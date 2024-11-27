@@ -380,62 +380,17 @@ public class Test implements Greeting {
             ),
             "javascript": (
                 "test.js",
-                """// Class definition
-class Person {
-    constructor(name) {
-        this.name = name;
-    }
-
-    sayHello() {
-        return `Hello, ${this.name}!`;
-    }
-}
-
-// Function declaration
-function greet(person) {
-    return person.sayHello();
-}
-
-// Variables and constants
-const DEFAULT_NAME = 'World';
-let currentPerson = new Person(DEFAULT_NAME);
-
-// Export for use in other modules
-module.exports = {
-    Person,
-    greet,
-    DEFAULT_NAME
-};
-""",
+                "",  # Now reads from fixture file
                 "Person",  # Key symbol to check
             ),
             "ocaml": (
                 "test.ml",
-                """(* Module definition *)
-module Greeter = struct
-  type person = {
-    name: string;
-    age: int
-  }
-
-  let create_person name age =
-    {name; age}
-
-  let greet person =
-    Printf.printf "Hello, %s! You are %d years old.\\n"
-      person.name person.age
-end
-
-(* Outside the module *)
-let () =
-  let person = Greeter.create_person "Alice" 30 in
-  Greeter.greet person
-""",
+                "",  # Now reads from fixture file
                 "Greeter",  # Key symbol to check
             ),
             "php": (
                 "test.php",
-                '<?php\nfunction greet($name) {\n    echo "Hello, $name!";\n}\n?>\n',
+                "",  # Now reads from fixture file
                 "greet",  # Key symbol to check
             ),
             "python": (
@@ -445,50 +400,17 @@ let () =
             ),
             "ql": (
                 "test.ql",
-                'predicate greet(string name) {\n  name = "World"\n}\n',
+                "",  # Now reads from fixture file
                 "greet",  # Key symbol to check
             ),
             "ruby": (
                 "test.rb",
-                'def greet(name)\n  puts "Hello, #{name}!"\nend\n',
+                "",  # Now reads from fixture file
                 "greet",  # Key symbol to check
             ),
             "rust": (
                 "test.rs",
-                """// Define a trait
-trait Greeting {
-    fn greet(&self) -> String;
-}
-
-// Define a struct
-struct Person {
-    name: String,
-    age: u32,
-}
-
-// Implement the trait for Person
-impl Greeting for Person {
-    fn greet(&self) -> String {
-        format!("Hello, {}! You are {} years old.", self.name, self.age)
-    }
-}
-
-// Implementation block for Person
-impl Person {
-    fn new(name: String, age: u32) -> Self {
-        Person { name, age }
-    }
-}
-
-// Constants
-const DEFAULT_NAME: &str = "World";
-const MAX_AGE: u32 = 150;
-
-fn main() {
-    let person = Person::new(DEFAULT_NAME.to_string(), 30);
-    println!("{}", person.greet());
-}
-""",
+                "",  # Now reads from fixture file
                 "Person",  # Key symbol to check
             ),
             "typescript": (
