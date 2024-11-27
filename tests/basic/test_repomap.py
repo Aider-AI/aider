@@ -539,11 +539,16 @@ class Greeter {
                 dump(result)
 
                 # Check if the result contains all the expected files and symbols
-                self.assertIn(filename, result, f"File for language {lang} not found in repo map: {result}")
+                self.assertIn(
+                    filename, result, f"File for language {lang} not found in repo map: {result}"
+                )
                 self.assertIn(
                     key_symbol,
                     result,
-                    f"Key symbol '{key_symbol}' for language {lang} not found in repo map: {result}",
+                    (
+                        f"Key symbol '{key_symbol}' for language {lang} not found in repo map:"
+                        f" {result}"
+                    ),
                 )
 
                 # close the open cache files, so Windows won't error
