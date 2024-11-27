@@ -642,38 +642,150 @@ namespace Greetings {
             ##################### FIX ALL THE ONES BELOW HERE vvvvvvvvvvv
             "elisp": (
                 "test.el",
-                '(defun greet (name)\n  (message "Hello, %s!" name))\n',
-                "greet",  # Key symbol to check
+                """(defvar *default-greeting* "Hello")
+(defvar *max-name-length* 50)
+
+(defstruct person
+  (name "Anonymous")
+  (age 0))
+
+(defclass greeter ()
+  ((prefix :initarg :prefix
+           :accessor greeter-prefix
+           :initform *default-greeting*)))
+
+(defmethod greet ((g greeter) (p person))
+  (format nil "~A, ~A! You are ~D years old."
+          (greeter-prefix g)
+          (person-name p)
+          (person-age p)))
+
+(defun create-formal-greeter ()
+  (make-instance 'greeter :prefix "Good day"))
+
+(defun main ()
+  (let ((greeter (create-formal-greeter))
+        (person (make-person :name "World" :age 42)))
+    (message "%s" (greet greeter person))))""",
+                "greeter",  # Key symbol to check
             ),
             "elm": (
                 "test.elm",
-                (
-                    "module Main exposing (main)\n\nimport Html exposing (text)\n\nmain =\n    text"
-                    ' "Hello, World!"\n'
-                ),
-                "Main",  # Key symbol to check
+                """module Main exposing (main, Person, Greeting)
+
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
+
+type alias Person =
+    { name : String
+    , age : Int
+    }
+
+type Greeting
+    = Formal
+    | Casual
+
+greet : Greeting -> Person -> String
+greet style person =
+    let
+        prefix =
+            case style of
+                Formal ->
+                    "Good day"
+                
+                Casual ->
+                    "Hi"
+    in
+    prefix ++ ", " ++ person.name ++ "!"
+
+defaultPerson : Person
+defaultPerson =
+    { name = "World"
+    , age = 42
+    }
+
+main : Html msg
+main =
+    div [ class "greeting" ]
+        [ text (greet Formal defaultPerson)
+        ]""",
+                "Person",  # Key symbol to check
             ),
             "go": (
                 "test.go",
-                (
-                    'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello,'
-                    ' World!")\n}\n'
-                ),
-                "main",  # Key symbol to check
+                """package main
+
+import (
+    "fmt"
+    "strings"
+)
+
+// Person represents someone who can be greeted
+type Person struct {
+    Name string
+    Age  int
+}
+
+// Greeter defines greeting behavior
+type Greeter interface {
+    Greet(p Person) string
+}
+
+// FormalGreeter implements Greeter with formal style
+type FormalGreeter struct {
+    Prefix string
+}
+
+const (
+    DefaultName = "World"
+    MaxAge     = 150
+)
+
+func (g FormalGreeter) Greet(p Person) string {
+    return fmt.Sprintf("%s, %s! You are %d years old.", 
+        g.Prefix, p.Name, p.Age)
+}
+
+func NewFormalGreeter() *FormalGreeter {
+    return &FormalGreeter{Prefix: "Good day"}
+}
+
+func main() {
+    greeter := NewFormalGreeter()
+    person := Person{Name: DefaultName, Age: 42}
+    fmt.Println(greeter.Greet(person))
+}""",
+                "Greeter",  # Key symbol to check
             ),
             "dart": (
                 "test.dart",
-                """void main() {
-  print('Hello, World!');
+                """abstract class Greeting {
+  String greet(Person person);
 }
 
-class Greeter {
-  String sayHello(String name) {
-    return 'Hello, $name!';
+class Person {
+  final String name;
+  final int age;
+  
+  const Person(this.name, this.age);
+}
+
+class FormalGreeting implements Greeting {
+  static const String prefix = 'Good day';
+  static const int maxAge = 150;
+  
+  @override
+  String greet(Person person) {
+    return '$prefix, ${person.name}! You are ${person.age} years old.';
   }
 }
-""",
-                "Greeter",  # Key symbol to check
+
+void main() {
+  final greeter = FormalGreeting();
+  final person = Person('World', 42);
+  print(greeter.greet(person));
+}""",
+                "Greeting",  # Key symbol to check
             ),
         }
 
