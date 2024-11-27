@@ -105,9 +105,14 @@ class Analytics:
         return uuid_str[:6] <= threshold
 
     def get_data_file_path(self):
-        data_file = Path.home() / ".aider" / "analytics.json"
-        data_file.parent.mkdir(parents=True, exist_ok=True)
-        return data_file
+        try:
+            data_file = Path.home() / ".aider" / "analytics.json"
+            data_file.parent.mkdir(parents=True, exist_ok=True)
+            return data_file
+        except OSError:
+            # If we can't create/access the directory, just disable analytics
+            self.disable(permanently=False)
+            return None
 
     def get_or_create_uuid(self):
         self.load_data()
@@ -119,6 +124,9 @@ class Analytics:
 
     def load_data(self):
         data_file = self.get_data_file_path()
+        if not data_file:
+            return
+            
         if data_file.exists():
             try:
                 data = json.loads(data_file.read_text())
@@ -130,14 +138,20 @@ class Analytics:
 
     def save_data(self):
         data_file = self.get_data_file_path()
+        if not data_file:
+            return
+            
         data = dict(
             uuid=self.user_id,
             permanently_disable=self.permanently_disable,
             asked_opt_in=self.asked_opt_in,
         )
 
-        # Allow exceptions; crash if we can't record permanently_disabled=True, etc
-        data_file.write_text(json.dumps(data, indent=4))
+        try:
+            data_file.write_text(json.dumps(data, indent=4))
+        except OSError:
+            # If we can't write the file, just disable analytics
+            self.disable(permanently=False)
 
     def get_system_info(self):
         return {
