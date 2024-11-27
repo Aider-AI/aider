@@ -373,20 +373,6 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
     def test_get_repo_map_all_languages(self):
         language_files = {
-            "dart": (
-                "test.dart",
-                """void main() {
-  print('Hello, World!');
-}
-
-class Greeter {
-  String sayHello(String name) {
-    return 'Hello, $name!';
-  }
-}
-""",
-                "Greeter",  # Key symbol to check
-            ),
             "c": (
                 "test.c",
                 (
@@ -394,14 +380,6 @@ class Greeter {
                     " return 0;\n}\n"
                 ),
                 "main",  # Key symbol to check
-            ),
-            "csharp": (
-                "test.cs",
-                (
-                    "using System;\n\nclass Program {\n    static void Main() {\n       "
-                    ' Console.WriteLine("Hello, World!");\n    }\n}\n'
-                ),
-                "Program",  # Key symbol to check
             ),
             "cpp": (
                 "test.cpp",
@@ -411,11 +389,6 @@ class Greeter {
                 ),
                 "main",  # Key symbol to check
             ),
-            "elisp": (
-                "test.el",
-                '(defun greet (name)\n  (message "Hello, %s!" name))\n',
-                "greet",  # Key symbol to check
-            ),
             "elixir": (
                 "test.ex",
                 (
@@ -423,22 +396,6 @@ class Greeter {
                     " end\nend\n"
                 ),
                 "Greeter",  # Key symbol to check
-            ),
-            "elm": (
-                "test.elm",
-                (
-                    "module Main exposing (main)\n\nimport Html exposing (text)\n\nmain =\n    text"
-                    ' "Hello, World!"\n'
-                ),
-                "Main",  # Key symbol to check
-            ),
-            "go": (
-                "test.go",
-                (
-                    'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello,'
-                    ' World!")\n}\n'
-                ),
-                "main",  # Key symbol to check
             ),
             "java": (
                 "Test.java",
@@ -450,7 +407,7 @@ class Greeter {
             ),
             "javascript": (
                 "test.js",
-                "function greet(name) {\n    console.log(`Hello, ${name}!`);\n}\n",
+                "var greet= 1;function greet(name) {\n    console.log(`Hello, ${name}!`);\n}\n",
                 "greet",  # Key symbol to check
             ),
             "ocaml": (
@@ -497,31 +454,74 @@ class Greeter {
                 ),
                 "Greeting",  # Key symbol to check
             ),
+            "csharp": (
+                "test.cs",
+                (
+                    "using System;\n\nclass Program {\n    static void Main() {\n       "
+                    ' Console.WriteLine("Hello, World!");\n    }\n}\n'
+                ),
+                "Program",  # Key symbol to check
+            ),
+            #####################
+            "dart": (
+                "test.dart",
+                """void main() {
+  print('Hello, World!');
+}
+
+class Greeter {
+  String sayHello(String name) {
+    return 'Hello, $name!';
+  }
+}
+""",
+                "Greeter",  # Key symbol to check
+            ),
+            "elisp": (
+                "test.el",
+                '(defun greet (name)\n  (message "Hello, %s!" name))\n',
+                "greet",  # Key symbol to check
+            ),
+            "elm": (
+                "test.elm",
+                (
+                    "module Main exposing (main)\n\nimport Html exposing (text)\n\nmain =\n    text"
+                    ' "Hello, World!"\n'
+                ),
+                "Main",  # Key symbol to check
+            ),
+            "go": (
+                "test.go",
+                (
+                    'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello,'
+                    ' World!")\n}\n'
+                ),
+                "main",  # Key symbol to check
+            ),
         }
 
-        with IgnorantTemporaryDirectory() as temp_dir:
-            for _, (filename, content, _) in language_files.items():
+        for lang, (filename, content, key_symbol) in language_files.items():
+            with GitTemporaryDirectory() as temp_dir:
                 with open(os.path.join(temp_dir, filename), "w") as f:
                     f.write(content)
 
-            io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
-            other_files = [
-                os.path.join(temp_dir, filename) for filename, _, _ in language_files.values()
-            ]
-            result = repo_map.get_repo_map([], other_files)
+                io = InputOutput()
+                repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+                other_files = [filename]
+                result = repo_map.get_repo_map([], other_files)
+                dump(lang)
+                dump(result)
 
-            # Check if the result contains all the expected files and symbols
-            for lang, (filename, _, key_symbol) in language_files.items():
-                self.assertIn(filename, result, f"File for language {lang} not found in repo map")
+                # Check if the result contains all the expected files and symbols
+                self.assertIn(filename, result, f"File for language {lang} not found in repo map: {result}")
                 self.assertIn(
                     key_symbol,
                     result,
-                    f"Key symbol '{key_symbol}' for language {lang} not found in repo map",
+                    f"Key symbol '{key_symbol}' for language {lang} not found in repo map: {result}",
                 )
 
-            # close the open cache files, so Windows won't error
-            del repo_map
+                # close the open cache files, so Windows won't error
+                del repo_map
 
     def test_repo_map_sample_code_base(self):
         # Path to the sample code base
