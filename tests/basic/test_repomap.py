@@ -333,23 +333,23 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
     def test_get_repo_map_all_languages(self):
         language_files = {
-            "c": "main",
-            "cpp": "main",
-            "elixir": "Greeter",
-            "java": "Greeting",
-            "javascript": "Person",
-            "ocaml": "Greeter",
-            "php": "greet",
-            "python": "Person",
-            "ql": "greet",
-            "ruby": "greet",
-            "rust": "Person",
-            "typescript": "greet",
-            "tsx": "UserProps",
-            "csharp": "IGreeter",
-            "elisp": "greeter",
-            "elm": "Person",
-            "go": "Greeter",
+            "c": ("c", "main"),
+            "cpp": ("cpp", "main"),
+            "elixir": ("ex", "Greeter"),
+            "java": ("java", "Greeting"),
+            "javascript": ("js", "Person"),
+            "ocaml": ("ml", "Greeter"),
+            "php": ("php", "greet"),
+            "python": ("py", "Person"),
+            "ql": ("ql", "greet"),
+            "ruby": ("rb", "greet"),
+            "rust": ("rs", "Person"),
+            "typescript": ("ts", "greet"),
+            "tsx": ("tsx", "UserProps"),
+            "csharp": ("cs", "IGreeter"),
+            "elisp": ("el", "greeter"),
+            "elm": ("elm", "Person"),
+            "go": ("go", "Greeter"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
@@ -357,13 +357,8 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         for lang, key_symbol in language_files.items():
             # Get the fixture file path and name based on language
             fixture_dir = fixtures_dir / lang
-            if lang == "cpp":
-                filename = "hello.cpp"
-            elif lang == "c":
-                filename = "hello.c"
-            else:
-                filename = "test." + {"csharp": "cs"}.get(lang, lang)
-
+            ext, key_symbol = language_files[lang]
+            filename = f"test.{ext}"
             fixture_path = fixture_dir / filename
             self.assertTrue(
                 fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}"
