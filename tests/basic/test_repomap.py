@@ -281,35 +281,7 @@ class TestRepoMapTypescript(unittest.TestCase):
     def test_get_repo_map_typescript(self):
         # Create a temporary directory with a sample TypeScript file
         test_file_ts = "test_file.ts"
-        file_content_ts = """\
-interface IMyInterface {
-    someMethod(): void;
-}
-
-type ExampleType = {
-    key: string;
-    value: number;
-};
-
-enum Status {
-    New,
-    InProgress,
-    Completed,
-}
-
-export class MyClass {
-    constructor(public value: number) {}
-
-    add(input: number): number {
-        return this.value + input;
-        return this.value + input;
-    }
-}
-
-export function myFunction(input: number): number {
-    return input * 2;
-}
-"""
+        file_content_ts = ""
 
         with IgnorantTemporaryDirectory() as temp_dir:
             with open(os.path.join(temp_dir, test_file_ts), "w") as f:
@@ -335,19 +307,7 @@ export function myFunction(input: number): number {
     def test_get_repo_map_tsx(self):
         # Create a temporary directory with a sample TSX file
         test_file_tsx = "test_file.tsx"
-        file_content_tsx = """\
-import React from 'react';
-
-interface GreetingProps {
-    name: string;
-}
-
-const Greeting: React.FC<GreetingProps> = ({ name }) => {
-    return <h1>Hello, {name}!</h1>;
-};
-
-export default Greeting;
-"""
+        file_content_tsx = ""
 
         with IgnorantTemporaryDirectory() as temp_dir:
             with open(os.path.join(temp_dir, test_file_tsx), "w") as f:
@@ -480,32 +440,7 @@ let () =
             ),
             "python": (
                 "test.py",
-                '''from typing import Optional, List
-
-class Person:
-    """A class representing a person."""
-
-    def __init__(self, name: str, age: Optional[int] = None):
-        self.name = name
-        self.age = age
-
-    def greet(self, formal: bool = False) -> str:
-        """Generate a greeting."""
-        prefix = "Good day" if formal else "Hello"
-        return f"{prefix}, {self.name}!"
-
-def create_greeting_list(people: List[Person]) -> List[str]:
-    """Create greetings for a list of people."""
-    return [person.greet() for person in people]
-
-# Constants
-DEFAULT_NAME = "World"
-MAX_AGE = 150
-
-if __name__ == "__main__":
-    person = Person(DEFAULT_NAME)
-    print(person.greet())
-''',
+                "",  # Now reads from fixture file
                 "Person",  # Key symbol to check
             ),
             "ql": (
