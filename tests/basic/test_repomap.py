@@ -335,26 +335,17 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         language_files = {
             "c": (
                 "test.c",
-                (
-                    '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n   '
-                    " return 0;\n}\n"
-                ),
+                "",  # Now reads from fixture file
                 "main",  # Key symbol to check
             ),
             "cpp": (
                 "test.cpp",
-                (
-                    '#include <iostream>\n\nint main() {\n    std::cout << "Hello, World!" <<'
-                    " std::endl;\n    return 0;\n}\n"
-                ),
+                "",  # Now reads from fixture file
                 "main",  # Key symbol to check
             ),
             "elixir": (
                 "test.ex",
-                (
-                    'defmodule Greeter do\n  def hello(name) do\n    IO.puts("Hello, #{name}!")\n '
-                    " end\nend\n"
-                ),
+                "",  # Now reads from fixture file
                 "Greeter",  # Key symbol to check
             ),
             "java": (
