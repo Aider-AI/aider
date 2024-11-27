@@ -169,7 +169,10 @@ python -m aider
 
 ## Can I change the system prompts that aider uses?
 
-Aider is set up to support different system prompts and edit formats
+The most convenient way to add custom instructions is to use a
+[conventions file](https://aider.chat/docs/usage/conventions.html).
+
+But, aider is set up to support different actual system prompts and edit formats
 in a modular way. If you look in the `aider/coders` subdirectory, you'll
 see there's a base coder with base prompts, and then there are
 a number of
