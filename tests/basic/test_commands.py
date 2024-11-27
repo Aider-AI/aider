@@ -903,6 +903,9 @@ class TestCommands(TestCase):
                 )
             )
 
+            # Add a dummy message to ensure format_messages() works
+            vision_coder.cur_messages = [{"role": "user", "content": "Check the image"}]
+
             # Check that the image file appears in the messages
             messages = vision_coder.format_messages().all_messages()
             found_image = False
