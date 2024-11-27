@@ -639,21 +639,7 @@ namespace Greetings {
 }""",
                 "IGreeter",  # Key symbol to check
             ),
-            #####################
-            "dart": (
-                "test.dart",
-                """void main() {
-  print('Hello, World!');
-}
-
-class Greeter {
-  String sayHello(String name) {
-    return 'Hello, $name!';
-  }
-}
-""",
-                "Greeter",  # Key symbol to check
-            ),
+            ##################### FIX ALL THE ONES BELOW HERE vvvvvvvvvvv
             "elisp": (
                 "test.el",
                 '(defun greet (name)\n  (message "Hello, %s!" name))\n',
@@ -674,6 +660,20 @@ class Greeter {
                     ' World!")\n}\n'
                 ),
                 "main",  # Key symbol to check
+            ),
+            "dart": (
+                "test.dart",
+                """void main() {
+  print('Hello, World!');
+}
+
+class Greeter {
+  String sayHello(String name) {
+    return 'Hello, $name!';
+  }
+}
+""",
+                "Greeter",  # Key symbol to check
             ),
         }
 
