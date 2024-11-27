@@ -2112,7 +2112,7 @@ class Coder:
             self.io.tool_output(f"Running {command}")
             # Add the command to input history
             self.io.add_to_input_history(f"/run {command.strip()}")
-            exit_status, output = run_cmd(command, error_print=self.io.tool_error)
+            exit_status, output = run_cmd(command, error_print=self.io.tool_error, cwd=self.root)
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
 
