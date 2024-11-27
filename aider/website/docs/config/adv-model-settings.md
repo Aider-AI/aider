@@ -504,7 +504,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   lazy: false
   name: claude-3-5-sonnet-20240620
@@ -523,7 +523,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   lazy: false
   name: anthropic/claude-3-5-sonnet-20240620
@@ -542,7 +542,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   lazy: false
   name: anthropic/claude-3-5-sonnet-20241022
@@ -561,7 +561,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   lazy: false
   name: bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
@@ -580,7 +580,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   lazy: false
   name: anthropic/claude-3-5-sonnet-latest
@@ -599,7 +599,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   lazy: false
   name: claude-3-5-sonnet-20241022
@@ -618,7 +618,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   lazy: false
   name: anthropic/claude-3-haiku-20240307
   reminder: user
@@ -636,7 +636,7 @@ cog.out("```\n")
   examples_as_sys_msg: false
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   lazy: false
   name: anthropic/claude-3-5-haiku-20241022
   reminder: user
@@ -654,7 +654,7 @@ cog.out("```\n")
   examples_as_sys_msg: false
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   lazy: false
   name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   reminder: user
@@ -672,7 +672,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   lazy: false
   name: claude-3-5-haiku-20241022
   reminder: user
@@ -707,7 +707,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   lazy: false
   name: claude-3-haiku-20240307
   reminder: user
