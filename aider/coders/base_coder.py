@@ -665,6 +665,8 @@ class Coder:
 
     def get_readonly_files_messages(self):
         readonly_messages = []
+        
+        # Handle non-image files
         read_only_content = self.get_read_only_files_content()
         if read_only_content:
             readonly_messages += [
@@ -676,6 +678,15 @@ class Coder:
                     content="Ok, I will use these files as references.",
                 ),
             ]
+
+        # Handle image files
+        images_message = self.get_images_message(self.abs_read_only_fnames)
+        if images_message is not None:
+            readonly_messages += [
+                images_message,
+                dict(role="assistant", content="Ok, I will use these images as references."),
+            ]
+            
         return readonly_messages
 
     def get_chat_files_messages(self):
@@ -697,7 +708,7 @@ class Coder:
                 dict(role="assistant", content=files_reply),
             ]
 
-        images_message = self.get_images_message()
+        images_message = self.get_images_message(self.abs_fnames)
         if images_message is not None:
             chat_files_messages += [
                 images_message,
@@ -706,7 +717,7 @@ class Coder:
 
         return chat_files_messages
 
-    def get_images_message(self):
+    def get_images_message(self, fnames):
         supports_images = self.main_model.info.get("supports_vision")
         supports_pdfs = self.main_model.info.get("supports_pdf_input")
 
