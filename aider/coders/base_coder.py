@@ -784,7 +784,7 @@ class Coder:
             return self.commands.run(inp)
 
         self.check_for_file_mentions(inp)
-        self.check_for_urls(inp)
+        inp = self.check_for_urls(inp)
 
         return inp
 
@@ -830,11 +830,10 @@ class Coder:
     def check_for_urls(self, inp: str) -> List[str]:
         """Check input for URLs and offer to add them to the chat."""
         if not self.detect_urls:
-            return []
+            return inp
 
         url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
-        added_urls = []
         group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
@@ -844,11 +843,10 @@ class Coder:
                 ):
                     inp += "\n\n"
                     inp += self.commands.cmd_web(url, return_content=True)
-                    added_urls.append(url)
                 else:
                     self.rejected_urls.add(url)
 
-        return added_urls
+        return inp
 
     def keyboard_interrupt(self):
         now = time.time()

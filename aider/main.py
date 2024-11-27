@@ -157,13 +157,17 @@ def check_gitignore(git_root, io, ask=True):
 
     gitignore_file = Path(git_root) / ".gitignore"
     if gitignore_file.exists():
-        content = io.read_text(gitignore_file)
-        if content is None:
+        try:
+            content = io.read_text(gitignore_file)
+            if content is None:
+                return
+            existing_lines = content.splitlines()
+            for pat in patterns:
+                if pat not in existing_lines:
+                    patterns_to_add.append(pat)
+        except OSError as e:
+            io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
             return
-        existing_lines = content.splitlines()
-        for pat in patterns:
-            if pat not in existing_lines:
-                patterns_to_add.append(pat)
     else:
         content = ""
         patterns_to_add = patterns
@@ -177,9 +181,17 @@ def check_gitignore(git_root, io, ask=True):
     if content and not content.endswith("\n"):
         content += "\n"
     content += "\n".join(patterns_to_add) + "\n"
-    io.write_text(gitignore_file, content)
 
-    io.tool_output(f"Added {', '.join(patterns_to_add)} to .gitignore")
+    try:
+        io.write_text(gitignore_file, content)
+        io.tool_output(f"Added {', '.join(patterns_to_add)} to .gitignore")
+    except OSError as e:
+        io.tool_error(f"Error when trying to write to {gitignore_file}: {e}")
+        io.tool_output(
+            "Try running with appropriate permissions or manually add these patterns to .gitignore:"
+        )
+        for pattern in patterns_to_add:
+            io.tool_output(f"  {pattern}")
 
 
 def check_streamlit_install(io):

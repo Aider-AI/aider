@@ -24,6 +24,10 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.65.1
+
+- Bugfix to `--alias`.
+
 ### Aider v0.65.0
 
 - Added `--alias` config to define [custom model aliases](https://aider.chat/docs/config/model-aliases.html).
