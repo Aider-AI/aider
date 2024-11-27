@@ -728,27 +728,29 @@ class Coder:
             return None
 
         image_messages = []
-        for fname, content in self.get_abs_fnames_content():
-            if is_image_file(fname):
-                mime_type, _ = mimetypes.guess_type(fname)
-                if not mime_type:
-                    continue
+        for fname in fnames:
+            if not is_image_file(fname):
+                continue
 
-                with open(fname, "rb") as image_file:
-                    encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
-                image_url = f"data:{mime_type};base64,{encoded_string}"
-                rel_fname = self.get_rel_fname(fname)
+            mime_type, _ = mimetypes.guess_type(fname)
+            if not mime_type:
+                continue
 
-                if mime_type.startswith("image/") and supports_images:
-                    image_messages += [
-                        {"type": "text", "text": f"Image file: {rel_fname}"},
-                        {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
-                    ]
-                elif mime_type == "application/pdf" and supports_pdfs:
-                    image_messages += [
-                        {"type": "text", "text": f"PDF file: {rel_fname}"},
-                        {"type": "image_url", "image_url": image_url},
-                    ]
+            with open(fname, "rb") as image_file:
+                encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+            image_url = f"data:{mime_type};base64,{encoded_string}"
+            rel_fname = self.get_rel_fname(fname)
+
+            if mime_type.startswith("image/") and supports_images:
+                image_messages += [
+                    {"type": "text", "text": f"Image file: {rel_fname}"},
+                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
+                ]
+            elif mime_type == "application/pdf" and supports_pdfs:
+                image_messages += [
+                    {"type": "text", "text": f"PDF file: {rel_fname}"},
+                    {"type": "image_url", "image_url": image_url},
+                ]
 
         if not image_messages:
             return None
