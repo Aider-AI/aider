@@ -278,54 +278,6 @@ class TestRepoMapTypescript(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
 
-    def test_get_repo_map_typescript(self):
-        # Create a temporary directory with a sample TypeScript file
-        test_file_ts = "test_file.ts"
-        file_content_ts = ""
-
-        with IgnorantTemporaryDirectory() as temp_dir:
-            with open(os.path.join(temp_dir, test_file_ts), "w") as f:
-                f.write(file_content_ts)
-
-            io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
-            other_files = [os.path.join(temp_dir, test_file_ts)]
-            result = repo_map.get_repo_map([], other_files)
-
-            # Check if the result contains the expected tags map with TypeScript identifiers
-            self.assertIn("test_file.ts", result)
-            self.assertIn("IMyInterface", result)
-            self.assertIn("ExampleType", result)
-            self.assertIn("Status", result)
-            self.assertIn("MyClass", result)
-            self.assertIn("add", result)
-            self.assertIn("myFunction", result)
-
-            # close the open cache files, so Windows won't error
-            del repo_map
-
-    def test_get_repo_map_tsx(self):
-        # Create a temporary directory with a sample TSX file
-        test_file_tsx = "test_file.tsx"
-        file_content_tsx = ""
-
-        with IgnorantTemporaryDirectory() as temp_dir:
-            with open(os.path.join(temp_dir, test_file_tsx), "w") as f:
-                f.write(file_content_tsx)
-
-            io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
-            other_files = [os.path.join(temp_dir, test_file_tsx)]
-            result = repo_map.get_repo_map([], other_files)
-
-            # Check if the result contains the expected tags map with TSX identifiers
-            self.assertIn("test_file.tsx", result)
-            self.assertIn("GreetingProps", result)
-            self.assertIn("Greeting", result)
-
-            # close the open cache files, so Windows won't error
-            del repo_map
-
 
 class TestRepoMapAllLanguages(unittest.TestCase):
     def setUp(self):
