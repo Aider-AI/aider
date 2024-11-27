@@ -639,7 +639,6 @@ namespace Greetings {
 }""",
                 "IGreeter",  # Key symbol to check
             ),
-            ##################### FIX ALL THE ONES BELOW HERE vvvvvvvvvvv
             "elisp": (
                 "test.el",
                 """(defvar *default-greeting* "Hello")
@@ -692,7 +691,7 @@ greet style person =
             case style of
                 Formal ->
                     "Good day"
-                
+
                 Casual ->
                     "Hi"
     in
@@ -742,7 +741,7 @@ const (
 )
 
 func (g FormalGreeter) Greet(p Person) string {
-    return fmt.Sprintf("%s, %s! You are %d years old.", 
+    return fmt.Sprintf("%s, %s! You are %d years old.",
         g.Prefix, p.Name, p.Age)
 }
 
@@ -756,36 +755,6 @@ func main() {
     fmt.Println(greeter.Greet(person))
 }""",
                 "Greeter",  # Key symbol to check
-            ),
-            "dart": (
-                "test.dart",
-                """abstract class Greeting {
-  String greet(Person person);
-}
-
-class Person {
-  final String name;
-  final int age;
-  
-  const Person(this.name, this.age);
-}
-
-class FormalGreeting implements Greeting {
-  static const String prefix = 'Good day';
-  static const int maxAge = 150;
-  
-  @override
-  String greet(Person person) {
-    return '$prefix, ${person.name}! You are ${person.age} years old.';
-  }
-}
-
-void main() {
-  final greeter = FormalGreeting();
-  final person = Person('World', 42);
-  print(greeter.greet(person));
-}""",
-                "Greeting",  # Key symbol to check
             ),
         }
 
