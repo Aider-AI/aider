@@ -21,7 +21,7 @@ from aider.utils import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
-from tree_sitter_languages import get_language, get_parser  # noqa: E402
+from tree_sitter_language_pack import get_language, get_parser  # noqa: E402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
@@ -216,28 +216,31 @@ class RepoMap:
         query = language.query(query_scm)
         captures = query.captures(tree.root_node)
 
-        captures = list(captures)
+        dump(fname)
+        dump(captures)
+        dump(captures.keys())
 
         saw = set()
-        for node, tag in captures:
-            if tag.startswith("name.definition."):
-                kind = "def"
-            elif tag.startswith("name.reference."):
-                kind = "ref"
-            else:
-                continue
+        for tag, nodes in captures.items():
+            for node in nodes:
+                if tag.startswith("name.definition."):
+                    kind = "def"
+                elif tag.startswith("name.reference."):
+                    kind = "ref"
+                else:
+                    continue
 
-            saw.add(kind)
+                saw.add(kind)
 
-            result = Tag(
-                rel_fname=rel_fname,
-                fname=fname,
-                name=node.text.decode("utf-8"),
-                kind=kind,
-                line=node.start_point[0],
-            )
+                result = Tag(
+                    rel_fname=rel_fname,
+                    fname=fname,
+                    name=node.text.decode("utf-8"),
+                    kind=kind,
+                    line=node.start_point[0],
+                )
 
-            yield result
+                yield result
 
         if "ref" in saw:
             return
