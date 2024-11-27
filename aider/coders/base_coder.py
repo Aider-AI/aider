@@ -665,7 +665,7 @@ class Coder:
 
     def get_readonly_files_messages(self):
         readonly_messages = []
-        
+
         # Handle non-image files
         read_only_content = self.get_read_only_files_content()
         if read_only_content:
@@ -686,7 +686,7 @@ class Coder:
                 images_message,
                 dict(role="assistant", content="Ok, I will use these images as references."),
             ]
-            
+
         return readonly_messages
 
     def get_chat_files_messages(self):
