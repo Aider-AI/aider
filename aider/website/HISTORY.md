@@ -29,7 +29,9 @@ cog.out(text)
 - PDF support for Sonnet and Gemini models.
 - Set cwd to repo root when running shell commands.
 - Improved error handling for failed .gitignore file operations.
-- Aider wrote 82% of the code in this release.
+- Improved error handling for input history file permissions.
+- Improved error handling for analytics file access.
+- Aider wrote 85% of the code in this release.
 
 ### Aider v0.65.1
 
