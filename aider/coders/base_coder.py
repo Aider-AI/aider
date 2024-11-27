@@ -704,11 +704,12 @@ class Coder:
                 dict(role="assistant", content="Ok."),
             ]
 
+        dump(chat_files_messages)
         return chat_files_messages
 
     def get_images_message(self):
-        if not self.main_model.info.get("supports_vision"):
-            return None
+        #if not self.main_model.info.get("supports_vision"):
+        #    return None
 
         image_messages = []
         for fname, content in self.get_abs_fnames_content():
@@ -716,14 +717,18 @@ class Coder:
                 with open(fname, "rb") as image_file:
                     encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
                 mime_type, _ = mimetypes.guess_type(fname)
-                if mime_type and mime_type.startswith("image/"):
+                dump(mime_type)
+                if not mime_type:
+                    continue
+                if mime_type.startswith("image/") or mime_type == "application/pdf":
                     image_url = f"data:{mime_type};base64,{encoded_string}"
                     rel_fname = self.get_rel_fname(fname)
                     image_messages += [
                         {"type": "text", "text": f"Image file: {rel_fname}"},
-                        {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
+                        {"type": "image_url", "image_url": image_url},
                     ]
 
+        dump(image_messages)
         if not image_messages:
             return None
 
