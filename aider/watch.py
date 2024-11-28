@@ -65,7 +65,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 class FileWatcher:
     """Watches source files for changes and AI comments"""
 
-    def __init__(self, directory: str, encoding="utf-8"):
+    def __init__(self, directory: str, encoding="utf-8", gitignores: list[str] = None):
         self.directory = directory
         self.encoding = encoding
         self.root = Path(directory)
@@ -73,6 +73,7 @@ class FileWatcher:
         self.stop_event = None
         self.watcher_thread = None
         self.changed_files = None
+        self.gitignores = gitignores
 
     def create_filter_func(self, gitignore_spec, ignore_func):
         """Creates a filter function for the file watcher"""
@@ -115,11 +116,11 @@ class FileWatcher:
 
         return filter_func
 
-    def start(self, gitignores: list[str] = None, ignore_func=None):
+    def start(self, ignore_func=None):
         """Start watching for file changes"""
         self.stop_event = threading.Event()
 
-        gitignore_paths = [Path(g) for g in gitignores] if gitignores else []
+        gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
         gitignore_spec = load_gitignores(gitignore_paths)
         filter_func = self.create_filter_func(gitignore_spec, ignore_func)
 
