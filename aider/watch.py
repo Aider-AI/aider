@@ -139,8 +139,9 @@ class FileWatcher:
                     if VERBOSE:
                         dump(result)
                     if result:
-                        # ai: they need to be rel_fnames!
-                        self.coder.abs_fnames.update(changed_files)
+                        # Convert to relative paths before updating
+                        rel_files = {str(Path(f).relative_to(self.root)) for f in changed_files}
+                        self.coder.abs_fnames.update(rel_files)
                         self.coder.io.interrupt_input()
                         return
             except Exception as e:
