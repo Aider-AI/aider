@@ -391,7 +391,7 @@ class InputOutput:
     ):
         self.rule()
 
-        # ai: initialize this in __init__!
+        # ai: the ignores should be passed to FileWater() not start()!
         self.file_watcher = FileWatcher(root, encoding=self.encoding)
         gitignore = [str(Path(root) / ".gitignore")]
         self.file_watcher.start(gitignores=gitignore)
