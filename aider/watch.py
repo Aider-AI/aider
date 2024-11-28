@@ -1,6 +1,7 @@
 import re
+import threading
 from pathlib import Path
-from typing import Optional, Set
+from typing import Optional
 
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
@@ -195,14 +196,17 @@ def main():
     def ignore_test_files(path):
         return "test" in path.name.lower()
 
+    watcher = FileWatcher(directory)
     try:
-        for changed_files in watch_source_files(
-            directory, args.gitignore, ignore_func=ignore_test_files
-        ):
-            for file in sorted(changed_files):
-                print(file)
+        watcher.start(gitignores=args.gitignore, ignore_func=ignore_test_files)
+        while True:
+            if changes := watcher.get_changes():
+                for file in sorted(changes.keys()):
+                    print(file)
+                watcher.changed_files = None
     except KeyboardInterrupt:
         print("\nStopped watching files")
+        watcher.stop()
 
 
 if __name__ == "__main__":

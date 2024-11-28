@@ -1,6 +1,5 @@
 import base64
 import os
-import threading
 import time
 import webbrowser
 from collections import defaultdict
@@ -26,7 +25,7 @@ from rich.style import Style as RichStyle
 from rich.text import Text
 
 from aider.mdstream import MarkdownStream
-from aider.watch import watch_source_files
+from aider.watch import FileWatcher
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
