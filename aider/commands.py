@@ -820,9 +820,7 @@ class Commands:
             else:
                 # Use substring matching like we do for read-only files
                 matched_files = [
-                    self.coder.get_rel_fname(f) 
-                    for f in self.coder.abs_fnames 
-                    if expanded_word in f
+                    self.coder.get_rel_fname(f) for f in self.coder.abs_fnames if expanded_word in f
                 ]
 
             if not matched_files:
