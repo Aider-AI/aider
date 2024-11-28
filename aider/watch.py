@@ -139,7 +139,7 @@ class FileWatcher:
                     if VERBOSE:
                         dump(result)
                     if result:
-                        # Update coder's tracked files and interrupt input
+                        # ai: they need to be rel_fnames!
                         self.coder.abs_fnames.update(changed_files)
                         self.coder.io.interrupt_input()
                         return
