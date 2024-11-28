@@ -771,6 +771,7 @@ class Coder:
         self.lint_outcome = None
         self.test_outcome = None
         self.shell_commands = []
+        self.message_cost = 0
 
         if self.repo:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
