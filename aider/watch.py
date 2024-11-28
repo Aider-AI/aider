@@ -67,10 +67,8 @@ class FileWatcher:
 
     def __init__(self, coder, encoding="utf-8", gitignores=None):
         self.coder = coder
-        self.directory = coder.root
         self.encoding = encoding
-        self.root = Path(self.directory)
-        self.root_abs = self.root.absolute()
+        self.root = Path(coder.root)
         self.stop_event = None
         self.watcher_thread = None
         self.changed_files = None
@@ -83,10 +81,10 @@ class FileWatcher:
             path_obj = Path(path)
             path_abs = path_obj.absolute()
 
-            if not path_abs.is_relative_to(self.root_abs):
+            if not path_abs.is_relative_to(self.root.absolute()):
                 return False
 
-            rel_path = path_abs.relative_to(self.root_abs)
+            rel_path = path_abs.relative_to(self.root)
             if VERBOSE:
                 dump(rel_path)
 
@@ -128,7 +126,7 @@ class FileWatcher:
         def watch_files():
             try:
                 for changes in watch(
-                    self.root, watch_filter=filter_func, stop_event=self.stop_event
+                    str(self.root), watch_filter=filter_func, stop_event=self.stop_event
                 ):
                     changed_files = {str(Path(change[1])) for change in changes}
                     result = {}
