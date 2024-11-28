@@ -2005,3 +2005,18 @@
   versions: 0.65.2.dev
   seconds_per_case: 35.8
   total_cost: 0.0000
+
+- dirname: 2024-11-28-14-41-46--granite3-dense-8b-whole-1
+  test_cases: 133
+  model: ollama/granite3-dense:8b
+  edit_format: whole
+  commit_hash: 200295e
+  pass_rate_1: 17.3
+  pass_rate_2: 20.3
+  percent_cases_well_formed: 78.9
+  exhausted_context_windows: 0
+  command: aider --model ollama/granite3-dense:8b
+  date: 2024-11-28
+  versions: 0.65.2.dev
+  seconds_per_case: 38.1
+  total_cost: 0.0000
