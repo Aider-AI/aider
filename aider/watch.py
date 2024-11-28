@@ -9,7 +9,7 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-VERBOSE = False
+VERBOSE = True
 
 
 def is_source_file(path: Path) -> bool:
@@ -65,10 +65,11 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 class FileWatcher:
     """Watches source files for changes and AI comments"""
 
-    def __init__(self, directory: str, encoding="utf-8", gitignores: list[str] = None):
-        self.directory = directory
+    def __init__(self, coder, encoding="utf-8", gitignores=None):
+        self.coder = coder
+        self.directory = coder.root
         self.encoding = encoding
-        self.root = Path(directory)
+        self.root = Path(self.directory)
         self.root_abs = self.root.absolute()
         self.stop_event = None
         self.watcher_thread = None
@@ -139,6 +140,7 @@ class FileWatcher:
                         dump(result)
                     if result:
                         self.changed_files = result
+                        self.io.interrupt_input()
                         return
             except Exception as e:
                 if VERBOSE:
