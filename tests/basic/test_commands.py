@@ -272,6 +272,7 @@ class TestCommands(TestCase):
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
 
+        # Create test files in root and subdirectory
         subdir = Path("subdir")
         subdir.mkdir()
         (subdir / "subtest1.py").touch()
@@ -279,17 +280,50 @@ class TestCommands(TestCase):
 
         Path("test1.py").touch()
         Path("test2.py").touch()
+        Path("test3.txt").touch()
 
-        # Add some files to the chat session
+        # Add all Python files to the chat session
         commands.cmd_add("*.py")
+        initial_count = len(coder.abs_fnames)
+        self.assertEqual(initial_count, 2)  # Only root .py files should be added
 
-        self.assertEqual(len(coder.abs_fnames), 2)
-
-        # Call the cmd_drop method with a glob pattern
+        # Test dropping with glob pattern
         commands.cmd_drop("*2.py")
-
         self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
         self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
+        self.assertEqual(len(coder.abs_fnames), initial_count - 1)
+
+    def test_cmd_drop_without_glob(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Create test files
+        test_files = ["file1.txt", "file2.txt", "file3.py"]
+        for fname in test_files:
+            Path(fname).touch()
+
+        # Add all files to the chat session
+        for fname in test_files:
+            commands.cmd_add(fname)
+        
+        initial_count = len(coder.abs_fnames)
+        self.assertEqual(initial_count, 3)
+
+        # Test dropping individual files without glob
+        commands.cmd_drop("file1.txt")
+        self.assertNotIn(str(Path("file1.txt").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("file2.txt").resolve()), coder.abs_fnames)
+        self.assertEqual(len(coder.abs_fnames), initial_count - 1)
+
+        # Test dropping multiple files without glob
+        commands.cmd_drop("file2.txt file3.py")
+        self.assertNotIn(str(Path("file2.txt").resolve()), coder.abs_fnames)
+        self.assertNotIn(str(Path("file3.py").resolve()), coder.abs_fnames)
+        self.assertEqual(len(coder.abs_fnames), 0)
 
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
