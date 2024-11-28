@@ -309,7 +309,7 @@ class TestCommands(TestCase):
         # Add all files to the chat session
         for fname in test_files:
             commands.cmd_add(fname)
-        
+
         initial_count = len(coder.abs_fnames)
         self.assertEqual(initial_count, 3)
 
