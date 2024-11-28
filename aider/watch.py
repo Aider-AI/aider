@@ -61,6 +61,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
 
 
+# ai: make a class for this that includes the code from io!
 def watch_source_files(
     directory: str,
     stop_event=None,

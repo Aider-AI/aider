@@ -392,7 +392,7 @@ class InputOutput:
     ):
         self.rule()
 
-        # Add a variable to store changed files and create stop event
+        # ai refactor this chunk ...
         self.changed_files = None
         stop_event = threading.Event()
 
@@ -413,6 +413,7 @@ class InputOutput:
         # Start the watcher thread
         watcher = threading.Thread(target=watch_files, daemon=True)
         watcher.start()
+        # ... to here
 
         rel_fnames = list(rel_fnames)
         show = ""
@@ -488,7 +489,7 @@ class InputOutput:
                 self.tool_error(str(err))
                 return ""
             finally:
-                # Clean up the watcher thread
+                # ai: we'll need to adjust this too
                 stop_event.set()
                 watcher.join()  # Thread should exit quickly due to stop_event
 
