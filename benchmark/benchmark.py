@@ -71,7 +71,7 @@ def find_latest_benchmark_dir():
     # Find directory with most recently modified .md file
     latest_dir = None
     latest_time = 0
-    
+
     for d in recent_dirs:
         # Look for .md files in subdirectories
         for md_file in d.glob("*/.*.md"):
