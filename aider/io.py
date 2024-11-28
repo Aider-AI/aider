@@ -198,6 +198,7 @@ class InputOutput:
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
         fancy_input=True,
+        file_watcher=None,
     ):
         self.placeholder = None
         self.never_prompts = set()
@@ -261,6 +262,8 @@ class InputOutput:
                 self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
         else:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+
+        self.file_watcher = file_watcher
 
     def _get_style(self):
         style_dict = {}
@@ -391,8 +394,6 @@ class InputOutput:
     ):
         self.rule()
 
-        gitignore = [str(Path(root) / ".gitignore")]
-        self.file_watcher = FileWatcher(root, encoding=self.encoding, gitignores=gitignore)
         self.file_watcher.start()
 
         rel_fnames = list(rel_fnames)
