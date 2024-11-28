@@ -392,28 +392,10 @@ class InputOutput:
     ):
         self.rule()
 
-        # ai refactor this chunk ...
-        self.changed_files = None
-        stop_event = threading.Event()
-
-        def watch_files():
-            try:
-                gitignore = [str(Path(root) / ".gitignore")]
-                for changed in watch_source_files(
-                    root, stop_event=stop_event, gitignores=gitignore, encoding=self.encoding
-                ):
-                    if changed:
-                        self.changed_files = changed
-                        self.interrupt_input()
-                        break
-            except Exception as e:
-                self.tool_error(f"File watcher error: {e}")
-                raise e
-
-        # Start the watcher thread
-        watcher = threading.Thread(target=watch_files, daemon=True)
-        watcher.start()
-        # ... to here
+        # Initialize and start the file watcher
+        self.file_watcher = FileWatcher(root, encoding=self.encoding)
+        gitignore = [str(Path(root) / ".gitignore")]
+        self.file_watcher.start(gitignores=gitignore)
 
         rel_fnames = list(rel_fnames)
         show = ""
@@ -476,9 +458,9 @@ class InputOutput:
                     line = input(show)
 
                 # Check if we were interrupted by a file change
-                if self.changed_files:
-                    res = process_file_changes(self.changed_files)
-                    self.changed_files = None
+                if changes := self.file_watcher.get_changes():
+                    res = process_file_changes(changes)
+                    self.file_watcher.changed_files = None
                     return res
 
             except EOFError:
@@ -489,9 +471,7 @@ class InputOutput:
                 self.tool_error(str(err))
                 return ""
             finally:
-                # ai: we'll need to adjust this too
-                stop_event.set()
-                watcher.join()  # Thread should exit quickly due to stop_event
+                self.file_watcher.stop()
 
             if line.strip("\r\n") and not multiline_input:
                 stripped = line.strip("\r\n")
