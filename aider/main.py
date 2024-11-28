@@ -794,6 +794,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if return_coder:
         return coder
 
+    # ai if git_root, use gitignore
+    gitignore = [str(Path(root) / ".gitignore")]
+    # ai pass coder.root to FW!
+    self.file_watcher = FileWatcher(root, encoding=self.encoding, gitignores=gitignore)
+
     coder.show_announcements()
 
     if args.show_prompts:
