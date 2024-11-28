@@ -53,8 +53,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
-    #ai add in .aider* to always be ignored too!
-    patterns = []
+    patterns = [".aider*"]  # Always ignore .aider* files
     for path in gitignore_paths:
         if path.exists():
             with open(path) as f:
