@@ -22,7 +22,9 @@ def has_been_reopened(issue_number):
 # Load environment variables from .env file
 load_dotenv()
 
-BOT_SUFFIX = """Note: A [bot script](https://github.com/Aider-AI/aider/blob/main/scripts/issues.py) made these updates to the issue.
+BOT_SUFFIX = """
+
+Note: [A bot script](https://github.com/Aider-AI/aider/blob/main/scripts/issues.py) made these updates to the issue.
 """  # noqa
 
 DUPLICATE_COMMENT = (
