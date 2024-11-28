@@ -391,7 +391,7 @@ class InputOutput:
     ):
         self.rule()
 
-        # Initialize and start the file watcher
+        # ai: initialize this in __init__!
         self.file_watcher = FileWatcher(root, encoding=self.encoding)
         gitignore = [str(Path(root) / ".gitignore")]
         self.file_watcher.start(gitignores=gitignore)
