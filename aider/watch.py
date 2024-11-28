@@ -53,6 +53,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
+    #ai add in .aider* to always be ignored too!
     patterns = []
     for path in gitignore_paths:
         if path.exists():
@@ -139,9 +140,7 @@ class FileWatcher:
                     if VERBOSE:
                         dump(result)
                     if result:
-                        # Convert to relative paths before updating
-                        rel_files = {str(Path(f).relative_to(self.root)) for f in changed_files}
-                        self.coder.abs_fnames.update(rel_files)
+                        self.coder.abs_fnames.update(changed_files)
                         self.coder.io.interrupt_input()
                         return
             except Exception as e:
