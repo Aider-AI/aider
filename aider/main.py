@@ -794,11 +794,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if return_coder:
         return coder
 
+    ignores = []
     if git_root:
-        gitignore = [str(Path(git_root) / ".gitignore")]
-        self.file_watcher = FileWatcher(git_root, encoding=self.encoding, gitignores=gitignore)
-    else:
-        self.file_watcher = FileWatcher(".", encoding=self.encoding)
+        ignores +=  [str(Path(git_root) / ".gitignore")]
+    # ai: add aiderignores too!
+    io.file_watcher = FileWatcher(coder, encoding=self.encoding, gitignores=gitignore)
 
     coder.show_announcements()
 
