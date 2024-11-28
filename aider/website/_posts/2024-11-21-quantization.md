@@ -81,6 +81,9 @@ if run with Ollama's default 2k context window.
 
 ## Benchmark results
 
+{: .note :}
+These are results from single benchmark runs, so expect normal variance of +/- 1-2%.
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 {% include quant-chart.js %}
