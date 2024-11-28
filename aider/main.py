@@ -797,8 +797,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     ignores = []
     if git_root:
         ignores.append(str(Path(git_root) / ".gitignore"))
-        if args.aiderignore:
-            ignores.append(str(Path(git_root) / args.aiderignore))
+    if args.aiderignore:
+        ignores.append(args.aiderignore)
     io.file_watcher = FileWatcher(coder.root, encoding=io.encoding, gitignores=ignores)
 
     coder.show_announcements()
