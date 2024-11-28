@@ -74,6 +74,8 @@ class FileWatcher:
         self.changed_files = None
         self.gitignores = gitignores
 
+        coder.io.file_watcher = self
+
     def create_filter_func(self, gitignore_spec, ignore_func):
         """Creates a filter function for the file watcher"""
 
@@ -137,8 +139,8 @@ class FileWatcher:
                     if VERBOSE:
                         dump(result)
                     if result:
-                        self.changed_files = result
-                        self.io.interrupt_input()
+                        # ai directly update coder.abs_fnames!
+                        self.coder.io.interrupt_input()
                         return
             except Exception as e:
                 if VERBOSE:
