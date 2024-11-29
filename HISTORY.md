@@ -9,7 +9,7 @@
 - Improved error handling for analytics file access.
 - Removed broken support for Dart.
 - Bugfix when scraping URLs found in chat messages.
-- Aider wrote 87% of the code in this release.
+- Aider wrote 88% of the code in this release.
 
 ### Aider v0.65.1
 
