@@ -64,7 +64,6 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     try:
         check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
     except (OSError,) + ANY_GIT_ERROR:
-        analytics.event("exit", reason="Processed message file")
         return
 
     # we had no guess, rely on the "true" repo result
@@ -149,7 +148,6 @@ def check_gitignore(git_root, io, ask=True):
     try:
         repo = git.Repo(git_root)
         if repo.ignored(".aider") and repo.ignored(".env"):
-            analytics.event("exit", reason="Normal completion")
             return
     except ANY_GIT_ERROR:
         pass
@@ -903,6 +901,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run(with_message=args.message)
         except SwitchCoder:
             pass
+        analytics.event("exit", reason="Completed --message")
         return
 
     if args.message_file:
@@ -918,6 +917,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_error(f"Error reading message file: {e}")
             analytics.event("exit", reason="Message file IO error")
             return 1
+
+        analytics.event("exit", reason="Completed --message-file")
         return
 
     if args.exit:
@@ -929,6 +930,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     while True:
         try:
             coder.run()
+            analytics.event("exit", reason="Completed main CLI coder.run")
             return
         except SwitchCoder as switch:
             kwargs = dict(io=io, from_coder=coder)
