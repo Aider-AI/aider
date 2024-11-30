@@ -53,6 +53,7 @@ Installing PortAudio is completely optional, but can usually be accomplished lik
 - For Windows, there is no need to install PortAudio.
 - For Mac, do `brew install portaudio`
 - For Linux, do `sudo apt-get install libportaudio2`
+  - Some linux environments may also need `sudo apt install libasound2-plugins`
 
 ## Add aider to your editor 
 
