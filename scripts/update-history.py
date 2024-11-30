@@ -67,6 +67,9 @@ Also, add this as the last bullet under the "### main branch" section:
     # Cleanup
     os.unlink(tmp_path)
 
+    # Show git diff of HISTORY.md
+    subprocess.run(["git", "diff", "HISTORY.md"])
+
 
 if __name__ == "__main__":
     main()

@@ -8,7 +8,8 @@
 - Improved error handling for input history file permissions.
 - Improved error handling for analytics file access.
 - Removed broken support for Dart.
-- Aider wrote 85% of the code in this release.
+- Bugfix when scraping URLs found in chat messages.
+- Aider wrote 88% of the code in this release.
 
 ### Aider v0.65.1
 
