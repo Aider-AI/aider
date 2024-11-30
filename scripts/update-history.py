@@ -94,8 +94,17 @@ Also, add this as the last bullet under the "### main branch" section:
     with open(hist_path, "r") as f:
         updated_history = f.read()
 
-    # Splice the updated portion back into the full history
-    full_history = history_content[:start_idx] + updated_history
+    # Find where the next version section would start
+    if next_version_idx == -1:
+        # No next version found, use the rest of the file
+        full_history = history_content[:start_idx] + updated_history
+    else:
+        # Splice the updated portion back in between the unchanged parts
+        full_history = (
+            history_content[:start_idx] +  # Keep unchanged header
+            updated_history +  # Add updated portion
+            history_content[next_version_idx:]  # Keep older entries
+        )
 
     # Write back the full history
     with open("HISTORY.md", "w") as f:
