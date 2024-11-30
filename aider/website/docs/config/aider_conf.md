@@ -446,5 +446,8 @@ cog.outl("```")
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en
+
+##Specify the voice input device name used for recording (default: system default)
+voice-input-device: xxx
 ```
 <!--[[[end]]]-->

@@ -75,7 +75,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--detect-urls | --no-detect-urls] [--editor]
-             [--voice-format] [--voice-language]
+             [--voice-format] [--voice-language] [--voice-input-device]
 
 ```
 
@@ -701,4 +701,9 @@ Environment variable: `AIDER_VOICE_FORMAT`
 Specify the language for voice using ISO 639-1 code (default: auto)  
 Default: en  
 Environment variable: `AIDER_VOICE_LANGUAGE`  
+
+### `--voice-input-device VOICE_INPUT_DEVICE`
+Specify the voice input device name used for recording (default: system default)
+Default: system default
+Environment variable: `VOICE_INPUT_DEVICE`
 <!--[[[end]]]-->

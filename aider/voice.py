@@ -34,7 +34,7 @@ class Voice:
 
     threshold = 0.15
 
-    def __init__(self, audio_format="wav"):
+    def __init__(self, audio_format="wav", device_name=None):
         if sf is None:
             raise SoundDeviceError
         try:
@@ -42,6 +42,27 @@ class Voice:
             import sounddevice as sd
 
             self.sd = sd
+
+
+            devices = sd.query_devices()
+
+            if device_name:
+                # Find the device with matching name
+                device_id = None
+                for i, device in enumerate(devices):
+                    if device_name in device["name"]:
+                        device_id = i
+                        break
+                if device_id is None:
+                    available_inputs = [d["name"] for d in devices if d["max_input_channels"] > 0]
+                    raise ValueError(f"Device '{device_name}' not found. Available input devices: {available_inputs}")
+
+                print(f"Using input device: {device_name} (ID: {device_id})")
+
+                self.device_id = device_id
+            else:
+                self.device_id = None
+
         except (OSError, ModuleNotFoundError):
             raise SoundDeviceError
         if audio_format not in ["wav", "mp3", "webm"]:
@@ -93,7 +114,7 @@ class Voice:
         temp_wav = tempfile.mktemp(suffix=".wav")
 
         try:
-            sample_rate = int(self.sd.query_devices(None, "input")["default_samplerate"])
+            sample_rate = int(self.sd.query_devices(self.device_id, "input")["default_samplerate"])
         except (TypeError, ValueError):
             sample_rate = 16000  # fallback to 16kHz if unable to query device
         except self.sd.PortAudioError:
@@ -104,7 +125,7 @@ class Voice:
         self.start_time = time.time()
 
         try:
-            with self.sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback):
+            with self.sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback, device=self.device_id):
                 prompt(self.get_prompt, refresh_interval=0.1)
         except self.sd.PortAudioError as err:
             raise SoundDeviceError(f"Error accessing audio input device: {err}")
