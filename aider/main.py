@@ -949,6 +949,10 @@ def is_first_run_of_new_version(io, verbose=False):
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
 
+    # Never show notes for .dev versions
+    if ".dev" in __version__:
+        return False
+
     if verbose:
         io.tool_output(
             f"Checking imports for version {__version__} and executable {sys.executable}"

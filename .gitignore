@@ -11,5 +11,6 @@ _site
 .jekyll-cache/
 .jekyll-metadata
 aider/__version__.py
+aider/_version.py
 .venv/
 .gitattributes
