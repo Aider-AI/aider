@@ -808,8 +808,21 @@ class Commands:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
 
-            # Handle read-only files with substring matching
-            read_only_matched = [f for f in self.coder.abs_read_only_fnames if expanded_word in f]
+            # Handle read-only files with substring matching and samefile check
+            read_only_matched = []
+            for f in self.coder.abs_read_only_fnames:
+                if expanded_word in f:
+                    read_only_matched.append(f)
+                    continue
+                
+                # Try samefile comparison for relative paths
+                try:
+                    abs_word = os.path.abspath(expanded_word)
+                    if os.path.samefile(abs_word, f):
+                        read_only_matched.append(f)
+                except (FileNotFoundError, OSError):
+                    continue
+
             for matched_file in read_only_matched:
                 self.coder.abs_read_only_fnames.remove(matched_file)
                 self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
