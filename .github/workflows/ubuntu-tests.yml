@@ -40,6 +40,5 @@ jobs:
     - name: Run tests
       env:
         AIDER_ANALYTICS: false
-        AIDER_ANALYTICS_LOG: /dev/null
       run: |
         pytest
