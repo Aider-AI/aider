@@ -4,12 +4,14 @@
 
 - PDF support for Sonnet and Gemini models.
 - Set cwd to repo root when running shell commands.
+- Added `--voice-input-device` to select audio input device for voice recording.
 - Improved error handling for failed .gitignore file operations.
 - Improved error handling for input history file permissions.
 - Improved error handling for analytics file access.
 - Removed broken support for Dart.
 - Bugfix when scraping URLs found in chat messages.
-- Aider wrote 88% of the code in this release.
+- Better handling of __version__ import errors.
+- Aider wrote 79% of the code in this release.
 
 ### Aider v0.65.1
 
