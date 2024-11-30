@@ -138,6 +138,9 @@ cog.outl("```")
 ## Verify the SSL cert when connecting to models (default: True)
 #AIDER_VERIFY_SSL=true
 
+## Timeout in seconds for API calls (default: None)
+#AIDER_TIMEOUT=
+
 ## Specify what edit format the LLM should use (default depends on model)
 #AIDER_EDIT_FORMAT=
 

@@ -153,6 +153,9 @@ cog.outl("```")
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true
 
+## Timeout in seconds for API calls (default: None)
+#timeout: xxx
+
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format: xxx
 

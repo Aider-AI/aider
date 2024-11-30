@@ -32,7 +32,7 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
              [--model-settings-file] [--model-metadata-file]
-             [--alias] [--verify-ssl | --no-verify-ssl]
+             [--alias] [--verify-ssl | --no-verify-ssl] [--timeout]
              [--edit-format] [--architect] [--weak-model]
              [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
@@ -204,6 +204,10 @@ Environment variable: `AIDER_VERIFY_SSL`
 Aliases:
   - `--verify-ssl`
   - `--no-verify-ssl`
+
+### `--timeout VALUE`
+Timeout in seconds for API calls (default: None)  
+Environment variable: `AIDER_TIMEOUT`  
 
 ### `--edit-format EDIT_FORMAT`
 Specify what edit format the LLM should use (default depends on model)  
