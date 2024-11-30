@@ -206,6 +206,12 @@ def get_parser(default_config_files, git_root):
         help="Verify the SSL cert when connecting to models (default: True)",
     )
     group.add_argument(
+        "--timeout",
+        type=float,
+        default=None,
+        help="Timeout in seconds for API calls (default: None)",
+    )
+    group.add_argument(
         "--edit-format",
         "--chat-mode",
         metavar="EDIT_FORMAT",
