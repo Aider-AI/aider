@@ -1431,6 +1431,45 @@ class TestCommands(TestCase):
         finally:
             os.unlink(external_file_path)
 
+    def test_cmd_drop_read_only_with_relative_path(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a test file in a subdirectory
+            subdir = Path(repo_dir) / "subdir"
+            subdir.mkdir()
+            test_file = subdir / "test_file.txt"
+            test_file.write_text("Test content")
+
+            # Add the file as read-only using absolute path
+            commands.cmd_read_only(str(test_file))
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            # Try to drop using relative path from different working directories
+            os.chdir(subdir)
+            commands.cmd_drop("test_file.txt")
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+            # Add it again
+            commands.cmd_read_only("test_file.txt")
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            # Try dropping with relative path from repo root
+            os.chdir(repo_dir)
+            commands.cmd_drop("subdir/test_file.txt")
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+            # Add it one more time
+            commands.cmd_read_only("subdir/test_file.txt")
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            # Try dropping with parent-relative path
+            os.chdir(subdir)
+            commands.cmd_drop("../subdir/test_file.txt")
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
     def test_cmd_read_only_with_multiple_files(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
