@@ -559,7 +559,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--test",
         action="store_true",
-        help="Run tests and fix problems found",
+        help="Run tests, fix problems found and then exit",
         default=False,
     )
 
