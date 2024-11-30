@@ -55,7 +55,7 @@ def test_callback_processing():
     # Test with silence (low amplitude)
     test_data = np.zeros((1000, 1))
     voice.callback(test_data, None, None, None)
-    assert voice.pct < 0.1
+    assert voice.pct == 0.5  # When range is too small (<=0.001), pct is set to 0.5
 
     # Test with loud signal (high amplitude)
     test_data = np.ones((1000, 1))
@@ -71,7 +71,7 @@ def test_record_and_transcribe(mock_litellm, mock_soundfile):
     voice = Voice()
 
     # Mock the recording process
-    with patch("prompt_toolkit.shortcuts.prompt"):
+    with patch("prompt_toolkit.shortcuts.prompt", return_value=""):
         with patch("sounddevice.InputStream"):
             # Mock the transcription response
             mock_litellm.transcription.return_value = Mock(text="Hello, world!")
