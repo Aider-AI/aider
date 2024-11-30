@@ -1,6 +1,6 @@
 import os
 import queue
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import numpy as np
 import pytest
