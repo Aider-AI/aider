@@ -37,10 +37,27 @@ def main():
     # Get the git log output
     diff_content = run_git_log()
 
-    # Save to temporary file
-    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".diff") as tmp:
-        tmp.write(diff_content)
-        tmp_path = tmp.name
+    # Extract relevant portion of HISTORY.md
+    base_ver = get_base_version()
+    with open("HISTORY.md", "r") as f:
+        history_content = f.read()
+
+    # Find the section for this version
+    version_header = f"### Aider v{base_ver}"
+    start_idx = history_content.find("# Release history")
+    if start_idx == -1:
+        raise ValueError("Could not find start of release history")
+    
+    relevant_history = history_content[start_idx:]
+
+    # Save relevant portions to temporary files
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".diff") as tmp_diff:
+        tmp_diff.write(diff_content)
+        diff_path = tmp_diff.name
+
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".md") as tmp_hist:
+        tmp_hist.write(relevant_history)
+        hist_path = tmp_hist.name
 
     # Run blame to get aider percentage
     blame_result = subprocess.run(["python3", "scripts/blame.py"], capture_output=True, text=True)
@@ -58,14 +75,26 @@ Also, add this as the last bullet under the "### main branch" section:
 {aider_line}
 """  # noqa
 
-    cmd = ["aider", "HISTORY.md", "--read", tmp_path, "--msg", message, "--no-auto-commit"]
+    cmd = ["aider", hist_path, "--read", diff_path, "--msg", message, "--no-auto-commit"]
     subprocess.run(cmd)
+
+    # Read back the updated history
+    with open(hist_path, "r") as f:
+        updated_history = f.read()
+
+    # Splice the updated portion back into the full history
+    full_history = history_content[:start_idx] + updated_history
+
+    # Write back the full history
+    with open("HISTORY.md", "w") as f:
+        f.write(full_history)
 
     # Run update-docs.sh after aider
     subprocess.run(["scripts/update-docs.sh"])
 
     # Cleanup
-    os.unlink(tmp_path)
+    os.unlink(diff_path)
+    os.unlink(hist_path)
 
     # Show git diff of HISTORY.md
     subprocess.run(["git", "diff", "HISTORY.md"])
