@@ -410,7 +410,8 @@ cog.outl("```")
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #AIDER_VOICE_LANGUAGE=en
+
+## Specify the voice input device name (default: system default)
+#AIDER_VOICE_INPUT_DEVICE="MacBook Pro Microphone"
 ```
 <!--[[[end]]]-->
-
-

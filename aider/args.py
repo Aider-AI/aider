@@ -22,7 +22,7 @@ def default_env_file(git_root):
 
 def get_parser(default_config_files, git_root):
     parser = configargparse.ArgumentParser(
-        description="aider is AI pair programming in your terminal",
+        description="Aider is AI pair programming in your terminal",
         add_config_file_help=True,
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
@@ -769,6 +769,12 @@ def get_parser(default_config_files, git_root):
         metavar="VOICE_LANGUAGE",
         default="en",
         help="Specify the language for voice using ISO 639-1 code (default: auto)",
+    )
+    group.add_argument(
+        "--voice-input-device",
+        metavar="VOICE_INPUT_DEVICE",
+        default=None,
+        help="Specify the input device name for voice recording",
     )
 
     return parser
