@@ -236,7 +236,7 @@ class TestCommands(TestCase):
         self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
         self.assertIn(str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames)
 
-        commands.cmd_drop("test_dir/another_dir")
+        commands.cmd_drop(str(Path("test_dir/another_dir")))
         self.assertIn(str(Path("test_dir/test_file1.txt").resolve()), coder.abs_fnames)
         self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
         self.assertNotIn(
