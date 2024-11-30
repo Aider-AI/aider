@@ -1,6 +1,5 @@
 import os
 import queue
-import tempfile
 from unittest.mock import Mock, patch
 
 import numpy as np
