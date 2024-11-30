@@ -8,7 +8,7 @@ class TestBrowser(unittest.TestCase):
     @patch("aider.main.launch_gui")
     def test_browser_flag_imports_streamlit(self, mock_launch_gui):
         # Run main with --browser and --yes flags
-        main(["--browser", "--yes", "--no-analytics", "--analytics-log", "/dev/null"])
+        main(["--browser", "--yes"])
 
         # Check that launch_gui was called
         mock_launch_gui.assert_called_once()
