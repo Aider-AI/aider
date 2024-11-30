@@ -138,6 +138,9 @@ cog.outl("```")
 ## Verify the SSL cert when connecting to models (default: True)
 #AIDER_VERIFY_SSL=true
 
+## Timeout in seconds for API calls (default: None)
+#AIDER_TIMEOUT=
+
 ## Specify what edit format the LLM should use (default depends on model)
 #AIDER_EDIT_FORMAT=
 
@@ -309,7 +312,7 @@ cog.outl("```")
 ## Enable/disable automatic testing after changes (default: False)
 #AIDER_AUTO_TEST=false
 
-## Run tests and fix problems found
+## Run tests, fix problems found and then exit
 #AIDER_TEST=false
 
 ############
@@ -410,7 +413,8 @@ cog.outl("```")
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #AIDER_VOICE_LANGUAGE=en
+
+## Specify the input device name for voice recording
+#AIDER_VOICE_INPUT_DEVICE=
 ```
 <!--[[[end]]]-->
-
-

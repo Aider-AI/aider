@@ -206,6 +206,12 @@ def get_parser(default_config_files, git_root):
         help="Verify the SSL cert when connecting to models (default: True)",
     )
     group.add_argument(
+        "--timeout",
+        type=int,
+        default=None,
+        help="Timeout in seconds for API calls (default: None)",
+    )
+    group.add_argument(
         "--edit-format",
         "--chat-mode",
         metavar="EDIT_FORMAT",
@@ -559,7 +565,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--test",
         action="store_true",
-        help="Run tests and fix problems found",
+        help="Run tests, fix problems found and then exit",
         default=False,
     )
 
@@ -769,6 +775,12 @@ def get_parser(default_config_files, git_root):
         metavar="VOICE_LANGUAGE",
         default="en",
         help="Specify the language for voice using ISO 639-1 code (default: auto)",
+    )
+    group.add_argument(
+        "--voice-input-device",
+        metavar="VOICE_INPUT_DEVICE",
+        default=None,
+        help="Specify the input device name for voice recording",
     )
 
     return parser

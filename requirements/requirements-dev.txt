@@ -145,6 +145,10 @@ pyproject-hooks==1.2.0
     #   build
     #   pip-tools
 pytest==8.3.3
+    # via
+    #   -r requirements/requirements-dev.in
+    #   pytest-env
+pytest-env==1.1.5
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via

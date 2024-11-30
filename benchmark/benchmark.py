@@ -47,10 +47,44 @@ def find_latest_benchmark_dir():
         print("Error: No benchmark directories found under tmp.benchmarks.")
         sys.exit(1)
 
-    latest_dir = max(
-        benchmark_dirs,
-        key=lambda d: next((f.stat().st_mtime for f in d.rglob("*.md") if f.is_file()), 0),
-    )
+    # Get current time and 24 hours ago
+    now = datetime.datetime.now()
+    day_ago = now - datetime.timedelta(days=1)
+
+    # Filter directories by name pattern YYYY-MM-DD-HH-MM-SS--
+    recent_dirs = []
+    for d in benchmark_dirs:
+        try:
+            # Extract datetime from directory name
+            date_str = d.name[:19]  # Takes YYYY-MM-DD-HH-MM-SS
+            dir_date = datetime.datetime.strptime(date_str, "%Y-%m-%d-%H-%M-%S")
+            if dir_date >= day_ago:
+                recent_dirs.append(d)
+        except ValueError:
+            # Skip directories that don't match the expected format
+            continue
+
+    if not recent_dirs:
+        print("Error: No benchmark directories found from the last 24 hours.")
+        sys.exit(1)
+
+    # Find directory with most recently modified .md file
+    latest_dir = None
+    latest_time = 0
+
+    for d in recent_dirs:
+        # Look for .md files in subdirectories
+        for md_file in d.glob("*/.*.md"):
+            if md_file.is_file():
+                mtime = md_file.stat().st_mtime
+                if mtime > latest_time:
+                    latest_time = mtime
+                    latest_dir = d
+
+    if not latest_dir:
+        print("Error: No .md files found in recent benchmark directories.")
+        sys.exit(1)
+
     print(f"Using the most recently updated benchmark directory: {latest_dir.name}")
     return latest_dir
 

@@ -1946,3 +1946,77 @@
   date: 2024-11-15
   versions: 0.63.2.dev
   seconds_per_case: 38.6
+- dirname: 2024-11-27-07-41-51--qwen2.5-coder-14b-whole-1
+  test_cases: 133
+  model: ollama/qwen2.5-coder:14b
+  edit_format: whole
+  commit_hash: 200295e
+  pass_rate_1: 53.4
+  pass_rate_2: 61.7
+  percent_cases_well_formed: 98.5
+  error_outputs: 4
+  num_malformed_responses: 4
+  num_with_malformed_responses: 2
+  user_asks: 48
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 2
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model ollama/qwen2.5-coder:14b
+  date: 2024-11-27
+  versions: 0.65.2.dev
+  seconds_per_case: 58.0
+  total_cost: 0.0000
+
+- dirname: 2024-11-28-07-42-56--qwen2.5-coder-32b-whole-4
+  test_cases: 133
+  model: ollama/qwen2.5-coder:32b
+  edit_format: whole
+  commit_hash: 200295e
+  pass_rate_1: 58.6
+  pass_rate_2: 72.9
+  percent_cases_well_formed: 100.0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/qwen2.5-coder:32b
+  date: 2024-11-28
+  versions: 0.65.2.dev
+  seconds_per_case: 147.5
+  total_cost: 0.0000
+- dirname: 2024-11-28-13-14-00--tulu3-whole-2
+  test_cases: 133
+  model: ollama/tulu3
+  edit_format: whole
+  commit_hash: 200295e
+  pass_rate_1: 21.8
+  pass_rate_2: 26.3
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  exhausted_context_windows: 0
+  command: aider --model ollama/tulu3
+  date: 2024-11-28
+  versions: 0.65.2.dev
+  seconds_per_case: 35.8
+  total_cost: 0.0000
+
+- dirname: 2024-11-28-14-41-46--granite3-dense-8b-whole-1
+  test_cases: 133
+  model: ollama/granite3-dense:8b
+  edit_format: whole
+  commit_hash: 200295e
+  pass_rate_1: 17.3
+  pass_rate_2: 20.3
+  percent_cases_well_formed: 78.9
+  exhausted_context_windows: 0
+  command: aider --model ollama/granite3-dense:8b
+  date: 2024-11-28
+  versions: 0.65.2.dev
+  seconds_per_case: 38.1
+  total_cost: 0.0000

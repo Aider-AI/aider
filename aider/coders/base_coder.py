@@ -771,6 +771,7 @@ class Coder:
         self.lint_outcome = None
         self.test_outcome = None
         self.shell_commands = []
+        self.message_cost = 0
 
         if self.repo:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
@@ -884,6 +885,7 @@ class Coder:
         thresh = 2  # seconds
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
             self.io.tool_warning("\n\n^C KeyboardInterrupt")
+            self.event("exit", reason="Control-C")
             sys.exit()
 
         self.io.tool_warning("\n\n^C again to exit")
@@ -1185,6 +1187,8 @@ class Coder:
         return chunks
 
     def send_message(self, inp):
+        self.event("message_send_starting")
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -1264,6 +1268,7 @@ class Coder:
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
                     self.io.tool_error(str(err))
+                    self.event("message_send_exception", exception=str(err))
                     return
         finally:
             if self.mdstream:

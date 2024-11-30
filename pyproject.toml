@@ -67,7 +67,7 @@ requires = ["setuptools>=68", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
-write_to = "aider/__version__.py"
+write_to = "aider/_version.py"
 
 [tool.codespell]
 skip = "*.svg,Gemfile.lock"

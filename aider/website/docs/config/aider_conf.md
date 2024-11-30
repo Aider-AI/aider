@@ -153,6 +153,9 @@ cog.outl("```")
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true
 
+## Timeout in seconds for API calls (default: None)
+#timeout: xxx
+
 ## Specify what edit format the LLM should use (default depends on model)
 #edit-format: xxx
 
@@ -329,7 +332,7 @@ cog.outl("```")
 ## Enable/disable automatic testing after changes (default: False)
 #auto-test: false
 
-## Run tests and fix problems found
+## Run tests, fix problems found and then exit
 #test: false
 
 ############
@@ -446,5 +449,8 @@ cog.outl("```")
 
 ## Specify the language for voice using ISO 639-1 code (default: auto)
 #voice-language: en
+
+## Specify the input device name for voice recording
+#voice-input-device: xxx
 ```
 <!--[[[end]]]-->

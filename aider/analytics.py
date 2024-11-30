@@ -214,7 +214,3 @@ class Analytics:
             with open(self.logfile, "a") as f:
                 json.dump(log_entry, f)
                 f.write("\n")
-
-    def __del__(self):
-        if self.ph:
-            self.ph.shutdown()

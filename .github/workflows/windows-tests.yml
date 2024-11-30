@@ -25,6 +25,8 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -38,6 +40,8 @@ jobs:
         pip install .
 
     - name: Run tests
+      env:
+        AIDER_ANALYTICS: false
       run: |
         pytest
         

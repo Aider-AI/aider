@@ -236,7 +236,7 @@ class TestCommands(TestCase):
         self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
         self.assertIn(str(Path("test_dir/another_dir/test_file.txt").resolve()), coder.abs_fnames)
 
-        commands.cmd_drop("test_dir/another_dir")
+        commands.cmd_drop(str(Path("test_dir/another_dir")))
         self.assertIn(str(Path("test_dir/test_file1.txt").resolve()), coder.abs_fnames)
         self.assertIn(str(Path("test_dir/test_file2.txt").resolve()), coder.abs_fnames)
         self.assertNotIn(
@@ -272,6 +272,7 @@ class TestCommands(TestCase):
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
 
+        # Create test files in root and subdirectory
         subdir = Path("subdir")
         subdir.mkdir()
         (subdir / "subtest1.py").touch()
@@ -279,17 +280,50 @@ class TestCommands(TestCase):
 
         Path("test1.py").touch()
         Path("test2.py").touch()
+        Path("test3.txt").touch()
 
-        # Add some files to the chat session
+        # Add all Python files to the chat session
         commands.cmd_add("*.py")
+        initial_count = len(coder.abs_fnames)
+        self.assertEqual(initial_count, 2)  # Only root .py files should be added
 
-        self.assertEqual(len(coder.abs_fnames), 2)
-
-        # Call the cmd_drop method with a glob pattern
+        # Test dropping with glob pattern
         commands.cmd_drop("*2.py")
-
         self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
         self.assertNotIn(str(Path("test2.py").resolve()), coder.abs_fnames)
+        self.assertEqual(len(coder.abs_fnames), initial_count - 1)
+
+    def test_cmd_drop_without_glob(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        from aider.coders import Coder
+
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Create test files
+        test_files = ["file1.txt", "file2.txt", "file3.py"]
+        for fname in test_files:
+            Path(fname).touch()
+
+        # Add all files to the chat session
+        for fname in test_files:
+            commands.cmd_add(fname)
+
+        initial_count = len(coder.abs_fnames)
+        self.assertEqual(initial_count, 3)
+
+        # Test dropping individual files without glob
+        commands.cmd_drop("file1.txt")
+        self.assertNotIn(str(Path("file1.txt").resolve()), coder.abs_fnames)
+        self.assertIn(str(Path("file2.txt").resolve()), coder.abs_fnames)
+        self.assertEqual(len(coder.abs_fnames), initial_count - 1)
+
+        # Test dropping multiple files without glob
+        commands.cmd_drop("file2.txt file3.py")
+        self.assertNotIn(str(Path("file2.txt").resolve()), coder.abs_fnames)
+        self.assertNotIn(str(Path("file3.py").resolve()), coder.abs_fnames)
+        self.assertEqual(len(coder.abs_fnames), 0)
 
     def test_cmd_add_bad_encoding(self):
         # Initialize the Commands and InputOutput objects
@@ -1396,6 +1430,43 @@ class TestCommands(TestCase):
                 )
         finally:
             os.unlink(external_file_path)
+
+    def test_cmd_drop_read_only_with_relative_path(self):
+        with ChdirTemporaryDirectory() as repo_dir:
+            test_file = Path("test_file.txt")
+            test_file.write_text("Test content")
+
+            # Create a test file in a subdirectory
+            subdir = Path(repo_dir) / "subdir"
+            subdir.mkdir()
+            os.chdir(subdir)
+
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Add the file as read-only using absolute path
+            rel_path = str(Path("..") / "test_file.txt")
+            commands.cmd_read_only(rel_path)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            # Try to drop using relative path from different working directories
+            commands.cmd_drop("test_file.txt")
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+            # Add it again
+            commands.cmd_read_only(rel_path)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            commands.cmd_drop(rel_path)
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+            # Add it one more time
+            commands.cmd_read_only(rel_path)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            commands.cmd_drop("test_file.txt")
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
     def test_cmd_read_only_with_multiple_files(self):
         with GitTemporaryDirectory() as repo_dir:
