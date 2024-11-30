@@ -66,7 +66,6 @@ def test_callback_processing():
     assert not voice.q.empty()
 
 
-
 def test_get_prompt():
     voice = Voice()
     voice.start_time = voice.start_time = os.times().elapsed
