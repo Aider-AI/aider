@@ -509,7 +509,7 @@ Aliases:
   - `--no-auto-test`
 
 ### `--test`
-Run tests and fix problems found  
+Run tests, fix problems found and then exit  
 Default: False  
 Environment variable: `AIDER_TEST`  
 

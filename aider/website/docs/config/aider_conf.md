@@ -329,7 +329,7 @@ cog.outl("```")
 ## Enable/disable automatic testing after changes (default: False)
 #auto-test: false
 
-## Run tests and fix problems found
+## Run tests, fix problems found and then exit
 #test: false
 
 ############

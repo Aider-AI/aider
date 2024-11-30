@@ -33,7 +33,6 @@ cog.out(text)
 - Improved error handling for analytics file access.
 - Removed broken support for Dart.
 - Bugfix when scraping URLs found in chat messages.
-- Consolidated analytics exit events in main function.
 - Aider wrote 88% of the code in this release.
 
 ### Aider v0.65.1
