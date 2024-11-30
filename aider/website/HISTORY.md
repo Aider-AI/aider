@@ -27,14 +27,16 @@ cog.out(text)
 ### main branch
 
 - PDF support for Sonnet and Gemini models.
-- Set cwd to repo root when running shell commands.
 - Added `--voice-input-device` to select audio input device for voice recording, by @preynal.
+- Added `--timeout` option to configure API call timeouts.
+- Set cwd to repo root when running shell commands.
 - Improved error handling for failed .gitignore file operations.
 - Improved error handling for input history file permissions.
 - Improved error handling for analytics file access.
 - Removed broken support for Dart.
 - Bugfix when scraping URLs found in chat messages.
 - Better handling of __version__ import errors.
+- Improved `/drop` command to support substring matching for non-glob patterns.
 - Aider wrote 79% of the code in this release.
 
 ### Aider v0.65.1
