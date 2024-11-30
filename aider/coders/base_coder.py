@@ -1186,6 +1186,8 @@ class Coder:
         return chunks
 
     def send_message(self, inp):
+        self.event("message_send_starting")
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -1265,6 +1267,7 @@ class Coder:
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
                     self.io.tool_error(str(err))
+                    self.event("message_send_exception", exception=str(err))
                     return
         finally:
             if self.mdstream:
