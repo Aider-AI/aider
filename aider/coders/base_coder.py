@@ -885,6 +885,7 @@ class Coder:
         thresh = 2  # seconds
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
             self.io.tool_warning("\n\n^C KeyboardInterrupt")
+            self.event("exit", reason="Control-C")
             sys.exit()
 
         self.io.tool_warning("\n\n^C again to exit")

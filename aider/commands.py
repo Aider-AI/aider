@@ -909,6 +909,7 @@ class Commands:
 
     def cmd_exit(self, args):
         "Exit the application"
+        self.coder.event("exit", reason="/exit")
         sys.exit()
 
     def cmd_quit(self, args):
@@ -1085,7 +1086,9 @@ class Commands:
                 self.io.tool_error("To use /voice you must provide an OpenAI API key.")
                 return
             try:
-                self.voice = voice.Voice(audio_format=self.args.voice_format, device_name=self.args.voice_input_device)
+                self.voice = voice.Voice(
+                    audio_format=self.args.voice_format, device_name=self.args.voice_input_device
+                )
             except voice.SoundDeviceError:
                 self.io.tool_error(
                     "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
