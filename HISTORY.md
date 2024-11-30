@@ -4,7 +4,7 @@
 
 - PDF support for Sonnet and Gemini models.
 - Set cwd to repo root when running shell commands.
-- Added `--voice-input-device` to select audio input device for voice recording.
+- Added `--voice-input-device` to select audio input device for voice recording, by @preynal.
 - Improved error handling for failed .gitignore file operations.
 - Improved error handling for input history file permissions.
 - Improved error handling for analytics file access.
