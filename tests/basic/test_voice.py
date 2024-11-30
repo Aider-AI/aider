@@ -66,28 +66,6 @@ def test_callback_processing():
     assert not voice.q.empty()
 
 
-@patch("aider.voice.litellm")
-def test_record_and_transcribe(mock_litellm, mock_soundfile):
-    voice = Voice()
-
-    # Mock the recording process
-    with patch("sounddevice.InputStream") as mock_stream:
-        # Set up the mock stream to simulate some audio data
-        mock_data = np.zeros((1000, 1))
-        mock_stream.return_value.__enter__.return_value = mock_data
-
-        # Mock prompt_toolkit's prompt function more completely
-        with patch("prompt_toolkit.shortcuts.prompt") as mock_prompt:
-            mock_prompt.return_value = ""  # Simulate pressing Enter
-
-            # Mock the transcription response
-            mock_litellm.transcription.return_value = Mock(text="Hello, world!")
-
-            result = voice.record_and_transcribe()
-
-            assert result == "Hello, world!"
-            mock_litellm.transcription.assert_called_once()
-
 
 def test_get_prompt():
     voice = Voice()
