@@ -47,7 +47,7 @@ def main():
     start_idx = history_content.find("# Release history")
     if start_idx == -1:
         raise ValueError("Could not find start of release history")
-    
+
     relevant_history = history_content[start_idx:]
 
     # Save relevant portions to temporary files
