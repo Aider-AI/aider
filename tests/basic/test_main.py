@@ -35,8 +35,6 @@ class TestMain(TestCase):
         self.webbrowser_patcher = patch("aider.io.webbrowser.open")
         self.mock_webbrowser = self.webbrowser_patcher.start()
 
-        dump(os.environ.get("AIDER_ANALYTICS"))
-
     def tearDown(self):
         os.chdir(self.original_cwd)
         self.tempdir_obj.cleanup()

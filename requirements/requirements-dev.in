@@ -3,6 +3,7 @@
 #    pip-compile --output-file=requirements-dev.txt requirements-dev.in --upgrade
 #
 pytest
+pytest-env
 pip-tools
 lox
 matplotlib
