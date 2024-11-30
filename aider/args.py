@@ -207,7 +207,7 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--timeout",
-        type=float,
+        type=int,
         default=None,
         help="Timeout in seconds for API calls (default: None)",
     )
