@@ -52,7 +52,7 @@ def main():
     version_idx = history_content.find(version_header, start_idx)
     if version_idx == -1:
         raise ValueError(f"Could not find version header: {version_header}")
-    
+
     # Find the next version header after this one
     next_version_idx = history_content.find("\n### Aider v", version_idx + len(version_header))
     if next_version_idx == -1:
