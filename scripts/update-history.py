@@ -101,9 +101,9 @@ Also, add this as the last bullet under the "### main branch" section:
     else:
         # Splice the updated portion back in between the unchanged parts
         full_history = (
-            history_content[:start_idx] +  # Keep unchanged header
-            updated_history +  # Add updated portion
-            history_content[next_version_idx:]  # Keep older entries
+            history_content[:start_idx]
+            + updated_history  # Keep unchanged header
+            + history_content[next_version_idx:]  # Add updated portion  # Keep older entries
         )
 
     # Write back the full history
