@@ -23,8 +23,6 @@ class TestMain(TestCase):
         self.original_env = os.environ.copy()
         os.environ["OPENAI_API_KEY"] = "deadbeef"
         os.environ["AIDER_CHECK_UPDATE"] = "false"
-        os.environ["AIDER_ANALYTICS"] = "false"
-        os.environ["AIDER_ANALYTICS_LOG"] = "/dev/null"
         self.original_cwd = os.getcwd()
         self.tempdir_obj = IgnorantTemporaryDirectory()
         self.tempdir = self.tempdir_obj.name
@@ -36,6 +34,8 @@ class TestMain(TestCase):
         self.mock_input = self.input_patcher.start()
         self.webbrowser_patcher = patch("aider.io.webbrowser.open")
         self.mock_webbrowser = self.webbrowser_patcher.start()
+
+        dump(os.environ.get("AIDER_ANALYTICS"))
 
     def tearDown(self):
         os.chdir(self.original_cwd)
