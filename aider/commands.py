@@ -814,7 +814,7 @@ class Commands:
                 if expanded_word in f:
                     read_only_matched.append(f)
                     continue
-                
+
                 # Try samefile comparison for relative paths
                 try:
                     abs_word = os.path.abspath(expanded_word)
