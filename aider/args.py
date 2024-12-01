@@ -532,8 +532,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--watch-files",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable watching files for external changes (default: True)",
+        default=False,
+        help="Enable/disable watching files for ai coding comments (default: False)",
     )
     group = parser.add_argument_group("Fixing and committing")
     group.add_argument(
