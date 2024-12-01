@@ -200,18 +200,14 @@ class FileWatcher:
         """Extract AI comment line numbers and bang status from a file"""
         line_nums = []
         has_bang = False
-        # remove try/except #ai!
-        try:
-            content = self.io.read_text(filepath)
-            for i, line in enumerate(content.splitlines(), 1):
-                if match := self.ai_comment_pattern.search(line):
-                    comment = match.group(0).strip()
-                    if comment:
-                        line_nums.append(i)
-                        if comment.strip().endswith("!"):
-                            has_bang = True
-        except Exception:
-            return None, False
+        content = self.io.read_text(filepath)
+        for i, line in enumerate(content.splitlines(), 1):
+            if match := self.ai_comment_pattern.search(line):
+                comment = match.group(0).strip()
+                if comment:
+                    line_nums.append(i)
+                    if comment.strip().endswith("!"):
+                        has_bang = True
         if not line_nums:
             return None, False
         return line_nums, has_bang
