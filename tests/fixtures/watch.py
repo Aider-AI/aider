@@ -1,19 +1,20 @@
-# Regular AI comment
-# ai do something
-# AI make this better
-# ai! urgent change needed
-# AI! another urgent one
-//ai javascript style
-//AI do that thing
-//ai! urgent js thing
-// ai with some space
-// AI with caps
-// ai! with bang
+# flake8: noqa
+
+# Regular not AI comment
+# ai 1 do something
+# AI 2 make this better
+# ai! 3 urgent change needed
+# AI! 4 another urgent one
 # this is not an ai comment
-// this is also not an ai comment
 # aider is not an ai comment
-// aider is not an ai comment
+# not an ai! comment
+
 
 def dummy_function():
-    # ai inside function
-    pass
+    # ai inside 5 function
+    # final 6 ai!
+    # final 7 ai
+    # ai
+    # ai
+    # those are 8+9
+    pass  # ai 10
