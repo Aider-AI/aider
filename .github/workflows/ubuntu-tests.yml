@@ -33,6 +33,11 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libportaudio2
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip

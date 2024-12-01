@@ -30,14 +30,16 @@ cog.out(text)
 - Added `--voice-input-device` to select audio input device for voice recording, by @preynal.
 - Added `--timeout` option to configure API call timeouts.
 - Set cwd to repo root when running shell commands.
+- Added Ctrl-Up/Down keyboard shortcuts for per-message history navigation.
 - Improved error handling for failed .gitignore file operations.
 - Improved error handling for input history file permissions.
 - Improved error handling for analytics file access.
+- Removed spurious warning about disabling pretty in VSCode.
 - Removed broken support for Dart.
 - Bugfix when scraping URLs found in chat messages.
 - Better handling of __version__ import errors.
 - Improved `/drop` command to support substring matching for non-glob patterns.
-- Aider wrote 79% of the code in this release.
+- Aider wrote 82% of the code in this release.
 
 ### Aider v0.65.1
 
