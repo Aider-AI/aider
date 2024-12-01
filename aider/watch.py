@@ -102,12 +102,10 @@ class FileWatcher:
 
             # Check if file contains AI markers
             try:
-                #ai use self.ai_comments() instead!
-                content = self.io.read_text(str(path_abs))
-                res = bool(re.search(r"(?:#|//) *ai\b", content, re.IGNORECASE))
+                comments = self.get_ai_comment(str(path_abs))
                 if self.verbose:
-                    dump(res)
-                return res
+                    dump(bool(comments))
+                return bool(comments)
             except Exception as err:
                 if self.verbose:
                     print("error")
