@@ -172,6 +172,7 @@ class FileWatcher:
             if line_nums:
                 ai_comments[fname] = comments
 
+        # instead of just joining the comments, use TreeContext to render them in context of their files ai!
         res = "\n".join(
             comment for comments in ai_comments.values() if comments for comment in comments
         )
