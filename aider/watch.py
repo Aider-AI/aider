@@ -177,7 +177,7 @@ class FileWatcher:
             if line_nums:
                 content = self.io.read_text(fname)
                 lines = content.splitlines()
-                comments = [lines[i-1].strip() for i in line_nums]
+                comments = [lines[i - 1].strip() for i in line_nums]
                 ai_comments[fname] = comments
                 has_bangs = has_bang
 
