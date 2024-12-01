@@ -171,7 +171,11 @@ class FileWatcher:
             self.io.tool_output()
 
         # TODO refresh all the ai comments from all the abs_fnames
-        return ""
+        # put them in ai_comments = dict fname -> get_ai_commet()
+        for fname in self.abs_fnames:
+            pass
+
+        # TODO use ai_comments, not self.changed_files in the rest of this method
         has_bangs = any(
             comment.strip().endswith("!")
             for comments in self.changed_files.values()
