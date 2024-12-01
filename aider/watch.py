@@ -51,7 +51,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
-    patterns = [".aider*"]  # Always ignore .aider* files
+    patterns = [".aider*", ".git"]  # Always ignore
     for path in gitignore_paths:
         if path.exists():
             with open(path) as f:
@@ -59,18 +59,18 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 
     return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
 
-
 class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     def __init__(self, coder, encoding="utf-8", gitignores=None, verbose=False):
         self.coder = coder
+        self.io = coder.io
         self.encoding = encoding
         self.root = Path(coder.root)
-        self.verbose = verbose
+        self.verbose = verbose #or True
         self.stop_event = None
         self.watcher_thread = None
-        self.changed_files = None
+        self.changed_files = set()
         self.gitignores = gitignores
 
         coder.io.file_watcher = self
@@ -111,6 +111,7 @@ class FileWatcher:
                     return res
             except (IOError, UnicodeDecodeError) as err:
                 if self.verbose:
+                    print("error")
                     dump(err)
                 return False
 
@@ -119,6 +120,7 @@ class FileWatcher:
     def start(self, ignore_func=None):
         """Start watching for file changes"""
         self.stop_event = threading.Event()
+        self.changed_files = set()
 
         gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
         gitignore_spec = load_gitignores(gitignore_paths)
@@ -132,14 +134,15 @@ class FileWatcher:
                     changed_files = {str(Path(change[1])) for change in changes}
                     result = {}
                     for file in changed_files:
-                        if comments := get_ai_comment(file, encoding=self.encoding):
+                        if comments := self.get_ai_comment(file, encoding=self.encoding):
                             result[file] = comments
 
+                    self.changed_files.update(result)
                     if self.verbose:
                         dump(result)
+                        dump(self.changed_files)
                     if result:
-                        self.coder.abs_fnames.update(changed_files)
-                        self.coder.io.interrupt_input()
+                        self.io.interrupt_input()
                         return
             except Exception as e:
                 if self.verbose:
@@ -158,24 +161,52 @@ class FileWatcher:
             self.watcher_thread = None
             self.stop_event = None
 
-    def get_changes(self):
+    def process_changes(self):
         """Get any detected file changes"""
-        return self.changed_files
 
+        for fname in self.changed_files:
+            if fname in self.coder.abs_fnames:
+                continue
+            self.coder.abs_fnames.add(fname)
+            rel_fname = self.coder.get_rel_fname(fname)
+            self.io.tool_output(f"Added {rel_fname} to the chat")
+            self.io.tool_output()
 
-def get_ai_comment(filepath, encoding="utf-8"):
-    """Extract all AI comments from a file"""
-    comments = []
-    try:
-        with open(filepath, encoding=encoding, errors="ignore") as f:
-            for line in f:
-                if match := re.search(r"(?:#|//) *(ai\b.*|ai)", line, re.IGNORECASE):
-                    comment = match.group(0).strip()
-                    if comment:
-                        comments.append(comment)
-    except (IOError, UnicodeDecodeError):
-        return None
-    return comments if comments else None
+        # TODO refresh all the ai comments from all the abs_fnames
+        return ""
+        has_bangs = any(
+            comment.strip().endswith("!")
+            for comments in self.changed_files.values()
+            if comments for comment in comments
+        )
+
+        if not has_bangs:
+            return ""
+
+        res = "\n".join(comment for comments in self.changed_files.values() if comments for comment in comments)
+        res = """The "ai" comments below can be found in the code above.
+    They contain your instructions.
+    Make the requested changes.
+    Also remove all these comments from the code.
+
+    """ + res
+
+        dump(res)
+        return res
+
+    def get_ai_comment(self, filepath, encoding="utf-8"):
+        """Extract all AI comments from a file"""
+        comments = []
+        try:
+            with open(filepath, encoding=encoding, errors="ignore") as f:
+                for line in f:
+                    if match := re.search(r"(?:#|//) *(ai\b.*|ai)", line, re.IGNORECASE):
+                        comment = match.group(0).strip()
+                        if comment:
+                            comments.append(comment)
+        except (IOError, UnicodeDecodeError):
+            return None
+        return comments if comments else None
 
 
 def main():
