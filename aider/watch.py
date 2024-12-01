@@ -128,7 +128,7 @@ class FileWatcher:
         def watch_files():
             try:
                 for changes in watch(
-                    str(self.root), watch_filter=filter_func, stop_event=self.stop_event
+                    str(self.root), watch_filter=self.filter_func, stop_event=self.stop_event
                 ):
                     if not changes:
                         continue
@@ -171,7 +171,7 @@ class FileWatcher:
         if not has_bangs:
             return ""
 
-        self.io.tool_output(f"Processing your request...")
+        self.io.tool_output("Processing your request...")
 
         # Refresh all AI comments from tracked files
         ai_comments = {}
