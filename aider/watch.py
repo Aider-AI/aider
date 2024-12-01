@@ -109,7 +109,7 @@ class FileWatcher:
                 content = f.read()
             match = self.ai_comment_pattern.search(content)
             return bool(match)
-        except Exception as err:
+        except Exception:
             return
 
     def start(self):
