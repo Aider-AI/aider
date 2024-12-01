@@ -11,7 +11,7 @@ def test_ai_comment_pattern():
             self.io = io
             self.root = "."
             self.abs_fnames = set()
-        
+
         def get_rel_fname(self, fname):
             return fname
 
