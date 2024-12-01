@@ -172,12 +172,12 @@ class FileWatcher:
 
         # Refresh all AI comments from tracked files
         ai_comments = {}
-        #ai has_bangs should be False and |= !
+        has_bangs = False
         for fname in self.coder.abs_fnames:
             line_nums, comments, has_bang = self.get_ai_comments(fname)
             if line_nums:
                 ai_comments[fname] = comments
-                has_bangs = has_bang
+                has_bangs |= has_bang
 
         if not has_bangs:
             return ""
