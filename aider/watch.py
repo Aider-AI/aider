@@ -172,17 +172,45 @@ class FileWatcher:
             if line_nums:
                 ai_comments[fname] = comments
 
-        # instead of just joining the comments, use TreeContext to render them in context of their files ai!
-        res = "\n".join(
-            comment for comments in ai_comments.values() if comments for comment in comments
-        )
+        from grep_ast import TreeContext
 
         res = """The "ai" comments below can be found in the code files I've shared with you.
     They contain your instructions.
     Make the requested changes.
     Be sure to remove all these "ai" comments from the code!
 
-    """ + res
+    """
+
+        for fname, comments in ai_comments.items():
+            if not comments:
+                continue
+
+            code = self.io.read_text(fname)
+            if not code:
+                continue
+
+            rel_fname = self.coder.get_rel_fname(fname)
+            res += f"\n{rel_fname}:\n"
+
+            # Convert comment line numbers to line indices (0-based)
+            lois = [ln - 1 for ln, _ in zip(line_nums, comments) if ln > 0]
+
+            context = TreeContext(
+                rel_fname,
+                code,
+                color=False,
+                line_number=False,
+                child_context=False,
+                last_line=False,
+                margin=0,
+                mark_lois=False,
+                loi_pad=0,
+                show_top_of_file_parent_scope=False,
+            )
+            context.lines_of_interest = set()
+            context.add_lines_of_interest(lois)
+            context.add_context()
+            res += context.format()
 
         dump(res)
         return res
