@@ -170,15 +170,16 @@ class FileWatcher:
             self.io.tool_output(f"Added {rel_fname} to the chat")
             self.io.tool_output()
 
-        # TODO refresh all the ai comments from all the abs_fnames
-        # put them in ai_comments = dict fname -> get_ai_commet()
-        for fname in self.abs_fnames:
-            pass
+        # Refresh all AI comments from tracked files
+        ai_comments = {}
+        for fname in self.coder.abs_fnames:
+            if comments := self.get_ai_comment(fname):
+                ai_comments[fname] = comments
 
-        # TODO use ai_comments, not self.changed_files in the rest of this method
+        # Check for bang (!) comments
         has_bangs = any(
             comment.strip().endswith("!")
-            for comments in self.changed_files.values()
+            for comments in ai_comments.values()
             if comments
             for comment in comments
         )
@@ -187,7 +188,7 @@ class FileWatcher:
             return ""
 
         res = "\n".join(
-            comment for comments in self.changed_files.values() if comments for comment in comments
+            comment for comments in ai_comments.values() if comments for comment in comments
         )
         res = """The "ai" comments below can be found in the code above.
     They contain your instructions.
