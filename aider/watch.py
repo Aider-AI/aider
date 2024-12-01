@@ -63,10 +63,9 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 class FileWatcher:
     """Watches source files for changes and AI comments"""
 
-    def __init__(self, coder, encoding="utf-8", gitignores=None, verbose=False):
+    def __init__(self, coder, gitignores=None, verbose=False):
         self.coder = coder
         self.io = coder.io
-        self.encoding = encoding
         self.root = Path(coder.root)
         self.verbose = verbose  # or True
         self.stop_event = None
@@ -133,7 +132,7 @@ class FileWatcher:
                     changed_files = {str(Path(change[1])) for change in changes}
                     result = {}
                     for file in changed_files:
-                        if comments := self.get_ai_comment(file, encoding=self.encoding):
+                        if comments := self.get_ai_comment(file):
                             result[file] = comments
 
                     self.changed_files.update(result)
@@ -196,7 +195,7 @@ class FileWatcher:
         dump(res)
         return res
 
-    def get_ai_comment(self, filepath, encoding="utf-8"):
+    def get_ai_comment(self, filepath):
         """Extract all AI comments from a file"""
         comments = []
         try:
