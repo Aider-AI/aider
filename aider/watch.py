@@ -63,10 +63,8 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 class FileWatcher:
     """Watches source files for changes and AI comments"""
 
-    # ai make this regex also match comments that end with "ai!"!
-    # so this comment would match ai!
     # Compiled regex pattern for AI comments
-    ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai)", re.IGNORECASE)
+    ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai|.*ai!)", re.IGNORECASE)
 
     def __init__(self, coder, gitignores=None, verbose=False):
         self.coder = coder
