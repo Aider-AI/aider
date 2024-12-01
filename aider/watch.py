@@ -196,6 +196,7 @@ class FileWatcher:
         dump(res)
         return res
 
+    # ai actually, have this function return the line nums, the comments and has_bang!
     def get_ai_comments(self, filepath):
         """Extract AI comment line numbers and bang status from a file"""
         line_nums = []
