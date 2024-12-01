@@ -9,8 +9,6 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-VERBOSE = True
-
 
 def is_source_file(path: Path) -> bool:
     """
@@ -65,10 +63,11 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 class FileWatcher:
     """Watches source files for changes and AI comments"""
 
-    def __init__(self, coder, encoding="utf-8", gitignores=None):
+    def __init__(self, coder, encoding="utf-8", gitignores=None, verbose=False):
         self.coder = coder
         self.encoding = encoding
         self.root = Path(coder.root)
+        self.verbose = verbose
         self.stop_event = None
         self.watcher_thread = None
         self.changed_files = None
@@ -87,7 +86,7 @@ class FileWatcher:
                 return False
 
             rel_path = path_abs.relative_to(self.root)
-            if VERBOSE:
+            if self.verbose:
                 dump(rel_path)
 
             if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
@@ -98,7 +97,7 @@ class FileWatcher:
             if not is_source_file(path_obj):
                 return False
 
-            if VERBOSE:
+            if self.verbose:
                 dump("ok", rel_path)
 
             # Check if file contains AI markers
@@ -107,11 +106,11 @@ class FileWatcher:
                     content = f.read()
 
                     res = bool(re.search(r"(?:#|//) *ai\b", content, re.IGNORECASE))
-                    if VERBOSE:
+                    if self.verbose:
                         dump(res)
                     return res
             except (IOError, UnicodeDecodeError) as err:
-                if VERBOSE:
+                if self.verbose:
                     dump(err)
                 return False
 
@@ -136,14 +135,14 @@ class FileWatcher:
                         if comments := get_ai_comment(file, encoding=self.encoding):
                             result[file] = comments
 
-                    if VERBOSE:
+                    if self.verbose:
                         dump(result)
                     if result:
                         self.coder.abs_fnames.update(changed_files)
                         self.coder.io.interrupt_input()
                         return
             except Exception as e:
-                if VERBOSE:
+                if self.verbose:
                     dump(f"File watcher error: {e}")
                 raise e
 
