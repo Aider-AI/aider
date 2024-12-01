@@ -820,6 +820,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         ignores.append(str(Path(git_root) / ".gitignore"))
     if args.aiderignore:
         ignores.append(args.aiderignore)
+
+    # only if --watch-files ai!
     FileWatcher(coder, gitignores=ignores, verbose=args.verbose)
 
     coder.show_announcements()
