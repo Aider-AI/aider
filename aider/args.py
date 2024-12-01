@@ -15,6 +15,7 @@ from aider.args_formatter import (
 
 from .dump import dump  # noqa: F401
 
+# add --watch-files switch to control FileWatcher ai!
 
 def default_env_file(git_root):
     return os.path.join(git_root, ".env") if git_root else ".env"
