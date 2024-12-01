@@ -77,8 +77,10 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 
 ### Emacs
 
-- `Up Arrow` : Scroll back through previously sent messages.
-- `Down Arrow` : Scroll forward through previously sent messages.
+- `Up Arrow` : Move up one line in the current message.
+- `Down Arrow` : Move down one line in the current message.
+- `Ctrl-Up` : Scroll back through previously sent messages.
+- `Ctrl-Down` : Scroll forward through previously sent messages.
 - `Ctrl-A` : Move cursor to the start of the line.
 - `Ctrl-B` : Move cursor back one character.
 - `Ctrl-D` : Delete the character under the cursor.
@@ -95,8 +97,10 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 
 To use vi/vim keybindings, run aider with the `--vim` switch.
 
-- `Up Arrow` : Scroll back through previously sent messages.
-- `Down Arrow` : Scroll forward through previously sent messages.
+- `Up Arrow` : Move up one line in the current message.
+- `Down Arrow` : Move down one line in the current message.
+- `Ctrl-Up` : Scroll back through previously sent messages.
+- `Ctrl-Down` : Scroll forward through previously sent messages.
 - `Esc` : Switch to command mode.
 - `i` : Switch to insert mode.
 - `a` : Move cursor one character to the right and switch to insert mode.
