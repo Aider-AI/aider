@@ -76,7 +76,9 @@ class FileWatcher:
         self.changed_files = set()
         self.gitignores = gitignores
 
-        self.gitignore_spec = load_gitignores([Path(g) for g in self.gitignores] if self.gitignores else [])
+        self.gitignore_spec = load_gitignores(
+            [Path(g) for g in self.gitignores] if self.gitignores else []
+        )
 
         coder.io.file_watcher = self
 
