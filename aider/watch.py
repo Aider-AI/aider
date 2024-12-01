@@ -106,13 +106,7 @@ class FileWatcher:
             # Check if file contains AI markers
             try:
                 content = self.io.read_text(str(path_abs))
-                if match := self.ai_comment_pattern.search(content):
-                    if self.verbose:
-                        dump(True)
-                    return True
-                if self.verbose:
-                    dump(False)
-                return False
+                return self.ai_comment_pattern.search(content)
             except Exception as err:
                 if self.verbose:
                     print("error")
@@ -179,10 +173,11 @@ class FileWatcher:
         # Refresh all AI comments from tracked files
         ai_comments = {}
         for fname in self.coder.abs_fnames:
-            if comments := self.get_ai_comment(fname):
-                ai_comments[fname] = comments
+            #ai update this too!
+            comment_lines, has_bang = self.get_ai_comment(fname):
+            ai_comments[fname] = comment_lines
 
-        # Check for bang (!) comments
+        # ai this logic should move into get_ai_comments()
         has_bangs = any(
             comment.strip().endswith("!")
             for comments in ai_comments.values()
@@ -196,16 +191,18 @@ class FileWatcher:
         res = "\n".join(
             comment for comments in ai_comments.values() if comments for comment in comments
         )
-        res = """The "ai" comments below can be found in the code above.
+        res = """The "ai" comments below can be found in the code files I've shared with you.
     They contain your instructions.
-    Make the requested changes.
-    Also remove all these comments from the code.
+    Make the requested changes and remove all the "ai" comments from the code.
 
     """ + res
 
         dump(res)
         return res
 
+    #ai change this to get_ai_comments() with an s
+    #ai return a list of the line numbers which have matching comments
+    # also return a bool indicating if any of the lines end with !
     def get_ai_comment(self, filepath):
         """Extract all AI comments from a file"""
         comments = []
