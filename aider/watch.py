@@ -59,6 +59,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
 
     return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
 
+
 class FileWatcher:
     """Watches source files for changes and AI comments"""
 
@@ -67,7 +68,7 @@ class FileWatcher:
         self.io = coder.io
         self.encoding = encoding
         self.root = Path(coder.root)
-        self.verbose = verbose #or True
+        self.verbose = verbose  # or True
         self.stop_event = None
         self.watcher_thread = None
         self.changed_files = set()
@@ -175,13 +176,16 @@ class FileWatcher:
         has_bangs = any(
             comment.strip().endswith("!")
             for comments in self.changed_files.values()
-            if comments for comment in comments
+            if comments
+            for comment in comments
         )
 
         if not has_bangs:
             return ""
 
-        res = "\n".join(comment for comments in self.changed_files.values() if comments for comment in comments)
+        res = "\n".join(
+            comment for comments in self.changed_files.values() if comments for comment in comments
+        )
         res = """The "ai" comments below can be found in the code above.
     They contain your instructions.
     Make the requested changes.
