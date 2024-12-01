@@ -173,7 +173,6 @@ class FileWatcher:
                 ai_comments[fname] = comments
 
         # feed the filenames and line numbers to TreeContext, like repomap does
-        # to produce the `res` with context ai!
         res = "\n".join(
             comment for comments in ai_comments.values() if comments for comment in comments
         )

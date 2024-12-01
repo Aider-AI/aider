@@ -650,7 +650,6 @@ class RepoMap:
             if not code.endswith("\n"):
                 code += "\n"
 
-            #ai
             context = TreeContext(
                 rel_fname,
                 code,
