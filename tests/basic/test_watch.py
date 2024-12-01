@@ -1,11 +1,12 @@
 from pathlib import Path
+
 from aider.watch import FileWatcher
 
 
 def test_ai_comment_pattern():
     # Read fixture files
     fixtures_dir = Path(__file__).parent.parent / "fixtures"
-    
+
     with open(fixtures_dir / "watch.py") as f:
         py_content = f.read()
     with open(fixtures_dir / "watch.js") as f:
