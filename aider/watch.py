@@ -173,9 +173,13 @@ class FileWatcher:
         # Refresh all AI comments from tracked files
         ai_comments = {}
         for fname in self.coder.abs_fnames:
-            comments, line_nums, has_bang = self.get_ai_comments(fname)
-            ai_comments[fname] = comments
-            has_bangs = has_bang
+            line_nums, has_bang = self.get_ai_comments(fname)
+            if line_nums:
+                content = self.io.read_text(fname)
+                lines = content.splitlines()
+                comments = [lines[i-1].strip() for i in line_nums]
+                ai_comments[fname] = comments
+                has_bangs = has_bang
 
         if not has_bangs:
             return ""
@@ -192,10 +196,8 @@ class FileWatcher:
         dump(res)
         return res
 
-    #ai don't return the comments, just line nums and has bang!
     def get_ai_comments(self, filepath):
-        """Extract all AI comments from a file, returning comments, line numbers and bang status"""
-        comments = []
+        """Extract AI comment line numbers and bang status from a file"""
         line_nums = []
         has_bang = False
         try:
@@ -204,15 +206,14 @@ class FileWatcher:
                 if match := self.ai_comment_pattern.search(line):
                     comment = match.group(0).strip()
                     if comment:
-                        comments.append(comment)
                         line_nums.append(i)
                         if comment.strip().endswith("!"):
                             has_bang = True
         except Exception:
-            return None, None, False
-        if not comments:
-            return None, None, False
-        return comments, line_nums, has_bang
+            return None, False
+        if not line_nums:
+            return None, False
+        return line_nums, has_bang
 
 
 def main():
