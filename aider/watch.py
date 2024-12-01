@@ -3,11 +3,10 @@ import threading
 from pathlib import Path
 from typing import Optional
 
+from grep_ast import TreeContext
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
-from grep_ast import TreeContext
-
 
 from aider.dump import dump  # noqa
 
@@ -67,7 +66,6 @@ class FileWatcher:
 
     # Compiled regex pattern for AI comments
     ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai\b.*|.*\bai!?)$", re.IGNORECASE)
-
 
     def __init__(self, coder, gitignores=None, verbose=False):
         self.coder = coder
