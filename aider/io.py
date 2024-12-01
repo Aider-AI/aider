@@ -201,6 +201,7 @@ class InputOutput:
         file_watcher=None,
     ):
         self.placeholder = None
+        self.interrupted = False
         self.never_prompts = set()
         self.editingmode = editingmode
         no_color = os.environ.get("NO_COLOR")
@@ -318,6 +319,7 @@ class InputOutput:
             self.tool_error(f"{filename}: {e}")
             return
 
+    # add a silent=False arg that suppresses error output ai!
     def read_text(self, filename):
         if is_image_file(filename):
             return self.read_image(filename)
@@ -381,6 +383,7 @@ class InputOutput:
         if self.prompt_session and self.prompt_session.app:
             # Store any partial input before interrupting
             self.placeholder = self.prompt_session.app.current_buffer.text
+            self.interrupted = True
             self.prompt_session.app.exit()
 
     def get_input(
@@ -393,8 +396,6 @@ class InputOutput:
         edit_format=None,
     ):
         self.rule()
-
-        self.file_watcher.start()
 
         rel_fnames = list(rel_fnames)
         show = ""
@@ -454,6 +455,10 @@ class InputOutput:
                     default = self.placeholder or ""
                     self.placeholder = None
 
+                    self.interrupted = False
+                    if not multiline_input:
+                        self.file_watcher.start()
+
                     line = self.prompt_session.prompt(
                         show,
                         default=default,
@@ -467,10 +472,9 @@ class InputOutput:
                     line = input(show)
 
                 # Check if we were interrupted by a file change
-                if changes := self.file_watcher.get_changes():
-                    res = process_file_changes(changes)
-                    self.file_watcher.changed_files = None
-                    return res
+                if self.interrupted:
+                    cmd = self.file_watcher.process_changes()
+                    return cmd
 
             except EOFError:
                 return ""
@@ -857,25 +861,3 @@ def get_rel_fname(fname, root):
         return os.path.relpath(fname, root)
     except ValueError:
         return fname
-
-
-def process_file_changes(changed):
-    """Process file changes and handle special ! comments"""
-
-    has_bangs = any(
-        "!" in comment for comments in changed.values() if comments for comment in comments
-    )
-
-    if not has_bangs:
-        return "/add " + " ".join(changed.keys())
-
-    res = "\n".join(comment for comments in changed.values() if comments for comment in comments)
-    res = """The "ai" comments below can be found in the code above.
-They contain your instructions.
-Make the requested changes.
-Also remove all these comments from the code.
-
-""" + res
-
-    dump(res)
-    return res
