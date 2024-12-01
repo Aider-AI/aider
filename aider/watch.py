@@ -6,6 +6,8 @@ from typing import Optional
 from pathspec import PathSpec
 from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
+from grep_ast import TreeContext
+
 
 from aider.dump import dump  # noqa
 
@@ -64,6 +66,7 @@ class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     # Compiled regex pattern for AI comments
+    # make this pattern match at the end of a line ai!
     ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai|.*\bai!)", re.IGNORECASE)
 
     def __init__(self, coder, gitignores=None, verbose=False):
@@ -165,15 +168,6 @@ class FileWatcher:
 
         self.io.tool_output("Processing your request...")
 
-        # Refresh all AI comments from tracked files
-        ai_comments = {}
-        for fname in self.coder.abs_fnames:
-            line_nums, comments, _has_bang = self.get_ai_comments(fname)
-            if line_nums:
-                ai_comments[fname] = comments
-
-        from grep_ast import TreeContext
-
         res = """The "ai" comments below can be found in the code files I've shared with you.
 They contain your instructions.
 Make the requested changes.
@@ -181,8 +175,10 @@ Be sure to remove all these "ai" comments from the code!
 
     """
 
-        for fname, comments in ai_comments.items():
-            if not comments:
+        # Refresh all AI comments from tracked files
+        for fname in self.coder.abs_fnames:
+            line_nums, comments, _has_bang = self.get_ai_comments(fname)
+            if not line_nums:
                 continue
 
             code = self.io.read_text(fname)
