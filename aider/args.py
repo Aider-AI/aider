@@ -15,8 +15,6 @@ from aider.args_formatter import (
 
 from .dump import dump  # noqa: F401
 
-# add --watch-files switch to control FileWatcher ai!
-
 def default_env_file(git_root):
     return os.path.join(git_root, ".env") if git_root else ".env"
 
@@ -529,6 +527,12 @@ def get_parser(default_config_files, git_root):
         action="store_true",
         help="Skip the sanity check for the git repository (default: False)",
         default=False,
+    )
+    group.add_argument(
+        "--watch-files",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable watching files for external changes (default: True)",
     )
     group = parser.add_argument_group("Fixing and committing")
     group.add_argument(
