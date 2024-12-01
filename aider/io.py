@@ -455,7 +455,7 @@ class InputOutput:
                     self.placeholder = None
 
                     self.interrupted = False
-                    if not multiline_input:
+                    if not multiline_input and self.file_watcher:
                         self.file_watcher.start()
 
                     line = self.prompt_session.prompt(
@@ -478,12 +478,15 @@ class InputOutput:
             except EOFError:
                 return ""
             except Exception as err:
-                dump(err)
+                self.tool_error(str(err))
+                # print the traceback ai!
+                return ""
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
                 return ""
             finally:
-                self.file_watcher.stop()
+                if self.file_watcher:
+                    self.file_watcher.stop()
 
             if line.strip("\r\n") and not multiline_input:
                 stripped = line.strip("\r\n")
