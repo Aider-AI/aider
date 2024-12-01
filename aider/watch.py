@@ -102,14 +102,12 @@ class FileWatcher:
 
             # Check if file contains AI markers
             try:
-                with open(path_abs, encoding=self.encoding, errors="ignore") as f:
-                    content = f.read()
-
-                    res = bool(re.search(r"(?:#|//) *ai\b", content, re.IGNORECASE))
-                    if self.verbose:
-                        dump(res)
-                    return res
-            except (IOError, UnicodeDecodeError) as err:
+                content = self.io.read_text(str(path_abs))
+                res = bool(re.search(r"(?:#|//) *ai\b", content, re.IGNORECASE))
+                if self.verbose:
+                    dump(res)
+                return res
+            except Exception as err:
                 if self.verbose:
                     print("error")
                     dump(err)
@@ -198,13 +196,13 @@ class FileWatcher:
         """Extract all AI comments from a file"""
         comments = []
         try:
-            with open(filepath, encoding=encoding, errors="ignore") as f:
-                for line in f:
-                    if match := re.search(r"(?:#|//) *(ai\b.*|ai)", line, re.IGNORECASE):
-                        comment = match.group(0).strip()
-                        if comment:
-                            comments.append(comment)
-        except (IOError, UnicodeDecodeError):
+            content = self.io.read_text(filepath)
+            for line in content.splitlines():
+                if match := re.search(r"(?:#|//) *(ai\b.*|ai)", line, re.IGNORECASE):
+                    comment = match.group(0).strip()
+                    if comment:
+                        comments.append(comment)
+        except Exception:
             return None
         return comments if comments else None
 
