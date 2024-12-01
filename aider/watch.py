@@ -205,7 +205,7 @@ class FileWatcher:
                     if comment:
                         comments.append(comment)
                         line_nums.append(i)
-                        if comment.strip().endswith('!'):
+                        if comment.strip().endswith("!"):
                             has_bang = True
         except Exception:
             return None, None, False
