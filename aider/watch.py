@@ -108,11 +108,8 @@ class FileWatcher:
 
         # Check if file contains AI markers
         try:
-            # TODO: use get_ai_comments() for this
-            with open(str(path_abs), "r", encoding=self.io.encoding) as f:
-                content = f.read()
-            match = self.ai_comment_pattern.search(content)
-            return bool(match)
+            _, _, has_match = self.get_ai_comments(str(path_abs))
+            return has_match
         except Exception:
             return
 
