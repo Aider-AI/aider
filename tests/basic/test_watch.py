@@ -1,11 +1,23 @@
 from pathlib import Path
 
+from aider.io import InputOutput
 from aider.watch import FileWatcher
 
 
 def test_ai_comment_pattern():
-    # Create a FileWatcher instance for testing
-    watcher = FileWatcher(None)
+    # Create minimal IO and Coder instances for testing
+    class MinimalCoder:
+        def __init__(self, io):
+            self.io = io
+            self.root = "."
+            self.abs_fnames = set()
+        
+        def get_rel_fname(self, fname):
+            return fname
+
+    io = InputOutput(pretty=False, fancy_input=False, yes=False)
+    coder = MinimalCoder(io)
+    watcher = FileWatcher(coder)
     fixtures_dir = Path(__file__).parent.parent / "fixtures"
 
     # Test Python fixture
