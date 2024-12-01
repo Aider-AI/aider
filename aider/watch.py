@@ -76,7 +76,7 @@ class FileWatcher:
         self.changed_files = set()
         self.gitignores = gitignores
 
-        # Create filter function during initialization
+        #ai stop making this so indirect; just `def filter_func()` and use self.gitignores in it!
         gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
         gitignore_spec = load_gitignores(gitignore_paths)
         self.filter_func = self.create_filter_func(gitignore_spec, None)
