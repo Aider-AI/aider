@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.66.0
 
 - PDF support for Sonnet and Gemini models.
 - Added `--voice-input-device` to select audio input device for voice recording, by @preynal.
