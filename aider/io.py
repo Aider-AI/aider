@@ -418,6 +418,16 @@ class InputOutput:
             "Ignore Ctrl when pressing space bar"
             event.current_buffer.insert_text(" ")
 
+        @kb.add("c-up")
+        def _(event):
+            "Navigate backward through history"
+            event.current_buffer.history_backward()
+
+        @kb.add("c-down")
+        def _(event):
+            "Navigate forward through history"
+            event.current_buffer.history_forward()
+
         @kb.add("escape", "c-m", eager=True)
         def _(event):
             event.current_buffer.insert_text("\n")
