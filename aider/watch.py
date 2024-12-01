@@ -66,7 +66,7 @@ class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     # Compiled regex pattern for AI comments
-    ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai|.*\bai!?)", re.IGNORECASE)
+    ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai\b.*|.*\bai!?)$", re.IGNORECASE)
 
 
     def __init__(self, coder, gitignores=None, verbose=False):
@@ -108,6 +108,7 @@ class FileWatcher:
 
         # Check if file contains AI markers
         try:
+            # TODO: use get_ai_comments() for this
             with open(str(path_abs), "r", encoding=self.io.encoding) as f:
                 content = f.read()
             match = self.ai_comment_pattern.search(content)
