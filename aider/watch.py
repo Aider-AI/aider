@@ -120,17 +120,10 @@ class FileWatcher:
 
         return filter_func
 
-    # ai remove ignore_func!
-    def start(self, ignore_func=None):
+    def start(self):
         """Start watching for file changes"""
         self.stop_event = threading.Event()
         self.changed_files = set()
-
-        # Update filter_func if ignore_func is provided
-        if ignore_func:
-            gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
-            gitignore_spec = load_gitignores(gitignore_paths)
-            self.filter_func = self.create_filter_func(gitignore_spec, ignore_func)
 
         def watch_files():
             try:
@@ -240,9 +233,9 @@ def main():
     def ignore_test_files(path):
         return "test" in path.name.lower()
 
-    watcher = FileWatcher(directory)
+    watcher = FileWatcher(directory, gitignores=args.gitignore)
     try:
-        watcher.start(gitignores=args.gitignore, ignore_func=ignore_test_files)
+        watcher.start()
         while True:
             if changes := watcher.get_changes():
                 for file in sorted(changes.keys()):
