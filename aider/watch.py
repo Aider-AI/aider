@@ -181,7 +181,6 @@ class FileWatcher:
 
     """
 
-        #ai just erase this comment!
         for fname, comments in ai_comments.items():
             if not comments:
                 continue
