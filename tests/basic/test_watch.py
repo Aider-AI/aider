@@ -6,14 +6,17 @@ from aider.watch import FileWatcher
 def test_ai_comment_pattern():
     # Test various AI comment patterns
     test_comments = [
+        # Python style
         "# ai do something",
         "# AI make this better",
         "# ai! urgent change needed",
         "# AI! another urgent one",
-        "//ai javascript style",
-        "//AI do that thing",
-        "//ai! urgent js thing",
-        "// ai with some space",
+        # JavaScript style
+        "//ai do something",
+        "//AI make this better", 
+        "//ai! urgent change needed",
+        "//AI! another urgent one",
+        "// ai with space",
         "// AI with caps",
         "// ai! with bang",
     ]
