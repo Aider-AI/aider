@@ -11,12 +11,13 @@ from aider.voice import SoundDeviceError, Voice
 # Mock the entire sounddevice module
 @pytest.fixture
 def mock_sounddevice():
-    with patch("aider.voice.sounddevice") as mock_sd:
+    with patch("sounddevice") as mock_sd:
         mock_sd.query_devices.return_value = [
             {"name": "test_device", "max_input_channels": 2},
             {"name": "another_device", "max_input_channels": 1},
         ]
-        yield mock_sd
+        with patch.dict("sys.modules", {"sounddevice": mock_sd}):
+            yield mock_sd
 
 
 @pytest.fixture
