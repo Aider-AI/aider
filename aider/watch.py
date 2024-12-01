@@ -76,49 +76,40 @@ class FileWatcher:
         self.changed_files = set()
         self.gitignores = gitignores
 
-        #ai stop making this so indirect; just `def filter_func()` and use self.gitignores in it!
-        gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
-        gitignore_spec = load_gitignores(gitignore_paths)
-        self.filter_func = self.create_filter_func(gitignore_spec, None)
+        self.gitignore_spec = load_gitignores([Path(g) for g in self.gitignores] if self.gitignores else [])
 
         coder.io.file_watcher = self
 
-    def create_filter_func(self, gitignore_spec, ignore_func):
-        """Creates a filter function for the file watcher"""
+    def filter_func(self, change_type, path):
+        """Filter function for the file watcher"""
+        path_obj = Path(path)
+        path_abs = path_obj.absolute()
 
-        def filter_func(change_type, path):
-            path_obj = Path(path)
-            path_abs = path_obj.absolute()
+        if not path_abs.is_relative_to(self.root.absolute()):
+            return False
 
-            if not path_abs.is_relative_to(self.root.absolute()):
-                return False
+        rel_path = path_abs.relative_to(self.root)
+        if self.verbose:
+            dump(rel_path)
 
-            rel_path = path_abs.relative_to(self.root)
+        if self.gitignore_spec and self.gitignore_spec.match_file(str(rel_path)):
+            return False
+
+        if not is_source_file(path_obj):
+            return False
+
+        if self.verbose:
+            dump("ok", rel_path)
+
+        # Check if file contains AI markers
+        try:
+            content = self.io.read_text(str(path_abs))
+            return self.ai_comment_pattern.search(content)
+        except Exception as err:
             if self.verbose:
-                dump(rel_path)
-
-            if gitignore_spec and gitignore_spec.match_file(str(rel_path)):
-                return False
-            if ignore_func and ignore_func(rel_path):
-                return False
-
-            if not is_source_file(path_obj):
-                return False
-
-            if self.verbose:
-                dump("ok", rel_path)
-
-            # Check if file contains AI markers
-            try:
-                content = self.io.read_text(str(path_abs))
-                return self.ai_comment_pattern.search(content)
-            except Exception as err:
-                if self.verbose:
-                    print("error")
-                    dump(err)
-                return False
-
-        return filter_func
+                print("error")
+                dump(err)
+            return False
 
     def start(self):
         """Start watching for file changes"""
