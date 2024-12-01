@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from aider.watch import FileWatcher
 
 
