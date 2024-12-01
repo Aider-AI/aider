@@ -200,6 +200,7 @@ class FileWatcher:
         """Extract AI comment line numbers and bang status from a file"""
         line_nums = []
         has_bang = False
+        # remove try/except #ai!
         try:
             content = self.io.read_text(filepath)
             for i, line in enumerate(content.splitlines(), 1):
