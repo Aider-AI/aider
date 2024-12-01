@@ -64,13 +64,13 @@ class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     # Compiled regex pattern for AI comments
-    ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai|.*ai!)", re.IGNORECASE)
+    ai_comment_pattern = re.compile(r"(?:#|//) *(ai\b.*|ai|.*\bai!)", re.IGNORECASE)
 
     def __init__(self, coder, gitignores=None, verbose=False):
         self.coder = coder
         self.io = coder.io
         self.root = Path(coder.root)
-        self.verbose = verbose  # or True
+        self.verbose = verbose
         self.stop_event = None
         self.watcher_thread = None
         self.changed_files = set()
@@ -105,13 +105,12 @@ class FileWatcher:
 
         # Check if file contains AI markers
         try:
-            content = self.io.read_text(str(path_abs))
-            return self.ai_comment_pattern.search(content)
+            with open(str(path_abs), "r", encoding=self.io.encoding) as f:
+                content = f.read()
+            match = self.ai_comment_pattern.search(content)
+            return bool(match)
         except Exception as err:
-            if self.verbose:
-                print("error")
-                dump(err)
-            return False
+            return
 
     def start(self):
         """Start watching for file changes"""
@@ -173,6 +172,8 @@ class FileWatcher:
             if line_nums:
                 ai_comments[fname] = comments
 
+        # feed the filenames and line numbers to TreeContext, like repomap does
+        # to produce the `res` with context ai!
         res = "\n".join(
             comment for comments in ai_comments.values() if comments for comment in comments
         )
