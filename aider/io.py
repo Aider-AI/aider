@@ -478,8 +478,9 @@ class InputOutput:
             except EOFError:
                 return ""
             except Exception as err:
+                import traceback
                 self.tool_error(str(err))
-                # print the traceback ai!
+                self.tool_error(traceback.format_exc())
                 return ""
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
