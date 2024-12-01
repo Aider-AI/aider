@@ -205,6 +205,7 @@ class FileWatcher:
         try:
             content = self.io.read_text(filepath)
             for line in content.splitlines():
+                #ai refactor the regex into self, compile it!
                 if match := re.search(r"(?:#|//) *(ai\b.*|ai)", line, re.IGNORECASE):
                     comment = match.group(0).strip()
                     if comment:
