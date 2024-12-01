@@ -162,8 +162,11 @@ class FileWatcher:
     def process_changes(self):
         """Get any detected file changes"""
 
+        has_bangs = False
         for fname in self.changed_files:
-            # ai actually, check for bangs up here, not down below!
+            _, _, has_bang = self.get_ai_comments(fname)
+            has_bangs |= has_bang
+            
             if fname in self.coder.abs_fnames:
                 continue
             self.coder.abs_fnames.add(fname)
@@ -173,7 +176,6 @@ class FileWatcher:
 
         # Refresh all AI comments from tracked files
         ai_comments = {}
-        has_bangs = False
         for fname in self.coder.abs_fnames:
             line_nums, comments, has_bang = self.get_ai_comments(fname)
             if line_nums:
