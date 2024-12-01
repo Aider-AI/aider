@@ -120,6 +120,7 @@ class FileWatcher:
 
         return filter_func
 
+    # ai remove ignore_func!
     def start(self, ignore_func=None):
         """Start watching for file changes"""
         self.stop_event = threading.Event()
