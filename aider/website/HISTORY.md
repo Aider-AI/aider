@@ -34,6 +34,7 @@ cog.out(text)
 - Improved error handling for failed .gitignore file operations.
 - Improved error handling for input history file permissions.
 - Improved error handling for analytics file access.
+- Removed spurious warning about disabling pretty in VSCode.
 - Removed broken support for Dart.
 - Bugfix when scraping URLs found in chat messages.
 - Better handling of __version__ import errors.
