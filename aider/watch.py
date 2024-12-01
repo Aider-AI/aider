@@ -75,7 +75,7 @@ class FileWatcher:
         self.watcher_thread = None
         self.changed_files = set()
         self.gitignores = gitignores
-        
+
         # Create filter function during initialization
         gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
         gitignore_spec = load_gitignores(gitignore_paths)
@@ -189,8 +189,6 @@ class FileWatcher:
         res = "\n".join(
             comment for comments in ai_comments.values() if comments for comment in comments
         )
-
-
 
         res = """The "ai" comments below can be found in the code files I've shared with you.
     They contain your instructions.
