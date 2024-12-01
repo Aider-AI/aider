@@ -1,11 +1,13 @@
 from pathlib import Path
+
 from aider.watch import FileWatcher
+
 
 def test_ai_comment_pattern():
     # Test various AI comment patterns
     test_comments = [
         "# ai do something",
-        "# AI make this better", 
+        "# AI make this better",
         "# ai! urgent change needed",
         "# AI! another urgent one",
         "//ai javascript style",
