@@ -175,9 +175,9 @@ class FileWatcher:
         from grep_ast import TreeContext
 
         res = """The "ai" comments below can be found in the code files I've shared with you.
-    They contain your instructions.
-    Make the requested changes.
-    Be sure to remove all these "ai" comments from the code!
+They contain your instructions.
+Make the requested changes.
+Be sure to remove all these "ai" comments from the code!
 
     """
 
@@ -195,6 +195,7 @@ class FileWatcher:
             # Convert comment line numbers to line indices (0-based)
             lois = [ln - 1 for ln, _ in zip(line_nums, comments) if ln > 0]
 
+            # ai: just remove this comment!
             context = TreeContext(
                 rel_fname,
                 code,
@@ -204,7 +205,7 @@ class FileWatcher:
                 last_line=False,
                 margin=0,
                 mark_lois=False,
-                loi_pad=0,
+                loi_pad=3,
                 show_top_of_file_parent_scope=False,
             )
             context.lines_of_interest = set()
