@@ -479,7 +479,6 @@ class InputOutput:
                 return ""
             except Exception as err:
                 import traceback
-                # remove this comment ai!
                 self.tool_error(str(err))
                 self.tool_error(traceback.format_exc())
                 return ""
