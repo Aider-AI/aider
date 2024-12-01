@@ -75,6 +75,11 @@ class FileWatcher:
         self.watcher_thread = None
         self.changed_files = set()
         self.gitignores = gitignores
+        
+        # Create filter function during initialization
+        gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
+        gitignore_spec = load_gitignores(gitignore_paths)
+        self.filter_func = self.create_filter_func(gitignore_spec, None)
 
         coder.io.file_watcher = self
 
@@ -120,10 +125,11 @@ class FileWatcher:
         self.stop_event = threading.Event()
         self.changed_files = set()
 
-        # ai move this to __init__, set self.filter_func!
-        gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
-        gitignore_spec = load_gitignores(gitignore_paths)
-        filter_func = self.create_filter_func(gitignore_spec, ignore_func)
+        # Update filter_func if ignore_func is provided
+        if ignore_func:
+            gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
+            gitignore_spec = load_gitignores(gitignore_paths)
+            self.filter_func = self.create_filter_func(gitignore_spec, ignore_func)
 
         def watch_files():
             try:
