@@ -120,6 +120,7 @@ class FileWatcher:
         self.stop_event = threading.Event()
         self.changed_files = set()
 
+        # ai move this to __init__, set self.filter_func!
         gitignore_paths = [Path(g) for g in self.gitignores] if self.gitignores else []
         gitignore_spec = load_gitignores(gitignore_paths)
         filter_func = self.create_filter_func(gitignore_spec, ignore_func)
@@ -129,19 +130,12 @@ class FileWatcher:
                 for changes in watch(
                     str(self.root), watch_filter=filter_func, stop_event=self.stop_event
                 ):
+                    if not changes:
+                        continue
                     changed_files = {str(Path(change[1])) for change in changes}
-                    result = {}
-                    for file in changed_files:
-                        if comments := self.get_ai_comment(file):
-                            result[file] = comments
-
-                    self.changed_files.update(result)
-                    if self.verbose:
-                        dump(result)
-                        dump(self.changed_files)
-                    if result:
-                        self.io.interrupt_input()
-                        return
+                    self.changed_files.update(changed_files)
+                    self.io.interrupt_input()
+                    return
             except Exception as e:
                 if self.verbose:
                     dump(f"File watcher error: {e}")
@@ -174,23 +168,28 @@ class FileWatcher:
             self.io.tool_output(f"Added {rel_fname} to the chat")
             self.io.tool_output()
 
+        if not has_bangs:
+            return ""
+
+        self.io.tool_output(f"Processing your request...")
+
         # Refresh all AI comments from tracked files
         ai_comments = {}
         for fname in self.coder.abs_fnames:
-            line_nums, comments, has_bang = self.get_ai_comments(fname)
+            line_nums, comments, _has_bang = self.get_ai_comments(fname)
             if line_nums:
                 ai_comments[fname] = comments
-                has_bangs |= has_bang
-
-        if not has_bangs:
-            return ""
 
         res = "\n".join(
             comment for comments in ai_comments.values() if comments for comment in comments
         )
+
+
+
         res = """The "ai" comments below can be found in the code files I've shared with you.
     They contain your instructions.
-    Make the requested changes and remove all the "ai" comments from the code.
+    Make the requested changes.
+    Be sure to remove all these "ai" comments from the code!
 
     """ + res
 
