@@ -59,9 +59,10 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--attribute-commit-message-author | --no-attribute-commit-message-author]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
-             [--skip-sanity-check-repo] [--lint] [--lint-cmd]
-             [--auto-lint | --no-auto-lint] [--test-cmd]
-             [--auto-test | --no-auto-test] [--test]
+             [--skip-sanity-check-repo]
+             [--watch-files | --no-watch-files] [--lint]
+             [--lint-cmd] [--auto-lint | --no-auto-lint]
+             [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--analytics | --no-analytics] [--analytics-log]
              [--analytics-disable] [--file] [--read] [--vim]
              [--chat-language] [--version] [--just-check-update]
@@ -479,6 +480,14 @@ Aliases:
 Skip the sanity check for the git repository (default: False)  
 Default: False  
 Environment variable: `AIDER_SKIP_SANITY_CHECK_REPO`  
+
+### `--watch-files`
+Enable/disable watching files for ai coding comments (default: False)  
+Default: False  
+Environment variable: `AIDER_WATCH_FILES`  
+Aliases:
+  - `--watch-files`
+  - `--no-watch-files`
 
 ## Fixing and committing:
 

@@ -309,6 +309,9 @@ cog.outl("```")
 ## Skip the sanity check for the git repository (default: False)
 #skip-sanity-check-repo: false
 
+## Enable/disable watching files for ai coding comments (default: False)
+#watch-files: false
+
 ########################
 # Fixing and committing:
 
