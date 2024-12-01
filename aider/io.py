@@ -319,7 +319,6 @@ class InputOutput:
             self.tool_error(f"{filename}: {e}")
             return
 
-    # add a silent=False arg that suppresses error output ai!
     def read_text(self, filename):
         if is_image_file(filename):
             return self.read_image(filename)

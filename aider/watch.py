@@ -212,7 +212,6 @@ Be sure to remove all these "ai" comments from the code!
             context.add_context()
             res += context.format()
 
-        dump(res)
         return res
 
     def get_ai_comments(self, filepath):

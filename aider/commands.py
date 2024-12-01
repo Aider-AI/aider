@@ -785,7 +785,8 @@ class Commands:
                     self.io.tool_error(f"Unable to read {matched_file}")
                 else:
                     self.coder.abs_fnames.add(abs_file_path)
-                    self.io.tool_output(f"Added {matched_file} to the chat")
+                    fname = self.coder.get_rel_fname(abs_file_path)
+                    self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
 
     def completions_drop(self):
