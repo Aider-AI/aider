@@ -13,7 +13,7 @@ def test_ai_comment_pattern():
         "# AI! another urgent one",
         # JavaScript style
         "//ai do something",
-        "//AI make this better", 
+        "//AI make this better",
         "//ai! urgent change needed",
         "//AI! another urgent one",
         "// ai with space",
