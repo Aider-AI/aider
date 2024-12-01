@@ -163,6 +163,7 @@ class FileWatcher:
         """Get any detected file changes"""
 
         for fname in self.changed_files:
+            # ai actually, check for bangs up here, not down below!
             if fname in self.coder.abs_fnames:
                 continue
             self.coder.abs_fnames.add(fname)
