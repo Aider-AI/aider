@@ -166,7 +166,7 @@ class FileWatcher:
         for fname in self.changed_files:
             _, _, has_bang = self.get_ai_comments(fname)
             has_bangs |= has_bang
-            
+
             if fname in self.coder.abs_fnames:
                 continue
             self.coder.abs_fnames.add(fname)
