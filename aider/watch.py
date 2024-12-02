@@ -11,7 +11,6 @@ from watchfiles import watch
 from aider.dump import dump  # noqa
 
 
-# ai
 def is_source_file(path: Path) -> bool:
     """
     Check if a file is a source file that uses # or // style comments.
@@ -226,8 +225,10 @@ Be sure to remove all these "ai" comments from the code!
                 if comment:
                     line_nums.append(i)
                     comments.append(comment)
-                    # Use the ai regex, but ensure it's "ai!" ... AI!
-                    if comment.strip().endswith("!"):
+                    comment = comment.lower()
+                    comment = comment.lstrip("/#-")
+                    comment = comment.strip()
+                    if comment.startswith("ai!") or comment.endswith("ai!"):
                         has_bang = True
         if not line_nums:
             return None, None, False
