@@ -226,6 +226,7 @@ Be sure to remove all these "ai" comments from the code!
                 if comment:
                     line_nums.append(i)
                     comments.append(comment)
+                    # Use the ai regex, but ensure it's "ai!" ... AI!
                     if comment.strip().endswith("!"):
                         has_bang = True
         if not line_nums:
