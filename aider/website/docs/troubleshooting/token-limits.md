@@ -12,11 +12,12 @@ Every LLM has limits on how many tokens it can process for each request:
 - Each model has limit on how many **output tokens** it can
 produce.
 
-Aider will report an error if a model responds indicating that
+Aider will report an error **if a model responds** indicating that
 it has exceeded a token limit.
 The error will include suggested actions to try and
 avoid hitting token limits.
-Here's an example error:
+
+Here's an example error: 
 
 ```
 Model gpt-3.5-turbo has hit a token limit!
@@ -36,9 +37,7 @@ For more info: https://aider.chat/docs/token-limits.html
 {: .note }
 Aider never *enforces* token limits, it only *reports* token limit errors
 from the API provider.
-You probably don't need to
-[configure aider with the proper token limits](https://aider.chat/docs/config/adv-model-settings.html#context-window-size-and-token-costs)
-for unusual models.
+The token counts that aider reports are *estimates*.
 
 ## Input tokens & context window size
 
