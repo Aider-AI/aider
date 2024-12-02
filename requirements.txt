@@ -16,6 +16,7 @@ anyio==4.6.2.post1
     # via
     #   httpx
     #   openai
+    #   watchfiles
 attrs==24.2.0
     # via
     #   aiohttp
@@ -239,6 +240,8 @@ urllib3==2.2.3
     # via
     #   mixpanel
     #   requests
+watchfiles==1.0.0
+    # via -r requirements/requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
 yarl==1.18.0
