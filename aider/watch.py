@@ -10,7 +10,8 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-#ai
+
+# ai
 def is_source_file(path: Path) -> bool:
     """
     Check if a file is a source file that uses # or // style comments.
@@ -48,7 +49,7 @@ def is_source_file(path: Path) -> bool:
         ".hs",  # Haskell
         ".lua",
         ".elm",
-        ".vhd", # VHDL
+        ".vhd",  # VHDL
         ".vhdl",
     }
     return path.suffix.lower() in COMMENT_STYLE_EXTENSIONS
