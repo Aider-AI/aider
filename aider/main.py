@@ -567,7 +567,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     fnames = [str(Path(fn).resolve()) for fn in all_files]
     read_only_fnames = []
     for fn in args.read or []:
-        path = Path(fn).resolve()
+        path = Path(fn).expanduser().resolve()
         if path.is_dir():
             read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
         else:
