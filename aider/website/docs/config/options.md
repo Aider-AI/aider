@@ -123,7 +123,7 @@ Aliases:
   - `-4`
 
 ### `--4o`
-Use gpt-4o-2024-08-06 model for the main chat  
+Use gpt-4o model for the main chat  
 Environment variable: `AIDER_4O`  
 
 ### `--mini`

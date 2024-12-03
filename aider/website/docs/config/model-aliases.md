@@ -54,7 +54,7 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `35turbo`: gpt-3.5-turbo
 - `4`: gpt-4-0613
 - `4-turbo`: gpt-4-1106-preview
-- `4o`: gpt-4o-2024-08-06
+- `4o`: gpt-4o
 - `deepseek`: deepseek/deepseek-coder
 - `haiku`: claude-3-5-haiku-20241022
 - `opus`: claude-3-opus-20240229
