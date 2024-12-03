@@ -69,7 +69,7 @@ MODEL_ALIASES = {
     "opus": "claude-3-opus-20240229",
     # GPT models
     "4": "gpt-4-0613",
-    "4o": "gpt-4o-2024-08-06",
+    "4o": "gpt-4o",
     "4-turbo": "gpt-4-1106-preview",
     "35turbo": "gpt-3.5-turbo",
     "35-turbo": "gpt-3.5-turbo",
