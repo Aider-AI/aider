@@ -921,6 +921,9 @@ class Commands:
                 dict(role="assistant", content="Ok."),
             ]
 
+            if add and exit_status != 0:
+                self.io.placeholder = "Fix that"
+
     def cmd_exit(self, args):
         "Exit the application"
         self.coder.event("exit", reason="/exit")
