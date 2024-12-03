@@ -98,7 +98,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.name, "gpt-4-0613")
 
         model = Model("4o")
-        self.assertEqual(model.name, "gpt-4o-2024-08-06")
+        self.assertEqual(model.name, "gpt-4o")
 
         model = Model("35turbo")
         self.assertEqual(model.name, "gpt-3.5-turbo")
