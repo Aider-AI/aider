@@ -277,7 +277,7 @@ class Spinner:
         self.last_update = 0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
-        
+
         # Try unicode first, fall back to ascii if needed
         try:
             # Test if we can print unicode characters
