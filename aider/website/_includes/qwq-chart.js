@@ -71,13 +71,6 @@ document.addEventListener('DOMContentLoaded', function () {
                   ];
                 }
               }
-            },
-            title: {
-              display: true,
-              text: 'Aider code editing benchmark results',
-              font: {
-                size: 16
-              }
             }
           },
           scales: {
@@ -85,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Percent completed correctly',
+                text: 'Aider code editing benchmark (%)',
                 font: {
                   size: 18
                 }
