@@ -41,7 +41,7 @@ function factorial(n) {
 ```
 
 This makes it easier to use aider from within your favorite editor or IDE. 
-See the demo video above of aider working with AI comments in VSCode.
+See the demo video above of aider working with AI comments in VSCode. You can also [download the demo video directly](/assets/videos/aider-watch-demo.mp4).
 
 This capability is quite flexible and powerful once you get familiar with the various ways it can be used:
 
