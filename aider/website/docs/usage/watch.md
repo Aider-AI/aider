@@ -8,6 +8,11 @@ description: Aider can run in your browser, not just on the command line.
 
 # Aider in your IDE
 
+<video width="100%" controls>
+  <source src="/assets/videos/aider-watch-demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 If you run aider with `--watch-files`,
 it will watch all files in your repo for edits. If you edit a file and add comments with "AI instructions", aider will follow them. So you can put aider messages right into your source files, nearby the code they refer to. 
 
