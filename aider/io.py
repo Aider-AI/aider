@@ -12,10 +12,13 @@ from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory
+from prompt_toolkit.filters import Condition
 from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
+import signal
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from rich.columns import Columns
@@ -422,7 +425,16 @@ class InputOutput:
             )
         )
 
+        def suspend_to_bg(event):
+            """Suspend currently running application."""
+            event.app.suspend_to_background()
+
         kb = KeyBindings()
+
+        @kb.add(Keys.ControlZ, filter=Condition(lambda: hasattr(signal, 'SIGTSTP')))
+        def _(event):
+            "Suspend to background with ctrl-z"
+            suspend_to_bg(event)
 
         @kb.add("c-space")
         def _(event):
