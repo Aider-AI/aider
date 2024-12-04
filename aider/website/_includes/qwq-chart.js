@@ -23,8 +23,16 @@ document.addEventListener('DOMContentLoaded', function () {
       datasets: [{
         label: 'Percent completed correctly',
         data: filteredData.map(row => row.pass_rate_2),
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: filteredData.map(row => 
+          row.model === 'Qwen2.5 Coder 32B Instruct' 
+            ? 'rgba(255, 99, 132, 0.2)'  // Pink color for Qwen
+            : 'rgba(54, 162, 235, 0.2)'  // Default blue
+        ),
+        borderColor: filteredData.map(row => 
+          row.model === 'Qwen2.5 Coder 32B Instruct'
+            ? 'rgba(255, 99, 132, 1)'    // Pink border for Qwen
+            : 'rgba(54, 162, 235, 1)'    // Default blue border
+        ),
         borderWidth: 1
       }]
     };
