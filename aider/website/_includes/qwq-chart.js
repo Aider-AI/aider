@@ -20,23 +20,26 @@ document.addEventListener('DOMContentLoaded', function () {
     
     var chartData = {
       labels: filteredData.map(row => row.model),
-      datasets: [{
-        label: 'Percent completed correctly',
-        data: filteredData.map(row => row.pass_rate_2),
-        backgroundColor: filteredData.map(row => {
-          if (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)') {
-            return 'rgba(75, 192, 192, 0.2)';  // Green color for both
-          }
-          return 'rgba(54, 162, 235, 0.2)';    // Default blue
-        }),
-        borderColor: filteredData.map(row => {
-          if (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)') {
-            return 'rgba(75, 192, 192, 1)';    // Green border for both
-          }
-          return 'rgba(54, 162, 235, 1)';      // Default blue border
-        }),
-        borderWidth: 1
-      }]
+      datasets: [
+        {
+          label: 'Solo model',
+          data: filteredData.map(row => 
+            (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)') ? row.pass_rate_2 : null
+          ),
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Green
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Architect + Editor',
+          data: filteredData.map(row => 
+            (row.model !== 'Qwen2.5 Coder 32B Instruct' && row.model !== 'Sonnet (SOTA)') ? row.pass_rate_2 : null
+          ),
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',  // Blue
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }
+      ]
     };
 
     if (chart) {
@@ -49,7 +52,13 @@ document.addEventListener('DOMContentLoaded', function () {
         options: {
           plugins: {
             legend: {
-              display: false
+              display: true,
+              position: 'top',
+              labels: {
+                font: {
+                  size: 14
+                }
+              }
             },
             title: {
               display: true,
