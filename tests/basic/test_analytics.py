@@ -65,7 +65,8 @@ def test_analytics_event_logging(temp_analytics_file, temp_data_dir):
     test_event = "test_event"
     test_properties = {"test_key": "test_value"}
 
-    with patch.object(analytics.mp, "track") as mock_mp_track:
+
+    # fix indent AI!
         with patch.object(analytics.ph, "capture") as mock_ph_capture:
             analytics.event(test_event, **test_properties)
 
