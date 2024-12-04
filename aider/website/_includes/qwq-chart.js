@@ -96,7 +96,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 callback: function(value, index) {
                   const label = this.getLabelForValue(value);
-                  return label.split(" + ");
+                  if (label.includes(" + ")) {
+                    const parts = label.split(" + ");
+                    return [parts[0] + " +", parts[1]];
+                  }
+                  return label;
                 }
               }
             }
