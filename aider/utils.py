@@ -268,7 +268,8 @@ def run_install(cmd):
 
 
 class Spinner:
-    spinner_chars = itertools.cycle(["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"])
+    unicode_spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+    ascii_spinner = ["|", "/", "-", "\\"]
 
     def __init__(self, text):
         self.text = text
@@ -276,6 +277,15 @@ class Spinner:
         self.last_update = 0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
+        
+        # Try unicode first, fall back to ascii if needed
+        try:
+            # Test if we can print unicode characters
+            print(self.unicode_spinner[0], end="", flush=True)
+            print("\r", end="", flush=True)
+            self.spinner_chars = itertools.cycle(self.unicode_spinner)
+        except UnicodeEncodeError:
+            self.spinner_chars = itertools.cycle(self.ascii_spinner)
 
     def step(self):
         if not self.is_tty:
