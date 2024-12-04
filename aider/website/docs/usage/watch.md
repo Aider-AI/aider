@@ -32,20 +32,29 @@ description: Aider can run in your browser, not just on the command line.
 }
 </style>
 
-If you run aider with `--watch-files`, it will watch all files in your repo for
-any instructions you add using your favorite IDE or text editor.
-If you add code comments with "AI instructions", aider will follow them.
-So you can put aider instructions right into your source files using your IDE.
+## AI comments
 
-Specifically, aider will react to one-liner comments (# ... or // ...) that either start or end with `AI` or `AI!`. 
+If you run aider with `--watch-files`, it will watch all files in your repo 
+and look for any AI coding instructions you add using your favorite IDE or text editor.
 
-Comments that use `AI!` with an exclamation point are special. They trigger aider to take action to process all the AI comments and use them as instructions to make code changes.
+Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI` or `AI!`, like these:
+
+```
+# Implement a snake game. AI!
+// Write self-learning protein folding prediction engine. AI!
+```
+
+Aider will take note of all the comments you add that start or end with `AI`, but
+a comment that includes `AI!` with an exclamation point is special. 
+That triggers aider to take action to collect *all* the AI comments and use them as instructions to make code changes.
+
+
+## Example
 
 For example, if you included this AI comment in your code:
 
 ```js
-function factorial(n) {
-// Implement this. AI!
+function factorial(n) // Implement this. AI!
 ```
 
 Then aider would update the file and implement the function:
@@ -60,14 +69,20 @@ function factorial(n) {
 }
 ```
 
-This makes it easier to use aider with your favorite editor or IDE. 
-See the demo video above that shows aider working with AI comments in VSCode. 
+
+Also see the demo video above that shows aider working with AI comments in VSCode. 
+
+## Multiple uses
+
+
 
 This capability is quite flexible and powerful once you get familiar with the various ways it can be used:
 
 - Add an AI comment in the function you want changed, explaining the change request in-context right where you want the changes:
-  - `# Add error handling... AI!`
-- Drop multiple AI comments (in multiple files) before triggering aider with a final `AI!`:
+  - `# Add error handling here... AI!`
+- Drop multiple `AI` comments without the `!` in multiple files, before triggering aider with a final `AI!`:
   - `# AI: Refactor this function...`
-  - `# ... into a method here in this class. AI!`
-- Just add `#AI` to a file and aider will automatically add it to the chat session.
+  - `# AI: Keep in mind the way it's used here.`
+  - `# ... refactor it into a method here in this class. AI!`
+- Just add `#AI` to a file and aider will automatically add it to the chat session. This is handy if you're looking at the file in your IDE and you want to add to the aider chat.
+
