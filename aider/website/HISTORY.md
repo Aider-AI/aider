@@ -24,6 +24,15 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Added `--watch-files` to watch files for AI comments.
+  - One-liner comments that start or end with "AI" are instructions to aider.
+  - When aider sees "AI!" it reads and follows all the instructions in AI comments.
+- Added Ctrl-Z support for process suspension.
+- `--read` now expands `~` home dirs.
+- Aider wrote 65% of the code in this release.
+
 ### Aider v0.66.0
 
 - PDF support for Sonnet and Gemini models.
