@@ -5,7 +5,7 @@ import time
 import uuid
 from pathlib import Path
 
-from mixpanel import Mixpanel, MixpanelException
+from mixpanel import MixpanelException
 from posthog import Posthog
 
 from aider import __version__
