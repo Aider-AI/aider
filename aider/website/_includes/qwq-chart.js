@@ -58,13 +58,15 @@ document.addEventListener('DOMContentLoaded', function () {
                       text: 'Solo model',
                       fillStyle: 'rgba(75, 192, 192, 0.2)',
                       strokeStyle: 'rgba(75, 192, 192, 1)',
-                      lineWidth: 1
+                      lineWidth: 1,
+                      fontColor: '#666'
                     },
                     {
                       text: 'Architect + Editor',
                       fillStyle: 'rgba(54, 162, 235, 0.2)',
                       strokeStyle: 'rgba(54, 162, 235, 1)',
-                      lineWidth: 1
+                      lineWidth: 1,
+                      fontColor: '#666'
                     }
                   ];
                 }
