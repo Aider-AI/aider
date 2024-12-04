@@ -23,12 +23,12 @@ document.addEventListener('DOMContentLoaded', function () {
       datasets: [{
         data: filteredData.map(row => row.pass_rate_2),
         backgroundColor: filteredData.map(row => 
-          (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)' || row.model === 'o1-mini' || row.model === 'o1-preview') 
+          (row.model === 'Qwen2.5 Coder 32B-I' || row.model === 'Sonnet (SOTA)' || row.model === 'o1-mini' || row.model === 'o1-preview') 
             ? 'rgba(75, 192, 192, 0.2)'   // Green for solo models
             : 'rgba(54, 162, 235, 0.2)'   // Blue for architect+editor
         ),
         borderColor: filteredData.map(row => 
-          (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)' || row.model === 'o1-mini' || row.model === 'o1-preview')
+          (row.model === 'Qwen2.5 Coder 32B-I' || row.model === 'Sonnet (SOTA)' || row.model === 'o1-mini' || row.model === 'o1-preview')
             ? 'rgba(75, 192, 192, 1)'     // Green border for solo models
             : 'rgba(54, 162, 235, 1)'     // Blue border for architect+editor
         ),
