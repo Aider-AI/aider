@@ -20,26 +20,20 @@ document.addEventListener('DOMContentLoaded', function () {
     
     var chartData = {
       labels: filteredData.map(row => row.model),
-      datasets: [
-        {
-          label: 'Solo model',
-          data: filteredData.map(row => 
-            (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)') ? row.pass_rate_2 : null
-          ),
-          backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Green
-          borderColor: 'rgba(75, 192, 192, 1)',
-          borderWidth: 1
-        },
-        {
-          label: 'Architect + Editor',
-          data: filteredData.map(row => 
-            (row.model !== 'Qwen2.5 Coder 32B Instruct' && row.model !== 'Sonnet (SOTA)') ? row.pass_rate_2 : null
-          ),
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',  // Blue
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }
-      ]
+      datasets: [{
+        data: filteredData.map(row => row.pass_rate_2),
+        backgroundColor: filteredData.map(row => 
+          (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)') 
+            ? 'rgba(75, 192, 192, 0.2)'   // Green for solo models
+            : 'rgba(54, 162, 235, 0.2)'   // Blue for architect+editor
+        ),
+        borderColor: filteredData.map(row => 
+          (row.model === 'Qwen2.5 Coder 32B Instruct' || row.model === 'Sonnet (SOTA)')
+            ? 'rgba(75, 192, 192, 1)'     // Green border for solo models
+            : 'rgba(54, 162, 235, 1)'     // Blue border for architect+editor
+        ),
+        borderWidth: 1
+      }]
     };
 
     if (chart) {
@@ -57,6 +51,22 @@ document.addEventListener('DOMContentLoaded', function () {
               labels: {
                 font: {
                   size: 14
+                },
+                generateLabels: function(chart) {
+                  return [
+                    {
+                      text: 'Solo model',
+                      fillStyle: 'rgba(75, 192, 192, 0.2)',
+                      strokeStyle: 'rgba(75, 192, 192, 1)',
+                      lineWidth: 1
+                    },
+                    {
+                      text: 'Architect + Editor',
+                      fillStyle: 'rgba(54, 162, 235, 0.2)',
+                      strokeStyle: 'rgba(54, 162, 235, 1)',
+                      lineWidth: 1
+                    }
+                  ];
                 }
               }
             },
