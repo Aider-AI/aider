@@ -8,14 +8,34 @@ description: Aider can run in your browser, not just on the command line.
 
 # Aider in your IDE
 
-<video width="100%" controls>
-  <source src="/assets/videos/aider-watch-demo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<div class="video-container">
+  <video controls loop poster="/assets/watch.jpg">
+    <source src="/assets/watch.mp4" type="video/mp4">
+    <a href="/assets/watch.mp4">Aider browser UI demo video</a>
+  </video>
+</div>
 
-If you run aider with `--watch-files`,
-it will watch all files in your repo for edits. If you edit a file and add comments with "AI instructions", aider will follow them. So you can put aider messages right into your source files, nearby the code they refer to. 
+<style>
+.video-container {
+  position: relative;
+  padding-bottom: 101.89%; /* 1080 / 1060 = 1.0189 */
+  height: 0;
+  overflow: hidden;
+}
 
+.video-container video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+If you run aider with `--watch-files`, it will watch all files in your repo for
+any instructions you add using your favorite IDE or text editor.
+If you add code comments with "AI instructions", aider will follow them.
+So you can put aider instructions right into your source files using your IDE.
 
 Specifically, aider will react to one-liner comments (# ... or // ...) that either start or end with `AI` or `AI!`. 
 
@@ -24,7 +44,7 @@ Comments that use `AI!` with an exclamation point are special. They trigger aide
 For example, if you included this AI comment in your code:
 
 ```js
-function factorial(n)
+function factorial(n) {
 // Implement this. AI!
 ```
 
@@ -40,15 +60,14 @@ function factorial(n) {
 }
 ```
 
-This makes it easier to use aider from within your favorite editor or IDE. 
-See the demo video above of aider working with AI comments in VSCode. You can also [download the demo video directly](/assets/videos/aider-watch-demo.mp4).
+This makes it easier to use aider with your favorite editor or IDE. 
+See the demo video above that shows aider working with AI comments in VSCode. 
 
 This capability is quite flexible and powerful once you get familiar with the various ways it can be used:
 
-- Just add #AI to a file to add it to the chat.
-- Add an AI comment in the function you want changed, explaining the change request in-context.
+- Add an AI comment in the function you want changed, explaining the change request in-context right where you want the changes:
   - `# Add error handling... AI!`
-- Drop multiple AI comments (in multiple files) before triggering aider with a final AI!:
+- Drop multiple AI comments (in multiple files) before triggering aider with a final `AI!`:
   - `# AI: Refactor this function...`
   - `# ... into a method here in this class. AI!`
-
+- Just add `#AI` to a file and aider will automatically add it to the chat session.
