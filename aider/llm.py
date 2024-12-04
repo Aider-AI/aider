@@ -13,6 +13,8 @@ os.environ["LITELLM_MODE"] = "PRODUCTION"
 
 # `import litellm` takes 1.5 seconds, defer it!
 
+VERBOSE = False
+
 
 class LazyLiteLLM:
     _lazy_module = None
@@ -26,6 +28,9 @@ class LazyLiteLLM:
     def _load_litellm(self):
         if self._lazy_module is not None:
             return
+
+        if VERBOSE:
+            print("Loading litellm...")
 
         self._lazy_module = importlib.import_module("litellm")
 

@@ -12,8 +12,6 @@ if type(__version__) is not str:
     __version__ = safe_version + "+type"
 else:
     try:
-        print(__version__)
-        print(safe_version)
         if version.parse(__version__) < version.parse(safe_version):
             __version__ = safe_version + "+less"
     except Exception:
