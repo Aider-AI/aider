@@ -154,8 +154,8 @@ def main():
         if not dry_run:
             subprocess.run(cmd, check=True)
 
-    # Remove aider/__version__.py if it exists
-    version_file = "aider/__version__.py"
+    # Remove aider/_version.py if it exists
+    version_file = "aider/_version.py"
     if os.path.exists(version_file):
         print(f"Removing {version_file}")
         if not dry_run:
