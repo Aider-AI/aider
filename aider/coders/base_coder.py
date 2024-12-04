@@ -1420,6 +1420,8 @@ class Coder:
     def lint_edited(self, fnames):
         res = ""
         for fname in fnames:
+            if not fname:
+                continue
             errors = self.linter.lint(self.abs_root_path(fname))
 
             if errors:
