@@ -51,7 +51,7 @@ filelock==3.16.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   virtualenv
-fonttools==4.55.0
+fonttools==4.55.1
     # via matplotlib
 identify==2.6.3
     # via pre-commit
@@ -85,7 +85,7 @@ markupsafe==3.0.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   jinja2
-matplotlib==3.9.2
+matplotlib==3.9.3
     # via -r requirements/requirements-dev.in
 mdurl==0.1.2
     # via
@@ -144,7 +144,7 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
-pytest==8.3.3
+pytest==8.3.4
     # via
     #   -r requirements/requirements-dev.in
     #   pytest-env
@@ -177,7 +177,7 @@ semver==3.0.2
     # via -r requirements/requirements-dev.in
 shellingham==1.5.4
     # via typer
-six==1.16.0
+six==1.17.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -204,7 +204,7 @@ sphinxcontrib-qthelp==2.0.0
     # via sphinx
 sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
-typer==0.13.1
+typer==0.15.1
     # via -r requirements/requirements-dev.in
 typing-extensions==4.12.2
     # via

@@ -4,9 +4,9 @@
 #
 #    pip-compile --output-file=requirements.txt requirements/requirements.in
 #
-aiohappyeyeballs==2.4.3
+aiohappyeyeballs==2.4.4
     # via aiohttp
-aiohttp==3.11.7
+aiohttp==3.11.9
     # via litellm
 aiosignal==1.3.1
     # via aiohttp
@@ -70,8 +70,10 @@ h11==0.14.0
 httpcore==1.0.7
     # via httpx
 httpx==0.27.2
-    # via openai
-huggingface-hub==0.26.2
+    # via
+    #   litellm
+    #   openai
+huggingface-hub==0.26.3
     # via tokenizers
 idna==3.10
     # via
@@ -97,7 +99,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.52.16
+litellm==1.53.5
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -121,7 +123,7 @@ numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.55.2
+openai==1.56.2
     # via litellm
 packaging==24.2
     # via
@@ -135,11 +137,11 @@ pexpect==4.9.0
     # via -r requirements/requirements.in
 pillow==10.4.0
     # via -r requirements/requirements.in
-posthog==3.7.3
+posthog==3.7.4
     # via -r requirements/requirements.in
 prompt-toolkit==3.0.48
     # via -r requirements/requirements.in
-propcache==0.2.0
+propcache==0.2.1
     # via
     #   aiohttp
     #   yarl
@@ -151,7 +153,7 @@ pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.10.2
+pydantic==2.10.3
     # via
     #   litellm
     #   openai
@@ -190,13 +192,13 @@ requests==2.32.3
     #   tiktoken
 rich==13.9.4
     # via -r requirements/requirements.in
-rpds-py==0.21.0
+rpds-py==0.22.3
     # via
     #   jsonschema
     #   referencing
 scipy==1.13.1
     # via -r requirements/requirements.in
-six==1.16.0
+six==1.17.0
     # via
     #   mixpanel
     #   posthog
@@ -244,7 +246,7 @@ watchfiles==1.0.0
     # via -r requirements/requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
-yarl==1.18.0
+yarl==1.18.3
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata

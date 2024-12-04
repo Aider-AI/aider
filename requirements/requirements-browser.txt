@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.14.2
+narwhals==1.15.2
     # via altair
 numpy==1.26.4
     # via
@@ -122,7 +122,7 @@ pillow==10.4.0
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   streamlit
-protobuf==5.28.3
+protobuf==5.29.1
     # via streamlit
 pyarrow==18.1.0
     # via streamlit
@@ -163,13 +163,13 @@ rich==13.9.4
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   streamlit
-rpds-py==0.21.0
+rpds-py==0.22.3
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   jsonschema
     #   referencing
-six==1.16.0
+six==1.17.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt

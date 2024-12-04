@@ -4,12 +4,12 @@
 #
 #    pip-compile --constraint=requirements.txt --constraint=requirements/requirements-dev.txt --output-file=requirements/requirements-help.txt requirements/requirements-help.in
 #
-aiohappyeyeballs==2.4.3
+aiohappyeyeballs==2.4.4
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   aiohttp
-aiohttp==3.11.7
+aiohttp==3.11.9
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -103,7 +103,7 @@ httpx==0.27.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   llama-index-core
-huggingface-hub[inference]==0.26.2
+huggingface-hub[inference]==0.26.3
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -188,13 +188,13 @@ pillow==10.4.0
     #   -c requirements/requirements-dev.txt
     #   llama-index-core
     #   sentence-transformers
-propcache==0.2.0
+propcache==0.2.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   aiohttp
     #   yarl
-pydantic==2.10.2
+pydantic==2.10.3
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -305,7 +305,7 @@ wrapt==1.17.0
     # via
     #   deprecated
     #   llama-index-core
-yarl==1.18.0
+yarl==1.18.3
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
