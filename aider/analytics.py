@@ -219,7 +219,9 @@ class Analytics:
                 "user_id": self.user_id,
                 "time": int(time.time()),
             }
-            # ai try/except OsErrors, ignore them AI!
-            with open(self.logfile, "a") as f:
-                json.dump(log_entry, f)
-                f.write("\n")
+            try:
+                with open(self.logfile, "a") as f:
+                    json.dump(log_entry, f)
+                    f.write("\n")
+            except OSError:
+                pass  # Ignore OS errors when writing to logfile
