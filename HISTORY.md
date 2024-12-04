@@ -2,12 +2,15 @@
 
 ### main branch
 
-- Added `--watch-files` to watch files for AI comments.
-  - One-liner comments that start or end with "AI" are instructions to aider.
+- [Use aider in your IDE or editor](https://aider.chat/docs/usage/watch.html).
+  - Run `aider --watch-files` and it will watch for instructions you add to your source files.
+  - One-liner `# ...` or `// ...` comments that start or end with "AI" are instructions to aider.
   - When aider sees "AI!" it reads and follows all the instructions in AI comments.
+- Support for new Amazon Bedrock Nova models.
+- `/diff` now invokes `git diff` to use your preferred diff tool.
 - Added Ctrl-Z support for process suspension.
 - `--read` now expands `~` home dirs.
-- Aider wrote 65% of the code in this release.
+- Aider wrote 63% of the code in this release.
 
 ### Aider v0.66.0
 
