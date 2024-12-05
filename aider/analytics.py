@@ -52,7 +52,10 @@ class Analytics:
 
         # self.mp = Mixpanel(mixpanel_project_token)
         self.ph = Posthog(
-            project_api_key=posthog_project_api_key, host=posthog_host, on_error=self.posthog_error
+            project_api_key=posthog_project_api_key,
+            host=posthog_host,
+            on_error=self.posthog_error,
+            enable_exception_autocapture=True,
         )
 
     def disable(self, permanently):
