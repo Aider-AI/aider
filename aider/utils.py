@@ -393,12 +393,14 @@ def printable_shell_command(cmd_list):
     else:
         return shlex.join(cmd_list)
 
+
 def main():
     spinner = Spinner("Running spinner...")
     for _ in range(40):  # 40 steps * 0.25 seconds = 10 seconds
         time.sleep(0.25)
         spinner.step()
     spinner.end()
+
 
 if __name__ == "__main__":
     main()
