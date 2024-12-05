@@ -124,7 +124,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.temperature, 0.0)  # Should be deterministic
 
         model = Model("github/o1-preview")
-        self.assertEqual(model.name, "github/o1-preview") 
+        self.assertEqual(model.name, "github/o1-preview")
         self.assertEqual(model.temperature, 0.0)  # Should be deterministic
 
         # Test non-alias passes through unchanged
