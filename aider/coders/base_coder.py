@@ -286,7 +286,6 @@ class Coder:
         detect_urls=True,
         ignore_mentions=None,
         file_watcher=None,
-
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
