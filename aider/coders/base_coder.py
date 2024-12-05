@@ -103,6 +103,7 @@ class Coder:
     detect_urls = True
     ignore_mentions = None
     chat_language = None
+    file_watcher = None
 
     @classmethod
     def create(
@@ -153,10 +154,12 @@ class Coder:
                 aider_commit_hashes=from_coder.aider_commit_hashes,
                 commands=from_coder.commands.clone(),
                 total_cost=from_coder.total_cost,
+                ignore_mentions=from_coder.ignore_mentions,
+                file_watcher=from_coder.file_watcher,
             )
-
             use_kwargs.update(update)  # override to complete the switch
             use_kwargs.update(kwargs)  # override passed kwargs
+            dump(use_kwargs)
 
             kwargs = use_kwargs
 
@@ -175,7 +178,6 @@ class Coder:
 
     def clone(self, **kwargs):
         new_coder = Coder.create(from_coder=self, **kwargs)
-        new_coder.ignore_mentions = self.ignore_mentions
         return new_coder
 
     def get_announcements(self):
@@ -283,6 +285,9 @@ class Coder:
         suggest_shell_commands=True,
         chat_language=None,
         detect_urls=True,
+        ignore_mentions=None,
+        file_watcher=None,
+
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -293,7 +298,14 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
-        self.ignore_mentions = set()
+
+        self.ignore_mentions = ignore_mentions
+        if not self.ignore_mentions:
+            self.ignore_mentions = set()
+
+        self.file_watcher = file_watcher
+        if self.file_watcher:
+            self.file_watcher.coder = self
 
         self.suggest_shell_commands = suggest_shell_commands
         self.detect_urls = detect_urls

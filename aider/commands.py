@@ -43,6 +43,8 @@ class Commands:
             verify_ssl=self.verify_ssl,
             args=self.args,
             parser=self.parser,
+            verbose=self.verbose,
+            editor=self.editor,
         )
 
     def __init__(
@@ -997,6 +999,7 @@ class Commands:
 
         if not args.strip():
             self.basic_help()
+            dump(self.coder)
             return
 
         self.coder.event("interactive help")
