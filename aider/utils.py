@@ -393,4 +393,11 @@ def printable_shell_command(cmd_list):
     else:
         return shlex.join(cmd_list)
 
+def main():
+    spinner = Spinner("Running spinner...")
+    for _ in range(40):  # 40 steps * 0.25 seconds = 10 seconds
+        time.sleep(0.25)
+        spinner.step()
+    spinner.end()
+
 # add main() that runs a spinner for 10 seconds in 1/4 sec steps AI!
