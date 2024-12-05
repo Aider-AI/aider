@@ -400,4 +400,4 @@ def main():
         spinner.step()
     spinner.end()
 
-# add main() that runs a spinner for 10 seconds in 1/4 sec steps AI!
+# add __main__ AI!
