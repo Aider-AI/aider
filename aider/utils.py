@@ -277,7 +277,12 @@ class Spinner:
         self.last_update = 0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
+        self.tested = False
 
+    def test_charset(self):
+        if self.tested:
+            return
+        self.tested = True
         # Try unicode first, fall back to ascii if needed
         try:
             # Test if we can print unicode characters
@@ -303,6 +308,7 @@ class Spinner:
         if not self.visible:
             return
 
+        self.test_charset()
         print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
 
     def end(self):
