@@ -118,6 +118,11 @@ class TestModels(unittest.TestCase):
         model = Model("opus")
         self.assertEqual(model.name, "claude-3-opus-20240229")
 
+        # Test non-alias passes through unchanged
+        model = Model("gpt-4")
+        self.assertEqual(model.name, "gpt-4")
+
+    def test_o1_use_temp_false(self):
         # Test GitHub Copilot models
         model = Model("github/o1-mini")
         self.assertEqual(model.name, "github/o1-mini")
@@ -126,10 +131,6 @@ class TestModels(unittest.TestCase):
         model = Model("github/o1-preview")
         self.assertEqual(model.name, "github/o1-preview")
         self.assertEqual(model.use_temperature, 0.0)  # Should be deterministic
-
-        # Test non-alias passes through unchanged
-        model = Model("gpt-4")
-        self.assertEqual(model.name, "gpt-4")
 
     def test_aider_extra_model_settings(self):
         import tempfile
