@@ -400,4 +400,5 @@ def main():
         spinner.step()
     spinner.end()
 
-# add __main__ AI!
+if __name__ == "__main__":
+    main()
