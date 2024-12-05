@@ -118,6 +118,15 @@ class TestModels(unittest.TestCase):
         model = Model("opus")
         self.assertEqual(model.name, "claude-3-opus-20240229")
 
+        # Test GitHub Copilot models
+        model = Model("github/o1-mini")
+        self.assertEqual(model.name, "github/o1-mini")
+        self.assertEqual(model.temperature, 0.0)  # Should be deterministic
+
+        model = Model("github/o1-preview")
+        self.assertEqual(model.name, "github/o1-preview") 
+        self.assertEqual(model.temperature, 0.0)  # Should be deterministic
+
         # Test non-alias passes through unchanged
         model = Model("gpt-4")
         self.assertEqual(model.name, "gpt-4")
