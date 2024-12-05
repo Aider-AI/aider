@@ -999,7 +999,6 @@ class Commands:
 
         if not args.strip():
             self.basic_help()
-            dump(self.coder)
             return
 
         self.coder.event("interactive help")

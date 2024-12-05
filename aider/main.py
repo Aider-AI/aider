@@ -947,9 +947,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             if "show_announcements" in kwargs:
                 del kwargs["show_announcements"]
 
-            dump(hash(coder.file_watcher), coder.file_watcher)
             coder = Coder.create(**kwargs)
-            dump(hash(coder.file_watcher), coder.file_watcher)
 
             if switch.kwargs.get("show_announcements") is not False:
                 coder.show_announcements()

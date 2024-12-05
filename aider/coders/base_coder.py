@@ -159,7 +159,6 @@ class Coder:
             )
             use_kwargs.update(update)  # override to complete the switch
             use_kwargs.update(kwargs)  # override passed kwargs
-            dump(use_kwargs)
 
             kwargs = use_kwargs
 
