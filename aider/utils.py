@@ -392,3 +392,5 @@ def printable_shell_command(cmd_list):
         return subprocess.list2cmdline(cmd_list)
     else:
         return shlex.join(cmd_list)
+
+# add main() that runs a spinner for 10 seconds in 1/4 sec steps AI!
