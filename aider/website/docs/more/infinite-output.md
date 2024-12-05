@@ -67,7 +67,6 @@ cog.out(model_list)
 - codestral/codestral-latest
 - deepseek-chat
 - deepseek-coder
-- eu.anthropic.claude-3-5-sonnet-20241022-v2:0
 - mistral/codestral-2405
 - mistral/codestral-latest
 - mistral/codestral-mamba-latest
@@ -88,8 +87,6 @@ cog.out(model_list)
 - mistral/open-mixtral-8x7b
 - mistral/pixtral-12b-2409
 - openrouter/anthropic/claude-3.5-sonnet
-- us.anthropic.claude-3-5-haiku-20241022-v1:0
-- us.anthropic.claude-3-5-sonnet-20241022-v2:0
 - vertex_ai/claude-3-5-haiku
 - vertex_ai/claude-3-5-haiku@20241022
 - vertex_ai/claude-3-5-sonnet
