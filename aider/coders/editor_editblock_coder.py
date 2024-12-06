@@ -39,7 +39,7 @@ class EditorEditBlockCoder(EditBlockCoder):
                 chunks.reminder = [
                     dict(
                         role="system",
-                        content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                        content=self.fmt_system_prompt(self.gpt_prompts.system_reminder),
                     )
                 ]
             elif self.main_model.reminder == "user" and final["role"] == "user":
