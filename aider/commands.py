@@ -1432,7 +1432,7 @@ Just show me the edits I need to make.
 """
 
         pyperclip.copy(markdown)
-        self.io.tool_output("Copied context to clipboard.")
+        self.io.tool_output("Copied code context to clipboard.")
 
 
 def expand_subdir(file_path):

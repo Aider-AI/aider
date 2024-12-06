@@ -211,3 +211,45 @@ def factorial(n):
 
 As you use aider with your chosen LLM, you can develop a sense for how
 explicit you need to make your AI comments.
+
+## Behind the scenes
+
+Aider sends your AI comments to the LLM with the
+[repo map](https://aider.chat/docs/repomap.html)
+and all the other code context you've added to the chat.
+
+It also pulls out and highlights the AI comments with specific context, showing the LLM
+exactly how they fit into the code base.
+
+```
+The "AI" comments below marked with █ can be found in the code files I've shared with you.
+They contain your instructions.
+Make the requested changes.
+Be sure to remove all these "AI" comments from the code!
+
+todo_app.py:
+⋮...
+class TodoList:
+⋮...
+│    def __init__(self):
+│        """Initialize an empty todo list"""
+⋮...
+│
+│    def list_tasks(self):
+│        """Display all tasks"""
+█        # Implement this. AI!
+│
+│def main():
+│    todo = TodoList()
+│
+⋮...
+```
+
+--------
+
+#### Credits
+
+*This feature was inspired by 
+the way [Overide](https://github.com/oi-overide) watches for file changes
+to find prompts embedded within `//> a specific set of delimiters <//`.*
+
