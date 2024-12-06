@@ -1,5 +1,13 @@
 # Release history
 
+### main branch
+
+- [Aider works with LLM web chat UIs with `--copy-paste` mode](https://aider.chat/docs/usage/copypaste.html).
+- Better error messages when missing dependencies for Gemini and Bedrock models
+- Control-D now properly exits the program
+- Fixed shell environment handling when running commands
+- Aider wrote 51% of the code in this release.
+
 ### Aider v0.67.0
 
 - [Use aider in your IDE or editor](https://aider.chat/docs/usage/watch.html).
