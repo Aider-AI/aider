@@ -176,8 +176,7 @@ The "AI" comments below marked with █ can be found in the code files I've shar
 They contain your instructions.
 Make the requested changes.
 Be sure to remove all these "AI" comments from the code!
-
-    """
+"""
 
         # Refresh all AI comments from tracked files
         for fname in self.coder.abs_fnames:
@@ -213,7 +212,6 @@ Be sure to remove all these "AI" comments from the code!
                 context.add_context()
                 res += context.format()
             except ValueError:
-                # Fall back to just showing the comments if TreeContext fails
                 for ln, comment in zip(line_nums, comments):
                     res += f"  Line {ln}: {comment}\n"
 
