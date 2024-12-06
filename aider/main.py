@@ -827,6 +827,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.copypaste:
         from aider.copypaste import ClipboardWatcher
+
         clipboard_watcher = ClipboardWatcher(coder.io, verbose=args.verbose)
         clipboard_watcher.start()
 
