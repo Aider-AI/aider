@@ -535,6 +535,12 @@ def get_parser(default_config_files, git_root):
         default=False,
         help="Enable/disable watching files for ai coding comments (default: False)",
     )
+    group.add_argument(
+        "--copypaste",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable watching clipboard for changes (default: False)",
+    )
     group = parser.add_argument_group("Fixing and committing")
     group.add_argument(
         "--lint",

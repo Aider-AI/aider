@@ -825,6 +825,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         file_watcher = FileWatcher(coder, gitignores=ignores, verbose=args.verbose)
         coder.file_watcher = file_watcher
 
+    if args.copypaste:
+        from aider.copypaste import ClipboardWatcher
+        clipboard_watcher = ClipboardWatcher(coder.io, verbose=args.verbose)
+        clipboard_watcher.start()
+
     coder.show_announcements()
 
     if args.show_prompts:
