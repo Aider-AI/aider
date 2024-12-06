@@ -218,7 +218,7 @@ Be sure to remove all these "ai" comments from the code!
         line_nums = []
         comments = []
         has_bang = False
-        content = self.io.read_text(filepath)
+        content = self.io.read_text(filepath, silent=True)
         for i, line in enumerate(content.splitlines(), 1):
             if match := self.ai_comment_pattern.search(line):
                 comment = match.group(0).strip()

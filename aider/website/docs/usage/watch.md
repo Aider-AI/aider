@@ -41,7 +41,8 @@ Specifically, aider looks for one-liner comments (# ... or // ...) that either s
 
 ```
 # Implement a snake game. AI!
-// Write self-learning protein folding prediction engine. AI!
+
+// Write a self-learning protein folding prediction engine. AI!
 ```
 
 Aider will take note of all the comments you add that start or end with `AI`, but
@@ -74,15 +75,70 @@ Also see the demo video above that shows aider working with AI comments in VSCod
 
 ## Multiple uses
 
+This capability is quite flexible and powerful, and can be used in many ways.
 
+### In-context instructions
 
-This capability is quite flexible and powerful once you get familiar with the various ways it can be used:
+You can add an AI comment in the function you want changed, 
+explaining the change request in-context right where you want the changes.
 
-- Add an AI comment in the function you want changed, explaining the change request in-context right where you want the changes:
-  - `# Add error handling here... AI!`
-- Drop multiple `AI` comments without the `!` in multiple files, before triggering aider with a final `AI!`:
-  - `# AI: Refactor this function...`
-  - `# AI: Keep in mind the way it's used here.`
-  - `# ... refactor it into a method here in this class. AI!`
-- Just add `#AI` to a file and aider will automatically add it to the chat session. This is handy if you're looking at the file in your IDE and you want to add to the aider chat.
+```javascript
+app.get('/sqrt/:n', (req, res) => {
+    const n = parseFloat(req.params.n);
+
+    // Add error handling for NaN and less than zero. AI!
+
+    const result = math.sqrt(n);
+    res.json({ result: result });
+});
+```
+
+### Multiple comments
+
+You can drop multiple `AI` comments without the `!`,
+before triggering aider with a final `AI!`.
+Also keep in mind that you can spread the AI comments across
+multiple files, if you want to coordinate changes in multiple places.
+Just use `AI!` last, to trigger aider.
+
+```python
+@app.route('/factorial/<int:n>')
+def factorial(n):
+    if n < 0:
+        return jsonify(error="Factorial is not defined for negative numbers"), 400
+        
+    # AI: Refactor this code...
+    
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+        
+    # ... into to a compute_factorial() function. AI!
+    
+    return jsonify(result=result)
+```
+
+### Long form instructions
+
+You can add a block of comments, with longer instructions.
+Just be sure to start or end one of the lines with `AI` or `AI!` to draw
+aider's attention to the block.
+
+```python
+# Make these changes: AI!
+# - Add a proper main() function
+# - Use Click to process cmd line args
+# - Accept --host and --port args
+# - Print a welcome message that includes the listening url
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+
+### Add a file to the aider chat
+
+Rather than using `/add` to add a file inside the aider chat, you can
+simply put an `#AI` comment in it and save the file.
+You can undo/remove the comment immediately if you like, the file
+will still be added to the aider chat.
 

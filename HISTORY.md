@@ -10,7 +10,8 @@
 - `/diff` now invokes `git diff` to use your preferred diff tool.
 - Added Ctrl-Z support for process suspension.
 - `--read` now expands `~` home dirs.
-- Aider wrote 63% of the code in this release.
+- Enabled exception capture in analytics.
+- Aider wrote 61% of the code in this release.
 
 ### Aider v0.66.0
 
