@@ -146,6 +146,27 @@ simply put an `#AI` comment in it and save the file.
 You can undo/remove the comment immediately if you like, the file
 will still be added to the aider chat.
 
+## Also use aider chat in the terminal
+
+It can be really helpful to get a change started with AI comments.
+But sometimes you want to build on or refine those changes.
+You can of course continue to do that with AI comments,
+but it can sometimes be effective to switch over to the aider terminal chat.
+The chat has the history of the AI comments you just made,
+so you can continue on naturally from there.
+
+You can also use the normal aider chat in your terminal to work with
+many of aider's more advanced features:
+
+- Use `/undo` to revert changes you don't like. Although you may also be able to use your IDE's undo function to step back in the file history.
+- Use [chat modes](https://aider.chat/docs/usage/modes.html) to ask questions or get help.
+- Manage the chat context with `/tokens`, `/clear`, `/drop`, `/reset`.
+Adding an AI comment will add the file to the chat. 
+Periodically, you may want remove extra context that is no longer needed.
+- [Fix lint and test errors](https://aider.chat/docs/usage/lint-test.html).
+- Run shell commands.
+- Etc.
+
 
 ## You can be lazy
 
@@ -250,6 +271,6 @@ todo_app.py:
 #### Credits
 
 *This feature was inspired by 
-the way [Overide](https://github.com/oi-overide) watches for file changes
+the way [Override](https://github.com/oi-overide) watches for file changes
 to find prompts embedded within `//> a specific set of delimiters <//`.*
 
