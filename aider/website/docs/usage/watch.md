@@ -229,7 +229,7 @@ Be sure to remove all these "AI" comments from the code!
 
 todo_app.py:
 ⋮...
-class TodoList:
+│class TodoList:
 ⋮...
 │    def __init__(self):
 │        """Initialize an empty todo list"""
