@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const diagonalPattern = pattern.draw('diagonal', 'rgba(54, 162, 235, 0.2)');
   let displayedData = [];
 
-  const HIGHTLIGHT_MODEL = 'no no no no';
+  const HIGHTLIGHT_MODEL = 'Qwen';
   var leaderboardData = {
     labels: [],
     datasets: [{
