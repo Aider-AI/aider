@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   var ctx = document.getElementById('editChart').getContext('2d');
+  const diagonalPattern = pattern.draw('diagonal', 'rgba(54, 162, 235, 0.2)');
   const HIGHTLIGHT_MODEL = 'no no no no';
   var leaderboardData = {
     labels: [],
@@ -9,9 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
       backgroundColor: function(context) {
         const row = allData[context.dataIndex];
         if (row && row.edit_format === 'whole') {
-          return pattern.draw('diagonal', 'rgba(54, 162, 235, 0.2)');
+          return diagonalPattern;
         }
-        const label = context.chart.data.labels[context.dataIndex] || '';
+        const label = leaderboardData.labels[context.dataIndex] || '';
         return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
       },
       borderColor: function(context) {
