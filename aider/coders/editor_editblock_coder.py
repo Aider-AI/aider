@@ -29,3 +29,20 @@ class EditorEditBlockCoder(EditBlockCoder):
                     markdown += content + "\n\n"
 
         return markdown.strip()
+
+    def format_chat_chunks(self):
+        chunks = super().format_chat_chunks()
+        # Only add reminder if there are current messages
+        if chunks.cur:
+            final = chunks.cur[-1]
+            if self.main_model.reminder == "sys":
+                chunks.reminder = self.reminder_message
+            elif self.main_model.reminder == "user" and final["role"] == "user":
+                # stuff it into the user message
+                new_content = (
+                    final["content"]
+                    + "\n\n"
+                    + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                )
+                chunks.cur[-1] = dict(role=final["role"], content=new_content)
+        return chunks
