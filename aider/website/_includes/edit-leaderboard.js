@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
   var ctx = document.getElementById('editChart').getContext('2d');
   const diagonalPattern = pattern.draw('diagonal', 'rgba(54, 162, 235, 0.2)');
+  let displayedData = [];
+
   const HIGHTLIGHT_MODEL = 'no no no no';
   var leaderboardData = {
     labels: [],
@@ -37,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var selectedRows = document.querySelectorAll('tr.selected');
     var showAll = selectedRows.length === 0;
 
+    displayedData = [];
     leaderboardData.labels = [];
     leaderboardData.datasets[0].data = [];
 
@@ -46,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         rowElement.classList.remove('selected');
       }
       if (showAll || rowElement.classList.contains('selected')) {
+        displayedData.push(row);
         leaderboardData.labels.push(row.model);
         leaderboardData.datasets[0].data.push(row.pass_rate_2);
       }
@@ -54,6 +58,13 @@ document.addEventListener('DOMContentLoaded', function () {
     leaderboardChart.update();
     leaderboardChart.render();
   }
+
+  // Use displayedData in the backgroundColor callback instead of allData
+  leaderboardData.datasets[0].backgroundColor = function(context) {
+    const row = displayedData[context.dataIndex];
+    if (row && row.edit_format === 'whole') return diagonalPattern;
+    return 'rgba(54, 162, 235, 0.2)';
+  };
 
   var tableBody = document.querySelector('table tbody');
   allData.forEach(function(row, index) {
@@ -119,6 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var tableBody = document.querySelector('table:first-of-type tbody');
     var rows = tableBody.getElementsByTagName('tr');
     
+    displayedData = [];
     leaderboardData.labels = [];
     leaderboardData.datasets[0].data = [];
     
@@ -126,6 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var rowText = rows[i].textContent;
       if (searchWords.every(word => rowText.toLowerCase().includes(word))) {
         rows[i].style.display = '';
+        displayedData.push(allData[i]);
         leaderboardData.labels.push(allData[i].model);
         leaderboardData.datasets[0].data.push(allData[i].pass_rate_2);
       } else {
