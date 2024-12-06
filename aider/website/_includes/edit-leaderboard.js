@@ -1,6 +1,3 @@
-// Initialize pattern maker
-const pattern = window.pattern;
-
 document.addEventListener('DOMContentLoaded', function () {
   var ctx = document.getElementById('editChart').getContext('2d');
   const HIGHTLIGHT_MODEL = 'no no no no';
