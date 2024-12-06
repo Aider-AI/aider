@@ -1,3 +1,6 @@
+// Initialize pattern maker
+const pattern = window.pattern;
+
 document.addEventListener('DOMContentLoaded', function () {
   var ctx = document.getElementById('editChart').getContext('2d');
   const HIGHTLIGHT_MODEL = 'no no no no';
@@ -7,6 +10,10 @@ document.addEventListener('DOMContentLoaded', function () {
       label: 'Percent completed correctly',
       data: [],
       backgroundColor: function(context) {
+        const row = allData[context.dataIndex];
+        if (row && row.edit_format === 'whole') {
+          return pattern.draw('diagonal', 'rgba(54, 162, 235, 0.2)');
+        }
         const label = context.chart.data.labels[context.dataIndex] || '';
         return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
       },
@@ -23,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function () {
     allData.push({
       model: '{{ row.model }}',
       pass_rate_2: {{ row.pass_rate_2 }},
-      percent_cases_well_formed: {{ row.percent_cases_well_formed }}
+      percent_cases_well_formed: {{ row.percent_cases_well_formed }},
+      edit_format: '{{ row.edit_format }}'
     });
   {% endfor %}
 
