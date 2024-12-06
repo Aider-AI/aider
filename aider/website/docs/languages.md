@@ -99,6 +99,7 @@ cog.out(get_supported_languages_md())
 | scala                | .scala               |          |   ✓    |
 | sql                  | .sql                 |          |   ✓    |
 | sqlite               | .sqlite              |          |   ✓    |
+| swift                | .swift               |    ✓     |        |
 | toml                 | .toml                |          |   ✓    |
 | tsq                  | .tsq                 |          |   ✓    |
 | typescript           | .ts                  |    ✓     |   ✓    |
