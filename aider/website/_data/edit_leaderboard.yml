@@ -2066,3 +2066,26 @@
   versions: 0.67.1.dev
   seconds_per_case: 20.2
   total_cost: 0.0000
+
+- dirname: 2024-12-06-21-35-50--gemini-exp-1206-diff
+  test_cases: 133
+  model: emini-exp-1206
+  edit_format: diff
+  commit_hash: f2d2ab5
+  pass_rate_1: 55.6
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 84.2
+  error_outputs: 68
+  num_malformed_responses: 68
+  num_with_malformed_responses: 21
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 2
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model gemini/gemini-exp-1206
+  date: 2024-12-06
+  versions: 0.67.1.dev
+  seconds_per_case: 32.1
+  total_cost: 0.0000
