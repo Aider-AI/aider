@@ -2043,3 +2043,26 @@
   versions: 0.66.1.dev
   seconds_per_case: 8.7
   total_cost: 0.0000
+
+- dirname: 2024-12-06-18-27-47--llama33-diff
+  test_cases: 133
+  model: llama-3.3-70b-instruct
+  edit_format: diff
+  commit_hash: 53e0d67
+  pass_rate_1: 42.1
+  pass_rate_2: 59.4
+  percent_cases_well_formed: 88.7
+  error_outputs: 33
+  num_malformed_responses: 33
+  num_with_malformed_responses: 15
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openrouter/meta-llama/llama-3.3-70b-instruct
+  date: 2024-12-06
+  versions: 0.67.1.dev
+  seconds_per_case: 20.2
+  total_cost: 0.0000
