@@ -321,8 +321,7 @@ class InputOutput:
             self.tool_error(f"{filename}: {e}")
             return
 
-    # add silent=False, if true don't output any error messages. SEARCH/REPLACE the entire func. AI!
-    def read_text(self, filename):
+    def read_text(self, filename, silent=False):
         if is_image_file(filename):
             return self.read_image(filename)
 
@@ -330,17 +329,21 @@ class InputOutput:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
         except OSError as err:
-            self.tool_error(f"{filename}: unable to read: {err}")
+            if not silent:
+                self.tool_error(f"{filename}: unable to read: {err}")
             return
         except FileNotFoundError:
-            self.tool_error(f"{filename}: file not found error")
+            if not silent:
+                self.tool_error(f"{filename}: file not found error")
             return
         except IsADirectoryError:
-            self.tool_error(f"{filename}: is a directory")
+            if not silent:
+                self.tool_error(f"{filename}: is a directory")
             return
         except UnicodeError as e:
-            self.tool_error(f"{filename}: {e}")
-            self.tool_error("Use --encoding to set the unicode encoding.")
+            if not silent:
+                self.tool_error(f"{filename}: {e}")
+                self.tool_error("Use --encoding to set the unicode encoding.")
             return
 
     def write_text(self, filename, content, max_retries=5, initial_delay=0.1):
