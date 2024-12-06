@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     leaderboardChart.update();
+    leaderboardChart.render();
   }
 
   var tableBody = document.querySelector('table tbody');
