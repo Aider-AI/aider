@@ -40,18 +40,20 @@ and look for any AI coding instructions you add using your favorite IDE or text 
 Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI` or `AI!`, like these:
 
 ```python
-# Implement a snake game. AI!
+# Make a snake game. AI!
 ```
 
 Or in `//` comment languages...
 
 ```js
-// Write a self-learning protein folding prediction engine. AI!
+// Write a protein folding prediction engine. AI!
 ```
 
 Aider will take note of all the comments that start or end with `AI`, but
 a comment that includes `AI!` with an exclamation point is special. 
 That triggers aider to take action to collect *all* the AI comments and use them as instructions to make code changes.
+
+See the demo video above that shows aider working with AI comments in VSCode. 
 
 
 ## Example
@@ -75,8 +77,6 @@ function factorial(n) {
 ```
 
 
-Also see the demo video above that shows aider working with AI comments in VSCode. 
-
 ## Multiple uses
 
 This capability is quite flexible and powerful, and can be used in many ways.
@@ -99,7 +99,7 @@ app.get('/sqrt/:n', (req, res) => {
 
 ### Multiple comments
 
-You can drop multiple `AI` comments without the `!`,
+You can add multiple `AI` comments without the `!`,
 before triggering aider with a final `AI!`.
 Also keep in mind that you can spread the AI comments across
 multiple files, if you want to coordinate changes in multiple places.
@@ -147,11 +147,11 @@ You can undo/remove the comment immediately if you like, the file
 will still be added to the aider chat.
 
 
-### You can be lazy
+## You can be lazy
 
-The comments in the examples above all show AI
+The examples above all show AI
 comments with full sentences, proper capitalization, punctuation, etc.
-This was done for clarity, but is not needed in practice.
+This was done to help explain how AI comments work, but is not needed in practice.
 
 Most LLMs are perfectly capable of dealing with ambiguity and
 inferring implied intent. 
