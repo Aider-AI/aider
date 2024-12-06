@@ -807,8 +807,8 @@ class Coder:
             return
 
     def copy_context(self):
-        # run cmd_copy_context if self.auto-copy-context ai!
-        pass
+        if self.auto_copy_context:
+            self.commands.cmd_copy_context()
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
