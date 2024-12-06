@@ -37,7 +37,7 @@ cog.out(text)
 - Spinner now falls back to ASCII art if fancy symbols throw unicode errors.
 - `--read` now expands `~` home dirs.
 - Enabled exception capture in analytics.
-- Aider wrote 61% of the code in this release.
+- [Aider wrote 61% of the code in this release.](https://aider.chat/HISTORY.html)
 
 ### Aider v0.66.0
 

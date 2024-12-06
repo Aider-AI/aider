@@ -3252,3 +3252,76 @@
     Philippe de Reynal: 30
   start_tag: v0.65.0
   total_lines: 726
+- aider_percentage: 61.15
+  aider_total: 458
+  end_date: '2024-12-06'
+  end_tag: v0.67.0
+  file_counts:
+    .github/workflows/issues.yml:
+      Paul Gauthier (aider): 29
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 13
+      Paul Gauthier (aider): 7
+    aider/args.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 5
+    aider/coders/base_coder.py:
+      Paul Gauthier: 15
+    aider/commands.py:
+      Paul Gauthier: 11
+    aider/io.py:
+      Paul Gauthier: 28
+      Paul Gauthier (aider): 32
+    aider/llm.py:
+      Paul Gauthier: 5
+    aider/main.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 5
+    aider/models.py:
+      Paul Gauthier: 1
+    aider/run_cmd.py:
+      Paul Gauthier: 1
+    aider/utils.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 22
+    aider/watch.py:
+      Paul Gauthier: 52
+      Paul Gauthier (aider): 220
+    aider/website/_includes/qwq-chart.js:
+      Paul Gauthier: 73
+      Paul Gauthier (aider): 47
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    scripts/blame.py:
+      Paul Gauthier (aider): 26
+    scripts/update-history.py:
+      Paul Gauthier: 5
+    scripts/versionbump.py:
+      Paul Gauthier: 2
+    tests/basic/test_analytics.py:
+      Paul Gauthier: 9
+      Paul Gauthier (aider): 3
+    tests/basic/test_main.py:
+      Paul Gauthier: 1
+    tests/basic/test_models.py:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 7
+    tests/basic/test_watch.py:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 34
+    tests/browser/test_browser.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 1
+    tests/fixtures/watch.js:
+      Paul Gauthier: 19
+      Paul Gauthier (aider): 16
+    tests/fixtures/watch.py:
+      Paul Gauthier: 17
+      Paul Gauthier (aider): 4
+  grand_total:
+    Paul Gauthier: 291
+    Paul Gauthier (aider): 458
+  start_tag: v0.66.0
+  total_lines: 749
