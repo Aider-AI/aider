@@ -29,6 +29,7 @@ cog.out(get_help_md())
 | **/code** | Ask for changes to your code |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/copy** | Copy the last assistant message to the clipboard |
+| **/copy-context** | Copy the current chat context as markdown, suitable to paste into a web UI |
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
 | **/editor** | Open an editor to write a prompt |

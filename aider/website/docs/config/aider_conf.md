@@ -312,6 +312,9 @@ cog.outl("```")
 ## Enable/disable watching files for ai coding comments (default: False)
 #watch-files: false
 
+## Enable automatic copy/paste of chat between aider and web UI (default: False)
+#copy-paste: false
+
 ########################
 # Fixing and committing:
 

@@ -60,9 +60,10 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--skip-sanity-check-repo]
-             [--watch-files | --no-watch-files] [--lint]
-             [--lint-cmd] [--auto-lint | --no-auto-lint]
-             [--test-cmd] [--auto-test | --no-auto-test] [--test]
+             [--watch-files | --no-watch-files]
+             [--copy-paste | --no-copy-paste] [--lint] [--lint-cmd]
+             [--auto-lint | --no-auto-lint] [--test-cmd]
+             [--auto-test | --no-auto-test] [--test]
              [--analytics | --no-analytics] [--analytics-log]
              [--analytics-disable] [--file] [--read] [--vim]
              [--chat-language] [--version] [--just-check-update]
@@ -488,6 +489,14 @@ Environment variable: `AIDER_WATCH_FILES`
 Aliases:
   - `--watch-files`
   - `--no-watch-files`
+
+### `--copy-paste`
+Enable automatic copy/paste of chat between aider and web UI (default: False)  
+Default: False  
+Environment variable: `AIDER_COPY_PASTE`  
+Aliases:
+  - `--copy-paste`
+  - `--no-copy-paste`
 
 ## Fixing and committing:
 
