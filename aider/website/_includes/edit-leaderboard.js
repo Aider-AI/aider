@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   var ctx = document.getElementById('editChart').getContext('2d');
-  const diagonalPattern = pattern.draw('diagonal', 'rgba(54, 162, 235, 0.2)');
+  const blueDiagonalPattern = pattern.draw('diagonal', 'rgba(54, 162, 235, 0.2)');
+  const redDiagonalPattern = pattern.draw('diagonal', 'rgba(255, 99, 132, 0.2)');
   let displayedData = [];
 
   const HIGHTLIGHT_MODEL = 'Qwen';
@@ -62,8 +63,15 @@ document.addEventListener('DOMContentLoaded', function () {
   // Use displayedData in the backgroundColor callback instead of allData
   leaderboardData.datasets[0].backgroundColor = function(context) {
     const row = displayedData[context.dataIndex];
-    if (row && row.edit_format === 'whole') return diagonalPattern;
-    return 'rgba(54, 162, 235, 0.2)';
+    const label = leaderboardData.labels[context.dataIndex] || '';
+    if (label && label.includes(HIGHTLIGHT_MODEL)) {
+      if (row && row.edit_format === 'whole') return redDiagonalPattern;
+      else return 'rgba(255, 99, 132, 0.2)';
+    } else if (row && row.edit_format === 'whole') {
+      return blueDiagonalPattern;
+    } else {
+      return 'rgba(54, 162, 235, 0.2)';
+    }
   };
 
   var tableBody = document.querySelector('table tbody');
