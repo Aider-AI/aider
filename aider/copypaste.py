@@ -13,6 +13,7 @@ class ClipboardWatcher:
         self.stop_event = None
         self.watcher_thread = None
         self.last_clipboard = None
+        self.io.clipboard_watcher = self
 
     def start(self):
         """Start watching clipboard for changes"""
@@ -25,8 +26,8 @@ class ClipboardWatcher:
                     current = pyperclip.paste()
                     if current != self.last_clipboard:
                         self.last_clipboard = current
-                        self.io.placeholder = current
                         self.io.interrupt_input()
+                        self.io.placeholder = current
                     time.sleep(0.5)
                 except Exception as e:
                     if self.verbose:

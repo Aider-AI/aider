@@ -688,6 +688,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_edit_format=args.editor_edit_format,
     )
 
+    if args.copypaste and args.edit_format is None:
+        if main_model.edit_format in ("diff", "whole"):
+            main_model.edit_format = "editor-" + main_model.edit_format
+
     if args.verbose:
         io.tool_output("Model metadata:")
         io.tool_output(json.dumps(main_model.info, indent=4))
@@ -828,7 +832,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.file_watcher = file_watcher
 
     if args.copypaste:
-        coder.clipboard_watcher = ClipboardWatcher(coder.io, verbose=args.verbose)
+        ClipboardWatcher(coder.io, verbose=args.verbose)
 
     coder.show_announcements()
 
