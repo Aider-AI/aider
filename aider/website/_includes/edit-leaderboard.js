@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const redDiagonalPattern = pattern.draw('diagonal', 'rgba(255, 99, 132, 0.2)');
   let displayedData = [];
 
-  const HIGHTLIGHT_MODEL = '1206';
+  const HIGHTLIGHT_MODEL = 'no no no';
   var leaderboardData = {
     labels: [],
     datasets: [{
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
             generateLabels: function(chart) {
               return [
                 {
-                  text: 'Diff format',
+                  text: 'Diff-like format',
                   fillStyle: 'rgba(54, 162, 235, 0.2)',
                   strokeStyle: 'rgba(54, 162, 235, 1)',
                   lineWidth: 1
