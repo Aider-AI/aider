@@ -39,13 +39,17 @@ and look for any AI coding instructions you add using your favorite IDE or text 
 
 Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI` or `AI!`, like these:
 
-```
+```python
 # Implement a snake game. AI!
+```
 
+Or in `//` comment languages...
+
+```js
 // Write a self-learning protein folding prediction engine. AI!
 ```
 
-Aider will take note of all the comments you add that start or end with `AI`, but
+Aider will take note of all the comments that start or end with `AI`, but
 a comment that includes `AI!` with an exclamation point is special. 
 That triggers aider to take action to collect *all* the AI comments and use them as instructions to make code changes.
 
@@ -142,3 +146,68 @@ simply put an `#AI` comment in it and save the file.
 You can undo/remove the comment immediately if you like, the file
 will still be added to the aider chat.
 
+
+### You can be lazy
+
+The comments in the examples above all show AI
+comments with full sentences, proper capitalization, punctuation, etc.
+This was done for clarity, but is not needed in practice.
+
+Most LLMs are perfectly capable of dealing with ambiguity and
+inferring implied intent. 
+This often allows you to be quite lazy with your AI comments.
+In particular, you can start and end comments with lowercase `ai` and `ai!`,
+but you can also be much more terse with the request itself.
+Below are simpler versions of some of the examples given above.
+
+When the context clearly implies the needed action, `ai!` might be all you
+need. For example, to implement a factorial function 
+in a program full of other math functions either of these
+approaches would probably work:
+
+```js
+function factorial(n) // ai!
+```
+
+Or...
+
+```js
+// add factorial() ai!
+```
+
+Rather than a long, explicit comment like "Add error handling for NaN and less than zero,"
+you can let aider infer more about the request.
+This simpler comment may be sufficient:
+
+```javascript
+app.get('/sqrt/:n', (req, res) => {
+    const n = parseFloat(req.params.n);
+
+    // add error handling ai!
+
+    const result = math.sqrt(n);
+    res.json({ result: result });
+});
+```
+
+Similarly, this refactor probably could have been requested with fewer words, like this:
+
+```python
+@app.route('/factorial/<int:n>')
+def factorial(n):
+    if n < 0:
+        return jsonify(error="Factorial is not defined for negative numbers"), 400
+        
+    # ai refactor...
+    
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+        
+    # ... to compute_factorial() ai!
+    
+    return jsonify(result=result)
+```
+
+As you use aider with your chosen LLM, you can develop a sense for how
+explicit you need to make your AI comments.

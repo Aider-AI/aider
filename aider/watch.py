@@ -171,10 +171,10 @@ class FileWatcher:
 
         self.io.tool_output("Processing your request...")
 
-        res = """The "ai" comments below can be found in the code files I've shared with you.
+        res = """The "AI" comments below can be found in the code files I've shared with you.
 They contain your instructions.
 Make the requested changes.
-Be sure to remove all these "ai" comments from the code!
+Be sure to remove all these "AI" comments from the code!
 
     """
 
