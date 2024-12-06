@@ -195,6 +195,7 @@ Be sure to remove all these "AI" comments from the code!
             # Convert comment line numbers to line indices (0-based)
             lois = [ln - 1 for ln, _ in zip(line_nums, comments) if ln > 0]
 
+            # Handle ValueError from TreeContext and just include the actual comments instead. ai!
             context = TreeContext(
                 rel_fname,
                 code,
