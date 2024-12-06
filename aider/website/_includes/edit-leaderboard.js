@@ -89,6 +89,29 @@ document.addEventListener('DOMContentLoaded', function () {
     type: 'bar',
     data: leaderboardData,
     options: {
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            generateLabels: function(chart) {
+              return [
+                {
+                  text: 'Diff format',
+                  fillStyle: 'rgba(54, 162, 235, 0.2)',
+                  strokeStyle: 'rgba(54, 162, 235, 1)',
+                  lineWidth: 1
+                },
+                {
+                  text: 'Whole format',
+                  fillStyle: blueDiagonalPattern,
+                  strokeStyle: 'rgba(54, 162, 235, 1)',
+                  lineWidth: 1
+                }
+              ];
+            }
+          }
+        }
+      },
       scales: {
         y: {
           beginAtZero: true,
