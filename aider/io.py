@@ -321,6 +321,7 @@ class InputOutput:
             self.tool_error(f"{filename}: {e}")
             return
 
+    # add silent=False, if true don't output any error messages. SEARCH/REPLACE the entire func. AI!
     def read_text(self, filename):
         if is_image_file(filename):
             return self.read_image(filename)
