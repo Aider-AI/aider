@@ -801,6 +801,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
             detect_urls=args.detect_urls,
+            auto_copy_context=args.copypaste,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
