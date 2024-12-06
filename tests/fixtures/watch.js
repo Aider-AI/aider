@@ -33,3 +33,6 @@ class Example {
     return 1;
   }
 }
+// trailing whitespace ai  
+// trailing whitespace ai!  
+// 15-16

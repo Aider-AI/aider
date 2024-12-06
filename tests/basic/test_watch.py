@@ -37,7 +37,7 @@ def test_ai_comment_pattern():
     # Test JavaScript fixture
     js_path = fixtures_dir / "watch.js"
     js_lines, js_comments, js_has_bang = watcher.get_ai_comments(str(js_path))
-    js_expected = 14
+    js_expected = 16
     assert (
         len(js_lines) == js_expected
     ), f"Expected {js_expected} AI comments in JavaScript fixture, found {len(js_lines)}"
