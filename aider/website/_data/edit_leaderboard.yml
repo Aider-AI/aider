@@ -2069,7 +2069,7 @@
 
 - dirname: 2024-12-06-21-35-50--gemini-exp-1206-diff
   test_cases: 133
-  model: emini-exp-1206
+  model: gemini-exp-1206
   edit_format: diff
   commit_hash: f2d2ab5
   pass_rate_1: 55.6
