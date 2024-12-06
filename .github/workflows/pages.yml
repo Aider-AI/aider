@@ -84,4 +84,4 @@ jobs:
 
       - name: Run linkchecker
         run: |
-          linkchecker https://aider.chat
+          linkchecker --ignore-url='.+\.(mp4|mov|avi)' https://aider.chat
