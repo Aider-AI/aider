@@ -1,6 +1,8 @@
 import threading
 import time
+
 import pyperclip
+
 
 class ClipboardWatcher:
     """Watches clipboard for changes and updates IO placeholder"""
@@ -29,6 +31,7 @@ class ClipboardWatcher:
                 except Exception as e:
                     if self.verbose:
                         from aider.dump import dump
+
                         dump(f"Clipboard watcher error: {e}")
                     continue
 
@@ -44,13 +47,14 @@ class ClipboardWatcher:
             self.watcher_thread = None
             self.stop_event = None
 
+
 def main():
     """Example usage of the clipboard watcher"""
     from aider.io import InputOutput
 
     io = InputOutput()
     watcher = ClipboardWatcher(io, verbose=True)
-    
+
     try:
         watcher.start()
         while True:
@@ -58,6 +62,7 @@ def main():
     except KeyboardInterrupt:
         print("\nStopped watching clipboard")
         watcher.stop()
+
 
 if __name__ == "__main__":
     main()
