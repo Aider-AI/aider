@@ -46,14 +46,18 @@ The json file should be a dictionary with an entry for each model, as follows:
 }
 ```
 
-See 
-[litellm's model_prices_and_context_window.json file](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) for more examples.
-Consider submitting a PR to that file to add missing models.
-
 {: .tip }
 Use a fully qualified model name with a `provider/` at the front
 in the `.aider.model.metadata.json` file.
 For example, use `deepseek/deepseek-chat`, not just `deepseek-chat`.
+
+### Contribute model metadata
+
+Aider relies on
+[litellm's model_prices_and_context_window.json file](https://github.com/BerriAI/litellm/blob/main/model_prices_and_context_window.json) 
+for model metadata.
+
+Consider submitting a PR to that file to add missing models.
 
 ## Model settings
 
