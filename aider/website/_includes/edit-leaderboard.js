@@ -66,6 +66,39 @@ document.addEventListener('DOMContentLoaded', function () {
       scales: {
         y: {
           beginAtZero: true
+        },
+        x: {
+          ticks: {
+            callback: function(value, index) {
+              const label = this.getLabelForValue(value);
+              if (label.length <= "claude-3-5-sonnet".length) {
+                return label;
+              }
+              
+              // Find all possible split positions
+              const splitPositions = [];
+              for (let i = 0; i < label.length; i++) {
+                if (label[i] === '-' || label[i] === ' ') {
+                  splitPositions.push(i);
+                }
+              }
+              
+              if (splitPositions.length === 0) {
+                return label;
+              }
+              
+              // Find split position closest to middle
+              const middle = label.length / 2;
+              const splitIndex = splitPositions.reduce((closest, current) => {
+                return Math.abs(current - middle) < Math.abs(closest - middle) ? current : closest;
+              });
+              
+              return [
+                label.slice(0, splitIndex),
+                label.slice(splitIndex + 1)
+              ];
+            }
+          }
         }
       }
     }
