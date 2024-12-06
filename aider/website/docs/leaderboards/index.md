@@ -58,6 +58,7 @@ The model also has to successfully apply all its changes to the source file with
 </table>
 
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
+<script src="https://unpkg.com/patternomaly/dist/patternomaly.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 {% include edit-leaderboard.js %}
@@ -113,6 +114,7 @@ Therefore, results are available for fewer models.
 </table>
 
 <canvas id="refacChart" width="800" height="450" style="margin-top: 20px"></canvas>
+<script src="https://unpkg.com/patternomaly/dist/patternomaly.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 {% include refactor-leaderboard.js %}
