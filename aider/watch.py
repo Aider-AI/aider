@@ -195,10 +195,27 @@ Be sure to remove all these "AI" comments from the code!
             # Convert comment line numbers to line indices (0-based)
             lois = [ln - 1 for ln, _ in zip(line_nums, comments) if ln > 0]
 
-            # Handle ValueError from TreeContext and just include the actual comments instead. ai!
-            context = TreeContext(
-                rel_fname,
-                code,
+            try:
+                context = TreeContext(
+                    rel_fname,
+                    code,
+                    color=False,
+                    line_number=False,
+                    child_context=False,
+                    last_line=False,
+                    margin=0,
+                    mark_lois=True,
+                    loi_pad=3,
+                    show_top_of_file_parent_scope=False,
+                )
+                context.lines_of_interest = set()
+                context.add_lines_of_interest(lois)
+                context.add_context()
+                res += context.format()
+            except ValueError:
+                # Fall back to just showing the comments if TreeContext fails
+                for ln, comment in zip(line_nums, comments):
+                    res += f"  Line {ln}: {comment}\n"
                 color=False,
                 line_number=False,
                 child_context=False,
