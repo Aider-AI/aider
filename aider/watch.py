@@ -216,19 +216,6 @@ Be sure to remove all these "AI" comments from the code!
                 # Fall back to just showing the comments if TreeContext fails
                 for ln, comment in zip(line_nums, comments):
                     res += f"  Line {ln}: {comment}\n"
-                color=False,
-                line_number=False,
-                child_context=False,
-                last_line=False,
-                margin=0,
-                mark_lois=True,
-                loi_pad=3,
-                show_top_of_file_parent_scope=False,
-            )
-            context.lines_of_interest = set()
-            context.add_lines_of_interest(lois)
-            context.add_context()
-            res += context.format()
 
         return res
 
