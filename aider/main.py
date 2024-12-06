@@ -688,7 +688,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_edit_format=args.editor_edit_format,
     )
 
-    if args.copypaste and args.edit_format is None:
+    if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
             main_model.edit_format = "editor-" + main_model.edit_format
 
@@ -805,7 +805,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
             detect_urls=args.detect_urls,
-            auto_copy_context=args.copypaste,
+            auto_copy_context=args.copy_paste,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
@@ -831,7 +831,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         file_watcher = FileWatcher(coder, gitignores=ignores, verbose=args.verbose)
         coder.file_watcher = file_watcher
 
-    if args.copypaste:
+    if args.copy_paste:
         ClipboardWatcher(coder.io, verbose=args.verbose)
 
     coder.show_announcements()
