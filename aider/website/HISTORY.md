@@ -24,15 +24,17 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.67.0
 
 - [Use aider in your IDE or editor](https://aider.chat/docs/usage/watch.html).
   - Run `aider --watch-files` and it will watch for instructions you add to your source files.
   - One-liner `# ...` or `// ...` comments that start or end with "AI" are instructions to aider.
   - When aider sees "AI!" it reads and follows all the instructions in AI comments.
 - Support for new Amazon Bedrock Nova models.
+- When `/run` or `/test` have non-zero exit codes, pre-fill "Fix that" into the next message prompt.
 - `/diff` now invokes `git diff` to use your preferred diff tool.
 - Added Ctrl-Z support for process suspension.
+- Spinner now falls back to ASCII art if fancy symbols throw unicode errors.
 - `--read` now expands `~` home dirs.
 - Enabled exception capture in analytics.
 - Aider wrote 61% of the code in this release.
