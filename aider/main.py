@@ -828,7 +828,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.file_watcher = file_watcher
 
     if args.copypaste:
-        clipboard_watcher = ClipboardWatcher(coder.io, verbose=args.verbose)
+        coder.clipboard_watcher = ClipboardWatcher(coder.io, verbose=args.verbose)
 
     coder.show_announcements()
 
