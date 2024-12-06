@@ -3,7 +3,7 @@ title: Copy/paste to web chat
 #highlight_image: /assets/browser.jpg
 parent: Usage
 nav_order: 850
-description: Aider works with web chat UIs
+description: Aider works with LLM web chat UIs
 ---
 
 # Copy/paste to web chat
