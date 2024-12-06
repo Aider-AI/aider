@@ -497,7 +497,7 @@ class InputOutput:
                         return cmd
 
             except EOFError:
-                return ""
+                raise
             except Exception as err:
                 import traceback
 
