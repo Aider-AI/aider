@@ -91,7 +91,11 @@ document.addEventListener('DOMContentLoaded', function () {
     options: {
       scales: {
         y: {
-          beginAtZero: true
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Percent completed correctly'
+          }
         },
         x: {
           ticks: {
