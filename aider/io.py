@@ -176,6 +176,7 @@ class AutoCompleter(Completer):
 class InputOutput:
     num_error_outputs = 0
     num_user_asks = 0
+    clipboard_watcher = None
 
     def __init__(
         self,
@@ -470,8 +471,11 @@ class InputOutput:
                     self.placeholder = None
 
                     self.interrupted = False
-                    if not multiline_input and self.file_watcher:
-                        self.file_watcher.start()
+                    if not multiline_input:
+                        if self.file_watcher:
+                            self.file_watcher.start()
+                        if self.clipboard_watcher:
+                            self.clipboard_watcher.start()
 
                     line = self.prompt_session.prompt(
                         show,
@@ -487,8 +491,10 @@ class InputOutput:
 
                 # Check if we were interrupted by a file change
                 if self.interrupted:
-                    cmd = self.file_watcher.process_changes()
-                    return cmd
+                    line = line or ""
+                    if self.file_watcher:
+                        cmd = self.file_watcher.process_changes()
+                        return cmd
 
             except EOFError:
                 return ""
@@ -504,6 +510,8 @@ class InputOutput:
             finally:
                 if self.file_watcher:
                     self.file_watcher.stop()
+                if self.clipboard_watcher:
+                    self.clipboard_watcher.stop()
 
             if line.strip("\r\n") and not multiline_input:
                 stripped = line.strip("\r\n")

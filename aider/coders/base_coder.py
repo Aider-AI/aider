@@ -286,6 +286,7 @@ class Coder:
         detect_urls=True,
         ignore_mentions=None,
         file_watcher=None,
+        auto_copy_context=False,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -296,6 +297,8 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
+
+        self.auto_copy_context = auto_copy_context
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -792,9 +795,9 @@ class Coder:
                 self.io.user_input(with_message)
                 self.run_one(with_message, preproc)
                 return self.partial_response_content
-
             while True:
                 try:
+                    self.copy_context()
                     user_message = self.get_input()
                     self.run_one(user_message, preproc)
                     self.show_undo_hint()
@@ -802,6 +805,10 @@ class Coder:
                     self.keyboard_interrupt()
         except EOFError:
             return
+
+    def copy_context(self):
+        if self.auto_copy_context:
+            self.commands.cmd_copy_context()
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
@@ -1114,7 +1121,10 @@ class Coder:
             # add the reminder anyway
             total_tokens = 0
 
-        final = chunks.cur[-1]
+        if chunks.cur:
+            final = chunks.cur[-1]
+        else:
+            final = None
 
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
         # Add the reminder prompt if we still have room to include it.
@@ -1125,7 +1135,7 @@ class Coder:
         ):
             if self.main_model.reminder == "sys":
                 chunks.reminder = reminder_message
-            elif self.main_model.reminder == "user" and final["role"] == "user":
+            elif self.main_model.reminder == "user" and final and final["role"] == "user":
                 # stuff it into the user message
                 new_content = (
                     final["content"]

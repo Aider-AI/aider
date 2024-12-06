@@ -1399,6 +1399,41 @@ class Commands:
         if user_input.strip():
             self.io.set_placeholder(user_input.rstrip())
 
+    def cmd_copy_context(self, args=None):
+        """Copy the current chat context as markdown, suitable to paste into a web UI"""
+
+        chunks = self.coder.format_chat_chunks()
+
+        markdown = ""
+
+        # Only include specified chunks in order
+        for messages in [chunks.repo, chunks.readonly_files, chunks.chat_files]:
+            for msg in messages:
+                # Only include user messages
+                if msg["role"] != "user":
+                    continue
+
+                content = msg["content"]
+
+                # Handle image/multipart content
+                if isinstance(content, list):
+                    for part in content:
+                        if part.get("type") == "text":
+                            markdown += part["text"] + "\n\n"
+                else:
+                    markdown += content + "\n\n"
+
+        markdown += """
+Just tell me how to edit the files to make the changes.
+Don't give me back entire files.
+Just show me the edits I need to make.
+
+
+"""
+
+        pyperclip.copy(markdown)
+        self.io.tool_output("Copied context to clipboard.")
+
 
 def expand_subdir(file_path):
     if file_path.is_file():

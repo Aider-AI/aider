@@ -20,6 +20,7 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
+from aider.copypaste import ClipboardWatcher
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -687,6 +688,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_edit_format=args.editor_edit_format,
     )
 
+    if args.copy_paste and args.edit_format is None:
+        if main_model.edit_format in ("diff", "whole"):
+            main_model.edit_format = "editor-" + main_model.edit_format
+
     if args.verbose:
         io.tool_output("Model metadata:")
         io.tool_output(json.dumps(main_model.info, indent=4))
@@ -800,6 +805,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
             detect_urls=args.detect_urls,
+            auto_copy_context=args.copy_paste,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
@@ -824,6 +830,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.watch_files:
         file_watcher = FileWatcher(coder, gitignores=ignores, verbose=args.verbose)
         coder.file_watcher = file_watcher
+
+    if args.copy_paste:
+        ClipboardWatcher(coder.io, verbose=args.verbose)
 
     coder.show_announcements()
 
