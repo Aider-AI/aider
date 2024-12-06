@@ -35,8 +35,13 @@ class EditorEditBlockCoder(EditBlockCoder):
         # Only add reminder if there are current messages
         if chunks.cur:
             final = chunks.cur[-1]
-            if self.main_model.reminder == "sys":
-                chunks.reminder = self.reminder_message
+            if self.main_model.reminder == "sys" and self.gpt_prompts.system_reminder:
+                chunks.reminder = [
+                    dict(
+                        role="system",
+                        content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                    )
+                ]
             elif self.main_model.reminder == "user" and final["role"] == "user":
                 # stuff it into the user message
                 new_content = (
