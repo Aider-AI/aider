@@ -50,7 +50,7 @@ pip install boto3
 To use aider installed via `pipx` with AWS Bedrock, you must add the `boto3` dependency to aider's virtual environment by running
 
 ```bash
-pipx inject aider boto3
+pipx inject aider-chat boto3
 ```
 
 

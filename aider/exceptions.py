@@ -78,4 +78,13 @@ class LiteLLMExceptions:
 
     def get_ex_info(self, ex):
         """Return the ExInfo for a given exception instance"""
+        import litellm
+
+        if ex.__class__ is litellm.APIConnectionError:
+            if "google.auth" in str(ex):
+                return ExInfo(
+                    "APIConnectionError", False, "You need to: pip install google-generativeai"
+                )
+            if "boto3" in str(ex):
+                return ExInfo("APIConnectionError", False, "You need to: pip install boto3")
         return self.exceptions.get(ex.__class__, ExInfo(None, None, None))
