@@ -27,6 +27,8 @@ def is_source_file(path: Path) -> bool:
         ".bash",
         ".yaml",
         ".yml",
+        ".zsh",
+        ".zshrc",
         # // style comments
         ".js",
         ".ts",
