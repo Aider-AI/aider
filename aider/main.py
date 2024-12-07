@@ -500,13 +500,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_warning("--openai-api-base is deprecated, use --set-env OPENAI_API_BASE=<value>")
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
     if args.openai_api_version:
-        io.tool_warning("--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>")
+        io.tool_warning(
+            "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
+        )
         os.environ["OPENAI_API_VERSION"] = args.openai_api_version
     if args.openai_api_type:
         io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
         os.environ["OPENAI_API_TYPE"] = args.openai_api_type
     if args.openai_organization_id:
-        io.tool_warning("--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>")
+        io.tool_warning(
+            "--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>"
+        )
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
     dump(os.environ.get("ANTHROPIC_API_KEY"))
