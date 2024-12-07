@@ -672,6 +672,36 @@ class TestMain(TestCase):
         # Verify that environment variables from pytest.ini are properly set
         self.assertEqual(os.environ.get("AIDER_ANALYTICS"), "false")
 
+    def test_set_env_single(self):
+        # Test setting a single environment variable
+        with GitTemporaryDirectory():
+            main(["--set-env", "TEST_VAR=test_value", "--exit", "--yes"])
+            self.assertEqual(os.environ.get("TEST_VAR"), "test_value")
+
+    def test_set_env_multiple(self):
+        # Test setting multiple environment variables
+        with GitTemporaryDirectory():
+            main([
+                "--set-env", "TEST_VAR1=value1",
+                "--set-env", "TEST_VAR2=value2",
+                "--exit", "--yes"
+            ])
+            self.assertEqual(os.environ.get("TEST_VAR1"), "value1")
+            self.assertEqual(os.environ.get("TEST_VAR2"), "value2")
+
+    def test_set_env_with_spaces(self):
+        # Test setting env var with spaces in value
+        with GitTemporaryDirectory():
+            main(["--set-env", "TEST_VAR=test value with spaces", "--exit", "--yes"])
+            self.assertEqual(os.environ.get("TEST_VAR"), "test value with spaces")
+
+    def test_set_env_invalid_format(self):
+        # Test invalid format handling
+        with GitTemporaryDirectory():
+            with self.assertRaises(SystemExit) as cm:
+                main(["--set-env", "INVALID_FORMAT", "--exit", "--yes"])
+            self.assertEqual(cm.exception.code, 1)
+
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
             with patch("aider.io.InputOutput.offer_url") as mock_offer_url:
