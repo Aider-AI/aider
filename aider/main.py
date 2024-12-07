@@ -489,22 +489,25 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     dump(os.environ.get("ANTHROPIC_API_KEY"))
 
-    # AI: for each of these, add io.tool_warning("--xxx is deprecated, use ---yyy") and either use --api-key foo=<key> or --set-env FOO=value
     if args.anthropic_api_key:
+        io.tool_warning("--anthropic-api-key is deprecated, use --api-key anthropic=<key>")
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
     if args.openai_api_key:
+        io.tool_warning("--openai-api-key is deprecated, use --api-key openai=<key>")
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
     if args.openai_api_base:
+        io.tool_warning("--openai-api-base is deprecated, use --set-env OPENAI_API_BASE=<value>")
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
     if args.openai_api_version:
+        io.tool_warning("--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>")
         os.environ["OPENAI_API_VERSION"] = args.openai_api_version
     if args.openai_api_type:
+        io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
         os.environ["OPENAI_API_TYPE"] = args.openai_api_type
     if args.openai_organization_id:
+        io.tool_warning("--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>")
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
-
-    # ... down to here AI!
 
     dump(os.environ.get("ANTHROPIC_API_KEY"))
 
