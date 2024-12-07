@@ -135,7 +135,7 @@ def get_parser(default_config_files, git_root):
     group = parser.add_argument_group("API Keys and settings")
     group.add_argument(
         "--openai-api-key",
-        help="Specify the OpenAI API key",
+        help="(deprecated, use --set-env OPENAI_API_KEY=<value>)",
     )
     group.add_argument(
         "--anthropic-api-key",
@@ -143,23 +143,23 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--openai-api-base",
-        help="Specify the api base url",
+        help="(deprecated, use --set-env OPENAI_API_BASE=<value>)",
     )
     group.add_argument(
         "--openai-api-type",
-        help="Specify the api_type",
+        help="(deprecated, use --set-env OPENAI_API_TYPE=<value>)",
     )
     group.add_argument(
         "--openai-api-version",
-        help="Specify the api_version",
+        help="(deprecated, use --set-env OPENAI_API_VERSION=<value>)",
     )
     group.add_argument(
         "--openai-api-deployment-id",
-        help="Specify the deployment_id",
+        help="(deprecated, use --set-env OPENAI_API_DEPLOYMENT_ID=<value>)",
     )
     group.add_argument(
         "--openai-organization-id",
-        help="Specify the OpenAI organization ID",
+        help="(deprecated, use --set-env OPENAI_ORGANIZATION=<value>)",
     )
     group.add_argument(
         "--set-env",
