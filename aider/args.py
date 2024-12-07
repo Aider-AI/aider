@@ -779,6 +779,13 @@ def get_parser(default_config_files, git_root):
         help="Set an environment variable (can be used multiple times)",
         default=[],
     )
+    group.add_argument(
+        "--api-key",
+        action="append",
+        metavar="PROVIDER=KEY",
+        help="Set an API key for a provider (eg: --api-key anthropic=sk-123)",
+        default=[],
+    )
 
     ##########
     group = parser.add_argument_group("Voice Settings")

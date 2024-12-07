@@ -537,6 +537,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 io.tool_output("Format should be: ENV_VAR_NAME=value")
                 return 1
 
+    # Process any API keys set via --api-key
+    if args.api_key:
+        for api_setting in args.api_key:
+            try:
+                provider, key = api_setting.split("=", 1)
+                env_var = f"{provider.strip().upper()}_API_KEY"
+                os.environ[env_var] = key.strip()
+            except ValueError:
+                io.tool_error(f"Invalid --api-key format: {api_setting}")
+                io.tool_output("Format should be: provider=key")
+                return 1
+
     analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
     if args.analytics is not False:
         if analytics.need_to_ask(args.analytics):
