@@ -461,17 +461,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics = Analytics(permanently_disable=True)
         print("Analytics have been permanently disabled.")
 
-    # Process any environment variables set via --set-env
-    if args.set_env:
-        for env_setting in args.set_env:
-            try:
-                name, value = env_setting.split("=", 1)
-                os.environ[name.strip()] = value.strip()
-            except ValueError:
-                io.tool_error(f"Invalid --set-env format: {env_setting}")
-                io.tool_output("Format should be: ENV_VAR_NAME=value")
-                return 1
-
     if not args.verify_ssl:
         import httpx
 
@@ -536,6 +525,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             raise err
         io = get_io(False)
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
+
+    # Process any environment variables set via --set-env
+    if args.set_env:
+        for env_setting in args.set_env:
+            try:
+                name, value = env_setting.split("=", 1)
+                os.environ[name.strip()] = value.strip()
+            except ValueError:
+                io.tool_error(f"Invalid --set-env format: {env_setting}")
+                io.tool_output("Format should be: ENV_VAR_NAME=value")
+                return 1
 
     analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
     if args.analytics is not False:
