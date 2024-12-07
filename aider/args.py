@@ -45,6 +45,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the Anthropic API key",
     )
     group.add_argument(
+        "--gemini-api-key",
+        metavar="GEMINI_API_KEY",
+        env_var="GEMINI_API_KEY",
+        help="Specify the Google Gemini API key",
+    )
+    group.add_argument(
         "--model",
         metavar="MODEL",
         default=None,
