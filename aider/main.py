@@ -535,7 +535,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             except ValueError:
                 io.tool_error(f"Invalid --set-env format: {env_setting}")
                 io.tool_output("Format should be: ENV_VAR_NAME=value")
-                analytics.event("exit", reason="Invalid env var format")
                 return 1
 
     analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
