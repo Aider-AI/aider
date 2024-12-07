@@ -75,7 +75,7 @@ class TestSendChat(unittest.TestCase):
         mock_completion.return_value.choices = None
 
         # Should return None on AttributeError
-        result = simple_send_with_retries(self.mock_model, self.mock_messages)
+        result = simple_send_with_retries(Model(self.mock_model), self.mock_messages)
         assert result is None
 
     @patch("litellm.completion")
@@ -89,7 +89,7 @@ class TestSendChat(unittest.TestCase):
             message="Invalid request", llm_provider="test_provider", model="test_model"
         )
 
-        result = simple_send_with_retries(self.mock_model, self.mock_messages)
+        result = simple_send_with_retries(Model(self.mock_model), self.mock_messages)
         assert result is None
         # Should only print the error message
         assert mock_print.call_count == 1
