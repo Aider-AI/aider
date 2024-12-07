@@ -192,9 +192,7 @@ class GitRepo:
             max_tokens = model.info.get("max_input_tokens") or 0
             if max_tokens and num_tokens > max_tokens:
                 continue
-            commit_message = simple_send_with_retries(
-                model.name, messages, extra_params=model.extra_params
-            )
+            commit_message = simple_send_with_retries(model, messages)
             if commit_message:
                 break
 
