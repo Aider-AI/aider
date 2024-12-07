@@ -91,9 +91,9 @@ class TestChatSummary(TestCase):
         # Check that both models were tried
         self.assertEqual(mock_send.call_count, 2)
 
-        # Check that the calls were made with the correct model names
-        self.assertEqual(mock_send.call_args_list[0][0][0], "gpt-4")
-        self.assertEqual(mock_send.call_args_list[1][0][0], "gpt-3.5-turbo")
+        # Check that the calls were made with the correct models
+        self.assertEqual(mock_send.call_args_list[0][0][0], mock_model1)
+        self.assertEqual(mock_send.call_args_list[1][0][0], mock_model2)
 
         # Check that we got a summary from the second model
         self.assertEqual(
