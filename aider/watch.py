@@ -10,7 +10,6 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-# add .zsh, .zshrc. and the various dotfiles for bash, etc ai!
 def is_source_file(path: Path) -> bool:
     """
     Check if a file is a source file that uses # or // style comments.
@@ -25,6 +24,16 @@ def is_source_file(path: Path) -> bool:
         ".pm",
         ".sh",
         ".bash",
+        ".zsh",
+        ".bashrc",
+        ".bash_profile",
+        ".bash_login",
+        ".bash_logout",
+        ".zshrc",
+        ".zprofile",
+        ".zlogin",
+        ".zlogout",
+        ".profile",
         ".yaml",
         ".yml",
         # // style comments
