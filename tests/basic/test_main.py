@@ -703,9 +703,8 @@ class TestMain(TestCase):
     def test_set_env_invalid_format(self):
         # Test invalid format handling
         with GitTemporaryDirectory():
-            with self.assertRaises(SystemExit) as cm:
-                main(["--set-env", "INVALID_FORMAT", "--exit", "--yes"])
-            self.assertEqual(cm.exception.code, 1)
+            result = main(["--set-env", "INVALID_FORMAT", "--exit", "--yes"])
+            self.assertEqual(result, 1)
 
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
