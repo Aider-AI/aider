@@ -772,6 +772,13 @@ def get_parser(default_config_files, git_root):
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
+    group.add_argument(
+        "--set-env",
+        action="append",
+        metavar="ENV_VAR_NAME=value",
+        help="Set an environment variable (can be used multiple times)",
+        default=[],
+    )
 
     ##########
     group = parser.add_argument_group("Voice Settings")
