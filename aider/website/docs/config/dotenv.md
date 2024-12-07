@@ -130,7 +130,7 @@ cog.outl("```")
 #AIDER_API_KEY=
 
 #################
-# Model Settings:
+# Model settings:
 
 ## List known models which match the (partial) MODEL name
 #AIDER_LIST_MODELS=
@@ -172,7 +172,7 @@ cog.outl("```")
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
 
 #################
-# Cache Settings:
+# Cache settings:
 
 ## Enable caching of prompts (default: False)
 #AIDER_CACHE_PROMPTS=false
@@ -181,7 +181,7 @@ cog.outl("```")
 #AIDER_CACHE_KEEPALIVE_PINGS=false
 
 ###################
-# Repomap Settings:
+# Repomap settings:
 
 ## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
 #AIDER_MAP_TOKENS=
@@ -208,7 +208,7 @@ cog.outl("```")
 #AIDER_LLM_HISTORY_FILE=
 
 ##################
-# Output Settings:
+# Output settings:
 
 ## Use colors suitable for a dark terminal background (default: False)
 #AIDER_DARK_MODE=false
@@ -256,7 +256,7 @@ cog.outl("```")
 #AIDER_SHOW_DIFFS=false
 
 ###############
-# Git Settings:
+# Git settings:
 
 ## Enable/disable looking for a git repo (default: True)
 #AIDER_GIT=true
@@ -385,7 +385,7 @@ cog.outl("```")
 #AIDER_SHOW_PROMPTS=false
 
 #################
-# Voice Settings:
+# Voice settings:
 
 ## Audio format for voice recording (default: wav). webm and mp3 require ffmpeg
 #AIDER_VOICE_FORMAT=wav
@@ -397,7 +397,7 @@ cog.outl("```")
 #AIDER_VOICE_INPUT_DEVICE=
 
 #################
-# Other Settings:
+# Other settings:
 
 ## specify a file to edit (can be used multiple times)
 #AIDER_FILE=

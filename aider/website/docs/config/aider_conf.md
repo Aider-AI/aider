@@ -150,7 +150,7 @@ cog.outl("```")
 #  - zzz
 
 #################
-# Model Settings:
+# Model settings:
 
 ## List known models which match the (partial) MODEL name
 #list-models: xxx
@@ -197,7 +197,7 @@ cog.outl("```")
 #max-chat-history-tokens: xxx
 
 #################
-# Cache Settings:
+# Cache settings:
 
 ## Enable caching of prompts (default: False)
 #cache-prompts: false
@@ -206,7 +206,7 @@ cog.outl("```")
 #cache-keepalive-pings: false
 
 ###################
-# Repomap Settings:
+# Repomap settings:
 
 ## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
 #map-tokens: xxx
@@ -233,7 +233,7 @@ cog.outl("```")
 #llm-history-file: xxx
 
 ##################
-# Output Settings:
+# Output settings:
 
 ## Use colors suitable for a dark terminal background (default: False)
 #dark-mode: false
@@ -281,7 +281,7 @@ cog.outl("```")
 #show-diffs: false
 
 ###############
-# Git Settings:
+# Git settings:
 
 ## Enable/disable looking for a git repo (default: True)
 #git: true
@@ -418,7 +418,7 @@ cog.outl("```")
 #show-prompts: false
 
 #################
-# Voice Settings:
+# Voice settings:
 
 ## Audio format for voice recording (default: wav). webm and mp3 require ffmpeg
 #voice-format: wav
@@ -430,7 +430,7 @@ cog.outl("```")
 #voice-input-device: xxx
 
 #################
-# Other Settings:
+# Other settings:
 
 ## specify a file to edit (can be used multiple times)
 #file: xxx

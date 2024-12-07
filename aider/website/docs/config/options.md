@@ -14,7 +14,6 @@ or review them below.
 {:toc}
 
 ## LLM keys
-{: .no_toc }
 
 {% include special-keys.md %}
 
@@ -189,7 +188,7 @@ Set an API key for a provider (eg: --api-key provider=<key> sets PROVIDER_API_KE
 Default: []  
 Environment variable: `AIDER_API_KEY`  
 
-## Model Settings:
+## Model settings:
 
 ### `--list-models MODEL`
 List known models which match the (partial) MODEL name  
@@ -259,7 +258,7 @@ Aliases:
 Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.  
 Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
 
-## Cache Settings:
+## Cache settings:
 
 ### `--cache-prompts`
 Enable caching of prompts (default: False)  
@@ -274,7 +273,7 @@ Number of times to ping at 5min intervals to keep prompt cache warm (default: 0)
 Default: 0  
 Environment variable: `AIDER_CACHE_KEEPALIVE_PINGS`  
 
-## Repomap Settings:
+## Repomap settings:
 
 ### `--map-tokens VALUE`
 Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)  
@@ -314,7 +313,7 @@ Aliases:
 Log the conversation with the LLM to this file (for example, .aider.llm.history)  
 Environment variable: `AIDER_LLM_HISTORY_FILE`  
 
-## Output Settings:
+## Output settings:
 
 ### `--dark-mode`
 Use colors suitable for a dark terminal background (default: False)  
@@ -392,7 +391,7 @@ Show diffs when committing changes (default: False)
 Default: False  
 Environment variable: `AIDER_SHOW_DIFFS`  
 
-## Git Settings:
+## Git settings:
 
 ### `--git`
 Enable/disable looking for a git repo (default: True)  
@@ -651,7 +650,7 @@ Print the system prompts and exit (debug)
 Default: False  
 Environment variable: `AIDER_SHOW_PROMPTS`  
 
-## Voice Settings:
+## Voice settings:
 
 ### `--voice-format VOICE_FORMAT`
 Audio format for voice recording (default: wav). webm and mp3 require ffmpeg  
@@ -667,7 +666,7 @@ Environment variable: `AIDER_VOICE_LANGUAGE`
 Specify the input device name for voice recording  
 Environment variable: `AIDER_VOICE_INPUT_DEVICE`  
 
-## Other Settings:
+## Other settings:
 
 ### `--file FILE`
 specify a file to edit (can be used multiple times)  

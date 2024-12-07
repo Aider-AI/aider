@@ -94,7 +94,7 @@
 #  - zzz
 
 #################
-# Model Settings:
+# Model settings:
 
 ## List known models which match the (partial) MODEL name
 #list-models: xxx
@@ -141,7 +141,7 @@
 #max-chat-history-tokens: xxx
 
 #################
-# Cache Settings:
+# Cache settings:
 
 ## Enable caching of prompts (default: False)
 #cache-prompts: false
@@ -150,7 +150,7 @@
 #cache-keepalive-pings: false
 
 ###################
-# Repomap Settings:
+# Repomap settings:
 
 ## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
 #map-tokens: xxx
@@ -177,7 +177,7 @@
 #llm-history-file: xxx
 
 ##################
-# Output Settings:
+# Output settings:
 
 ## Use colors suitable for a dark terminal background (default: False)
 #dark-mode: false
@@ -225,7 +225,7 @@
 #show-diffs: false
 
 ###############
-# Git Settings:
+# Git settings:
 
 ## Enable/disable looking for a git repo (default: True)
 #git: true
@@ -362,7 +362,7 @@
 #show-prompts: false
 
 #################
-# Voice Settings:
+# Voice settings:
 
 ## Audio format for voice recording (default: wav). webm and mp3 require ffmpeg
 #voice-format: wav
@@ -374,7 +374,7 @@
 #voice-input-device: xxx
 
 #################
-# Other Settings:
+# Other settings:
 
 ## specify a file to edit (can be used multiple times)
 #file: xxx
