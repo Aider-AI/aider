@@ -37,8 +37,9 @@ class TestSendChat(unittest.TestCase):
         ]
 
         # Call the simple_send_with_retries method
-        simple_send_with_retries("model", ["message"])
-        assert mock_print.call_count == 3
+        simple_send_with_retries(self.mock_model, self.mock_messages)
+        # Should print: error message, description (if any), and retry message
+        assert mock_print.call_count == 2  # Error message + retry message
 
     @patch("litellm.completion")
     def test_send_completion_basic(self, mock_completion):
@@ -90,4 +91,5 @@ class TestSendChat(unittest.TestCase):
 
         result = simple_send_with_retries(self.mock_model, self.mock_messages)
         assert result is None
+        # Should only print the error message
         assert mock_print.call_count == 1
