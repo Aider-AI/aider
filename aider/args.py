@@ -33,14 +33,6 @@ def get_parser(default_config_files, git_root):
         "files", metavar="FILE", nargs="*", help="files to edit with an LLM (optional)"
     )
     group.add_argument(
-        "--openai-api-key",
-        help="Specify the OpenAI API key",
-    )
-    group.add_argument(
-        "--anthropic-api-key",
-        help="Specify the Anthropic API key",
-    )
-    group.add_argument(
         "--model",
         metavar="MODEL",
         default=None,
@@ -140,12 +132,14 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
-    group = parser.add_argument_group("Model Settings")
+    group = parser.add_argument_group("API Keys and settings")
     group.add_argument(
-        "--list-models",
-        "--models",
-        metavar="MODEL",
-        help="List known models which match the (partial) MODEL name",
+        "--openai-api-key",
+        help="Specify the OpenAI API key",
+    )
+    group.add_argument(
+        "--anthropic-api-key",
+        help="Specify the Anthropic API key",
     )
     group.add_argument(
         "--openai-api-base",
@@ -166,6 +160,27 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--openai-organization-id",
         help="Specify the OpenAI organization ID",
+    )
+    group.add_argument(
+        "--set-env",
+        action="append",
+        metavar="ENV_VAR_NAME=value",
+        help="Set an environment variable (can be used multiple times)",
+        default=[],
+    )
+    group.add_argument(
+        "--api-key",
+        action="append",
+        metavar="PROVIDER=KEY",
+        help="Set an API key for a provider (eg: --api-key anthropic=sk-123)",
+        default=[],
+    )
+    group = parser.add_argument_group("Model Settings")
+    group.add_argument(
+        "--list-models",
+        "--models",
+        metavar="MODEL",
+        help="List known models which match the (partial) MODEL name",
     )
     group.add_argument(
         "--model-settings-file",
@@ -757,20 +772,6 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--editor",
         help="Specify which editor to use for the /editor command",
-    )
-    group.add_argument(
-        "--set-env",
-        action="append",
-        metavar="ENV_VAR_NAME=value",
-        help="Set an environment variable (can be used multiple times)",
-        default=[],
-    )
-    group.add_argument(
-        "--api-key",
-        action="append",
-        metavar="PROVIDER=KEY",
-        help="Set an API key for a provider (eg: --api-key anthropic=sk-123)",
-        default=[],
     )
 
     ##########
