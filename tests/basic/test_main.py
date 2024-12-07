@@ -681,11 +681,16 @@ class TestMain(TestCase):
     def test_set_env_multiple(self):
         # Test setting multiple environment variables
         with GitTemporaryDirectory():
-            main([
-                "--set-env", "TEST_VAR1=value1",
-                "--set-env", "TEST_VAR2=value2",
-                "--exit", "--yes"
-            ])
+            main(
+                [
+                    "--set-env",
+                    "TEST_VAR1=value1",
+                    "--set-env",
+                    "TEST_VAR2=value2",
+                    "--exit",
+                    "--yes",
+                ]
+            )
             self.assertEqual(os.environ.get("TEST_VAR1"), "value1")
             self.assertEqual(os.environ.get("TEST_VAR2"), "value2")
 
