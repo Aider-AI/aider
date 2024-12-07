@@ -584,6 +584,21 @@ MODEL_SETTINGS = [
         use_repo_map=True,
     ),
     ModelSettings(
+        "gemini/gemini-exp-1206",
+        "diff",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-exp-1114",
+        "diff",
+        use_repo_map=True,
+    ),
+    ModelSettings(
+        "gemini/gemini-exp-1121",
+        "diff",
+        use_repo_map=True,
+    ),
+    ModelSettings(
         "vertex_ai/gemini-pro-experimental",
         "diff-fenced",
         use_repo_map=True,
