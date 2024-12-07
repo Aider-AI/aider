@@ -391,6 +391,22 @@
 ## Specify which editor to use for the /editor command
 #editor: xxx
 
+## Set an environment variable (can be used multiple times)
+#set-env: xxx
+## Specify multiple values like this:
+#set-env:
+#  - xxx
+#  - yyy
+#  - zzz
+
+## Set an API key for a provider (eg: --api-key anthropic=sk-123)
+#api-key: xxx
+## Specify multiple values like this:
+#api-key:
+#  - xxx
+#  - yyy
+#  - zzz
+
 #################
 # Voice Settings:
 

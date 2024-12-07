@@ -34,14 +34,10 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--openai-api-key",
-        metavar="OPENAI_API_KEY",
-        env_var="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
     )
     group.add_argument(
         "--anthropic-api-key",
-        metavar="ANTHROPIC_API_KEY",
-        env_var="ANTHROPIC_API_KEY",
         help="Specify the Anthropic API key",
     )
     group.add_argument(
@@ -153,32 +149,22 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--openai-api-base",
-        metavar="OPENAI_API_BASE",
-        env_var="OPENAI_API_BASE",
         help="Specify the api base url",
     )
     group.add_argument(
         "--openai-api-type",
-        metavar="OPENAI_API_TYPE",
-        env_var="OPENAI_API_TYPE",
         help="Specify the api_type",
     )
     group.add_argument(
         "--openai-api-version",
-        metavar="OPENAI_API_VERSION",
-        env_var="OPENAI_API_VERSION",
         help="Specify the api_version",
     )
     group.add_argument(
         "--openai-api-deployment-id",
-        metavar="OPENAI_API_DEPLOYMENT_ID",
-        env_var="OPENAI_API_DEPLOYMENT_ID",
         help="Specify the deployment_id",
     )
     group.add_argument(
         "--openai-organization-id",
-        metavar="OPENAI_ORGANIZATION_ID",
-        env_var="OPENAI_ORGANIZATION_ID",
         help="Specify the OpenAI organization ID",
     )
     group.add_argument(

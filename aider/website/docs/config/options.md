@@ -77,8 +77,8 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--detect-urls | --no-detect-urls] [--editor]
-             [--voice-format] [--voice-language]
-             [--voice-input-device]
+             [--set-env] [--api-key] [--voice-format]
+             [--voice-language] [--voice-input-device]
 
 ```
 
@@ -92,13 +92,13 @@ Aliases:
 
 ## Main:
 
-### `--openai-api-key OPENAI_API_KEY`
+### `--openai-api-key VALUE`
 Specify the OpenAI API key  
-Environment variable: `OPENAI_API_KEY`  
+Environment variable: `AIDER_OPENAI_API_KEY`  
 
-### `--anthropic-api-key ANTHROPIC_API_KEY`
+### `--anthropic-api-key VALUE`
 Specify the Anthropic API key  
-Environment variable: `ANTHROPIC_API_KEY`  
+Environment variable: `AIDER_ANTHROPIC_API_KEY`  
 
 ### `--model MODEL`
 Specify the model to use for the main chat  
@@ -165,25 +165,25 @@ Aliases:
   - `--list-models MODEL`
   - `--models MODEL`
 
-### `--openai-api-base OPENAI_API_BASE`
+### `--openai-api-base VALUE`
 Specify the api base url  
-Environment variable: `OPENAI_API_BASE`  
+Environment variable: `AIDER_OPENAI_API_BASE`  
 
-### `--openai-api-type OPENAI_API_TYPE`
+### `--openai-api-type VALUE`
 Specify the api_type  
-Environment variable: `OPENAI_API_TYPE`  
+Environment variable: `AIDER_OPENAI_API_TYPE`  
 
-### `--openai-api-version OPENAI_API_VERSION`
+### `--openai-api-version VALUE`
 Specify the api_version  
-Environment variable: `OPENAI_API_VERSION`  
+Environment variable: `AIDER_OPENAI_API_VERSION`  
 
-### `--openai-api-deployment-id OPENAI_API_DEPLOYMENT_ID`
+### `--openai-api-deployment-id VALUE`
 Specify the deployment_id  
-Environment variable: `OPENAI_API_DEPLOYMENT_ID`  
+Environment variable: `AIDER_OPENAI_API_DEPLOYMENT_ID`  
 
-### `--openai-organization-id OPENAI_ORGANIZATION_ID`
+### `--openai-organization-id VALUE`
 Specify the OpenAI organization ID  
-Environment variable: `OPENAI_ORGANIZATION_ID`  
+Environment variable: `AIDER_OPENAI_ORGANIZATION_ID`  
 
 ### `--model-settings-file MODEL_SETTINGS_FILE`
 Specify a file with aider model settings for unknown models  
@@ -712,6 +712,16 @@ Aliases:
 ### `--editor VALUE`
 Specify which editor to use for the /editor command  
 Environment variable: `AIDER_EDITOR`  
+
+### `--set-env ENV_VAR_NAME=value`
+Set an environment variable (can be used multiple times)  
+Default: []  
+Environment variable: `AIDER_SET_ENV`  
+
+### `--api-key PROVIDER=KEY`
+Set an API key for a provider (eg: --api-key anthropic=sk-123)  
+Default: []  
+Environment variable: `AIDER_API_KEY`  
 
 ## Voice Settings:
 

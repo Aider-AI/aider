@@ -64,10 +64,10 @@ cog.outl("```")
 # Main:
 
 ## Specify the OpenAI API key
-#OPENAI_API_KEY=
+#AIDER_OPENAI_API_KEY=
 
 ## Specify the Anthropic API key
-#ANTHROPIC_API_KEY=
+#AIDER_ANTHROPIC_API_KEY=
 
 ## Specify the model to use for the main chat
 #AIDER_MODEL=
@@ -112,19 +112,19 @@ cog.outl("```")
 #AIDER_LIST_MODELS=
 
 ## Specify the api base url
-#OPENAI_API_BASE=
+#AIDER_OPENAI_API_BASE=
 
 ## Specify the api_type
-#OPENAI_API_TYPE=
+#AIDER_OPENAI_API_TYPE=
 
 ## Specify the api_version
-#OPENAI_API_VERSION=
+#AIDER_OPENAI_API_VERSION=
 
 ## Specify the deployment_id
-#OPENAI_API_DEPLOYMENT_ID=
+#AIDER_OPENAI_API_DEPLOYMENT_ID=
 
 ## Specify the OpenAI organization ID
-#OPENAI_ORGANIZATION_ID=
+#AIDER_OPENAI_ORGANIZATION_ID=
 
 ## Specify a file with aider model settings for unknown models
 #AIDER_MODEL_SETTINGS_FILE=.aider.model.settings.yml
@@ -410,6 +410,12 @@ cog.outl("```")
 
 ## Specify which editor to use for the /editor command
 #AIDER_EDITOR=
+
+## Set an environment variable (can be used multiple times)
+#AIDER_SET_ENV=
+
+## Set an API key for a provider (eg: --api-key anthropic=sk-123)
+#AIDER_API_KEY=
 
 #################
 # Voice Settings:
