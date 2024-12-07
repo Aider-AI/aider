@@ -10,51 +10,6 @@ from watchfiles import watch
 
 from aider.dump import dump  # noqa
 
-
-def is_source_file(path: Path) -> bool:
-    """
-    Check if a file is a source file that uses # or // style comments.
-    This includes Python, JavaScript, TypeScript, C, C++, etc.
-    """
-    COMMENT_STYLE_EXTENSIONS = {
-        # # style comments
-        ".py",
-        ".r",
-        ".rb",
-        ".pl",
-        ".pm",
-        ".sh",
-        ".bash",
-        ".yaml",
-        ".yml",
-        ".zsh",
-        # // style comments
-        ".js",
-        ".ts",
-        ".jsx",
-        ".tsx",
-        ".cpp",
-        ".c",
-        ".h",
-        ".hpp",
-        ".java",
-        ".swift",
-        ".kt",
-        ".cs",
-        ".go",
-        ".rs",
-        ".php",
-        # -- style comments
-        ".sql",
-        ".hs",  # Haskell
-        ".lua",
-        ".elm",
-        ".vhd",  # VHDL
-        ".vhdl",
-    }
-    return path.suffix.lower() in COMMENT_STYLE_EXTENSIONS
-
-
 def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     """Load and parse multiple .gitignore files into a single PathSpec"""
     if not gitignore_paths:
@@ -104,9 +59,6 @@ class FileWatcher:
             dump(rel_path)
 
         if self.gitignore_spec and self.gitignore_spec.match_file(str(rel_path)):
-            return False
-
-        if not is_source_file(path_obj):
             return False
 
         if self.verbose:
