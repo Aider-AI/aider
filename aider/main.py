@@ -451,8 +451,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     args, unknown = parser.parse_known_args(argv)
 
-    dump(os.environ.get("ANTHROPIC_API_KEY"))
-
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
 
