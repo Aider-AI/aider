@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, patch
 
 from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
+from aider.models import Model
 from aider.sendchat import send_completion, simple_send_with_retries
 
 
@@ -37,9 +38,8 @@ class TestSendChat(unittest.TestCase):
         ]
 
         # Call the simple_send_with_retries method
-        simple_send_with_retries(self.mock_model, self.mock_messages)
-        # Should print: error message, description (if any), and retry message
-        assert mock_print.call_count == 2  # Error message + retry message
+        simple_send_with_retries(Model(self.mock_model), self.mock_messages)
+        assert mock_print.call_count == 3
 
     @patch("litellm.completion")
     def test_send_completion_basic(self, mock_completion):
