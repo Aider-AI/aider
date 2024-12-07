@@ -458,7 +458,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.set_env:
         for env_setting in args.set_env:
             try:
-                name, value = env_setting.split('=', 1)
+                name, value = env_setting.split("=", 1)
                 os.environ[name.strip()] = value.strip()
             except ValueError:
                 io.tool_error(f"Invalid --set-env format: {env_setting}")
