@@ -1,6 +1,6 @@
 ---
 parent: Configuration
-nav_order: 900
+nav_order: 20
 description: Using a .env file to store LLM API keys for aider.
 ---
 
@@ -60,14 +60,8 @@ cog.outl("```")
 
 ##...
 
-#######
-# Main:
-
-## Specify the OpenAI API key
-#AIDER_OPENAI_API_KEY=
-
-## Specify the Anthropic API key
-#AIDER_ANTHROPIC_API_KEY=
+#############
+# Main model:
 
 ## Specify the model to use for the main chat
 #AIDER_MODEL=
@@ -105,26 +99,41 @@ cog.outl("```")
 ## Use o1-preview model for the main chat
 #AIDER_O1_PREVIEW=
 
+########################
+# API Keys and settings:
+
+## Specify the OpenAI API key
+#AIDER_OPENAI_API_KEY=
+
+## Specify the Anthropic API key
+#AIDER_ANTHROPIC_API_KEY=
+
+## Specify the api base url
+#AIDER_OPENAI_API_BASE=
+
+## (deprecated, use --set-env OPENAI_API_TYPE=<value>)
+#AIDER_OPENAI_API_TYPE=
+
+## (deprecated, use --set-env OPENAI_API_VERSION=<value>)
+#AIDER_OPENAI_API_VERSION=
+
+## (deprecated, use --set-env OPENAI_API_DEPLOYMENT_ID=<value>)
+#AIDER_OPENAI_API_DEPLOYMENT_ID=
+
+## (deprecated, use --set-env OPENAI_ORGANIZATION=<value>)
+#AIDER_OPENAI_ORGANIZATION_ID=
+
+## Set an environment variable (to control API settings, can be used multiple times)
+#AIDER_SET_ENV=
+
+## Set an API key for a provider (eg: --api-key provider=<key> sets PROVIDER_API_KEY=<key>)
+#AIDER_API_KEY=
+
 #################
 # Model Settings:
 
 ## List known models which match the (partial) MODEL name
 #AIDER_LIST_MODELS=
-
-## Specify the api base url
-#AIDER_OPENAI_API_BASE=
-
-## Specify the api_type
-#AIDER_OPENAI_API_TYPE=
-
-## Specify the api_version
-#AIDER_OPENAI_API_VERSION=
-
-## Specify the deployment_id
-#AIDER_OPENAI_API_DEPLOYMENT_ID=
-
-## Specify the OpenAI organization ID
-#AIDER_OPENAI_ORGANIZATION_ID=
 
 ## Specify a file with aider model settings for unknown models
 #AIDER_MODEL_SETTINGS_FILE=.aider.model.settings.yml
@@ -161,9 +170,6 @@ cog.outl("```")
 
 ## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
-
-## Specify the .env file to load (default: .env in git root)
-#AIDER_ENV_FILE=.env
 
 #################
 # Cache Settings:
@@ -297,9 +303,6 @@ cog.outl("```")
 ## Enable/disable watching files for ai coding comments (default: False)
 #AIDER_WATCH_FILES=false
 
-## Enable automatic copy/paste of chat between aider and web UI (default: False)
-#AIDER_COPY_PASTE=false
-
 ########################
 # Fixing and committing:
 
@@ -333,20 +336,8 @@ cog.outl("```")
 ## Permanently disable analytics
 #AIDER_ANALYTICS_DISABLE=false
 
-#################
-# Other Settings:
-
-## specify a file to edit (can be used multiple times)
-#AIDER_FILE=
-
-## specify a read-only file (can be used multiple times)
-#AIDER_READ=
-
-## Use VI editing mode in the terminal (default: False)
-#AIDER_VIM=false
-
-## Specify the language to use in the chat (default: None, uses system settings)
-#AIDER_CHAT_LANGUAGE=
+############
+# Upgrading:
 
 ## Check for updates and return status in the exit code
 #AIDER_JUST_CHECK_UPDATE=false
@@ -363,26 +354,8 @@ cog.outl("```")
 ## Upgrade aider to the latest version from PyPI
 #AIDER_UPGRADE=false
 
-## Apply the changes from the given file instead of running the chat (debug)
-#AIDER_APPLY=
-
-## Apply clipboard contents as edits using the main model's editor format
-#AIDER_APPLY_CLIPBOARD_EDITS=false
-
-## Always say yes to every confirmation
-#AIDER_YES_ALWAYS=
-
-## Enable verbose output
-#AIDER_VERBOSE=false
-
-## Print the repo map and exit (debug)
-#AIDER_SHOW_REPO_MAP=false
-
-## Print the system prompts and exit (debug)
-#AIDER_SHOW_PROMPTS=false
-
-## Do all startup activities then exit before accepting user input (debug)
-#AIDER_EXIT=false
+########
+# Modes:
 
 ## Specify a single message to send the LLM, process reply then exit (disables chat mode)
 #AIDER_MESSAGE=
@@ -390,32 +363,26 @@ cog.outl("```")
 ## Specify a file containing the message to send the LLM, process reply, then exit (disables chat mode)
 #AIDER_MESSAGE_FILE=
 
-## Load and execute /commands from a file on launch
-#AIDER_LOAD=
-
-## Specify the encoding for input and output (default: utf-8)
-#AIDER_ENCODING=utf-8
-
 ## Run aider in your browser (default: False)
 #AIDER_GUI=false
 
-## Enable/disable suggesting shell commands (default: True)
-#AIDER_SUGGEST_SHELL_COMMANDS=true
+## Enable automatic copy/paste of chat between aider and web UI (default: False)
+#AIDER_COPY_PASTE=false
 
-## Enable/disable fancy input with history and completion (default: True)
-#AIDER_FANCY_INPUT=true
+## Apply the changes from the given file instead of running the chat (debug)
+#AIDER_APPLY=
 
-## Enable/disable detection and offering to add URLs to chat (default: True)
-#AIDER_DETECT_URLS=true
+## Apply clipboard contents as edits using the main model's editor format
+#AIDER_APPLY_CLIPBOARD_EDITS=false
 
-## Specify which editor to use for the /editor command
-#AIDER_EDITOR=
+## Do all startup activities then exit before accepting user input (debug)
+#AIDER_EXIT=false
 
-## Set an environment variable (can be used multiple times)
-#AIDER_SET_ENV=
+## Print the repo map and exit (debug)
+#AIDER_SHOW_REPO_MAP=false
 
-## Set an API key for a provider (eg: --api-key anthropic=sk-123)
-#AIDER_API_KEY=
+## Print the system prompts and exit (debug)
+#AIDER_SHOW_PROMPTS=false
 
 #################
 # Voice Settings:
@@ -428,5 +395,47 @@ cog.outl("```")
 
 ## Specify the input device name for voice recording
 #AIDER_VOICE_INPUT_DEVICE=
+
+#################
+# Other Settings:
+
+## specify a file to edit (can be used multiple times)
+#AIDER_FILE=
+
+## specify a read-only file (can be used multiple times)
+#AIDER_READ=
+
+## Use VI editing mode in the terminal (default: False)
+#AIDER_VIM=false
+
+## Specify the language to use in the chat (default: None, uses system settings)
+#AIDER_CHAT_LANGUAGE=
+
+## Always say yes to every confirmation
+#AIDER_YES_ALWAYS=
+
+## Enable verbose output
+#AIDER_VERBOSE=false
+
+## Load and execute /commands from a file on launch
+#AIDER_LOAD=
+
+## Specify the encoding for input and output (default: utf-8)
+#AIDER_ENCODING=utf-8
+
+## Specify the .env file to load (default: .env in git root)
+#AIDER_ENV_FILE=.env
+
+## Enable/disable suggesting shell commands (default: True)
+#AIDER_SUGGEST_SHELL_COMMANDS=true
+
+## Enable/disable fancy input with history and completion (default: True)
+#AIDER_FANCY_INPUT=true
+
+## Enable/disable detection and offering to add URLs to chat (default: True)
+#AIDER_DETECT_URLS=true
+
+## Specify which editor to use for the /editor command
+#AIDER_EDITOR=
 ```
 <!--[[[end]]]-->

@@ -25,18 +25,19 @@ from aider.args import get_md_help
 cog.out(get_md_help())
 ]]]-->
 ```
-usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
-             [--opus] [--sonnet] [--haiku] [--4] [--4o] [--mini]
-             [--4-turbo] [--35turbo] [--deepseek] [--o1-mini]
-             [--o1-preview] [--list-models] [--openai-api-base]
+usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
+             [--4o] [--mini] [--4-turbo] [--35turbo] [--deepseek]
+             [--o1-mini] [--o1-preview] [--openai-api-key]
+             [--anthropic-api-key] [--openai-api-base]
              [--openai-api-type] [--openai-api-version]
              [--openai-api-deployment-id] [--openai-organization-id]
+             [--set-env] [--api-key] [--list-models]
              [--model-settings-file] [--model-metadata-file]
              [--alias] [--verify-ssl | --no-verify-ssl] [--timeout]
              [--edit-format] [--architect] [--weak-model]
              [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
-             [--max-chat-history-tokens] [--env-file]
+             [--max-chat-history-tokens]
              [--cache-prompts | --no-cache-prompts]
              [--cache-keepalive-pings] [--map-tokens]
              [--map-refresh] [--map-multiplier-no-files]
@@ -60,25 +61,25 @@ usage: aider [-h] [--openai-api-key] [--anthropic-api-key] [--model]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--skip-sanity-check-repo]
-             [--watch-files | --no-watch-files]
-             [--copy-paste | --no-copy-paste] [--lint] [--lint-cmd]
-             [--auto-lint | --no-auto-lint] [--test-cmd]
-             [--auto-test | --no-auto-test] [--test]
+             [--watch-files | --no-watch-files] [--lint]
+             [--lint-cmd] [--auto-lint | --no-auto-lint]
+             [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--analytics | --no-analytics] [--analytics-log]
-             [--analytics-disable] [--file] [--read] [--vim]
-             [--chat-language] [--version] [--just-check-update]
+             [--analytics-disable] [--just-check-update]
              [--check-update | --no-check-update]
              [--show-release-notes | --no-show-release-notes]
-             [--install-main-branch] [--upgrade] [--apply]
-             [--apply-clipboard-edits] [--yes-always] [-v]
-             [--show-repo-map] [--show-prompts] [--exit] [--message]
-             [--message-file] [--load] [--encoding] [-c]
+             [--install-main-branch] [--upgrade] [--version]
+             [--message] [--message-file]
              [--gui | --no-gui | --browser | --no-browser]
+             [--copy-paste | --no-copy-paste] [--apply]
+             [--apply-clipboard-edits] [--exit] [--show-repo-map]
+             [--show-prompts] [--voice-format] [--voice-language]
+             [--voice-input-device] [--file] [--read] [--vim]
+             [--chat-language] [--yes-always] [-v] [--load]
+             [--encoding] [-c] [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--detect-urls | --no-detect-urls] [--editor]
-             [--set-env] [--api-key] [--voice-format]
-             [--voice-language] [--voice-input-device]
 
 ```
 
@@ -90,15 +91,7 @@ Aliases:
   - `-h`
   - `--help`
 
-## Main:
-
-### `--openai-api-key VALUE`
-Specify the OpenAI API key  
-Environment variable: `AIDER_OPENAI_API_KEY`  
-
-### `--anthropic-api-key VALUE`
-Specify the Anthropic API key  
-Environment variable: `AIDER_ANTHROPIC_API_KEY`  
+## Main model:
 
 ### `--model MODEL`
 Specify the model to use for the main chat  
@@ -156,6 +149,46 @@ Environment variable: `AIDER_O1_MINI`
 Use o1-preview model for the main chat  
 Environment variable: `AIDER_O1_PREVIEW`  
 
+## API Keys and settings:
+
+### `--openai-api-key VALUE`
+Specify the OpenAI API key  
+Environment variable: `AIDER_OPENAI_API_KEY`  
+
+### `--anthropic-api-key VALUE`
+Specify the Anthropic API key  
+Environment variable: `AIDER_ANTHROPIC_API_KEY`  
+
+### `--openai-api-base VALUE`
+Specify the api base url  
+Environment variable: `AIDER_OPENAI_API_BASE`  
+
+### `--openai-api-type VALUE`
+(deprecated, use --set-env OPENAI_API_TYPE=<value>)  
+Environment variable: `AIDER_OPENAI_API_TYPE`  
+
+### `--openai-api-version VALUE`
+(deprecated, use --set-env OPENAI_API_VERSION=<value>)  
+Environment variable: `AIDER_OPENAI_API_VERSION`  
+
+### `--openai-api-deployment-id VALUE`
+(deprecated, use --set-env OPENAI_API_DEPLOYMENT_ID=<value>)  
+Environment variable: `AIDER_OPENAI_API_DEPLOYMENT_ID`  
+
+### `--openai-organization-id VALUE`
+(deprecated, use --set-env OPENAI_ORGANIZATION=<value>)  
+Environment variable: `AIDER_OPENAI_ORGANIZATION_ID`  
+
+### `--set-env ENV_VAR_NAME=value`
+Set an environment variable (to control API settings, can be used multiple times)  
+Default: []  
+Environment variable: `AIDER_SET_ENV`  
+
+### `--api-key PROVIDER=KEY`
+Set an API key for a provider (eg: --api-key provider=<key> sets PROVIDER_API_KEY=<key>)  
+Default: []  
+Environment variable: `AIDER_API_KEY`  
+
 ## Model Settings:
 
 ### `--list-models MODEL`
@@ -164,26 +197,6 @@ Environment variable: `AIDER_LIST_MODELS`
 Aliases:
   - `--list-models MODEL`
   - `--models MODEL`
-
-### `--openai-api-base VALUE`
-Specify the api base url  
-Environment variable: `AIDER_OPENAI_API_BASE`  
-
-### `--openai-api-type VALUE`
-Specify the api_type  
-Environment variable: `AIDER_OPENAI_API_TYPE`  
-
-### `--openai-api-version VALUE`
-Specify the api_version  
-Environment variable: `AIDER_OPENAI_API_VERSION`  
-
-### `--openai-api-deployment-id VALUE`
-Specify the deployment_id  
-Environment variable: `AIDER_OPENAI_API_DEPLOYMENT_ID`  
-
-### `--openai-organization-id VALUE`
-Specify the OpenAI organization ID  
-Environment variable: `AIDER_OPENAI_ORGANIZATION_ID`  
 
 ### `--model-settings-file MODEL_SETTINGS_FILE`
 Specify a file with aider model settings for unknown models  
@@ -245,11 +258,6 @@ Aliases:
 ### `--max-chat-history-tokens VALUE`
 Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.  
 Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
-
-### `--env-file ENV_FILE`
-Specify the .env file to load (default: .env in git root)  
-Default: .env  
-Environment variable: `AIDER_ENV_FILE`  
 
 ## Cache Settings:
 
@@ -490,14 +498,6 @@ Aliases:
   - `--watch-files`
   - `--no-watch-files`
 
-### `--copy-paste`
-Enable automatic copy/paste of chat between aider and web UI (default: False)  
-Default: False  
-Environment variable: `AIDER_COPY_PASTE`  
-Aliases:
-  - `--copy-paste`
-  - `--no-copy-paste`
-
 ## Fixing and committing:
 
 ### `--lint`
@@ -554,27 +554,7 @@ Permanently disable analytics
 Default: False  
 Environment variable: `AIDER_ANALYTICS_DISABLE`  
 
-## Other Settings:
-
-### `--file FILE`
-specify a file to edit (can be used multiple times)  
-Environment variable: `AIDER_FILE`  
-
-### `--read FILE`
-specify a read-only file (can be used multiple times)  
-Environment variable: `AIDER_READ`  
-
-### `--vim`
-Use VI editing mode in the terminal (default: False)  
-Default: False  
-Environment variable: `AIDER_VIM`  
-
-### `--chat-language CHAT_LANGUAGE`
-Specify the language to use in the chat (default: None, uses system settings)  
-Environment variable: `AIDER_CHAT_LANGUAGE`  
-
-### `--version`
-Show the version number and exit  
+## Upgrading:
 
 ### `--just-check-update`
 Check for updates and return status in the exit code  
@@ -609,41 +589,10 @@ Aliases:
   - `--upgrade`
   - `--update`
 
-### `--apply FILE`
-Apply the changes from the given file instead of running the chat (debug)  
-Environment variable: `AIDER_APPLY`  
+### `--version`
+Show the version number and exit  
 
-### `--apply-clipboard-edits`
-Apply clipboard contents as edits using the main model's editor format  
-Default: False  
-Environment variable: `AIDER_APPLY_CLIPBOARD_EDITS`  
-
-### `--yes-always`
-Always say yes to every confirmation  
-Environment variable: `AIDER_YES_ALWAYS`  
-
-### `--verbose`
-Enable verbose output  
-Default: False  
-Environment variable: `AIDER_VERBOSE`  
-Aliases:
-  - `-v`
-  - `--verbose`
-
-### `--show-repo-map`
-Print the repo map and exit (debug)  
-Default: False  
-Environment variable: `AIDER_SHOW_REPO_MAP`  
-
-### `--show-prompts`
-Print the system prompts and exit (debug)  
-Default: False  
-Environment variable: `AIDER_SHOW_PROMPTS`  
-
-### `--exit`
-Do all startup activities then exit before accepting user input (debug)  
-Default: False  
-Environment variable: `AIDER_EXIT`  
+## Modes:
 
 ### `--message COMMAND`
 Specify a single message to send the LLM, process reply then exit (disables chat mode)  
@@ -660,6 +609,95 @@ Aliases:
   - `--message-file MESSAGE_FILE`
   - `-f MESSAGE_FILE`
 
+### `--gui`
+Run aider in your browser (default: False)  
+Default: False  
+Environment variable: `AIDER_GUI`  
+Aliases:
+  - `--gui`
+  - `--no-gui`
+  - `--browser`
+  - `--no-browser`
+
+### `--copy-paste`
+Enable automatic copy/paste of chat between aider and web UI (default: False)  
+Default: False  
+Environment variable: `AIDER_COPY_PASTE`  
+Aliases:
+  - `--copy-paste`
+  - `--no-copy-paste`
+
+### `--apply FILE`
+Apply the changes from the given file instead of running the chat (debug)  
+Environment variable: `AIDER_APPLY`  
+
+### `--apply-clipboard-edits`
+Apply clipboard contents as edits using the main model's editor format  
+Default: False  
+Environment variable: `AIDER_APPLY_CLIPBOARD_EDITS`  
+
+### `--exit`
+Do all startup activities then exit before accepting user input (debug)  
+Default: False  
+Environment variable: `AIDER_EXIT`  
+
+### `--show-repo-map`
+Print the repo map and exit (debug)  
+Default: False  
+Environment variable: `AIDER_SHOW_REPO_MAP`  
+
+### `--show-prompts`
+Print the system prompts and exit (debug)  
+Default: False  
+Environment variable: `AIDER_SHOW_PROMPTS`  
+
+## Voice Settings:
+
+### `--voice-format VOICE_FORMAT`
+Audio format for voice recording (default: wav). webm and mp3 require ffmpeg  
+Default: wav  
+Environment variable: `AIDER_VOICE_FORMAT`  
+
+### `--voice-language VOICE_LANGUAGE`
+Specify the language for voice using ISO 639-1 code (default: auto)  
+Default: en  
+Environment variable: `AIDER_VOICE_LANGUAGE`  
+
+### `--voice-input-device VOICE_INPUT_DEVICE`
+Specify the input device name for voice recording  
+Environment variable: `AIDER_VOICE_INPUT_DEVICE`  
+
+## Other Settings:
+
+### `--file FILE`
+specify a file to edit (can be used multiple times)  
+Environment variable: `AIDER_FILE`  
+
+### `--read FILE`
+specify a read-only file (can be used multiple times)  
+Environment variable: `AIDER_READ`  
+
+### `--vim`
+Use VI editing mode in the terminal (default: False)  
+Default: False  
+Environment variable: `AIDER_VIM`  
+
+### `--chat-language CHAT_LANGUAGE`
+Specify the language to use in the chat (default: None, uses system settings)  
+Environment variable: `AIDER_CHAT_LANGUAGE`  
+
+### `--yes-always`
+Always say yes to every confirmation  
+Environment variable: `AIDER_YES_ALWAYS`  
+
+### `--verbose`
+Enable verbose output  
+Default: False  
+Environment variable: `AIDER_VERBOSE`  
+Aliases:
+  - `-v`
+  - `--verbose`
+
 ### `--load LOAD_FILE`
 Load and execute /commands from a file on launch  
 Environment variable: `AIDER_LOAD`  
@@ -675,15 +713,10 @@ Aliases:
   - `-c CONFIG_FILE`
   - `--config CONFIG_FILE`
 
-### `--gui`
-Run aider in your browser (default: False)  
-Default: False  
-Environment variable: `AIDER_GUI`  
-Aliases:
-  - `--gui`
-  - `--no-gui`
-  - `--browser`
-  - `--no-browser`
+### `--env-file ENV_FILE`
+Specify the .env file to load (default: .env in git root)  
+Default: .env  
+Environment variable: `AIDER_ENV_FILE`  
 
 ### `--suggest-shell-commands`
 Enable/disable suggesting shell commands (default: True)  
@@ -712,30 +745,4 @@ Aliases:
 ### `--editor VALUE`
 Specify which editor to use for the /editor command  
 Environment variable: `AIDER_EDITOR`  
-
-### `--set-env ENV_VAR_NAME=value`
-Set an environment variable (can be used multiple times)  
-Default: []  
-Environment variable: `AIDER_SET_ENV`  
-
-### `--api-key PROVIDER=KEY`
-Set an API key for a provider (eg: --api-key anthropic=sk-123)  
-Default: []  
-Environment variable: `AIDER_API_KEY`  
-
-## Voice Settings:
-
-### `--voice-format VOICE_FORMAT`
-Audio format for voice recording (default: wav). webm and mp3 require ffmpeg  
-Default: wav  
-Environment variable: `AIDER_VOICE_FORMAT`  
-
-### `--voice-language VOICE_LANGUAGE`
-Specify the language for voice using ISO 639-1 code (default: auto)  
-Default: en  
-Environment variable: `AIDER_VOICE_LANGUAGE`  
-
-### `--voice-input-device VOICE_INPUT_DEVICE`
-Specify the input device name for voice recording  
-Environment variable: `AIDER_VOICE_INPUT_DEVICE`  
 <!--[[[end]]]-->

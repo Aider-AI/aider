@@ -558,18 +558,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
     if args.openai_api_version:
         io.tool_warning(
-            "--openai-api-version will be deprecated soon, use --set-env OPENAI_API_VERSION=<value>"
+            "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
         )
         os.environ["OPENAI_API_VERSION"] = args.openai_api_version
     if args.openai_api_type:
-        io.tool_warning(
-            "--openai-api-type will be deprecated soon, use --set-env OPENAI_API_TYPE=<value>"
-        )
+        io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
         os.environ["OPENAI_API_TYPE"] = args.openai_api_type
     if args.openai_organization_id:
         io.tool_warning(
-            "--openai-organization-id will be deprecated soon, use --set-env"
-            " OPENAI_ORGANIZATION=<value>"
+            "--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>"
         )
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
