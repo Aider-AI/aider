@@ -715,11 +715,7 @@ class TestMain(TestCase):
     def test_api_key_multiple(self):
         # Test setting multiple API keys
         with GitTemporaryDirectory():
-            main([
-                "--api-key", "anthropic=key1",
-                "--api-key", "openai=key2",
-                "--exit", "--yes"
-            ])
+            main(["--api-key", "anthropic=key1", "--api-key", "openai=key2", "--exit", "--yes"])
             self.assertEqual(os.environ.get("ANTHROPIC_API_KEY"), "key1")
             self.assertEqual(os.environ.get("OPENAI_API_KEY"), "key2")
 
