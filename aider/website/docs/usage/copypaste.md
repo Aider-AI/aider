@@ -1,12 +1,12 @@
 ---
-title: Copy/paste to web chat
+title: Copy/paste with web chat
 #highlight_image: /assets/browser.jpg
 parent: Usage
 nav_order: 850
 description: Aider works with LLM web chat UIs
 ---
 
-# Copy/paste to web chat
+# Copy/paste with web chat
 
 <div class="video-container">
   <video controls loop poster="/assets/copypaste.jpg">
@@ -37,16 +37,15 @@ description: Aider works with LLM web chat UIs
 [Aider can connect to most LLMs via API](https://aider.chat/docs/llms.html) and works best that way.
 But there are times when you may want to work with an LLM via its web chat interface:
 
-- There may not be an API available.
-- Corporate restrictions may force you to use a proprietary web based LLM.
-- The web LLM may have access to unique context or may have been specially fine tuned for your task.
+- Workplace policies may limit your LLM usage to a proprietary web chat system.
+- The web chat LLM may have access to unique context or may have been specially fine tuned for your task.
 - It may be cost prohibitive to use some models via API.
+- There may not be an API available.
 
 Aider has features for working with an LLM via its web chat interface.
 This allows you to use the web chat LLM as the "big brain code architect"
 while running aider with a smaller, cheaper LLM to actually make changes
 to your local files.
-
 
 For this "file editor" part of the process 
 you can run aider with many open source, free or very inexpensive LLMs.
@@ -92,13 +91,12 @@ Depending on the LLM you have aider use, it will be either `editor-whole` or `ed
 
 ## Terms of service
 
-Be sure to review the Terms Of Service (TOS) of any LLM web chat service you use with
+Be sure to review the Terms Of Service of any LLM web chat service you use with
 these features.
-Be sure your LLM web chat provider allows you to manually paste code into their web user
-interface and manually copy LLM replies to use with other software on your computer.
+These features are not intended to be used in violation of any service's Terms Of Use (TOS).
 
 Aider's web chat features have been designed to be compliant with the 
-terms of service (TOS) of most LLM web chats.
+terms of service of most LLM web chats.
 
 There are 4 copy/paste steps involved when coding with an LLM web chat:
 
@@ -113,9 +111,10 @@ Aider's `--copy-paste` mode leaves those as 100% manual steps for the user to co
 It simply streamlines steps (1) and (4) that are interactions with aider,
 and which should not be under the scope of an LLM web chat TOS.
 
-If you have concerns that
+If you are concerned that
 the automatic interactions with aider in steps (1) and (4) may be problematic with respect to
-your LLM web chat provider's TOS, you can forego `--copy-paste` mode, and manually use
-`/copy-context` and `/paste`.
+your LLM web chat provider's TOS, you can forego `--copy-paste` mode.
+Instead, manually use the `/copy-context` and `/paste` commands if that
+will keep you in compliance.
 
-These features are not intended to be used in violation of any service's Terms Of Use.
+Again, do not use these features in violation of any service's Terms Of Use.
