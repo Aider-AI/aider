@@ -35,14 +35,22 @@ description: Aider works with LLM web chat UIs
 ## Working with an LLM web chat
 
 [Aider can connect to most LLMs via API](https://aider.chat/docs/llms.html) and works best that way.
-But there are times when you may want to work with an LLM via its web chat interface.
-You may not have API access to that particular LLM,
-or perhaps it is cost prohibitive to use via API.
+But there are times when you may want to work with an LLM via its web chat interface:
 
-Aider has features for working with an LLM web chat.
+- There may not be an API available.
+- Corporate restrictions may force you to use a proprietary web based LLM.
+- The web LLM may have access to unique context or may have been specially fine tuned.
+- It may be cost prohibitive to use some models via API.
+
+Aider has features for working with an LLM via its web chat interface.
 This allows you to use the web chat LLM as the "big brain architect"
 while running aider with a smaller, cheaper LLM to actually make changes
 to your local files.
+
+You can run aider with many open source, free or very inexpensive LLMs
+for this "file editor" part of the process.
+The demo video above shows aider using DeepSeek to apply the changes
+that GPT-4o is suggesting in the web chat.
 
 ### Copy aider's code context to your clipboard, paste into the web UI
 
