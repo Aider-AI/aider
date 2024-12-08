@@ -558,6 +558,14 @@ MODEL_SETTINGS = [
         send_undo_reply=False,
         examples_as_sys_msg=True,
     ),
+    ModelSettings(
+        "openrouter/meta-llama/llama-3.3-70b-instruct",
+        "diff",
+        weak_model_name="openrouter/meta-llama/llama-3.3-70b-instruct",
+        use_repo_map=False,
+        send_undo_reply=False,
+        examples_as_sys_msg=True,
+    ),
     # Gemini
     ModelSettings(
         "gemini/gemini-1.5-pro-002",
