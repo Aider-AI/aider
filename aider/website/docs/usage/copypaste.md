@@ -39,17 +39,18 @@ But there are times when you may want to work with an LLM via its web chat inter
 
 - There may not be an API available.
 - Corporate restrictions may force you to use a proprietary web based LLM.
-- The web LLM may have access to unique context or may have been specially fine tuned.
+- The web LLM may have access to unique context or may have been specially fine tuned for your task.
 - It may be cost prohibitive to use some models via API.
 
 Aider has features for working with an LLM via its web chat interface.
-This allows you to use the web chat LLM as the "big brain architect"
+This allows you to use the web chat LLM as the "big brain code architect"
 while running aider with a smaller, cheaper LLM to actually make changes
 to your local files.
 
-You can run aider with many open source, free or very inexpensive LLMs
-for this "file editor" part of the process.
-The demo video above shows aider using DeepSeek to apply the changes
+
+For this "file editor" part of the process 
+you can run aider with many open source, free or very inexpensive LLMs.
+For example, the demo video above shows aider using DeepSeek to apply the changes
 that GPT-4o is suggesting in the web chat.
 
 ### Copy aider's code context to your clipboard, paste into the web UI
@@ -105,4 +106,4 @@ There are 4 copy/paste steps involved when coding with an LLM web chat:
 Most LLM web chat TOS prohibit automating steps (2) and (3) where code
 is copied/pasted in the web chat.
 Aider's copy/paste mode leaves those as 100% manual steps for the user to complete,
-but streamlines steps (1) and (4) which are not related to any LLM web chat TOS.
+but streamlines steps (1) and (4) which are should not be related to any LLM web chat TOS.
