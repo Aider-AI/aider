@@ -1468,6 +1468,39 @@ class TestCommands(TestCase):
             commands.cmd_drop("test_file.txt")
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
+    def test_cmd_read_only_bulk_conversion(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create and add some test files
+            test_files = ["test1.txt", "test2.txt", "test3.txt"]
+            for fname in test_files:
+                Path(fname).write_text(f"Content of {fname}")
+                commands.cmd_add(fname)
+
+            # Verify files are in editable mode
+            self.assertEqual(len(coder.abs_fnames), 3)
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+            # Convert all files to read-only mode
+            commands.cmd_read_only("")
+
+            # Verify all files were moved to read-only
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 3)
+
+            # Check specific files
+            for fname in test_files:
+                abs_path = Path(repo_dir) / fname
+                self.assertTrue(
+                    any(
+                        os.path.samefile(str(abs_path), ro_fname)
+                        for ro_fname in coder.abs_read_only_fnames
+                    )
+                )
+
     def test_cmd_read_only_with_multiple_files(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
