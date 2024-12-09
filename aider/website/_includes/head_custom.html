@@ -36,6 +36,15 @@ window.addEventListener('load', function(){
       }
     },
     type: "opt-in",
+    position: "bottom-left",
+    showLink: false,
+    dismissOnScroll: true,
+    cookie: {
+      name: 'cookieconsent_status',
+      path: '/',
+      domain: 'aider.chat',
+      expiryDays: 365
+    },
     content: {
       message: "This website uses analytics cookies to help us understand how you use the site.",
       dismiss: "Decline",
