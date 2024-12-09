@@ -12,7 +12,6 @@ import semver
 import yaml
 from tqdm import tqdm
 
-# Put the list of inidividual URLs here: AI!
 
 def blame(start_tag, end_tag=None):
     commits = get_all_commit_hashes_between_tags(start_tag, end_tag)
@@ -22,15 +21,18 @@ def blame(start_tag, end_tag=None):
 
     revision = end_tag if end_tag else "HEAD"
     files = run(["git", "ls-tree", "-r", "--name-only", revision]).strip().split("\n")
+    website_files = [
+        "aider/website/share/index.md",
+        "aider/website/_includes/head_custom.html",
+        "aider/website/docs/leaderboards/index.md",
+    ]
+    
     files = [
         f
         for f in files
         if f.endswith((".js", ".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
-        # AI: refactor these into a list...
-        or f == "aider/website/share/index.md"
-        or f == "aider/website/_includes/head_custom.html"
-        or f == "aider/website/docs/leaderboards/index.md"
+        or f in website_files
     ]
     files = [f for f in files if not f.endswith("prompts.py")]
 
