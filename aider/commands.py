@@ -1210,7 +1210,12 @@ class Commands:
     def cmd_read_only(self, args):
         "Add files to the chat that are for reference, not to be edited"
         if not args.strip():
-            self.io.tool_error("Please provide filenames or directories to read.")
+            # Convert all files in chat to read-only
+            for fname in list(self.coder.abs_fnames):
+                self.coder.abs_fnames.remove(fname)
+                self.coder.abs_read_only_fnames.add(fname)
+                rel_fname = self.coder.get_rel_fname(fname)
+                self.io.tool_output(f"Converted {rel_fname} to read-only")
             return
 
         filenames = parse_quoted_filenames(args)
