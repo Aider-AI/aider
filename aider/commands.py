@@ -103,6 +103,7 @@ class Commands:
                 ("help", "Get help about using aider (usage, config, troubleshoot)."),
                 ("ask", "Ask questions about your code without making any changes."),
                 ("code", "Ask for changes to your code (using the best edit format)."),
+                ("architect", "Discuss high-level design and architecture."),
             ]
         )
 
