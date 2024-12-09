@@ -125,9 +125,9 @@ class TestRepo(unittest.TestCase):
         # Check that simple_send_with_retries was called twice
         self.assertEqual(mock_send.call_count, 2)
 
-        # Check that it was called with the correct model names
-        self.assertEqual(mock_send.call_args_list[0][0][0], model1.name)
-        self.assertEqual(mock_send.call_args_list[1][0][0], model2.name)
+        # Check that it was called with the correct models
+        self.assertEqual(mock_send.call_args_list[0][0][0], model1)
+        self.assertEqual(mock_send.call_args_list[1][0][0], model2)
 
         # Check that the content of the messages is the same for both calls
         self.assertEqual(mock_send.call_args_list[0][0][1], mock_send.call_args_list[1][0][1])

@@ -35,14 +35,23 @@ description: Aider works with LLM web chat UIs
 ## Working with an LLM web chat
 
 [Aider can connect to most LLMs via API](https://aider.chat/docs/llms.html) and works best that way.
-But there are times when you may want to work with an LLM via its web chat interface.
-You may not have API access to that particular LLM,
-or perhaps it is cost prohibitive to use via API.
+But there are times when you may want to work with an LLM via its web chat interface:
 
-Aider has features for working with an LLM web chat.
-This allows you to use the web chat LLM as the "big brain architect"
+- There may not be an API available.
+- Corporate restrictions may force you to use a proprietary web based LLM.
+- The web LLM may have access to unique context or may have been specially fine tuned for your task.
+- It may be cost prohibitive to use some models via API.
+
+Aider has features for working with an LLM via its web chat interface.
+This allows you to use the web chat LLM as the "big brain code architect"
 while running aider with a smaller, cheaper LLM to actually make changes
 to your local files.
+
+
+For this "file editor" part of the process 
+you can run aider with many open source, free or very inexpensive LLMs.
+For example, the demo video above shows aider using DeepSeek to apply the changes
+that GPT-4o is suggesting in the web chat.
 
 ### Copy aider's code context to your clipboard, paste into the web UI
 
@@ -83,8 +92,12 @@ Depending on the LLM you have aider use, it will be either `editor-whole` or `ed
 
 ## Terms of service
 
-Be sure your LLM web chat provider allows you to copy and paste code according to their terms of service.
-This feature has been designed to be compliant with the 
+Be sure to review the Terms Of Service (TOS) of any LLM web chat service you use with
+these features.
+Be sure your LLM web chat provider allows you to manually paste code into their web user
+interface and manually copy LLM replies to use with other software on your computer.
+
+Aider's web chat features have been designed to be compliant with the 
 terms of service (TOS) of most LLM web chats.
 
 There are 4 copy/paste steps involved when coding with an LLM web chat:
@@ -95,6 +108,14 @@ There are 4 copy/paste steps involved when coding with an LLM web chat:
 4. Paste the LLM reply into aider.
 
 Most LLM web chat TOS prohibit automating steps (2) and (3) where code
-is copied/pasted in the web chat.
-Aider's copy/paste mode leaves those as 100% manual steps for the user to complete,
-but streamlines steps (1) and (4) which are not related to any LLM web chat TOS.
+is copied from and pasted into the web chat.
+Aider's `--copy-paste` mode leaves those as 100% manual steps for the user to complete.
+It simply streamlines steps (1) and (4) that are interactions with aider,
+and which should not be under the scope of an LLM web chat TOS.
+
+If you have concerns that
+the automatic interactions with aider in steps (1) and (4) may be problematic with respect to
+your LLM web chat provider's TOS, you can forego `--copy-paste` mode, and manually use
+`/copy-context` and `/paste`.
+
+These features are not intended to be used in violation of any service's Terms Of Use.

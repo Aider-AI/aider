@@ -203,9 +203,23 @@ def main():
 def get_counts_for_file(start_tag, end_tag, authors, fname):
     try:
         if end_tag:
-            text = run(["git", "blame", f"{start_tag}..{end_tag}", "--", fname])
+            text = run(
+                [
+                    "git",
+                    "blame",
+                    "-M",
+                    "-C",
+                    "-C",
+                    "--abbrev=9",
+                    f"{start_tag}..{end_tag}",
+                    "--",
+                    fname,
+                ]
+            )
         else:
-            text = run(["git", "blame", f"{start_tag}..HEAD", "--", fname])
+            text = run(
+                ["git", "blame", "-M", "-C", "-C", "--abbrev=9", f"{start_tag}..HEAD", "--", fname]
+            )
         if not text:
             return None
         text = text.splitlines()

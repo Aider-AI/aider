@@ -672,6 +672,59 @@ class TestMain(TestCase):
         # Verify that environment variables from pytest.ini are properly set
         self.assertEqual(os.environ.get("AIDER_ANALYTICS"), "false")
 
+    def test_set_env_single(self):
+        # Test setting a single environment variable
+        with GitTemporaryDirectory():
+            main(["--set-env", "TEST_VAR=test_value", "--exit", "--yes"])
+            self.assertEqual(os.environ.get("TEST_VAR"), "test_value")
+
+    def test_set_env_multiple(self):
+        # Test setting multiple environment variables
+        with GitTemporaryDirectory():
+            main(
+                [
+                    "--set-env",
+                    "TEST_VAR1=value1",
+                    "--set-env",
+                    "TEST_VAR2=value2",
+                    "--exit",
+                    "--yes",
+                ]
+            )
+            self.assertEqual(os.environ.get("TEST_VAR1"), "value1")
+            self.assertEqual(os.environ.get("TEST_VAR2"), "value2")
+
+    def test_set_env_with_spaces(self):
+        # Test setting env var with spaces in value
+        with GitTemporaryDirectory():
+            main(["--set-env", "TEST_VAR=test value with spaces", "--exit", "--yes"])
+            self.assertEqual(os.environ.get("TEST_VAR"), "test value with spaces")
+
+    def test_set_env_invalid_format(self):
+        # Test invalid format handling
+        with GitTemporaryDirectory():
+            result = main(["--set-env", "INVALID_FORMAT", "--exit", "--yes"])
+            self.assertEqual(result, 1)
+
+    def test_api_key_single(self):
+        # Test setting a single API key
+        with GitTemporaryDirectory():
+            main(["--api-key", "anthropic=test-key", "--exit", "--yes"])
+            self.assertEqual(os.environ.get("ANTHROPIC_API_KEY"), "test-key")
+
+    def test_api_key_multiple(self):
+        # Test setting multiple API keys
+        with GitTemporaryDirectory():
+            main(["--api-key", "anthropic=key1", "--api-key", "openai=key2", "--exit", "--yes"])
+            self.assertEqual(os.environ.get("ANTHROPIC_API_KEY"), "key1")
+            self.assertEqual(os.environ.get("OPENAI_API_KEY"), "key2")
+
+    def test_api_key_invalid_format(self):
+        # Test invalid format handling
+        with GitTemporaryDirectory():
+            result = main(["--api-key", "INVALID_FORMAT", "--exit", "--yes"])
+            self.assertEqual(result, 1)
+
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
             with patch("aider.io.InputOutput.offer_url") as mock_offer_url:

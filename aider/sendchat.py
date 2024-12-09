@@ -56,18 +56,19 @@ def send_completion(
     return hash_object, res
 
 
-def simple_send_with_retries(model_name, messages, extra_params=None):
+def simple_send_with_retries(model, messages):
     litellm_ex = LiteLLMExceptions()
 
     retry_delay = 0.125
     while True:
         try:
             kwargs = {
-                "model_name": model_name,
+                "model_name": model.name,
                 "messages": messages,
                 "functions": None,
                 "stream": False,
-                "extra_params": extra_params,
+                "temperature": None if not model.use_temperature else 0,
+                "extra_params": model.extra_params,
             }
 
             _hash, response = send_completion(**kwargs)

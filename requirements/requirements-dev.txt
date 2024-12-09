@@ -51,7 +51,7 @@ filelock==3.16.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   virtualenv
-fonttools==4.55.1
+fonttools==4.55.2
     # via matplotlib
 identify==2.6.3
     # via pre-commit

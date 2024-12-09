@@ -56,6 +56,7 @@ class Analytics:
             host=posthog_host,
             on_error=self.posthog_error,
             enable_exception_autocapture=True,
+            super_properties=self.get_system_info(),  # Add system info to all events
         )
 
     def disable(self, permanently):
@@ -164,6 +165,7 @@ class Analytics:
             "os_platform": platform.system(),
             "os_release": platform.release(),
             "machine": platform.machine(),
+            "aider_version": __version__,
         }
 
     def _redact_model_name(self, model):
@@ -195,7 +197,6 @@ class Analytics:
             properties["editor_model"] = self._redact_model_name(main_model.editor_model)
 
         properties.update(kwargs)
-        properties.update(self.get_system_info())  # Add system info to all events
 
         # Handle numeric values
         for key, value in properties.items():
@@ -203,8 +204,6 @@ class Analytics:
                 properties[key] = value
             else:
                 properties[key] = str(value)
-
-        properties["aider_version"] = __version__
 
         if self.mp:
             try:

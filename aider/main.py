@@ -526,6 +526,50 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io = get_io(False)
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
 
+    # Process any environment variables set via --set-env
+    if args.set_env:
+        for env_setting in args.set_env:
+            try:
+                name, value = env_setting.split("=", 1)
+                os.environ[name.strip()] = value.strip()
+            except ValueError:
+                io.tool_error(f"Invalid --set-env format: {env_setting}")
+                io.tool_output("Format should be: ENV_VAR_NAME=value")
+                return 1
+
+    # Process any API keys set via --api-key
+    if args.api_key:
+        for api_setting in args.api_key:
+            try:
+                provider, key = api_setting.split("=", 1)
+                env_var = f"{provider.strip().upper()}_API_KEY"
+                os.environ[env_var] = key.strip()
+            except ValueError:
+                io.tool_error(f"Invalid --api-key format: {api_setting}")
+                io.tool_output("Format should be: provider=key")
+                return 1
+
+    if args.anthropic_api_key:
+        os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
+
+    if args.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = args.openai_api_key
+    if args.openai_api_base:
+        os.environ["OPENAI_API_BASE"] = args.openai_api_base
+    if args.openai_api_version:
+        io.tool_warning(
+            "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
+        )
+        os.environ["OPENAI_API_VERSION"] = args.openai_api_version
+    if args.openai_api_type:
+        io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
+        os.environ["OPENAI_API_TYPE"] = args.openai_api_type
+    if args.openai_organization_id:
+        io.tool_warning(
+            "--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>"
+        )
+        os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
+
     analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
     if args.analytics is not False:
         if analytics.need_to_ask(args.analytics):
@@ -645,20 +689,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
     check_and_load_imports(io, is_first_run, verbose=args.verbose)
-
-    if args.anthropic_api_key:
-        os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
-
-    if args.openai_api_key:
-        os.environ["OPENAI_API_KEY"] = args.openai_api_key
-    if args.openai_api_base:
-        os.environ["OPENAI_API_BASE"] = args.openai_api_base
-    if args.openai_api_version:
-        os.environ["OPENAI_API_VERSION"] = args.openai_api_version
-    if args.openai_api_type:
-        os.environ["OPENAI_API_TYPE"] = args.openai_api_type
-    if args.openai_organization_id:
-        os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
