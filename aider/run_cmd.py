@@ -113,7 +113,7 @@ def run_cmd_pexpect(command, verbose=False, cwd=None):
             # Use the shell from SHELL environment variable
             if verbose:
                 print("Running pexpect.spawn with shell:", shell)
-            child = pexpect.spawn(shell, args=["-c", command], encoding="utf-8", cwd=cwd)
+            child = pexpect.spawn(shell, args=["-i", "-c", command], encoding="utf-8", cwd=cwd)
         else:
             # Fall back to spawning the command directly
             if verbose:
