@@ -12,6 +12,12 @@ import semver
 import yaml
 from tqdm import tqdm
 
+website_files = [
+    "aider/website/share/index.md",
+    "aider/website/_includes/head_custom.html",
+    "aider/website/docs/leaderboards/index.md",
+]
+
 
 def blame(start_tag, end_tag=None):
     commits = get_all_commit_hashes_between_tags(start_tag, end_tag)
@@ -21,12 +27,6 @@ def blame(start_tag, end_tag=None):
 
     revision = end_tag if end_tag else "HEAD"
     files = run(["git", "ls-tree", "-r", "--name-only", revision]).strip().split("\n")
-    website_files = [
-        "aider/website/share/index.md",
-        "aider/website/_includes/head_custom.html",
-        "aider/website/docs/leaderboards/index.md",
-    ]
-
     files = [
         f
         for f in files
