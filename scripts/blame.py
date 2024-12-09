@@ -26,7 +26,7 @@ def blame(start_tag, end_tag=None):
         "aider/website/_includes/head_custom.html",
         "aider/website/docs/leaderboards/index.md",
     ]
-    
+
     files = [
         f
         for f in files
