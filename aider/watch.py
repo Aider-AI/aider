@@ -84,11 +84,12 @@ class FileWatcher:
     # Compiled regex pattern for AI comments
     ai_comment_pattern = re.compile(r"(?:#|//|--) *(ai\b.*|ai\b.*|.*\bai!?) *$", re.IGNORECASE)
 
-    def __init__(self, coder, gitignores=None, verbose=False):
+    def __init__(self, coder, gitignores=None, verbose=False, analytics=None):
         self.coder = coder
         self.io = coder.io
         self.root = Path(coder.root)
         self.verbose = verbose
+        self.analytics = analytics
         self.stop_event = None
         self.watcher_thread = None
         self.changed_files = set()
@@ -171,7 +172,8 @@ class FileWatcher:
 
             if fname in self.coder.abs_fnames:
                 continue
-            # AI: fire an event()
+            if self.analytics:
+                self.analytics.event("file_added", filename=fname)
             self.coder.abs_fnames.add(fname)
             rel_fname = self.coder.get_rel_fname(fname)
             self.io.tool_output(f"Added {rel_fname} to the chat")
@@ -180,7 +182,8 @@ class FileWatcher:
         if not has_bangs:
             return ""
 
-        # fire a different event. AI!
+        if self.analytics:
+            self.analytics.event("ai_comment_request")
         self.io.tool_output("Processing your request...")
 
         res = """
