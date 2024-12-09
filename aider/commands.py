@@ -1206,9 +1206,8 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
-    # if no args are supplied, convert all /added files into read-only files ai!
     def cmd_read_only(self, args):
-        "Add files to the chat that are for reference, not to be edited"
+        "Add files to the chat that are for reference only, or turn added files to read-only"
         if not args.strip():
             # Convert all files in chat to read-only
             for fname in list(self.coder.abs_fnames):
