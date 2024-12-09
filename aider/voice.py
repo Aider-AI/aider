@@ -14,6 +14,8 @@ from .dump import dump  # noqa: F401
 warnings.filterwarnings(
     "ignore", message="Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work"
 )
+warnings.filterwarnings("ignore", category=SyntaxWarning)
+
 
 from pydub import AudioSegment  # noqa
 
@@ -43,7 +45,6 @@ class Voice:
 
             self.sd = sd
 
-
             devices = sd.query_devices()
 
             if device_name:
@@ -55,7 +56,10 @@ class Voice:
                         break
                 if device_id is None:
                     available_inputs = [d["name"] for d in devices if d["max_input_channels"] > 0]
-                    raise ValueError(f"Device '{device_name}' not found. Available input devices: {available_inputs}")
+                    raise ValueError(
+                        f"Device '{device_name}' not found. Available input devices:"
+                        f" {available_inputs}"
+                    )
 
                 print(f"Using input device: {device_name} (ID: {device_id})")
 
@@ -125,7 +129,9 @@ class Voice:
         self.start_time = time.time()
 
         try:
-            with self.sd.InputStream(samplerate=sample_rate, channels=1, callback=self.callback, device=self.device_id):
+            with self.sd.InputStream(
+                samplerate=sample_rate, channels=1, callback=self.callback, device=self.device_id
+            ):
                 prompt(self.get_prompt, refresh_interval=0.1)
         except self.sd.PortAudioError as err:
             raise SoundDeviceError(f"Error accessing audio input device: {err}")
