@@ -171,6 +171,7 @@ class FileWatcher:
 
             if fname in self.coder.abs_fnames:
                 continue
+            # AI: fire an event()
             self.coder.abs_fnames.add(fname)
             rel_fname = self.coder.get_rel_fname(fname)
             self.io.tool_output(f"Added {rel_fname} to the chat")
@@ -179,6 +180,7 @@ class FileWatcher:
         if not has_bangs:
             return ""
 
+        # fire a different event. AI!
         self.io.tool_output("Processing your request...")
 
         res = """
