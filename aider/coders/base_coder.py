@@ -1559,6 +1559,16 @@ class Coder:
                 yield from self.show_send_output_stream(completion)
             else:
                 self.show_send_output(completion)
+
+            # Calculate costs for successful responses
+            self.calculate_and_show_tokens_and_cost(messages, completion)
+
+        except litellm_ex.exceptions_tuple() as err:
+            ex_info = litellm_ex.get_ex_info(err)
+            if ex_info.name == "ContextWindowExceededError":
+                # Still calculate costs for context window errors
+                self.calculate_and_show_tokens_and_cost(messages, completion)
+            raise
         except KeyboardInterrupt as kbi:
             self.keyboard_interrupt()
             raise kbi
@@ -1575,8 +1585,6 @@ class Coder:
                 args = self.parse_partial_args()
                 if args:
                     self.io.ai_output(json.dumps(args, indent=4))
-
-            self.calculate_and_show_tokens_and_cost(messages, completion)
 
     def show_send_output(self, completion):
         if self.verbose:
