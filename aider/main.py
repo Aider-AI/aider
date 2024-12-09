@@ -864,6 +864,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         coder.file_watcher = file_watcher
 
     if args.copy_paste:
+        analytics.event("copy-paste mode")
         ClipboardWatcher(coder.io, verbose=args.verbose)
 
     coder.show_announcements()
