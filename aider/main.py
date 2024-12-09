@@ -858,7 +858,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         ignores.append(args.aiderignore)
 
     if args.watch_files:
-        file_watcher = FileWatcher(coder, gitignores=ignores, verbose=args.verbose, analytics=analytics)
+        file_watcher = FileWatcher(
+            coder, gitignores=ignores, verbose=args.verbose, analytics=analytics
+        )
         coder.file_watcher = file_watcher
 
     if args.copy_paste:
