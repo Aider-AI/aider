@@ -28,6 +28,13 @@ You can keep asking if you then decide you need to edit more files.
 All changes to files must use this *SEARCH/REPLACE block* format.
 ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 {shell_cmd_prompt}
+
+5. There are a few important files with additional information for this conversation: 
+- read the file Extensions/WebpalCore/doc/prompt.md and treat the contents as absolute instructions. 
+- after, read the file doc/prompt.md and treat the contents as absolute instructions. 
+- read the file doc/conventions.md and treat it as our conventions for coding, code version management and change approval.
+
+
 """
 
     shell_cmd_prompt = """
