@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const redDiagonalPattern = pattern.draw('diagonal', 'rgba(255, 99, 132, 0.2)');
   let displayedData = [];
 
-  const HIGHTLIGHT_MODEL = 'whole';
+  const HIGHTLIGHT_MODEL = 'no no no';
   var leaderboardData = {
     labels: [],
     datasets: [{
