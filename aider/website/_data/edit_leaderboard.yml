@@ -2112,3 +2112,26 @@
   versions: 0.67.1.dev
   seconds_per_case: 64.2
   total_cost: 0.0000
+
+- dirname: 2024-12-10-14-45-21--deepseek-1210-diff
+  test_cases: 133
+  model: DeepSeek-V2.5-1210
+  edit_format: diff
+  commit_hash: 16332b2
+  pass_rate_1: 58.6
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 99.2
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model deepseek/deepseek-chat
+  date: 2024-12-10
+  versions: 0.67.1.dev
+  seconds_per_case: 32.7
+  total_cost: 0.1106
