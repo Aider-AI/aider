@@ -644,7 +644,7 @@
 
 - dirname: 2024-07-19-08-57-13--openrouter-deepseek-chat-v2-0628
   test_cases: 133
-  model: DeepSeek Chat V2 0628 (deprecated)
+  model: DeepSeek Chat V2 0628
   edit_format: diff
   commit_hash: 96ff06e-dirty
   pass_rate_1: 60.9
@@ -716,7 +716,7 @@
 
 - dirname: 2024-07-24-07-10-58--deepseek-coder2-0724-diff-direct
   test_cases: 133
-  model: DeepSeek Coder V2 0724 (deprecated)
+  model: DeepSeek Coder V2 0724
   edit_format: diff
   commit_hash: 89965bf
   pass_rate_1: 57.9
