@@ -797,7 +797,8 @@ class Coder:
                 return self.partial_response_content
             while True:
                 try:
-                    self.copy_context()
+                    if not self.io.placeholder:
+                        self.copy_context()
                     user_message = self.get_input()
                     self.run_one(user_message, preproc)
                     self.show_undo_hint()
