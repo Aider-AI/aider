@@ -1,4 +1,3 @@
-
 <!-- Edit README.md, not index.md -->
 
 # Aider is AI pair programming in your terminal
@@ -88,7 +87,7 @@ Pair program with AI.
 - [Add images to the chat](https://aider.chat/docs/usage/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
 - [Add URLs to the chat](https://aider.chat/docs/usage/images-urls.html) and aider will read their content.
 - [Code with your voice](https://aider.chat/docs/usage/voice.html).
-
+- Create and integrate custom tools with Aider using the `--custom-tool` argument.
 
 ## Top tier performance
 
@@ -134,3 +133,51 @@ projects like django, scikitlearn, matplotlib, etc.
 - *Hands down, this is the best AI coding assistant tool so far.* -- [IndyDevDan](https://www.youtube.com/watch?v=MPYFPvxfGZs)
 - *[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life.* -- [maledorak](https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264)
 - *Best agent for actual dev work in existing codebases.* -- [Nick Dobos](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
+
+## Creating and Integrating Custom Tools
+
+Aider allows users to create and integrate custom tools to enhance its functionality. This can be done using the `--custom-tool` argument.
+
+### Example: Web Search Integration
+
+To create a custom tool for web search integration, follow these steps:
+
+1. Create a Python file for your custom tool, e.g., `web_search_tool.py`:
+
+```python
+from aider.coders.custom_tool import CustomTool
+
+class WebSearchTool(CustomTool):
+    def execute(self, query):
+        # Implement your web search logic here
+        return f"Results for query: {query}"
+```
+
+2. Use the `--custom-tool` argument to specify your custom tool when running Aider:
+
+```sh
+aider --custom-tool web_search_tool.WebSearchTool
+```
+
+### Example: Code Repository Search
+
+To create a custom tool for code repository search, follow these steps:
+
+1. Create a Python file for your custom tool, e.g., `repo_search_tool.py`:
+
+```python
+from aider.coders.custom_tool import CustomTool
+
+class RepoSearchTool(CustomTool):
+    def execute(self, query):
+        # Implement your code repository search logic here
+        return f"Results for repository query: {query}"
+```
+
+2. Use the `--custom-tool` argument to specify your custom tool when running Aider:
+
+```sh
+aider --custom-tool repo_search_tool.RepoSearchTool
+```
+
+These examples demonstrate how you can extend Aider's functionality by creating and integrating custom tools tailored to your specific needs.
