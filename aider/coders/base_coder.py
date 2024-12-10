@@ -162,6 +162,15 @@ class Coder:
 
             kwargs = use_kwargs
 
+        # Check for mixture of architects case first
+        if "architect_models" in kwargs:
+            for coder in coders.__all__:
+                if coder.edit_format == "mixture":
+                    res = coder(main_model, io, **kwargs)
+                    res.original_kwargs = dict(kwargs)
+                    return res
+
+        # Normal case - find coder matching edit_format
         for coder in coders.__all__:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
                 res = coder(main_model, io, **kwargs)
@@ -209,6 +218,12 @@ class Coder:
         if weak_model is not main_model:
             output = f"Weak model: {weak_model.name}"
             lines.append(output)
+
+        # Mixture of Architects info
+        if self.edit_format == "mixture" and hasattr(self, "architects"):
+            for arch in self.architects[1:]:  # Skip alpha since it's already shown as main model
+                output = f"Architect {arch.name.upper()}: {arch.model.name}"
+                lines.append(output)
 
         # Repo
         if self.repo:

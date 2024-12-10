@@ -806,7 +806,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.stream = False
 
     try:
-        coder = Coder.create(
+        coder_kwargs = dict(
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
@@ -838,6 +838,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
         )
+
+        if args.moa:
+            # Parse space-separated model names and convert to Model objects
+            architect_model_names = args.moa
+            architect_models = [models.Model(m) for m in architect_model_names]
+            coder_kwargs["architect_models"] = architect_models
+            coder = Coder.create(**coder_kwargs)
+        else:
+            coder = Coder.create(**coder_kwargs)
     except UnknownEditFormat as err:
         io.tool_error(str(err))
         io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
