@@ -50,6 +50,7 @@ The json file should be a dictionary with an entry for each model, as follows:
 Use a fully qualified model name with a `provider/` at the front
 in the `.aider.model.metadata.json` file.
 For example, use `deepseek/deepseek-chat`, not just `deepseek-chat`.
+That prefix should match the `litellm_provider` field.
 
 ### Contribute model metadata
 
