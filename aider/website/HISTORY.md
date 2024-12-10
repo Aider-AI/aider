@@ -24,7 +24,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.68.0
 
 - [Aider works with LLM web chat UIs](https://aider.chat/docs/usage/copypaste.html).
   - New `--copy-paste` mode.

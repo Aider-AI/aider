@@ -1,9 +1,3 @@
-{"event": "no-repo", "properties": {"python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733514902}
-{"event": "message_send_starting", "properties": {"python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733514902}
-{"event": "message_send", "properties": {"main_model": "claude-3-5-haiku-20241022", "weak_model": "claude-3-5-sonnet-20241022", "editor_model": "claude-3-5-haiku-20241022", "edit_format": "diff", "prompt_tokens": 9112, "completion_tokens": 39, "total_tokens": 9151, "cost": 0.010357, "total_cost": 0.010357, "python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733514906}
-{"event": "exit", "properties": {"reason": "Completed --message", "python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733514906}
-{"event": "exit", "properties": {"reason": "Control-C", "python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733514988}
-{"event": "launched", "properties": {"python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733516111}
 {"event": "repo", "properties": {"num_files": 406, "python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733516111}
 {"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-sonnet-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733516111}
 {"event": "message_send_starting", "properties": {"python_version": "3.12.6", "os_platform": "Darwin", "os_release": "23.6.0", "machine": "x86_64", "aider_version": "0.67.1.dev+import"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733516134}
@@ -998,3 +992,9 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733845632}
 {"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733845647}
 {"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733845647}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733846535}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733846535}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733846535}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733847561}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733847561}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733847561}
