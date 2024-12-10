@@ -93,7 +93,7 @@ Depending on the LLM you have aider use, it will be either `editor-whole` or `ed
 
 Be sure to review the Terms Of Service of any LLM web chat service you use with
 these features.
-These features are not intended to be used in violation of any service's Terms Of Use (TOS).
+These features are not intended to be used in violation of any service's Terms Of Service (TOS).
 
 Aider's web chat features have been designed to be compliant with the 
 terms of service of most LLM web chats.
@@ -117,4 +117,4 @@ your LLM web chat provider's TOS, you can forego `--copy-paste` mode.
 Instead, manually use the `/copy-context` and `/paste` commands if that
 will keep you in compliance.
 
-Again, do not use these features in violation of any service's Terms Of Use.
+Again, do not use these features in violation of any service's Terms Of Service.

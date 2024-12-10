@@ -3,12 +3,12 @@
 ### main branch
 
 - [Aider works with LLM web chat UIs with `--copy-paste` mode](https://aider.chat/docs/usage/copypaste.html).
-- Better error messages when missing dependencies for Gemini and Bedrock models
-- Added `--api-key provider=key` and `--set-env VAR=value` flags for setting API keys and environment variables
-- Control-D now properly exits the program
-- Fixed shell environment handling when running commands
-- Reorganized command line arguments with improved help messages and grouping
-- Aider wrote 72% of the code in this release.
+- Added [`--api-key provider=key`](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys) and `--set-env VAR=value` flags for setting API keys and environment variables
+- Better error messages when missing dependencies for Gemini and Bedrock models.
+- Control-D now properly exits the program.
+- Reorganized command line arguments with improved help messages and grouping.
+- Added experimental Gemini models
+- Aider wrote 71% of the code in this release.
 
 ### Aider v0.67.0
 

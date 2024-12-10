@@ -24,6 +24,8 @@ If the files above exist, they will be loaded in that order. Files loaded last w
 
 {% include special-keys.md %}
 
+{% include env-keys-tip.md %}
+
 ## Sample .env file
 
 Below is a sample `.env` file, which you
