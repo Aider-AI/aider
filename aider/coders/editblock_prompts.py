@@ -35,7 +35,9 @@ ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 
 Just suggest shell commands this way, not example code.
 Only suggest complete shell commands that are ready to execute, without placeholders.
-Only suggest at most a few shell commands at a time, not more than 1-3.
+Only suggest at most a few shell commands at a time, not more than 1-3, one per line.
+Do not suggest multi-line shell commands.
+All shell commands will run from the root directory of the user's project.
 
 Use the appropriate shell based on the user's system info:
 {platform}
