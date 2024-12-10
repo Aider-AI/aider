@@ -18,7 +18,7 @@ description: Aider works with LLM web chat UIs
 <style>
 .video-container {
   position: relative;
-  padding-bottom: 101.89%; /* 1080 / 1060 = 1.0189 */
+  padding-bottom: 66.34%; /* 2160 / 3256 = 0.6634 */
   height: 0;
   overflow: hidden;
 }
@@ -50,7 +50,7 @@ to your local files.
 For this "file editor" part of the process 
 you can run aider with many open source, free or very inexpensive LLMs.
 For example, the demo video above shows aider using DeepSeek to apply the changes
-that GPT-4o is suggesting in the web chat.
+that o1-preview is suggesting in the web chat.
 
 ### Copy aider's code context to your clipboard, paste into the web UI
 

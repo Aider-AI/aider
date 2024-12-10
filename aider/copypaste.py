@@ -28,6 +28,9 @@ class ClipboardWatcher:
                         self.last_clipboard = current
                         self.io.interrupt_input()
                         self.io.placeholder = current
+                        if len(current.splitlines()) > 1:
+                            self.io.placeholder = "\n" + self.io.placeholder + "\n"
+
                     time.sleep(0.5)
                 except Exception as e:
                     if self.verbose:

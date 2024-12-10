@@ -18,7 +18,7 @@ description: Aider can run in your browser, not just on the command line.
 <style>
 .video-container {
   position: relative;
-  padding-bottom: 101.89%; /* 1080 / 1060 = 1.0189 */
+  padding-bottom: 102.7%; /1.027 */
   height: 0;
   overflow: hidden;
 }
