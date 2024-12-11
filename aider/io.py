@@ -202,11 +202,19 @@ class InputOutput:
         editingmode=EditingMode.EMACS,
         fancy_input=True,
         file_watcher=None,
+        multiline_mode=False,
     ):
         self.placeholder = None
         self.interrupted = False
         self.never_prompts = set()
         self.editingmode = editingmode
+        # Base multiline setting that can be temporarily overridden
+        # Command line argument takes precedence over environment variable
+        self.base_multiline_mode = multiline_mode if multiline_mode is not None else (
+            os.environ.get('AIDER_MULTILINE', '').lower() in ('true', '1', 'yes', 'on')
+        )
+        # Current multiline state that can be temporarily disabled for prompts
+        self.multiline_mode = self.base_multiline_mode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
@@ -412,6 +420,8 @@ class InputOutput:
             show = self.format_files_for_input(rel_fnames, rel_read_only_fnames)
         if edit_format:
             show += edit_format
+        if self.multiline_mode:
+            show += (" " if edit_format else "") + "multi"
         show += "> "
 
         inp = ""
@@ -456,9 +466,25 @@ class InputOutput:
             "Navigate forward through history"
             event.current_buffer.history_forward()
 
-        @kb.add("escape", "c-m", eager=True)
+        @kb.add("enter", eager=True)
         def _(event):
-            event.current_buffer.insert_text("\n")
+            "Handle Enter key press"
+            if self.multiline_mode:
+                # In multiline mode, Enter adds a newline
+                event.current_buffer.insert_text("\n")
+            else:
+                # In normal mode, Enter submits
+                event.current_buffer.validate_and_handle()
+
+        @kb.add("escape", "enter", eager=True)  # This is Alt+Enter
+        def _(event):
+            "Handle Alt+Enter key press"
+            if self.multiline_mode:
+                # In multiline mode, Alt+Enter submits
+                event.current_buffer.validate_and_handle()
+            else:
+                # In normal mode, Alt+Enter adds a newline
+                event.current_buffer.insert_text("\n")
 
         while True:
             if multiline_input:
@@ -629,6 +655,9 @@ class InputOutput:
         group=None,
         allow_never=False,
     ):
+        # Temporarily disable multiline mode for yes/no prompts
+        orig_multiline = self.multiline_mode
+        self.multiline_mode = False
         self.num_user_asks += 1
 
         question_id = (question, subject)
@@ -726,9 +755,15 @@ class InputOutput:
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
+        # Restore original multiline mode
+        self.multiline_mode = orig_multiline
+
         return is_yes
 
     def prompt_ask(self, question, default="", subject=None):
+        # Temporarily disable multiline mode for prompts
+        orig_multiline = self.multiline_mode
+        self.multiline_mode = False
         self.num_user_asks += 1
 
         if subject:
@@ -751,6 +786,9 @@ class InputOutput:
         self.append_chat_history(hist, linebreak=True, blockquote=True)
         if self.yes in (True, False):
             self.tool_output(hist)
+
+        # Restore original multiline mode
+        self.multiline_mode = orig_multiline
 
         return res
 
@@ -820,6 +858,14 @@ class InputOutput:
 
     def print(self, message=""):
         print(message)
+
+    def toggle_multiline_mode(self):
+        """Toggle between normal and multiline input modes"""
+        self.multiline_mode = not self.multiline_mode
+        if self.multiline_mode:
+            self.tool_output("Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
+        else:
+            self.tool_output("Multiline mode: Disabled. Alt-Enter inserts newline, Enter submits text")
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
