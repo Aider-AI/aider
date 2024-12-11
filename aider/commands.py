@@ -1447,8 +1447,16 @@ Just show me the edits I need to make.
 
 """
 
-        pyperclip.copy(markdown)
-        self.io.tool_output("Copied code context to clipboard.")
+        try:
+            pyperclip.copy(markdown)
+            self.io.tool_output("Copied code context to clipboard.")
+        except pyperclip.PyperclipException as e:
+            self.io.tool_error(f"Failed to copy to clipboard: {str(e)}")
+            self.io.tool_output(
+                "You may need to install xclip or xsel on Linux, or pbcopy on macOS."
+            )
+        except Exception as e:
+            self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
 
 
 def expand_subdir(file_path):
