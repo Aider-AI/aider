@@ -1363,6 +1363,10 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error saving commands to file: {e}")
 
+    def cmd_multiline_mode(self, args):
+        "Toggle multiline mode (swaps behavior of Enter and Meta+Enter)"
+        self.io.toggle_multiline_mode()
+
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
         all_messages = self.coder.done_messages + self.coder.cur_messages
