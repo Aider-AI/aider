@@ -248,6 +248,9 @@ class Coder:
         if self.done_messages:
             lines.append("Restored previous conversation history.")
 
+        if self.io.multiline_mode:
+            lines.append("Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
+
         return lines
 
     def __init__(

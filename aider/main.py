@@ -515,6 +515,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             llm_history_file=args.llm_history_file,
             editingmode=editing_mode,
             fancy_input=args.fancy_input,
+            multiline_mode=args.multiline,
         )
 
     io = get_io(args.pretty)
