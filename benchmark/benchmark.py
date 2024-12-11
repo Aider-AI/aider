@@ -158,6 +158,7 @@ def main(
     dirnames: Optional[List[str]] = typer.Argument(None, help="Directory names"),
     graphs: bool = typer.Option(False, "--graphs", help="Generate graphs"),
     model: str = typer.Option("gpt-3.5-turbo", "--model", "-m", help="Model name"),
+    sleep: float = typer.Option(0, "--sleep", help="Sleep seconds between tests when single threaded"),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     editor_model: str = typer.Option(None, "--editor-model", help="Editor model name"),
     editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Editor edit format"),
@@ -285,10 +286,13 @@ def main(
                 editor_model,
                 editor_edit_format,
                 num_ctx,
+                sleep,
             )
 
             all_results.append(results)
             summarize_results(dirname)
+            if sleep:
+                time.sleep(sleep)
     else:
         run_test_threaded = lox.thread(threads)(run_test)
         for testname in test_dnames:
@@ -565,6 +569,7 @@ def run_test_real(
     editor_model,
     editor_edit_format,
     num_ctx=None,
+    sleep=0,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
