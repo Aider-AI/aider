@@ -2158,3 +2158,26 @@
   versions: 0.67.1.dev
   seconds_per_case: 57.8
   total_cost: 0.0000
+
+- dirname: 2024-12-11-21-07-00--gemini-2-flash-diff
+  test_cases: 133
+  model: gemini-2.0-flash-exp
+  edit_format: diff
+  commit_hash: fcb2bac-dirty, 02e7e31-dirty
+  pass_rate_1: 56.4
+  pass_rate_2: 69.9
+  percent_cases_well_formed: 97.0
+  error_outputs: 10
+  num_malformed_responses: 6
+  num_with_malformed_responses: 4
+  user_asks: 8
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 1
+  command: aider --model gemini/gemini-2.0-flash-exp
+  date: 2024-12-11
+  versions: 0.68.1.dev
+  seconds_per_case: 7.3
+  total_cost: 0.0000
