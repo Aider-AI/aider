@@ -2135,3 +2135,26 @@
   versions: 0.67.1.dev
   seconds_per_case: 32.7
   total_cost: 0.1106
+
+- dirname: 2024-12-11-00-37-08--yi-test
+  test_cases: 133
+  model: yi-lightning
+  edit_format: whole
+  commit_hash: e909a3d-dirty
+  pass_rate_1: 49.6
+  pass_rate_2: 65.4
+  percent_cases_well_formed: 97.0
+  error_outputs: 304
+  num_malformed_responses: 5
+  num_with_malformed_responses: 4
+  user_asks: 34
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model openai/yi-lightning
+  date: 2024-12-11
+  versions: 0.67.1.dev
+  seconds_per_case: 57.8
+  total_cost: 0.0000
