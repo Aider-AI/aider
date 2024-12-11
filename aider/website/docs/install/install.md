@@ -33,28 +33,28 @@ To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
 
 ## Mac/Linux install
 
-```
+```bash
 # Install aider
 python -m pip install -U --upgrade-strategy only-if-needed aider-chat
 
 # To work with GPT-4o:
-$ aider --4o --openai-api-key sk-xxx...
+aider --4o --openai-api-key sk-xxx...
 
 # To work with Claude 3.5 Sonnet:
-$ aider --sonnet --anthropic-api-key sk-xxx...
+aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
 ## Windows install
 
-```
+```bash
 # Install aider
 python -m pip install -U --upgrade-strategy only-if-needed aider-chat
 
 # To work with GPT-4o:
-$ aider --4o --openai-api-key sk-xxx...
+aider --4o --openai-api-key sk-xxx...
 
 # To work with Claude 3.5 Sonnet:
-$ aider --sonnet --anthropic-api-key sk-xxx...
+aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
 {% include python-m-aider.md %}

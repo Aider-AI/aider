@@ -1,6 +1,6 @@
 To use aider with pipx on replit, you can run these commands in the replit shell:
 
-```
+```bash
 pip install pipx
 pipx run aider-chat ...normal aider args...
 ```

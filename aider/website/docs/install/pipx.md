@@ -7,7 +7,7 @@ nav_order: 100
 
 A recommended way to install aider is with pipx:
 
-```
+```bash
 python -m pip install pipx  # If you need to install pipx
 pipx install aider-chat
 ```
