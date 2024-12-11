@@ -478,6 +478,9 @@ cog.outl("```")
 ## Enable/disable fancy input with history and completion (default: True)
 #fancy-input: true
 
+## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
+#multiline: false
+
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #detect-urls: true
 

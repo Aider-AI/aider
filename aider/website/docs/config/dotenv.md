@@ -434,6 +434,9 @@ cog.outl("```")
 ## Enable/disable fancy input with history and completion (default: True)
 #AIDER_FANCY_INPUT=true
 
+## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
+#AIDER_MULTILINE=false
+
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #AIDER_DETECT_URLS=true
 

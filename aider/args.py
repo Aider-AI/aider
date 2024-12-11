@@ -799,7 +799,7 @@ def get_parser(default_config_files, git_root):
         "--multiline",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Enable/disable multi-line input mode with Meta-Enter to submit (default: False, env: AIDER_MULTILINE)",
+        help="Enable/disable multi-line input mode with Meta-Enter to submit (default: False)",
     )
     group.add_argument(
         "--detect-urls",

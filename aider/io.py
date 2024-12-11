@@ -208,13 +208,7 @@ class InputOutput:
         self.interrupted = False
         self.never_prompts = set()
         self.editingmode = editingmode
-        # Base multiline setting that can be temporarily overridden
-        # Command line argument takes precedence over environment variable
-        self.base_multiline_mode = multiline_mode if multiline_mode is not None else (
-            os.environ.get('AIDER_MULTILINE', '').lower() in ('true', '1', 'yes', 'on')
-        )
-        # Current multiline state that can be temporarily disabled for prompts
-        self.multiline_mode = self.base_multiline_mode
+        self.multiline_mode = multiline_mode
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
@@ -863,9 +857,13 @@ class InputOutput:
         """Toggle between normal and multiline input modes"""
         self.multiline_mode = not self.multiline_mode
         if self.multiline_mode:
-            self.tool_output("Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
+            self.tool_output(
+                "Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text"
+            )
         else:
-            self.tool_output("Multiline mode: Disabled. Alt-Enter inserts newline, Enter submits text")
+            self.tool_output(
+                "Multiline mode: Disabled. Alt-Enter inserts newline, Enter submits text"
+            )
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:

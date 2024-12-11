@@ -78,6 +78,7 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--encoding] [-c] [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
+             [--multiline | --no-multiline]
              [--detect-urls | --no-detect-urls] [--editor]
 
 ```
@@ -732,6 +733,14 @@ Environment variable: `AIDER_FANCY_INPUT`
 Aliases:
   - `--fancy-input`
   - `--no-fancy-input`
+
+### `--multiline`
+Enable/disable multi-line input mode with Meta-Enter to submit (default: False)  
+Default: False  
+Environment variable: `AIDER_MULTILINE`  
+Aliases:
+  - `--multiline`
+  - `--no-multiline`
 
 ### `--detect-urls`
 Enable/disable detection and offering to add URLs to chat (default: True)  
