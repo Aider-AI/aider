@@ -60,6 +60,14 @@ def is_source_file(path: Path) -> bool:
         ".elm",
         ".vhd",  # VHDL
         ".vhdl",
+        # ;; style comments
+        ".lisp",
+        ".lsp",
+        ".cl",
+        ".scm",
+        ".ss",
+        ".el",
+        ".emacs",
     }
     return path.suffix.lower() in COMMENT_STYLE_EXTENSIONS
 
@@ -82,7 +90,7 @@ class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     # Compiled regex pattern for AI comments
-    ai_comment_pattern = re.compile(r"(?:#|//|--) *(ai\b.*|ai\b.*|.*\bai!?) *$", re.IGNORECASE)
+    ai_comment_pattern = re.compile(r"(?:#|//|--|;;) *(ai\b.*|ai\b.*|.*\bai!?) *$", re.IGNORECASE)
 
     def __init__(self, coder, gitignores=None, verbose=False, analytics=None):
         self.coder = coder
