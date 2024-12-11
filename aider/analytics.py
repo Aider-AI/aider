@@ -181,6 +181,7 @@ class Analytics:
 
     def posthog_error(self):
         """disable posthog if we get an error"""
+        print("X" * 100)
         # https://github.com/PostHog/posthog-python/blob/9e1bb8c58afaa229da24c4fb576c08bb88a75752/posthog/consumer.py#L86
         # https://github.com/Aider-AI/aider/issues/2532
         self.ph = None
