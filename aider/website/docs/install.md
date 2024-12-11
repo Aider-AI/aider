@@ -15,7 +15,7 @@ for more details,
 or the
 [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
-{% include python-m-aider.md %}
+{% include venv-pipx.md %}
 
 <div class="video-container">
   <video controls poster="/assets/install.jpg">
