@@ -8,7 +8,7 @@ You can send long, multi-line messages in the chat in a few ways:
   - Use multiline-mode, which swaps the function of Meta-Enter and Enter, so that Enter inserts a newline, and Meta-Enter submits your command. You can enable multiline mode in three ways:
     - Use the `/multiline-mode` command to toggle it during a session
     - Start aider with the `--multiline` flag
-    - Start aider with the environment variable AIDER\_MULTILINE=true
+    - Start aider with the environment variable AIDER_MULTILINE=true
 
 Example with a tag:
 ```
