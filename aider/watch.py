@@ -9,6 +9,7 @@ from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
 
 from aider.dump import dump  # noqa
+from aider.watch_prompts import watch_prompt
 
 
 def is_source_file(path: Path) -> bool:
@@ -186,12 +187,7 @@ class FileWatcher:
             self.analytics.event("ai-comments execute")
         self.io.tool_output("Processing your request...")
 
-        res = """
-The "AI" comments below marked with █ can be found in the code files I've shared with you.
-They contain your instructions.
-Make the requested changes.
-Be sure to remove all these "AI" comments from the code!
-"""
+        res = watch_prompt
 
         # Refresh all AI comments from tracked files
         for fname in self.coder.abs_fnames:
