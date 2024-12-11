@@ -1232,7 +1232,7 @@
 
 - dirname: 2024-09-24-16-33-23--gemini-1.5-flash-002-whole
   test_cases: 133
-  model: gemini-1.5-flash-002
+  model: gemini-1.5-flash-002 (0924)
   edit_format: whole
   commit_hash: 3edcd71
   pass_rate_1: 37.6
