@@ -24,8 +24,8 @@ from dotenv import load_dotenv
 from plots import plot_refactoring
 from rich.console import Console
 
-from aider import models
-from aider.coders import Coder
+from aider import models, sendchat
+from aider.coders import Coder, base_coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 
@@ -269,6 +269,11 @@ def main(
     random.shuffle(test_dnames)
     if num_tests > 0:
         test_dnames = test_dnames[:num_tests]
+
+    # Don't give up when benchmarking
+    LONG_TIMEOUT = 24 * 60 * 60
+    sendchat.RETRY_TIMEOUT = LONG_TIMEOUT
+    base_coder.RETRY_TIMEOUT = LONG_TIMEOUT
 
     if threads == 1:
         all_results = []
