@@ -9,7 +9,7 @@ nav_order: 100
 Install [uv](https://docs.astral.sh/uv/getting-started/installation/) then do:
 
 ```
-uv install tool aider-chat
+uv tool install --python python3.12 aider-chat
 ```
 
 {% include conflicts.md %}
