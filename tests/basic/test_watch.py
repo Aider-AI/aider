@@ -52,4 +52,3 @@ def test_ai_comment_pattern():
     ), f"Expected {question_js_expected} AI comments in watch_question.js fixture, found {len(question_js_lines)}"
     assert question_js_has_bang, "Expected at least one bang (!) comment in watch_question.js fixture"
 
-    # add another test for watch_question.js ai!
