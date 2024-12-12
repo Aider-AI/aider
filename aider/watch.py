@@ -166,10 +166,11 @@ class FileWatcher:
     def process_changes(self):
         """Get any detected file changes"""
 
-        has_bangs = False
+        has_action = None
         for fname in self.changed_files:
-            _, _, has_bang = self.get_ai_comments(fname)
-            has_bangs |= has_bang
+            _, _, action = self.get_ai_comments(fname)
+            if action in ("!", "?"):
+                has_action = action
 
             if fname in self.coder.abs_fnames:
                 continue
@@ -180,7 +181,7 @@ class FileWatcher:
             self.io.tool_output(f"Added {rel_fname} to the chat")
             self.io.tool_output()
 
-        if not has_bangs:
+        if not has_action:
             return ""
 
         if self.analytics:
@@ -229,10 +230,10 @@ class FileWatcher:
         return res
 
     def get_ai_comments(self, filepath):
-        """Extract AI comment line numbers, comments and bang status from a file"""
+        """Extract AI comment line numbers, comments and action status from a file"""
         line_nums = []
         comments = []
-        has_bang = False
+        has_action = None  # None, "!" or "?"
         content = self.io.read_text(filepath, silent=True)
         for i, line in enumerate(content.splitlines(), 1):
             if match := self.ai_comment_pattern.search(line):
@@ -244,10 +245,12 @@ class FileWatcher:
                     comment = comment.lstrip("/#-")
                     comment = comment.strip()
                     if comment.startswith("ai!") or comment.endswith("ai!"):
-                        has_bang = True
+                        has_action = "!"
+                    elif comment.startswith("ai?") or comment.endswith("ai?"):
+                        has_action = "?"
         if not line_nums:
-            return None, None, False
-        return line_nums, comments, has_bang
+            return None, None, None
+        return line_nums, comments, has_action
 
 
 def main():
