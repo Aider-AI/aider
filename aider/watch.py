@@ -70,6 +70,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
+    # expand this set of patterns to include all manner of text editor temp files like .bak, ...~, etc ai!
     patterns = [".aider*", ".git"]  # Always ignore
     for path in gitignore_paths:
         if path.exists():
