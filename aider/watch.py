@@ -9,6 +9,7 @@ from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
 
 from aider.dump import dump  # noqa
+from aider.utils import get_canary_path
 from aider.watch_prompts import watch_ask_prompt, watch_code_prompt
 
 
@@ -161,6 +162,9 @@ class FileWatcher:
 
         if not has_action:
             return ""
+
+        with open(get_canary_path(self.root), 'w') as file:
+            file.write("this is a canary file for wait-for-aider.sh which will be deleted after Aider finishes processing changes")
 
         if self.analytics:
             self.analytics.event("ai-comments execute")
