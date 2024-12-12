@@ -70,7 +70,6 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
-    # are there any others we should consider ai?
     patterns = [
         ".aider*",
         ".git",
@@ -88,6 +87,23 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
         "__pycache__/",  # Python cache dir
         ".DS_Store",  # macOS metadata
         "Thumbs.db",  # Windows thumbnail cache
+        # IDE files
+        ".idea/",  # JetBrains IDEs
+        ".vscode/",  # VS Code
+        "*.sublime-*",  # Sublime Text
+        ".project",  # Eclipse
+        ".settings/",  # Eclipse
+        "*.code-workspace",  # VS Code workspace
+        # Environment files
+        ".env",  # Environment variables
+        ".venv/",  # Python virtual environments
+        "node_modules/",  # Node.js dependencies
+        "vendor/",  # Various dependencies
+        # Logs and caches
+        "*.log",  # Log files
+        ".cache/",  # Cache directories
+        ".pytest_cache/",  # Python test cache
+        "coverage/",  # Code coverage reports
     ]  # Always ignore
     for path in gitignore_paths:
         if path.exists():
