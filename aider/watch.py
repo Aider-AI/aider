@@ -9,7 +9,7 @@ from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
 
 from aider.dump import dump  # noqa
-from aider.watch_prompts import watch_prompt
+from aider.watch_prompts import watch_ask_prompt, watch_code_prompt
 
 
 def is_source_file(path: Path) -> bool:
@@ -188,11 +188,14 @@ class FileWatcher:
             self.analytics.event("ai-comments execute")
         self.io.tool_output("Processing your request...")
 
-        res = watch_prompt
+        if has_action == "!":
+            res = watch_code_prompt
+        elif has_action == "?":
+            res = watch_ask_prompt
 
         # Refresh all AI comments from tracked files
         for fname in self.coder.abs_fnames:
-            line_nums, comments, _has_bang = self.get_ai_comments(fname)
+            line_nums, comments, _action = self.get_ai_comments(fname)
             if not line_nums:
                 continue
 
