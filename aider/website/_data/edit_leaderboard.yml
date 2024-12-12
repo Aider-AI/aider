@@ -2181,3 +2181,26 @@
   versions: 0.68.1.dev
   seconds_per_case: 7.3
   total_cost: 0.0000
+
+- dirname: 2024-12-12-18-47-35--a-gemini-2-flash-free-tier-fullrun
+  test_cases: 133
+  model: gemini/gemini-2.0-flash-exp
+  edit_format: whole
+  commit_hash: 39fa8ba-dirty
+  pass_rate_1: 55.6
+  pass_rate_2: 69.2
+  percent_cases_well_formed: 100.0
+  error_outputs: 54
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 3
+  command: aider --model gemini/gemini-2.0-flash-exp
+  date: 2024-12-12
+  versions: 0.68.1.dev
+  seconds_per_case: 16.1
+  total_cost: 0.0000
