@@ -45,10 +45,14 @@ def test_ai_comment_pattern():
 
     # Test watch_question.js fixture
     question_js_path = fixtures_dir / "watch_question.js"
-    question_js_lines, question_js_comments, question_js_has_bang = watcher.get_ai_comments(str(question_js_path))
+    question_js_lines, question_js_comments, question_js_has_bang = watcher.get_ai_comments(
+        str(question_js_path)
+    )
     question_js_expected = 5
+    assert len(question_js_lines) == question_js_expected, (
+        f"Expected {question_js_expected} AI comments in watch_question.js fixture, found"
+        f" {len(question_js_lines)}"
+    )
     assert (
-        len(question_js_lines) == question_js_expected
-    ), f"Expected {question_js_expected} AI comments in watch_question.js fixture, found {len(question_js_lines)}"
-    assert question_js_has_bang, "Expected at least one bang (!) comment in watch_question.js fixture"
-
+        question_js_has_bang
+    ), "Expected at least one bang (!) comment in watch_question.js fixture"
