@@ -17,7 +17,6 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
-    # AI: add tests for all of these patterns ai!
     patterns = [
         ".aider*",
         ".git",
