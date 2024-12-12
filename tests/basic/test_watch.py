@@ -7,15 +7,16 @@ from aider.watch import FileWatcher
 def test_gitignore_patterns():
     """Test that gitignore patterns are properly loaded and matched"""
     from pathlib import Path
+
     from aider.watch import load_gitignores
 
     # Create a temporary gitignore file with test patterns
     tmp_gitignore = Path("test.gitignore")
     tmp_gitignore.write_text("custom_pattern\n*.custom")
-    
+
     gitignores = [tmp_gitignore]
     spec = load_gitignores(gitignores)
-    
+
     # Test built-in patterns
     assert spec.match_file(".aider.conf")
     assert spec.match_file(".git/config")
@@ -46,18 +47,19 @@ def test_gitignore_patterns():
     assert spec.match_file(".cache/files")
     assert spec.match_file(".pytest_cache/v/cache")
     assert spec.match_file("coverage/lcov.info")
-    
+
     # Test custom patterns from gitignore file
     assert spec.match_file("custom_pattern")
     assert spec.match_file("file.custom")
-    
+
     # Test non-matching patterns
     assert not spec.match_file("regular_file.txt")
     assert not spec.match_file("src/main.py")
     assert not spec.match_file("docs/index.html")
-    
+
     # Cleanup
     tmp_gitignore.unlink()
+
 
 def test_ai_comment_pattern():
     # Create minimal IO and Coder instances for testing
