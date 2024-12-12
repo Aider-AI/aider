@@ -35,7 +35,7 @@ def blame(start_tag, end_tag=None):
         or f in website_files
     ]
     files = [f for f in files if not f.endswith("prompts.py")]
-    # skip tests/fixtures/watch* ai!
+    files = [f for f in files if not f.startswith("tests/fixtures/watch")]
 
     all_file_counts = {}
     grand_total = defaultdict(int)
