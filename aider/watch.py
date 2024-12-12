@@ -25,7 +25,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
         "*.bak",  # Generic backup
         "*.swp",  # Vim swap
         "*.swo",  # Vim swap
-        "#*#",  # Emacs auto-save
+        "\\#*\\#",  # Emacs auto-save
         ".#*",  # Emacs lock files
         "*.tmp",  # Generic temp files
         "*.temp",  # Generic temp files
