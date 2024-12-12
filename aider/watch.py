@@ -37,6 +37,8 @@ def is_source_file(path: Path) -> bool:
         ".profile",
         ".yaml",
         ".yml",
+        ".ex",  #Elixir
+        ".exs", #Elixir
         # // style comments
         ".js",
         ".ts",
