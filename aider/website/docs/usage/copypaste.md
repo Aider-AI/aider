@@ -54,13 +54,14 @@ that o1-preview is suggesting in the web chat.
 
 ### Copy aider's code context to your clipboard, paste into the web UI
 
-The `/copy-context` command can be used in chat to copy aider's code context to your clipboard.
+The `/copy-context <instructions>` command can be used in chat to copy aider's code context to your clipboard.
 It will include:
 
 - All the files which have been added to the chat via `/add`.
 - Any read only files which have been added via `/read`.
 - Aider's [repository map](https://aider.chat/docs/repomap.html) that brings in code context related to the above files from elsewhere in your git repo.
 - Some instructions to the LLM that ask it to output change instructions concisely.
+- If you include `<instructions>`, they will be copied too.
 
 You can paste the context into your browser, and start interacting with the LLM web chat to
 ask for code changes.
