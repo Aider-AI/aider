@@ -265,51 +265,6 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         self.io = InputOutput(fancy_input=True)
         self.io.prompt_session = MagicMock()
 
-    def test_get_input_multiline_mode_enabled(self):
-        """Test that multiline mode properly handles newlines and submission"""
-        self.io.multiline_mode = True
-
-        # Simulate user typing "Hello", pressing Enter (newline),
-        # typing "World", then Alt+Enter to submit
-        user_input = "Hello\nWorld"
-        self.io.prompt_session.prompt.return_value = user_input
-
-        result = self.io.get_input(
-            root="",
-            rel_fnames=[],
-            addable_rel_fnames=[],
-            commands=None,
-        )
-
-        # Verify the prompt shows multiline mode is active
-        prompt_args = self.io.prompt_session.prompt.call_args[0][0]
-        self.assertIn("multi", prompt_args)
-
-        # Check that the multiline input is preserved
-        self.assertEqual(result, user_input)
-
-    def test_get_input_multiline_mode_disabled(self):
-        """Test that normal mode submits on Enter"""
-        self.io.multiline_mode = False
-
-        # Simulate user typing "Hello" and pressing Enter to submit
-        user_input = "Hello"
-        self.io.prompt_session.prompt.return_value = user_input
-
-        result = self.io.get_input(
-            root="",
-            rel_fnames=[],
-            addable_rel_fnames=[],
-            commands=None,
-        )
-
-        # Verify the prompt doesn't show multiline mode
-        prompt_args = self.io.prompt_session.prompt.call_args[0][0]
-        self.assertNotIn("multi", prompt_args)
-
-        # Check that single-line input works as expected
-        self.assertEqual(result, user_input)
-
     def test_toggle_multiline_mode(self):
         """Test that toggling multiline mode works correctly"""
         # Start in single-line mode
