@@ -74,19 +74,19 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
         ".aider*",
         ".git",
         # Common editor backup/temp files
-        "*~",           # Emacs/vim backup
-        "*.bak",        # Generic backup
-        "*.swp",        # Vim swap
-        "*.swo",        # Vim swap
-        "#*#",          # Emacs auto-save
-        ".#*",          # Emacs lock files
-        "*.tmp",        # Generic temp files
-        "*.temp",       # Generic temp files
-        "*.orig",       # Merge conflict originals
-        "*.pyc",        # Python bytecode
-        "__pycache__/", # Python cache dir
-        ".DS_Store",    # macOS metadata
-        "Thumbs.db",    # Windows thumbnail cache
+        "*~",  # Emacs/vim backup
+        "*.bak",  # Generic backup
+        "*.swp",  # Vim swap
+        "*.swo",  # Vim swap
+        "#*#",  # Emacs auto-save
+        ".#*",  # Emacs lock files
+        "*.tmp",  # Generic temp files
+        "*.temp",  # Generic temp files
+        "*.orig",  # Merge conflict originals
+        "*.pyc",  # Python bytecode
+        "__pycache__/",  # Python cache dir
+        ".DS_Store",  # macOS metadata
+        "Thumbs.db",  # Windows thumbnail cache
     ]  # Always ignore
     for path in gitignore_paths:
         if path.exists():
