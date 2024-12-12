@@ -82,6 +82,19 @@ function factorial(n) {
 }
 ```
 
+## Comment styles
+
+Aider only watches for these types of **one-liner** comments:
+
+```
+# Python and bash style
+// Javascript style 
+-- SQL style 
+```
+
+Aider will look for those comment types in all files.
+You can use them into any code file you're editing, even if they aren't the
+correct comment syntax for that language.
 
 ## Multiple uses
 
