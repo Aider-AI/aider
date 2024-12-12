@@ -2,6 +2,7 @@
 
 ### main branch
 
+- Use `# ... AI?` comments to ask questions about your code.
 - New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
 - Added "flash" alias for Gemini 2.0 Flash experimental model.
 - Improved clipboard error handling with helpful messages.
