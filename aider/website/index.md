@@ -72,7 +72,7 @@ cog.out(open("aider/website/_includes/get-started.md").read())
 
 You can get started quickly like this:
 
-```
+```bash
 python -m pip install -U aider-chat
 
 # Change directory into a git repo

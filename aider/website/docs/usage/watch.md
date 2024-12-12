@@ -18,7 +18,7 @@ description: Aider can run in your browser, not just on the command line.
 <style>
 .video-container {
   position: relative;
-  padding-bottom: 101.89%; /* 1080 / 1060 = 1.0189 */
+  padding-bottom: 102.7%; /1.027 */
   height: 0;
   overflow: hidden;
 }
@@ -37,10 +37,11 @@ description: Aider can run in your browser, not just on the command line.
 If you run aider with `--watch-files`, it will watch all files in your repo 
 and look for any AI coding instructions you add using your favorite IDE or text editor.
 
-Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI` or `AI!`, like these:
+Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI`, `AI!` or `AI?1 like these:
 
 ```python
 # Make a snake game. AI!
+# What is the purpose of this method AI?
 ```
 
 Or in `//` comment languages...
@@ -49,9 +50,14 @@ Or in `//` comment languages...
 // Write a protein folding prediction engine. AI!
 ```
 
-Aider will take note of all the comments that start or end with `AI`, but
-a comment that includes `AI!` with an exclamation point is special. 
-That triggers aider to take action to collect *all* the AI comments and use them as instructions to make code changes.
+Aider will take note of all the comments that start or end with `AI`.
+Comments that include `AI!` with an exclamation point or `AI?` with a question
+mark are special. 
+They triggers aider to take action to collect *all* the AI comments and use them 
+as your instructions.
+
+- `AI!` triggers aider to make changes to your code.
+- `AI?` triggers aider to answer your question.
 
 See the demo video above that shows aider working with AI comments in VSCode. 
 
@@ -76,6 +82,19 @@ function factorial(n) {
 }
 ```
 
+## Comment styles
+
+Aider only watches for these types of **one-liner** comments:
+
+```
+# Python and bash style
+// Javascript style 
+-- SQL style 
+```
+
+Aider will look for those comment types in all files.
+You can use them into any code file you're editing, even if they aren't the
+correct comment syntax for that language.
 
 ## Multiple uses
 

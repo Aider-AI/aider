@@ -24,6 +24,8 @@ If the files above exist, they will be loaded in that order. Files loaded last w
 
 {% include special-keys.md %}
 
+{% include env-keys-tip.md %}
+
 ## Sample .env file
 
 Below is a sample `.env` file, which you
@@ -431,6 +433,9 @@ cog.outl("```")
 
 ## Enable/disable fancy input with history and completion (default: True)
 #AIDER_FANCY_INPUT=true
+
+## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
+#AIDER_MULTILINE=false
 
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #AIDER_DETECT_URLS=true

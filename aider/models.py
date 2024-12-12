@@ -76,6 +76,7 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-coder",
+    "flash": "gemini/gemini-2.0-flash-exp",
 }
 
 
@@ -607,6 +608,12 @@ MODEL_SETTINGS = [
         "gemini/gemini-1.5-flash-exp-0827",
         "whole",
         use_repo_map=False,
+        send_undo_reply=False,
+    ),
+    ModelSettings(
+        "gemini/gemini-2.0-flash-exp",
+        "diff",
+        use_repo_map=True,
         send_undo_reply=False,
     ),
     ModelSettings(

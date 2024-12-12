@@ -644,7 +644,7 @@
 
 - dirname: 2024-07-19-08-57-13--openrouter-deepseek-chat-v2-0628
   test_cases: 133
-  model: DeepSeek Chat V2 0628 (deprecated)
+  model: DeepSeek Chat V2 0628
   edit_format: diff
   commit_hash: 96ff06e-dirty
   pass_rate_1: 60.9
@@ -716,7 +716,7 @@
 
 - dirname: 2024-07-24-07-10-58--deepseek-coder2-0724-diff-direct
   test_cases: 133
-  model: DeepSeek Coder V2 0724 (deprecated)
+  model: DeepSeek Coder V2 0724
   edit_format: diff
   commit_hash: 89965bf
   pass_rate_1: 57.9
@@ -1232,7 +1232,7 @@
 
 - dirname: 2024-09-24-16-33-23--gemini-1.5-flash-002-whole
   test_cases: 133
-  model: gemini-1.5-flash-002
+  model: gemini-1.5-flash-002 (0924)
   edit_format: whole
   commit_hash: 3edcd71
   pass_rate_1: 37.6
@@ -2069,7 +2069,7 @@
 
 - dirname: 2024-12-06-21-35-50--gemini-exp-1206-diff
   test_cases: 133
-  model: gemini-exp-1206
+  model: gemini-exp-1206 (diff)
   edit_format: diff
   commit_hash: f2d2ab5
   pass_rate_1: 55.6
@@ -2088,4 +2088,96 @@
   date: 2024-12-06
   versions: 0.67.1.dev
   seconds_per_case: 32.1
+  total_cost: 0.0000
+
+- dirname: 2024-12-08-21-39-06--gemini-exp-1206-whole
+  test_cases: 133
+  model: gemini-exp-1206 (whole)
+  edit_format: whole
+  commit_hash: f2d2ab5
+  pass_rate_1: 60.9
+  pass_rate_2: 80.5
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model gemini/gemini-exp-1206
+  date: 2024-12-08
+  versions: 0.67.1.dev
+  seconds_per_case: 64.2
+  total_cost: 0.0000
+
+- dirname: 2024-12-10-14-45-21--deepseek-1210-diff
+  test_cases: 133
+  model: DeepSeek-V2.5-1210
+  edit_format: diff
+  commit_hash: 16332b2
+  pass_rate_1: 58.6
+  pass_rate_2: 72.2
+  percent_cases_well_formed: 99.2
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 2
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model deepseek/deepseek-chat
+  date: 2024-12-10
+  versions: 0.67.1.dev
+  seconds_per_case: 32.7
+  total_cost: 0.1106
+
+- dirname: 2024-12-11-00-37-08--yi-test
+  test_cases: 133
+  model: yi-lightning
+  edit_format: whole
+  commit_hash: e909a3d-dirty
+  pass_rate_1: 49.6
+  pass_rate_2: 65.4
+  percent_cases_well_formed: 97.0
+  error_outputs: 304
+  num_malformed_responses: 5
+  num_with_malformed_responses: 4
+  user_asks: 34
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model openai/yi-lightning
+  date: 2024-12-11
+  versions: 0.67.1.dev
+  seconds_per_case: 57.8
+  total_cost: 0.0000
+
+- dirname: 2024-12-11-21-07-00--gemini-2-flash-diff
+  test_cases: 133
+  model: gemini-2.0-flash-exp
+  edit_format: diff
+  commit_hash: fcb2bac-dirty, 02e7e31-dirty
+  pass_rate_1: 56.4
+  pass_rate_2: 69.9
+  percent_cases_well_formed: 97.0
+  error_outputs: 10
+  num_malformed_responses: 6
+  num_with_malformed_responses: 4
+  user_asks: 8
+  lazy_comments: 0
+  syntax_errors: 1
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 1
+  command: aider --model gemini/gemini-2.0-flash-exp
+  date: 2024-12-11
+  versions: 0.68.1.dev
+  seconds_per_case: 7.3
   total_cost: 0.0000

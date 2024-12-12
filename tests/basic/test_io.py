@@ -220,6 +220,7 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input", side_effect=["d"])
     def test_confirm_ask_allow_never(self, mock_input):
+        """Test the 'don't ask again' functionality in confirm_ask"""
         io = InputOutput(pretty=False, fancy_input=False)
 
         # First call: user selects "Don't ask again"
@@ -257,6 +258,25 @@ class TestInputOutput(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
+
+
+class TestInputOutputMultilineMode(unittest.TestCase):
+    def setUp(self):
+        self.io = InputOutput(fancy_input=True)
+        self.io.prompt_session = MagicMock()
+
+    def test_toggle_multiline_mode(self):
+        """Test that toggling multiline mode works correctly"""
+        # Start in single-line mode
+        self.io.multiline_mode = False
+
+        # Toggle to multiline mode
+        self.io.toggle_multiline_mode()
+        self.assertTrue(self.io.multiline_mode)
+
+        # Toggle back to single-line mode
+        self.io.toggle_multiline_mode()
+        self.assertFalse(self.io.multiline_mode)
 
 
 if __name__ == "__main__":

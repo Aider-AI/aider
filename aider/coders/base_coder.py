@@ -248,6 +248,9 @@ class Coder:
         if self.done_messages:
             lines.append("Restored previous conversation history.")
 
+        if self.io.multiline_mode:
+            lines.append("Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
+
         return lines
 
     def __init__(
@@ -797,7 +800,8 @@ class Coder:
                 return self.partial_response_content
             while True:
                 try:
-                    self.copy_context()
+                    if not self.io.placeholder:
+                        self.copy_context()
                     user_message = self.get_input()
                     self.run_one(user_message, preproc)
                     self.show_undo_hint()
@@ -1470,7 +1474,7 @@ class Coder:
         words = set(word for word in content.split())
 
         # drop sentence punctuation from the end
-        words = set(word.rstrip(",.!;:") for word in words)
+        words = set(word.rstrip(",.!;:?") for word in words)
 
         # strip away all kinds of quotes
         quotes = "".join(['"', "'", "`"])
@@ -1559,6 +1563,16 @@ class Coder:
                 yield from self.show_send_output_stream(completion)
             else:
                 self.show_send_output(completion)
+
+            # Calculate costs for successful responses
+            self.calculate_and_show_tokens_and_cost(messages, completion)
+
+        except LiteLLMExceptions().exceptions_tuple() as err:
+            ex_info = LiteLLMExceptions().get_ex_info(err)
+            if ex_info.name == "ContextWindowExceededError":
+                # Still calculate costs for context window errors
+                self.calculate_and_show_tokens_and_cost(messages, completion)
+            raise
         except KeyboardInterrupt as kbi:
             self.keyboard_interrupt()
             raise kbi
@@ -1575,8 +1589,6 @@ class Coder:
                 args = self.parse_partial_args()
                 if args:
                     self.io.ai_output(json.dumps(args, indent=4))
-
-            self.calculate_and_show_tokens_and_cost(messages, completion)
 
     def show_send_output(self, completion):
         if self.verbose:

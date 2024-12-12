@@ -3325,3 +3325,88 @@
     Paul Gauthier (aider): 457
   start_tag: v0.66.0
   total_lines: 700
+- aider_percentage: 71.21
+  aider_total: 428
+  end_date: '2024-12-10'
+  end_tag: v0.68.0
+  file_counts:
+    .github/workflows/pages.yml:
+      Paul Gauthier (aider): 1
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 2
+    aider/args.py:
+      Paul Gauthier: 30
+      Paul Gauthier (aider): 15
+    aider/coders/base_coder.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 10
+    aider/coders/editor_editblock_coder.py:
+      Paul Gauthier: 1
+    aider/coders/editor_whole_coder.py:
+      Paul Gauthier: 1
+    aider/commands.py:
+      Paul Gauthier: 24
+      Paul Gauthier (aider): 25
+    aider/copypaste.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 68
+    aider/exceptions.py:
+      Paul Gauthier: 9
+    aider/history.py:
+      Paul Gauthier (aider): 1
+    aider/io.py:
+      Paul Gauthier: 13
+    aider/main.py:
+      Paul Gauthier: 17
+      Paul Gauthier (aider): 29
+    aider/models.py:
+      Paul Gauthier: 15
+    aider/repo.py:
+      Paul Gauthier (aider): 1
+    aider/run_cmd.py:
+      Paul Gauthier: 1
+    aider/sendchat.py:
+      Paul Gauthier (aider): 4
+    aider/utils.py:
+      Paul Gauthier: 1
+    aider/voice.py:
+      Paul Gauthier: 9
+    aider/watch.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 35
+    aider/website/_includes/edit-leaderboard.js:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 90
+    aider/website/_includes/head_custom.html:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 53
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 2
+    scripts/blame.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 17
+    scripts/pip-compile.sh:
+      Paul Gauthier: 2
+    tests/basic/test_commands.py:
+      Paul Gauthier (aider): 24
+    tests/basic/test_history.py:
+      Paul Gauthier (aider): 3
+    tests/basic/test_main.py:
+      Paul Gauthier (aider): 46
+    tests/basic/test_repo.py:
+      Paul Gauthier (aider): 3
+    tests/basic/test_sendchat.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 1
+    tests/basic/test_watch.py:
+      Paul Gauthier: 1
+    tests/fixtures/watch.js:
+      Paul Gauthier: 3
+  grand_total:
+    Paul Gauthier: 173
+    Paul Gauthier (aider): 428
+  start_tag: v0.67.0
+  total_lines: 601

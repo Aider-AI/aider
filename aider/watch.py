@@ -9,59 +9,7 @@ from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
 
 from aider.dump import dump  # noqa
-
-
-def is_source_file(path: Path) -> bool:
-    """
-    Check if a file is a source file that uses # or // style comments.
-    This includes Python, JavaScript, TypeScript, C, C++, etc.
-    """
-    COMMENT_STYLE_EXTENSIONS = {
-        # # style comments
-        ".py",
-        ".r",
-        ".rb",
-        ".pl",
-        ".pm",
-        ".sh",
-        ".bash",
-        ".zsh",
-        ".bashrc",
-        ".bash_profile",
-        ".bash_login",
-        ".bash_logout",
-        ".zshrc",
-        ".zprofile",
-        ".zlogin",
-        ".zlogout",
-        ".profile",
-        ".yaml",
-        ".yml",
-        # // style comments
-        ".js",
-        ".ts",
-        ".jsx",
-        ".tsx",
-        ".cpp",
-        ".c",
-        ".h",
-        ".hpp",
-        ".java",
-        ".swift",
-        ".kt",
-        ".cs",
-        ".go",
-        ".rs",
-        ".php",
-        # -- style comments
-        ".sql",
-        ".hs",  # Haskell
-        ".lua",
-        ".elm",
-        ".vhd",  # VHDL
-        ".vhdl",
-    }
-    return path.suffix.lower() in COMMENT_STYLE_EXTENSIONS
+from aider.watch_prompts import watch_ask_prompt, watch_code_prompt
 
 
 def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
@@ -69,7 +17,41 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
-    patterns = [".aider*", ".git"]  # Always ignore
+    patterns = [
+        ".aider*",
+        ".git",
+        # Common editor backup/temp files
+        "*~",  # Emacs/vim backup
+        "*.bak",  # Generic backup
+        "*.swp",  # Vim swap
+        "*.swo",  # Vim swap
+        "\\#*\\#",  # Emacs auto-save
+        ".#*",  # Emacs lock files
+        "*.tmp",  # Generic temp files
+        "*.temp",  # Generic temp files
+        "*.orig",  # Merge conflict originals
+        "*.pyc",  # Python bytecode
+        "__pycache__/",  # Python cache dir
+        ".DS_Store",  # macOS metadata
+        "Thumbs.db",  # Windows thumbnail cache
+        # IDE files
+        ".idea/",  # JetBrains IDEs
+        ".vscode/",  # VS Code
+        "*.sublime-*",  # Sublime Text
+        ".project",  # Eclipse
+        ".settings/",  # Eclipse
+        "*.code-workspace",  # VS Code workspace
+        # Environment files
+        ".env",  # Environment variables
+        ".venv/",  # Python virtual environments
+        "node_modules/",  # Node.js dependencies
+        "vendor/",  # Various dependencies
+        # Logs and caches
+        "*.log",  # Log files
+        ".cache/",  # Cache directories
+        ".pytest_cache/",  # Python test cache
+        "coverage/",  # Code coverage reports
+    ]  # Always ignore
     for path in gitignore_paths:
         if path.exists():
             with open(path) as f:
@@ -82,13 +64,14 @@ class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     # Compiled regex pattern for AI comments
-    ai_comment_pattern = re.compile(r"(?:#|//|--) *(ai\b.*|ai\b.*|.*\bai!?) *$", re.IGNORECASE)
+    ai_comment_pattern = re.compile(r"(?:#|//|--) *(ai\b.*|ai\b.*|.*\bai[?!]?) *$", re.IGNORECASE)
 
-    def __init__(self, coder, gitignores=None, verbose=False):
+    def __init__(self, coder, gitignores=None, verbose=False, analytics=None):
         self.coder = coder
         self.io = coder.io
         self.root = Path(coder.root)
         self.verbose = verbose
+        self.analytics = analytics
         self.stop_event = None
         self.watcher_thread = None
         self.changed_files = set()
@@ -113,9 +96,6 @@ class FileWatcher:
             dump(rel_path)
 
         if self.gitignore_spec and self.gitignore_spec.match_file(str(rel_path)):
-            return False
-
-        if not is_source_file(path_obj):
             return False
 
         if self.verbose:
@@ -164,33 +144,36 @@ class FileWatcher:
     def process_changes(self):
         """Get any detected file changes"""
 
-        has_bangs = False
+        has_action = None
         for fname in self.changed_files:
-            _, _, has_bang = self.get_ai_comments(fname)
-            has_bangs |= has_bang
+            _, _, action = self.get_ai_comments(fname)
+            if action in ("!", "?"):
+                has_action = action
 
             if fname in self.coder.abs_fnames:
                 continue
+            if self.analytics:
+                self.analytics.event("ai-comments file-add")
             self.coder.abs_fnames.add(fname)
             rel_fname = self.coder.get_rel_fname(fname)
             self.io.tool_output(f"Added {rel_fname} to the chat")
             self.io.tool_output()
 
-        if not has_bangs:
+        if not has_action:
             return ""
 
+        if self.analytics:
+            self.analytics.event("ai-comments execute")
         self.io.tool_output("Processing your request...")
 
-        res = """
-The "AI" comments below marked with █ can be found in the code files I've shared with you.
-They contain your instructions.
-Make the requested changes.
-Be sure to remove all these "AI" comments from the code!
-"""
+        if has_action == "!":
+            res = watch_code_prompt
+        elif has_action == "?":
+            res = watch_ask_prompt
 
         # Refresh all AI comments from tracked files
         for fname in self.coder.abs_fnames:
-            line_nums, comments, _has_bang = self.get_ai_comments(fname)
+            line_nums, comments, _action = self.get_ai_comments(fname)
             if not line_nums:
                 continue
 
@@ -228,10 +211,10 @@ Be sure to remove all these "AI" comments from the code!
         return res
 
     def get_ai_comments(self, filepath):
-        """Extract AI comment line numbers, comments and bang status from a file"""
+        """Extract AI comment line numbers, comments and action status from a file"""
         line_nums = []
         comments = []
-        has_bang = False
+        has_action = None  # None, "!" or "?"
         content = self.io.read_text(filepath, silent=True)
         for i, line in enumerate(content.splitlines(), 1):
             if match := self.ai_comment_pattern.search(line):
@@ -243,10 +226,12 @@ Be sure to remove all these "AI" comments from the code!
                     comment = comment.lstrip("/#-")
                     comment = comment.strip()
                     if comment.startswith("ai!") or comment.endswith("ai!"):
-                        has_bang = True
+                        has_action = "!"
+                    elif comment.startswith("ai?") or comment.endswith("ai?"):
+                        has_action = "?"
         if not line_nums:
-            return None, None, False
-        return line_nums, comments, has_bang
+            return None, None, None
+        return line_nums, comments, has_action
 
 
 def main():

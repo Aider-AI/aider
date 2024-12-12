@@ -26,13 +26,33 @@ cog.out(text)
 
 ### main branch
 
-- [Aider works with LLM web chat UIs with `--copy-paste` mode](https://aider.chat/docs/usage/copypaste.html).
-- Better error messages when missing dependencies for Gemini and Bedrock models
-- Added `--api-key provider=key` and `--set-env VAR=value` flags for setting API keys and environment variables
-- Control-D now properly exits the program
-- Fixed shell environment handling when running commands
-- Reorganized command line arguments with improved help messages and grouping
-- Aider wrote 72% of the code in this release.
+- Use `# ... AI?` comments to ask questions about your code.
+- New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
+- Added "flash" alias for Gemini 2.0 Flash experimental model.
+- Improved clipboard error handling with helpful messages.
+- `/voice` now lets you edit the transcribed text before sending.
+- Aider wrote 12% of the code in this release
+
+### Aider v0.68.0
+
+- [Aider works with LLM web chat UIs](https://aider.chat/docs/usage/copypaste.html).
+  - New `--copy-paste` mode.
+  - New `/copy-context` command.
+- [Set API keys and other environment variables for all providers from command line or yaml conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
+  - New `--api-key provider=key` setting.
+  - New `--set-env VAR=value` setting.
+- Added bash and zsh support to `--watch-files`.
+- Better error messages when missing dependencies for Gemini and Bedrock models.
+- Control-D now properly exits the program.
+- Don't count token costs when API provider returns a hard error.
+- Bugfix so watch files works with files that don't have tree-sitter support.
+- Bugfix so o1 models can be used as weak model.
+- Updated shell command prompt.
+- Added docstrings for all Coders.
+- Reorganized command line arguments with improved help messages and grouping.
+- Use the exact `sys.python` for self-upgrades.
+- Added experimental Gemini models.
+- Aider wrote 71% of the code in this release.
 
 ### Aider v0.67.0
 

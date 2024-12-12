@@ -5,29 +5,20 @@ nav_order: 100
 
 # Install with pipx
 
-If you are using aider to work on a python project, sometimes your project will require
-specific versions of python packages which conflict with the versions that aider
-requires.
-If this happens, the `python -m pip install` command may return errors like these:
+A recommended way to install aider is with pipx:
 
-```
-aider-chat 0.23.0 requires somepackage==X.Y.Z, but you have somepackage U.W.V which is incompatible.
-```
-
-You can avoid this problem by installing aider using `pipx`,
-which will install it globally on your system
-within its own python environment.
-This way you can use aider to work on any python project,
-even if that project has conflicting dependencies.
-
-Install [pipx](https://pipx.pypa.io/stable/) then just do:
-
-```
+```bash
+python -m pip install pipx  # If you need to install pipx
 pipx install aider-chat
 ```
+
+See also the 
+[docs on other methods for installing pipx itself](https://pipx.pypa.io/stable/installation/).
 
 
 ## pipx on replit
 
 {% include replit-pipx.md %}
 
+
+{% include conflicts.md %}
