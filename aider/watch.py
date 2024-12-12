@@ -70,6 +70,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     if not gitignore_paths:
         return None
 
+    # are there any others we should consider ai?
     patterns = [
         ".aider*",
         ".git",
