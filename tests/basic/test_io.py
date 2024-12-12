@@ -269,7 +269,7 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         """Test that multiline mode properly handles newlines and submission"""
         self.io.multiline_mode = True
 
-        # Simulate user typing "Hello", pressing Enter (newline), 
+        # Simulate user typing "Hello", pressing Enter (newline),
         # typing "World", then Alt+Enter to submit
         user_input = "Hello\nWorld"
         self.io.prompt_session.prompt.return_value = user_input
@@ -314,11 +314,11 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         """Test that toggling multiline mode works correctly"""
         # Start in single-line mode
         self.io.multiline_mode = False
-        
+
         # Toggle to multiline mode
         self.io.toggle_multiline_mode()
         self.assertTrue(self.io.multiline_mode)
-        
+
         # Toggle back to single-line mode
         self.io.toggle_multiline_mode()
         self.assertFalse(self.io.multiline_mode)
