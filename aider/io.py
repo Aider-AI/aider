@@ -12,7 +12,8 @@ from pathlib import Path
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
-from prompt_toolkit.filters import Condition
+from prompt_toolkit.filters import Condition, buffer_has_focus
+from prompt_toolkit.key_binding.bindings.search import SEARCH_BUFFER
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
@@ -460,7 +461,7 @@ class InputOutput:
             "Navigate forward through history"
             event.current_buffer.history_forward()
 
-        @kb.add("enter", eager=True)
+        @kb.add("enter", eager=True, filter=~buffer_has_focus(SEARCH_BUFFER))
         def _(event):
             "Handle Enter key press"
             if self.multiline_mode:
@@ -470,7 +471,7 @@ class InputOutput:
                 # In normal mode, Enter submits
                 event.current_buffer.validate_and_handle()
 
-        @kb.add("escape", "enter", eager=True)  # This is Alt+Enter
+        @kb.add("escape", "enter", eager=True, filter=~buffer_has_focus(SEARCH_BUFFER))  # This is Alt+Enter
         def _(event):
             "Handle Alt+Enter key press"
             if self.multiline_mode:
