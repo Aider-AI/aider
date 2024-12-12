@@ -435,6 +435,11 @@ class InputOutput:
             )
         )
 
+        from prompt_toolkit.application.current import get_app
+        from prompt_toolkit.filters import Condition
+
+        is_searching = Condition(lambda: get_app().is_searching)
+
         def suspend_to_bg(event):
             """Suspend currently running application."""
             event.app.suspend_to_background()
@@ -461,7 +466,7 @@ class InputOutput:
             "Navigate forward through history"
             event.current_buffer.history_forward()
 
-        @kb.add("enter", eager=True, filter=~buffer_has_focus(SEARCH_BUFFER))
+        @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             "Handle Enter key press"
             if self.multiline_mode:
@@ -471,7 +476,7 @@ class InputOutput:
                 # In normal mode, Enter submits
                 event.current_buffer.validate_and_handle()
 
-        @kb.add("escape", "enter", eager=True, filter=~buffer_has_focus(SEARCH_BUFFER))  # This is Alt+Enter
+        @kb.add("escape", "enter", eager=True, filter=~is_searching)  # This is Alt+Enter
         def _(event):
             "Handle Alt+Enter key press"
             if self.multiline_mode:
