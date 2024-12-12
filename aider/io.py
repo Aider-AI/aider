@@ -12,10 +12,9 @@ from pathlib import Path
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
-from prompt_toolkit.filters import Condition, buffer_has_focus
+from prompt_toolkit.filters import Condition, buffer_has_focus, is_searching
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
-from prompt_toolkit.key_binding.bindings.search import SEARCH_BUFFER
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
@@ -434,11 +433,6 @@ class InputOutput:
                 abs_read_only_fnames=abs_read_only_fnames,
             )
         )
-
-        from prompt_toolkit.application.current import get_app
-        from prompt_toolkit.filters import Condition
-
-        is_searching = Condition(lambda: get_app().is_searching)
 
         def suspend_to_bg(event):
             """Suspend currently running application."""
