@@ -1,5 +1,13 @@
 # Release history
 
+### main branch
+
+- New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
+- Added "flash" alias for Gemini 2.0 Flash experimental model.
+- Improved clipboard error handling with helpful messages.
+- `/voice` now lets you edit the transcribed text before sending.
+- Aider wrote 12% of the code in this release
+
 ### Aider v0.68.0
 
 - [Aider works with LLM web chat UIs](https://aider.chat/docs/usage/copypaste.html).
