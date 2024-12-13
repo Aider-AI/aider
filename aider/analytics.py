@@ -84,7 +84,7 @@ class Analytics:
         if not self.user_id:
             return False
 
-        PERCENT = 2.5
+        PERCENT = 5
         return self.is_uuid_in_percentage(self.user_id, PERCENT)
 
     def is_uuid_in_percentage(self, uuid_str, percent):
