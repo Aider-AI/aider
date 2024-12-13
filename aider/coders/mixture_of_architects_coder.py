@@ -43,64 +43,6 @@ class MixtureOfArchitectsCoder(Coder):
     def get_architect_response(self, architect, current_user_message):
         """Get response from individual architect with proper prompting"""
         try:
-            # Build architect-specific conversation history
-            full_context = f"You are architect {architect.name.upper()}.\n\n"
-
-            # Group messages by conversation round
-            rounds = []
-            current_round = []
-
-            for msg in self.discussion_messages:
-                if msg["role"] == "user":
-                    if current_round:
-                        rounds.append(current_round)
-                    current_round = [msg]
-                else:
-                    current_round.append(msg)
-
-            if current_round:
-                rounds.append(current_round)
-
-            # Build context from rounds
-            for round_msgs in rounds:
-                user_msg = next(msg for msg in round_msgs if msg["role"] == "user")
-                full_context += "<user_message>\n"
-                full_context += user_msg["content"]
-                full_context += "\n</user_message>\n\n"
-
-                # Add architects' responses/proposals
-                for msg in round_msgs:
-                    if msg["role"] == "assistant":
-                        if msg["name"] == architect.name.upper():
-                            # Include full response for the current architect
-                            full_context += f"<architect name='{msg['name']}'>\n"
-                            full_context += msg["content"]
-                            full_context += "\n</architect>\n\n"
-                        else:
-                            # Only include proposal content from other architects
-                            content = msg["content"]
-                            proposal_match = re.search(
-                                r"<proposal>(.*?)</proposal>", content, re.DOTALL
-                            )
-                            if proposal_match:
-                                proposal_content = proposal_match.group(1).strip()
-                                full_context += f"<architect name='{msg['name']}'>\n"
-                                full_context += proposal_content
-                                full_context += "\n</architect>\n\n"
-
-            # Only add current message if it's not already the last user message
-            if not rounds or rounds[-1][0]["content"] != current_user_message:
-                full_context += "<user_message>\n"
-                full_context += current_user_message
-                full_context += "\n</user_message>\n"
-
-            # Debug output if verbose
-            if self.verbose:
-                self.io.tool_output(f"\nDebug: Context being sent to {architect.name}:")
-                self.io.tool_output("-" * 40)
-                self.io.tool_output(full_context)
-                self.io.tool_output("-" * 40 + "\n")
-
             # Create and configure AskCoder
             ask_coder = AskCoder.create(
                 main_model=architect.model,
@@ -115,7 +57,76 @@ class MixtureOfArchitectsCoder(Coder):
             ask_coder.auto_commits = self.auto_commits
             ask_coder.gpt_prompts = MixturePrompts()
 
-            response = ask_coder.run(with_message=full_context, preproc=False)
+            # Group messages by conversation round
+            rounds = []
+            current_round = []
+            for msg in self.discussion_messages:
+                if msg["role"] == "user":
+                    if current_round:
+                        rounds.append(current_round)
+                    current_round = [msg]
+                else:
+                    current_round.append(msg)
+            if current_round:
+                rounds.append(current_round)
+
+            # Build the conversation messages
+            for round_msgs in rounds:
+                user_msg = next(msg for msg in round_msgs if msg["role"] == "user")
+
+                # Combine user message with other architects' proposals
+                user_content = "<user_message>\n"
+                user_content += user_msg["content"]
+                user_content += "\n</user_message>\n\n"
+
+                # Add other architects' proposals from this round
+                for msg in round_msgs:
+                    if (
+                        msg["role"] == "assistant"
+                        and msg["name"] != architect.name.upper()
+                    ):
+                        content = msg["content"]
+                        proposal_match = re.search(
+                            r"<proposal>(.*?)</proposal>", content, re.DOTALL
+                        )
+                        if proposal_match:
+                            proposal_content = proposal_match.group(1).strip()
+                            user_content += f"<architect name='{msg['name']}'>\n"
+                            user_content += proposal_content
+                            user_content += "\n</architect>\n\n"
+
+                ask_coder.cur_messages.append({"role": "user", "content": user_content})
+
+                # Add this architect's own response if they had one
+                for msg in round_msgs:
+                    if (
+                        msg["role"] == "assistant"
+                        and msg["name"] == architect.name.upper()
+                    ):
+                        ask_coder.cur_messages.append(
+                            {"role": "assistant", "content": msg["content"]}
+                        )
+
+            # Debug output if verbose
+            if self.verbose:
+
+                self.io.rule()
+                self.io.tool_output(
+                    f"\nDebug: Messages being sent to {architect.name}:", bold=True
+                )
+                self.io.tool_output("-" * 40)
+                for msg in ask_coder.cur_messages:
+                    self.io.tool_output(f"{msg['role'].upper()}:")
+                    self.io.tool_output(msg["content"])
+                    self.io.tool_output("-" * 40)
+
+            # Pass the current message with XML tags as with_message
+            formatted_message = f"""
+                You are arhitect {architect.name}
+                <user_message>
+                {current_user_message}
+                </user_message>"""
+            response = ask_coder.run(with_message=formatted_message, preproc=False)
 
             if not response.strip():
                 self.io.tool_warning(f"Warning: Empty response from {architect.name}")
@@ -140,13 +151,15 @@ class MixtureOfArchitectsCoder(Coder):
                 return
 
             # Debug: Show which architects are active
+            self.io.rule()
             self.io.tool_output(
                 f"Active architects: {[arch.name for arch in active_architects]}"
             )
 
             # Process architects sequentially instead of concurrently
             for arch in active_architects:
-                self.io.tool_output(f"Waiting for {arch.name}'s response...")
+                self.io.tool_output(f"Waiting for {arch.name}'s response...", bold=True)
+                self.io.rule()
                 try:
                     arch, response = self.get_architect_response(arch, user_message)
 
@@ -173,9 +186,9 @@ class MixtureOfArchitectsCoder(Coder):
                     )
 
                 # Show architect's proposal immediately
-                if arch.last_response:
+                if self.verbose and arch.last_response:
                     self.io.rule()
-                    self.io.tool_output(f"{arch.name.upper()}'s proposal:", bold=True)
+                    self.io.tool_output(f"{arch.name.upper()}'s Response:", bold=True)
                     self.io.tool_output(f"\n{arch.last_response}\n")
 
             # Add final divider
