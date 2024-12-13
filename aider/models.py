@@ -858,7 +858,7 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None, infinite_output_model=None):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
@@ -897,6 +897,11 @@ class Model(ModelSettings):
             self.editor_model_name = None
         else:
             self.get_editor_model(editor_model, editor_edit_format)
+
+        if infinite_output_model is False:
+            self.infinite_output_model_name = None
+        else:
+            self.get_infinite_output_model(infinite_output_model)
 
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
@@ -1017,7 +1022,11 @@ class Model(ModelSettings):
     def commit_message_models(self):
         return [self.weak_model, self]
 
-    def get_infinite_output_model(self):
+    def get_infinite_output_model(self, provided_infinite_output_model_name):
+        # If infinite_output_model_name is provided, override the model settings
+        if provided_infinite_output_model_name:
+            self.infinite_output_model_name = provided_infinite_output_model_name
+
         if not self.infinite_output_model_name:
             return None
             
