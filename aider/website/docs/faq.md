@@ -246,10 +246,6 @@ tr:hover { background-color: #f5f5f5; }
 </table>
 <!--[[[end]]]-->
 
-{: .note :}
-Some models show as REDACTED, because they are new or unpopular models.
-Aider's analytics only records the names of "well known" LLMs.
-
 ## How are the "aider wrote xx% of code" stats computed?
 
 [Aider is tightly integrated with git](/docs/git.html) so all
