@@ -6,7 +6,7 @@ from collections import defaultdict
 from pathlib import Path
 
 # Get the analytics file path
-analytics_path = Path.home() / '.aider' / 'analytics.jsonl'
+analytics_path = Path.home() / ".aider" / "analytics.jsonl"
 
 # Dictionary to store model stats
 model_stats = defaultdict(int)
@@ -17,10 +17,10 @@ with open(analytics_path) as f:
         try:
             event = json.loads(line)
             # Check if this is a message_send event
-            if event['event'] == 'message_send':
-                properties = event['properties']
-                main_model = properties.get('main_model')
-                total_tokens = properties.get('total_tokens', 0)
+            if event["event"] == "message_send":
+                properties = event["properties"]
+                main_model = properties.get("main_model")
+                total_tokens = properties.get("total_tokens", 0)
                 if main_model:
                     model_stats[main_model] += total_tokens
         except json.JSONDecodeError:
