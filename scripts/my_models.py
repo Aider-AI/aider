@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import json
-from collections import defaultdict
+from collections import defaultdict, deque
 from pathlib import Path
 
 # Get the analytics file path
@@ -10,9 +10,14 @@ analytics_path = Path.home() / ".aider" / "analytics.jsonl"
 # Dictionary to store model stats
 model_stats = defaultdict(int)
 
-# Read and process the file
+# Number of lines to process from the end
+N = 1000
+
+# Read and process the last N lines of the file
 with open(analytics_path) as f:
-    for line in f:
+    # Get last N lines using deque
+    lines = deque(f, N)
+    for line in lines:
         try:
             event = json.loads(line)
             # Check if this is a message_send event
