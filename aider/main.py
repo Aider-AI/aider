@@ -557,6 +557,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
     if args.openai_api_base:
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
+    if args.openai_api_base_whisper:
+        os.environ["AIDER_OPENAI_API_BASE_WHISPER"] = args.openai_api_base_whisper
     if args.openai_api_version:
         io.tool_warning(
             "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"

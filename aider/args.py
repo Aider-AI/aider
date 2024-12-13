@@ -715,6 +715,10 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Specify the input device name for voice recording",
     )
+    group.add_argument(
+        "--openai-api-base-whisper",
+        help="Specify the api base url for Whisper transcriptions",
+    )
 
     ######
     group = parser.add_argument_group("Other settings")
