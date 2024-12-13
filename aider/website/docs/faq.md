@@ -209,6 +209,23 @@ all the raw information being sent to/from the LLM in the conversation.
 You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
+## What LLMs do you use to build aider?
+
+Aider writes a lot of its own code, usually about 70% of the new code in each
+release.
+People often ask which LLM models I use with aider, when writing aider.
+Below is a table showing the models I use,
+extracted from the [public log of my aider analytics](https://github.com/aider-ai/aider/blob/main/aider/website/assets/sample-analytics.jsonl).
+
+<!--[[[cog
+from .scripts.my_models import collect_model_stats
+stats = my_models.collect_model_stats()
+html = my_models.format_html_table(stats)
+cog.out(html)
+]]]-->
+
+<!--[[[end]]]-->
+
 
 ## How are the "aider wrote xx% of code" stats computed?
 
