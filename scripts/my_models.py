@@ -31,7 +31,7 @@ def format_text_table(model_stats):
     """Format model statistics as a text table."""
     total_tokens = sum(model_stats.values())
     lines = []
-    
+
     lines.append("\nModel Token Usage Summary:")
     lines.append("-" * 80)
     lines.append(f"{'Model Name':<40} {'Total Tokens':>15} {'Percent':>10}")
@@ -43,14 +43,14 @@ def format_text_table(model_stats):
 
     lines.append("-" * 80)
     lines.append(f"{'TOTAL':<40} {total_tokens:>15,} {100:>9.1f}%")
-    
+
     return "\n".join(lines)
 
 
 def format_html_table(model_stats):
     """Format model statistics as an HTML table."""
     total_tokens = sum(model_stats.values())
-    
+
     html = [
         "<html>",
         "<head>",
@@ -65,9 +65,12 @@ def format_html_table(model_stats):
         "<body>",
         "<h2>Model Token Usage Summary</h2>",
         "<table>",
-        "<tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>"
+        (
+            "<tr><th>Model Name</th><th class='right'>Total Tokens</th><th"
+            " class='right'>Percent</th></tr>"
+        ),
     ]
-    
+
     for model, tokens in sorted(model_stats.items(), key=lambda x: x[1], reverse=True):
         percentage = (tokens / total_tokens) * 100 if total_tokens > 0 else 0
         html.append(
@@ -75,13 +78,13 @@ def format_html_table(model_stats):
             f"<td class='right'>{tokens:,}</td>"
             f"<td class='right'>{percentage:.1f}%</td></tr>"
         )
-    
+
     html.append(
-        f"<tr><td><strong>TOTAL</strong></td>"
+        "<tr><td><strong>TOTAL</strong></td>"
         f"<td class='right'><strong>{total_tokens:,}</strong></td>"
-        f"<td class='right'><strong>100.0%</strong></td></tr>"
+        "<td class='right'><strong>100.0%</strong></td></tr>"
     )
-    
+
     html.extend(["</table>", "</body>", "</html>"])
     return "\n".join(html)
 
