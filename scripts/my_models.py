@@ -78,12 +78,14 @@ def format_html_table(model_stats):
 
     # Add note about redacted models if any are present
     if any("REDACTED" in model for model in model_stats.keys()):
-        html.extend([
-            "",
-            "{: .note :}",
-            "Some models show as REDACTED, because they are new or unpopular models.",
-            "Aider's analytics only records the names of \"well known\" LLMs."
-        ])
+        html.extend(
+            [
+                "",
+                "{: .note :}",
+                "Some models show as REDACTED, because they are new or unpopular models.",
+                'Aider\'s analytics only records the names of "well known" LLMs.',
+            ]
+        )
 
     return "\n".join(html)
 
