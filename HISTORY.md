@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.69.0
 
 - [Watch files](https://aider.chat/docs/usage/watch.html) improvements:
   - Use `# ... AI?` comments to trigger aider and ask questions about your code.
