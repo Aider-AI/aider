@@ -218,6 +218,10 @@ Below is a table showing the models I use,
 extracted from the [public log of my aider analytics](https://github.com/aider-ai/aider/blob/main/aider/website/assets/sample-analytics.jsonl).
 
 <!--[[[cog
+import sys
+from pathlib import Path
+repo_root = Path(__file__).parent.parent.parent.parent
+sys.path.append(str(repo_root))
 import scripts.my_models as my_models
 stats = my_models.collect_model_stats()
 html = my_models.format_html_table(stats)
