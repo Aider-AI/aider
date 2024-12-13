@@ -30,7 +30,7 @@ is enabled.
 
 ## Community contributed conventions
 
-You can check the [aider conventions repository[(https://github.com/Aider-AI/conventions)
+You can check the [aider conventions repository](https://github.com/Aider-AI/conventions)
 to find or contribute conventions files.
 
 ## Always load conventions
