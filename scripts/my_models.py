@@ -52,8 +52,6 @@ def format_html_table(model_stats):
     total_tokens = sum(model_stats.values())
 
     html = [
-        "<html>",
-        "<head>",
         "<style>",
         "table { border-collapse: collapse; width: 100%; }",
         "th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }",
@@ -61,9 +59,6 @@ def format_html_table(model_stats):
         "tr:hover { background-color: #f5f5f5; }",
         ".right { text-align: right; }",
         "</style>",
-        "</head>",
-        "<body>",
-        "<h2>Model Token Usage Summary</h2>",
         "<table>",
         (
             "<tr><th>Model Name</th><th class='right'>Total Tokens</th><th"
@@ -79,13 +74,7 @@ def format_html_table(model_stats):
             f"<td class='right'>{percentage:.1f}%</td></tr>"
         )
 
-    html.append(
-        "<tr><td><strong>TOTAL</strong></td>"
-        f"<td class='right'><strong>{total_tokens:,}</strong></td>"
-        "<td class='right'><strong>100.0%</strong></td></tr>"
-    )
-
-    html.extend(["</table>", "</body>", "</html>"])
+    html.extend(["</table>"])
     return "\n".join(html)
 
 
