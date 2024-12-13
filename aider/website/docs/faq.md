@@ -218,7 +218,7 @@ Below is a table showing the models I have used recently,
 extracted from the 
 [public log](https://github.com/aider-ai/aider/blob/main/aider/website/assets/sample-analytics.jsonl)
 of my
-[aider analytics](http://aider.chat/docs/more/analytics.html).
+[aider analytics](https://aider.chat/docs/more/analytics.html).
 
 <!--[[[cog
 import sys
