@@ -112,7 +112,6 @@ MODEL_SETTINGS = [
         "gpt-3.5-turbo",
         "whole",
         weak_model_name="gpt-4o-mini",
-        infinite_output_model_name="claude-3-5-sonnet-20241022",
         reminder="sys",
     ),
     ModelSettings(

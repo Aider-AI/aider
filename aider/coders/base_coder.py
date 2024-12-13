@@ -211,7 +211,7 @@ class Coder:
             output = f"Weak model: {weak_model.name}"
             lines.append(output)
 
-        if infinite_output_model is not main_model:
+        if infinite_output_model and infinite_output_model is not main_model:
             output = f"Infinite output model: {infinite_output_model.name}"
             lines.append(output)
 
