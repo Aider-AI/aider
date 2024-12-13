@@ -371,9 +371,7 @@ def handle_fixed_issues(all_issues, auto_yes):
             comment_url = (
                 f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
             )
-            comment = (
-                CLOSE_FIXED_ENHANCEMENT_COMMENT if is_enhancement else CLOSE_FIXED_BUG_COMMENT
-            )
+            comment = CLOSE_FIXED_ENHANCEMENT_COMMENT if is_enhancement else CLOSE_FIXED_BUG_COMMENT
             response = requests.post(comment_url, headers=headers, json={"body": comment})
             response.raise_for_status()
 
