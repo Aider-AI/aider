@@ -31,7 +31,10 @@ cog.out(text)
 - Added "flash" alias for Gemini 2.0 Flash experimental model.
 - Improved clipboard error handling with helpful messages.
 - `/voice` now lets you edit the transcribed text before sending.
-- Aider wrote 12% of the code in this release
+- Fixed Ctrl-R reverse search behavior.
+- Fixed Emacs auto-save gitignore pattern.
+- Disabled complete-while-typing in prompt session for better performance.
+- Aider wrote 61% of the code in this release.
 
 ### Aider v0.68.0
 

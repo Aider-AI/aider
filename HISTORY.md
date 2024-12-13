@@ -5,9 +5,10 @@
 - Use `# ... AI?` comments to ask questions about your code.
 - New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
 - Added "flash" alias for Gemini 2.0 Flash experimental model.
-- Improved clipboard error handling with helpful messages.
+- Improved clipboard error handling with helpful requirements install info.
 - `/voice` now lets you edit the transcribed text before sending.
-- Aider wrote 12% of the code in this release
+- Disabled auto-complete in Y/N prompts.
+- Aider wrote 61% of the code in this release.
 
 ### Aider v0.68.0
 
