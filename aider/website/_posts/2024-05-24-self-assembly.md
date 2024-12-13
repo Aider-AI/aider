@@ -1,6 +1,6 @@
 ---
-title: Aider has written 7% of its own code
-excerpt: Aider has written 7% of its own code, via 600+ commits that inserted 4.8K and deleted 1.5K lines of code.
+title: Aider has written 7% of its own code (outdated, now 70%)
+excerpt: This article is quite out dated. Aider is currently writing about 70% of the new code in each release.
 highlight_image: /assets/self-assembly.jpg
 nav_exclude: true
 ---
@@ -8,13 +8,16 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# Aider has written 7% of its own code
+# Aider has written 7% of its own code (outdated, now 70%)
 
 [![self assembly](/assets/self-assembly.jpg)](https://aider.chat/assets/self-assembly.jpg)
 
 {: .note }
-This article is quite out dated. For current statistics, see
-[aider's release history](/HISTORY.html).
+This article is quite old and outdated. 
+Aider is currently writing about 70% of the new code
+in each release.
+See
+[aider's release history](/HISTORY.html) for the latest statistics.
 
 The
 [aider git repo](https://github.com/Aider-AI/aider)

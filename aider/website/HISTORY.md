@@ -1,7 +1,6 @@
 ---
 title: Release history
-parent: More info
-nav_order: 900
+nav_order: 925
 highlight_image: /assets/blame.jpg
 description: Release notes and stats on aider writing its own code.
 ---
