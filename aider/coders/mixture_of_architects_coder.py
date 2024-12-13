@@ -193,7 +193,7 @@ class MixtureOfArchitectsCoder(Coder):
             cmd = words[0].lower()
             args = " ".join(words[1:])
 
-            if cmd in ["/drop", "/discuss", "/code"]:
+            if cmd in ["/drop", "/discuss", "/code", "/clear", "/reset"]:
                 cmd = cmd[1:]  # strip the /
                 return self.handle_discussion_commands(cmd, args)
 
@@ -218,8 +218,22 @@ class MixtureOfArchitectsCoder(Coder):
         /drop <name>   - Remove an architect from the discussion
         /discuss <msg> - Start a new discussion round
         /code <msg>    - Move to implementation phase
+        /clear        - Clear chat and discussion history
+        /reset        - Drop files and clear all history
         """
-        if cmd == "drop":
+        if cmd == "clear":
+            self.discussion_messages = []
+            self.io.tool_output("Chat history and discussion history cleared.")
+            return
+        elif cmd == "reset":
+            self.abs_fnames = set()
+            self.abs_read_only_fnames = set()
+            self.discussion_messages = []
+            self.io.tool_output(
+                "All files dropped, chat history and discussion history cleared."
+            )
+            return
+        elif cmd == "drop":
             nato_name = args.strip().lower()
             for arch in self.architects:
                 if arch.name == nato_name:
