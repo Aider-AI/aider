@@ -19,6 +19,9 @@ class MixtureOfArchitectsCoder(Coder):
     def __init__(self, main_model, io, architect_models=None, **kwargs):
         super().__init__(main_model, io, **kwargs)
 
+        # Add conversation history tracking
+        self.discussion_messages = []  # List to store the full conversation
+
         # The main_model is always the first architect (alpha)
         self.architects = [ArchitectAgent("alpha", main_model)]
 
@@ -37,37 +40,102 @@ class MixtureOfArchitectsCoder(Coder):
         )
         return prompt
 
-    def get_architect_response(self, architect, context):
+    def get_architect_response(self, architect, current_user_message):
         """Get response from individual architect with proper prompting"""
         try:
-            # Add architect name to the context
-            full_context = f"You are architect {architect.name.upper()}.\n\n{context}"
+            # Build architect-specific conversation history
+            full_context = f"You are architect {architect.name.upper()}.\n\n"
 
-            # Add other architects' previous responses to the context
-            other_responses = []
+            # Group messages by conversation round
+            rounds = []
+            current_round = []
+
+            for msg in self.discussion_messages:
+                if msg["role"] == "user":
+                    if current_round:
+                        rounds.append(current_round)
+                    current_round = [msg]
+                else:
+                    current_round.append(msg)
+
+            if current_round:
+                rounds.append(current_round)
+
+            # Build context specific to this architect
+            for round_msgs in rounds:
+                user_msg = next(msg for msg in round_msgs if msg["role"] == "user")
+                full_context += "<user_message>\n"
+                full_context += user_msg["content"]
+
+                # For each user message, add the other architects' proposals
+                other_proposals = []
+                for msg in round_msgs:
+                    if msg["role"] == "assistant":
+                        if msg["name"] == architect.name.upper():
+                            # Add this architect's own response
+                            full_context += "\n\nYour previous response:\n"
+                            full_context += msg["content"]
+                        elif architect.name == "alpha":  # Alpha sees all proposals
+                            proposal_match = re.search(
+                                r"<proposal>(.*?)</proposal>",
+                                msg["content"],
+                                re.DOTALL,
+                            )
+                            if proposal_match:
+                                other_proposals.append(
+                                    f"\nProposal from {msg['name']}:\n{proposal_match.group(1).strip()}"
+                                )
+                        elif (
+                            msg["name"] == "ALPHA"
+                        ):  # Other architects only see Alpha's proposals
+                            proposal_match = re.search(
+                                r"<proposal>(.*?)</proposal>",
+                                msg["content"],
+                                re.DOTALL,
+                            )
+                            if proposal_match:
+                                other_proposals.append(
+                                    f"\nProposal from ALPHA:\n{proposal_match.group(1).strip()}"
+                                )
+
+                if other_proposals:
+                    full_context += "".join(other_proposals)
+                full_context += "\n</user_message>\n\n"
+
+            # Add current context
+            full_context += f"Current user request:\n{current_user_message}\n"
+
+            # Add other architects' current proposals if they exist
+            current_proposals = []
             for other_arch in self.architects:
                 if (
                     other_arch != architect
                     and other_arch.active
                     and other_arch.last_response
-                ):
-                    # Extract just the proposal content from the last response
+                    and (architect.name == "alpha" or other_arch.name == "alpha")
+                ):  # Only show Alpha to others
+
                     proposal_match = re.search(
                         r"<proposal>(.*?)</proposal>",
                         other_arch.last_response,
                         re.DOTALL,
                     )
                     if proposal_match:
-                        proposal = proposal_match.group(1).strip()
-                        other_responses.append(
-                            f"<architect name='{other_arch.name.upper()}'>\n{proposal}\n</architect>"
+                        current_proposals.append(
+                            f"\nCurrent proposal from {other_arch.name.upper()}:\n{proposal_match.group(1).strip()}"
                         )
 
-            if other_responses:
-                full_context += "\nPrevious proposals from other architects:\n\n"
-                full_context += "\n".join(other_responses)
+            if current_proposals:
+                full_context += "".join(current_proposals)
 
-            # Create AskCoder with architect-specific system prompt
+            # Debug output if verbose
+            if self.verbose:
+                self.io.tool_output(f"\nDebug: Context being sent to {architect.name}:")
+                self.io.tool_output("-" * 40)
+                self.io.tool_output(full_context)
+                self.io.tool_output("-" * 40 + "\n")
+
+            # Create and configure AskCoder
             ask_coder = AskCoder.create(
                 main_model=architect.model,
                 io=self.io,
@@ -76,17 +144,13 @@ class MixtureOfArchitectsCoder(Coder):
                 repo=self.repo,
                 map_tokens=self.repo_map.max_map_tokens if self.repo_map else 0,
                 summarize_from_coder=False,
-                stream=False,  # Explicitly disable streaming
+                stream=True,
             )
-            ask_coder.auto_commit = self.auto_commits
-
-            # Override AskCoder's prompts with MixturePrompts
+            ask_coder.auto_commits = self.auto_commits
             ask_coder.gpt_prompts = MixturePrompts()
 
-            # Run with empty message since we already set up the messages
             response = ask_coder.run(with_message=full_context, preproc=False)
 
-            # Add debug logging
             if not response.strip():
                 self.io.tool_warning(f"Warning: Empty response from {architect.name}")
 
@@ -100,8 +164,8 @@ class MixtureOfArchitectsCoder(Coder):
 
     def run_discussion_round(self, user_message):
         try:
-            # Create context for all architects
-            base_context = f"User message: {user_message}\n\n"
+            # Store user message
+            self.discussion_messages.append({"role": "user", "content": user_message})
 
             # Get active architects
             active_architects = [arch for arch in self.architects if arch.active]
@@ -115,19 +179,25 @@ class MixtureOfArchitectsCoder(Coder):
             )
 
             # Process architects sequentially instead of concurrently
-            all_responses = {}
             for arch in active_architects:
                 self.io.tool_output(f"Waiting for {arch.name}'s response...")
                 try:
-                    # Get response directly instead of using ThreadPoolExecutor
-                    arch, response = self.get_architect_response(arch, base_context)
+                    arch, response = self.get_architect_response(arch, user_message)
 
                     if not response.strip():
                         self.io.tool_warning(f"Empty response from {arch.name}")
                         continue
 
                     arch.last_response = response
-                    all_responses[arch.name] = response
+                    # Store architect's response in discussion history
+                    self.discussion_messages.append(
+                        {
+                            "role": "assistant",
+                            "name": arch.name.upper(),
+                            "content": response,
+                        }
+                    )
+
                     self.io.tool_output(
                         f"Received {arch.name}'s response ({len(response)} chars)"
                     )
@@ -136,8 +206,7 @@ class MixtureOfArchitectsCoder(Coder):
                         f"Failed to get response from {arch.name}: {str(e)}"
                     )
 
-            # Show all architects' proposals after all are complete
-            for arch in active_architects:
+                # Show architect's proposal immediately
                 if arch.last_response:
                     self.io.rule()
                     self.io.tool_output(f"{arch.name.upper()}'s proposal:", bold=True)
@@ -203,14 +272,37 @@ class MixtureOfArchitectsCoder(Coder):
         return False
 
     def run_coding_phase(self, message):
-        # Combine active architects' responses
-        combined_response = f"User request: {message}\n\n"
-        combined_response += "Based on the discussion between architects:\n\n"
-        for arch in self.architects:
-            if arch.active and arch.last_response:
-                combined_response += (
-                    f"From {arch.name.upper()}:\n{arch.last_response}\n\n"
-                )
+        # Add the final code implementation request to the discussion
+        if message.strip():
+            self.discussion_messages.append(
+                {
+                    "role": "user",
+                    "content": f"Please implement the following: {message}",
+                }
+            )
+
+        # Format the full conversation history with XML fences
+        combined_response = "Full discussion history:\n\n"
+        for msg in self.discussion_messages:
+            if msg["role"] == "user":
+                combined_response += "<user_message>\n"
+                combined_response += msg["content"]
+                combined_response += "\n</user_message>\n\n"
+            else:
+                combined_response += f"<architect name='{msg['name']}'>\n"
+                combined_response += msg["content"]
+                combined_response += f"\n</architect>\n\n"
+
+        combined_response += (
+            "\nBased on the above discussion, please implement the requested changes."
+        )
+
+        # Debug print the combined response
+        if self.verbose:
+            self.io.tool_output("\nDebug: Combined response being sent to editor:")
+            self.io.tool_output("-" * 40)
+            self.io.tool_output(combined_response)
+            self.io.tool_output("-" * 40 + "\n")
 
         # Use editor coder like ArchitectCoder does
         kwargs = dict()
@@ -228,7 +320,7 @@ class MixtureOfArchitectsCoder(Coder):
         new_kwargs.update(kwargs)
 
         editor_coder = Coder.create(**new_kwargs)
-        editor_coder.auto_commit = self.auto_commits
+        editor_coder.auto_commits = self.auto_commits
         editor_coder.cur_messages = []
         editor_coder.done_messages = []
 
