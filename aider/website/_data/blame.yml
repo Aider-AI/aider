@@ -3252,8 +3252,8 @@
     Philippe de Reynal: 30
   start_tag: v0.65.0
   total_lines: 703
-- aider_percentage: 65.29
-  aider_total: 457
+- aider_percentage: 67.86
+  aider_total: 437
   end_date: '2024-12-06'
   end_tag: v0.67.0
   file_counts:
@@ -3314,18 +3314,12 @@
     tests/browser/test_browser.py:
       Paul Gauthier: 2
       Paul Gauthier (aider): 1
-    tests/fixtures/watch.js:
-      Paul Gauthier: 19
-      Paul Gauthier (aider): 16
-    tests/fixtures/watch.py:
-      Paul Gauthier: 17
-      Paul Gauthier (aider): 4
   grand_total:
-    Paul Gauthier: 243
-    Paul Gauthier (aider): 457
+    Paul Gauthier: 207
+    Paul Gauthier (aider): 437
   start_tag: v0.66.0
-  total_lines: 700
-- aider_percentage: 71.21
+  total_lines: 644
+- aider_percentage: 71.57
   aider_total: 428
   end_date: '2024-12-10'
   end_tag: v0.68.0
@@ -3403,10 +3397,63 @@
       Paul Gauthier (aider): 1
     tests/basic/test_watch.py:
       Paul Gauthier: 1
-    tests/fixtures/watch.js:
-      Paul Gauthier: 3
   grand_total:
-    Paul Gauthier: 173
+    Paul Gauthier: 170
     Paul Gauthier (aider): 428
   start_tag: v0.67.0
-  total_lines: 601
+  total_lines: 598
+- aider_percentage: 67.87
+  aider_total: 207
+  end_date: '2024-12-13'
+  end_tag: v0.69.0
+  file_counts:
+    .github/workflows/pages.yml:
+      Paul Gauthier: 2
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 2
+    aider/args.py:
+      Mir Adnan ALI: 3
+      Paul Gauthier: 1
+    aider/coders/base_coder.py:
+      JeongJuhyeon: 1
+      Mir Adnan ALI: 3
+    aider/commands.py:
+      Mir Adnan ALI: 4
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 3
+    aider/io.py:
+      Mir Adnan ALI: 37
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 3
+    aider/main.py:
+      Mir Adnan ALI: 1
+    aider/models.py:
+      Paul Gauthier: 7
+    aider/watch.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 47
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    benchmark/benchmark.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 7
+    scripts/blame.py:
+      Paul Gauthier (aider): 1
+    scripts/issues.py:
+      Paul Gauthier (aider): 58
+    scripts/update-history.py:
+      Paul Gauthier: 3
+    tests/basic/test_io.py:
+      Paul Gauthier (aider): 20
+    tests/basic/test_watch.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 68
+  grand_total:
+    JeongJuhyeon: 1
+    Mir Adnan ALI: 48
+    Paul Gauthier: 49
+    Paul Gauthier (aider): 207
+  start_tag: v0.68.0
+  total_lines: 305

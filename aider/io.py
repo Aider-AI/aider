@@ -717,6 +717,7 @@ class InputOutput:
                     res = self.prompt_session.prompt(
                         question,
                         style=style,
+                        complete_while_typing=False,
                     )
                 else:
                     res = input(question)

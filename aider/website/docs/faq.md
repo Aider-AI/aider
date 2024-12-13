@@ -209,6 +209,46 @@ all the raw information being sent to/from the LLM in the conversation.
 You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
+## What LLMs do you use to build aider?
+
+Aider writes a lot of its own code, usually about 70% of the new code in each
+release.
+People often ask which LLMs I use with aider, when writing aider.
+Below is a table showing the models I have used recently,
+extracted from the 
+[public log](https://github.com/aider-ai/aider/blob/main/aider/website/assets/sample-analytics.jsonl)
+of my
+[aider analytics](https://aider.chat/docs/more/analytics.html).
+
+<!--[[[cog
+import sys
+sys.path.append(".")
+import scripts.my_models as my_models
+stats = my_models.collect_model_stats()
+html = my_models.format_html_table(stats)
+cog.out(html)
+]]]-->
+<style>
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+th { background-color: #f2f2f2; }
+tr:hover { background-color: #f5f5f5; }
+.right { text-align: right; }
+</style>
+<table>
+<tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,693,353</td><td class='right'>89.5%</td></tr>
+<tr><td>gemini/REDACTED</td><td class='right'>82,572</td><td class='right'>4.4%</td></tr>
+<tr><td>o1-preview</td><td class='right'>79,317</td><td class='right'>4.2%</td></tr>
+<tr><td>deepseek/deepseek-coder</td><td class='right'>24,628</td><td class='right'>1.3%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>9,243</td><td class='right'>0.5%</td></tr>
+<tr><td>gpt-4o-mini</td><td class='right'>3,420</td><td class='right'>0.2%</td></tr>
+</table>
+
+{: .note :}
+Some models show as REDACTED, because they are new or unpopular models.
+Aider's analytics only records the names of "well known" LLMs.
+<!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?
 

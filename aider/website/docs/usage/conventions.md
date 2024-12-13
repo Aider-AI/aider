@@ -28,6 +28,11 @@ or `aider --read CONVENTIONS.md`.
 This way it is marked as read-only, and cached if prompt caching
 is enabled.
 
+## Community contributed conventions
+
+You can check the [aider conventions repository](https://github.com/Aider-AI/conventions)
+to find or contribute conventions files.
+
 ## Always load conventions
 
 You can also configure aider to always load your conventions file
