@@ -25,14 +25,19 @@ cog.out(text)
 
 ### main branch
 
+- [Watch files](https://aider.chat/docs/usage/watch.html) improvements:
+  - Use `# ... AI?` comments to trigger aider and ask questions about your code.
+  - Now watches *all* files, not just certain source files.
+  - Use `# AI comments`, `// AI comments`, or `-- AI comments` to give aider instructions in any text file.
 - Full support for Gemini Flash 2.0 Exp:
   - `aider --model flash` or `aider --model gemini/gemini-2.0-flash-exp`
-- Use `# ... AI?` comments to ask questions about your code.
-- New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
+- [New `--multiline` flag and `/multiline-mode` command](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
+- `/copy-context <instructions>` now takes optional "instructions" when [copying code context to the clipboard](https://aider.chat/docs/usage/copypaste.html#copy-aiders-code-context-to-your-clipboard-paste-into-the-web-ui).
 - Improved clipboard error handling with helpful requirements install info.
+- Ask 5% of users if they want to opt-in to analytics.
 - `/voice` now lets you edit the transcribed text before sending.
 - Disabled auto-complete in Y/N prompts.
-- Aider wrote 61% of the code in this release.
+- Aider wrote 60% of the code in this release.
 
 ### Aider v0.68.0
 
