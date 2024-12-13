@@ -29,11 +29,9 @@ cog.out(text)
 - Use `# ... AI?` comments to ask questions about your code.
 - New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
 - Added "flash" alias for Gemini 2.0 Flash experimental model.
-- Improved clipboard error handling with helpful messages.
+- Improved clipboard error handling with helpful requirements install info.
 - `/voice` now lets you edit the transcribed text before sending.
-- Fixed Ctrl-R reverse search behavior.
-- Fixed Emacs auto-save gitignore pattern.
-- Disabled complete-while-typing in prompt session for better performance.
+- Disabled auto-complete in Y/N prompts.
 - Aider wrote 61% of the code in this release.
 
 ### Aider v0.68.0
