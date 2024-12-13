@@ -251,6 +251,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the edit format for the editor model (default: depends on editor model)",
     )
     group.add_argument(
+        "--infinite-output-model",
+        metavar="INFINITE_OUTPUT_MODEL",
+        default=None,
+        help="Specify the model to use for continuing long responses (default depends on --model)",
+    )
+    group.add_argument(
         "--show-model-warnings",
         action=argparse.BooleanOptionalAction,
         default=True,
