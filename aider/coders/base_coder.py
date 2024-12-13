@@ -1275,9 +1275,14 @@ class Coder:
                     break
                 except FinishReasonLength:
                     # We hit the output limit!
-                    if not self.main_model.info.get("supports_assistant_prefill"):
-                        exhausted = True
-                        break
+                    if self.main_model.info.get("supports_assistant_prefill"):
+                        use_model = self.main_model
+                    else:
+                        # Try to get an infinite output model
+                        use_model = self.main_model.get_infinite_output_model()
+                        if not use_model or not use_model.info.get("supports_assistant_prefill"):
+                            exhausted = True
+                            break
 
                     self.multi_response_content = self.get_multi_response_content()
 
@@ -1287,6 +1292,10 @@ class Coder:
                         messages.append(
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
+                    
+                    # Switch to the infinite output model if needed
+                    if use_model != self.main_model:
+                        self.main_model = use_model
                 except Exception as err:
                     self.mdstream = None
                     lines = traceback.format_exception(type(err), err, err.__traceback__)

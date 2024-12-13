@@ -86,6 +86,7 @@ class ModelSettings:
     name: str
     edit_format: str = "whole"
     weak_model_name: Optional[str] = None
+    infinite_output_model_name: Optional[str] = None
     use_repo_map: bool = False
     send_undo_reply: bool = False
     lazy: bool = False
@@ -111,6 +112,7 @@ MODEL_SETTINGS = [
         "gpt-3.5-turbo",
         "whole",
         weak_model_name="gpt-4o-mini",
+        infinite_output_model_name="claude-3-5-sonnet-20241022",
         reminder="sys",
     ),
     ModelSettings(
@@ -866,6 +868,7 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
+        self.infinite_output_model = None
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -1014,6 +1017,20 @@ class Model(ModelSettings):
 
     def commit_message_models(self):
         return [self.weak_model, self]
+
+    def get_infinite_output_model(self):
+        if not self.infinite_output_model_name:
+            return None
+            
+        if self.infinite_output_model_name == self.name:
+            return self
+            
+        self.infinite_output_model = Model(
+            self.infinite_output_model_name,
+            weak_model=False,
+            editor_model=False,
+        )
+        return self.infinite_output_model
 
     def get_editor_model(self, provided_editor_model_name, editor_edit_format):
         # If editor_model_name is provided, override the model settings
