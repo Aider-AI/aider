@@ -2,9 +2,10 @@
 
 ### main branch
 
+- Full support for Gemini Flash 2.0 Exp:
+  - `aider --model flash` or `aider --model gemini/gemini-2.0-flash-exp`
 - Use `# ... AI?` comments to ask questions about your code.
 - New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
-- Added "flash" alias for Gemini 2.0 Flash experimental model.
 - Improved clipboard error handling with helpful requirements install info.
 - `/voice` now lets you edit the transcribed text before sending.
 - Disabled auto-complete in Y/N prompts.
