@@ -1284,7 +1284,7 @@ class Coder:
                         use_model = self.main_model
                     else:
                         # Try to get an infinite output model
-                        use_model = self.main_model.get_infinite_output_model()
+                        use_model = self.main_model.infinite_output_model
                         if not use_model or not use_model.info.get("supports_assistant_prefill"):
                             exhausted = True
                             break
