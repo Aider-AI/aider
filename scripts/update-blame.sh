@@ -3,5 +3,6 @@
 # exit when any command fails
 set -e
 
-# take a version as an optional command line arg; use v0.1.0 if not provided AI!
-./scripts/blame.py v0.1.0 --all --output aider/website/_data/blame.yml
+# Use first argument as version if provided, otherwise default to v0.1.0
+VERSION=${1:-v0.1.0}
+./scripts/blame.py "$VERSION" --all --output aider/website/_data/blame.yml
