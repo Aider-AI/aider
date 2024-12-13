@@ -30,14 +30,18 @@ with open(analytics_path) as f:
         except json.JSONDecodeError:
             continue
 
+# Calculate total for percentages
+total_tokens = sum(model_stats.values())
+
 # Print results
 print("\nModel Token Usage Summary:")
-print("-" * 60)
-print(f"{'Model Name':<40} {'Total Tokens':>15}")
-print("-" * 60)
+print("-" * 80)
+print(f"{'Model Name':<40} {'Total Tokens':>15} {'Percent':>10}")
+print("-" * 80)
 
 for model, tokens in sorted(model_stats.items(), key=lambda x: x[1], reverse=True):
-    print(f"{model:<40} {tokens:>15,}")
+    percentage = (tokens / total_tokens) * 100 if total_tokens > 0 else 0
+    print(f"{model:<40} {tokens:>15,} {percentage:>9.1f}%")
 
-print("-" * 60)
-print(f"{'TOTAL':<40} {sum(model_stats.values()):>15,}")
+print("-" * 80)
+print(f"{'TOTAL':<40} {total_tokens:>15,} {100:>9.1f}%")
