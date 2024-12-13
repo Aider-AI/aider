@@ -14,7 +14,7 @@
 - Ask 5% of users if they want to opt-in to analytics.
 - `/voice` now lets you edit the transcribed text before sending.
 - Disabled auto-complete in Y/N prompts.
-- Aider wrote 60% of the code in this release.
+- Aider wrote 68% of the code in this release.
 
 ### Aider v0.68.0
 
