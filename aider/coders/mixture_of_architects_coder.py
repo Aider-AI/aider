@@ -61,72 +61,38 @@ class MixtureOfArchitectsCoder(Coder):
             if current_round:
                 rounds.append(current_round)
 
-            # Build context specific to this architect
+            # Build context from rounds
             for round_msgs in rounds:
                 user_msg = next(msg for msg in round_msgs if msg["role"] == "user")
                 full_context += "<user_message>\n"
                 full_context += user_msg["content"]
+                full_context += "\n</user_message>\n\n"
 
-                # For each user message, add the other architects' proposals
-                other_proposals = []
+                # Add architects' responses/proposals
                 for msg in round_msgs:
                     if msg["role"] == "assistant":
                         if msg["name"] == architect.name.upper():
-                            # Add this architect's own response
-                            full_context += "\n\nYour previous response:\n"
+                            # Include full response for the current architect
+                            full_context += f"<architect name='{msg['name']}'>\n"
                             full_context += msg["content"]
-                        elif architect.name == "alpha":  # Alpha sees all proposals
+                            full_context += "\n</architect>\n\n"
+                        else:
+                            # Only include proposal content from other architects
+                            content = msg["content"]
                             proposal_match = re.search(
-                                r"<proposal>(.*?)</proposal>",
-                                msg["content"],
-                                re.DOTALL,
+                                r"<proposal>(.*?)</proposal>", content, re.DOTALL
                             )
                             if proposal_match:
-                                other_proposals.append(
-                                    f"\nProposal from {msg['name']}:\n{proposal_match.group(1).strip()}"
-                                )
-                        elif (
-                            msg["name"] == "ALPHA"
-                        ):  # Other architects only see Alpha's proposals
-                            proposal_match = re.search(
-                                r"<proposal>(.*?)</proposal>",
-                                msg["content"],
-                                re.DOTALL,
-                            )
-                            if proposal_match:
-                                other_proposals.append(
-                                    f"\nProposal from ALPHA:\n{proposal_match.group(1).strip()}"
-                                )
+                                proposal_content = proposal_match.group(1).strip()
+                                full_context += f"<architect name='{msg['name']}'>\n"
+                                full_context += proposal_content
+                                full_context += "\n</architect>\n\n"
 
-                if other_proposals:
-                    full_context += "".join(other_proposals)
-                full_context += "\n</user_message>\n\n"
-
-            # Add current context
-            full_context += f"Current user request:\n{current_user_message}\n"
-
-            # Add other architects' current proposals if they exist
-            current_proposals = []
-            for other_arch in self.architects:
-                if (
-                    other_arch != architect
-                    and other_arch.active
-                    and other_arch.last_response
-                    and (architect.name == "alpha" or other_arch.name == "alpha")
-                ):  # Only show Alpha to others
-
-                    proposal_match = re.search(
-                        r"<proposal>(.*?)</proposal>",
-                        other_arch.last_response,
-                        re.DOTALL,
-                    )
-                    if proposal_match:
-                        current_proposals.append(
-                            f"\nCurrent proposal from {other_arch.name.upper()}:\n{proposal_match.group(1).strip()}"
-                        )
-
-            if current_proposals:
-                full_context += "".join(current_proposals)
+            # Only add current message if it's not already the last user message
+            if not rounds or rounds[-1][0]["content"] != current_user_message:
+                full_context += "<user_message>\n"
+                full_context += current_user_message
+                full_context += "\n</user_message>\n"
 
             # Debug output if verbose
             if self.verbose:
