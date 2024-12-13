@@ -319,11 +319,7 @@ def handle_fixed_enhancements(all_issues, auto_yes):
     for issue in all_issues:
         # Skip if not open or doesn't have both required labels
         labels = [label["name"] for label in issue["labels"]]
-        if (
-            issue["state"] != "open"
-            or "enhancement" not in labels
-            or "fixed" not in labels
-        ):
+        if issue["state"] != "open" or "enhancement" not in labels or "fixed" not in labels:
             continue
 
         # Find when the fixed label was added
@@ -358,7 +354,9 @@ def handle_fixed_enhancements(all_issues, auto_yes):
                     continue
 
             # Add closing comment
-            comment_url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            comment_url = (
+                f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            )
             response = requests.post(
                 comment_url, headers=headers, json={"body": CLOSE_FIXED_ENHANCEMENT_COMMENT}
             )
@@ -369,6 +367,7 @@ def handle_fixed_enhancements(all_issues, auto_yes):
             response = requests.patch(url, headers=headers, json={"state": "closed"})
             response.raise_for_status()
             print(f"  Closed issue #{issue['number']}")
+
 
 def handle_duplicate_issues(all_issues, auto_yes):
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
