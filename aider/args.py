@@ -254,7 +254,7 @@ def get_parser(default_config_files, git_root):
         "--infinite-output-model",
         metavar="INFINITE_OUTPUT_MODEL",
         default=None,
-        help="Specify the model to use for continuing long responses (default depends on --model)",
+        help="Specify the model to use for continuing long responses (default: None)",
     )
     group.add_argument(
         "--show-model-warnings",
