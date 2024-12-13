@@ -150,23 +150,32 @@ class Voice:
 
         with open(filename, "rb") as fh:
             try:
-                # Store original API base if it exists
+                # Store original API settings if they exist
                 original_api_base = os.environ.get('OPENAI_API_BASE')
+                original_api_key = os.environ.get('OPENAI_API_KEY')
 
-                # Set Whisper-specific API base if configured
+                # Set Whisper-specific API settings if configured
                 whisper_api_base = os.environ.get('AIDER_OPENAI_API_BASE_WHISPER')
+                whisper_api_key = os.environ.get('AIDER_OPENAI_API_KEY_WHISPER')
                 if whisper_api_base:
                     os.environ['OPENAI_API_BASE'] = whisper_api_base
+                if whisper_api_key:
+                    os.environ['OPENAI_API_KEY'] = whisper_api_key
 
                 transcript = litellm.transcription(
                     model="whisper-1", file=fh, prompt=history, language=language
                 )
 
-                # Restore original API base (or remove if not previously set)
+                # Restore original API settings (or remove if not previously set)
                 if original_api_base is not None:
                     os.environ['OPENAI_API_BASE'] = original_api_base
                 else:
                     os.environ.pop('OPENAI_API_BASE', None)
+                    
+                if original_api_key is not None:
+                    os.environ['OPENAI_API_KEY'] = original_api_key
+                else:
+                    os.environ.pop('OPENAI_API_KEY', None)
 
             except Exception as err:
                 print(f"Unable to transcribe {filename}: {err}")

@@ -719,6 +719,10 @@ def get_parser(default_config_files, git_root):
         "--openai-api-base-whisper",
         help="Specify the api base url for Whisper transcriptions",
     )
+    group.add_argument(
+        "--openai-api-key-whisper",
+        help="Specify the OpenAI API key for Whisper transcriptions",
+    )
 
     ######
     group = parser.add_argument_group("Other settings")
