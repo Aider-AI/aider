@@ -186,6 +186,7 @@ class Coder:
         # Model
         main_model = self.main_model
         weak_model = main_model.weak_model
+        infinite_output_model = main_model.infinite_output_model
 
         if weak_model is not main_model:
             prefix = "Main model"
@@ -208,6 +209,10 @@ class Coder:
 
         if weak_model is not main_model:
             output = f"Weak model: {weak_model.name}"
+            lines.append(output)
+
+        if infinite_output_model is not main_model:
+            output = f"Infinite output model: {infinite_output_model.name}"
             lines.append(output)
 
         # Repo
