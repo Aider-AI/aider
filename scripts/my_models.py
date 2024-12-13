@@ -31,7 +31,7 @@ print("-" * 60)
 print(f"{'Model Name':<40} {'Total Tokens':>15}")
 print("-" * 60)
 
-for model, tokens in sorted(model_stats.items()):
+for model, tokens in sorted(model_stats.items(), key=lambda x: x[1], reverse=True):
     print(f"{model:<40} {tokens:>15,}")
 
 print("-" * 60)
