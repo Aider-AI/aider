@@ -460,14 +460,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     args, unknown = parser.parse_known_args(argv)
 
-    if git is None:
-        args.git = False
-
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+
+    if git is None:
+        args.git = False
 
     if args.analytics_disable:
         analytics = Analytics(permanently_disable=True)
