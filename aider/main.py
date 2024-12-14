@@ -9,7 +9,11 @@ import webbrowser
 from dataclasses import fields
 from pathlib import Path
 
-import git
+try:
+    import git
+except ImportError:
+    git = None
+
 import importlib_resources
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
@@ -93,6 +97,9 @@ def make_new_repo(git_root, io):
 
 
 def setup_git(git_root, io):
+    if git is None:
+        return
+
     try:
         cwd = Path.cwd()
     except OSError:
@@ -410,7 +417,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if argv is None:
         argv = sys.argv[1:]
 
-    if force_git_root:
+    if git is None:
+        git_root = None
+    elif force_git_root:
         git_root = force_git_root
     else:
         git_root = get_git_root()
@@ -450,6 +459,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     parser = get_parser(default_config_files, git_root)
 
     args, unknown = parser.parse_known_args(argv)
+
+    if git is None:
+        args.git = False
 
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
@@ -646,7 +658,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
     # the location of the config.yml and history files.
-    if args.git and not force_git_root:
+    if args.git and not force_git_root and git is not None:
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
             analytics.event("exit", reason="Recursing with correct repo")
