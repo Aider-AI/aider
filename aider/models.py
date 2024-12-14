@@ -1232,7 +1232,7 @@ def sanity_check_model(io, model):
             status = "Set" if value else "Not set"
             io.tool_output(f"- {key}: {status}")
 
-        if platform.system() == "Windows" or True:
+        if platform.system() == "Windows":
             io.tool_output(
                 "If you just set these environment variables using `setx` you may need to restart"
                 " your terminal or command prompt for the changes to take effect."
