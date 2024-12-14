@@ -8,8 +8,6 @@ import tempfile
 import time
 from pathlib import Path
 
-import git
-
 from aider.dump import dump  # noqa: F401
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
@@ -73,6 +71,8 @@ class GitTemporaryDirectory(ChdirTemporaryDirectory):
 
 
 def make_repo(path=None):
+    import git
+
     if not path:
         path = "."
     repo = git.Repo.init(path)
