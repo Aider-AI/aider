@@ -50,10 +50,6 @@ Also see the
 [docs on other methods for installing pipx itself](https://pipx.pypa.io/stable/installation/).
 
 
-### pipx on replit
-
-{% include replit-pipx.md %}
-
 ## Install with pip
 
 You can directly install aider with pip, but one of the above
@@ -85,7 +81,7 @@ It's best to install aider using aider-install, uv or pipx as described above.
 While aider is available in a number of system package managers,
 they often install aider with incorrect dependencies.
 
-## You are done!
+## Next steps...
 
 There are some [optional install steps](/docs/install/optional.html) you could consider.
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
