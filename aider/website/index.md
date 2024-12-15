@@ -88,7 +88,7 @@ aider --model gpt-4o --openai-api-key your-key-goes-here
 <!-- NOOP -->
 
 See the
-[installation instructions](https://aider.chat/docs/install/install.html)
+[installation instructions](https://aider.chat/docs/install.html)
 and
 [usage documentation](https://aider.chat/docs/usage.html)
 for more details.
