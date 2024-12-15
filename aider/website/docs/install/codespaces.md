@@ -8,9 +8,9 @@ nav_order: 900
 
 You can use aider in GitHub Codespaces via the built-in Terminal pane.
 See below for an example,
-but you can see the 
+but you can just follow the
 [main install instructions](/docs/install.html)
-for all the details.
+inside your codespace terminal.
 
 
 <div class="video-container">
