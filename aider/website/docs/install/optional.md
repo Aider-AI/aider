@@ -11,10 +11,29 @@ The steps below are completely optional.
 - TOC
 {:toc}
 
+## Install git
 
-## Store your api keys 
+Aider works best if you have git installed.
+Here are
+[instructions for installing git in various environments](https://github.com/git-guides/install-git).
 
-You can [store your api keys in a .env file](/docs/config/dotenv.html)
+## Get your API key
+
+To work with OpenAI's models like GPT-4o or o1-preview you need a paid
+[OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
+Note that this is different than being a "ChatGPT Plus" subscriber.
+
+To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
+[Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
+
+
+### Working with other LLMs
+
+{% include works-best.md %}
+
+### Store your api keys 
+
+You can [store your api keys in configuration or env files](/docs/config/api-keys.html)
 and they will be loaded automatically whenever you run aider.
 
 ## Enable Playwright 

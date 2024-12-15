@@ -1,5 +1,5 @@
 
-You can get started quickly like this:
+You can get started quickly like this, with python 3.8-3.13:
 
 ```bash
 python -m pip install aider-install
