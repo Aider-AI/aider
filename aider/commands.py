@@ -1112,12 +1112,21 @@ class Commands:
         "Record and transcribe voice input"
 
         if not self.voice:
-            if "OPENAI_API_KEY" not in os.environ:
-                self.io.tool_error("To use /voice you must provide an OpenAI API key.")
+            if "WHISPER_API_BASE" in os.environ and "WHISPER_API_KEY" not in os.environ:
+                self.io.tool_error(
+                    "To use /voice with a custom Whisper API you must provide a custom Whisper API key"
+                )
                 return
+            elif "OPENAI_API_KEY" not in os.environ:
+                self.io.tool_error(
+                    "To use /voice you must provide an OpenAI API key (or custom Whisper API and key)."
+                )
+                return
+
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.args.voice_format, device_name=self.args.voice_input_device
+                    audio_format=self.args.voice_format,
+                    device_name=self.args.voice_input_device,
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(

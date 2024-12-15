@@ -150,8 +150,34 @@ class Voice:
 
         with open(filename, "rb") as fh:
             try:
+                # Get API configuration from environment
+                api_base = os.getenv("WHISPER_API_BASE", None ) # None is the default OpenAI endpoint
+                api_key = os.getenv("WHISPER_API_KEY", None )   # None causes OPENAI_API_KEY to be used
+
+                # If a custom base is specified, require a specific whisper key
+                if api_base and not api_key:
+                    raise Exception(
+                        "When using a custom WHISPER_API_BASE, you must provide a WHISPER_API_KEY"
+                        " via --api whisper=<key>"
+                    )
+
+                # Only use OpenAI key as fallback if using default OpenAI endpoint
+                if not api_key:
+                    if not api_base or api_base == "https://api.openai.com/v1":
+                        api_key = os.getenv("OPENAI_API_KEY")
+                        if not api_key:
+                            raise Exception(
+                                "No API key found. Please set either WHISPER_API_KEY or OPENAI_API_KEY"
+                                " environment variables, or use --api whisper=<key>"
+                            )
+
                 transcript = litellm.transcription(
-                    model="whisper-1", file=fh, prompt=history, language=language
+                    model="whisper-1",
+                    file=fh,
+                    prompt=history,
+                    language=language,
+                    api_base=api_base,
+                    api_key=api_key,
                 )
             except Exception as err:
                 print(f"Unable to transcribe {filename}: {err}")
@@ -165,7 +191,4 @@ class Voice:
 
 
 if __name__ == "__main__":
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        raise ValueError("Please set the OPENAI_API_KEY environment variable.")
     print(Voice().record_and_transcribe())

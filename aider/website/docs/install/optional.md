@@ -65,6 +65,9 @@ for additional information.
 Aider supports 
 [coding with your voice](https://aider.chat/docs/usage/voice.html)
 using the in-chat `/voice` command.
+
+### Audio capture setup
+
 Aider uses the [PortAudio](http://www.portaudio.com) library to
 capture audio.
 Installing PortAudio is completely optional, but can usually be accomplished like this:
@@ -73,6 +76,42 @@ Installing PortAudio is completely optional, but can usually be accomplished lik
 - For Mac, do `brew install portaudio`
 - For Linux, do `sudo apt-get install libportaudio2`
   - Some linux environments may also need `sudo apt install libasound2-plugins`
+
+### Whisper API configuration
+
+By default, aider uses OpenAI's Whisper API for voice transcription. You can configure an alternate Whisper API provider:
+
+```bash
+# Via command line arguments
+aider --set-env WHISPER_API_BASE=https://api.example.com --api-key whisper=your-api-key
+
+# Via environment variables or .env file
+WHISPER_API_BASE=https://api.example.com
+WHISPER_API_KEY=your-api-key
+
+# Via config file (.aider.conf.yml)
+api-base:
+  - whisper=https://api.example.com
+api-key:
+  - whisper=your-api-key
+```
+
+When using an alternate Whisper API endpoint:
+
+- You must provide both the API base URL and API key
+- Your OpenAI API key will not be sent to the alternate endpoint
+- This is useful for:
+    - Using a different Whisper API provider
+    - Running Whisper locally or on your own infrastructure
+    - Controlling costs or data privacy
+
+API key behavior:
+
+- If using a custom WHISPER_API_BASE, you must provide a WHISPER_API_KEY
+- If using the default OpenAI endpoint (or no endpoint specified):
+    - Will use WHISPER_API_KEY if provided
+    - Will fall back to OPENAI_API_KEY if no WHISPER_API_KEY is set
+- If neither key is available, an error will be raised
 
 ## Add aider to your IDE/editor
 

@@ -101,3 +101,34 @@ def test_record_and_transcribe_device_error():
         ):
             result = voice.record_and_transcribe()
             assert result is None
+
+def test_record_and_transcribe_no_api_key():
+    with patch("aider.voice.sf", MagicMock()):
+        voice = Voice()
+        with patch.dict(os.environ, {}, clear=True):  # Clear environment variables
+            result = voice.record_and_transcribe()
+            assert result is None
+
+def test_record_and_transcribe_custom_base_no_key():
+    with patch("aider.voice.sf", MagicMock()):
+        voice = Voice()
+        with patch.dict(os.environ, {"WHISPER_API_BASE": "http://custom.api"}, clear=True):
+            with pytest.raises(Exception) as exc:
+                voice.record_and_transcribe()
+            assert "When using a custom WHISPER_API_BASE" in str(exc.value)
+            assert "via --api whisper=<key>" in str(exc.value)
+
+def test_record_and_transcribe_custom_base_with_key():
+    with patch("aider.voice.sf", MagicMock()):
+        voice = Voice()
+        with patch.dict(
+            os.environ,
+            {
+                "WHISPER_API_BASE": "http://custom.api",
+                "WHISPER_API_KEY": "test-key"
+            },
+            clear=True
+        ):
+            with patch.object(voice, "raw_record_and_transcribe") as mock_record:
+                voice.record_and_transcribe()
+                assert mock_record.called

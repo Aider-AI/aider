@@ -17,11 +17,11 @@ when you ask aider to edit your code.
 Use the in-chat `/voice` command to start recording,
 and press `ENTER` when you're done speaking.
 Your voice coding instructions will be transcribed, 
-as if you had  typed them into
+as if you had typed them into
 the aider chat session.
 
 See the [installation instructions](https://aider.chat/docs/install/optional.html#enable-voice-coding) for
-information on how to enable the `/voice` command.
+information on how to enable the `/voice` command and configure alternate Whisper API endpoints.
 
 <br/>
 <div class="chat-transcript" markdown="1">
