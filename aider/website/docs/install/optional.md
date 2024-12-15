@@ -74,13 +74,17 @@ Installing PortAudio is completely optional, but can usually be accomplished lik
 - For Linux, do `sudo apt-get install libportaudio2`
   - Some linux environments may also need `sudo apt install libasound2-plugins`
 
-## Add aider to your editor 
+## Add aider to your IDE/editor
 
-Other projects have integrated aider into some IDE/editors.
+You can use 
+[aider's `--watch-files` mode](https://aider.chat/docs/usage/watch.html)
+to integrate with any IDE or editor.
+
+Other projects have made plugins for various IDE/editors.
 It's not clear if they are tracking the latest
 versions of aider,
 so it may be best to just run the latest
-aider in a terminal alongside your editor.
+aider in a terminal alongside your editor and use `--watch-files`.
 
 ### NeoVim
 
@@ -90,9 +94,9 @@ aider in a terminal alongside your editor.
 
 ### VS Code
 
-joshuavial also confirmed that aider works inside a VS Code terminal window.
-Aider detects if it is running inside VSCode and turns off pretty/color output,
-since the VSCode terminal doesn't seem to support it well.
+You can run aider inside a VS Code terminal window.
+There are a number of 3rd party 
+[aider plugins for VSCode](https://marketplace.visualstudio.com/search?term=aider%20-kodu&target=VSCode&category=All%20categories&sortBy=Relevance).
 
 ### Other editors
 
@@ -104,7 +108,7 @@ please let me know by opening a
 ## Install the development version of aider 
 
 If you want the very latest development version of aider
-you can install directly from GitHub:
+you can install it like this:
 
 ```
 aider --install-main-branch
