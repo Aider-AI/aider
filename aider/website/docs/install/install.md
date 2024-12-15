@@ -6,28 +6,9 @@ nav_order: 10
 # Installing aider
 {: .no_toc }
 
-- TOC
-{:toc}
-
 ## Python version
 
 Aider currently works with python 3.9-3.12.
-
-## Install git
-
-Make sure you have git installed.
-Here are
-[instructions for installing git in various environments](https://github.com/git-guides/install-git).
-
-## Get your API key
-
-To work with OpenAI's models like GPT-4o or GPT-3.5 you need a paid
-[OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
-Note that this is different than being a "ChatGPT Plus" subscriber.
-
-To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
-[Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
-
 
 {% include venv-pipx.md %}
 
@@ -58,6 +39,22 @@ aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
 {% include python-m-aider.md %}
+
+## Install git
+
+Make sure you have git installed.
+Here are
+[instructions for installing git in various environments](https://github.com/git-guides/install-git).
+
+## Get your API key
+
+To work with OpenAI's models like GPT-4o or GPT-3.5 you need a paid
+[OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
+Note that this is different than being a "ChatGPT Plus" subscriber.
+
+To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
+[Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
+
 
 ## Working with other LLMs
 

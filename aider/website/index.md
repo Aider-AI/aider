@@ -80,10 +80,10 @@ aider-install
 cd /to/your/git/repo
 
 # Work with Claude 3.5 Sonnet on your repo
-aider --anthropic-api-key=your-key-goes-here
+aider --model sonnet --anthropic-api-key your-key-goes-here
 
 # Work with GPT-4o on your repo
-aider --openai-api-key=your-key-goes-here
+aider --model gpt-4o --openai-api-key your-key-goes-here
 ```
 <!-- NOOP -->
 
