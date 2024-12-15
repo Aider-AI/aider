@@ -40,5 +40,5 @@ Using an `.env` file:
 AIDER_DARK_MODE=true
 ```
 
-{% include env-keys-tip.md %}
+{% include keys.md %}
 

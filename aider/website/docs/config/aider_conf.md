@@ -15,11 +15,7 @@ load whichever is found first.
 - The root of your git repo.
 - Your home directory.
 
-## Storing LLM keys
-
-{% include special-keys.md %}
-
-{% include env-keys-tip.md %}
+{% include keys.md %}
 
 ## A note on lists
 

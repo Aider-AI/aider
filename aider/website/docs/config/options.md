@@ -13,9 +13,7 @@ or review them below.
 - TOC
 {:toc}
 
-## LLM keys
-
-{% include special-keys.md %}
+{% include keys.md %}
 
 ## Usage summary
 

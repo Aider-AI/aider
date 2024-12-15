@@ -20,11 +20,7 @@ Aider will look for a `.env` file in these locations:
 
 If the files above exist, they will be loaded in that order. Files loaded last will take priority.
 
-## Storing LLM keys
-
-{% include special-keys.md %}
-
-{% include env-keys-tip.md %}
+{% include keys.md %}
 
 ## Sample .env file
 
