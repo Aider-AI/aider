@@ -70,7 +70,7 @@ Aider works best with GPT-4o & Claude 3.5 Sonnet and can
 cog.out(open("aider/website/_includes/get-started.md").read())
 -->
 
-You can get started quickly like this:
+You can get started quickly like this, with python 3.8-3.13:
 
 ```bash
 python -m pip install aider-install
@@ -88,9 +88,9 @@ aider --model gpt-4o --openai-api-key your-key-goes-here
 <!-- NOOP -->
 
 See the
-[installation instructions](https://aider.chat/docs/install.html)
-and other
-[documentation](https://aider.chat/docs/usage.html)
+[installation instructions](https://aider.chat/docs/install/install.html)
+and
+[usage documentation](https://aider.chat/docs/usage.html)
 for more details.
 
 ## Features
