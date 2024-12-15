@@ -1234,8 +1234,8 @@ def sanity_check_model(io, model):
 
         if platform.system() == "Windows":
             io.tool_output(
-                "If you just set these environment variables using `setx` you may need to restart"
-                " your terminal or command prompt for the changes to take effect."
+                "Note: You may need to restart your terminal or command prompt for `setx` to take"
+                " effect."
             )
 
     elif not model.keys_in_environment:

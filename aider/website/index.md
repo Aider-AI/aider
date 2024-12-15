@@ -73,18 +73,17 @@ cog.out(open("aider/website/_includes/get-started.md").read())
 You can get started quickly like this:
 
 ```bash
-python -m pip install -U aider-chat
+python -m pip install aider-install
+aider-install
 
-# Change directory into a git repo
+# Change directory into your code base
 cd /to/your/git/repo
 
 # Work with Claude 3.5 Sonnet on your repo
-export ANTHROPIC_API_KEY=your-key-goes-here
-aider
+aider --anthropic-api-key=your-key-goes-here
 
 # Work with GPT-4o on your repo
-export OPENAI_API_KEY=your-key-goes-here
-aider 
+aider --openai-api-key=your-key-goes-here
 ```
 <!-- NOOP -->
 

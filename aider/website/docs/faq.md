@@ -237,12 +237,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,693,353</td><td class='right'>89.5%</td></tr>
-<tr><td>gemini/REDACTED</td><td class='right'>82,572</td><td class='right'>4.4%</td></tr>
-<tr><td>o1-preview</td><td class='right'>79,317</td><td class='right'>4.2%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,637,563</td><td class='right'>89.1%</td></tr>
+<tr><td>gemini/REDACTED</td><td class='right'>82,572</td><td class='right'>4.5%</td></tr>
+<tr><td>o1-preview</td><td class='right'>79,317</td><td class='right'>4.3%</td></tr>
 <tr><td>deepseek/deepseek-coder</td><td class='right'>24,628</td><td class='right'>1.3%</td></tr>
 <tr><td>gpt-4o</td><td class='right'>9,243</td><td class='right'>0.5%</td></tr>
 <tr><td>gpt-4o-mini</td><td class='right'>3,420</td><td class='right'>0.2%</td></tr>
+<tr><td>mistral/REDACTED</td><td class='right'>620</td><td class='right'>0.0%</td></tr>
 </table>
 
 {: .note :}
