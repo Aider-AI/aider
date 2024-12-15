@@ -75,6 +75,12 @@ aider --sonnet --anthropic-api-key sk-xxx...
 
 {% include python-m-aider.md %}
 
+## Installing with package managers
+
+It's best to install aider using aider-install, uv or pipx as described above.
+While aider is available in a number of system package managers,
+they often install aider with incorrect dependencies.
+
 ## You are done!
 
 There are some [optional install steps](/docs/install/optional.html) you could consider.
