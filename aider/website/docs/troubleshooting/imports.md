@@ -13,6 +13,18 @@ or if aider is reporting `ImportErrors`
 it is likely that your
 aider install is using incorrect dependencies.
 
+
+## Avoid package conflicts
+
+If you are using aider to work on a python project, sometimes your project will require
+specific versions of python packages which conflict with the versions that aider
+requires.
+If this happens, you may see errors like these when running pip installs:
+
+```
+aider-chat 0.23.0 requires somepackage==X.Y.Z, but you have somepackage U.W.V which is incompatible.
+```
+
 ## Install with aider-install, uv or pipx
 
 If you are having dependency problems you should consider
