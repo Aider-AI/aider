@@ -19,6 +19,15 @@ aider-install will automatically install a separate version of python3.12 to use
 There are some [optional install steps](/docs/install/optional.html) you could consider.
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
+## One-liner for Windows
+
+This one-liner will install aider, along with python3.12 if needed.
+It is based on the [uv installer for Windows](https://docs.astral.sh/uv/getting-started/installation/).
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"
+```
+
 ## Install with uv
 
 A recommended way to install aider is with uv:
@@ -49,12 +58,14 @@ You can use pipx to install aider with python versions 3.9-3.12.
 Also see the
 [docs on other methods for installing pipx itself](https://pipx.pypa.io/stable/installation/).
 
+## Other install methods
 
-## Install with pip
-
-You can directly install aider with pip, but one of the above
+You can install aider with the methods described below, but one of the above
 methods is usually safer.
-If you do install with pip, you should consider
+
+#### Install with pip
+
+If you install with pip, you should consider
 using a 
 [virtual environment](https://docs.python.org/3/library/venv.html)
 to keep aider's dependencies separated.
@@ -75,9 +86,11 @@ aider --sonnet --anthropic-api-key sk-xxx...
 
 {% include python-m-aider.md %}
 
-## Installing with package managers
+#### Installing with package managers
 
-It's best to install aider using aider-install, uv or pipx as described above.
+It's best to install aider using one of methods
+recommended above: 
+aider-install, the one-liner, uv or pipx.
 While aider is available in a number of system package managers,
 they often install aider with incorrect dependencies.
 
