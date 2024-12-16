@@ -145,6 +145,7 @@ class FileWatcher:
         """Get any detected file changes"""
 
         has_action = None
+        added = False
         for fname in self.changed_files:
             _, _, action = self.get_ai_comments(fname)
             if action in ("!", "?"):
@@ -156,14 +157,16 @@ class FileWatcher:
                 self.analytics.event("ai-comments file-add")
             self.coder.abs_fnames.add(fname)
             rel_fname = self.coder.get_rel_fname(fname)
+            if not added:
+                self.io.tool_output()
+                added = True
             self.io.tool_output(f"Added {rel_fname} to the chat")
-            if not has_action:
-                self.io.tool_output(
-                    "Use AI! to request changes or AI? to ask questions about the code"
-                )
-            self.io.tool_output()
 
         if not has_action:
+            if added:
+                self.io.tool_output(
+                    "End your comment with AI! to request changes or AI? to ask questions"
+                )
             return ""
 
         if self.analytics:
