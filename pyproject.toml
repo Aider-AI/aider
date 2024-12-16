@@ -1,7 +1,3 @@
-# [[[cog
-# from aider.help_pats import exclude_website_pats
-# ]]]
-# [[[end]]]
 
 [project]
 name = "aider-chat"
