@@ -89,8 +89,7 @@ aider --sonnet --anthropic-api-key sk-xxx...
 #### Installing with package managers
 
 It's best to install aider using one of methods
-recommended above: 
-aider-install, the one-liner, uv or pipx.
+recommended above.
 While aider is available in a number of system package managers,
 they often install aider with incorrect dependencies.
 
