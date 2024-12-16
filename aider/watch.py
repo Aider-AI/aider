@@ -157,6 +157,7 @@ class FileWatcher:
             self.coder.abs_fnames.add(fname)
             rel_fname = self.coder.get_rel_fname(fname)
             self.io.tool_output(f"Added {rel_fname} to the chat")
+            # if there has never been an "action" triggered, also output "Use AI! or AI? to trigger processing" AI!
             self.io.tool_output()
 
         if not has_action:
