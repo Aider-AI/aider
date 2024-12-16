@@ -1,5 +1,6 @@
 recursive-exclude aider/website/examples *
 recursive-exclude aider/website/_posts *
+exclude **/OLD/**
 exclude aider/website/HISTORY.md
 exclude aider/website/docs/benchmarks*.md
 exclude aider/website/docs/ctags.md
