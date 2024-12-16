@@ -158,7 +158,9 @@ class FileWatcher:
             rel_fname = self.coder.get_rel_fname(fname)
             self.io.tool_output(f"Added {rel_fname} to the chat")
             if not has_action:
-                self.io.tool_output("Use AI! to request changes or AI? to ask questions about the code")
+                self.io.tool_output(
+                    "Use AI! to request changes or AI? to ask questions about the code"
+                )
             self.io.tool_output()
 
         if not has_action:
