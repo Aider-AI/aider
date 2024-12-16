@@ -25,7 +25,7 @@ A recommended way to install aider is with uv:
 
 ```bash
 python -m pip install uv  # If you need to install uv
-uv tool install --force --python python3.12 aider-chat
+uv tool install --force --python python3.12 aider-chat@latest
 ```
 
 You can use uv to install aider with your existing python versions 3.8-3.13.
