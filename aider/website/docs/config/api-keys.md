@@ -6,6 +6,13 @@ description: Setting API keys for API providers.
 
 # API Keys
 
+Aider lets you specify API keys in a few ways:
+
+- On the command line
+- As environment variables
+- In a `.env` file
+- In your `.aider.conf.yml` config file
+
 ### OpenAI and Anthropic
 
 Aider has special support for providing
