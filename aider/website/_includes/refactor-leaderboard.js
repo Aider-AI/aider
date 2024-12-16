@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
     leaderboardChart.update();
   }
 
-  var tableBody = document.querySelectorAll('table tbody')[1];
+  var tableBody = document.querySelector('table tbody');
   allData.forEach(function(row, index) {
     var tr = tableBody.children[index];
     tr.id = 'refac-row-' + index;
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // Add search functionality for refactoring table
   document.getElementById('refacSearchInput').addEventListener('keyup', function() {
     var searchWords = this.value.toLowerCase().split(' ').filter(word => word.length > 0);
-    var tableBody = document.querySelectorAll('table tbody')[1];
+    var tableBody = document.querySelector('table tbody');
     var rows = tableBody.getElementsByTagName('tr');
     
     leaderboardData.labels = [];
