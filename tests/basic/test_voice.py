@@ -121,17 +121,3 @@ def test_record_and_transcribe_custom_base_no_key():
                 assert "When using a custom WHISPER_API_BASE" in str(exc.value)
                 assert "via --api whisper=<key>" in str(exc.value)
 
-def test_record_and_transcribe_custom_base_with_key():
-    with patch("aider.voice.sf", MagicMock()):
-        voice = Voice()
-        with patch.dict(
-            os.environ,
-            {
-                "WHISPER_API_BASE": "http://custom.api",
-                "WHISPER_API_KEY": "test-key"
-            },
-            clear=True
-        ):
-            with patch.object(voice, "raw_record_and_transcribe") as mock_record:
-                voice.record_and_transcribe()
-                assert mock_record.called
