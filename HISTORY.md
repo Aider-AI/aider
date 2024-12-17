@@ -3,8 +3,9 @@
 ### main branch
 
 - Support for running without git installed.
-- Improved help messages for AI! and AI? commands.
-- Aider wrote 65% of the code in this release.
+- Show hints about AI! and AI? when user makes AI comments.
+- Ask 10% of users to opt-in to analytics.
+- Aider wrote 70% of the code in this release.
 
 ### Aider v0.69.0
 
