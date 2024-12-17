@@ -36,13 +36,13 @@ powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"
 Use curl to download the script and execute it with sh:
 
 ```bash
-$ curl -LsSf https://aider.chat/install.sh | sh
+curl -LsSf https://aider.chat/install.sh | sh
 ```
 
 If your system doesn't have curl, you can use wget:
 
 ```bash
-$ wget -qO- https://aider.chat/install.sh | sh
+wget -qO- https://aider.chat/install.sh | sh
 ```
 
 
