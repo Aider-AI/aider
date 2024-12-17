@@ -59,8 +59,14 @@ def analyze_exercise_solutions():
     # Sort by number of models that solved each exercise
     sorted_exercises = sorted(exercise_solutions.items(), key=lambda x: len(x[1]), reverse=True)
 
+    # Calculate max length for alignment
+    max_name_len = max(len(testcase) for testcase, _ in sorted_exercises)
+    total_models = len({model for models in exercise_solutions.values() for model in models})
+
     for testcase, models in sorted_exercises:
-        print(f"{testcase}: {len(models)} solved")
+        num_solved = len(models)
+        percent = (num_solved / total_models) * 100
+        print(f"{testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
 
     print("\nSummary:")
     print(f"Total exercises solved at least once: {len(exercise_solutions)}")
