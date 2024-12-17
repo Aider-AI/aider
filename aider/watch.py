@@ -223,6 +223,9 @@ class FileWatcher:
         comments = []
         has_action = None  # None, "!" or "?"
         content = self.io.read_text(filepath, silent=True)
+        if not content:
+            return None, None, None
+
         for i, line in enumerate(content.splitlines(), 1):
             if match := self.ai_comment_pattern.search(line):
                 comment = match.group(0).strip()
