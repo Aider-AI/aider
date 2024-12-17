@@ -14,10 +14,10 @@ from aider.dump import dump  # noqa: F401
 
 def compute_hex_threshold(percent):
     """Convert percentage to 6-digit hex threshold.
-    
+
     Args:
         percent: Percentage threshold (0-100)
-        
+
     Returns:
         str: 6-digit hex threshold
     """
@@ -47,6 +47,8 @@ def is_uuid_in_percentage(uuid_str, percent):
 
     threshold = compute_hex_threshold(percent)
     return uuid_str[:6] <= threshold
+
+
 from aider.models import model_info_manager
 
 mixpanel_project_token = "6da9a43058a5d1b9f3353153921fb04d"
@@ -123,7 +125,6 @@ class Analytics:
 
         PERCENT = 5
         return is_uuid_in_percentage(self.user_id, PERCENT)
-
 
     def get_data_file_path(self):
         try:
@@ -245,7 +246,7 @@ class Analytics:
                 pass  # Ignore OS errors when writing to logfile
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     a = Analytics()
     dump(a.user_id)
     a.is_uuid_in_percentage(a.user_id, 5)
