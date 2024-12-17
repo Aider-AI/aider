@@ -52,7 +52,7 @@ def analyze_exercise_solutions():
             if tests_outcomes and tests_outcomes[-1]:
                 exercise_solutions[testcase].append(model)
 
-    # Print statistics
+    # Print per-exercise statistics
     print("\nExercise Solution Statistics:")
     print("-" * 40)
 
@@ -60,8 +60,7 @@ def analyze_exercise_solutions():
     sorted_exercises = sorted(exercise_solutions.items(), key=lambda x: len(x[1]), reverse=True)
 
     for testcase, models in sorted_exercises:
-        print(f"{testcase}: solved by {len(models)} models")
-        # print(f"  Models: {', '.join(models)}")
+        print(f"{testcase}: {len(models)} solved")
 
     print("\nSummary:")
     print(f"Total exercises solved at least once: {len(exercise_solutions)}")
