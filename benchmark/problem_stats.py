@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -25,10 +26,15 @@ def load_results(dirname):
     return all_results
 
 
-def analyze_exercise_solutions():
+def analyze_exercise_solutions(topn=None):
     # Load the leaderboard data
     with open("aider/website/_data/edit_leaderboard.yml") as f:
         leaderboard = yaml.safe_load(f)
+
+    # Sort models by pass rate to get top N if specified
+    if topn:
+        leaderboard.sort(key=lambda x: float(x.get('pass_rate_2', '0').rstrip('%')), reverse=True)
+        leaderboard = leaderboard[:topn]
 
     # Get all exercise names from a complete run
     all_exercises = set()
@@ -89,4 +95,8 @@ def analyze_exercise_solutions():
 
 
 if __name__ == "__main__":
-    analyze_exercise_solutions()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--topn', type=int, help='Only consider top N models by pass rate')
+    args = parser.parse_args()
+    
+    analyze_exercise_solutions(args.topn)
