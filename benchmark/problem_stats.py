@@ -67,5 +67,6 @@ def analyze_exercise_solutions():
     never_solved = 133 - len(exercise_solutions)
     print(f"Never solved by any model: {never_solved}")
 
+
 if __name__ == "__main__":
     analyze_exercise_solutions()
