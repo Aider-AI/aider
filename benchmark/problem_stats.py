@@ -94,10 +94,10 @@ def analyze_exercise_solutions(topn=None):
     max_name_len = max(len(testcase) for testcase in all_exercises)
     total_models = len(leaderboard)
 
-    for testcase, models in sorted_exercises:
+    for i, (testcase, models) in enumerate(sorted_exercises, 1):
         num_solved = len(models)
         percent = (num_solved / total_models) * 100
-        print(f"{testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
+        print(f"{i:>3}. {testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
 
     print("\nSummary:")
     print(f"Total exercises solved at least once: {len(exercise_solutions)}")
