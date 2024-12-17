@@ -87,6 +87,7 @@ class Analytics:
         PERCENT = 5
         return self.is_uuid_in_percentage(self.user_id, PERCENT)
 
+    # AI refactor this out of the class...
     def is_uuid_in_percentage(self, uuid_str, percent):
         """Check if a UUID string falls within the first X percent of the UUID space.
 
@@ -107,7 +108,10 @@ class Analytics:
         # Using first 6 hex digits
         if percent == 0:
             return False
+
+        # and make a separate function for computing the threshold AI!
         threshold = format(int(0xFFFFFF * percent / 100), "06x")
+
         return uuid_str[:6] <= threshold
 
     def get_data_file_path(self):
@@ -228,3 +232,9 @@ class Analytics:
                     f.write("\n")
             except OSError:
                 pass  # Ignore OS errors when writing to logfile
+
+
+if __name__ == '__main__':
+    a = Analytics()
+    dump(a.user_id)
+    a.is_uuid_in_percentage(a.user_id, 5)
