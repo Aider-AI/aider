@@ -67,15 +67,5 @@ def analyze_exercise_solutions():
     never_solved = 133 - len(exercise_solutions)
     print(f"Never solved by any model: {never_solved}")
 
-    # Distribution of solutions
-    solved_by_counts = defaultdict(int)
-    for models in exercise_solutions.values():
-        solved_by_counts[len(models)] += 1
-
-    print("\nDistribution of solutions:")
-    for count in sorted(solved_by_counts.keys()):
-        print(f"Solved by {count} models: {solved_by_counts[count]} exercises")
-
-
 if __name__ == "__main__":
     analyze_exercise_solutions()
