@@ -48,7 +48,7 @@ wget -qO- https://aider.chat/install.sh | sh
 
 ## Install with uv
 
-A recommended way to install aider is with uv:
+You can install aider with uv:
 
 ```bash
 python -m pip install uv  # If you need to install uv
@@ -64,7 +64,7 @@ Also see the
 
 ## Install with pipx
 
-A recommended way to install aider is with pipx:
+You can install aider with pipx:
 
 ```bash
 python -m pip install pipx  # If you need to install pipx
