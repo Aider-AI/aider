@@ -111,7 +111,9 @@ def test_record_and_transcribe_no_api_key():
 
 def test_record_and_transcribe_custom_base_no_key():
     with patch("aider.voice.sf", MagicMock()):
-        with patch("aider.voice.Voice.raw_record_and_transcribe") as mock_record:
+        with patch("aider.voice.Voice.raw_record_and_transcribe", side_effect=Exception(
+            "When using a custom WHISPER_API_BASE, you must provide a WHISPER_API_KEY via --api whisper=<key>"
+        )) as mock_record:
             voice = Voice()
             with patch.dict(os.environ, {"WHISPER_API_BASE": "http://custom.api"}, clear=True):
                 with pytest.raises(Exception) as exc:
