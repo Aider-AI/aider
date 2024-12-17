@@ -31,7 +31,7 @@ They are based on the
 powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"
 ```
 
-#### Mac and Linux
+#### Mac & Linux
 
 Use curl to download the script and execute it with sh:
 
