@@ -33,7 +33,7 @@ def analyze_exercise_solutions(topn=None):
 
     # Sort models by pass rate to get top N if specified
     if topn:
-        leaderboard.sort(key=lambda x: float(x.get('pass_rate_2', '0').rstrip('%')), reverse=True)
+        leaderboard.sort(key=lambda x: float(x.get("pass_rate_2", "0").rstrip("%")), reverse=True)
         leaderboard = leaderboard[:topn]
 
     # Get all exercise names from a complete run
@@ -96,7 +96,7 @@ def analyze_exercise_solutions(topn=None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--topn', type=int, help='Only consider top N models by pass rate')
+    parser.add_argument("--topn", type=int, help="Only consider top N models by pass rate")
     args = parser.parse_args()
-    
+
     analyze_exercise_solutions(args.topn)
