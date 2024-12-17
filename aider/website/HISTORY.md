@@ -23,6 +23,12 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Support for running without git installed.
+- Improved help messages for AI! and AI? commands.
+- Aider wrote 65% of the code in this release.
+
 ### Aider v0.69.0
 
 - [Watch files](https://aider.chat/docs/usage/watch.html) improvements:

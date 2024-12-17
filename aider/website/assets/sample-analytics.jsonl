@@ -1,18 +1,3 @@
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840852}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840855}
-{"event": "repo", "properties": {"num_files": 404}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840855}
-{"event": "copy-paste mode", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840855}
-{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-sonnet-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "editor-diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840855}
-{"event": "command_ls", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840856}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840858}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733840858}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842057}
-{"event": "repo", "properties": {"num_files": 404}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842057}
-{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842061}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842634}
-{"event": "repo", "properties": {"num_files": 404}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842634}
-{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842638}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842794}
 {"event": "repo", "properties": {"num_files": 404}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842794}
 {"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733842798}
 {"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1733844000}
@@ -998,3 +983,18 @@
 {"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "gemini/REDACTED", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 18560, "completion_tokens": 401, "total_tokens": 18961, "cost": 0.061695, "total_cost": 0.116061}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734393767}
 {"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734393840}
 {"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734393840}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734395443}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734395443}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734395443}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452625}
+{"event": "repo", "properties": {"num_files": 412}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452627}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "gemini/REDACTED", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452627}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452638}
+{"event": "ai-comments execute", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452650}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452657}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "gemini/REDACTED", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 5507, "completion_tokens": 276, "total_tokens": 5783, "cost": 0.020661000000000002, "total_cost": 0.020661000000000002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452664}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452869}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452871}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452871}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "gemini/REDACTED", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 6592, "completion_tokens": 163, "total_tokens": 6755, "cost": 0.022221, "total_cost": 0.022221}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452876}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1734452877}
