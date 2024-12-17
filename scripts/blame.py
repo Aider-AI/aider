@@ -18,6 +18,10 @@ website_files = [
     "aider/website/docs/leaderboards/index.md",
 ]
 
+# AI add an exclude_files list with:
+aider/website/install.ps1
+aider/website/install.sh
+# ..AI!
 
 def blame(start_tag, end_tag=None):
     commits = get_all_commit_hashes_between_tags(start_tag, end_tag)
