@@ -870,10 +870,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.aiderignore:
         ignores.append(args.aiderignore)
 
-    # if args.subtree_only, pass root=os.cwd ai!
     if args.watch_files:
         file_watcher = FileWatcher(
             coder, gitignores=ignores, verbose=args.verbose, analytics=analytics,
+            root=str(Path.cwd()) if args.subtree_only else None,
         )
         coder.file_watcher = file_watcher
 
