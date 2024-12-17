@@ -1202,6 +1202,9 @@ install() {
             say "    source $_fish_env_script_path_expr (fish)"
         fi
     fi
+
+    # Install aider-chat using the newly installed uv
+    ensure "${_install_dir}/uv" tool install --force --python python3.12 aider-chat@latest
 }
 
 print_home_for_script() {
