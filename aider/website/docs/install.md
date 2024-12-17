@@ -14,14 +14,14 @@ description: How to install and get started pair programming with aider.
 {% include get-started.md %}
 
 If needed, 
-aider-install will automatically install a separate version of python3.12 to use with aider.
+aider-install will automatically install a separate version of python 3.12 to use with aider.
 
 There are some [optional install steps](/docs/install/optional.html) you could consider.
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
 ## One-liners
 
-These one-liners will install aider, along with python3.12 if needed.
+These one-liners will install aider, along with python 3.12 if needed.
 They are based on the 
 [uv installers](https://docs.astral.sh/uv/getting-started/installation/).
 
@@ -55,9 +55,10 @@ python -m pip install uv  # If you need to install uv
 uv tool install --force --python python3.12 aider-chat@latest
 ```
 
-You can use uv to install aider with your existing python versions 3.8-3.13.
+This will install uv using your existing python version 3.8-3.13,
+and use it to install aider.
 If needed, 
-uv will automatically install a separate version of python3.12 to use with aider.
+uv will automatically install a separate python 3.12 to use with aider.
 
 Also see the
 [docs on other methods for installing uv itself](https://docs.astral.sh/uv/getting-started/installation/).
