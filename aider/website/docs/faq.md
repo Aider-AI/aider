@@ -261,6 +261,31 @@ by doing something like `git blame` on the repo,
 and counting up who wrote all the new lines of code in each release.
 Only lines in source code files are counted, not documentation or prompt files.
 
+## Why does aider sometimes stop highlighting code in its replies?
+
+Aider displays the markdown responses that are coming back from the LLM.
+Usually, the LLM will reply with code in a markdown "code block" with
+triple backtick fences, like this:
+
+````
+Here's some code:
+
+```
+print("hello")
+```
+````
+
+But if you've added files to the chat that contain triple backticks,
+aider needs to tell the LLM to use a different set of fences.
+Otherwise, the LLM can't safely include your code's triple backticks
+inside the code blocks that it returns with edits.
+Aider will use fences like `<source>...</source>` in this case.
+
+A side effect of this is that the code that aider outputs may no
+longer be properly highlighted.
+You will most often notice this if you add markdown files
+to you chats that contain code blocks.
+
 ## Why is the LLM speaking to me in an unexpected language?
 
 Aider goes to some effort to prompt the model to use the language that is configured
