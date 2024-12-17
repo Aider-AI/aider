@@ -30,8 +30,17 @@ def analyze_exercise_solutions():
     with open("aider/website/_data/edit_leaderboard.yml") as f:
         leaderboard = yaml.safe_load(f)
 
-    # Track which models solved each exercise
+    # Get all exercise names from a complete run
+    all_exercises = set()
     exercise_solutions = defaultdict(list)
+
+    # Find a complete run to get all exercise names
+    for entry in leaderboard:
+        dirname = entry["dirname"]
+        results = load_results(dirname)
+        if results and len(results) == 133:  # Complete run
+            all_exercises = {result["testcase"] for result in results}
+            break
 
     for entry in leaderboard:
         dirname = entry["dirname"]
@@ -56,11 +65,16 @@ def analyze_exercise_solutions():
     print("\nExercise Solution Statistics:")
     print("-" * 40)
 
+    # Add exercises that were never solved
+    for exercise in all_exercises:
+        if exercise not in exercise_solutions:
+            exercise_solutions[exercise] = []
+
     # Sort by number of models that solved each exercise
     sorted_exercises = sorted(exercise_solutions.items(), key=lambda x: len(x[1]), reverse=True)
 
     # Calculate max length for alignment
-    max_name_len = max(len(testcase) for testcase, _ in sorted_exercises)
+    max_name_len = max(len(testcase) for testcase in all_exercises)
     total_models = len({model for models in exercise_solutions.values() for model in models})
 
     for testcase, models in sorted_exercises:
