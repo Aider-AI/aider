@@ -66,10 +66,10 @@ class FileWatcher:
     # Compiled regex pattern for AI comments
     ai_comment_pattern = re.compile(r"(?:#|//|--) *(ai\b.*|ai\b.*|.*\bai[?!]?) *$", re.IGNORECASE)
 
-    def __init__(self, coder, gitignores=None, verbose=False, analytics=None):
+    def __init__(self, coder, gitignores=None, verbose=False, analytics=None, root=None):
         self.coder = coder
         self.io = coder.io
-        self.root = Path(coder.root)
+        self.root = Path(root) if root else Path(coder.root)
         self.verbose = verbose
         self.analytics = analytics
         self.stop_event = None
