@@ -31,11 +31,22 @@ def analyze_exercise_solutions(topn=None):
     with open("aider/website/_data/edit_leaderboard.yml") as f:
         leaderboard = yaml.safe_load(f)
 
-    # Sort models by pass rate to get top N if specified
-    if topn:
-        leaderboard.sort(key=lambda x: float(x.get("pass_rate_2", 0)), reverse=True)
-        leaderboard = leaderboard[:topn]
+    # Filter out entries that don't load and sort by pass rate
+    valid_entries = []
+    for entry in leaderboard:
+        dirname = entry["dirname"]
+        results = load_results(dirname)
+        if results:
+            valid_entries.append((entry, results))
 
+    # Sort by pass rate and take top N if specified
+    valid_entries.sort(key=lambda x: float(x[0].get("pass_rate_2", 0)), reverse=True)
+    if topn:
+        valid_entries = valid_entries[:topn]
+
+    # Unpack the filtered and sorted entries
+    leaderboard = [entry for entry, _ in valid_entries]
+    
     # Get all exercise names from a complete run
     all_exercises = set()
     exercise_solutions = defaultdict(list)
@@ -81,7 +92,7 @@ def analyze_exercise_solutions(topn=None):
 
     # Calculate max length for alignment
     max_name_len = max(len(testcase) for testcase in all_exercises)
-    total_models = len({model for models in exercise_solutions.values() for model in models})
+    total_models = len(leaderboard)
 
     for testcase, models in sorted_exercises:
         num_solved = len(models)
