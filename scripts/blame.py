@@ -23,6 +23,7 @@ exclude_files = [
     "aider/website/install.sh",
 ]
 
+
 def blame(start_tag, end_tag=None):
     commits = get_all_commit_hashes_between_tags(start_tag, end_tag)
     commits = [commit[:hash_len] for commit in commits]
