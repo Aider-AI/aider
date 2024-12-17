@@ -12,7 +12,7 @@ from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.models import model_info_manager
 
-PERCENT = 5
+PERCENT = 10
 
 
 def compute_hex_threshold(percent):
