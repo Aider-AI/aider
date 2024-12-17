@@ -1172,7 +1172,7 @@ install() {
         say "  $_lib_name"
     done
 
-    say "everything's installed!"
+    say "uv is installed!"
 
     # Avoid modifying the users PATH if they are managing their PATH manually
     case :$PATH:
@@ -1203,6 +1203,9 @@ install() {
         fi
     fi
 
+    say ""
+    say "Installing aider..."
+    say ""
     # Install aider-chat using the newly installed uv
     ensure "${_install_dir}/uv" tool install --force --python python3.12 aider-chat@latest
 }

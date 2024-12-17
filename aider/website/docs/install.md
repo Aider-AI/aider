@@ -19,14 +19,32 @@ aider-install will automatically install a separate version of python3.12 to use
 There are some [optional install steps](/docs/install/optional.html) you could consider.
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
-## One-liner for Windows
+## One-liners
 
-This one-liner will install aider, along with python3.12 if needed.
-It is based on the [uv installer for Windows](https://docs.astral.sh/uv/getting-started/installation/).
+These one-liners will install aider, along with python3.12 if needed.
+They are based on the 
+[uv installers](https://docs.astral.sh/uv/getting-started/installation/).
+
+#### Windows
 
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"
 ```
+
+#### Mac and Linux
+
+Use curl to download the script and execute it with sh:
+
+```bash
+$ curl -LsSf https://aider.chat/install.sh | sh
+```
+
+If your system doesn't have curl, you can use wget:
+
+```bash
+$ wget -qO- https://aider.chat/install.sh | sh
+```
+
 
 ## Install with uv
 
