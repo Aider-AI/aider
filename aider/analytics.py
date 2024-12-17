@@ -12,6 +12,8 @@ from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.models import model_info_manager
 
+PERCENT = 5
+
 
 def compute_hex_threshold(percent):
     """Convert percentage to 6-digit hex threshold.
@@ -122,7 +124,6 @@ class Analytics:
         if not self.user_id:
             return False
 
-        PERCENT = 5
         return is_uuid_in_percentage(self.user_id, PERCENT)
 
     def get_data_file_path(self):
@@ -246,6 +247,4 @@ class Analytics:
 
 
 if __name__ == "__main__":
-    a = Analytics()
-    dump(a.user_id)
-    a.is_uuid_in_percentage(a.user_id, 5)
+    dump(compute_hex_threshold(PERCENT))
