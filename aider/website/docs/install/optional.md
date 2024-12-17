@@ -80,8 +80,8 @@ You can use
 [aider's `--watch-files` mode](https://aider.chat/docs/usage/watch.html)
 to integrate with any IDE or editor.
 
-Other projects have made plugins for various IDE/editors.
-It's not clear if they are tracking the latest
+There are a number of 3rd party aider plugins for various IDE/editors.
+It's not clear how well they are tracking the latest
 versions of aider,
 so it may be best to just run the latest
 aider in a terminal alongside your editor and use `--watch-files`.
@@ -101,7 +101,7 @@ There are a number of 3rd party
 ### Other editors
 
 If you are interested in creating an aider plugin for your favorite editor,
-please let me know by opening a
+please let us know by opening a
 [GitHub issue](https://github.com/Aider-AI/aider/issues).
 
 

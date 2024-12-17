@@ -13,10 +13,13 @@ description: How to install and get started pair programming with aider.
 
 {% include get-started.md %}
 
+This will install aider in its own separate python environment.
 If needed, 
-aider-install will automatically install a separate version of python 3.12 to use with aider.
+aider-install will also install a separate version of python 3.12 to use with aider.
 
-There are some [optional install steps](/docs/install/optional.html) you could consider.
+Once aider is installed,
+there are also some [optional install steps](/docs/install/optional.html).
+
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
 
 ## One-liners
