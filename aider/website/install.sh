@@ -1174,6 +1174,12 @@ install() {
 
     say "uv is installed!"
 
+    say ""
+    say "Installing aider..."
+    say ""
+    # Install aider-chat using the newly installed uv
+    ensure "${_install_dir}/uv" tool install --force --python python3.12 aider-chat@latest
+    
     # Avoid modifying the users PATH if they are managing their PATH manually
     case :$PATH:
       in *:$_install_dir:*) NO_MODIFY_PATH=1 ;;
@@ -1203,11 +1209,6 @@ install() {
         fi
     fi
 
-    say ""
-    say "Installing aider..."
-    say ""
-    # Install aider-chat using the newly installed uv
-    ensure "${_install_dir}/uv" tool install --force --python python3.12 aider-chat@latest
 }
 
 print_home_for_script() {
