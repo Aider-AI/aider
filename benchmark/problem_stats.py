@@ -46,7 +46,7 @@ def analyze_exercise_solutions(topn=None):
 
     # Unpack the filtered and sorted entries
     leaderboard = [entry for entry, _ in valid_entries]
-    
+
     # Get all exercise names from a complete run
     all_exercises = set()
     exercise_solutions = defaultdict(list)
