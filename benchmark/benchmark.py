@@ -269,6 +269,7 @@ def main(
     assert original_dname.exists() and original_dname.is_dir(), original_dname
 
     exercise_dirs = get_exercise_dirs(original_dname, languages)
+
     if not exercise_dirs:
         print("No exercise directories found")
         return 1
@@ -302,6 +303,7 @@ def main(
                 shutil.copytree(practice_dir, dest_lang_dir)
         print("...done")
 
+    # these test_dnames need to include LANGNAME/exercises/practice/EXNAME ai!
     test_dnames = sorted(d.name for d in exercise_dirs)
 
     if keywords:
