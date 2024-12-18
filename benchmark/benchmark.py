@@ -416,6 +416,7 @@ def load_results(dirname):
             results = json.loads(fname.read_text())
             all_results.append(results)
         except json.JSONDecodeError:
+            print("json.JSONDecodeError", fname)
             continue
     return all_results
 
@@ -655,7 +656,9 @@ def run_test_real(
         config = json.loads(f.read())
 
     # Get solution and test files from config
-    solution_files = config.get("files", {}).get("solution", [])
+    solution_files = set(config.get("files", {}).get("solution", []))
+    solution_files.discard("Cargo.toml")
+
     test_files = config.get("files", {}).get("test", [])
 
     # Copy all solution files
@@ -743,7 +746,10 @@ def run_test_real(
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
         suggest_shell_commands=False,
+        ignore_mentions=set(test_files),
     )
+    dump(coder.ignore_mentions)
+
     coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
 
@@ -851,7 +857,7 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
     # Map of file extensions to test commands
     TEST_COMMANDS = {
         ".py": ["pytest"],
-        ".rs": ["cargo", "test", "--", "--include-ignored"],
+        ".rs": ["cargo", "test", "--offline", "--", "--include-ignored"],
         ".cs": ["dotnet", "test"],
         ".go": ["go", "test", "./..."],
         ".js": ["/aider/benchmark/npm-test.sh"],

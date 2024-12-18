@@ -765,6 +765,15 @@ MODEL_SETTINGS = [
         streaming=False,
     ),
     ModelSettings(
+        "openrouter/openai/o1",
+        "diff",
+        weak_model_name="openrouter/openai/gpt-4o-mini",
+        editor_model_name="openrouter/openai/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        use_temperature=False,
+    ),
+    ModelSettings(
         "openrouter/qwen/qwen-2.5-coder-32b-instruct",
         "diff",
         weak_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
