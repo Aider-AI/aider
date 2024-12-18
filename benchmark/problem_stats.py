@@ -186,17 +186,26 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     hard_set = {ex for ex, models in exercise_solutions.items() if len(models) <= HARD_SET_NUM}
     print(f"Total hard set exercises: {len(hard_set)}")
 
-    # Count problems by language in hard set
-    lang_counts = defaultdict(int)
+    # Count total problems and hard set problems by language
+    lang_totals = defaultdict(int)
+    lang_hard_counts = defaultdict(int)
+    
+    for exercise in all_exercises:
+        lang = exercise.split("/")[1]  # Get language from path
+        lang_totals[lang] += 1
+        
     for exercise in hard_set:
         lang = exercise.split("/")[1]  # Get language from path
-        lang_counts[lang] += 1
+        lang_hard_counts[lang] += 1
 
     print("\nHard set problems by language:")
-    print(f"{'Language':<12} {'Count':>5}")
-    print("-" * 18)
-    for lang, count in sorted(lang_counts.items()):
-        print(f"{lang:<12} {count:>5}")
+    print(f"{'Language':<12} {'Count':>5} {'Percent':>8}")
+    print("-" * 28)
+    for lang in sorted(lang_totals.keys()):
+        count = lang_hard_counts[lang]
+        total = lang_totals[lang]
+        pct = (count / total) * 100
+        print(f"{lang:<12} {count:>5} {pct:>7.1f}%")
     print()
 
     # For each model, compute performance on hard set
