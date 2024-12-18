@@ -240,13 +240,14 @@ def main(
         return
 
     assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
+
     def get_exercise_dirs(base_dir, languages=None):
         """Get all exercise directories for specified languages (or all if none specified)"""
         base_dir = Path(base_dir)
-        
+
         # Get available language dirs
         lang_dirs = [d for d in base_dir.iterdir() if d.is_dir()]
-        
+
         # Filter to requested languages if specified
         if languages:
             requested = set(lang.strip().lower() for lang in languages.split(","))
@@ -261,7 +262,7 @@ def main(
             practice_dir = lang_dir / "exercises" / "practice"
             if practice_dir.exists():
                 exercise_dirs.extend(d for d in practice_dir.iterdir() if d.is_dir())
-        
+
         return exercise_dirs
 
     original_dname = BENCHMARK_DNAME / exercises_dir
