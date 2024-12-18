@@ -86,7 +86,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         if results:
             for result in results:
                 try:
-                    all_exercises.add(result["language"] + "/" + result["testcase"])
+                    all_exercises.add(result["testcase"] +"/"+ result["language"])
                 except KeyError:
                     print(f"Warning: Missing testcase in {dirname}")
 
@@ -103,7 +103,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
             if not lang:
                 continue
 
-            testcase = f"{lang}/{testcase}"
+            testcase = f"{testcase}/{lang}"
             # Consider it solved if the last test attempt passed
             tests_outcomes = result.get("tests_outcomes", [])
             if tests_outcomes and tests_outcomes[-1]:
@@ -147,7 +147,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     print("\nAll Exercises (sorted by solve rate):")
     for i, (lang, testcase, num_solved, percent) in enumerate(exercise_stats, 1):
         print(
-            f"{i:>3}. {lang}/{testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)"
+            f"{i:>3}. {testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)"
         )
 
     print("\nSummary:")
