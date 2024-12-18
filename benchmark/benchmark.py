@@ -410,7 +410,10 @@ def show_diffs(dirnames):
 
 def load_results(dirname):
     dirname = Path(dirname)
-    all_results = [json.loads(fname.read_text()) for fname in dirname.glob("*/exercises/practice/*/.aider.results.json")]
+    all_results = [
+        json.loads(fname.read_text())
+        for fname in dirname.glob("*/exercises/practice/*/.aider.results.json")
+    ]
     return all_results
 
 
