@@ -789,9 +789,27 @@ def run_test_real(
 def run_unit_tests(testdir, history_fname, test_files):
     timeout = 60
 
-    # Choose test command based on test file extensions
-    is_rust = any(Path(f).suffix == ".rs" for f in test_files)
-    command = "cargo test -- --include-ignored".split() if is_rust else ["pytest"]
+    # Map of file extensions to test commands
+    TEST_COMMANDS = {
+        '.py': ['pytest'],
+        '.rs': ['cargo', 'test', '--', '--include-ignored'],
+        '.cs': ['dotnet', 'test'],
+        '.go': ['go', 'test', './...'],
+        '.js': ['npm', 'test'],
+    }
+
+    # Get unique file extensions from test files
+    extensions = {Path(f).suffix for f in test_files}
+    
+    # Find matching test command
+    command = None
+    for ext in extensions:
+        if ext in TEST_COMMANDS:
+            command = TEST_COMMANDS[ext]
+            break
+    
+    if not command:
+        raise ValueError(f"No test command found for files with extensions: {extensions}")
     print(" ".join(command))
 
     result = subprocess.run(
