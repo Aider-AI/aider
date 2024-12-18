@@ -74,7 +74,7 @@ def find_latest_benchmark_dir():
 
     for d in recent_dirs:
         # Look for .md files in subdirectories
-        for md_file in d.glob("*/.*.md"):
+        for md_file in d.glob("*/exercises/practice/*/.*.md"):
             if md_file.is_file():
                 mtime = md_file.stat().st_mtime
                 if mtime > latest_time:
@@ -847,6 +847,7 @@ def run_test_real(
     return results
 
 
+# pass in the original_dname, and copy the test_files into the test_dir before running tests ai!
 def run_unit_tests(testdir, history_fname, test_files):
     timeout = 60
 
@@ -880,7 +881,6 @@ def run_unit_tests(testdir, history_fname, test_files):
         text=True,
         timeout=timeout,
         cwd=testdir,
-        shell=True,
     )
 
     success = result.returncode == 0
