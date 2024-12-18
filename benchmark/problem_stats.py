@@ -3,6 +3,9 @@
 import argparse
 import json
 from collections import defaultdict
+from typing import List, Optional
+
+HARD_SET_NUM = 4  # Number of models that defines the hard set threshold
 from pathlib import Path
 
 import yaml
@@ -178,10 +181,10 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         cumsum += count
         print(f"{i:>6d}  {count:>9d}  {cumsum:>10d}")
 
-    # Collect the hard set (exercises solved by 4 or fewer models)
-    print("\nHard Set Analysis (exercises solved by ≤4 models):")
+    # Collect the hard set (exercises solved by HARD_SET_NUM or fewer models)
+    print(f"\nHard Set Analysis (exercises solved by ≤{HARD_SET_NUM} models):")
     print("-" * 60)
-    hard_set = {ex for ex, models in exercise_solutions.items() if len(models) <= 4}
+    hard_set = {ex for ex, models in exercise_solutions.items() if len(models) <= HARD_SET_NUM}
     print(f"Total hard set exercises: {len(hard_set)}")
 
     # For each model, compute performance on hard set
