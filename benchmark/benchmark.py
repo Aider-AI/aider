@@ -303,7 +303,7 @@ def main(
                 shutil.copytree(practice_dir, dest_lang_dir)
         print("...done")
 
-    test_dnames = sorted(d.name for d in exercise_dirs)
+    test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
 
     if keywords:
         keywords = keywords.split(",")
@@ -320,10 +320,10 @@ def main(
 
     if threads == 1:
         all_results = []
-        for testname in test_dnames:
+        for test_path in test_dnames:
             results = run_test(
                 original_dname,
-                dirname / testname,
+                dirname / test_path,
                 model,
                 edit_format,
                 tries,
@@ -345,10 +345,10 @@ def main(
                 time.sleep(sleep)
     else:
         run_test_threaded = lox.thread(threads)(run_test)
-        for testname in test_dnames:
+        for test_path in test_dnames:
             run_test_threaded.scatter(
                 original_dname,
-                dirname / testname,
+                dirname / test_path,
                 model,
                 edit_format,
                 tries,
