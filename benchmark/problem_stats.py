@@ -29,7 +29,7 @@ def load_results(dirname):
             results = json.loads(fname.read_text())
             # Add language info to results
             lang = fname.parts[-4]  # Get language from path
-            results['language'] = lang
+            results["language"] = lang
             all_results.append(results)
         except json.JSONDecodeError:
             print(f"Failed to parse {fname}")
@@ -115,12 +115,15 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     by_language = defaultdict(list)
     for testcase in all_exercises:
         # Find language for this testcase from results
-        lang = next((r['language'] for r in next(iter(valid_entries))[1] if r['testcase'] == testcase), 'unknown')
+        lang = next(
+            (r["language"] for r in next(iter(valid_entries))[1] if r["testcase"] == testcase),
+            "unknown",
+        )
         by_language[lang].append(testcase)
 
     # Sort languages
     sorted_languages = sorted(by_language.keys())
-    
+
     # Calculate max lengths for alignment
     max_name_len = max(len(testcase) for testcase in all_exercises)
     max_lang_len = max(len(lang) for lang in sorted_languages)
@@ -132,7 +135,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         lang_exercises = [(ex, exercise_solutions[ex]) for ex in by_language[lang]]
         # Sort by number of models that solved each exercise
         lang_exercises.sort(key=lambda x: len(x[1]), reverse=True)
-        
+
         for i, (testcase, models) in enumerate(lang_exercises, 1):
             num_solved = len(models)
             percent = (num_solved / total_models) * 100
