@@ -159,8 +159,14 @@ def analyze_exercise_solutions(dirs=None, topn=None):
 
     print("\nSummary:")
     solved_at_least_once = len([ex for ex, models in exercise_solutions.items() if models])
+    solved_by_none = never_solved
+    solved_by_all = len([ex for ex, models in exercise_solutions.items() if len(models) == total_models])
+    
     print(f"Total exercises solved at least once: {solved_at_least_once}")
-    print(f"Never solved by any model: {never_solved}")
+    print(f"Never solved by any model: {solved_by_none}")
+    print(f"Solved by all models: {solved_by_all}")
+    print(f"Total exercises: {len(all_exercises)} = {solved_by_none} (none) + {solved_by_all} (all) + "
+          f"{len(all_exercises) - solved_by_none - solved_by_all} (some)")
 
 
 if __name__ == "__main__":
