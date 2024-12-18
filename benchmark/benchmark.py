@@ -847,7 +847,6 @@ def run_test_real(
     return results
 
 
-# pass in the original_dname, and copy the test_files into the test_dir before running tests ai!
 def run_unit_tests(testdir, history_fname, test_files):
     timeout = 60
 
