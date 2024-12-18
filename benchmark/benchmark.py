@@ -161,6 +161,9 @@ def main(
     sleep: float = typer.Option(
         0, "--sleep", help="Sleep seconds between tests when single threaded"
     ),
+    languages: str = typer.Option(
+        None, "--languages", "-l", help="Only run tests for specific languages (comma separated)"
+    ),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     editor_model: str = typer.Option(None, "--editor-model", help="Editor model name"),
     editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Editor edit format"),
@@ -237,8 +240,37 @@ def main(
         return
 
     assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
+    def get_exercise_dirs(base_dir, languages=None):
+        """Get all exercise directories for specified languages (or all if none specified)"""
+        base_dir = Path(base_dir)
+        
+        # Get available language dirs
+        lang_dirs = [d for d in base_dir.iterdir() if d.is_dir()]
+        
+        # Filter to requested languages if specified
+        if languages:
+            requested = set(lang.strip().lower() for lang in languages.split(","))
+            lang_dirs = [d for d in lang_dirs if d.name.lower() in requested]
+            if not lang_dirs:
+                print(f"No matching language directories found for: {languages}")
+                return []
+
+        # Get all exercise dirs under exercises/practice for each language
+        exercise_dirs = []
+        for lang_dir in lang_dirs:
+            practice_dir = lang_dir / "exercises" / "practice"
+            if practice_dir.exists():
+                exercise_dirs.extend(d for d in practice_dir.iterdir() if d.is_dir())
+        
+        return exercise_dirs
+
     original_dname = BENCHMARK_DNAME / exercises_dir
     assert original_dname.exists() and original_dname.is_dir(), original_dname
+
+    exercise_dirs = get_exercise_dirs(original_dname, languages)
+    if not exercise_dirs:
+        print("No exercise directories found")
+        return 1
 
     if clean and dirname.exists():
         print("Cleaning up and replacing", dirname)
@@ -260,7 +292,7 @@ def main(
         shutil.copytree(original_dname, dirname)
         print("...done")
 
-    test_dnames = sorted(os.listdir(dirname))
+    test_dnames = sorted(d.name for d in exercise_dirs)
 
     if keywords:
         keywords = keywords.split(",")
@@ -614,7 +646,9 @@ def run_test_real(
         if src.exists():
             fnames.append(src)
             # restore the original file, in case we interrupted a prev run
-            original_fname = original_dname / testdir.name / file_path
+            # Find the original file in the language-specific practice dir
+            lang_part = str(testdir).split("/exercises/practice/")[0]
+            original_fname = Path(lang_part) / "exercises" / "practice" / testdir.name / file_path
             if original_fname.exists():
                 os.makedirs(src.parent, exist_ok=True)
                 shutil.copy(original_fname, src)
