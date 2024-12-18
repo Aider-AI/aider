@@ -410,6 +410,7 @@ def show_diffs(dirnames):
 
 def load_results(dirname):
     dirname = Path(dirname)
+    # handle JSON decode errors, just skip those files. ai!
     all_results = [
         json.loads(fname.read_text())
         for fname in dirname.glob("*/exercises/practice/*/.aider.results.json")
@@ -530,6 +531,7 @@ def summarize_results(dirname):
     show("indentation_errors")
     show("exhausted_context_windows")
     show("test_timeouts")
+    show("total_tests")
 
     a_model = set(variants["model"]).pop()
     command = f"aider --model {a_model}"
@@ -654,8 +656,6 @@ def run_test_real(
     solution_files = config.get("files", {}).get("solution", [])
     test_files = config.get("files", {}).get("test", [])
 
-    dump(original_dname)
-    dump(testdir)
     # Copy all solution files
     for file_path in solution_files:
         src = testdir / Path(file_path)
@@ -672,8 +672,6 @@ def run_test_real(
                 / testdir.name
                 / file_path
             )
-            dump(original_fname)
-            dump(src)
             if original_fname.exists():
                 os.makedirs(src.parent, exist_ok=True)
                 shutil.copy(original_fname, src)
@@ -687,8 +685,6 @@ def run_test_real(
             original_fname = original_dname / testdir.name / file_path
             if original_fname.exists():
                 os.makedirs(src.parent, exist_ok=True)
-                dump("2", original_fname)
-                dump("2", src)
                 shutil.copy(original_fname, src)
         else:
             print(f"Warning: Test file not found: {src}")
