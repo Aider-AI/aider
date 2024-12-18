@@ -935,7 +935,7 @@ class Commands:
             ]
 
             if add and exit_status != 0:
-                self.io.placeholder = "Fix that"
+                self.io.placeholder = "Why? Fix that"
 
     def cmd_exit(self, args):
         "Exit the application"
