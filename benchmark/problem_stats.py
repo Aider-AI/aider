@@ -251,22 +251,25 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
 
         print(f"\nCopying hard set problems to {dst_dir}...")
 
-        # Get the base names of hard set problems
-        hard_set_bases = {exercise.split("/")[0] for exercise in hard_set}
+        # Create a set of (exercise, language) pairs from hard_set
+        hard_set_pairs = {tuple(exercise.split("/")) for exercise in hard_set}
 
         # Copy each hard set problem's directory
+        num_copied = 0
         for lang_dir in src_dir.glob("*/exercises/practice"):
             if not lang_dir.is_dir():
                 continue
-
+                
+            lang = lang_dir.parts[-3]  # Get language from path
             for problem_dir in lang_dir.glob("*"):
-                if problem_dir.name in hard_set_bases:
+                if (problem_dir.name, lang) in hard_set_pairs:
                     rel_path = problem_dir.relative_to(src_dir)
                     dst_path = dst_dir / rel_path
                     dst_path.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copytree(problem_dir, dst_path)
+                    num_copied += 1
 
-        print("Done copying hard set problems")
+        print(f"Copied {num_copied} hard set problems")
 
 
 if __name__ == "__main__":
