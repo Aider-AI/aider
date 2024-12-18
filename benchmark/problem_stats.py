@@ -259,7 +259,7 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
         for lang_dir in src_dir.glob("*/exercises/practice"):
             if not lang_dir.is_dir():
                 continue
-                
+
             lang = lang_dir.parts[-3]  # Get language from path
             for problem_dir in lang_dir.glob("*"):
                 if (problem_dir.name, lang) in hard_set_pairs:
