@@ -22,7 +22,8 @@ RUN curl -OL https://golang.org/dl/go1.21.5.linux-amd64.tar.gz && \
 ENV PATH="/usr/local/go/bin:${PATH}"
 
 # Install Rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ADD https://sh.rustup.rs /tmp/rustup.sh
+RUN chmod +x /tmp/rustup.sh && /tmp/rustup.sh -y && rm /tmp/rustup.sh
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 COPY . /aider
