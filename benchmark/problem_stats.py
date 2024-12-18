@@ -23,9 +23,13 @@ def load_results(dirname):
         return None
 
     all_results = []
-    for fname in benchmark_dir.glob("*/.aider.results.json"):
+    # Look in language subdirectories under exercises/practice
+    for fname in benchmark_dir.glob("*/exercises/practice/*/.aider.results.json"):
         try:
             results = json.loads(fname.read_text())
+            # Add language info to results
+            lang = fname.parts[-4]  # Get language from path
+            results['language'] = lang
             all_results.append(results)
         except json.JSONDecodeError:
             print(f"Failed to parse {fname}")
@@ -107,17 +111,32 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         if exercise not in exercise_solutions:
             exercise_solutions[exercise] = []
 
-    # Sort by number of models that solved each exercise
-    sorted_exercises = sorted(exercise_solutions.items(), key=lambda x: len(x[1]), reverse=True)
+    # Group exercises by language
+    by_language = defaultdict(list)
+    for testcase in all_exercises:
+        # Find language for this testcase from results
+        lang = next((r['language'] for r in next(iter(valid_entries))[1] if r['testcase'] == testcase), 'unknown')
+        by_language[lang].append(testcase)
 
-    # Calculate max length for alignment
+    # Sort languages
+    sorted_languages = sorted(by_language.keys())
+    
+    # Calculate max lengths for alignment
     max_name_len = max(len(testcase) for testcase in all_exercises)
+    max_lang_len = max(len(lang) for lang in sorted_languages)
     total_models = len(valid_entries)
 
-    for i, (testcase, models) in enumerate(sorted_exercises, 1):
-        num_solved = len(models)
-        percent = (num_solved / total_models) * 100
-        print(f"{i:>3}. {testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
+    # Print exercises grouped by language
+    for lang in sorted_languages:
+        print(f"\n{lang.upper()}:")
+        lang_exercises = [(ex, exercise_solutions[ex]) for ex in by_language[lang]]
+        # Sort by number of models that solved each exercise
+        lang_exercises.sort(key=lambda x: len(x[1]), reverse=True)
+        
+        for i, (testcase, models) in enumerate(lang_exercises, 1):
+            num_solved = len(models)
+            percent = (num_solved / total_models) * 100
+            print(f"{i:>3}. {testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
 
     print("\nSummary:")
     solved_at_least_once = len([ex for ex, models in exercise_solutions.items() if models])
