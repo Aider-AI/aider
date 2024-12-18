@@ -189,7 +189,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     for (dirname, model), results, _ in valid_entries:
         if not results:
             continue
-        
+
         solved_hard = 0
         for result in results:
             testcase = result.get("testcase")
@@ -198,19 +198,19 @@ def analyze_exercise_solutions(dirs=None, topn=None):
             lang = result.get("language")
             if not lang:
                 continue
-            
+
             testcase = f"{testcase}/{lang}"
             if testcase in hard_set:
                 tests_outcomes = result.get("tests_outcomes", [])
                 if tests_outcomes and tests_outcomes[-1]:
                     solved_hard += 1
-        
+
         pct = (solved_hard / len(hard_set)) * 100
         model_hard_stats.append((model, solved_hard, pct))
 
     # Sort by number solved
     model_hard_stats.sort(key=lambda x: x[1], reverse=True)
-    
+
     print("\nModel performance on hard set:")
     print(f"{'Model':<30} {'Solved':<8} {'Percent':>7}")
     print("-" * 50)
