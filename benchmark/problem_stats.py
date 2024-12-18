@@ -127,7 +127,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
 
     for testcase in all_exercises:
         # Language is already in the testcase string
-        lang = testcase.split('/')[0]  # First part is the language
+        lang = testcase.split("/")[0]  # First part is the language
         models = exercise_solutions[testcase]
         num_solved = len(models)
         percent = (num_solved / total_models) * 100
