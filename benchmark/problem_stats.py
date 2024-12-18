@@ -5,12 +5,13 @@ import json
 from collections import defaultdict
 from typing import List, Optional
 
-HARD_SET_NUM = 4  # Number of models that defines the hard set threshold
 from pathlib import Path
 
 import yaml
 
 from aider.dump import dump  # noqa
+
+HARD_SET_NUM = 4  # Number of models that defines the hard set threshold
 
 
 def get_dirs_from_leaderboard():
