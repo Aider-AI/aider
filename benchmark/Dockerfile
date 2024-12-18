@@ -32,7 +32,7 @@ RUN chmod +x /tmp/rustup.sh && /tmp/rustup.sh -y && rm /tmp/rustup.sh
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 COPY . /aider
-RUN pip3 install --no-cache-dir --upgrade pip
-RUN pip3 install --no-cache-dir -e /aider[dev]
+RUN pip3 install --no-cache-dir --upgrade pip uv
+RUN uv pip install --system --no-cache-dir -e /aider[dev]
 RUN git config --global --add safe.directory /aider
 WORKDIR /aider
