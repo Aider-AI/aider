@@ -19,9 +19,10 @@ RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/* && \
-
-# install these in /npm-install ai!
-    npm install -g \
+    mkdir -p /npm-install && \
+    cd /npm-install && \
+    npm init -y && \
+    npm install \
     jest \
     @babel/core@7.25.2 \
     @exercism/babel-preset-javascript@0.2.1 \
