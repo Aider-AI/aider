@@ -187,24 +187,28 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
     hard_set = {ex for ex, models in exercise_solutions.items() if len(models) <= HARD_SET_NUM}
     print(f"Total hard set exercises: {len(hard_set)}")
 
-    # Count total problems and unsolved problems by language
+    # Count total problems, unsolved problems, and hard set problems by language
     lang_totals = defaultdict(int)
     lang_unsolved = defaultdict(int)
+    lang_hard_set = defaultdict(int)
 
     for exercise in all_exercises:
         lang = exercise.split("/")[1]  # Get language from path
         lang_totals[lang] += 1
         if not exercise_solutions[exercise]:  # No models solved this exercise
             lang_unsolved[lang] += 1
+        if exercise in hard_set:  # Exercise is in the hard set
+            lang_hard_set[lang] += 1
 
-    print("\nUnsolved problems by language:")
-    print(f"{'Language':<12} {'Count':>5} {'Total':>7} {'Percent':>8}")
-    print("-" * 35)
+    print("\nUnsolved and hard set problems by language:")
+    print(f"{'Language':<12} {'Unsolved':>8} {'Hard Set':>9} {'Total':>7} {'Percent':>8}")
+    print("-" * 47)
     for lang in sorted(lang_totals.keys()):
         count = lang_unsolved[lang]
+        hard = lang_hard_set[lang]
         total = lang_totals[lang]
         pct = (count / total) * 100
-        print(f"{lang:<12} {count:>5} {total:>7} {pct:>7.1f}%")
+        print(f"{lang:<12} {count:>8} {hard:>9} {total:>7} {pct:>7.1f}%")
     print()
 
     # For each model, compute performance on hard set
