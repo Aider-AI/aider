@@ -790,7 +790,7 @@ def run_unit_tests(testdir, history_fname, test_files):
     timeout = 60
 
     # Choose test command based on test file extensions
-    is_rust = any(Path(f).suffix == '.rs' for f in test_files)
+    is_rust = any(Path(f).suffix == ".rs" for f in test_files)
     command = "cargo test -- --include-ignored".split() if is_rust else ["pytest"]
     print(" ".join(command))
 
