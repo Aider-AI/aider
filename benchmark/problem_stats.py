@@ -126,16 +126,8 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     total_models = len(valid_entries)
 
     for testcase in all_exercises:
-        # Find language for this testcase
-        lang = "unknown"
-        for r in next(iter(valid_entries))[1]:
-            try:
-                if r.get("testcase") == testcase:
-                    lang = r["language"]
-                    break
-            except KeyError:
-                continue
-
+        # Language is already in the testcase string
+        lang = testcase.split('/')[0]  # First part is the language
         models = exercise_solutions[testcase]
         num_solved = len(models)
         percent = (num_solved / total_models) * 100
