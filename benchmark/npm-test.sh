@@ -3,8 +3,9 @@
 # exit when any command fails
 set -e
 
-# only do this if the files don't exist ai!
-ln -s /npm-install/node_modules /npm-install/package-lock.json .
+# Create symlinks if they don't exist
+[ ! -e node_modules ] && ln -s /npm-install/node_modules .
+[ ! -e package-lock.json ] && ln -s /npm-install/package-lock.json .
 
 
 sed -i 's/\bxtest(/test(/g' *.spec.js
