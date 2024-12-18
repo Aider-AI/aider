@@ -86,7 +86,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         if results:
             for result in results:
                 try:
-                    all_exercises.add(result["testcase"] +"/"+ result["language"])
+                    all_exercises.add(result["testcase"] + "/" + result["language"])
                 except KeyError:
                     print(f"Warning: Missing testcase in {dirname}")
 
@@ -138,7 +138,9 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         exercise_stats.append((lang, testcase, num_solved, percent))
 
     # Sort all exercises by solve rate, then by exercise name
-    exercise_stats.sort(key=lambda x: (-x[2], x[1]))  # -x[2] for descending solve rate, x[1] for ascending exercise name
+    exercise_stats.sort(
+        key=lambda x: (-x[2], x[1])
+    )  # -x[2] for descending solve rate, x[1] for ascending exercise name
 
     # Calculate max lengths for alignment after cleaning up paths
     max_name_len = max(len(f"{lang}/{testcase}") for lang, testcase, _, _ in exercise_stats)
@@ -146,9 +148,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     # Print all exercises sorted by solve rate
     print("\nAll Exercises (sorted by solve rate):")
     for i, (lang, testcase, num_solved, percent) in enumerate(exercise_stats, 1):
-        print(
-            f"{i:>3}. {testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)"
-        )
+        print(f"{i:>3}. {testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
 
     print("\nSummary:")
     solved_at_least_once = len([ex for ex, models in exercise_solutions.items() if models])
