@@ -771,7 +771,9 @@ MODEL_SETTINGS = [
         editor_model_name="openrouter/openai/gpt-4o",
         editor_edit_format="editor-diff",
         use_repo_map=True,
+        streaming=False,
         use_temperature=False,
+        extra_params=dict(reasoning_effort="high"),
     ),
     ModelSettings(
         "openrouter/qwen/qwen-2.5-coder-32b-instruct",

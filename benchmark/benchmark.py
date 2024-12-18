@@ -644,10 +644,12 @@ def run_test_real(
     if results_fname.exists():
         try:
             res = json.loads(results_fname.read_text())
-            return res
+            if res.get("test_timeouts", 0) > 0:
+                print(f"{results_fname} test timeouts, redoing...")
+            else:
+                return res
         except JSONDecodeError:
-            print(f"{results_fname} failed to parse, skipping")
-            return
+            print(f"{results_fname} failed to parse, redoing...")
 
     # Read solution and test files from config
     fnames = []
@@ -800,8 +802,11 @@ def run_test_real(
         try:
             errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
         except subprocess.TimeoutExpired:
-            errors = "Tests timed out!"
-            timeouts += 1
+            try:
+                errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
+            except subprocess.TimeoutExpired:
+                errors = "Tests timed out!"
+                timeouts += 1
 
         if errors:
             test_outcomes.append(False)
