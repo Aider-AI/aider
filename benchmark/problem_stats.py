@@ -134,7 +134,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         testcase = testcase.replace("exercises/", "")  # Remove the exercises/ prefix
         # Remove duplicate language prefix (e.g. javascript/javascript/ -> javascript/)
         if testcase.startswith(f"{lang}/{lang}/"):
-            testcase = testcase[len(lang)+1:]
+            testcase = testcase[len(lang) + 1 :]
         exercise_stats.append((lang, testcase, num_solved, percent))
 
     # Sort all exercises by solve rate
