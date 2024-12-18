@@ -83,7 +83,11 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     all_exercises = set()
     for (dirname, model), results, _ in valid_entries:
         if results:
-            all_exercises.update(result["testcase"] for result in results)
+            for result in results:
+                try:
+                    all_exercises.add(result["testcase"])
+                except KeyError:
+                    print(f"Warning: Missing testcase in {dirname}")
 
     for (dirname, model), results, _ in valid_entries:
         if not results:
