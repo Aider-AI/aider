@@ -198,13 +198,13 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
             lang_unsolved[lang] += 1
 
     print("\nUnsolved problems by language:")
-    print(f"{'Language':<12} {'Count':>5} {'Percent':>8}")
-    print("-" * 28)
+    print(f"{'Language':<12} {'Count':>5} {'Total':>7} {'Percent':>8}")
+    print("-" * 35)
     for lang in sorted(lang_totals.keys()):
         count = lang_unsolved[lang]
         total = lang_totals[lang]
         pct = (count / total) * 100
-        print(f"{lang:<12} {count:>5} {pct:>7.1f}%")
+        print(f"{lang:<12} {count:>5} {total:>7} {pct:>7.1f}%")
     print()
 
     # For each model, compute performance on hard set
