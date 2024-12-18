@@ -791,23 +791,23 @@ def run_unit_tests(testdir, history_fname, test_files):
 
     # Map of file extensions to test commands
     TEST_COMMANDS = {
-        '.py': ['pytest'],
-        '.rs': ['cargo', 'test', '--', '--include-ignored'],
-        '.cs': ['dotnet', 'test'],
-        '.go': ['go', 'test', './...'],
-        '.js': ['npm', 'test'],
+        ".py": ["pytest"],
+        ".rs": ["cargo", "test", "--", "--include-ignored"],
+        ".cs": ["dotnet", "test"],
+        ".go": ["go", "test", "./..."],
+        ".js": ["npm", "test"],
     }
 
     # Get unique file extensions from test files
     extensions = {Path(f).suffix for f in test_files}
-    
+
     # Find matching test command
     command = None
     for ext in extensions:
         if ext in TEST_COMMANDS:
             command = TEST_COMMANDS[ext]
             break
-    
+
     if not command:
         raise ValueError(f"No test command found for files with extensions: {extensions}")
     print(" ".join(command))
