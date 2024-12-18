@@ -48,11 +48,21 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         if results:
             # Calculate pass rate for sorting when using custom dirs
             if dirs is not None:
-                pass_rate = sum(1 for r in results if r.get("tests_outcomes", []) and r["tests_outcomes"][-1]) / len(results)
+                pass_rate = sum(
+                    1 for r in results if r.get("tests_outcomes", []) and r["tests_outcomes"][-1]
+                ) / len(results)
             else:
                 # Use existing pass rate from leaderboard
-                pass_rate = next((entry["pass_rate_2"] for entry in yaml.safe_load(open("aider/website/_data/edit_leaderboard.yml")) 
-                                if entry["dirname"] == dirname), 0)
+                pass_rate = next(
+                    (
+                        entry["pass_rate_2"]
+                        for entry in yaml.safe_load(
+                            open("aider/website/_data/edit_leaderboard.yml")
+                        )
+                        if entry["dirname"] == dirname
+                    ),
+                    0,
+                )
             valid_entries.append(((dirname, model), results, float(pass_rate)))
 
     # Sort by pass rate and take top N if specified
@@ -118,7 +128,9 @@ def analyze_exercise_solutions(dirs=None, topn=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--topn", type=int, help="Only consider top N models by pass rate")
-    parser.add_argument("dirs", nargs="*", help="Directories to analyze (optional, defaults to leaderboard entries)")
+    parser.add_argument(
+        "dirs", nargs="*", help="Directories to analyze (optional, defaults to leaderboard entries)"
+    )
     args = parser.parse_args()
 
     analyze_exercise_solutions(args.dirs if args.dirs else None, args.topn)
