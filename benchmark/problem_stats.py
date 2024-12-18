@@ -136,6 +136,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         models = exercise_solutions[testcase]
         num_solved = len(models)
         percent = (num_solved / total_models) * 100
+        testcase = testcase.replace("exercises/", "")  # Remove the exercises/ prefix
         exercise_stats.append((lang, testcase, num_solved, percent))
 
     # Sort all exercises by solve rate
