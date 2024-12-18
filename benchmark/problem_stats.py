@@ -4,7 +4,7 @@ import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
-
+from aider.dump import dump
 import yaml
 
 
@@ -48,6 +48,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     # Filter out entries that don't load and sort by pass rate
     valid_entries = []
     for dirname, model in dir_entries:
+        dump(dirname, model)
         results = load_results(dirname)
         if results:
             # Calculate pass rate for sorting when using custom dirs
