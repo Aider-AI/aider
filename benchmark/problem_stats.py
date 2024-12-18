@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import shutil
 from collections import defaultdict
 from pathlib import Path
 
@@ -41,7 +42,7 @@ def load_results(dirname):
     return all_results
 
 
-def analyze_exercise_solutions(dirs=None, topn=None):
+def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
     if dirs is None:
         # Use leaderboard data if no directories specified
         dir_entries = get_dirs_from_leaderboard()
@@ -239,6 +240,34 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     for model, solved, pct in model_hard_stats:
         print(f"{model:<55} {solved:>6d}   {pct:>6.1f}%")
 
+    if copy_hard_set:
+        # Create hard set directory
+        src_dir = Path("tmp.benchmarks/exercism")
+        dst_dir = Path("tmp.benchmarks/exercism-hard-set")
+        
+        if dst_dir.exists():
+            print(f"\nError: Destination directory {dst_dir} already exists")
+            return
+
+        print(f"\nCopying hard set problems to {dst_dir}...")
+        
+        # Get the base names of hard set problems
+        hard_set_bases = {exercise.split('/')[0] for exercise in hard_set}
+        
+        # Copy each hard set problem's directory
+        for lang_dir in src_dir.glob("*/exercises/practice"):
+            if not lang_dir.is_dir():
+                continue
+                
+            for problem_dir in lang_dir.glob("*"):
+                if problem_dir.name in hard_set_bases:
+                    rel_path = problem_dir.relative_to(src_dir)
+                    dst_path = dst_dir / rel_path
+                    dst_path.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copytree(problem_dir, dst_path)
+        
+        print("Done copying hard set problems")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -246,6 +275,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "dirs", nargs="*", help="Directories to analyze (optional, defaults to leaderboard entries)"
     )
+    parser.add_argument(
+        "--copy-hard-set",
+        action="store_true",
+        help="Copy hard set problems to tmp.benchmarks/exercism-hard-set",
+    )
     args = parser.parse_args()
 
-    analyze_exercise_solutions(args.dirs if args.dirs else None, args.topn)
+    analyze_exercise_solutions(args.dirs if args.dirs else None, args.topn, args.copy_hard_set)
