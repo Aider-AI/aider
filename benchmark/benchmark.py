@@ -303,7 +303,6 @@ def main(
                 shutil.copytree(practice_dir, dest_lang_dir)
         print("...done")
 
-    # these test_dnames need to include LANGNAME/exercises/practice/EXNAME ai!
     test_dnames = sorted(d.name for d in exercise_dirs)
 
     if keywords:
