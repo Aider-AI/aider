@@ -7,7 +7,7 @@ from pathlib import Path
 
 import yaml
 
-from aider.dump import dump
+from aider.dump import dump # noqa
 
 
 def get_dirs_from_leaderboard():
