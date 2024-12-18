@@ -595,21 +595,42 @@ def run_test_real(
             print(f"{results_fname} failed to parse, skipping")
             return
 
-    # TODO
+    # Read solution and test files from config
     fnames = []
-    for fname in testdir.glob("*"):
-        if (
-            "test" not in fname.name
-            and fname.is_file()
-            and fname.name[0] != "."
-            and fname.suffix == ".py"
-        ):
-            fnames.append(fname)
+    config_file = testdir / ".meta/config.json"
+    if not config_file.exists():
+        raise ValueError(f"No config file found: {config_file}")
 
+    with open(config_file) as f:
+        config = json.loads(f.read())
+
+    # Get solution and test files from config
+    solution_files = config.get("files", {}).get("solution", [])
+    test_files = config.get("files", {}).get("test", [])
+
+    # Copy all solution files
+    for file_path in solution_files:
+        src = testdir / Path(file_path)
+        if src.exists():
+            fnames.append(src)
             # restore the original file, in case we interrupted a prev run
-            # after it had saved changes
-            original_fname = original_dname / testdir.name / fname.name
-            shutil.copy(original_fname, fname)
+            original_fname = original_dname / testdir.name / file_path
+            if original_fname.exists():
+                os.makedirs(src.parent, exist_ok=True)
+                shutil.copy(original_fname, src)
+        else:
+            print(f"Warning: Solution file not found: {src}")
+
+    # Copy all test files
+    for file_path in test_files:
+        src = testdir / Path(file_path)
+        if src.exists():
+            original_fname = original_dname / testdir.name / file_path
+            if original_fname.exists():
+                os.makedirs(src.parent, exist_ok=True)
+                shutil.copy(original_fname, src)
+        else:
+            print(f"Warning: Test file not found: {src}")
 
     file_list = " ".join(fname.name for fname in fnames)
 
