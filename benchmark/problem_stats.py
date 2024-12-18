@@ -178,6 +178,45 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         cumsum += count
         print(f"{i:>6d}  {count:>9d}  {cumsum:>10d}")
 
+    # Collect the hard set (exercises solved by 4 or fewer models)
+    print("\nHard Set Analysis (exercises solved by ≤4 models):")
+    print("-" * 60)
+    hard_set = {ex for ex, models in exercise_solutions.items() if len(models) <= 4}
+    print(f"Total hard set exercises: {len(hard_set)}")
+
+    # For each model, compute performance on hard set
+    model_hard_stats = []
+    for (dirname, model), results, _ in valid_entries:
+        if not results:
+            continue
+        
+        solved_hard = 0
+        for result in results:
+            testcase = result.get("testcase")
+            if not testcase:
+                continue
+            lang = result.get("language")
+            if not lang:
+                continue
+            
+            testcase = f"{testcase}/{lang}"
+            if testcase in hard_set:
+                tests_outcomes = result.get("tests_outcomes", [])
+                if tests_outcomes and tests_outcomes[-1]:
+                    solved_hard += 1
+        
+        pct = (solved_hard / len(hard_set)) * 100
+        model_hard_stats.append((model, solved_hard, pct))
+
+    # Sort by number solved
+    model_hard_stats.sort(key=lambda x: x[1], reverse=True)
+    
+    print("\nModel performance on hard set:")
+    print(f"{'Model':<30} {'Solved':<8} {'Percent':>7}")
+    print("-" * 50)
+    for model, solved, pct in model_hard_stats:
+        print(f"{model:<30} {solved:>6d}   {pct:>6.1f}%")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
