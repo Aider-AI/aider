@@ -164,14 +164,16 @@ def analyze_exercise_solutions(dirs=None, topn=None):
 
     # Distribution table of how many models solved each exercise
     print("\nDistribution of solutions:")
-    print("Models  Exercises")
-    print("-" * 20)
+    print("Models  Exercises  Cumulative")
+    print("-" * 35)
     counts = [0] * (total_models + 1)
     for ex, models in exercise_solutions.items():
         counts[len(models)] += 1
 
+    cumsum = 0
     for i, count in enumerate(counts):
-        print(f"{i:>6d}  {count:>9d}")
+        cumsum += count
+        print(f"{i:>6d}  {count:>9d}  {cumsum:>10d}")
 
 
 if __name__ == "__main__":
