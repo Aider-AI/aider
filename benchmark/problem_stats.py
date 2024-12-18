@@ -132,7 +132,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
                     break
             except KeyError:
                 continue
-        
+
         models = exercise_solutions[testcase]
         num_solved = len(models)
         percent = (num_solved / total_models) * 100
@@ -147,7 +147,9 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     # Print all exercises sorted by solve rate
     print("\nAll Exercises (sorted by solve rate):")
     for i, (lang, testcase, num_solved, percent) in enumerate(exercise_stats, 1):
-        print(f"{i:>3}. {lang}/{testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
+        print(
+            f"{i:>3}. {lang}/{testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)"
+        )
 
     print("\nSummary:")
     solved_at_least_once = len([ex for ex, models in exercise_solutions.items() if models])
