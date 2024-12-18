@@ -244,28 +244,28 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
         # Create hard set directory
         src_dir = Path("tmp.benchmarks/exercism")
         dst_dir = Path("tmp.benchmarks/exercism-hard-set")
-        
+
         if dst_dir.exists():
             print(f"\nError: Destination directory {dst_dir} already exists")
             return
 
         print(f"\nCopying hard set problems to {dst_dir}...")
-        
+
         # Get the base names of hard set problems
-        hard_set_bases = {exercise.split('/')[0] for exercise in hard_set}
-        
+        hard_set_bases = {exercise.split("/")[0] for exercise in hard_set}
+
         # Copy each hard set problem's directory
         for lang_dir in src_dir.glob("*/exercises/practice"):
             if not lang_dir.is_dir():
                 continue
-                
+
             for problem_dir in lang_dir.glob("*"):
                 if problem_dir.name in hard_set_bases:
                     rel_path = problem_dir.relative_to(src_dir)
                     dst_path = dst_dir / rel_path
                     dst_path.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copytree(problem_dir, dst_path)
-        
+
         print("Done copying hard set problems")
 
 
