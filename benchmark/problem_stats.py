@@ -4,8 +4,10 @@ import argparse
 import json
 from collections import defaultdict
 from pathlib import Path
-from aider.dump import dump
+
 import yaml
+
+from aider.dump import dump
 
 
 def get_dirs_from_leaderboard():
