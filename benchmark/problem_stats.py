@@ -3,9 +3,8 @@
 import argparse
 import json
 from collections import defaultdict
-from typing import List, Optional
-
 from pathlib import Path
+from typing import List, Optional
 
 import yaml
 
@@ -191,7 +190,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     # Count problems by language in hard set
     lang_counts = defaultdict(int)
     for exercise in hard_set:
-        lang = exercise.split('/')[1]  # Get language from path
+        lang = exercise.split("/")[1]  # Get language from path
         lang_counts[lang] += 1
 
     print("\nHard set problems by language:")
