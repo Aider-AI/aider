@@ -506,6 +506,7 @@ def summarize_results(dirname):
         percents[i] = pass_rate
         # console.print(f"{pass_rate:.1f}% correct after try {i+1}")
         setattr(res, f"pass_rate_{i + 1}", f"{pass_rate:.1f}")
+        setattr(res, f"pass_num_{i + 1}", passed_tests[i])
 
     print(f"- dirname: {dirname.name}")
     style = None if res.completed_tests in NUM_TESTS else "red"
@@ -521,6 +522,8 @@ def summarize_results(dirname):
 
     for i in range(tries):
         print(f"  pass_rate_{i + 1}: {percents[i]:.1f}")
+    for i in range(tries):
+        print(f"  pass_num_{i + 1}: {passed_tests[i]}")
 
     pct_well_formed = 1.0 - res.num_with_malformed_responses / res.completed_tests
     print(f"  percent_cases_well_formed: {pct_well_formed * 100:.1f}")
@@ -661,6 +664,9 @@ def run_test_real(
 
     test_files = config.get("files", {}).get("test", [])
 
+    ignore_files = set(["Cargo.toml"])
+    ignore_files.update(test_files)
+
     # Copy all solution files
     for file_path in solution_files:
         src = testdir / Path(file_path)
@@ -746,7 +752,7 @@ def run_test_real(
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
         suggest_shell_commands=False,
-        ignore_mentions=set(test_files),
+        ignore_mentions=ignore_files,
     )
     dump(coder.ignore_mentions)
 
@@ -852,7 +858,7 @@ def run_test_real(
 
 
 def run_unit_tests(original_dname, testdir, history_fname, test_files):
-    timeout = 60
+    timeout = 60 * 3
 
     # Map of file extensions to test commands
     TEST_COMMANDS = {

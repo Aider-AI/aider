@@ -201,13 +201,13 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
             lang_hard_set[lang] += 1
 
     print("\nUnsolved and hard set problems by language:")
-    print(f"{'Language':<12} {'Unsolved':>8} {'Hard Set':>9} {'Total':>7} {'Percent':>8}")
+    print(f"{'Language':<12} {'Unsolved':>8} {'Hard Set':>9} {'Total':>7} {'%hardUnsolved':>8}")
     print("-" * 47)
     for lang in sorted(lang_totals.keys()):
         count = lang_unsolved[lang]
         hard = lang_hard_set[lang]
         total = lang_totals[lang]
-        pct = (count / total) * 100
+        pct = (count / hard) * 100
         print(f"{lang:<12} {count:>8} {hard:>9} {total:>7} {pct:>7.1f}%")
     print()
 
