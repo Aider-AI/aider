@@ -140,8 +140,8 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     # Sort all exercises by solve rate
     exercise_stats.sort(key=lambda x: x[2], reverse=True)
 
-    # Calculate max lengths for alignment
-    max_name_len = max(len(f"{lang}/{ex}") for lang, ex, _, _ in exercise_stats)
+    # Calculate max lengths for alignment after cleaning up paths
+    max_name_len = max(len(f"{lang}/{testcase}") for lang, testcase, _, _ in exercise_stats)
 
     # Print all exercises sorted by solve rate
     print("\nAll Exercises (sorted by solve rate):")
