@@ -122,10 +122,14 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     by_language = defaultdict(list)
     for testcase in all_exercises:
         # Find language for this testcase from results
-        lang = next(
-            (r["language"] for r in next(iter(valid_entries))[1] if r["testcase"] == testcase),
-            "unknown",
-        )
+        lang = "unknown"
+        for r in next(iter(valid_entries))[1]:
+            try:
+                if r.get("testcase") == testcase:
+                    lang = r["language"]
+                    break
+            except KeyError:
+                continue
         by_language[lang].append(testcase)
 
     # Sort languages
