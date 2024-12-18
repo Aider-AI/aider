@@ -747,7 +747,6 @@ def run_test_real(
         indentation_errors += sum(1 for line in errors if line.startswith("IndentationError"))
 
         print(errors[-1])
-        errors = errors[:50]
         errors = "\n".join(errors)
         instructions = errors
         instructions += prompts.test_failures.format(file_list=file_list)
@@ -788,21 +787,12 @@ def run_test_real(
 
 
 def run_unit_tests(testdir, history_fname):
-    command = [
-        "python",
-        "-m",
-        "unittest",
-        "discover",
-        "-s",
-        str(testdir),
-        "-t",
-        str(testdir),
-        "-p",
-        "*_test.py",
-    ]
-    print(" ".join(command))
 
     timeout = 60
+
+    command = ["pytest"]
+
+    print(" ".join(command))
 
     result = subprocess.run(
         command,
@@ -810,11 +800,13 @@ def run_unit_tests(testdir, history_fname):
         stderr=subprocess.STDOUT,
         text=True,
         timeout=timeout,
+        cwd=testdir,
     )
 
     success = result.returncode == 0
     res = result.stdout
     res = cleanup_test_output(res, testdir)
+    dump(res)
 
     with history_fname.open("a") as fh:
         fh.write(f"```\n{res}\n```")
@@ -827,23 +819,7 @@ def run_unit_tests(testdir, history_fname):
 def cleanup_test_output(output, testdir):
     # remove timing info, to avoid randomizing the response to GPT
     res = re.sub(
-        r"^Ran \d+ tests in \d+\.\d+s$",
-        "",
-        output,
-        flags=re.MULTILINE,
-    )
-    res = re.sub(
-        r"^====*$",
-        "====",
-        res,
-        flags=re.MULTILINE,
-    )
-    res = re.sub(
-        r"^----*$",
-        "----",
-        res,
-        flags=re.MULTILINE,
-    )
+        r"\bin \d+\.\d+s\b",
 
     res = res.replace(str(testdir), str(testdir.name))
     return res
