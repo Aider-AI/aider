@@ -1102,6 +1102,10 @@ class Coder:
             chunks.system = [
                 dict(role="system", content=main_sys),
             ]
+        elif self.main_model.use_developer_message:
+            chunks.system = [
+                dict(role="developer", content=main_sys),
+            ]
         else:
             chunks.system = [
                 dict(role="user", content=main_sys),

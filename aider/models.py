@@ -95,6 +95,7 @@ class ModelSettings:
     cache_control: bool = False
     caches_by_default: bool = False
     use_system_prompt: bool = True
+    use_developer_message: bool = False
     use_temperature: bool = True
     streaming: bool = True
     editor_model_name: Optional[str] = None
@@ -674,6 +675,19 @@ MODEL_SETTINGS = [
         reminder="sys",
         editor_edit_format="editor-diff",
     ),
+    ModelSettings(
+        "openrouter/openai/o1",
+        "diff",
+        weak_model_name="openrouter/openai/gpt-4o-mini",
+        use_repo_map=True,
+        lazy=True,
+        reminder="sys",
+        editor_edit_format="editor-diff",
+        use_system_prompt=False,
+        use_temperature=False,
+        use_developer_message = True
+    ),
+
     ModelSettings(
         "openai/o1-mini",
         "whole",
