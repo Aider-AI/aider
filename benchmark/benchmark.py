@@ -410,10 +410,13 @@ def show_diffs(dirnames):
 
 def load_results(dirname):
     dirname = Path(dirname)
-    # handle JSON decode errors, just skip those files. ai!
-    all_results = [
-        json.loads(fname.read_text())
-        for fname in dirname.glob("*/exercises/practice/*/.aider.results.json")
+    all_results = []
+    for fname in dirname.glob("*/exercises/practice/*/.aider.results.json"):
+        try:
+            results = json.loads(fname.read_text())
+            all_results.append(results)
+        except json.JSONDecodeError:
+            continue
     ]
     return all_results
 
