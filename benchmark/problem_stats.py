@@ -8,6 +8,13 @@ from pathlib import Path
 import yaml
 
 
+def get_dirs_from_leaderboard():
+    # Load the leaderboard data
+    with open("aider/website/_data/edit_leaderboard.yml") as f:
+        leaderboard = yaml.safe_load(f)
+    return [(entry["dirname"], entry["model"]) for entry in leaderboard]
+
+
 def load_results(dirname):
     """Load all result files from a benchmark directory"""
     dirname = Path(dirname)
@@ -26,44 +33,44 @@ def load_results(dirname):
     return all_results
 
 
-def analyze_exercise_solutions(topn=None):
-    # Load the leaderboard data
-    with open("aider/website/_data/edit_leaderboard.yml") as f:
-        leaderboard = yaml.safe_load(f)
+def analyze_exercise_solutions(dirs=None, topn=None):
+    if dirs is None:
+        # Use leaderboard data if no directories specified
+        dir_entries = get_dirs_from_leaderboard()
+    else:
+        # Use provided directories, with dirname as model name
+        dir_entries = [(d, d) for d in dirs]
 
     # Filter out entries that don't load and sort by pass rate
     valid_entries = []
-    for entry in leaderboard:
-        dirname = entry["dirname"]
+    for dirname, model in dir_entries:
         results = load_results(dirname)
         if results:
-            valid_entries.append((entry, results))
+            # Calculate pass rate for sorting when using custom dirs
+            if dirs is not None:
+                pass_rate = sum(1 for r in results if r.get("tests_outcomes", []) and r["tests_outcomes"][-1]) / len(results)
+            else:
+                # Use existing pass rate from leaderboard
+                pass_rate = next((entry["pass_rate_2"] for entry in yaml.safe_load(open("aider/website/_data/edit_leaderboard.yml")) 
+                                if entry["dirname"] == dirname), 0)
+            valid_entries.append(((dirname, model), results, float(pass_rate)))
 
     # Sort by pass rate and take top N if specified
-    valid_entries.sort(key=lambda x: float(x[0].get("pass_rate_2", 0)), reverse=True)
+    valid_entries.sort(key=lambda x: x[2], reverse=True)
     if topn:
         valid_entries = valid_entries[:topn]
-
-    # Unpack the filtered and sorted entries
-    leaderboard = [entry for entry, _ in valid_entries]
 
     # Get all exercise names from a complete run
     all_exercises = set()
     exercise_solutions = defaultdict(list)
 
     # Find a complete run to get all exercise names
-    for entry in leaderboard:
-        dirname = entry["dirname"]
-        results = load_results(dirname)
+    for (dirname, model), results, _ in valid_entries:
         if results and len(results) == 133:  # Complete run
             all_exercises = {result["testcase"] for result in results}
             break
 
-    for entry in leaderboard:
-        dirname = entry["dirname"]
-        model = entry["model"]
-
-        results = load_results(dirname)
+    for (dirname, model), results, _ in valid_entries:
         if not results:
             print(f"Could not load results for {dirname}")
             continue
@@ -95,7 +102,7 @@ def analyze_exercise_solutions(topn=None):
 
     # Calculate max length for alignment
     max_name_len = max(len(testcase) for testcase in all_exercises)
-    total_models = len(leaderboard)
+    total_models = len(valid_entries)
 
     for i, (testcase, models) in enumerate(sorted_exercises, 1):
         num_solved = len(models)
@@ -111,6 +118,7 @@ def analyze_exercise_solutions(topn=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--topn", type=int, help="Only consider top N models by pass rate")
+    parser.add_argument("dirs", nargs="*", help="Directories to analyze (optional, defaults to leaderboard entries)")
     args = parser.parse_args()
 
-    analyze_exercise_solutions(args.topn)
+    analyze_exercise_solutions(args.dirs if args.dirs else None, args.topn)
