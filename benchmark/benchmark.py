@@ -651,6 +651,8 @@ def run_test_real(
     solution_files = config.get("files", {}).get("solution", [])
     test_files = config.get("files", {}).get("test", [])
 
+    dump(original_dname)
+    dump(testdir)
     # Copy all solution files
     for file_path in solution_files:
         src = testdir / Path(file_path)
@@ -661,12 +663,14 @@ def run_test_real(
             lang_part = str(testdir).split("/exercises/practice/")[0]
             original_fname = (
                 original_dname
-                / Path(lang_part)
+                / Path(lang_part).name
                 / "exercises"
                 / "practice"
                 / testdir.name
                 / file_path
             )
+            dump(original_fname)
+            dump(src)
             if original_fname.exists():
                 os.makedirs(src.parent, exist_ok=True)
                 shutil.copy(original_fname, src)
@@ -680,6 +684,8 @@ def run_test_real(
             original_fname = original_dname / testdir.name / file_path
             if original_fname.exists():
                 os.makedirs(src.parent, exist_ok=True)
+                dump("2", original_fname)
+                dump("2", src)
                 shutil.copy(original_fname, src)
         else:
             print(f"Warning: Test file not found: {src}")
@@ -847,7 +853,7 @@ def run_unit_tests(testdir, history_fname, test_files):
         ".rs": ["cargo", "test", "--", "--include-ignored"],
         ".cs": ["dotnet", "test"],
         ".go": ["go", "test", "./..."],
-        ".js": ["npm", "test"],
+        ".js": ["/aider/benchmark/npm-test.sh"],
     }
 
     # Get unique file extensions from test files
@@ -871,6 +877,7 @@ def run_unit_tests(testdir, history_fname, test_files):
         text=True,
         timeout=timeout,
         cwd=testdir,
+        shell=True,
     )
 
     success = result.returncode == 0
