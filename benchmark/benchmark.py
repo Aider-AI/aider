@@ -788,7 +788,7 @@ def run_test_real(
             break
 
         try:
-            errors = run_unit_tests(testdir, history_fname, test_files)
+            errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
         except subprocess.TimeoutExpired:
             errors = "Tests timed out!"
             timeouts += 1
@@ -847,7 +847,7 @@ def run_test_real(
     return results
 
 
-def run_unit_tests(testdir, history_fname, test_files):
+def run_unit_tests(original_dname, testdir, history_fname, test_files):
     timeout = 60
 
     # Map of file extensions to test commands
@@ -871,6 +871,15 @@ def run_unit_tests(testdir, history_fname, test_files):
 
     if not command:
         raise ValueError(f"No test command found for files with extensions: {extensions}")
+
+    # Copy test files from original directory
+    for file_path in test_files:
+        src = original_dname / testdir.name / file_path
+        dst = testdir / file_path
+        if src.exists():
+            os.makedirs(dst.parent, exist_ok=True)
+            shutil.copy(src, dst)
+
     print(" ".join(command))
 
     result = subprocess.run(
