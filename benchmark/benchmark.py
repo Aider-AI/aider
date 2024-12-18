@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import datetime
 import json
 import os
@@ -727,6 +727,7 @@ def run_test_real(
             break
 
         try:
+            # pass test_files in, and choose the test command based on them ai!
             errors = run_unit_tests(testdir, history_fname)
         except subprocess.TimeoutExpired:
             errors = "Tests timed out!"
@@ -790,7 +791,7 @@ def run_unit_tests(testdir, history_fname):
     timeout = 60
 
     command = ["pytest"]
-
+    command = "cargo test -- --include-ignored".split()
     print(" ".join(command))
 
     result = subprocess.run(
