@@ -189,11 +189,11 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     # Count total problems and hard set problems by language
     lang_totals = defaultdict(int)
     lang_hard_counts = defaultdict(int)
-    
+
     for exercise in all_exercises:
         lang = exercise.split("/")[1]  # Get language from path
         lang_totals[lang] += 1
-        
+
     for exercise in hard_set:
         lang = exercise.split("/")[1]  # Get language from path
         lang_hard_counts[lang] += 1
