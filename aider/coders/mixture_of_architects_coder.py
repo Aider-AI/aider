@@ -52,7 +52,7 @@ class MixtureOfArchitectsCoder(Coder):
                 repo=self.repo,
                 map_tokens=self.repo_map.max_map_tokens if self.repo_map else 0,
                 summarize_from_coder=False,
-                stream=True,
+                stream=self.stream,
             )
             ask_coder.auto_commits = self.auto_commits
             ask_coder.gpt_prompts = MixturePrompts()
@@ -195,6 +195,10 @@ class MixtureOfArchitectsCoder(Coder):
             self.io.rule()
         finally:
             self.io.tool_output("Discussion round complete.")
+        # Yes is proxy for auto running code, As proxy for benchmarking
+        # TODO: Replace with a better testing strategy
+        if self.io.yes:
+            self.run_coding_phase(user_message)
 
     def preproc_user_input(self, inp):
         if not inp:
@@ -308,14 +312,19 @@ class MixtureOfArchitectsCoder(Coder):
         kwargs["cache_prompts"] = False
         kwargs["num_cache_warming_pings"] = 0
         kwargs["summarize_from_coder"] = False
+        kwargs["stream"] = self.stream
+        kwargs["auto_commits"] = self.auto_commits
 
         new_kwargs = dict(io=self.io)
         new_kwargs.update(kwargs)
 
         editor_coder = Coder.create(**new_kwargs)
+        editor_coder.abs_fnames = set(self.abs_fnames)
+        editor_coder.abs_read_only_fnames = set(self.abs_read_only_fnames)
         editor_coder.auto_commits = self.auto_commits
         editor_coder.cur_messages = []
         editor_coder.done_messages = []
+        editor_coder.repo = self.repo
 
         if self.verbose:
             editor_coder.show_announcements()

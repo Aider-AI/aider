@@ -195,6 +195,9 @@ def main(
     num_ctx: Optional[int] = typer.Option(
         None, "--num-ctx", help="Override model context window size"
     ),
+    moa: Optional[List[str]] = typer.Option(
+        None, "--moa", help="List of additional architect models"
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -294,6 +297,7 @@ def main(
                 editor_edit_format,
                 num_ctx,
                 sleep,
+                moa,
             )
 
             all_results.append(results)
@@ -317,6 +321,9 @@ def main(
                 max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
+                num_ctx,
+                sleep,
+                moa,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -577,6 +584,7 @@ def run_test_real(
     editor_edit_format,
     num_ctx=None,
     sleep=0,
+    moa=None,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -651,10 +659,10 @@ def run_test_real(
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
 
-    coder = Coder.create(
-        main_model,
-        edit_format,
-        io,
+    coder_kwargs = dict(
+        main_model=main_model,
+        edit_format=edit_format,
+        io=io,
         fnames=fnames,
         use_git=False,
         stream=False,
@@ -663,6 +671,14 @@ def run_test_real(
         cache_prompts=True,
         suggest_shell_commands=False,
     )
+
+    # Add architect_models if moa parameter provided
+    if moa:
+        # moa is already a list of models
+        architect_models = [models.Model(m) for m in moa]
+        coder_kwargs["architect_models"] = architect_models
+
+    coder = Coder.create(**coder_kwargs)
     coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
 
@@ -730,10 +746,15 @@ def run_test_real(
         instructions = errors
         instructions += prompts.test_failures.format(file_list=file_list)
 
+    # For MOA Benchmark, add the MOA models to the model name 
+    model_name = main_model.name
+    if moa:
+        model_name = f"{model_name}, {', '.join(moa)}"
+    
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
-        model=main_model.name,
+        model=model_name,
         edit_format=edit_format,
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
