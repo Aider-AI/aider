@@ -212,10 +212,10 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     model_hard_stats.sort(key=lambda x: x[1], reverse=True)
 
     print("\nModel performance on hard set:")
-    print(f"{'Model':<30} {'Solved':<8} {'Percent':>7}")
+    print(f"{'Model':<55} {'Solved':<8} {'Percent':>7}")
     print("-" * 50)
     for model, solved, pct in model_hard_stats:
-        print(f"{model:<30} {solved:>6d}   {pct:>6.1f}%")
+        print(f"{model:<55} {solved:>6d}   {pct:>6.1f}%")
 
 
 if __name__ == "__main__":
