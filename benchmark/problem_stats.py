@@ -78,6 +78,9 @@ def analyze_exercise_solutions(topn=None):
             if tests_outcomes and tests_outcomes[-1]:
                 exercise_solutions[testcase].append(model)
 
+    # Calculate never solved exercises
+    never_solved = len(all_exercises - set(exercise_solutions.keys()))
+
     # Print per-exercise statistics
     print("\nExercise Solution Statistics:")
     print("-" * 40)
@@ -100,8 +103,8 @@ def analyze_exercise_solutions(topn=None):
         print(f"{i:>3}. {testcase:<{max_name_len}} : {num_solved:>3} solved ({percent:>5.1f}%)")
 
     print("\nSummary:")
-    print(f"Total exercises solved at least once: {len(exercise_solutions)}")
-    never_solved = 133 - len(exercise_solutions)
+    solved_at_least_once = len([ex for ex, models in exercise_solutions.items() if models])
+    print(f"Total exercises solved at least once: {solved_at_least_once}")
     print(f"Never solved by any model: {never_solved}")
 
 
