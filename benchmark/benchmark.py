@@ -289,7 +289,6 @@ def main(
         dirname.rename(dest)
 
     if not dirname.exists():
-        # only copy the practice subdirs with the exercises ai!
         print(f"Copying {original_dname} -> {dirname} ...")
         shutil.copytree(original_dname, dirname)
         print("...done")
