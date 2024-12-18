@@ -290,7 +290,16 @@ def main(
 
     if not dirname.exists():
         print(f"Copying {original_dname} -> {dirname} ...")
-        shutil.copytree(original_dname, dirname)
+        # Only copy the practice subdirs with exercises
+        os.makedirs(dirname, exist_ok=True)
+        for lang_dir in original_dname.iterdir():
+            if not lang_dir.is_dir():
+                continue
+            practice_dir = lang_dir / "exercises" / "practice"
+            if practice_dir.exists():
+                dest_lang_dir = dirname / lang_dir.name / "exercises" / "practice"
+                os.makedirs(dest_lang_dir.parent, exist_ok=True)
+                shutil.copytree(practice_dir, dest_lang_dir)
         print("...done")
 
     test_dnames = sorted(d.name for d in exercise_dirs)
