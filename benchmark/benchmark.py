@@ -410,7 +410,7 @@ def show_diffs(dirnames):
 
 def load_results(dirname):
     dirname = Path(dirname)
-    all_results = [json.loads(fname.read_text()) for fname in dirname.glob("*/.aider.results.json")]
+    all_results = [json.loads(fname.read_text()) for fname in dirname.glob("*/exercises/practice/*/.aider.results.json")]
     return all_results
 
 
@@ -418,7 +418,7 @@ def summarize_results(dirname):
     all_results = load_results(dirname)
 
     res = SimpleNamespace()
-    res.total_tests = len(list(Path(dirname).glob("*")))
+    res.total_tests = len(list(Path(dirname).glob("*/exercises/practice/*")))
 
     try:
         tries = max(len(results.get("tests_outcomes", [])) for results in all_results if results)
