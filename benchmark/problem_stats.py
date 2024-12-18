@@ -177,7 +177,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     counts = [0] * (total_models + 1)
     for ex, models in exercise_solutions.items():
         counts[len(models)] += 1
-    
+
     for i, count in enumerate(counts):
         print(f"{i:>6d}  {count:>9d}")
 
