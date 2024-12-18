@@ -32,7 +32,6 @@ def load_results(dirname):
             # Add language info to results
             lang = fname.parts[-5]  # Get language from path
             results["language"] = lang
-            dump(results)
             all_results.append(results)
         except json.JSONDecodeError:
             print(f"Failed to parse {fname}")
@@ -51,7 +50,6 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     # Filter out entries that don't load and sort by pass rate
     valid_entries = []
     for dirname, model in dir_entries:
-        dump(dirname, model)
         results = load_results(dirname)
         if results:
             # Calculate pass rate for sorting when using custom dirs
