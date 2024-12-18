@@ -659,7 +659,14 @@ def run_test_real(
             # restore the original file, in case we interrupted a prev run
             # Find the original file in the language-specific practice dir
             lang_part = str(testdir).split("/exercises/practice/")[0]
-            original_fname = Path(lang_part) / "exercises" / "practice" / testdir.name / file_path
+            original_fname = (
+                original_dname
+                / Path(lang_part)
+                / "exercises"
+                / "practice"
+                / testdir.name
+                / file_path
+            )
             if original_fname.exists():
                 os.makedirs(src.parent, exist_ok=True)
                 shutil.copy(original_fname, src)
