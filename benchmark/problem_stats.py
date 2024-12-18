@@ -126,7 +126,6 @@ def analyze_exercise_solutions(dirs=None, topn=None):
 
     # Calculate max lengths for alignment
     max_name_len = max(len(testcase) for testcase in all_exercises)
-    max_lang_len = max(len(lang) for lang in sorted_languages)
     total_models = len(valid_entries)
 
     # Print exercises grouped by language
