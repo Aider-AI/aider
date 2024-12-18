@@ -417,7 +417,6 @@ def load_results(dirname):
             all_results.append(results)
         except json.JSONDecodeError:
             continue
-    ]
     return all_results
 
 
