@@ -78,11 +78,11 @@ def analyze_exercise_solutions(dirs=None, topn=None):
     all_exercises = set()
     exercise_solutions = defaultdict(list)
 
-    # Find a complete run to get all exercise names
+    # Get all unique exercise names from all results
+    all_exercises = set()
     for (dirname, model), results, _ in valid_entries:
-        if results and len(results) == 133:  # Complete run
-            all_exercises = {result["testcase"] for result in results}
-            break
+        if results:
+            all_exercises.update(result["testcase"] for result in results)
 
     for (dirname, model), results, _ in valid_entries:
         if not results:
