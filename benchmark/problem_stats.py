@@ -30,8 +30,9 @@ def load_results(dirname):
         try:
             results = json.loads(fname.read_text())
             # Add language info to results
-            lang = fname.parts[-4]  # Get language from path
+            lang = fname.parts[-5]  # Get language from path
             results["language"] = lang
+            dump(results)
             all_results.append(results)
         except json.JSONDecodeError:
             print(f"Failed to parse {fname}")
@@ -87,7 +88,7 @@ def analyze_exercise_solutions(dirs=None, topn=None):
         if results:
             for result in results:
                 try:
-                    all_exercises.add(result["testcase"])
+                    all_exercises.add(result["language"] + "/" + result["testcase"])
                 except KeyError:
                     print(f"Warning: Missing testcase in {dirname}")
 
@@ -100,7 +101,11 @@ def analyze_exercise_solutions(dirs=None, topn=None):
             testcase = result.get("testcase")
             if not testcase:
                 continue
+            lang = result.get("language")
+            if not lang:
+                continue
 
+            testcase = f"{lang}/{testcase}"
             # Consider it solved if the last test attempt passed
             tests_outcomes = result.get("tests_outcomes", [])
             if tests_outcomes and tests_outcomes[-1]:
