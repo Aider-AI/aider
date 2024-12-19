@@ -880,6 +880,15 @@ def run_test_real(
 def run_unit_tests(original_dname, testdir, history_fname, test_files):
     timeout = 60 * 3
 
+    # Remove @Disabled annotations from Java test files
+    for file_path in test_files:
+        if file_path.endswith('.java'):
+            test_file = testdir / file_path
+            if test_file.exists():
+                content = test_file.read_text()
+                content = re.sub(r'@Disabled\([^)]*\)\s*\n', '', content)
+                test_file.write_text(content)
+
     # Map of file extensions to test commands
     TEST_COMMANDS = {
         ".py": ["pytest"],
