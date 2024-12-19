@@ -674,8 +674,8 @@ def run_test_real(
     )
 
     # Add all files under .meta and .docs directories
-    ignore_files.update(str(p) for p in testdir.glob(".meta/**/*"))
-    ignore_files.update(str(p) for p in testdir.glob(".docs/**/*"))
+    ignore_files.update(str(p.relative_to(testdir)) for p in testdir.glob(".meta/**/*"))
+    ignore_files.update(str(p.relative_to(testdir)) for p in testdir.glob(".docs/**/*"))
 
     # Also ignore test & example files
     ignore_files.update(test_files)
@@ -817,11 +817,11 @@ def run_test_real(
         try:
             errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
         except subprocess.TimeoutExpired:
-            try:
-                errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
-            except subprocess.TimeoutExpired:
-                errors = "Tests timed out!"
-                timeouts += 1
+            #try:
+            #    errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
+            #except subprocess.TimeoutExpired:
+            errors = "Tests timed out!"
+            timeouts += 1
 
         if errors:
             test_outcomes.append(False)
