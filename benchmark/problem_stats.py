@@ -10,7 +10,7 @@ import yaml
 
 from aider.dump import dump  # noqa
 
-HARD_SET_NUM = 4  # Number of models that defines the hard set threshold
+HARD_SET_NUM = 3  # Number of models that defines the hard set threshold
 
 
 def get_dirs_from_leaderboard():
@@ -207,7 +207,7 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
         count = lang_unsolved[lang]
         hard = lang_hard_set[lang]
         total = lang_totals[lang]
-        pct = (count / hard) * 100
+        pct = (count / hard) * 100 if hard else -1
         print(f"{lang:<12} {count:>8} {hard:>9} {total:>7} {pct:>7.1f}%")
     print()
 
