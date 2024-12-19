@@ -505,6 +505,7 @@ class InputOutput:
                         complete_style=CompleteStyle.MULTI_COLUMN,
                         style=style,
                         key_bindings=kb,
+                        complete_while_typing=True,
                     )
                 else:
                     line = input(show)
@@ -773,7 +774,12 @@ class InputOutput:
             res = "no"
         else:
             if self.prompt_session:
-                res = self.prompt_session.prompt(question + " ", default=default, style=style)
+                res = self.prompt_session.prompt(
+                    question + " ",
+                    default=default,
+                    style=style,
+                    complete_while_typing=True,
+                )
             else:
                 res = input(question + " ")
 

@@ -14,12 +14,11 @@ You may see an error message like this:
 
 > aider: The term 'aider' is not recognized as a name of a cmdlet, function, script file, or executable program. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
 
-Below is the most fail safe way to install and run aider in these situations:
+Below is the most fail safe way to run aider in these situations:
 
 ```
-python -m pip install -U aider-chat
 python -m aider
 ```
 
-
-{% include venv-pipx.md %}
+You should also consider 
+[installing aider using aider-install, uv or pipx](/docs/install.html).

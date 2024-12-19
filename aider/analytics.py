@@ -12,6 +12,46 @@ from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.models import model_info_manager
 
+PERCENT = 5
+
+
+def compute_hex_threshold(percent):
+    """Convert percentage to 6-digit hex threshold.
+
+    Args:
+        percent: Percentage threshold (0-100)
+
+    Returns:
+        str: 6-digit hex threshold
+    """
+    return format(int(0xFFFFFF * percent / 100), "06x")
+
+
+def is_uuid_in_percentage(uuid_str, percent):
+    """Check if a UUID string falls within the first X percent of the UUID space.
+
+    Args:
+        uuid_str: UUID string to test
+        percent: Percentage threshold (0-100)
+
+    Returns:
+        bool: True if UUID falls within the first X percent
+    """
+    if not (0 <= percent <= 100):
+        raise ValueError("Percentage must be between 0 and 100")
+
+    if not uuid_str:
+        return False
+
+    # Convert percentage to hex threshold (1% = "04...", 10% = "1a...", etc)
+    # Using first 6 hex digits
+    if percent == 0:
+        return False
+
+    threshold = compute_hex_threshold(percent)
+    return uuid_str[:6] <= threshold
+
+
 mixpanel_project_token = "6da9a43058a5d1b9f3353153921fb04d"
 posthog_project_api_key = "phc_99T7muzafUMMZX15H8XePbMSreEUzahHbtWjy3l5Qbv"
 posthog_host = "https://us.i.posthog.com"
@@ -84,31 +124,7 @@ class Analytics:
         if not self.user_id:
             return False
 
-        PERCENT = 5
-        return self.is_uuid_in_percentage(self.user_id, PERCENT)
-
-    def is_uuid_in_percentage(self, uuid_str, percent):
-        """Check if a UUID string falls within the first X percent of the UUID space.
-
-        Args:
-            uuid_str: UUID string to test
-            percent: Percentage threshold (0-100)
-
-        Returns:
-            bool: True if UUID falls within the first X percent
-        """
-        if not (0 <= percent <= 100):
-            raise ValueError("Percentage must be between 0 and 100")
-
-        if not uuid_str:
-            return False
-
-        # Convert percentage to hex threshold (1% = "04...", 10% = "1a...", etc)
-        # Using first 6 hex digits
-        if percent == 0:
-            return False
-        threshold = format(int(0xFFFFFF * percent / 100), "06x")
-        return uuid_str[:6] <= threshold
+        return is_uuid_in_percentage(self.user_id, PERCENT)
 
     def get_data_file_path(self):
         try:
@@ -228,3 +244,7 @@ class Analytics:
                     f.write("\n")
             except OSError:
                 pass  # Ignore OS errors when writing to logfile
+
+
+if __name__ == "__main__":
+    dump(compute_hex_threshold(PERCENT))

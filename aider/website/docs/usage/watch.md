@@ -37,7 +37,7 @@ description: Aider can run in your browser, not just on the command line.
 If you run aider with `--watch-files`, it will watch all files in your repo 
 and look for any AI coding instructions you add using your favorite IDE or text editor.
 
-Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI`, `AI!` or `AI?1 like these:
+Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI`, `AI!` or `AI?` like these:
 
 ```python
 # Make a snake game. AI!

@@ -18,6 +18,11 @@ website_files = [
     "aider/website/docs/leaderboards/index.md",
 ]
 
+exclude_files = [
+    "aider/website/install.ps1",
+    "aider/website/install.sh",
+]
+
 
 def blame(start_tag, end_tag=None):
     commits = get_all_commit_hashes_between_tags(start_tag, end_tag)
@@ -36,6 +41,7 @@ def blame(start_tag, end_tag=None):
     ]
     files = [f for f in files if not f.endswith("prompts.py")]
     files = [f for f in files if not f.startswith("tests/fixtures/watch")]
+    files = [f for f in files if f not in exclude_files]
 
     all_file_counts = {}
     grand_total = defaultdict(int)

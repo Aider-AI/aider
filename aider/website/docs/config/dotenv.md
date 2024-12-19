@@ -20,11 +20,7 @@ Aider will look for a `.env` file in these locations:
 
 If the files above exist, they will be loaded in that order. Files loaded last will take priority.
 
-## Storing LLM keys
-
-{% include special-keys.md %}
-
-{% include env-keys-tip.md %}
+{% include keys.md %}
 
 ## Sample .env file
 
@@ -251,7 +247,7 @@ cog.outl("```")
 ## Set the background color for the current item in the completion menu (default: terminal's default text color)
 #AIDER_COMPLETION_MENU_CURRENT_BG_COLOR=
 
-## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)
+## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light, or a Pygments builtin style, see https://pygments.org/styles for available themes)
 #AIDER_CODE_THEME=default
 
 ## Show diffs when committing changes (default: False)
