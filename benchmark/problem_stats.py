@@ -35,7 +35,7 @@ def load_results(dirname):
         error = False
         try:
             results = json.loads(fname.read_text())
-            error = 'testcase' not in results
+            error = "testcase" not in results
             if not error:
                 # Add language info to results
                 lang = fname.parts[-5]  # Get language from path
