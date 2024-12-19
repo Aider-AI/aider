@@ -34,16 +34,26 @@ sudo apt-get update
 echo "Installing Docker Engine..."
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-# Add current user to docker group
+# Add current user to docker group and verify
 echo "Adding current user to docker group..."
 sudo usermod -aG docker $USER
 
-# Apply group changes to current session
-echo "Applying group changes to current session..."
-newgrp docker << EOF
+# Verify group addition
+if getent group docker | grep -q "\b${USER}\b"; then
+    echo "Successfully added $USER to docker group"
+else
+    echo "Failed to add $USER to docker group. Retrying..."
+    # Force group addition
+    sudo gpasswd -a $USER docker
+fi
 
-# Print success message
+# Print success message and instructions
 echo "Docker installation completed successfully!"
+echo -e "\n*** IMPORTANT: Group changes require a complete session refresh."
+echo "Please run these commands in sequence:"
+echo "1. sudo systemctl restart docker"
+echo "2. exit"
+echo -e "Then log back in and docker commands should work without sudo\n"
 
 # Start Docker service
 echo "Starting Docker service..."
