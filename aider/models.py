@@ -773,7 +773,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         streaming=False,
         use_temperature=False,
-        extra_params=dict(reasoning_effort="high"),
+        extra_params=dict(extra_body=dict(reasoning_effort="high")),
     ),
     ModelSettings(
         "openrouter/qwen/qwen-2.5-coder-32b-instruct",

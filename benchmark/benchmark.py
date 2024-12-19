@@ -36,8 +36,6 @@ EXERCISES_DIR_DEFAULT = "exercism-python"
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
-NUM_TESTS = (89, 133)
-
 load_dotenv(override=True)
 
 
@@ -103,8 +101,10 @@ def show_stats(dirnames, graphs):
         if not row:
             continue
 
-        if row.completed_tests not in NUM_TESTS:
-            print(f"Warning: {row.dir_name} is incomplete: {row.completed_tests}")
+        if row.completed_tests != row.total_tests:
+            print(
+                f"Warning: {row.dir_name} is incomplete: {row.completed_tests} of {row.total_tests}"
+            )
 
         kind = (row.model, row.edit_format)
         if kind in seen:
@@ -509,7 +509,7 @@ def summarize_results(dirname):
         setattr(res, f"pass_num_{i + 1}", passed_tests[i])
 
     print(f"- dirname: {dirname.name}")
-    style = None if res.completed_tests in NUM_TESTS else "red"
+    style = None if res.completed_tests == res.total_tests else "red"
     console.print(f"  test_cases: {res.completed_tests}", style=style)
     for key, val in variants.items():
         if len(val) > 1:
@@ -537,7 +537,7 @@ def summarize_results(dirname):
     show("indentation_errors")
     show("exhausted_context_windows")
     show("test_timeouts")
-    show("total_tests")
+    print(f"  total_tests: {res.total_tests}")
 
     a_model = set(variants["model"]).pop()
     command = f"aider --model {a_model}"
@@ -660,14 +660,25 @@ def run_test_real(
     with open(config_file) as f:
         config = json.loads(f.read())
 
-    # Get solution and test files from config
-    solution_files = set(config.get("files", {}).get("solution", []))
-    solution_files.discard("Cargo.toml")
-
+    # Get file sets from config
     test_files = config.get("files", {}).get("test", [])
+    example_files = config.get("files", {}).get("example", [])
+    solution_files = set(config.get("files", {}).get("solution", []))
 
-    ignore_files = set(["Cargo.toml"])
+    # Forcibly ignore certain files not covered by test_files and example_files
+    ignore_files = set(
+        [
+            "CMakeLists.txt",
+            "Cargo.toml",
+        ]
+    )
+
+    # Also ignore test & example files
     ignore_files.update(test_files)
+    ignore_files.update(example_files)
+
+    # Remove any ignore files from the solution set that LLM will edit
+    solution_files.discard(ignore_files)
 
     # Copy all solution files
     for file_path in solution_files:
@@ -868,10 +879,11 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
     # Map of file extensions to test commands
     TEST_COMMANDS = {
         ".py": ["pytest"],
-        ".rs": ["cargo", "test", "--offline", "--", "--include-ignored"],
-        ".cs": ["dotnet", "test"],
+        ".rs": ["cargo", "test", "--", "--include-ignored"],
         ".go": ["go", "test", "./..."],
         ".js": ["/aider/benchmark/npm-test.sh"],
+        ".cpp": ["/aider/benchmark/cpp-test.sh"],
+        ".java": ["./gradlew", "test"],
     }
 
     # Get unique file extensions from test files
