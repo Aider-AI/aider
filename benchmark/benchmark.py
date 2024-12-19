@@ -817,9 +817,9 @@ def run_test_real(
         try:
             errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
         except subprocess.TimeoutExpired:
-            #try:
+            # try:
             #    errors = run_unit_tests(original_dname, testdir, history_fname, test_files)
-            #except subprocess.TimeoutExpired:
+            # except subprocess.TimeoutExpired:
             errors = "Tests timed out!"
             timeouts += 1
 
@@ -882,11 +882,11 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
 
     # Remove @Disabled annotations from Java test files
     for file_path in test_files:
-        if file_path.endswith('.java'):
+        if file_path.endswith(".java"):
             test_file = testdir / file_path
             if test_file.exists():
                 content = test_file.read_text()
-                content = re.sub(r'@Disabled\([^)]*\)\s*\n', '', content)
+                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
                 test_file.write_text(content)
 
     # Map of file extensions to test commands
