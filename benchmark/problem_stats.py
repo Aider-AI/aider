@@ -29,7 +29,7 @@ def load_results(dirname):
 
     all_results = []
     parse_errors = []  # Track which exercises had parse errors for this model
-    
+
     # Look in language subdirectories under exercises/practice
     for fname in benchmark_dir.glob("*/exercises/practice/*/.aider.results.json"):
         try:
@@ -38,7 +38,7 @@ def load_results(dirname):
             lang = fname.parts[-5]  # Get language from path
             results["language"] = lang
             all_results.append(results)
-            
+
         except json.JSONDecodeError:
             # Track the parse error for this exercise/model combination
             lang = fname.parts[-5]
@@ -46,7 +46,7 @@ def load_results(dirname):
             parse_errors.append(exercise)
             print(f"Failed to parse {fname}")
             continue
-            
+
     return all_results, parse_errors
 
 
@@ -63,7 +63,7 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
     # Filter out entries that don't load and sort by pass rate
     valid_entries = []
     parse_errors_by_model = {}  # Track which exercises had parse errors for each model
-    
+
     for dirname, model in dir_entries:
         results_data = load_results(dirname)
         if results_data:
@@ -203,12 +203,14 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
 
     # Find exercises to disqualify based on parse error threshold
     disqualified_exercises = {
-        exercise for exercise, count in parse_error_counts.items() 
-        if count >= PARSE_ERROR_M
+        exercise for exercise, count in parse_error_counts.items() if count >= PARSE_ERROR_M
     }
 
     if disqualified_exercises:
-        print(f"\nDisqualified {len(disqualified_exercises)} exercises with {PARSE_ERROR_M}+ parse errors:")
+        print(
+            f"\nDisqualified {len(disqualified_exercises)} exercises with {PARSE_ERROR_M}+ parse"
+            " errors:"
+        )
         for ex in sorted(disqualified_exercises):
             print(f"  {ex} ({parse_error_counts[ex]} parse errors)")
 
@@ -216,7 +218,8 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
     print(f"\nHard Set Analysis (exercises solved by ≤{HARD_SET_NUM} models):")
     print("-" * 60)
     hard_set = {
-        ex for ex, models in exercise_solutions.items() 
+        ex
+        for ex, models in exercise_solutions.items()
         if len(models) <= HARD_SET_NUM and ex not in disqualified_exercises
     }
     print(f"Total hard set exercises: {len(hard_set)}")
