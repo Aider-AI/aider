@@ -32,19 +32,25 @@ def load_results(dirname):
 
     # Look in language subdirectories under exercises/practice
     for fname in benchmark_dir.glob("*/exercises/practice/*/.aider.results.json"):
+        error = False
         try:
             results = json.loads(fname.read_text())
-            # Add language info to results
-            lang = fname.parts[-5]  # Get language from path
-            results["language"] = lang
-            all_results.append(results)
+            error = 'testcase' not in results
+            if not error:
+                # Add language info to results
+                lang = fname.parts[-5]  # Get language from path
+                results["language"] = lang
+                all_results.append(results)
 
         except json.JSONDecodeError:
+            error = True
+
+        if error:
             # Track the parse error for this exercise/model combination
             lang = fname.parts[-5]
             exercise = f"{fname.parts[-2]}/{lang}"  # Use directory name as testcase
             parse_errors.append(exercise)
-            print(f"Failed to parse {fname}")
+            print(f"Bad results file {fname}")
             continue
 
     return all_results, parse_errors
@@ -105,7 +111,7 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
                 try:
                     all_exercises.add(result["testcase"] + "/" + result["language"])
                 except KeyError:
-                    print(f"Warning: Missing testcase in {dirname}")
+                    print(f"Warning: Missing testcase in {dirname}", json.dumps(result, indent=4))
 
     for (dirname, model), results, _ in valid_entries:
         if not results:
@@ -223,6 +229,9 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
         if len(models) <= HARD_SET_NUM and ex not in disqualified_exercises
     }
     print(f"Total hard set exercises: {len(hard_set)}")
+
+    dump(disqualified_exercises)
+    dump(hard_set)
 
     # Count total problems, unsolved problems, and hard set problems by language
     lang_totals = defaultdict(int)
