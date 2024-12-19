@@ -3,6 +3,7 @@ FROM buildpack-deps:jammy
 # Install Python 3.11
 RUN apt-get update && apt-get install -y \
     software-properties-common \
+    cmake \
     && add-apt-repository ppa:deadsnakes/ppa \
     && apt-get update \
     && apt-get install -y \
