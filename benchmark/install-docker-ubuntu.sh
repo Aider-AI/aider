@@ -42,9 +42,17 @@ sudo usermod -aG docker $USER
 echo "Docker installation completed successfully!"
 echo "Please log out and log back in for group changes to take effect."
 
-# Verify Docker installation
+# Start Docker service
+echo "Starting Docker service..."
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Verify Docker installation and service status
 echo "Docker version:"
 docker --version
 
 echo "Docker Compose version:"
 docker compose version
+
+echo "Docker service status:"
+sudo systemctl status docker --no-pager
