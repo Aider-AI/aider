@@ -616,11 +616,11 @@ def run_test_real(
 
     introduction = testdir / ".docs/introduction.md"
     if introduction.exists():
-        instructions += introduction.read_text()
-    instructions += (testdir / ".docs/instructions.md").read_text()
+        instructions += introduction.read_text(encoding='utf-8')
+    instructions += (testdir / ".docs/instructions.md").read_text(encoding='utf-8')
     instructions_append = testdir / ".docs/instructions.append.md"
     if instructions_append.exists():
-        instructions += instructions_append.read_text()
+        instructions += instructions_append.read_text(encoding='utf-8')
 
     instructions += prompts.instructions_addendum.format(file_list=file_list)
 
