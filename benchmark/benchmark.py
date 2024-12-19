@@ -673,7 +673,9 @@ def run_test_real(
         ]
     )
 
-    # add all the files under testdir/ .meta and .docs to ignore_files ai!
+    # Add all files under .meta and .docs directories
+    ignore_files.update(str(p) for p in testdir.glob(".meta/**/*"))
+    ignore_files.update(str(p) for p in testdir.glob(".docs/**/*"))
 
     # Also ignore test & example files
     ignore_files.update(test_files)
