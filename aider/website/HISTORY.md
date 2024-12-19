@@ -25,6 +25,12 @@ cog.out(text)
 
 ### main branch
 
+- Support for running without git installed.
+- Improved help messages for AI! and AI? commands.
+- Aider wrote 65% of the code in this release.
+
+### Aider v0.69.0
+
 - [Watch files](https://aider.chat/docs/usage/watch.html) improvements:
   - Use `# ... AI?` comments to trigger aider and ask questions about your code.
   - Now watches *all* files, not just certain source files.
@@ -37,7 +43,7 @@ cog.out(text)
 - Ask 5% of users if they want to opt-in to analytics.
 - `/voice` now lets you edit the transcribed text before sending.
 - Disabled auto-complete in Y/N prompts.
-- Aider wrote 60% of the code in this release.
+- Aider wrote 68% of the code in this release.
 
 ### Aider v0.68.0
 

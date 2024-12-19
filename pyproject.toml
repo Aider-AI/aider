@@ -1,7 +1,3 @@
-# [[[cog
-# from aider.help_pats import exclude_website_pats
-# ]]]
-# [[[end]]]
 
 [project]
 name = "aider-chat"
@@ -38,29 +34,11 @@ help = { file = "requirements/requirements-help.txt" }
 browser = { file = "requirements/requirements-browser.txt" }
 playwright = { file = "requirements/requirements-playwright.txt" }
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.setuptools.packages.find]
-include = ["aider*", "aider.website"]
-
-[tool.setuptools.package-data]
-"aider" = ["queries/*.scm"]
-"aider.website" = ["**/*.md"]
-
-[tool.setuptools.exclude-package-data]
-"aider.website" = [
-# [[[cog
-# cog.out("\n".join(f'    "{pat}",' for pat in exclude_website_pats))
-# ]]]
-"examples/**",
-"_posts/**",
-"HISTORY.md",
-"docs/benchmarks*md",
-"docs/ctags.md",
-"docs/unified-diffs.md",
-"docs/leaderboards/index.md",
-"assets/**",
-"**/.DS_Store",
-# [[[end]]]
-]
+include = ["aider"]
 
 [build-system]
 requires = ["setuptools>=68", "setuptools_scm[toml]>=8"]

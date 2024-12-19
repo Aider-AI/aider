@@ -433,7 +433,8 @@ def get_parser(default_config_files, git_root):
         default="default",
         help=(
             "Set the markdown code theme (default: default, other options include monokai,"
-            " solarized-dark, solarized-light)"
+            " solarized-dark, solarized-light, or a Pygments builtin style,"
+            " see https://pygments.org/styles for available themes)"
         ),
     )
     group.add_argument(
