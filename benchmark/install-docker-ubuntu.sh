@@ -38,9 +38,12 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plu
 echo "Adding current user to docker group..."
 sudo usermod -aG docker $USER
 
+# Apply group changes to current session
+echo "Applying group changes to current session..."
+newgrp docker << EOF
+
 # Print success message
 echo "Docker installation completed successfully!"
-echo "Please log out and log back in for group changes to take effect."
 
 # Start Docker service
 echo "Starting Docker service..."
@@ -56,3 +59,5 @@ docker compose version
 
 echo "Docker service status:"
 sudo systemctl status docker --no-pager
+
+EOF
