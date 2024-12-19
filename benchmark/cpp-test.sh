@@ -3,7 +3,7 @@
 # exit when any command fails
 set -e
 
-mkdir build
+[ ! -d "build" ] && mkdir build
 cd build
 cmake -G "Unix Makefiles" ..
 make
