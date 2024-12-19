@@ -14,7 +14,8 @@ EXCLUDE_FILE=$(mktemp)
 # Convert .gitignore patterns to rsync exclude patterns
 git -C "$REPO_ROOT" ls-files --exclude-standard --others --ignored --directory > "$EXCLUDE_FILE"
 
-# make ~/aider on the remote side if needed ai!
+# Create remote directory if needed
+ssh "$DEST" "mkdir -p ~/aider"
 
 # Sync the repository
 rsync -avz --delete \
