@@ -181,6 +181,7 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
     )
 
     print(f"Total exercises solved at least once: {solved_at_least_once}")
+    # print out these never solved use lang/exercises/practice/ex ai!
     print(f"Never solved by any model: {solved_by_none}")
     if solved_by_none > 0:
         print("\nExercises never solved by any model:")
@@ -234,9 +235,6 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
         if len(models) <= HARD_SET_NUM and ex not in disqualified_exercises
     }
     print(f"Total hard set exercises: {len(hard_set)}")
-
-    dump(disqualified_exercises)
-    dump(hard_set)
 
     # Count total problems, unsolved problems, and hard set problems by language
     lang_totals = defaultdict(int)
