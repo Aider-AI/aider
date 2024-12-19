@@ -1,5 +1,5 @@
 {
-    "gemini-2.0-flash-exp": {
+    "vertex_ai-language-models/gemini-2.0-flash-exp": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
         "max_output_tokens": 8192,
@@ -17,7 +17,7 @@
         "supports_response_schema": true,
         "source": "https://cloud.google.com/vertex-ai/generative-ai/docs/gemini-v2"
     },
-    "gemini-2.0-flash-exp": {
+    "gemini/gemini-2.0-flash-exp": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
         "max_output_tokens": 8192,

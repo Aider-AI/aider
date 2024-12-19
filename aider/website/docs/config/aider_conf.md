@@ -15,11 +15,7 @@ load whichever is found first.
 - The root of your git repo.
 - Your home directory.
 
-## Storing LLM keys
-
-{% include special-keys.md %}
-
-{% include env-keys-tip.md %}
+{% include keys.md %}
 
 ## A note on lists
 
@@ -274,7 +270,7 @@ cog.outl("```")
 ## Set the background color for the current item in the completion menu (default: terminal's default text color)
 #completion-menu-current-bg-color: xxx
 
-## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)
+## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light, or a Pygments builtin style, see https://pygments.org/styles for available themes)
 #code-theme: default
 
 ## Show diffs when committing changes (default: False)

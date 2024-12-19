@@ -20,7 +20,7 @@ copy of each source file that needs changes.
 While simple, it can be slow and costly because the LLM has to return
 the *entire file* even if just a few lines are edited.
 
-The format expects the file path just before the fenced file content:
+The whole format expects the file path just before the fenced file content:
 
 ````
 show_greeting.py
@@ -28,7 +28,7 @@ show_greeting.py
 import sys
 
 def greeting(name):
-    print(f"Hey {{name}}")
+    print("Hey", name)
 
 if __name__ == '__main__':
     greeting(sys.argv[1])
@@ -42,7 +42,7 @@ The "diff" edit format asks the LLM to specify file edits as a series of search/
 This is an efficient format, because the model only needs to return parts of the file
 which have changes.
 
-They are formatted using a syntax similar to the git merge conflict resolution markings,
+Edits are formatted using a syntax similar to the git merge conflict resolution markings,
 with the file path right before a fenced block:
 
 ````
@@ -62,7 +62,7 @@ from flask import Flask
 The "diff-fenced" edit format is based on the diff format, but
 the file path is placed inside the fence.
 It is primarily used with the Gemini family of models,
-which often fail to conform to fencing approach specified in the diff format.
+which often fail to conform to the fencing approach specified in the diff format.
 
 ````
 ```
@@ -84,7 +84,10 @@ This is an efficient format, because the model only needs to return parts of the
 which have changes.
 
 It was mainly used to the GPT-4 Turbo family of models,
-to reduce their "lazy coding" tendencies with other edit formats.
+because it reduced their "lazy coding" tendencies.
+With other edit formats the GPT-4 Turbo models tended to elide
+large sections of code and replace them with "# ... original code here ..."
+style comments.
 
 
 ````
@@ -104,3 +107,10 @@ to reduce their "lazy coding" tendencies with other edit formats.
 These are streamlined versions of the diff and whole formats, intended to be used
 with `--editor-edit-format` when using
 [architect mode](/docs/usage/modes.html).
+The actual edit format is the same, but aider uses a simpler prompt that
+is more narrowly focused on just editing the file as opposed to
+solving the coding task.
+The architect model resolves the coding task and
+provides plain text instructions about which file changes need to be made.
+The editor interprets those instructions to produce the
+syntactically correct diff or whole edits.

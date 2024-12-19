@@ -13,9 +13,7 @@ or review them below.
 - TOC
 {:toc}
 
-## LLM keys
-
-{% include special-keys.md %}
+{% include keys.md %}
 
 ## Usage summary
 
@@ -383,7 +381,7 @@ Set the background color for the current item in the completion menu (default: t
 Environment variable: `AIDER_COMPLETION_MENU_CURRENT_BG_COLOR`  
 
 ### `--code-theme VALUE`
-Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light)  
+Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light, or a Pygments builtin style, see https://pygments.org/styles for available themes)  
 Default: default  
 Environment variable: `AIDER_CODE_THEME`  
 

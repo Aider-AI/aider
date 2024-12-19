@@ -3,7 +3,11 @@
 import sys
 from pathlib import Path
 
-import git
+try:
+    import git
+except ImportError:
+    git = None
+
 from diff_match_patch import diff_match_patch
 from tqdm import tqdm
 
