@@ -187,7 +187,7 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
         unsolved = [ex for ex, models in exercise_solutions.items() if not models]
         for ex in sorted(unsolved):
             # Split into language and exercise parts
-            lang, exercise = ex.split('/')
+            lang, exercise = ex.split("/")
             # Reconstruct path in desired format
             formatted_path = f"{lang}/exercises/practice/{exercise}"
             print(f"  {formatted_path}")
