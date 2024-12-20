@@ -12,6 +12,34 @@ class ArchitectAgent:
         self.last_response: str | None = None
 
 
+def extract_proposal_content(content, architect_name):
+    """
+    Extracts proposal content from the given content string.
+
+    Args:
+        content: The string content to extract from.
+        architect_name: The name of the architect.
+
+    Returns:
+        A string containing the extracted proposal content,
+        wrapped in <architect name='...'> tags.
+    """
+    # Try to get properly fenced content first
+    proposal_match = re.search(r"<proposal>(.*?)</proposal>", content, re.DOTALL)
+    if proposal_match:
+        proposal_content = proposal_match.group(1).strip()
+    else:
+        # Fallback: Try to get content after <proposal> tag
+        proposal_start = content.find("<proposal>")
+        if proposal_start != -1:
+            proposal_content = content[proposal_start + len("<proposal>") :].strip()
+        else:
+            # Last resort: Use the entire response
+            proposal_content = content.strip()
+
+    return f"<architect name='{architect_name}'>\n{proposal_content}\n</architect>\n\n"
+
+
 class MixtureOfArchitectsCoder(Coder):
     edit_format = "mixture"
     gpt_prompts = MixturePrompts()
@@ -85,15 +113,10 @@ class MixtureOfArchitectsCoder(Coder):
                         msg["role"] == "assistant"
                         and msg["name"] != architect.name.upper()
                     ):
-                        content = msg["content"]
-                        proposal_match = re.search(
-                            r"<proposal>(.*?)</proposal>", content, re.DOTALL
+                        # Use the helper function to extract proposal content
+                        user_content += extract_proposal_content(
+                            msg["content"], msg["name"]
                         )
-                        if proposal_match:
-                            proposal_content = proposal_match.group(1).strip()
-                            user_content += f"<architect name='{msg['name']}'>\n"
-                            user_content += proposal_content
-                            user_content += "\n</architect>\n\n"
 
                 ask_coder.cur_messages.append({"role": "user", "content": user_content})
 
