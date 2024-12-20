@@ -173,7 +173,8 @@ def check_gitignore(git_root, io, ask=True):
             existing_lines = content.splitlines()
             for pat in patterns:
                 if pat not in existing_lines:
-                    patterns_to_add.append(pat)
+                    if '*' in pat or (Path(git_root) / pat).exists():
+                        patterns_to_add.append(pat)
         except OSError as e:
             io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
             return
