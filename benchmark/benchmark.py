@@ -644,10 +644,10 @@ def run_test_real(
     if results_fname.exists():
         try:
             res = json.loads(results_fname.read_text())
-            if res.get("test_timeouts", 0) > 0:
-                print(f"{results_fname} test timeouts, redoing...")
-            else:
-                return res
+            #if res.get("test_timeouts", 0) > 0:
+            #    print(f"{results_fname} test timeouts, redoing...")
+            #else:
+            return res
         except JSONDecodeError:
             print(f"{results_fname} failed to parse, redoing...")
 
