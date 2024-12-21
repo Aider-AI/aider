@@ -87,10 +87,10 @@ def find_latest_benchmark_dir():
     return latest_dir
 
 
-def show_stats(dirnames, graphs):
+def show_stats(dirnames, graphs, stats_languages=None):
     raw_rows = []
     for dirname in dirnames:
-        row = summarize_results(dirname)
+        row = summarize_results(dirname, stats_languages)
         raw_rows.append(row)
 
     # return
@@ -236,7 +236,7 @@ def main(
         updated_dirnames.append(dirname)
 
     if stats_only:
-        return show_stats(updated_dirnames, graphs)
+        return show_stats(updated_dirnames, graphs, stats_languages)
 
     if diffs_only:
         return show_diffs(updated_dirnames)
@@ -439,7 +439,7 @@ def load_results(dirname, stats_languages=None):
     return all_results
 
 
-def summarize_results(dirname):
+def summarize_results(dirname, stats_languages=None):
     all_results = load_results(dirname, stats_languages)
 
     res = SimpleNamespace()
