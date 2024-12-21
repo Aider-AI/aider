@@ -56,6 +56,8 @@ The model also has to successfully apply all its changes to the source file with
 <script src="https://unpkg.com/patternomaly/dist/patternomaly.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+{% assign data_source = edit_sorted %}
+{% assign pass_rate_field = "pass_rate_2" %}
 {% include edit-leaderboard.js %}
 </script>
 <style>

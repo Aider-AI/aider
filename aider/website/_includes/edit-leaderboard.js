@@ -27,12 +27,12 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   var allData = [];
-  {% for row in edit_sorted %}
+  {% for row in data_source %}
     allData.push({
       model: '{{ row.model }}',
-      pass_rate_2: {{ row.pass_rate_2 }},
+      pass_rate: {{ row[pass_rate_field] }},
       percent_cases_well_formed: {{ row.percent_cases_well_formed }},
-      edit_format: '{{ row.edit_format }}'
+      edit_format: '{{ row.edit_format | default: "diff" }}'
     });
   {% endfor %}
 
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (showAll || rowElement.classList.contains('selected')) {
         displayedData.push(row);
         leaderboardData.labels.push(row.model);
-        leaderboardData.datasets[0].data.push(row.pass_rate_2);
+        leaderboardData.datasets[0].data.push(row.pass_rate);
       }
     });
 
