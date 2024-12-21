@@ -5,6 +5,7 @@ import time
 from aider.dump import dump  # noqa: F401
 from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
+from aider.compatible_openai_api import CompatibleOpenaiApi
 
 # from diskcache import Cache
 
@@ -15,12 +16,14 @@ CACHE = None
 
 RETRY_TIMEOUT = 60
 
+openaiApi = CompatibleOpenaiApi()
 
 def send_completion(
     model_name,
     messages,
     functions,
     stream,
+    compatible_api,
     temperature=0,
     extra_params=None,
 ):
@@ -44,6 +47,23 @@ def send_completion(
 
     # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
     hash_object = hashlib.sha1(key)
+    
+    if compatible_api:
+        try:
+            response = openaiApi.chat_completion(
+                model=model_name,
+                messages=messages,
+                stream=stream,
+                temperature=temperature if temperature is not None else 0.7
+            )
+            
+            if "error" in response:
+                raise Exception(f"OpenAI API error: {response['error']}")
+            return hash_object, response
+                
+        except Exception as e:
+            print(f"Error calling OpenAI API: {str(e)}")
+            raise
 
     if not stream and CACHE is not None and key in CACHE:
         return hash_object, CACHE[key]
@@ -67,6 +87,7 @@ def simple_send_with_retries(model, messages):
                 "messages": messages,
                 "functions": None,
                 "stream": False,
+                "compatible_api": model.compatible_api,
                 "temperature": None if not model.use_temperature else 0,
                 "extra_params": model.extra_params,
             }

@@ -239,6 +239,12 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--compatible-api",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use openai api compatible interface (default: False)",
+    )
+    group.add_argument(
         "--editor-model",
         metavar="EDITOR_MODEL",
         default=None,

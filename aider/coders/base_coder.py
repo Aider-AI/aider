@@ -267,6 +267,7 @@ class Coder:
         map_tokens=1024,
         verbose=False,
         stream=True,
+        compatible_api=False,
         use_git=True,
         cur_messages=None,
         done_messages=None,
@@ -349,6 +350,7 @@ class Coder:
 
         self.io = io
         self.stream = stream
+        self.compatible_api = compatible_api
 
         self.shell_commands = []
 
@@ -1185,17 +1187,28 @@ class Coder:
 
                 kwargs = dict(self.main_model.extra_params) or dict()
                 kwargs["max_tokens"] = 1
-
-                try:
-                    completion = litellm.completion(
-                        model=self.main_model.name,
-                        messages=self.cache_warming_chunks.cacheable_messages(),
-                        stream=False,
-                        **kwargs,
-                    )
-                except Exception as err:
-                    self.io.tool_warning(f"Cache warming error: {str(err)}")
-                    continue
+                if self.compatible_api:
+                    try:
+                        completion = openaiApi.chat_completion(
+                            model=model_name,
+                            messages=messages,
+                            stream=stream,
+                            temperature=temperature if temperature is not None else 0.7
+                        )
+                    except Exception as e:
+                        self.io.tool_warning(f"Error calling OpenAI API: {str(e)}")
+                        continue
+                else:
+                    try:
+                        completion = litellm.completion(
+                            model=self.main_model.name,
+                            messages=self.cache_warming_chunks.cacheable_messages(),
+                            stream=False,
+                            **kwargs,
+                        )
+                    except Exception as err:
+                        self.io.tool_warning(f"Cache warming error: {str(err)}")
+                        continue
 
                 cache_hit_tokens = getattr(
                     completion.usage, "prompt_cache_hit_tokens", 0
@@ -1554,6 +1567,7 @@ class Coder:
                 messages,
                 functions,
                 self.stream,
+                self.compatible_api,
                 temp,
                 extra_params=model.extra_params,
             )

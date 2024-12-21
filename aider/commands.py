@@ -78,6 +78,7 @@ class Commands:
 
         model_name = args.strip()
         model = models.Model(model_name)
+        model.compatible_api = args.compatible_api 
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 

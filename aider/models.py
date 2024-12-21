@@ -862,6 +862,7 @@ class Model(ModelSettings):
         model = MODEL_ALIASES.get(model, model)
 
         self.name = model
+        self.compatible_api = False
 
         self.max_chat_history_tokens = 1024
         self.weak_model = None
@@ -1115,6 +1116,10 @@ class Model(ModelSettings):
             return dict(keys_in_environment=[var], missing_keys=[])
 
     def validate_environment(self):
+        # Check for compatible API mode first
+        if self.compatible_api:
+            return validate_variables(["COMPATIBLE_OPENAI_API_KEY", "COMPATIBLE_OPENAI_API_BASE"])
+
         res = self.fast_validate_environment()
         if res:
             return res
