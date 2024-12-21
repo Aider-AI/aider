@@ -195,6 +195,9 @@ def main(
     stats_only: bool = typer.Option(
         False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
     ),
+    stats_languages: str = typer.Option(
+        None, "--stats-languages", help="Only include stats for specific languages (comma separated)"
+    ),
     diffs_only: bool = typer.Option(False, "--diffs", help="Just diff the provided stats dirs"),
     tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
     threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
@@ -413,13 +416,18 @@ def show_diffs(dirnames):
     print("unchanged:", len(unchanged), ",".join(sorted(unchanged)))
 
 
-def load_results(dirname):
+def load_results(dirname, stats_languages=None):
     dirname = Path(dirname)
     all_results = []
-    # do this ai!
-    # add a --stats-languages switch that takes like java,cpp,python
-    # limit the glob here to those languages followed by /exercises/practice/*/.aider.results.json
-    for fname in dirname.glob("*/exercises/practice/*/.aider.results.json"):
+    
+    if stats_languages:
+        languages = [lang.strip().lower() for lang in stats_languages.split(",")]
+        glob_patterns = [f"{lang}/exercises/practice/*/.aider.results.json" for lang in languages]
+    else:
+        glob_patterns = ["*/exercises/practice/*/.aider.results.json"]
+        
+    for pattern in glob_patterns:
+        for fname in dirname.glob(pattern):
         try:
             results = json.loads(fname.read_text())
             all_results.append(results)
@@ -430,7 +438,7 @@ def load_results(dirname):
 
 
 def summarize_results(dirname):
-    all_results = load_results(dirname)
+    all_results = load_results(dirname, stats_languages)
 
     res = SimpleNamespace()
     res.total_tests = len(list(Path(dirname).glob("*/exercises/practice/*")))
