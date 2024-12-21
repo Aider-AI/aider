@@ -196,7 +196,9 @@ def main(
         False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
     ),
     stats_languages: str = typer.Option(
-        None, "--stats-languages", help="Only include stats for specific languages (comma separated)"
+        None,
+        "--stats-languages",
+        help="Only include stats for specific languages (comma separated)",
     ),
     diffs_only: bool = typer.Option(False, "--diffs", help="Just diff the provided stats dirs"),
     tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
@@ -419,13 +421,13 @@ def show_diffs(dirnames):
 def load_results(dirname, stats_languages=None):
     dirname = Path(dirname)
     all_results = []
-    
+
     if stats_languages:
         languages = [lang.strip().lower() for lang in stats_languages.split(",")]
         glob_patterns = [f"{lang}/exercises/practice/*/.aider.results.json" for lang in languages]
     else:
         glob_patterns = ["*/exercises/practice/*/.aider.results.json"]
-        
+
     for pattern in glob_patterns:
         for fname in dirname.glob(pattern):
             try:
@@ -661,9 +663,9 @@ def run_test_real(
     if results_fname.exists():
         try:
             res = json.loads(results_fname.read_text())
-            #if res.get("test_timeouts", 0) > 0:
+            # if res.get("test_timeouts", 0) > 0:
             #    print(f"{results_fname} test timeouts, redoing...")
-            #else:
+            # else:
             return res
         except JSONDecodeError:
             print(f"{results_fname} failed to parse, redoing...")
