@@ -58,7 +58,7 @@ The model also has to successfully apply all its changes to the source file with
 <script>
 {% assign data_source = edit_sorted %}
 {% assign pass_rate_field = "pass_rate_2" %}
-{% include edit-leaderboard.js %}
+{% include leaderboard.js %}
 </script>
 <style>
   tr.selected {

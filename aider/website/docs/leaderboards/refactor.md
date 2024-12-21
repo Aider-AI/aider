@@ -46,7 +46,7 @@ Therefore, results are available for fewer models.
 <script>
 {% assign data_source = refac_sorted %}
 {% assign pass_rate_field = "pass_rate_1" %}
-{% include edit-leaderboard.js %}
+{% include leaderboard.js %}
 </script>
 
 
