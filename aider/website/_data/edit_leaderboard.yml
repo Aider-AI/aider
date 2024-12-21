@@ -2184,7 +2184,7 @@
 
 - dirname: 2024-12-18-01-50-08--o1
   test_cases: 133
-  model: openrouter/openai/o1
+  model: o1
   edit_format: diff
   commit_hash: 074c636-dirty
   pass_rate_1: 65.4
