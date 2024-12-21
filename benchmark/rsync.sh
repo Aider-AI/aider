@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ $# -ne 1 ]; then
     echo "Usage: $0 user@host"
     exit 1
@@ -19,10 +21,13 @@ ssh "$DEST" "mkdir -p ~/aider"
 
 # Sync the repository
 rsync -avz --delete \
-    --exclude='.git/' \
     --exclude-from="$EXCLUDE_FILE" \
     "$REPO_ROOT/" \
     "$DEST:~/aider/"
+
+rsync -a .env .bash_history .gitignore "$DEST:~/aider/."
+
+rsync -a ~/dotfiles/screenrc "$DEST:.screenrc"
 
 # Clean up
 rm "$EXCLUDE_FILE"

@@ -49,11 +49,6 @@ fi
 
 # Print success message and instructions
 echo "Docker installation completed successfully!"
-echo -e "\n*** IMPORTANT: Group changes require a complete session refresh."
-echo "Please run these commands in sequence:"
-echo "1. sudo systemctl restart docker"
-echo "2. exit"
-echo -e "Then log back in and docker commands should work without sudo\n"
 
 # Start Docker service
 echo "Starting Docker service..."
@@ -66,8 +61,3 @@ docker --version
 
 echo "Docker Compose version:"
 docker compose version
-
-echo "Docker service status:"
-sudo systemctl status docker --no-pager
-
-EOF

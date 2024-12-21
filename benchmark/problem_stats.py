@@ -23,9 +23,12 @@ def get_dirs_from_leaderboard():
 def load_results(dirname):
     """Load all result files from a benchmark directory"""
     dirname = Path(dirname)
-    benchmark_dir = Path("tmp.benchmarks") / dirname
+
+    benchmark_dir = dirname
     if not benchmark_dir.exists():
-        return None
+        benchmark_dir = Path("tmp.benchmarks") / dirname
+        if not benchmark_dir.exists():
+            return None
 
     all_results = []
     parse_errors = []  # Track which exercises had parse errors for this model
@@ -70,8 +73,11 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
     valid_entries = []
     parse_errors_by_model = {}  # Track which exercises had parse errors for each model
 
+    dump(dir_entries)
+
     for dirname, model in dir_entries:
         results_data = load_results(dirname)
+
         if results_data:
             results, model_parse_errors = results_data
             parse_errors_by_model[model] = set(model_parse_errors)
@@ -299,7 +305,7 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
     if copy_hard_set:
         # Create hard set directory
         src_dir = Path("tmp.benchmarks/exercism")
-        dst_dir = Path("tmp.benchmarks/exercism-hard-set")
+        dst_dir = Path("tmp.benchmarks/exercism-polyglot")
 
         if dst_dir.exists():
             print(f"\nError: Destination directory {dst_dir} already exists")
@@ -340,7 +346,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--copy-hard-set",
         action="store_true",
-        help="Copy hard set problems to tmp.benchmarks/exercism-hard-set",
+        help="Copy hard set problems to tmp.benchmarks/exercism-polygot",
     )
     args = parser.parse_args()
 

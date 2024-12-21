@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Create directories if they don't exist
-mkdir -p tmp.benchmark/exercism
+mkdir -p tmp.benchmarks/exercism
 
 # Change to the exercism directory
-cd tmp.benchmark/exercism
+cd tmp.benchmarks/exercism
 
 # List of languages to clone
 languages=("cpp" "go" "java" "javascript" "python" "rust")
