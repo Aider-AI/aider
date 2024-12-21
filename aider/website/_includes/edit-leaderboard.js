@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
         rows[i].style.display = '';
         displayedData.push(allData[i]);
         leaderboardData.labels.push(allData[i].model);
-        leaderboardData.datasets[0].data.push(allData[i].pass_rate_2);
+        leaderboardData.datasets[0].data.push(allData[i].pass_rate);
       } else {
         rows[i].style.display = 'none';
       }
