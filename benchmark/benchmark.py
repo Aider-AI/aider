@@ -106,7 +106,11 @@ def show_stats(dirnames, graphs):
                 f"Warning: {row.dir_name} is incomplete: {row.completed_tests} of {row.total_tests}"
             )
 
-        kind = (row.model, row.edit_format)
+        try:
+            kind = (row.model, row.edit_format)
+        except AttributeError:
+            return
+
         if kind in seen:
             dump(row.dir_name)
             dump(seen[kind])
@@ -252,6 +256,7 @@ def main(
         if languages:
             requested = set(lang.strip().lower() for lang in languages.split(","))
             lang_dirs = [d for d in lang_dirs if d.name.lower() in requested]
+            dump(lang_dirs)
             if not lang_dirs:
                 print(f"No matching language directories found for: {languages}")
                 return []
@@ -411,6 +416,9 @@ def show_diffs(dirnames):
 def load_results(dirname):
     dirname = Path(dirname)
     all_results = []
+    # do this ai!
+    # add a --stats-languages switch that takes like java,cpp,python
+    # limit the glob here to those languages followed by /exercises/practice/*/.aider.results.json
     for fname in dirname.glob("*/exercises/practice/*/.aider.results.json"):
         try:
             results = json.loads(fname.read_text())
@@ -539,9 +547,10 @@ def summarize_results(dirname):
     show("test_timeouts")
     print(f"  total_tests: {res.total_tests}")
 
-    a_model = set(variants["model"]).pop()
-    command = f"aider --model {a_model}"
-    print(f"  command: {command}")
+    if variants["model"]:
+        a_model = set(variants["model"]).pop()
+        command = f"aider --model {a_model}"
+        print(f"  command: {command}")
 
     print(f"  date: {date}")
     print("  versions:", ",".join(versions))
