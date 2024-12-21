@@ -428,12 +428,12 @@ def load_results(dirname, stats_languages=None):
         
     for pattern in glob_patterns:
         for fname in dirname.glob(pattern):
-        try:
-            results = json.loads(fname.read_text())
-            all_results.append(results)
-        except json.JSONDecodeError:
-            print("json.JSONDecodeError", fname)
-            continue
+            try:
+                results = json.loads(fname.read_text())
+                all_results.append(results)
+            except json.JSONDecodeError:
+                print("json.JSONDecodeError", fname)
+                continue
     return all_results
 
 
