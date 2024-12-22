@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const redDiagonalPattern = pattern.draw('diagonal', 'rgba(255, 99, 132, 0.2)');
   let displayedData = [];
 
-  const HIGHTLIGHT_MODEL = 'no no no';
+  const HIGHLIGHT_MODEL = '{{ highlight_model | default: "no no no" }}';
   var leaderboardData = {
     labels: [],
     datasets: [{
@@ -16,11 +16,11 @@ document.addEventListener('DOMContentLoaded', function () {
           return diagonalPattern;
         }
         const label = leaderboardData.labels[context.dataIndex] || '';
-        return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
+        return (label && label.includes(HIGHLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
       },
       borderColor: function(context) {
         const label = context.chart.data.labels[context.dataIndex] || '';
-        return (label && label.includes(HIGHTLIGHT_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+        return (label && label.includes(HIGHLIGHT_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
       },
       borderWidth: 1
     }]
