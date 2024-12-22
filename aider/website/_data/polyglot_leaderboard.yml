@@ -179,3 +179,29 @@
   versions: 0.69.2.dev
   seconds_per_case: 84.4
   total_cost: 0.0000
+
+- dirname: 2024-12-22-21-26-35--polyglot-o1mini-whole
+  test_cases: 225
+  model: o1-mini
+  edit_format: whole
+  commit_hash: 37df899
+  pass_rate_1: 5.8
+  pass_rate_2: 32.9
+  pass_num_1: 13
+  pass_num_2: 74
+  percent_cases_well_formed: 96.9
+  error_outputs: 8
+  num_malformed_responses: 8
+  num_with_malformed_responses: 7
+  user_asks: 27
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model o1-mini
+  date: 2024-12-22
+  versions: 0.69.2.dev
+  seconds_per_case: 34.7
+  total_cost: 18.5770
