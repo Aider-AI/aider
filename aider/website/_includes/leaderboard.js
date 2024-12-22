@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
   leaderboardData.datasets[0].backgroundColor = function(context) {
     const row = displayedData[context.dataIndex];
     const label = leaderboardData.labels[context.dataIndex] || '';
-    if (label && label.includes(HIGHTLIGHT_MODEL)) {
+    if (label && label.includes(HIGHLIGHT_MODEL)) {
       if (row && row.edit_format === 'whole') return redDiagonalPattern;
       else return 'rgba(255, 99, 132, 0.2)';
     } else if (row && row.edit_format === 'whole') {
