@@ -26,7 +26,10 @@ This measures the LLM's coding ability, and whether it can
 write new code that integrates into existing code.
 The model also has to successfully apply all its changes to the source file without human intervention.
 
-<input type="text" id="editSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
+<div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin: 10px auto; max-width: 800px;">
+  <input type="text" id="editSearchInput" placeholder="Search..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+  <span style="color: #666;">Last benchmark run: {% assign latest_dirname = site.data.edit_leaderboard | map: 'dirname' | sort | last %}{{ latest_dirname | slice: 0, 10 | date: "%d %b %Y" }}</span>
+</div>
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
