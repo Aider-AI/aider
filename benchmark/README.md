@@ -50,10 +50,7 @@ cd aider
 mkdir tmp.benchmarks
 
 # Clone the repo with the exercises
-
-
-# Copy the practice exercises into the benchmark scratch dir
-cp -rp python/exercises/practice tmp.benchmarks/exercism-python
+git clone https://github.com/Aider-AI/polyglot-benchmark tmp.benchmarks/polyglot-benchmark
 
 # Build the docker container
 ./benchmark/docker_build.sh
@@ -72,11 +69,11 @@ Launch the docker container and run the benchmark inside it:
 pip install -e .
 
 # Run the benchmark:
-./benchmark/benchmark.py a-helpful-name-for-this-run --model gpt-3.5-turbo --edit-format whole --threads 10
+./benchmark/benchmark.py a-helpful-name-for-this-run --model gpt-3.5-turbo --edit-format whole --threads 10 --exercises-dir polyglot-benchmark
 ```
 
 The above will create a folder `tmp.benchmarks/YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run` with benchmarking results.
-Run like this, the script will run all 133 exercises in a random order.
+Run like this, the script will run all 225 exercises in a random order.
 
 You can run `./benchmark/benchmark.py --help` for a list of all the arguments, but here are the most useful to keep in mind:
 
@@ -101,7 +98,7 @@ The benchmark report is a yaml record with statistics about the run:
 
 ```yaml
 - dirname: 2024-07-04-14-32-08--claude-3.5-sonnet-diff-continue
-  test_cases: 133
+  test_cases: 225
   model: claude-3.5-sonnet
   edit_format: diff
   commit_hash: 35f21b5
@@ -142,7 +139,6 @@ You can see examples of the benchmark report yaml in the
 
 ## Limitations, notes
 
-- Benchmarking all 133 exercises against Claude 3.5 Sonnet will cost about $4.
 - Contributions of benchmark results are welcome! Submit results by opening a PR with edits to the
 [aider leaderboard data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 - These scripts are not intended for use by typical aider end users.
