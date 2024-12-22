@@ -153,3 +153,29 @@
   versions: 0.69.2.dev
   seconds_per_case: 31.8
   total_cost: 6.0583
+
+- dirname: 2024-12-22-13-22-32--polyglot-qwen-diff
+  test_cases: 225
+  model: Qwen2.5-Coder-32B-Instruct
+  edit_format: diff
+  commit_hash: 6d7e8be-dirty
+  pass_rate_1: 4.4
+  pass_rate_2: 8.0
+  pass_num_1: 10
+  pass_num_2: 18
+  percent_cases_well_formed: 71.6
+  error_outputs: 158
+  num_malformed_responses: 148
+  num_with_malformed_responses: 64
+  user_asks: 132
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 2
+  total_tests: 225
+  command: "aider --model openai/Qwen/Qwen2.5-Coder-32B-Instruct # via hyperbolic"
+  date: 2024-12-22
+  versions: 0.69.2.dev
+  seconds_per_case: 84.4
+  total_cost: 0.0000

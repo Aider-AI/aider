@@ -2,6 +2,7 @@
 
 ### main branch
 
+- Support for o1 models.
 - Support for running without git installed.
 - Show hints about AI! and AI? when user makes AI comments.
 - Ask 10% of users to opt-in to analytics.

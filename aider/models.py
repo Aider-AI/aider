@@ -666,6 +666,13 @@ MODEL_SETTINGS = [
         reminder="sys",
     ),
     ModelSettings(
+        "openrouter/deepseek/deepseek-chat",
+        "diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        reminder="sys",
+    ),
+    ModelSettings(
         "openrouter/openai/gpt-4o",
         "diff",
         weak_model_name="openrouter/openai/gpt-4o-mini",
