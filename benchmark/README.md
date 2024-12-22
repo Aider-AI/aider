@@ -1,8 +1,8 @@
 
-# Aider code editing benchmark harness
+# Aider benchmark harness
 
-Aider uses a "code editing" benchmark to quantitatively measure how well it works
-with the GPT-3.5 and GPT-4 models.
+Aider uses benchmarks to quantitatively measure how well it works
+various LLMs.
 This directory holds the harness and tools needed to run the benchmarking suite.
 
 ## Background
