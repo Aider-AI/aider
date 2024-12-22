@@ -140,7 +140,14 @@ class TestMain(TestCase):
 
             self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
+            # Test without .env file present
             gitignore.write_text("one\ntwo\n")
+            check_gitignore(cwd, io)
+            self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
+
+            # Test with .env file present
+            env_file = cwd / ".env"
+            env_file.touch()
             check_gitignore(cwd, io)
             self.assertEqual("one\ntwo\n.aider*\n.env\n", gitignore.read_text())
             del os.environ["GIT_CONFIG_GLOBAL"]
