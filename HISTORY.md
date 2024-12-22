@@ -2,11 +2,12 @@
 
 ### main branch
 
-- Support for o1 models.
+- Full support for o1 models.
 - Support for running without git installed.
 - Show hints about AI! and AI? when user makes AI comments.
 - Ask 10% of users to opt-in to analytics.
-- Aider wrote 70% of the code in this release.
+- Improved environment variable setup messages on Windows.
+- Aider wrote 75% of the code in this release.
 
 ### Aider v0.69.0
 
