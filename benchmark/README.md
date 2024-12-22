@@ -66,7 +66,7 @@ Launch the docker container and run the benchmark inside it:
 
 # Inside the container, install aider as a development build.
 # This way you're running the code that you cloned above, including any local changes.
-pip install -e .
+pip install -e .[dev]
 
 # Run the benchmark:
 ./benchmark/benchmark.py a-helpful-name-for-this-run --model gpt-3.5-turbo --edit-format whole --threads 10 --exercises-dir polyglot-benchmark
