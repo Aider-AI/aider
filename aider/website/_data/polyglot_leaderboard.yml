@@ -182,7 +182,7 @@
 
 - dirname: 2024-12-22-21-26-35--polyglot-o1mini-whole
   test_cases: 225
-  model: o1-mini
+  model: o1-mini-2024-09-12
   edit_format: whole
   commit_hash: 37df899
   pass_rate_1: 5.8
