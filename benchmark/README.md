@@ -17,7 +17,7 @@ GPT's coding ability, but also its capacity to *edit existing code*
 and *format those code edits* so that aider can save the
 edits to the local source files.
 
-See [this writeup for a longer discussion about the benchmark](https://aider.chat/2024/12/21/polyglot.html)
+See [this writeup for a longer discussion about the benchmark](https://aider.chat/2024/12/21/polyglot.html).
 
 The benchmark is intended to be run *inside a docker container*.
 This is because the benchmarking harness will be
@@ -32,7 +32,7 @@ There are 3 main tasks involved in benchmarking aider:
 
 1. Install and setup for benchmarking.
 
-2. Run the benchmark to measure performance across the 133 exercises.
+2. Run the benchmark to measure performance across all the exercises.
 
 3. Generate a summary report of how many of the exercises succeeded or failed.
 
@@ -73,14 +73,14 @@ pip install -e .[dev]
 ```
 
 The above will create a folder `tmp.benchmarks/YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run` with benchmarking results.
-Run like this, the script will run all 225 exercises in a random order.
+Run like this, the script will run all the exercises in a random order.
 
 You can run `./benchmark/benchmark.py --help` for a list of all the arguments, but here are the most useful to keep in mind:
 
 - `--model` is the name of the model, same as you would pass directly to `aider`.
 - `--edit-format` is the name of the edit format, same as you would pass directly to `aider`. When working with an experimental LLM, I recommend starting with `whole`
 - `--threads` specifies how many exercises to benchmark in parallel. Start with a single thread if you are working out the kinks on your benchmarking setup or working with a new model, etc. Once you are getting reliable results, you can speed up the process by running with more threads. 10 works well against the OpenAI APIs.
-- `--num-tests` specifies how many of the 133 tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
+- `--num-tests` specifies how many of the tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
 
 ### Benchmark report
