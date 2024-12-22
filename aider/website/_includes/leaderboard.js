@@ -77,6 +77,11 @@ document.addEventListener('DOMContentLoaded', function () {
   var tableBody = document.querySelector('table tbody');
   allData.forEach(function(row, index) {
     var tr = tableBody.children[index];
+    if (!tr) {
+      // If the row doesn't exist, create it
+      tr = document.createElement('tr');
+      tableBody.appendChild(tr);
+    }
     tr.id = 'edit-row-' + index;
     tr.style.cursor = 'pointer';
     tr.onclick = function() {
