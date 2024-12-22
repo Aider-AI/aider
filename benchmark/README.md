@@ -7,8 +7,7 @@ This directory holds the harness and tools needed to run the benchmarking suite.
 
 ## Background
 
-The benchmark is based on the [Exercism
-python](https://github.com/exercism/python) coding exercises.
+The benchmark is based on the [Exercism](https://github.com/exercism/python) coding exercises.
 This
 benchmark evaluates how effectively aider and GPT can translate a
 natural language coding request into executable code saved into
@@ -18,7 +17,7 @@ GPT's coding ability, but also its capacity to *edit existing code*
 and *format those code edits* so that aider can save the
 edits to the local source files.
 
-See [this writeup for a longer discussion about the benchmark and how to interpret the results](https://aider.chat/docs/benchmarks.html).
+See [this writeup for a longer discussion about the benchmark](https://aider.chat/2024/12/21/polyglot.html)
 
 The benchmark is intended to be run *inside a docker container*.
 This is because the benchmarking harness will be
@@ -50,8 +49,8 @@ git clone git@github.com:Aider-AI/aider.git
 cd aider
 mkdir tmp.benchmarks
 
-# Clone the exercism repo
-git clone git@github.com:exercism/python.git
+# Clone the repo with the exercises
+
 
 # Copy the practice exercises into the benchmark scratch dir
 cp -rp python/exercises/practice tmp.benchmarks/exercism-python
