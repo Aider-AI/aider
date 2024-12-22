@@ -13,7 +13,7 @@ This old
 [aider code editing leaderboard](edit.html)
 has been replaced by the
 new, much more challenging
-[polyglot leaderboard](/docs/leaderboard/).
+[polyglot leaderboard](/docs/leaderboards/).
 
 [Aider's code editing benchmark](/docs/benchmarks.html#the-benchmark) asks the LLM to edit python source files to complete 133 small coding exercises
 from Exercism. 

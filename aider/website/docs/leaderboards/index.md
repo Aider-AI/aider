@@ -24,7 +24,7 @@ The old
 [aider code editing leaderboard](edit.html)
 has been replaced by this 
 new, much more challenging
-[polyglot leaderboard]().
+[polyglot leaderboard](https://aider.chat/2024/12/21/polyglot.html).
 
 ## Polyglot leaderboard
 
