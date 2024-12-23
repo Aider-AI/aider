@@ -2181,3 +2181,52 @@
   versions: 0.68.1.dev
   seconds_per_case: 7.3
   total_cost: 0.0000
+
+- dirname: 2024-12-18-01-50-08--o1
+  test_cases: 133
+  model: o1
+  edit_format: diff
+  commit_hash: 074c636-dirty
+  pass_rate_1: 65.4
+  pass_rate_2: 84.2
+  percent_cases_well_formed: 99.2
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 0
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  command: aider --model openrouter/openai/o1
+  date: 2024-12-18
+  versions: 0.69.2.dev
+  seconds_per_case: 29.9
+  total_cost: 0.0000
+
+- dirname: 2024-12-21-22-06-01--polyglot-o1-mini-whole
+  test_cases: 225
+  model: o1-mini-2024-09-12
+  edit_format: whole
+  commit_hash: a755079-dirty
+  pass_rate_1: 8.9
+  pass_rate_2: 27.1
+  pass_num_1: 20
+  pass_num_2: 61
+  percent_cases_well_formed: 95.6
+  error_outputs: 15
+  num_malformed_responses: 14
+  num_with_malformed_responses: 10
+  user_asks: 37
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model o1-mini
+  date: 2024-12-21
+  versions: 0.69.2.dev
+  seconds_per_case: 34.3
+  total_cost: 17.6270

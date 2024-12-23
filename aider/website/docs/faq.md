@@ -237,13 +237,11 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,661,418</td><td class='right'>87.5%</td></tr>
-<tr><td>o1-preview</td><td class='right'>117,312</td><td class='right'>6.2%</td></tr>
-<tr><td>gemini/REDACTED</td><td class='right'>82,572</td><td class='right'>4.4%</td></tr>
-<tr><td>deepseek/deepseek-coder</td><td class='right'>24,628</td><td class='right'>1.3%</td></tr>
-<tr><td>gpt-4o</td><td class='right'>9,243</td><td class='right'>0.5%</td></tr>
-<tr><td>gpt-4o-mini</td><td class='right'>1,992</td><td class='right'>0.1%</td></tr>
-<tr><td>mistral/REDACTED</td><td class='right'>620</td><td class='right'>0.0%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,918,086</td><td class='right'>98.0%</td></tr>
+<tr><td>o1-preview</td><td class='right'>33,530</td><td class='right'>1.7%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>4,273</td><td class='right'>0.2%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>1,234</td><td class='right'>0.1%</td></tr>
+<tr><td>openai/gpt-4o-mini</td><td class='right'>141</td><td class='right'>0.0%</td></tr>
 </table>
 
 {: .note :}
