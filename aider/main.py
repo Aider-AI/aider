@@ -113,7 +113,7 @@ def setup_git(git_root, io):
         except ANY_GIT_ERROR:
             pass
     elif cwd == Path.home():
-        io.tool_warning("You should probably run aider in a directory, not your home dir.")
+        io.tool_warning("You should probably run aider in your project's directory, not your home dir.")
         return
     elif cwd and io.confirm_ask(
         "No git repo found, create one to track aider's changes (recommended)?"
