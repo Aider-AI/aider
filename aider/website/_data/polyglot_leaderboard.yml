@@ -78,7 +78,7 @@
 
 - dirname: 2024-12-21-19-23-03--polyglot-o1-hard-diff
   test_cases: 224
-  model: o1-2024-12-17
+  model: o1-2024-12-17 (high)
   edit_format: diff
   commit_hash: a755079-dirty
   pass_rate_1: 23.7
