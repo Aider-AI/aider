@@ -893,9 +893,12 @@ class InputOutput:
                 self.chat_history_file = None  # Disable further attempts to write
 
     def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
+        rel_fnames = rel_fnames or []
+        rel_read_only_fnames = rel_read_only_fnames or []
+
         if not self.pretty:
             read_only_files = []
-            for full_path in sorted(rel_read_only_fnames or []):
+            for full_path in sorted(rel_read_only_fnames):
                 read_only_files.append(f"{full_path} (read only)")
 
             editable_files = []
@@ -909,11 +912,12 @@ class InputOutput:
         output = StringIO()
         console = Console(file=output, force_terminal=False)
 
+        # If the file is way outside the current directory, show the absolute path
         def external_absolute(fname):
-            fname if not fname.startswith(".." + os.sep + ".." + os.sep) else os.path.abspath(fname)
+            return fname if not fname.startswith(".." + os.sep + ".." + os.sep) else os.path.abspath(fname)
 
-        read_only_files = sorted([external_absolute(f) for f in (rel_read_only_fnames or [])])
-        editable_files = sorted([external_absolute(f) for f in rel_fnames if f not in rel_read_only_fnames])
+        read_only_files = sorted(external_absolute(f) for f in rel_read_only_fnames)
+        editable_files = sorted(external_absolute(f) for f in rel_fnames if f not in rel_read_only_fnames)
 
         if read_only_files:
             files_with_label = ["Readonly:"] + read_only_files
