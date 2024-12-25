@@ -909,8 +909,11 @@ class InputOutput:
         output = StringIO()
         console = Console(file=output, force_terminal=False)
 
-        read_only_files = sorted(rel_read_only_fnames or [])
-        editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
+        def external_absolute(fname):
+            fname if not fname.startswith(".." + os.sep + ".." + os.sep) else os.path.abspath(fname)
+
+        read_only_files = sorted([external_absolute(f) for f in (rel_read_only_fnames or [])])
+        editable_files = sorted([external_absolute(f) for f in rel_fnames if f not in rel_read_only_fnames])
 
         if read_only_files:
             files_with_label = ["Readonly:"] + read_only_files
