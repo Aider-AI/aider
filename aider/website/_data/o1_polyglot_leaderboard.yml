@@ -104,7 +104,7 @@
 
 - dirname: 2024-12-21-20-56-21--polyglot-deepseek-diff
   test_cases: 225
-  model: deepseek-chat
+  model: DeepSeek Chat V2.5
   edit_format: diff
   commit_hash: a755079-dirty
   pass_rate_1: 5.3
