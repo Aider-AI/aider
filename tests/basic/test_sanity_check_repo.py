@@ -8,6 +8,8 @@ from git import GitError, Repo
 
 from aider import urls
 from aider.main import sanity_check_repo
+from aider.repo import GitRepo
+from aider.io import InputOutput
 
 
 @pytest.fixture
@@ -182,3 +184,41 @@ def test_sanity_check_repo_with_no_repo(mock_io):
     # Assert that no errors or outputs were logged
     mock_io.tool_error.assert_not_called()
     mock_io.tool_output.assert_not_called()
+
+
+def corrupt_git_index(repo_path):
+    index_path = os.path.join(repo_path, ".git", "index")
+    with open(index_path, "r+b") as f:
+        # Verify the file has the correct signature
+        signature = f.read(4)
+        if signature != b"DIRC":
+            raise ValueError("Invalid git index file signature.")
+
+        # Seek to the data section and inject invalid bytes to simulate encoding error
+        f.seek(77)
+        f.write(b"\xF5" * 5)
+
+
+def test_sanity_check_repo_with_corrupt_index(create_repo, mock_io):
+    repo_path, repo = create_repo
+    # Corrupt the Git index file
+    corrupt_git_index(repo_path)
+
+    # Create GitRepo instance
+    git_repo = GitRepo(InputOutput(), None, repo_path)
+
+    # Call the function
+    result = sanity_check_repo(git_repo, mock_io)
+
+    # Assert that the function returns False
+    assert result is False
+
+    # Assert that the appropriate error messages were logged
+    mock_io.tool_error.assert_called_with("Unable to read git repository, it may be corrupt?")
+    mock_io.tool_output.assert_called_with(
+        (
+            "Failed to read the Git repository. This issue is likely caused by a path encoded "
+            "in a format different from the expected encoding \"utf-8\".\n"
+            "Internal error: 'utf-8' codec can't decode byte 0xf5 in position 3: invalid start byte"
+        )
+    )
