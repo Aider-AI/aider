@@ -237,8 +237,8 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,951,105</td><td class='right'>99.0%</td></tr>
-<tr><td>claude-3-5-haiku-20241022</td><td class='right'>14,008</td><td class='right'>0.7%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,759,513</td><td class='right'>98.9%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>14,008</td><td class='right'>0.8%</td></tr>
 <tr><td>gpt-4o</td><td class='right'>4,273</td><td class='right'>0.2%</td></tr>
 <tr><td>openrouter/REDACTED</td><td class='right'>1,234</td><td class='right'>0.1%</td></tr>
 <tr><td>openai/gpt-4o-mini</td><td class='right'>141</td><td class='right'>0.0%</td></tr>
