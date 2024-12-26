@@ -1316,6 +1316,35 @@ class Commands:
                     f"Command '{cmd}' is only supported in interactive mode, skipping."
                 )
 
+    def test_cmd_load_with_switch_coder(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a temporary file with commands
+            commands_file = Path(repo_dir) / "test_commands.txt"
+            commands_file.write_text("/ask Tell me about the code\n/model gpt-4\n")
+
+            # Mock run to raise SwitchCoder for /ask and /model
+            def mock_run(cmd):
+                if cmd.startswith(("/ask", "/model")):
+                    raise SwitchCoder()
+                return None
+
+            with mock.patch.object(commands, "run", side_effect=mock_run):
+                # Capture tool_error output
+                with mock.patch.object(io, "tool_error") as mock_tool_error:
+                    commands.cmd_load(str(commands_file))
+
+                    # Check that appropriate error messages were shown
+                    mock_tool_error.assert_any_call(
+                        "Command '/ask Tell me about the code' is only supported in interactive mode, skipping."
+                    )
+                    mock_tool_error.assert_any_call(
+                        "Command '/model gpt-4' is only supported in interactive mode, skipping."
+                    )
+
     def completions_raw_save(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
 
