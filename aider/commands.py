@@ -1309,6 +1309,7 @@ class Commands:
                 continue
 
             self.io.tool_output(f"\nExecuting: {cmd}")
+            # catch switchcoder exception and print error that cmd is only supported with interactive /commands ai!
             self.run(cmd)
 
     def completions_raw_save(self, document, complete_event):
