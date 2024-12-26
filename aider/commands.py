@@ -7,6 +7,7 @@ import tempfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
+from unittest import mock
 
 import pyperclip
 from PIL import Image, ImageGrab
@@ -14,6 +15,9 @@ from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
+from aider.coders import Coder
+from aider.io import InputOutput
+from aider.utils import GitTemporaryDirectory
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
