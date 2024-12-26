@@ -913,6 +913,7 @@ class InputOutput:
         editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
 
         if read_only_files:
+            # for each ro file display the abs path if it is shorter than the rel ai!
             files_with_label = ["Readonly:"] + read_only_files
             read_only_output = StringIO()
             Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
