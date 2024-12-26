@@ -24,8 +24,15 @@ document.addEventListener('DOMContentLoaded', function () {
     var linesData = {
         labels: labels,
         datasets: [{
-            label: 'Aider\'s lines of new code',
+            label: 'Lines by aider',
             data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_total }} },{% endfor %}],
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'Lines by human',
+            data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.total_lines - row.aider_total }} },{% endfor %}],
             backgroundColor: 'rgba(255, 99, 132, 0.8)',
             borderColor: 'rgba(255, 99, 132, 1)',
             borderWidth: 1
@@ -98,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 },
                 y: {
+                    stacked: true,
                     title: {
                         display: true,
                         text: 'Lines of new code'
@@ -107,12 +115,12 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             plugins: {
                 legend: {
-                    display: false
+                    display: true
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            var label = 'New lines of code by aider';
+                            var label = context.dataset.label;
                             var value = context.parsed.y || 0;
                             return `${label}: ${value}`;
                         }
@@ -120,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 title: {
                     display: true,
-                    text: 'Lines of new code written by aider, by release',
+                    text: 'Lines of new code by author, by release',
                     font: {
                         size: 16
                     }
