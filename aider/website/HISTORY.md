@@ -26,8 +26,15 @@ cog.out(text)
 ### main branch
 
 - Full support for o1 models.
+- Watch files now honors `--subtree-only`, and only watches that sub tree.
+- Improved prompting for watch files, to work more reliably with more models.
+- New install methods via uv, including one-liners.
+- Better error handling when non-interactive commands are attempted via `/load` or `--load`.
+- Bugfix for auto-suggest.
+- Gracefully handle unicode errors in git path names.
+- Support for openrouter/deepseek/deepseek-chat model.
 - Ask 10% of users to opt-in to analytics.
-- Aider wrote 75% of the code in this release.
+- Aider wrote 74% of the code in this release.
 
 ### Aider v0.69.1
 
