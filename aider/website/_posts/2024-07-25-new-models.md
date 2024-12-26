@@ -36,7 +36,7 @@ $ python -m pip install -U aider-chat
 $ cd /to/your/git/repo
 
 $ export DEEPSEEK_API_KEY=your-key-goes-here
-$ aider --model deepseek/deepseek-coder
+$ aider --model deepseek/deepseek-chat
 
 $ export MISTRAL_API_KEY=your-key-goes-here
 $ aider --model mistral/mistral-large-2407

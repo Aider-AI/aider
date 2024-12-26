@@ -66,7 +66,7 @@ cog.out(model_list)
 - codestral/codestral-2405
 - codestral/codestral-latest
 - deepseek-chat
-- deepseek-coder
+- deepseek-chat
 - eu.anthropic.claude-3-5-sonnet-20241022-v2:0
 - mistral/codestral-2405
 - mistral/codestral-latest

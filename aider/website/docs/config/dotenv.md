@@ -88,7 +88,7 @@ cog.outl("```")
 ## Use gpt-3.5-turbo model for the main chat
 #AIDER_35TURBO=
 
-## Use deepseek/deepseek-coder model for the main chat
+## Use deepseek/deepseek-chat model for the main chat
 #AIDER_DEEPSEEK=
 
 ## Use o1-mini model for the main chat

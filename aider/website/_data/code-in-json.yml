@@ -82,9 +82,9 @@
   versions: 0.50.2-dev
   seconds_per_case: 10.5
   total_cost: 1.6714
-- dirname: 2024-08-15-13-26-38--json-no-lint-deepseek-coder-whole
+- dirname: 2024-08-15-13-26-38--json-no-lint-deepseek-chat-whole
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 59.4
@@ -98,7 +98,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 27.9
@@ -187,9 +187,9 @@
   versions: 0.50.2-dev
   seconds_per_case: 16.5
   total_cost: 1.6556
-- dirname: 2024-08-15-14-06-12--json-no-lint-deepseek-coder-whole-2
+- dirname: 2024-08-15-14-06-12--json-no-lint-deepseek-chat-whole-2
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 60.9
@@ -203,7 +203,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 25.8
@@ -292,9 +292,9 @@
   versions: 0.50.2-dev
   seconds_per_case: 11.0
   total_cost: 1.6555
-- dirname: 2024-08-15-14-21-06--json-no-lint-deepseek-coder-whole-3
+- dirname: 2024-08-15-14-21-06--json-no-lint-deepseek-chat-whole-3
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 61.7
@@ -308,7 +308,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 3
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 24.4
@@ -397,9 +397,9 @@
   versions: 0.50.2-dev
   seconds_per_case: 11.3
   total_cost: 1.6635
-- dirname: 2024-08-15-14-38-35--json-no-lint-deepseek-coder-whole-4
+- dirname: 2024-08-15-14-38-35--json-no-lint-deepseek-chat-whole-4
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 59.4
@@ -413,7 +413,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 24.5
@@ -502,9 +502,9 @@
   versions: 0.50.2-dev
   seconds_per_case: 11.4
   total_cost: 1.6685
-- dirname: 2024-08-15-14-54-41--json-no-lint-deepseek-coder-whole-5
+- dirname: 2024-08-15-14-54-41--json-no-lint-deepseek-chat-whole-5
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: Markdown
   commit_hash: bac04a2
   pass_rate_1: 61.7
@@ -518,7 +518,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 0
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 24.5
@@ -713,9 +713,9 @@
   seconds_per_case: 7.6
   total_cost: 1.4948
 
-- dirname: 2024-08-15-19-35-32--json-no-lint-again-deepseek-coder-func-1
+- dirname: 2024-08-15-19-35-32--json-no-lint-again-deepseek-chat-func-1
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: JSON
   commit_hash: 3a2ac02-dirty
   pass_rate_1: 50.4
@@ -729,14 +729,14 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 17.8
   total_cost: 0.0330
-- dirname: 2024-08-15-19-37-50--json-no-lint-again-deepseek-coder-func-2
+- dirname: 2024-08-15-19-37-50--json-no-lint-again-deepseek-chat-func-2
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: JSON
   commit_hash: 1a98c28
   pass_rate_1: 49.6
@@ -750,14 +750,14 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 1
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 18.3
   total_cost: 0.0336
-- dirname: 2024-08-15-19-40-20--json-no-lint-again-deepseek-coder-func-3
+- dirname: 2024-08-15-19-40-20--json-no-lint-again-deepseek-chat-func-3
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: JSON
   commit_hash: 1a98c28
   pass_rate_1: 48.9
@@ -771,14 +771,14 @@
   indentation_errors: 1
   exhausted_context_windows: 1
   test_timeouts: 2
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 18.4
   total_cost: 0.0337
-- dirname: 2024-08-15-19-44-07--json-no-lint-again-deepseek-coder-func-4
+- dirname: 2024-08-15-19-44-07--json-no-lint-again-deepseek-chat-func-4
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: JSON
   commit_hash: 1a98c28
   pass_rate_1: 53.4
@@ -792,14 +792,14 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 17.6
   total_cost: 0.0330
-- dirname: 2024-08-15-19-46-48--json-no-lint-again-deepseek-coder-func-5
+- dirname: 2024-08-15-19-46-48--json-no-lint-again-deepseek-chat-func-5
   test_cases: 133
-  model: deepseek-coder V2 0724
+  model: deepseek-chat V2 0724
   edit_format: JSON
   commit_hash: 1a98c28-dirty
   pass_rate_1: 53.4
@@ -813,7 +813,7 @@
   indentation_errors: 0
   exhausted_context_windows: 0
   test_timeouts: 2
-  command: aider --model deepseek-coder
+  command: aider --model deepseek-chat
   date: 2024-08-15
   versions: 0.50.2-dev
   seconds_per_case: 18.0

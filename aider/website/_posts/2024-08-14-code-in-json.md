@@ -147,7 +147,7 @@ Four of the strongest code editing models were benchmarked
 to assess the impact of JSON-wrapping code:
 
 - claude-3-5-sonnet-20240620
-- deepseek-coder (V2 0724)
+- deepseek-chat (V2 0724)
 - gpt-4o-2024-05-13
 - gpt-4o-2024-08-06
 
