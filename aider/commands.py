@@ -1339,7 +1339,8 @@ class Commands:
 
                     # Check that appropriate error messages were shown
                     mock_tool_error.assert_any_call(
-                        "Command '/ask Tell me about the code' is only supported in interactive mode, skipping."
+                        "Command '/ask Tell me about the code' is only supported in interactive"
+                        " mode, skipping."
                     )
                     mock_tool_error.assert_any_call(
                         "Command '/model gpt-4' is only supported in interactive mode, skipping."
