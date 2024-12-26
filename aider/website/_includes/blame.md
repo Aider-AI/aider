@@ -33,8 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             label: 'Human',
             data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.total_lines | minus: row.aider_total }} },{% endfor %}],
-            backgroundColor: 'rgba(255, 99, 132, 0.8)',
-            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(200, 200, 200, 0.8)',
+            borderColor: 'rgba(200, 200, 200, 1)',
             borderWidth: 1
         }]
     };
