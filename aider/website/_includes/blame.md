@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
         options: {
             scales: {
                 x: {
+                    stacked: true,
                     type: 'category',
                     title: {
                         display: true,
