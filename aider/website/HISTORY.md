@@ -29,11 +29,12 @@ cog.out(text)
 - Watch files now honors `--subtree-only`, and only watches that sub tree.
 - Improved prompting for watch files, to work more reliably with more models.
 - New install methods via uv, including one-liners.
+- Support for openrouter/deepseek/deepseek-chat model.
 - Better error handling when non-interactive commands are attempted via `/load` or `--load`.
+- Display read-only files with abs path if it's shorter than rel path.
+- Ask 10% of users to opt-in to analytics.
 - Bugfix for auto-suggest.
 - Gracefully handle unicode errors in git path names.
-- Support for openrouter/deepseek/deepseek-chat model.
-- Ask 10% of users to opt-in to analytics.
 - Aider wrote 74% of the code in this release.
 
 ### Aider v0.69.1
