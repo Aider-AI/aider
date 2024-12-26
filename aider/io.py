@@ -920,7 +920,7 @@ class InputOutput:
             for rel_path in read_only_files:
                 abs_path = os.path.abspath(os.path.join(self.root, rel_path))
                 ro_paths.append(abs_path if len(abs_path) < len(rel_path) else rel_path)
-            
+
             files_with_label = ["Readonly:"] + ro_paths
             read_only_output = StringIO()
             Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
