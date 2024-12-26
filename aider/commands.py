@@ -16,16 +16,15 @@ from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
 from aider.coders import Coder
-from aider.io import InputOutput
-from aider.utils import GitTemporaryDirectory
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
+from aider.io import InputOutput
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
+from aider.utils import GitTemporaryDirectory, is_image_file
 
 from .dump import dump  # noqa: F401
 
