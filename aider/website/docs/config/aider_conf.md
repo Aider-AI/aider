@@ -96,7 +96,7 @@ cog.outl("```")
 ## Use gpt-3.5-turbo model for the main chat
 #35turbo: false
 
-## Use deepseek/deepseek-coder model for the main chat
+## Use deepseek/deepseek-chat model for the main chat
 #deepseek: false
 
 ## Use o1-mini model for the main chat
