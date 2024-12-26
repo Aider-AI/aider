@@ -24,14 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
     var linesData = {
         labels: labels,
         datasets: [{
-            label: 'Lines by aider',
+            label: 'Aider',
             data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_total }} },{% endfor %}],
             backgroundColor: 'rgba(54, 162, 235, 0.8)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
         },
         {
-            label: 'Lines by human',
+            label: 'Human',
             data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.total_lines | minus: row.aider_total }} },{% endfor %}],
             backgroundColor: 'rgba(255, 99, 132, 0.8)',
             borderColor: 'rgba(255, 99, 132, 1)',
@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
         options: {
             scales: {
                 x: {
-                    stacked: true,
                     type: 'category',
                     title: {
                         display: true,
@@ -96,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
             scales: {
                 x: {
                     type: 'category',
+                    stacked: true,
                     title: {
                         display: true,
                         text: 'Version'
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 title: {
                     display: true,
-                    text: 'Lines of new code by author, by release',
+                    text: 'Lines of new code, by release',
                     font: {
                         size: 16
                     }
