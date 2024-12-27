@@ -31,7 +31,7 @@ from aider.io import InputOutput
 
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
-EXERCISES_DIR_DEFAULT = "exercism-python"
+EXERCISES_DIR_DEFAULT = "polyglot-benchmark"
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
