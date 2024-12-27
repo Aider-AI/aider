@@ -1226,6 +1226,10 @@ class Commands:
                 self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def _add_read_only_file(self, abs_path, original_name):
+        if self.coder.repo and self.coder.repo.ignored_file(original_name):
+            self.io.tool_warning(f"Skipping {original_name} due to aiderignore or --subtree-only.")
+            return
+
         if is_image_file(original_name) and not self.coder.main_model.info.get("supports_vision"):
             self.io.tool_error(
                 f"Cannot add image file {original_name} as the"
