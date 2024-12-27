@@ -1,5 +1,24 @@
-<canvas id="blameChart" width="800" height="360" style="margin-top: 20px"></canvas>
-<canvas id="linesChart" width="800" height="360" style="margin-top: 20px"></canvas>
+<div class="chart-container">
+    <canvas id="blameChart" style="margin-top: 20px"></canvas>
+</div>
+<div class="chart-container">
+    <canvas id="linesChart" style="margin-top: 20px"></canvas>
+</div>
+
+<style>
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 360px;
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 480px;  /* Taller on mobile */
+    }
+}
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
@@ -43,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'bar',
         data: blameData,
         options: {
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     type: 'category',
@@ -92,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'bar',
         data: linesData,
         options: {
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     type: 'category',
