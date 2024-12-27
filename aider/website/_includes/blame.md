@@ -138,7 +138,8 @@ document.addEventListener('DOMContentLoaded', function () {
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top-left'
+                    position: 'chartArea',
+                    reverse: true
                 },
                 tooltip: {
                     callbacks: {
