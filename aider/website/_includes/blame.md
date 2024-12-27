@@ -137,7 +137,8 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             plugins: {
                 legend: {
-                    display: true
+                    display: true,
+                    position: 'top-left'
                 },
                 tooltip: {
                     callbacks: {
