@@ -106,7 +106,7 @@ def get_parser(default_config_files, git_root):
         const=gpt_3_model_name,
         help=f"Use {gpt_3_model_name} model for the main chat",
     )
-    deepseek_model = "deepseek/deepseek-coder"
+    deepseek_model = "deepseek/deepseek-chat"
     group.add_argument(
         "--deepseek",
         action="store_const",
@@ -427,7 +427,8 @@ def get_parser(default_config_files, git_root):
         default="default",
         help=(
             "Set the markdown code theme (default: default, other options include monokai,"
-            " solarized-dark, solarized-light)"
+            " solarized-dark, solarized-light, or a Pygments builtin style,"
+            " see https://pygments.org/styles for available themes)"
         ),
     )
     group.add_argument(

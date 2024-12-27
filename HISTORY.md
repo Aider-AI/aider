@@ -1,13 +1,41 @@
 # Release history
 
-### main branch
+### Aider v0.70.0
 
-- Use `# ... AI?` comments to ask questions about your code.
-- New `--multiline` flag makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
-- Added "flash" alias for Gemini 2.0 Flash experimental model.
-- Improved clipboard error handling with helpful messages.
+- Full support for o1 models.
+- Watch files now honors `--subtree-only`, and only watches that subtree.
+- Improved prompting for watch files, to work more reliably with more models.
+- New install methods via uv, including one-liners.
+- Support for openrouter/deepseek/deepseek-chat model.
+- Better error handling when interactive commands are attempted via `/load` or `--load`.
+- Display read-only files with abs path if its shorter than rel path.
+- Ask 10% of users to opt-in to analytics.
+- Bugfix for auto-suggest.
+- Gracefully handle unicode errors in git path names.
+- Aider wrote 74% of the code in this release. 
+
+### Aider v0.69.1
+
+- Fix for gemini model names in model metadata.
+- Show hints about AI! and AI? when user makes AI comments.
+- Support for running without git installed.
+- Improved environment variable setup messages on Windows.
+
+### Aider v0.69.0
+
+- [Watch files](https://aider.chat/docs/usage/watch.html) improvements:
+  - Use `# ... AI?` comments to trigger aider and ask questions about your code.
+  - Now watches *all* files, not just certain source files.
+  - Use `# AI comments`, `// AI comments`, or `-- AI comments` to give aider instructions in any text file.
+- Full support for Gemini Flash 2.0 Exp:
+  - `aider --model flash` or `aider --model gemini/gemini-2.0-flash-exp`
+- [New `--multiline` flag and `/multiline-mode` command](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
+- `/copy-context <instructions>` now takes optional "instructions" when [copying code context to the clipboard](https://aider.chat/docs/usage/copypaste.html#copy-aiders-code-context-to-your-clipboard-paste-into-the-web-ui).
+- Improved clipboard error handling with helpful requirements install info.
+- Ask 5% of users if they want to opt-in to analytics.
 - `/voice` now lets you edit the transcribed text before sending.
-- Aider wrote 12% of the code in this release
+- Disabled auto-complete in Y/N prompts.
+- Aider wrote 68% of the code in this release.
 
 ### Aider v0.68.0
 

@@ -94,9 +94,6 @@ def test_need_to_ask(temp_data_dir):
     assert analytics.need_to_ask(True) is True
     assert analytics.need_to_ask(False) is False
 
-    analytics.user_id = "111"
-    assert analytics.need_to_ask(None) is False
-
     analytics.user_id = "000"
     assert analytics.need_to_ask(None) is True
 
@@ -108,32 +105,32 @@ def test_need_to_ask(temp_data_dir):
 
 
 def test_is_uuid_in_percentage():
-    analytics = Analytics()
+    from aider.analytics import is_uuid_in_percentage
 
     # Test basic percentage thresholds
-    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 1) is True
-    assert analytics.is_uuid_in_percentage("01999000000000000000000000000000", 1) is True
-    assert analytics.is_uuid_in_percentage("02000000000000000000000000000000", 1) is True
-    assert analytics.is_uuid_in_percentage("02910000000000000000000000000001", 1) is False
-    assert analytics.is_uuid_in_percentage("03000000000000000000000000000000", 1) is False
-    assert analytics.is_uuid_in_percentage("ff000000000000000000000000000000", 1) is False
+    assert is_uuid_in_percentage("00000000000000000000000000000000", 1) is True
+    assert is_uuid_in_percentage("01999000000000000000000000000000", 1) is True
+    assert is_uuid_in_percentage("02000000000000000000000000000000", 1) is True
+    assert is_uuid_in_percentage("02910000000000000000000000000001", 1) is False
+    assert is_uuid_in_percentage("03000000000000000000000000000000", 1) is False
+    assert is_uuid_in_percentage("ff000000000000000000000000000000", 1) is False
 
-    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 10) is True
-    assert analytics.is_uuid_in_percentage("19000000000000000000000000000000", 10) is True
-    assert analytics.is_uuid_in_percentage("1a000000000000000000000000000000", 10) is False
-    assert analytics.is_uuid_in_percentage("ff000000000000000000000000000000", 10) is False
+    assert is_uuid_in_percentage("00000000000000000000000000000000", 10) is True
+    assert is_uuid_in_percentage("19000000000000000000000000000000", 10) is True
+    assert is_uuid_in_percentage("1a000000000000000000000000000000", 10) is False
+    assert is_uuid_in_percentage("ff000000000000000000000000000000", 10) is False
 
     # Test edge cases
-    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 0) is False
-    assert analytics.is_uuid_in_percentage("00000000000000000000000000000000", 100) is True
-    assert analytics.is_uuid_in_percentage("ffffffffffffffffffffffffffffffff", 100) is True
+    assert is_uuid_in_percentage("00000000000000000000000000000000", 0) is False
+    assert is_uuid_in_percentage("00000000000000000000000000000000", 100) is True
+    assert is_uuid_in_percentage("ffffffffffffffffffffffffffffffff", 100) is True
 
     # Test invalid inputs
     with pytest.raises(ValueError):
-        analytics.is_uuid_in_percentage("00000000000000000000000000000000", -1)
+        is_uuid_in_percentage("00000000000000000000000000000000", -1)
     with pytest.raises(ValueError):
-        analytics.is_uuid_in_percentage("00000000000000000000000000000000", 101)
+        is_uuid_in_percentage("00000000000000000000000000000000", 101)
 
     # Test empty/None UUID
-    assert analytics.is_uuid_in_percentage("", 50) is False
-    assert analytics.is_uuid_in_percentage(None, 50) is False
+    assert is_uuid_in_percentage("", 50) is False
+    assert is_uuid_in_percentage(None, 50) is False

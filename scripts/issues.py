@@ -46,6 +46,20 @@ CLOSE_STALE_COMMENT = (
     + BOT_SUFFIX
 )
 
+CLOSE_FIXED_ENHANCEMENT_COMMENT = (
+    """I'm closing this enhancement request since it has been marked as 'fixed' for over """
+    """3 weeks. The requested feature should now be available in recent versions of aider.\n\n"""
+    """If you find that this enhancement is still needed, please feel free to reopen this """
+    """issue or create a new one.""" + BOT_SUFFIX
+)
+
+CLOSE_FIXED_BUG_COMMENT = (
+    """I'm closing this bug report since it has been marked as 'fixed' for over """
+    """3 weeks. This issue should be resolved in recent versions of aider.\n\n"""
+    """If you find that this bug is still present, please feel free to reopen this """
+    """issue or create a new one with steps to reproduce.""" + BOT_SUFFIX
+)
+
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
 REPO_OWNER = "Aider-AI"
@@ -306,6 +320,68 @@ def handle_stale_closing(all_issues, auto_yes):
                 print(f"  Closed issue #{issue['number']}")
 
 
+def handle_fixed_issues(all_issues, auto_yes):
+    print("\nChecking for fixed enhancement and bug issues to close...")
+
+    for issue in all_issues:
+        # Skip if not open or doesn't have fixed label
+        labels = [label["name"] for label in issue["labels"]]
+        if issue["state"] != "open" or "fixed" not in labels:
+            continue
+
+        # Check if it's an enhancement or bug
+        is_enhancement = "enhancement" in labels
+        is_bug = "bug" in labels
+        if not (is_enhancement or is_bug):
+            continue
+
+        # Find when the fixed label was added
+        timeline_url = (
+            f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/timeline"
+        )
+        response = requests.get(timeline_url, headers=headers)
+        response.raise_for_status()
+        events = response.json()
+
+        # Find the most recent fixed label addition
+        fixed_events = [
+            event
+            for event in events
+            if event.get("event") == "labeled" and event.get("label", {}).get("name") == "fixed"
+        ]
+
+        if not fixed_events:
+            continue
+
+        latest_fixed = datetime.strptime(fixed_events[-1]["created_at"], "%Y-%m-%dT%H:%M:%SZ")
+        days_fixed = (datetime.now() - latest_fixed).days
+
+        if days_fixed >= 21:
+            issue_type = "enhancement" if is_enhancement else "bug"
+            print(f"\nFixed {issue_type} ready for closing #{issue['number']}: {issue['title']}")
+            print(f"  Has been marked fixed for {days_fixed} days")
+
+            if not auto_yes:
+                confirm = input("Close this issue? (y/n): ")
+                if confirm.lower() != "y":
+                    print("Skipping this issue.")
+                    continue
+
+            # Add closing comment
+            comment_url = (
+                f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
+            )
+            comment = CLOSE_FIXED_ENHANCEMENT_COMMENT if is_enhancement else CLOSE_FIXED_BUG_COMMENT
+            response = requests.post(comment_url, headers=headers, json={"body": comment})
+            response.raise_for_status()
+
+            # Close the issue
+            url = f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}"
+            response = requests.patch(url, headers=headers, json={"state": "closed"})
+            response.raise_for_status()
+            print(f"  Closed issue #{issue['number']}")
+
+
 def handle_duplicate_issues(all_issues, auto_yes):
     open_issues = [issue for issue in all_issues if issue["state"] == "open"]
     grouped_open_issues = group_issues_by_subject(open_issues)
@@ -363,6 +439,7 @@ def main():
     handle_stale_issues(all_issues, args.yes)
     handle_stale_closing(all_issues, args.yes)
     handle_duplicate_issues(all_issues, args.yes)
+    handle_fixed_issues(all_issues, args.yes)
 
 
 if __name__ == "__main__":

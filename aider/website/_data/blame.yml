@@ -3252,8 +3252,8 @@
     Philippe de Reynal: 30
   start_tag: v0.65.0
   total_lines: 703
-- aider_percentage: 65.29
-  aider_total: 457
+- aider_percentage: 67.86
+  aider_total: 437
   end_date: '2024-12-06'
   end_tag: v0.67.0
   file_counts:
@@ -3314,18 +3314,12 @@
     tests/browser/test_browser.py:
       Paul Gauthier: 2
       Paul Gauthier (aider): 1
-    tests/fixtures/watch.js:
-      Paul Gauthier: 19
-      Paul Gauthier (aider): 16
-    tests/fixtures/watch.py:
-      Paul Gauthier: 17
-      Paul Gauthier (aider): 4
   grand_total:
-    Paul Gauthier: 243
-    Paul Gauthier (aider): 457
+    Paul Gauthier: 207
+    Paul Gauthier (aider): 437
   start_tag: v0.66.0
-  total_lines: 700
-- aider_percentage: 71.21
+  total_lines: 644
+- aider_percentage: 71.57
   aider_total: 428
   end_date: '2024-12-10'
   end_tag: v0.68.0
@@ -3403,10 +3397,151 @@
       Paul Gauthier (aider): 1
     tests/basic/test_watch.py:
       Paul Gauthier: 1
-    tests/fixtures/watch.js:
-      Paul Gauthier: 3
   grand_total:
-    Paul Gauthier: 173
+    Paul Gauthier: 170
     Paul Gauthier (aider): 428
   start_tag: v0.67.0
-  total_lines: 601
+  total_lines: 598
+- aider_percentage: 67.87
+  aider_total: 207
+  end_date: '2024-12-13'
+  end_tag: v0.69.0
+  file_counts:
+    .github/workflows/pages.yml:
+      Paul Gauthier: 2
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 2
+    aider/args.py:
+      Mir Adnan ALI: 3
+      Paul Gauthier: 1
+    aider/coders/base_coder.py:
+      JeongJuhyeon: 1
+      Mir Adnan ALI: 3
+    aider/commands.py:
+      Mir Adnan ALI: 4
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 3
+    aider/io.py:
+      Mir Adnan ALI: 37
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 3
+    aider/main.py:
+      Mir Adnan ALI: 1
+    aider/models.py:
+      Paul Gauthier: 7
+    aider/watch.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 47
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    benchmark/benchmark.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 7
+    scripts/blame.py:
+      Paul Gauthier (aider): 1
+    scripts/issues.py:
+      Paul Gauthier (aider): 58
+    scripts/update-history.py:
+      Paul Gauthier: 3
+    tests/basic/test_io.py:
+      Paul Gauthier (aider): 20
+    tests/basic/test_watch.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 68
+  grand_total:
+    JeongJuhyeon: 1
+    Mir Adnan ALI: 48
+    Paul Gauthier: 49
+    Paul Gauthier (aider): 207
+  start_tag: v0.68.0
+  total_lines: 305
+- aider_percentage: 74.22
+  aider_total: 875
+  end_date: '2024-12-26'
+  end_tag: v0.70.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 41
+    aider/args.py:
+      Evan Johnson: 2
+    aider/coders/search_replace.py:
+      Paul Gauthier: 5
+    aider/commands.py:
+      Paul Gauthier (aider): 41
+    aider/help_pats.py:
+      Paul Gauthier: 3
+    aider/io.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 9
+    aider/main.py:
+      Paul Gauthier: 15
+      Paul Gauthier (aider): 5
+      apaz-cli: 3
+      mdk: 6
+    aider/models.py:
+      Paul Gauthier: 29
+    aider/repo.py:
+      Paul Gauthier: 14
+    aider/utils.py:
+      Paul Gauthier: 2
+    aider/watch.py:
+      Paul Gauthier: 13
+    aider/website/_includes/head_custom.html:
+      Paul Gauthier (aider): 4
+    aider/website/_includes/leaderboard.js:
+      Paul Gauthier (aider): 14
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 28
+      Paul Gauthier (aider): 2
+    benchmark/Dockerfile:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 43
+    benchmark/benchmark.py:
+      Paul Gauthier: 69
+      Paul Gauthier (aider): 153
+    benchmark/clone-exercism.sh:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 18
+    benchmark/cpp-test.sh:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 1
+    benchmark/docker.sh:
+      Paul Gauthier (aider): 4
+    benchmark/install-docker-ubuntu.sh:
+      Paul Gauthier (aider): 63
+    benchmark/npm-test.sh:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 3
+    benchmark/problem_stats.py:
+      Paul Gauthier: 35
+      Paul Gauthier (aider): 318
+    benchmark/rsync.sh:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 26
+    scripts/blame.py:
+      Paul Gauthier (aider): 6
+    scripts/my_models.py:
+      Paul Gauthier (aider): 95
+    scripts/update-blame.sh:
+      Paul Gauthier (aider): 3
+    scripts/update-docs.sh:
+      Paul Gauthier: 1
+    tests/basic/test_analytics.py:
+      Paul Gauthier (aider): 19
+    tests/basic/test_main.py:
+      Paul Gauthier (aider): 7
+    tests/basic/test_sanity_check_repo.py:
+      mdk: 28
+  grand_total:
+    Evan Johnson: 2
+    Paul Gauthier: 265
+    Paul Gauthier (aider): 875
+    apaz-cli: 3
+    mdk: 34
+  start_tag: v0.69.0
+  total_lines: 1179

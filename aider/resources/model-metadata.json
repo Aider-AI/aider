@@ -1,0 +1,27 @@
+{
+    "openrouter/openai/o1": {
+        "max_tokens": 100000,
+        "max_input_tokens": 200000,
+        "max_output_tokens": 100000,
+        "input_cost_per_token": 0.000015,
+        "output_cost_per_token": 0.00006,
+        "cache_read_input_token_cost": 0.0000075,
+        "litellm_provider": "openrouter",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_parallel_function_calling": true,
+        "supports_vision": true,
+        "supports_prompt_caching": true,
+        "supports_system_messages": true,
+        "supports_response_schema": true
+    },
+    "openrouter/deepseek/deepseek-chat": {
+        "max_tokens": 8192,
+        "max_input_tokens": 66000,
+        "max_output_tokens": 4096,
+        "input_cost_per_token": 0.00000014,
+        "output_cost_per_token": 0.00000028,
+        "litellm_provider": "openrouter",
+        "mode": "chat"
+    },
+}

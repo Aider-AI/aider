@@ -209,6 +209,45 @@ all the raw information being sent to/from the LLM in the conversation.
 You can also refer to the
 [instructions for installing a development version of aider](https://aider.chat/docs/install/optional.html#install-the-development-version-of-aider).
 
+## What LLMs do you use to build aider?
+
+Aider writes a lot of its own code, usually about 70% of the new code in each
+release.
+People often ask which LLMs I use with aider, when writing aider.
+Below is a table showing the models I have used recently,
+extracted from the 
+[public log](https://github.com/aider-ai/aider/blob/main/aider/website/assets/sample-analytics.jsonl)
+of my
+[aider analytics](https://aider.chat/docs/more/analytics.html).
+
+<!--[[[cog
+import sys
+sys.path.append(".")
+import scripts.my_models as my_models
+stats = my_models.collect_model_stats()
+html = my_models.format_html_table(stats)
+cog.out(html)
+]]]-->
+<style>
+table { border-collapse: collapse; width: 100%; }
+th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+th { background-color: #f2f2f2; }
+tr:hover { background-color: #f5f5f5; }
+.right { text-align: right; }
+</style>
+<table>
+<tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,741,135</td><td class='right'>98.9%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>14,008</td><td class='right'>0.8%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>4,273</td><td class='right'>0.2%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>1,234</td><td class='right'>0.1%</td></tr>
+<tr><td>openai/gpt-4o-mini</td><td class='right'>141</td><td class='right'>0.0%</td></tr>
+</table>
+
+{: .note :}
+Some models show as REDACTED, because they are new or unpopular models.
+Aider's analytics only records the names of "well known" LLMs.
+<!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?
 
@@ -219,6 +258,31 @@ The
 by doing something like `git blame` on the repo,
 and counting up who wrote all the new lines of code in each release.
 Only lines in source code files are counted, not documentation or prompt files.
+
+## Why does aider sometimes stop highlighting code in its replies?
+
+Aider displays the markdown responses that are coming back from the LLM.
+Usually, the LLM will reply with code in a markdown "code block" with
+triple backtick fences, like this:
+
+````
+Here's some code:
+
+```
+print("hello")
+```
+````
+
+But if you've added files to the chat that contain triple backticks,
+aider needs to tell the LLM to use a different set of fences.
+Otherwise, the LLM can't safely include your code's triple backticks
+inside the code blocks that it returns with edits.
+Aider will use fences like `<source>...</source>` in this case.
+
+A side effect of this is that the code that aider outputs may no
+longer be properly highlighted.
+You will most often notice this if you add markdown files
+to you chats that contain code blocks.
 
 ## Why is the LLM speaking to me in an unexpected language?
 

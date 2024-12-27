@@ -66,10 +66,10 @@ class FileWatcher:
     # Compiled regex pattern for AI comments
     ai_comment_pattern = re.compile(r"(?:#|//|--) *(ai\b.*|ai\b.*|.*\bai[?!]?) *$", re.IGNORECASE)
 
-    def __init__(self, coder, gitignores=None, verbose=False, analytics=None):
+    def __init__(self, coder, gitignores=None, verbose=False, analytics=None, root=None):
         self.coder = coder
         self.io = coder.io
-        self.root = Path(coder.root)
+        self.root = Path(root) if root else Path(coder.root)
         self.verbose = verbose
         self.analytics = analytics
         self.stop_event = None
@@ -145,6 +145,7 @@ class FileWatcher:
         """Get any detected file changes"""
 
         has_action = None
+        added = False
         for fname in self.changed_files:
             _, _, action = self.get_ai_comments(fname)
             if action in ("!", "?"):
@@ -156,10 +157,16 @@ class FileWatcher:
                 self.analytics.event("ai-comments file-add")
             self.coder.abs_fnames.add(fname)
             rel_fname = self.coder.get_rel_fname(fname)
+            if not added:
+                self.io.tool_output()
+                added = True
             self.io.tool_output(f"Added {rel_fname} to the chat")
-            self.io.tool_output()
 
         if not has_action:
+            if added:
+                self.io.tool_output(
+                    "End your comment with AI! to request changes or AI? to ask questions"
+                )
             return ""
 
         if self.analytics:
@@ -216,6 +223,9 @@ class FileWatcher:
         comments = []
         has_action = None  # None, "!" or "?"
         content = self.io.read_text(filepath, silent=True)
+        if not content:
+            return None, None, None
+
         for i, line in enumerate(content.splitlines(), 1):
             if match := self.ai_comment_pattern.search(line):
                 comment = match.group(0).strip()

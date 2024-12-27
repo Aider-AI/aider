@@ -1166,6 +1166,22 @@ cog.out("```\n")
 - cache_control: false
   caches_by_default: false
   edit_format: diff
+  editor_edit_format: null
+  editor_model_name: null
+  examples_as_sys_msg: true
+  extra_params: null
+  lazy: false
+  name: openrouter/deepseek/deepseek-chat
+  reminder: sys
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: true
+  weak_model_name: null
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
   editor_edit_format: editor-diff
   editor_model_name: null
   examples_as_sys_msg: false
@@ -1307,6 +1323,54 @@ cog.out("```\n")
   use_system_prompt: false
   use_temperature: false
   weak_model_name: openrouter/openai/gpt-4o-mini
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openrouter/openai/gpt-4o
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: false
+  name: openrouter/openai/o1
+  reminder: user
+  send_undo_reply: false
+  streaming: false
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: false
+  weak_model_name: openrouter/openai/gpt-4o-mini
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openai/gpt-4o
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: false
+  name: openai/o1
+  reminder: user
+  send_undo_reply: false
+  streaming: false
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: false
+  weak_model_name: openai/gpt-4o-mini
+- cache_control: false
+  caches_by_default: false
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: gpt-4o
+  examples_as_sys_msg: false
+  extra_params: null
+  lazy: false
+  name: o1
+  reminder: user
+  send_undo_reply: false
+  streaming: false
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: false
+  weak_model_name: gpt-4o-mini
 - cache_control: false
   caches_by_default: false
   edit_format: diff

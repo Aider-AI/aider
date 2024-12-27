@@ -11,6 +11,7 @@ fi
 
 if [ "$ARG" != "--check" ]; then
   tail -1000 ~/.aider/analytics.jsonl > aider/website/assets/sample-analytics.jsonl
+  cog -r aider/website/docs/faq.md
 fi
 
 # README.md before index.md, because index.md uses cog to include README.md
