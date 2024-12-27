@@ -176,11 +176,6 @@ def main(
         "--replay",
         help="Replay previous .aider.chat.history.md responses from previous benchmark run",
     ),
-    max_apply_update_errors: int = typer.Option(
-        3,
-        "--max-apply-update-errors",
-        help="Maximum number of apply update errors before stopping the test",
-    ),
     keywords: str = typer.Option(
         None, "--keywords", "-k", help="Only run tests that contain keywords (comma sep)"
     ),
@@ -342,7 +337,6 @@ def main(
                 verbose,
                 commit_hash,
                 replay,
-                max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
                 num_ctx,
@@ -645,7 +639,6 @@ def run_test_real(
     verbose,
     commit_hash,
     replay,
-    max_apply_update_errors,
     editor_model,
     editor_edit_format,
     num_ctx=None,
@@ -792,8 +785,6 @@ def run_test_real(
     )
     dump(coder.ignore_mentions)
 
-    # remove all the code related to max_apply_update_errors, it's deprecated. ai!
-    coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
 
     timeouts = 0
