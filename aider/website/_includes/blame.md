@@ -11,12 +11,6 @@
     width: 100%;
     height: 300px;
 }
-
-@media (max-width: 768px) {
-    .chart-container {
-        height: 480px;  /* Taller on mobile */
-    }
-}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
