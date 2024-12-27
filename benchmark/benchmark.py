@@ -792,6 +792,7 @@ def run_test_real(
     )
     dump(coder.ignore_mentions)
 
+    # remove all the code related to max_apply_update_errors, it's deprecated. ai!
     coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
 
