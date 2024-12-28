@@ -203,6 +203,7 @@ class InputOutput:
         fancy_input=True,
         file_watcher=None,
         multiline_mode=False,
+        root=".",
     ):
         self.placeholder = None
         self.interrupted = False
@@ -270,6 +271,7 @@ class InputOutput:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
 
         self.file_watcher = file_watcher
+        self.root = root
 
     def _get_style(self):
         style_dict = {}
@@ -913,7 +915,13 @@ class InputOutput:
         editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
 
         if read_only_files:
-            files_with_label = ["Readonly:"] + read_only_files
+            # Use shorter of abs/rel paths for readonly files
+            ro_paths = []
+            for rel_path in read_only_files:
+                abs_path = os.path.abspath(os.path.join(self.root, rel_path))
+                ro_paths.append(abs_path if len(abs_path) < len(rel_path) else rel_path)
+
+            files_with_label = ["Readonly:"] + ro_paths
             read_only_output = StringIO()
             Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
             read_only_lines = read_only_output.getvalue().splitlines()

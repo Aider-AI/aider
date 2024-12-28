@@ -136,7 +136,7 @@ Aliases:
   - `-3`
 
 ### `--deepseek`
-Use deepseek/deepseek-coder model for the main chat  
+Use deepseek/deepseek-chat model for the main chat  
 Environment variable: `AIDER_DEEPSEEK`  
 
 ### `--o1-mini`

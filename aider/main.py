@@ -113,7 +113,7 @@ def setup_git(git_root, io):
         except ANY_GIT_ERROR:
             pass
     elif cwd == Path.home():
-        io.tool_warning("You should probably run aider in a directory, not your home dir.")
+        io.tool_warning("You should probably run aider in your project's directory, not your home dir.")
         return
     elif cwd and io.confirm_ask(
         "No git repo found, create one to track aider's changes (recommended)?"
@@ -393,6 +393,12 @@ def sanity_check_repo(repo, io):
         if not repo.git_repo_error:
             return True
         error_msg = str(repo.git_repo_error)
+    except UnicodeDecodeError as exc:
+        error_msg = (
+            f"Failed to read the Git repository. This issue is likely caused by a path encoded "
+            f"in a format different from the expected encoding \"{sys.getfilesystemencoding()}\".\n"
+            f"Internal error: {str(exc)}"
+        )
     except ANY_GIT_ERROR as exc:
         error_msg = str(exc)
         bad_ver = "version in (1, 2)" in error_msg

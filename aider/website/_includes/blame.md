@@ -1,5 +1,18 @@
-<canvas id="blameChart" width="800" height="360" style="margin-top: 20px"></canvas>
-<canvas id="linesChart" width="800" height="360" style="margin-top: 20px"></canvas>
+<div class="chart-container">
+    <canvas id="blameChart" style="margin-top: 20px"></canvas>
+</div>
+<div class="chart-container">
+    <canvas id="linesChart" style="margin-top: 20px"></canvas>
+</div>
+
+<style>
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+}
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/moment"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
@@ -24,10 +37,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var linesData = {
         labels: labels,
         datasets: [{
-            label: 'Aider\'s lines of new code',
+            label: 'Aider',
             data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_total }} },{% endfor %}],
-            backgroundColor: 'rgba(255, 99, 132, 0.8)',
-            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        },
+        {
+            label: 'Human',
+            data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.total_lines | minus: row.aider_total }} },{% endfor %}],
+            backgroundColor: 'rgba(200, 200, 200, 0.8)',
+            borderColor: 'rgba(200, 200, 200, 1)',
             borderWidth: 1
         }]
     };
@@ -36,6 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'bar',
         data: blameData,
         options: {
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     type: 'category',
@@ -85,9 +106,11 @@ document.addEventListener('DOMContentLoaded', function () {
         type: 'bar',
         data: linesData,
         options: {
+            maintainAspectRatio: false,
             scales: {
                 x: {
                     type: 'category',
+                    stacked: true,
                     title: {
                         display: true,
                         text: 'Version'
@@ -98,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 },
                 y: {
+                    stacked: true,
                     title: {
                         display: true,
                         text: 'Lines of new code'
@@ -107,12 +131,14 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             plugins: {
                 legend: {
-                    display: false
+                    display: true,
+                    position: 'chartArea',
+                    reverse: true
                 },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            var label = 'New lines of code by aider';
+                            var label = context.dataset.label;
                             var value = context.parsed.y || 0;
                             return `${label}: ${value}`;
                         }
@@ -120,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 title: {
                     display: true,
-                    text: 'Lines of new code written by aider, by release',
+                    text: 'Lines of new code, by release',
                     font: {
                         size: 16
                     }

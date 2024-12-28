@@ -25,7 +25,7 @@ rsync -avz --delete \
     "$REPO_ROOT/" \
     "$DEST:~/aider/"
 
-rsync -a .env .bash_history .gitignore "$DEST:~/aider/."
+rsync -a .env .gitignore "$DEST:~/aider/."
 
 rsync -a ~/dotfiles/screenrc "$DEST:.screenrc"
 

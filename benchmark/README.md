@@ -2,18 +2,18 @@
 # Aider benchmark harness
 
 Aider uses benchmarks to quantitatively measure how well it works
-various LLMs.
+with various LLMs.
 This directory holds the harness and tools needed to run the benchmarking suite.
 
 ## Background
 
 The benchmark is based on the [Exercism](https://github.com/exercism/python) coding exercises.
 This
-benchmark evaluates how effectively aider and GPT can translate a
+benchmark evaluates how effectively aider and LLMs can translate a
 natural language coding request into executable code saved into
 files that pass unit tests.
 It provides an end-to-end evaluation of not just
-GPT's coding ability, but also its capacity to *edit existing code*
+the LLM's coding ability, but also its capacity to *edit existing code*
 and *format those code edits* so that aider can save the
 edits to the local source files.
 
