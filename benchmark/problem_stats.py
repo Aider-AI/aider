@@ -205,16 +205,18 @@ def analyze_exercise_solutions(dirs=None, topn=None, copy_hard_set=False):
 
     # Distribution table of how many models solved each exercise
     print("\nDistribution of solutions:")
-    print("Models  Exercises  Cumulative")
-    print("-" * 35)
+    print("Models  Exercises  Cumulative  RevCumulative")
+    print("-" * 50)
     counts = [0] * (total_models + 1)
     for ex, models in exercise_solutions.items():
         counts[len(models)] += 1
 
     cumsum = 0
+    revcumsum = sum(counts)  # Start with total number of exercises
     for i, count in enumerate(counts):
         cumsum += count
-        print(f"{i:>6d}  {count:>9d}  {cumsum:>10d}")
+        print(f"{i:>6d}  {count:>9d}  {cumsum:>10d}  {revcumsum:>12d}")
+        revcumsum -= count  # Decrement the reverse cumulative sum
 
     # Count parse errors per exercise
     parse_error_counts = defaultdict(int)
