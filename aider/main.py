@@ -7,11 +7,15 @@ import traceback
 import webbrowser
 from dataclasses import fields
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     import git
-except ImportError:
-    git = None
+else:
+    try:
+        import git
+    except ImportError:
+        git = None
 
 import importlib_resources
 import shtab
