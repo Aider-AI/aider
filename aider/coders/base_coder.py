@@ -962,7 +962,7 @@ class Coder:
             self.io.offer_url(url)
         return urls
 
-    def check_for_urls(self, inp: str) -> List[str]:
+    def check_for_urls(self, inp: str) -> str:
         """Check input for URLs and offer to add them to the chat."""
         if not self.detect_urls:
             return inp
