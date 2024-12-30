@@ -802,6 +802,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     commands = Commands(
         io,
         None,
+        voice_language=args.voice_language,
+        voice_input_device=args.voice_input_device,
         verify_ssl=args.verify_ssl,
         args=args,
         parser=parser,

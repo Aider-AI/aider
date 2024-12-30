@@ -54,6 +54,7 @@ class Commands:
         io,
         coder,
         voice_language=None,
+        voice_input_device=None,
         verify_ssl=True,
         args=None,
         parser=None,
@@ -1119,7 +1120,7 @@ class Commands:
                 return
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.args.voice_format, device_name=self.args.voice_input_device
+                    audio_format="wav", device_name=self.voice_input_device
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(
