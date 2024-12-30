@@ -7,6 +7,7 @@ import tempfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
+
 import pyperclip
 from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
