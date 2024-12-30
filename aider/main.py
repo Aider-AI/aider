@@ -113,7 +113,9 @@ def setup_git(git_root, io):
         except ANY_GIT_ERROR:
             pass
     elif cwd == Path.home():
-        io.tool_warning("You should probably run aider in your project's directory, not your home dir.")
+        io.tool_warning(
+            "You should probably run aider in your project's directory, not your home dir."
+        )
         return
     elif cwd and io.confirm_ask(
         "No git repo found, create one to track aider's changes (recommended)?"
@@ -173,7 +175,7 @@ def check_gitignore(git_root, io, ask=True):
             existing_lines = content.splitlines()
             for pat in patterns:
                 if pat not in existing_lines:
-                    if '*' in pat or (Path(git_root) / pat).exists():
+                    if "*" in pat or (Path(git_root) / pat).exists():
                         patterns_to_add.append(pat)
         except OSError as e:
             io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
@@ -395,8 +397,8 @@ def sanity_check_repo(repo, io):
         error_msg = str(repo.git_repo_error)
     except UnicodeDecodeError as exc:
         error_msg = (
-            f"Failed to read the Git repository. This issue is likely caused by a path encoded "
-            f"in a format different from the expected encoding \"{sys.getfilesystemencoding()}\".\n"
+            "Failed to read the Git repository. This issue is likely caused by a path encoded "
+            f'in a format different from the expected encoding "{sys.getfilesystemencoding()}".\n'
             f"Internal error: {str(exc)}"
         )
     except ANY_GIT_ERROR as exc:
