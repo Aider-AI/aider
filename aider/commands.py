@@ -67,10 +67,10 @@ class Commands:
         self.verbose = verbose
 
         self.verify_ssl = verify_ssl
+
         if voice_language == "auto":
             voice_language = None
-
-        self.voice_language = voice_language
+        self.voice_language = voice_language or (args.voice_language if args and hasattr(args, 'voice_language') else None)
 
         self.help = None
         self.editor = editor
