@@ -95,6 +95,8 @@ cog.out(''.join(lines))
 - TOGETHERAI_API_KEY
 - VOLCENGINE_API_KEY
 - VOYAGE_API_KEY
+- WATSONX_API_KEY
+- WX_API_KEY
 - XAI_API_KEY
 - XINFERENCE_API_KEY
 <!--[[[end]]]-->

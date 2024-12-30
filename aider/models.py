@@ -75,7 +75,7 @@ MODEL_ALIASES = {
     "35-turbo": "gpt-3.5-turbo",
     "3": "gpt-3.5-turbo",
     # Other models
-    "deepseek": "deepseek/deepseek-coder",
+    "deepseek": "deepseek/deepseek-chat",
     "flash": "gemini/gemini-2.0-flash-exp",
 }
 

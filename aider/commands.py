@@ -7,6 +7,7 @@ import tempfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
+from unittest import mock
 
 import pyperclip
 from PIL import Image, ImageGrab
@@ -17,11 +18,12 @@ from aider import models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
+from aider.io import InputOutput
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
+from aider.utils import GitTemporaryDirectory, is_image_file
 
 from .dump import dump  # noqa: F401
 
@@ -1009,7 +1011,7 @@ class Commands:
             return
 
         self.coder.event("interactive help")
-        from aider.coders import Coder
+        from aider.coders.base_coder import Coder
 
         if not self.help:
             res = install_help_extra(self.io)
@@ -1069,7 +1071,7 @@ class Commands:
             self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
             return
 
-        from aider.coders import Coder
+        from aider.coders.base_coder import Coder
 
         coder = Coder.create(
             io=self.io,
@@ -1309,7 +1311,42 @@ class Commands:
                 continue
 
             self.io.tool_output(f"\nExecuting: {cmd}")
-            self.run(cmd)
+            try:
+                self.run(cmd)
+            except SwitchCoder:
+                self.io.tool_error(
+                    f"Command '{cmd}' is only supported in interactive mode, skipping."
+                )
+
+    def test_cmd_load_with_switch_coder(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create a temporary file with commands
+            commands_file = Path(repo_dir) / "test_commands.txt"
+            commands_file.write_text("/ask Tell me about the code\n/model gpt-4\n")
+
+            # Mock run to raise SwitchCoder for /ask and /model
+            def mock_run(cmd):
+                if cmd.startswith(("/ask", "/model")):
+                    raise SwitchCoder()
+                return None
+
+            with mock.patch.object(commands, "run", side_effect=mock_run):
+                # Capture tool_error output
+                with mock.patch.object(io, "tool_error") as mock_tool_error:
+                    commands.cmd_load(str(commands_file))
+
+                    # Check that appropriate error messages were shown
+                    mock_tool_error.assert_any_call(
+                        "Command '/ask Tell me about the code' is only supported in interactive"
+                        " mode, skipping."
+                    )
+                    mock_tool_error.assert_any_call(
+                        "Command '/model gpt-4' is only supported in interactive mode, skipping."
+                    )
 
     def completions_raw_save(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
