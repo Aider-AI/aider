@@ -7,8 +7,6 @@ import tempfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
-from unittest import mock
-
 import pyperclip
 from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
@@ -18,12 +16,11 @@ from aider import models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
-from aider.io import InputOutput
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import GitTemporaryDirectory, is_image_file
+from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
 
