@@ -776,6 +776,12 @@ def get_parser(default_config_files, git_root):
             " or home directory)"
         ),
     )
+    group.add_argument(
+        "--commandio",
+        action="store_true",
+        help="Run aider using commands via stdin/stdout",
+        default=False,
+    )
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
     # argument parsing, but it's here so that the help is displayed as expected.
     group.add_argument(

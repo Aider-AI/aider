@@ -1,0 +1,8 @@
+{
+    "aider_repo": {
+        "url": "https://github.com/caseymcc/aider.git",
+        "branch": "commandio",
+        "commit": "977387f"
+    },
+    "python_version": "3.12"
+}
