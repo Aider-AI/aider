@@ -1120,7 +1120,9 @@ class Commands:
                 self.io.tool_error("To use /voice you must provide an OpenAI API key.")
                 return
             try:
-                self.voice = voice.Voice(audio_format=self.voice_format or "wav", device_name=self.voice_input_device)
+                self.voice = voice.Voice(
+                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
+                )
             except voice.SoundDeviceError:
                 self.io.tool_error(
                     "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
