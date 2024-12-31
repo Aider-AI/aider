@@ -1,0 +1,30 @@
+# escape=`
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
+
+# Set working directory
+WORKDIR C:/app
+
+# Install Chocolatey
+RUN powershell -Command `
+    Set-ExecutionPolicy Bypass -Scope Process -Force; `
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+# Install Python and Git
+RUN choco install -y python --version=3.12.0 git
+
+# Refresh environment variables
+RUN refreshenv
+
+# Add Python to PATH
+RUN setx /M PATH "%PATH%;C:\Python312;C:\Python312\Scripts"
+
+# Install pip requirements
+COPY requirements.txt .
+RUN python -m pip install --no-cache-dir -r requirements.txt pyinstaller
+
+# Set working directory for the build
+WORKDIR C:/repo
+
+# Set entrypoint
+ENTRYPOINT ["python", "scripts/build.py"]

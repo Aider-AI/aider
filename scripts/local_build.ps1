@@ -1,47 +1,32 @@
 # Exit on error
 $ErrorActionPreference = "Stop"
 
-$CONFIG_FILE = "scripts/build_config.json"
+# Get version from Dockerfile
+$DOCKER_VERSION = python scripts/docker_version.py
+$DOCKER_IMAGE = "ghcr.io/caseymcc/aider/builder:${DOCKER_VERSION}"
 
-if (-not (Test-Path $CONFIG_FILE)) {
-    Write-Error "Error: build_config.json not found"
-    exit 1
+Write-Host "Checking for Docker image: ${DOCKER_IMAGE}"
+
+# Try to pull the image from GitHub Container Registry
+try {
+    docker pull ${DOCKER_IMAGE} 2>$null
+    Write-Host "Found existing Docker image, using it for build"
+}
+catch {
+    Write-Host "Building Docker image locally..."
+    docker build -t ${DOCKER_IMAGE} -f scripts/Dockerfile.windows.cio .
 }
 
-# Read config file for Python version
-$config = Get-Content $CONFIG_FILE | ConvertFrom-Json
-
-# Check if pyenv-win is installed
-$pyenvPath = "$env:USERPROFILE\.pyenv\pyenv-win"
-if (-not (Test-Path $pyenvPath)) {
-    Write-Host "Installing pyenv-win..."
-    Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"
-    & ./install-pyenv-win.ps1
-    Remove-Item ./install-pyenv-win.ps1
-    
-    # Set up environment variables
-    $env:PYENV = "$env:USERPROFILE\.pyenv\pyenv-win"
-    $env:Path = "$env:PYENV\bin;$env:PYENV\shims;$env:Path"
+# Create dist directory if it doesn't exist
+if (-not (Test-Path dist)) {
+    New-Item -ItemType Directory -Path dist
 }
 
-# Get Python version from config
-$pythonVersion = $config.python_version
+# Run the build in Docker
+Write-Host "Running build in Docker container..."
+docker run --rm `
+    -v "${PWD}:/repo" `
+    -v "${PWD}/dist:/repo/dist" `
+    ${DOCKER_IMAGE}
 
-# Install Python version if not present
-$installedVersions = & pyenv versions
-if ($installedVersions -notcontains $pythonVersion) {
-    Write-Host "Installing Python $pythonVersion..."
-    & pyenv install $pythonVersion
-}
-
-# Set local Python version and create venv
-Write-Host "Setting up Python virtual environment..."
-& pyenv local $pythonVersion
-python -m venv venv
-. .\venv\Scripts\Activate.ps1
-
-# Run the Python build script
-python scripts/build.py
-
-# Deactivate virtual environment
-deactivate
+Write-Host "Build complete! Executable should be in dist/"
