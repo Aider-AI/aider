@@ -1,7 +1,7 @@
 # Exit on error
 $ErrorActionPreference = "Stop"
 
-# Get version from Dockerfile
+# Get version from Dockerfile (includes OS suffix)
 $DOCKER_VERSION = python scripts/docker_version.py
 $DOCKER_IMAGE = "ghcr.io/caseymcc/aider/builder:${DOCKER_VERSION}"
 

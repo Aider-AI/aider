@@ -3,7 +3,7 @@
 # Exit on error
 set -e
 
-# Get version from Dockerfile
+# Get version from Dockerfile (includes OS suffix)
 DOCKER_VERSION=$(python3 scripts/docker_version.py)
 DOCKER_IMAGE="ghcr.io/caseymcc/aider/builder:${DOCKER_VERSION}"
 

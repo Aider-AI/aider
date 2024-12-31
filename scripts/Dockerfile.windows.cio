@@ -1,5 +1,6 @@
 # escape=`
 FROM mcr.microsoft.com/windows/servercore:ltsc2019
+LABEL version="0.1.0"
 
 # Set working directory
 WORKDIR C:/app

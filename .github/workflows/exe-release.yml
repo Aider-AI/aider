@@ -53,7 +53,7 @@ jobs:
         context: .
         file: ${{ runner.os == 'Windows' && 'scripts/Dockerfile.windows.cio' || 'scripts/Dockerfile.cio' }}
         push: true
-        tags: ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}
+        tags: ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}-${{ runner.os }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
@@ -68,7 +68,7 @@ jobs:
         docker run --rm \
           -v ${{ github.workspace }}:/repo \
           -v ${{ github.workspace }}/dist:/repo/dist \
-          ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}
+          ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}-${{ runner.os }}
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
