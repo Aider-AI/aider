@@ -23,6 +23,7 @@ jobs:
         fetch-depth: 0
 
     - name: Set up Docker Buildx
+      if: runner.os != 'Windows'
       uses: docker/setup-buildx-action@v3
 
     - name: Login to GitHub Container Registry
@@ -36,26 +37,35 @@ jobs:
       id: docker-version
       run: |
         echo "version=$(python scripts/docker_version.py)" >> $GITHUB_OUTPUT
+      shell: bash
 
     - name: Check if Docker image exists
       id: check-image
       run: |
-        if docker manifest inspect ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }} > /dev/null 2>&1; then
+        if docker manifest inspect ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}-${{ runner.os }} > /dev/null 2>&1; then
           echo "image_exists=true" >> $GITHUB_OUTPUT
         else
           echo "image_exists=false" >> $GITHUB_OUTPUT
         fi
+      shell: bash
 
-    - name: Build and push Docker image
-      if: steps.check-image.outputs.image_exists != 'true'
+    - name: Build and push Docker image (non-Windows)
+      if: steps.check-image.outputs.image_exists != 'true' && runner.os != 'Windows'
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ${{ runner.os == 'Windows' && 'scripts/Dockerfile.windows.cio' || 'scripts/Dockerfile.linux.cio' }}
+        file: scripts/Dockerfile.linux.cio
         push: true
         tags: ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}-${{ runner.os }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+    - name: Build and push Docker image (Windows)
+      if: steps.check-image.outputs.image_exists != 'true' && runner.os == 'Windows'
+      shell: bash
+      run: |
+        docker build -t ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}-${{ runner.os }} -f scripts/Dockerfile.windows.cio .
+        docker push ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}-${{ runner.os }}
 
     - name: Build Release
       shell: bash
