@@ -51,7 +51,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ${{ runner.os == 'Windows' && 'scripts/Dockerfile.windows.cio' || 'scripts/Dockerfile.cio' }}
+        file: ${{ runner.os == 'Windows' && 'scripts/Dockerfile.windows.cio' || 'scripts/Dockerfile.linux.cio' }}
         push: true
         tags: ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}-${{ runner.os }}
         cache-from: type=gha

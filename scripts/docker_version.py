@@ -5,7 +5,7 @@ import sys
 
 def get_docker_version():
     """Extract version from Dockerfile."""
-    dockerfile = "scripts/Dockerfile.windows.cio" if sys.platform.startswith('win') else "scripts/Dockerfile.cio"
+    dockerfile = "scripts/Dockerfile.windows.cio" if sys.platform.startswith('win') else "scripts/Dockerfile.linux.cio"
     with open(dockerfile, "r") as f:
         for line in f:
             if "LABEL version=" in line:

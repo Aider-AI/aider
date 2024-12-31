@@ -14,7 +14,7 @@ if docker pull ${DOCKER_IMAGE} >/dev/null 2>&1; then
     echo "Found existing Docker image, using it for build"
 else
     echo "Building Docker image locally..."
-    docker build -t ${DOCKER_IMAGE} -f scripts/Dockerfile.cio .
+    docker build -t ${DOCKER_IMAGE} -f scripts/Dockerfile.linux.cio .
 fi
 
 # Create dist directory if it doesn't exist
