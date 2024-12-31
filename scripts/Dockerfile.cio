@@ -1,0 +1,33 @@
+FROM ubuntu:20.04
+LABEL version="0.1.0"
+
+WORKDIR /app
+
+# Install system dependencies
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y \
+    git \
+    build-essential \
+    portaudio19-dev \
+    python3.12 \
+    python3.12-dev \
+    curl \
+    && curl -sS https://bootstrap.pypa.io/get-pip.py | python3.12 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create python command symlink
+RUN ln -s /usr/bin/python3.12 /usr/bin/python
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt pyinstaller
+
+WORKDIR /repo
+
+# Set entrypoint to build script
+ENTRYPOINT ["python", "scripts/build.py"]

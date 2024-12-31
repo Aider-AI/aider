@@ -3,44 +3,28 @@
 # Exit on error
 set -e
 
-CONFIG_FILE="scripts/build_config.json"
+# Get version from Dockerfile
+DOCKER_VERSION=$(python3 scripts/docker_version.py)
+DOCKER_IMAGE="ghcr.io/caseymcc/aider/builder:${DOCKER_VERSION}"
 
-if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: build_config.json not found"
-    exit 1
+echo "Checking for Docker image: ${DOCKER_IMAGE}"
+
+# Try to pull the image from GitHub Container Registry
+if docker pull ${DOCKER_IMAGE} >/dev/null 2>&1; then
+    echo "Found existing Docker image, using it for build"
+else
+    echo "Building Docker image locally..."
+    docker build -t ${DOCKER_IMAGE} -f scripts/Dockerfile.cio .
 fi
 
-# Setup pyenv
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
+# Create dist directory if it doesn't exist
+mkdir -p dist
 
-# Install pyenv if not present
-if [ ! -d "$PYENV_ROOT" ]; then
-    echo "Installing pyenv..."
-    curl https://pyenv.run | bash
-fi
+# Run the build in Docker
+echo "Running build in Docker container..."
+docker run --rm \
+    -v "$(pwd):/repo" \
+    -v "$(pwd)/dist:/repo/dist" \
+    ${DOCKER_IMAGE}
 
-# Initialize pyenv
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-# Get Python version from config
-PYTHON_VERSION=$(jq -r '.python_version' "$CONFIG_FILE")
-
-# Install Python version if not present
-if ! pyenv versions | grep -q $PYTHON_VERSION; then
-    echo "Installing Python $PYTHON_VERSION..."
-    pyenv install $PYTHON_VERSION
-fi
-
-# Set local Python version and create venv
-echo "Setting up Python virtual environment..."
-pyenv local $PYTHON_VERSION
-python -m venv venv
-source venv/bin/activate
-
-# Run the Python build script
-python scripts/build.py
-
-# Deactivate virtual environment
-deactivate
+echo "Build complete! Executable should be in dist/"

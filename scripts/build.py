@@ -20,30 +20,6 @@ def read_config():
     config['repo_path'] = Path("external/aider")
     return config
 
-def setup_repo(config):
-    # Create external directory if it doesn't exist
-    os.makedirs(config['repo_path'].parent, exist_ok=True)
-
-    repo_info = config['aider_repo']
-
-    # Clone if needed
-    if not config['repo_path'].exists():
-        print("Cloning aider repository...")
-        subprocess.run(["git", "clone", repo_info['url'], config['repo_path']], check=True)
-
-    # Setup correct branch/commit
-    original_dir = os.getcwd()
-    os.chdir(config['repo_path'])
-    
-    subprocess.run(["git", "fetch"], check=True)
-    subprocess.run(["git", "checkout", repo_info['branch']], check=True)
-    
-    if repo_info['commit'] != repo_info['branch']:
-        print("Checking out specific commit...")
-        subprocess.run(["git", "checkout", "-q", repo_info['commit']], check=True)
-        
-    os.chdir(original_dir)
-
 def analyze_imports(config):
     from importlib.metadata import distributions
     import importlib
@@ -80,7 +56,7 @@ def analyze_imports(config):
     
     # Run PyInstaller with debug imports
     debug_output = subprocess.run(
-        f"pyinstaller --debug=imports aider/run.py",
+        f"pyinstaller --debug=imports aider/main.py",
         shell=True,
         capture_output=True,
         text=True
@@ -110,21 +86,14 @@ def analyze_imports(config):
     return missing_imports
  
 def build_project(config):
-    original_dir = os.getcwd()
-    os.chdir(config['repo_path'])
-    
     # Create output directory
-    output_dir = Path("external/bin")
-    os.makedirs(f"../../{output_dir}", exist_ok=True)
-
-    # Install dependencies
-    print("Installing dependencies...")
-    subprocess.run("pip install -r requirements.txt", shell=True, check=True)
-    subprocess.run("pip install pyinstaller", shell=True, check=True)
+    output_dir = Path("dist")
+    os.makedirs(output_dir, exist_ok=True)
 
     default_imports = [
         'aider',
-        'aider.resources'
+        'aider.resources',
+        'importlib_resources'
     ]
     
     # Analyze imports after dependencies are installed
@@ -143,25 +112,19 @@ def build_project(config):
     # Run build command
     print(f"Building executable for {sys.platform}...")
     arch = os.uname().machine if hasattr(os, 'uname') else platform.machine()
-    output_path = f"../../{output_dir}/{sys.platform}-{arch}"
-    os.makedirs(output_path, exist_ok=True)
     
     build_command = (
         f"pyinstaller --onefile --hidden-import=aider {hidden_imports} "
-        f"--collect-all aider aider/run.py "
-        f"--name {exe_name} --distpath {output_path}"
+        f"--collect-all aider aider/main.py "
+        f"--name {exe_name}"
     )
     
     print(f"Build command: {build_command}")
     subprocess.run(build_command, shell=True, check=True)
-    
-    os.chdir(original_dir)
 
 def main():
     config = read_config()
-    setup_repo(config)
     build_project(config)
-    print("Build complete! Executable should be in out/bin/")
 
 if __name__ == "__main__":
     main()

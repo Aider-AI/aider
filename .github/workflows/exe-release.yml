@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -21,26 +22,47 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v3
       with:
-        python-version: '3.10'
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Setup Environment (Linux/macOS)
-      if: runner.os != 'Windows'
+    - name: Get Docker version
+      id: docker-version
       run: |
-        python -m pip install --upgrade pip
-        python scripts/local_build.py
+        echo "version=$(python scripts/docker_version.py)" >> $GITHUB_OUTPUT
 
-    - name: Setup Environment (Windows)
-      if: runner.os == 'Windows'
-      shell: pwsh
+    - name: Check if Docker image exists
+      id: check-image
       run: |
-        python -m pip install --upgrade pip
-        ./scripts/local_build.ps1
+        if docker manifest inspect ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }} > /dev/null 2>&1; then
+          echo "image_exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "image_exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Build and push Docker image
+      if: steps.check-image.outputs.image_exists != 'true'
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: scripts/Dockerfile.cio
+        push: true
+        tags: ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
     - name: Build Release
-      run: python scripts/build.py
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/repo \
+          -v ${{ github.workspace }}/dist:/repo/dist \
+          ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3

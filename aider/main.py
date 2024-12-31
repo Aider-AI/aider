@@ -36,7 +36,7 @@ from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
 
-from .dump import dump  # noqa: F401
+from aider.dump import dump  # noqa: F401
 
 
 def check_config_files_for_yes(config_files):
