@@ -51,14 +51,20 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: scripts/Dockerfile.cio
+        file: ${{ runner.os == 'Windows' && 'scripts/Dockerfile.windows.cio' || 'scripts/Dockerfile.cio' }}
         push: true
         tags: ghcr.io/${{ github.repository }}/builder:${{ steps.docker-version.outputs.version }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
     - name: Build Release
+      shell: bash
       run: |
+        if [ "${{ runner.os }}" = "Windows" ]; then
+          DOCKERFILE="scripts/Dockerfile.windows.cio"
+        else
+          DOCKERFILE="scripts/Dockerfile.cio"
+        fi
         docker run --rm \
           -v ${{ github.workspace }}:/repo \
           -v ${{ github.workspace }}/dist:/repo/dist \
