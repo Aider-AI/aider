@@ -237,16 +237,12 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,741,135</td><td class='right'>98.9%</td></tr>
-<tr><td>claude-3-5-haiku-20241022</td><td class='right'>14,008</td><td class='right'>0.8%</td></tr>
-<tr><td>gpt-4o</td><td class='right'>4,273</td><td class='right'>0.2%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>1,234</td><td class='right'>0.1%</td></tr>
-<tr><td>openai/gpt-4o-mini</td><td class='right'>141</td><td class='right'>0.0%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>1,422,360</td><td class='right'>62.0%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>823,708</td><td class='right'>35.9%</td></tr>
+<tr><td>o1</td><td class='right'>37,290</td><td class='right'>1.6%</td></tr>
+<tr><td>gemini/gemini-2.0-flash-exp</td><td class='right'>4,827</td><td class='right'>0.2%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>4,473</td><td class='right'>0.2%</td></tr>
 </table>
-
-{: .note :}
-Some models show as REDACTED, because they are new or unpopular models.
-Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?
