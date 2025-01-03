@@ -215,6 +215,21 @@ def check_streamlit_install(io):
     )
 
 
+def write_streamlit_credentials():
+    from streamlit.file_util import get_streamlit_file_path
+    # See https://github.com/Aider-AI/aider/issues/772
+
+    credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
+    if not os.path.exists(credential_path):
+        empty_creds = '[general]\nemail = ""\n'
+
+        os.makedirs(os.path.dirname(credential_path), exist_ok=True)
+        with open(credential_path, "w") as f:
+            f.write(empty_creds)
+    else:
+        print("Streamlit credentials already exist.")
+
+
 def launch_gui(args):
     from streamlit.web import cli
 
@@ -222,6 +237,9 @@ def launch_gui(args):
 
     print()
     print("CONTROL-C to exit...")
+
+    # Necessary so streamlit does not prompt the user for an email address.
+    write_streamlit_credentials()
 
     target = gui.__file__
 
