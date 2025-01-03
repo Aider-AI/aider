@@ -809,6 +809,7 @@ def run_test_real(
             coder.apply_updates()
         else:
             response = coder.run(with_message=instructions, preproc=False)
+
         dur += time.time() - start
 
         if not no_aider:
