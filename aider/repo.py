@@ -285,9 +285,17 @@ class GitRepo:
                 files = self.tree_files[commit]
             else:
                 try:
-                    for blob in commit.tree.traverse():
-                        if blob.type == "blob":  # blob is a file
-                            files.add(blob.path)
+                    iterator = commit.tree.traverse()
+                    while True:
+                        try:
+                            blob = next(iterator)
+                            if blob.type == "blob":  # blob is a file
+                                files.add(blob.path)
+                        except (IndexError,) + ANY_GIT_ERROR:
+                            self.io.tool_output(f"GitRepo: read error skipping {blob.path}")
+                            continue
+                        except StopIteration:
+                            break
                 except ANY_GIT_ERROR as err:
                     self.git_repo_error = err
                     self.io.tool_error(f"Unable to list files in git repo: {err}")
