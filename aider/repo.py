@@ -292,7 +292,7 @@ class GitRepo:
                             if blob.type == "blob":  # blob is a file
                                 files.add(blob.path)
                         except (IndexError,) + ANY_GIT_ERROR:
-                            self.io.tool_output(f"GitRepo: read error skipping {blob.path}")
+                            self.io.tool_warning(f"GitRepo: read error skipping {blob.path}")
                             continue
                         except StopIteration:
                             break
