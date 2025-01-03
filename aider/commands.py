@@ -291,6 +291,34 @@ class Commands:
         commit_message = args.strip() if args else None
         self.coder.repo.commit(message=commit_message)
 
+    def cmd_scommit(self, args=None):
+        "Commit edits to the repo made outside the chat (commit message optional)"
+        try:
+            self.raw_cmd_scommit(args)
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to complete commit: {err}")
+
+    def raw_cmd_scommit(self, args=None):
+        if not self.coder.repo:
+            self.io.tool_error("No git repository found.")
+            return
+
+        commit_message = args.strip() if args else None
+
+        # Show the diff of the staged changes
+        self.io.tool_output("Staged changes diff:")
+        diff = self.coder.repo.repo.git.diff("--cached")  # Access git attribute of self.repo.repo
+        self.io.print(diff)
+
+        # Check if the repository is dirty (optional warning)
+        if self.coder.repo.is_dirty():
+            self.io.tool_warning("The repository has uncommitted changes in the working tree. Proceeding with the commit of staged changes.")
+
+        # staged ONLY:
+        self.coder.repo.repo.git.commit("-m", commit_message or "Staged changes commit") # test1.txt should be clean after commit
+
+        self.io.tool_output("Staged changes committed successfully.")
+
     def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"
 
