@@ -11583,7 +11583,7 @@ from aider.llm import litellm
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 
 
-@@@ #### add --deepseek for model deepseek/deepseek-coder @@@@@@@@@@@@@@@@@@@@
+@@@ #### add --deepseek for model deepseek/deepseek-chat @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: aider/args.py @@@@@@@@@@@@@@@@@@@@
     gpt_3_model_name = "gpt-3.5-turbo"
     group.add_argument(
@@ -11608,7 +11608,7 @@ from aider.llm import litellm
         const=gpt_3_model_name,
         help=f"Use {gpt_3_model_name} model for the main chat",
     )
-    deepseek_model = "deepseek/deepseek-coder"
+    deepseek_model = "deepseek/deepseek-chat"
     group.add_argument(
         "--deepseek",
         action="store_const",
@@ -11621,7 +11621,7 @@ from aider.llm import litellm
 
 @@@ #### add a --deepseek-beta bool arg. descibe as uses deepseek coder via the beta api endpoint @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: aider/args.py @@@@@@@@@@@@@@@@@@@@
-    deepseek_model = "deepseek/deepseek-coder"
+    deepseek_model = "deepseek/deepseek-chat"
     group.add_argument(
         "--deepseek",
         action="store_const",
@@ -11630,7 +11630,7 @@ from aider.llm import litellm
         help=f"Use {deepseek_model} model for the main chat",
     )
 @@@@@@@@@@@@@@@@@@@@
-    deepseek_model = "deepseek/deepseek-coder"
+    deepseek_model = "deepseek/deepseek-chat"
     group.add_argument(
         "--deepseek",
         action="store_const",
@@ -11695,7 +11695,7 @@ from aider.llm import litellm
             args.model = "claude-3-5-sonnet-20240620"
 
     if args.deepseek_beta:
-        args.model = "deepseek-coder"
+        args.model = "deepseek-chat"
         os.environ["DEEPSEEK_API_BASE"] = "https://api.deepseek.com/beta"
 
     main_model = models.Model(args.model, weak_model=args.weak_model)
@@ -11714,7 +11714,7 @@ from aider.llm import litellm
             args.model = "claude-3-5-sonnet-20240620"
 
     if args.deepseek_beta:
-        args.model = "deepseek-coder"
+        args.model = "deepseek-chat"
         os.environ["DEEPSEEK_API_BASE"] = "https://api.deepseek.com/beta"
 
     main_model = models.Model(args.model, weak_model=args.weak_model)
@@ -13780,7 +13780,7 @@ HISTORY.md
 
 > /Users/gauthier/Projects/aider/.venv/bin/aider --deepseek HISTORY.md --dry-run --edit whole  
 > Aider v0.49.2-dev  
-> Model: deepseek/deepseek-coder with ♾️ whole edit format  
+> Model: deepseek/deepseek-chat with ♾️ whole edit format  
 > Git repo: .git with 304 files  
 > Repo-map: using 1024 tokens  
 > Added HISTORY.md to the chat.  
@@ -19682,7 +19682,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('passRateChart').getContext('2d');
     
     var data = {
-        labels: ['gpt-4o-2024-08-06', 'claude-3.5-sonnet', 'deepseek-coder'],
+        labels: ['gpt-4o-2024-08-06', 'claude-3.5-sonnet', 'deepseek-chat'],
         datasets: [
             {
                 label: 'Markdown',
@@ -19753,7 +19753,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var ctx = document.getElementById('passRateChart').getContext('2d');
     
     var data = {
-        labels: ['gpt-4o-2024-08-06', 'claude-3.5-sonnet', 'deepseek-coder'],
+        labels: ['gpt-4o-2024-08-06', 'claude-3.5-sonnet', 'deepseek-chat'],
         datasets: [
             {
                 label: 'Markdown',
@@ -20049,14 +20049,14 @@ MODELS=<<EOF
       openai/gpt-4o-2024-08-06
       openai/gpt-4o-2024-05-13
       openrouter/anthropic/claude-3.5-sonnet
-      openrouter/deepseek/deepseek-coder
+      openrouter/deepseek/deepseek-chat
 EOF
 @@@@@@@@@@@@@@@@@@@@
 MODELS="
       openai/gpt-4o-2024-08-06
       openai/gpt-4o-2024-05-13
       openrouter/anthropic/claude-3.5-sonnet
-      openrouter/deepseek/deepseek-coder
+      openrouter/deepseek/deepseek-chat
 "
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 
@@ -23947,9 +23947,9 @@ HISTORY.md
 
 # aider chat started at 2024-08-19 10:39:14
 
-> /Users/gauthier/Projects/aider/.venv/bin/aider --model openrouter/deepseek/deepseek-coder HISTORY.md --dry-run --msg translate it all to french --edit-format whole  
+> /Users/gauthier/Projects/aider/.venv/bin/aider --model openrouter/deepseek/deepseek-chat HISTORY.md --dry-run --msg translate it all to french --edit-format whole  
 > Aider v0.50.2-dev  
-> Model: openrouter/deepseek/deepseek-coder with ♾️ whole edit format  
+> Model: openrouter/deepseek/deepseek-chat with ♾️ whole edit format  
 > Git repo: .git with 308 files  
 > Repo-map: using 1024 tokens, auto refresh  
 > Added HISTORY.md to the chat.  

@@ -627,7 +627,7 @@ MODEL_SETTINGS = [
         },
     ),
     ModelSettings(
-        "deepseek/deepseek-coder",
+        "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
@@ -648,7 +648,7 @@ MODEL_SETTINGS = [
         },
     ),
     ModelSettings(
-        "deepseek-coder",
+        "deepseek-chat",
         "diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
@@ -659,7 +659,7 @@ MODEL_SETTINGS = [
         },
     ),
     ModelSettings(
-        "openrouter/deepseek/deepseek-coder",
+        "openrouter/deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
         examples_as_sys_msg=True,

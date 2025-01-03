@@ -1105,7 +1105,7 @@ cog.out("```\n")
   extra_params:
     max_tokens: 8192
   lazy: false
-  name: deepseek/deepseek-coder
+  name: deepseek/deepseek-chat
   reminder: sys
   send_undo_reply: false
   streaming: true
@@ -1139,7 +1139,7 @@ cog.out("```\n")
   extra_params:
     max_tokens: 8192
   lazy: false
-  name: deepseek-coder
+  name: deepseek-chat
   reminder: sys
   send_undo_reply: false
   streaming: true
@@ -1155,7 +1155,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params: null
   lazy: false
-  name: openrouter/deepseek/deepseek-coder
+  name: openrouter/deepseek/deepseek-chat
   reminder: sys
   send_undo_reply: false
   streaming: true
