@@ -853,6 +853,16 @@ def run_test_real(
         instructions = errors
         instructions += prompts.test_failures.format(file_list=file_list)
 
+    # Clean up Rust target/debug directory after all attempts
+    if ".rs" in {Path(f).suffix for f in test_files}:
+        target_dir = testdir / "target" / "debug"
+        if target_dir.exists():
+            try:
+                shutil.rmtree(target_dir)
+                print(f"Cleaned up Rust target/debug directory: {target_dir}")
+            except Exception as e:
+                print(f"Failed to clean up Rust target/debug directory: {e}")
+
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
