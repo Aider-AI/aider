@@ -52,6 +52,8 @@ class Commands:
         io,
         coder,
         voice_language=None,
+        voice_input_device=None,
+        voice_format=None,
         verify_ssl=True,
         args=None,
         parser=None,
@@ -1009,7 +1011,7 @@ class Commands:
             return
 
         self.coder.event("interactive help")
-        from aider.coders import Coder
+        from aider.coders.base_coder import Coder
 
         if not self.help:
             res = install_help_extra(self.io)
@@ -1069,7 +1071,7 @@ class Commands:
             self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
             return
 
-        from aider.coders import Coder
+        from aider.coders.base_coder import Coder
 
         coder = Coder.create(
             io=self.io,
@@ -1117,7 +1119,7 @@ class Commands:
                 return
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.args.voice_format, device_name=self.args.voice_input_device
+                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(
@@ -1309,7 +1311,12 @@ class Commands:
                 continue
 
             self.io.tool_output(f"\nExecuting: {cmd}")
-            self.run(cmd)
+            try:
+                self.run(cmd)
+            except SwitchCoder:
+                self.io.tool_error(
+                    f"Command '{cmd}' is only supported in interactive mode, skipping."
+                )
 
     def completions_raw_save(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)

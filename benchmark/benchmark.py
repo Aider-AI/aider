@@ -31,7 +31,7 @@ from aider.io import InputOutput
 
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
-EXERCISES_DIR_DEFAULT = "exercism-python"
+EXERCISES_DIR_DEFAULT = "polyglot-benchmark"
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
@@ -175,11 +175,6 @@ def main(
         None,
         "--replay",
         help="Replay previous .aider.chat.history.md responses from previous benchmark run",
-    ),
-    max_apply_update_errors: int = typer.Option(
-        3,
-        "--max-apply-update-errors",
-        help="Maximum number of apply update errors before stopping the test",
     ),
     keywords: str = typer.Option(
         None, "--keywords", "-k", help="Only run tests that contain keywords (comma sep)"
@@ -342,7 +337,6 @@ def main(
                 verbose,
                 commit_hash,
                 replay,
-                max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
                 num_ctx,
@@ -367,7 +361,6 @@ def main(
                 verbose,
                 commit_hash,
                 replay,
-                max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
             )
@@ -645,7 +638,6 @@ def run_test_real(
     verbose,
     commit_hash,
     replay,
-    max_apply_update_errors,
     editor_model,
     editor_edit_format,
     num_ctx=None,
@@ -792,7 +784,6 @@ def run_test_real(
     )
     dump(coder.ignore_mentions)
 
-    coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
 
     timeouts = 0

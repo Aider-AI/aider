@@ -20,8 +20,8 @@ it works best with models that score well on the benchmarks.
 
 
 {: .note :}
-The old
-[aider code editing leaderboard](edit.html)
+The
+[original aider code editing leaderboard](edit.html)
 has been replaced by this 
 new, much more challenging
 [polyglot leaderboard](https://aider.chat/2024/12/21/polyglot.html).
@@ -122,6 +122,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-December 22, 2024.
+December 26, 2024.
 <!--[[[end]]]-->
 </p>
