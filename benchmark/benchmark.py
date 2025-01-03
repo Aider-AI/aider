@@ -853,7 +853,8 @@ def run_test_real(
         instructions = errors
         instructions += prompts.test_failures.format(file_list=file_list)
 
-    # Clean up Rust target/debug directory after all attempts
+    # Clean up build directories after all attempts
+    # Rust target/debug
     target_dir = testdir / "target" / "debug"
     if target_dir.exists():
         try:
@@ -861,6 +862,15 @@ def run_test_real(
             print(f"Cleaned up Rust target/debug directory: {target_dir}")
         except Exception as e:
             print(f"Failed to clean up Rust target/debug directory: {e}")
+
+    # Java build directories
+    java_build_dir = testdir / "build"
+    if java_build_dir.exists():
+        try:
+            shutil.rmtree(java_build_dir)
+            print(f"Cleaned up Java build directory: {java_build_dir}")
+        except Exception as e:
+            print(f"Failed to clean up Java build directory: {e}")
 
     results = dict(
         testdir=str(testdir),
