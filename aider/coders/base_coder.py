@@ -35,6 +35,7 @@ from aider.utils import format_content, format_messages, format_tokens, is_image
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
+from .custom_tool import CustomTool
 
 
 class UnknownEditFormat(ValueError):
@@ -104,6 +105,7 @@ class Coder:
     ignore_mentions = None
     chat_language = None
     file_watcher = None
+    custom_tools = []
 
     @classmethod
     def create(
@@ -156,6 +158,7 @@ class Coder:
                 total_cost=from_coder.total_cost,
                 ignore_mentions=from_coder.ignore_mentions,
                 file_watcher=from_coder.file_watcher,
+                custom_tools=from_coder.custom_tools,  # Copy custom tools
             )
             use_kwargs.update(update)  # override to complete the switch
             use_kwargs.update(kwargs)  # override passed kwargs
@@ -290,6 +293,7 @@ class Coder:
         ignore_mentions=None,
         file_watcher=None,
         auto_copy_context=False,
+        custom_tools=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -478,6 +482,11 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+
+        # Initialize custom tools
+        self.custom_tools = custom_tools or []
+        for tool in self.custom_tools:
+            tool.initialize(self)
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:

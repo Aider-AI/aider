@@ -812,6 +812,13 @@ def get_parser(default_config_files, git_root):
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
+    group.add_argument(
+        "--custom-tool",
+        action="append",
+        metavar="TOOL",
+        help="Specify a custom tool to integrate with Aider (can be used multiple times)",
+        default=[],
+    )
 
     return parser
 
