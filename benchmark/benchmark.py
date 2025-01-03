@@ -872,6 +872,15 @@ def run_test_real(
         except Exception as e:
             print(f"Failed to clean up Java build directory: {e}")
 
+    # Node.js node_modules directories
+    node_modules_dir = testdir / "node_modules"
+    if node_modules_dir.exists():
+        try:
+            shutil.rmtree(node_modules_dir)
+            print(f"Cleaned up Node.js node_modules directory: {node_modules_dir}")
+        except Exception as e:
+            print(f"Failed to clean up Node.js node_modules directory: {e}")
+
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
