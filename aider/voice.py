@@ -147,27 +147,20 @@ class Voice:
             print("\nWarning: {temp_wav} is too large, switching to mp3 format.")
             self.audio_format = "mp3"
 
+        filename = temp_wav
         if self.audio_format != "wav":
             try:
-                filename = tempfile.mktemp(suffix=f".{self.audio_format}")
+                new_filename = tempfile.mktemp(suffix=f".{self.audio_format}")
                 audio = AudioSegment.from_wav(temp_wav)
                 audio.export(filename, format=self.audio_format)
                 os.remove(temp_wav)
-                print(
-                    f"Converted to {self.audio_format}, new size:"
-                    f" {os.path.getsize(filename) / 1024 / 1024:.1f}MB"
-                )
+                filename = new_filename
             except (CouldntDecodeError, CouldntEncodeError) as e:
                 print(f"Error converting audio: {e}")
-                filename = temp_wav  # fall back to original file
             except (OSError, FileNotFoundError) as e:
                 print(f"File system error during conversion: {e}")
-                filename = temp_wav  # fall back to original file
             except Exception as e:
                 print(f"Unexpected error during audio conversion: {e}")
-                filename = temp_wav  # fall back to original file
-        else:
-            filename = temp_wav
 
         with open(filename, "rb") as fh:
             try:
