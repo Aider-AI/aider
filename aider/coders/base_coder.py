@@ -613,9 +613,19 @@ class Coder:
     def get_ident_filename_matches(self, idents):
         all_fnames = defaultdict(set)
         for fname in self.get_all_relative_files():
-            base = Path(fname).with_suffix("").name.lower()
-            if len(base) >= 5:
-                all_fnames[base].add(fname)
+            # Skip empty paths or just '.'
+            if not fname or fname == '.':
+                continue
+                
+            try:
+                # Handle dotfiles properly
+                path = Path(fname)
+                base = path.stem.lower()  # Use stem instead of with_suffix("").name
+                if len(base) >= 5:
+                    all_fnames[base].add(fname)
+            except ValueError:
+                # Skip paths that can't be processed
+                continue
 
         matches = set()
         for ident in idents:
