@@ -614,9 +614,9 @@ class Coder:
         all_fnames = defaultdict(set)
         for fname in self.get_all_relative_files():
             # Skip empty paths or just '.'
-            if not fname or fname == '.':
+            if not fname or fname == ".":
                 continue
-                
+
             try:
                 # Handle dotfiles properly
                 path = Path(fname)
