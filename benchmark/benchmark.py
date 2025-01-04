@@ -859,28 +859,33 @@ def run_test_real(
     if target_dir.exists():
         try:
             shutil.rmtree(target_dir)
-            print(f"Cleaned up Rust target/debug directory: {target_dir}")
-        except Exception as e:
-            # ignore all these exceptions on cleanup. ai!
-            print(f"Failed to clean up Rust target/debug directory: {e}")
+            if verbose:
+                print(f"Cleaned up Rust target/debug directory: {target_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Rust target/debug directory: {e}")
 
     # Java build directories
     java_build_dir = testdir / "build"
     if java_build_dir.exists():
         try:
             shutil.rmtree(java_build_dir)
-            print(f"Cleaned up Java build directory: {java_build_dir}")
-        except Exception as e:
-            print(f"Failed to clean up Java build directory: {e}")
+            if verbose:
+                print(f"Cleaned up Java build directory: {java_build_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Java build directory: {e}")
 
     # Node.js node_modules directories
     node_modules_dir = testdir / "node_modules"
     if node_modules_dir.exists():
         try:
             shutil.rmtree(node_modules_dir)
-            print(f"Cleaned up Node.js node_modules directory: {node_modules_dir}")
-        except Exception as e:
-            print(f"Failed to clean up Node.js node_modules directory: {e}")
+            if verbose:
+                print(f"Cleaned up Node.js node_modules directory: {node_modules_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Node.js node_modules directory: {e}")
 
     results = dict(
         testdir=str(testdir),
