@@ -804,9 +804,9 @@ class InputOutput:
                 hist = message.strip() if strip else message
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
 
+        message = Text(message)
+        style = dict(style=color) if self.pretty and color else dict()
         try:
-            message = Text(message)
-            style = dict(style=color) if self.pretty and color else dict()
             self.console.print(message, **style)
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
