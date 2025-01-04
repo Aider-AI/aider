@@ -140,6 +140,9 @@ class Voice:
             while not self.q.empty():
                 file.write(self.q.get())
 
+        # ai: File uploads are currently limited to 25 MB
+        # check if the format is wav and the file is >25mb
+        # if so, offer to switch to mp3 format. ai!
         if self.audio_format != "wav":
             filename = tempfile.mktemp(suffix=f".{self.audio_format}")
             audio = AudioSegment.from_wav(temp_wav)
