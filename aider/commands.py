@@ -71,6 +71,8 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
+        self.voice_format = voice_format
+        self.voice_input_device = voice_input_device
 
         self.help = None
         self.editor = editor
