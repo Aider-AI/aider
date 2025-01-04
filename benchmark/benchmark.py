@@ -861,6 +861,7 @@ def run_test_real(
             shutil.rmtree(target_dir)
             print(f"Cleaned up Rust target/debug directory: {target_dir}")
         except Exception as e:
+            # ignore all these exceptions on cleanup. ai!
             print(f"Failed to clean up Rust target/debug directory: {e}")
 
     # Java build directories
