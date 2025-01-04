@@ -918,6 +918,7 @@ class Commands:
         if combined_output is None:
             return
 
+        # tokenize the output, and ask "Add xx k-tokens of command output to the chat?" # ai!
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
