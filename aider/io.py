@@ -810,7 +810,7 @@ class InputOutput:
             self.console.print(message, **style)
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
-            message = message.encode('ascii', errors='replace').decode('ascii')
+            message = message.encode("ascii", errors="replace").decode("ascii")
             self.console.print(message, **style)
 
     def tool_error(self, message="", strip=True):
