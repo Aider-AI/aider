@@ -18,6 +18,7 @@ warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
 from pydub import AudioSegment  # noqa
+from pydub.exceptions import CouldntDecodeError, CouldntEncodeError  # noqa
 
 try:
     import soundfile as sf
@@ -147,10 +148,21 @@ class Voice:
             self.audio_format = "mp3"
 
         if self.audio_format != "wav":
-            filename = tempfile.mktemp(suffix=f".{self.audio_format}")
-            audio = AudioSegment.from_wav(temp_wav)
-            audio.export(filename, format=self.audio_format)
-            os.remove(temp_wav)
+            try:
+                filename = tempfile.mktemp(suffix=f".{self.audio_format}")
+                audio = AudioSegment.from_wav(temp_wav)
+                audio.export(filename, format=self.audio_format)
+                os.remove(temp_wav)
+                print(f"Converted to {self.audio_format}, new size: {os.path.getsize(filename)/1024/1024:.1f}MB")
+            except (CouldntDecodeError, CouldntEncodeError) as e:
+                print(f"Error converting audio: {e}")
+                filename = temp_wav  # fall back to original file
+            except (OSError, FileNotFoundError) as e:
+                print(f"File system error during conversion: {e}")
+                filename = temp_wav  # fall back to original file
+            except Exception as e:
+                print(f"Unexpected error during audio conversion: {e}")
+                filename = temp_wav  # fall back to original file
         else:
             filename = temp_wav
 
