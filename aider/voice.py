@@ -153,6 +153,7 @@ class Voice:
                 audio = AudioSegment.from_wav(temp_wav)
                 audio.export(filename, format=self.audio_format)
                 os.remove(temp_wav)
+                print(f"Converted to {self.audio_format}, new size: {os.path.getsize(filename) / 1024 / 1024:.1f}MB")
             except (CouldntDecodeError, CouldntEncodeError) as e:
                 print(f"Error converting audio: {e}")
                 filename = temp_wav  # fall back to original file
