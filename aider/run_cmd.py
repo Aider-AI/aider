@@ -39,7 +39,7 @@ def get_windows_parent_process_name():
         return None
 
 
-def run_cmd_subprocess(command, verbose=False, cwd=None):
+def run_cmd_subprocess(command, verbose=False, cwd=None, encoding=sys.stdout.encoding):
     if verbose:
         print("Using run_cmd_subprocess:", command)
 
@@ -65,7 +65,7 @@ def run_cmd_subprocess(command, verbose=False, cwd=None):
             stderr=subprocess.STDOUT,
             text=True,
             shell=True,
-            encoding=sys.stdout.encoding,
+            encoding=encoding,
             errors="replace",
             bufsize=0,  # Set bufsize to 0 for unbuffered output
             universal_newlines=True,
