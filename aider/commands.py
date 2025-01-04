@@ -921,13 +921,11 @@ class Commands:
         # Calculate token count of output
         token_count = self.coder.main_model.token_count(combined_output)
         k_tokens = token_count / 1000
-        
+
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            add = self.io.confirm_ask(
-                f"Add {k_tokens:.1f}k tokens of command output to the chat?"
-            )
+            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
 
         if add:
             num_lines = len(combined_output.strip().splitlines())
