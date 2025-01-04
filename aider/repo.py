@@ -367,8 +367,8 @@ class GitRepo:
 
     def ignored_file_raw(self, fname):
         if self.subtree_only:
-            fname_path = Path(self.normalize_path(fname))
             try:
+                fname_path = Path(self.normalize_path(fname))
                 cwd_path = Path.cwd().resolve().relative_to(Path(self.root).resolve())
             except ValueError:
                 # Issue #1524
