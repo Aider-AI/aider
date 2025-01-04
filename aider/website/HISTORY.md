@@ -24,11 +24,14 @@ cog.out(text)
 
 
 ### main branch
+- Prompts help DeepSeek work better when alternating between `/ask` and `/code`.
 - Increased max chat history tokens limit from 4k to 8k.
 - Added support for custom voice format and input device settings.
 - Disabled Streamlit email prompt by automatically creating credentials file.
 - Fixed lint command handling of nested spaced strings.
-- Aider wrote 45% of the code in this release.
+- Added token count feedback when adding command output to chat.
+- Improved error handling for large audio files with automatic format conversion.
+- Aider wrote 50% of the code in this release.
 
 ### Aider v0.70.0
 - Full support for o1 models.
