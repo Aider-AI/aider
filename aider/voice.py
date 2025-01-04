@@ -142,18 +142,11 @@ class Voice:
 
         # Check file size and offer to convert to mp3 if too large
         file_size = os.path.getsize(temp_wav)
-        if file_size > 25 * 1024 * 1024:  # 25 MB
-            print("\nWarning: Recording is too large for direct upload (over 25MB)")
-            if input("Convert to mp3 to reduce size? [Y/n] ").lower() in ("", "y"):
-                filename = tempfile.mktemp(suffix=".mp3")
-                audio = AudioSegment.from_wav(temp_wav)
-                audio.export(filename, format="mp3")
-                os.remove(temp_wav)
-                print(f"Converted to mp3, new size: {os.path.getsize(filename)/1024/1024:.1f}MB")
-            else:
-                print("Uploading large file - may fail if over 25MB")
-                filename = temp_wav
-        elif self.audio_format != "wav":
+        if file_size > 24.9 * 1024 * 1024 and self.audio_format == "wav":
+            print("\nWarning: {temp_wav} is too large, switching to mp3 format.")
+            self.audio_format = "mp3"
+
+        if self.audio_format != "wav":
             filename = tempfile.mktemp(suffix=f".{self.audio_format}")
             audio = AudioSegment.from_wav(temp_wav)
             audio.export(filename, format=self.audio_format)
