@@ -23,8 +23,14 @@ cog.out(text)
 ]]]-->
 
 
-### Aider v0.70.0
+### main branch
+- Increased max chat history tokens limit from 4k to 8k.
+- Added support for custom voice format and input device settings.
+- Disabled Streamlit email prompt by automatically creating credentials file.
+- Fixed lint command handling of nested spaced strings.
+- Aider wrote 45% of the code in this release.
 
+### Aider v0.70.0
 - Full support for o1 models.
 - Watch files now honors `--subtree-only`, and only watches that subtree.
 - Improved prompting for watch files, to work more reliably with more models.
@@ -35,7 +41,7 @@ cog.out(text)
 - Ask 10% of users to opt-in to analytics.
 - Bugfix for auto-suggest.
 - Gracefully handle unicode errors in git path names.
-- Aider wrote 74% of the code in this release. 
+- Aider wrote 74% of the code in this release.
 
 ### Aider v0.69.1
 
