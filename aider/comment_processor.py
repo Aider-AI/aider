@@ -1,8 +1,6 @@
 import re
 from typing import Optional, Tuple, List
-
 from grep_ast import TreeContext
-
 from aider.io import InputOutput
 
 
