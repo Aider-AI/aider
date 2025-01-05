@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from aider.io import InputOutput
-from aider.watch import FileWatcher
+from aider.comment_processor import CommentProcessor
 
 
 def test_gitignore_patterns():
@@ -74,7 +74,7 @@ def test_ai_comment_pattern():
 
     io = InputOutput(pretty=False, fancy_input=False, yes=False)
     coder = MinimalCoder(io)
-    watcher = FileWatcher(coder)
+    watcher = CommentProcessor(io, coder)
     fixtures_dir = Path(__file__).parent.parent / "fixtures"
 
     # Test Python fixture
