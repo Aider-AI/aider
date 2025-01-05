@@ -22,6 +22,7 @@ from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
+from aider.comment_processor import CommentProcessor
 
 from .dump import dump  # noqa: F401
 
@@ -681,6 +682,12 @@ class Commands:
         files = [self.quote_fname(fn) for fn in files]
         return files
 
+    def completions_comments(self):
+        files = set(self.coder.get_all_relative_files())
+        files = files - set(self.coder.get_inchat_relative_files())
+        files = [self.quote_fname(fn) for fn in files]
+        return files
+
     def glob_filtered_to_repo(self, pattern):
         if not pattern.strip():
             return []
@@ -805,6 +812,21 @@ class Commands:
                     fname = self.coder.get_rel_fname(abs_file_path)
                     self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
+
+    def cmd_comments(self, args):
+        files = parse_quoted_filenames(args)
+        comment_processor = CommentProcessor(self.io, self.coder)
+        comment_prompt = comment_processor.process_changes(files)
+
+        from aider.coders.base_coder import Coder
+
+        coder = Coder.create(
+            io=self.io,
+            from_coder=self.coder,
+            edit_format=self.coder.edit_format,
+            summarize_from_coder=False,
+        )
+        coder.run(comment_prompt)
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
