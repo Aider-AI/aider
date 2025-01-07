@@ -42,11 +42,11 @@ The end.
 
 class MarkdownStream:
     """Streaming markdown renderer that progressively displays content with a live updating window.
-    
+
     Uses rich.console and rich.live to render markdown content with smooth scrolling and partial updates.
     Maintains a sliding window of visible content while streaming in new markdown text.
     """
-    
+
     live = None  # Rich Live display instance
     when = 0  # Timestamp of last update
     min_delay = 0.050  # Minimum time between updates (20fps)
@@ -54,7 +54,7 @@ class MarkdownStream:
 
     def __init__(self, mdargs=None):
         """Initialize the markdown stream.
-        
+
         Args:
             mdargs (dict, optional): Additional arguments to pass to rich Markdown renderer
         """
@@ -79,7 +79,7 @@ class MarkdownStream:
 
     def update(self, text, final=False):
         """Update the displayed markdown content.
-        
+
         Args:
             text (str): New markdown text to append
             final (bool): If True, this is the final update and we should clean up
