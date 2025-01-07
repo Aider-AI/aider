@@ -3,7 +3,6 @@ title: Aider in your IDE
 #highlight_image: /assets/browser.jpg
 parent: Usage
 nav_order: 750
-# rewrite this description to be relevant to running within an ide ai!
 description: Aider can watch your files and respond to AI comments you add in your favorite IDE or text editor.
 ---
 
