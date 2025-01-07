@@ -126,8 +126,13 @@ class MarkdownStream:
             return
         self.when = now
 
-        # time how long this takes and set min_delay to it. ai!
+        # Measure render time and adjust min_delay to maintain smooth rendering
+        start = time.time()
         lines = self._render_markdown_to_lines(text)
+        render_time = time.time() - start
+        
+        # Set min_delay to render time plus a small buffer
+        self.min_delay = max(render_time * 1.1, 1./30)  # At least 30fps
 
 
         num_lines = len(lines)
