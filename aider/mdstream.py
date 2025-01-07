@@ -82,8 +82,18 @@ class MarkdownStream:
         """Update the displayed markdown content.
 
         Args:
-            text (str): New markdown text to append
+            text (str): The markdown text received so far
             final (bool): If True, this is the final update and we should clean up
+
+        Splits the output into "stable" older lines and the "last few" lines
+        which aren't considered stable. They may shift around as new chunks
+        are appended to the markdown text.
+
+        The stable lines emit to the console above the Live window.
+        The unstable lines emit into the Live window so they can be repainted.
+
+        Markdown going to the console works better in terminal scrollback buffers.
+        The live window doesn't play nice with terminal scrollback.
         """
         now = time.time()
         # Throttle updates to maintain smooth rendering
@@ -91,6 +101,7 @@ class MarkdownStream:
             return
         self.when = now
 
+        # ai: refactor this into a helper function...
         # Render the markdown to a string buffer
         string_io = io.StringIO()
         console = Console(file=string_io, force_terminal=True)
@@ -100,18 +111,23 @@ class MarkdownStream:
 
         # Split rendered output into lines
         lines = output.splitlines(keepends=True)
+        # ... ai!
+
         num_lines = len(lines)
 
-        # During streaming, keep a window of lines at the bottom visible
+        # How many lines have "left" the live window and are now considered stable?
+        # Or if final, consider all lines to be stable.
         if not final:
             num_lines -= self.live_window
 
-        # If we have new content to display...
+        # If we have stable content to display...
         if final or num_lines > 0:
+
+            # How many stable lines do we need to newly show above the live window?
             num_printed = len(self.printed)
             show = num_lines - num_printed
 
-            # Skip if no new lines to show
+            # Skip if no new lines to show above live window
             if show <= 0:
                 return
 
@@ -119,7 +135,7 @@ class MarkdownStream:
             show = lines[num_printed:num_lines]
             show = "".join(show)
             show = Text.from_ansi(show)
-            self.live.console.print(show)
+            self.live.console.print(show) # to the console above the live area
 
             # Update our record of printed lines
             self.printed = lines[:num_lines]
