@@ -167,7 +167,8 @@ class MarkdownStream:
 
 
 if __name__ == "__main__":
-    code = # read aider.io's source file. ai!
+    with open("aider/io.py", "r") as f:
+        code = f.read()
     _text = _text_prefix + code + _text_suffix
 
     pm = MarkdownStream()
