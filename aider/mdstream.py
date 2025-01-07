@@ -42,9 +42,10 @@ The end.
 
 class MarkdownStream:
     """Streaming markdown renderer that progressively displays content with a live updating window.
-
-    Uses rich.console and rich.live to render markdown content with smooth scrolling and partial updates.
-    Maintains a sliding window of visible content while streaming in new markdown text.
+    
+    Uses rich.console and rich.live to render markdown content with smooth scrolling
+    and partial updates. Maintains a sliding window of visible content while streaming
+    in new markdown text.
     """
 
     live = None  # Rich Live display instance
