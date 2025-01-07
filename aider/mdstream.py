@@ -70,6 +70,25 @@ class MarkdownStream:
         self.live = Live(Text(""), refresh_per_second=1.0 / self.min_delay)
         self.live.start()
 
+    def _render_markdown_to_lines(self, text):
+        """Render markdown text to a list of lines.
+        
+        Args:
+            text (str): Markdown text to render
+            
+        Returns:
+            list: List of rendered lines with line endings preserved
+        """
+        # Render the markdown to a string buffer
+        string_io = io.StringIO()
+        console = Console(file=string_io, force_terminal=True)
+        markdown = Markdown(text, **self.mdargs)
+        console.print(markdown)
+        output = string_io.getvalue()
+
+        # Split rendered output into lines
+        return output.splitlines(keepends=True)
+
     def __del__(self):
         """Destructor to ensure Live display is properly cleaned up."""
         if self.live:
@@ -101,17 +120,7 @@ class MarkdownStream:
             return
         self.when = now
 
-        # ai: refactor this into a helper function...
-        # Render the markdown to a string buffer
-        string_io = io.StringIO()
-        console = Console(file=string_io, force_terminal=True)
-        markdown = Markdown(text, **self.mdargs)
-        console.print(markdown)
-        output = string_io.getvalue()
-
-        # Split rendered output into lines
-        lines = output.splitlines(keepends=True)
-        # ... ai!
+        lines = self._render_markdown_to_lines(text)
 
         num_lines = len(lines)
 
