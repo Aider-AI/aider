@@ -56,7 +56,7 @@ class MarkdownStream:
 
     live = None  # Rich Live display instance
     when = 0  # Timestamp of last update
-    min_delay = 1./20  # Minimum time between updates (20fps)
+    min_delay = 1.0 / 20  # Minimum time between updates (20fps)
     live_window = 6  # Number of lines to keep visible at bottom during streaming
 
     def __init__(self, mdargs=None):
@@ -130,10 +130,9 @@ class MarkdownStream:
         start = time.time()
         lines = self._render_markdown_to_lines(text)
         render_time = time.time() - start
-        
-        # Set min_delay to render time plus a small buffer
-        self.min_delay = max(render_time * 1.1, 1./30)  # At least 30fps
 
+        # Set min_delay to render time plus a small buffer
+        self.min_delay = max(render_time * 1.1, 1.0 / 30)  # At least 30fps
 
         num_lines = len(lines)
 
