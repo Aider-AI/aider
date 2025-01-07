@@ -2,6 +2,7 @@
 
 ### main branch
 - Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
+- Streaming pretty LLM responses is smoother and faster for long replies.
 - Increased max chat history tokens limit from 4k to 8k.
 - Added support for custom voice format and input device settings.
 - Disabled Streamlit email prompt by automatically creating credentials file.
