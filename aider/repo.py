@@ -27,6 +27,7 @@ ANY_GIT_ERROR += [
     TypeError,
     ValueError,
     AttributeError,
+    AssertionError,
 ]
 ANY_GIT_ERROR = tuple(ANY_GIT_ERROR)
 
