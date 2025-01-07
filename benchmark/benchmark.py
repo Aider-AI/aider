@@ -693,7 +693,7 @@ def run_test_real(
     ignore_files.update(example_files)
 
     # Remove any ignore files from the solution set that LLM will edit
-    solution_files.discard(ignore_files)
+    solution_files.difference_update(ignore_files)
 
     # Copy all solution files
     for file_path in solution_files:
