@@ -10,7 +10,7 @@ from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
 
-_text = """
+_text_prefix = """
 # Header
 
 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
@@ -27,10 +27,9 @@ Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
 
 
 ```python
-import sys
+"""
 
-def greeting():
-    print("Hello world!")
+_text_suffix = """
 ```
 
 ## Sub header too
@@ -121,7 +120,6 @@ class MarkdownStream:
         self.when = now
 
         lines = self._render_markdown_to_lines(text)
-
         num_lines = len(lines)
 
         # How many lines have "left" the live window and are now considered stable?
@@ -153,19 +151,27 @@ class MarkdownStream:
             self.live.update(Text(""))
             self.live.stop()
             self.live = None
-        else:
-            # Update the live window with remaining lines
-            rest = lines[num_lines:]
-            rest = "".join(rest)
-            rest = Text.from_ansi(rest)
-            self.live.update(rest)
+            return
+
+        # Update the live window with remaining lines
+        rest = lines[num_lines:]
+        rest = "".join(rest)
+        rest = Text.from_ansi(rest)
+        self.live.update(rest)
+
+    def find_minimal_suffix(self, text, match_lines=50):
+        """
+        Splits text into chunks on blank lines "\n\n".
+        """
+
 
 
 if __name__ == "__main__":
-    _text = 5 * _text
+    code = # read aider.io's source file. ai!
+    _text = _text_prefix + code + _text_suffix
 
     pm = MarkdownStream()
-    for i in range(6, len(_text)):
+    for i in range(6, len(_text), 5):
         pm.update(_text[:i])
         time.sleep(0.01)
 
