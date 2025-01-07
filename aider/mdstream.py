@@ -72,10 +72,10 @@ class MarkdownStream:
 
     def _render_markdown_to_lines(self, text):
         """Render markdown text to a list of lines.
-        
+
         Args:
             text (str): Markdown text to render
-            
+
         Returns:
             list: List of rendered lines with line endings preserved
         """
@@ -131,7 +131,6 @@ class MarkdownStream:
 
         # If we have stable content to display...
         if final or num_lines > 0:
-
             # How many stable lines do we need to newly show above the live window?
             num_printed = len(self.printed)
             show = num_lines - num_printed
@@ -144,7 +143,7 @@ class MarkdownStream:
             show = lines[num_printed:num_lines]
             show = "".join(show)
             show = Text.from_ansi(show)
-            self.live.console.print(show) # to the console above the live area
+            self.live.console.print(show)  # to the console above the live area
 
             # Update our record of printed lines
             self.printed = lines[:num_lines]
