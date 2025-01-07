@@ -1,7 +1,7 @@
 # Release history
 
 ### main branch
-- Prompts help DeepSeek work better when alternating between `/ask` and `/code`.
+- Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
 - Increased max chat history tokens limit from 4k to 8k.
 - Added support for custom voice format and input device settings.
 - Disabled Streamlit email prompt by automatically creating credentials file.
