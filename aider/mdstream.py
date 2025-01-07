@@ -165,7 +165,6 @@ class MarkdownStream:
         """
 
 
-
 if __name__ == "__main__":
     with open("aider/io.py", "r") as f:
         code = f.read()
