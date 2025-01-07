@@ -56,7 +56,7 @@ class MarkdownStream:
 
     live = None  # Rich Live display instance
     when = 0  # Timestamp of last update
-    min_delay = 0.050  # Minimum time between updates (20fps)
+    min_delay = 1./20  # Minimum time between updates (20fps)
     live_window = 6  # Number of lines to keep visible at bottom during streaming
 
     def __init__(self, mdargs=None):
@@ -126,7 +126,10 @@ class MarkdownStream:
             return
         self.when = now
 
+        # time how long this takes and set min_delay to it. ai!
         lines = self._render_markdown_to_lines(text)
+
+
         num_lines = len(lines)
 
         # How many lines have "left" the live window and are now considered stable?
