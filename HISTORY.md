@@ -9,7 +9,9 @@
 - Fixed lint command handling of nested spaced strings.
 - Added token count feedback when adding command output to chat.
 - Improved error handling for large audio files with automatic format conversion.
-- Aider wrote 50% of the code in this release.
+- Added better error handling for git repository index errors.
+- Improved unicode handling in console output with ASCII fallback.
+- Aider wrote 54% of the code in this release.
 
 ### Aider v0.70.0
 - Full support for o1 models.
