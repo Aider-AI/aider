@@ -154,7 +154,7 @@ class Voice:
             try:
                 new_filename = tempfile.mktemp(suffix=f".{use_audio_format}")
                 audio = AudioSegment.from_wav(temp_wav)
-                audio.export(filename, format=use_audio_format)
+                audio.export(new_filename, format=use_audio_format)
                 os.remove(temp_wav)
                 filename = new_filename
             except (CouldntDecodeError, CouldntEncodeError) as e:
