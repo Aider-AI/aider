@@ -237,11 +237,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>1,777,140</td><td class='right'>74.4%</td></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>563,591</td><td class='right'>23.6%</td></tr>
-<tr><td>o1</td><td class='right'>37,290</td><td class='right'>1.6%</td></tr>
-<tr><td>gemini/gemini-2.0-flash-exp</td><td class='right'>4,827</td><td class='right'>0.2%</td></tr>
-<tr><td>gpt-4o</td><td class='right'>4,473</td><td class='right'>0.2%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>1,516,643</td><td class='right'>92.5%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>67,672</td><td class='right'>4.1%</td></tr>
+<tr><td>o1</td><td class='right'>32,137</td><td class='right'>2.0%</td></tr>
+<tr><td>gemini/gemini-1.5-flash-8b</td><td class='right'>8,297</td><td class='right'>0.5%</td></tr>
+<tr><td>gemini/gemini-1.5-flash-002</td><td class='right'>4,964</td><td class='right'>0.3%</td></tr>
+<tr><td>gemini/gemini-2.0-flash-exp</td><td class='right'>4,827</td><td class='right'>0.3%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>4,473</td><td class='right'>0.3%</td></tr>
 </table>
 <!--[[[end]]]-->
 
