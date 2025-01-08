@@ -1,14 +1,17 @@
 # Release history
 
 ### main branch
-- Prompts help DeepSeek work better when alternating between `/ask` and `/code`.
+- Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
+- Streaming pretty LLM responses is smoother and faster for long replies.
 - Increased max chat history tokens limit from 4k to 8k.
 - Added support for custom voice format and input device settings.
 - Disabled Streamlit email prompt by automatically creating credentials file.
 - Fixed lint command handling of nested spaced strings.
 - Added token count feedback when adding command output to chat.
 - Improved error handling for large audio files with automatic format conversion.
-- Aider wrote 50% of the code in this release.
+- Added better error handling for git repository index errors.
+- Improved unicode handling in console output with ASCII fallback.
+- Aider wrote 54% of the code in this release.
 
 ### Aider v0.70.0
 - Full support for o1 models.
