@@ -42,7 +42,7 @@ class CommentProcessor:
             return None, None, None
         return line_nums, comments, has_action
 
-    def process_changes(self, changed_files)
+    def process_changes(self, changed_files):
         """Process file changes and generate prompt from AI comments"""
         from aider.watch_prompts import watch_code_prompt, watch_ask_prompt
 
