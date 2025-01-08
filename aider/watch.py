@@ -122,7 +122,8 @@ class FileWatcher:
                         continue
                     changed_files = {str(Path(change[1])) for change in changes}
                     self.changed_files.update(changed_files)
-                    self.io.interrupt_input()
+                    if self.io.prompt_session and self.io.prompt_session.app:
+                        self.io.interrupt_input()
                     return
             except Exception as e:
                 if self.verbose:

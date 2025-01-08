@@ -934,10 +934,9 @@ class Model(ModelSettings):
         self.keys_in_environment = res.get("keys_in_environment")
 
         max_input_tokens = self.info.get("max_input_tokens") or 0
-        if max_input_tokens < 32 * 1024:
-            self.max_chat_history_tokens = 1024
-        else:
-            self.max_chat_history_tokens = 2 * 1024
+        # Calculate max_chat_history_tokens as 1/16th of max_input_tokens,
+        # with minimum 1k and maximum 8k
+        self.max_chat_history_tokens = min(max(max_input_tokens / 16, 1024), 8192)
 
         self.configure_model_settings(model)
         if weak_model is False:

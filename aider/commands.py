@@ -7,7 +7,6 @@ import tempfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
-from unittest import mock
 
 import pyperclip
 from PIL import Image, ImageGrab
@@ -18,12 +17,11 @@ from aider import models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
-from aider.io import InputOutput
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import GitTemporaryDirectory, is_image_file
+from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
 
@@ -54,6 +52,8 @@ class Commands:
         io,
         coder,
         voice_language=None,
+        voice_input_device=None,
+        voice_format=None,
         verify_ssl=True,
         args=None,
         parser=None,
@@ -71,6 +71,8 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
+        self.voice_format = voice_format
+        self.voice_input_device = voice_input_device
 
         self.help = None
         self.editor = editor
@@ -916,10 +918,14 @@ class Commands:
         if combined_output is None:
             return
 
+        # Calculate token count of output
+        token_count = self.coder.main_model.token_count(combined_output)
+        k_tokens = token_count / 1000
+
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            add = self.io.confirm_ask("Add command output to the chat?")
+            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
 
         if add:
             num_lines = len(combined_output.strip().splitlines())
@@ -1119,7 +1125,7 @@ class Commands:
                 return
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.args.voice_format, device_name=self.args.voice_input_device
+                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(
@@ -1317,36 +1323,6 @@ class Commands:
                 self.io.tool_error(
                     f"Command '{cmd}' is only supported in interactive mode, skipping."
                 )
-
-    def test_cmd_load_with_switch_coder(self):
-        with GitTemporaryDirectory() as repo_dir:
-            io = InputOutput(pretty=False, fancy_input=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
-            commands = Commands(io, coder)
-
-            # Create a temporary file with commands
-            commands_file = Path(repo_dir) / "test_commands.txt"
-            commands_file.write_text("/ask Tell me about the code\n/model gpt-4\n")
-
-            # Mock run to raise SwitchCoder for /ask and /model
-            def mock_run(cmd):
-                if cmd.startswith(("/ask", "/model")):
-                    raise SwitchCoder()
-                return None
-
-            with mock.patch.object(commands, "run", side_effect=mock_run):
-                # Capture tool_error output
-                with mock.patch.object(io, "tool_error") as mock_tool_error:
-                    commands.cmd_load(str(commands_file))
-
-                    # Check that appropriate error messages were shown
-                    mock_tool_error.assert_any_call(
-                        "Command '/ask Tell me about the code' is only supported in interactive"
-                        " mode, skipping."
-                    )
-                    mock_tool_error.assert_any_call(
-                        "Command '/model gpt-4' is only supported in interactive mode, skipping."
-                    )
 
     def completions_raw_save(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)

@@ -30,7 +30,7 @@ class TestLinter(unittest.TestCase):
     def test_run_cmd(self, mock_popen):
         mock_process = MagicMock()
         mock_process.returncode = 0
-        mock_process.communicate.return_value = ("", None)
+        mock_process.stdout.read.side_effect = ("", None)
         mock_popen.return_value = mock_process
 
         result = self.linter.run_cmd("test_cmd", "test_file.py", "code")
@@ -40,7 +40,7 @@ class TestLinter(unittest.TestCase):
     def test_run_cmd_with_errors(self, mock_popen):
         mock_process = MagicMock()
         mock_process.returncode = 1
-        mock_process.communicate.return_value = ("Error message", None)
+        mock_process.stdout.read.side_effect = ("Error message", None)
         mock_popen.return_value = mock_process
 
         result = self.linter.run_cmd("test_cmd", "test_file.py", "code")
