@@ -17,9 +17,7 @@ class CommentProcessor:
         self.coder = coder
         self.analytics = analytics
 
-    def get_ai_comments(
-        self, filepath
-    ) -> Tuple[Optional[List[int]], Optional[List[str]], Optional[str]]:
+    def get_ai_comments(self, filepath):
         """Extract AI comment line numbers, comments and action status from a file"""
         line_nums = []
         comments = []
@@ -45,7 +43,7 @@ class CommentProcessor:
             return None, None, None
         return line_nums, comments, has_action
 
-    def process_changes(self, changed_files) -> str:
+    def process_changes(self, changed_files)
         """Process file changes and generate prompt from AI comments"""
         from aider.watch_prompts import watch_code_prompt, watch_ask_prompt
 
