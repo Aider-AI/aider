@@ -1,6 +1,7 @@
 # Release history
 
 ### main branch
+
 - Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
 - Streaming pretty LLM responses is smoother and faster for long replies.
 - Increased max chat history tokens limit from 4k to 8k.
@@ -18,6 +19,7 @@
 - Aider wrote 59% of the code in this release.
 
 ### Aider v0.70.0
+
 - Full support for o1 models.
 - Watch files now honors `--subtree-only`, and only watches that subtree.
 - Improved prompting for watch files, to work more reliably with more models.

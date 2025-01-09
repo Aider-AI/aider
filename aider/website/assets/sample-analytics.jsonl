@@ -1,6 +1,3 @@
-{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1735600170}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1735600170}
-{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "gemini/gemini-2.0-flash-exp", "editor_model": "deepseek/deepseek-chat", "edit_format": "ask", "prompt_tokens": 6949, "completion_tokens": 328, "total_tokens": 7277, "cost": 0.0010647, "total_cost": 0.02245922000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1735600177}
 {"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1735600197}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1735600197}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "gemini/gemini-2.0-flash-exp", "editor_model": "deepseek/deepseek-chat", "edit_format": "ask", "prompt_tokens": 7251, "completion_tokens": 404, "total_tokens": 7655, "cost": 0.00112826, "total_cost": 0.023587480000000008}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1735600206}
@@ -998,3 +995,6 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736452825}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 22997, "completion_tokens": 237, "total_tokens": 23234, "cost": 0.0032859399999980404, "total_cost": 0.0032859399999980404}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736452837}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736452837}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736453047}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736453047}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736453047}
