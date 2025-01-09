@@ -8,6 +8,7 @@ try:
     ANY_GIT_ERROR = [
         git.exc.ODBError,
         git.exc.GitError,
+        git.exc.InvalidGitRepositoryError,
     ]
 except ImportError:
     git = None
