@@ -28,13 +28,17 @@ cog.out(text)
 - Streaming pretty LLM responses is smoother and faster for long replies.
 - Increased max chat history tokens limit from 4k to 8k.
 - Added support for custom voice format and input device settings.
-- Disabled Streamlit email prompt by automatically creating credentials file.
-- Fixed lint command handling of nested spaced strings.
+- Disabled Streamlit email prompt, by apaz-cli.
+- Fixed lint command handling of nested spaced strings, by Aaron Weisberg.
 - Added token count feedback when adding command output to chat.
 - Improved error handling for large audio files with automatic format conversion.
-- Added better error handling for git repository index errors.
+- Improved handling of git repo index errors, by Krazer.
 - Improved unicode handling in console output with ASCII fallback.
-- Aider wrote 54% of the code in this release.
+- Added AssertionError to git error handling.
+- Fixed file export path in voice format conversion.
+- Added AttributeError to git error handling.
+- Improved markdown rendering performance with adaptive delay based on render time.
+- Aider wrote 59% of the code in this release.
 
 ### Aider v0.70.0
 - Full support for o1 models.
