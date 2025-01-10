@@ -12,12 +12,12 @@ from pathlib import Path
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
-from prompt_toolkit.output.vt100 import is_dumb_terminal
 from prompt_toolkit.filters import Condition, is_searching
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
+from prompt_toolkit.output.vt100 import is_dumb_terminal
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
@@ -251,7 +251,7 @@ class InputOutput:
 
         self.prompt_session = None
         self.is_dumb_terminal = is_dumb_terminal()
-        
+
         if fancy_input and not self.is_dumb_terminal:
             # Initialize PromptSession only if we have a capable terminal
             session_kwargs = {
