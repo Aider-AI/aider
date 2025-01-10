@@ -18,6 +18,8 @@ def collect_model_stats(n_lines=1000):
                 if event["event"] == "message_send":
                     properties = event["properties"]
                     main_model = properties.get("main_model")
+
+                    # combine deepseek/deepseek-coder into ...-chat ai!
                     total_tokens = properties.get("total_tokens", 0)
                     if main_model:
                         model_stats[main_model] += total_tokens
