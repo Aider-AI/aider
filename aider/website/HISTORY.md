@@ -23,7 +23,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.71.0
 
 - Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
 - Streaming pretty LLM responses is smoother and faster for long replies.

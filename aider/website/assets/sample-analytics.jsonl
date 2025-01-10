@@ -1,26 +1,3 @@
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270145}
-{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 10602, "completion_tokens": 526, "total_tokens": 11128, "cost": 0.0016315600000000002, "total_cost": 0.0016315600000000002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270311}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270419}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270429}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270430}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270430}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270439}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270474}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270475}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270475}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270475}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270476}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270476}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270483}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270484}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270501}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270502}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270502}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270502}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270503}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270503}
-{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 10755, "completion_tokens": 546, "total_tokens": 11301, "cost": 0.00169442, "total_cost": 0.00169442}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270670}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270670}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 10648, "completion_tokens": 669, "total_tokens": 11317, "cost": 0.00167804, "total_cost": 0.00167804}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270672}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270672}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270677}
@@ -998,3 +975,26 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736548965}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 27953, "completion_tokens": 820, "total_tokens": 28773, "cost": 0.0041430199999980405, "total_cost": 0.0041430199999980405}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736548990}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736548990}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549095}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549095}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549095}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549200}
+{"event": "repo", "properties": {"num_files": 423}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549202}
+{"event": "cli session", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549202}
+{"event": "command_run", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549212}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549224}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 13281, "completion_tokens": 183, "total_tokens": 13464, "cost": 0.00191057999999804, "total_cost": 0.00191057999999804}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549232}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549338}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549351}
+{"event": "repo", "properties": {"num_files": 423}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549352}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549356}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549431}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549431}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549431}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549444}
+{"event": "repo", "properties": {"num_files": 423}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549445}
+{"event": "cli session", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549445}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549447}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549470}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 17467, "completion_tokens": 323, "total_tokens": 17790, "cost": 0.00253581999999804, "total_cost": 0.00253581999999804}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549483}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736549673}
