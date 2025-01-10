@@ -848,7 +848,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
-    map_tokens = args.map_tokens or main_model.get_repo_map_tokens()
+    if args.map_tokens is None:
+        map_tokens = main_model.get_repo_map_tokens()
+    else:
+        map_tokens = args.map_tokens
 
     try:
         coder = Coder.create(
