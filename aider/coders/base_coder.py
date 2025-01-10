@@ -348,7 +348,6 @@ class Coder:
             self.done_messages = []
 
         self.io = io
-        self.stream = stream
 
         self.shell_commands = []
 
@@ -362,6 +361,8 @@ class Coder:
         self.pretty = self.io.pretty
 
         self.main_model = main_model
+
+        self.stream = stream and main_model.streaming
 
         if cache_prompts and self.main_model.cache_control:
             self.add_cache_headers = True
