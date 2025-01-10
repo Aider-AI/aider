@@ -17,6 +17,13 @@ class TestInputOutput(unittest.TestCase):
             io = InputOutput(fancy_input=False)
             self.assertFalse(io.pretty)
 
+    def test_dumb_terminal(self):
+        with patch.dict(os.environ, {"TERM": "dumb"}):
+            io = InputOutput(fancy_input=True)
+            self.assertTrue(io.is_dumb_terminal)
+            self.assertFalse(io.pretty)
+            self.assertIsNone(io.prompt_session)
+
     def test_autocompleter_get_command_completions(self):
         # Step 3: Mock the commands object
         commands = MagicMock()
