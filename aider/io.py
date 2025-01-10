@@ -251,7 +251,7 @@ class InputOutput:
 
         self.prompt_session = None
         self.is_dumb_terminal = is_dumb_terminal()
-        
+
         if self.is_dumb_terminal:
             self.pretty = False
             fancy_input = False
