@@ -13,6 +13,7 @@
 - Turn off fancy input and watch files if terminal is dumb.
 - Added support for custom voice format and input device settings.
 - Disabled Streamlit email prompt, by apaz-cli.
+- Docker container runs as non-root user.
 - Fixed lint command handling of nested spaced strings, by Aaron Weisberg.
 - Added token count feedback when adding command output to chat.
 - Improved error handling for large audio files with automatic format conversion.
