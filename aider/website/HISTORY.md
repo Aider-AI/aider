@@ -31,6 +31,7 @@ cog.out(text)
   - Can now switch to/from `/model o1` and a streaming model
 - Pretty output remains enabled even when editing files with triple-backtick fences
 - Bare `/ask`, `/code` and `/architect` commands now switch the chat mode.
+- Increased default size of the repomap.
 - Increased max chat history tokens limit from 4k to 8k.
 - Turn off fancy input and watch files if terminal is dumb.
 - Added support for custom voice format and input device settings.
@@ -45,7 +46,7 @@ cog.out(text)
 - Added AttributeError to git error handling.
 - Improved markdown rendering performance with adaptive delay based on render time.
 - Fixed typo in model metadata variable name.
-- Aider wrote 59% of the code in this release.
+- Aider wrote 60% of the code in this release.
 
 ### Aider v0.70.0
 
