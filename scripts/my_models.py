@@ -20,10 +20,9 @@ def collect_model_stats(n_lines=1000):
                     main_model = properties.get("main_model")
 
                     total_tokens = properties.get("total_tokens", 0)
+                    if main_model == "deepseek/deepseek-coder":
+                        main_model = "deepseek/deepseek-chat"
                     if main_model:
-                        # Normalize deepseek model names
-                        if "deepseek" in main_model.lower():
-                            main_model = "deepseek-chat"
                         model_stats[main_model] += total_tokens
             except json.JSONDecodeError:
                 continue
