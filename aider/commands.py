@@ -1074,8 +1074,8 @@ class Commands:
 
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
-            self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
-            return
+            # Switch to the corresponding chat mode if no args provided
+            return self.cmd_chat_mode(edit_format)
 
         from aider.coders.base_coder import Coder
 
