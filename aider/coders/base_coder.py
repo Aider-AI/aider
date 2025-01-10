@@ -59,7 +59,8 @@ def wrap_fence(name):
 
 
 all_fences = [
-    ("``" + "`", "``" + "`"),
+    ("`" * 3, "`" * 3),
+    ("`" * 4, "`" * 4),
     wrap_fence("source"),
     wrap_fence("code"),
     wrap_fence("pre"),
@@ -520,7 +521,7 @@ class Coder:
             return False
 
         # only show pretty output if fences are the normal triple-backtick
-        if self.fence != self.fences[0]:
+        if self.fence[0][0] != "`":
             return False
 
         return True
