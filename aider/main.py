@@ -636,8 +636,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     analytics.event("launched")
 
-    # ai
-
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
             analytics.event("exit", reason="Streamlit not installed")
@@ -850,6 +848,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    map_tokens = args.map_tokens or main_model.get_repo_map_tokens()
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -862,7 +862,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
             dry_run=args.dry_run,
-            map_tokens=args.map_tokens,
+            map_tokens=map_tokens,
             verbose=args.verbose,
             stream=args.stream,
             use_git=args.git,

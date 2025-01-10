@@ -231,10 +231,10 @@ class Coder:
             if map_tokens > 0:
                 refresh = self.repo_map.refresh
                 lines.append(f"Repo-map: using {map_tokens} tokens, {refresh} refresh")
-                max_map_tokens = 2048
+                max_map_tokens = self.main_model.get_repo_map_tokens() * 2
                 if map_tokens > max_map_tokens:
                     lines.append(
-                        f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                        f"Warning: map-tokens > {max_map_tokens} is not recommended. Too much"
                         " irrelevant code can confuse LLMs."
                     )
             else:
