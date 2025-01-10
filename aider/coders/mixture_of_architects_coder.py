@@ -85,50 +85,55 @@ class MixtureOfArchitectsCoder(Coder):
             ask_coder.auto_commits = self.auto_commits
             ask_coder.gpt_prompts = MixturePrompts()
 
-            # Group messages by conversation round
-            rounds = []
-            current_round = []
             for msg in self.discussion_messages:
-                if msg["role"] == "user":
-                    if current_round:
-                        rounds.append(current_round)
-                    current_round = [msg]
+                if ask_coder.cur_messages:
+                    last_msg_is_user = ask_coder.cur_messages[-1]["role"] == "user"
                 else:
-                    current_round.append(msg)
-            if current_round:
-                rounds.append(current_round)
+                    last_msg_is_user = False
 
-            # Build the conversation messages
-            for round_msgs in rounds:
-                user_msg = next(msg for msg in round_msgs if msg["role"] == "user")
-
-                # Combine user message with other architects' proposals
-                user_content = "<user_message>\n"
-                user_content += user_msg["content"]
-                user_content += "\n</user_message>\n\n"
-
-                # Add other architects' proposals from this round
-                for msg in round_msgs:
-                    if (
-                        msg["role"] == "assistant"
-                        and msg["name"] != architect.name.upper()
-                    ):
-                        # Use the helper function to extract proposal content
-                        user_content += extract_proposal_content(
-                            msg["content"], msg["name"]
+                match msg["role"]:
+                    case "user":
+                        fenced_content = (
+                            f"<user_message>\n{msg['content']}\n</user_message>\n\n"
                         )
+                        if last_msg_is_user:
+                            latest_user_content = ask_coder.cur_messages[-1]["content"]
+                            latest_user_content += fenced_content
+                            ask_coder.cur_messages[-1]["content"] = latest_user_content
+                        else:
+                            ask_coder.cur_messages.append(
+                                {"role": "user", "content": fenced_content}
+                            )
+                    case "assistant":
+                        # If its the current architect, then we use role=assistant
+                        if msg["name"] == architect.name.upper():
+                            ask_coder.cur_messages.append(
+                                {"role": "assistant", "content": msg["content"]}
+                            )
+                        else:
+                            # If the not current architect, then we inject in user side
+                            # append to the last user message
+                            if last_msg_is_user:
 
-                ask_coder.cur_messages.append({"role": "user", "content": user_content})
-
-                # Add this architect's own response if they had one
-                for msg in round_msgs:
-                    if (
-                        msg["role"] == "assistant"
-                        and msg["name"] == architect.name.upper()
-                    ):
-                        ask_coder.cur_messages.append(
-                            {"role": "assistant", "content": msg["content"]}
-                        )
+                                latest_user_content = ask_coder.cur_messages[-1][
+                                    "content"
+                                ]
+                                latest_user_content += extract_proposal_content(
+                                    msg["content"], msg["name"]
+                                )
+                                ask_coder.cur_messages[-1][
+                                    "content"
+                                ] = latest_user_content
+                            # or create a new user message
+                            else:
+                                ask_coder.cur_messages.append(
+                                    {
+                                        "role": "user",
+                                        "content": extract_proposal_content(
+                                            msg["content"], msg["name"]
+                                        ),
+                                    }
+                                )
 
             # Debug output if verbose
             if self.verbose:
@@ -221,7 +226,7 @@ class MixtureOfArchitectsCoder(Coder):
         # Yes is proxy for auto running code, As proxy for benchmarking
         # TODO: Replace with a better testing strategy
         if self.io.yes:
-            self.run_coding_phase(user_message)
+            self.run_coding_phase("lets implement best simplest solution")
 
     def preproc_user_input(self, inp):
         if not inp:
@@ -297,12 +302,12 @@ class MixtureOfArchitectsCoder(Coder):
             self.discussion_messages.append(
                 {
                     "role": "user",
-                    "content": f"Please implement the following: {message}",
+                    "content": f"{message}",
                 }
             )
 
         # Format the full conversation history with XML fences
-        combined_response = "Full discussion history:\n\n"
+        combined_response = ""
         for msg in self.discussion_messages:
             if msg["role"] == "user":
                 combined_response += "<user_message>\n"
@@ -311,11 +316,7 @@ class MixtureOfArchitectsCoder(Coder):
             else:
                 combined_response += f"<architect name='{msg['name']}'>\n"
                 combined_response += msg["content"]
-                combined_response += f"\n</architect>\n\n"
-
-        combined_response += (
-            "\nBased on the above discussion, please implement the requested changes."
-        )
+                combined_response += "\n</architect>\n\n"
 
         # Debug print the combined response
         if self.verbose:
