@@ -217,6 +217,7 @@ def check_streamlit_install(io):
 
 def write_streamlit_credentials():
     from streamlit.file_util import get_streamlit_file_path
+
     # See https://github.com/Aider-AI/aider/issues/772
 
     credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
@@ -753,8 +754,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     main_model = models.Model(
         args.model,
-        weak_model=args.weak_model,
-        editor_model=args.editor_model,
+        weak_model_name=args.weak_model,
+        editor_model_name=args.editor_model,
         editor_edit_format=args.editor_edit_format,
     )
 

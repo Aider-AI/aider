@@ -744,20 +744,18 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+    def __init__(
+        self, model_name, weak_model_name=None, editor_model_name=None, editor_edit_format=None
+    ):
         # Map any alias to its canonical name
-        model = MODEL_ALIASES.get(model, model)
+        model_name = MODEL_ALIASES.get(model_name, model_name)
 
-        self.name = model
-
-        self.max_chat_history_tokens = 1024
-        self.weak_model = None
-        self.editor_model = None
+        self.name = model_name
 
         # Find the extra settings
         self.extra_model_settings = get_model_settings("aider/extra_params")
 
-        self.info = self.get_model_info(model)
+        self.info = self.get_model_info(model_name)
 
         # Are all needed keys/params available?
         res = self.validate_environment()
@@ -769,19 +767,14 @@ class Model(ModelSettings):
         # with minimum 1k and maximum 8k
         self.max_chat_history_tokens = min(max(max_input_tokens / 16, 1024), 8192)
 
-        self.configure_model_settings(model)
-        if weak_model is False:
-            self.weak_model_name = None
-        else:
-            self.get_weak_model(weak_model)
+        self.configure_model_settings(model_name)
 
-        if editor_model is False:
-            self.editor_model_name = None
-        else:
-            self.get_editor_model(editor_model, editor_edit_format)
+        self._set_weak_model(weak_model_name)
 
-    def get_model_info(self, model):
-        return model_info_manager.get_model_info(model)
+        self._set_editor_model_and_format(editor_model_name, editor_edit_format)
+
+    def get_model_info(self, model_name):
+        return model_info_manager.get_model_info(model_name)
 
     def _copy_fields(self, source):
         """Helper to copy fields from a ModelSettings instance to self"""
@@ -789,13 +782,13 @@ class Model(ModelSettings):
             val = getattr(source, field.name)
             setattr(self, field.name, val)
 
-    def configure_model_settings(self, model):
+    def configure_model_settings(self, model_name):
         # Look for exact model match
-        if ms := get_model_settings(model):
+        if ms := get_model_settings(model_name):
             self._copy_fields(ms)
         else:
             # If no exact match, try generic settings
-            self.apply_generic_model_settings(model.lower())
+            self.apply_generic_model_settings(model_name.lower())
 
         # Apply override settings last if they exist
         if self.extra_model_settings and self.extra_model_settings.extra_params:
@@ -869,43 +862,46 @@ class Model(ModelSettings):
     def __str__(self):
         return self.name
 
-    def get_weak_model(self, provided_weak_model_name):
-        # If weak_model_name is provided, override the model settings
-        if provided_weak_model_name:
-            self.weak_model_name = provided_weak_model_name
-
-        if (not self.weak_model_name) or (self.weak_model_name == self.name):
-            self.weak_model = self
+    def _set_weak_model(self, provided_weak_model_name):
+        if provided_weak_model_name is False:
+            self.weak_model = None
+            self.weak_model_name = None
             return
 
-        self.weak_model = Model(
-            self.weak_model_name,
-            weak_model=False,
-        )
-        return self.weak_model
+        # If weak_model_name is provided, override the model settings
+        self.weak_model_name = provided_weak_model_name or self.weak_model_name
+
+        if (self.weak_model_name is None) or (self.weak_model_name == self.name):
+            self.weak_model = self
+        else:
+            self.weak_model = Model(
+                self.weak_model_name,
+                weak_model_name=False,
+            )
 
     def commit_message_models(self):
         return [self.weak_model, self]
 
-    def get_editor_model(self, provided_editor_model_name, editor_edit_format):
-        # If editor_model_name is provided, override the model settings
-        if provided_editor_model_name:
-            self.editor_model_name = provided_editor_model_name
-        if editor_edit_format:
-            self.editor_edit_format = editor_edit_format
+    def _set_editor_model_and_format(self, provided_editor_model_name, provided_editor_edit_format):
+        if provided_editor_model_name is False:
+            self.editor_model = None
+            self.editor_model_name = None
+            return
 
-        if not self.editor_model_name or self.editor_model_name == self.name:
+        # If editor_model_name is provided, override the model settings
+        self.editor_model_name = provided_editor_model_name or self.editor_model_name
+
+        if (self.editor_model_name is None) or (self.editor_model_name == self.name):
             self.editor_model = self
         else:
             self.editor_model = Model(
-                self.editor_model_name,
-                editor_model=False,
+                provided_editor_model_name,
+                editor_model_name=False,
             )
 
-        if not self.editor_edit_format:
-            self.editor_edit_format = self.editor_model.edit_format
-
-        return self.editor_model
+        self.editor_edit_format = (
+            provided_editor_edit_format or self.editor_edit_format or self.editor_model.edit_format
+        )
 
     def tokenizer(self, text):
         return litellm.encode(model=self.name, text=text)
