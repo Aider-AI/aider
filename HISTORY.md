@@ -20,6 +20,7 @@
 - Fixed file export path in voice format conversion.
 - Added AttributeError to git error handling.
 - Improved markdown rendering performance with adaptive delay based on render time.
+- Fixed typo in model metadata variable name.
 - Aider wrote 59% of the code in this release.
 
 ### Aider v0.70.0
