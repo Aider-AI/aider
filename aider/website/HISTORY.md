@@ -27,6 +27,8 @@ cog.out(text)
 
 - Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
 - Streaming pretty LLM responses is smoother and faster for long replies.
+- Streaming automatically turns of for model that don't support it
+  - Can now switch to/from `/model o1` and a streaming model
 - Increased max chat history tokens limit from 4k to 8k.
 - Added support for custom voice format and input device settings.
 - Disabled Streamlit email prompt, by apaz-cli.

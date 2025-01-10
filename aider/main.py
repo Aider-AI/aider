@@ -217,6 +217,7 @@ def check_streamlit_install(io):
 
 def write_streamlit_credentials():
     from streamlit.file_util import get_streamlit_file_path
+
     # See https://github.com/Aider-AI/aider/issues/772
 
     credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
@@ -634,6 +635,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.enable()
 
     analytics.event("launched")
+
+    # ai
 
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
