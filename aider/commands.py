@@ -1061,15 +1061,18 @@ class Commands:
         )
 
     def cmd_ask(self, args):
-        "Ask questions about the code base without editing any files"
+        """Ask questions about the code base without editing any files.
+        If no prompt is provided, switches to ask mode."""
         return self._generic_chat_command(args, "ask")
 
     def cmd_code(self, args):
-        "Ask for changes to your code"
+        """Ask for changes to your code.
+        If no prompt is provided, switches to code mode."""
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
     def cmd_architect(self, args):
-        "Enter architect mode to discuss high-level design and architecture"
+        """Enter architect mode to discuss high-level design and architecture.
+        If no prompt is provided, switches to architect mode."""
         return self._generic_chat_command(args, "architect")
 
     def _generic_chat_command(self, args, edit_format):
