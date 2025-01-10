@@ -441,7 +441,7 @@ class TestMain(TestCase):
                     output=DummyOutput(),
                 )
                 _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
+                self.assertEqual(kwargs["main_model"].name, "openai/gpt-4-1106-preview")
                 self.assertEqual(kwargs["map_tokens"], 8192)
 
                 # Test loading from current working directory
@@ -463,7 +463,7 @@ class TestMain(TestCase):
                 git_config.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
+                self.assertEqual(kwargs["main_model"].name, "openai/gpt-3.5-turbo")
                 self.assertEqual(kwargs["map_tokens"], 1024)
 
     def test_map_tokens_option(self):
