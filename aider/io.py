@@ -251,8 +251,12 @@ class InputOutput:
 
         self.prompt_session = None
         self.is_dumb_terminal = is_dumb_terminal()
+        
+        if self.is_dumb_terminal:
+            self.pretty = False
+            fancy_input = False
 
-        if fancy_input and not self.is_dumb_terminal:
+        if fancy_input:
             # Initialize PromptSession only if we have a capable terminal
             session_kwargs = {
                 "input": self.input,
