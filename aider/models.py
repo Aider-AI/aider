@@ -1183,7 +1183,7 @@ class Model(ModelSettings):
         if max_inp_tokens:
             map_tokens = max_inp_tokens / 8
             map_tokens = min(map_tokens, 4096)
-            max_tokens = max(map_tokens, 1024)
+            map_tokens = max(map_tokens, 1024)
         return map_tokens
 
 
