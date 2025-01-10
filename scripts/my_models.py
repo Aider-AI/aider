@@ -19,9 +19,11 @@ def collect_model_stats(n_lines=1000):
                     properties = event["properties"]
                     main_model = properties.get("main_model")
 
-                    # combine deepseek/deepseek-coder into ...-chat ai!
                     total_tokens = properties.get("total_tokens", 0)
                     if main_model:
+                        # Normalize deepseek model names
+                        if "deepseek" in main_model.lower():
+                            main_model = "deepseek-chat"
                         model_stats[main_model] += total_tokens
             except json.JSONDecodeError:
                 continue
