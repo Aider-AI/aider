@@ -12,6 +12,7 @@ from pathlib import Path
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
+from prompt_toolkit.output.vt100 import is_dumb_terminal
 from prompt_toolkit.filters import Condition, is_searching
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
@@ -249,8 +250,10 @@ class InputOutput:
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.prompt_session = None
-        if fancy_input:
-            # Initialize PromptSession
+        self.is_dumb_terminal = is_dumb_terminal()
+        
+        if fancy_input and not self.is_dumb_terminal:
+            # Initialize PromptSession only if we have a capable terminal
             session_kwargs = {
                 "input": self.input,
                 "output": self.output,
@@ -269,6 +272,8 @@ class InputOutput:
                 self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
         else:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+            if self.is_dumb_terminal:
+                self.tool_output("Detected dumb terminal, disabling advanced features")
 
         self.file_watcher = file_watcher
         self.root = root
