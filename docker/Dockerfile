@@ -30,7 +30,7 @@ FROM base AS aider-full
 
 ENV AIDER_DOCKER_IMAGE=paulgauthier/aider-full
 
-COPY --chown=appuser:appuser . /tmp/aider
+COPY . /tmp/aider
 
 # Install dependencies as root
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
@@ -54,7 +54,7 @@ FROM base AS aider
 
 ENV AIDER_DOCKER_IMAGE=paulgauthier/aider
 
-COPY --chown=appuser:appuser . /tmp/aider
+COPY . /tmp/aider
 
 # Install dependencies as root
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
