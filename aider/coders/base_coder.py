@@ -246,6 +246,8 @@ class Coder:
         for fname in self.get_inchat_relative_files():
             lines.append(f"Added {fname} to the chat.")
 
+        # also print out "Added fname to the chat (read-only)" for ro files ai!
+
         if self.done_messages:
             lines.append("Restored previous conversation history.")
 
