@@ -288,19 +288,19 @@ class TestInputOutputMultilineMode(unittest.TestCase):
     def test_tool_message_unicode_fallback(self):
         """Test that Unicode messages are properly converted to ASCII with replacement"""
         io = InputOutput(pretty=False, fancy_input=False)
-        
+
         # Create a message with Unicode characters
         unicode_message = "Hello こんにちは Привет"
-        
+
         # Mock console.print to capture the output
-        with patch.object(io.console, 'print') as mock_print:
+        with patch.object(io.console, "print") as mock_print:
             io._tool_message(unicode_message)
-            
+
             # Verify that the message was converted to ASCII with replacement
             mock_print.assert_called_once()
             args, kwargs = mock_print.call_args
             converted_message = args[0]
-            
+
             # The Unicode characters should be replaced with '?'
             self.assertEqual(converted_message, "Hello ????? ?????")
 
