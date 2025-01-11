@@ -41,6 +41,9 @@ RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
 # Install playwright browsers
 RUN /venv/bin/python -m playwright install --with-deps chromium
 
+# Fix site-packages permissions
+RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
+
 # Switch to appuser
 USER appuser
 
@@ -61,6 +64,9 @@ RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
 
 # Install playwright browsers
 RUN /venv/bin/python -m playwright install --with-deps chromium
+
+# Fix site-packages permissions
+RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
 
 # Switch to appuser
 USER appuser
