@@ -1,27 +1,3 @@
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270869}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270870}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270870}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-1.5-flash-8b", "weak_model": "gemini/gemini-1.5-flash-8b", "editor_model": "gemini/gemini-1.5-flash-8b", "edit_format": "whole", "prompt_tokens": 690, "completion_tokens": 892, "total_tokens": 1582, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270877}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270877}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-1.5-flash-8b", "weak_model": "gemini/gemini-1.5-flash-8b", "editor_model": "gemini/gemini-1.5-flash-8b", "edit_format": "whole", "prompt_tokens": 2584, "completion_tokens": 57, "total_tokens": 2641, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270878}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270878}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270895}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270896}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270896}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270901}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-1.5-flash-8b", "weak_model": "gemini/gemini-1.5-flash-8b", "editor_model": "gemini/gemini-1.5-flash-8b", "edit_format": "whole", "prompt_tokens": 690, "completion_tokens": 829, "total_tokens": 1519, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270902}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270903}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270903}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270919}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270920}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270920}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-1.5-flash-8b", "weak_model": "gemini/gemini-1.5-flash-8b", "editor_model": "gemini/gemini-1.5-flash-8b", "edit_format": "whole", "prompt_tokens": 690, "completion_tokens": 829, "total_tokens": 1519, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270926}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270942}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270985}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270987}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270987}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-1.5-flash-8b", "weak_model": "gemini/gemini-1.5-flash-8b", "editor_model": "gemini/gemini-1.5-flash-8b", "edit_format": "whole", "prompt_tokens": 686, "completion_tokens": 350, "total_tokens": 1036, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736270990}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736271004}
 {"event": "exit", "properties": {"reason": "Listed models"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736271005}
 {"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736271026}
 {"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736271027}
@@ -998,3 +974,27 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736553103}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-coder", "weak_model": "deepseek/deepseek-coder", "editor_model": "deepseek/deepseek-coder", "edit_format": "diff", "prompt_tokens": 4553, "completion_tokens": 229, "total_tokens": 4782, "cost": 0.0007015400000000001, "total_cost": 0.0007015400000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736553110}
 {"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736553160}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736553253}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736553254}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736553254}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606809}
+{"event": "repo", "properties": {"num_files": 423}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606811}
+{"event": "cli session", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606811}
+{"event": "command_run", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606822}
+{"event": "command_run", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606829}
+{"event": "command_editor", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606852}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606865}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606865}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "ask", "prompt_tokens": 7100, "completion_tokens": 347, "total_tokens": 7447, "cost": 0.00109115999999804, "total_cost": 0.00109115999999804}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606877}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606892}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 9733, "completion_tokens": 401, "total_tokens": 10134, "cost": 0.0014748999999980399, "total_cost": 0.0025660599999960797}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606904}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736606968}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607055}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607078}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607101}
+{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607131}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607132}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 24137, "completion_tokens": 441, "total_tokens": 24578, "cost": 0.079026, "total_cost": 0.08159205999999608}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607147}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607194}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607194}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "ask", "prompt_tokens": 22430, "completion_tokens": 203, "total_tokens": 22633, "cost": 0.07033500000000001, "total_cost": 0.1519270599999961}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736607202}

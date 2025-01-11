@@ -1,5 +1,9 @@
 # Release history
 
+### Aider v0.71.1
+
+- Fix permissions issue in Docker images.
+
 ### Aider v0.71.0
 
 - Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
@@ -19,11 +23,7 @@
 - Improved error handling for large audio files with automatic format conversion.
 - Improved handling of git repo index errors, by Krazer.
 - Improved unicode handling in console output with ASCII fallback.
-- Added AssertionError to git error handling.
-- Fixed file export path in voice format conversion.
-- Added AttributeError to git error handling.
-- Improved markdown rendering performance with adaptive delay based on render time.
-- Fixed typo in model metadata variable name.
+- Added AssertionError, AttributeError to git error handling.
 - Aider wrote 60% of the code in this release.
 
 ### Aider v0.70.0
