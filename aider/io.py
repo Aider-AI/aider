@@ -813,13 +813,16 @@ class InputOutput:
                 hist = message.strip() if strip else message
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        message = Text(message)
+        if not isinstance(message, Text):
+            message = Text(message)
         style = dict(style=color) if self.pretty and color else dict()
         try:
             self.console.print(message, **style)
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
-            message = message.encode("ascii", errors="replace").decode("ascii")
+            if isinstance(message, Text):
+                message = message.plain
+            message = str(message).encode("ascii", errors="replace").decode("ascii")
             self.console.print(message, **style)
 
     def tool_error(self, message="", strip=True):
