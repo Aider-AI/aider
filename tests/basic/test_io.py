@@ -296,8 +296,8 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         # Mock console.print to capture the output
         with patch.object(io.console, "print") as mock_print:
             # First call will raise UnicodeEncodeError
-            mock_print.side_effect = [UnicodeEncodeError('utf-8', '', 0, 1, 'invalid'), None]
-            
+            mock_print.side_effect = [UnicodeEncodeError("utf-8", "", 0, 1, "invalid"), None]
+
             io._tool_message(invalid_unicode)
 
             # Verify that the message was converted to ASCII with replacement
