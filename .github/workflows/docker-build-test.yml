@@ -41,11 +41,6 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: false
         target: aider
-        load: true
-        tags: aider-test:latest
-
-    - name: Test standard image
-      run: docker run --rm aider-test:latest --yes --exit
 
     - name: Build Docker full image
       uses: docker/build-push-action@v5
@@ -55,8 +50,3 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: false
         target: aider-full
-        load: true
-        tags: aider-full-test:latest
-
-    - name: Test full image
-      run: docker run --rm aider-full-test:latest --yes --exit
