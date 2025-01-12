@@ -26,6 +26,10 @@ cog.out(text)
 ### Aider v0.71.1
 
 - Fix permissions issue in Docker images.
+- Added read-only file announcements to chat.
+- Bugfix: ASCII fallback for unicode errors.
+- Bugfix: integer indices for list slicing in repomap calculations.
+- Aider wrote 83% of the code in this release.
 
 ### Aider v0.71.0
 
