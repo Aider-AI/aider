@@ -31,7 +31,7 @@ from aider.io import InputOutput
 
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
-EXERCISES_DIR_DEFAULT = "exercism-python"
+EXERCISES_DIR_DEFAULT = "polyglot-benchmark"
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
@@ -175,11 +175,6 @@ def main(
         None,
         "--replay",
         help="Replay previous .aider.chat.history.md responses from previous benchmark run",
-    ),
-    max_apply_update_errors: int = typer.Option(
-        3,
-        "--max-apply-update-errors",
-        help="Maximum number of apply update errors before stopping the test",
     ),
     keywords: str = typer.Option(
         None, "--keywords", "-k", help="Only run tests that contain keywords (comma sep)"
@@ -342,7 +337,6 @@ def main(
                 verbose,
                 commit_hash,
                 replay,
-                max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
                 num_ctx,
@@ -367,7 +361,6 @@ def main(
                 verbose,
                 commit_hash,
                 replay,
-                max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
             )
@@ -645,7 +638,6 @@ def run_test_real(
     verbose,
     commit_hash,
     replay,
-    max_apply_update_errors,
     editor_model,
     editor_edit_format,
     num_ctx=None,
@@ -701,7 +693,7 @@ def run_test_real(
     ignore_files.update(example_files)
 
     # Remove any ignore files from the solution set that LLM will edit
-    solution_files.discard(ignore_files)
+    solution_files.difference_update(ignore_files)
 
     # Copy all solution files
     for file_path in solution_files:
@@ -792,7 +784,6 @@ def run_test_real(
     )
     dump(coder.ignore_mentions)
 
-    coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
 
     timeouts = 0
@@ -818,6 +809,7 @@ def run_test_real(
             coder.apply_updates()
         else:
             response = coder.run(with_message=instructions, preproc=False)
+
         dur += time.time() - start
 
         if not no_aider:
@@ -860,6 +852,40 @@ def run_test_real(
         errors = "\n".join(errors)
         instructions = errors
         instructions += prompts.test_failures.format(file_list=file_list)
+
+    # Clean up build directories after all attempts
+    # Rust target/debug
+    target_dir = testdir / "target" / "debug"
+    if target_dir.exists():
+        try:
+            shutil.rmtree(target_dir)
+            if verbose:
+                print(f"Cleaned up Rust target/debug directory: {target_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Rust target/debug directory: {e}")
+
+    # Java build directories
+    java_build_dir = testdir / "build"
+    if java_build_dir.exists():
+        try:
+            shutil.rmtree(java_build_dir)
+            if verbose:
+                print(f"Cleaned up Java build directory: {java_build_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Java build directory: {e}")
+
+    # Node.js node_modules directories
+    node_modules_dir = testdir / "node_modules"
+    if node_modules_dir.exists():
+        try:
+            shutil.rmtree(node_modules_dir)
+            if verbose:
+                print(f"Cleaned up Node.js node_modules directory: {node_modules_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Node.js node_modules directory: {e}")
 
     results = dict(
         testdir=str(testdir),

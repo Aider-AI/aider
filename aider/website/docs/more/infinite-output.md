@@ -65,14 +65,15 @@ cog.out(model_list)
 - claude-3-sonnet-20240229
 - codestral/codestral-2405
 - codestral/codestral-latest
-- deepseek-chat
-- deepseek-coder
+- deepseek/deepseek-chat
+- deepseek/deepseek-coder
 - eu.anthropic.claude-3-5-sonnet-20241022-v2:0
 - mistral/codestral-2405
 - mistral/codestral-latest
 - mistral/codestral-mamba-latest
 - mistral/mistral-large-2402
 - mistral/mistral-large-2407
+- mistral/mistral-large-2411
 - mistral/mistral-large-latest
 - mistral/mistral-medium
 - mistral/mistral-medium-2312
@@ -87,6 +88,8 @@ cog.out(model_list)
 - mistral/open-mixtral-8x22b
 - mistral/open-mixtral-8x7b
 - mistral/pixtral-12b-2409
+- mistral/pixtral-large-2411
+- mistral/pixtral-large-latest
 - openrouter/anthropic/claude-3.5-sonnet
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0

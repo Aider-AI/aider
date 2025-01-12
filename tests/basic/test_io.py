@@ -17,6 +17,13 @@ class TestInputOutput(unittest.TestCase):
             io = InputOutput(fancy_input=False)
             self.assertFalse(io.pretty)
 
+    def test_dumb_terminal(self):
+        with patch.dict(os.environ, {"TERM": "dumb"}):
+            io = InputOutput(fancy_input=True)
+            self.assertTrue(io.is_dumb_terminal)
+            self.assertFalse(io.pretty)
+            self.assertIsNone(io.prompt_session)
+
     def test_autocompleter_get_command_completions(self):
         # Step 3: Mock the commands object
         commands = MagicMock()
@@ -277,6 +284,29 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         # Toggle back to single-line mode
         self.io.toggle_multiline_mode()
         self.assertFalse(self.io.multiline_mode)
+
+    def test_tool_message_unicode_fallback(self):
+        """Test that Unicode messages are properly converted to ASCII with replacement"""
+        io = InputOutput(pretty=False, fancy_input=False)
+
+        # Create a message with invalid Unicode that can't be encoded in UTF-8
+        # Using a surrogate pair that's invalid in UTF-8
+        invalid_unicode = "Hello \ud800World"
+
+        # Mock console.print to capture the output
+        with patch.object(io.console, "print") as mock_print:
+            # First call will raise UnicodeEncodeError
+            mock_print.side_effect = [UnicodeEncodeError("utf-8", "", 0, 1, "invalid"), None]
+
+            io._tool_message(invalid_unicode)
+
+            # Verify that the message was converted to ASCII with replacement
+            self.assertEqual(mock_print.call_count, 2)
+            args, kwargs = mock_print.call_args
+            converted_message = args[0]
+
+            # The invalid Unicode should be replaced with '?'
+            self.assertEqual(converted_message, "Hello ?World")
 
 
 if __name__ == "__main__":

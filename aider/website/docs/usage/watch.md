@@ -3,7 +3,7 @@ title: Aider in your IDE
 #highlight_image: /assets/browser.jpg
 parent: Usage
 nav_order: 750
-description: Aider can run in your browser, not just on the command line.
+description: Aider can watch your files and respond to AI comments you add in your favorite IDE or text editor.
 ---
 
 # Aider in your IDE
@@ -34,7 +34,7 @@ description: Aider can run in your browser, not just on the command line.
 
 ## AI comments
 
-If you run aider with `--watch-files`, it will watch all files in your repo 
+If you run aider with `--watch-files`, it will watch all files in your repo
 and look for any AI coding instructions you add using your favorite IDE or text editor.
 
 Specifically, aider looks for one-liner comments (# ... or // ...) that either start or end with `AI`, `AI!` or `AI?` like these:
@@ -52,14 +52,14 @@ Or in `//` comment languages...
 
 Aider will take note of all the comments that start or end with `AI`.
 Comments that include `AI!` with an exclamation point or `AI?` with a question
-mark are special. 
-They triggers aider to take action to collect *all* the AI comments and use them 
+mark are special.
+They triggers aider to take action to collect *all* the AI comments and use them
 as your instructions.
 
 - `AI!` triggers aider to make changes to your code.
 - `AI?` triggers aider to answer your question.
 
-See the demo video above that shows aider working with AI comments in VSCode. 
+See the demo video above that shows aider working with AI comments in VSCode.
 
 
 ## Example
@@ -88,8 +88,8 @@ Aider only watches for these types of **one-liner** comments:
 
 ```
 # Python and bash style
-// Javascript style 
--- SQL style 
+// Javascript style
+-- SQL style
 ```
 
 Aider will look for those comment types in all files.
@@ -102,7 +102,7 @@ This capability is quite flexible and powerful, and can be used in many ways.
 
 ### In-context instructions
 
-You can add an AI comment in the function you want changed, 
+You can add an AI comment in the function you want changed,
 explaining the change request in-context right where you want the changes.
 
 ```javascript
@@ -129,15 +129,15 @@ Just use `AI!` last, to trigger aider.
 def factorial(n):
     if n < 0:
         return jsonify(error="Factorial is not defined for negative numbers"), 400
-        
+
     # AI: Refactor this code...
-    
+
     result = 1
     for i in range(1, n + 1):
         result *= i
-        
+
     # ... into to a compute_factorial() function. AI!
-    
+
     return jsonify(result=result)
 ```
 
@@ -180,7 +180,7 @@ many of aider's more advanced features:
 - Use `/undo` to revert changes you don't like. Although you may also be able to use your IDE's undo function to step back in the file history.
 - Use [chat modes](https://aider.chat/docs/usage/modes.html) to ask questions or get help.
 - Manage the chat context with `/tokens`, `/clear`, `/drop`, `/reset`.
-Adding an AI comment will add the file to the chat. 
+Adding an AI comment will add the file to the chat.
 Periodically, you may want remove extra context that is no longer needed.
 - [Fix lint and test errors](https://aider.chat/docs/usage/lint-test.html).
 - Run shell commands.
@@ -194,14 +194,14 @@ comments with full sentences, proper capitalization, punctuation, etc.
 This was done to help explain how AI comments work, but is not needed in practice.
 
 Most LLMs are perfectly capable of dealing with ambiguity and
-inferring implied intent. 
+inferring implied intent.
 This often allows you to be quite lazy with your AI comments.
 In particular, you can start and end comments with lowercase `ai` and `ai!`,
 but you can also be much more terse with the request itself.
 Below are simpler versions of some of the examples given above.
 
 When the context clearly implies the needed action, `ai!` might be all you
-need. For example, to implement a factorial function 
+need. For example, to implement a factorial function
 in a program full of other math functions either of these
 approaches would probably work:
 
@@ -237,15 +237,15 @@ Similarly, this refactor probably could have been requested with fewer words, li
 def factorial(n):
     if n < 0:
         return jsonify(error="Factorial is not defined for negative numbers"), 400
-        
+
     # ai refactor...
-    
+
     result = 1
     for i in range(1, n + 1):
         result *= i
-        
+
     # ... to compute_factorial() ai!
-    
+
     return jsonify(result=result)
 ```
 
@@ -289,7 +289,6 @@ todo_app.py:
 
 #### Credits
 
-*This feature was inspired by 
+*This feature was inspired by
 the way [Override](https://github.com/oi-overide) watches for file changes
 to find prompts embedded within `//> a specific set of delimiters <//`.*
-

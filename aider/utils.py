@@ -300,12 +300,15 @@ class Spinner:
 
 
 def find_common_root(abs_fnames):
-    if len(abs_fnames) == 1:
-        return safe_abs_path(os.path.dirname(list(abs_fnames)[0]))
-    elif abs_fnames:
-        return safe_abs_path(os.path.commonpath(list(abs_fnames)))
-    else:
-        return safe_abs_path(os.getcwd())
+    try:
+        if len(abs_fnames) == 1:
+            return safe_abs_path(os.path.dirname(list(abs_fnames)[0]))
+        elif abs_fnames:
+            return safe_abs_path(os.path.commonpath(list(abs_fnames)))
+    except OSError:
+        pass
+
+    return safe_abs_path(os.getcwd())
 
 
 def format_tokens(count):

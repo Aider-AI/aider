@@ -18,6 +18,7 @@ warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
 from pydub import AudioSegment  # noqa
+from pydub.exceptions import CouldntDecodeError, CouldntEncodeError  # noqa
 
 try:
     import soundfile as sf
@@ -140,13 +141,28 @@ class Voice:
             while not self.q.empty():
                 file.write(self.q.get())
 
-        if self.audio_format != "wav":
-            filename = tempfile.mktemp(suffix=f".{self.audio_format}")
-            audio = AudioSegment.from_wav(temp_wav)
-            audio.export(filename, format=self.audio_format)
-            os.remove(temp_wav)
-        else:
-            filename = temp_wav
+        use_audio_format = self.audio_format
+
+        # Check file size and offer to convert to mp3 if too large
+        file_size = os.path.getsize(temp_wav)
+        if file_size > 24.9 * 1024 * 1024 and self.audio_format == "wav":
+            print("\nWarning: {temp_wav} is too large, switching to mp3 format.")
+            use_audio_format = "mp3"
+
+        filename = temp_wav
+        if use_audio_format != "wav":
+            try:
+                new_filename = tempfile.mktemp(suffix=f".{use_audio_format}")
+                audio = AudioSegment.from_wav(temp_wav)
+                audio.export(new_filename, format=use_audio_format)
+                os.remove(temp_wav)
+                filename = new_filename
+            except (CouldntDecodeError, CouldntEncodeError) as e:
+                print(f"Error converting audio: {e}")
+            except (OSError, FileNotFoundError) as e:
+                print(f"File system error during conversion: {e}")
+            except Exception as e:
+                print(f"Unexpected error during audio conversion: {e}")
 
         with open(filename, "rb") as fh:
             try:
@@ -157,7 +173,7 @@ class Voice:
                 print(f"Unable to transcribe {filename}: {err}")
                 return
 
-        if self.audio_format != "wav":
+        if filename != temp_wav:
             os.remove(filename)
 
         text = transcript.text

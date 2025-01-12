@@ -183,6 +183,9 @@ If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 
 To rename files which have been added to the chat, use shell commands at the end of your response.
 
+If the user just says something like "ok" or "go ahead" or "do that" they probably want you to make SEARCH/REPLACE blocks for the code changes you just proposed.
+The user will say when they've applied your edits. If they haven't explicitly confirmed the edits have been applied, they probably want proper SEARCH/REPLACE blocks.
+
 {lazy_prompt}
 ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 {shell_cmd_reminder}

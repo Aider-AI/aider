@@ -113,7 +113,9 @@ def setup_git(git_root, io):
         except ANY_GIT_ERROR:
             pass
     elif cwd == Path.home():
-        io.tool_warning("You should probably run aider in your project's directory, not your home dir.")
+        io.tool_warning(
+            "You should probably run aider in your project's directory, not your home dir."
+        )
         return
     elif cwd and io.confirm_ask(
         "No git repo found, create one to track aider's changes (recommended)?"
@@ -173,7 +175,7 @@ def check_gitignore(git_root, io, ask=True):
             existing_lines = content.splitlines()
             for pat in patterns:
                 if pat not in existing_lines:
-                    if '*' in pat or (Path(git_root) / pat).exists():
+                    if "*" in pat or (Path(git_root) / pat).exists():
                         patterns_to_add.append(pat)
         except OSError as e:
             io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
@@ -213,6 +215,22 @@ def check_streamlit_install(io):
     )
 
 
+def write_streamlit_credentials():
+    from streamlit.file_util import get_streamlit_file_path
+
+    # See https://github.com/Aider-AI/aider/issues/772
+
+    credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
+    if not os.path.exists(credential_path):
+        empty_creds = '[general]\nemail = ""\n'
+
+        os.makedirs(os.path.dirname(credential_path), exist_ok=True)
+        with open(credential_path, "w") as f:
+            f.write(empty_creds)
+    else:
+        print("Streamlit credentials already exist.")
+
+
 def launch_gui(args):
     from streamlit.web import cli
 
@@ -220,6 +238,9 @@ def launch_gui(args):
 
     print()
     print("CONTROL-C to exit...")
+
+    # Necessary so streamlit does not prompt the user for an email address.
+    write_streamlit_credentials()
 
     target = gui.__file__
 
@@ -358,18 +379,18 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
 
 
 def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
-    model_metatdata_files = []
+    model_metadata_files = []
 
     # Add the resource file path
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
-    model_metatdata_files.append(str(resource_metadata))
+    model_metadata_files.append(str(resource_metadata))
 
-    model_metatdata_files += generate_search_path_list(
+    model_metadata_files += generate_search_path_list(
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:
-        model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
+        model_metadata_files_loaded = models.register_litellm_models(model_metadata_files)
         if len(model_metadata_files_loaded) > 0 and verbose:
             io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
@@ -395,8 +416,8 @@ def sanity_check_repo(repo, io):
         error_msg = str(repo.git_repo_error)
     except UnicodeDecodeError as exc:
         error_msg = (
-            f"Failed to read the Git repository. This issue is likely caused by a path encoded "
-            f"in a format different from the expected encoding \"{sys.getfilesystemencoding()}\".\n"
+            "Failed to read the Git repository. This issue is likely caused by a path encoded "
+            f'in a format different from the expected encoding "{sys.getfilesystemencoding()}".\n'
             f"Internal error: {str(exc)}"
         )
     except ANY_GIT_ERROR as exc:
@@ -802,6 +823,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     commands = Commands(
         io,
         None,
+        voice_language=args.voice_language,
+        voice_input_device=args.voice_input_device,
+        voice_format=args.voice_format,
         verify_ssl=args.verify_ssl,
         args=args,
         parser=parser,
@@ -824,6 +848,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    if args.map_tokens is None:
+        map_tokens = main_model.get_repo_map_tokens()
+    else:
+        map_tokens = args.map_tokens
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -836,7 +865,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
             dry_run=args.dry_run,
-            map_tokens=args.map_tokens,
+            map_tokens=map_tokens,
             verbose=args.verbose,
             stream=args.stream,
             use_git=args.git,
