@@ -68,6 +68,7 @@ class GitRepo:
         self.attribute_commit_message_committer = attribute_commit_message_committer
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
+        self.current_subtree = Path.cwd().resolve()
         self.ignore_file_cache = {}
 
         if git_dname:
@@ -182,6 +183,44 @@ class GitRepo:
             return os.path.relpath(self.repo.git_dir, os.getcwd())
         except (ValueError, OSError):
             return self.repo.git_dir
+
+    def set_current_subtree(self, new_path):
+        """
+        Change the current subtree path used for file filtering.
+
+        :param new_path: The new path to set as the current subtree. It's either
+        an absolute path or relative to the repo root.
+
+        :return: A tuple with a boolean indicating success and an optional error message.
+        """
+        if not self.subtree_only:
+            return (
+                False,
+                "Subtree mode is not enabled. Run aider with --subtree-only flag.",
+            )
+
+        root_path = Path(self.root).resolve()
+        new_path = Path(new_path)
+
+        if new_path.is_absolute():
+            abs_path = new_path
+        else:
+            abs_path = (root_path / new_path).resolve()
+
+        try:
+            # Additional validation: path must exist and be a directory
+            if not abs_path.is_dir():
+                return False, "The path must be a directory."
+
+            # Verify the new path is within the git repo
+            if not abs_path.is_relative_to(root_path):
+                return False, "The path must be within the git repo."
+
+            self.current_subtree = abs_path
+            self.ignore_file_cache = {}
+            return True, None
+        except ValueError:
+            return False, "Invalid path."
 
     def get_commit_message(self, diffs, context):
         diffs = "# Diffs:\n" + diffs
@@ -371,7 +410,7 @@ class GitRepo:
         if self.subtree_only:
             try:
                 fname_path = Path(self.normalize_path(fname))
-                cwd_path = Path.cwd().resolve().relative_to(Path(self.root).resolve())
+                cwd_path = self.current_subtree.relative_to(Path(self.root).resolve())
             except ValueError:
                 # Issue #1524
                 # ValueError: 'C:\\dev\\squid-certbot' is not in the subpath of

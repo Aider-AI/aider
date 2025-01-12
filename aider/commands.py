@@ -1292,6 +1292,33 @@ class Commands:
         output = f"{announcements}\n{settings}"
         self.io.tool_output(output)
 
+    def cmd_subtree(self, args):
+        "Set the current subtree path for file filtering"
+        if not self.coder.repo:
+            self.io.tool_error("No git repository found.")
+            return
+
+        if not args.strip():
+            # Get current subtree relative to repo root
+            try:
+                current_path = self.coder.repo.current_subtree.relative_to(
+                    Path(self.coder.repo.root).resolve()
+                )
+                self.io.tool_output(f"Current subtree path: {current_path}")
+            except ValueError:
+                self.io.tool_error("Current subtree is not within repository root.")
+            return
+
+        [success, error_message] = self.coder.repo.set_current_subtree(args.strip())
+        if success:
+            # Get the relative path from repo root for display
+            new_path = self.coder.repo.current_subtree.relative_to(
+                Path(self.coder.repo.root).resolve()
+            )
+            self.io.tool_output(f"Changed subtree path to: {new_path}")
+        else:
+            self.io.tool_error(error_message)
+
     def completions_raw_load(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
 
@@ -1326,6 +1353,53 @@ class Commands:
 
     def completions_raw_save(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
+
+    def completions_raw_subtree(self, document, complete_event):
+        # Get the text before the cursor
+        text = document.text_before_cursor
+
+        # Skip the first word and the space after it
+        after_command = text.split()[-1]
+
+        # Create a new Document object with the text after the command
+        new_document = Document(after_command, cursor_position=len(after_command))
+
+        def get_paths():
+            if not self.coder.repo:
+                return None
+            return [self.coder.repo.root]
+
+        path_completer = PathCompleter(
+            get_paths=get_paths,
+            only_directories=True,
+            expanduser=True,
+        )
+
+        # Adjust the start_position to replace all of 'after_command'
+        adjusted_start_position = -len(after_command)
+
+        # Collect all completions
+        all_completions = []
+
+        # Iterate over the completions and modify them
+        for completion in path_completer.get_completions(new_document, complete_event):
+            quoted_text = self.quote_fname(after_command + completion.text)
+            all_completions.append(
+                Completion(
+                    text=quoted_text,
+                    start_position=adjusted_start_position,
+                    display=completion.display,
+                    style=completion.style,
+                    selected_style=completion.selected_style,
+                )
+            )
+
+        # Sort all completions based on their text
+        sorted_completions = sorted(all_completions, key=lambda c: c.text)
+
+        # Yield the sorted completions
+        for completion in sorted_completions:
+            yield completion
 
     def cmd_save(self, args):
         "Save commands to a file that can reconstruct the current chat session's files"
