@@ -72,12 +72,9 @@ class APIInputOutput:
             self.tool_error(f"Error reading {filename}: {e}")
             return None
 
-    def log_llm_history(self, role, content):
-        # You can choose how to handle LLM history logging in API context
-        # For now, we'll pass as we may not need to log in API mode
-        pass
+    def log_llm_history(self, role, content, filename='llm_history.log'):
         try:
-            with open(filename, 'w') as f:
+            with open(filename, 'w', encoding=self.encoding) as f:
                 f.write(content)
             return True
         except Exception as e:
