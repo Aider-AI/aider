@@ -352,10 +352,6 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
-        except OSError as err:
-            if not silent:
-                self.tool_error(f"{filename}: unable to read: {err}")
-            return
         except FileNotFoundError:
             if not silent:
                 self.tool_error(f"{filename}: file not found error")
@@ -363,6 +359,10 @@ class InputOutput:
         except IsADirectoryError:
             if not silent:
                 self.tool_error(f"{filename}: is a directory")
+            return
+        except OSError as err:
+            if not silent:
+                self.tool_error(f"{filename}: unable to read: {err}")
             return
         except UnicodeError as e:
             if not silent:
