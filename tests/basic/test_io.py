@@ -12,6 +12,18 @@ from aider.utils import ChdirTemporaryDirectory
 
 
 class TestInputOutput(unittest.TestCase):
+    def test_line_endings_validation(self):
+        # Test valid line endings
+        for ending in ["platform", "lf", "crlf"]:
+            io = InputOutput(line_endings=ending)
+            self.assertEqual(io.newline, None if ending == "platform" else "\n" if ending == "lf" else "\r\n")
+
+        # Test invalid line endings
+        with self.assertRaises(ValueError) as cm:
+            io = InputOutput(line_endings="invalid")
+        self.assertIn("Invalid line_endings value: invalid", str(cm.exception))
+        self.assertIn("Must be one of: platform, lf, crlf", str(cm.exception))
+
     def test_no_color_environment_variable(self):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
             io = InputOutput(fancy_input=False)
