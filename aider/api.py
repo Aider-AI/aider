@@ -16,7 +16,7 @@ class APIInputOutput:
         self.coder = None
 
     def tool_output(self, message="", log_only=False, bold=False):
-        if not log_only:  # Only add non-log messages to response
+        if not log_only:
             self.current_response.append({"type": "tool_output", "message": str(message)})
 
     def tool_error(self, message="", strip=True):
@@ -28,7 +28,6 @@ class APIInputOutput:
     def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames=None, edit_format=None):
         return self.input_queue.get()
 
-    # Add these additional methods to capture all output types
     def print(self, message=""):
         self.current_response.append({"type": "print", "message": str(message)})
 
@@ -38,14 +37,37 @@ class APIInputOutput:
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         self.current_response.append({
-            "type": "chat_history",
+            "type": "assistant",
             "message": str(text),
             "linebreak": linebreak,
             "blockquote": blockquote
         })
 
     def rule(self):
-        pass  # Ignore horizontal rules in API mode
+        pass
+
+    def confirm_ask(self, question, default="y", subject=None, explicit_yes_required=False, group=None, allow_never=False):
+        return True  # Auto-confirm in API mode
+
+    def add_to_input_history(self, inp):
+        pass
+
+    def read_text(self, filename, silent=False):
+        try:
+            with open(filename, 'r') as f:
+                return f.read()
+        except Exception as e:
+            self.tool_error(f"Error reading {filename}: {e}")
+            return None
+
+    def write_text(self, filename, content):
+        try:
+            with open(filename, 'w') as f:
+                f.write(content)
+            return True
+        except Exception as e:
+            self.tool_error(f"Error writing {filename}: {e}")
+            return False
 
 class Message(BaseModel):
     content: str
