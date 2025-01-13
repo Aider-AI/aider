@@ -20,7 +20,36 @@ class APIInputOutput:
 
     def tool_output(self, message="", log_only=False, bold=False):
         if not log_only:
-            self.current_response.append({"type": "tool_output", "message": str(message)})
+            response = {"type": "tool_output", "message": str(message)}
+
+            # Parse tokens and costs if present in the message
+            import re
+            pattern = r"Tokens:\s*([\d\.kM]+)\s*sent,\s*([\d\.kM]+)\s*received\. Cost:\s*\$([\d\.]+)\s*message,\s*\$([\d\.]+)\s*session\."
+            match = re.search(pattern, message)
+            if match:
+                tokens_sent_str, tokens_received_str, cost_message, cost_session = match.groups()
+
+                # Function to convert token strings like '2.0k' to numerical values
+                def parse_tokens(token_str):
+                    token_str = token_str.lower()
+                    if 'k' in token_str:
+                        return float(token_str.replace('k', '')) * 1000
+                    elif 'm' in token_str:
+                        return float(token_str.replace('m', '')) * 1_000_000
+                    else:
+                        return float(token_str)
+
+                tokens_sent = str(int(parse_tokens(tokens_sent_str)))
+                tokens_received = str(int(parse_tokens(tokens_received_str)))
+
+                response.update({
+                    "tokens_sent": tokens_sent,
+                    "tokens_received": tokens_received,
+                    "cost_message": cost_message,
+                    "cost_session": cost_session
+                })
+
+            self.current_response.append(response)
 
     def tool_error(self, message="", strip=True):
         self.current_response.append({"type": "error", "message": str(message)})
