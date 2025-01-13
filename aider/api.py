@@ -15,7 +15,8 @@ class APIInputOutput:
         self.input_queue = Queue()
         self.coder = None
         self.pretty = False  # API mode doesn't need pretty output
-        self.encoding = 'utf-8'  # Add encoding attribute
+        self.encoding = 'utf-8'  # Ensure encoding is set
+        self.llm_history_file = None  # Add this attribute
 
     def tool_output(self, message="", log_only=False, bold=False):
         if not log_only:
@@ -65,13 +66,16 @@ class APIInputOutput:
 
     def read_text(self, filename, silent=False):
         try:
-            with open(filename, 'r') as f:
+            with open(filename, 'r', encoding=self.encoding, errors='replace') as f:
                 return f.read()
         except Exception as e:
             self.tool_error(f"Error reading {filename}: {e}")
             return None
 
-    def write_text(self, filename, content):
+    def log_llm_history(self, role, content):
+        # You can choose how to handle LLM history logging in API context
+        # For now, we'll pass as we may not need to log in API mode
+        pass
         try:
             with open(filename, 'w') as f:
                 f.write(content)
