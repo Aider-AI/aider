@@ -767,6 +767,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the encoding for input and output (default: utf-8)",
     )
     group.add_argument(
+        "--line-endings",
+        choices=["platform", "lf", "crlf"],
+        default="platform",
+        help="Line endings to use when writing files (default: platform)",
+    )
+    group.add_argument(
         "-c",
         "--config",
         is_config_file=True,

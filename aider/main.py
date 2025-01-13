@@ -552,6 +552,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             code_theme=args.code_theme,
             dry_run=args.dry_run,
             encoding=args.encoding,
+            line_endings=args.line_endings,
             llm_history_file=args.llm_history_file,
             editingmode=editing_mode,
             fancy_input=args.fancy_input,
