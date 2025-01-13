@@ -24,7 +24,7 @@ class TestInputOutput(unittest.TestCase):
         with self.assertRaises(ValueError) as cm:
             io = InputOutput(line_endings="invalid")
         self.assertIn("Invalid line_endings value: invalid", str(cm.exception))
-        self.assertIn("Must be one of: platform, lf, crlf", str(cm.exception))
+        self.assertIn("Must be one of: platform, crlf, lf", str(cm.exception))
 
     def test_no_color_environment_variable(self):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
