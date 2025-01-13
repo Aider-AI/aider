@@ -2,6 +2,7 @@ import re
 from .base_coder import Coder
 from .mixture_prompts import MixturePrompts
 from .ask_coder import AskCoder
+from .compiler_coder import CompilerCoder
 
 
 class ArchitectAgent:
@@ -186,7 +187,7 @@ class MixtureOfArchitectsCoder(Coder):
 
             # Process architects sequentially instead of concurrently
             for arch in active_architects:
-                self.io.tool_output(f"Waiting for {arch.name}'s response...", bold=True)
+                self.io.tool_output(f"{arch.name}'s response...", bold=True)
                 self.io.rule()
                 try:
                     arch, response = self.get_architect_response(arch, user_message)
@@ -306,23 +307,43 @@ class MixtureOfArchitectsCoder(Coder):
                 }
             )
 
-        # Format the full conversation history with XML fences
-        combined_response = ""
+        # Create compiler coder instance
+        compiler_coder = CompilerCoder(
+            main_model=self.main_model,
+            io=self.io,
+            fnames=list(self.abs_fnames),
+            read_only_fnames=list(self.abs_read_only_fnames),
+            repo=self.repo,
+            map_tokens=0,
+            stream=self.stream,
+        )
+        compiler_coder.auto_commits = self.auto_commits
+
+        # Format the conversation for the compiler
+        compiler_input = "Please compile the following architects' proposals into implementation instructions:\n\n"
         for msg in self.discussion_messages:
             if msg["role"] == "user":
-                combined_response += "<user_message>\n"
-                combined_response += msg["content"]
-                combined_response += "\n</user_message>\n\n"
+                compiler_input += "<user_message>\n"
+                compiler_input += msg["content"]
+                compiler_input += "\n</user_message>\n\n"
             else:
-                combined_response += f"<architect name='{msg['name']}'>\n"
-                combined_response += msg["content"]
-                combined_response += "\n</architect>\n\n"
+                compiler_input += f"<architect name='{msg['name']}'>\n"
+                compiler_input += msg["content"]
+                compiler_input += "\n</architect>\n\n"
 
-        # Debug print the combined response
+
+        # Get compiled instructions
+        self.io.tool_output("Compiler's instructions", bold=True)
+        self.io.rule()
+        compiler_coder.run(with_message=compiler_input, preproc=False)
+        compiled_instructions = compiler_coder.partial_response_content
+
+
+        # Debug print the compiled instructions
         if self.verbose:
-            self.io.tool_output("\nDebug: Combined response being sent to editor:")
+            self.io.tool_output("\nDebug: Compiled instructions being sent to editor:")
             self.io.tool_output("-" * 40)
-            self.io.tool_output(combined_response)
+            self.io.tool_output(compiled_instructions)
             self.io.tool_output("-" * 40 + "\n")
 
         # Use editor coder like ArchitectCoder does
@@ -353,7 +374,10 @@ class MixtureOfArchitectsCoder(Coder):
         if self.verbose:
             editor_coder.show_announcements()
 
-        editor_coder.run(with_message=combined_response, preproc=False)
+
+        self.io.tool_output("Coder's output", bold=True)
+        self.io.rule()
+        editor_coder.run(with_message=compiled_instructions, preproc=False)
 
         self.move_back_cur_messages(
             "Changes have been applied based on architects' consensus."

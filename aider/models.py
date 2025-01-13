@@ -794,6 +794,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         streaming=False,
         use_temperature=False,
+        use_developer_message = True
         # extra_params=dict(extra_body=dict(reasoning_effort="high")),
     ),
     ModelSettings(
@@ -805,6 +806,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         streaming=False,
         use_temperature=False,
+        use_developer_message=True
         # extra_params=dict(extra_body=dict(reasoning_effort="high")),
     ),
     ModelSettings(
