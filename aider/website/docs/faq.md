@@ -141,6 +141,18 @@ When starting a fresh aider session, you can include recent git history in the c
 
 Remember, the chat history already includes recent changes made during the current session, so this tip is most useful when starting a new aider session and you want to provide context about recent work.
 
+You can also use aider to review PR branches:
+
+```
+/run git diff one-branch..another-branch
+
+...
+
+Add 6.9k tokens of command output to the chat? (Y)es/(N)o [Yes]: Yes
+
+/ask Are there any problems with the way this change works with the FooBar class?
+```
+
 {: .tip }
 The `/git` command will not work for this purpose, as its output is not included in the chat. 
 
