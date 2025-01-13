@@ -81,6 +81,12 @@ class APIInputOutput:
             self.tool_error(f"Error writing {filename}: {e}")
             return False
 
+    def ai_output(self, content):
+        self.current_response.append({
+            "type": "assistant",
+            "message": str(content)
+        })
+
     def get_assistant_mdstream(self):
         return None  # Disable streaming in API mode
 
