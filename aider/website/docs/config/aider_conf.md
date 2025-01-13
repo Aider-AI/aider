@@ -462,6 +462,9 @@ cog.outl("```")
 ## Specify the encoding for input and output (default: utf-8)
 #encoding: utf-8
 
+## Line endings to use when writing files (default: platform)
+#line-endings: platform
+
 ## Specify the config file (default: search for .aider.conf.yml in git root, cwd or home directory)
 #config: xxx
 
