@@ -16,7 +16,9 @@ class TestInputOutput(unittest.TestCase):
         # Test valid line endings
         for ending in ["platform", "lf", "crlf"]:
             io = InputOutput(line_endings=ending)
-            self.assertEqual(io.newline, None if ending == "platform" else "\n" if ending == "lf" else "\r\n")
+            self.assertEqual(
+                io.newline, None if ending == "platform" else "\n" if ending == "lf" else "\r\n"
+            )
 
         # Test invalid line endings
         with self.assertRaises(ValueError) as cm:
