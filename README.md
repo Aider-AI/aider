@@ -1,13 +1,9 @@
 
 <!-- Edit README.md, not index.md -->
 
-# Aider is AI pair programming in your terminal
+# Aider REST API - AI Pair Programming as a Service
 
-Aider lets you pair program with LLMs,
-to edit code in your local git repository.
-Start a new project or work with an existing code base.
-Aider works best with Claude 3.5 Sonnet, DeepSeek V3, o1 & GPT-4o and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
-
+This fork of Aider focuses on providing a REST API interface to Aider's powerful AI pair programming capabilities. While maintaining all the original CLI features, it adds a robust API layer that allows you to integrate Aider's functionality into your own applications and services.
 
 <!-- SCREENCAST START -->
 <p align="center">
@@ -36,7 +32,53 @@ VIDEO END -->
   </a>
 </p>
 
-## Getting started
+## REST API
+
+Aider's REST API allows you to integrate AI pair programming capabilities into your applications. The API server can be started using:
+
+```bash
+python -m aider.server [aider_args]
+```
+
+For example, here's an advanced configuration using multiple models and features:
+```bash
+python -m aider.server --architect --model openrouter/anthropic/claude-3.5-sonnet:beta --editor-model openrouter/anthropic/claude-3.5-sonnet --weak-model claude-3-haiku-20240307 --cache-prompts --analytics
+```
+
+The server runs on `http://0.0.0.0:8000` by default and provides the following endpoints:
+
+### POST /init
+Initializes an Aider instance with the provided configuration.
+
+Request body:
+```json
+{
+    "pretty": false  // Optional, defaults to false
+}
+```
+
+### POST /chat
+Sends a message to chat with Aider.
+
+Request body:
+```json
+{
+    "content": "Your message here"
+}
+```
+
+Response includes an array of responses with different types:
+- tool_output: Results from tool operations
+- error: Error messages
+- warning: Warning messages
+- print: General output messages
+- system: System messages
+- assistant: AI assistant responses
+
+### POST /stop
+Stops the Aider instance.
+
+## CLI Usage
 <!--[[[cog
 # We can't "include" here.
 # Because this page is rendered by GitHub as the repo README
@@ -88,7 +130,6 @@ Pair program with AI.
 - [Add URLs to the chat](https://aider.chat/docs/usage/images-urls.html) and aider will read their content.
 - [Code with your voice](https://aider.chat/docs/usage/voice.html).
 - Aider works best with Claude 3.5 Sonnet, DeepSeek V3, o1 & GPT-4o and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
-
 
 ## Top tier performance
 
