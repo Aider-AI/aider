@@ -2,8 +2,12 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from queue import Queue
 import sys
+import os
 
 app = FastAPI()
+
+# Store aider args globally so they can be set before starting uvicorn
+AIDER_ARGS = []
 
 class APIInputOutput:
     def __init__(self):
@@ -26,15 +30,17 @@ class APIInputOutput:
 class Message(BaseModel):
     content: str
 
+def set_aider_args(args):
+    """Set the aider arguments before starting the server"""
+    global AIDER_ARGS
+    AIDER_ARGS = args + ["--no-stream"]
+
 @app.post("/init")
 async def initialize_aider():
     from aider.main import main
     
     app.io = APIInputOutput()
-    # Use the same args that were passed to the server, but ensure --no-stream
-    args = sys.argv[1:] + ["--no-stream"]
-    
-    app.io.coder = main(args, input=None, output=None, return_coder=True)
+    app.io.coder = main(AIDER_ARGS, input=None, output=None, return_coder=True)
     return {"status": "initialized"}
 
 @app.post("/chat")
