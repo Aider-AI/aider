@@ -1,9 +1,3 @@
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736438263}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736438264}
-{"event": "repo", "properties": {"num_files": 18}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736438266}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736438266}
-{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-coder", "weak_model": "deepseek/deepseek-coder", "editor_model": "deepseek/deepseek-coder", "edit_format": "diff", "prompt_tokens": 3838, "completion_tokens": 1843, "total_tokens": 5681, "cost": 0.0010533600000000001, "total_cost": 0.0010533600000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736438311}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736440041}
 {"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736440043}
 {"event": "repo", "properties": {"num_files": 18}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736440045}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736440045}
@@ -998,3 +992,9 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640204}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 4692, "completion_tokens": 202, "total_tokens": 4894, "cost": 0.0007134399999980401, "total_cost": 0.0007134399999980401}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640209}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640209}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640352}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640352}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640352}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640454}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640455}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736640455}

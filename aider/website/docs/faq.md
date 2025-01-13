@@ -237,8 +237,8 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>1,258,436</td><td class='right'>86.2%</td></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>178,352</td><td class='right'>12.2%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>1,252,755</td><td class='right'>86.2%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>178,352</td><td class='right'>12.3%</td></tr>
 <tr><td>o1</td><td class='right'>22,748</td><td class='right'>1.6%</td></tr>
 </table>
 <!--[[[end]]]-->
