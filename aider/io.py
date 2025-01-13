@@ -245,6 +245,12 @@ class InputOutput:
             self.chat_history_file = None
 
         self.encoding = encoding
+        valid_line_endings = {"platform", "lf", "crlf"}
+        if line_endings not in valid_line_endings:
+            raise ValueError(
+                f"Invalid line_endings value: {line_endings}. "
+                f"Must be one of: {', '.join(valid_line_endings)}"
+            )
         self.newline = None if line_endings == "platform" \
             else "\n" if line_endings == "lf" else "\r\n"
         self.dry_run = dry_run
