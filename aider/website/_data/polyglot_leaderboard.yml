@@ -312,7 +312,7 @@
 
 - dirname: 2024-12-26-00-55-20--Qwen2.5-Coder-32B-Instruct
   test_cases: 225
-  model: openai/Qwen2.5-Coder-32B-Instruct
+  model: Qwen2.5-Coder-32B-Instruct
   edit_format: whole
   commit_hash: b51768b0
   pass_rate_1: 4.9
