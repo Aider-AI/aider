@@ -943,7 +943,7 @@ class Commands:
             ]
 
             if add and exit_status != 0:
-                self.io.placeholder = "Fix that"
+                self.io.placeholder = "What's wrong? Fix"
 
     def cmd_exit(self, args):
         "Exit the application"
@@ -1061,21 +1061,21 @@ class Commands:
         )
 
     def cmd_ask(self, args):
-        "Ask questions about the code base without editing any files"
+        """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
 
     def cmd_code(self, args):
-        "Ask for changes to your code"
+        """Ask for changes to your code. If no prompt provided, switches to code mode."""  # noqa
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
     def cmd_architect(self, args):
-        "Enter architect mode to discuss high-level design and architecture"
+        """Enter architect mode to discuss high-level design and architecture. If no prompt provided, switches to architect mode."""  # noqa
         return self._generic_chat_command(args, "architect")
 
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
-            self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
-            return
+            # Switch to the corresponding chat mode if no args provided
+            return self.cmd_chat_mode(edit_format)
 
         from aider.coders.base_coder import Coder
 

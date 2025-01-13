@@ -181,7 +181,7 @@ cog.outl("```")
 ###################
 # Repomap settings:
 
-## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
+## Suggested number of tokens to use for repo map, use 0 to disable
 #AIDER_MAP_TOKENS=
 
 ## Control how often the repo map is refreshed. Options: auto, always, files, manual (default: auto)

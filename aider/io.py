@@ -17,6 +17,7 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
+from prompt_toolkit.output.vt100 import is_dumb_terminal
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
@@ -249,8 +250,14 @@ class InputOutput:
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.prompt_session = None
+        self.is_dumb_terminal = is_dumb_terminal()
+
+        if self.is_dumb_terminal:
+            self.pretty = False
+            fancy_input = False
+
         if fancy_input:
-            # Initialize PromptSession
+            # Initialize PromptSession only if we have a capable terminal
             session_kwargs = {
                 "input": self.input,
                 "output": self.output,
@@ -269,6 +276,8 @@ class InputOutput:
                 self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
         else:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+            if self.is_dumb_terminal:
+                self.tool_output("Detected dumb terminal, disabling fancy input and pretty output.")
 
         self.file_watcher = file_watcher
         self.root = root
@@ -804,13 +813,16 @@ class InputOutput:
                 hist = message.strip() if strip else message
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        message = Text(message)
+        if not isinstance(message, Text):
+            message = Text(message)
         style = dict(style=color) if self.pretty and color else dict()
         try:
             self.console.print(message, **style)
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
-            message = message.encode("ascii", errors="replace").decode("ascii")
+            if isinstance(message, Text):
+                message = message.plain
+            message = str(message).encode("ascii", errors="replace").decode("ascii")
             self.console.print(message, **style)
 
     def tool_error(self, message="", strip=True):

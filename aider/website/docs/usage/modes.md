@@ -29,6 +29,14 @@ with the `/chat-mode <mode>` command:
 /chat-mode help
 ```
 
+Or you can switch between coding modes using these commands without arguments:
+
+```
+/code
+/architect
+/ask
+```
+
 Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
 There is also a special shortcut `--architect` to launch in `--chat-mode architect`.
 

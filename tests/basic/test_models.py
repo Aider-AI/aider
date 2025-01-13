@@ -132,6 +132,31 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.name, "github/o1-preview")
         self.assertEqual(model.use_temperature, False)
 
+    def test_get_repo_map_tokens(self):
+        # Test default case (no max_input_tokens in info)
+        model = Model("gpt-4")
+        model.info = {}
+        self.assertEqual(model.get_repo_map_tokens(), 1024)
+
+        # Test minimum boundary (max_input_tokens < 8192)
+        model.info = {"max_input_tokens": 4096}
+        self.assertEqual(model.get_repo_map_tokens(), 1024)
+
+        # Test middle range (max_input_tokens = 16384)
+        model.info = {"max_input_tokens": 16384}
+        self.assertEqual(model.get_repo_map_tokens(), 2048)
+
+        # Test maximum boundary (max_input_tokens > 32768)
+        model.info = {"max_input_tokens": 65536}
+        self.assertEqual(model.get_repo_map_tokens(), 4096)
+
+        # Test exact boundary values
+        model.info = {"max_input_tokens": 8192}
+        self.assertEqual(model.get_repo_map_tokens(), 1024)
+
+        model.info = {"max_input_tokens": 32768}
+        self.assertEqual(model.get_repo_map_tokens(), 4096)
+
     def test_aider_extra_model_settings(self):
         import tempfile
 

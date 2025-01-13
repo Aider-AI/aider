@@ -275,7 +275,7 @@ Environment variable: `AIDER_CACHE_KEEPALIVE_PINGS`
 ## Repomap settings:
 
 ### `--map-tokens VALUE`
-Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)  
+Suggested number of tokens to use for repo map, use 0 to disable  
 Environment variable: `AIDER_MAP_TOKENS`  
 
 ### `--map-refresh VALUE`

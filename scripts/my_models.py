@@ -18,7 +18,10 @@ def collect_model_stats(n_lines=1000):
                 if event["event"] == "message_send":
                     properties = event["properties"]
                     main_model = properties.get("main_model")
+
                     total_tokens = properties.get("total_tokens", 0)
+                    if main_model == "deepseek/deepseek-coder":
+                        main_model = "deepseek/deepseek-chat"
                     if main_model:
                         model_stats[main_model] += total_tokens
             except json.JSONDecodeError:
