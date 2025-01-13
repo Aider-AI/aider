@@ -5,24 +5,6 @@
 
 This fork of Aider focuses on providing a REST API interface to Aider's powerful AI pair programming capabilities. While maintaining all the original CLI features, it adds a robust API layer that allows you to integrate Aider's functionality into your own applications and services.
 
-<!-- SCREENCAST START -->
-<p align="center">
-  <img
-    src="https://aider.chat/assets/screencast.svg"
-    alt="aider screencast"
-  >
-</p>
-<!-- SCREENCAST END -->
-
-<!-- VIDEO START
-<p align="center">
-  <video style="max-width: 100%; height: auto;" autoplay loop muted playsinline>
-    <source src="/assets/shell-cmds-small.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</p>
-VIDEO END -->
-
 <p align="center">
   <a href="https://discord.gg/Tv2uQnR88V">
     <img src="https://img.shields.io/badge/Join-Discord-blue.svg"/>
