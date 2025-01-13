@@ -49,12 +49,32 @@ Request body:
 ```
 
 Response includes an array of responses with different types:
-- tool_output: Results from tool operations
+- tool_output: Results from tool operations (including token usage and costs)
 - error: Error messages
 - warning: Warning messages
 - print: General output messages
 - system: System messages
 - assistant: AI assistant responses
+
+Example response with pretty=true:
+```json
+{
+    "responses": [
+        {
+            "type": "assistant",
+            "message": "I'll help you create a simple Hello World program in NodeJS. Let's create a new file called `hello.js`.\n\nHere's what to put in the file:\n\n```javascript\nconsole.log(\"Hello, World!\");\n```\n\nWould you like me to create this file? Please let me know the filename and location where you'd like it created."
+        },
+        {
+            "type": "tool_output",
+            "message": "Tokens: 10k sent, 79 received. Cost: $0.03 message, $0.03 session.",
+            "tokens_sent": "10000",
+            "tokens_received": "79",
+            "cost_message": "0.03",
+            "cost_session": "0.03"
+        }
+    ]
+}
+```
 
 ### POST /stop
 Stops the Aider instance.
