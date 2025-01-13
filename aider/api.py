@@ -95,7 +95,7 @@ async def initialize_aider():
     from aider.main import main
     
     app.io = APIInputOutput()
-    app.io.coder = main(AIDER_ARGS, input=None, output=None, return_coder=True)
+    app.io.coder = main(AIDER_ARGS, input=None, output=None, return_coder=True, io=app.io)
     return {"status": "initialized"}
 
 @app.post("/chat")

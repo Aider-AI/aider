@@ -439,7 +439,7 @@ def sanity_check_repo(repo, io):
     return False
 
 
-def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False, io=None):
     report_uncaught_exceptions()
 
     if argv is None:
@@ -559,7 +559,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             multiline_mode=args.multiline,
         )
 
-    io = get_io(args.pretty)
+    if io is None:
+        io = get_io(args.pretty)
+    else:
+        pass  # Use the provided io instance
     try:
         io.rule()
     except UnicodeEncodeError as err:
