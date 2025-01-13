@@ -181,7 +181,7 @@ cog.outl("```")
 ###################
 # Repomap settings:
 
-## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
+## Suggested number of tokens to use for repo map, use 0 to disable
 #AIDER_MAP_TOKENS=
 
 ## Control how often the repo map is refreshed. Options: auto, always, files, manual (default: auto)
@@ -420,6 +420,9 @@ cog.outl("```")
 
 ## Specify the encoding for input and output (default: utf-8)
 #AIDER_ENCODING=utf-8
+
+## Line endings to use when writing files (default: platform)
+#AIDER_LINE_ENDINGS=platform
 
 ## Specify the .env file to load (default: .env in git root)
 #AIDER_ENV_FILE=.env

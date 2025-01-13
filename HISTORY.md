@@ -1,19 +1,37 @@
 # Release history
 
-### main branch
+### Aider v0.71.1
+
+- Fix permissions issue in Docker images.
+- Added read-only file announcements to chat.
+- Bugfix: ASCII fallback for unicode errors.
+- Bugfix: integer indices for list slicing in repomap calculations.
+- Aider wrote 83% of the code in this release.
+
+### Aider v0.71.0
+
 - Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
 - Streaming pretty LLM responses is smoother and faster for long replies.
+- Streaming automatically turns of for model that don't support it
+  - Can now switch to/from `/model o1` and a streaming model
+- Pretty output remains enabled even when editing files with triple-backtick fences
+- Bare `/ask`, `/code` and `/architect` commands now switch the chat mode.
+- Increased default size of the repomap.
 - Increased max chat history tokens limit from 4k to 8k.
+- Turn off fancy input and watch files if terminal is dumb.
 - Added support for custom voice format and input device settings.
-- Disabled Streamlit email prompt by automatically creating credentials file.
-- Fixed lint command handling of nested spaced strings.
+- Disabled Streamlit email prompt, by apaz-cli.
+- Docker container runs as non-root user.
+- Fixed lint command handling of nested spaced strings, by Aaron Weisberg.
 - Added token count feedback when adding command output to chat.
 - Improved error handling for large audio files with automatic format conversion.
-- Added better error handling for git repository index errors.
+- Improved handling of git repo index errors, by Krazer.
 - Improved unicode handling in console output with ASCII fallback.
-- Aider wrote 54% of the code in this release.
+- Added AssertionError, AttributeError to git error handling.
+- Aider wrote 60% of the code in this release.
 
 ### Aider v0.70.0
+
 - Full support for o1 models.
 - Watch files now honors `--subtree-only`, and only watches that subtree.
 - Improved prompting for watch files, to work more reliably with more models.

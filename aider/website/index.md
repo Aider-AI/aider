@@ -104,7 +104,7 @@ for more details.
   - Update docs.
 - Aider will edit your files to complete your request.
 - Aider [automatically git commits](https://aider.chat/docs/git.html) changes with a sensible commit message.
-- [Use aider inside your favorite editor or IDE](/docs/usage/watch.html).
+- [Use aider inside your favorite editor or IDE](https://aider.chat/docs/usage/watch.html).
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
 - Aider can edit multiple files at once for complex requests.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.

@@ -204,7 +204,7 @@ cog.outl("```")
 ###################
 # Repomap settings:
 
-## Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)
+## Suggested number of tokens to use for repo map, use 0 to disable
 #map-tokens: xxx
 
 ## Control how often the repo map is refreshed. Options: auto, always, files, manual (default: auto)
@@ -461,6 +461,9 @@ cog.outl("```")
 
 ## Specify the encoding for input and output (default: utf-8)
 #encoding: utf-8
+
+## Line endings to use when writing files (default: platform)
+#line-endings: platform
 
 ## Specify the config file (default: search for .aider.conf.yml in git root, cwd or home directory)
 #config: xxx

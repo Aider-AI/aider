@@ -1177,6 +1177,15 @@ class Model(ModelSettings):
 
         return res
 
+    def get_repo_map_tokens(self):
+        map_tokens = 1024
+        max_inp_tokens = self.info.get("max_input_tokens")
+        if max_inp_tokens:
+            map_tokens = max_inp_tokens / 8
+            map_tokens = min(map_tokens, 4096)
+            map_tokens = max(map_tokens, 1024)
+        return map_tokens
+
 
 def register_models(model_settings_fnames):
     files_loaded = []

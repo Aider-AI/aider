@@ -217,6 +217,7 @@ def check_streamlit_install(io):
 
 def write_streamlit_credentials():
     from streamlit.file_util import get_streamlit_file_path
+
     # See https://github.com/Aider-AI/aider/issues/772
 
     credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
@@ -378,18 +379,18 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
 
 
 def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
-    model_metatdata_files = []
+    model_metadata_files = []
 
     # Add the resource file path
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
-    model_metatdata_files.append(str(resource_metadata))
+    model_metadata_files.append(str(resource_metadata))
 
-    model_metatdata_files += generate_search_path_list(
+    model_metadata_files += generate_search_path_list(
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:
-        model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
+        model_metadata_files_loaded = models.register_litellm_models(model_metadata_files)
         if len(model_metadata_files_loaded) > 0 and verbose:
             io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
@@ -551,6 +552,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             code_theme=args.code_theme,
             dry_run=args.dry_run,
             encoding=args.encoding,
+            line_endings=args.line_endings,
             llm_history_file=args.llm_history_file,
             editingmode=editing_mode,
             fancy_input=args.fancy_input,
@@ -847,6 +849,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    if args.map_tokens is None:
+        map_tokens = main_model.get_repo_map_tokens()
+    else:
+        map_tokens = args.map_tokens
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -859,7 +866,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
             dry_run=args.dry_run,
-            map_tokens=args.map_tokens,
+            map_tokens=map_tokens,
             verbose=args.verbose,
             stream=args.stream,
             use_git=args.git,

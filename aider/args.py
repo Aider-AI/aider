@@ -287,7 +287,7 @@ def get_parser(default_config_files, git_root):
         "--map-tokens",
         type=int,
         default=None,
-        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
+        help="Suggested number of tokens to use for repo map, use 0 to disable",
     )
     group.add_argument(
         "--map-refresh",
@@ -765,6 +765,12 @@ def get_parser(default_config_files, git_root):
         "--encoding",
         default="utf-8",
         help="Specify the encoding for input and output (default: utf-8)",
+    )
+    group.add_argument(
+        "--line-endings",
+        choices=["platform", "lf", "crlf"],
+        default="platform",
+        help="Line endings to use when writing files (default: platform)",
     )
     group.add_argument(
         "-c",

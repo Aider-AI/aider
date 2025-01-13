@@ -59,7 +59,8 @@ def wrap_fence(name):
 
 
 all_fences = [
-    ("``" + "`", "``" + "`"),
+    ("`" * 3, "`" * 3),
+    ("`" * 4, "`" * 4),
     wrap_fence("source"),
     wrap_fence("code"),
     wrap_fence("pre"),
@@ -230,10 +231,10 @@ class Coder:
             if map_tokens > 0:
                 refresh = self.repo_map.refresh
                 lines.append(f"Repo-map: using {map_tokens} tokens, {refresh} refresh")
-                max_map_tokens = 2048
+                max_map_tokens = self.main_model.get_repo_map_tokens() * 2
                 if map_tokens > max_map_tokens:
                     lines.append(
-                        f"Warning: map-tokens > {max_map_tokens} is not recommended as too much"
+                        f"Warning: map-tokens > {max_map_tokens} is not recommended. Too much"
                         " irrelevant code can confuse LLMs."
                     )
             else:
@@ -244,6 +245,10 @@ class Coder:
         # Files
         for fname in self.get_inchat_relative_files():
             lines.append(f"Added {fname} to the chat.")
+
+        for fname in self.abs_read_only_fnames:
+            rel_fname = self.get_rel_fname(fname)
+            lines.append(f"Added {rel_fname} to the chat (read-only).")
 
         if self.done_messages:
             lines.append("Restored previous conversation history.")
@@ -348,7 +353,6 @@ class Coder:
             self.done_messages = []
 
         self.io = io
-        self.stream = stream
 
         self.shell_commands = []
 
@@ -362,6 +366,8 @@ class Coder:
         self.pretty = self.io.pretty
 
         self.main_model = main_model
+
+        self.stream = stream and main_model.streaming
 
         if cache_prompts and self.main_model.cache_control:
             self.add_cache_headers = True
@@ -519,7 +525,7 @@ class Coder:
             return False
 
         # only show pretty output if fences are the normal triple-backtick
-        if self.fence != self.fences[0]:
+        if self.fence[0][0] != "`":
             return False
 
         return True

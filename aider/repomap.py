@@ -605,7 +605,7 @@ class RepoMap:
 
         self.tree_cache = dict()
 
-        middle = min(max_map_tokens // 25, num_tags)
+        middle = min(int(max_map_tokens // 25), num_tags)
         while lower_bound <= upper_bound:
             # dump(lower_bound, middle, upper_bound)
 
@@ -628,7 +628,7 @@ class RepoMap:
             else:
                 upper_bound = middle - 1
 
-            middle = (lower_bound + upper_bound) // 2
+            middle = int((lower_bound + upper_bound) // 2)
 
         spin.end()
         return best_tree
