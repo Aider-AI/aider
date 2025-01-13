@@ -10,7 +10,7 @@ app = FastAPI()
 AIDER_ARGS = []
 
 class APIInputOutput:
-    def __init__(self):
+    def __init__(self, pretty=False):
         self.current_response = []
         self.input_queue = Queue()
         self.coder = None
@@ -116,6 +116,9 @@ class APIInputOutput:
     def get_assistant_mdstream(self):
         return None  # Disable streaming in API mode
 
+class InitRequest(BaseModel):
+    pretty: bool = False  # Optional, defaults to False
+
 class Message(BaseModel):
     content: str
 
@@ -125,10 +128,10 @@ def set_aider_args(args):
     AIDER_ARGS = args + ["--no-stream"]
 
 @app.post("/init")
-async def initialize_aider():
+async def initialize_aider(request: InitRequest):
     from aider.main import main
     
-    app.io = APIInputOutput()
+    app.io = APIInputOutput(pretty=request.pretty)
     app.io.coder = main(AIDER_ARGS, input=None, output=None, return_coder=True, io=app.io)
     return {"status": "initialized"}
 
