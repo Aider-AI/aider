@@ -15,6 +15,7 @@ class APIInputOutput:
         self.input_queue = Queue()
         self.coder = None
         self.pretty = False  # API mode doesn't need pretty output
+        self.encoding = 'utf-8'  # Add encoding attribute
 
     def tool_output(self, message="", log_only=False, bold=False):
         if not log_only:
