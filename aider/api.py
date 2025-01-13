@@ -49,7 +49,7 @@ class APIInputOutput:
     def assistant_output(self, message, pretty=None):
         # This is the main method for AI responses
         self.current_response.append({
-            "type": "assistant",
+            "type": "assistant", 
             "message": str(message)
         })
 
