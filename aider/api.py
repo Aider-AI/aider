@@ -16,16 +16,36 @@ class APIInputOutput:
         self.coder = None
 
     def tool_output(self, message="", log_only=False, bold=False):
-        self.current_response.append({"type": "tool_output", "message": message})
+        if not log_only:  # Only add non-log messages to response
+            self.current_response.append({"type": "tool_output", "message": str(message)})
 
     def tool_error(self, message="", strip=True):
-        self.current_response.append({"type": "error", "message": message})
+        self.current_response.append({"type": "error", "message": str(message)})
 
     def tool_warning(self, message="", strip=True):
-        self.current_response.append({"type": "warning", "message": message})
+        self.current_response.append({"type": "warning", "message": str(message)})
 
     def get_input(self, root, rel_fnames, addable_rel_fnames, commands, abs_read_only_fnames=None, edit_format=None):
         return self.input_queue.get()
+
+    # Add these additional methods to capture all output types
+    def print(self, message=""):
+        self.current_response.append({"type": "print", "message": str(message)})
+
+    def user_input(self, inp, log_only=True):
+        if not log_only:
+            self.current_response.append({"type": "user_input", "message": str(inp)})
+
+    def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
+        self.current_response.append({
+            "type": "chat_history",
+            "message": str(text),
+            "linebreak": linebreak,
+            "blockquote": blockquote
+        })
+
+    def rule(self):
+        pass  # Ignore horizontal rules in API mode
 
 class Message(BaseModel):
     content: str
