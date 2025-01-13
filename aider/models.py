@@ -162,6 +162,7 @@ MODEL_SETTINGS = [
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "openai/gpt-4o-2024-08-06",
@@ -170,6 +171,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o-2024-08-06",
@@ -178,6 +180,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o-2024-11-20",
@@ -186,6 +189,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "openai/gpt-4o-2024-11-20",
@@ -194,6 +198,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o",
@@ -203,6 +208,7 @@ MODEL_SETTINGS = [
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o-mini",
@@ -680,6 +686,7 @@ MODEL_SETTINGS = [
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "openai/o1-mini",

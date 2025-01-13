@@ -50,32 +50,58 @@
   seconds_per_case: 30.8
   total_cost: 13.4847
 
-- dirname: 2024-12-21-18-52-34--polyglot-gpt-4o-diff
+- dirname: 2024-12-30-20-57-12--gpt-4o-2024-11-20-ex-as-sys
   test_cases: 225
   model: gpt-4o-2024-11-20
   edit_format: diff
-  commit_hash: a755079-dirty
+  commit_hash: 09ee197-dirty
   pass_rate_1: 4.9
-  pass_rate_2: 15.1
+  pass_rate_2: 18.2
   pass_num_1: 11
-  pass_num_2: 34
-  percent_cases_well_formed: 96.0
+  pass_num_2: 41
+  percent_cases_well_formed: 95.1
   error_outputs: 12
-  num_malformed_responses: 11
-  num_with_malformed_responses: 9
-  user_asks: 34
+  num_malformed_responses: 12
+  num_with_malformed_responses: 11
+  user_asks: 53
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
-  exhausted_context_windows: 1
-  test_timeouts: 19
+  exhausted_context_windows: 0
+  test_timeouts: 12
   total_tests: 225
   command: aider --model gpt-4o-2024-11-20
-  date: 2024-12-21
-  versions: 0.69.2.dev
-  seconds_per_case: 22.2
-  total_cost: 7.1835
-
+  date: 2024-12-30
+  versions: 0.70.1.dev
+  seconds_per_case: 12.1
+  total_cost: 6.7351
+  
+- dirname: 2024-12-30-20-44-54--gpt4o-ex-as-sys-clean-prompt
+  test_cases: 225
+  model: gpt-4o-2024-08-06
+  edit_format: diff
+  commit_hash: 09ee197-dirty
+  pass_rate_1: 4.9
+  pass_rate_2: 23.1
+  pass_num_1: 11
+  pass_num_2: 52
+  percent_cases_well_formed: 94.2
+  error_outputs: 21
+  num_malformed_responses: 21
+  num_with_malformed_responses: 13
+  user_asks: 65
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model gpt-4o-2024-08-06
+  date: 2024-12-30
+  versions: 0.70.1.dev
+  seconds_per_case: 16.0
+  total_cost: 7.0286
+  
 - dirname: 2024-12-21-19-23-03--polyglot-o1-hard-diff
   test_cases: 224
   model: o1-2024-12-17 (high)
