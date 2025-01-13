@@ -14,6 +14,7 @@ class APIInputOutput:
         self.current_response = []
         self.input_queue = Queue()
         self.coder = None
+        self.pretty = False  # API mode doesn't need pretty output
 
     def tool_output(self, message="", log_only=False, bold=False):
         if not log_only:
@@ -36,11 +37,20 @@ class APIInputOutput:
             self.current_response.append({"type": "user_input", "message": str(inp)})
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
+        # Only append blockquotes (system messages) here
+        if blockquote:
+            self.current_response.append({
+                "type": "system",
+                "message": str(text),
+                "linebreak": linebreak,
+                "blockquote": blockquote
+            })
+
+    def assistant_output(self, message, pretty=None):
+        # This is the main method for AI responses
         self.current_response.append({
             "type": "assistant",
-            "message": str(text),
-            "linebreak": linebreak,
-            "blockquote": blockquote
+            "message": str(message)
         })
 
     def rule(self):
@@ -68,6 +78,9 @@ class APIInputOutput:
         except Exception as e:
             self.tool_error(f"Error writing {filename}: {e}")
             return False
+
+    def get_assistant_mdstream(self):
+        return None  # Disable streaming in API mode
 
 class Message(BaseModel):
     content: str
