@@ -153,9 +153,6 @@ class ReviewCoder(Coder):
     def format_review_prompt(self, changes: List[FileChange]) -> str:
         """Format the changes into a prompt for the LLM"""
         prompt = "Please review the following changes and provide:\n"
-        prompt += "1. A summary of each file's changes\n"
-        prompt += "2. Potential issues or improvements\n"
-        prompt += "3. Overall assessment of the changes\n\n"
 
         for change in changes:
             prompt += f"\nFile: {change.filename}\n"
