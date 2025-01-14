@@ -1399,22 +1399,29 @@ class Commands:
 
         report_github_issue(issue_text, title=title, confirm=False)
     
-    def cmd_review(self, pr_number=None, base="main", head=None):
-        """Review a pull request
-        Usage: /review <pr_number> [base_branch] [head_branch]
+    def cmd_review(self, args=""):
+        """Review a pull request or branch changes
+        Usage: 
+          /review <pr_number> [base_branch] [head_branch]
+          /review <branch> [base_branch]
         """
-        if not pr_number:
-            self.io.tool_error("Please provide a PR number")
+        args = args.strip().split()
+        if not args:
+            self.io.tool_error("Please provide a PR number or branch name")
             return
 
-        if not head:
+        pr_number_or_branch = args[0]
+        base = args[1] if len(args) > 1 else None
+        head = args[2] if len(args) > 2 else None
+
+        if not head and not pr_number_or_branch.isdigit():
             head = self.coder.repo.repo.active_branch.name
 
         # Create a new ReviewCoder
         review_coder = self.coder.clone(edit_format="review")
 
         # Stream the review
-        for chunk in review_coder.review_pr(pr_number, base, head):
+        for chunk in review_coder.review_pr(pr_number_or_branch, base, head):
             pass  # The streaming is handled by the coder
 
     def cmd_editor(self, initial_content=""):
