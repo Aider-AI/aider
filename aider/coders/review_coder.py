@@ -23,7 +23,7 @@ class ReviewCoder(Coder):
         super().__init__(*args, **kwargs)
         self.pr_number = None
         self.base_branch = None
-        self.head_branch = None
+        self.main_branch = None
 
     def get_pr_changes(self) -> List[FileChange]:
         """Get all file changes in the PR or between branches"""
@@ -37,15 +37,16 @@ class ReviewCoder(Coder):
         if self.pr_number:
             # Get GitHub token from environment
             github_token = os.getenv('GITHUB_TOKEN')
-            if not github_token:
-                self.io.tool_error("GITHUB_TOKEN environment variable not set")
-                return []
 
             try:
                 # Get the GitHub repository
-                g = Github(github_token)
+                g = Github(github_token) if github_token else Github()
                 remote_url = repo.remotes.origin.url
                 repo_name = remote_url.split('github.com/')[-1].replace('.git', '')
+
+                self.io.tool_output(f"Fetching PR information for {repo_name} from {remote_url}")
+                self.io.tool_output(f"PR number: {self.pr_number}")
+
                 gh_repo = g.get_repo(repo_name)
                 
                 # Get the PR
@@ -54,15 +55,18 @@ class ReviewCoder(Coder):
                 # Update base and head branches from PR if not explicitly set
                 if not self.base_branch:
                     self.base_branch = pr.base.ref
-                if not self.head_branch:
-                    self.head_branch = pr.head.ref
+                if not self.main_branch:
+                    self.main_branch = pr.head.ref
 
             except Exception as e:
                 self.io.tool_error(f"Error fetching PR information: {str(e)}")
                 return []
 
+        self.io.tool_output(f"Reviewing {self.pr_number}, {self.base_branch} against {self.main_branch}")
         # Get the diff between branches
-        diff = repo.git.diff(f"{self.base_branch}...{self.head_branch}", "--name-status")
+        diff = repo.git.diff(f"{self.base_branch}...{self.main_branch}", "--name-status")
+
+        self.io.tool_output(f"Diff:\n{diff}")
 
         for line in diff.splitlines():
             self.io.debug(line)
@@ -117,18 +121,18 @@ class ReviewCoder(Coder):
 
         return prompt
 
-    def review_pr(self, pr_number_or_branch: str, base: str = None, head: str = None):
+    def review_pr(self, pr_number_or_branch: str, base_branch: str = None):
         """Main method to review a PR or branch changes"""
         if pr_number_or_branch.isdigit():
             # PR number provided
             self.pr_number = pr_number_or_branch
-            self.base_branch = base
-            self.head_branch = head
+            self.base_branch = None
+            self.main_branch = None
         else:
             # Branch comparison
             self.pr_number = None
-            self.base_branch = base or 'HEAD'
-            self.head_branch = pr_number_or_branch
+            self.base_branch = base_branch
+            self.main_branch = pr_number_or_branch
 
         changes = self.get_pr_changes()
         if not changes:
