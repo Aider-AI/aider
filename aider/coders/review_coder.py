@@ -2,18 +2,8 @@ from typing import List, Optional, NamedTuple
 from dataclasses import dataclass
 from pathlib import Path
 import git
-from github import Github
 import os
 import re
-from rich.console import Console
-from rich.panel import Panel
-from rich.text import Text
-from rich.progress import (
-    Progress,
-    SpinnerColumn,
-    TextColumn,
-    ProgressColumn,
-)
 
 from .review_prompts import ReviewPrompts
 from .base_coder import Coder
@@ -26,6 +16,7 @@ class FileChange:
     old_content: Optional[str]
     new_content: str
     change_type: str  # 'added', 'modified', 'deleted'
+
 
 class ReviewComment(NamedTuple):
     file: str
@@ -54,6 +45,15 @@ class ReviewCoder(Coder):
         repo = git.Repo(self.repo.root)
 
         if self.pr_number:
+            try:
+                from github import Github
+            except ImportError:
+                self.io.tool_error(
+                    "The 'PyGithub' package is required for PR reviews. "
+                    "Please install it with: pip install PyGithub"
+                )
+                return []
+
             # Get GitHub token from environment
             github_token = os.getenv('GITHUB_TOKEN')
 
@@ -121,7 +121,7 @@ class ReviewCoder(Coder):
 
             self.io.tool_output(
                 f"Reviewing {self.base_branch} against {self.main_branch}")
-            
+
             diff = repo.git.diff(f"{self.main_branch}...{self.base_branch}", "--name-status")
             self.io.tool_output(f"Diff:\n{diff}")
 
@@ -195,9 +195,8 @@ class ReviewCoder(Coder):
         # Parse assessment
         assessment_match = re.search(r'<assessment>(.*?)</assessment>', review_text, re.DOTALL)
         assessment = assessment_match.group(1).strip() if assessment_match else ""
-        
-        return summary, comments, assessment
 
+        return summary, comments, assessment
 
     def review_pr(self, pr_number_or_branch: str, base_branch: str = None):
         """Main method to review a PR or branch changes"""
@@ -225,7 +224,7 @@ class ReviewCoder(Coder):
             {"role": "system", "content": self.gpt_prompts.main_system},
             {"role": "user", "content": prompt}
         ]
-        
+
         hash_obj, response = send_completion(
             self.main_model.name,
             messages,
@@ -239,14 +238,14 @@ class ReviewCoder(Coder):
         full_response = ""
         with self.io.create_progress_context("Analyzing changes...") as progress:
             review_task = progress.add_task("Analyzing changes...", total=None)
-            
+
             for chunk in response:
                 if hasattr(chunk, 'choices') and chunk.choices:
                     delta = chunk.choices[0].delta
                     if hasattr(delta, 'content') and delta.content:
                         content = delta.content
                         full_response += content
-                        
+
                         # Update progress description based on content
                         if "<summary>" in content:
                             progress.update(review_task, description="Generating summary...")
@@ -254,7 +253,7 @@ class ReviewCoder(Coder):
                             progress.update(review_task, description="Adding review comments...")
                         elif "<assessment>" in content:
                             progress.update(review_task, description="Making final assessment...")
-        
+
         # Parse and display complete review
         summary, comments, assessment = self.parse_review(full_response)
         self.io.display_review(summary, comments, assessment)
