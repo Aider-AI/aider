@@ -188,7 +188,7 @@ class ReviewCoder(Coder):
             {"role": "user", "content": prompt}
         ]
         
-        response = send_completion(
+        hash_obj, response = send_completion(
             self.main_model.name,
             messages,
             None,
@@ -199,8 +199,10 @@ class ReviewCoder(Coder):
 
         # Display the streamed response
         for chunk in response:
-            if chunk:
-                self.io.tool_output(chunk, log_only=False)
+            if hasattr(chunk, 'choices') and chunk.choices:
+                delta = chunk.choices[0].delta
+                if hasattr(delta, 'content') and delta.content:
+                    self.io.tool_output(delta.content, log_only=False)
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
