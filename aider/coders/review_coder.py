@@ -42,7 +42,11 @@ class ReviewCoder(Coder):
                 # Get the GitHub repository
                 g = Github(github_token) if github_token else Github()
                 remote_url = repo.remotes.origin.url
-                repo_name = remote_url.split('github.com/')[-1].replace('.git', '')
+                # Handle both HTTPS and SSH URLs
+                if 'git@github.com:' in remote_url:
+                    repo_name = remote_url.split('git@github.com:')[-1].replace('.git', '')
+                else:
+                    repo_name = remote_url.split('github.com/')[-1].replace('.git', '')
 
                 self.io.tool_output(f"Fetching PR information for {repo_name} from {remote_url}")
                 self.io.tool_output(f"PR number: {self.pr_number}")
