@@ -7,6 +7,7 @@ import os
 
 from .review_prompts import ReviewPrompts
 from .base_coder import Coder
+from aider.sendchat import simple_send_with_retries
 
 
 @dataclass
@@ -54,10 +55,10 @@ class ReviewCoder(Coder):
                 self.io.tool_output(f"PR number: {self.pr_number}")
 
                 gh_repo = g.get_repo(repo_name)
-                
+
                 # Get the PR
                 pr = gh_repo.get_pull(int(self.pr_number))
-                
+
                 # Update base and head branches from PR if not explicitly set
                 if not self.base_branch:
                     self.base_branch = pr.base.ref
@@ -68,7 +69,8 @@ class ReviewCoder(Coder):
                 self.io.tool_error(f"Error fetching PR information: {str(e)}")
                 return []
 
-        self.io.tool_output(f"Reviewing {self.pr_number}, {self.base_branch} against {self.main_branch}")
+        self.io.tool_output(
+            f"Reviewing {self.pr_number}, {self.base_branch} against {self.main_branch}")
         # Get the diff between branches
         diff = repo.git.diff(f"{self.base_branch}...{self.main_branch}", "--name-status")
 
@@ -148,20 +150,16 @@ class ReviewCoder(Coder):
 
         self.io.tool_output(f"Reviewing changes:")
 
-        # Send to LLM for review
-        messages = self.format_messages()
-        messages.append({"role": "user", "content": prompt})
+        # Create a fresh message without chat history
+        messages = [
+            {"role": "system", "content": self.gpt_prompts.main_system},
+            {"role": "user", "content": prompt}
+        ]
 
-        # Stream the review response
+        # Send directly to model without chat history
         try:
-            response = ""
-            for chunk in self.send_message(prompt):
-                if isinstance(chunk, dict) and "content" in chunk:
-                    response += chunk["content"]
-                    yield chunk["content"]
-                elif isinstance(chunk, str):
-                    response += chunk
-                    yield chunk
+            for chunk in simple_send_with_retries(self.main_model, messages):
+                yield chunk
         except Exception as e:
             self.io.tool_error(f"Unable to complete review: {str(e)}")
 
