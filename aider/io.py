@@ -902,6 +902,16 @@ class InputOutput:
                 "Multiline mode: Disabled. Alt-Enter inserts newline, Enter submits text"
             )
 
+    def create_progress_context(self, initial_status="Processing..."):
+        """Create and return a progress context with a dynamic status message"""
+        progress = Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            console=self.console,
+            transient=True,
+        )
+        return progress
+
     def display_review(self, summary: str, comments: list, assessment: str):
         """Display a complete code review including summary, comments and assessment"""
         # Display Summary

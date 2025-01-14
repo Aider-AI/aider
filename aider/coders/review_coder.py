@@ -8,7 +8,7 @@ import re
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn, ProgressColumn
 
 from .review_prompts import ReviewPrompts
 from .base_coder import Coder
@@ -232,12 +232,7 @@ class ReviewCoder(Coder):
 
         # Collect the full response with progress indicator
         full_response = ""
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            console=Console(),
-            transient=True,
-        ) as progress:
+        with self.io.create_progress_context("Analyzing changes...") as progress:
             review_task = progress.add_task("Analyzing changes...", total=None)
             
             for chunk in response:
