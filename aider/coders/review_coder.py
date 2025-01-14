@@ -7,7 +7,7 @@ import os
 
 from .review_prompts import ReviewPrompts
 from .base_coder import Coder
-from aider.sendchat import simple_send_with_retries
+from aider.sendchat import send_completion
 
 
 @dataclass
@@ -188,11 +188,19 @@ class ReviewCoder(Coder):
             {"role": "user", "content": prompt}
         ]
 
-        # Send directly to model without chat history and output chunks
+        # Stream the response using send_completion
         try:
-            for chunk in simple_send_with_retries(self.main_model, messages):
-                self.io.tool_output(chunk, log_only=False)
-                yield chunk
+            response = send_completion(
+                self.main_model.name,
+                messages,
+                functions=None,
+                stream=True,
+                temperature=0
+            )
+            for chunk in response:
+                if chunk:
+                    self.io.tool_output(chunk, log_only=False)
+                    yield chunk
         except Exception as e:
             self.io.tool_error(f"Unable to complete review: {str(e)}")
 
