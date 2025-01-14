@@ -1071,7 +1071,7 @@ class Commands:
     def cmd_architect(self, args):
         """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
         return self._generic_chat_command(args, "architect")
-
+    
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
             # Switch to the corresponding chat mode if no args provided
@@ -1398,6 +1398,24 @@ class Commands:
             title = None
 
         report_github_issue(issue_text, title=title, confirm=False)
+    
+    def cmd_review(self, pr_number=None, base="main", head=None):
+        """Review a pull request
+        Usage: /review <pr_number> [base_branch] [head_branch]
+        """
+        if not pr_number:
+            self.io.tool_error("Please provide a PR number")
+            return
+
+        if not head:
+            head = self.coder.repo.repo.active_branch.name
+
+        # Create a new ReviewCoder
+        review_coder = self.coder.clone(edit_format="review")
+
+        # Stream the review
+        for chunk in review_coder.review_pr(pr_number, base, head):
+            pass  # The streaming is handled by the coder
 
     def cmd_editor(self, initial_content=""):
         "Open an editor to write a prompt"
