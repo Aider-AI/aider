@@ -177,9 +177,9 @@ class AutoCompleter(Completer):
 
 class InputOutput:
     num_error_outputs = 0
-    Progress = Progress
-    SpinnerColumn = SpinnerColumn
-    TextColumn = TextColumn
+    Progress = _Progress
+    SpinnerColumn = _SpinnerColumn
+    TextColumn = _TextColumn
     num_user_asks = 0
     clipboard_watcher = None
 
