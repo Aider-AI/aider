@@ -5,6 +5,7 @@ import git
 from github import Github
 import os
 
+from .review_prompts import ReviewPrompts
 from .base_coder import Coder
 
 
@@ -18,6 +19,7 @@ class FileChange:
 
 class ReviewCoder(Coder):
     edit_format = "review"  # Unique identifier for this coder
+    gpt_prompts = ReviewPrompts()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -73,7 +75,6 @@ class ReviewCoder(Coder):
         self.io.tool_output(f"Diff:\n{diff}")
 
         for line in diff.splitlines():
-            self.io.debug(line)
             status, filename = line.split('\t')
 
             if status.startswith('A'):  # Added
@@ -144,6 +145,8 @@ class ReviewCoder(Coder):
             return
 
         prompt = self.format_review_prompt(changes)
+
+        self.io.tool_output(f"Reviewing changes:")
 
         # Send to LLM for review
         messages = self.format_messages()
