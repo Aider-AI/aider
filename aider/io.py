@@ -25,6 +25,7 @@ from pygments.token import Token
 from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
+from rich.panel import Panel
 from rich.style import Style as RichStyle
 from rich.text import Text
 
@@ -900,6 +901,28 @@ class InputOutput:
             self.tool_output(
                 "Multiline mode: Disabled. Alt-Enter inserts newline, Enter submits text"
             )
+
+    def display_review_comments(self, comments):
+        """Display code review comments in a formatted way"""
+        for comment in comments:
+            # Create styled text based on comment type
+            title = Text()
+            title.append(f"{comment.file}:{comment.line} ", style="bold")
+            
+            type_styles = {
+                "issue": "red",
+                "suggestion": "yellow", 
+                "security": "red bold",
+                "performance": "blue"
+            }
+            title.append(f"[{comment.type}]", style=type_styles.get(comment.type, "white"))
+            
+            panel = Panel(
+                Text(comment.content),
+                title=title,
+                border_style=type_styles.get(comment.type, "white")
+            )
+            self.console.print(panel)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:

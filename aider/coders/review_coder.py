@@ -187,29 +187,6 @@ class ReviewCoder(Coder):
             
         return comments
 
-    def display_comments(self, comments: List[ReviewComment]):
-        """Display parsed comments in a formatted way"""
-        console = Console()
-        
-        for comment in comments:
-            # Create styled text based on comment type
-            title = Text()
-            title.append(f"{comment.file}:{comment.line} ", style="bold")
-            
-            type_styles = {
-                "issue": "red",
-                "suggestion": "yellow",
-                "security": "red bold",
-                "performance": "blue"
-            }
-            title.append(f"[{comment.type}]", style=type_styles.get(comment.type, "white"))
-            
-            panel = Panel(
-                Text(comment.content),
-                title=title,
-                border_style=type_styles.get(comment.type, "white")
-            )
-            console.print(panel)
 
     def review_pr(self, pr_number_or_branch: str, base_branch: str = None):
         """Main method to review a PR or branch changes"""
@@ -263,7 +240,7 @@ class ReviewCoder(Coder):
         comments = self.parse_comments(full_response)
         if comments:
             self.io.tool_output("\nDetailed Review Comments:")
-            self.display_comments(comments)
+            self.io.display_review_comments(comments)
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
