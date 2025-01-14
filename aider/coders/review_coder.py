@@ -1,9 +1,13 @@
-from typing import List, Optional
+from typing import List, Optional, NamedTuple
 from dataclasses import dataclass
 from pathlib import Path
 import git
 from github import Github
 import os
+import re
+from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
 
 from .review_prompts import ReviewPrompts
 from .base_coder import Coder
@@ -16,6 +20,12 @@ class FileChange:
     old_content: Optional[str]
     new_content: str
     change_type: str  # 'added', 'modified', 'deleted'
+
+class ReviewComment(NamedTuple):
+    file: str
+    line: int
+    type: str
+    content: str
 
 
 class ReviewCoder(Coder):
@@ -161,6 +171,46 @@ class ReviewCoder(Coder):
 
         return prompt
 
+    def parse_comments(self, review_text: str) -> List[ReviewComment]:
+        """Parse structured comments from the review text"""
+        pattern = r'<comment file="([^"]+)" line="(\d+)" type="([^"]+)">\s*(.*?)\s*</comment>'
+        comments = []
+        
+        for match in re.finditer(pattern, review_text, re.DOTALL):
+            file, line, type_, content = match.groups()
+            comments.append(ReviewComment(
+                file=file,
+                line=int(line),
+                type=type_,
+                content=content.strip()
+            ))
+            
+        return comments
+
+    def display_comments(self, comments: List[ReviewComment]):
+        """Display parsed comments in a formatted way"""
+        console = Console()
+        
+        for comment in comments:
+            # Create styled text based on comment type
+            title = Text()
+            title.append(f"{comment.file}:{comment.line} ", style="bold")
+            
+            type_styles = {
+                "issue": "red",
+                "suggestion": "yellow",
+                "security": "red bold",
+                "performance": "blue"
+            }
+            title.append(f"[{comment.type}]", style=type_styles.get(comment.type, "white"))
+            
+            panel = Panel(
+                Text(comment.content),
+                title=title,
+                border_style=type_styles.get(comment.type, "white")
+            )
+            console.print(panel)
+
     def review_pr(self, pr_number_or_branch: str, base_branch: str = None):
         """Main method to review a PR or branch changes"""
         if pr_number_or_branch.isdigit():
@@ -197,12 +247,23 @@ class ReviewCoder(Coder):
             extra_params=self.main_model.extra_params,
         )
 
-        # Display the streamed response
+        # Collect the full response
+        full_response = ""
         for chunk in response:
             if hasattr(chunk, 'choices') and chunk.choices:
                 delta = chunk.choices[0].delta
                 if hasattr(delta, 'content') and delta.content:
-                    self.io.tool_output(delta.content, log_only=False)
+                    content = delta.content
+                    full_response += content
+                    # Only output non-comment parts directly
+                    if not ("<comment" in content or "</comment>" in content):
+                        self.io.tool_output(content, log_only=False)
+        
+        # Parse and display structured comments
+        comments = self.parse_comments(full_response)
+        if comments:
+            self.io.tool_output("\nDetailed Review Comments:")
+            self.display_comments(comments)
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
