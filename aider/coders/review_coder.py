@@ -153,8 +153,17 @@ class ReviewCoder(Coder):
         messages.append({"role": "user", "content": prompt})
 
         # Stream the review response
-        for chunk in self.send_message(prompt):
-            yield chunk
+        try:
+            response = ""
+            for chunk in self.send_message(prompt):
+                if isinstance(chunk, dict) and "content" in chunk:
+                    response += chunk["content"]
+                    yield chunk["content"]
+                elif isinstance(chunk, str):
+                    response += chunk
+                    yield chunk
+        except Exception as e:
+            self.io.tool_error(f"Unable to complete review: {str(e)}")
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
