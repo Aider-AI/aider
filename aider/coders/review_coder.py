@@ -102,7 +102,8 @@ class ReviewCoder(Coder):
             # Get changes from local branches
             current_branch = repo.active_branch.name
             if self.base_branch != current_branch:
-                self.io.tool_error(f"Must be on base branch ({self.base_branch}) to review local changes")
+                self.io.tool_error(
+                    f"Must be on base branch ({self.base_branch}) to review local changes")
                 return []
 
             diff = repo.git.diff(f"{self.base_branch}...{self.main_branch}", "--name-status")
@@ -182,27 +183,24 @@ class ReviewCoder(Coder):
 
         self.io.tool_output(f"Reviewing changes:")
 
-        # Create a fresh message without chat history
         messages = [
             {"role": "system", "content": self.gpt_prompts.main_system},
             {"role": "user", "content": prompt}
         ]
+        
+        response = send_completion(
+            self.main_model.name,
+            messages,
+            None,
+            stream=True,
+            temperature=0,  # Use 0 for more consistent reviews
+            extra_params=self.main_model.extra_params,
+        )
 
-        # Stream the response using send_completion
-        try:
-            response = send_completion(
-                self.main_model.name,
-                messages,
-                functions=None,
-                stream=True,
-                temperature=0
-            )
-            for chunk in response:
-                if chunk:
-                    self.io.tool_output(chunk, log_only=False)
-                    yield chunk
-        except Exception as e:
-            self.io.tool_error(f"Unable to complete review: {str(e)}")
+        # Display the streamed response
+        for chunk in response:
+            if chunk:
+                self.io.tool_output(chunk, log_only=False)
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
