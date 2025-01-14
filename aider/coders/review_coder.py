@@ -8,6 +8,7 @@ import re
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
+from rich.progress import Progress, SpinnerColumn, TextColumn
 
 from .review_prompts import ReviewPrompts
 from .base_coder import Coder
@@ -229,17 +230,30 @@ class ReviewCoder(Coder):
             extra_params=self.main_model.extra_params,
         )
 
-        # Collect the full response
+        # Collect the full response with progress indicator
         full_response = ""
-        for chunk in response:
-            if hasattr(chunk, 'choices') and chunk.choices:
-                delta = chunk.choices[0].delta
-                if hasattr(delta, 'content') and delta.content:
-                    content = delta.content
-                    full_response += content
-                    # Only output non-comment parts directly
-                    if not ("<comment" in content or "</comment>" in content):
-                        self.io.tool_output(content, log_only=False)
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            console=Console(),
+            transient=True,
+        ) as progress:
+            review_task = progress.add_task("Analyzing changes...", total=None)
+            
+            for chunk in response:
+                if hasattr(chunk, 'choices') and chunk.choices:
+                    delta = chunk.choices[0].delta
+                    if hasattr(delta, 'content') and delta.content:
+                        content = delta.content
+                        full_response += content
+                        
+                        # Update progress description based on content
+                        if "<summary>" in content:
+                            progress.update(review_task, description="Generating summary...")
+                        elif "<comment" in content:
+                            progress.update(review_task, description="Adding review comments...")
+                        elif "<assessment>" in content:
+                            progress.update(review_task, description="Making final assessment...")
         
         # Parse and display complete review
         summary, comments, assessment = self.parse_review(full_response)
