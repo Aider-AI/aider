@@ -188,9 +188,10 @@ class ReviewCoder(Coder):
             {"role": "user", "content": prompt}
         ]
 
-        # Send directly to model without chat history
+        # Send directly to model without chat history and output chunks
         try:
             for chunk in simple_send_with_retries(self.main_model, messages):
+                self.io.tool_output(chunk, log_only=False)
                 yield chunk
         except Exception as e:
             self.io.tool_error(f"Unable to complete review: {str(e)}")
