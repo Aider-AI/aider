@@ -1402,27 +1402,42 @@ class Commands:
     def cmd_review(self, args=""):
         """Review a pull request or branch changes
         Usage: 
-          /review <pr_number> [base_branch] [head_branch]
-          /review <branch> [base_branch]
+          /review <pr_number>
+          /review [main_branch (main)] [head_branch (HEAD)]
         """
-        args = args.strip().split()
-        if not args:
-            self.io.tool_error("Please provide a PR number or branch name")
-            return
 
-        pr_number_or_branch = args[0]
-        base = args[1] if len(args) > 1 else None
-        head = args[2] if len(args) > 2 else None
+        if args:
+            args = args.strip().split()
 
-        if not head and not pr_number_or_branch.isdigit():
-            head = self.coder.repo.repo.active_branch.name
+            pr_number_or_branch = args[0]
+            base_branch = args[1] if len(args) > 1 else self.coder.repo.repo.active_branch.name
+        else:
+            pr_number_or_branch = None
+            base_branch = self.coder.repo.repo.active_branch.name
+
+        if not pr_number_or_branch:
+            pr_number_or_branch = 'main'
+
+        from aider.coders.base_coder import Coder
 
         # Create a new ReviewCoder
-        review_coder = self.coder.clone(edit_format="review")
+        review_coder = Coder.create(
+            io=self.io,
+            from_coder=self.coder,
+            edit_format="review",
+            summarize_from_coder=False,
+            done_messages=[],  # Empty history
+            cur_messages=[],   # Empty current messages
+        )
 
-        # Stream the review
-        for chunk in review_coder.review_pr(pr_number_or_branch, base, head):
-            pass  # The streaming is handled by the coder
+        review_coder.review_pr(pr_number_or_branch, base_branch)
+
+        raise SwitchCoder(
+            edit_format=self.coder.edit_format,
+            summarize_from_coder=False,
+            from_coder=review_coder,
+            show_announcements=False,
+        )
 
     def cmd_editor(self, initial_content=""):
         "Open an editor to write a prompt"

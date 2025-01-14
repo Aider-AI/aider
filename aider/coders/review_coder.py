@@ -67,9 +67,6 @@ class ReviewCoder(Coder):
                 else:
                     repo_name = remote_url.split('github.com/')[-1].replace('.git', '')
 
-                self.io.tool_output(f"Fetching PR information for {repo_name} from {remote_url}")
-                self.io.tool_output(f"PR number: {self.pr_number}")
-
                 gh_repo = g.get_repo(repo_name)
 
                 # Get the PR
@@ -77,17 +74,17 @@ class ReviewCoder(Coder):
 
                 # Update base and head branches from PR if not explicitly set
                 if not self.base_branch:
-                    self.base_branch = pr.base.ref
+                    self.base_branch = pr.head.ref
                 if not self.main_branch:
-                    self.main_branch = pr.head.ref
+                    self.main_branch = pr.base.ref
 
             except Exception as e:
                 self.io.tool_error(f"Error fetching PR information: {str(e)}")
                 return []
 
-        self.io.tool_output(
-            f"Reviewing {self.pr_number}, {self.base_branch} against {self.main_branch}")
-        if self.pr_number:
+            self.io.tool_output(
+                f"Reviewing PR {self.pr_number} - {self.base_branch} against {self.main_branch}")
+
             # Get changes from GitHub PR
             pr = gh_repo.get_pull(int(self.pr_number))
             files = pr.get_files()
@@ -122,7 +119,10 @@ class ReviewCoder(Coder):
                     f"Must be on base branch ({self.base_branch}) to review local changes")
                 return []
 
-            diff = repo.git.diff(f"{self.base_branch}...{self.main_branch}", "--name-status")
+            self.io.tool_output(
+                f"Reviewing {self.base_branch} against {self.main_branch}")
+            
+            diff = repo.git.diff(f"{self.main_branch}...{self.base_branch}", "--name-status")
             self.io.tool_output(f"Diff:\n{diff}")
 
             for line in diff.splitlines():

@@ -28,6 +28,10 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.style import Style as RichStyle
 from rich.text import Text
+from rich.progress import Progress
+from rich.progress import SpinnerColumn
+from rich.progress import TextColumn
+from rich.progress import ProgressColumn
 
 from aider.mdstream import MarkdownStream
 
@@ -177,11 +181,11 @@ class AutoCompleter(Completer):
 
 class InputOutput:
     num_error_outputs = 0
-    Progress = _Progress
-    SpinnerColumn = _SpinnerColumn
-    TextColumn = _TextColumn
     num_user_asks = 0
     clipboard_watcher = None
+    progress = Progress
+    spinner_column = SpinnerColumn
+    text_column = TextColumn
 
     def __init__(
         self,
@@ -907,9 +911,9 @@ class InputOutput:
 
     def create_progress_context(self, initial_status="Processing..."):
         """Create and return a progress context with a dynamic status message"""
-        progress = self.Progress(
-            self.SpinnerColumn(),
-            self.TextColumn("[progress.description]{task.description}"),
+        progress = self.progress(
+            self.spinner_column(),
+            self.text_column("[progress.description]{task.description}"),
             console=self.console,
             transient=True,
         )
