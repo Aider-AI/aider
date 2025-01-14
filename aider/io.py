@@ -902,27 +902,49 @@ class InputOutput:
                 "Multiline mode: Disabled. Alt-Enter inserts newline, Enter submits text"
             )
 
-    def display_review_comments(self, comments):
-        """Display code review comments in a formatted way"""
-        for comment in comments:
-            # Create styled text based on comment type
-            title = Text()
-            title.append(f"{comment.file}:{comment.line} ", style="bold")
-            
+    def display_review(self, summary: str, comments: list, assessment: str):
+        """Display a complete code review including summary, comments and assessment"""
+        # Display Summary
+        if summary:
+            summary_panel = Panel(
+                Text(summary),
+                title="Summary",
+                border_style="cyan"
+            )
+            self.console.print(summary_panel)
+            self.console.print()
+
+        # Display Comments
+        if comments:
+            self.console.print("[bold]Detailed Review Comments:[/bold]")
             type_styles = {
                 "issue": "red",
-                "suggestion": "yellow", 
+                "suggestion": "yellow",
                 "security": "red bold",
                 "performance": "blue"
             }
-            title.append(f"[{comment.type}]", style=type_styles.get(comment.type, "white"))
             
-            panel = Panel(
-                Text(comment.content),
-                title=title,
-                border_style=type_styles.get(comment.type, "white")
+            for comment in comments:
+                title = Text()
+                title.append(f"{comment.file}:{comment.line} ", style="bold")
+                title.append(f"[{comment.type}]", style=type_styles.get(comment.type, "white"))
+                
+                panel = Panel(
+                    Text(comment.content),
+                    title=title,
+                    border_style=type_styles.get(comment.type, "white")
+                )
+                self.console.print(panel)
+            self.console.print()
+
+        # Display Assessment
+        if assessment:
+            assessment_panel = Panel(
+                Text(assessment),
+                title="Overall Assessment",
+                border_style="green"
             )
-            self.console.print(panel)
+            self.console.print(assessment_panel)
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:

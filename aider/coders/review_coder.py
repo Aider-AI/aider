@@ -171,11 +171,15 @@ class ReviewCoder(Coder):
 
         return prompt
 
-    def parse_comments(self, review_text: str) -> List[ReviewComment]:
-        """Parse structured comments from the review text"""
+    def parse_review(self, review_text: str) -> tuple[str, List[ReviewComment], str]:
+        """Parse the complete review including summary, comments and assessment"""
+        # Parse summary
+        summary_match = re.search(r'<summary>(.*?)</summary>', review_text, re.DOTALL)
+        summary = summary_match.group(1).strip() if summary_match else ""
+
+        # Parse comments
         pattern = r'<comment file="([^"]+)" line="(\d+)" type="([^"]+)">\s*(.*?)\s*</comment>'
         comments = []
-        
         for match in re.finditer(pattern, review_text, re.DOTALL):
             file, line, type_, content = match.groups()
             comments.append(ReviewComment(
@@ -184,8 +188,12 @@ class ReviewCoder(Coder):
                 type=type_,
                 content=content.strip()
             ))
-            
-        return comments
+
+        # Parse assessment
+        assessment_match = re.search(r'<assessment>(.*?)</assessment>', review_text, re.DOTALL)
+        assessment = assessment_match.group(1).strip() if assessment_match else ""
+        
+        return summary, comments, assessment
 
 
     def review_pr(self, pr_number_or_branch: str, base_branch: str = None):
@@ -236,11 +244,9 @@ class ReviewCoder(Coder):
                     if not ("<comment" in content or "</comment>" in content):
                         self.io.tool_output(content, log_only=False)
         
-        # Parse and display structured comments
-        comments = self.parse_comments(full_response)
-        if comments:
-            self.io.tool_output("\nDetailed Review Comments:")
-            self.io.display_review_comments(comments)
+        # Parse and display complete review
+        summary, comments, assessment = self.parse_review(full_response)
+        self.io.display_review(summary, comments, assessment)
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
