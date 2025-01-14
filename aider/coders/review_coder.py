@@ -8,7 +8,12 @@ import re
 from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
-from rich.progress import Progress, SpinnerColumn, TextColumn, ProgressColumn
+from rich.progress import (
+    Progress,
+    SpinnerColumn,
+    TextColumn,
+    ProgressColumn,
+)
 
 from .review_prompts import ReviewPrompts
 from .base_coder import Coder

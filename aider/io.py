@@ -177,6 +177,9 @@ class AutoCompleter(Completer):
 
 class InputOutput:
     num_error_outputs = 0
+    Progress = Progress
+    SpinnerColumn = SpinnerColumn
+    TextColumn = TextColumn
     num_user_asks = 0
     clipboard_watcher = None
 
@@ -904,9 +907,9 @@ class InputOutput:
 
     def create_progress_context(self, initial_status="Processing..."):
         """Create and return a progress context with a dynamic status message"""
-        progress = Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
+        progress = self.Progress(
+            self.SpinnerColumn(),
+            self.TextColumn("[progress.description]{task.description}"),
             console=self.console,
             transient=True,
         )
