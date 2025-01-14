@@ -71,39 +71,71 @@ class ReviewCoder(Coder):
 
         self.io.tool_output(
             f"Reviewing {self.pr_number}, {self.base_branch} against {self.main_branch}")
-        # Get the diff between branches
-        diff = repo.git.diff(f"{self.base_branch}...{self.main_branch}", "--name-status")
+        if self.pr_number:
+            # Get changes from GitHub PR
+            pr = gh_repo.get_pull(int(self.pr_number))
+            files = pr.get_files()
 
-        self.io.tool_output(f"Diff:\n{diff}")
+            for file in files:
+                if file.status == 'added':
+                    changes.append(FileChange(
+                        filename=file.filename,
+                        old_content=None,
+                        new_content=file.patch,
+                        change_type='added'
+                    ))
+                elif file.status == 'modified':
+                    changes.append(FileChange(
+                        filename=file.filename,
+                        old_content=file.raw_url,  # GitHub raw URL for the original content
+                        new_content=file.patch,
+                        change_type='modified'
+                    ))
+                elif file.status == 'removed':
+                    changes.append(FileChange(
+                        filename=file.filename,
+                        old_content=file.raw_url,  # GitHub raw URL for the deleted content
+                        new_content=None,
+                        change_type='deleted'
+                    ))
+        else:
+            # Get changes from local branches
+            current_branch = repo.active_branch.name
+            if self.base_branch != current_branch:
+                self.io.tool_error(f"Must be on base branch ({self.base_branch}) to review local changes")
+                return []
 
-        for line in diff.splitlines():
-            status, filename = line.split('\t')
+            diff = repo.git.diff(f"{self.base_branch}...{self.main_branch}", "--name-status")
+            self.io.tool_output(f"Diff:\n{diff}")
 
-            if status.startswith('A'):  # Added
-                new_content = self.io.read_text(filename)
-                changes.append(FileChange(
-                    filename=filename,
-                    old_content=None,
-                    new_content=new_content,
-                    change_type='added'
-                ))
-            elif status.startswith('M'):  # Modified
-                old_content = repo.git.show(f"{self.base_branch}:{filename}")
-                new_content = self.io.read_text(filename)
-                changes.append(FileChange(
-                    filename=filename,
-                    old_content=old_content,
-                    new_content=new_content,
-                    change_type='modified'
-                ))
-            elif status.startswith('D'):  # Deleted
-                old_content = repo.git.show(f"{self.base_branch}:{filename}")
-                changes.append(FileChange(
-                    filename=filename,
-                    old_content=old_content,
-                    new_content=None,
-                    change_type='deleted'
-                ))
+            for line in diff.splitlines():
+                status, filename = line.split('\t')
+
+                if status.startswith('A'):  # Added
+                    new_content = self.io.read_text(filename)
+                    changes.append(FileChange(
+                        filename=filename,
+                        old_content=None,
+                        new_content=new_content,
+                        change_type='added'
+                    ))
+                elif status.startswith('M'):  # Modified
+                    old_content = repo.git.show(f"{self.base_branch}:{filename}")
+                    new_content = self.io.read_text(filename)
+                    changes.append(FileChange(
+                        filename=filename,
+                        old_content=old_content,
+                        new_content=new_content,
+                        change_type='modified'
+                    ))
+                elif status.startswith('D'):  # Deleted
+                    old_content = repo.git.show(f"{self.base_branch}:{filename}")
+                    changes.append(FileChange(
+                        filename=filename,
+                        old_content=old_content,
+                        new_content=None,
+                        change_type='deleted'
+                    ))
 
         return changes
 
