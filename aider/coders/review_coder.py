@@ -2,6 +2,8 @@ from typing import List, Optional
 from dataclasses import dataclass
 from pathlib import Path
 import git
+from github import Github
+import os
 
 from .base_coder import Coder
 
@@ -29,8 +31,30 @@ class ReviewCoder(Coder):
             self.io.tool_error("No git repository found")
             return []
 
+        # Get GitHub token from environment
+        github_token = os.getenv('GITHUB_TOKEN')
+        if not github_token:
+            self.io.tool_error("GITHUB_TOKEN environment variable not set")
+            return []
+
         changes = []
         repo = git.Repo(self.repo.root)
+
+        try:
+            # Get the GitHub repository
+            g = Github(github_token)
+            remote_url = repo.remotes.origin.url
+            repo_name = remote_url.split('github.com/')[-1].replace('.git', '')
+            gh_repo = g.get_repo(repo_name)
+            
+            # Get the PR
+            pr = gh_repo.get_pull(int(self.pr_number))
+            
+            # Update base and head branches from PR if not explicitly set
+            if not self.base_branch:
+                self.base_branch = pr.base.ref
+            if not self.head_branch:
+                self.head_branch = pr.head.ref
 
         # Get the diff between branches
         diff = repo.git.diff(f"{self.base_branch}...{self.head_branch}", "--name-status")
