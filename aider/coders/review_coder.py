@@ -56,6 +56,10 @@ class ReviewCoder(Coder):
             if not self.head_branch:
                 self.head_branch = pr.head.ref
 
+        except Exception as e:
+            self.io.tool_error(f"Error fetching PR information: {str(e)}")
+            return []
+
         # Get the diff between branches
         diff = repo.git.diff(f"{self.base_branch}...{self.head_branch}", "--name-status")
 
