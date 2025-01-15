@@ -107,8 +107,7 @@ import datetime
 
 files = [
     'aider/website/docs/leaderboards/index.md',
-    'aider/website/_data/edit_leaderboard.yml',
-    'aider/website/_data/refactor_leaderboard.yml'
+    'aider/website/_data/polyglot_leaderboard.yml',
 ]
 
 def get_last_modified_date(file):
@@ -122,6 +121,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-December 26, 2024.
+January 13, 2025.
 <!--[[[end]]]-->
 </p>
