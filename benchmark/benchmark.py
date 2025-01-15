@@ -717,17 +717,6 @@ def run_test_real(
         else:
             print(f"Warning: Solution file not found: {src}")
 
-    # Copy all test files
-    for file_path in test_files:
-        src = testdir / Path(file_path)
-        if src.exists():
-            original_fname = original_dname / testdir.name / file_path
-            if original_fname.exists():
-                os.makedirs(src.parent, exist_ok=True)
-                shutil.copy(original_fname, src)
-        else:
-            print(f"Warning: Test file not found: {src}")
-
     file_list = " ".join(fname.name for fname in fnames)
 
     instructions = ""
@@ -785,6 +774,7 @@ def run_test_real(
     dump(coder.ignore_mentions)
 
     coder.show_announcements()
+    coder.get_file_mentions = lambda x: set()  # No loading of any other files
 
     timeouts = 0
 
@@ -796,6 +786,7 @@ def run_test_real(
     test_outcomes = []
     for i in range(tries):
         start = time.time()
+
         if no_aider:
             pass
         elif replay:
