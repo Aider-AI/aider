@@ -234,11 +234,12 @@ class ReviewCoder(Coder):
             extra_params=self.main_model.extra_params,
         )
 
-        # Collect the full response with progress indicator
+        # Collect the full response with progress updates
         full_response = ""
-        with self.io.create_progress_context("Analyzing changes...") as progress:
-            review_task = progress.add_task("Analyzing changes...", total=None)
+        progress = self.io.create_progress_context("Analyzing changes...")
+        progress.start()
 
+        try:
             for chunk in response:
                 if hasattr(chunk, 'choices') and chunk.choices:
                     delta = chunk.choices[0].delta
@@ -248,11 +249,13 @@ class ReviewCoder(Coder):
 
                         # Update progress description based on content
                         if "<summary>" in content:
-                            progress.update(review_task, description="Generating summary...")
+                            progress.update(description="Generating summary...")
                         elif "<comment" in content:
-                            progress.update(review_task, description="Adding review comments...")
+                            progress.update(description="Adding review comments...")
                         elif "<assessment>" in content:
-                            progress.update(review_task, description="Making final assessment...")
+                            progress.update(description="Making final assessment...")
+        finally:
+            progress.stop()
 
         # Parse and display complete review
         summary, comments, assessment = self.parse_review(full_response)
