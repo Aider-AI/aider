@@ -182,15 +182,14 @@ class AutoCompleter(Completer):
 class ProgressContext:
     """A context manager for displaying progress with dynamic status messages."""
     
-    def __init__(self, progress, console, initial_status="Processing..."):
-        self.progress = progress
+    def __init__(self, console, initial_status="Processing..."):
         self.console = console
         self.task_id = None
         self.initial_status = initial_status
         self._progress = None
 
     def start(self):
-        progress = self.progress(
+        progress = Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console,
@@ -215,9 +214,6 @@ class InputOutput:
     num_error_outputs = 0
     num_user_asks = 0
     clipboard_watcher = None
-    progress = lambda *args, **kwargs: Progress(*args, **kwargs)
-    spinner_column = SpinnerColumn
-    text_column = TextColumn
 
     def __init__(
         self,
@@ -943,11 +939,7 @@ class InputOutput:
 
     def create_progress_context(self, initial_status="Processing..."):
         """Create and return a progress context with a dynamic status message"""
-        return ProgressContext(
-            lambda *args, **kwargs: Progress(*args, **kwargs),
-            self.console,
-            initial_status
-        )
+        return ProgressContext(self.console, initial_status)
 
     def display_review(self, summary: str, comments: list, assessment: str):
         """Display a complete code review including summary, comments and assessment"""
