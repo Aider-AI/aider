@@ -62,6 +62,12 @@ Aider v0.50.2-dev
 Models: claude-3-5-sonnet-20240620 with ♾️ diff edit format
 ```
 
+## Try architect mode
+
+Run aider with `--architect` or `/chat-mode architect` to enable [architect mode](../usage/modes.md#architect-mode-and-the-editor-model).
+This mode first proposes changes, then uses a separate model to handle the file edits.
+This two-step process often produces more reliable edits, especially with models that have trouble
+following edit format instructions.
 
 ## More help
 
