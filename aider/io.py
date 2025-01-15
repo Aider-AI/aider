@@ -179,6 +179,36 @@ class AutoCompleter(Completer):
             yield Completion(ins, start_position=pos, display=match)
 
 
+class ProgressContext:
+    """A context manager for displaying progress with dynamic status messages."""
+    
+    def __init__(self, progress, console, initial_status="Processing..."):
+        self.progress = progress
+        self.console = console
+        self.task_id = None
+        self.initial_status = initial_status
+        self._progress = None
+
+    def start(self):
+        with self.progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            console=self.console,
+            transient=True,
+        ) as progress:
+            self.task_id = progress.add_task(self.initial_status, total=None)
+            self._progress = progress
+
+    def update(self, description=None):
+        if description and self.task_id is not None:
+            self._progress.update(self.task_id, description=description)
+
+    def stop(self):
+        if self.task_id is not None:
+            self._progress.stop()
+            self.task_id = None
+
+
 class InputOutput:
     num_error_outputs = 0
     num_user_asks = 0
@@ -911,33 +941,7 @@ class InputOutput:
 
     def create_progress_context(self, initial_status="Processing..."):
         """Create and return a progress context with a dynamic status message"""
-        class ProgressContext:
-            def __init__(self, progress, console):
-                self.progress = progress
-                self.console = console
-                self.task_id = None
-                self.initial_status = initial_status
-
-            def start(self):
-                with self.progress(
-                    SpinnerColumn(),
-                    TextColumn("[progress.description]{task.description}"),
-                    console=self.console,
-                    transient=True,
-                ) as progress:
-                    self.task_id = progress.add_task(self.initial_status, total=None)
-                    self._progress = progress
-
-            def update(self, description=None):
-                if description and self.task_id is not None:
-                    self._progress.update(self.task_id, description=description)
-
-            def stop(self):
-                if self.task_id is not None:
-                    self._progress.stop()
-                    self.task_id = None
-
-        return ProgressContext(self.progress, self.console)
+        return ProgressContext(self.progress, self.console, initial_status)
 
     def display_review(self, summary: str, comments: list, assessment: str):
         """Display a complete code review including summary, comments and assessment"""
