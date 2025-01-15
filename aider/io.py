@@ -190,30 +190,32 @@ class ProgressContext:
         self._progress = None
 
     def start(self):
-        with self.progress(
+        progress = self.progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console,
             transient=True,
-        ) as progress:
-            self.task_id = progress.add_task(self.initial_status, total=None)
-            self._progress = progress
+        )
+        progress.start()
+        self.task_id = progress.add_task(self.initial_status, total=None)
+        self._progress = progress
 
     def update(self, description=None):
         if description and self.task_id is not None:
             self._progress.update(self.task_id, description=description)
 
     def stop(self):
-        if self.task_id is not None:
+        if self._progress is not None:
             self._progress.stop()
             self.task_id = None
+            self._progress = None
 
 
 class InputOutput:
     num_error_outputs = 0
     num_user_asks = 0
     clipboard_watcher = None
-    progress = Progress
+    progress = lambda *args, **kwargs: Progress(*args, **kwargs)
     spinner_column = SpinnerColumn
     text_column = TextColumn
 
@@ -941,7 +943,11 @@ class InputOutput:
 
     def create_progress_context(self, initial_status="Processing..."):
         """Create and return a progress context with a dynamic status message"""
-        return ProgressContext(self.progress, self.console, initial_status)
+        return ProgressContext(
+            lambda *args, **kwargs: Progress(*args, **kwargs),
+            self.console,
+            initial_status
+        )
 
     def display_review(self, summary: str, comments: list, assessment: str):
         """Display a complete code review including summary, comments and assessment"""
