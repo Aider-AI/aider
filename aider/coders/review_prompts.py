@@ -25,7 +25,7 @@ Comment types:
 
 Use {language} in your responses.
 Format your review to be clear and constructive.
-The summary and assetmet MUST use the XML format.
+The summary and assessment MUST use the XML format.
 Each specific comment MUST use the XML format with correct file and line numbers.
 {platform}
 """

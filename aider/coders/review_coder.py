@@ -120,7 +120,7 @@ class ReviewCoder(Coder):
                 return []
 
             self.io.tool_output(
-                f"Reviewing {self.base_branch} against {self.main_branch}")
+                f"Reviewing {self.base_branch} branch against {self.main_branch} branch")
 
             diff = repo.git.diff(f"{self.main_branch}...{self.base_branch}", "--name-status")
             self.io.tool_output(f"Diff:\n{diff}")
@@ -218,12 +218,13 @@ class ReviewCoder(Coder):
 
         prompt = self.format_review_prompt(changes)
 
-        self.io.tool_output(f"Reviewing changes:")
-
         messages = [
             {"role": "system", "content": self.gpt_prompts.main_system},
             {"role": "user", "content": prompt}
         ]
+
+        progress = self.io.create_progress_context("Analyzing changes...")
+        progress.start()
 
         hash_obj, response = send_completion(
             self.main_model.name,
@@ -236,8 +237,7 @@ class ReviewCoder(Coder):
 
         # Collect the full response with progress updates
         full_response = ""
-        progress = self.io.create_progress_context("Analyzing changes...")
-        progress.start()
+        progress.update(description="Processing response...")
 
         try:
             for chunk in response:
