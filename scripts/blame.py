@@ -2,8 +2,6 @@
 
 import argparse
 import os
-import subprocess
-import sys
 from collections import defaultdict
 from datetime import datetime
 from operator import itemgetter
@@ -11,6 +9,8 @@ from operator import itemgetter
 import semver
 import yaml
 from tqdm import tqdm
+
+from aider.stats import get_all_commit_hashes_between_tags, run, hash_len, get_commit_authors, get_counts_for_file
 
 website_files = [
     "aider/website/index.html",
@@ -67,36 +67,6 @@ def blame(start_tag, end_tag=None):
 
     return all_file_counts, grand_total, total_lines, aider_total, aider_percentage, end_date
 
-
-def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
-    if end_tag:
-        res = run(["git", "rev-list", f"{start_tag}..{end_tag}"])
-    else:
-        res = run(["git", "rev-list", f"{start_tag}..HEAD"])
-
-    if res:
-        commit_hashes = res.strip().split("\n")
-        return commit_hashes
-
-
-def run(cmd):
-    # Get all commit hashes since the specified tag
-    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-    return result.stdout
-
-
-def get_commit_authors(commits):
-    commit_to_author = dict()
-    for commit in commits:
-        author = run(["git", "show", "-s", "--format=%an", commit]).strip()
-        commit_message = run(["git", "show", "-s", "--format=%s", commit]).strip()
-        if commit_message.lower().startswith("aider:"):
-            author += " (aider)"
-        commit_to_author[commit] = author
-    return commit_to_author
-
-
-hash_len = len("44e6fefc2")
 
 
 def process_all_tags_since(start_tag):

@@ -4,7 +4,7 @@ import re
 import subprocess
 import sys
 import tempfile
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from os.path import expanduser
 from pathlib import Path
 
@@ -23,6 +23,7 @@ from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
+from aider.stats import hash_len, get_all_commit_hashes_between_tags, get_commit_authors, get_counts_for_file
 
 from .dump import dump  # noqa: F401
 
@@ -1520,6 +1521,9 @@ class Commands:
                     self.io.tool_error("No main or master branch found. Please specify a revision.")
                     return
             source_revision, target_revision = args.split("..") if ".." in args else (args, "HEAD")
+            commits = get_all_commit_hashes_between_tags(source_revision, target_revision)
+            commits = [commit[:hash_len] for commit in commits] if commits else []
+            authors = get_commit_authors(commits)
 
             # Get files changed between revisions
             diff_files = self.coder.repo.repo.git.diff(
@@ -1535,49 +1539,29 @@ class Commands:
                 '.ttf', '.otf', '.woff', '.woff2', '.eot'  # fonts
             ))]
             self.io.tool_output(f"Found {len(files)} non-binary tracked files in the repository.")
-            
-            total_lines = 0
-            aider_lines = 0
-            
+
+            all_file_counts = {}
+            grand_total = defaultdict(int)
+            aider_total = 0
             for file in files:
-                try:
-                    # Run git blame for each file
-                    blame_output = self.coder.repo.repo.git.blame(
-                        f"{source_revision}..{target_revision}", "-M", "-C", "--line-porcelain", "--", file
-                    )
-                    
-                    # Parse blame output
-                    for line in blame_output.split('filename'):
-                        total_lines += 1
-                        for field in line.split('\n'):
-                            # Check author and committer lines for aider attribution
-                            author_match = False
-                            committer_match = False
-                            if field.startswith("author ") or field.startswith("committer "):
-                                author_match = "(aider)" in field.lower()
-                                committer_match = "(aider)" in field.lower()
-                            if author_match or committer_match:
-                                aider_lines += 1
-                    
-                except Exception as e:
-                    if "no such path" not in str(e).lower():
-                        self.io.tool_error(f"Error processing {file}: {e}")
+                file_counts = get_counts_for_file(source_revision, target_revision, authors, file)
+                if file_counts:
+                    all_file_counts[file] = file_counts
+                    for author, count in file_counts.items():
+                        grand_total[author] += count
+                        if "(aider)" in author.lower():
+                            aider_total += count
+            total_lines = sum(grand_total.values())
+            aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
 
             # Calculate percentages
             if total_lines > 0:
-                aider_percentage = (aider_lines / total_lines) * 100
-                human_lines = total_lines - aider_lines
-                human_percentage = (human_lines / total_lines) * 100
+                # Output overall statistics
+                self.io.tool_output(f"\nAnalysis from {source_revision} to {target_revision}:")
+                self.io.tool_output(f"Total lines analyzed: {total_lines:,}")
+                self.io.tool_output(f"Lines by aider: {aider_total:,} ({aider_percentage:.1f}%)")
+                self.io.tool_output(f"Lines by humans: {total_lines - aider_total:,} ({100 - aider_percentage:.1f}%)")
 
-                # Display results
-                self.io.tool_output("\nCode contribution statistics:")
-                self.io.tool_output(f"Total lines of code: {total_lines:,}")
-                self.io.tool_output(
-                    f"Human-written code: {human_lines:,} lines ({human_percentage:.1f}%)"
-                )
-                self.io.tool_output(
-                    f"Aider-written code: {aider_lines:,} lines ({aider_percentage:.1f}%)"
-                )
             else:
                 self.io.tool_output("No lines of code found in the repository.")
 
