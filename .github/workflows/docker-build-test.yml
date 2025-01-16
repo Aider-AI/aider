@@ -13,7 +13,10 @@ on:
   pull_request:
     paths-ignore:
       - 'aider/website/**'
-      - README.md
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/docker-build-test.yml'
     branches:
       - main
 
