@@ -42,22 +42,44 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Build and push Docker images
+    - name: Build Docker images (PR)
+      if: github.event_name == 'pull_request'
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./docker/Dockerfile
         platforms: linux/amd64,linux/arm64
-        push: ${{ github.event_name != 'pull_request' }}
+        push: false
+        target: aider
+
+    - name: Build Docker images (Push)
+      if: github.event_name != 'pull_request'
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider:dev
         target: aider
 
-    - name: Build and push Docker full image
+    - name: Build Docker full image (PR)
+      if: github.event_name == 'pull_request'
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./docker/Dockerfile
         platforms: linux/amd64,linux/arm64
-        push: ${{ github.event_name != 'pull_request' }}
+        push: false
+        target: aider-full
+
+    - name: Build Docker full image (Push)
+      if: github.event_name != 'pull_request'
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider-full:dev
         target: aider-full
