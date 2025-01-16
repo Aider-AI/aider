@@ -55,10 +55,9 @@ jobs:
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
-        # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "aider/website/_site/"
+          path: "aider/website/_site"
 
   # Deployment job
   deploy:
