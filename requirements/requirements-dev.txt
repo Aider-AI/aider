@@ -10,19 +10,19 @@ babel==2.16.0
     # via sphinx
 build==1.2.2.post1
     # via pip-tools
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   requests
 cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   requests
-click==8.1.7
+click==8.1.8
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -51,9 +51,9 @@ filelock==3.16.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   virtualenv
-fonttools==4.55.2
+fonttools==4.55.3
     # via matplotlib
-identify==2.6.3
+identify==2.6.5
     # via pre-commit
 idna==3.10
     # via
@@ -66,12 +66,12 @@ imgcat==0.6.0
     # via -r requirements/requirements-dev.in
 iniconfig==2.0.0
     # via pytest
-jinja2==3.1.4
+jinja2==3.1.5
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   sphinx
-kiwisolver==1.4.7
+kiwisolver==1.4.8
     # via matplotlib
 lox==0.12.0
     # via -r requirements/requirements-dev.in
@@ -85,7 +85,7 @@ markupsafe==3.0.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   jinja2
-matplotlib==3.9.3
+matplotlib==3.10.0
     # via -r requirements/requirements-dev.in
 mdurl==0.1.2
     # via
@@ -132,13 +132,13 @@ ppft==1.7.6.9
     # via pathos
 pre-commit==4.0.1
     # via -r requirements/requirements-dev.in
-pygments==2.18.0
+pygments==2.19.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   rich
     #   sphinx
-pyparsing==3.2.0
+pyparsing==3.2.1
     # via matplotlib
 pyproject-hooks==1.2.0
     # via
@@ -213,12 +213,12 @@ typing-extensions==4.12.2
     #   typer
 tzdata==2024.2
     # via pandas
-urllib3==2.2.3
+urllib3==2.3.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   requests
-virtualenv==20.28.0
+virtualenv==20.29.0
     # via pre-commit
 wheel==0.45.1
     # via pip-tools
@@ -229,5 +229,5 @@ pip==24.3.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   pip-tools
-setuptools==75.6.0
+setuptools==75.8.0
     # via pip-tools

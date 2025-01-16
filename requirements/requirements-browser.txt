@@ -6,7 +6,7 @@
 #
 altair==5.5.0
     # via streamlit
-attrs==24.2.0
+attrs==24.3.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -17,33 +17,33 @@ blinker==1.9.0
     # via streamlit
 cachetools==5.5.0
     # via streamlit
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   requests
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   requests
-click==8.1.7
+click==8.1.8
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   streamlit
-gitdb==4.0.11
+gitdb==4.0.12
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   gitpython
-gitpython==3.1.43
+gitpython==3.1.44
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -55,7 +55,7 @@ idna==3.10
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   requests
-jinja2==3.1.4
+jinja2==3.1.5
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.16.0
+narwhals==1.22.0
     # via altair
 numpy==1.26.4
     # via
@@ -122,13 +122,13 @@ pillow==10.4.0
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   streamlit
-protobuf==5.29.1
+protobuf==5.29.3
     # via streamlit
-pyarrow==18.1.0
+pyarrow==19.0.0
     # via streamlit
 pydeck==0.9.1
     # via streamlit
-pygments==2.18.0
+pygments==2.19.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -144,7 +144,7 @@ pytz==2024.2
     # via
     #   -c requirements/requirements-dev.txt
     #   pandas
-referencing==0.35.1
+referencing==0.36.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -175,14 +175,14 @@ six==1.17.0
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   python-dateutil
-smmap==5.0.1
+smmap==5.0.2
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   gitdb
-streamlit==1.40.2
+streamlit==1.41.1
     # via -r requirements/requirements-browser.in
-tenacity==8.5.0
+tenacity==9.0.0
     # via
     #   -c requirements/requirements-help.txt
     #   streamlit
@@ -197,12 +197,13 @@ typing-extensions==4.12.2
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   altair
+    #   referencing
     #   streamlit
 tzdata==2024.2
     # via
     #   -c requirements/requirements-dev.txt
     #   pandas
-urllib3==2.2.3
+urllib3==2.3.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
