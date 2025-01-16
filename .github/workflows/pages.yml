@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - "aider/website/**"
+      - ".github/workflows/pages.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
