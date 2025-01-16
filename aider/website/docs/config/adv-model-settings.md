@@ -235,7 +235,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: editor-diff
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openai/gpt-4o
@@ -251,7 +251,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openai/gpt-4o-2024-08-06
@@ -267,7 +267,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: gpt-4o-2024-08-06
@@ -283,7 +283,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: gpt-4o-2024-11-20
@@ -299,7 +299,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openai/gpt-4o-2024-11-20
@@ -315,7 +315,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: editor-diff
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: gpt-4o
@@ -1184,7 +1184,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: editor-diff
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openrouter/openai/gpt-4o
