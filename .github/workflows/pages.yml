@@ -56,12 +56,12 @@ jobs:
         env:
           JEKYLL_ENV: production
       - name: List build output
-        run: ls -la aider/website/_site
+        run: ls -la _site
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "aider/website/_site"
+          path: "_site"
 
   # Deployment job
   deploy:
