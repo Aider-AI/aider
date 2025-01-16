@@ -1484,6 +1484,107 @@ class Commands:
         "Toggle multiline mode (swaps behavior of Enter and Meta+Enter)"
         self.io.toggle_multiline_mode()
 
+    def cmd_stats(self, args):
+        """Show statistics about code changes and aider's contributions by counting lines of code through git blame.
+
+        Usage:
+            /stats                   Compare against main/master branch
+            /stats <revision>        Compare against specific revision
+            /stats rev1..rev2        Compare between two specific revisions
+            
+        Examples:
+            /stats                   Show stats vs main/master branch
+            /stats HEAD~5            Show stats vs 5 commits ago
+            /stats v1.0.0           Show stats vs version 1.0.0
+            /stats main..HEAD        Show stats between main and current HEAD
+
+        Lines are attributed to aider when the git author or committer contains "(aider)".
+        Binary files (images, audio, etc.) are excluded from the analysis.
+        """
+        if not self.coder.repo:
+            self.io.tool_error("No git repository found.")
+            return
+
+        try:
+            # Get the revision range
+            if not args:
+                # Default to comparing against main/master branch
+                for default_branch in ["main", "master"]:
+                    try:
+                        self.coder.repo.repo.rev_parse(default_branch)
+                        args = default_branch
+                        break
+                    except:
+                        continue
+                if not args:
+                    self.io.tool_error("No main or master branch found. Please specify a revision.")
+                    return
+            source_revision, target_revision = args.split("..") if ".." in args else (args, "HEAD")
+
+            # Get files changed between revisions
+            diff_files = self.coder.repo.repo.git.diff(
+                "--name-only", f"{source_revision}..{target_revision}"
+            ).splitlines()
+            # Filter out media files
+            files = [f for f in diff_files if not any(f.lower().endswith(ext) for ext in (
+                '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.ico', '.svg',  # images
+                '.mp3', '.wav', '.ogg', '.m4a', '.flac',  # audio
+                '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm',  # video
+                '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx',  # documents
+                '.zip', '.tar', '.gz', '.7z', '.rar',  # archives
+                '.ttf', '.otf', '.woff', '.woff2', '.eot'  # fonts
+            ))]
+            self.io.tool_output(f"Found {len(files)} non-binary tracked files in the repository.")
+            
+            total_lines = 0
+            aider_lines = 0
+            
+            for file in files:
+                try:
+                    # Run git blame for each file
+                    blame_output = self.coder.repo.repo.git.blame(
+                        f"{source_revision}..{target_revision}", "-M", "-C", "--line-porcelain", "--", file
+                    )
+                    
+                    # Parse blame output
+                    for line in blame_output.split('filename'):
+                        total_lines += 1
+                        for field in line.split('\n'):
+                            # Check author and committer lines for aider attribution
+                            author_match = False
+                            committer_match = False
+                            if field.startswith("author ") or field.startswith("committer "):
+                                author_match = "(aider)" in field.lower()
+                                committer_match = "(aider)" in field.lower()
+                            if author_match or committer_match:
+                                aider_lines += 1
+                    
+                except Exception as e:
+                    if "no such path" not in str(e).lower():
+                        self.io.tool_error(f"Error processing {file}: {e}")
+
+            # Calculate percentages
+            if total_lines > 0:
+                aider_percentage = (aider_lines / total_lines) * 100
+                human_lines = total_lines - aider_lines
+                human_percentage = (human_lines / total_lines) * 100
+
+                # Display results
+                self.io.tool_output("\nCode contribution statistics:")
+                self.io.tool_output(f"Total lines of code: {total_lines:,}")
+                self.io.tool_output(
+                    f"Human-written code: {human_lines:,} lines ({human_percentage:.1f}%)"
+                )
+                self.io.tool_output(
+                    f"Aider-written code: {aider_lines:,} lines ({aider_percentage:.1f}%)"
+                )
+            else:
+                self.io.tool_output("No lines of code found in the repository.")
+
+        except Exception as e:
+            self.io.tool_error(f"Error analyzing aider statistics: {e}")
+
+
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
         all_messages = self.coder.done_messages + self.coder.cur_messages
