@@ -4,8 +4,10 @@ on:
   push:
     paths-ignore:
       - 'aider/website/**'
-      - README.md
-      - HISTORY.md
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/ubuntu-tests.yml'
     branches:
       - main
   pull_request:
