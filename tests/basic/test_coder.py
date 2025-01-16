@@ -969,7 +969,7 @@ This command will print 'Hello, World!' to the console."""
             error_message = coder.io.tool_error.call_args[0][0]
 
             # Assert that the error message contains the expected information
-            self.assertIn("Model gpt-3.5-turbo has hit a token limit!", error_message)
+            self.assertIn("Model openai/gpt-3.5-turbo has hit a token limit!", error_message)
             self.assertIn("Input tokens:", error_message)
             self.assertIn("Output tokens:", error_message)
             self.assertIn("Total tokens:", error_message)

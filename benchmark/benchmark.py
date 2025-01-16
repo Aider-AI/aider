@@ -753,8 +753,8 @@ def run_test_real(
 
     main_model = models.Model(
         model_name,
-        weak_model=weak_model_name,
-        editor_model=editor_model,
+        weak_model_name=weak_model_name,
+        editor_model_name=editor_model,
         editor_edit_format=editor_edit_format,
     )
 

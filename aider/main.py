@@ -755,8 +755,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     main_model = models.Model(
         args.model,
-        weak_model=args.weak_model,
-        editor_model=args.editor_model,
+        weak_model_name=args.weak_model,
+        editor_model_name=args.editor_model,
         editor_edit_format=args.editor_edit_format,
     )
 

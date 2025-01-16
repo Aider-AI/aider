@@ -5,6 +5,8 @@ from aider.models import (
     ANTHROPIC_BETA_HEADER,
     Model,
     ModelInfoManager,
+    ModelSettings,
+    get_model_settings,
     register_models,
     sanity_check_model,
     sanity_check_models,
@@ -95,28 +97,28 @@ class TestModels(unittest.TestCase):
     def test_model_aliases(self):
         # Test common aliases
         model = Model("4")
-        self.assertEqual(model.name, "gpt-4-0613")
+        self.assertEqual(model.name, "openai/gpt-4-0613")
 
         model = Model("4o")
-        self.assertEqual(model.name, "gpt-4o")
+        self.assertEqual(model.name, "openai/gpt-4o")
 
         model = Model("35turbo")
-        self.assertEqual(model.name, "gpt-3.5-turbo")
+        self.assertEqual(model.name, "openai/gpt-3.5-turbo")
 
         model = Model("35-turbo")
-        self.assertEqual(model.name, "gpt-3.5-turbo")
+        self.assertEqual(model.name, "openai/gpt-3.5-turbo")
 
         model = Model("3")
-        self.assertEqual(model.name, "gpt-3.5-turbo")
+        self.assertEqual(model.name, "openai/gpt-3.5-turbo")
 
         model = Model("sonnet")
-        self.assertEqual(model.name, "claude-3-5-sonnet-20241022")
+        self.assertEqual(model.name, "anthropic/claude-3-5-sonnet-20241022")
 
         model = Model("haiku")
-        self.assertEqual(model.name, "claude-3-5-haiku-20241022")
+        self.assertEqual(model.name, "anthropic/claude-3-5-haiku-20241022")
 
         model = Model("opus")
-        self.assertEqual(model.name, "claude-3-opus-20240229")
+        self.assertEqual(model.name, "anthropic/claude-3-opus-20240229")
 
         # Test non-alias passes through unchanged
         model = Model("gpt-4")
@@ -207,6 +209,99 @@ class TestModels(unittest.TestCase):
                 os.unlink(tmp)
             except OSError:
                 pass
+
+    def test_get_model_settings_with_or_without_prefix(self):
+        # Test that get_model_settings returns same settings with or without prefix
+        settings_with_prefix = get_model_settings("openai/gpt-4o")
+        settings_without_prefix = get_model_settings("gpt-4o")
+
+        self.assertIsInstance(settings_with_prefix, ModelSettings)
+        self.assertEqual(settings_with_prefix, settings_without_prefix)
+
+        # Test with a different model to verify behavior
+        settings_with_prefix = get_model_settings("anthropic/claude-3-opus-20240229")
+        settings_without_prefix = get_model_settings("claude-3-opus-20240229")
+
+        self.assertIsInstance(settings_with_prefix, ModelSettings)
+        self.assertEqual(settings_with_prefix, settings_without_prefix)
+
+    def test_get_model_settings_invalid(self):
+        # Test that get_model_settings returns None for invalid model names
+        self.assertIsNone(get_model_settings("invalid-model-name"))
+        self.assertIsNone(get_model_settings("openai/invalid-model"))
+        self.assertIsNone(get_model_settings("not-a-provider/gpt-4"))
+
+    def test_weak_model_settings(self):
+        # When weak_model is None and no weak model configured, use self
+        model = Model("openai/gpt-undefined", weak_model_name=None)
+        self.assertIs(model.weak_model, model)
+
+        # When weak_model is None and model has weak model configured
+        model = Model("openai/gpt-4o", weak_model_name=None)
+        self.assertEqual(model.weak_model.name, model.weak_model_name)
+
+        # Test when weak_model is False
+        model = Model("openai/gpt-4o", weak_model_name=False)
+        self.assertIsNone(model.weak_model)
+
+        # Test when weak_model_name matches model name
+        model = Model("openai/gpt-undefined", weak_model_name="openai/gpt-undefined")
+        self.assertIs(model.weak_model, model)
+
+        # Test when weak_model_name is different, and none configured
+        model = Model("openai/gpt-undefined", weak_model_name="gpt-3.5-turbo")
+        self.assertNotEqual(model.weak_model, model)
+        self.assertEqual(model.weak_model.name, "openai/gpt-3.5-turbo")
+
+        # Test when weak_model_name is different, and other configured
+        model = Model("openai/gpt-4o", weak_model_name="gpt-3.5-turbo")
+        self.assertNotEqual(model.weak_model, model)
+        self.assertEqual(model.weak_model.name, "openai/gpt-3.5-turbo")
+
+    def test_editor_model_settings(self):
+        # Test when model has no editor model configured, use self
+        model = Model("openai/gpt-undefined", editor_model_name=None)
+        self.assertIs(model.editor_model, model)
+
+        # Test when model has editor model configured
+        model = Model("anthropic/claude-3-5-sonnet-20240620")
+        self.assertEqual(model.editor_model.name, "anthropic/claude-3-5-sonnet-20240620")
+        self.assertIs(model.editor_model, model)
+
+        # Test when editor_model is False
+        model = Model("anthropic/claude-3-5-sonnet-20240620", editor_model_name=False)
+        self.assertIsNone(model.editor_model)
+
+        # Test when editor_model_name matches model name
+        model = Model("openai/gpt-4o", editor_model_name="openai/gpt-4o")
+        self.assertIs(model.editor_model, model)
+
+    def test_editor_edit_format(self):
+        # Test when editor_edit_format is provided, override the model settings
+        model = Model("openai/gpt-4o", editor_edit_format="whole")
+        self.assertEqual(model.editor_edit_format, "whole")
+
+        # Test when editor_edit_format is not provided, use the model settings
+        model = Model("openai/gpt-4o")
+        self.assertEqual(model.editor_edit_format, "editor-diff")
+
+        # Test when editor_model_name is provided, use the model settings
+        model = Model("openai/gpt-4o", editor_model_name="openai/gpt-4o")
+        self.assertEqual(model.editor_edit_format, "editor-diff")
+
+        # When editor_model_name and editor_edit_format is provided, overrides the model settings
+        model = Model(
+            "openai/gpt-4o", editor_model_name="openai/gpt-4o", editor_edit_format="whole"
+        )
+        self.assertEqual(model.editor_edit_format, "whole")
+
+        # When model editor_edit_format is not specified, use the editor_model settings
+        model = Model("openai/gpt-4-turbo", editor_model_name="openai/gpt-4o")
+        self.assertEqual(model.editor_edit_format, "diff")
+
+        # When editor_model_name=False, ignore provided editor_edit_format
+        model = Model("openai/gpt-4-turbo", editor_model_name=False, editor_edit_format="whole")
+        self.assertIsNone(model.editor_edit_format)
 
 
 if __name__ == "__main__":
