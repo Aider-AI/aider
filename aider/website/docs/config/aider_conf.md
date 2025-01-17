@@ -7,13 +7,15 @@ description: How to configure aider with a yaml config file.
 # YAML config file
 
 Most of aider's options can be set in an `.aider.conf.yml` file.
-Aider will look for a this file in these locations and
-load whichever is found first.
+Aider will look for a this file in these locations:
 
-- As specified with the `--config <filename>` parameter.
-- The current directory.
-- The root of your git repo.
 - Your home directory.
+- The root of your git repo.
+- The current directory.
+
+If the files above exist, they will be loaded in that order. Files loaded last will take priority.
+
+You can also specify the `--config <filename>` parameter, which will only load the one config file.
 
 {% include keys.md %}
 
