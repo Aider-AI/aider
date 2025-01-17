@@ -337,6 +337,7 @@ class MixtureOfArchitectsCoder(Coder):
         self.io.rule()
         compiler_coder.run(with_message=compiler_input, preproc=False)
         compiled_instructions = compiler_coder.partial_response_content
+        compiled_instructions += "\n\nCompletely implement all steps in the instructions above. Do not return to me until you have done so."
 
 
         # Debug print the compiled instructions
