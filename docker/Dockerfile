@@ -19,7 +19,7 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/home/appuser/pw-browsers
 ENV PLAYWRIGHT_SKIP_BROWSER_GC=1
 
 # Create directories with proper permissions
-RUN mkdir -p /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers && \
+RUN mkdir -p /home/appuser/.aider /home/appuser/.caches /home/appuser/pw-browsers && \
     chown -R appuser:appuser /home/appuser /app /venv
 
 # So git doesn't complain about unusual permissions
