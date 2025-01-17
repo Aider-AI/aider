@@ -17,13 +17,11 @@ class FileChange:
     new_content: str
     change_type: str  # 'added', 'modified', 'deleted'
 
-
 class ReviewComment(NamedTuple):
     file: str
     line: int
     type: str
     content: str
-
 
 class ReviewCoder(Coder):
     edit_format = "review"  # Unique identifier for this coder
