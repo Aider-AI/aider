@@ -1,74 +1,71 @@
 FROM python:3.10-slim AS base
 
-# Install system dependencies
+# Create non-root user first
+RUN useradd -m -u 1000 -s /bin/bash appuser
+ENV HOME=/home/appuser
+
+RUN mkdir -p \
+    $HOME/.aider \
+    $HOME/.cache \
+    $HOME/pw-browsers \
+    $HOME/app \
+    $HOME/venv
+
+
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y build-essential git libportaudio2 pandoc && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    git \
+    libportaudio2 \
+    pandoc && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Create app user with UID 1000
-RUN useradd -m -u 1000 -s /bin/bash appuser
+WORKDIR $HOME/app
 
-WORKDIR /app
+# Set up Python environment and Playwright settings
+ENV PATH="$HOME/venv/bin:$PATH" \
+    PLAYWRIGHT_BROWSERS_PATH=$HOME/pw-browsers \
+    PLAYWRIGHT_SKIP_BROWSER_GC=1
 
-# Create virtual environment
-RUN python -m venv /venv
-ENV PATH="/venv/bin:$PATH"
+RUN python -m venv $HOME/venv && \
+    pip install --no-cache-dir --upgrade pip
 
-# Playwright browser settings
-ENV PLAYWRIGHT_BROWSERS_PATH=/home/appuser/pw-browsers
-ENV PLAYWRIGHT_SKIP_BROWSER_GC=1
+COPY --chown=appuser:appuser . $HOME/aider
 
-# Create directories with proper permissions
-RUN mkdir -p /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers && \
-    chown -R appuser:appuser /home/appuser /app /venv
-
-# So git doesn't complain about unusual permissions
-RUN git config --system --add safe.directory /app
+RUN git config --global --add safe.directory $HOME/app
 
 #########################
 FROM base AS aider-full
 
 ENV AIDER_DOCKER_IMAGE=paulgauthier/aider-full
 
-COPY . /tmp/aider
+# Install extra dependencies
+RUN pip install --no-cache-dir $HOME/aider[playwright,help,browser] \
+    --extra-index-url https://download.pytorch.org/whl/cpu && \
+    playwright install --with-deps chromium
 
-# Install dependencies as root
-RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[help,browser,playwright] \
-       --extra-index-url https://download.pytorch.org/whl/cpu && \
-    rm -rf /tmp/aider
+RUN rm -rf $HOME/aider
 
-# Install playwright browsers
-RUN /venv/bin/python -m playwright install --with-deps chromium
+RUN chown -R appuser:appuser $HOME
 
-# Fix site-packages permissions
-RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
-
-# Switch to appuser
 USER appuser
 
-ENTRYPOINT ["/venv/bin/aider"]
+ENTRYPOINT ["aider"]
 
 #########################
 FROM base AS aider
 
 ENV AIDER_DOCKER_IMAGE=paulgauthier/aider
 
-COPY . /tmp/aider
+RUN pip install --no-cache-dir $HOME/aider[playwright] \
+    --extra-index-url https://download.pytorch.org/whl/cpu && \
+    playwright install --with-deps chromium
 
-# Install dependencies as root
-RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[playwright] \
-       --extra-index-url https://download.pytorch.org/whl/cpu && \
-    rm -rf /tmp/aider
+RUN rm -rf $HOME/aider
 
-# Install playwright browsers
-RUN /venv/bin/python -m playwright install --with-deps chromium
+RUN chown -R appuser:appuser $HOME
 
-# Fix site-packages permissions
-RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
-
-# Switch to appuser
 USER appuser
 
-ENTRYPOINT ["/venv/bin/aider"]
+ENTRYPOINT ["aider"]
