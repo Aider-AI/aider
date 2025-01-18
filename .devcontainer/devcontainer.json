@@ -1,0 +1,31 @@
+{
+    "name": "Aider Development",
+    "image": "paulgauthier/aider-full:latest",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.flake8"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/home/appuser/venv/bin/python",
+                "python.linting.enabled": true,
+                "python.linting.flake8Enabled": true,
+                "python.formatting.provider": "none",
+                "editor.formatOnSave": true,
+                "editor.rulers": [
+                    100
+                ]
+            }
+        }
+    },
+    "postCreateCommand": "pip install -e . && pip install -r requirements/requirements-dev.txt && pre-commit install",
+    "postAttachCommand": "aider",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/appuser/app,type=bind",
+    "workspaceFolder": "/home/appuser/app",
+    "remoteEnv": {
+        "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+        "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}"
+    }
+}
