@@ -292,6 +292,9 @@ cog.outl("```")
 ## Specify a custom prompt for generating commit messages
 #AIDER_COMMIT_PROMPT=
 
+## Append human provided commit messages after AI generated ones (default: False)
+#AIDER_APPEND_PROVIDED_MESSAGE=false
+
 ## Perform a dry run without modifying files (default: False)
 #AIDER_DRY_RUN=false
 

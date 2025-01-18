@@ -263,6 +263,9 @@
 ## Specify a custom prompt for generating commit messages
 #commit-prompt: xxx
 
+## Append human provided commit messages after AI generated ones (default: False)
+#append-provided-message: false
+
 ## Perform a dry run without modifying files (default: False)
 #dry-run: false
 

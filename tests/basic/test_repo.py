@@ -357,6 +357,31 @@ class TestRepo(unittest.TestCase):
             fnames = git_repo.get_tracked_files()
             self.assertIn(str(fname), fnames)
 
+    @patch("aider.repo.simple_send_with_retries")
+    def test_get_commit_message_append_provided(self, mock_send):
+        mock_send.return_value = "feat: add new feature"
+
+        # Test with append_provided_message=True
+        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], append_provided_message=True)
+        result = repo.get_commit_message(
+            "dummy diff", "dummy context", "This change was needed because..."
+        )
+        self.assertEqual(result, "feat: add new feature\n\nThis change was needed because...")
+
+        # Test with append_provided_message=False (default behavior)
+        repo = GitRepo(
+            InputOutput(), None, None, models=[self.GPT35], append_provided_message=False
+        )
+        result = repo.get_commit_message(
+            "dummy diff", "dummy context", "This change was needed because..."
+        )
+        self.assertEqual(result, "This change was needed because...")
+
+        # Test with append_provided_message=True but no provided message
+        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], append_provided_message=True)
+        result = repo.get_commit_message("dummy diff", "dummy context")
+        self.assertEqual(result, "feat: add new feature")
+
     def test_subtree_only(self):
         with GitTemporaryDirectory():
             # Create a new repo

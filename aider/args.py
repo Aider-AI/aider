@@ -797,6 +797,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable suggesting shell commands (default: True)",
     )
     group.add_argument(
+        "--append-provided-message",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Append human provided commit messages after AI generated ones (default: False)",
+    )
+    group.add_argument(
         "--fancy-input",
         action=argparse.BooleanOptionalAction,
         default=True,

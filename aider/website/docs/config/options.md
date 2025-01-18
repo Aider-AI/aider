@@ -475,6 +475,14 @@ Environment variable: `AIDER_COMMIT`
 Specify a custom prompt for generating commit messages  
 Environment variable: `AIDER_COMMIT_PROMPT`  
 
+### `--append-provided-message`
+Append human provided commit messages after AI generated ones (default: False)  
+Default: False  
+Environment variable: `AIDER_APPEND_PROVIDED_MESSAGE`  
+Aliases:
+  - `--append-provided-message`
+  - `--no-append-provided-message`
+
 ### `--dry-run`
 Perform a dry run without modifying files (default: False)  
 Default: False  

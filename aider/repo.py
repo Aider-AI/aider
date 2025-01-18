@@ -56,9 +56,11 @@ class GitRepo:
         attribute_commit_message_committer=False,
         commit_prompt=None,
         subtree_only=False,
+        append_provided_message=False,
     ):
         self.io = io
         self.models = models
+        self.append_provided_message = append_provided_message
 
         self.normalized_path = {}
         self.tree_files = {}
@@ -184,7 +186,10 @@ class GitRepo:
         except (ValueError, OSError):
             return self.repo.git_dir
 
-    def get_commit_message(self, diffs, context):
+    def get_commit_message(self, diffs, context, message=None):
+        if message and not self.append_provided_message:
+            return message
+
         diffs = "# Diffs:\n" + diffs
 
         content = ""
@@ -198,25 +203,28 @@ class GitRepo:
             dict(role="user", content=content),
         ]
 
-        commit_message = None
+        ai_message = None
         for model in self.models:
             num_tokens = model.token_count(messages)
             max_tokens = model.info.get("max_input_tokens") or 0
             if max_tokens and num_tokens > max_tokens:
                 continue
-            commit_message = simple_send_with_retries(model, messages)
-            if commit_message:
+            ai_message = simple_send_with_retries(model, messages)
+            if ai_message:
                 break
 
-        if not commit_message:
+        if not ai_message:
             self.io.tool_error("Failed to generate commit message!")
-            return
+            return message or "(no commit message provided)"
 
-        commit_message = commit_message.strip()
-        if commit_message and commit_message[0] == '"' and commit_message[-1] == '"':
-            commit_message = commit_message[1:-1].strip()
+        ai_message = ai_message.strip()
+        if ai_message and ai_message[0] == '"' and ai_message[-1] == '"':
+            ai_message = ai_message[1:-1].strip()
 
-        return commit_message
+        if message and self.append_provided_message:
+            return f"{ai_message}\n\n{message}"
+
+        return ai_message
 
     def get_diffs(self, fnames=None):
         # We always want diffs of index and working dir
