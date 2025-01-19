@@ -1406,6 +1406,29 @@ class Commands:
         if user_input.strip():
             self.io.set_placeholder(user_input.rstrip())
 
+    def cmd_repeat(self, args):
+        "Repeat a prompt multiple times, using each assistant response as context for the next prompt"
+        
+        # Parse args into count and message
+        try:
+            count_str, *message_parts = args.strip().split(maxsplit=1)
+            count = int(count_str)
+            if count < 1:
+                raise ValueError("Count must be positive")
+            message = message_parts[0] if message_parts else ""
+        except (ValueError, IndexError) as e:
+            self.io.tool_error("Usage: /repeat N 'message' - where N is a positive number")
+            return
+
+        if not message:
+            self.io.tool_error("Please provide a message to repeat")
+            return
+
+        # Run the prompt multiple times
+        for i in range(count):
+            self.io.tool_output(f"\nRepeat {i+1}/{count}: {message}")
+            self.coder.run(message)
+
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
 
