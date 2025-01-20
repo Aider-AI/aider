@@ -633,6 +633,20 @@ MODEL_SETTINGS = [
         },
     ),
     ModelSettings(
+        "deepseek/deepseek-reasoner",
+        "diff",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        streaming=False,
+        use_temperature=False,
+        examples_as_sys_msg=True,
+        reminder="user",
+        caches_by_default=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+    ),
+    ModelSettings(
         "deepseek/deepseek-coder",
         "diff",
         use_repo_map=True,
