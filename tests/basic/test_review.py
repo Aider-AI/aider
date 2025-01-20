@@ -6,7 +6,8 @@ from aider.coders.review_prompts import ReviewPrompts
 
 def test_parse_review():
     """Test parsing of review responses"""
-    coder = ReviewCoder(None)
+    mock_io = Mock()
+    coder = ReviewCoder(mock_io)
     
     review_text = """
     <summary>
@@ -43,7 +44,8 @@ def test_parse_review():
 
 def test_format_review_prompt():
     """Test formatting of review prompts"""
-    coder = ReviewCoder(None)
+    mock_io = Mock()
+    coder = ReviewCoder(mock_io)
     coder.fence = ('```', '```')
     
     changes = [
@@ -91,7 +93,7 @@ async def test_review_pr_local():
         mock_git.return_value.git.diff.return_value = "M\ttest.py"
         mock_git.return_value.git.show.return_value = "old content"
         
-        coder = ReviewCoder(None)
+        coder = ReviewCoder(mock_io)
         coder.io = mock_io
         coder.repo = mock_repo
         
