@@ -8,7 +8,9 @@
 - Added `--line-endings` for file writing, by Titusz Pan.
 - Added examples_as_sys_msg=True for GPT-4o models, improves benchmark scores.
 - Bumped all dependencies, to pick up litellm support for o1 system messages.
-- Aider wrote 70% of the code in this release.
+- Bugfix for turn taking when reflecting lint/test errors.
+- Improved message validation with better error reporting for malformed chat turns.
+- Aider wrote 58% of the code in this release.
 
 ### Aider v0.71.1
 
