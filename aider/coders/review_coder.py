@@ -195,33 +195,14 @@ class ReviewCoder(Coder):
             assessment_match = re.search(r'<assessment>(.*?)</assessment>', review_text, re.DOTALL)
             assessment = assessment_match.group(1).strip() if assessment_match else ""
 
-            # If no XML tags found, raise exception
-            if not (summary or comments or assessment):
-                raise ValueError("No valid XML tags found in review")
+            # If no XML tags found or missing required sections, raise exception
+            if not (summary and assessment):  # Allow empty comments
+                raise ValueError("Missing required XML tags in review")
 
             return summary, comments, assessment
 
         except Exception as e:
-            # If parsing fails, create a basic review from the raw text
-            self.io.tool_warning(f"Failed to parse review in XML format: {str(e)}")
-            self.io.tool_warning("Falling back to raw text format")
-            
-            # Use the first line as summary if possible
-            lines = review_text.strip().split('\n')
-            summary = lines[0] if lines else "Review parsing failed"
-            
-            # Create a generic comment with the full text
-            comments = [ReviewComment(
-                file="unknown",
-                line=1,
-                type="issue",
-                content=review_text.strip()
-            )]
-            
-            # Use a standard assessment message
-            assessment = "Review was provided in non-standard format"
-            
-            return summary, comments, assessment
+            raise ValueError(f"Failed to parse review in XML format: {str(e)}")
 
     def review_pr(self, pr_number_or_branch: str, base_branch: str = None):
         """Main method to review a PR or branch changes"""
