@@ -625,6 +625,7 @@ MODEL_SETTINGS = [
     ModelSettings(
         "deepseek/deepseek-reasoner",
         "diff",
+        weak_model_name="deepseek/deepseek-chat",
         editor_model_name="deepseek/deepseek-chat",
         editor_edit_format="editor-diff",
         use_repo_map=True,

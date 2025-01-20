@@ -26,6 +26,12 @@ class ChatSummary:
         return sized
 
     def summarize(self, messages, depth=0):
+        messages = self.summarize_real(messages)
+        if messages and messages[-1]["role"] != "assistant":
+            messages.append(dict(role="assistant", content="Ok."))
+        return messages
+
+    def summarize_real(self, messages, depth=0):
         if not self.models:
             raise ValueError("No models available for summarization")
 
@@ -88,7 +94,7 @@ class ChatSummary:
         if summary_tokens + tail_tokens < self.max_tokens:
             return result
 
-        return self.summarize(result, depth + 1)
+        return self.summarize_real(result, depth + 1)
 
     def summarize_all(self, messages):
         content = ""
