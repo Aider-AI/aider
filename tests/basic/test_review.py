@@ -77,6 +77,59 @@ def test_format_review_prompt():
     assert "print('hello')" in prompt
 
 @pytest.mark.asyncio
+async def test_review_retry_on_bad_format():
+    """Test that review parsing retries on badly formatted responses"""
+    mock_io = Mock()
+    mock_repo = Mock()
+    mock_repo.root = "/fake/path"
+    
+    with patch('git.Repo') as mock_git:
+        # Setup mock repo
+        mock_git.return_value.active_branch.name = "feature"
+        mock_git.return_value.git.diff.return_value = "M\ttest.py"
+        mock_git.return_value.git.show.return_value = "old content"
+
+        # Setup mock model
+        mock_model = Mock()
+        mock_model.name = "gpt-4"
+        mock_model.extra_params = {}
+        
+        # Create a sequence of responses - first bad format, then good format
+        bad_response = Mock()
+        bad_chunk = Mock()
+        bad_chunk.choices = [Mock()]
+        bad_chunk.choices[0].delta.content = "This is not in XML format"
+        bad_response.__iter__ = Mock(return_value=iter([bad_chunk]))
+
+        good_response = Mock()
+        good_chunk = Mock()
+        good_chunk.choices = [Mock()]
+        good_chunk.choices[0].delta.content = "<summary>Test summary</summary>"
+        good_response.__iter__ = Mock(return_value=iter([good_chunk]))
+
+        coder = ReviewCoder(mock_model, mock_io)
+        coder.io = mock_io
+        coder.repo = mock_repo
+
+        # Mock file reading
+        def mock_read_text(filename):
+            return "new content"
+        mock_io.read_text = mock_read_text
+
+        # Mock send_completion to return bad response first, then good response
+        with patch('aider.coders.review_coder.send_completion') as mock_send:
+            mock_send.side_effect = [(None, bad_response), (None, good_response)]
+            
+            # Test local branch review
+            coder.review_pr("main", "feature")
+
+            # Verify send_completion was called twice
+            assert mock_send.call_count == 2
+            
+            # Verify warning was logged about retry
+            mock_io.tool_warning.assert_any_call("Review parsing failed (attempt 1/3), retrying...")
+
+@pytest.mark.asyncio
 async def test_review_pr_local():
     """Test reviewing local branch changes"""
     mock_io = Mock()
