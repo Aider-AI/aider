@@ -92,22 +92,24 @@ async def test_review_pr_local():
     mock_repo.root = "/fake/path"
     
     with patch('git.Repo') as mock_git:
+        # Setup mock repo with active branch
+        mock_git.return_value.active_branch.name = "feature"
         mock_git.return_value.git.diff.return_value = "M\ttest.py"
         mock_git.return_value.git.show.return_value = "old content"
-        
+
         mock_model = Mock()
         coder = ReviewCoder(mock_model, mock_io)
         coder.io = mock_io
         coder.repo = mock_repo
-        
+
         # Mock file reading
         def mock_read_text(filename):
             return "new content"
         mock_io.read_text = mock_read_text
-        
+
         # Test local branch review
         coder.review_pr("main", "feature")
-        
+
         # Verify git commands were called
-        mock_git.return_value.git.diff.assert_called_once()
+        mock_git.return_value.git.diff.assert_called_once_with("main...feature", "--name-status")
         mock_git.return_value.git.show.assert_called_once()
