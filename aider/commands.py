@@ -1059,7 +1059,9 @@ class Commands:
             map_mul_no_files=map_mul_no_files,
             show_announcements=False,
         )
-
+    def cmd_iterate(self, args):
+        """Iteratively perform the change on files in batches that fit to context and output limits"""
+        return self._generic_chat_command(args, "iterate")
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
