@@ -174,27 +174,54 @@ class ReviewCoder(Coder):
 
     def parse_review(self, review_text: str) -> tuple[str, List[ReviewComment], str]:
         """Parse the complete review including summary, comments and assessment"""
-        # Parse summary
-        summary_match = re.search(r'<summary>(.*?)</summary>', review_text, re.DOTALL)
-        summary = summary_match.group(1).strip() if summary_match else ""
+        try:
+            # Parse summary
+            summary_match = re.search(r'<summary>(.*?)</summary>', review_text, re.DOTALL)
+            summary = summary_match.group(1).strip() if summary_match else ""
 
-        # Parse comments
-        pattern = r'<comment file="([^"]+)" line="(\d+)" type="([^"]+)">\s*(.*?)\s*</comment>'
-        comments = []
-        for match in re.finditer(pattern, review_text, re.DOTALL):
-            file, line, type_, content = match.groups()
-            comments.append(ReviewComment(
-                file=file,
-                line=int(line),
-                type=type_,
-                content=content.strip()
-            ))
+            # Parse comments
+            pattern = r'<comment file="([^"]+)" line="(\d+)" type="([^"]+)">\s*(.*?)\s*</comment>'
+            comments = []
+            for match in re.finditer(pattern, review_text, re.DOTALL):
+                file, line, type_, content = match.groups()
+                comments.append(ReviewComment(
+                    file=file,
+                    line=int(line),
+                    type=type_,
+                    content=content.strip()
+                ))
 
-        # Parse assessment
-        assessment_match = re.search(r'<assessment>(.*?)</assessment>', review_text, re.DOTALL)
-        assessment = assessment_match.group(1).strip() if assessment_match else ""
+            # Parse assessment
+            assessment_match = re.search(r'<assessment>(.*?)</assessment>', review_text, re.DOTALL)
+            assessment = assessment_match.group(1).strip() if assessment_match else ""
 
-        return summary, comments, assessment
+            # If no XML tags found, raise exception
+            if not (summary or comments or assessment):
+                raise ValueError("No valid XML tags found in review")
+
+            return summary, comments, assessment
+
+        except Exception as e:
+            # If parsing fails, create a basic review from the raw text
+            self.io.tool_warning(f"Failed to parse review in XML format: {str(e)}")
+            self.io.tool_warning("Falling back to raw text format")
+            
+            # Use the first line as summary if possible
+            lines = review_text.strip().split('\n')
+            summary = lines[0] if lines else "Review parsing failed"
+            
+            # Create a generic comment with the full text
+            comments = [ReviewComment(
+                file="unknown",
+                line=1,
+                type="issue",
+                content=review_text.strip()
+            )]
+            
+            # Use a standard assessment message
+            assessment = "Review was provided in non-standard format"
+            
+            return summary, comments, assessment
 
     def review_pr(self, pr_number_or_branch: str, base_branch: str = None):
         """Main method to review a PR or branch changes"""
@@ -256,8 +283,11 @@ class ReviewCoder(Coder):
             progress.stop()
 
         # Parse and display complete review
-        summary, comments, assessment = self.parse_review(full_response)
-        self.io.display_review(summary, comments, assessment)
+        try:
+            summary, comments, assessment = self.parse_review(full_response)
+            self.io.display_review(summary, comments, assessment)
+        except Exception as e:
+            self.io.tool_error(f"Failed to process review: {str(e)}")
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
