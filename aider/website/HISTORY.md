@@ -23,6 +23,10 @@ cog.out(text)
 ]]]-->
 
 
+### v0.71.1
+
+- Fix model metadata for `openrouter/deepseek/deepseek-r1`
+
 ### v0.72.0
 
 - Support for DeepSeek R1.
