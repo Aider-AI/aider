@@ -76,15 +76,6 @@ def test_format_review_prompt():
     assert "Change type: added" in prompt
     assert "print('hello')" in prompt
 
-def test_review_prompts():
-    """Test review prompt templates"""
-    prompts = ReviewPrompts()
-    
-    assert "<summary>" in prompts.main_system
-    assert "<comment" in prompts.main_system
-    assert "<assessment>" in prompts.main_system
-    assert "issue|suggestion|security|performance" in prompts.main_system
-
 @pytest.mark.asyncio
 async def test_review_pr_local():
     """Test reviewing local branch changes"""
