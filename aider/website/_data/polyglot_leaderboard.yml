@@ -387,3 +387,29 @@
   versions: 0.71.2.dev
   seconds_per_case: 9.3
   total_cost: 1.9834
+
+- dirname: 2025-01-20-19-11-38--ds-turns-upd-cur-msgs-fix-with-summarizer
+  test_cases: 225
+  model: DeepSeek R1
+  edit_format: diff
+  commit_hash: 5650697-dirty
+  pass_rate_1: 26.7
+  pass_rate_2: 56.9
+  pass_num_1: 60
+  pass_num_2: 128
+  percent_cases_well_formed: 96.9
+  error_outputs: 8
+  num_malformed_responses: 7
+  num_with_malformed_responses: 7
+  user_asks: 15
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-01-20
+  versions: 0.71.2.dev
+  seconds_per_case: 113.7
+  total_cost: 5.4193
