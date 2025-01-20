@@ -1059,7 +1059,9 @@ class Commands:
             map_mul_no_files=map_mul_no_files,
             show_announcements=False,
         )
-
+    def cmd_iterate(self, args):
+        """Perform a /code command for each chunk of the input files that fit the context window"""
+        return self._generic_chat_command(args, "iterate")
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
