@@ -15,6 +15,7 @@ CACHE = None
 
 RETRY_TIMEOUT = 60
 
+# sanity_check_messages(messages) -> check if messages alternate role=user and role=assistant (it's ok if role=system messages are interspersed) ai!
 
 def send_completion(
     model_name,
