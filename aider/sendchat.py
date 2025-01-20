@@ -50,7 +50,7 @@ def send_completion(
     temperature=0,
     extra_params=None,
 ):
-    # sanity_check_messages(messages)
+    sanity_check_messages(messages)
 
     kwargs = dict(
         model=model_name,
