@@ -23,7 +23,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### v0.72.0
 
 - Support for DeepSeek R1.
   - Use shortcut: `--model r1`
