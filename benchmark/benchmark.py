@@ -16,6 +16,7 @@ from types import SimpleNamespace
 from typing import List, Optional
 
 import git
+import importlib_resources
 import lox
 import pandas as pd
 import prompts
@@ -737,6 +738,10 @@ def run_test_real(
         chat_history_file=history_fname,
     )
 
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
+    dump(model_metadata_files_loaded)
+
     # weak_model_name = model_name
     weak_model_name = None
 
@@ -746,6 +751,8 @@ def run_test_real(
         editor_model=editor_model,
         editor_edit_format=editor_edit_format,
     )
+
+    dump(main_model.max_chat_history_tokens)
 
     if num_ctx:
         if not main_model.extra_params:

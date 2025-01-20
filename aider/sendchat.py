@@ -5,6 +5,7 @@ import time
 from aider.dump import dump  # noqa: F401
 from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
+from aider.utils import format_messages
 
 # from diskcache import Cache
 
@@ -16,6 +17,30 @@ CACHE = None
 RETRY_TIMEOUT = 60
 
 
+def sanity_check_messages(messages):
+    """Check if messages alternate between user and assistant roles.
+    System messages can be interspersed anywhere.
+    Also verifies the last non-system message is from the user.
+    Returns True if valid, False otherwise."""
+    last_role = None
+    last_non_system_role = None
+
+    for msg in messages:
+        role = msg.get("role")
+        if role == "system":
+            continue
+
+        if last_role and role == last_role:
+            turns = format_messages(messages)
+            raise ValueError("Messages don't properly alternate user/assistant:\n\n" + turns)
+
+        last_role = role
+        last_non_system_role = role
+
+    # Ensure last non-system message is from user
+    return last_non_system_role == "user"
+
+
 def send_completion(
     model_name,
     messages,
@@ -24,6 +49,12 @@ def send_completion(
     temperature=0,
     extra_params=None,
 ):
+    #
+    #
+    # sanity_check_messages(messages)
+    #
+    #
+
     kwargs = dict(
         model=model_name,
         messages=messages,

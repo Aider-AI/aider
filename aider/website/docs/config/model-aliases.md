@@ -59,6 +59,7 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `flash`: gemini/gemini-2.0-flash-exp
 - `haiku`: claude-3-5-haiku-20241022
 - `opus`: claude-3-opus-20240229
+- `r1`: deepseek/deepseek-reasoner
 - `sonnet`: claude-3-5-sonnet-20241022
 <!--[[[end]]]-->
 
