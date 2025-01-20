@@ -51,7 +51,7 @@ def send_completion(
 ):
     #
     #
-    sanity_check_messages(messages)
+    # sanity_check_messages(messages)
     #
     #
 
