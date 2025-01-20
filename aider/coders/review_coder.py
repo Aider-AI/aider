@@ -282,12 +282,43 @@ class ReviewCoder(Coder):
         finally:
             progress.stop()
 
-        # Parse and display complete review
-        try:
-            summary, comments, assessment = self.parse_review(full_response)
-            self.io.display_review(summary, comments, assessment)
-        except Exception as e:
-            self.io.tool_error(f"Failed to process review: {str(e)}")
+        # Parse and display complete review with retries
+        max_retries = 3
+        retry_count = 0
+        
+        while retry_count < max_retries:
+            try:
+                summary, comments, assessment = self.parse_review(full_response)
+                self.io.display_review(summary, comments, assessment)
+                break
+            except Exception as e:
+                retry_count += 1
+                if retry_count >= max_retries:
+                    self.io.tool_error(f"Failed to process review after {max_retries} attempts: {str(e)}")
+                    break
+                
+                self.io.tool_warning(f"Review parsing failed (attempt {retry_count}/{max_retries}), retrying...")
+                
+                # Request a new response with explicit formatting reminder
+                messages.append({"role": "assistant", "content": full_response})
+                messages.append({"role": "user", "content": "Please rewrite your review using the correct XML format with <summary>, <comment>, and <assessment> tags."})
+                
+                hash_obj, response = send_completion(
+                    self.main_model.name,
+                    messages,
+                    None,
+                    stream=True,
+                    temperature=0,
+                    extra_params=self.main_model.extra_params,
+                )
+                
+                # Collect the new response
+                full_response = ""
+                for chunk in response:
+                    if hasattr(chunk, 'choices') and chunk.choices:
+                        delta = chunk.choices[0].delta
+                        if hasattr(delta, 'content') and delta.content:
+                            full_response += delta.content
 
     def get_edits(self):
         """ReviewCoder doesn't make edits"""
