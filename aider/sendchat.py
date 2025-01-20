@@ -15,7 +15,19 @@ CACHE = None
 
 RETRY_TIMEOUT = 60
 
-# sanity_check_messages(messages) -> check if messages alternate role=user and role=assistant (it's ok if role=system messages are interspersed) ai!
+def sanity_check_messages(messages):
+    """Check if messages alternate between user and assistant roles.
+    System messages can be interspersed anywhere.
+    Returns True if valid, False otherwise."""
+    last_role = None
+    for msg in messages:
+        role = msg.get("role")
+        if role == "system":
+            continue
+        if last_role and role == last_role:
+            return False
+        last_role = role
+    return True
 
 def send_completion(
     model_name,
