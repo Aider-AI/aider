@@ -15,6 +15,7 @@ CACHE = None
 
 RETRY_TIMEOUT = 60
 
+
 def sanity_check_messages(messages):
     """Check if messages alternate between user and assistant roles.
     System messages can be interspersed anywhere.
@@ -28,6 +29,7 @@ def sanity_check_messages(messages):
             return False
         last_role = role
     return True
+
 
 def send_completion(
     model_name,
