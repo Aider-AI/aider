@@ -1,11 +1,3 @@
-{"event": "cli session", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736544946}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736544957}
-{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 4798, "completion_tokens": 130, "total_tokens": 4928, "cost": 0.0007081199999980401, "total_cost": 0.0007081199999980401}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736544963}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736544969}
-{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 24424, "completion_tokens": 466, "total_tokens": 24890, "cost": 0.0035498399999980405, "total_cost": 0.00425795999999608}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736544985}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736545010}
-{"event": "repo", "properties": {"num_files": 423}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736545011}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736545011}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 3597, "completion_tokens": 85, "total_tokens": 3682, "cost": 0.0005273799999980401, "total_cost": 0.0005273799999980401}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736545016}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736545016}
 {"event": "command_diff", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1736545021}
@@ -998,3 +990,11 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737401399}
 {"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 12552, "completion_tokens": 375, "total_tokens": 12927, "cost": 0.0018622800000000002, "total_cost": 0.0018622800000000002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737401412}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737401412}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402071}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402071}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402071}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402163}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402165}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402166}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 13089, "completion_tokens": 422, "total_tokens": 13511, "cost": 0.0019506200000000001, "total_cost": 0.0019506200000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402181}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1737402181}
