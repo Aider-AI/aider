@@ -104,9 +104,9 @@ async def test_review_retry_on_bad_format():
         good_response = Mock()
         good_chunk = Mock()
         good_chunk.choices = [Mock()]
-        good_chunk.choices[0].delta.content = "<summary>Test summary</summar            good_chunk.choices[0].delta.content = """<summary>Test summary</summary>
-        good_chunk.choices[0].delta.content = "<summary>Test summary</summar<comment file="test.py" line="1" type="suggestion">Test comment</comment>
-        good_chunk.choices[0].delta.content = "<summary>Test summary</summar<assessment>Test assessment</assessment>"""
+        good_chunk.choices[0].delta.content = """<summary>Test summary</summary>
+<comment file="test.py" line="1" type="suggestion">Test comment</comment>
+<assessment>Test assessment</assessment>"""
         good_response.__iter__ = Mock(return_value=iter([good_chunk]))
 
         coder = ReviewCoder(mock_model, mock_io)
