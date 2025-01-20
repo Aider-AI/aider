@@ -623,11 +623,26 @@ MODEL_SETTINGS = [
         send_undo_reply=False,
     ),
     ModelSettings(
+        "deepseek/deepseek-reasoner",
+        "diff",
+        editor_model_name="deepseek/deepseek-chat",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        use_temperature=False,
+        reminder="user",
+        caches_by_default=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+    ),
+    ModelSettings(
         "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
         reminder="sys",
+        caches_by_default=True,
         extra_params={
             "max_tokens": 8192,
         },
