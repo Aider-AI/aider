@@ -290,6 +290,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "elixir": ("ex", "Greeter"),
             "java": ("java", "Greeting"),
             "javascript": ("js", "Person"),
+            "kotlin": ("kt", "Greeting"),
             "ocaml": ("ml", "Greeter"),
             "php": ("php", "greet"),
             "python": ("py", "Person"),
