@@ -639,7 +639,6 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         use_temperature=False,
         examples_as_sys_msg=True,
-        editor_edit_format="editor-diff",
         reminder="user",
         caches_by_default=True,
         extra_params={
