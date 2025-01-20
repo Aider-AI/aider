@@ -1,6 +1,6 @@
 # Release history
 
-### v0.71.1
+### v0.72.1
 
 - Fix model metadata for `openrouter/deepseek/deepseek-r1`
 
