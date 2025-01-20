@@ -8,6 +8,7 @@ def test_parse_review():
     """Test parsing of review responses"""
     mock_io = Mock()
     mock_model = Mock()
+    mock_model.extra_params = {}  # Mock extra_params as empty dict
     coder = ReviewCoder(mock_model, mock_io)
     
     review_text = """
