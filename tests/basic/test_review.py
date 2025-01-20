@@ -98,7 +98,18 @@ async def test_review_pr_local():
         mock_git.return_value.git.diff.return_value = "M\ttest.py"
         mock_git.return_value.git.show.return_value = "old content"
 
+        # Setup mock model and response
         mock_model = Mock()
+        mock_model.name = "gpt-4"
+        mock_model.extra_params = {}
+        
+        # Mock the completion response
+        mock_response = Mock()
+        mock_chunk = Mock()
+        mock_chunk.choices = [Mock()]
+        mock_chunk.choices[0].delta.content = "<summary>Test summary</summary>"
+        mock_response.__iter__ = Mock(return_value=iter([mock_chunk]))
+
         coder = ReviewCoder(mock_model, mock_io)
         coder.io = mock_io
         coder.repo = mock_repo
@@ -108,8 +119,10 @@ async def test_review_pr_local():
             return "new content"
         mock_io.read_text = mock_read_text
 
-        # Test local branch review
-        coder.review_pr("main", "feature")
+        # Mock send_completion
+        with patch('aider.coders.review_coder.send_completion', return_value=(None, mock_response)):
+            # Test local branch review
+            coder.review_pr("main", "feature")
 
         # Verify git commands were called
         mock_git.return_value.git.diff.assert_called_once_with("main...feature", "--name-status")
