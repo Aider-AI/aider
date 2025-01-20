@@ -2,6 +2,9 @@
 
 ### main branch
 
+- Support for DeepSeek R1.
+  - Use shortcut: `--model r1`
+  - Also via OpenRouter: `--model openrouter/deepseek/deepseek-r1`
 - Added `--line-endings` for file writing, by Titusz Pan.
 - Added examples_as_sys_msg=True for GPT-4o models, improves benchmark scores.
 - Bumped all dependencies, to pick up litellm support for o1 system messages.
@@ -10,7 +13,7 @@
 ### Aider v0.71.1
 
 - Fix permissions issue in Docker images.
-- Added read-only file announcements to chat.
+- Added read-only file announcements.
 - Bugfix: ASCII fallback for unicode errors.
 - Bugfix: integer indices for list slicing in repomap calculations.
 
