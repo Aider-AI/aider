@@ -1,4 +1,4 @@
-FROM python:3.10-slim AS base
+FROM python:3.12-slim AS base
 
 # Create non-root user first
 RUN useradd -m -u 1000 -s /bin/bash appuser
