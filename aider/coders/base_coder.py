@@ -931,7 +931,6 @@ class Coder:
         self.last_keyboard_interrupt = now
 
     def summarize_start(self):
-        return
         if not self.summarizer.too_big(self.done_messages):
             return
 
