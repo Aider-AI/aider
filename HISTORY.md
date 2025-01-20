@@ -14,8 +14,6 @@
 - Added examples_as_sys_msg=True for GPT-4o models, improves benchmark scores.
 - Bumped all dependencies, to pick up litellm support for o1 system messages.
 - Bugfix for turn taking when reflecting lint/test errors.
-- Improved message validation with better error reporting for malformed chat turns.
-- Disabled summarization by default to improve chat stability.
 - Aider wrote 52% of the code in this release.
 
 ### Aider v0.71.1
