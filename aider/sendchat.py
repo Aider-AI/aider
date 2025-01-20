@@ -23,18 +23,18 @@ def sanity_check_messages(messages):
     Returns True if valid, False otherwise."""
     last_role = None
     last_non_system_role = None
-    
+
     for msg in messages:
         role = msg.get("role")
         if role == "system":
             continue
-            
+
         if last_role and role == last_role:
             return False
-            
+
         last_role = role
         last_non_system_role = role
-        
+
     # Ensure last non-system message is from user
     return last_non_system_role == "user"
 
