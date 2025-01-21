@@ -1,10 +1,10 @@
 # Release history
 
-### v0.72.1
+### Aider v0.72.1
 
 - Fix model metadata for `openrouter/deepseek/deepseek-r1`
 
-### v0.72.0
+### Aider v0.72.0
 
 - Support for DeepSeek R1.
   - Use shortcut: `--model r1`
