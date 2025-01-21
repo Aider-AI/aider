@@ -82,6 +82,7 @@ class MixtureOfArchitectsCoder(Coder):
                 map_tokens=self.repo_map.max_map_tokens if self.repo_map else 0,
                 summarize_from_coder=False,
                 stream=self.stream,
+                verbose=self.verbose,
             )
             ask_coder.auto_commits = self.auto_commits
             ask_coder.gpt_prompts = MixturePrompts()
@@ -150,11 +151,19 @@ class MixtureOfArchitectsCoder(Coder):
                     self.io.tool_output("-" * 40)
 
             # Pass the current message with XML tags as with_message
-            formatted_message = f"""
-                You are arhitect {architect.name}
-                <user_message>
-                {current_user_message}
-                </user_message>"""
+            if ask_coder.cur_messages[-1].get("role") == "user":
+                architect_assignment = f""" You are architect {architect.name}
+                    <user_message>
+                    {current_user_message}
+                    </user_message>"""
+                ask_coder.cur_messages[-1]["content"] += architect_assignment
+                ask_coder.cur_messages.append(
+                    {"role": "assistant", "content": "I am architect {architect.name}"}
+                )
+            formatted_message = (
+                f"<user_message>\n{current_user_message}\n</user_message>"
+            )
+
             response = ask_coder.run(with_message=formatted_message, preproc=False)
 
             if not response.strip():
@@ -331,14 +340,12 @@ class MixtureOfArchitectsCoder(Coder):
                 compiler_input += msg["content"]
                 compiler_input += "\n</architect>\n\n"
 
-
         # Get compiled instructions
         self.io.tool_output("Compiler's instructions", bold=True)
         self.io.rule()
         compiler_coder.run(with_message=compiler_input, preproc=False)
         compiled_instructions = compiler_coder.partial_response_content
         compiled_instructions += "\n\nCompletely implement all steps in the instructions above. Do not return to me until you have done so."
-
 
         # Debug print the compiled instructions
         if self.verbose:
@@ -360,6 +367,7 @@ class MixtureOfArchitectsCoder(Coder):
         kwargs["summarize_from_coder"] = False
         kwargs["stream"] = self.stream
         kwargs["auto_commits"] = self.auto_commits
+        kwargs["verbose"] = self.verbose
 
         new_kwargs = dict(io=self.io)
         new_kwargs.update(kwargs)
@@ -374,7 +382,6 @@ class MixtureOfArchitectsCoder(Coder):
 
         if self.verbose:
             editor_coder.show_announcements()
-
 
         self.io.tool_output("Coder's output", bold=True)
         self.io.rule()
