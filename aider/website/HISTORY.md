@@ -23,11 +23,11 @@ cog.out(text)
 ]]]-->
 
 
-### v0.72.1
+### Aider v0.72.1
 
 - Fix model metadata for `openrouter/deepseek/deepseek-r1`
 
-### v0.72.0
+### Aider v0.72.0
 
 - Support for DeepSeek R1.
   - Use shortcut: `--model r1`
@@ -37,8 +37,6 @@ cog.out(text)
 - Added examples_as_sys_msg=True for GPT-4o models, improves benchmark scores.
 - Bumped all dependencies, to pick up litellm support for o1 system messages.
 - Bugfix for turn taking when reflecting lint/test errors.
-- Improved message validation with better error reporting for malformed chat turns.
-- Disabled summarization by default to improve chat stability.
 - Aider wrote 52% of the code in this release.
 
 ### Aider v0.71.1
