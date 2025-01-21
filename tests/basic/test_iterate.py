@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 from aider.coders import Coder
 from aider.io import InputOutput
 from aider.models import Model
+from aider.repo import GitRepo
 from aider.utils import GitTemporaryDirectory
 
 
@@ -47,7 +48,6 @@ class TestIterateCoder(unittest.TestCase):
             for original_message in original_context:
                 assert original_message in messages, f"Chat history before start of the command is not retained."
             # Simulate response mentioning filename
-            a : str=""
             files_message = [msg['content'] for msg in messages if "*added these files to the chat*" in msg['content']][0]
             from re import findall
             file_names =  findall(r'.*\n(\S+\.py)\n```.*',files_message)
@@ -61,9 +61,8 @@ class TestIterateCoder(unittest.TestCase):
 
         with GitTemporaryDirectory():
             # Mock the send method
-            with patch.object(Coder, 'send',new_callable=lambda: mock_send):
+            with (patch.object(Coder, 'send',new_callable=lambda: mock_send), patch.object(Coder, 'lint_edited',lambda *_,**__:None), patch.object(GitRepo,'commit',lambda *_,**__:None)): 
                 self.coder.coder = Coder.create(main_model=self.coder.main_model, edit_format=self.coder.main_model.edit_format,from_coder=self.coder,**self.coder.original_kwargs)
-                
                 # Add initial conversation history
                 original_context = self.coder.done_messages = [
                     {"role": "user", "content": "Initial conversation"},
