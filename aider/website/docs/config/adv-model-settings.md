@@ -235,7 +235,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: editor-diff
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openai/gpt-4o
@@ -251,7 +251,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openai/gpt-4o-2024-08-06
@@ -267,7 +267,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: gpt-4o-2024-08-06
@@ -283,7 +283,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: gpt-4o-2024-11-20
@@ -299,7 +299,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openai/gpt-4o-2024-11-20
@@ -315,7 +315,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: editor-diff
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: gpt-4o
@@ -1080,7 +1080,41 @@ cog.out("```\n")
   use_temperature: true
   weak_model_name: null
 - cache_control: false
-  caches_by_default: false
+  caches_by_default: true
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: openrouter/deepseek/deepseek-chat
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  lazy: false
+  name: openrouter/deepseek/deepseek-r1
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: false
+  weak_model_name: openrouter/deepseek/deepseek-chat
+- cache_control: false
+  caches_by_default: true
+  edit_format: diff
+  editor_edit_format: editor-diff
+  editor_model_name: deepseek/deepseek-chat
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  lazy: false
+  name: deepseek/deepseek-reasoner
+  reminder: user
+  send_undo_reply: false
+  streaming: true
+  use_repo_map: true
+  use_system_prompt: true
+  use_temperature: false
+  weak_model_name: deepseek/deepseek-chat
+- cache_control: false
+  caches_by_default: true
   edit_format: diff
   editor_edit_format: null
   editor_model_name: null
@@ -1184,7 +1218,7 @@ cog.out("```\n")
   edit_format: diff
   editor_edit_format: editor-diff
   editor_model_name: null
-  examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params: null
   lazy: true
   name: openrouter/openai/gpt-4o

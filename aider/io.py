@@ -198,6 +198,7 @@ class InputOutput:
         completion_menu_current_bg_color=None,
         code_theme="default",
         encoding="utf-8",
+        line_endings="platform",
         dry_run=False,
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
@@ -244,6 +245,15 @@ class InputOutput:
             self.chat_history_file = None
 
         self.encoding = encoding
+        valid_line_endings = {"platform", "lf", "crlf"}
+        if line_endings not in valid_line_endings:
+            raise ValueError(
+                f"Invalid line_endings value: {line_endings}. "
+                f"Must be one of: {', '.join(valid_line_endings)}"
+            )
+        self.newline = (
+            None if line_endings == "platform" else "\n" if line_endings == "lf" else "\r\n"
+        )
         self.dry_run = dry_run
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -342,10 +352,6 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
-        except OSError as err:
-            if not silent:
-                self.tool_error(f"{filename}: unable to read: {err}")
-            return
         except FileNotFoundError:
             if not silent:
                 self.tool_error(f"{filename}: file not found error")
@@ -353,6 +359,10 @@ class InputOutput:
         except IsADirectoryError:
             if not silent:
                 self.tool_error(f"{filename}: is a directory")
+            return
+        except OSError as err:
+            if not silent:
+                self.tool_error(f"{filename}: unable to read: {err}")
             return
         except UnicodeError as e:
             if not silent:
@@ -375,7 +385,7 @@ class InputOutput:
         delay = initial_delay
         for attempt in range(max_retries):
             try:
-                with open(str(filename), "w", encoding=self.encoding) as f:
+                with open(str(filename), "w", encoding=self.encoding, newline=self.newline) as f:
                     f.write(content)
                 return  # Successfully wrote the file
             except PermissionError as err:

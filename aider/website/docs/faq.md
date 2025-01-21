@@ -141,6 +141,18 @@ When starting a fresh aider session, you can include recent git history in the c
 
 Remember, the chat history already includes recent changes made during the current session, so this tip is most useful when starting a new aider session and you want to provide context about recent work.
 
+You can also use aider to review PR branches:
+
+```
+/run git diff one-branch..another-branch
+
+...
+
+Add 6.9k tokens of command output to the chat? (Y)es/(N)o [Yes]: Yes
+
+/ask Are there any problems with the way this change works with the FooBar class?
+```
+
 {: .tip }
 The `/git` command will not work for this purpose, as its output is not included in the chat. 
 
@@ -237,10 +249,20 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>1,258,436</td><td class='right'>86.2%</td></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>178,352</td><td class='right'>12.2%</td></tr>
-<tr><td>o1</td><td class='right'>22,748</td><td class='right'>1.6%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>1,119,920</td><td class='right'>59.5%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>699,676</td><td class='right'>37.2%</td></tr>
+<tr><td>o1</td><td class='right'>25,121</td><td class='right'>1.3%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>10,083</td><td class='right'>0.5%</td></tr>
+<tr><td>gemini/gemini-exp-1206</td><td class='right'>10,068</td><td class='right'>0.5%</td></tr>
+<tr><td>mistral/codestral-latest</td><td class='right'>8,137</td><td class='right'>0.4%</td></tr>
+<tr><td>deepseek/REDACTED</td><td class='right'>7,432</td><td class='right'>0.4%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>1,775</td><td class='right'>0.1%</td></tr>
+<tr><td>o1-preview</td><td class='right'>175</td><td class='right'>0.0%</td></tr>
 </table>
+
+{: .note :}
+Some models show as REDACTED, because they are new or unpopular models.
+Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?

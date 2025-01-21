@@ -1069,7 +1069,7 @@ class Commands:
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
     def cmd_architect(self, args):
-        """Enter architect mode to discuss high-level design and architecture. If no prompt provided, switches to architect mode."""  # noqa
+        """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
         return self._generic_chat_command(args, "architect")
 
     def _generic_chat_command(self, args, edit_format):

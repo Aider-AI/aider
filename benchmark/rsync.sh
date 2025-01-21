@@ -19,15 +19,27 @@ git -C "$REPO_ROOT" ls-files --exclude-standard --others --ignored --directory >
 # Create remote directory if needed
 ssh "$DEST" "mkdir -p ~/aider"
 
-# Sync the repository
-rsync -avz --delete \
-    --exclude-from="$EXCLUDE_FILE" \
-    "$REPO_ROOT/" \
-    "$DEST:~/aider/"
+sync_repo() {
+    # Sync the repository
+    rsync -avz --delete \
+          --exclude-from="$EXCLUDE_FILE" \
+          "$REPO_ROOT/" \
+          "$DEST:~/aider/" || true
+    
+    rsync -a .env .gitignore "$DEST:~/aider/." || true
 
-rsync -a .env .gitignore "$DEST:~/aider/."
+    echo Done syncing, waiting.
+}
+    
+sync_repo
 
-rsync -a ~/dotfiles/screenrc "$DEST:.screenrc"
+while true; do
+    fswatch -o $REPO_ROOT | while read ; do
+        sync_repo
+    done
+done
+                              
 
 # Clean up
 rm "$EXCLUDE_FILE"
+

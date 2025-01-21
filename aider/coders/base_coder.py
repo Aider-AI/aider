@@ -474,6 +474,7 @@ class Coder:
 
         self.summarizer_thread = None
         self.summarized_done_messages = []
+        self.summarizing_messages = None
 
         if not self.done_messages and restore_chat_history:
             history_md = self.io.read_text(self.io.chat_history_file)
@@ -957,8 +958,9 @@ class Coder:
         self.summarizer_thread.start()
 
     def summarize_worker(self):
+        self.summarizing_messages = list(self.done_messages)
         try:
-            self.summarized_done_messages = self.summarizer.summarize(self.done_messages)
+            self.summarized_done_messages = self.summarizer.summarize(self.summarizing_messages)
         except ValueError as err:
             self.io.tool_warning(err.args[0])
 
@@ -972,7 +974,9 @@ class Coder:
         self.summarizer_thread.join()
         self.summarizer_thread = None
 
-        self.done_messages = self.summarized_done_messages
+        if self.summarizing_messages == self.done_messages:
+            self.done_messages = self.summarized_done_messages
+        self.summarizing_messages = None
         self.summarized_done_messages = []
 
     def move_back_cur_messages(self, message):
@@ -1346,6 +1350,8 @@ class Coder:
             self.num_exhausted_context_windows += 1
             return
 
+        self.add_assistant_reply_to_cur_messages()
+
         if self.partial_response_function_call:
             args = self.parse_partial_args()
             if args:
@@ -1378,8 +1384,6 @@ class Coder:
 
         edited = self.apply_updates()
 
-        self.update_cur_messages()
-
         if edited:
             self.aider_edited_files.update(edited)
             saved_message = self.auto_commit(edited)
@@ -1400,7 +1404,6 @@ class Coder:
                 ok = self.io.confirm_ask("Attempt to fix lint errors?")
                 if ok:
                     self.reflected_message = lint_errors
-                    self.update_cur_messages()
                     return
 
         shared_output = self.run_shell_commands()
@@ -1417,7 +1420,6 @@ class Coder:
                 ok = self.io.confirm_ask("Attempt to fix test errors?")
                 if ok:
                     self.reflected_message = test_errors
-                    self.update_cur_messages()
                     return
 
     def reply_completed(self):
@@ -1493,7 +1495,7 @@ class Coder:
 
         return res
 
-    def update_cur_messages(self):
+    def add_assistant_reply_to_cur_messages(self):
         if self.partial_response_content:
             self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
         if self.partial_response_function_call:
