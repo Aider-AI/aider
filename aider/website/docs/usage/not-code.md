@@ -4,7 +4,7 @@ nav_order: 901
 description: Edit configuration files, documentation, and other text-based formats.
 ---
 
-# Editing Configuration and Text Files
+# Editing config & text files
 
 Aider isn't just for code! Here are practical examples of modifying common config/text files:
 
@@ -91,18 +91,6 @@ hosts
 + 127.0.0.1   track.analytics.co
 ```
 
-## Cron Jobs
-```bash
-$ aider mycron
-
-Added mycron to the chat.
-────────────────────────────────────────────────────────────────
-mycron
-> Add daily backup at 2am and weekly log rotation
-
-+ 0 2 * * * /usr/local/bin/backup --incremental
-+ 0 3 * * 6 /usr/sbin/logrotate /etc/logrotate.conf
-```
 
 ## Editor Configs
 ```bash
@@ -156,10 +144,10 @@ README.md
 + ## Installation
 + ```bash
 + # Homebrew
-+ brew install aider
++ brew install cool-app-10k
 + 
 + # PyPI
-+ pipx install aider-chat
++ pipx install cool-app-10k
 + ```
 ```
 
@@ -180,4 +168,4 @@ pom.xml
 + </dependency>
 ```
 
-> **Note**: Aider works with any text-based format. For system files requiring elevated privileges, use `sudo aider` as needed.
+
