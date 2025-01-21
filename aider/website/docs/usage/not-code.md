@@ -1,3 +1,9 @@
+---
+parent: Usage
+nav_order: 901
+description: Edit configuration files, documentation, and other text-based formats.
+---
+
 # Editing Configuration and Text Files
 
 Aider isn't just for code! Here are practical examples of modifying common config/text files:
