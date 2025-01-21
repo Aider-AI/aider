@@ -413,3 +413,29 @@
   versions: 0.71.2.dev
   seconds_per_case: 113.7
   total_cost: 5.4193
+
+- dirname: 2025-01-21-06-02-55--ninja-superagent-final
+  test_cases: 225
+  model: openai/ninja-superagent
+  edit_format: diff
+  commit_hash: 620ae5c-dirty
+  pass_rate_1: 26.2
+  pass_rate_2: 56.0
+  pass_num_1: 59
+  pass_num_2: 126
+  percent_cases_well_formed: 98.7
+  error_outputs: 3
+  num_malformed_responses: 3
+  num_with_malformed_responses: 3
+  user_asks: 13
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openai/ninja-superagent
+  date: 2025-01-21
+  versions: 0.71.2.dev
+  seconds_per_case: 158.8
+  total_cost: 0.0000
