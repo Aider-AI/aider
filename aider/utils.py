@@ -112,7 +112,7 @@ def format_messages(messages, title=None):
         output.append(f"{title.upper()} {'*' * 50}")
 
     for msg in messages:
-        output.append("")
+        output.append("-------")
         role = msg["role"].upper()
         content = msg.get("content")
         if isinstance(content, list):  # Handle list content (e.g., image messages)

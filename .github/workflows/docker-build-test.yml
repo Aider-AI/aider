@@ -4,14 +4,19 @@ on:
   push:
     paths-ignore:
       - 'aider/website/**'
-      - README.md
-      - HISTORY.md
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/docker-build-test.yml'
     branches:
       - main
   pull_request:
     paths-ignore:
       - 'aider/website/**'
-      - README.md
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/docker-build-test.yml'
     branches:
       - main
 
@@ -31,12 +36,24 @@ jobs:
       uses: docker/setup-buildx-action@v3
 
     - name: Login to DockerHub
+      if: ${{ github.event_name != 'pull_request' }}
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    - name: Build and push Docker images
+    - name: Build Docker images (PR)
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: false
+        target: aider
+
+    - name: Build Docker images (Push)
+      if: ${{ github.event_name != 'pull_request' }}
       uses: docker/build-push-action@v5
       with:
         context: .
@@ -46,7 +63,18 @@ jobs:
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider:dev
         target: aider
 
-    - name: Build and push Docker full image
+    - name: Build Docker full image (PR)
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        platforms: linux/amd64,linux/arm64
+        push: false
+        target: aider-full
+
+    - name: Build Docker full image (Push)
+      if: ${{ github.event_name != 'pull_request' }}
       uses: docker/build-push-action@v5
       with:
         context: .

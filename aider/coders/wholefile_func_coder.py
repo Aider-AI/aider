@@ -49,7 +49,7 @@ class WholeFileFunctionCoder(Coder):
         self.gpt_prompts = WholeFileFunctionPrompts()
         super().__init__(*args, **kwargs)
 
-    def update_cur_messages(self, edited):
+    def add_assistant_reply_to_cur_messages(self, edited):
         if edited:
             self.cur_messages += [
                 dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)

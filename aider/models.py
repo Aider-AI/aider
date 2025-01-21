@@ -76,6 +76,7 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
+    "r1": "deepseek/deepseek-reasoner",
     "flash": "gemini/gemini-2.0-flash-exp",
 }
 
@@ -162,6 +163,7 @@ MODEL_SETTINGS = [
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "openai/gpt-4o-2024-08-06",
@@ -170,6 +172,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o-2024-08-06",
@@ -178,6 +181,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o-2024-11-20",
@@ -186,6 +190,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "openai/gpt-4o-2024-11-20",
@@ -194,6 +199,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         lazy=True,
         reminder="sys",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o",
@@ -203,6 +209,7 @@ MODEL_SETTINGS = [
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "gpt-4o-mini",
@@ -617,11 +624,42 @@ MODEL_SETTINGS = [
         send_undo_reply=False,
     ),
     ModelSettings(
+        "openrouter/deepseek/deepseek-r1",
+        "diff",
+        weak_model_name="openrouter/deepseek/deepseek-chat",
+        editor_model_name="openrouter/deepseek/deepseek-chat",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        use_temperature=False,
+        reminder="user",
+        caches_by_default=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+    ),
+    ModelSettings(
+        "deepseek/deepseek-reasoner",
+        "diff",
+        weak_model_name="deepseek/deepseek-chat",
+        editor_model_name="deepseek/deepseek-chat",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        examples_as_sys_msg=True,
+        use_temperature=False,
+        reminder="user",
+        caches_by_default=True,
+        extra_params={
+            "max_tokens": 8192,
+        },
+    ),
+    ModelSettings(
         "deepseek/deepseek-chat",
         "diff",
         use_repo_map=True,
         examples_as_sys_msg=True,
         reminder="sys",
+        caches_by_default=True,
         extra_params={
             "max_tokens": 8192,
         },
@@ -680,6 +718,7 @@ MODEL_SETTINGS = [
         lazy=True,
         reminder="sys",
         editor_edit_format="editor-diff",
+        examples_as_sys_msg=True,
     ),
     ModelSettings(
         "openai/o1-mini",
