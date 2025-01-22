@@ -1326,12 +1326,20 @@ class Coder:
 
         self.show_usage_report()
 
+        self.add_assistant_reply_to_cur_messages()
+
         if exhausted:
+            if not self.cur_messages or self.cur_messages[-1]["role"] == "user":
+                self.cur_messages += [
+                    dict(
+                        role="assistant",
+                        content="FinishReasonLength exception: you sent too many tokens",
+                    ),
+                ]
+
             self.show_exhausted_error()
             self.num_exhausted_context_windows += 1
             return
-
-        self.add_assistant_reply_to_cur_messages()
 
         if self.partial_response_function_call:
             args = self.parse_partial_args()
