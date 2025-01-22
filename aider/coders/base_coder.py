@@ -1359,8 +1359,10 @@ class Coder:
                 interrupted = True
 
         if interrupted:
-            content += "\n^C KeyboardInterrupt"
-            self.cur_messages += [dict(role="assistant", content=content)]
+            self.cur_messages += [
+                dict(role="user", content="^C KeyboardInterrupt"),
+                dict(role="assistant", content="I see that you interrupted my previous reply."),
+            ]
             return
 
         edited = self.apply_updates()

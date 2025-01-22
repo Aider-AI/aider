@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 import time
 
 from aider.dump import dump  # noqa: F401
@@ -51,7 +52,8 @@ def send_completion(
 ):
     #
     #
-    # sanity_check_messages(messages)
+    if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
+        sanity_check_messages(messages)
     #
     #
 
