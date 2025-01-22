@@ -12,15 +12,15 @@ from .wholefile_coder import WholeFileCoder
 # from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 
 __all__ = [
-    HelpCoder,
-    AskCoder,
-    Coder,
-    EditBlockCoder,
-    EditBlockFencedCoder,
-    WholeFileCoder,
-    UnifiedDiffCoder,
-    #    SingleWholeFileFunctionCoder,
-    ArchitectCoder,
-    EditorEditBlockCoder,
-    EditorWholeFileCoder,
+    "HelpCoder",
+    "AskCoder",
+    "Coder",
+    "EditBlockCoder",
+    "EditBlockFencedCoder",
+    "WholeFileCoder",
+    "UnifiedDiffCoder",
+    #    "SingleWholeFileFunctionCoder",
+    "ArchitectCoder",
+    "EditorEditBlockCoder",
+    "EditorWholeFileCoder",
 ]

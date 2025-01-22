@@ -17,7 +17,6 @@ from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from typing import List
 
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
@@ -896,7 +895,7 @@ class Coder:
             self.io.offer_url(url)
         return urls
 
-    def check_for_urls(self, inp: str) -> List[str]:
+    def check_for_urls(self, inp: str) -> str:
         """Check input for URLs and offer to add them to the chat."""
         if not self.detect_urls:
             return inp
