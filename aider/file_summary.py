@@ -133,19 +133,12 @@ class FileSummary:
             {"role": "user", "content": content_msg}
         ]
 
-        # Use the main model to generate a summary with streaming
-        hourglass_chars = "⌛⏳"
-        hourglass_idx = 0
-        last_hourglass_time = 0
-        hourglass_delay = 0.5  # seconds between hourglass flips
-        
-        completion_text = ""
         try:
             completion = send_completion(
                 self.model.name,
                 messages,
                 None,
-                stream=True,
+                stream=False,  # Changed to False for testing
                 temperature=0,
                 extra_params=self.model.extra_params,
             )
