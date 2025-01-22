@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 import tempfile
+from datetime import datetime
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
@@ -352,6 +353,79 @@ class Commands:
         "Clear the chat history"
 
         self._clear_chat_history()
+
+    def cmd_clear_summary_cache(self, args):
+        "Clear the summary cache"
+        try:
+            self.coder.summary_cache.clear()
+            self.io.tool_output("Summary cache cleared.")
+        except Exception as e:
+            self.io.tool_error(f"Error clearing cache: {str(e)}")
+
+    def cmd_show_summary_cache(self, args):
+        "Show summary cache statistics"
+        try:
+            # Show files currently loaded in memory
+            if self.coder.summary_cache.file_summaries:
+                self.io.tool_output("Currently loaded file summaries:")
+                for fname, summary in self.coder.summary_cache.file_summaries.items():
+                    if summary.summary:
+                        rel_fname = self.coder.get_rel_fname(fname)
+                        mtime = datetime.fromtimestamp(summary.last_mtime)
+                        date_str = mtime.strftime("%Y-%m-%d %H:%M:%S")
+                        self.io.tool_output(
+                            f"  {rel_fname}: {date_str}, {len(summary.summary)} chars"
+                        )
+                self.io.tool_output()
+
+            # Show files in disk cache but not loaded
+            cache_only = set(k for k in self.coder.summary_cache.cache) - set(
+                self.coder.summary_cache.file_summaries.keys()
+            )
+            if cache_only:
+                self.io.tool_output("Cached but not loaded file summaries:")
+                for fname in sorted(cache_only):
+                    cached = self.coder.summary_cache.cache[fname]
+                    rel_fname = self.coder.get_rel_fname(fname)
+                    mtime = datetime.fromtimestamp(cached['mtime'])
+                    date_str = mtime.strftime("%Y-%m-%d %H:%M:%S")
+                    self.io.tool_output(
+                        f"  {rel_fname}: {date_str}, {len(cached['summary'])} chars"
+                    )
+
+        except Exception as e:
+            self.io.tool_error(f"Error getting cache stats: {str(e)}")
+
+    def completions_show_summary(self):
+        files = self.coder.get_inchat_relative_files()
+        read_only_files = [self.coder.get_rel_fname(fn) for fn in self.coder.abs_read_only_fnames]
+        all_files = files + read_only_files
+        all_files = [self.quote_fname(fn) for fn in all_files]
+        return all_files
+
+    def cmd_show_summary(self, args):
+        "Show the cached summary of a file"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to show the summary for.")
+            return
+
+        try:
+            filenames = parse_quoted_filenames(args)
+            if not filenames:
+                self.io.tool_error("No valid filename provided.")
+                return
+
+            file_path = self.coder.abs_root_path(filenames[0])
+
+            if self.coder.has_file_summary(file_path):
+                summary = self.coder.get_existing_file_summary(file_path)
+                self.io.tool_output(summary)
+                return
+
+            self.io.tool_output(f"No summary found in cache for {file_path}.")
+
+        except Exception as e:
+            self.io.tool_error(f"Error getting cached summary: {str(e)}")
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()

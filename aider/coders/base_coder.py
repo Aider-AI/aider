@@ -32,10 +32,10 @@ from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.sendchat import RETRY_TIMEOUT, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
+from aider.summary_cache import SummaryCache
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
-
 
 class UnknownEditFormat(ValueError):
     def __init__(self, edit_format, valid_formats):
@@ -105,6 +105,7 @@ class Coder:
     ignore_mentions = None
     chat_language = None
     file_watcher = None
+    summarize_file_size = 200 * 1024  # 200 KB is a rather large code file
 
     @classmethod
     def create(
@@ -420,6 +421,9 @@ class Coder:
         if not self.repo:
             self.root = utils.find_common_root(self.abs_fnames)
 
+        # Add summary cache to the coder
+        self.summary_cache = SummaryCache(self.io, self.root, self.main_model)
+
         if read_only_fnames:
             self.abs_read_only_fnames = set()
             for fname in read_only_fnames:
@@ -531,9 +535,32 @@ class Coder:
 
         return True
 
+    def get_file_content(self, fname):
+        if not os.path.exists(fname):
+            return None
+            
+        try:
+            if os.path.getsize(fname) > self.summarize_file_size:
+                rel_fname = self.get_rel_fname(fname)
+                if self.io.confirm_ask(f"File {rel_fname} is large. Create/use a summary to reduce token usage?"):
+                    content = self.summary_cache.get_file_summary(fname)
+                else:
+                    content = self.io.read_text(fname)
+            else:
+                content = self.io.read_text(fname)
+            return content
+        except OSError:
+            return None
+    
+    def has_file_summary(self, fname):
+        return self.summary_cache.has_file_summary(fname)
+    
+    def get_existing_file_summary(self, fname):
+        return self.summary_cache.get_file_summary(fname)
+    
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
-            content = self.io.read_text(fname)
+            content = self.get_file_content(fname)
 
             if content is None:
                 relative_fname = self.get_rel_fname(fname)
@@ -591,11 +618,11 @@ class Coder:
                 prompt += f"{self.fence[1]}\n"
 
         return prompt
-
+    
     def get_read_only_files_content(self):
         prompt = ""
         for fname in self.abs_read_only_fnames:
-            content = self.io.read_text(fname)
+            content = self.get_file_content(fname)
             if content is not None and not is_image_file(fname):
                 relative_fname = self.get_rel_fname(fname)
                 prompt += "\n"
@@ -1251,6 +1278,10 @@ class Coder:
             self.mdstream = None
 
         retry_delay = 0.125
+        hourglass_chars = "⌛⏳"
+        hourglass_idx = 0
+        last_hourglass_time = 0
+        hourglass_delay = 0.5  # seconds between hourglass flips
 
         litellm_ex = LiteLLMExceptions()
 
@@ -1260,7 +1291,16 @@ class Coder:
         try:
             while True:
                 try:
+                    # Show rotating hourglass while waiting
+                    current_time = time.time()
+                    if current_time - last_hourglass_time >= hourglass_delay:
+                        last_hourglass_time = current_time
+                        hourglass = hourglass_chars[hourglass_idx]
+                        hourglass_idx = (hourglass_idx + 1) % len(hourglass_chars)
+                        print(f"\r{hourglass}", end="", flush=True)
+
                     yield from self.send(messages, functions=self.functions)
+                    print("\r ", end="", flush=True)  # Clear the hourglass
                     break
                 except litellm_ex.exceptions_tuple() as err:
                     ex_info = litellm_ex.get_ex_info(err)
@@ -1963,8 +2003,9 @@ class Coder:
         for fname in self.abs_fnames:
             if is_image_file(fname):
                 continue
-            content = self.io.read_text(fname)
-            tokens += self.main_model.token_count(content)
+            content = self.get_file_content(fname)
+            if content:
+                tokens += self.main_model.token_count(content)
 
         if tokens < warn_number_of_tokens:
             return
