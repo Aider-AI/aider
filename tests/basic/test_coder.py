@@ -7,12 +7,13 @@ from unittest.mock import MagicMock, patch
 import git
 
 from aider.coders import Coder
-from aider.coders.base_coder import UnknownEditFormat
+from aider.coders.base_coder import UnknownEditFormat, FinishReasonLength
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
 from aider.repo import GitRepo
 from aider.utils import GitTemporaryDirectory
+from aider.sendchat import sanity_check_messages
 
 
 class TestCoder(unittest.TestCase):
