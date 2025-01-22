@@ -1329,7 +1329,7 @@ class Coder:
         self.add_assistant_reply_to_cur_messages()
 
         if exhausted:
-            if not self.cur_messages or self.cur_messages[-1]["role"] == "user":
+            if self.cur_messages and self.cur_messages[-1]["role"] == "user":
                 self.cur_messages += [
                     dict(
                         role="assistant",
