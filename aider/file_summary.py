@@ -133,6 +133,13 @@ class FileSummary:
             {"role": "user", "content": content_msg}
         ]
 
+        # Initialize variables for progress tracking
+        completion_text = ""
+        hourglass_chars = "⌛⏳"
+        hourglass_idx = 0
+        last_hourglass_time = 0
+        hourglass_delay = 0.5
+
         try:
             completion = send_completion(
                 self.model.name,
