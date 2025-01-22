@@ -34,6 +34,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install '.[browser,dev,playwright,mypy]'
 
+    - uses: pre-commit/action@v3.0.1
+
     - name: Run Mypy
       uses: wearerequired/lint-action@v2.3.0
       with:
