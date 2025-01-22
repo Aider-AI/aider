@@ -6,7 +6,11 @@ description: Edit configuration files, documentation, and other text-based forma
 
 # Editing config & text files
 
-Aider isn't just for code! Here are practical examples of modifying common config/text files:
+Aider isn't just for code, it can be very helpful when editing
+almost any text file.
+You can use aider to make changes to you shell rc files, ssh settings, dockerfiles,
+config files or docs.
+Here are practical examples of modifying common config/text files:
 
 ## Shell Configuration
 ```bash
