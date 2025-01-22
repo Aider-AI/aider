@@ -21,7 +21,7 @@ $ aider .bashrc
 Added .bashrc to the chat.
 ────────────────────────────────────────────────────────────────
 .bashrc
-> Add an alias 'll' that runs 'ls -alh' and update PATH to include ~/.local/bin
+> Add an alias 'll' that lists all files, with all details in human readable format. And update PATH to include uv installed tools.
 
 + alias ll='ls -alh'
 + export PATH="$HOME/.local/bin:$PATH"
