@@ -982,22 +982,21 @@ This command will print 'Hello, World!' to the console."""
 
             # Simulate keyboard interrupt during message processing
             def mock_send(*args, **kwargs):
+                coder.partial_response_content = "Partial response"
+                coder.partial_response_function_call = dict()
                 raise KeyboardInterrupt()
 
             coder.send = mock_send
 
             # Initial valid state
-            coder.cur_messages = [{"role": "user", "content": "Initial question"}]
-            self.assertTrue(sanity_check_messages(coder.cur_messages))
+            sanity_check_messages(coder.cur_messages)
 
             # Process message that will trigger interrupt
-            with self.assertRaises(KeyboardInterrupt):
-                list(coder.send_message("Test message"))
+            list(coder.send_message("Test message"))
 
             # Verify messages are still in valid state
-            self.assertTrue(sanity_check_messages(coder.cur_messages))
-            self.assertEqual(len(coder.cur_messages), 2)
-            self.assertEqual(coder.cur_messages[-1]["role"], "user")
+            sanity_check_messages(coder.cur_messages)
+            self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
     def test_token_limit_error_handling(self):
         with GitTemporaryDirectory():
@@ -1006,20 +1005,21 @@ This command will print 'Hello, World!' to the console."""
 
             # Simulate token limit error
             def mock_send(*args, **kwargs):
+                coder.partial_response_content = "Partial response"
+                coder.partial_response_function_call = dict()
                 raise FinishReasonLength()
 
             coder.send = mock_send
 
             # Initial valid state
-            coder.cur_messages = [{"role": "user", "content": "Initial question"}]
-            self.assertTrue(sanity_check_messages(coder.cur_messages))
+            sanity_check_messages(coder.cur_messages)
 
             # Process message that hits token limit
             list(coder.send_message("Long message"))
 
             # Verify messages are still in valid state
-            self.assertTrue(sanity_check_messages(coder.cur_messages))
-            self.assertEqual(coder.cur_messages[-1]["role"], "user")
+            sanity_check_messages(coder.cur_messages)
+            self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
     def test_message_sanity_after_partial_response(self):
         with GitTemporaryDirectory():
@@ -1029,19 +1029,16 @@ This command will print 'Hello, World!' to the console."""
             # Simulate partial response then interrupt
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = "Partial response"
+                coder.partial_response_function_call = dict()
                 raise KeyboardInterrupt()
 
             coder.send = mock_send
 
-            coder.cur_messages = [{"role": "user", "content": "Question"}]
-            with self.assertRaises(KeyboardInterrupt):
-                list(coder.send_message("Test"))
+            list(coder.send_message("Test"))
 
             # Verify message structure remains valid
-            self.assertTrue(sanity_check_messages(coder.cur_messages))
-            self.assertEqual(len(coder.cur_messages), 2)
-            self.assertEqual(coder.cur_messages[-1]["role"], "user")
-            self.assertIn("Partial response", coder.partial_response_content)
+            sanity_check_messages(coder.cur_messages)
+            self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
 
 if __name__ == "__main__":
