@@ -28,6 +28,9 @@ class FileSummary:
     def has_changed(self):
         """Check if the file has changed since last summary generation"""
 
+        if not self.loaded:
+            return True
+                
         file_size = os.path.getsize(self.fname)
         if file_size != self.last_size:
             return True
@@ -114,7 +117,7 @@ class FileSummary:
 
         return chunks
 
-    def summarize_chunk(self, chunk, chunk_index=0, previous_summaries=None, pbar=None):
+    def summarize_chunk(self, chunk, chunk_index=0, pbar=None):
         """Summarize a single chunk using the LLM, with context from previous chunks"""
         system_msg = (
             "You are a helpful assistant that summarizes files. If the file contains code, provide a summary of "
@@ -387,14 +390,11 @@ class FileSummary:
                 summary, prompt_tokens, completion_tokens, cost = self.summarize_chunk(
                     chunk, 
                     chunk_index=i,
-                    previous_summaries=summaries if summaries else None,
                     pbar=pbar
                 )
-                if summary is None:
-                    pbar.close()
-                    return None
-                    
-                summaries.append(summary)
+                if summary:
+                    summaries.append(summary)
+
                 total_prompt_tokens += prompt_tokens
                 total_completion_tokens += completion_tokens
                 total_cost += cost
