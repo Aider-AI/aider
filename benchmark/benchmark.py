@@ -16,6 +16,7 @@ from types import SimpleNamespace
 from typing import List, Optional
 
 import git
+import importlib_resources
 import lox
 import pandas as pd
 import prompts
@@ -717,17 +718,6 @@ def run_test_real(
         else:
             print(f"Warning: Solution file not found: {src}")
 
-    # Copy all test files
-    for file_path in test_files:
-        src = testdir / Path(file_path)
-        if src.exists():
-            original_fname = original_dname / testdir.name / file_path
-            if original_fname.exists():
-                os.makedirs(src.parent, exist_ok=True)
-                shutil.copy(original_fname, src)
-        else:
-            print(f"Warning: Test file not found: {src}")
-
     file_list = " ".join(fname.name for fname in fnames)
 
     instructions = ""
@@ -748,6 +738,10 @@ def run_test_real(
         chat_history_file=history_fname,
     )
 
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
+    dump(model_metadata_files_loaded)
+
     # weak_model_name = model_name
     weak_model_name = None
 
@@ -757,6 +751,8 @@ def run_test_real(
         editor_model=editor_model,
         editor_edit_format=editor_edit_format,
     )
+
+    dump(main_model.max_chat_history_tokens)
 
     if num_ctx:
         if not main_model.extra_params:
@@ -785,6 +781,7 @@ def run_test_real(
     dump(coder.ignore_mentions)
 
     coder.show_announcements()
+    coder.get_file_mentions = lambda x: set()  # No loading of any other files
 
     timeouts = 0
 
@@ -796,6 +793,7 @@ def run_test_real(
     test_outcomes = []
     for i in range(tries):
         start = time.time()
+
         if no_aider:
             pass
         elif replay:
@@ -925,15 +923,6 @@ def run_test_real(
 def run_unit_tests(original_dname, testdir, history_fname, test_files):
     timeout = 60 * 3
 
-    # Remove @Disabled annotations from Java test files
-    for file_path in test_files:
-        if file_path.endswith(".java"):
-            test_file = testdir / file_path
-            if test_file.exists():
-                content = test_file.read_text()
-                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
-                test_file.write_text(content)
-
     # Map of file extensions to test commands
     TEST_COMMANDS = {
         ".py": ["pytest"],
@@ -964,6 +953,15 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
         if src.exists():
             os.makedirs(dst.parent, exist_ok=True)
             shutil.copy(src, dst)
+
+    # Remove @Disabled annotations from Java test files
+    for file_path in test_files:
+        if file_path.endswith(".java"):
+            test_file = testdir / file_path
+            if test_file.exists():
+                content = test_file.read_text()
+                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
+                test_file.write_text(content)
 
     print(" ".join(command))
 

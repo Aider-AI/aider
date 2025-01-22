@@ -249,11 +249,20 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>1,344,540</td><td class='right'>86.4%</td></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>178,352</td><td class='right'>11.5%</td></tr>
-<tr><td>o1</td><td class='right'>25,326</td><td class='right'>1.6%</td></tr>
-<tr><td>mistral/codestral-latest</td><td class='right'>8,137</td><td class='right'>0.5%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>1,295,395</td><td class='right'>61.6%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>699,676</td><td class='right'>33.3%</td></tr>
+<tr><td>deepseek/REDACTED</td><td class='right'>50,831</td><td class='right'>2.4%</td></tr>
+<tr><td>o1</td><td class='right'>25,121</td><td class='right'>1.2%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>10,083</td><td class='right'>0.5%</td></tr>
+<tr><td>gemini/gemini-exp-1206</td><td class='right'>10,068</td><td class='right'>0.5%</td></tr>
+<tr><td>mistral/codestral-latest</td><td class='right'>8,137</td><td class='right'>0.4%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>1,775</td><td class='right'>0.1%</td></tr>
+<tr><td>o1-preview</td><td class='right'>175</td><td class='right'>0.0%</td></tr>
 </table>
+
+{: .note :}
+Some models show as REDACTED, because they are new or unpopular models.
+Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?

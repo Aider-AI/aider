@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - "aider/website/**"
+      - ".github/workflows/pages.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -55,10 +56,9 @@ jobs:
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
-        # Automatically uploads an artifact from the './_site' directory by default
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: "aider/website/_site/"
+          path: "aider/website/_site"
 
   # Deployment job
   deploy:
@@ -70,7 +70,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
         
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
