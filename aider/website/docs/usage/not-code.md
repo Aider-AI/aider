@@ -1,16 +1,18 @@
 ---
 parent: Usage
 nav_order: 901
-description: Edit configuration files, documentation, and other text-based formats.
+description: Use aider to edit configuration files, documentation, and other text-based formats.
 ---
 
 # Editing config & text files
 
 Aider isn't just for code, it can be very helpful when editing
 almost any text file.
-You can use aider to make changes to you shell rc files, ssh settings, dockerfiles,
-config files or docs.
-Here are practical examples of modifying common config/text files:
+You can use aider to make changes to your shell & ssh settings, 
+Dockerfiles
+or pretty much any configuration or documentation file.
+
+Here are some practical examples of modifying common config/text files:
 
 ## Shell Configuration
 ```bash
