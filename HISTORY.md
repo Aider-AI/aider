@@ -1,11 +1,14 @@
 # Release history
 
-### Aider v0.72.1
+### Aider v0.72.2
 
+- Harden against user/assistant turn order problems which cause R1 errors.
+- Added environment variable AIDER_SANITY_CHECK_TURNS for turn order validation.
+
+### Aider v0.72.1
 - Fix model metadata for `openrouter/deepseek/deepseek-r1`
 
 ### Aider v0.72.0
-
 - Support for DeepSeek R1.
   - Use shortcut: `--model r1`
   - Also via OpenRouter: `--model openrouter/deepseek/deepseek-r1`
