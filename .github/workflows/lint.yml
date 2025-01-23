@@ -1,0 +1,41 @@
+name: Linting
+
+on:
+  push:
+    paths-ignore:
+      - 'aider/website/**'
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/lint.yml'
+    branches:
+      - main
+  pull_request:
+    paths-ignore:
+      - 'aider/website/**'
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/lint.yml'
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - uses: pre-commit/action@v3.0.1
