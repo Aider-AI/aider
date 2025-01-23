@@ -12,7 +12,7 @@ class TestScriptingAPI(unittest.TestCase):
     def test_basic_scripting(self, mock_send):
         with GitTemporaryDirectory():
             # Setup
-            def mock_send_side_effect(messages, functions=None):
+            def mock_send_side_effect(messages, model=None, functions=None):
                 coder.partial_response_content = "Changes applied successfully."
                 coder.partial_response_function_call = None
                 return "Changes applied successfully."
