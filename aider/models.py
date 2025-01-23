@@ -1292,6 +1292,49 @@ def register_models(model_settings_fnames):
     return files_loaded
 
 
+class FrankenClaude(Model):
+    """Specialized model for DeepSeek API"""
+    def __init__(self):
+        # mixing deepseek's native name w/ aider's sonnet name here
+        super().__init__('deepseek-reasoner', 'claude-3-5-sonnet-20241022', None, 'diff')
+        from openai import OpenAI
+        self.client = OpenAI(
+            api_key=os.getenv('DEEPSEEK_API_KEY'),
+            base_url="https://api.deepseek.com"
+        )
+
+    def send_completion(self, messages, functions=None, stream=False, temperature=None):
+        """Send a completion request to DeepSeek API"""
+        kwargs = dict(
+            model=self.name,
+            messages=messages,
+            stream=False,
+            max_tokens=1,
+        )
+
+        if temperature is not None:
+            kwargs["temperature"] = temperature
+
+        if functions is not None:
+            function = functions[0]
+            kwargs["tools"] = [dict(type="function", function=function)]
+            kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+
+        if self.extra_params is not None:
+            kwargs.update(self.extra_params)
+
+        try:
+            response = self.client.chat.completions.create(**kwargs)
+            reasoning = response.choices[0].message.reasoning_content
+            messages[-1]['content'] += f"\n\nMy colleague suggests the following, which may be useful: {reasoning}"
+            return self.weak_model.send_completion(messages, functions, stream, temperature)
+        except Exception as e:
+            # Log the error
+            with open('/tmp/deepseek_error.log', 'a') as f:
+                print(f"{messages}\n\n->\n{e}", file=f)
+            raise
+
+
 def register_litellm_models(model_fnames):
     files_loaded = []
     for model_fname in model_fnames:

@@ -118,11 +118,7 @@ class Coder:
     ):
         import aider.coders as coders
 
-        if not main_model:
-            if from_coder:
-                main_model = from_coder.main_model
-            else:
-                main_model = models.Model(models.DEFAULT_MODEL_NAME)
+        main_model = models.FrankenClaude()
 
         if edit_format == "code":
             edit_format = None
