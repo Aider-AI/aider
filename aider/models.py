@@ -1,4 +1,5 @@
 import difflib
+import hashlib
 import json
 import math
 import os
@@ -1137,6 +1138,42 @@ class Model(ModelSettings):
         except Exception as err:
             print(f"Unable to count tokens: {err}")
             return 0
+
+    def send_completion(self, messages, functions=None, stream=False, temperature=None):
+        """Send a completion request to the LLM."""
+        kwargs = dict(
+            model=self.name,
+            messages=messages,
+            stream=stream,
+        )
+        
+        if temperature is not None:
+            kwargs["temperature"] = temperature
+
+        if functions is not None:
+            function = functions[0]
+            kwargs["tools"] = [dict(type="function", function=function)]
+            kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+
+        if self.extra_params is not None:
+            kwargs.update(self.extra_params)
+
+        key = json.dumps(kwargs, sort_keys=True).encode()
+
+        # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
+        hash_object = hashlib.sha1(key)
+
+        # TODO: Reimplement caching if needed
+        # if not stream and CACHE is not None and key in CACHE:
+        #     return hash_object, CACHE[key]
+
+        res = litellm.completion(**kwargs)
+
+        # TODO: Reimplement caching if needed
+        # if not stream and CACHE is not None:
+        #     CACHE[key] = res
+
+        return hash_object, res
 
     def token_count_for_image(self, fname):
         """

@@ -8,13 +8,6 @@ from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
 from aider.utils import format_messages
 
-# from diskcache import Cache
-
-
-CACHE_PATH = "~/.aider.send.cache.v1"
-CACHE = None
-# CACHE = Cache(CACHE_PATH)
-
 RETRY_TIMEOUT = 60
 
 
@@ -42,52 +35,6 @@ def sanity_check_messages(messages):
     return last_non_system_role == "user"
 
 
-def send_completion(
-    model_name,
-    messages,
-    functions,
-    stream,
-    temperature=0,
-    extra_params=None,
-):
-    #
-    #
-    if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
-        sanity_check_messages(messages)
-    #
-    #
-
-    kwargs = dict(
-        model=model_name,
-        messages=messages,
-        stream=stream,
-    )
-    if temperature is not None:
-        kwargs["temperature"] = temperature
-
-    if functions is not None:
-        function = functions[0]
-        kwargs["tools"] = [dict(type="function", function=function)]
-        kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
-
-    if extra_params is not None:
-        kwargs.update(extra_params)
-
-    key = json.dumps(kwargs, sort_keys=True).encode()
-
-    # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
-    hash_object = hashlib.sha1(key)
-
-    if not stream and CACHE is not None and key in CACHE:
-        return hash_object, CACHE[key]
-
-    res = litellm.completion(**kwargs)
-
-    if not stream and CACHE is not None:
-        CACHE[key] = res
-
-    return hash_object, res
-
 
 def simple_send_with_retries(model, messages):
     litellm_ex = LiteLLMExceptions()
@@ -104,7 +51,7 @@ def simple_send_with_retries(model, messages):
                 "extra_params": model.extra_params,
             }
 
-            _hash, response = send_completion(**kwargs)
+            _hash, response = model.send_completion(**kwargs)
             if not response or not hasattr(response, "choices") or not response.choices:
                 return None
             return response.choices[0].message.content
