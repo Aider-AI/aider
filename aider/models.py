@@ -1349,6 +1349,7 @@ def fuzzy_match_models(name):
 
     chat_models = set()
     for model, attrs in litellm.model_cost.items():
+        # it's fine to lowercase for fuzzy searching, but we need to return the original case version ai!
         model = model.lower()
         if attrs.get("mode") != "chat":
             continue
