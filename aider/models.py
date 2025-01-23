@@ -1348,9 +1348,8 @@ def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
-    for model, attrs in litellm.model_cost.items():
-        # it's fine to lowercase for fuzzy searching, but we need to return the original case version ai!
-        model = model.lower()
+    for orig_model, attrs in litellm.model_cost.items():
+        model = orig_model.lower()
         if attrs.get("mode") != "chat":
             continue
         provider = attrs.get("litellm_provider", "").lower()
@@ -1359,12 +1358,12 @@ def fuzzy_match_models(name):
         provider += "/"
 
         if model.startswith(provider):
-            fq_model = model
+            fq_model = orig_model
         else:
-            fq_model = provider + model
+            fq_model = provider + orig_model
 
         chat_models.add(fq_model)
-        chat_models.add(model)
+        chat_models.add(orig_model)
 
     chat_models = sorted(chat_models)
     # exactly matching model
