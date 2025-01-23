@@ -1295,8 +1295,12 @@ def register_models(model_settings_fnames):
 class FrankenClaude(Model):
     """Specialized model for DeepSeek API"""
     def __init__(self):
-        # mixing deepseek's native name w/ aider's sonnet name here
-        super().__init__('deepseek-reasoner', 'claude-3-5-sonnet-20241022', None, 'diff')
+        super().__init__('r1', 'sonnet')
+        # when weak model is instantiated it doesn't apply main-model parameters, so
+        # recreate it as a main model now
+        self.weak_model = Model('sonnet')
+
+        # the client for native deepseek calls
         from openai import OpenAI
         self.client = OpenAI(
             api_key=os.getenv('DEEPSEEK_API_KEY'),
@@ -1306,7 +1310,7 @@ class FrankenClaude(Model):
     def send_completion(self, messages, functions=None, stream=False, temperature=None):
         """Send a completion request to DeepSeek API"""
         kwargs = dict(
-            model=self.name,
+            model='deepseek-reasoner', # native model name
             messages=messages,
             stream=False,
             max_tokens=1,
@@ -1329,6 +1333,7 @@ class FrankenClaude(Model):
             messages[-1]['content'] += f"\n\nMy colleague suggests the following, which may be useful: {reasoning}"
             return self.weak_model.send_completion(messages, functions, stream, temperature)
         except Exception as e:
+            print(kwargs)
             # Log the error
             with open('/tmp/deepseek_error.log', 'a') as f:
                 print(f"{messages}\n\n->\n{e}", file=f)

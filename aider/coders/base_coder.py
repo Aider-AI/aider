@@ -118,15 +118,9 @@ class Coder:
     ):
         import aider.coders as coders
 
+        # FIXME hardcode FrankenClaude
         main_model = models.FrankenClaude()
-
-        if edit_format == "code":
-            edit_format = None
-        if edit_format is None:
-            if from_coder:
-                edit_format = from_coder.edit_format
-            else:
-                edit_format = main_model.edit_format
+        edit_format = "diff"
 
         if not io and from_coder:
             io = from_coder.io
