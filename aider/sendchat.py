@@ -44,7 +44,7 @@ def sanity_check_messages(messages):
 
 def ensure_alternating_roles(messages):
     """Ensure messages alternate between 'assistant' and 'user' roles.
-    
+
     Inserts empty messages of the opposite role when consecutive messages
     of the same role are found.
 
