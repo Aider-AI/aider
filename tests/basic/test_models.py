@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import ANY, MagicMock, patch
 
 from aider.models import (
-    ANTHROPIC_BETA_HEADER,
     Model,
     ModelInfoManager,
     register_models,
@@ -190,7 +189,7 @@ class TestModels(unittest.TestCase):
             self.assertEqual(model.extra_params["extra_headers"]["Foo"], "bar")
             self.assertEqual(
                 model.extra_params["extra_headers"]["anthropic-beta"],
-                ANTHROPIC_BETA_HEADER,
+                "prompt-caching-2024-07-31,pdfs-2024-09-25",
             )
             self.assertEqual(model.extra_params["some_param"], "some value")
             self.assertEqual(model.extra_params["max_tokens"], 8192)

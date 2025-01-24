@@ -1,0 +1,16 @@
+models:
+  - provider: "groq"
+    name: "llama3-70b-8192"
+    edit_format: "diff"
+    weak_model_name: "groq/llama3-8b-8192"
+    use_repo_map: false
+    send_undo_reply: false
+    examples_as_sys_msg: true
+
+  - provider: "openrouter"
+    name: "meta-llama/llama-3-70b-instruct"
+    edit_format: "diff"
+    weak_model_name: "openrouter/meta-llama/llama-3-70b-instruct"
+    use_repo_map: false
+    send_undo_reply: false
+    examples_as_sys_msg: true

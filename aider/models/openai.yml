@@ -1,0 +1,178 @@
+definitions:
+  - &openai-base
+    provider: "openai"
+    weak_model_name: "gpt-4o-mini"
+    reminder: "sys"
+
+  - &openai-whole
+    <<: *openai-base
+    edit_format: "whole"
+
+  - &openai-diff
+    <<: *openai-base
+    edit_format: "diff"
+    use_repo_map: true
+
+  - &openai-udiff
+    <<: *openai-base
+    edit_format: "udiff"
+    use_repo_map: true
+    lazy: true
+
+  - &openai-gpt4o
+    <<: *openai-diff
+    lazy: true
+    editor_edit_format: "editor-diff"
+    examples_as_sys_msg: True
+
+  - &o1-base
+    edit_format: "whole"
+    editor_edit_format: "editor-diff"
+    use_repo_map: true
+    reminder: "user"
+    use_system_prompt: false
+    use_temperature: false
+
+  - &openrouter-base
+    provider: "openrouter"
+    use_repo_map: true
+    reminder: "sys"
+    editor_edit_format: "editor-diff"
+
+models:
+  - <<: *openai-whole
+    name: "gpt-3.5-turbo"
+
+  - <<: *openai-whole
+    name: "gpt-3.5-turbo-0125"
+
+  - <<: *openai-whole
+    name: "gpt-3.5-turbo-1106"
+
+  - <<: *openai-whole
+    name: "gpt-3.5-turbo-0613"
+
+  - <<: *openai-whole
+    name: "gpt-3.5-turbo-16k-0613"
+
+  - <<: *openai-udiff
+    name: "gpt-4-turbo-2024-04-09"
+
+  - <<: *openai-udiff
+    name: "gpt-4-turbo"
+
+  - <<: *openai-gpt4o
+    name: "gpt-4o"
+
+  - <<: *openai-gpt4o
+    name: "gpt-4o-2024-08-06"
+
+  - <<: *openai-gpt4o
+    name: "gpt-4o-2024-11-20"
+
+  - <<: *openai-whole
+    name: "gpt-4o-mini"
+    weak_model_name: "gpt-4o-mini"
+    lazy: true
+
+  - <<: *openai-whole
+    name: "gpt-4o-mini"
+    weak_model_name: "openai/gpt-4o-mini"
+    lazy: true
+
+  - <<: *openai-udiff
+    name: "gpt-4-0125-preview"
+    examples_as_sys_msg: true
+
+  - <<: *openai-udiff
+    name: "gpt-4-1106-preview"
+
+  - <<: *openai-diff
+    name: "gpt-4-vision-preview"
+
+  - <<: *openai-diff
+    name: "gpt-4-0314"
+    examples_as_sys_msg: true
+
+  - <<: *openai-diff
+    name: "gpt-4-0613"
+
+  - <<: *openai-diff
+    name: "gpt-4-32k-0613"
+
+  - <<: *openrouter-base
+    name: "openai/gpt-4o"
+    edit_format: "diff"
+    weak_model_name: "openrouter/openai/gpt-4o-mini"
+    examples_as_sys_msg: True
+    lazy: true
+
+  - <<: *o1-base
+    provider: "openai"
+    name: "o1-mini"
+    weak_model_name: "openai/gpt-4o-mini"
+    editor_model_name: "openai/gpt-4o"
+
+  - <<: *o1-base
+    provider: "azure"
+    name: "o1-mini"
+    weak_model_name: "azure/gpt-4o-mini"
+    editor_model_name: "azure/gpt-4o"
+
+  - <<: *o1-base
+    provider: "openai"
+    name: "o1-mini"
+    weak_model_name: "gpt-4o-mini"
+    editor_model_name: "gpt-4o"
+
+  - <<: *o1-base
+    provider: "openai"
+    name: "o1-preview"
+    edit_format: "diff"
+    weak_model_name: "openai/gpt-4o-mini"
+    editor_model_name: "openai/gpt-4o"
+
+  - <<: *o1-base
+    provider: "azure"
+    name: "o1-preview"
+    edit_format: "diff"
+    weak_model_name: "azure/gpt-4o-mini"
+    editor_model_name: "azure/gpt-4o"
+
+  - <<: *o1-base
+    provider: "openai"
+    name: "o1-preview"
+    edit_format: "architect"
+    weak_model_name: "gpt-4o-mini"
+    editor_model_name: "gpt-4o"
+
+  - <<: *o1-base
+    provider: "openrouter"
+    name: "openai/o1-mini"
+    weak_model_name: "openrouter/openai/gpt-4o-mini"
+    editor_model_name: "openrouter/openai/gpt-4o"
+    streaming: false
+
+  - <<: *o1-base
+    provider: "openrouter"
+    name: "openai/o1-preview"
+    edit_format: "diff"
+    weak_model_name: "openrouter/openai/gpt-4o-mini"
+    editor_model_name: "openrouter/openai/gpt-4o"
+    streaming: false
+
+  - <<: *o1-base
+    provider: "openrouter"
+    name: "openai/o1"
+    edit_format: "diff"
+    weak_model_name: "openrouter/openai/gpt-4o-mini"
+    editor_model_name: "openrouter/openai/gpt-4o"
+    streaming: false
+
+  - <<: *o1-base
+    provider: "openai"
+    name: "o1"
+    edit_format: "diff"
+    weak_model_name: "openai/gpt-4o-mini"
+    editor_model_name: "openai/gpt-4o"
+    streaming: false

@@ -1,0 +1,65 @@
+definitions:
+  - &deepseek-base
+    edit_format: "diff"
+    use_repo_map: true
+    examples_as_sys_msg: true
+    reminder: "sys"
+
+  - &deepseek-with-tokens
+    <<: *deepseek-base
+    extra_params:
+      max_tokens: 8192
+
+  - &deepseek-coder
+    <<: *deepseek-with-tokens
+    name: "deepseek-coder"
+    caches_by_default: true
+
+  - &deepseek-chat
+    <<: *deepseek-with-tokens
+    name: "deepseek-chat"
+
+  - &deepseek-reasoner
+    edit_format: "diff"
+    editor_edit_format: "editor-diff"
+    use_repo_map: true
+    examples_as_sys_msg: true
+    use_temperature: false
+    reminder: "user"
+    caches_by_default: true
+    extra_params:
+      max_tokens: 8192
+
+models:
+  - <<: *deepseek-chat
+    provider: "deepseek"
+    caches_by_default: true
+
+  - <<: *deepseek-coder
+    provider: "deepseek"
+
+  - <<: *deepseek-chat
+    provider: ""
+
+  - <<: *deepseek-coder
+    provider: ""
+
+  - <<: *deepseek-base
+    provider: "openrouter"
+    name: "deepseek/deepseek-coder"
+
+  - <<: *deepseek-base
+    provider: "openrouter"
+    name: "deepseek/deepseek-chat"
+
+  - <<: *deepseek-reasoner
+    provider: "openrouter"
+    name: "deepseek/deepseek-r1"
+    weak_model_name: "openrouter/deepseek/deepseek-chat"
+    editor_model_name: "openrouter/deepseek/deepseek-chat"
+
+  - <<: *deepseek-reasoner
+    provider: "deepseek"
+    name: "deepseek-reasoner"
+    weak_model_name: "deepseek/deepseek-chat"
+    editor_model_name: "deepseek/deepseek-chat"

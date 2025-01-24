@@ -1,0 +1,54 @@
+definitions:
+  - &gemini-base
+    provider: "gemini"
+    use_repo_map: true
+
+  - &gemini-diff-base
+    <<: *gemini-base
+    edit_format: "diff"
+
+  - &gemini-diff-fenced-base
+    <<: *gemini-base
+    edit_format: "diff-fenced"
+
+  - &gemini-flash-base
+    <<: *gemini-base
+    edit_format: "whole"
+    use_repo_map: false
+    send_undo_reply: false
+
+models:
+  - <<: *gemini-diff-base
+    name: "gemini-1.5-pro-002"
+
+  - <<: *gemini-flash-base
+    name: "gemini-1.5-flash-002"
+    use_repo_map: false
+
+  - <<: *gemini-diff-fenced-base
+    name: "gemini-1.5-pro"
+
+  - <<: *gemini-diff-fenced-base
+    name: "gemini-1.5-pro-latest"
+
+  - <<: *gemini-diff-fenced-base
+    name: "gemini-1.5-pro-exp-0827"
+
+  - <<: *gemini-diff-base
+    name: "gemini-exp-1206"
+
+  - <<: *gemini-diff-base
+    name: "gemini-exp-1114"
+
+  - <<: *gemini-diff-base
+    name: "gemini-exp-1121"
+
+  - <<: *gemini-diff-fenced-base
+    provider: "vertex_ai"
+    name: "gemini-pro-experimental"
+
+  - <<: *gemini-flash-base
+    name: "gemini-1.5-flash-exp-0827"
+
+  - <<: *gemini-diff-base
+    name: "gemini-2.0-flash-exp"

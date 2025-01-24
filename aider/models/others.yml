@@ -1,0 +1,26 @@
+models:
+  - provider: ""
+    name: "command-r-plus"
+    edit_format: "whole"
+    weak_model_name: "command-r-plus"
+    use_repo_map: true
+
+  - provider: ""
+    name: "command-r-08-2024"
+    edit_format: "whole"
+    weak_model_name: "command-r-08-2024"
+    use_repo_map: true
+
+  - provider: ""
+    name: "command-r-plus-08-2024"
+    edit_format: "whole"
+    weak_model_name: "command-r-plus-08-2024"
+    use_repo_map: true
+
+  - provider: "openrouter"
+    name: "qwen/qwen-2.5-coder-32b-instruct"
+    edit_format: "diff"
+    weak_model_name: "openrouter/qwen/qwen-2.5-coder-32b-instruct"
+    editor_model_name: "openrouter/qwen/qwen-2.5-coder-32b-instruct"
+    editor_edit_format: "editor-diff"
+    use_repo_map: true
