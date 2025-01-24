@@ -60,19 +60,20 @@ def ensure_alternating_roles(messages):
     prev_role = None
 
     for msg in messages:
-        current_role = msg.get('role')  # Get 'role', None if missing
+        current_role = msg.get("role")  # Get 'role', None if missing
 
         # If the current role is the same as the previous, insert an empty message of the opposite role
         if current_role == prev_role:
-            if current_role == 'user':
-                fixed_messages.append({'role': 'assistant', 'content': ''})
+            if current_role == "user":
+                fixed_messages.append({"role": "assistant", "content": ""})
             else:
-                fixed_messages.append({'role': 'user', 'content': ''})
+                fixed_messages.append({"role": "user", "content": ""})
 
         fixed_messages.append(msg)
         prev_role = current_role
 
     return fixed_messages
+
 
 def send_completion(
     model_name,
@@ -89,7 +90,7 @@ def send_completion(
     #
     #
 
-    if model_name == 'deepseek/deepseek-reasoner':
+    if "deepseek-reasoner" in model_name:
         messages = ensure_alternating_roles(messages)
 
     kwargs = dict(
@@ -126,6 +127,9 @@ def send_completion(
 
 def simple_send_with_retries(model, messages):
     litellm_ex = LiteLLMExceptions()
+
+    if "deepseek-reasoner" in model.name:
+        messages = ensure_alternating_roles(messages)
 
     retry_delay = 0.125
     while True:
