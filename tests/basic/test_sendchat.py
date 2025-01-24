@@ -68,6 +68,24 @@ class TestSendChat(unittest.TestCase):
         assert called_kwargs["tools"][0]["function"] == mock_function
 
     @patch("litellm.completion")
+    def test_send_completion_aider_specific_header(self, mock_completion):
+        # Setup mock to raise AttributeError
+        mock_completion.return_value = MagicMock()
+        mock_completion.return_value.choices = None
+
+        _ = Model(self.mock_model).send_completion(
+            self.mock_messages,
+            functions=None,
+            stream=False,
+        )
+
+        # Verify the aider specific header was sent
+        called_kwargs = mock_completion.call_args.kwargs
+        assert "headers" in called_kwargs
+        assert "x-coding-assistant" in called_kwargs["headers"]
+        assert "aider" in called_kwargs["headers"]["x-coding-assistant"]
+
+    @patch("litellm.completion")
     def test_simple_send_attribute_error(self, mock_completion):
         # Setup mock to raise AttributeError
         mock_completion.return_value = MagicMock()

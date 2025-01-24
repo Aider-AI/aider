@@ -16,6 +16,7 @@ import json5
 import yaml
 from PIL import Image
 
+from aider._version import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
@@ -570,6 +571,7 @@ class Model(ModelSettings):
             model=self.name,
             messages=messages,
             stream=stream,
+            headers={"x-coding-assistant": f"aider-{__version__}"},
         )
 
         if self.use_temperature is not False:
