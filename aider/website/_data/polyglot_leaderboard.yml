@@ -413,3 +413,31 @@
   versions: 0.71.2.dev
   seconds_per_case: 113.7
   total_cost: 5.4193
+
+- dirname: 2025-01-23-19-14-48--r1-architect-sonnet
+  test_cases: 225
+  model: DeepSeek R1 + claude-3-5-sonnet-20241022
+  edit_format: architect
+  commit_hash: 05a77c7
+  editor_model: claude-3-5-sonnet-20241022
+  editor_edit_format: editor-diff
+  pass_rate_1: 27.1
+  pass_rate_2: 64.0
+  pass_num_1: 61
+  pass_num_2: 144
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 392
+  lazy_comments: 6
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --architect --model r1 --editor-model sonnet
+  date: 2025-01-23
+  versions: 0.72.3.dev
+  seconds_per_case: 251.6
+  total_cost: 13.2933
