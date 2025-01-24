@@ -60,7 +60,7 @@ def ensure_alternating_roles(messages):
     prev_role = None
 
     for msg in messages:
-        current_role = msg['role']
+        current_role = msg.get('role')  # Get 'role', None if missing
 
         # If the current role is the same as the previous, insert an empty message of the opposite role
         if current_role == prev_role:
