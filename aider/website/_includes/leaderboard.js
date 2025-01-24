@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
     options: {
       plugins: {
         legend: {
-          display: true,
+          display: false,
           labels: {
             generateLabels: function(chart) {
               return [
