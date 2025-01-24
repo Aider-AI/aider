@@ -42,6 +42,38 @@ def sanity_check_messages(messages):
     return last_non_system_role == "user"
 
 
+def ensure_alternating_roles(messages):
+    """
+    Ensure messages alternate between 'assistant' and 'user' roles.
+    Inserts empty messages of the opposite role when consecutive messages of the same role are found.
+
+    Args:
+        messages: List of message dictionaries with 'role' and 'content' keys.
+
+    Returns:
+        List of messages with alternating roles.
+    """
+    if not messages:
+        return messages
+
+    fixed_messages = []
+    prev_role = None
+
+    for msg in messages:
+        current_role = msg['role']
+
+        # If the current role is the same as the previous, insert an empty message of the opposite role
+        if current_role == prev_role:
+            if current_role == 'user':
+                fixed_messages.append({'role': 'assistant', 'content': ''})
+            else:
+                fixed_messages.append({'role': 'user', 'content': ''})
+
+        fixed_messages.append(msg)
+        prev_role = current_role
+
+    return fixed_messages
+
 def send_completion(
     model_name,
     messages,
@@ -56,6 +88,9 @@ def send_completion(
         sanity_check_messages(messages)
     #
     #
+
+    if model_name == 'deepseek/deepseek-reasoner':
+        messages = ensure_alternating_roles(messages)
 
     kwargs = dict(
         model=model_name,
