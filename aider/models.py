@@ -1424,11 +1424,10 @@ def get_model_settings_as_yaml():
 
     # Filter out None values before dumping
     yaml_str = yaml.dump(
-        [ms for ms in model_settings_list if ms is not None],
-        default_flow_style=False
+        [ms for ms in model_settings_list if ms is not None], default_flow_style=False
     )
     # Add actual blank lines between entries
-    return yaml_str.replace('\n- ', '\n\n- ')
+    return yaml_str.replace("\n- ", "\n\n- ")
 
 
 def main():
