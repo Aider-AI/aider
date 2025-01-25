@@ -72,7 +72,7 @@ for more details.
 - Ask for changes:
   - Add new features or test cases.
   - Describe a bug.
-  - Paste in an error message or or GitHub issue URL.
+  - Paste in an error message or GitHub issue URL.
   - Refactor code.
   - Update docs.
 - Aider will edit your files to complete your request.
