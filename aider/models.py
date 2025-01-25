@@ -1409,22 +1409,23 @@ def print_matching_models(io, search):
 
 def get_model_settings_as_yaml():
     import yaml
+    from dataclasses import fields
 
     model_settings_list = []
     for ms in MODEL_SETTINGS:
-        # Create ordered dict with name first
-        model_settings_dict = {"name": ms.name}
-        # Add remaining fields in order
+        # Create dict with explicit field order
+        model_settings_dict = {}
         for field in fields(ModelSettings):
-            if field.name != "name":
-                model_settings_dict[field.name] = getattr(ms, field.name)
+            model_settings_dict[field.name] = getattr(ms, field.name)
         model_settings_list.append(model_settings_dict)
         # Add blank line between entries
         model_settings_list.append(None)
 
     # Filter out None values before dumping
     yaml_str = yaml.dump(
-        [ms for ms in model_settings_list if ms is not None], default_flow_style=False
+        [ms for ms in model_settings_list if ms is not None], 
+        default_flow_style=False,
+        sort_keys=False  # Preserve field order from dataclass
     )
     # Add actual blank lines between entries
     return yaml_str.replace("\n- ", "\n\n- ")
