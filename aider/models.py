@@ -765,6 +765,17 @@ MODEL_SETTINGS = [
         use_temperature=False,
     ),
     ModelSettings(
+        "azure/o1",
+        "diff",
+        weak_model_name="azure/gpt-4o-mini",
+        editor_model_name="azure/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        reminder="user",
+        use_system_prompt=False,
+        use_temperature=False,
+    ),
+    ModelSettings(
         "azure/o1-preview",
         "diff",
         weak_model_name="azure/gpt-4o-mini",
