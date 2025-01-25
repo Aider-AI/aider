@@ -771,9 +771,9 @@ MODEL_SETTINGS = [
         editor_model_name="azure/gpt-4o",
         editor_edit_format="editor-diff",
         use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
+        streaming=False,
         use_temperature=False,
+        # extra_params=dict(extra_body=dict(reasoning_effort="high")),
     ),
     ModelSettings(
         "azure/o1-preview",
