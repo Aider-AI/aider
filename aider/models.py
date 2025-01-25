@@ -776,6 +776,17 @@ MODEL_SETTINGS = [
         use_temperature=False,
     ),
     ModelSettings(
+        "azure/o1",
+        "diff",
+        weak_model_name="azure/gpt-4o-mini",
+        editor_model_name="azure/gpt-4o",
+        editor_edit_format="editor-diff",
+        use_repo_map=True,
+        streaming=False,
+        use_temperature=False,
+        # extra_params=dict(extra_body=dict(reasoning_effort="high")),
+    ),
+    ModelSettings(
         "o1-preview",
         "architect",
         weak_model_name="gpt-4o-mini",
