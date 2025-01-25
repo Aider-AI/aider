@@ -1408,8 +1408,9 @@ def print_matching_models(io, search):
 
 
 def get_model_settings_as_yaml():
-    import yaml
     from dataclasses import fields
+
+    import yaml
 
     model_settings_list = []
     for ms in MODEL_SETTINGS:
@@ -1423,9 +1424,9 @@ def get_model_settings_as_yaml():
 
     # Filter out None values before dumping
     yaml_str = yaml.dump(
-        [ms for ms in model_settings_list if ms is not None], 
+        [ms for ms in model_settings_list if ms is not None],
         default_flow_style=False,
-        sort_keys=False  # Preserve field order from dataclass
+        sort_keys=False,  # Preserve field order from dataclass
     )
     # Add actual blank lines between entries
     return yaml_str.replace("\n- ", "\n\n- ")
