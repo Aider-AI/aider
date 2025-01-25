@@ -1410,15 +1410,25 @@ def print_matching_models(io, search):
 def get_model_settings_as_yaml():
     import yaml
 
-    # I want the "name" field to be the first entry in each list; i want a blank line between list entries. ai!
     model_settings_list = []
     for ms in MODEL_SETTINGS:
-        model_settings_dict = {
-            field.name: getattr(ms, field.name) for field in fields(ModelSettings)
-        }
+        # Create ordered dict with name first
+        model_settings_dict = {"name": ms.name}
+        # Add remaining fields in order
+        for field in fields(ModelSettings):
+            if field.name != "name":
+                model_settings_dict[field.name] = getattr(ms, field.name)
         model_settings_list.append(model_settings_dict)
+        # Add blank line between entries
+        model_settings_list.append(None)
 
-    return yaml.dump(model_settings_list, default_flow_style=False)
+    # Filter out None values before dumping
+    yaml_str = yaml.dump(
+        [ms for ms in model_settings_list if ms is not None],
+        default_flow_style=False
+    )
+    # Add actual blank lines between entries
+    return yaml_str.replace('\n- ', '\n\n- ')
 
 
 def main():
