@@ -1410,6 +1410,7 @@ def print_matching_models(io, search):
 def get_model_settings_as_yaml():
     import yaml
 
+    # I want the "name" field to be the first entry in each list; i want a blank line between list entries. ai!
     model_settings_list = []
     for ms in MODEL_SETTINGS:
         model_settings_dict = {
