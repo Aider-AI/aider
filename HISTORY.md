@@ -1,7 +1,12 @@
 # Release history
 
-### Aider v0.72.2
+### Aider v0.72.3
 
+- Enforce user/assistant turn order to avoid R1 errors, by miradnanali.
+- Case-insensitive model name matching while preserving original case.
+- Aider wrote 67% of the code in this release.
+
+### Aider v0.72.2
 - Harden against user/assistant turn order problems which cause R1 errors.
 - Added environment variable AIDER_SANITY_CHECK_TURNS for turn order validation.
 
