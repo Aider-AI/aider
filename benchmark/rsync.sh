@@ -24,9 +24,9 @@ sync_repo() {
     rsync -avz --delete \
           --exclude-from="$EXCLUDE_FILE" \
           "$REPO_ROOT/" \
-          "$DEST:~/aider/" || true
+          "$DEST:~/aider/" || sleep 0.1
     
-    rsync -a .env .gitignore "$DEST:~/aider/." || true
+    rsync -a .env .gitignore "$DEST:~/aider/." || sleep 0.1
 
     echo Done syncing, waiting.
 }
