@@ -867,7 +867,10 @@ class Coder:
 
         while message:
             self.reflected_message = None
-            list(self.send_message(message))
+            # for the first reflection use the (quicker) editor model; if it takes more than 1 retry though
+            # use the (potentially slower) main model
+            send_model = self.main_model.editor_model if self.num_reflections == 1 else self.main_model
+            list(self.send_message(message, model=send_model))
 
             if not self.reflected_message:
                 break
@@ -1230,7 +1233,7 @@ class Coder:
 
         return chunks
 
-    def send_message(self, inp):
+    def send_message(self, inp, model=None):
         self.event("message_send_starting")
 
         self.cur_messages += [
@@ -1260,7 +1263,7 @@ class Coder:
         try:
             while True:
                 try:
-                    yield from self.send(messages, functions=self.functions)
+                    yield from self.send(messages, model=model, functions=self.functions)
                     break
                 except litellm_ex.exceptions_tuple() as err:
                     ex_info = litellm_ex.get_ex_info(err)
