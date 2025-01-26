@@ -4,14 +4,13 @@ highlight_image: /assets/prompt-caching.jpg
 parent: Usage
 nav_order: 750
 description: Aider supports prompt caching for cost savings and faster coding.
-
 ---
 
 # Prompt caching
 
 Aider supports prompt caching for cost savings and faster coding.
 Currently Anthropic provides caching for Sonnet and Haiku,
-and DeepSeek provides caching for Coder.
+and DeepSeek provides caching for Chat.
 
 Aider organizes the chat history to try and cache:
 
@@ -47,5 +46,4 @@ Use `--cache-keepalive-pings N` to tell aider to ping
 every 5 minutes to keep the cache warm.
 Aider will ping up to `N` times over a period of `N*5` minutes
 after each message you send.
-
 
