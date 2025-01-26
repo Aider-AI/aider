@@ -19,7 +19,7 @@ Aider works best with these models, which are skilled at editing code:
 - [GPT-4o](/docs/llms/openai.html)
 - [Claude 3.5 Sonnet](/docs/llms/anthropic.html)
 - [Claude 3 Opus](/docs/llms/anthropic.html)
-- [DeepSeek Coder V2](/docs/llms/deepseek.html)
+- [DeepSeek V3](/docs/llms/deepseek.html)
 
 
 ## Free models
