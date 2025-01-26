@@ -1,5 +1,32 @@
 
 
+- dirname: 2025-01-25-13-53-23--deepseek-r1-v3
+  test_cases: 225
+  model: deepseek/deepseek-reasoner
+  edit_format: architect
+  commit_hash: b276d48-dirty
+  editor_model: deepseek/deepseek-chat
+  editor_edit_format: editor-diff
+  pass_rate_1: 30.7
+  pass_rate_2: 59.1
+  pass_num_1: 69
+  pass_num_2: 133
+  percent_cases_well_formed: 100.0
+  error_outputs: 13
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 388
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-01-25
+  versions: 0.72.3.dev
+  seconds_per_case: 949.4
+  total_cost: 6.3330
 
 - dirname: 2025-01-23-19-14-48--r1-architect-sonnet
   test_cases: 225
