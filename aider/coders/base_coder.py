@@ -1251,7 +1251,8 @@ class Coder:
                 num_ctx = extra_params.get("num_ctx")
                 if num_ctx:
                     self.io.tool_waning(
-                        f"\nNote: Your Ollama model is configured with num_ctx={num_ctx}. See"
+                        f"\nYour Ollama model is configured with num_ctx={num_ctx} tokens of"
+                        " context window\nSee"
                         " https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
                         " for help configuring larger context windows."
                     )
