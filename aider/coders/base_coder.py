@@ -1237,10 +1237,10 @@ class Coder:
 
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
-                f"\nInput tokens ({input_tokens:,}) exceeds model's"
+                f"\nYour current chat context {input_tokens:,} exceeds the model's"
                 f" {max_input_tokens:,} token limit!"
             )
-            self.io.tool_output("Try:")
+            self.io.tool_output("To reduce the chat context:")
             self.io.tool_output("- Use /drop to remove unneeded files from the chat")
             self.io.tool_output("- Use /clear to clear the chat history")
             self.io.tool_output("- Break your code into smaller files")
@@ -1250,7 +1250,7 @@ class Coder:
                 extra_params = getattr(self.main_model, "extra_params", None) or {}
                 num_ctx = extra_params.get("num_ctx")
                 if num_ctx:
-                    self.io.tool_error(
+                    self.io.tool_waning(
                         f"\nNote: Your Ollama model is configured with num_ctx={num_ctx}. See"
                         " https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
                         " for help configuring larger context windows."
