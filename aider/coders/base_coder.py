@@ -1367,6 +1367,7 @@ class Coder:
                 interrupted = True
 
         if interrupted:
+            # check if the last messages was role==user, append the ^C Key.. to it if so. ai!
             self.cur_messages += [
                 dict(role="user", content="^C KeyboardInterrupt"),
                 dict(role="assistant", content="I see that you interrupted my previous reply."),
