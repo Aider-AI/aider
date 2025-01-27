@@ -1244,7 +1244,8 @@ class Coder:
             self.io.tool_error("- Use /drop to remove unneeded files from the chat")
             self.io.tool_error("- Use /clear to clear the chat history")
             self.io.tool_error("- Break your code into smaller files")
-            return False
+            if not self.io.confirm_ask("Try to proceed anyway?", default="n"):
+                return False
         return True
 
     def send_message(self, inp):
