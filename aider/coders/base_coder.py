@@ -1372,7 +1372,6 @@ class Coder:
             else:
                 self.cur_messages += [dict(role="user", content="^C KeyboardInterrupt")]
             self.cur_messages += [dict(role="assistant", content="I see that you interrupted my previous reply.")]
-            ]
             return
 
         edited = self.apply_updates()
