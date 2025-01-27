@@ -1240,6 +1240,7 @@ class Coder:
                 f"\nInput tokens ({input_tokens:,}) exceeds model's"
                 f" {max_input_tokens:,} token limit!"
             )
+            # turn these into tool_output ai!
             self.io.tool_error("Try:")
             self.io.tool_error("- Use /drop to remove unneeded files from the chat")
             self.io.tool_error("- Use /clear to clear the chat history")
