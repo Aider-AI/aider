@@ -1250,8 +1250,8 @@ class Coder:
                 num_ctx = self.main_model.extra_params.get("num_ctx")
                 if num_ctx:
                     self.io.tool_error(
-                        f"\nNote: Your Ollama model is configured with num_ctx={num_ctx}."
-                        f" See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
+                        f"\nNote: Your Ollama model is configured with num_ctx={num_ctx}. See"
+                        " https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
                         " for help configuring larger context windows."
                     )
 
