@@ -1237,8 +1237,8 @@ class Coder:
 
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
-                f"Your current chat context {input_tokens:,} exceeds the model's"
-                f" {max_input_tokens:,} token limit!"
+                f"Your current chat context {input_tokens:,} exceeds the"
+                f" {max_input_tokens:,} token limit for {self.main_model.name}!"
             )
             self.io.tool_output("To reduce the chat context:")
             self.io.tool_output("- Use /drop to remove unneeded files from the chat")
