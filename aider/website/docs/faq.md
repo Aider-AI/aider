@@ -249,14 +249,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>1,262,744</td><td class='right'>54.9%</td></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>670,009</td><td class='right'>29.1%</td></tr>
-<tr><td>deepseek/REDACTED</td><td class='right'>308,841</td><td class='right'>13.4%</td></tr>
-<tr><td>deepseek/deepseek-reasoner</td><td class='right'>22,989</td><td class='right'>1.0%</td></tr>
-<tr><td>claude-3-5-haiku-20241022</td><td class='right'>10,083</td><td class='right'>0.4%</td></tr>
-<tr><td>gemini/gemini-exp-1206</td><td class='right'>10,068</td><td class='right'>0.4%</td></tr>
-<tr><td>mistral/codestral-latest</td><td class='right'>8,137</td><td class='right'>0.4%</td></tr>
-<tr><td>o1</td><td class='right'>4,963</td><td class='right'>0.2%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>910,318</td><td class='right'>41.9%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>887,826</td><td class='right'>40.9%</td></tr>
+<tr><td>deepseek/REDACTED</td><td class='right'>308,841</td><td class='right'>14.2%</td></tr>
+<tr><td>deepseek/deepseek-reasoner</td><td class='right'>40,597</td><td class='right'>1.9%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>10,083</td><td class='right'>0.5%</td></tr>
+<tr><td>gemini/gemini-exp-1206</td><td class='right'>10,068</td><td class='right'>0.5%</td></tr>
+<tr><td>o1</td><td class='right'>2,385</td><td class='right'>0.1%</td></tr>
 <tr><td>gpt-4o</td><td class='right'>1,775</td><td class='right'>0.1%</td></tr>
 <tr><td>o1-preview</td><td class='right'>175</td><td class='right'>0.0%</td></tr>
 </table>
