@@ -1244,6 +1244,17 @@ class Coder:
             self.io.tool_error("- Use /drop to remove unneeded files from the chat")
             self.io.tool_error("- Use /clear to clear the chat history")
             self.io.tool_error("- Break your code into smaller files")
+
+            # Special warning for Ollama models about context window size
+            if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
+                num_ctx = self.main_model.extra_params.get("num_ctx")
+                if num_ctx:
+                    self.io.tool_error(
+                        f"\nNote: Your Ollama model is configured with num_ctx={num_ctx}."
+                        f" See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
+                        " for help configuring larger context windows."
+                    )
+
             if not self.io.confirm_ask("Try to proceed anyway?", default="n"):
                 return False
         return True
