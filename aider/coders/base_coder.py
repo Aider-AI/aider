@@ -1247,7 +1247,8 @@ class Coder:
 
             # Special warning for Ollama models about context window size
             if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
-                num_ctx = self.main_model.extra_params.get("num_ctx")
+                extra_params = getattr(self.main_model, "extra_params", None) or {}
+                num_ctx = extra_params.get("num_ctx")
                 if num_ctx:
                     self.io.tool_error(
                         f"\nNote: Your Ollama model is configured with num_ctx={num_ctx}. See"
