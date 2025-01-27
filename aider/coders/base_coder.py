@@ -1237,13 +1237,14 @@ class Coder:
 
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
-                f"\nYour current chat context {input_tokens:,} exceeds the model's"
+                f"Your current chat context {input_tokens:,} exceeds the model's"
                 f" {max_input_tokens:,} token limit!"
             )
             self.io.tool_output("To reduce the chat context:")
             self.io.tool_output("- Use /drop to remove unneeded files from the chat")
             self.io.tool_output("- Use /clear to clear the chat history")
             self.io.tool_output("- Break your code into smaller files")
+            proceed = "y"
 
             # Special warning for Ollama models about context window size
             if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
@@ -1251,13 +1252,14 @@ class Coder:
                 num_ctx = extra_params.get("num_ctx")
                 if num_ctx:
                     self.io.tool_waning(
-                        f"\nYour Ollama model is configured with num_ctx={num_ctx} tokens of"
+                        f"Your Ollama model is configured with num_ctx={num_ctx} tokens of"
                         " context window\nSee"
                         " https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
                         " for help configuring larger context windows."
                     )
+                proceed = "n"
 
-            if not self.io.confirm_ask("Try to proceed anyway?", default="n"):
+            if not self.io.confirm_ask("Try to proceed anyway?", default=proceed):
                 return False
         return True
 
