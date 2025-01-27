@@ -1235,6 +1235,8 @@ class Coder:
         input_tokens = self.main_model.token_count(messages)
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
 
+        proceed = None
+
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
                 f"Your estimated chat context of {input_tokens:,} tokens exceeds the"
@@ -1244,28 +1246,26 @@ class Coder:
             self.io.tool_output("- Use /drop to remove unneeded files from the chat")
             self.io.tool_output("- Use /clear to clear the chat history")
             self.io.tool_output("- Break your code into smaller files")
+            proceed = "y"
+            self.io.tool_output(
+                "It's probably safe to try and send the request, most providers won't charge if"
+                " the context limit is exceeded."
+            )
 
-            # Special warning for Ollama models about context window size
-            if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
-                extra_params = getattr(self.main_model, "extra_params", None) or {}
-                num_ctx = extra_params.get("num_ctx")
-                if num_ctx:
-                    self.io.tool_waning(
-                        f"Your Ollama model is configured with num_ctx={num_ctx} tokens of"
-                        " context window\nSee"
-                        " https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
-                        " for help configuring larger context windows."
-                    )
-                proceed = "n"
-            else:
-                proceed = "y"
-                self.io.tool_output(
-                    "It's probably safe to try and send the request, most providers won't charge if"
-                    " the context limit is exceeded."
+        # Special warning for Ollama models about context window size
+        if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
+            extra_params = getattr(self.main_model, "extra_params", None) or {}
+            num_ctx = extra_params.get("num_ctx", 8192)
+            if max_input_tokens and max_input_tokens > num_ctx:
+                self.io.tool_waning(
+                    f"Your Ollama model is configured with num_ctx={num_ctx} tokens of"
+                    " context window\nSee"
+                    " https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
+                    " for help configuring larger context windows."
                 )
 
-            if not self.io.confirm_ask("Try to proceed anyway?", default=proceed):
-                return False
+        if proceed and not self.io.confirm_ask("Try to proceed anyway?", default=proceed):
+            return False
         return True
 
     def send_message(self, inp):
