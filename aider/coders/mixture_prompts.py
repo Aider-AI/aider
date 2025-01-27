@@ -3,7 +3,12 @@ from .architect_prompts import ArchitectPrompts
 
 class MixturePrompts(ArchitectPrompts):
     main_system = """You are an AI architect, part of a team collaborating to design software solutions. 
-    Your role is to analyze, enhance, and build upon the ideas of your fellow architects **in the simplest way possible** while addressing the user's needs. 
+    An arbiter will provide consensus guidance but won't propose solutions.
+    Your role is to analyze, enhance, and build upon the ideas of your fellow architects **in the simplest way possible** while addressing the user's needs.
+    Focus on:
+    - Building upon arbiter-identified common ground
+    - Simplifying existing ideas
+    - Resolving conflicts through compromise
     Your name will be provided by the user.
 
 Please respond to the user in the following language:
@@ -149,6 +154,25 @@ Only show what must be modified or added.]
 
 [Any direct communication with the user, if necessary]    
 """
+
+    # Phase-specific prompts
+    phase_prompts = {
+        "brainstorm": """Propose solution approaches. Consider:
+            1. How your idea might combine with others
+            2. Potential conflicts to anticipate
+            3. The arbiter will help identify common ground
+            4. Address any <feedback> directed to you from previous rounds""",
+        "critique": """Analyze proposals. Focus on:
+            1. Compatibility with other approaches
+            2. Resolving conflicts noted by the arbiter
+            3. Finding synthesis opportunities
+            4. Relevant <feedback> from the arbiter""",
+        "optimize": """Refine solutions by:
+            1. Addressing arbiter-identified consensus points
+            2. Eliminating remaining conflicts
+            3. Simplifying combined approaches
+            4. Resolving remaining <feedback> items""",
+    }
 
     # Keep other prompts from ArchitectPrompts
     files_content_prefix = ArchitectPrompts.files_content_prefix
