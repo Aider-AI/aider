@@ -1237,14 +1237,13 @@ class Coder:
 
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
-                f"Your current chat context {input_tokens:,} exceeds the"
+                f"Your estimated chat context of {input_tokens:,} tokens exceeds the"
                 f" {max_input_tokens:,} token limit for {self.main_model.name}!"
             )
             self.io.tool_output("To reduce the chat context:")
             self.io.tool_output("- Use /drop to remove unneeded files from the chat")
             self.io.tool_output("- Use /clear to clear the chat history")
             self.io.tool_output("- Break your code into smaller files")
-            proceed = "y"
 
             # Special warning for Ollama models about context window size
             if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
@@ -1258,6 +1257,12 @@ class Coder:
                         " for help configuring larger context windows."
                     )
                 proceed = "n"
+            else:
+                proceed = "y"
+                self.io.tool_output(
+                    "It's probably safe to try and send the request, most providers won't charge if"
+                    " the context limit is exceeded."
+                )
 
             if not self.io.confirm_ask("Try to proceed anyway?", default=proceed):
                 return False
