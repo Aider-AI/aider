@@ -1240,11 +1240,10 @@ class Coder:
                 f"\nInput tokens ({input_tokens:,}) exceeds model's"
                 f" {max_input_tokens:,} token limit!"
             )
-            # turn these into tool_output ai!
-            self.io.tool_error("Try:")
-            self.io.tool_error("- Use /drop to remove unneeded files from the chat")
-            self.io.tool_error("- Use /clear to clear the chat history")
-            self.io.tool_error("- Break your code into smaller files")
+            self.io.tool_output("Try:")
+            self.io.tool_output("- Use /drop to remove unneeded files from the chat")
+            self.io.tool_output("- Use /clear to clear the chat history")
+            self.io.tool_output("- Break your code into smaller files")
 
             # Special warning for Ollama models about context window size
             if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
