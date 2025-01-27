@@ -1230,6 +1230,23 @@ class Coder:
 
         return chunks
 
+    def check_tokens(self, messages):
+        """Check if the messages will fit within the model's token limits."""
+        input_tokens = self.main_model.token_count(messages)
+        max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
+
+        if max_input_tokens and input_tokens >= max_input_tokens:
+            self.io.tool_error(
+                f"\nInput tokens ({input_tokens:,}) exceeds model's"
+                f" {max_input_tokens:,} token limit!"
+            )
+            self.io.tool_error("Try:")
+            self.io.tool_error("- Use /drop to remove unneeded files from the chat")
+            self.io.tool_error("- Use /clear to clear the chat history")
+            self.io.tool_error("- Break your code into smaller files")
+            return False
+        return True
+
     def send_message(self, inp):
         self.event("message_send_starting")
 
@@ -1239,6 +1256,8 @@ class Coder:
 
         chunks = self.format_messages()
         messages = chunks.all_messages()
+        if not self.check_tokens(messages):
+            return
         self.warm_cache(chunks)
 
         if self.verbose:
