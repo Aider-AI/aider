@@ -103,10 +103,14 @@ class ModelSettings:
     remove_reasoning: Optional[str] = None
 
 
-# load these from aider/resources/model-settings.yml
-# use the proper packaging way to locate that file
-# ai!
+import importlib.resources
+
+# Load model settings from package resource
 MODEL_SETTINGS = []
+with importlib.resources.open_text("aider.resources", "model-settings.yml") as f:
+    model_settings_list = yaml.safe_load(f)
+    for model_settings_dict in model_settings_list:
+        MODEL_SETTINGS.append(ModelSettings(**model_settings_dict))
 
 class ModelInfoManager:
     MODEL_INFO_URL = (
