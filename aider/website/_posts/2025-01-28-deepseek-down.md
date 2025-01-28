@@ -63,9 +63,18 @@ See [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-rou
 
 ## Fireworks
 
-# add the code block showing how to set FIREWORKS_API_KEY
-# also show --model fireworks_ai/accounts/fireworks/models/deepseek-chat
-# ai!
+```bash
+# Set your API key using environment variables
+export FIREWORKS_API_KEY=<your-key>
+aider --model fireworks_ai/accounts/fireworks/models/deepseek-chat
+
+# Or use the --api-key command line option
+aider --model fireworks_ai/accounts/fireworks/models/deepseek-chat --api-key fireworks=<your-key>
+
+# Or add it to .aider.conf.yml in your home directory or project root:
+api-key:
+  - fireworks=<your-key>
+```
 
 ```yaml
 - name: fireworks_ai/accounts/fireworks/models/deepseek-chat
