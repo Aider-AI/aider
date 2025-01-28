@@ -667,8 +667,8 @@ def get_model_settings_as_yaml():
     defaults["name"] = "(default values)"
     model_settings_list.append(defaults)
 
-    # sort on .name ai!
-    for ms in MODEL_SETTINGS:
+    # Sort model settings by name
+    for ms in sorted(MODEL_SETTINGS, key=lambda x: x.name):
         # Create dict with explicit field order
         model_settings_dict = {}
         for field in fields(ModelSettings):
