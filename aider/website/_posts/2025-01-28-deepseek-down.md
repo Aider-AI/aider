@@ -12,6 +12,9 @@ nav_exclude: true
 # Alternative DeepSeek V3 providers
 {: .no_toc }
 
+* TOC
+{:toc}
+
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 
 DeepSeek's API has been experiencing significant reliability issues for the past 24-48+ hours, with many users reporting downtime and overload problems.
