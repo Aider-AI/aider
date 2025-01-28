@@ -1884,9 +1884,11 @@ class Coder:
             new = new.rstrip()
 
         res = cur + new
-        # if self.main_model.remove_reasoning, then use that string. say it's "think"
-        # then use a regex to remove "<think>.*</think>" from the res
-        # the text may span many lines. ai!
+
+        if self.main_model.remove_reasoning:
+            import re
+            pattern = f"<{self.main_model.remove_reasoning}>.*?</{self.main_model.remove_reasoning}>"
+            res = re.sub(pattern, "", res, flags=re.DOTALL)
 
         return res
 
