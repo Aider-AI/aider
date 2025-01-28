@@ -1,6 +1,6 @@
 ---
-title: DeepSeek V3 polyglot benchmark results by provider
-excerpt: Comparing DeepSeek V3 performance across different providers on aider's polyglot benchmark.
+title: DeepSeek API issues - Alternative providers
+excerpt: DeepSeek's API has been experiencing reliability issues. Here are alternative providers you can use.
 highlight_image: /assets/deepseek-down.jpg
 draft: false
 nav_exclude: true
@@ -9,15 +9,29 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# DeepSeek V3 polyglot benchmark results by provider
+# DeepSeek API issues - Alternative providers
 {: .no_toc }
 
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 
-DeepSeek V3 is a powerful open source model that performs well on aider's polyglot benchmark.
-However, the results can vary significantly depending on which provider is serving the model.
+DeepSeek's API has been experiencing significant reliability issues for the past 24-48+ hours, with many users reporting downtime and overload problems.
 
-This article compares DeepSeek V3 results from multiple providers to help you choose the best option for your needs.
+If you're affected by these issues, several alternative providers offer access to DeepSeek models. This article compares their performance on aider's polyglot benchmark to help you choose a reliable alternative.
+
+## Using alternative providers
+
+The benchmark results below show that several providers offer comparable or better performance than DeepSeek's native API. To switch providers, you'll need to:
+
+1. Sign up for an account with your chosen alternative provider
+2. Get their API key
+3. Update your aider configuration to use their endpoint
+
+For example, to use OpenRouter:
+
+```bash
+export OPENROUTER_API_KEY=<your-key>
+aider --model openrouter/deepseek/deepseek-v3
+```
 
 ## Results
 
