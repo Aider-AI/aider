@@ -1,4 +1,5 @@
 import difflib
+import importlib.resources
 import json
 import math
 import os
@@ -102,8 +103,6 @@ class ModelSettings:
     editor_edit_format: Optional[str] = None
     remove_reasoning: Optional[str] = None
 
-
-import importlib.resources
 
 # Load model settings from package resource
 MODEL_SETTINGS = []
