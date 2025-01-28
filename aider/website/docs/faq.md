@@ -249,9 +249,9 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>866,175</td><td class='right'>44.5%</td></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>704,119</td><td class='right'>36.2%</td></tr>
-<tr><td>deepseek/REDACTED</td><td class='right'>308,841</td><td class='right'>15.9%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>876,538</td><td class='right'>44.8%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>704,119</td><td class='right'>36.0%</td></tr>
+<tr><td>deepseek/REDACTED</td><td class='right'>308,841</td><td class='right'>15.8%</td></tr>
 <tr><td>deepseek/deepseek-reasoner</td><td class='right'>40,597</td><td class='right'>2.1%</td></tr>
 <tr><td>claude-3-5-haiku-20241022</td><td class='right'>10,083</td><td class='right'>0.5%</td></tr>
 <tr><td>openrouter/deepseek/deepseek-chat</td><td class='right'>9,995</td><td class='right'>0.5%</td></tr>

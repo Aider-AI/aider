@@ -144,6 +144,10 @@ You can also look at the `ModelSettings` class in
 [models.py](https://github.com/Aider-AI/aider/blob/main/aider/models.py)
 file for more details about all of the model setting that aider supports.
 
+The first entry shows all the settings, with their default values.
+For a real model,
+you just need to include whichever fields that you want to override the defaults.
+
 <!--[[[cog
 from aider.models import get_model_settings_as_yaml
 cog.out("```yaml\n")
@@ -151,6 +155,24 @@ cog.out(get_model_settings_as_yaml())
 cog.out("```\n")
 ]]]-->
 ```yaml
+- name: (default values)
+  edit_format: whole
+  weak_model_name: null
+  use_repo_map: false
+  send_undo_reply: false
+  lazy: false
+  reminder: user
+  examples_as_sys_msg: false
+  extra_params: null
+  cache_control: false
+  caches_by_default: false
+  use_system_prompt: true
+  use_temperature: true
+  streaming: true
+  editor_model_name: null
+  editor_edit_format: null
+  remove_reasoning: null
+
 - name: gpt-3.5-turbo
   weak_model_name: gpt-4o-mini
   reminder: sys

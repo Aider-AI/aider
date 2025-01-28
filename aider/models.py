@@ -1414,6 +1414,13 @@ def get_model_settings_as_yaml():
     import yaml
 
     model_settings_list = []
+    # Add default settings first with all field values
+    defaults = {}
+    for field in fields(ModelSettings):
+        defaults[field.name] = field.default
+    defaults["name"] = "(default values)"
+    model_settings_list.append(defaults)
+
     for ms in MODEL_SETTINGS:
         # Create dict with explicit field order
         model_settings_dict = {}
