@@ -39,5 +39,24 @@ If you get errors, check your
 Be sure to "enable providers that may train on inputs"
 to allow use of all models.
 
+## Controlling provider selection
+
+You can control which OpenRouter providers are used by creating a `.aider.model.settings.yml` file in your home directory or project root. For example:
+
+```yaml
+- name: openrouter/anthropic/claude-3.5-sonnet
+  extra_params:
+    provider:
+      # Only use these providers, in this order
+      order: ["Anthropic", "Together"]
+      # Don't fall back to other providers
+      allow_fallbacks: false
+      # Skip providers that may train on inputs
+      data_collection: "deny"
+      # Only use providers supporting all parameters
+      require_parameters: true
+```
+
+See [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for full details on these settings.
 
 
