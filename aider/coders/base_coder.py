@@ -1886,7 +1886,7 @@ class Coder:
         res = cur + new
 
         if self.main_model.remove_reasoning:
-            import re
+            import re # to top ai!
 
             pattern = (
                 f"<{self.main_model.remove_reasoning}>.*?</{self.main_model.remove_reasoning}>"
