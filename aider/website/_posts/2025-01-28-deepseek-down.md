@@ -76,6 +76,8 @@ api-key:
   - fireworks=<your-key>
 ```
 
+Create a `.aider.model.settings.yml` file in your home directory or git project root with settings like this:
+
 ```yaml
 - name: fireworks_ai/accounts/fireworks/models/deepseek-chat
   edit_format: diff
@@ -98,12 +100,14 @@ api-key:
 ## Other providers
 
 You will need to properly configure aider to work with DeepSeek V3 when served
-via alternate providers.
-Aider is pre-configured to work well with V3 served via DeepSeek's direct API and via OpenRouter.
+via other providers:
 
-For other providers, you should adapt this example configuration for using DeepSeek V3
-via Fireworks.
-You'll need to change the `name` field to match you chosen provider's model naming scheme.
+- Determine the `--model` name to use.
+- Provide your API key to aider.
+- Add model settings to `.aider.model.settings.yml`.
+
+
+Adapt the `.aider.model.settings.yml` shown above for Fireworks. You will need to change the `name` field to match you chosen provider's model naming scheme.
 
 See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings) for details about all aider model settings
 
