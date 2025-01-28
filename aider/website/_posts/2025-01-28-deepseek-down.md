@@ -1,7 +1,7 @@
 ---
 title: Alternative DeepSeek V3 providers
 excerpt: DeepSeek's API has been experiencing reliability issues. Here are alternative providers you can use.
-highlight_image: /assets/deepseek-down.jpg
+#highlight_image: /assets/deepseek-down.jpg
 draft: false
 nav_exclude: true
 ---
@@ -18,10 +18,6 @@ DeepSeek's API has been experiencing significant reliability issues for the past
 Their [status page](https://status.deepseek.com) notes an ongoing incident.
 
 If you're affected by these issues, several alternative providers offer access to DeepSeek V3. This article compares their performance on aider's polyglot benchmark to help you choose a reliable alternative.
-
-## Using alternative providers
-
-To use these providers, you'll need to create an account with them and obtain an API key.
 
 ## OpenRouter
 
@@ -64,15 +60,12 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
 
 See [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for more details.
 
-## Other providers
 
-You will need to properly configure aider to work with DeepSeek V3 when served
-via alternate providers.
-Aider is pre-configured to work well with V3 served via DeepSeek's direct API and via OpenRouter.
+## Fireworks
 
-For other providers, you should adapt this example configuration for using DeepSeek V3
-via Fireworks.
-You'll need to change the `name` field to match you chosen provider's model naming scheme.
+# add the code block showing how to set FIREWORKS_API_KEY
+# also show --model fireworks_ai/accounts/fireworks/models/deepseek-chat
+# ai!
 
 ```yaml
 - name: fireworks_ai/accounts/fireworks/models/deepseek-chat
@@ -92,6 +85,16 @@ You'll need to change the `name` field to match you chosen provider's model nami
   streaming: true
 ```
 
+
+## Other providers
+
+You will need to properly configure aider to work with DeepSeek V3 when served
+via alternate providers.
+Aider is pre-configured to work well with V3 served via DeepSeek's direct API and via OpenRouter.
+
+For other providers, you should adapt this example configuration for using DeepSeek V3
+via Fireworks.
+You'll need to change the `name` field to match you chosen provider's model naming scheme.
 
 See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings) for details about all aider model settings
 
