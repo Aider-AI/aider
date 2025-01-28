@@ -12,15 +12,16 @@ nav_exclude: true
 # Alternative DeepSeek V3 providers
 {: .no_toc }
 
-* TOC
-{:toc}
-
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 
 DeepSeek's API has been experiencing significant reliability issues for the past 24-48+ hours, with many users reporting downtime and overload problems.
 Their [status page](https://status.deepseek.com) notes an ongoing incident.
 
 If you're affected by these issues, several alternative providers offer access to DeepSeek V3. This article compares their performance on aider's polyglot benchmark to help you choose a reliable alternative.
+
+## Providers
+* TOC
+{:toc}
 
 ## OpenRouter
 
