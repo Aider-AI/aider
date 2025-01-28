@@ -56,6 +56,8 @@ you added to the chat.
 That's because ollama is silently discarding them because they exceed the context window.
 
 Aider sets Ollama's context window to 8k by default. 
+Larger context windows will allow you to work with larger amounts of code,
+but will use memory and increase latency.
 If you would like
 a larger context window
 you can use a

@@ -119,8 +119,11 @@ setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows, restart shell after set
 aider --model ollama/deepseek-v3
 ```
 
-It's important to provide model settings, especially the `num_ctx` parameter.
+It's important to provide model settings, especially the `num_ctx` parameter to
+set the context window.
 Ollama uses a 2k context window by default, which is very small for working with aider.
+Larger context windows will allow you to work with larger amounts of code,
+but will use memory and increase latency.
 
 Unlike most other LLM servers, Ollama does not throw an error if you submit a request that exceeds the context window. Instead, it just silently truncates the request by discarding the “oldest” messages in the chat to make it fit within the context window.
 
@@ -137,15 +140,13 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
   lazy: false
   reminder: sys
   examples_as_sys_msg: true
-  extra_params:
-    max_tokens: 8192
   cache_control: false
   caches_by_default: true
   use_system_prompt: true
   use_temperature: true
   streaming: true
   extra_params:
-    num_ctx: 8192
+    num_ctx: 8192 # How large a context window?
 ```
 
 ## Other providers
