@@ -1413,6 +1413,7 @@ def get_model_settings_as_yaml():
 
     import yaml
 
+    # omit the keys if the value is the same as the default value for that key. ai!
     model_settings_list = []
     for ms in MODEL_SETTINGS:
         # Create dict with explicit field order
