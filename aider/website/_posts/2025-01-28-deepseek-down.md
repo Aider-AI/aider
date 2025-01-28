@@ -122,6 +122,8 @@ Unlike most other LLM servers, Ollama does not throw an error if you submit a re
 
 So if your context window is too small, you won’t get an explicit error. The biggest symptom will be that aider says it can’t see (some of) the files you added to the chat. That’s because ollama is silently discarding them because they exceed the context window.
 
+Create a `.aider.model.settings.yml` file in your home directory or git project root with settings like this:
+
 ```yaml
 - name: ollama/deepseek-v3
   edit_format: diff
