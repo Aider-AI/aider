@@ -29,8 +29,16 @@ The benchmark results below show that several providers offer comparable or bett
 For example, to use OpenRouter:
 
 ```bash
+# Set your API key using environment variables
 export OPENROUTER_API_KEY=<your-key>
 aider --model openrouter/deepseek/deepseek-v3
+
+# Or use the --api-key command line option
+aider --model openrouter/deepseek/deepseek-v3 --api-key openrouter=<your-key>
+
+# Or add it to .aider.conf.yml in your home directory or project root:
+api-key:
+  - openrouter=<your-key>
 ```
 
 ## Configuring model settings
