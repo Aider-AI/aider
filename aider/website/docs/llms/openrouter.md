@@ -56,15 +56,16 @@ entries like this:
 ```yaml
 - name: openrouter/anthropic/claude-3.5-sonnet
   extra_params:
-    provider:
-      # Only use these providers, in this order
-      order: ["Anthropic", "Together"]
-      # Don't fall back to other providers
-      allow_fallbacks: false
-      # Skip providers that may train on inputs
-      data_collection: "deny"
-      # Only use providers supporting all parameters
-      require_parameters: true
+    extra_body:
+      provider:
+        # Only use these providers, in this order
+        order: ["Anthropic", "Together"]
+        # Don't fall back to other providers
+        allow_fallbacks: false
+        # Skip providers that may train on inputs
+        data_collection: "deny"
+        # Only use providers supporting all parameters
+        require_parameters: true
 ```
 
 See [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for full details on these settings.
