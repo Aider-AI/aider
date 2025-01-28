@@ -97,6 +97,37 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
 ```
 
 
+## Ollama
+
+You can run [DeepSeek V3 via Ollama](https://ollama.com/library/deepseek-v3).
+
+It's important to provide model settings, especially the `num_ctx` parameter.
+Ollama uses a 2k context window by default, which is very small for working with aider.
+
+Unlike most other LLM servers, Ollama does not throw an error if you submit a request that exceeds the context window. Instead, it just silently truncates the request by discarding the “oldest” messages in the chat to make it fit within the context window.
+
+So if your context window is too small, you won’t get an explicit error. The biggest symptom will be that aider says it can’t see (some of) the files you added to the chat. That’s because ollama is silently discarding them because they exceed the context window.
+
+```yaml
+- name: ollama/deepseek-v3
+  edit_format: diff
+  weak_model_name: null
+  use_repo_map: true
+  send_undo_reply: false
+  lazy: false
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  cache_control: false
+  caches_by_default: true
+  use_system_prompt: true
+  use_temperature: true
+  streaming: true
+  extra_params:
+    num_ctx: 8192
+```
+
 ## Other providers
 
 You will need to properly configure aider to work with DeepSeek V3 when served
