@@ -157,7 +157,6 @@ def resolve_dirname(dirname, use_single_prior, make_new):
     dirname = BENCHMARK_DNAME / dirname
     return dirname
 
-
 @app.command()
 def main(
     dirnames: Optional[List[str]] = typer.Argument(None, help="Directory names"),
