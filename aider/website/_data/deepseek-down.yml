@@ -50,3 +50,29 @@
   versions: 0.72.4.dev
   seconds_per_case: 115.9
   total_cost: 2.1177
+
+- dirname: 2025-01-28-17-41-19--or-v3-deepinfra
+  test_cases: 221
+  model: OpenRouter: Deepinfra
+  edit_format: whole
+  commit_hash: 0336a98-dirty
+  pass_rate_1: 24.0
+  pass_rate_2: 47.1
+  pass_num_1: 53
+  pass_num_2: 106
+  percent_cases_well_formed: 99.5
+  error_outputs: 5
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 38
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openrouter/deepseek/deepseek-chat
+  date: 2025-01-28
+  versions: 0.72.4.dev
+  seconds_per_case: 156.5
+  total_cost: 0.2110
