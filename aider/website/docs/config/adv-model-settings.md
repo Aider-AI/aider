@@ -152,1483 +152,585 @@ cog.out("```\n")
 ]]]-->
 ```yaml
 - name: gpt-3.5-turbo
-  edit_format: whole
   weak_model_name: gpt-4o-mini
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-3.5-turbo-0125
-  edit_format: whole
   weak_model_name: gpt-4o-mini
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-3.5-turbo-1106
-  edit_format: whole
   weak_model_name: gpt-4o-mini
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-3.5-turbo-0613
-  edit_format: whole
   weak_model_name: gpt-4o-mini
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-3.5-turbo-16k-0613
-  edit_format: whole
   weak_model_name: gpt-4o-mini
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-turbo-2024-04-09
   edit_format: udiff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-turbo
   edit_format: udiff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openai/gpt-4o
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openai/gpt-4o-2024-08-06
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4o-2024-08-06
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4o-2024-11-20
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openai/gpt-4o-2024-11-20
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4o
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: gpt-4o-mini
-  edit_format: whole
   weak_model_name: gpt-4o-mini
-  use_repo_map: false
-  send_undo_reply: false
   lazy: true
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openai/gpt-4o-mini
-  edit_format: whole
   weak_model_name: openai/gpt-4o-mini
-  use_repo_map: false
-  send_undo_reply: false
   lazy: true
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-0125-preview
   edit_format: udiff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-1106-preview
   edit_format: udiff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-vision-preview
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-0314
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-0613
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gpt-4-32k-0613
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: claude-3-opus-20240229
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openrouter/anthropic/claude-3-opus
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: claude-3-sonnet-20240229
-  edit_format: whole
   weak_model_name: claude-3-5-haiku-20241022
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: claude-3-5-sonnet-20240620
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: claude-3-5-sonnet-20240620
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: anthropic/claude-3-5-sonnet-20240620
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: anthropic/claude-3-5-sonnet-20240620
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: anthropic/claude-3-5-sonnet-20241022
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: anthropic/claude-3-5-sonnet-20241022
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: anthropic/claude-3-5-sonnet-latest
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: anthropic/claude-3-5-sonnet-20241022
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: claude-3-5-sonnet-20241022
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: claude-3-5-sonnet-20241022
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: anthropic/claude-3-haiku-20240307
-  edit_format: whole
   weak_model_name: anthropic/claude-3-haiku-20240307
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: anthropic/claude-3-5-haiku-20241022
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: claude-3-5-haiku-20241022
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: vertex_ai/claude-3-5-haiku@20241022
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
   extra_params:
     max_tokens: 4096
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: claude-3-haiku-20240307
-  edit_format: whole
   weak_model_name: claude-3-haiku-20240307
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openrouter/anthropic/claude-3.5-sonnet
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: openrouter/anthropic/claude-3.5-sonnet
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openrouter/anthropic/claude-3.5-sonnet:beta
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku:beta
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
   cache_control: true
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: openrouter/anthropic/claude-3.5-sonnet:beta
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: vertex_ai/claude-3-5-sonnet@20240620
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: vertex_ai/claude-3-5-sonnet@20240620
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: vertex_ai/claude-3-5-sonnet-v2@20241022
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: vertex_ai/claude-3-5-sonnet-v2@20241022
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: vertex_ai/claude-3-opus@20240229
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: vertex_ai/claude-3-sonnet@20240229
-  edit_format: whole
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: command-r-plus
-  edit_format: whole
   weak_model_name: command-r-plus
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: command-r-08-2024
-  edit_format: whole
   weak_model_name: command-r-08-2024
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: command-r-plus-08-2024
-  edit_format: whole
   weak_model_name: command-r-plus-08-2024
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: groq/llama3-70b-8192
   edit_format: diff
   weak_model_name: groq/llama3-8b-8192
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openrouter/meta-llama/llama-3-70b-instruct
   edit_format: diff
   weak_model_name: openrouter/meta-llama/llama-3-70b-instruct
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-1.5-pro-002
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-1.5-flash-002
-  edit_format: whole
-  weak_model_name: null
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-1.5-pro
   edit_format: diff-fenced
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-1.5-pro-latest
   edit_format: diff-fenced
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-1.5-pro-exp-0827
   edit_format: diff-fenced
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-exp-1206
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-exp-1114
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-exp-1121
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: vertex_ai/gemini-pro-experimental
   edit_format: diff-fenced
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-1.5-flash-exp-0827
-  edit_format: whole
-  weak_model_name: null
-  use_repo_map: false
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: gemini/gemini-2.0-flash-exp
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openrouter/deepseek/deepseek-r1
   edit_format: diff
   weak_model_name: openrouter/deepseek/deepseek-chat
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
   caches_by_default: true
-  use_system_prompt: true
   use_temperature: false
-  streaming: true
   editor_model_name: openrouter/deepseek/deepseek-chat
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: deepseek/deepseek-reasoner
   edit_format: diff
   weak_model_name: deepseek/deepseek-chat
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
   caches_by_default: true
-  use_system_prompt: true
   use_temperature: false
-  streaming: true
   editor_model_name: deepseek/deepseek-chat
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: deepseek/deepseek-chat
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
   caches_by_default: true
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: deepseek/deepseek-coder
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
   caches_by_default: true
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: deepseek-chat
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: deepseek-coder
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
-  cache_control: false
   caches_by_default: true
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openrouter/deepseek/deepseek-coder
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openrouter/deepseek/deepseek-chat
   edit_format: diff
-  weak_model_name: null
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
-  editor_edit_format: null
-  remove_reasoning: null
 
 - name: openrouter/openai/gpt-4o
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
   lazy: true
   reminder: sys
   examples_as_sys_msg: true
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
-  editor_model_name: null
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openai/o1-mini
-  edit_format: whole
   weak_model_name: openai/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
-  streaming: true
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: azure/o1-mini
-  edit_format: whole
   weak_model_name: azure/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
-  streaming: true
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: o1-mini
-  edit_format: whole
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
-  streaming: true
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openai/o1-preview
   edit_format: diff
   weak_model_name: openai/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
-  streaming: true
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: azure/o1-preview
   edit_format: diff
   weak_model_name: azure/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
-  streaming: true
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: azure/o1
   edit_format: diff
   weak_model_name: azure/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
   use_temperature: false
   streaming: false
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: o1-preview
   edit_format: architect
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
-  streaming: true
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openrouter/openai/o1-mini
-  edit_format: whole
   weak_model_name: openrouter/openai/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
   streaming: false
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openrouter/openai/o1-preview
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
   use_system_prompt: false
   use_temperature: false
   streaming: false
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openrouter/openai/o1
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
   use_temperature: false
   streaming: false
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openai/o1
   edit_format: diff
   weak_model_name: openai/gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
   use_temperature: false
   streaming: false
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: o1
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
   use_temperature: false
   streaming: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
-  remove_reasoning: null
 
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   edit_format: diff
   weak_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  extra_params: null
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: true
-  streaming: true
   editor_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   editor_edit_format: editor-diff
-  remove_reasoning: null
 ```
 <!--[[[end]]]-->
 
