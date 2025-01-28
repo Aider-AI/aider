@@ -202,6 +202,9 @@ def main(
     num_ctx: Optional[int] = typer.Option(
         None, "--num-ctx", help="Override model context window size"
     ),
+    read_model_settings: str = typer.Option(
+        None, "--read-model-settings", help="Load aider model settings from YAML file"
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -740,6 +743,18 @@ def run_test_real(
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
     model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
     dump(model_metadata_files_loaded)
+
+    if read_model_settings:
+        try:
+            files_loaded = models.register_models([read_model_settings])
+            if verbose:
+                if files_loaded:
+                    io.tool_output(f"Loaded model settings from: {files_loaded[0]}")
+                else:
+                    io.tool_output(f"No model settings loaded from: {read_model_settings}")
+        except Exception as e:
+            io.tool_error(f"Error loading model settings: {e}")
+            return 1
 
     # weak_model_name = model_name
     weak_model_name = None
