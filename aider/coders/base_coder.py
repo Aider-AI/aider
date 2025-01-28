@@ -72,6 +72,7 @@ all_fences = [
 class Coder:
     abs_fnames = None
     abs_read_only_fnames = None
+    abs_read_only_stubs_fnames = None
     repo = None
     last_aider_commit_hash = None
     aider_edited_files = None
@@ -150,6 +151,7 @@ class Coder:
             update = dict(
                 fnames=list(from_coder.abs_fnames),
                 read_only_fnames=list(from_coder.abs_read_only_fnames),  # Copy read-only files
+                read_only_stubs_fnames=list(from_coder.abs_read_only_stubs_fnames),  # Copy read-only stubs
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
@@ -250,6 +252,10 @@ class Coder:
             rel_fname = self.get_rel_fname(fname)
             lines.append(f"Added {rel_fname} to the chat (read-only).")
 
+        for fname in self.abs_read_only_stubs_fnames:
+            rel_fname = self.get_rel_fname(fname)
+            lines.append(f"Added {rel_fname} to the chat (read-only stub).")
+
         if self.done_messages:
             lines.append("Restored previous conversation history.")
 
@@ -265,6 +271,7 @@ class Coder:
         repo=None,
         fnames=None,
         read_only_fnames=None,
+        read_only_stubs_fnames=None,
         show_diffs=False,
         auto_commits=True,
         dirty_commits=True,
@@ -341,6 +348,8 @@ class Coder:
         self.verbose = verbose
         self.abs_fnames = set()
         self.abs_read_only_fnames = set()
+        self.abs_read_only_stubs_fnames = set()
+
 
         if cur_messages:
             self.cur_messages = cur_messages
@@ -428,6 +437,15 @@ class Coder:
                     self.abs_read_only_fnames.add(abs_fname)
                 else:
                     self.io.tool_warning(f"Error: Read-only file {fname} does not exist. Skipping.")
+
+        if read_only_stubs_fnames:
+            self.abs_read_only_stubs_fnames = set()
+            for fname in read_only_stubs_fnames:
+                abs_fname = self.abs_root_path(fname)
+                if os.path.exists(abs_fname):
+                    self.abs_read_only_stubs_fnames.add(abs_fname)
+                else:
+                    self.io.tool_warning(f"Error: Read-only (stub) file {fname} does not exist. Skipping.")
 
         if map_tokens is None:
             use_repo_map = main_model.use_repo_map
@@ -550,6 +568,10 @@ class Coder:
             content = self.io.read_text(_fname)
             if content is not None:
                 all_content += content + "\n"
+        for _fname in self.abs_read_only_stubs_fnames:
+            content = self.io.read_text(_fname)
+            if content is not None:
+                all_content += content + "\n"
 
         lines = all_content.splitlines()
         good = False
@@ -594,6 +616,7 @@ class Coder:
 
     def get_read_only_files_content(self):
         prompt = ""
+        # Handle regular read-only files
         for fname in self.abs_read_only_fnames:
             content = self.io.read_text(fname)
             if content is not None and not is_image_file(fname):
@@ -602,6 +625,17 @@ class Coder:
                 prompt += relative_fname
                 prompt += f"\n{self.fence[0]}\n"
                 prompt += content
+                prompt += f"{self.fence[1]}\n"
+
+        # Handle stub files
+        for fname in self.abs_read_only_stubs_fnames:
+            if not is_image_file(fname):
+                relative_fname = self.get_rel_fname(fname)
+                prompt += "\n"
+                prompt += f"{relative_fname} (stub)"
+                prompt += f"\n{self.fence[0]}\n"
+                stub = self.get_file_stub(fname)
+                prompt += stub
                 prompt += f"{self.fence[1]}\n"
         return prompt
 
@@ -654,7 +688,8 @@ class Coder:
 
         all_abs_files = set(self.get_all_abs_files())
         repo_abs_read_only_fnames = set(self.abs_read_only_fnames) & all_abs_files
-        chat_files = set(self.abs_fnames) | repo_abs_read_only_fnames
+        repo_abs_read_only_stubs_fnames = set(self.abs_read_only_stubs_fnames) & all_abs_files
+        chat_files = set(self.abs_fnames) | repo_abs_read_only_fnames | repo_abs_read_only_stubs_fnames
         other_files = all_abs_files - chat_files
 
         repo_content = self.repo_map.get_repo_map(
@@ -713,7 +748,9 @@ class Coder:
             ]
 
         # Handle image files
-        images_message = self.get_images_message(self.abs_read_only_fnames)
+        images_message = self.get_images_message(
+            list(self.abs_read_only_fnames) + list(self.abs_read_only_stubs_fnames)
+        )
         if images_message is not None:
             readonly_messages += [
                 images_message,
@@ -833,15 +870,17 @@ class Coder:
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
-        read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
-        all_files = sorted(set(inchat_files + read_only_files))
+        all_read_only_fnames = self.abs_read_only_fnames | self.abs_read_only_stubs_fnames
+        all_read_only_files = [self.get_rel_fname(fname) for fname in all_read_only_fnames]
+        all_files = sorted(set(inchat_files + all_read_only_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
             self.root,
             all_files,
             self.get_addable_relative_files(),
             self.commands,
-            self.abs_read_only_fnames,
+            abs_read_only_fnames=self.abs_read_only_fnames,
+            abs_read_only_stubs_fnames=self.abs_read_only_stubs_fnames,
             edit_format=edit_format,
         )
 
@@ -1555,7 +1594,7 @@ See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size
 
         # Get basenames of files already in chat or read-only
         existing_basenames = {os.path.basename(f) for f in self.get_inchat_relative_files()} | {
-            os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
+            os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames | self.abs_read_only_stubs_fnames
         }
 
         mentioned_rel_fnames = set()
@@ -1893,6 +1932,10 @@ See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size
 
         return res
 
+
+    def get_file_stub(self, fname):
+        return RepoMap.get_file_stub(fname, self.io)
+
     def get_rel_fname(self, fname):
         try:
             return os.path.relpath(fname, self.root)
@@ -1929,7 +1972,8 @@ See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size
         all_files = set(self.get_all_relative_files())
         inchat_files = set(self.get_inchat_relative_files())
         read_only_files = set(self.get_rel_fname(fname) for fname in self.abs_read_only_fnames)
-        return all_files - inchat_files - read_only_files
+        stub_files = set(self.get_rel_fname(fname) for fname in self.abs_read_only_stubs_fnames)
+        return all_files - inchat_files - read_only_files - stub_files
 
     def check_for_dirty_commit(self, path):
         if not self.repo:
