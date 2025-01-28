@@ -53,7 +53,7 @@
 
 - dirname: 2025-01-28-17-41-19--or-v3-deepinfra
   test_cases: 221
-  model: OpenRouter: Deepinfra
+  model: "OpenRouter: Deepinfra"
   edit_format: whole
   commit_hash: 0336a98-dirty
   pass_rate_1: 24.0
@@ -76,3 +76,4 @@
   versions: 0.72.4.dev
   seconds_per_case: 156.5
   total_cost: 0.2110
+  
