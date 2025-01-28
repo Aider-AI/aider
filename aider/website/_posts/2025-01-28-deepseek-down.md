@@ -9,7 +9,7 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# DeepSeek API issues - Alternative providers
+# Alternative DeepSeek V3 providers
 {: .no_toc }
 
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
