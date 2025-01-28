@@ -1887,7 +1887,10 @@ class Coder:
 
         if self.main_model.remove_reasoning:
             import re
-            pattern = f"<{self.main_model.remove_reasoning}>.*?</{self.main_model.remove_reasoning}>"
+
+            pattern = (
+                f"<{self.main_model.remove_reasoning}>.*?</{self.main_model.remove_reasoning}>"
+            )
             res = re.sub(pattern, "", res, flags=re.DOTALL)
 
         return res
