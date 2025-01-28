@@ -26,7 +26,7 @@ sync_repo() {
           "$REPO_ROOT/" \
           "$DEST:~/aider/" || sleep 0.1
     
-    rsync -a .env .gitignore .aider.model.settings.yml "$DEST:~/aider/." || sleep 0.1
+    rsync -av .env .gitignore .aider.model.settings.yml "$DEST:~/aider/." || sleep 0.1
 
     echo Done syncing, waiting.
 }
