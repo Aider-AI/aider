@@ -41,7 +41,9 @@ to allow use of all models.
 
 ## Controlling provider selection
 
-You can control which OpenRouter providers are used by creating a `.aider.model.settings.yml` file in your home directory or project root. See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html) for more details about model settings files. For example:
+You can control which OpenRouter providers are used by creating a `.aider.model.settings.yml` file in your home directory or project root. 
+See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings)
+for more details about model settings files. For example:
 
 ```yaml
 - name: openrouter/anthropic/claude-3.5-sonnet
