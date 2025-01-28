@@ -9,6 +9,7 @@ import mimetypes
 import os
 import platform
 import re
+import re
 import sys
 import threading
 import time
@@ -1886,8 +1887,6 @@ class Coder:
         res = cur + new
 
         if self.main_model.remove_reasoning:
-            import re # to top ai!
-
             pattern = (
                 f"<{self.main_model.remove_reasoning}>.*?</{self.main_model.remove_reasoning}>"
             )
