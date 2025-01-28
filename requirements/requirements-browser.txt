@@ -6,7 +6,7 @@
 #
 altair==5.5.0
     # via streamlit
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -15,7 +15,7 @@ attrs==24.3.0
     #   referencing
 blinker==1.9.0
     # via streamlit
-cachetools==5.5.0
+cachetools==5.5.1
     # via streamlit
 certifi==2024.12.14
     # via
@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.22.0
+narwhals==1.24.0
     # via altair
 numpy==1.26.4
     # via
@@ -144,7 +144,7 @@ pytz==2024.2
     # via
     #   -c requirements/requirements-dev.txt
     #   pandas
-referencing==0.36.0
+referencing==0.36.2
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -199,7 +199,7 @@ typing-extensions==4.12.2
     #   altair
     #   referencing
     #   streamlit
-tzdata==2024.2
+tzdata==2025.1
     # via
     #   -c requirements/requirements-dev.txt
     #   pandas
