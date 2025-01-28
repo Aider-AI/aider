@@ -1889,7 +1889,7 @@ class Coder:
             pattern = (
                 f"<{self.main_model.remove_reasoning}>.*?</{self.main_model.remove_reasoning}>"
             )
-            res = re.sub(pattern, "", res, flags=re.DOTALL)
+            res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
 
         return res
 
