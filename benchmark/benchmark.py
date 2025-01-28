@@ -646,6 +646,7 @@ def run_test_real(
     editor_edit_format,
     num_ctx=None,
     sleep=0,
+    read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
