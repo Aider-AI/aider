@@ -101,6 +101,20 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
 
 You can run [DeepSeek V3 via Ollama](https://ollama.com/library/deepseek-v3).
 
+```bash
+# Pull the model
+ollama pull deepseek-v3
+
+# Start your ollama server
+ollama serve
+
+# In another terminal window...
+export OLLAMA_API_BASE=http://127.0.0.1:11434 # Mac/Linux
+setx   OLLAMA_API_BASE http://127.0.0.1:11434 # Windows, restart shell after setx
+
+aider --model ollama/deepseek-v3
+```
+
 It's important to provide model settings, especially the `num_ctx` parameter.
 Ollama uses a 2k context window by default, which is very small for working with aider.
 
