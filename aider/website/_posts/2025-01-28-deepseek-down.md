@@ -23,6 +23,8 @@ If you're affected by these issues, several alternative providers offer access t
 This article is being updated as benchmark runs complete.
 
 ## Providers
+{: .no_toc }
+
 * TOC
 {:toc}
 
