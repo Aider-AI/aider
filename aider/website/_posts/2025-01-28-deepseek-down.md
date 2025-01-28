@@ -1,5 +1,5 @@
 ---
-title: DeepSeek API issues - Alternative providers
+title: Alternative DeepSeek V3 providers
 excerpt: DeepSeek's API has been experiencing reliability issues. Here are alternative providers you can use.
 highlight_image: /assets/deepseek-down.jpg
 draft: false
@@ -15,18 +15,19 @@ nav_exclude: true
 <canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
 
 DeepSeek's API has been experiencing significant reliability issues for the past 24-48+ hours, with many users reporting downtime and overload problems.
+Their [status page](https://status.deepseek.com) notes an ongoing incident.
 
-If you're affected by these issues, several alternative providers offer access to DeepSeek models. This article compares their performance on aider's polyglot benchmark to help you choose a reliable alternative.
+If you're affected by these issues, several alternative providers offer access to DeepSeek V3. This article compares their performance on aider's polyglot benchmark to help you choose a reliable alternative.
 
 ## Using alternative providers
 
-The benchmark results below show that several providers offer comparable or better performance than DeepSeek's native API. To switch providers, you'll need to:
+To use these providers, you'll need to create an account with them and obtain an API key.
 
-1. Sign up for an account with your chosen alternative provider
-2. Get their API key
-3. Update your aider configuration to use their endpoint
+## OpenRouter
 
-For example, to use OpenRouter:
+[OpenRouter offers many DeepSeek providers](https://openrouter.ai/deepseek/deepseek-chat/providers)
+through their unified API.
+You can use aider with OpenRouter like this:
 
 ```bash
 # Set your API key using environment variables
@@ -41,10 +42,13 @@ api-key:
   - openrouter=<your-key>
 ```
 
-## Configuring model settings
+OpenRouter automatically monitors their providers and routes requests to stable
+APIs and away from those experiencing unreliable performance.
 
-You may want to configure specific settings when using alternative providers. For example, you can control which OpenRouter providers are used to serve the model, or set other model parameters.
-
+But not all providers serve the same version of open source models, and not
+all have the same privacy guarantees.
+You can control which OpenRouter providers are used to serve the model via
+[aider's model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings).
 Create a `.aider.model.settings.yml` file in your home directory or git project root with settings like this:
 
 ```yaml
@@ -58,7 +62,17 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
         allow_fallbacks: false
 ```
 
-Different providers may need different settings. For example, here's a configuration for using Fireworks:
+See [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for more details.
+
+## Other providers
+
+You will need to properly configure aider to work with DeepSeek V3 when served
+via alternate providers.
+Aider is pre-configured to work well with V3 served via DeepSeek's direct API and via OpenRouter.
+
+For other providers, you should adapt this example configuration for using DeepSeek V3
+via Fireworks.
+You'll need to change the `name` field to match you chosen provider's model naming scheme.
 
 ```yaml
 - name: fireworks_ai/accounts/fireworks/models/deepseek-chat
@@ -78,9 +92,8 @@ Different providers may need different settings. For example, here's a configura
   streaming: true
 ```
 
-You'll need to adapt these settings based on your chosen provider. See:
-- [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for OpenRouter-specific settings
-- [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings) for details about all aider model settings
+
+See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings) for details about all aider model settings
 
 ## Results
 
@@ -115,7 +128,7 @@ You'll need to adapt these settings based on your chosen provider. See:
 <script>
 {% assign data_source = edit_sorted %}
 {% assign pass_rate_field = "pass_rate_2" %}
-{% assign highlight_model = "+" %}
+{% assign highlight_model = "DeepSeek" %}
 {% assign show_legend = false %}
 {% include leaderboard.js %}
 </script>
