@@ -112,6 +112,7 @@ with importlib.resources.open_text("aider.resources", "model-settings.yml") as f
     for model_settings_dict in model_settings_list:
         MODEL_SETTINGS.append(ModelSettings(**model_settings_dict))
 
+
 class ModelInfoManager:
     MODEL_INFO_URL = (
         "https://raw.githubusercontent.com/BerriAI/litellm/main/"
