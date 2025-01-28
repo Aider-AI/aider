@@ -9,7 +9,6 @@ import mimetypes
 import os
 import platform
 import re
-import re
 import sys
 import threading
 import time
