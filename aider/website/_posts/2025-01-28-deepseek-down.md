@@ -50,9 +50,29 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
         allow_fallbacks: false
 ```
 
-See [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for full details on these settings.
+Different providers may need different settings. For example, here's a configuration for using Fireworks:
 
-See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings) for more details about aider's model settings files.
+```yaml
+- name: fireworks_ai/accounts/fireworks/models/deepseek-v3
+  edit_format: diff
+  weak_model_name: null
+  use_repo_map: true
+  send_undo_reply: false
+  lazy: false
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  cache_control: false
+  caches_by_default: true
+  use_system_prompt: true
+  use_temperature: true
+  streaming: true
+```
+
+You'll need to adapt these settings based on your chosen provider. See:
+- [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for OpenRouter-specific settings
+- [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings) for details about all aider model settings
 
 ## Results
 
