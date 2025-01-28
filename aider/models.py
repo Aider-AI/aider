@@ -100,6 +100,7 @@ class ModelSettings:
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
+    remove_reasoning: Optional[str] = None
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
