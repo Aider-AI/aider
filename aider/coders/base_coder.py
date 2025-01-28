@@ -1882,7 +1882,13 @@ class Coder:
 
         if new.rstrip() != new and not final:
             new = new.rstrip()
-        return cur + new
+
+        res = cur + new
+        # if self.main_model.remove_reasoning, then use that string. say it's "think"
+        # then use a regex to remove "<think>.*</think>" from the res
+        # the text may span many lines. ai!
+
+        return res
 
     def get_rel_fname(self, fname):
         try:
