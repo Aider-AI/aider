@@ -33,6 +33,27 @@ export OPENROUTER_API_KEY=<your-key>
 aider --model openrouter/deepseek/deepseek-v3
 ```
 
+## Configuring model settings
+
+You may want to configure specific settings when using alternative providers. For example, you can control which OpenRouter providers are used to serve the model, or set other model parameters.
+
+Create a `.aider.model.settings.yml` file in your home directory or git project root with settings like this:
+
+```yaml
+- name: openrouter/deepseek/deepseek-v3
+  extra_params:
+    extra_body:
+      provider:
+        # Only use these providers, in this order
+        order: ["Novita"]
+        # Don't fall back to other providers
+        allow_fallbacks: false
+```
+
+See [OpenRouter's provider routing docs](https://openrouter.ai/docs/provider-routing) for full details on these settings.
+
+See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.html#model-settings) for more details about aider's model settings files.
+
 ## Results
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
