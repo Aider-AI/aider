@@ -31,10 +31,10 @@ For example, to use OpenRouter:
 ```bash
 # Set your API key using environment variables
 export OPENROUTER_API_KEY=<your-key>
-aider --model openrouter/deepseek/deepseek-v3
+aider --model openrouter/deepseek/deepseek-chat
 
 # Or use the --api-key command line option
-aider --model openrouter/deepseek/deepseek-v3 --api-key openrouter=<your-key>
+aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=<your-key>
 
 # Or add it to .aider.conf.yml in your home directory or project root:
 api-key:
@@ -48,7 +48,7 @@ You may want to configure specific settings when using alternative providers. Fo
 Create a `.aider.model.settings.yml` file in your home directory or git project root with settings like this:
 
 ```yaml
-- name: openrouter/deepseek/deepseek-v3
+- name: openrouter/deepseek/deepseek-chat
   extra_params:
     extra_body:
       provider:
@@ -61,7 +61,7 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
 Different providers may need different settings. For example, here's a configuration for using Fireworks:
 
 ```yaml
-- name: fireworks_ai/accounts/fireworks/models/deepseek-v3
+- name: fireworks_ai/accounts/fireworks/models/deepseek-chat
   edit_format: diff
   weak_model_name: null
   use_repo_map: true
