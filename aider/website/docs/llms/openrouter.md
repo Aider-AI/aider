@@ -45,7 +45,7 @@ OpenRouter often has multiple providers serving each model.
 You can control which OpenRouter providers are used for your requests in two ways:
 
 1. By "ignoring" certain providers in your 
-[OpenRouter account settings]().
+[OpenRouter account settings](https://openrouter.ai/settings/preferences).
 This disables those named providers across all the models that you access via OpenRouter.
 
 2. By configuring "provider routing" in a `.aider.model.settings.yml` file.
