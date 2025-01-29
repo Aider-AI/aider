@@ -106,6 +106,46 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
 ```
 
 
+## Hyperbolic
+
+You can use [Hyperbolic's API](https://hyperbolic.xyz) as an OpenAI-compatible provider:
+
+```bash
+# Set your API key using environment variables
+export OPENAI_API_BASE=https://api.hyperbolic.xyz/v1/
+export OPENAI_API_KEY=<your-key>
+aider --model openai/deepseek-ai/DeepSeek-V3
+
+# Or use the --api-key command line option
+aider --model openai/deepseek-ai/DeepSeek-V3 --api-key openai=<your-key>
+
+# Or add it to .aider.conf.yml in your home directory or project root:
+api-key:
+  - openai=<your-key>
+```
+
+Create a `.aider.model.settings.yml` file in your home directory or git project root with settings like this:
+
+```yaml
+- name: openai/deepseek-ai/DeepSeek-V3
+  edit_format: diff
+  weak_model_name: null
+  use_repo_map: true
+  send_undo_reply: false
+  lazy: false
+  reminder: sys
+  examples_as_sys_msg: true
+  cache_control: false
+  caches_by_default: true
+  use_system_prompt: true
+  use_temperature: true
+  streaming: true
+  editor_model_name: null
+  editor_edit_format: null
+  extra_params:
+    max_tokens: 65536
+```
+
 ## Ollama
 
 You can run [DeepSeek V3 via Ollama](https://ollama.com/library/deepseek-v3).
