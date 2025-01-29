@@ -667,6 +667,18 @@ cog.out("```\n")
   editor_model_name: openrouter/deepseek/deepseek-chat
   editor_edit_format: editor-diff
 
+- name: openrouter/deepseek/deepseek-r1:free
+  edit_format: diff
+  weak_model_name: openrouter/deepseek/deepseek-chat:free
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+  use_temperature: false
+  editor_model_name: openrouter/deepseek/deepseek-chat:free
+  editor_edit_format: editor-diff
+
 - name: openrouter/meta-llama/llama-3-70b-instruct
   edit_format: diff
   weak_model_name: openrouter/meta-llama/llama-3-70b-instruct
