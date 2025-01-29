@@ -19,9 +19,6 @@ Their [status page](https://status.deepseek.com) notes an ongoing incident.
 
 If you're affected by these issues, several alternative providers offer access to DeepSeek V3. This article compares their performance on aider's polyglot benchmark to help you choose a reliable alternative.
 
-{: .note :}
-This article is being updated as benchmark runs complete.
-
 ## Providers
 {: .no_toc }
 
