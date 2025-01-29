@@ -125,7 +125,6 @@ entry in the list below and adding the above `extra_params` entry:
   lazy: false
   reminder: user
   examples_as_sys_msg: false
-  extra_params: null
   cache_control: false
   caches_by_default: false
   use_system_prompt: true
