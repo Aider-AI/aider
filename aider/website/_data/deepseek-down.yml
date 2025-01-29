@@ -76,3 +76,29 @@
   versions: 0.72.4.dev
   seconds_per_case: 187.0
   total_cost: 0.2733
+
+- dirname: 2025-01-28-21-07-23--or-v3-novita-diff
+  test_cases: 225
+  model: "OpenRouter: Novita"
+  edit_format: diff
+  commit_hash: 66025a0
+  pass_rate_1: 20.4
+  pass_rate_2: 42.7
+  pass_num_1: 46
+  pass_num_2: 96
+  percent_cases_well_formed: 84.0
+  error_outputs: 265
+  num_malformed_responses: 67
+  num_with_malformed_responses: 36
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 8
+  total_tests: 225
+  command: aider --model openrouter/deepseek/deepseek-chat
+  date: 2025-01-28
+  versions: 0.72.4.dev
+  seconds_per_case: 472.5
+  total_cost: 0.0000
