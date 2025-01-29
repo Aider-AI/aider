@@ -102,3 +102,29 @@
   versions: 0.72.4.dev
   seconds_per_case: 472.5
   total_cost: 0.0000
+
+- dirname: 2025-01-29-00-36-49--v3-hyperolic-diff
+  test_cases: 224
+  model: Hyperbolic
+  edit_format: diff
+  commit_hash: 298f713
+  pass_rate_1: 20.5
+  pass_rate_2: 48.4
+  pass_num_1: 46
+  pass_num_2: 109
+  percent_cases_well_formed: 97.3
+  error_outputs: 29
+  num_malformed_responses: 6
+  num_with_malformed_responses: 6
+  user_asks: 7
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 7
+  total_tests: 225
+  command: OPENAI_API_BASE=https://api.hyperbolic.xyz/v1/ aider --model openai/deepseek-ai/DeepSeek-V3
+  date: 2025-01-29
+  versions: 0.72.4.dev
+  seconds_per_case: 365.4
+  total_cost: 0.0000
