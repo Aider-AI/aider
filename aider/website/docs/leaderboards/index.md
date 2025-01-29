@@ -19,13 +19,6 @@ While [aider can connect to almost any LLM](/docs/llms.html),
 it works best with models that score well on the benchmarks.
 
 
-{: .note :}
-The
-[original aider code editing leaderboard](edit.html)
-has been replaced by this 
-new, much more challenging
-[polyglot leaderboard](https://aider.chat/2024/12/21/polyglot.html).
-
 ## Polyglot leaderboard
 
 [Aider's polyglot benchmark](/docs/benchmarks.html#the-benchmark) 
