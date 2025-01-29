@@ -108,12 +108,13 @@ These settings will be merged with any model-specific settings, with the
 You need this chunk of yaml:
 
 ```
-  extra_body:
-    reasoning_effort: high
+  extra_params:
+    extra_body:
+      reasoning_effort: high
 ```
 
 This is a full entry for o1 with that setting, obtained by finding the default
-entry in the list below and adding the above `extra_body` entry:
+entry in the list below and adding the above `extra_params` entry:
 
 ```
 - name: o1
@@ -132,8 +133,9 @@ entry in the list below and adding the above `extra_body` entry:
   streaming: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
-  extra_body:
-    reasoning_effort: high
+  extra_params:
+    extra_body:
+      reasoning_effort: high
 ```
 
 ### Default model settings
