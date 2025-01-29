@@ -732,6 +732,7 @@ class InputOutput:
                         question,
                         style=style,
                         complete_while_typing=False,
+                        default=default,
                     )
                 else:
                     res = input(question)
