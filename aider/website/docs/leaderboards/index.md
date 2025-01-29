@@ -21,7 +21,7 @@ it works best with models that score well on the benchmarks.
 
 ## Polyglot leaderboard
 
-[Aider's polyglot benchmark](/docs/benchmarks.html#the-benchmark) 
+[Aider's polyglot benchmark](https://aider.chat/2024/12/21/polyglot.html#the-polyglot-benchmark) 
 asks the LLM to edit source files to complete 225 coding exercises
 from Exercism. 
 It contains exercises in many popular programming languages:
