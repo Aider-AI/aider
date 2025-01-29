@@ -756,6 +756,7 @@ class Commands:
 
             if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
                 try:
+                    fname.parent.mkdir(parents=True, exist_ok=True)
                     fname.touch()
                     all_matched_files.add(str(fname))
                 except OSError as e:
