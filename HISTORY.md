@@ -1,5 +1,10 @@
 # Release history
 
+### Aider v0.72.4
+
+- Support for DeepSeek R1 free.
+  - Use shortcut via OpenRouter: `--model openrouter/deepseek/deepseek-r1:free`
+
 ### Aider v0.72.3
 
 - Enforce user/assistant turn order to avoid R1 errors, by miradnanali.
