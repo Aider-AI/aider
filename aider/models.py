@@ -1,4 +1,5 @@
 import difflib
+import importlib.resources
 import json
 import math
 import os
@@ -76,6 +77,7 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
+    "r1": "deepseek/deepseek-reasoner",
     "flash": "gemini/gemini-2.0-flash-exp",
 }
 
@@ -99,720 +101,15 @@ class ModelSettings:
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
+    remove_reasoning: Optional[str] = None
 
 
-# https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
-# https://platform.openai.com/docs/models/gpt-3-5-turbo
-# https://openai.com/pricing
-
-MODEL_SETTINGS = [
-    # gpt-3.5
-    ModelSettings(
-        "gpt-3.5-turbo",
-        "whole",
-        weak_model_name="gpt-4o-mini",
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-3.5-turbo-0125",
-        "whole",
-        weak_model_name="gpt-4o-mini",
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-3.5-turbo-1106",
-        "whole",
-        weak_model_name="gpt-4o-mini",
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-3.5-turbo-0613",
-        "whole",
-        weak_model_name="gpt-4o-mini",
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-3.5-turbo-16k-0613",
-        "whole",
-        weak_model_name="gpt-4o-mini",
-        reminder="sys",
-    ),
-    # gpt-4
-    ModelSettings(
-        "gpt-4-turbo-2024-04-09",
-        "udiff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4-turbo",
-        "udiff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "openai/gpt-4o",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-        editor_edit_format="editor-diff",
-    ),
-    ModelSettings(
-        "openai/gpt-4o-2024-08-06",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4o-2024-08-06",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4o-2024-11-20",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "openai/gpt-4o-2024-11-20",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4o",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-        editor_edit_format="editor-diff",
-    ),
-    ModelSettings(
-        "gpt-4o-mini",
-        "whole",
-        weak_model_name="gpt-4o-mini",
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "openai/gpt-4o-mini",
-        "whole",
-        weak_model_name="openai/gpt-4o-mini",
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4-0125-preview",
-        "udiff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-        examples_as_sys_msg=True,
-    ),
-    ModelSettings(
-        "gpt-4-1106-preview",
-        "udiff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4-vision-preview",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4-0314",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        reminder="sys",
-        examples_as_sys_msg=True,
-    ),
-    ModelSettings(
-        "gpt-4-0613",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "gpt-4-32k-0613",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        use_repo_map=True,
-        reminder="sys",
-    ),
-    # Claude
-    ModelSettings(
-        "claude-3-opus-20240229",
-        "diff",
-        weak_model_name="claude-3-5-haiku-20241022",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "openrouter/anthropic/claude-3-opus",
-        "diff",
-        weak_model_name="openrouter/anthropic/claude-3-5-haiku",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "claude-3-sonnet-20240229",
-        "whole",
-        weak_model_name="claude-3-5-haiku-20241022",
-    ),
-    ModelSettings(
-        "claude-3-5-sonnet-20240620",
-        "diff",
-        weak_model_name="claude-3-5-haiku-20241022",
-        editor_model_name="claude-3-5-sonnet-20240620",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-            "max_tokens": 8192,
-        },
-        cache_control=True,
-        reminder="user",
-    ),
-    ModelSettings(
-        "anthropic/claude-3-5-sonnet-20240620",
-        "diff",
-        weak_model_name="anthropic/claude-3-5-haiku-20241022",
-        editor_model_name="anthropic/claude-3-5-sonnet-20240620",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-            "max_tokens": 8192,
-        },
-        cache_control=True,
-        reminder="user",
-    ),
-    ModelSettings(
-        "anthropic/claude-3-5-sonnet-20241022",
-        "diff",
-        weak_model_name="anthropic/claude-3-5-haiku-20241022",
-        editor_model_name="anthropic/claude-3-5-sonnet-20241022",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-            "max_tokens": 8192,
-        },
-        cache_control=True,
-        reminder="user",
-    ),
-    ModelSettings(
-        "bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
-        "diff",
-        weak_model_name="bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
-        editor_model_name="bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-            "max_tokens": 8192,
-        },
-        cache_control=True,
-        reminder="user",
-    ),
-    ModelSettings(
-        "anthropic/claude-3-5-sonnet-latest",
-        "diff",
-        weak_model_name="anthropic/claude-3-5-haiku-20241022",
-        editor_model_name="anthropic/claude-3-5-sonnet-20241022",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-            "max_tokens": 8192,
-        },
-        cache_control=True,
-        reminder="user",
-    ),
-    ModelSettings(
-        "claude-3-5-sonnet-20241022",
-        "diff",
-        weak_model_name="claude-3-5-haiku-20241022",
-        editor_model_name="claude-3-5-sonnet-20241022",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-            "max_tokens": 8192,
-        },
-        cache_control=True,
-        reminder="user",
-    ),
-    ModelSettings(
-        "anthropic/claude-3-haiku-20240307",
-        "whole",
-        weak_model_name="anthropic/claude-3-haiku-20240307",
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-        },
-        cache_control=True,
-    ),
-    ModelSettings(
-        "anthropic/claude-3-5-haiku-20241022",
-        "diff",
-        weak_model_name="anthropic/claude-3-5-haiku-20241022",
-        use_repo_map=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-        },
-        cache_control=True,
-    ),
-    ModelSettings(
-        "bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
-        "diff",
-        weak_model_name="bedrock/anthropic.claude-3-5-haiku-20241022-v1:0",
-        use_repo_map=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-        },
-        cache_control=True,
-    ),
-    ModelSettings(
-        "claude-3-5-haiku-20241022",
-        "diff",
-        weak_model_name="claude-3-5-haiku-20241022",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-        },
-        cache_control=True,
-    ),
-    ModelSettings(
-        "vertex_ai/claude-3-5-haiku@20241022",
-        "diff",
-        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
-        use_repo_map=True,
-        extra_params={
-            "max_tokens": 4096,
-        },
-    ),
-    ModelSettings(
-        "claude-3-haiku-20240307",
-        "whole",
-        weak_model_name="claude-3-haiku-20240307",
-        examples_as_sys_msg=True,
-        extra_params={
-            "extra_headers": {
-                "anthropic-beta": ANTHROPIC_BETA_HEADER,
-            },
-        },
-        cache_control=True,
-    ),
-    ModelSettings(
-        "openrouter/anthropic/claude-3.5-sonnet",
-        "diff",
-        weak_model_name="openrouter/anthropic/claude-3-5-haiku",
-        editor_model_name="openrouter/anthropic/claude-3.5-sonnet",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "max_tokens": 8192,
-        },
-        reminder="user",
-        cache_control=True,
-    ),
-    ModelSettings(
-        "openrouter/anthropic/claude-3.5-sonnet:beta",
-        "diff",
-        weak_model_name="openrouter/anthropic/claude-3-5-haiku:beta",
-        editor_model_name="openrouter/anthropic/claude-3.5-sonnet:beta",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "max_tokens": 8192,
-        },
-        reminder="user",
-        cache_control=True,
-    ),
-    # Vertex AI Claude models
-    # Does not yet support 8k token
-    ModelSettings(
-        "vertex_ai/claude-3-5-sonnet@20240620",
-        "diff",
-        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
-        editor_model_name="vertex_ai/claude-3-5-sonnet@20240620",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "max_tokens": 8192,
-        },
-        reminder="user",
-    ),
-    ModelSettings(
-        "vertex_ai/claude-3-5-sonnet-v2@20241022",
-        "diff",
-        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
-        editor_model_name="vertex_ai/claude-3-5-sonnet-v2@20241022",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        extra_params={
-            "max_tokens": 8192,
-        },
-        reminder="user",
-    ),
-    ModelSettings(
-        "vertex_ai/claude-3-opus@20240229",
-        "diff",
-        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "vertex_ai/claude-3-sonnet@20240229",
-        "whole",
-        weak_model_name="vertex_ai/claude-3-5-haiku@20241022",
-    ),
-    # Cohere
-    ModelSettings(
-        "command-r-plus",
-        "whole",
-        weak_model_name="command-r-plus",
-        use_repo_map=True,
-    ),
-    # New Cohere models
-    ModelSettings(
-        "command-r-08-2024",
-        "whole",
-        weak_model_name="command-r-08-2024",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "command-r-plus-08-2024",
-        "whole",
-        weak_model_name="command-r-plus-08-2024",
-        use_repo_map=True,
-    ),
-    # Groq llama3
-    ModelSettings(
-        "groq/llama3-70b-8192",
-        "diff",
-        weak_model_name="groq/llama3-8b-8192",
-        use_repo_map=False,
-        send_undo_reply=False,
-        examples_as_sys_msg=True,
-    ),
-    # Openrouter llama3
-    ModelSettings(
-        "openrouter/meta-llama/llama-3-70b-instruct",
-        "diff",
-        weak_model_name="openrouter/meta-llama/llama-3-70b-instruct",
-        use_repo_map=False,
-        send_undo_reply=False,
-        examples_as_sys_msg=True,
-    ),
-    # Gemini
-    ModelSettings(
-        "gemini/gemini-1.5-pro-002",
-        "diff",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "gemini/gemini-1.5-flash-002",
-        "whole",
-    ),
-    ModelSettings(
-        "gemini/gemini-1.5-pro",
-        "diff-fenced",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "gemini/gemini-1.5-pro-latest",
-        "diff-fenced",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "gemini/gemini-1.5-pro-exp-0827",
-        "diff-fenced",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "gemini/gemini-exp-1206",
-        "diff",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "gemini/gemini-exp-1114",
-        "diff",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "gemini/gemini-exp-1121",
-        "diff",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "vertex_ai/gemini-pro-experimental",
-        "diff-fenced",
-        use_repo_map=True,
-    ),
-    ModelSettings(
-        "gemini/gemini-1.5-flash-exp-0827",
-        "whole",
-        use_repo_map=False,
-        send_undo_reply=False,
-    ),
-    ModelSettings(
-        "gemini/gemini-2.0-flash-exp",
-        "diff",
-        use_repo_map=True,
-        send_undo_reply=False,
-    ),
-    ModelSettings(
-        "deepseek/deepseek-chat",
-        "diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        reminder="sys",
-        extra_params={
-            "max_tokens": 8192,
-        },
-    ),
-    ModelSettings(
-        "deepseek/deepseek-coder",
-        "diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        reminder="sys",
-        caches_by_default=True,
-        extra_params={
-            "max_tokens": 8192,
-        },
-    ),
-    ModelSettings(
-        "deepseek-chat",
-        "diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        reminder="sys",
-        extra_params={
-            "max_tokens": 8192,
-        },
-    ),
-    ModelSettings(
-        "deepseek-coder",
-        "diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        reminder="sys",
-        caches_by_default=True,
-        extra_params={
-            "max_tokens": 8192,
-        },
-    ),
-    ModelSettings(
-        "openrouter/deepseek/deepseek-coder",
-        "diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "openrouter/deepseek/deepseek-chat",
-        "diff",
-        use_repo_map=True,
-        examples_as_sys_msg=True,
-        reminder="sys",
-    ),
-    ModelSettings(
-        "openrouter/openai/gpt-4o",
-        "diff",
-        weak_model_name="openrouter/openai/gpt-4o-mini",
-        use_repo_map=True,
-        lazy=True,
-        reminder="sys",
-        editor_edit_format="editor-diff",
-    ),
-    ModelSettings(
-        "openai/o1-mini",
-        "whole",
-        weak_model_name="openai/gpt-4o-mini",
-        editor_model_name="openai/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-    ),
-    ModelSettings(
-        "azure/o1-mini",
-        "whole",
-        weak_model_name="azure/gpt-4o-mini",
-        editor_model_name="azure/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-    ),
-    ModelSettings(
-        "o1-mini",
-        "whole",
-        weak_model_name="gpt-4o-mini",
-        editor_model_name="gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-    ),
-    ModelSettings(
-        "openai/o1-preview",
-        "diff",
-        weak_model_name="openai/gpt-4o-mini",
-        editor_model_name="openai/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-    ),
-    ModelSettings(
-        "azure/o1-preview",
-        "diff",
-        weak_model_name="azure/gpt-4o-mini",
-        editor_model_name="azure/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-    ),
-    ModelSettings(
-        "o1-preview",
-        "architect",
-        weak_model_name="gpt-4o-mini",
-        editor_model_name="gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-    ),
-    ModelSettings(
-        "openrouter/openai/o1-mini",
-        "whole",
-        weak_model_name="openrouter/openai/gpt-4o-mini",
-        editor_model_name="openrouter/openai/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-        streaming=False,
-    ),
-    ModelSettings(
-        "openrouter/openai/o1-preview",
-        "diff",
-        weak_model_name="openrouter/openai/gpt-4o-mini",
-        editor_model_name="openrouter/openai/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        reminder="user",
-        use_system_prompt=False,
-        use_temperature=False,
-        streaming=False,
-    ),
-    ModelSettings(
-        "openrouter/openai/o1",
-        "diff",
-        weak_model_name="openrouter/openai/gpt-4o-mini",
-        editor_model_name="openrouter/openai/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        streaming=False,
-        use_temperature=False,
-        # extra_params=dict(extra_body=dict(reasoning_effort="high")),
-    ),
-    ModelSettings(
-        "openai/o1",
-        "diff",
-        weak_model_name="openai/gpt-4o-mini",
-        editor_model_name="openai/gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        streaming=False,
-        use_temperature=False,
-        # extra_params=dict(extra_body=dict(reasoning_effort="high")),
-    ),
-    ModelSettings(
-        "o1",
-        "diff",
-        weak_model_name="gpt-4o-mini",
-        editor_model_name="gpt-4o",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-        streaming=False,
-        use_temperature=False,
-        # extra_params=dict(extra_body=dict(reasoning_effort="high")),
-    ),
-    ModelSettings(
-        "openrouter/qwen/qwen-2.5-coder-32b-instruct",
-        "diff",
-        weak_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
-        editor_model_name="openrouter/qwen/qwen-2.5-coder-32b-instruct",
-        editor_edit_format="editor-diff",
-        use_repo_map=True,
-    ),
-]
+# Load model settings from package resource
+MODEL_SETTINGS = []
+with importlib.resources.open_text("aider.resources", "model-settings.yml") as f:
+    model_settings_list = yaml.safe_load(f)
+    for model_settings_dict in model_settings_list:
+        MODEL_SETTINGS.append(ModelSettings(**model_settings_dict))
 
 
 class ModelInfoManager:
@@ -1309,8 +606,8 @@ def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
-    for model, attrs in litellm.model_cost.items():
-        model = model.lower()
+    for orig_model, attrs in litellm.model_cost.items():
+        model = orig_model.lower()
         if attrs.get("mode") != "chat":
             continue
         provider = attrs.get("litellm_provider", "").lower()
@@ -1319,12 +616,12 @@ def fuzzy_match_models(name):
         provider += "/"
 
         if model.startswith(provider):
-            fq_model = model
+            fq_model = orig_model
         else:
-            fq_model = provider + model
+            fq_model = provider + orig_model
 
         chat_models.add(fq_model)
-        chat_models.add(model)
+        chat_models.add(orig_model)
 
     chat_models = sorted(chat_models)
     # exactly matching model
@@ -1358,16 +655,38 @@ def print_matching_models(io, search):
 
 
 def get_model_settings_as_yaml():
+    from dataclasses import fields
+
     import yaml
 
     model_settings_list = []
-    for ms in MODEL_SETTINGS:
-        model_settings_dict = {
-            field.name: getattr(ms, field.name) for field in fields(ModelSettings)
-        }
-        model_settings_list.append(model_settings_dict)
+    # Add default settings first with all field values
+    defaults = {}
+    for field in fields(ModelSettings):
+        defaults[field.name] = field.default
+    defaults["name"] = "(default values)"
+    model_settings_list.append(defaults)
 
-    return yaml.dump(model_settings_list, default_flow_style=False)
+    # Sort model settings by name
+    for ms in sorted(MODEL_SETTINGS, key=lambda x: x.name):
+        # Create dict with explicit field order
+        model_settings_dict = {}
+        for field in fields(ModelSettings):
+            value = getattr(ms, field.name)
+            if value != field.default:
+                model_settings_dict[field.name] = value
+        model_settings_list.append(model_settings_dict)
+        # Add blank line between entries
+        model_settings_list.append(None)
+
+    # Filter out None values before dumping
+    yaml_str = yaml.dump(
+        [ms for ms in model_settings_list if ms is not None],
+        default_flow_style=False,
+        sort_keys=False,  # Preserve field order from dataclass
+    )
+    # Add actual blank lines between entries
+    return yaml_str.replace("\n- ", "\n\n- ")
 
 
 def main():

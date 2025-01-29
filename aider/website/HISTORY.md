@@ -23,13 +23,36 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.72.3
+
+- Enforce user/assistant turn order to avoid R1 errors, by miradnanali.
+- Case-insensitive model name matching while preserving original case.
+- Aider wrote 67% of the code in this release.
+
+### Aider v0.72.2
+- Harden against user/assistant turn order problems which cause R1 errors.
+- Added environment variable AIDER_SANITY_CHECK_TURNS for turn order validation.
+
+### Aider v0.72.1
+- Fix model metadata for `openrouter/deepseek/deepseek-r1`
+
+### Aider v0.72.0
+- Support for DeepSeek R1.
+  - Use shortcut: `--model r1`
+  - Also via OpenRouter: `--model openrouter/deepseek/deepseek-r1`
+- Added Kotlin syntax support to repo map, by Paul Walker.
+- Added `--line-endings` for file writing, by Titusz Pan.
+- Added examples_as_sys_msg=True for GPT-4o models, improves benchmark scores.
+- Bumped all dependencies, to pick up litellm support for o1 system messages.
+- Bugfix for turn taking when reflecting lint/test errors.
+- Aider wrote 52% of the code in this release.
+
 ### Aider v0.71.1
 
 - Fix permissions issue in Docker images.
-- Added read-only file announcements to chat.
+- Added read-only file announcements.
 - Bugfix: ASCII fallback for unicode errors.
 - Bugfix: integer indices for list slicing in repomap calculations.
-- Aider wrote 83% of the code in this release.
 
 ### Aider v0.71.0
 

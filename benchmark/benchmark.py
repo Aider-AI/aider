@@ -16,6 +16,7 @@ from types import SimpleNamespace
 from typing import List, Optional
 
 import git
+import importlib_resources
 import lox
 import pandas as pd
 import prompts
@@ -202,6 +203,9 @@ def main(
     num_ctx: Optional[int] = typer.Option(
         None, "--num-ctx", help="Override model context window size"
     ),
+    read_model_settings: str = typer.Option(
+        None, "--read-model-settings", help="Load aider model settings from YAML file"
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -309,6 +313,22 @@ def main(
         print("...done")
 
     test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
+
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
+    dump(model_metadata_files_loaded)
+
+    if read_model_settings:
+        try:
+            files_loaded = models.register_models([read_model_settings])
+            if verbose:
+                if files_loaded:
+                    print(f"Loaded model settings from: {files_loaded[0]}")
+                else:
+                    print(f"No model settings loaded from: {read_model_settings}")
+        except Exception as e:
+            print(f"Error loading model settings: {e}")
+            return 1
 
     if keywords:
         keywords = keywords.split(",")
@@ -642,6 +662,7 @@ def run_test_real(
     editor_edit_format,
     num_ctx=None,
     sleep=0,
+    read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -717,17 +738,6 @@ def run_test_real(
         else:
             print(f"Warning: Solution file not found: {src}")
 
-    # Copy all test files
-    for file_path in test_files:
-        src = testdir / Path(file_path)
-        if src.exists():
-            original_fname = original_dname / testdir.name / file_path
-            if original_fname.exists():
-                os.makedirs(src.parent, exist_ok=True)
-                shutil.copy(original_fname, src)
-        else:
-            print(f"Warning: Test file not found: {src}")
-
     file_list = " ".join(fname.name for fname in fnames)
 
     instructions = ""
@@ -758,6 +768,8 @@ def run_test_real(
         editor_edit_format=editor_edit_format,
     )
 
+    dump(main_model.max_chat_history_tokens)
+
     if num_ctx:
         if not main_model.extra_params:
             main_model.extra_params = {}
@@ -785,6 +797,7 @@ def run_test_real(
     dump(coder.ignore_mentions)
 
     coder.show_announcements()
+    coder.get_file_mentions = lambda x: set()  # No loading of any other files
 
     timeouts = 0
 
@@ -796,6 +809,7 @@ def run_test_real(
     test_outcomes = []
     for i in range(tries):
         start = time.time()
+
         if no_aider:
             pass
         elif replay:
@@ -925,15 +939,6 @@ def run_test_real(
 def run_unit_tests(original_dname, testdir, history_fname, test_files):
     timeout = 60 * 3
 
-    # Remove @Disabled annotations from Java test files
-    for file_path in test_files:
-        if file_path.endswith(".java"):
-            test_file = testdir / file_path
-            if test_file.exists():
-                content = test_file.read_text()
-                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
-                test_file.write_text(content)
-
     # Map of file extensions to test commands
     TEST_COMMANDS = {
         ".py": ["pytest"],
@@ -964,6 +969,15 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
         if src.exists():
             os.makedirs(dst.parent, exist_ok=True)
             shutil.copy(src, dst)
+
+    # Remove @Disabled annotations from Java test files
+    for file_path in test_files:
+        if file_path.endswith(".java"):
+            test_file = testdir / file_path
+            if test_file.exists():
+                content = test_file.read_text()
+                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
+                test_file.write_text(content)
 
     print(" ".join(command))
 

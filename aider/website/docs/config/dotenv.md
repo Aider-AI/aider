@@ -421,6 +421,9 @@ cog.outl("```")
 ## Specify the encoding for input and output (default: utf-8)
 #AIDER_ENCODING=utf-8
 
+## Line endings to use when writing files (default: platform)
+#AIDER_LINE_ENDINGS=platform
+
 ## Specify the .env file to load (default: .env in git root)
 #AIDER_ENV_FILE=.env
 
