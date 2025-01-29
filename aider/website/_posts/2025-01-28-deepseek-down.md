@@ -210,6 +210,8 @@ See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.
 
 ## Results
 
+# remove the total cost column. ai!
+
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
