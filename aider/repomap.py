@@ -59,7 +59,7 @@ class RepoMap:
         # Reuse existing tag parsing
         tags = rm.get_tags(fname, rel_fname)
         if not tags:
-            return f"# No outline available for {rel_fname}"
+            return f"# No outline available"
 
         # Get all definition lines
         lois = [tag.line for tag in tags if tag.kind == "def"]
@@ -67,7 +67,7 @@ class RepoMap:
         # Reuse existing tree rendering
         outline = rm.render_tree(fname, rel_fname, lois)
 
-        return f"{rel_fname}:\n{outline}"
+        return f"{outline}"
 
     def __init__(
         self,
