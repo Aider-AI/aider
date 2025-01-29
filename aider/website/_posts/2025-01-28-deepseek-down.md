@@ -210,7 +210,6 @@ See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.
 
 ## Results
 
-# remove the total cost column. ai!
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
@@ -220,7 +219,6 @@ See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.
       <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
-      <th style="padding: 8px; text-align: center;">Total Cost</th>
     </tr>
   </thead>
   <tbody>
@@ -232,7 +230,6 @@ See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.
         <td style="padding: 8px; text-align: center;">{{ row.percent_cases_well_formed }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
         <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
-        <td style="padding: 8px; text-align: center;">{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</td>
       </tr>
     {% endfor %}
   </tbody>
