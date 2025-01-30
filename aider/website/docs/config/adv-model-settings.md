@@ -389,6 +389,25 @@ cog.out("```\n")
   editor_model_name: deepseek/deepseek-chat
   editor_edit_format: editor-diff
 
+- name: fireworks_ai/accounts/fireworks/models/deepseek-r1
+  edit_format: diff
+  weak_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
+  use_repo_map: true
+  extra_params:
+    max_tokens: 160000
+  use_temperature: false
+  editor_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
+  editor_edit_format: editor-diff
+  remove_reasoning: false
+
+- name: fireworks_ai/accounts/fireworks/models/deepseek-v3
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 128000
+
 - name: gemini/gemini-1.5-flash-002
 
 - name: gemini/gemini-1.5-flash-exp-0827
@@ -656,6 +675,18 @@ cog.out("```\n")
   examples_as_sys_msg: true
 
 - name: openrouter/deepseek/deepseek-r1
+  edit_format: diff
+  weak_model_name: openrouter/deepseek/deepseek-chat
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+  use_temperature: false
+  editor_model_name: openrouter/deepseek/deepseek-chat
+  editor_edit_format: editor-diff
+
+- name: openrouter/deepseek/deepseek-r1-distill-llama-70b
   edit_format: diff
   weak_model_name: openrouter/deepseek/deepseek-chat
   use_repo_map: true
