@@ -441,3 +441,28 @@
   versions: 0.72.3.dev
   seconds_per_case: 251.6
   total_cost: 13.2933
+
+- dirname: 2025-01-28-16-00-03--qwen-max-2025-01-25-polyglot-diff
+  test_cases: 225
+  model: Qwen Max
+  edit_format: diff
+  commit_hash: ae7d459
+  pass_rate_1: 9.3
+  pass_rate_2: 21.8
+  pass_num_1: 21
+  pass_num_2: 49
+  percent_cases_well_formed: 90.2
+  error_outputs: 46
+  num_malformed_responses: 44
+  num_with_malformed_responses: 22
+  user_asks: 23
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 9
+  total_tests: 225
+  command: OPENAI_API_BASE=https://dashscope-intl.aliyuncs.com/compatible-mode/v1 aider --model openai/qwen-max-2025-01-25
+  date: 2025-01-28
+  versions: 0.72.4.dev
+  seconds_per_case: 39.5
