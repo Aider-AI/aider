@@ -69,7 +69,7 @@ The model also has to successfully apply all its changes to the source file with
 <script>
 {% assign data_source = edit_sorted %}
 {% assign pass_rate_field = "pass_rate_2" %}
-{% assign highlight_model = include.highlight | default: "xxx xxx" %}
+{% assign highlight_model = page.url | split: '?' | last | split: '=' | last %}
 {% include leaderboard.js %}
 </script>
 <style>
