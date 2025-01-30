@@ -590,3 +590,17 @@
   use_repo_map: true
   editor_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   editor_edit_format: editor-diff
+
+
+- name: openrouter/deepseek/deepseek-r1-distill-llama-70b
+  edit_format: diff
+  weak_model_name: openrouter/deepseek/deepseek-chat
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+  use_temperature: false
+  editor_model_name: openrouter/deepseek/deepseek-chat
+  editor_edit_format: editor-diff
+  
