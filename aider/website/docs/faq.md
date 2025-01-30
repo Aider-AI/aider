@@ -249,9 +249,9 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,007,140</td><td class='right'>50.7%</td></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>588,766</td><td class='right'>29.7%</td></tr>
-<tr><td>deepseek/REDACTED</td><td class='right'>258,010</td><td class='right'>13.0%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,043,388</td><td class='right'>51.6%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>588,766</td><td class='right'>29.1%</td></tr>
+<tr><td>deepseek/REDACTED</td><td class='right'>258,010</td><td class='right'>12.8%</td></tr>
 <tr><td>deepseek/deepseek-reasoner</td><td class='right'>40,597</td><td class='right'>2.0%</td></tr>
 <tr><td>claude-3-5-haiku-20241022</td><td class='right'>30,124</td><td class='right'>1.5%</td></tr>
 <tr><td>ollama/REDACTED</td><td class='right'>22,641</td><td class='right'>1.1%</td></tr>
