@@ -69,7 +69,7 @@ The model also has to successfully apply all its changes to the source file with
 <script>
 {% assign data_source = edit_sorted %}
 {% assign pass_rate_field = "pass_rate_2" %}
-{% assign highlight_model = "xxxxxxxxxxx" %}
+{% assign highlight_model = "xxxxxxxxxxx" %} # can we use the ?highlight= query param for this assign? ai!
 {% include leaderboard.js %}
 </script>
 <style>
