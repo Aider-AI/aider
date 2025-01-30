@@ -444,7 +444,7 @@
 
 - dirname: 2025-01-28-16-00-03--qwen-max-2025-01-25-polyglot-diff
   test_cases: 225
-  model: Qwen Max
+  model: qwen-max-2025-01-25
   edit_format: diff
   commit_hash: ae7d459
   pass_rate_1: 9.3
