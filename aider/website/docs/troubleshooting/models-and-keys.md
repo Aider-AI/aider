@@ -1,13 +1,15 @@
+---
+parent: Troubleshooting
+nav_order: 28
+---
 
-If you already have python 3.8-3.13 installed, you can get started quickly like this:
+# Models and API keys
 
-```bash
-python -m pip install aider-install
-aider-install
+You need to tell aider which LLM to use and provide an API key.
+The easiest way is to use the `--model` and `--api-key`
+command line arguments, like this:
 
-# Change directory into your code base
-cd /to/your/project
-
+```
 # Work with DeepSeek via DeepSeek's API
 aider --model deepseek --api-key deepseek=your-key-goes-here
 
@@ -23,3 +25,4 @@ aider --model openrouter/anthropic/claude-3.5-sonnet --api-key openrouter=your-k
 # Work with DeepSeek via OpenRouter's API
 aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
 ```
+
