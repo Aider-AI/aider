@@ -1,19 +1,19 @@
 # Release history
 
-### Aider v0.72.4
-
-- Support for DeepSeek R1 free.
-  - Use shortcut via OpenRouter: `--model openrouter/deepseek/deepseek-r1:free`
+### main branch
+- Improved handling of context window size limits, with better messaging and Ollama-specific guidance.
+- Added support for removing model-specific reasoning tags from responses with `remove_reasoning: tagname` model setting.
+- Auto-create parent directories when creating new files, by xqyz.
+- Support for R1 free on OpenRouter: `--model openrouter/deepseek/deepseek-r1:free`
+- Aider wrote 69% of the code in this release.
 
 ### Aider v0.72.3
 
 - Enforce user/assistant turn order to avoid R1 errors, by miradnanali.
 - Case-insensitive model name matching while preserving original case.
-- Aider wrote 67% of the code in this release.
 
 ### Aider v0.72.2
 - Harden against user/assistant turn order problems which cause R1 errors.
-- Added environment variable AIDER_SANITY_CHECK_TURNS for turn order validation.
 
 ### Aider v0.72.1
 - Fix model metadata for `openrouter/deepseek/deepseek-r1`

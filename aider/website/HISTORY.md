@@ -23,6 +23,12 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+- Improved handling of context window size limits, with better messaging and Ollama-specific guidance.
+- Added support for removing model-specific reasoning tags from responses.
+- Auto-create parent directories when creating new files, by xqyz.
+- Aider wrote 69% of the code in this release.
+
 ### Aider v0.72.4
 
 - Support for DeepSeek R1 free.
