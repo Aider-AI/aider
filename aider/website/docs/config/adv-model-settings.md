@@ -583,9 +583,6 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  extra_params:
-    extra_body:
-      reasoning_effort: high
   use_temperature: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
@@ -650,9 +647,6 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
-  extra_params:
-    extra_body:
-      reasoning_effort: high
   use_temperature: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff

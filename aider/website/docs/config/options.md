@@ -30,7 +30,8 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--openai-api-deployment-id] [--openai-organization-id]
              [--set-env] [--api-key] [--list-models]
              [--model-settings-file] [--model-metadata-file]
-             [--alias] [--verify-ssl | --no-verify-ssl] [--timeout]
+             [--alias] [--reasoning-effort]
+             [--verify-ssl | --no-verify-ssl] [--timeout]
              [--edit-format] [--architect] [--weak-model]
              [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
@@ -209,6 +210,10 @@ Environment variable: `AIDER_MODEL_METADATA_FILE`
 ### `--alias ALIAS:MODEL`
 Add a model alias (can be used multiple times)  
 Environment variable: `AIDER_ALIAS`  
+
+### `--reasoning-effort VALUE`
+Set the reasoning_effort API parameter (default: not set)  
+Environment variable: `AIDER_REASONING_EFFORT`  
 
 ### `--verify-ssl`
 Verify the SSL cert when connecting to models (default: True)  
