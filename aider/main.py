@@ -777,6 +777,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_edit_format=args.editor_edit_format,
     )
 
+    # add --reasoning-effort cli param
+    # defaults to None
+    # if present, set main_model.extra_params["extra_body"]["reasoning_effort"] = <val>
+    # be careful, not all those dicts will be initialized
+    # ai!
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
             main_model.edit_format = "editor-" + main_model.edit_format
