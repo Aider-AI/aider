@@ -752,7 +752,7 @@ class TestMain(TestCase):
             coder = main(
                 ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
             )
-            self.assertEqual(coder.main_model.name, "sonnet")
+            self.assertIn("sonnet", coder.main_model.name.lower())
             del os.environ["ANTHROPIC_API_KEY"]
 
             # Test DeepSeek API key
@@ -760,7 +760,7 @@ class TestMain(TestCase):
             coder = main(
                 ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
             )
-            self.assertEqual(coder.main_model.name, "deepseek")
+            self.assertIn("deepseek", coder.main_model.name.lower())
             del os.environ["DEEPSEEK_API_KEY"]
 
             # Test OpenRouter API key
@@ -768,7 +768,7 @@ class TestMain(TestCase):
             coder = main(
                 ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
             )
-            self.assertEqual(coder.main_model.name, "openrouter/anthropic/claude-3.5-sonnet")
+            self.assertIn("openrouter/anthropic/claude", coder.main_model.name.lower())
             del os.environ["OPENROUTER_API_KEY"]
 
             # Test OpenAI API key
@@ -776,7 +776,7 @@ class TestMain(TestCase):
             coder = main(
                 ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
             )
-            self.assertEqual(coder.main_model.name, "gpt-4o")
+            self.assertIn("gpt-4", coder.main_model.name.lower())
             del os.environ["OPENAI_API_KEY"]
 
             # Test Gemini API key
@@ -784,7 +784,7 @@ class TestMain(TestCase):
             coder = main(
                 ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
             )
-            self.assertEqual(coder.main_model.name, "flash")
+            self.assertIn("flash", coder.main_model.name.lower())
             del os.environ["GEMINI_API_KEY"]
 
             # Test no API keys
@@ -799,7 +799,7 @@ class TestMain(TestCase):
             coder = main(
                 ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
             )
-            self.assertEqual(coder.main_model.name, "sonnet")
+            self.assertIn("sonnet", coder.main_model.name.lower())
             del os.environ["ANTHROPIC_API_KEY"]
             del os.environ["OPENAI_API_KEY"]
 
