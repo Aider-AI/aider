@@ -622,3 +622,12 @@
   examples_as_sys_msg: true
   extra_params:
       max_tokens: 128000
+
+- name: openai/o3-mini
+  edit_format: diff
+  weak_model_name: gpt-4o-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: gpt-4o
+  editor_edit_format: editor-diff
+      
