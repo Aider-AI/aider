@@ -749,17 +749,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
     if not args.model:
-        # make a list of tuples XXX_API_KEY, "model-name" and run through it to pick
-        # a model based on the first key set
-        # ANTHROPIC -> sonnet
         # Select model based on available API keys
+        model_key_pairs = [
+            ("ANTHROPIC_API_KEY", "claude-3-5-sonnet-20241022"),
+            ("DEEPSEEK_API_KEY", "deepseek-chat"),
+            ("GEMINI_API_KEY", "flash"),
+        ]
         args.model = "gpt-4o-2024-08-06"  # default
-        if os.environ.get("ANTHROPIC_API_KEY"):
-            args.model = "claude-3-5-sonnet-20241022"
-        elif os.environ.get("DEEPSEEK_API_KEY"):
-            args.model = "deepseek-chat"
-        elif os.environ.get("GEMINI_API_KEY"):
-            args.model = "flash"
+        for env_key, model_name in model_key_pairs:
+            if os.environ.get(env_key):
+                args.model = model_name
+                break
 
     main_model = models.Model(
         args.model,
