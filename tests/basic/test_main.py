@@ -745,6 +745,52 @@ class TestMain(TestCase):
                 args, _ = mock_offer_url.call_args
                 self.assertEqual(args[0], "https://aider.chat/docs/more/edit-formats.html")
 
+    def test_default_model_selection(self):
+        with GitTemporaryDirectory():
+            # Test Anthropic API key
+            os.environ["ANTHROPIC_API_KEY"] = "test-key"
+            coder = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True)
+            self.assertEqual(coder.main_model.name, "sonnet")
+            del os.environ["ANTHROPIC_API_KEY"]
+
+            # Test DeepSeek API key
+            os.environ["DEEPSEEK_API_KEY"] = "test-key"
+            coder = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True)
+            self.assertEqual(coder.main_model.name, "deepseek")
+            del os.environ["DEEPSEEK_API_KEY"]
+
+            # Test OpenRouter API key
+            os.environ["OPENROUTER_API_KEY"] = "test-key"
+            coder = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True)
+            self.assertEqual(coder.main_model.name, "openrouter/anthropic/claude-3.5-sonnet")
+            del os.environ["OPENROUTER_API_KEY"]
+
+            # Test OpenAI API key
+            os.environ["OPENAI_API_KEY"] = "test-key"
+            coder = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True)
+            self.assertEqual(coder.main_model.name, "gpt-4o")
+            del os.environ["OPENAI_API_KEY"]
+
+            # Test Gemini API key
+            os.environ["GEMINI_API_KEY"] = "test-key"
+            coder = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True)
+            self.assertEqual(coder.main_model.name, "flash")
+            del os.environ["GEMINI_API_KEY"]
+
+            # Test no API keys
+            result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
+            self.assertEqual(result, 1)
+
+    def test_model_precedence(self):
+        with GitTemporaryDirectory():
+            # Test that earlier API keys take precedence
+            os.environ["ANTHROPIC_API_KEY"] = "test-key"
+            os.environ["OPENAI_API_KEY"] = "test-key"
+            coder = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True)
+            self.assertEqual(coder.main_model.name, "sonnet")
+            del os.environ["ANTHROPIC_API_KEY"]
+            del os.environ["OPENAI_API_KEY"]
+
     def test_chat_language_spanish(self):
         with GitTemporaryDirectory():
             coder = main(
