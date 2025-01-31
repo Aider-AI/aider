@@ -824,3 +824,7 @@ class TestMain(TestCase):
             self.fail(f"main() raised an unexpected exception: {e}")
 
         self.assertIsNone(result, "main() should return None when called with --exit")
+    
+    def test_reasoning_effort_option(self):
+        coder = main(["--reasoning-effort", "3", "--yes", "--exit"], input=DummyInput(), output=DummyOutput(), return_coder=True)
+        self.assertEqual(coder.main_model.extra_params.get("extra_body", {}).get("reasoning_effort"), "3")
