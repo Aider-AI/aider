@@ -126,7 +126,7 @@
   date: 2024-12-21
   versions: 0.69.2.dev
   seconds_per_case: 133.2
-  total_cost: 0.0000
+  total_cost: 186.4958
 
 - dirname: 2024-12-21-20-56-21--polyglot-deepseek-diff
   test_cases: 225
@@ -492,3 +492,29 @@
   versions: 0.72.4.dev
   seconds_per_case: 47.2
   total_cost: 8.8599
+
+- dirname: 2025-01-31-20-42-47--o3-mini-diff-high
+  test_cases: 224
+  model: o3-mini (high)
+  edit_format: diff
+  commit_hash: b0d58d1-dirty
+  pass_rate_1: 21.0
+  pass_rate_2: 60.4
+  pass_num_1: 47
+  pass_num_2: 136
+  percent_cases_well_formed: 93.3
+  error_outputs: 26
+  num_malformed_responses: 24
+  num_with_malformed_responses: 15
+  user_asks: 19
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 7
+  total_tests: 225
+  command: aider --model openai/o3-mini
+  date: 2025-01-31
+  versions: 0.72.4.dev
+  seconds_per_case: 124.6
+  total_cost: 18.1584
