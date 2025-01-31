@@ -751,14 +751,19 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if not args.model:
         # Select model based on available API keys
         model_key_pairs = [
-            ("ANTHROPIC_API_KEY", "claude-3-5-sonnet-20241022"),
-            ("DEEPSEEK_API_KEY", "deepseek-chat"),
+            ("ANTHROPIC_API_KEY", "sonnet"),
+            ("DEEPSEEK_API_KEY", "deepseek"),
+            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.5-sonnet"),
+            ("OPENAI_API_KEY", "gpt-4o"),
             ("GEMINI_API_KEY", "flash"),
         ]
         args.model = "gpt-4o-2024-08-06"  # default
         for env_key, model_name in model_key_pairs:
             if os.environ.get(env_key):
                 args.model = model_name
+                io.tool_warning(
+                    f"Found {env_key} so using {model_name} since no --model was specified."
+                )
                 break
 
     main_model = models.Model(
