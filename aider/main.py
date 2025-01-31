@@ -779,7 +779,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # add --reasoning-effort cli param
     if args.reasoning_effort is not None:
-        if not hasattr(main_model, "extra_params"):
+        if not getattr(main_model, "extra_params", None):
             main_model.extra_params = {}
         if "extra_body" not in main_model.extra_params:
             main_model.extra_params["extra_body"] = {}
