@@ -304,6 +304,11 @@ def get_parser(default_config_files, git_root):
         default=2,
         help="Multiplier for map tokens when no files are specified (default: 2)",
     )
+    group.add_argument(
+        "--reasoning-effort",
+        type=float,
+        help="Control how much effort the model spends on reasoning (0.0-1.0)",
+    )
 
     ##########
     group = parser.add_argument_group("History Files")

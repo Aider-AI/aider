@@ -778,10 +778,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     )
 
     # add --reasoning-effort cli param
-    # defaults to None
-    # if present, set main_model.extra_params["extra_body"]["reasoning_effort"] = <val>
-    # be careful, not all those dicts will be initialized
-    # ai!
+    if args.reasoning_effort is not None:
+        if not hasattr(main_model, 'extra_params'):
+            main_model.extra_params = {}
+        if 'extra_body' not in main_model.extra_params:
+            main_model.extra_params['extra_body'] = {}
+        main_model.extra_params['extra_body']['reasoning_effort'] = args.reasoning_effort
+
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
             main_model.edit_format = "editor-" + main_model.edit_format
