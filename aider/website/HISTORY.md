@@ -31,7 +31,7 @@ cog.out(text)
 - Added support for removing model-specific reasoning tags from responses with `remove_reasoning: tagname` model setting.
 - Auto-create parent directories when creating new files, by xqyz.
 - Support for R1 free on OpenRouter: `--model openrouter/deepseek/deepseek-r1:free`
-- Aider wrote 70% of the code in this release.
+- Aider wrote 69% of the code in this release.
 
 ### Aider v0.72.3
 
