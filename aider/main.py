@@ -766,7 +766,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 )
                 break
         if not args.model:
-            self.io.tool_error("You need to specify a --model and an --api-key to use.")
+            io.tool_error("You need to specify a --model and an --api-key to use.")
             io.offer_url(urls.models_and_keys, "Open documentation url for more info?")
             return 1
 
