@@ -26,3 +26,7 @@ aider --model openrouter/anthropic/claude-3.5-sonnet --api-key openrouter=your-k
 aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
 ```
 
+For more information, see the documentation sections:
+
+- [Connecting to LLMs](https://aider.chat/docs/llms.html)
+- [Configuring API keys](https://aider.chat/docs/config/api-keys.html)
