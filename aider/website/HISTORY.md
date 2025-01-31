@@ -23,8 +23,9 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.73.0
 
+- Full support for o3-mini: `aider --model o3-mini`
 - Improved handling of context window size limits, with better messaging and Ollama-specific guidance.
 - Added support for removing model-specific reasoning tags from responses with `remove_reasoning: tagname` model setting.
 - Auto-create parent directories when creating new files, by xqyz.

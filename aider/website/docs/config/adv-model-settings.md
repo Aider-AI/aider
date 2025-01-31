@@ -579,6 +579,17 @@ cog.out("```\n")
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
 
+- name: o3-mini
+  edit_format: diff
+  weak_model_name: gpt-4o-mini
+  use_repo_map: true
+  extra_params:
+    extra_body:
+      reasoning_effort: high
+  use_temperature: false
+  editor_model_name: gpt-4o
+  editor_edit_format: editor-diff
+
 - name: openai/gpt-4o
   edit_format: diff
   weak_model_name: gpt-4o-mini
@@ -633,6 +644,17 @@ cog.out("```\n")
   use_system_prompt: false
   use_temperature: false
   editor_model_name: openai/gpt-4o
+  editor_edit_format: editor-diff
+
+- name: openai/o3-mini
+  edit_format: diff
+  weak_model_name: gpt-4o-mini
+  use_repo_map: true
+  extra_params:
+    extra_body:
+      reasoning_effort: high
+  use_temperature: false
+  editor_model_name: gpt-4o
   editor_edit_format: editor-diff
 
 - name: openrouter/anthropic/claude-3-opus

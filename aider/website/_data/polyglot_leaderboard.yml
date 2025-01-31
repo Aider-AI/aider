@@ -466,3 +466,29 @@
   date: 2025-01-28
   versions: 0.72.4.dev
   seconds_per_case: 39.5
+
+- dirname: 2025-01-31-20-27-46--o3-mini-diff2
+  test_cases: 225
+  model: o3-mini (medium)
+  edit_format: diff
+  commit_hash: 2fb517b-dirty
+  pass_rate_1: 19.1
+  pass_rate_2: 53.8
+  pass_num_1: 43
+  pass_num_2: 121
+  percent_cases_well_formed: 95.1
+  error_outputs: 28
+  num_malformed_responses: 28
+  num_with_malformed_responses: 11
+  user_asks: 17
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openai/o3-mini
+  date: 2025-01-31
+  versions: 0.72.4.dev
+  seconds_per_case: 47.2
+  total_cost: 8.8599
