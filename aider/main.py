@@ -752,13 +752,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         # make a list of tuples XXX_API_KEY, "model-name" and run through it to pick
         # a model based on the first key set
         # ANTHROPIC -> sonnet
-        # OPENAI -> gpt-4o
-        # DEEPSEEK -> deepseek
-        # GEMINI -> flash
-        # ai!
-        args.model = "gpt-4o-2024-08-06"
+        # Select model based on available API keys
+        args.model = "gpt-4o-2024-08-06"  # default
         if os.environ.get("ANTHROPIC_API_KEY"):
             args.model = "claude-3-5-sonnet-20241022"
+        elif os.environ.get("DEEPSEEK_API_KEY"):
+            args.model = "deepseek-chat"
+        elif os.environ.get("GEMINI_API_KEY"):
+            args.model = "flash"
 
     main_model = models.Model(
         args.model,
