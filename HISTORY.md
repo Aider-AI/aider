@@ -1,6 +1,7 @@
 # Release history
 
 ### main branch
+
 - Improved handling of context window size limits, with better messaging and Ollama-specific guidance.
 - Added support for removing model-specific reasoning tags from responses with `remove_reasoning: tagname` model setting.
 - Auto-create parent directories when creating new files, by xqyz.

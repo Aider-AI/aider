@@ -398,7 +398,7 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
   editor_edit_format: editor-diff
-  remove_reasoning: false
+  remove_reasoning: think
 
 - name: fireworks_ai/accounts/fireworks/models/deepseek-v3
   edit_format: diff
