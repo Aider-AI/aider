@@ -204,6 +204,11 @@ def get_parser(default_config_files, git_root):
         help="Add a model alias (can be used multiple times)",
     )
     group.add_argument(
+        "--reasoning-effort",
+        type=str,
+        help="Set the reasoning_effort API parameter (default: not set)",
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -303,11 +308,6 @@ def get_parser(default_config_files, git_root):
         type=float,
         default=2,
         help="Multiplier for map tokens when no files are specified (default: 2)",
-    )
-    group.add_argument(
-        "--reasoning-effort",
-        type=float,
-        help="Control how much effort the model spends on reasoning (0.0-1.0)",
     )
 
     ##########
