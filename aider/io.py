@@ -698,7 +698,12 @@ class InputOutput:
             options += "/(D)on't ask again"
             valid_responses.append("don't")
 
-        question += options + " [Yes]: "
+        if default.lower().startswith("y"):
+            question += options + " [Yes]: "
+        elif default.lower().startswith("n"):
+            question += options + " [No]: "
+        else:
+            question += options + f" [{default}]: "
 
         if subject:
             self.tool_output()
@@ -732,13 +737,12 @@ class InputOutput:
                         question,
                         style=style,
                         complete_while_typing=False,
-                        default=default,
                     )
                 else:
                     res = input(question)
 
                 if not res:
-                    res = "y"  # Default to Yes if no input
+                    res = default
                     break
                 res = res.lower()
                 good = any(valid_response.startswith(res) for valid_response in valid_responses)

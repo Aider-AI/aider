@@ -757,7 +757,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             ("OPENAI_API_KEY", "gpt-4o"),
             ("GEMINI_API_KEY", "flash"),
         ]
-        args.model = "gpt-4o-2024-08-06"  # default
+
         for env_key, model_name in model_key_pairs:
             if os.environ.get(env_key):
                 args.model = model_name
