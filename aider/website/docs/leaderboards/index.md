@@ -45,6 +45,7 @@ The model also has to successfully apply all its changes to the source file with
       <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
+      <th style="padding: 8px; text-align: center;">Total Cost</th>
     </tr>
   </thead>
   <tbody>
@@ -56,6 +57,7 @@ The model also has to successfully apply all its changes to the source file with
         <td style="padding: 8px; text-align: center;">{{ row.percent_cases_well_formed }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
         <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
+        <td style="padding: 8px; text-align: center;">{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</td>
       </tr>
     {% endfor %}
   </tbody>
