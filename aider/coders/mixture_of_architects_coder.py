@@ -274,7 +274,7 @@ class MixtureOfArchitectsCoder(Coder):
                             )
                     case "assistant":
                         # If its the current architect, then we use role=assistant
-                        if msg["name"] == architect.name.upper():
+                        if msg["name"] == architect.name.upper() or msg["name"] == "ANY":
                             ask_coder.cur_messages.append(
                                 {"role": "assistant", "content": msg["content"]}
                             )
@@ -688,6 +688,23 @@ class MixtureOfArchitectsCoder(Coder):
         self.io.tool_output("Coder's output", bold=True)
         self.io.rule()
         editor_coder.run(with_message=compiled_instructions, preproc=False)
+
+
+        # Inject implementation notice to discussion
+        self.discussion_messages.append(
+            {
+                "role": "user",
+                "content": "We have implemented the plan. Refer to the latest code state",
+            }
+        )
+        self.discussion_messages.append(
+            {
+                "role": "assistant",
+                "name": "ANY",
+                "content": "Okay, i'll refer to the latest code state",
+            }
+        )
+
 
         self.move_back_cur_messages(
             "Changes have been applied based on architects' consensus."
