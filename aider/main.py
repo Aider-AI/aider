@@ -749,9 +749,26 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
     if not args.model:
-        args.model = "gpt-4o-2024-08-06"
-        if os.environ.get("ANTHROPIC_API_KEY"):
-            args.model = "claude-3-5-sonnet-20241022"
+        # Select model based on available API keys
+        model_key_pairs = [
+            ("ANTHROPIC_API_KEY", "sonnet"),
+            ("DEEPSEEK_API_KEY", "deepseek"),
+            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.5-sonnet"),
+            ("OPENAI_API_KEY", "gpt-4o"),
+            ("GEMINI_API_KEY", "flash"),
+        ]
+
+        for env_key, model_name in model_key_pairs:
+            if os.environ.get(env_key):
+                args.model = model_name
+                io.tool_warning(
+                    f"Found {env_key} so using {model_name} since no --model was specified."
+                )
+                break
+        if not args.model:
+            io.tool_error("You need to specify a --model and an --api-key to use.")
+            io.offer_url(urls.models_and_keys, "Open documentation url for more info?")
+            return 1
 
     main_model = models.Model(
         args.model,
@@ -759,6 +776,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_model=args.editor_model,
         editor_edit_format=args.editor_edit_format,
     )
+
+    # add --reasoning-effort cli param
+    if args.reasoning_effort is not None:
+        if not getattr(main_model, "extra_params", None):
+            main_model.extra_params = {}
+        if "extra_body" not in main_model.extra_params:
+            main_model.extra_params["extra_body"] = {}
+        main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):

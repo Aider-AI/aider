@@ -249,15 +249,17 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>deepseek/deepseek-chat</td><td class='right'>1,119,920</td><td class='right'>59.5%</td></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>699,676</td><td class='right'>37.2%</td></tr>
-<tr><td>o1</td><td class='right'>25,121</td><td class='right'>1.3%</td></tr>
-<tr><td>claude-3-5-haiku-20241022</td><td class='right'>10,083</td><td class='right'>0.5%</td></tr>
-<tr><td>gemini/gemini-exp-1206</td><td class='right'>10,068</td><td class='right'>0.5%</td></tr>
-<tr><td>mistral/codestral-latest</td><td class='right'>8,137</td><td class='right'>0.4%</td></tr>
-<tr><td>deepseek/REDACTED</td><td class='right'>7,432</td><td class='right'>0.4%</td></tr>
-<tr><td>gpt-4o</td><td class='right'>1,775</td><td class='right'>0.1%</td></tr>
-<tr><td>o1-preview</td><td class='right'>175</td><td class='right'>0.0%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,151,290</td><td class='right'>74.5%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>168,712</td><td class='right'>10.9%</td></tr>
+<tr><td>None</td><td class='right'>67,682</td><td class='right'>4.4%</td></tr>
+<tr><td>deepseek/deepseek-reasoner</td><td class='right'>35,080</td><td class='right'>2.3%</td></tr>
+<tr><td>openai/REDACTED</td><td class='right'>33,313</td><td class='right'>2.2%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>30,124</td><td class='right'>1.9%</td></tr>
+<tr><td>ollama/REDACTED</td><td class='right'>22,641</td><td class='right'>1.5%</td></tr>
+<tr><td>fireworks_ai/REDACTED</td><td class='right'>15,676</td><td class='right'>1.0%</td></tr>
+<tr><td>openrouter/deepseek/deepseek-chat</td><td class='right'>9,995</td><td class='right'>0.6%</td></tr>
+<tr><td>gemini/gemini-2.0-flash-thinking-exp</td><td class='right'>8,225</td><td class='right'>0.5%</td></tr>
+<tr><td>groq/REDACTED</td><td class='right'>2,462</td><td class='right'>0.2%</td></tr>
 </table>
 
 {: .note :}

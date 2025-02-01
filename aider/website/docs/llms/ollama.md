@@ -45,7 +45,19 @@ setx   OLLAMA_API_KEY <api-key> # Windows, restart shell after setx
 [Ollama uses a 2k context window by default](https://github.com/ollama/ollama/blob/main/docs/faq.md#how-can-i-specify-the-context-window-size),
 which is very small for working with aider.
 
+Unlike most other LLM servers, Ollama does not throw an error if you submit
+a request that exceeds the context window.
+Instead, it just silently truncates the request by discarding the "oldest" messages
+in the chat to make it fit within the context window.
+
+So if your context window is too small, you won't get an explicit error.
+The biggest symptom will be that aider says it can't see (some of) the files
+you added to the chat.
+That's because ollama is silently discarding them because they exceed the context window.
+
 Aider sets Ollama's context window to 8k by default. 
+Larger context windows will allow you to work with larger amounts of code,
+but will use memory and increase latency.
 If you would like
 a larger context window
 you can use a
@@ -58,11 +70,3 @@ like this:
     num_ctx: 8192
 ```
 
-Unlike most other LLM servers, Ollama does not throw an error if you submit
-a request that exceeds the context window.
-Instead, it just silently truncates the request by discarding the "oldest" messages
-in the chat to make it fit within the context window.
-So if your context window is too small, you won't get an error.
-Aider will probably just fail to work well and experience
-a lot of 
-[file editing problems](https://aider.chat/docs/troubleshooting/edit-errors.html).

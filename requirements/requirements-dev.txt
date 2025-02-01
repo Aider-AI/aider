@@ -28,7 +28,7 @@ click==8.1.8
     #   -c requirements.txt
     #   pip-tools
     #   typer
-codespell==2.3.0
+codespell==2.4.0
     # via -r requirements/requirements-dev.in
 cogapp==3.4.1
     # via -r requirements/requirements-dev.in
@@ -46,14 +46,14 @@ docutils==0.21.2
     # via
     #   sphinx
     #   sphinx-rtd-theme
-filelock==3.16.1
+filelock==3.17.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   virtualenv
-fonttools==4.55.3
+fonttools==4.55.7
     # via matplotlib
-identify==2.6.5
+identify==2.6.6
     # via pre-commit
 idna==3.10
     # via
@@ -130,7 +130,7 @@ pox==0.3.5
     # via pathos
 ppft==1.7.6.9
     # via pathos
-pre-commit==4.0.1
+pre-commit==4.1.0
     # via -r requirements/requirements-dev.in
 pygments==2.19.1
     # via
@@ -173,7 +173,7 @@ rich==13.9.4
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   typer
-semver==3.0.2
+semver==3.0.4
     # via -r requirements/requirements-dev.in
 shellingham==1.5.4
     # via typer
@@ -211,20 +211,20 @@ typing-extensions==4.12.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   typer
-tzdata==2024.2
+tzdata==2025.1
     # via pandas
 urllib3==2.3.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   requests
-virtualenv==20.29.0
+virtualenv==20.29.1
     # via pre-commit
 wheel==0.45.1
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==24.3.1
+pip==25.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt

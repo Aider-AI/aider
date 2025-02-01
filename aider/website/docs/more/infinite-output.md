@@ -67,6 +67,7 @@ cog.out(model_list)
 - codestral/codestral-latest
 - deepseek/deepseek-chat
 - deepseek/deepseek-coder
+- deepseek/deepseek-reasoner
 - eu.anthropic.claude-3-5-haiku-20241022-v1:0
 - eu.anthropic.claude-3-5-sonnet-20241022-v2:0
 - mistral/codestral-2405
@@ -92,6 +93,7 @@ cog.out(model_list)
 - mistral/pixtral-large-2411
 - mistral/pixtral-large-latest
 - openrouter/anthropic/claude-3.5-sonnet
+- openrouter/deepseek/deepseek-r1
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
 - vertex_ai/claude-3-5-haiku

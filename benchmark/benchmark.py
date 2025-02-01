@@ -233,6 +233,8 @@ def main(
     ),
     moa: Optional[List[str]] = typer.Option(
         None, "--moa", help="List of additional architect models"
+    read_model_settings: str = typer.Option(
+        None, "--read-model-settings", help="Load aider model settings from YAML file"
     ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
@@ -346,6 +348,22 @@ def main(
         print("...done")
 
     test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
+
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
+    dump(model_metadata_files_loaded)
+
+    if read_model_settings:
+        try:
+            files_loaded = models.register_models([read_model_settings])
+            if verbose:
+                if files_loaded:
+                    print(f"Loaded model settings from: {files_loaded[0]}")
+                else:
+                    print(f"No model settings loaded from: {read_model_settings}")
+        except Exception as e:
+            print(f"Error loading model settings: {e}")
+            return 1
 
     if keywords:
         keywords = keywords.split(",")
@@ -696,6 +714,7 @@ def run_test_real(
     num_ctx=None,
     sleep=0,
     moa=None,
+    read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -790,10 +809,6 @@ def run_test_real(
         yes=True,
         chat_history_file=history_fname,
     )
-
-    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
-    model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
-    dump(model_metadata_files_loaded)
 
     # weak_model_name = model_name
     weak_model_name = None

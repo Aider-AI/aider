@@ -7,11 +7,12 @@ from unittest.mock import MagicMock, patch
 import git
 
 from aider.coders import Coder
-from aider.coders.base_coder import UnknownEditFormat
+from aider.coders.base_coder import FinishReasonLength, UnknownEditFormat
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
 from aider.repo import GitRepo
+from aider.sendchat import sanity_check_messages
 from aider.utils import GitTemporaryDirectory
 
 
@@ -973,6 +974,71 @@ This command will print 'Hello, World!' to the console."""
             self.assertIn("Input tokens:", error_message)
             self.assertIn("Output tokens:", error_message)
             self.assertIn("Total tokens:", error_message)
+
+    def test_keyboard_interrupt_handling(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Simulate keyboard interrupt during message processing
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = "Partial response"
+                coder.partial_response_function_call = dict()
+                raise KeyboardInterrupt()
+
+            coder.send = mock_send
+
+            # Initial valid state
+            sanity_check_messages(coder.cur_messages)
+
+            # Process message that will trigger interrupt
+            list(coder.send_message("Test message"))
+
+            # Verify messages are still in valid state
+            sanity_check_messages(coder.cur_messages)
+            self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
+
+    def test_token_limit_error_handling(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Simulate token limit error
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = "Partial response"
+                coder.partial_response_function_call = dict()
+                raise FinishReasonLength()
+
+            coder.send = mock_send
+
+            # Initial valid state
+            sanity_check_messages(coder.cur_messages)
+
+            # Process message that hits token limit
+            list(coder.send_message("Long message"))
+
+            # Verify messages are still in valid state
+            sanity_check_messages(coder.cur_messages)
+            self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
+
+    def test_message_sanity_after_partial_response(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Simulate partial response then interrupt
+            def mock_send(*args, **kwargs):
+                coder.partial_response_content = "Partial response"
+                coder.partial_response_function_call = dict()
+                raise KeyboardInterrupt()
+
+            coder.send = mock_send
+
+            list(coder.send_message("Test"))
+
+            # Verify message structure remains valid
+            sanity_check_messages(coder.cur_messages)
+            self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
 
 if __name__ == "__main__":

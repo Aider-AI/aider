@@ -1,0 +1,130 @@
+- dirname: 2024-12-25-13-31-51--deepseekv3preview-diff2
+  test_cases: 225
+  model: DeepSeek
+  edit_format: diff
+  commit_hash: 0a23c4a-dirty
+  pass_rate_1: 22.7
+  pass_rate_2: 48.4
+  pass_num_1: 51
+  pass_num_2: 109
+  percent_cases_well_formed: 98.7
+  error_outputs: 7
+  num_malformed_responses: 7
+  num_with_malformed_responses: 3
+  user_asks: 19
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 8
+  total_tests: 225
+  command: aider --model deepseek/deepseek-chat
+  date: 2024-12-25
+  versions: 0.69.2.dev
+  seconds_per_case: 34.8
+  total_cost: 0.3369
+
+
+- dirname: 2025-01-28-17-47-49--v3-fireworks
+  test_cases: 225
+  model: Fireworks
+  edit_format: diff
+  commit_hash: 0336a98-dirty
+  pass_rate_1: 22.2
+  pass_rate_2: 48.4
+  pass_num_1: 50
+  pass_num_2: 109
+  percent_cases_well_formed: 96.9
+  error_outputs: 18
+  num_malformed_responses: 16
+  num_with_malformed_responses: 7
+  user_asks: 14
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 9
+  total_tests: 225
+  command: aider --model fireworks_ai/accounts/fireworks/models/deepseek-v3
+  date: 2025-01-28
+  versions: 0.72.4.dev
+  seconds_per_case: 115.9
+  total_cost: 2.1177
+
+- dirname: 2025-01-28-19-25-32--or-v3-deepinfra-diff
+  test_cases: 222
+  model: "OpenRouter: DeepInfra"
+  edit_format: diff
+  commit_hash: bfc5745, 77d2bc5-dirty
+  pass_rate_1: 23.9
+  pass_rate_2: 48.0
+  pass_num_1: 53
+  pass_num_2: 108
+  percent_cases_well_formed: 99.5
+  error_outputs: 18
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 17
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model openrouter/deepseek/deepseek-chat
+  date: 2025-01-28
+  versions: 0.72.4.dev
+  seconds_per_case: 187.0
+  total_cost: 0.2733
+
+- dirname: 2025-01-28-21-07-23--or-v3-novita-diff
+  test_cases: 225
+  model: "OpenRouter: Novita"
+  edit_format: diff
+  commit_hash: 66025a0
+  pass_rate_1: 20.4
+  pass_rate_2: 42.7
+  pass_num_1: 46
+  pass_num_2: 96
+  percent_cases_well_formed: 84.0
+  error_outputs: 265
+  num_malformed_responses: 67
+  num_with_malformed_responses: 36
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 8
+  total_tests: 225
+  command: aider --model openrouter/deepseek/deepseek-chat
+  date: 2025-01-28
+  versions: 0.72.4.dev
+  seconds_per_case: 472.5
+  total_cost: 0.0000
+
+- dirname: 2025-01-29-00-36-49--v3-hyperolic-diff
+  test_cases: 224
+  model: Hyperbolic
+  edit_format: diff
+  commit_hash: 298f713
+  pass_rate_1: 20.5
+  pass_rate_2: 48.4
+  pass_num_1: 46
+  pass_num_2: 109
+  percent_cases_well_formed: 97.3
+  error_outputs: 29
+  num_malformed_responses: 6
+  num_with_malformed_responses: 6
+  user_asks: 7
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 7
+  total_tests: 225
+  command: OPENAI_API_BASE=https://api.hyperbolic.xyz/v1/ aider --model openai/deepseek-ai/DeepSeek-V3
+  date: 2025-01-29
+  versions: 0.72.4.dev
+  seconds_per_case: 365.4
+  total_cost: 0.0000

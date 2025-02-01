@@ -1,4 +1,5 @@
 import difflib
+import importlib.resources
 import json
 import math
 import os
@@ -101,6 +102,7 @@ class ModelSettings:
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
+    remove_reasoning: Optional[str] = None
 
 
 # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
@@ -731,9 +733,8 @@ MODEL_SETTINGS = [
         editor_edit_format="editor-diff",
         use_system_prompt=False,
         use_temperature=False,
-        use_developer_message = True
+        use_developer_message=True,
     ),
-
     ModelSettings(
         "openai/o1-mini",
         "whole",
@@ -833,7 +834,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         streaming=False,
         use_temperature=False,
-        use_developer_message = True
+        use_developer_message=True,
         # extra_params=dict(extra_body=dict(reasoning_effort="high")),
     ),
     ModelSettings(
@@ -845,7 +846,7 @@ MODEL_SETTINGS = [
         use_repo_map=True,
         streaming=False,
         use_temperature=False,
-        use_developer_message=True
+        use_developer_message=True,
         # extra_params=dict(extra_body=dict(reasoning_effort="high")),
     ),
     ModelSettings(
@@ -868,6 +869,12 @@ MODEL_SETTINGS = [
         use_repo_map=True,
     ),
 ]
+# Load model settings from package resource
+MODEL_SETTINGS = []
+with importlib.resources.open_text("aider.resources", "model-settings.yml") as f:
+    model_settings_list = yaml.safe_load(f)
+    for model_settings_dict in model_settings_list:
+        MODEL_SETTINGS.append(ModelSettings(**model_settings_dict))
 
 
 class ModelInfoManager:
@@ -952,7 +959,9 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+    def __init__(
+        self, model, weak_model=None, editor_model=None, editor_edit_format=None
+    ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
@@ -1023,7 +1032,9 @@ class Model(ModelSettings):
 
             # Deep merge the extra_params dicts
             for key, value in self.extra_model_settings.extra_params.items():
-                if isinstance(value, dict) and isinstance(self.extra_params.get(key), dict):
+                if isinstance(value, dict) and isinstance(
+                    self.extra_params.get(key), dict
+                ):
                     # For nested dicts, merge recursively
                     self.extra_params[key] = {**self.extra_params[key], **value}
                 else:
@@ -1258,14 +1269,17 @@ def register_models(model_settings_fnames):
             for model_settings_dict in model_settings_list:
                 model_settings = ModelSettings(**model_settings_dict)
                 existing_model_settings = next(
-                    (ms for ms in MODEL_SETTINGS if ms.name == model_settings.name), None
+                    (ms for ms in MODEL_SETTINGS if ms.name == model_settings.name),
+                    None,
                 )
 
                 if existing_model_settings:
                     MODEL_SETTINGS.remove(existing_model_settings)
                 MODEL_SETTINGS.append(model_settings)
         except Exception as e:
-            raise Exception(f"Error loading model settings from {model_settings_fname}: {e}")
+            raise Exception(
+                f"Error loading model settings from {model_settings_fname}: {e}"
+            )
         files_loaded.append(model_settings_fname)
 
     return files_loaded
@@ -1343,7 +1357,9 @@ def sanity_check_model(io, model):
 
     elif not model.keys_in_environment:
         show = True
-        io.tool_warning(f"Warning for {model}: Unknown which environment variables are required.")
+        io.tool_warning(
+            f"Warning for {model}: Unknown which environment variables are required."
+        )
 
     if not model.info:
         show = True
@@ -1364,8 +1380,8 @@ def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
-    for model, attrs in litellm.model_cost.items():
-        model = model.lower()
+    for orig_model, attrs in litellm.model_cost.items():
+        model = orig_model.lower()
         if attrs.get("mode") != "chat":
             continue
         provider = attrs.get("litellm_provider", "").lower()
@@ -1374,12 +1390,12 @@ def fuzzy_match_models(name):
         provider += "/"
 
         if model.startswith(provider):
-            fq_model = model
+            fq_model = orig_model
         else:
-            fq_model = provider + model
+            fq_model = provider + orig_model
 
         chat_models.add(fq_model)
-        chat_models.add(model)
+        chat_models.add(orig_model)
 
     chat_models = sorted(chat_models)
     # exactly matching model
@@ -1413,16 +1429,38 @@ def print_matching_models(io, search):
 
 
 def get_model_settings_as_yaml():
+    from dataclasses import fields
+
     import yaml
 
     model_settings_list = []
-    for ms in MODEL_SETTINGS:
-        model_settings_dict = {
-            field.name: getattr(ms, field.name) for field in fields(ModelSettings)
-        }
-        model_settings_list.append(model_settings_dict)
+    # Add default settings first with all field values
+    defaults = {}
+    for field in fields(ModelSettings):
+        defaults[field.name] = field.default
+    defaults["name"] = "(default values)"
+    model_settings_list.append(defaults)
 
-    return yaml.dump(model_settings_list, default_flow_style=False)
+    # Sort model settings by name
+    for ms in sorted(MODEL_SETTINGS, key=lambda x: x.name):
+        # Create dict with explicit field order
+        model_settings_dict = {}
+        for field in fields(ModelSettings):
+            value = getattr(ms, field.name)
+            if value != field.default:
+                model_settings_dict[field.name] = value
+        model_settings_list.append(model_settings_dict)
+        # Add blank line between entries
+        model_settings_list.append(None)
+
+    # Filter out None values before dumping
+    yaml_str = yaml.dump(
+        [ms for ms in model_settings_list if ms is not None],
+        default_flow_style=False,
+        sort_keys=False,  # Preserve field order from dataclass
+    )
+    # Add actual blank lines between entries
+    return yaml_str.replace("\n- ", "\n\n- ")
 
 
 def main():

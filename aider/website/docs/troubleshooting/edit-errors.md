@@ -24,6 +24,8 @@ In these cases, here are some things you might try.
 Many LLMs now have very large context windows,
 but filling them with irrelevant code or conversation 
 can confuse the model.
+Above about 25k tokens of context, most models start to become distracted and become less likely
+to conform to their system prompt.
 
 - Don't add too many files to the chat, *just* add the files you think need to be edited.
 Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs/repomap.html), so other relevant code will be included automatically.
@@ -33,8 +35,8 @@ Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs
 
 ## Use a more capable model
 
-If possible try using GPT-4o, Claude 3.5 Sonnet or Claude 3 Opus, 
-as they are the strongest and most capable models.
+If possible try using GPT-4o, Claude 3.5 Sonnet, DeepSeek V3 or DeepSeek R1.
+They are the strongest and most capable models.
 
 Weaker models
 are more prone to
