@@ -1145,7 +1145,7 @@ class Commands:
 
     def cmd_paste(self, args):
         """Paste image/text from the clipboard into the chat.\
-        Optionally provide a name for the image."""
+        Optionally provide a name for the image, or append text to clipboard content."""
         try:
             # Check for image first
             image = ImageGrab.grabclipboard()
@@ -1184,7 +1184,8 @@ class Commands:
             # If not an image, try to get text
             text = pyperclip.paste()
             if text:
-                self.io.tool_output(text)
+                user_text = args.strip()
+                self.io.tool_output(text if not user_text else f"{text}\n\n{user_text}")
                 return text
 
             self.io.tool_error("No image or text content found in clipboard.")
