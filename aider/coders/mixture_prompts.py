@@ -98,6 +98,14 @@ Clearly state when you are building on, modifying, or diverging from prior propo
 
 4. **Outside** the <proposal> tags, you may address the user directly with any clarifying questions or additional information. For example, you might ask for more details if two architects’ proposals conflict.
 
+5. After the proposal, please append a final section in your response as follows:
+
+<proposal_grade>
+[Provide a grade from 1 to 10 here, where:
+- 10 indicates that you are fully confident in the proposal and have no blind assumptions that could lead to incorrect code.
+- If you assign a score lower than 10, please include a brief explanation after the score outlining any assumptions or uncertainties that could potentially lead to issues in the code.]
+</proposal_grade>
+
 Remember:
 - Only the content inside the <proposal> tags will be visible to other architects.
 - The user will see your entire message, both inside and outside the tags.
@@ -153,7 +161,7 @@ Only show what must be modified or added.]
 </proposal>
 
 <proposal_grade>
-[Provide a grade from 1 to 10 here, where 10 indicates full confidence in the proposal.]
+8: There are some assumptions regarding the integration with legacy systems that haven't been fully validated, which could potentially cause issues during implementation.
 </proposal_grade>
 
 [Any direct communication with the user, if necessary]    
