@@ -152,6 +152,10 @@ Only show what must be modified or added.]
 “No further changes are necessary, and I believe this meets all user requirements.”]
 </proposal>
 
+<proposal_grade>
+[Provide a grade from 1 to 10 here, where 10 indicates full confidence in the proposal.]
+</proposal_grade>
+
 [Any direct communication with the user, if necessary]    
 """
 
