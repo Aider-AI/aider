@@ -1107,6 +1107,128 @@ class TestCommands(TestCase):
                 )
             )
 
+    def test_cmd_subtree_no_args(self):
+        """Test /subtree with no arguments shows current path"""
+        with GitTemporaryDirectory() as repo_dir:
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Change to repo dir first
+            os.chdir(repo_dir)
+
+            # Create and commit files
+            root_file = Path("root.txt")
+            root_file.touch()
+            raw_repo.git.add(str(root_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            repo = GitRepo(io, None, None, subtree_only=True)
+            coder = Coder.create(self.GPT35, None, io, repo=repo)
+            commands = Commands(io, coder)
+
+            # Mock tool_output to capture output
+            with mock.patch.object(io, "tool_output") as mock_output:
+                commands.cmd_subtree("")
+                mock_output.assert_called_with("Current subtree path: .")
+
+    def test_cmd_subtree_absolute_path(self):
+        """Test /subtree with absolute path"""
+        with GitTemporaryDirectory() as repo_dir:
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Change to repo dir first
+            os.chdir(repo_dir)
+
+            # Create and commit files
+            root_file = Path("root.txt")
+            root_file.touch()
+            subdir = Path("subdir")
+            subdir.mkdir()
+
+            raw_repo.git.add(str(root_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            repo = GitRepo(io, None, None, subtree_only=True)
+            coder = Coder.create(self.GPT35, None, io, repo=repo)
+            commands = Commands(io, coder)
+
+            # Test with absolute path
+            with mock.patch.object(io, "tool_output") as mock_output:
+                commands.cmd_subtree(str(subdir))
+                mock_output.assert_called_with("Changed subtree path to: subdir")
+
+    def test_cmd_subtree_relative_path(self):
+        """Test /subtree with relative path"""
+        with GitTemporaryDirectory() as repo_dir:
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Change to repo dir first
+            os.chdir(repo_dir)
+
+            # Create and commit files
+            root_file = Path("root.txt")
+            root_file.touch()
+            Path("dir1/dir2").mkdir(parents=True)
+
+            raw_repo.git.add(str(root_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            repo = GitRepo(io, None, None, subtree_only=True)
+            coder = Coder.create(self.GPT35, None, io, repo=repo)
+            commands = Commands(io, coder)
+
+            # Test with relative path
+            with mock.patch.object(io, "tool_output") as mock_output:
+                commands.cmd_subtree(os.path.join("dir1", "dir2"))
+                expected_path = os.path.normpath("dir1/dir2")
+                mock_output.assert_called_with(f"Changed subtree path to: {expected_path}")
+
+    def test_cmd_subtree_no_repo(self):
+        """Test /subtree with no git repo"""
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Test with no repo
+            with mock.patch.object(io, "tool_error") as mock_error:
+                commands.cmd_subtree("some/path")
+                mock_error.assert_called_with("No git repository found.")
+
+    def test_cmd_subtree_outside_repo(self):
+        """Test /subtree with path outside repo"""
+        with GitTemporaryDirectory() as repo_dir:
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Change to repo dir first
+            os.chdir(repo_dir)
+
+            # Create and commit files
+            root_file = Path("root.txt")
+            root_file.touch()
+            raw_repo.git.add(str(root_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            repo = GitRepo(io, None, None, subtree_only=True)
+            coder = Coder.create(self.GPT35, None, io, repo=repo)
+            commands = Commands(io, coder)
+
+            # Create a path that's definitely outside the repo
+            outside_path = os.path.abspath(os.path.join(repo_dir, "..", "outside"))
+            os.makedirs(outside_path, exist_ok=True)
+
+            # Try to set path outside repo
+            with mock.patch.object(io, "tool_error") as mock_error:
+                commands.cmd_subtree(outside_path)
+                mock_error.assert_called_with("The path must be within the git repo.")
+
     def test_cmd_test_unbound_local_error(self):
         with ChdirTemporaryDirectory():
             io = InputOutput(pretty=False, fancy_input=False, yes=False)

@@ -393,6 +393,134 @@ class TestRepo(unittest.TestCase):
             self.assertNotIn(str(root_file), tracked_files)
             self.assertNotIn(str(another_subdir_file), tracked_files)
 
+    def test_set_current_subtree_without_subtree_only(self):
+        with GitTemporaryDirectory():
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Create files in different directories
+            root_file = Path("root.txt")
+            subdir_file = Path("subdir/subdir_file.txt")
+            another_subdir_file = Path("another_subdir/another_file.txt")
+
+            root_file.touch()
+            subdir_file.parent.mkdir()
+            subdir_file.touch()
+            another_subdir_file.parent.mkdir()
+            another_subdir_file.touch()
+
+            raw_repo.git.add(str(root_file), str(subdir_file), str(another_subdir_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            root_path = Path(raw_repo.working_dir).resolve()
+
+            # Start in subdir
+            os.chdir(subdir_file.parent)
+
+            # Create GitRepo instance with subtree_only=False
+            git_repo = GitRepo(InputOutput(), None, None, subtree_only=False)
+
+            # Test initial state
+            self.assertFalse(git_repo.ignored_file(str(subdir_file)))
+            self.assertFalse(git_repo.ignored_file(str(root_file)))
+            self.assertFalse(git_repo.ignored_file(str(another_subdir_file)))
+
+            # Test changing subtree using absolute path
+            abs_another_subdir = (root_path / another_subdir_file.parent).resolve()
+            success, msg = git_repo.set_current_subtree(abs_another_subdir)
+            self.assertFalse(success)
+            self.assertEqual(msg, "Subtree mode is not enabled. Run aider with --subtree-only flag.")
+
+            # Test changing subtree using relative path from git root
+            success, msg = git_repo.set_current_subtree("subdir")
+            self.assertFalse(success)
+            self.assertEqual(msg, "Subtree mode is not enabled. Run aider with --subtree-only flag.")
+
+            # Test changing subtree using relative path from current directory
+            success, msg = git_repo.set_current_subtree("another_subdir")
+            self.assertFalse(success)
+            self.assertEqual(msg, "Subtree mode is not enabled. Run aider with --subtree-only flag.")
+
+    def test_set_current_subtree_with_subtree_only(self):
+        with GitTemporaryDirectory():
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Create files in different directories
+            root_file = Path("root.txt")
+            subdir_file = Path("subdir/subdir_file.txt")
+            another_subdir_file = Path("another_subdir/another_file.txt")
+
+            root_file.touch()
+            subdir_file.parent.mkdir()
+            subdir_file.touch()
+            another_subdir_file.parent.mkdir()
+            another_subdir_file.touch()
+
+            raw_repo.git.add(str(root_file), str(subdir_file), str(another_subdir_file))
+            raw_repo.git.commit("-m", "Initial commit")
+
+            root_path = Path(raw_repo.working_dir).resolve()
+
+            # Start in subdir
+            os.chdir(subdir_file.parent)
+
+            # Create GitRepo instance with subtree_only=True
+            git_repo = GitRepo(InputOutput(), None, None, subtree_only=True)
+
+            # Test initial state
+            self.assertFalse(git_repo.ignored_file(str(subdir_file)))
+            self.assertTrue(git_repo.ignored_file(str(root_file)))
+            self.assertTrue(git_repo.ignored_file(str(another_subdir_file)))
+
+            # Test changing subtree using absolute path
+            abs_another_subdir = (root_path / another_subdir_file.parent).resolve()
+            success, msg = git_repo.set_current_subtree(abs_another_subdir)
+            self.assertTrue(success)
+            self.assertIsNone(msg)
+
+            # Test new state with absolute path change
+            self.assertTrue(git_repo.ignored_file(str(subdir_file)))
+            self.assertTrue(git_repo.ignored_file(str(root_file)))
+            self.assertFalse(git_repo.ignored_file(str(another_subdir_file)))
+
+            # Test changing subtree using relative path from git root
+            success, msg = git_repo.set_current_subtree("subdir")
+            self.assertTrue(success)
+            self.assertIsNone(msg)
+
+            # Test new state with relative path change
+            self.assertFalse(git_repo.ignored_file(str(subdir_file)))
+            self.assertTrue(git_repo.ignored_file(str(root_file)))
+            self.assertTrue(git_repo.ignored_file(str(another_subdir_file)))
+
+            # Set path to root
+            success, msg = git_repo.set_current_subtree(".")
+            self.assertTrue(success)
+            self.assertIsNone(msg)
+
+            # Test new state with root path change
+            self.assertFalse(git_repo.ignored_file(str(subdir_file)))
+            self.assertFalse(git_repo.ignored_file(str(root_file)))
+            self.assertFalse(git_repo.ignored_file(str(another_subdir_file)))
+
+            # Try to set path outside repo
+            outside_path = root_path.parent
+            success, msg = git_repo.set_current_subtree(outside_path)
+            self.assertFalse(success)
+            self.assertEqual(msg, "The path must be within the git repo.")
+
+            # Try to set path to non-existent directory
+            non_existent_path = root_path / "non_existent"
+            success, msg = git_repo.set_current_subtree(non_existent_path)
+            self.assertFalse(success)
+            self.assertEqual(msg, "The path must be a directory.")
+
+            # Try to set path to a file
+            success, msg = git_repo.set_current_subtree(root_file)
+            self.assertFalse(success)
+            self.assertEqual(msg, "The path must be a directory.")
+
     @patch("aider.repo.simple_send_with_retries")
     def test_noop_commit(self, mock_send):
         mock_send.return_value = '"a good commit message"'
