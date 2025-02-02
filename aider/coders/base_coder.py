@@ -1055,6 +1055,12 @@ class Coder:
         else:
             language = "the same language they are using"
 
+        special_model_clause = ""
+        if self.main_model and hasattr(self.main_model, "name"):
+            name = self.main_model.name
+            if name.startswith("o1-") or name.startswith("/o1-") or name.startswith("o3-") or name.startswith("/o3-"):
+                special_model_clause = "Formatting re-enabled\n"
+
         prompt = prompt.format(
             fence=self.fence,
             lazy_prompt=lazy_prompt,
@@ -1062,6 +1068,7 @@ class Coder:
             shell_cmd_prompt=shell_cmd_prompt,
             shell_cmd_reminder=shell_cmd_reminder,
             language=language,
+            special_model_clause=special_model_clause,
         )
         return prompt
 

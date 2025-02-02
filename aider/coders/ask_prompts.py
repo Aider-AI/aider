@@ -4,7 +4,7 @@ from .base_prompts import CoderPrompts
 
 
 class AskPrompts(CoderPrompts):
-    main_system = """Act as an expert code analyst.
+    main_system = """{special_model_clause}Act as an expert code analyst.
 Answer questions about the supplied code.
 Always reply to the user in {language}.
 
