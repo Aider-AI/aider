@@ -173,24 +173,54 @@ class ModelInfoManager:
 
         return dict()
 
-    def get_model_info(self, model):
-        cached_info = self.get_model_from_cached_json_db(model)
 
-        litellm_info = None
-        if litellm._lazy_module or not cached_info:
+model_info_manager = ModelInfoManager()
+
+
+def modify_model_info_manager():
+    # Add the local_metadata dict and register_local_metadata method
+    ModelInfoManager.local_metadata = {}
+
+    def register_local_metadata(self, model_def):
+        """Store local metadata when registering models"""
+        if isinstance(model_def, dict):
+            self.local_metadata.update(model_def)
+
+    def get_model_info(self, model):
+        # First check local metadata
+        if model in self.local_metadata:
+            return self.local_metadata[model]
+
+        # Check if it's a provider/model format
+        pieces = model.split("/")
+        if len(pieces) == 2 and pieces[1] in self.local_metadata:
+            info = self.local_metadata[pieces[1]]
+            if info.get("litellm_provider") == pieces[0]:
+                return info
+
+        # Fall back to cached/online data
+        cached_info = self.get_model_from_cached_json_db(model)
+        if cached_info:
+            return cached_info
+
+        # Try litellm as last resort
+        if litellm._lazy_module:
             try:
                 litellm_info = litellm.get_model_info(model)
+                if litellm_info:
+                    return litellm_info
             except Exception as ex:
                 if "model_prices_and_context_window.json" not in str(ex):
                     print(str(ex))
 
-        if litellm_info:
-            return litellm_info
+        return dict()
 
-        return cached_info
+    # Add new methods to the class
+    ModelInfoManager.register_local_metadata = register_local_metadata
+    ModelInfoManager.get_model_info = get_model_info
 
 
-model_info_manager = ModelInfoManager()
+modify_model_info_manager()
 
 
 class Model(ModelSettings):
@@ -526,6 +556,9 @@ def register_litellm_models(model_fnames):
             model_def = json5.loads(data)
             if not model_def:
                 continue
+
+            # Store in ModelInfoManager's local metadata
+            model_info_manager.register_local_metadata(model_def)
 
             # only load litellm if we have actual data
             litellm._load_litellm()
