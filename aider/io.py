@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from io import StringIO
 from pathlib import Path
+from functools import wraps
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
@@ -662,6 +663,18 @@ class InputOutput:
             return True
         return False
 
+    def disable_multiline_during_prompt(f):
+        @wraps(f)
+        def wrapper(self, *args, **kwargs):
+            orig = self.multiline_mode
+            self.multiline_mode = False  # Temporarily disable
+            try:
+                return f(self, *args, **kwargs)
+            finally:
+                self.multiline_mode = orig  # Restore original state
+        return wrapper
+
+    @disable_multiline_during_prompt
     def confirm_ask(
         self,
         question,
@@ -671,9 +684,6 @@ class InputOutput:
         group=None,
         allow_never=False,
     ):
-        # Temporarily disable multiline mode for yes/no prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         question_id = (question, subject)
@@ -777,15 +787,10 @@ class InputOutput:
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
-
         return is_yes
 
+    @disable_multiline_during_prompt
     def prompt_ask(self, question, default="", subject=None):
-        # Temporarily disable multiline mode for prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         if subject:
@@ -813,9 +818,6 @@ class InputOutput:
         self.append_chat_history(hist, linebreak=True, blockquote=True)
         if self.yes in (True, False):
             self.tool_output(hist)
-
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
 
         return res
 
