@@ -308,6 +308,11 @@ class Model(ModelSettings):
             self.use_temperature = False
             return  # <--
 
+        if model.startswith("deepseek-r1") or "/deepseek-r1" in model:
+            self.use_system_prompt = False
+            self.use_temperature = True
+            return  # <--
+        
         if (
             "qwen" in model
             and "coder" in model
