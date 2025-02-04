@@ -23,6 +23,7 @@ from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.exceptions import LiteLLMExceptions
+from aider.sendchat import RETRY_TIMEOUT
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
