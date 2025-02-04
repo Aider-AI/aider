@@ -560,9 +560,8 @@ class Model(ModelSettings):
             kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
         if self.extra_params:
             kwargs.update(self.extra_params)
-
-        # if is_ollama and kwargs[num_ctx] isn't set: num_ctx = token_count(messages) * 1.5 ai!
-
+        if self.is_ollama() and "num_ctx" not in kwargs:
+            kwargs["num_ctx"] = int(self.token_count(messages) * 1.5)
         key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
         hash_object = hashlib.sha1(key)
