@@ -17,10 +17,7 @@ from PIL import Image
 
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
-from aider.sendchat import (
-    ensure_alternating_roles,
-    sanity_check_messages,
-)
+from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 
 RETRY_TIMEOUT = 60
 
