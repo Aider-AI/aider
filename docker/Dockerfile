@@ -20,7 +20,8 @@ ENV PLAYWRIGHT_SKIP_BROWSER_GC=1
 
 # Create directories with proper permissions
 RUN mkdir -p /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers && \
-    chown -R appuser:appuser /home/appuser /app /venv
+    chown -R appuser:appuser /home/appuser /app /venv && \
+    chmod -R 777 /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers
 
 # So git doesn't complain about unusual permissions
 RUN git config --system --add safe.directory /app
