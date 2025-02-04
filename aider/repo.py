@@ -17,6 +17,7 @@ except ImportError:
 import pathspec
 
 from aider import prompts, utils
+
 from .dump import dump  # noqa: F401
 
 ANY_GIT_ERROR += [
