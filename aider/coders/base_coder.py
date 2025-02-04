@@ -1620,8 +1620,7 @@ See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size
 
         completion = None
         try:
-            hash_object, completion = send_completion(
-                model.name,
+            hash_object, completion = model.send_completion(
                 messages,
                 functions,
                 self.stream,
