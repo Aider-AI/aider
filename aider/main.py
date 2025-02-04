@@ -163,8 +163,8 @@ def check_gitignore(git_root, io, ask=True):
         if not repo.ignored(".aider"):
             patterns_to_add.append(".aider*")
 
-        # only check .env if git_root/.env exists ai!
-        if not repo.ignored(".env"):
+        env_path = Path(git_root) / ".env"
+        if env_path.exists() and not repo.ignored(".env"):
             patterns_to_add.append(".env")
 
         if not patterns_to_add:
