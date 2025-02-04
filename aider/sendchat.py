@@ -1,12 +1,6 @@
 from aider.dump import dump  # noqa: F401
 from aider.utils import format_messages
 
-# from diskcache import Cache
-
-
-CACHE_PATH = "~/.aider.send.cache.v1"
-CACHE = None
-# CACHE = Cache(CACHE_PATH)
 
 RETRY_TIMEOUT = 60
 

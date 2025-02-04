@@ -551,13 +551,8 @@ class Model(ModelSettings):
         key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
         hash_object = hashlib.sha1(key)
-        from aider.sendchat import CACHE, litellm
-
-        if not stream and CACHE is not None and key in CACHE:
-            return hash_object, CACHE[key]
+        from aider.sendchat import litellm
         res = litellm.completion(**kwargs)
-        if not stream and CACHE is not None:
-            CACHE[key] = res
         return hash_object, res
 
     def simple_send_with_retries(self, messages):
