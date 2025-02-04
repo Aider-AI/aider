@@ -260,7 +260,6 @@ class Model(ModelSettings):
             if model.startswith("ollama/") or model.startswith("ollama_chat/"):
                 if not (self.extra_params and "num_ctx" in self.extra_params):
                     self.extra_params = dict(num_ctx=8 * 1024)
-                    dump(self.extra_params)
 
         # Apply override settings last if they exist
         if self.extra_model_settings and self.extra_model_settings.extra_params:
