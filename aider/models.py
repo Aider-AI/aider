@@ -10,7 +10,7 @@ import sys
 import time
 from dataclasses import dataclass, fields
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import json5
 import yaml
@@ -102,7 +102,7 @@ class ModelSettings:
     cache_control: bool = False
     caches_by_default: bool = False
     use_system_prompt: bool = True
-    use_temperature: bool = True # how can i make this a bool or a float? ai!
+    use_temperature: Union[bool, float] = True
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
@@ -551,7 +551,7 @@ class Model(ModelSettings):
 
         if self.use_temperature is not False:
             if temperature is None:
-                if self.use_temperature in (True, None):
+                if isinstance(self.use_temperature, bool):
                     temperature = 0
                 else:
                     temperature = float(self.use_temperature)
