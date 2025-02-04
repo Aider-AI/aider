@@ -7,7 +7,8 @@ description: How to configure reasoning model settings from secondary providers.
 # Reasoning models
 
 Many 
-"reasoning" models have restrictions on streaming and setting the temperature parameter.
+"reasoning" models have restrictions on how they can be used.
+They sometimes prohibit streaming, use of temperature and/or the system prompt.
 Aider is configured to work properly with these models
 when served through major provider APIs.
 
@@ -61,7 +62,7 @@ settings for a different provider.
 There is also a `remove_reasoning` setting, which takes the name of a tag.
 This is used to remove everything inside that XML tag pair.
 
-When using DeepSeek R1 from Fireworks, the reasoning comes back inside
+For example when using DeepSeek R1 from Fireworks, the reasoning comes back inside
 `<think>...</think>` tags, so aider's settings
 include `remove_reasoning: think` to remove that part of the response.
 
