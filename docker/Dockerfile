@@ -40,7 +40,7 @@ COPY . /tmp/aider
 
 # Install dependencies as root
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[help,browser,playwright] \
+    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[help,browser,playwright] boto3 \
        --extra-index-url https://download.pytorch.org/whl/cpu && \
     rm -rf /tmp/aider
 
@@ -64,7 +64,7 @@ COPY . /tmp/aider
 
 # Install dependencies as root
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[playwright] \
+    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[playwright] boto3 \
        --extra-index-url https://download.pytorch.org/whl/cpu && \
     rm -rf /tmp/aider
 
