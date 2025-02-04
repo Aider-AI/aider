@@ -1612,19 +1612,13 @@ See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
-        if self.main_model.use_temperature:
-            temp = self.temperature
-        else:
-            temp = None
-
         completion = None
         try:
             hash_object, completion = model.send_completion(
                 messages,
                 functions,
                 self.stream,
-                temp,
-                extra_params=model.extra_params,
+                self.temperature,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
