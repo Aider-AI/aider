@@ -528,9 +528,11 @@ class Model(ModelSettings):
     def send_completion(self, messages, functions, stream, temperature=0, extra_params=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             from aider.sendchat import sanity_check_messages
+
             sanity_check_messages(messages)
         if "deepseek-reasoner" in self.name:
             from aider.sendchat import ensure_alternating_roles
+
             messages = ensure_alternating_roles(messages)
         kwargs = dict(
             model=self.name,
@@ -549,6 +551,7 @@ class Model(ModelSettings):
         # dump(kwargs)
         hash_object = hashlib.sha1(key)
         from aider.sendchat import CACHE, litellm
+
         if not stream and CACHE is not None and key in CACHE:
             return hash_object, CACHE[key]
         res = litellm.completion(**kwargs)
@@ -559,6 +562,7 @@ class Model(ModelSettings):
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
         from aider.sendchat import RETRY_TIMEOUT, ensure_alternating_roles
+
         litellm_ex = LiteLLMExceptions()
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)

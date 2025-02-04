@@ -75,7 +75,3 @@ def ensure_alternating_roles(messages):
         prev_role = current_role
 
     return fixed_messages
-
-
-
-
