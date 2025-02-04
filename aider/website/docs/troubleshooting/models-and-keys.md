@@ -16,13 +16,13 @@ aider --model deepseek --api-key deepseek=your-key-goes-here
 # Work with Claude 3.5 Sonnet via Anthropic's API
 aider --model sonnet --api-key anthropic=your-key-goes-here
 
-# Work with GPT-4o via OpenAI's API
-aider --model gpt-4o --api-key openai=your-key-goes-here
+# Work with o3-mini via OpenAI's API
+aider --model o3-mini --api-key openai=your-key-goes-here
 
 # Work with Sonnet via OpenRouter's API
 aider --model openrouter/anthropic/claude-3.5-sonnet --api-key openrouter=your-key-goes-here
 
-# Work with DeepSeek via OpenRouter's API
+# Work with DeepSeek Chat V3 via OpenRouter's API
 aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
 ```
 
