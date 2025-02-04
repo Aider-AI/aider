@@ -1,5 +1,12 @@
 # Release history
 
+### main branch
+- Improved .gitignore handling:
+  - Honor ignores already in effect regardless of how they've been configured.
+  - Check for .env only when the file exists.
+- Added "catch all" model-specific configuration settings for o3-mini, DeepSeek V3 & R1, o1-mini, o1.
+- Aider wrote 40% of the code in this release.
+
 ### Aider v0.73.0
 
 - Full support for o3-mini: `aider --model o3-mini`

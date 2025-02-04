@@ -249,13 +249,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>982,539</td><td class='right'>72.4%</td></tr>
-<tr><td>None</td><td class='right'>192,849</td><td class='right'>14.2%</td></tr>
-<tr><td>o3-mini</td><td class='right'>42,495</td><td class='right'>3.1%</td></tr>
-<tr><td>openai/REDACTED</td><td class='right'>33,313</td><td class='right'>2.5%</td></tr>
-<tr><td>claude-3-5-haiku-20241022</td><td class='right'>30,124</td><td class='right'>2.2%</td></tr>
-<tr><td>ollama/REDACTED</td><td class='right'>22,641</td><td class='right'>1.7%</td></tr>
-<tr><td>fireworks_ai/REDACTED</td><td class='right'>18,207</td><td class='right'>1.3%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,060,798</td><td class='right'>71.5%</td></tr>
+<tr><td>None</td><td class='right'>192,849</td><td class='right'>13.0%</td></tr>
+<tr><td>o3-mini</td><td class='right'>91,579</td><td class='right'>6.2%</td></tr>
+<tr><td>openai/REDACTED</td><td class='right'>33,313</td><td class='right'>2.2%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>30,124</td><td class='right'>2.0%</td></tr>
+<tr><td>ollama/REDACTED</td><td class='right'>22,641</td><td class='right'>1.5%</td></tr>
+<tr><td>fireworks_ai/REDACTED</td><td class='right'>18,207</td><td class='right'>1.2%</td></tr>
 <tr><td>openrouter/REDACTED</td><td class='right'>10,043</td><td class='right'>0.7%</td></tr>
 <tr><td>openrouter/deepseek/deepseek-chat</td><td class='right'>9,995</td><td class='right'>0.7%</td></tr>
 <tr><td>gemini/gemini-2.0-flash-thinking-exp</td><td class='right'>8,225</td><td class='right'>0.6%</td></tr>
