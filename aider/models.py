@@ -571,8 +571,7 @@ class Model(ModelSettings):
                     "messages": messages,
                     "functions": None,
                     "stream": False,
-                    "temperature": None if not self.use_temperature else 0,
-                    "extra_params": self.extra_params,
+                    "temperature": 0,
                 }
                 _hash, response = self.send_completion(**kwargs)
                 if not response or not hasattr(response, "choices") or not response.choices:
