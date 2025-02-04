@@ -102,7 +102,7 @@ class ModelSettings:
     cache_control: bool = False
     caches_by_default: bool = False
     use_system_prompt: bool = True
-    use_temperature: bool = True
+    use_temperature: bool = True # how can i make this a bool or a float? ai!
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
@@ -536,7 +536,7 @@ class Model(ModelSettings):
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
-    def send_completion(self, messages, functions, stream, temperature=0):
+    def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
@@ -549,7 +549,13 @@ class Model(ModelSettings):
             stream=stream,
         )
 
-        if self.use_temperature:
+        if self.use_temperature is not False:
+            if temperature is None:
+                if self.use_temperature in (True, None):
+                    temperature = 0
+                else:
+                    temperature = float(self.use_temperature)
+
             kwargs["temperature"] = temperature
 
         if functions is not None:
@@ -562,6 +568,8 @@ class Model(ModelSettings):
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
         key = json.dumps(kwargs, sort_keys=True).encode()
+
+        dump(kwargs)
 
         hash_object = hashlib.sha1(key)
         res = litellm.completion(**kwargs)
@@ -588,7 +596,6 @@ class Model(ModelSettings):
                     "messages": messages,
                     "functions": None,
                     "stream": False,
-                    "temperature": 0,
                 }
                 _hash, response = self.send_completion(**kwargs)
                 if not response or not hasattr(response, "choices") or not response.choices:
