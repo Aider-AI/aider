@@ -531,24 +531,29 @@ class Model(ModelSettings):
             map_tokens = max(map_tokens, 1024)
         return map_tokens
 
-    def send_completion(self, messages, functions, stream, temperature=0, extra_params=None):
+    def send_completion(self, messages, functions, stream, temperature=0):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
+
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)
+
         kwargs = dict(
             model=self.name,
             messages=messages,
             stream=stream,
         )
-        if temperature is not None:
+
+        if self.use_temperature:
             kwargs["temperature"] = temperature
+
         if functions is not None:
             function = functions[0]
             kwargs["tools"] = [dict(type="function", function=function)]
             kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
-        if extra_params is not None:
-            kwargs.update(extra_params)
+        if self.extra_params:
+            kwargs.update(self.extra_params)
+
         key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
         hash_object = hashlib.sha1(key)
