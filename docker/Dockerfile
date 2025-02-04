@@ -25,7 +25,11 @@ RUN mkdir -p /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers
 
 # So git doesn't complain about unusual permissions
 RUN git config --system --add safe.directory /app
-ENV HOME=/home/appuser
+
+# This puts the container's ~/.aider into the host's project directory (usually host's cwd).
+# That way caches, version checks, etc get stored in the host filesystem not
+# simply discarded every time the container exits.
+ENV HOME=/app
 
 #########################
 FROM base AS aider-full
