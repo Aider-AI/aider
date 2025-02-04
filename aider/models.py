@@ -257,6 +257,11 @@ class Model(ModelSettings):
         if not exact_match:
             self.apply_generic_model_settings(model)
 
+            if model.startswith("ollama/") or model.startswith("ollama_chat/"): # and num_ctx isn't already set ai!
+                self.extra_params = dict(num_ctx=8 * 1024)
+                dump(self.extra_params)
+
+
         # Apply override settings last if they exist
         if self.extra_model_settings and self.extra_model_settings.extra_params:
             # Initialize extra_params if it doesn't exist
@@ -357,8 +362,6 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.editor_edit_format = "editor-diff"
             self.use_repo_map = True
-            if model.startswith("ollama/") or model.startswith("ollama_chat/"):
-                self.extra_params = dict(num_ctx=8 * 1024)
             return  # <--
 
         # use the defaults
