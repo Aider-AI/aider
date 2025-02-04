@@ -261,10 +261,6 @@ class Model(ModelSettings):
         if not exact_match:
             self.apply_generic_model_settings(model)
 
-            if model.startswith("ollama/") or model.startswith("ollama_chat/"):
-                if not (self.extra_params and "num_ctx" in self.extra_params):
-                    self.extra_params = dict(num_ctx=8 * 1024)
-
         # Apply override settings last if they exist
         if self.extra_model_settings and self.extra_model_settings.extra_params:
             # Initialize extra_params if it doesn't exist
@@ -561,9 +557,10 @@ class Model(ModelSettings):
         if self.extra_params:
             kwargs.update(self.extra_params)
         if self.is_ollama() and "num_ctx" not in kwargs:
-            kwargs["num_ctx"] = int(self.token_count(messages) * 1.5)
+            num_ctx = int(self.token_count(messages) * 1.25) + 8192
+            kwargs["num_ctx"] = num_ctx
         key = json.dumps(kwargs, sort_keys=True).encode()
-        # dump(kwargs)
+
         hash_object = hashlib.sha1(key)
         res = litellm.completion(**kwargs)
         return hash_object, res

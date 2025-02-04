@@ -1246,26 +1246,13 @@ class Coder:
             self.io.tool_output("- Use /drop to remove unneeded files from the chat")
             self.io.tool_output("- Use /clear to clear the chat history")
             self.io.tool_output("- Break your code into smaller files")
-            proceed = "Y"
             self.io.tool_output(
                 "It's probably safe to try and send the request, most providers won't charge if"
                 " the context limit is exceeded."
             )
 
-        # Special warning for Ollama models about context window size
-        if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
-            extra_params = getattr(self.main_model, "extra_params", None) or {}
-            num_ctx = extra_params.get("num_ctx", 2048)
-            if input_tokens > num_ctx:
-                proceed = "N"
-                self.io.tool_warning(f"""
-Your Ollama model is configured with num_ctx={num_ctx} tokens of context window.
-You are attempting to send {input_tokens} tokens.
-See https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size
-""".strip())  # noqa
-
-        if proceed and not self.io.confirm_ask("Try to proceed anyway?", default=proceed):
-            return False
+            if not self.io.confirm_ask("Try to proceed anyway?"):
+                return False
         return True
 
     def send_message(self, inp):
