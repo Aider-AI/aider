@@ -153,7 +153,7 @@ class GitRepo:
             os.environ["GIT_COMMITTER_NAME"] = committer_name
 
         if aider_edits and self.attribute_author:
-            original_auther_name_env = os.environ.get("GIT_AUTHOR_NAME")
+            original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
         try:
@@ -173,8 +173,8 @@ class GitRepo:
                     del os.environ["GIT_COMMITTER_NAME"]
 
             if aider_edits and self.attribute_author:
-                if original_auther_name_env is not None:
-                    os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
+                if original_author_name_env is not None:
+                    os.environ["GIT_AUTHOR_NAME"] = original_author_name_env
                 else:
                     del os.environ["GIT_AUTHOR_NAME"]
 
