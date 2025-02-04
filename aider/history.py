@@ -114,7 +114,7 @@ class ChatSummary:
 
         for model in self.models:
             try:
-                summary = simple_send_with_retries(model, summarize_messages)
+                summary = model.simple_send_with_retries(summarize_messages)
                 if summary is not None:
                     summary = prompts.summary_prefix + summary
                     return [dict(role="user", content=summary)]
