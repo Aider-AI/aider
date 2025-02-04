@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, patch
 from aider.exceptions import LiteLLMExceptions
 from aider.llm import litellm
 from aider.models import Model
-from aider.sendchat import simple_send_with_retries
 
 
 class PrintCalled(Exception):
@@ -38,7 +37,7 @@ class TestSendChat(unittest.TestCase):
         ]
 
         # Call the simple_send_with_retries method
-        simple_send_with_retries(Model(self.mock_model), self.mock_messages)
+        Model(self.mock_model).simple_send_with_retries(self.mock_messages)
         assert mock_print.call_count == 3
 
     @patch("litellm.completion")
@@ -75,7 +74,7 @@ class TestSendChat(unittest.TestCase):
         mock_completion.return_value.choices = None
 
         # Should return None on AttributeError
-        result = simple_send_with_retries(Model(self.mock_model), self.mock_messages)
+        result = Model(self.mock_model).simple_send_with_retries(self.mock_messages)
         assert result is None
 
     @patch("litellm.completion")
@@ -89,7 +88,7 @@ class TestSendChat(unittest.TestCase):
             message="Invalid request", llm_provider="test_provider", model="test_model"
         )
 
-        result = simple_send_with_retries(Model(self.mock_model), self.mock_messages)
+        result = Model(self.mock_model).simple_send_with_retries(self.mock_messages)
         assert result is None
         # Should only print the error message
         assert mock_print.call_count == 1
