@@ -1,4 +1,3 @@
-
 from aider.dump import dump  # noqa: F401
 from aider.utils import format_messages
 
