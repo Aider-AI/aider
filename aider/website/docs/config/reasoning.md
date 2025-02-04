@@ -1,7 +1,7 @@
 ---
 parent: Configuration
 nav_order: 110
-description: How to configure a reasoning models
+description: How to configure reasoning model settings from secondary providers.
 ---
 
 # Reasoning models
