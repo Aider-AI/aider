@@ -1235,8 +1235,6 @@ class Coder:
         input_tokens = self.main_model.token_count(messages)
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
 
-        proceed = None
-
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
                 f"Your estimated chat context of {input_tokens:,} tokens exceeds the"
