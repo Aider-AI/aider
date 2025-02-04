@@ -273,6 +273,46 @@ class Model(ModelSettings):
                     self.extra_params[key] = value
 
     def apply_generic_model_settings(self, model):
+        if "/o3-mini" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.use_temperature = False
+            return  # <--
+
+        if "/o1-mini" in model:
+            self.use_repo_map = True
+            self.use_temperature = False
+            self.use_system_prompt = False
+            return  # <--
+
+        if "/o1-preview" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.use_temperature = False
+            self.use_system_prompt = False
+            return  # <--
+
+        if "/o1" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.use_temperature = False
+            self.streaming = False
+            return  # <--
+
+        if "deepseek" in model and "v3" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = True
+            return  # <--
+
+        if "deepseek" in model and ("r1" in model or "reasoning" in model):
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.examples_as_sys_msg = True
+            self.use_temperature = False
+            return  # <--
+
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
