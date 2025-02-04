@@ -262,7 +262,6 @@ class Model(ModelSettings):
                     self.extra_params = dict(num_ctx=8 * 1024)
                     dump(self.extra_params)
 
-
         # Apply override settings last if they exist
         if self.extra_model_settings and self.extra_model_settings.extra_params:
             # Initialize extra_params if it doesn't exist
