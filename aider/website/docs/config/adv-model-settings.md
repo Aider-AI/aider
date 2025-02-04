@@ -256,6 +256,14 @@ cog.out("```\n")
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
 
+- name: azure/o3-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4o-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4o
+  editor_edit_format: editor-diff
+
 - name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
@@ -773,7 +781,7 @@ cog.out("```\n")
   weak_model_name: openrouter/openai/gpt-4o-mini
   use_repo_map: true
   use_temperature: false
-  editor_model_name: gpt-4o
+  editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
 
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
