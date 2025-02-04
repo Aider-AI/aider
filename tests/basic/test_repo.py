@@ -106,7 +106,7 @@ class TestRepo(unittest.TestCase):
             diffs = git_repo.diff_commits(False, "HEAD~1", "HEAD")
             self.assertIn("two", diffs)
 
-    @patch("aider.repo.simple_send_with_retries")
+    @patch("aider.models.Model.simple_send_with_retries")
     def test_get_commit_message(self, mock_send):
         mock_send.side_effect = ["", "a good commit message"]
 
@@ -135,7 +135,7 @@ class TestRepo(unittest.TestCase):
         # Optionally, you can still dump the call args if needed for debugging
         dump(mock_send.call_args_list)
 
-    @patch("aider.repo.simple_send_with_retries")
+    @patch("aider.models.Model.simple_send_with_retries")
     def test_get_commit_message_strip_quotes(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
@@ -146,7 +146,7 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, "a good commit message")
 
-    @patch("aider.repo.simple_send_with_retries")
+    @patch("aider.models.Model.simple_send_with_retries")
     def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
         mock_send.return_value = 'a good "commit message"'
 
@@ -157,7 +157,7 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
 
-    @patch("aider.repo.simple_send_with_retries")
+    @patch("aider.models.Model.simple_send_with_retries")
     def test_get_commit_message_with_custom_prompt(self, mock_send):
         mock_send.return_value = "Custom commit message"
         custom_prompt = "Generate a commit message in the style of Shakespeare"
@@ -393,7 +393,7 @@ class TestRepo(unittest.TestCase):
             self.assertNotIn(str(root_file), tracked_files)
             self.assertNotIn(str(another_subdir_file), tracked_files)
 
-    @patch("aider.repo.simple_send_with_retries")
+    @patch("aider.models.Model.simple_send_with_retries")
     def test_noop_commit(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
