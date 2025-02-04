@@ -159,7 +159,7 @@ def check_gitignore(git_root, io, ask=True):
     try:
         repo = git.Repo(git_root)
         patterns_to_add = []
-        
+
         if not repo.ignored(".aider"):
             patterns_to_add.append(".aider*")
         if not repo.ignored(".env"):
@@ -196,7 +196,8 @@ def check_gitignore(git_root, io, ask=True):
         except OSError as e:
             io.tool_error(f"Error when trying to write to {gitignore_file}: {e}")
             io.tool_output(
-                "Try running with appropriate permissions or manually add these patterns to .gitignore:"
+                "Try running with appropriate permissions or manually add these patterns to"
+                " .gitignore:"
             )
             for pattern in patterns_to_add:
                 io.tool_output(f"  {pattern}")
