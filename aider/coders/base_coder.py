@@ -85,7 +85,7 @@ class Coder:
     max_reflections = 3
     edit_format = None
     yield_stream = False
-    temperature = 0
+    temperature = None
     auto_lint = True
     auto_test = False
     test_cmd = None
