@@ -552,6 +552,7 @@ class Model(ModelSettings):
         # dump(kwargs)
         hash_object = hashlib.sha1(key)
         from aider.sendchat import litellm
+
         res = litellm.completion(**kwargs)
         return hash_object, res
 
