@@ -1,8 +1,6 @@
 from aider.dump import dump  # noqa: F401
 from aider.utils import format_messages
 
-RETRY_TIMEOUT = 60
-
 
 def sanity_check_messages(messages):
     """Check if messages alternate between user and assistant roles.

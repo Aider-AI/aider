@@ -18,10 +18,11 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.sendchat import (
-    RETRY_TIMEOUT,
     ensure_alternating_roles,
     sanity_check_messages,
 )
+
+RETRY_TIMEOUT = 60
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"

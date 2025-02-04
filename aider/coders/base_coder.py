@@ -30,7 +30,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
-from aider.sendchat import RETRY_TIMEOUT
+from aider.models import RETRY_TIMEOUT
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
