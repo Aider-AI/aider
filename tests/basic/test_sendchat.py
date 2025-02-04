@@ -48,8 +48,8 @@ class TestSendChat(unittest.TestCase):
         mock_completion.return_value = mock_response
 
         # Test basic send_completion
-        hash_obj, response = send_completion(
-            self.mock_model, self.mock_messages, functions=None, stream=False
+        hash_obj, response = Model(self.mock_model).send_completion(
+            self.mock_messages, functions=None, stream=False
         )
 
         assert response == mock_response
@@ -59,8 +59,8 @@ class TestSendChat(unittest.TestCase):
     def test_send_completion_with_functions(self, mock_completion):
         mock_function = {"name": "test_function", "parameters": {"type": "object"}}
 
-        hash_obj, response = send_completion(
-            self.mock_model, self.mock_messages, functions=[mock_function], stream=False
+        hash_obj, response = Model(self.mock_model).send_completion(
+            self.mock_messages, functions=[mock_function], stream=False
         )
 
         # Verify function was properly included in tools
