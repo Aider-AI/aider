@@ -565,6 +565,14 @@ class Model(ModelSettings):
         res = litellm.completion(**kwargs)
         return hash_object, res
 
+    def remove_reasoning_content(self, res):
+        if not self.remove_reasoning:
+            return res
+
+        pattern = f"<{self.remove_reasoning}>.*?</{self.remove_reasoning}>"
+        res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
+        return res
+
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
 
@@ -583,7 +591,9 @@ class Model(ModelSettings):
                 _hash, response = self.send_completion(**kwargs)
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
-                return response.choices[0].message.content
+                res = response.choices[0].message.content
+                return self.remove_reasoning_content(res)
+
             except litellm_ex.exceptions_tuple() as err:
                 ex_info = litellm_ex.get_ex_info(err)
                 print(str(err))
