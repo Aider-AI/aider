@@ -128,7 +128,9 @@ class FileWatcher:
                 else:
                     roots_to_watch = [str(self.root)]
 
-                for changes in watch(*roots_to_watch, watch_filter=self.filter_func, stop_event=self.stop_event):
+                for changes in watch(
+                    *roots_to_watch, watch_filter=self.filter_func, stop_event=self.stop_event
+                ):
                     if not changes:
                         continue
                     changed_files = {str(Path(change[1])) for change in changes}
