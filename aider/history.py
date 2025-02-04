@@ -2,7 +2,6 @@ import argparse
 
 from aider import models, prompts
 from aider.dump import dump  # noqa: F401
-from aider.sendchat import simple_send_with_retries
 
 
 class ChatSummary:
