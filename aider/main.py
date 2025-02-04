@@ -181,6 +181,8 @@ def check_gitignore(git_root, io, ask=True):
                 return
         else:
             content = ""
+    except ANY_GIT_ERROR:
+        return
         if ask:
             io.tool_output("You can skip this check with --no-gitignore")
             if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
