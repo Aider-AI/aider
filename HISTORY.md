@@ -1,11 +1,14 @@
 # Release history
 
 ### main branch
+- Now dynamically sets `num_ctx` for Ollama, to ensure the context window can hold the chat.
+- Watch files now fully ignores top-level directories, to reduce the chance of hitting OS limits on number of watched files. Helpful to ignore giant subtrees like `node_modules`.
 - Improved .gitignore handling:
   - Honor ignores already in effect regardless of how they've been configured.
   - Check for .env only when the file exists.
 - Added "catch all" model-specific configuration settings for o3-mini, DeepSeek V3 & R1, o1-mini, o1.
-- Aider wrote 40% of the code in this release.
+- Added Azure o3-Mini model support.
+- Aider wrote 68% of the code in this release.
 
 ### Aider v0.73.0
 
