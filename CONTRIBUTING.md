@@ -50,7 +50,7 @@ cd aider
 
 It is recommended to create a virtual environment outside of the repository to keep your development environment isolated.
 
-#### Using `venv` (Python 3.9 and later)
+#### Using `venv` (Python 3.9 to 3.12, Python 3.13 is not supported)
 
 ```
 python -m venv /path/to/venv
