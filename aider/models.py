@@ -85,6 +85,8 @@ MODEL_ALIASES = {
     "r1": "deepseek/deepseek-reasoner",
     "flash": "gemini/gemini-2.0-flash-exp",
 }
+# Deferred model definitions loaded from metadata files
+LITELLM_MODEL_DEFS = []
 
 
 @dataclass
@@ -238,6 +240,12 @@ class Model(ModelSettings):
             self.get_editor_model(editor_model, editor_edit_format)
 
     def get_model_info(self, model):
+        global LITELLM_MODEL_DEFS
+        if LITELLM_MODEL_DEFS:
+            litellm._load_litellm()
+            for model_def in LITELLM_MODEL_DEFS:
+                litellm.register_model(model_def)
+            LITELLM_MODEL_DEFS.clear()
         return model_info_manager.get_model_info(model)
 
     def _copy_fields(self, source):
@@ -665,9 +673,8 @@ def register_litellm_models(model_fnames):
             if not model_def:
                 continue
 
-            # only load litellm if we have actual data
-            litellm._load_litellm()
-            litellm.register_model(model_def)
+            # Defer registration with litellm to faster path.
+            LITELLM_MODEL_DEFS.append(model_def)
         except Exception as e:
             raise Exception(f"Error loading model definition from {model_fname}: {e}")
 
