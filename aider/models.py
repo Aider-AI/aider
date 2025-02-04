@@ -17,6 +17,7 @@ from PIL import Image
 
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.sendchat import sanity_check_messages, ensure_alternating_roles, RETRY_TIMEOUT
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
@@ -528,12 +529,8 @@ class Model(ModelSettings):
 
     def send_completion(self, messages, functions, stream, temperature=0, extra_params=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
-            from aider.sendchat import sanity_check_messages
-
             sanity_check_messages(messages)
         if "deepseek-reasoner" in self.name:
-            from aider.sendchat import ensure_alternating_roles
-
             messages = ensure_alternating_roles(messages)
         kwargs = dict(
             model=self.name,
@@ -551,14 +548,11 @@ class Model(ModelSettings):
         key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
         hash_object = hashlib.sha1(key)
-        from aider.sendchat import litellm
-
         res = litellm.completion(**kwargs)
         return hash_object, res
 
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
-        from aider.sendchat import RETRY_TIMEOUT, ensure_alternating_roles
 
         litellm_ex = LiteLLMExceptions()
         if "deepseek-reasoner" in self.name:
