@@ -24,6 +24,7 @@ RUN mkdir -p /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers
 
 # So git doesn't complain about unusual permissions
 RUN git config --system --add safe.directory /app
+ENV HOME=/home/appuser
 
 #########################
 FROM base AS aider-full
