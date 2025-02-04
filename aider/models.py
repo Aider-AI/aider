@@ -316,6 +316,7 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.examples_as_sys_msg = True
             self.use_temperature = False
+            self.remove_reasoning = "think"
             return  # <--
 
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
