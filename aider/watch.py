@@ -120,7 +120,7 @@ class FileWatcher:
                     roots_to_watch = [
                         str(path)
                         for path in self.root.iterdir()
-                        if not self.gitignore_spec.match_file(path.name)
+                        if not self.gitignore_spec.match_file(str(path.relative_to(self.root)))
                     ]
                     # Fallback to watching root if all top-level items are filtered out
                     if not roots_to_watch:
