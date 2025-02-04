@@ -152,10 +152,17 @@ def setup_git(git_root, io):
     return repo.working_tree_dir
 
 
+# change this function to check for repo.ignored(.aider) and add `.aider*` to .gitignore if it's not ignored
+# check for repo.ignored(.env) and add `.env` to .gitignore if it's not ignored
+# stop checking .gitignore for patterns
+# ai!
 def check_gitignore(git_root, io, ask=True):
     if not git_root:
         return
 
+    # ai: here we use git to check for ignore, which is good because it picks up
+    # local .gitignore and ~/.global_gitignore and .git/xxxx, etc
+    # however git is ignoring, we detect it
     try:
         repo = git.Repo(git_root)
         if repo.ignored(".aider") and repo.ignored(".env"):
@@ -163,6 +170,8 @@ def check_gitignore(git_root, io, ask=True):
     except ANY_GIT_ERROR:
         pass
 
+
+    # ai: but here, we check for specific patterns only in .gitignore
     patterns = [".aider*", ".env"]
     patterns_to_add = []
 
