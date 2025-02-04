@@ -7,6 +7,7 @@ from aider.models import Model
 class TestChatSummary(TestCase):
     def setUp(self):
         self.mock_model = mock.Mock(spec=Model)
+        del self.mock_model.simple_send_with_retries
         self.mock_model.name = "gpt-3.5-turbo"
         self.mock_model.token_count = lambda msg: len(msg["content"].split())
         self.mock_model.info = {"max_input_tokens": 4096}
@@ -72,8 +73,10 @@ class TestChatSummary(TestCase):
     @mock.patch("aider.models.Model.simple_send_with_retries")
     def test_fallback_to_second_model(self, mock_send):
         mock_model1 = mock.Mock(spec=Model)
+        del mock_model1.simple_send_with_retries
         mock_model1.name = "gpt-4"
         mock_model2 = mock.Mock(spec=Model)
+        del mock_model2.simple_send_with_retries
         mock_model2.name = "gpt-3.5-turbo"
 
         chat_summary = ChatSummary([mock_model1, mock_model2], max_tokens=100)
