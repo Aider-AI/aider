@@ -257,9 +257,10 @@ class Model(ModelSettings):
         if not exact_match:
             self.apply_generic_model_settings(model)
 
-            if model.startswith("ollama/") or model.startswith("ollama_chat/"): # and num_ctx isn't already set ai!
-                self.extra_params = dict(num_ctx=8 * 1024)
-                dump(self.extra_params)
+            if model.startswith("ollama/") or model.startswith("ollama_chat/"):
+                if not (self.extra_params and "num_ctx" in self.extra_params):
+                    self.extra_params = dict(num_ctx=8 * 1024)
+                    dump(self.extra_params)
 
 
         # Apply override settings last if they exist
