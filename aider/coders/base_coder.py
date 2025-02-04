@@ -23,7 +23,6 @@ from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.exceptions import LiteLLMExceptions
-from aider.sendchat import RETRY_TIMEOUT
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
@@ -31,6 +30,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
+from aider.sendchat import RETRY_TIMEOUT
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
