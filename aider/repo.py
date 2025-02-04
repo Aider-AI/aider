@@ -17,8 +17,6 @@ except ImportError:
 import pathspec
 
 from aider import prompts, utils
-from aider.sendchat import simple_send_with_retries
-
 from .dump import dump  # noqa: F401
 
 ANY_GIT_ERROR += [
