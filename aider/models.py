@@ -529,11 +529,20 @@ class Model(ModelSettings):
             map_tokens = max(map_tokens, 1024)
         return map_tokens
 
+    def is_deepseek_r1(self):
+        name = self.name.lower()
+        if "deepseek" not in name:
+            return
+        return "r1" in name or "reasoner" in name
+
+    def is_ollama(self):
+        return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
+
     def send_completion(self, messages, functions, stream, temperature=0):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
-        if "deepseek-reasoner" in self.name:
+        if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
         kwargs = dict(
@@ -551,6 +560,8 @@ class Model(ModelSettings):
             kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
         if self.extra_params:
             kwargs.update(self.extra_params)
+
+        # if is_ollama and kwargs[num_ctx] isn't set: num_ctx = token_count(messages) * 1.5 ai!
 
         key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
