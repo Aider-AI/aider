@@ -1,11 +1,5 @@
-import hashlib
-import json
-import os
-import time
 
 from aider.dump import dump  # noqa: F401
-from aider.exceptions import LiteLLMExceptions
-from aider.llm import litellm
 from aider.utils import format_messages
 
 # from diskcache import Cache
