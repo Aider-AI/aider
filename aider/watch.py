@@ -128,6 +128,7 @@ class FileWatcher:
                 else:
                     roots_to_watch = [str(self.root)]
 
+                dump("tmp.benchmarks" in roots_to_watch)
                 for changes in watch(
                     *roots_to_watch, watch_filter=self.filter_func, stop_event=self.stop_event
                 ):
