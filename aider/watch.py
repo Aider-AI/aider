@@ -95,7 +95,9 @@ class FileWatcher:
         if self.verbose:
             dump(rel_path)
 
-        if self.gitignore_spec and self.gitignore_spec.match_file(rel_path.as_posix() + ("/" if path_abs.is_dir() else "")):
+        if self.gitignore_spec and self.gitignore_spec.match_file(
+            rel_path.as_posix() + ("/" if path_abs.is_dir() else "")
+        ):
             return False
 
         if self.verbose:
