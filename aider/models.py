@@ -86,7 +86,7 @@ MODEL_ALIASES = {
     "flash": "gemini/gemini-2.0-flash-exp",
 }
 # Deferred model definitions loaded from metadata files
-LITELLM_MODEL_DEFS = []
+LITELLM_MODEL_DEFS = dict()
 
 
 @dataclass
@@ -162,6 +162,10 @@ class ModelInfoManager:
                 pass
 
     def get_model_from_cached_json_db(self, model):
+        resource_data = LITELLM_MODEL_DEFS.get(model)
+        if resource_data:
+            return resource_data
+
         if not self.content:
             self._update_cache()
 
@@ -240,12 +244,6 @@ class Model(ModelSettings):
             self.get_editor_model(editor_model, editor_edit_format)
 
     def get_model_info(self, model):
-        global LITELLM_MODEL_DEFS
-        if LITELLM_MODEL_DEFS:
-            litellm._load_litellm()
-            for model_def in LITELLM_MODEL_DEFS:
-                litellm.register_model(model_def)
-            LITELLM_MODEL_DEFS.clear()
         return model_info_manager.get_model_info(model)
 
     def _copy_fields(self, source):
@@ -674,7 +672,7 @@ def register_litellm_models(model_fnames):
                 continue
 
             # Defer registration with litellm to faster path.
-            LITELLM_MODEL_DEFS.append(model_def)
+            LITELLM_MODEL_DEFS.update(model_def)
         except Exception as e:
             raise Exception(f"Error loading model definition from {model_fname}: {e}")
 
