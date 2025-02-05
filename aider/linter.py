@@ -4,6 +4,7 @@ import subprocess
 import sys
 import traceback
 import warnings
+import shlex
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -44,7 +45,7 @@ class Linter:
             return fname
 
     def run_cmd(self, cmd, rel_fname, code):
-        cmd += " " + rel_fname
+        cmd += " " + shlex.quote(rel_fname)
 
         returncode = 0
         stdout = ""
