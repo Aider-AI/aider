@@ -2,6 +2,7 @@
 
 ### main branch
 
+- Fast startup with more providers and when model metadata provided in local files.
 - Removes `<think>` tags from R1 responses for commit messages (and other weak model uses).
 - Now dynamically sets `num_ctx` for Ollama, to ensure the context window can hold the chat.
 - Watch files now fully ignores top-level directories, to reduce the chance of hitting OS limits on number of watched files. Helpful to ignore giant subtrees like `node_modules`.

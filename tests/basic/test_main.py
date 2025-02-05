@@ -522,9 +522,15 @@ class TestMain(TestCase):
             os.unlink(external_file_path)
 
     def test_model_metadata_file(self):
-        from aider.models import model_info_manager
+        # Re-init so we don't have old data lying around from earlier test cases
+        from aider import models
 
-        model_info_manager.local_model_metadata = {}
+        models.model_info_manager = models.ModelInfoManager()
+
+        from aider.llm import litellm
+
+        litellm._lazy_module = None
+
         with GitTemporaryDirectory():
             metadata_file = Path(".aider.model.metadata.json")
 
