@@ -492,20 +492,20 @@ class Model(ModelSettings):
 
         model = self.name
 
-        pieces = model.split('/')
+        pieces = model.split("/")
         if len(pieces) > 1:
             provider = pieces[0]
         else:
             provider = None
 
         keymap = dict(
-            openrouter = "OPENROUTER_API_KEY",
-            openai = "OPENAI_API_KEY",
-            deepseek = "DEEPSEEK_API_KEY",
-            gemini = "GEMINI_API_KEY",
-            anthropic = "ANTHROPIC_API_KEY",
-            groq = "GROQ_API_KEY"
-            )
+            openrouter="OPENROUTER_API_KEY",
+            openai="OPENAI_API_KEY",
+            deepseek="DEEPSEEK_API_KEY",
+            gemini="GEMINI_API_KEY",
+            anthropic="ANTHROPIC_API_KEY",
+            groq="GROQ_API_KEY",
+        )
         var = None
         if model in OPENAI_MODELS:
             var = "OPENAI_API_KEY"
