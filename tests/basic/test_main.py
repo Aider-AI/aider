@@ -523,6 +523,7 @@ class TestMain(TestCase):
 
     def test_model_metadata_file(self):
         from aider.models import model_info_manager
+
         model_info_manager.local_model_metadata = {}
         with GitTemporaryDirectory():
             metadata_file = Path(".aider.model.metadata.json")
