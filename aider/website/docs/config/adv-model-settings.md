@@ -74,7 +74,7 @@ a model that aider doesn't know about.
 You can override or add settings for any model by creating a `.aider.model.settings.yml` file in one of these locations:
 
 - Your home directory.
-- The root if your git repo.
+- The root of your git repo.
 - The current directory where you launch aider.
 - Or specify a specific file with the `--model-settings-file <filename>` switch.
 
