@@ -162,10 +162,9 @@ class ModelInfoManager:
                 pass
 
     def get_model_from_cached_json_db(self, model):
-        resource_data = LITELLM_MODEL_DEFS.get(model)
-        dump(resource_data)
-        if resource_data:
-            return resource_data
+        data = LITELLM_MODEL_DEFS.get(model)
+        if data:
+            return data
 
         if not self.content:
             self._update_cache()
