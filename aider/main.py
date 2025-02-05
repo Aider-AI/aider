@@ -991,6 +991,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Failed to read apply content")
             return
         coder.partial_response_content = content
+        # For testing #2879
+        # from aider.coders.base_coder import all_fences
+        # coder.fence = all_fences[1]
         coder.apply_updates()
         analytics.event("exit", reason="Applied updates")
         return

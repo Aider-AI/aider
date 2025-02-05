@@ -60,7 +60,7 @@ def wrap_fence(name):
 
 all_fences = [
     ("`" * 3, "`" * 3),
-    # ("`" * 4, "`" * 4), # LLMs ignore and revert to triple-backtick, causing #2879
+    ("`" * 4, "`" * 4),  # LLMs ignore and revert to triple-backtick, causing #2879
     wrap_fence("source"),
     wrap_fence("code"),
     wrap_fence("pre"),
