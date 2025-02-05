@@ -144,7 +144,12 @@ class Coder:
             # the system prompt.
             done_messages = from_coder.done_messages
             if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
-                done_messages = from_coder.summarizer.summarize_all(done_messages)
+                try:
+                    done_messages = from_coder.summarizer.summarize_all(done_messages)
+                except ValueError as e:
+                    # If summarization fails, keep the original messages and warn the user
+                    io.tool_warning("Chat history summarization failed, continuing with full history")
+                    io.tool_warning(str(e))
 
             # Bring along context from the old Coder
             update = dict(
