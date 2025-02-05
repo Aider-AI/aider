@@ -1055,8 +1055,16 @@ class Coder:
         else:
             language = "the same language they are using"
 
+        if self.fence[0] == "`" * 4:
+            quad_backtick_reminder = (
+                "\nIMPORTANT: Use *quadruple* backticks ```` as fences, not triple backticks!\n"
+            )
+        else:
+            quad_backtick_reminder = ""
+
         prompt = prompt.format(
             fence=self.fence,
+            quad_backtick_reminder=quad_backtick_reminder,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
             shell_cmd_prompt=shell_cmd_prompt,
