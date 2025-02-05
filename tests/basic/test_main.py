@@ -522,6 +522,7 @@ class TestMain(TestCase):
             os.unlink(external_file_path)
 
     def test_model_metadata_file(self):
+        # reset the models.model_info_manager ai!
         with GitTemporaryDirectory():
             metadata_file = Path(".aider.model.metadata.json")
 
