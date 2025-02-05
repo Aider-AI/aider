@@ -500,12 +500,12 @@ class Model(ModelSettings):
 
         keymap = dict(
             openrouter = "OPENROUTER_API_KEY",
-            openai =
-            deepseek =
-            gemini =
-            anthropic
-            groq
-            ) # ai! finish the above
+            openai = "OPENAI_API_KEY",
+            deepseek = "DEEPSEEK_API_KEY",
+            gemini = "GEMINI_API_KEY",
+            anthropic = "ANTHROPIC_API_KEY",
+            groq = "GROQ_API_KEY"
+            )
         var = None
         if model in OPENAI_MODELS:
             var = "OPENAI_API_KEY"
