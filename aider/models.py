@@ -505,6 +505,7 @@ class Model(ModelSettings):
             gemini="GEMINI_API_KEY",
             anthropic="ANTHROPIC_API_KEY",
             groq="GROQ_API_KEY",
+            fireworks_ai="FIREWORKS_API_KEY",
         )
         var = None
         if model in OPENAI_MODELS:
