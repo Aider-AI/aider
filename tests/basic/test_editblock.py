@@ -554,6 +554,27 @@ Hope you like it!
             ],
         )
 
+    def test_find_original_update_blocks_quad_backticks_with_triples_in_LLM_reply(self):
+        # https://github.com/Aider-AI/aider/issues/2879
+        edit = """
+Here's the change:
+
+foo.txt
+```text
+<<<<<<< SEARCH
+=======
+Tooooo
+>>>>>>> REPLACE
+```
+
+Hope you like it!
+"""
+
+        quad_backticks = "`" * 4
+        quad_backticks = (quad_backticks, quad_backticks)
+        edits = list(eb.find_original_update_blocks(edit, fence=quad_backticks))
+        self.assertEqual(edits, [("foo.txt", "", "Tooooo\n")])
+
 
 if __name__ == "__main__":
     unittest.main()
