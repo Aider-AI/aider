@@ -163,6 +163,7 @@ class ModelInfoManager:
 
     def get_model_from_cached_json_db(self, model):
         resource_data = LITELLM_MODEL_DEFS.get(model)
+        dump(resource_data)
         if resource_data:
             return resource_data
 
@@ -490,14 +491,30 @@ class Model(ModelSettings):
         """Fast path for common models. Avoids forcing litellm import."""
 
         model = self.name
-        if model in OPENAI_MODELS or model.startswith("openai/"):
+
+        pieces = model.split('/')
+        if len(pieces) > 1:
+            provider = pieces[0]
+        else:
+            provider = None
+
+        keymap = dict(
+            openrouter = "OPENROUTER_API_KEY",
+            openai =
+            deepseek =
+            gemini =
+            anthropic
+            groq
+            ) # ai! finish the above
+        var = None
+        if model in OPENAI_MODELS:
             var = "OPENAI_API_KEY"
-        elif model in ANTHROPIC_MODELS or model.startswith("anthropic/"):
+        elif model in ANTHROPIC_MODELS:
             var = "ANTHROPIC_API_KEY"
         else:
-            return
+            var = keymap.get(provider)
 
-        if os.environ.get(var):
+        if var and os.environ.get(var):
             return dict(keys_in_environment=[var], missing_keys=[])
 
     def validate_environment(self):
