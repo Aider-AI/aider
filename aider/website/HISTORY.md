@@ -25,6 +25,7 @@ cog.out(text)
 
 ### main branch
 
+- Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
 - Fast startup with more providers and when model metadata provided in local files.
 - Removes `<think>` tags from R1 responses for commit messages (and other weak model uses).
 - Now dynamically sets `num_ctx` for Ollama, to ensure the context window can hold the chat.

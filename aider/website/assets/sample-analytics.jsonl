@@ -1,4 +1,3 @@
-{"event": "message_send", "properties": {"main_model": "o3-mini", "weak_model": "gpt-4o-mini", "editor_model": "gpt-4o", "edit_format": "ask", "prompt_tokens": 7025, "completion_tokens": 282, "total_tokens": 7307, "cost": 0.0089683, "total_cost": 0.0333905}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738637562}
 {"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738637579}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738637579}
 {"event": "message_send", "properties": {"main_model": "o3-mini", "weak_model": "gpt-4o-mini", "editor_model": "gpt-4o", "edit_format": "diff", "prompt_tokens": 9638, "completion_tokens": 155, "total_tokens": 9793, "cost": 0.0112838, "total_cost": 0.0446743}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738637594}
@@ -998,3 +997,4 @@
 {"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789232}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789243}
 {"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 22069, "completion_tokens": 225, "total_tokens": 22294, "cost": 0.069582, "total_cost": 0.069582}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789255}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738791922}
