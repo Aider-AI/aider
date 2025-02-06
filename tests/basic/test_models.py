@@ -391,6 +391,7 @@ And this text should remain"""
             stream=False,
             temperature=0,
             num_ctx=expected_ctx,
+            timeout=600,
         )
 
     @patch("aider.models.litellm.completion")
@@ -408,6 +409,7 @@ And this text should remain"""
             stream=False,
             temperature=0,
             num_ctx=4096,
+            timeout=600,
         )
 
     @patch("aider.models.litellm.completion")
@@ -423,6 +425,7 @@ And this text should remain"""
             messages=messages,
             stream=False,
             temperature=0,
+            timeout=600,
         )
         self.assertNotIn("num_ctx", mock_completion.call_args.kwargs)
 
@@ -452,6 +455,7 @@ And this text should remain"""
             messages=messages,
             stream=False,
             temperature=0,
+            timeout=600,
         )
 
         # Test use_temperature=False doesn't send temperature
