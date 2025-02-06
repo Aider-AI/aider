@@ -212,6 +212,21 @@ class TestModels(unittest.TestCase):
         self.assertFalse(model.use_temperature)
         self.assertEqual(model.remove_reasoning, "think")
 
+        # Test provider/deepseek-r1 case
+        model = Model("someprovider/deepseek-r1")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertTrue(model.examples_as_sys_msg)
+        self.assertFalse(model.use_temperature)
+        self.assertEqual(model.remove_reasoning, "think")
+
+        # Test provider/deepseek-v3 case
+        model = Model("anotherprovider/deepseek-v3")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertEqual(model.reminder, "sys")
+        self.assertTrue(model.examples_as_sys_msg)
+
         # Test llama3 70b case
         model = Model("llama3-70b")
         self.assertEqual(model.edit_format, "diff")
