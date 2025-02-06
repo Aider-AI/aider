@@ -1,4 +1,5 @@
 import base64
+import functools
 import os
 import signal
 import time
@@ -8,6 +9,21 @@ from dataclasses import dataclass
 from datetime import datetime
 from io import StringIO
 from pathlib import Path
+
+
+def restore_multiline(func):
+    """Decorator to restore multiline mode after function execution"""
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        orig_multiline = self.multiline_mode
+        self.multiline_mode = False
+        try:
+            return func(self, *args, **kwargs)
+        except:
+            raise
+        finally:
+            self.multiline_mode = orig_multiline
+    return wrapper
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
@@ -671,9 +687,6 @@ class InputOutput:
         group=None,
         allow_never=False,
     ):
-        # Temporarily disable multiline mode for yes/no prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         question_id = (question, subject)
