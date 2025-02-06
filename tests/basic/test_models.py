@@ -254,10 +254,8 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            temperature=ANY,
+            temperature=0,
             num_ctx=4096,
-            tools=None,
-            tool_choice=None,
         )
 
     @patch("aider.models.litellm.completion")
