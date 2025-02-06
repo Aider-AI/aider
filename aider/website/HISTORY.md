@@ -33,6 +33,7 @@ cog.out(text)
 - Docker containers now set `HOME=/app` which is the normal project mount-point, to persist `~/.aider`.
 - Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
 - Bugfix for `--timeout`
+- Bugfix so that `/model` now correctly reports that the weak model is not changed.
 - Watch files now fully ignores top-level directories named in ignore files, to reduce the chance of hitting OS watch limits. Helpful to ignore giant subtrees like `node_modules`.
 - Fast startup with more providers and when model metadata provided in local files.
 - Improved .gitignore handling:
