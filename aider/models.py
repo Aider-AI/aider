@@ -114,6 +114,7 @@ class ModelSettings:
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
     remove_reasoning: Optional[str] = None
+    system_prompt_prefix: Optional[str] = None
 
 
 # Load model settings from package resource
@@ -294,6 +295,7 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.use_repo_map = True
             self.use_temperature = False
+            self.system_prompt_prefix = "Formatting re-enabled. "
             return  # <--
 
         if "/o1-mini" in model:
@@ -314,6 +316,7 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.use_temperature = False
             self.streaming = False
+            self.system_prompt_prefix = "Formatting re-enabled. "
             return  # <--
 
         if "deepseek" in model and "v3" in model:

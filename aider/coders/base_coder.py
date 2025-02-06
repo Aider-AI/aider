@@ -1077,6 +1077,10 @@ class Coder:
             shell_cmd_reminder=shell_cmd_reminder,
             language=language,
         )
+
+        if self.main_model.system_prompt_prefix:
+            prompt = self.main_model.system_prompt_prefix + prompt
+
         return prompt
 
     def format_chat_chunks(self):
