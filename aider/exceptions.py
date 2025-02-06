@@ -61,17 +61,7 @@ class LiteLLMExceptions:
         import litellm
 
         for var in dir(litellm):
-            if not var.endswith("Error"):
-                continue
-
-            ex_info = None
-            if var in self.exception_names:
-                for exi in EXCEPTIONS:
-                    if var == exi.name:
-                        ex_info = exi
-                        break
-
-            if strict and not ex_info:
+            if var.endswith("Error") and var not in self.exception_names:
                 raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
 
             ex = getattr(litellm, var)
