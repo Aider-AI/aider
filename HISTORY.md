@@ -3,7 +3,7 @@
 ### Aider v0.74.0
 
 - Dynamically changes the Ollama context window to hold the current chat.
-- Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 via secondary API providers.
+- Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 especially via third-party API providers.
 - Remove `<think>` tags from R1 responses for commit messages (and other weak model uses).
 - Can now specify `use_temperature: <float>` in model settings, not just true/false.
 - The full docker container now includes `boto3` for Bedrock.
