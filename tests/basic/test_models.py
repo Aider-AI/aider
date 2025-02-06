@@ -445,6 +445,50 @@ And this text should remain"""
         self.assertEqual(model.use_temperature, 0.7)
 
     @patch("aider.models.litellm.completion")
+    def test_request_timeout_default(self, mock_completion):
+        # Test default timeout is used when not specified in extra_params
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            temperature=0,
+            timeout=600,  # Default timeout
+        )
+
+    @patch("aider.models.litellm.completion")
+    def test_request_timeout_from_extra_params(self, mock_completion):
+        # Test timeout from extra_params overrides default
+        model = Model("gpt-4")
+        model.extra_params = {"timeout": 300}  # 5 minutes
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            temperature=0,
+            timeout=300,  # From extra_params
+        )
+
+    @patch("aider.models.litellm.completion")
+    def test_request_timeout_explicit_in_call(self, mock_completion):
+        # Test explicit timeout in send_completion overrides both default and extra_params
+        model = Model("gpt-4")
+        model.extra_params = {"timeout": 300}  # 5 minutes
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False, timeout=120)  # 2 minutes
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            temperature=0,
+            timeout=120,  # Explicit in call
+        )
+
+    @patch("aider.models.litellm.completion")
     def test_use_temperature_in_send_completion(self, mock_completion):
         # Test use_temperature=True sends temperature=0
         model = Model("gpt-4")
