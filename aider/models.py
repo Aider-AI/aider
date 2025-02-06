@@ -601,6 +601,7 @@ class Model(ModelSettings):
         # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
+        # don't pass timeout here, add it to kwargs (if not already present) ai!
         res = litellm.completion(timeout=request_timeout, **kwargs)
         return hash_object, res
 
