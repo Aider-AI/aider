@@ -262,6 +262,68 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.editor_edit_format, "editor-diff")
         self.assertTrue(model.use_repo_map)
 
+    def test_remove_reasoning_content(self):
+        # Test with no removal configured
+        model = Model("gpt-4")
+        text = "Here is <think>some reasoning</think> and regular text"
+        self.assertEqual(model.remove_reasoning_content(text), text)
+
+        # Test with removal configured
+        model = Model("deepseek-r1")  # This model has remove_reasoning="think"
+        text = """Here is some text
+<think>
+This is reasoning that should be removed
+Over multiple lines
+</think>
+And more text here"""
+        expected = """Here is some text
+
+And more text here"""
+        self.assertEqual(model.remove_reasoning_content(text), expected)
+
+        # Test with multiple reasoning blocks
+        text = """Start
+<think>Block 1</think>
+Middle
+<think>Block 2</think>
+End"""
+        expected = """Start
+
+Middle
+
+End"""
+        self.assertEqual(model.remove_reasoning_content(text), expected)
+
+        # Test with no reasoning blocks
+        text = "Just regular text"
+        self.assertEqual(model.remove_reasoning_content(text), text)
+
+    @patch("aider.models.litellm.completion")
+    def test_simple_send_with_retries_removes_reasoning(self, mock_completion):
+        model = Model("deepseek-r1")  # This model has remove_reasoning="think"
+        
+        # Mock the completion response
+        mock_response = MagicMock()
+        mock_response.choices = [
+            MagicMock(message=MagicMock(content="""Here is some text
+<think>
+This reasoning should be removed
+</think>
+And this text should remain"""))
+        ]
+        mock_completion.return_value = mock_response
+
+        messages = [{"role": "user", "content": "test"}]
+        result = model.simple_send_with_retries(messages)
+
+        expected = """Here is some text
+
+And this text should remain"""
+        self.assertEqual(result, expected)
+
+        # Verify the completion was called
+        mock_completion.assert_called_once()
+
     def test_aider_extra_model_settings(self):
         import tempfile
 
