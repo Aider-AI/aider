@@ -64,7 +64,7 @@ class LiteLLMExceptions:
             if var.endswith("Error"):
                 if var not in self.exception_info:
                     raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
-                
+
                 ex = getattr(litellm, var)
                 dump(var, ex)
                 self.exceptions[ex] = self.exception_info[var]
