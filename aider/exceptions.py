@@ -1,3 +1,4 @@
+from aider.dump import dump  # noqa: F401
 from dataclasses import dataclass
 
 
@@ -62,6 +63,7 @@ class LiteLLMExceptions:
                 continue
 
             ex_info = None
+            # collect these names into a set once, above ai!
             for exi in EXCEPTIONS:
                 if var == exi.name:
                     ex_info = exi
@@ -71,6 +73,7 @@ class LiteLLMExceptions:
                 raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
 
             ex = getattr(litellm, var)
+            dump(var, ex)
             self.exceptions[ex] = ex_info
 
     def exceptions_tuple(self):
