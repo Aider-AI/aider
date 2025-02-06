@@ -110,8 +110,8 @@ class Commands:
                 (
                     "architect",
                     (
-                        "Work with an architect model to design code changes, and an editor to make"
-                        " them."
+                        "Work with an architect model to design code changes (you can tweak them)"
+                        " and an editor to make them."
                     ),
                 ),
             ]
@@ -1070,7 +1070,9 @@ class Commands:
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
     def cmd_architect(self, args):
-        """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
+        """Enter architect/editor mode using 2 different models.
+        If no prompt is provided, switches to architect/editor mode.
+        You can tweak the prompt before it is forwarded to the editor model."""  #noqa
         return self._generic_chat_command(args, "architect")
 
     def _generic_chat_command(self, args, edit_format):

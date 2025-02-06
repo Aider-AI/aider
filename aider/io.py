@@ -662,6 +662,22 @@ class InputOutput:
             return True
         return False
 
+    def edit_in_editor(self, content):
+        import tempfile
+        import subprocess
+        
+        with tempfile.NamedTemporaryFile(suffix=".md", mode="w", delete=False, encoding=self.encoding) as tmpfile:
+            tmpfile.write(content)
+            tmpfile.flush()
+            editor = os.environ.get('EDITOR', 'vi')
+            subprocess.call([editor, tmpfile.name])
+        
+        with open(tmpfile.name, "r", encoding=self.encoding) as f:
+            edited = f.read()
+        
+        os.unlink(tmpfile.name)
+        return edited
+
     def confirm_ask(
         self,
         question,
@@ -670,6 +686,8 @@ class InputOutput:
         explicit_yes_required=False,
         group=None,
         allow_never=False,
+        skip_chat_history=False,
+        allow_tweak=False,
     ):
         # Temporarily disable multiline mode for yes/no prompts
         orig_multiline = self.multiline_mode
@@ -688,6 +706,9 @@ class InputOutput:
 
         valid_responses = ["yes", "no", "skip", "all"]
         options = " (Y)es/(N)o"
+        if allow_tweak:
+            valid_responses.append("tweak")
+            options = " (Y)es/(T)weak/(N)o"
         if group:
             if not explicit_yes_required:
                 options += "/(A)ll"
@@ -715,11 +736,6 @@ class InputOutput:
                 self.tool_output(subject, bold=True)
 
         style = self._get_style()
-
-        def is_valid_response(text):
-            if not text:
-                return True
-            return text.lower() in valid_responses
 
         if self.yes is True:
             res = "n" if explicit_yes_required else "y"
@@ -751,12 +767,15 @@ class InputOutput:
                 self.tool_error(error_message)
 
         res = res.lower()[0]
-
         if res == "d" and allow_never:
             self.never_prompts.add(question_id)
-            hist = f"{question.strip()} {res}"
-            self.append_chat_history(hist, linebreak=True, blockquote=True)
+            if not skip_chat_history:
+                hist = f"{question.strip()} {res}"
+                self.append_chat_history(hist, linebreak=True, blockquote=True)
             return False
+
+        if res == "t":
+            return "tweak"
 
         if explicit_yes_required:
             is_yes = res == "y"
@@ -772,9 +791,9 @@ class InputOutput:
             elif is_skip:
                 group.preference = "skip"
 
-        hist = f"{question.strip()} {res}"
-        self.append_chat_history(hist, linebreak=True, blockquote=True)
-
+        if not skip_chat_history:
+            hist = f"{question.strip()} {res}"
+            self.append_chat_history(hist, linebreak=True, blockquote=True)
         # Restore original multiline mode
         self.multiline_mode = orig_multiline
 
