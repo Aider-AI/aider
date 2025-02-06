@@ -67,7 +67,6 @@ class LiteLLMExceptions:
 
         for var in self.exception_info:
             ex = getattr(litellm, var)
-            dump(var, ex)
             self.exceptions[ex] = self.exception_info[var]
 
     def exceptions_tuple(self):
