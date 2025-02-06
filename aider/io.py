@@ -775,15 +775,10 @@ class InputOutput:
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
-
         return is_yes
 
+    @restore_multiline
     def prompt_ask(self, question, default="", subject=None):
-        # Temporarily disable multiline mode for prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         if subject:
@@ -811,9 +806,6 @@ class InputOutput:
         self.append_chat_history(hist, linebreak=True, blockquote=True)
         if self.yes in (True, False):
             self.tool_output(hist)
-
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
 
         return res
 
