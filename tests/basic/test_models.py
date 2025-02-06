@@ -170,6 +170,89 @@ class TestModels(unittest.TestCase):
         model.info = {"max_input_tokens": 32768}
         self.assertEqual(model.get_repo_map_tokens(), 4096)
 
+    def test_configure_model_settings(self):
+        # Test o3-mini case
+        model = Model("something/o3-mini")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertFalse(model.use_temperature)
+
+        # Test o1-mini case
+        model = Model("something/o1-mini")
+        self.assertTrue(model.use_repo_map)
+        self.assertFalse(model.use_temperature)
+        self.assertFalse(model.use_system_prompt)
+
+        # Test o1-preview case
+        model = Model("something/o1-preview")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertFalse(model.use_temperature)
+        self.assertFalse(model.use_system_prompt)
+
+        # Test o1 case
+        model = Model("something/o1")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertFalse(model.use_temperature)
+        self.assertFalse(model.streaming)
+
+        # Test deepseek v3 case
+        model = Model("deepseek-v3")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertEqual(model.reminder, "sys")
+        self.assertTrue(model.examples_as_sys_msg)
+
+        # Test deepseek reasoner case
+        model = Model("deepseek-r1")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertTrue(model.examples_as_sys_msg)
+        self.assertFalse(model.use_temperature)
+        self.assertEqual(model.remove_reasoning, "think")
+
+        # Test llama3 70b case
+        model = Model("llama3-70b")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertTrue(model.send_undo_reply)
+        self.assertTrue(model.examples_as_sys_msg)
+
+        # Test gpt-4-turbo case
+        model = Model("gpt-4-turbo")
+        self.assertEqual(model.edit_format, "udiff")
+        self.assertTrue(model.use_repo_map)
+        self.assertTrue(model.send_undo_reply)
+
+        # Test gpt-4 case
+        model = Model("gpt-4")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertTrue(model.send_undo_reply)
+
+        # Test gpt-3.5 case
+        model = Model("gpt-3.5")
+        self.assertEqual(model.reminder, "sys")
+
+        # Test 3.5-sonnet case
+        model = Model("claude-3.5-sonnet")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertTrue(model.use_repo_map)
+        self.assertTrue(model.examples_as_sys_msg)
+        self.assertEqual(model.reminder, "user")
+
+        # Test o1- prefix case
+        model = Model("o1-something")
+        self.assertFalse(model.use_system_prompt)
+        self.assertFalse(model.use_temperature)
+
+        # Test qwen case
+        model = Model("qwen-coder-2.5-32b")
+        self.assertEqual(model.edit_format, "diff")
+        self.assertEqual(model.editor_edit_format, "editor-diff")
+        self.assertTrue(model.use_repo_map)
+
     def test_aider_extra_model_settings(self):
         import tempfile
 
