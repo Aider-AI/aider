@@ -51,6 +51,7 @@ EXCEPTIONS = [
 
 class LiteLLMExceptions:
     exceptions = dict()
+    exception_names = {exi.name for exi in EXCEPTIONS}
 
     def __init__(self):
         self._load()
@@ -63,11 +64,11 @@ class LiteLLMExceptions:
                 continue
 
             ex_info = None
-            # collect these names into a set once, above ai!
-            for exi in EXCEPTIONS:
-                if var == exi.name:
-                    ex_info = exi
-                    break
+            if var in self.exception_names:
+                for exi in EXCEPTIONS:
+                    if var == exi.name:
+                        ex_info = exi
+                        break
 
             if strict and not ex_info:
                 raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
