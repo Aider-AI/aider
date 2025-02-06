@@ -224,10 +224,8 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            temperature=ANY,
+            temperature=0,
             num_ctx=expected_ctx,
-            tools=None,
-            tool_choice=None,
         )
 
     @patch("aider.models.litellm.completion")
@@ -261,9 +259,7 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            temperature=ANY,
-            tools=None,
-            tool_choice=None,
+            temperature=0,
         )
         self.assertNotIn("num_ctx", mock_completion.call_args.kwargs)
 
