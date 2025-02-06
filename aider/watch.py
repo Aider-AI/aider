@@ -9,7 +9,7 @@ from pathspec.patterns import GitWildMatchPattern
 from watchfiles import watch
 
 from aider.dump import dump  # noqa
-from aider.watch_prompts import watch_ask_prompt, watch_code_prompt
+from aider.comment_processor import CommentProcessor
 
 
 def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
@@ -81,6 +81,7 @@ class FileWatcher:
             [Path(g) for g in self.gitignores] if self.gitignores else []
         )
 
+        self.comment_processor = CommentProcessor(self.io, self.coder, self.analytics)
         coder.io.file_watcher = self
 
     def filter_func(self, change_type, path):
@@ -105,7 +106,7 @@ class FileWatcher:
 
         # Check if file contains AI markers
         try:
-            comments, _, _ = self.get_ai_comments(str(path_abs))
+            comments, _, _ = self.comment_processor.get_ai_comments(str(path_abs))
             return bool(comments)
         except Exception:
             return
@@ -160,106 +161,7 @@ class FileWatcher:
 
     def process_changes(self):
         """Get any detected file changes"""
-
-        has_action = None
-        added = False
-        for fname in self.changed_files:
-            _, _, action = self.get_ai_comments(fname)
-            if action in ("!", "?"):
-                has_action = action
-
-            if fname in self.coder.abs_fnames:
-                continue
-            if self.analytics:
-                self.analytics.event("ai-comments file-add")
-            self.coder.abs_fnames.add(fname)
-            rel_fname = self.coder.get_rel_fname(fname)
-            if not added:
-                self.io.tool_output()
-                added = True
-            self.io.tool_output(f"Added {rel_fname} to the chat")
-
-        if not has_action:
-            if added:
-                self.io.tool_output(
-                    "End your comment with AI! to request changes or AI? to ask questions"
-                )
-            return ""
-
-        if self.analytics:
-            self.analytics.event("ai-comments execute")
-        self.io.tool_output("Processing your request...")
-
-        if has_action == "!":
-            res = watch_code_prompt
-        elif has_action == "?":
-            res = watch_ask_prompt
-
-        # Refresh all AI comments from tracked files
-        for fname in self.coder.abs_fnames:
-            line_nums, comments, _action = self.get_ai_comments(fname)
-            if not line_nums:
-                continue
-
-            code = self.io.read_text(fname)
-            if not code:
-                continue
-
-            rel_fname = self.coder.get_rel_fname(fname)
-            res += f"\n{rel_fname}:\n"
-
-            # Convert comment line numbers to line indices (0-based)
-            lois = [ln - 1 for ln, _ in zip(line_nums, comments) if ln > 0]
-
-            try:
-                context = TreeContext(
-                    rel_fname,
-                    code,
-                    color=False,
-                    line_number=False,
-                    child_context=False,
-                    last_line=False,
-                    margin=0,
-                    mark_lois=True,
-                    loi_pad=3,
-                    show_top_of_file_parent_scope=False,
-                )
-                context.lines_of_interest = set()
-                context.add_lines_of_interest(lois)
-                context.add_context()
-                res += context.format()
-            except ValueError:
-                for ln, comment in zip(line_nums, comments):
-                    res += f"  Line {ln}: {comment}\n"
-
-        return res
-
-    def get_ai_comments(self, filepath):
-        """Extract AI comment line numbers, comments and action status from a file"""
-        line_nums = []
-        comments = []
-        has_action = None  # None, "!" or "?"
-        content = self.io.read_text(filepath, silent=True)
-        if not content:
-            return None, None, None
-
-        for i, line in enumerate(content.splitlines(), 1):
-            if match := self.ai_comment_pattern.search(line):
-                comment = match.group(0).strip()
-                if comment:
-                    line_nums.append(i)
-                    comments.append(comment)
-                    comment = comment.lower()
-                    comment = comment.lstrip("/#-")
-                    comment = comment.strip()
-                    if comment.startswith("ai!") or comment.endswith("ai!"):
-                        has_action = "!"
-                    elif comment.startswith("ai?") or comment.endswith("ai?"):
-                        has_action = "?"
-        if not line_nums:
-            return None, None, None
-        return line_nums, comments, has_action
-
+        return self.comment_processor.process_changes(self.changed_files)
 
 def main():
     """Example usage of the file watcher"""

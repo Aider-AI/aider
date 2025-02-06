@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from aider.io import InputOutput
-from aider.watch import FileWatcher
+from aider.comment_processor import CommentProcessor
 
 
 def test_gitignore_patterns():
@@ -74,12 +74,12 @@ def test_ai_comment_pattern():
 
     io = InputOutput(pretty=False, fancy_input=False, yes=False)
     coder = MinimalCoder(io)
-    watcher = FileWatcher(coder)
+    comment_processor = CommentProcessor(io, coder)
     fixtures_dir = Path(__file__).parent.parent / "fixtures"
 
     # Test Python fixture
     py_path = fixtures_dir / "watch.py"
-    py_lines, py_comments, py_has_bang = watcher.get_ai_comments(str(py_path))
+    py_lines, py_comments, py_has_bang = comment_processor.get_ai_comments(str(py_path))
 
     # Count unique AI comments (excluding duplicates and variations with extra spaces)
     unique_py_comments = set(comment.strip().lower() for comment in py_comments)
@@ -93,7 +93,7 @@ def test_ai_comment_pattern():
 
     # Test JavaScript fixture
     js_path = fixtures_dir / "watch.js"
-    js_lines, js_comments, js_has_bang = watcher.get_ai_comments(str(js_path))
+    js_lines, js_comments, js_has_bang = comment_processor.get_ai_comments(str(js_path))
     js_expected = 16
     assert (
         len(js_lines) == js_expected
@@ -102,8 +102,8 @@ def test_ai_comment_pattern():
 
     # Test watch_question.js fixture
     question_js_path = fixtures_dir / "watch_question.js"
-    question_js_lines, question_js_comments, question_js_has_bang = watcher.get_ai_comments(
-        str(question_js_path)
+    question_js_lines, question_js_comments, question_js_has_bang = (
+        comment_processor.get_ai_comments(str(question_js_path))
     )
     question_js_expected = 6
     assert len(question_js_lines) == question_js_expected, (
