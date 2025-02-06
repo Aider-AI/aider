@@ -209,7 +209,7 @@ function Download($download_url, $platforms) {
   # forward all tars to it in case the user has a machine that can handle it!
   switch -Wildcard ($zip_ext) {
     ".zip" {
-      Expand-Archive -Path $dir_path -DestinationPath "$tmp";
+      Expand-Archive -Path $dir_path -OutputPath "$tmp";
       Break
     }
     ".tar.*" {
