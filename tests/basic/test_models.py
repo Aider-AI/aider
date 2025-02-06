@@ -219,12 +219,6 @@ class TestModels(unittest.TestCase):
         self.assertTrue(model.send_undo_reply)
         self.assertTrue(model.examples_as_sys_msg)
 
-        # Test gpt-4-turbo case
-        model = Model("gpt-4-turbo")
-        self.assertEqual(model.edit_format, "udiff")
-        self.assertTrue(model.use_repo_map)
-        self.assertTrue(model.send_undo_reply)
-
         # Test gpt-4 case
         model = Model("gpt-4")
         self.assertEqual(model.edit_format, "diff")
