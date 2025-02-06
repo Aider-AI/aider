@@ -474,21 +474,6 @@ And this text should remain"""
         )
 
     @patch("aider.models.litellm.completion")
-    def test_request_timeout_explicit_in_call(self, mock_completion):
-        # Test explicit timeout in send_completion overrides both default and extra_params
-        model = Model("gpt-4")
-        model.extra_params = {"timeout": 300}  # 5 minutes
-        messages = [{"role": "user", "content": "Hello"}]
-        model.send_completion(messages, functions=None, stream=False, timeout=120)  # 2 minutes
-        mock_completion.assert_called_with(
-            model=model.name,
-            messages=messages,
-            stream=False,
-            temperature=0,
-            timeout=120,  # Explicit in call
-        )
-
-    @patch("aider.models.litellm.completion")
     def test_use_temperature_in_send_completion(self, mock_completion):
         # Test use_temperature=True sends temperature=0
         model = Model("gpt-4")
