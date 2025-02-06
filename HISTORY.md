@@ -18,7 +18,7 @@
   - Honor ignores already in effect regardless of how they've been configured.
   - Check for .env only when the file exists.
 - Yes/No prompts now accept All/Skip as alias for Y/N even when not processing a group of confirmations.
-- Aider wrote 74% of the code in this release.
+- Aider wrote 77% of the code in this release.
 
 ### Aider v0.73.0
 
