@@ -242,6 +242,34 @@ class TestInputOutput(unittest.TestCase):
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
+        # Test case 4: 'skip' functions as 'no' without group
+        mock_input.return_value = "s"
+        result = io.confirm_ask("Are you sure?")
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 5: 'all' functions as 'yes' without group
+        mock_input.return_value = "a"
+        result = io.confirm_ask("Are you sure?")
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 6: Full word 'skip' functions as 'no' without group
+        mock_input.return_value = "skip"
+        result = io.confirm_ask("Are you sure?")
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 7: Full word 'all' functions as 'yes' without group
+        mock_input.return_value = "all"
+        result = io.confirm_ask("Are you sure?")
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
     @patch("builtins.input", side_effect=["d"])
     def test_confirm_ask_allow_never(self, mock_input):
         """Test the 'don't ask again' functionality in confirm_ask"""
