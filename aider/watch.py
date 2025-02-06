@@ -128,7 +128,7 @@ class FileWatcher:
         """Process the detected changes and update state"""
         if not changes:
             return False
-            
+
         changed_files = {str(Path(change[1])) for change in changes}
         self.changed_files.update(changed_files)
         self.io.interrupt_input()
@@ -138,15 +138,13 @@ class FileWatcher:
         """Watch for file changes and process them"""
         try:
             roots_to_watch = self.get_roots_to_watch()
-            
+
             for changes in watch(
-                *roots_to_watch, 
-                watch_filter=self.filter_func, 
-                stop_event=self.stop_event
+                *roots_to_watch, watch_filter=self.filter_func, stop_event=self.stop_event
             ):
                 if self.handle_changes(changes):
                     return
-                    
+
         except Exception as e:
             if self.verbose:
                 dump(f"File watcher error: {e}")
@@ -156,11 +154,8 @@ class FileWatcher:
         """Start watching for file changes"""
         self.stop_event = threading.Event()
         self.changed_files = set()
-        
-        self.watcher_thread = threading.Thread(
-            target=self.watch_files,
-            daemon=True
-        )
+
+        self.watcher_thread = threading.Thread(target=self.watch_files, daemon=True)
         self.watcher_thread.start()
 
     def stop(self):
