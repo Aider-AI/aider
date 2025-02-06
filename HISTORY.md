@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.74.0
 
 - Dynamically changes the Ollama context window to hold the current chat.
 - Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 via secondary API providers.
