@@ -10,24 +10,6 @@ from datetime import datetime
 from io import StringIO
 from pathlib import Path
 
-
-def restore_multiline(func):
-    """Decorator to restore multiline mode after function execution"""
-
-    @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
-        try:
-            return func(self, *args, **kwargs)
-        except Exception:
-            raise
-        finally:
-            self.multiline_mode = orig_multiline
-
-    return wrapper
-
-
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
@@ -48,9 +30,25 @@ from rich.style import Style as RichStyle
 from rich.text import Text
 
 from aider.mdstream import MarkdownStream
-
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+
+def restore_multiline(func):
+    """Decorator to restore multiline mode after function execution"""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        orig_multiline = self.multiline_mode
+        self.multiline_mode = False
+        try:
+            return func(self, *args, **kwargs)
+        except Exception:
+            raise
+        finally:
+            self.multiline_mode = orig_multiline
+
+    return wrapper
 
 
 @dataclass
