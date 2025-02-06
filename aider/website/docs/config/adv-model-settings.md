@@ -436,6 +436,10 @@ cog.out("```\n")
   edit_format: diff-fenced
   use_repo_map: true
 
+- name: gemini/gemini-2.0-flash
+  edit_format: diff
+  use_repo_map: true
+
 - name: gemini/gemini-2.0-flash-exp
   edit_format: diff
   use_repo_map: true
