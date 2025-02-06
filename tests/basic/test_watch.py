@@ -4,6 +4,16 @@ from aider.io import InputOutput
 from aider.watch import FileWatcher
 
 
+class MinimalCoder:
+    def __init__(self, io):
+        self.io = io
+        self.root = "."
+        self.abs_fnames = set()
+
+    def get_rel_fname(self, fname):
+        return fname
+
+
 def test_gitignore_patterns():
     """Test that gitignore patterns are properly loaded and matched"""
     from pathlib import Path
@@ -102,15 +112,6 @@ def test_handle_changes():
 
 def test_ai_comment_pattern():
     # Create minimal IO and Coder instances for testing
-    class MinimalCoder:
-        def __init__(self, io):
-            self.io = io
-            self.root = "."
-            self.abs_fnames = set()
-
-        def get_rel_fname(self, fname):
-            return fname
-
     io = InputOutput(pretty=False, fancy_input=False, yes=False)
     coder = MinimalCoder(io)
     watcher = FileWatcher(coder)
