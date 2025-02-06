@@ -1,63 +1,3 @@
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701664}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701667}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701683}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701686}
-{"event": "cli session", "properties": {"main_model": "ollama/REDACTED", "weak_model": "ollama/REDACTED", "editor_model": "ollama/REDACTED", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701686}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701690}
-{"event": "message_send", "properties": {"main_model": "ollama/REDACTED", "weak_model": "ollama/REDACTED", "editor_model": "ollama/REDACTED", "edit_format": "ask", "prompt_tokens": 94, "completion_tokens": 11, "total_tokens": 105, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701701}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701774}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701774}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701777}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701779}
-{"event": "cli session", "properties": {"main_model": "ollama/REDACTED", "weak_model": "ollama/REDACTED", "editor_model": "ollama/REDACTED", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701779}
-{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701781}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701805}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701806}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701809}
-{"event": "cli session", "properties": {"main_model": "ollama/REDACTED", "weak_model": "ollama/REDACTED", "editor_model": "ollama/REDACTED", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701809}
-{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701812}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701814}
-{"event": "message_send", "properties": {"main_model": "ollama/REDACTED", "weak_model": "ollama/REDACTED", "editor_model": "ollama/REDACTED", "edit_format": "ask", "prompt_tokens": 12804, "completion_tokens": 34, "total_tokens": 12838, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701848}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701858}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701858}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701875}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701877}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701932}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701934}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701944}
-{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 21965, "completion_tokens": 91, "total_tokens": 22056, "cost": 0.06726, "total_cost": 0.06726}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701953}
-{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738701963}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702103}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702105}
-{"event": "cli session", "properties": {"main_model": "claude-3-5-haiku-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-haiku-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702105}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702117}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702120}
-{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702121}
-{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702121}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702121}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702185}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702187}
-{"event": "cli session", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702187}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702191}
-{"event": "message_send", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff", "prompt_tokens": 10003, "completion_tokens": 36, "total_tokens": 10039, "cost": 0.009035099999999999, "total_cost": 0.009035099999999999}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702196}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702198}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702198}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702221}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702223}
-{"event": "cli session", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702223}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702230}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702233}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702233}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702304}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702306}
-{"event": "cli session", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702306}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702312}
-{"event": "message_send", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff", "prompt_tokens": 7053, "completion_tokens": 276, "total_tokens": 7329, "cost": 0.0065961, "total_cost": 0.0065961}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702323}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702328}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702328}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702409}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702417}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702419}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702420}
 {"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 10023, "completion_tokens": 125, "total_tokens": 10148, "cost": 0.031944, "total_cost": 0.031944}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702428}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738702428}
@@ -998,3 +938,63 @@
 {"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878309}
 {"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878310}
 {"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878310}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878659}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878659}
+{"event": "cli session", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878659}
+{"event": "command_multiline-mode", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878664}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878665}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878689}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 2399, "completion_tokens": 67, "total_tokens": 2466, "cost": 0.00035461999999804, "total_cost": 0.00035461999999804}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878695}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878807}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878814}
+{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878814}
+{"event": "cli session", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878815}
+{"event": "command_read-only", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878837}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878842}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878909}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878909}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "ask", "prompt_tokens": 13955, "completion_tokens": 438, "total_tokens": 14393, "cost": 0.0020763399999980396, "total_cost": 0.0020763399999980396}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878931}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878933}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 16714, "completion_tokens": 853, "total_tokens": 17567, "cost": 0.0025787999999980406, "total_cost": 0.00465513999999608}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878967}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738878993}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879021}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879046}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879046}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "ask", "prompt_tokens": 16298, "completion_tokens": 618, "total_tokens": 16916, "cost": 0.00245475999999804, "total_cost": 0.00710989999999412}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879084}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879085}
+{"event": "message_send", "properties": {"main_model": "deepseek/deepseek-chat", "weak_model": "deepseek/deepseek-chat", "editor_model": "deepseek/deepseek-chat", "edit_format": "diff", "prompt_tokens": 19220, "completion_tokens": 0, "total_tokens": 19220, "cost": 0.0026907999999980403, "total_cost": 0.00980069999999216}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879147}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879243}
+{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879269}
+{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879276}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879277}
+{"event": "message_send", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "deepseek/deepseek-chat", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff", "prompt_tokens": 19249, "completion_tokens": 599, "total_tokens": 19848, "cost": 0.0178632, "total_cost": 0.027663899999992157}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879325}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879395}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879408}
+{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879409}
+{"event": "cli session", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879409}
+{"event": "command_run", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879411}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879443}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879475}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879475}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879497}
+{"event": "message_send", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff", "prompt_tokens": 17539, "completion_tokens": 302, "total_tokens": 17841, "cost": 0.0160569, "total_cost": 0.0160569}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879512}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879521}
+{"event": "message_send", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff", "prompt_tokens": 18166, "completion_tokens": 383, "total_tokens": 18549, "cost": 0.0166941, "total_cost": 0.032751}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879544}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879557}
+{"event": "message_send", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff", "prompt_tokens": 19898, "completion_tokens": 567, "total_tokens": 20465, "cost": 0.018418499999999997, "total_cost": 0.0511695}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879594}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879604}
+{"event": "message_send", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff", "prompt_tokens": 21582, "completion_tokens": 811, "total_tokens": 22393, "cost": 0.020153699999999997, "total_cost": 0.0713232}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879648}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879663}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879794}
+{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879794}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879794}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879806}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879807}
+{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879808}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879808}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879812}
+{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879814}
+{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879814}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879819}
+{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879819}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738879822}
