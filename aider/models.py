@@ -22,6 +22,8 @@ from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 
 RETRY_TIMEOUT = 60
 
+request_timeout = 600
+
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
 
@@ -599,7 +601,7 @@ class Model(ModelSettings):
         # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
-        res = litellm.completion(**kwargs)
+        res = litellm.completion(timeout=request_timeout, **kwargs)
         return hash_object, res
 
     def remove_reasoning_content(self, res):

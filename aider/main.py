@@ -509,8 +509,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
 
     if args.timeout:
-        litellm._load_litellm()
-        litellm._lazy_module.request_timeout = args.timeout
+        models.request_timeout = args.timeout
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
