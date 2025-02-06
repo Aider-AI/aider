@@ -48,6 +48,7 @@ from rich.style import Style as RichStyle
 from rich.text import Text
 
 from aider.mdstream import MarkdownStream
+
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
 
