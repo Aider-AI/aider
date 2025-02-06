@@ -13,6 +13,7 @@ from pathlib import Path
 
 def restore_multiline(func):
     """Decorator to restore multiline mode after function execution"""
+
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
         orig_multiline = self.multiline_mode
@@ -23,7 +24,9 @@ def restore_multiline(func):
             raise
         finally:
             self.multiline_mode = orig_multiline
+
     return wrapper
+
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
