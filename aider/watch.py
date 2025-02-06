@@ -110,43 +110,57 @@ class FileWatcher:
         except Exception:
             return
 
+    def get_roots_to_watch(self):
+        """Determine which root paths to watch based on gitignore rules"""
+        if self.gitignore_spec:
+            roots = [
+                str(path)
+                for path in self.root.iterdir()
+                if not self.gitignore_spec.match_file(
+                    path.relative_to(self.root).as_posix() + ("/" if path.is_dir() else "")
+                )
+            ]
+            # Fallback to watching root if all top-level items are filtered out
+            return roots if roots else [str(self.root)]
+        return [str(self.root)]
+
+    def handle_changes(self, changes):
+        """Process the detected changes and update state"""
+        if not changes:
+            return False
+            
+        changed_files = {str(Path(change[1])) for change in changes}
+        self.changed_files.update(changed_files)
+        self.io.interrupt_input()
+        return True
+
+    def watch_files(self):
+        """Watch for file changes and process them"""
+        try:
+            roots_to_watch = self.get_roots_to_watch()
+            
+            for changes in watch(
+                *roots_to_watch, 
+                watch_filter=self.filter_func, 
+                stop_event=self.stop_event
+            ):
+                if self.handle_changes(changes):
+                    return
+                    
+        except Exception as e:
+            if self.verbose:
+                dump(f"File watcher error: {e}")
+            raise e
+
     def start(self):
         """Start watching for file changes"""
         self.stop_event = threading.Event()
         self.changed_files = set()
-
-        def watch_files():
-            try:
-                # If a gitignore spec exists, filter out top-level entries that match it
-                if self.gitignore_spec:
-                    roots_to_watch = [
-                        str(path)
-                        for path in self.root.iterdir()
-                        if not self.gitignore_spec.match_file(
-                            path.relative_to(self.root).as_posix() + ("/" if path.is_dir() else "")
-                        )
-                    ]
-                    # Fallback to watching root if all top-level items are filtered out
-                    if not roots_to_watch:
-                        roots_to_watch = [str(self.root)]
-                else:
-                    roots_to_watch = [str(self.root)]
-
-                for changes in watch(
-                    *roots_to_watch, watch_filter=self.filter_func, stop_event=self.stop_event
-                ):
-                    if not changes:
-                        continue
-                    changed_files = {str(Path(change[1])) for change in changes}
-                    self.changed_files.update(changed_files)
-                    self.io.interrupt_input()
-                    return
-            except Exception as e:
-                if self.verbose:
-                    dump(f"File watcher error: {e}")
-                raise e
-
-        self.watcher_thread = threading.Thread(target=watch_files, daemon=True)
+        
+        self.watcher_thread = threading.Thread(
+            target=self.watch_files,
+            daemon=True
+        )
         self.watcher_thread.start()
 
     def stop(self):

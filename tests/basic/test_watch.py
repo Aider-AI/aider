@@ -61,6 +61,43 @@ def test_gitignore_patterns():
     tmp_gitignore.unlink()
 
 
+def test_get_roots_to_watch(tmp_path):
+    # Create a test directory structure
+    (tmp_path / "included").mkdir()
+    (tmp_path / "excluded").mkdir()
+    
+    io = InputOutput(pretty=False, fancy_input=False, yes=False)
+    coder = MinimalCoder(io)
+    
+    # Test with no gitignore
+    watcher = FileWatcher(coder, root=tmp_path)
+    roots = watcher.get_roots_to_watch()
+    assert len(roots) == 1
+    assert roots[0] == str(tmp_path)
+    
+    # Test with gitignore
+    gitignore = tmp_path / ".gitignore"
+    gitignore.write_text("excluded/")
+    watcher = FileWatcher(coder, root=tmp_path, gitignores=[gitignore])
+    roots = watcher.get_roots_to_watch()
+    assert len(roots) == 1
+    assert Path(roots[0]).name == "included"
+
+def test_handle_changes():
+    io = InputOutput(pretty=False, fancy_input=False, yes=False)
+    coder = MinimalCoder(io)
+    watcher = FileWatcher(coder)
+    
+    # Test no changes
+    assert not watcher.handle_changes([])
+    assert len(watcher.changed_files) == 0
+    
+    # Test with changes
+    changes = [('modified', '/path/to/file.py')]
+    assert watcher.handle_changes(changes)
+    assert len(watcher.changed_files) == 1
+    assert str(Path('/path/to/file.py')) in watcher.changed_files
+
 def test_ai_comment_pattern():
     # Create minimal IO and Coder instances for testing
     class MinimalCoder:
