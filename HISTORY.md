@@ -2,16 +2,16 @@
 
 ### main branch
 
+- Dynamically changes the Ollama context window to hold the current chat.
+- Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 via secondary API providers.
+- Remove `<think>` tags from R1 responses for commit messages (and other weak model uses).
 - Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
+- Watch files now fully ignores top-level directories named in ignore files, to reduce the chance of hitting OS watch limits. Helpful to ignore giant subtrees like `node_modules`.
 - Fast startup with more providers and when model metadata provided in local files.
-- Removes `<think>` tags from R1 responses for commit messages (and other weak model uses).
-- Now dynamically sets `num_ctx` for Ollama, to ensure the context window can hold the chat.
-- Watch files now fully ignores top-level directories, to reduce the chance of hitting OS limits on number of watched files. Helpful to ignore giant subtrees like `node_modules`.
 - Improved .gitignore handling:
   - Honor ignores already in effect regardless of how they've been configured.
   - Check for .env only when the file exists.
-- Added "catch all" model-specific configuration settings for o3-mini, DeepSeek V3 & R1, o1-mini, o1.
-- Added Azure o3-Mini model support.
+- Yes/No prompts now accept All/Skip as alias for Y/N even when not processing a group of confirmations.
 - Aider wrote 68% of the code in this release.
 
 ### Aider v0.73.0
