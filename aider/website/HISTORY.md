@@ -30,6 +30,7 @@ cog.out(text)
 - Remove `<think>` tags from R1 responses for commit messages (and other weak model uses).
 - Can now specify `use_temperature: <float>` in model settings, not just true/false.
 - Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
+- Bugfix for `--timeout`
 - Watch files now fully ignores top-level directories named in ignore files, to reduce the chance of hitting OS watch limits. Helpful to ignore giant subtrees like `node_modules`.
 - Fast startup with more providers and when model metadata provided in local files.
 - Improved .gitignore handling:
