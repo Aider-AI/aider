@@ -173,6 +173,7 @@ cog.out("```\n")
   editor_model_name: null
   editor_edit_format: null
   remove_reasoning: null
+  system_prompt_prefix: null
 
 - name: anthropic/claude-3-5-haiku-20241022
   edit_format: diff
@@ -263,6 +264,7 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
 
 - name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   edit_format: diff
@@ -573,6 +575,7 @@ cog.out("```\n")
   streaming: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
 
 - name: o1-mini
   weak_model_name: gpt-4o-mini
@@ -598,6 +601,7 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
 
 - name: openai/gpt-4o
   edit_format: diff
@@ -637,6 +641,7 @@ cog.out("```\n")
   streaming: false
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
 
 - name: openai/o1-mini
   weak_model_name: openai/gpt-4o-mini
@@ -662,6 +667,7 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
 
 - name: openrouter/anthropic/claude-3-opus
   edit_format: diff
@@ -760,6 +766,7 @@ cog.out("```\n")
   streaming: false
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
 
 - name: openrouter/openai/o1-mini
   weak_model_name: openrouter/openai/gpt-4o-mini
@@ -787,6 +794,7 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
 
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   edit_format: diff
