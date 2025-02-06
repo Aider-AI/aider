@@ -504,7 +504,7 @@ class InputOutput:
             "Handle Enter key press"
             if self.multiline_mode:
                 # In multiline mode, Enter adds a newline
-                event.current_buffer.insert_text("\n")
+                event.current_buffer.insert_text("\n. ")
             else:
                 # In normal mode, Enter submits
                 event.current_buffer.validate_and_handle()
@@ -517,7 +517,7 @@ class InputOutput:
                 event.current_buffer.validate_and_handle()
             else:
                 # In normal mode, Alt+Enter adds a newline
-                event.current_buffer.insert_text("\n")
+                event.current_buffer.insert_text("\n. ")
 
         while True:
             if multiline_input:
@@ -680,6 +680,7 @@ class InputOutput:
             return True
         return False
 
+    @restore_multiline
     def confirm_ask(
         self,
         question,
