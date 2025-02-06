@@ -613,6 +613,7 @@ class Model(ModelSettings):
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)
         retry_delay = 0.125
+
         while True:
             try:
                 kwargs = {
@@ -620,6 +621,7 @@ class Model(ModelSettings):
                     "functions": None,
                     "stream": False,
                 }
+
                 _hash, response = self.send_completion(**kwargs)
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
