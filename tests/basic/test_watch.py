@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from aider.dump import dump  # noqa
 from aider.io import InputOutput
 from aider.watch import FileWatcher
 
@@ -90,8 +91,9 @@ def test_get_roots_to_watch(tmp_path):
     gitignore.write_text("excluded/")
     watcher = FileWatcher(coder, root=tmp_path, gitignores=[gitignore])
     roots = watcher.get_roots_to_watch()
-    assert len(roots) == 1
-    assert Path(roots[0]).name == "included"
+    assert len(roots) == 2
+    assert Path(sorted(roots)[0]).name == ".gitignore"
+    assert Path(sorted(roots)[1]).name == "included"
 
 
 def test_handle_changes():
