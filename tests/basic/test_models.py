@@ -474,6 +474,7 @@ And this text should remain"""
             messages=messages,
             stream=False,
             temperature=0.7,
+            timeout=600,
         )
 
 
