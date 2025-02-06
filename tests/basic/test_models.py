@@ -208,16 +208,16 @@ class TestModels(unittest.TestCase):
             except OSError:
                 pass
 
-    @patch('aider.models.litellm.completion')
-    @patch.object(Model, 'token_count')
+    @patch("aider.models.litellm.completion")
+    @patch.object(Model, "token_count")
     def test_ollama_num_ctx_set_when_missing(self, mock_token_count, mock_completion):
         mock_token_count.return_value = 1000
-        
+
         model = Model("ollama/llama3")
         messages = [{"role": "user", "content": "Hello"}]
-        
+
         model.send_completion(messages, functions=None, stream=False)
-        
+
         # Verify num_ctx was calculated and added to call
         expected_ctx = int(1000 * 1.25) + 8192  # 9442
         mock_completion.assert_called_once_with(
@@ -230,14 +230,14 @@ class TestModels(unittest.TestCase):
             tool_choice=None,
         )
 
-    @patch('aider.models.litellm.completion')
+    @patch("aider.models.litellm.completion")
     def test_ollama_uses_existing_num_ctx(self, mock_completion):
         model = Model("ollama/llama3")
         model.extra_params = {"num_ctx": 4096}
-        
+
         messages = [{"role": "user", "content": "Hello"}]
         model.send_completion(messages, functions=None, stream=False)
-        
+
         # Should use provided num_ctx from extra_params
         mock_completion.assert_called_once_with(
             model=model.name,
@@ -249,13 +249,13 @@ class TestModels(unittest.TestCase):
             tool_choice=None,
         )
 
-    @patch('aider.models.litellm.completion')
+    @patch("aider.models.litellm.completion")
     def test_non_ollama_no_num_ctx(self, mock_completion):
         model = Model("gpt-4")
         messages = [{"role": "user", "content": "Hello"}]
-        
+
         model.send_completion(messages, functions=None, stream=False)
-        
+
         # Regular models shouldn't get num_ctx
         mock_completion.assert_called_once_with(
             model=model.name,
@@ -265,7 +265,7 @@ class TestModels(unittest.TestCase):
             tools=None,
             tool_choice=None,
         )
-        self.assertNotIn('num_ctx', mock_completion.call_args.kwargs)
+        self.assertNotIn("num_ctx", mock_completion.call_args.kwargs)
 
 
 if __name__ == "__main__":
