@@ -431,11 +431,11 @@ And this text should remain"""
         model = Model("gpt-4")
         self.assertTrue(model.use_temperature)
         self.assertEqual(model.use_temperature, True)
-        
+
         # Test use_temperature=False doesn't pass temperature
         model = Model("github/o1-mini")
         self.assertFalse(model.use_temperature)
-        
+
         # Test use_temperature as float value
         model = Model("gpt-4")
         model.use_temperature = 0.7
