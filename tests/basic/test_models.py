@@ -426,6 +426,52 @@ And this text should remain"""
         )
         self.assertNotIn("num_ctx", mock_completion.call_args.kwargs)
 
+    def test_use_temperature_settings(self):
+        # Test use_temperature=True (default) uses temperature=0
+        model = Model("gpt-4")
+        self.assertTrue(model.use_temperature)
+        self.assertEqual(model.use_temperature, True)
+        
+        # Test use_temperature=False doesn't pass temperature
+        model = Model("github/o1-mini")
+        self.assertFalse(model.use_temperature)
+        
+        # Test use_temperature as float value
+        model = Model("gpt-4")
+        model.use_temperature = 0.7
+        self.assertEqual(model.use_temperature, 0.7)
+
+    @patch("aider.models.litellm.completion")
+    def test_use_temperature_in_send_completion(self, mock_completion):
+        # Test use_temperature=True sends temperature=0
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            temperature=0,
+        )
+
+        # Test use_temperature=False doesn't send temperature
+        model = Model("github/o1-mini")
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+        self.assertNotIn("temperature", mock_completion.call_args.kwargs)
+
+        # Test use_temperature as float sends that value
+        model = Model("gpt-4")
+        model.use_temperature = 0.7
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            temperature=0.7,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
