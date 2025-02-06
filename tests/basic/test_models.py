@@ -15,11 +15,13 @@ class TestModels(unittest.TestCase):
     def setUp(self):
         """Reset MODEL_SETTINGS before each test"""
         from aider.models import MODEL_SETTINGS
+
         self._original_settings = MODEL_SETTINGS.copy()
 
     def tearDown(self):
         """Restore original MODEL_SETTINGS after each test"""
         from aider.models import MODEL_SETTINGS
+
         MODEL_SETTINGS.clear()
         MODEL_SETTINGS.extend(self._original_settings)
 
