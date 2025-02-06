@@ -1,5 +1,6 @@
-from aider.dump import dump  # noqa: F401
 from dataclasses import dataclass
+
+from aider.dump import dump  # noqa: F401
 
 
 @dataclass
