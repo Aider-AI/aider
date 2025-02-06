@@ -686,14 +686,12 @@ class InputOutput:
         if group:
             allow_never = True
 
-        valid_responses = ["yes", "no"]
+        valid_responses = ["yes", "no", "skip", "all"]
         options = " (Y)es/(N)o"
         if group:
             if not explicit_yes_required:
                 options += "/(A)ll"
-                valid_responses.append("all")
             options += "/(S)kip all"
-            valid_responses.append("skip")
         if allow_never:
             options += "/(D)on't ask again"
             valid_responses.append("don't")
