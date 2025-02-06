@@ -29,6 +29,8 @@ cog.out(text)
 - Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 via secondary API providers.
 - Remove `<think>` tags from R1 responses for commit messages (and other weak model uses).
 - Can now specify `use_temperature: <float>` in model settings, not just true/false.
+- The full docker container now includes `boto3` for Bedrock.
+- Docker containers now set `HOME=/app` which is the normal project mount-point, to persist `~/.aider`.
 - Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
 - Bugfix for `--timeout`
 - Watch files now fully ignores top-level directories named in ignore files, to reduce the chance of hitting OS watch limits. Helpful to ignore giant subtrees like `node_modules`.
