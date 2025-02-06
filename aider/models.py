@@ -601,8 +601,8 @@ class Model(ModelSettings):
         # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
-        if 'timeout' not in kwargs:
-            kwargs['timeout'] = request_timeout
+        if "timeout" not in kwargs:
+            kwargs["timeout"] = request_timeout
         res = litellm.completion(**kwargs)
         return hash_object, res
 
