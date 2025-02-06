@@ -52,7 +52,7 @@ EXCEPTIONS = [
 
 class LiteLLMExceptions:
     exceptions = dict()
-    exception_names = {exi.name for exi in EXCEPTIONS}
+    exception_info = {exi.name: exi for exi in EXCEPTIONS}
 
     def __init__(self):
         self._load()
@@ -61,12 +61,13 @@ class LiteLLMExceptions:
         import litellm
 
         for var in dir(litellm):
-            if var.endswith("Error") and var not in self.exception_names:
-                raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
-
-            ex = getattr(litellm, var)
-            dump(var, ex)
-            self.exceptions[ex] = ex_info
+            if var.endswith("Error"):
+                if var not in self.exception_info:
+                    raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
+                
+                ex = getattr(litellm, var)
+                dump(var, ex)
+                self.exceptions[ex] = self.exception_info[var]
 
     def exceptions_tuple(self):
         return tuple(self.exceptions)
