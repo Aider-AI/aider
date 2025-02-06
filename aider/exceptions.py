@@ -5,7 +5,7 @@ from dataclasses import dataclass
 class ExInfo:
     name: str
     retry: bool
-    description: str
+    description: str | None
 
 
 EXCEPTIONS = [
