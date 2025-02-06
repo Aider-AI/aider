@@ -601,8 +601,9 @@ class Model(ModelSettings):
         # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
-        # don't pass timeout here, add it to kwargs (if not already present) ai!
-        res = litellm.completion(timeout=request_timeout, **kwargs)
+        if 'timeout' not in kwargs:
+            kwargs['timeout'] = request_timeout
+        res = litellm.completion(**kwargs)
         return hash_object, res
 
     def remove_reasoning_content(self, res):
