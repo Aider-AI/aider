@@ -1567,7 +1567,7 @@ class Coder:
             lang = filename_to_lang(fname)
             rel_fname = self.get_rel_fname(fname)
 
-            cmd = self.fix_cmds and self.fix_cmds[lang] or None
+            cmd = self.fix_cmds[lang] if self.fix_cmds and lang in self.fix_cmds else None
 
             if not cmd:
                 return

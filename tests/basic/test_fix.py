@@ -13,10 +13,6 @@ class TestFix(unittest.TestCase):
             io=self.io,
             fix_cmds={"python": "black"},
         )
-        # Mock the abs_root_path method to return the input unchanged
-        self.coder.abs_root_path = lambda x: x
-        # Mock get_rel_fname to return the input unchanged
-        self.coder.get_rel_fname = lambda x: x
 
     @patch("aider.coders.base_coder.run_cmd")
     def test_fix_edited_success(self, mock_run):
