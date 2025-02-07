@@ -32,10 +32,7 @@ def blame(start_tag, end_tag=None):
 
     revision = end_tag if end_tag else "HEAD"
     files = run(["git", "ls-tree", "-r", "--name-only", revision]).strip().split("\n")
-    test_files = [
-        f for f in files 
-        if f.startswith("tests/fixtures/languages/") and "/test." in f
-    ]
+    test_files = [f for f in files if f.startswith("tests/fixtures/languages/") and "/test." in f]
     files = [
         f
         for f in files
