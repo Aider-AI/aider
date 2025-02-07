@@ -11,6 +11,7 @@ from collections import Counter, defaultdict, namedtuple
 from importlib import resources
 from pathlib import Path
 
+import tree_sitter
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
@@ -279,12 +280,17 @@ class RepoMap:
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
-        query = language.query(query_scm)
+        try:
+            query = language.query(query_scm)
+        except tree_sitter.QueryError as err:
+            dump(fname, err)
+            return
+
         captures = query.captures(tree.root_node)
 
-        dump(fname)
-        dump(captures)
-        dump(captures.keys())
+        # dump(fname)
+        # dump(captures)
+        # dump(captures.keys())
 
         saw = set()
         for tag, nodes in captures.items():
