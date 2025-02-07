@@ -302,6 +302,33 @@ def parse_lint_cmds(lint_cmds, io):
     return res
 
 
+def parse_fix_cmds(fix_cmds, io):
+    err = False
+    res = dict()
+    for fix_cmd in fix_cmds:
+        if re.match(r"^[a-z]+:.*", fix_cmd):
+            pieces = fix_cmd.split(":")
+            lang = pieces[0]
+            cmd = fix_cmd[len(lang) + 1 :]
+            lang = lang.strip()
+        else:
+            lang = None
+            cmd = fix_cmd
+
+        cmd = cmd.strip()
+
+        if cmd:
+            res[lang] = cmd
+        else:
+            io.tool_error(f'Unable to parse --fix-cmd "{fix_cmd}"')
+            io.tool_output('The arg should be "language: cmd --args ..."')
+            io.tool_output('For example: --fix-cmd "go: gofmt"')
+            err = True
+    if err:
+        return
+    return res
+
+
 def generate_search_path_list(default_file, git_root, command_line_file):
     files = []
     files.append(Path.home() / default_file)  # homedir
@@ -803,6 +830,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="Invalid lint command format")
         return 1
 
+    fix_cmds = parse_fix_cmds(args.fix_cmd, io)
+    if fix_cmds is None:
+        analytics.event("exit", reason="Invalid fix command format")
+        return 1
+
     if args.show_model_warnings:
         problem = models.sanity_check_models(io, main_model)
         if problem:
@@ -896,8 +928,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             use_git=args.git,
             restore_chat_history=args.restore_chat_history,
             auto_lint=args.auto_lint,
+            auto_fix=args.auto_fix,
             auto_test=args.auto_test,
             lint_cmds=lint_cmds,
+            fix_cmds=fix_cmds,
             test_cmd=args.test_cmd,
             commands=commands,
             summarizer=summarizer,

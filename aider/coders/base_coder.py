@@ -18,6 +18,7 @@ from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
+from grep_ast import filename_to_lang
 
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
@@ -87,9 +88,11 @@ class Coder:
     yield_stream = False
     temperature = None
     auto_lint = True
+    auto_fix = True
     auto_test = False
     test_cmd = None
     lint_outcome = None
+    fix_outcome = None
     test_outcome = None
     multi_response_content = ""
     partial_response_content = ""
@@ -283,8 +286,10 @@ class Coder:
         done_messages=None,
         restore_chat_history=False,
         auto_lint=True,
+        auto_fix=True,
         auto_test=False,
         lint_cmds=None,
+        fix_cmds=None,
         test_cmd=None,
         aider_commit_hashes=None,
         map_mul_no_files=8,
@@ -476,8 +481,10 @@ class Coder:
         # Linting and testing
         self.linter = Linter(root=self.root, encoding=io.encoding)
         self.auto_lint = auto_lint
+        self.auto_fix = auto_fix
         self.setup_lint_cmds(lint_cmds)
         self.lint_cmds = lint_cmds
+        self.fix_cmds = fix_cmds
         self.auto_test = auto_test
         self.test_cmd = test_cmd
 
@@ -808,6 +815,7 @@ class Coder:
         self.reflected_message = None
         self.num_reflections = 0
         self.lint_outcome = None
+        self.fix_outcome = None
         self.test_outcome = None
         self.shell_commands = []
         self.message_cost = 0
@@ -1032,11 +1040,23 @@ class Coder:
                 else:
                     platform_text += f"  - {lang}: {cmd}\n"
 
+        if self.fix_cmds:
+            if self.auto_fix:
+                platform_text += (
+                    "- The user's pre-commit runs these fix commands, don't suggest running"
+                    " them:\n"
+                )
+            else:
+                platform_text += "- The user prefers these fix commands:\n"
+            for lang, cmd in self.fix_cmds.items():
+                if lang is None:
+                    platform_text += f"  - {cmd}\n"
+                else:
+                    platform_text += f"  - {lang}: {cmd}\n"
+
         if self.test_cmd:
             if self.auto_test:
-                platform_text += (
-                    "- The user's pre-commit runs this test command, don't suggest running them: "
-                )
+                platform_text += "- The user's pre-commit runs this test command, don't suggest running them: "
             else:
                 platform_text += "- The user prefers this test command: "
             platform_text += self.test_cmd + "\n"
@@ -1420,6 +1440,10 @@ class Coder:
 
         edited = self.apply_updates()
 
+        if edited and self.auto_fix:
+            fix_errors = self.fix_edited(edited)
+            self.fix_outcome = not fix_errors
+
         if edited:
             self.aider_edited_files.update(edited)
             saved_message = self.auto_commit(edited)
@@ -1524,6 +1548,33 @@ class Coder:
             if errors:
                 res += "\n"
                 res += errors
+                res += "\n"
+
+        if res:
+            self.io.tool_warning(res)
+
+        return res
+
+    def fix_edited(self, fnames):
+        res = ""
+        for fname in fnames:
+            if not fname:
+                continue
+            lang = filename_to_lang(fname)
+            rel_fname = self.get_rel_fname(fname)
+
+            cmd = self.fix_cmds and self.fix_cmds[lang] or None
+
+            if not cmd:
+                return
+
+            result = run_cmd(f"{cmd} {rel_fname}")
+            if len(result) != 2:
+                raise Exception("Invalid number of results")
+
+            if result[0] != 0:
+                res += "\n"
+                res += str(result[1])
                 res += "\n"
 
         if res:

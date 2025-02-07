@@ -560,6 +560,21 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable automatic linting after changes (default: True)",
     )
     group.add_argument(
+        "--fix-cmd",
+        action="append",
+        help=(
+            'Specify fix commands to run for different languages, eg: "go: gofmt" (can be used'
+            ' multiple times)'
+        ),
+        default=[],
+    )
+    group.add_argument(
+        "--auto-fix",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable automatic fixing after changes (default: True)",
+    )
+    group.add_argument(
         "--test-cmd",
         help="Specify command to run tests",
         default=[],
