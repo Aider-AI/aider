@@ -13,8 +13,12 @@ class TestFix(unittest.TestCase):
             io=self.io,
             fix_cmds={"python": "black"},
         )
+        # Mock the abs_root_path method to return the input unchanged
+        self.coder.abs_root_path = lambda x: x
+        # Mock get_rel_fname to return the input unchanged
+        self.coder.get_rel_fname = lambda x: x
 
-    @patch("aider.run_cmd.run_cmd")
+    @patch("aider.coders.base_coder.run_cmd")
     def test_fix_edited_success(self, mock_run):
         mock_run.return_value = (0, "")  # Success, no output
         edited = ["test.py"]
@@ -22,7 +26,7 @@ class TestFix(unittest.TestCase):
         self.assertEqual(result, "")
         mock_run.assert_called_once_with("black test.py")
 
-    @patch("aider.run_cmd.run_cmd")
+    @patch("aider.coders.base_coder.run_cmd")
     def test_fix_edited_error(self, mock_run):
         error_output = "Error: invalid syntax"
         mock_run.return_value = (1, error_output)  # Error with output
@@ -31,7 +35,7 @@ class TestFix(unittest.TestCase):
         self.assertIn(error_output, result)
         mock_run.assert_called_once_with("black test.py")
 
-    @patch("aider.run_cmd.run_cmd")
+    @patch("aider.coders.base_coder.run_cmd")
     def test_fix_edited_no_cmd(self, mock_run):
         self.coder.fix_cmds = {}  # No fix command configured
         edited = ["test.py"]
@@ -39,7 +43,7 @@ class TestFix(unittest.TestCase):
         self.assertIsNone(result)
         mock_run.assert_not_called()
 
-    @patch("aider.run_cmd.run_cmd")
+    @patch("aider.coders.base_coder.run_cmd")
     def test_fix_edited_multiple_files(self, mock_run):
         mock_run.side_effect = [(0, ""), (1, "Error in file2")]
         edited = ["file1.py", "file2.py"]
@@ -47,14 +51,14 @@ class TestFix(unittest.TestCase):
         self.assertIn("Error in file2", result)
         self.assertEqual(mock_run.call_count, 2)
 
-    @patch("aider.run_cmd.run_cmd")
+    @patch("aider.coders.base_coder.run_cmd")
     def test_fix_edited_empty_filename(self, mock_run):
         edited = [""]
         result = self.coder.fix_edited(edited)
         self.assertEqual(result, "")
         mock_run.assert_not_called()
 
-    @patch("aider.run_cmd.run_cmd")
+    @patch("aider.coders.base_coder.run_cmd")
     def test_fix_edited_different_language(self, mock_run):
         self.coder.fix_cmds = {"go": "gofmt -w"}
         edited = ["test.py"]  # Python file but only Go formatter configured
