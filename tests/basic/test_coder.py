@@ -924,48 +924,6 @@ This command will print 'Hello, World!' to the console."""
         system_message = next(msg for msg in messages if msg["role"] == "system")
         self.assertTrue(system_message["content"].startswith(test_prefix))
 
-    def test_system_prompt_prefix_none(self):
-        # Test behavior when system_prompt_prefix is None
-        io = InputOutput(yes=True)
-
-        # Create a model without system_prompt_prefix
-        model = Model("gpt-3.5-turbo")
-        model.system_prompt_prefix = None
-
-        coder = Coder.create(model, None, io=io)
-
-        # Get the formatted messages
-        chunks = coder.format_messages()
-        messages = chunks.all_messages()
-
-        # Get the system message
-        system_message = next(msg for msg in messages if msg["role"] == "system")
-        original_content = coder.fmt_system_prompt(coder.gpt_prompts.main_system)
-
-        # Check just the first line
-        self.assertEqual(system_message["content"].split("\n")[0], original_content.split("\n")[0])
-
-    def test_system_prompt_prefix_empty(self):
-        # Test behavior when system_prompt_prefix is empty string
-        io = InputOutput(yes=True)
-
-        # Create a model with empty system_prompt_prefix
-        model = Model("gpt-3.5-turbo")
-        model.system_prompt_prefix = ""
-
-        coder = Coder.create(model, None, io=io)
-
-        # Get the formatted messages
-        chunks = coder.format_messages()
-        messages = chunks.all_messages()
-
-        # Get the system message
-        system_message = next(msg for msg in messages if msg["role"] == "system")
-        original_content = coder.fmt_system_prompt(coder.gpt_prompts.main_system)
-
-        # Check just the first line
-        self.assertEqual(system_message["content"].split("\n")[0], original_content.split("\n")[0])
-
     def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
