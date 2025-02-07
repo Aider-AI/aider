@@ -518,3 +518,29 @@
   versions: 0.72.4.dev
   seconds_per_case: 124.6
   total_cost: 18.1584
+
+- dirname: 2025-01-21-22-51-49--gemini-2.0-flash-thinking-exp-01-21-polyglot-diff
+  test_cases: 225
+  model: gemini-2.0-flash-thinking-exp-01-21
+  edit_format: diff
+  commit_hash: 843720a
+  pass_rate_1: 5.8
+  pass_rate_2: 18.2
+  pass_num_1: 13
+  pass_num_2: 41
+  percent_cases_well_formed: 77.8
+  error_outputs: 182
+  num_malformed_responses: 180
+  num_with_malformed_responses: 50
+  user_asks: 26
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 7
+  total_tests: 225
+  command: aider --model gemini/gemini-2.0-flash-thinking-exp-01-21
+  date: 2025-01-21
+  versions: 0.72.2.dev
+  seconds_per_case: 24.2
+  total_cost: 0.0000

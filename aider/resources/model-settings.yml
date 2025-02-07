@@ -386,6 +386,10 @@
   edit_format: diff
   use_repo_map: true
 
+- name: gemini/gemini-2.0-flash
+  edit_format: diff
+  use_repo_map: true
+
 - name: openrouter/deepseek/deepseek-r1
   edit_format: diff
   weak_model_name: openrouter/deepseek/deepseek-chat
@@ -400,14 +404,14 @@
 
 - name: openrouter/deepseek/deepseek-r1:free
   edit_format: diff
-  weak_model_name: openrouter/deepseek/deepseek-chat:free
+  weak_model_name: openrouter/deepseek/deepseek-r1:free
   use_repo_map: true
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
   caches_by_default: true
   use_temperature: false
-  editor_model_name: openrouter/deepseek/deepseek-chat:free
+  editor_model_name: openrouter/deepseek/deepseek-r1:free
   editor_edit_format: editor-diff
 
 - name: deepseek/deepseek-reasoner
@@ -565,6 +569,7 @@
   streaming: false
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
 
 - name: openai/o1
   edit_format: diff
@@ -574,6 +579,7 @@
   streaming: false
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
 
 - name: o1
   edit_format: diff
@@ -583,6 +589,7 @@
   streaming: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
 
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   edit_format: diff
@@ -630,6 +637,7 @@
   use_temperature: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
   
 - name: o3-mini
   edit_format: diff
@@ -638,4 +646,23 @@
   use_temperature: false
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
-      
+
+  system_prompt_prefix: "Formatting re-enabled. "
+
+- name: openrouter/openai/o3-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4o-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+
+- name: azure/o3-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4o-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "

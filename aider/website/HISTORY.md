@@ -23,6 +23,26 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.74.0
+
+- Dynamically changes the Ollama context window to hold the current chat.
+- Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 especially via third-party API providers.
+- Remove `<think>` tags from R1 responses for commit messages (and other weak model uses).
+- Can now specify `use_temperature: <float>` in model settings, not just true/false.
+- The full docker container now includes `boto3` for Bedrock.
+- Docker containers now set `HOME=/app` which is the normal project mount-point, to persist `~/.aider`.
+- Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
+- Bugfix for `--timeout`
+- Bugfix so that `/model` now correctly reports that the weak model is not changed.
+- Bugfix so that multi-line mode persists through ^C at confirmation prompts.
+- Watch files now fully ignores top-level directories named in ignore files, to reduce the chance of hitting OS watch limits. Helpful to ignore giant subtrees like `node_modules`.
+- Fast startup with more providers and when model metadata provided in local files.
+- Improved .gitignore handling:
+  - Honor ignores already in effect regardless of how they've been configured.
+  - Check for .env only when the file exists.
+- Yes/No prompts now accept All/Skip as alias for Y/N even when not processing a group of confirmations.
+- Aider wrote 77% of the code in this release.
+
 ### Aider v0.73.0
 
 - Full support for o3-mini: `aider --model o3-mini`

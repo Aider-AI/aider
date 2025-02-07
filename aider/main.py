@@ -158,40 +158,39 @@ def check_gitignore(git_root, io, ask=True):
 
     try:
         repo = git.Repo(git_root)
-        if repo.ignored(".aider") and repo.ignored(".env"):
+        patterns_to_add = []
+
+        if not repo.ignored(".aider"):
+            patterns_to_add.append(".aider*")
+
+        env_path = Path(git_root) / ".env"
+        if env_path.exists() and not repo.ignored(".env"):
+            patterns_to_add.append(".env")
+
+        if not patterns_to_add:
             return
-    except ANY_GIT_ERROR:
-        pass
 
-    patterns = [".aider*", ".env"]
-    patterns_to_add = []
-
-    gitignore_file = Path(git_root) / ".gitignore"
-    if gitignore_file.exists():
-        try:
-            content = io.read_text(gitignore_file)
-            if content is None:
+        gitignore_file = Path(git_root) / ".gitignore"
+        if gitignore_file.exists():
+            try:
+                content = io.read_text(gitignore_file)
+                if content is None:
+                    return
+                if not content.endswith("\n"):
+                    content += "\n"
+            except OSError as e:
+                io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
                 return
-            existing_lines = content.splitlines()
-            for pat in patterns:
-                if pat not in existing_lines:
-                    if "*" in pat or (Path(git_root) / pat).exists():
-                        patterns_to_add.append(pat)
-        except OSError as e:
-            io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
+        else:
+            content = ""
+    except ANY_GIT_ERROR:
+        return
+
+    if ask:
+        io.tool_output("You can skip this check with --no-gitignore")
+        if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
             return
-    else:
-        content = ""
-        patterns_to_add = patterns
 
-    if not patterns_to_add:
-        return
-
-    if ask and not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
-        return
-
-    if content and not content.endswith("\n"):
-        content += "\n"
     content += "\n".join(patterns_to_add) + "\n"
 
     try:
@@ -510,8 +509,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
 
     if args.timeout:
-        litellm._load_litellm()
-        litellm._lazy_module.request_timeout = args.timeout
+        models.request_timeout = args.timeout
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
@@ -1011,6 +1009,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Failed to read apply content")
             return
         coder.partial_response_content = content
+        # For testing #2879
+        # from aider.coders.base_coder import all_fences
+        # coder.fence = all_fences[1]
         coder.apply_updates()
         analytics.event("exit", reason="Applied updates")
         return

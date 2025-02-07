@@ -17,7 +17,6 @@ except ImportError:
 import pathspec
 
 from aider import prompts, utils
-from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
 
@@ -29,6 +28,7 @@ ANY_GIT_ERROR += [
     ValueError,
     AttributeError,
     AssertionError,
+    TimeoutError,
 ]
 ANY_GIT_ERROR = tuple(ANY_GIT_ERROR)
 
@@ -153,7 +153,7 @@ class GitRepo:
             os.environ["GIT_COMMITTER_NAME"] = committer_name
 
         if aider_edits and self.attribute_author:
-            original_auther_name_env = os.environ.get("GIT_AUTHOR_NAME")
+            original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
         try:
@@ -173,8 +173,8 @@ class GitRepo:
                     del os.environ["GIT_COMMITTER_NAME"]
 
             if aider_edits and self.attribute_author:
-                if original_auther_name_env is not None:
-                    os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
+                if original_author_name_env is not None:
+                    os.environ["GIT_AUTHOR_NAME"] = original_author_name_env
                 else:
                     del os.environ["GIT_AUTHOR_NAME"]
 
@@ -204,7 +204,7 @@ class GitRepo:
             max_tokens = model.info.get("max_input_tokens") or 0
             if max_tokens and num_tokens > max_tokens:
                 continue
-            commit_message = simple_send_with_retries(model, messages)
+            commit_message = model.simple_send_with_retries(messages)
             if commit_message:
                 break
 

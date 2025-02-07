@@ -1,14 +1,16 @@
 import difflib
+import hashlib
 import importlib.resources
 import json
 import math
 import os
 import platform
+import re
 import sys
 import time
 from dataclasses import dataclass, fields
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import json5
 import yaml
@@ -16,11 +18,20 @@ from PIL import Image
 
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.sendchat import ensure_alternating_roles, sanity_check_messages
+
+RETRY_TIMEOUT = 60
+
+request_timeout = 600
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
 
 OPENAI_MODELS = """
+o1
+o1-preview
+o1-mini
+o3-mini
 gpt-4
 gpt-4o
 gpt-4o-2024-05-13
@@ -80,6 +91,7 @@ MODEL_ALIASES = {
     "r1": "deepseek/deepseek-reasoner",
     "flash": "gemini/gemini-2.0-flash-exp",
 }
+# Model metadata loaded from resources and user's files.
 
 
 @dataclass
@@ -97,11 +109,12 @@ class ModelSettings:
     cache_control: bool = False
     caches_by_default: bool = False
     use_system_prompt: bool = True
-    use_temperature: bool = True
+    use_temperature: Union[bool, float] = True
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
     remove_reasoning: Optional[str] = None
+    system_prompt_prefix: Optional[str] = None
 
 
 # Load model settings from package resource
@@ -123,6 +136,7 @@ class ModelInfoManager:
         self.cache_dir = Path.home() / ".aider" / "caches"
         self.cache_file = self.cache_dir / "model_prices_and_context_window.json"
         self.content = None
+        self.local_model_metadata = {}
         self._load_cache()
 
     def _load_cache(self):
@@ -155,6 +169,10 @@ class ModelInfoManager:
                 pass
 
     def get_model_from_cached_json_db(self, model):
+        data = self.local_model_metadata.get(model)
+        if data:
+            return data
+
         if not self.content:
             self._update_cache()
 
@@ -277,6 +295,49 @@ class Model(ModelSettings):
                     self.extra_params[key] = value
 
     def apply_generic_model_settings(self, model):
+        if "/o3-mini" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.use_temperature = False
+            self.system_prompt_prefix = "Formatting re-enabled. "
+            return  # <--
+
+        if "/o1-mini" in model:
+            self.use_repo_map = True
+            self.use_temperature = False
+            self.use_system_prompt = False
+            return  # <--
+
+        if "/o1-preview" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.use_temperature = False
+            self.use_system_prompt = False
+            return  # <--
+
+        if "/o1" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.use_temperature = False
+            self.streaming = False
+            self.system_prompt_prefix = "Formatting re-enabled. "
+            return  # <--
+
+        if "deepseek" in model and "v3" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = True
+            return  # <--
+
+        if "deepseek" in model and ("r1" in model or "reasoning" in model):
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.examples_as_sys_msg = True
+            self.use_temperature = False
+            self.remove_reasoning = "think"
+            return  # <--
+
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
@@ -321,8 +382,6 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.editor_edit_format = "editor-diff"
             self.use_repo_map = True
-            if model.startswith("ollama/") or model.startswith("ollama_chat/"):
-                self.extra_params = dict(num_ctx=8 * 1024)
             return  # <--
 
         # use the defaults
@@ -444,14 +503,31 @@ class Model(ModelSettings):
         """Fast path for common models. Avoids forcing litellm import."""
 
         model = self.name
-        if model in OPENAI_MODELS or model.startswith("openai/"):
+
+        pieces = model.split("/")
+        if len(pieces) > 1:
+            provider = pieces[0]
+        else:
+            provider = None
+
+        keymap = dict(
+            openrouter="OPENROUTER_API_KEY",
+            openai="OPENAI_API_KEY",
+            deepseek="DEEPSEEK_API_KEY",
+            gemini="GEMINI_API_KEY",
+            anthropic="ANTHROPIC_API_KEY",
+            groq="GROQ_API_KEY",
+            fireworks_ai="FIREWORKS_API_KEY",
+        )
+        var = None
+        if model in OPENAI_MODELS:
             var = "OPENAI_API_KEY"
-        elif model in ANTHROPIC_MODELS or model.startswith("anthropic/"):
+        elif model in ANTHROPIC_MODELS:
             var = "ANTHROPIC_API_KEY"
         else:
-            return
+            var = keymap.get(provider)
 
-        if os.environ.get(var):
+        if var and os.environ.get(var):
             return dict(keys_in_environment=[var], missing_keys=[])
 
     def validate_environment(self):
@@ -486,6 +562,104 @@ class Model(ModelSettings):
             map_tokens = min(map_tokens, 4096)
             map_tokens = max(map_tokens, 1024)
         return map_tokens
+
+    def is_deepseek_r1(self):
+        name = self.name.lower()
+        if "deepseek" not in name:
+            return
+        return "r1" in name or "reasoner" in name
+
+    def is_ollama(self):
+        return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
+
+    def send_completion(self, messages, functions, stream, temperature=None):
+        if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
+            sanity_check_messages(messages)
+
+        if self.is_deepseek_r1():
+            messages = ensure_alternating_roles(messages)
+
+        kwargs = dict(
+            model=self.name,
+            messages=messages,
+            stream=stream,
+        )
+
+        if self.use_temperature is not False:
+            if temperature is None:
+                if isinstance(self.use_temperature, bool):
+                    temperature = 0
+                else:
+                    temperature = float(self.use_temperature)
+
+            kwargs["temperature"] = temperature
+
+        if functions is not None:
+            function = functions[0]
+            kwargs["tools"] = [dict(type="function", function=function)]
+            kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+        if self.extra_params:
+            kwargs.update(self.extra_params)
+        if self.is_ollama() and "num_ctx" not in kwargs:
+            num_ctx = int(self.token_count(messages) * 1.25) + 8192
+            kwargs["num_ctx"] = num_ctx
+        key = json.dumps(kwargs, sort_keys=True).encode()
+
+        # dump(kwargs)
+
+        hash_object = hashlib.sha1(key)
+        if "timeout" not in kwargs:
+            kwargs["timeout"] = request_timeout
+        res = litellm.completion(**kwargs)
+        return hash_object, res
+
+    def remove_reasoning_content(self, res):
+        if not self.remove_reasoning:
+            return res
+
+        pattern = f"<{self.remove_reasoning}>.*?</{self.remove_reasoning}>"
+        res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
+        return res
+
+    def simple_send_with_retries(self, messages):
+        from aider.exceptions import LiteLLMExceptions
+
+        litellm_ex = LiteLLMExceptions()
+        if "deepseek-reasoner" in self.name:
+            messages = ensure_alternating_roles(messages)
+        retry_delay = 0.125
+
+        while True:
+            try:
+                kwargs = {
+                    "messages": messages,
+                    "functions": None,
+                    "stream": False,
+                }
+
+                _hash, response = self.send_completion(**kwargs)
+                if not response or not hasattr(response, "choices") or not response.choices:
+                    return None
+                res = response.choices[0].message.content
+                return self.remove_reasoning_content(res)
+
+            except litellm_ex.exceptions_tuple() as err:
+                ex_info = litellm_ex.get_ex_info(err)
+                print(str(err))
+                if ex_info.description:
+                    print(ex_info.description)
+                should_retry = ex_info.retry
+                if should_retry:
+                    retry_delay *= 2
+                    if retry_delay > RETRY_TIMEOUT:
+                        should_retry = False
+                if not should_retry:
+                    return None
+                print(f"Retrying in {retry_delay:.1f} seconds...")
+                time.sleep(retry_delay)
+                continue
+            except AttributeError:
+                return None
 
 
 def register_models(model_settings_fnames):
@@ -534,9 +708,8 @@ def register_litellm_models(model_fnames):
             if not model_def:
                 continue
 
-            # only load litellm if we have actual data
-            litellm._load_litellm()
-            litellm.register_model(model_def)
+            # Defer registration with litellm to faster path.
+            model_info_manager.local_model_metadata.update(model_def)
         except Exception as e:
             raise Exception(f"Error loading model definition from {model_fname}: {e}")
 

@@ -2,6 +2,8 @@
 
 docker run \
        -it --rm \
+       --memory=25g \
+       --memory-swap=25g \
        --add-host=host.docker.internal:host-gateway \
        -v `pwd`:/aider \
        -v `pwd`/tmp.benchmarks/.:/benchmarks \

@@ -157,7 +157,7 @@ Every *SEARCH/REPLACE block* must use this format:
 8. The closing fence: {fence[1]}
 
 Use the *FULL* file path, as shown to you by the user.
-
+{quad_backtick_reminder}
 Every *SEARCH* section must *EXACTLY MATCH* the existing file content, character for character, including all comments, docstrings, etc.
 If the file contains code or other data wrapped/escaped in json/xml/quotes or other containers, you need to propose edits to the literal contents of the file, including the container markup.
 
