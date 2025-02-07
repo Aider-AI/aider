@@ -3167,8 +3167,8 @@
     malkoG: 83
   start_tag: v0.64.0
   total_lines: 670
-- aider_percentage: 81.65
-  aider_total: 574
+- aider_percentage: 86.17
+  aider_total: 841
   end_date: '2024-12-01'
   end_tag: v0.66.0
   file_counts:
@@ -3240,18 +3240,52 @@
       Paul Gauthier (aider): 103
     tests/browser/test_browser.py:
       Paul Gauthier: 1
+    tests/fixtures/languages/c/test.c:
+      Paul Gauthier (aider): 6
+    tests/fixtures/languages/cpp/test.cpp:
+      Paul Gauthier (aider): 6
+    tests/fixtures/languages/csharp/test.cs:
+      Paul Gauthier (aider): 39
+    tests/fixtures/languages/elisp/test.el:
+      Paul Gauthier (aider): 25
+    tests/fixtures/languages/elixir/test.ex:
+      Paul Gauthier (aider): 5
+    tests/fixtures/languages/elm/test.elm:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 37
+    tests/fixtures/languages/go/test.go:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 41
+    tests/fixtures/languages/java/test.java:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 14
     tests/fixtures/languages/javascript/test.js:
       Paul Gauthier: 1
       Paul Gauthier (aider): 25
+    tests/fixtures/languages/ocaml/test.ml:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 17
+    tests/fixtures/languages/php/test.php:
+      Paul Gauthier (aider): 5
     tests/fixtures/languages/python/test.py:
       Paul Gauthier: 2
       Paul Gauthier (aider): 26
+    tests/fixtures/languages/ql/test.ql:
+      Paul Gauthier (aider): 3
+    tests/fixtures/languages/ruby/test.rb:
+      Paul Gauthier (aider): 3
+    tests/fixtures/languages/rust/test.rs:
+      Paul Gauthier (aider): 33
+    tests/fixtures/languages/tsx/test.tsx:
+      Paul Gauthier (aider): 30
+    tests/fixtures/languages/typescript/test.ts:
+      Paul Gauthier (aider): 3
   grand_total:
-    Paul Gauthier: 99
-    Paul Gauthier (aider): 574
+    Paul Gauthier: 105
+    Paul Gauthier (aider): 841
     Philippe de Reynal: 30
   start_tag: v0.65.0
-  total_lines: 703
+  total_lines: 976
 - aider_percentage: 67.86
   aider_total: 437
   end_date: '2024-12-06'
@@ -3619,7 +3653,7 @@
     apaz-cli: 18
   start_tag: v0.70.0
   total_lines: 391
-- aider_percentage: 51.69
+- aider_percentage: 48.76
   aider_total: 138
   end_date: '2025-01-20'
   end_tag: v0.72.0
@@ -3680,13 +3714,15 @@
       Paul Gauthier (aider): 39
     tests/basic/test_repomap.py:
       Paul Walker: 1
+    tests/fixtures/languages/kotlin/test.kt:
+      Paul Walker: 16
   grand_total:
     Paul Gauthier: 92
     Paul Gauthier (aider): 138
-    Paul Walker: 28
+    Paul Walker: 44
     Titusz Pan: 9
   start_tag: v0.71.0
-  total_lines: 267
+  total_lines: 283
 - aider_percentage: 69.44
   aider_total: 284
   end_date: '2025-01-31'
