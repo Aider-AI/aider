@@ -739,7 +739,7 @@ def get_scm_fname(lang):
             path = resources.files(__package__).joinpath(
                 "queries",
                 subdir,
-                f"tree-sitter-{lang}-tags.scm",
+                f"{lang}-tags.scm",
             )
             if path.exists():
                 return path
@@ -752,7 +752,7 @@ def get_scm_fname(lang):
         return resources.files(__package__).joinpath(
             "queries",
             subdir,
-            f"tree-sitter-{lang}-tags.scm",
+            f"{lang}-tags.scm",
         )
     except KeyError:
         return
