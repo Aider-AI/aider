@@ -11,7 +11,6 @@ from collections import Counter, defaultdict, namedtuple
 from importlib import resources
 from pathlib import Path
 
-import tree_sitter
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
@@ -24,7 +23,9 @@ from aider.utils import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
-from tree_sitter_language_pack import get_language, get_parser  # noqa: E402
+from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
+
+dump(USING_TSL_PACK)
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
@@ -280,17 +281,8 @@ class RepoMap:
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
-        try:
-            query = language.query(query_scm)
-        except tree_sitter.QueryError as err:
-            dump(fname, err)
-            return
-
+        query = language.query(query_scm)
         captures = query.captures(tree.root_node)
-
-        # dump(fname)
-        # dump(captures)
-        # dump(captures.keys())
 
         saw = set()
         for tag, nodes in captures.items():
