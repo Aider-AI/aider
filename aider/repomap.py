@@ -733,8 +733,19 @@ def get_random_color():
 
 def get_scm_fname(lang):
     # Load the tags queries
+    if USING_TSL_PACK:
+        subdir = "tree-sitter-language-pack"
+        # check this subdir first, if file exists, return it otherwise check the other. ai!
+    else:
+        subdir = "tree-sitter-languages"
+
+
     try:
-        return resources.files(__package__).joinpath("queries", f"tree-sitter-{lang}-tags.scm")
+        return resources.files(__package__).joinpath(
+            "queries",
+            subdir,
+            f"tree-sitter-{lang}-tags.scm",
+        )
     except KeyError:
         return
 
