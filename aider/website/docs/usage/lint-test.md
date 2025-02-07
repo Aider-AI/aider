@@ -11,13 +11,13 @@ every time it makes changes.
 This helps identify and repair any problems introduced
 by the AI edits.
 
-## Linting
+## Linting and Fixing
 
 Aider comes with built in linters for 
 [most popular languages](/docs/languages.html)
 and will automatically lint code in these languages.
 
-Or you can specify your favorite linter
+You can specify your favorite linter
 with the `--lint-cmd <cmd>` switch.
 The lint command should accept the filenames
 of the files to lint. 
@@ -28,6 +28,19 @@ This is how most linters normally operate.
 
 By default, aider will lint any files which it edits.
 You can disable this with the `--no-auto-lint` switch.
+
+### Auto-fixing
+
+Aider can automatically fix code style issues using tools like gofmt, black, prettier etc.
+You can specify fix commands for different languages using the `--fix-cmd` option:
+
+```bash
+aider --fix-cmd "python: black" --fix-cmd "go: gofmt -w"
+```
+
+The fix command should accept filenames and modify them in place.
+By default, aider will run the appropriate fix command after editing files.
+You can disable this with the `--no-auto-fix` switch.
 
 ## Testing
 
