@@ -1,5 +1,9 @@
 # Release history
 
+### main branch
+
+- Have o1 & o3-mini generate markdown by sending the magic "Formatting re-enabled." string.
+
 ### Aider v0.74.0
 
 - Dynamically changes the Ollama context window to hold the current chat.
