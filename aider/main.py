@@ -322,7 +322,7 @@ def parse_fix_cmds(fix_cmds, io):
         else:
             io.tool_error(f'Unable to parse --fix-cmd "{fix_cmd}"')
             io.tool_output('The arg should be "language: cmd --args ..."')
-            io.tool_output('For example: --fix-cmd "go: gofmt"')
+            io.tool_output('For example: --fix-cmd "go: gofmt -w"')
             err = True
     if err:
         return

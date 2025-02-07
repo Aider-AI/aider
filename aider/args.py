@@ -563,7 +563,7 @@ def get_parser(default_config_files, git_root):
         "--fix-cmd",
         action="append",
         help=(
-            'Specify fix commands to run for different languages, eg: "go: gofmt" (can be used'
+            'Specify fix commands to run for different languages, eg: "go: gofmt -w" (can be used'
             ' multiple times)'
         ),
         default=[],
