@@ -735,11 +735,19 @@ def get_scm_fname(lang):
     # Load the tags queries
     if USING_TSL_PACK:
         subdir = "tree-sitter-language-pack"
-        # check this subdir first, if file exists, return it otherwise check the other. ai!
-    else:
-        subdir = "tree-sitter-languages"
+        try:
+            path = resources.files(__package__).joinpath(
+                "queries",
+                subdir,
+                f"tree-sitter-{lang}-tags.scm",
+            )
+            if path.exists():
+                return path
+        except KeyError:
+            pass
 
-
+    # Fall back to tree-sitter-languages
+    subdir = "tree-sitter-languages"
     try:
         return resources.files(__package__).joinpath(
             "queries",
