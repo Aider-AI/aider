@@ -26,6 +26,7 @@ cog.out(text)
 ### main branch
 
 - Have o1 & o3-mini generate markdown by sending the magic "Formatting re-enabled." string.
+- Bugfix for multi-line inputs, which should not include the ". " continuation prompt.
 
 ### Aider v0.74.0
 
