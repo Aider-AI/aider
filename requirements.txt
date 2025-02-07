@@ -63,7 +63,7 @@ gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
     # via -r requirements/requirements.in
-#grep-ast==0.5.0
+grep-ast==0.6.0
     # via -r requirements/requirements.in
 h11==0.14.0
     # via httpcore
@@ -225,11 +225,11 @@ tqdm==4.67.1
     # via
     #   huggingface-hub
     #   openai
-#tree-sitter==0.21.3
+tree-sitter==0.21.3
     # via
     #   -r requirements/requirements.in
     #   tree-sitter-languages
-tree-sitter-language-pack
+tree-sitter-languages==1.10.2
     # via grep-ast
 typing-extensions==4.12.2
     # via
