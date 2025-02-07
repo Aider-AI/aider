@@ -39,6 +39,7 @@ def blame(start_tag, end_tag=None):
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
         or f in website_files
     ]
+    # include all tests/fixtures/languages/*/test.* ai!
     files = [f for f in files if not f.endswith("prompts.py")]
     files = [f for f in files if not f.startswith("tests/fixtures/watch")]
     files = [f for f in files if f not in exclude_files]
