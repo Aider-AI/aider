@@ -22,10 +22,16 @@ from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 
 RETRY_TIMEOUT = 60
 
+request_timeout = 600
+
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
 
 OPENAI_MODELS = """
+o1
+o1-preview
+o1-mini
+o3-mini
 gpt-4
 gpt-4o
 gpt-4o-2024-05-13
@@ -108,6 +114,7 @@ class ModelSettings:
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
     remove_reasoning: Optional[str] = None
+    system_prompt_prefix: Optional[str] = None
 
 
 # Load model settings from package resource
@@ -288,6 +295,7 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.use_repo_map = True
             self.use_temperature = False
+            self.system_prompt_prefix = "Formatting re-enabled. "
             return  # <--
 
         if "/o1-mini" in model:
@@ -308,6 +316,7 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.use_temperature = False
             self.streaming = False
+            self.system_prompt_prefix = "Formatting re-enabled. "
             return  # <--
 
         if "deepseek" in model and "v3" in model:
@@ -595,6 +604,8 @@ class Model(ModelSettings):
         # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
+        if "timeout" not in kwargs:
+            kwargs["timeout"] = request_timeout
         res = litellm.completion(**kwargs)
         return hash_object, res
 
@@ -613,6 +624,7 @@ class Model(ModelSettings):
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)
         retry_delay = 0.125
+
         while True:
             try:
                 kwargs = {
@@ -620,6 +632,7 @@ class Model(ModelSettings):
                     "functions": None,
                     "stream": False,
                 }
+
                 _hash, response = self.send_completion(**kwargs)
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
