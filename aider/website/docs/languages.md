@@ -62,7 +62,6 @@ cog.out(get_supported_languages_md())
 | cpp                  | .cc                  |    ✓     |   ✓    |
 | cpp                  | .cpp                 |    ✓     |   ✓    |
 | css                  | .css                 |          |   ✓    |
-| dart                 | .dart                |    ✓     |   ✓    |
 | dockerfile           | .dockerfile          |          |   ✓    |
 | dot                  | .dot                 |          |   ✓    |
 | elisp                | .el                  |    ✓     |   ✓    |
@@ -74,7 +73,8 @@ cog.out(get_supported_languages_md())
 | gomod                | .gomod               |          |   ✓    |
 | hack                 | .hack                |          |   ✓    |
 | haskell              | .hs                  |          |   ✓    |
-| hcl                  | .hcl                 |          |   ✓    |
+| hcl                  | .hcl                 |    ✓     |   ✓    |
+| hcl                  | .tf                  |    ✓     |   ✓    |
 | html                 | .html                |          |   ✓    |
 | java                 | .java                |    ✓     |   ✓    |
 | javascript           | .js                  |    ✓     |   ✓    |
@@ -82,7 +82,7 @@ cog.out(get_supported_languages_md())
 | jsdoc                | .jsdoc               |          |   ✓    |
 | json                 | .json                |          |   ✓    |
 | julia                | .jl                  |          |   ✓    |
-| kotlin               | .kt                  |          |   ✓    |
+| kotlin               | .kt                  |    ✓     |   ✓    |
 | lua                  | .lua                 |          |   ✓    |
 | make                 | .mk                  |          |   ✓    |
 | objc                 | .m                   |          |   ✓    |

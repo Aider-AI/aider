@@ -35,7 +35,9 @@ ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 
 Just suggest shell commands this way, not example code.
 Only suggest complete shell commands that are ready to execute, without placeholders.
-Only suggest at most a few shell commands at a time, not more than 1-3.
+Only suggest at most a few shell commands at a time, not more than 1-3, one per line.
+Do not suggest multi-line shell commands.
+All shell commands will run from the root directory of the user's project.
 
 Use the appropriate shell based on the user's system info:
 {platform}
@@ -155,7 +157,7 @@ Every *SEARCH/REPLACE block* must use this format:
 8. The closing fence: {fence[1]}
 
 Use the *FULL* file path, as shown to you by the user.
-
+{quad_backtick_reminder}
 Every *SEARCH* section must *EXACTLY MATCH* the existing file content, character for character, including all comments, docstrings, etc.
 If the file contains code or other data wrapped/escaped in json/xml/quotes or other containers, you need to propose edits to the literal contents of the file, including the container markup.
 
@@ -180,6 +182,9 @@ If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 - The new file's contents in the `REPLACE` section
 
 To rename files which have been added to the chat, use shell commands at the end of your response.
+
+If the user just says something like "ok" or "go ahead" or "do that" they probably want you to make SEARCH/REPLACE blocks for the code changes you just proposed.
+The user will say when they've applied your edits. If they haven't explicitly confirmed the edits have been applied, they probably want proper SEARCH/REPLACE blocks.
 
 {lazy_prompt}
 ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!

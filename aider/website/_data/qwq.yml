@@ -1,0 +1,170 @@
+
+- dirname: 2024-11-28-21-38-50--architect-qwq-haiku-whole
+  test_cases: 133
+  model: QwQ + Haiku
+  edit_format: architect
+  commit_hash: e4a1d6f
+  editor_model: claude-3-5-haiku-20241022
+  editor_edit_format: editor-whole
+  pass_rate_1: 54.1
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 100.0
+  error_outputs: 4
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 196
+  lazy_comments: 4
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/qwen/qwq-32b-preview --editor-model claude-3-5-haiku-20241022 --edit-format editor-whole
+  date: 2024-11-28
+  versions: 0.65.2.dev
+  seconds_per_case: 154.7
+  total_cost: 1.4196
+
+- dirname: 2024-11-28-19-24-35--architect-qwq-deepseek-whole
+  test_cases: 133
+  model: QwQ + DeepSeek V2.5
+  edit_format: architect
+  commit_hash: e4a1d6f
+  editor_model: deepseek/deepseek-chat
+  editor_edit_format: editor-whole
+  pass_rate_1: 55.6
+  pass_rate_2: 67.7
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 193
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/qwen/qwq-32b-preview --editor-model deepseek/deepseek-chat --edit-format editor-whole
+  date: 2024-11-28
+  versions: 0.65.2.dev
+  seconds_per_case: 170.3
+  total_cost: 0.1558
+
+
+- dirname: 2024-11-09-11-09-15--Qwen2.5-Coder-32B-Instruct
+  test_cases: 133
+  model: Qwen2.5 Coder 32B-I
+  released: 2024-11-12
+  edit_format: diff
+  commit_hash: ec9982a
+  pass_rate_1: 59.4
+  pass_rate_2: 71.4
+  percent_cases_well_formed: 94.7
+  error_outputs: 17
+  num_malformed_responses: 17
+  num_with_malformed_responses: 7
+  user_asks: 1
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  command: aider --model openai/hf:Qwen/Qwen2.5-Coder-32B-Instruct --openai-api-base https://glhf.chat/api/openai/v1 (via GLHF)
+  date: 2024-11-09
+  versions: 0.59.2.dev
+  seconds_per_case: 22.5
+  total_cost: 0.0000
+
+- dirname: 2024-12-04-00-10-39--architect-qwq-qwen
+  test_cases: 132
+  model: QwQ + Qwen2.5 Coder 32B-I
+  edit_format: architect
+  commit_hash: 51c02da
+  editor_model: openrouter/qwen/qwen-2.5-coder-32b-instruct
+  editor_edit_format: editor-whole
+  pass_rate_1: 58.3
+  pass_rate_2: 73.6
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 186
+  lazy_comments: 5
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  command: aider --model openrouter/qwen/qwq-32b-preview --editor-model openrouter/qwen/qwen-2.5-coder-32b-instruct --editor-edit-format editor-whole
+  date: 2024-12-04
+  versions: 0.66.1.dev
+  seconds_per_case: 144.1
+  total_cost: 0.1444
+
+- dirname: 2024-12-04-00-42-05--qwq-alone-whole
+  test_cases: 133
+  model: QwQ
+  edit_format: whole
+  commit_hash: 19004c0
+  pass_rate_1: 33.1
+  pass_rate_2: 42.1
+  percent_cases_well_formed: 91.0
+  error_outputs: 28
+  num_malformed_responses: 12
+  num_with_malformed_responses: 12
+  user_asks: 119
+  lazy_comments: 2
+  syntax_errors: 22
+  indentation_errors: 9
+  exhausted_context_windows: 2
+  test_timeouts: 1
+  command: aider --model openrouter/qwen/qwq-32b-preview
+  date: 2024-12-04
+  versions: 0.66.1.dev
+  seconds_per_case: 414.3
+  total_cost: 0.0000
+
+- dirname: 2024-09-12-19-57-35--o1-mini-whole
+  test_cases: 133
+  model: o1-mini
+  edit_format: whole
+  commit_hash: 36fa773-dirty, 291b456
+  pass_rate_1: 49.6
+  pass_rate_2: 70.7
+  percent_cases_well_formed: 90.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 17
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model o1-mini
+  date: 2024-09-12
+  versions: 0.56.1.dev
+  seconds_per_case: 103.0
+  total_cost: 5.3725
+
+- dirname: 2024-09-21-16-45-11--o1-preview-flex-sr-markers
+  test_cases: 133
+  model: o1-preview
+  _released: 2024-09-12
+  edit_format: diff
+  commit_hash: 5493654-dirty
+  pass_rate_1: 57.9
+  pass_rate_2: 79.7
+  percent_cases_well_formed: 93.2
+  error_outputs: 11
+  num_malformed_responses: 11
+  num_with_malformed_responses: 9
+  user_asks: 3
+  lazy_comments: 0
+  syntax_errors: 10
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  command: aider --model o1-preview
+  date: 2024-09-21
+  versions: 0.56.1.dev
+  seconds_per_case: 80.9
+  total_cost: 63.9190

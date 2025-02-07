@@ -2,6 +2,8 @@ import importlib
 import os
 import warnings
 
+from aider.dump import dump  # noqa: F401
+
 warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
 AIDER_SITE_URL = "https://aider.chat"
@@ -12,6 +14,8 @@ os.environ["OR_APP_NAME"] = AIDER_APP_NAME
 os.environ["LITELLM_MODE"] = "PRODUCTION"
 
 # `import litellm` takes 1.5 seconds, defer it!
+
+VERBOSE = False
 
 
 class LazyLiteLLM:
@@ -26,6 +30,9 @@ class LazyLiteLLM:
     def _load_litellm(self):
         if self._lazy_module is not None:
             return
+
+        if VERBOSE:
+            print("Loading litellm...")
 
         self._lazy_module = importlib.import_module("litellm")
 

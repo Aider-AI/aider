@@ -10,6 +10,7 @@ class TestChatSummary(TestCase):
         self.mock_model.name = "gpt-3.5-turbo"
         self.mock_model.token_count = lambda msg: len(msg["content"].split())
         self.mock_model.info = {"max_input_tokens": 4096}
+        self.mock_model.simple_send_with_retries = mock.Mock()
         self.chat_summary = ChatSummary(self.mock_model, max_tokens=100)
 
     def test_initialization(self):
@@ -34,9 +35,8 @@ class TestChatSummary(TestCase):
         tokenized = self.chat_summary.tokenize(messages)
         self.assertEqual(tokenized, [(2, messages[0]), (2, messages[1])])
 
-    @mock.patch("aider.history.simple_send_with_retries")
-    def test_summarize_all(self, mock_send):
-        mock_send.return_value = "This is a summary"
+    def test_summarize_all(self):
+        self.mock_model.simple_send_with_retries.return_value = "This is a summary"
         messages = [
             {"role": "user", "content": "Hello world"},
             {"role": "assistant", "content": "Hi there"},
@@ -69,17 +69,20 @@ class TestChatSummary(TestCase):
         self.assertGreater(len(result), 0)
         self.assertLessEqual(len(result), len(messages))
 
-    @mock.patch("aider.history.simple_send_with_retries")
-    def test_fallback_to_second_model(self, mock_send):
+    def test_fallback_to_second_model(self):
         mock_model1 = mock.Mock(spec=Model)
         mock_model1.name = "gpt-4"
+        mock_model1.simple_send_with_retries = mock.Mock(side_effect=Exception("Model 1 failed"))
+        mock_model1.info = {"max_input_tokens": 4096}
+        mock_model1.token_count = lambda msg: len(msg["content"].split())
+
         mock_model2 = mock.Mock(spec=Model)
         mock_model2.name = "gpt-3.5-turbo"
+        mock_model2.simple_send_with_retries = mock.Mock(return_value="Summary from Model 2")
+        mock_model2.info = {"max_input_tokens": 4096}
+        mock_model2.token_count = lambda msg: len(msg["content"].split())
 
         chat_summary = ChatSummary([mock_model1, mock_model2], max_tokens=100)
-
-        # Make the first model fail
-        mock_send.side_effect = [Exception("Model 1 failed"), "Summary from Model 2"]
 
         messages = [
             {"role": "user", "content": "Hello world"},
@@ -89,11 +92,8 @@ class TestChatSummary(TestCase):
         summary = chat_summary.summarize_all(messages)
 
         # Check that both models were tried
-        self.assertEqual(mock_send.call_count, 2)
-
-        # Check that the calls were made with the correct model names
-        self.assertEqual(mock_send.call_args_list[0][0][0], "gpt-4")
-        self.assertEqual(mock_send.call_args_list[1][0][0], "gpt-3.5-turbo")
+        mock_model1.simple_send_with_retries.assert_called_once()
+        mock_model2.simple_send_with_retries.assert_called_once()
 
         # Check that we got a summary from the second model
         self.assertEqual(

@@ -12,10 +12,34 @@ from aider.utils import ChdirTemporaryDirectory
 
 
 class TestInputOutput(unittest.TestCase):
+    def test_line_endings_validation(self):
+        # Test valid line endings
+        for ending in ["platform", "lf", "crlf"]:
+            io = InputOutput(line_endings=ending)
+            self.assertEqual(
+                io.newline, None if ending == "platform" else "\n" if ending == "lf" else "\r\n"
+            )
+
+        # Test invalid line endings
+        with self.assertRaises(ValueError) as cm:
+            io = InputOutput(line_endings="invalid")
+        self.assertIn("Invalid line_endings value: invalid", str(cm.exception))
+        # Check each valid option is in the error message
+        self.assertIn("platform", str(cm.exception))
+        self.assertIn("crlf", str(cm.exception))
+        self.assertIn("lf", str(cm.exception))
+
     def test_no_color_environment_variable(self):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
             io = InputOutput(fancy_input=False)
             self.assertFalse(io.pretty)
+
+    def test_dumb_terminal(self):
+        with patch.dict(os.environ, {"TERM": "dumb"}):
+            io = InputOutput(fancy_input=True)
+            self.assertTrue(io.is_dumb_terminal)
+            self.assertFalse(io.pretty)
+            self.assertIsNone(io.prompt_session)
 
     def test_autocompleter_get_command_completions(self):
         # Step 3: Mock the commands object
@@ -218,8 +242,37 @@ class TestInputOutput(unittest.TestCase):
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
+        # Test case 4: 'skip' functions as 'no' without group
+        mock_input.return_value = "s"
+        result = io.confirm_ask("Are you sure?")
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 5: 'all' functions as 'yes' without group
+        mock_input.return_value = "a"
+        result = io.confirm_ask("Are you sure?")
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 6: Full word 'skip' functions as 'no' without group
+        mock_input.return_value = "skip"
+        result = io.confirm_ask("Are you sure?")
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 7: Full word 'all' functions as 'yes' without group
+        mock_input.return_value = "all"
+        result = io.confirm_ask("Are you sure?")
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
     @patch("builtins.input", side_effect=["d"])
     def test_confirm_ask_allow_never(self, mock_input):
+        """Test the 'don't ask again' functionality in confirm_ask"""
         io = InputOutput(pretty=False, fancy_input=False)
 
         # First call: user selects "Don't ask again"
@@ -257,6 +310,88 @@ class TestInputOutput(unittest.TestCase):
         self.assertFalse(result)
         self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
+
+
+class TestInputOutputMultilineMode(unittest.TestCase):
+    def setUp(self):
+        self.io = InputOutput(fancy_input=True)
+        self.io.prompt_session = MagicMock()
+
+    def test_toggle_multiline_mode(self):
+        """Test that toggling multiline mode works correctly"""
+        # Start in single-line mode
+        self.io.multiline_mode = False
+
+        # Toggle to multiline mode
+        self.io.toggle_multiline_mode()
+        self.assertTrue(self.io.multiline_mode)
+
+        # Toggle back to single-line mode
+        self.io.toggle_multiline_mode()
+        self.assertFalse(self.io.multiline_mode)
+
+    def test_tool_message_unicode_fallback(self):
+        """Test that Unicode messages are properly converted to ASCII with replacement"""
+        io = InputOutput(pretty=False, fancy_input=False)
+
+        # Create a message with invalid Unicode that can't be encoded in UTF-8
+        # Using a surrogate pair that's invalid in UTF-8
+        invalid_unicode = "Hello \ud800World"
+
+        # Mock console.print to capture the output
+        with patch.object(io.console, "print") as mock_print:
+            # First call will raise UnicodeEncodeError
+            mock_print.side_effect = [UnicodeEncodeError("utf-8", "", 0, 1, "invalid"), None]
+
+            io._tool_message(invalid_unicode)
+
+            # Verify that the message was converted to ASCII with replacement
+            self.assertEqual(mock_print.call_count, 2)
+            args, kwargs = mock_print.call_args
+            converted_message = args[0]
+
+            # The invalid Unicode should be replaced with '?'
+            self.assertEqual(converted_message, "Hello ?World")
+
+    def test_multiline_mode_restored_after_interrupt(self):
+        """Test that multiline mode is restored after KeyboardInterrupt"""
+        io = InputOutput(fancy_input=True)
+        io.prompt_session = MagicMock()
+
+        # Start in multiline mode
+        io.multiline_mode = True
+
+        # Mock prompt() to raise KeyboardInterrupt
+        io.prompt_session.prompt.side_effect = KeyboardInterrupt
+
+        # Test confirm_ask()
+        with self.assertRaises(KeyboardInterrupt):
+            io.confirm_ask("Test question?")
+        self.assertTrue(io.multiline_mode)  # Should be restored
+
+        # Test prompt_ask()
+        with self.assertRaises(KeyboardInterrupt):
+            io.prompt_ask("Test prompt?")
+        self.assertTrue(io.multiline_mode)  # Should be restored
+
+    def test_multiline_mode_restored_after_normal_exit(self):
+        """Test that multiline mode is restored after normal exit"""
+        io = InputOutput(fancy_input=True)
+        io.prompt_session = MagicMock()
+
+        # Start in multiline mode
+        io.multiline_mode = True
+
+        # Mock prompt() to return normally
+        io.prompt_session.prompt.return_value = "y"
+
+        # Test confirm_ask()
+        io.confirm_ask("Test question?")
+        self.assertTrue(io.multiline_mode)  # Should be restored
+
+        # Test prompt_ask()
+        io.prompt_ask("Test prompt?")
+        self.assertTrue(io.multiline_mode)  # Should be restored
 
 
 if __name__ == "__main__":

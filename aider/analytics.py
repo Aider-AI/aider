@@ -5,12 +5,52 @@ import time
 import uuid
 from pathlib import Path
 
-from mixpanel import Mixpanel, MixpanelException
+from mixpanel import MixpanelException
 from posthog import Posthog
 
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.models import model_info_manager
+
+PERCENT = 10
+
+
+def compute_hex_threshold(percent):
+    """Convert percentage to 6-digit hex threshold.
+
+    Args:
+        percent: Percentage threshold (0-100)
+
+    Returns:
+        str: 6-digit hex threshold
+    """
+    return format(int(0xFFFFFF * percent / 100), "06x")
+
+
+def is_uuid_in_percentage(uuid_str, percent):
+    """Check if a UUID string falls within the first X percent of the UUID space.
+
+    Args:
+        uuid_str: UUID string to test
+        percent: Percentage threshold (0-100)
+
+    Returns:
+        bool: True if UUID falls within the first X percent
+    """
+    if not (0 <= percent <= 100):
+        raise ValueError("Percentage must be between 0 and 100")
+
+    if not uuid_str:
+        return False
+
+    # Convert percentage to hex threshold (1% = "04...", 10% = "1a...", etc)
+    # Using first 6 hex digits
+    if percent == 0:
+        return False
+
+    threshold = compute_hex_threshold(percent)
+    return uuid_str[:6] <= threshold
+
 
 mixpanel_project_token = "6da9a43058a5d1b9f3353153921fb04d"
 posthog_project_api_key = "phc_99T7muzafUMMZX15H8XePbMSreEUzahHbtWjy3l5Qbv"
@@ -50,8 +90,14 @@ class Analytics:
             self.disable(False)
             return
 
-        self.mp = Mixpanel(mixpanel_project_token)
-        self.ph = Posthog(project_api_key=posthog_project_api_key, host=posthog_host)
+        # self.mp = Mixpanel(mixpanel_project_token)
+        self.ph = Posthog(
+            project_api_key=posthog_project_api_key,
+            host=posthog_host,
+            on_error=self.posthog_error,
+            enable_exception_autocapture=True,
+            super_properties=self.get_system_info(),  # Add system info to all events
+        )
 
     def disable(self, permanently):
         self.mp = None
@@ -78,31 +124,7 @@ class Analytics:
         if not self.user_id:
             return False
 
-        PERCENT = 2.5
-        return self.is_uuid_in_percentage(self.user_id, PERCENT)
-
-    def is_uuid_in_percentage(self, uuid_str, percent):
-        """Check if a UUID string falls within the first X percent of the UUID space.
-
-        Args:
-            uuid_str: UUID string to test
-            percent: Percentage threshold (0-100)
-
-        Returns:
-            bool: True if UUID falls within the first X percent
-        """
-        if not (0 <= percent <= 100):
-            raise ValueError("Percentage must be between 0 and 100")
-
-        if not uuid_str:
-            return False
-
-        # Convert percentage to hex threshold (1% = "04...", 10% = "1a...", etc)
-        # Using first 6 hex digits
-        if percent == 0:
-            return False
-        threshold = format(int(0xFFFFFF * percent / 100), "06x")
-        return uuid_str[:6] <= threshold
+        return is_uuid_in_percentage(self.user_id, PERCENT)
 
     def get_data_file_path(self):
         try:
@@ -159,6 +181,7 @@ class Analytics:
             "os_platform": platform.system(),
             "os_release": platform.release(),
             "machine": platform.machine(),
+            "aider_version": __version__,
         }
 
     def _redact_model_name(self, model):
@@ -172,6 +195,13 @@ class Analytics:
             return model.name.split("/")[0] + "/REDACTED"
         return None
 
+    def posthog_error(self):
+        """disable posthog if we get an error"""
+        print("X" * 100)
+        # https://github.com/PostHog/posthog-python/blob/9e1bb8c58afaa229da24c4fb576c08bb88a75752/posthog/consumer.py#L86
+        # https://github.com/Aider-AI/aider/issues/2532
+        self.ph = None
+
     def event(self, event_name, main_model=None, **kwargs):
         if not self.mp and not self.ph and not self.logfile:
             return
@@ -184,7 +214,6 @@ class Analytics:
             properties["editor_model"] = self._redact_model_name(main_model.editor_model)
 
         properties.update(kwargs)
-        properties.update(self.get_system_info())  # Add system info to all events
 
         # Handle numeric values
         for key, value in properties.items():
@@ -192,8 +221,6 @@ class Analytics:
                 properties[key] = value
             else:
                 properties[key] = str(value)
-
-        properties["aider_version"] = __version__
 
         if self.mp:
             try:
@@ -211,10 +238,13 @@ class Analytics:
                 "user_id": self.user_id,
                 "time": int(time.time()),
             }
-            with open(self.logfile, "a") as f:
-                json.dump(log_entry, f)
-                f.write("\n")
+            try:
+                with open(self.logfile, "a") as f:
+                    json.dump(log_entry, f)
+                    f.write("\n")
+            except OSError:
+                pass  # Ignore OS errors when writing to logfile
 
-    def __del__(self):
-        if self.ph:
-            self.ph.shutdown()
+
+if __name__ == "__main__":
+    dump(compute_hex_threshold(PERCENT))

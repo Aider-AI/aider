@@ -28,21 +28,9 @@ def get_parser(default_config_files, git_root):
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
-    group = parser.add_argument_group("Main")
+    group = parser.add_argument_group("Main model")
     group.add_argument(
         "files", metavar="FILE", nargs="*", help="files to edit with an LLM (optional)"
-    )
-    group.add_argument(
-        "--openai-api-key",
-        metavar="OPENAI_API_KEY",
-        env_var="OPENAI_API_KEY",
-        help="Specify the OpenAI API key",
-    )
-    group.add_argument(
-        "--anthropic-api-key",
-        metavar="ANTHROPIC_API_KEY",
-        env_var="ANTHROPIC_API_KEY",
-        help="Specify the Anthropic API key",
     )
     group.add_argument(
         "--model",
@@ -83,7 +71,7 @@ def get_parser(default_config_files, git_root):
         const=gpt_4_model,
         help=f"Use {gpt_4_model} model for the main chat",
     )
-    gpt_4o_model = "gpt-4o-2024-08-06"
+    gpt_4o_model = "gpt-4o"
     group.add_argument(
         "--4o",
         action="store_const",
@@ -118,7 +106,7 @@ def get_parser(default_config_files, git_root):
         const=gpt_3_model_name,
         help=f"Use {gpt_3_model_name} model for the main chat",
     )
-    deepseek_model = "deepseek/deepseek-coder"
+    deepseek_model = "deepseek/deepseek-chat"
     group.add_argument(
         "--deepseek",
         action="store_const",
@@ -144,42 +132,58 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
-    group = parser.add_argument_group("Model Settings")
+    group = parser.add_argument_group("API Keys and settings")
+    group.add_argument(
+        "--openai-api-key",
+        help="Specify the OpenAI API key",
+    )
+    group.add_argument(
+        "--anthropic-api-key",
+        help="Specify the Anthropic API key",
+    )
+    group.add_argument(
+        "--openai-api-base",
+        help="Specify the api base url",
+    )
+    group.add_argument(
+        "--openai-api-type",
+        help="(deprecated, use --set-env OPENAI_API_TYPE=<value>)",
+    )
+    group.add_argument(
+        "--openai-api-version",
+        help="(deprecated, use --set-env OPENAI_API_VERSION=<value>)",
+    )
+    group.add_argument(
+        "--openai-api-deployment-id",
+        help="(deprecated, use --set-env OPENAI_API_DEPLOYMENT_ID=<value>)",
+    )
+    group.add_argument(
+        "--openai-organization-id",
+        help="(deprecated, use --set-env OPENAI_ORGANIZATION=<value>)",
+    )
+    group.add_argument(
+        "--set-env",
+        action="append",
+        metavar="ENV_VAR_NAME=value",
+        help="Set an environment variable (to control API settings, can be used multiple times)",
+        default=[],
+    )
+    group.add_argument(
+        "--api-key",
+        action="append",
+        metavar="PROVIDER=KEY",
+        help=(
+            "Set an API key for a provider (eg: --api-key provider=<key> sets"
+            " PROVIDER_API_KEY=<key>)"
+        ),
+        default=[],
+    )
+    group = parser.add_argument_group("Model settings")
     group.add_argument(
         "--list-models",
         "--models",
         metavar="MODEL",
         help="List known models which match the (partial) MODEL name",
-    )
-    group.add_argument(
-        "--openai-api-base",
-        metavar="OPENAI_API_BASE",
-        env_var="OPENAI_API_BASE",
-        help="Specify the api base url",
-    )
-    group.add_argument(
-        "--openai-api-type",
-        metavar="OPENAI_API_TYPE",
-        env_var="OPENAI_API_TYPE",
-        help="Specify the api_type",
-    )
-    group.add_argument(
-        "--openai-api-version",
-        metavar="OPENAI_API_VERSION",
-        env_var="OPENAI_API_VERSION",
-        help="Specify the api_version",
-    )
-    group.add_argument(
-        "--openai-api-deployment-id",
-        metavar="OPENAI_API_DEPLOYMENT_ID",
-        env_var="OPENAI_API_DEPLOYMENT_ID",
-        help="Specify the deployment_id",
-    )
-    group.add_argument(
-        "--openai-organization-id",
-        metavar="OPENAI_ORGANIZATION_ID",
-        env_var="OPENAI_ORGANIZATION_ID",
-        help="Specify the OpenAI organization ID",
     )
     group.add_argument(
         "--model-settings-file",
@@ -200,10 +204,21 @@ def get_parser(default_config_files, git_root):
         help="Add a model alias (can be used multiple times)",
     )
     group.add_argument(
+        "--reasoning-effort",
+        type=str,
+        help="Set the reasoning_effort API parameter (default: not set)",
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Verify the SSL cert when connecting to models (default: True)",
+    )
+    group.add_argument(
+        "--timeout",
+        type=float,
+        default=None,
+        help="Timeout in seconds for API calls (default: None)",
     )
     group.add_argument(
         "--edit-format",
@@ -255,17 +270,9 @@ def get_parser(default_config_files, git_root):
             " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
     )
-    # This is a duplicate of the argument in the preparser and is a no-op by this time of
-    # argument parsing, but it's here so that the help is displayed as expected.
-    group.add_argument(
-        "--env-file",
-        metavar="ENV_FILE",
-        default=default_env_file(git_root),
-        help="Specify the .env file to load (default: .env in git root)",
-    )
 
     ##########
-    group = parser.add_argument_group("Cache Settings")
+    group = parser.add_argument_group("Cache settings")
     group.add_argument(
         "--cache-prompts",
         action=argparse.BooleanOptionalAction,
@@ -280,12 +287,12 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
-    group = parser.add_argument_group("Repomap Settings")
+    group = parser.add_argument_group("Repomap settings")
     group.add_argument(
         "--map-tokens",
         type=int,
         default=None,
-        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
+        help="Suggested number of tokens to use for repo map, use 0 to disable",
     )
     group.add_argument(
         "--map-refresh",
@@ -337,7 +344,7 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
-    group = parser.add_argument_group("Output Settings")
+    group = parser.add_argument_group("Output settings")
     group.add_argument(
         "--dark-mode",
         action="store_true",
@@ -425,7 +432,8 @@ def get_parser(default_config_files, git_root):
         default="default",
         help=(
             "Set the markdown code theme (default: default, other options include monokai,"
-            " solarized-dark, solarized-light)"
+            " solarized-dark, solarized-light, or a Pygments builtin style,"
+            " see https://pygments.org/styles for available themes)"
         ),
     )
     group.add_argument(
@@ -436,7 +444,7 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
-    group = parser.add_argument_group("Git Settings")
+    group = parser.add_argument_group("Git settings")
     group.add_argument(
         "--git",
         action=argparse.BooleanOptionalAction,
@@ -523,6 +531,12 @@ def get_parser(default_config_files, git_root):
         help="Skip the sanity check for the git repository (default: False)",
         default=False,
     )
+    group.add_argument(
+        "--watch-files",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable watching files for ai coding comments (default: False)",
+    )
     group = parser.add_argument_group("Fixing and committing")
     group.add_argument(
         "--lint",
@@ -559,7 +573,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--test",
         action="store_true",
-        help="Run tests and fix problems found",
+        help="Run tests, fix problems found and then exit",
         default=False,
     )
 
@@ -583,37 +597,8 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
 
-    group = parser.add_argument_group("Other Settings")
-    group.add_argument(
-        "--file",
-        action="append",
-        metavar="FILE",
-        help="specify a file to edit (can be used multiple times)",
-    )
-    group.add_argument(
-        "--read",
-        action="append",
-        metavar="FILE",
-        help="specify a read-only file (can be used multiple times)",
-    )
-    group.add_argument(
-        "--vim",
-        action="store_true",
-        help="Use VI editing mode in the terminal (default: False)",
-        default=False,
-    )
-    group.add_argument(
-        "--chat-language",
-        metavar="CHAT_LANGUAGE",
-        default=None,
-        help="Specify the language to use in the chat (default: None, uses system settings)",
-    )
-    group.add_argument(
-        "--version",
-        action="version",
-        version=f"%(prog)s {__version__}",
-        help="Show the version number and exit",
-    )
+    #########
+    group = parser.add_argument_group("Upgrading")
     group.add_argument(
         "--just-check-update",
         action="store_true",
@@ -646,47 +631,14 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
-        "--apply",
-        metavar="FILE",
-        help="Apply the changes from the given file instead of running the chat (debug)",
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="Show the version number and exit",
     )
-    group.add_argument(
-        "--apply-clipboard-edits",
-        action="store_true",
-        help="Apply clipboard contents as edits using the main model's editor format",
-        default=False,
-    )
-    group.add_argument(
-        "--yes-always",
-        action="store_true",
-        help="Always say yes to every confirmation",
-        default=None,
-    )
-    group.add_argument(
-        "-v",
-        "--verbose",
-        action="store_true",
-        help="Enable verbose output",
-        default=False,
-    )
-    group.add_argument(
-        "--show-repo-map",
-        action="store_true",
-        help="Print the repo map and exit (debug)",
-        default=False,
-    )
-    group.add_argument(
-        "--show-prompts",
-        action="store_true",
-        help="Print the system prompts and exit (debug)",
-        default=False,
-    )
-    group.add_argument(
-        "--exit",
-        action="store_true",
-        help="Do all startup activities then exit before accepting user input (debug)",
-        default=False,
-    )
+
+    ##########
+    group = parser.add_argument_group("Modes")
     group.add_argument(
         "--message",
         "--msg",
@@ -706,6 +658,110 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--gui",
+        "--browser",
+        action=argparse.BooleanOptionalAction,
+        help="Run aider in your browser (default: False)",
+        default=False,
+    )
+    group.add_argument(
+        "--copy-paste",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable automatic copy/paste of chat between aider and web UI (default: False)",
+    )
+    group.add_argument(
+        "--apply",
+        metavar="FILE",
+        help="Apply the changes from the given file instead of running the chat (debug)",
+    )
+    group.add_argument(
+        "--apply-clipboard-edits",
+        action="store_true",
+        help="Apply clipboard contents as edits using the main model's editor format",
+        default=False,
+    )
+    group.add_argument(
+        "--exit",
+        action="store_true",
+        help="Do all startup activities then exit before accepting user input (debug)",
+        default=False,
+    )
+    group.add_argument(
+        "--show-repo-map",
+        action="store_true",
+        help="Print the repo map and exit (debug)",
+        default=False,
+    )
+    group.add_argument(
+        "--show-prompts",
+        action="store_true",
+        help="Print the system prompts and exit (debug)",
+        default=False,
+    )
+
+    ##########
+    group = parser.add_argument_group("Voice settings")
+    group.add_argument(
+        "--voice-format",
+        metavar="VOICE_FORMAT",
+        default="wav",
+        choices=["wav", "mp3", "webm"],
+        help="Audio format for voice recording (default: wav). webm and mp3 require ffmpeg",
+    )
+    group.add_argument(
+        "--voice-language",
+        metavar="VOICE_LANGUAGE",
+        default="en",
+        help="Specify the language for voice using ISO 639-1 code (default: auto)",
+    )
+    group.add_argument(
+        "--voice-input-device",
+        metavar="VOICE_INPUT_DEVICE",
+        default=None,
+        help="Specify the input device name for voice recording",
+    )
+
+    ######
+    group = parser.add_argument_group("Other settings")
+    group.add_argument(
+        "--file",
+        action="append",
+        metavar="FILE",
+        help="specify a file to edit (can be used multiple times)",
+    )
+    group.add_argument(
+        "--read",
+        action="append",
+        metavar="FILE",
+        help="specify a read-only file (can be used multiple times)",
+    )
+    group.add_argument(
+        "--vim",
+        action="store_true",
+        help="Use VI editing mode in the terminal (default: False)",
+        default=False,
+    )
+    group.add_argument(
+        "--chat-language",
+        metavar="CHAT_LANGUAGE",
+        default=None,
+        help="Specify the language to use in the chat (default: None, uses system settings)",
+    )
+    group.add_argument(
+        "--yes-always",
+        action="store_true",
+        help="Always say yes to every confirmation",
+        default=None,
+    )
+    group.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose output",
+        default=False,
+    )
+    group.add_argument(
         "--load",
         metavar="LOAD_FILE",
         help="Load and execute /commands from a file on launch",
@@ -714,6 +770,12 @@ def get_parser(default_config_files, git_root):
         "--encoding",
         default="utf-8",
         help="Specify the encoding for input and output (default: utf-8)",
+    )
+    group.add_argument(
+        "--line-endings",
+        choices=["platform", "lf", "crlf"],
+        default="platform",
+        help="Line endings to use when writing files (default: platform)",
     )
     group.add_argument(
         "-c",
@@ -725,12 +787,13 @@ def get_parser(default_config_files, git_root):
             " or home directory)"
         ),
     )
+    # This is a duplicate of the argument in the preparser and is a no-op by this time of
+    # argument parsing, but it's here so that the help is displayed as expected.
     group.add_argument(
-        "--gui",
-        "--browser",
-        action=argparse.BooleanOptionalAction,
-        help="Run aider in your browser (default: False)",
-        default=False,
+        "--env-file",
+        metavar="ENV_FILE",
+        default=default_env_file(git_root),
+        help="Specify the .env file to load (default: .env in git root)",
     )
     group.add_argument(
         "--suggest-shell-commands",
@@ -745,6 +808,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable fancy input with history and completion (default: True)",
     )
     group.add_argument(
+        "--multiline",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable multi-line input mode with Meta-Enter to submit (default: False)",
+    )
+    group.add_argument(
         "--detect-urls",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -753,22 +822,6 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--editor",
         help="Specify which editor to use for the /editor command",
-    )
-
-    ##########
-    group = parser.add_argument_group("Voice Settings")
-    group.add_argument(
-        "--voice-format",
-        metavar="VOICE_FORMAT",
-        default="wav",
-        choices=["wav", "mp3", "webm"],
-        help="Audio format for voice recording (default: wav). webm and mp3 require ffmpeg",
-    )
-    group.add_argument(
-        "--voice-language",
-        metavar="VOICE_LANGUAGE",
-        default="en",
-        help="Specify the language for voice using ISO 639-1 code (default: auto)",
     )
 
     return parser

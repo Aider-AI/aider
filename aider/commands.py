@@ -43,6 +43,8 @@ class Commands:
             verify_ssl=self.verify_ssl,
             args=self.args,
             parser=self.parser,
+            verbose=self.verbose,
+            editor=self.editor,
         )
 
     def __init__(
@@ -50,6 +52,8 @@ class Commands:
         io,
         coder,
         voice_language=None,
+        voice_input_device=None,
+        voice_format=None,
         verify_ssl=True,
         args=None,
         parser=None,
@@ -67,6 +71,8 @@ class Commands:
             voice_language = None
 
         self.voice_language = voice_language
+        self.voice_format = voice_format
+        self.voice_input_device = voice_input_device
 
         self.help = None
         self.editor = editor
@@ -75,7 +81,7 @@ class Commands:
         "Switch to a new LLM"
 
         model_name = args.strip()
-        model = models.Model(model_name)
+        model = models.Model(model_name, weak_model=self.coder.main_model.weak_model.name)
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
@@ -101,6 +107,13 @@ class Commands:
                 ("help", "Get help about using aider (usage, config, troubleshoot)."),
                 ("ask", "Ask questions about your code without making any changes."),
                 ("code", "Ask for changes to your code (using the best edit format)."),
+                (
+                    "architect",
+                    (
+                        "Work with an architect model to design code changes, and an editor to make"
+                        " them."
+                    ),
+                ),
             ]
         )
 
@@ -588,6 +601,10 @@ class Commands:
 
         self.io.tool_output(f"Diff since {commit_before_message[:7]}...")
 
+        if self.coder.pretty:
+            run_cmd(f"git diff {commit_before_message}")
+            return
+
         diff = self.coder.repo.diff_commits(
             self.coder.pretty,
             commit_before_message,
@@ -739,6 +756,7 @@ class Commands:
 
             if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
                 try:
+                    fname.parent.mkdir(parents=True, exist_ok=True)
                     fname.touch()
                     all_matched_files.add(str(fname))
                 except OSError as e:
@@ -785,7 +803,8 @@ class Commands:
                     self.io.tool_error(f"Unable to read {matched_file}")
                 else:
                     self.coder.abs_fnames.add(abs_file_path)
-                    self.io.tool_output(f"Added {matched_file} to the chat")
+                    fname = self.coder.get_rel_fname(abs_file_path)
+                    self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
 
     def completions_drop(self):
@@ -808,15 +827,33 @@ class Commands:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
 
-            # Handle read-only files separately, without glob_filtered_to_repo
-            read_only_matched = [f for f in self.coder.abs_read_only_fnames if expanded_word in f]
+            # Handle read-only files with substring matching and samefile check
+            read_only_matched = []
+            for f in self.coder.abs_read_only_fnames:
+                if expanded_word in f:
+                    read_only_matched.append(f)
+                    continue
 
-            if read_only_matched:
-                for matched_file in read_only_matched:
-                    self.coder.abs_read_only_fnames.remove(matched_file)
-                    self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
+                # Try samefile comparison for relative paths
+                try:
+                    abs_word = os.path.abspath(expanded_word)
+                    if os.path.samefile(abs_word, f):
+                        read_only_matched.append(f)
+                except (FileNotFoundError, OSError):
+                    continue
 
-            matched_files = self.glob_filtered_to_repo(expanded_word)
+            for matched_file in read_only_matched:
+                self.coder.abs_read_only_fnames.remove(matched_file)
+                self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
+
+            # For editable files, use glob if word contains glob chars, otherwise use substring
+            if any(c in expanded_word for c in "*?[]"):
+                matched_files = self.glob_filtered_to_repo(expanded_word)
+            else:
+                # Use substring matching like we do for read-only files
+                matched_files = [
+                    self.coder.get_rel_fname(f) for f in self.coder.abs_fnames if expanded_word in f
+                ]
 
             if not matched_files:
                 matched_files.append(expanded_word)
@@ -882,10 +919,14 @@ class Commands:
         if combined_output is None:
             return
 
+        # Calculate token count of output
+        token_count = self.coder.main_model.token_count(combined_output)
+        k_tokens = token_count / 1000
+
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            add = self.io.confirm_ask("Add command output to the chat?")
+            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
 
         if add:
             num_lines = len(combined_output.strip().splitlines())
@@ -902,13 +943,17 @@ class Commands:
                 dict(role="assistant", content="Ok."),
             ]
 
+            if add and exit_status != 0:
+                self.io.placeholder = "What's wrong? Fix"
+
     def cmd_exit(self, args):
         "Exit the application"
+        self.coder.event("exit", reason="/exit")
         sys.exit()
 
     def cmd_quit(self, args):
         "Exit the application"
-        sys.exit()
+        self.cmd_exit(args)
 
     def cmd_ls(self, args):
         "List all known files and indicate which are included in the chat session"
@@ -973,7 +1018,7 @@ class Commands:
             return
 
         self.coder.event("interactive help")
-        from aider.coders import Coder
+        from aider.coders.base_coder import Coder
 
         if not self.help:
             res = install_help_extra(self.io)
@@ -1017,23 +1062,23 @@ class Commands:
         )
 
     def cmd_ask(self, args):
-        "Ask questions about the code base without editing any files"
+        """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
 
     def cmd_code(self, args):
-        "Ask for changes to your code"
+        """Ask for changes to your code. If no prompt provided, switches to code mode."""  # noqa
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
     def cmd_architect(self, args):
-        "Enter architect mode to discuss high-level design and architecture"
+        """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
         return self._generic_chat_command(args, "architect")
 
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
-            self.io.tool_error(f"Please provide a question or topic for the {edit_format} chat.")
-            return
+            # Switch to the corresponding chat mode if no args provided
+            return self.cmd_chat_mode(edit_format)
 
-        from aider.coders import Coder
+        from aider.coders.base_coder import Coder
 
         coder = Coder.create(
             io=self.io,
@@ -1080,43 +1125,23 @@ class Commands:
                 self.io.tool_error("To use /voice you must provide an OpenAI API key.")
                 return
             try:
-                self.voice = voice.Voice(audio_format=self.args.voice_format)
+                self.voice = voice.Voice(
+                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
+                )
             except voice.SoundDeviceError:
                 self.io.tool_error(
                     "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
                 )
                 return
 
-        history_iter = self.io.get_input_history()
-
-        history = []
-        size = 0
-        for line in history_iter:
-            if line.startswith("/"):
-                continue
-            if line in history:
-                continue
-            if size + len(line) > 1024:
-                break
-            size += len(line)
-            history.append(line)
-
-        history.reverse()
-        history = "\n".join(history)
-
         try:
-            text = self.voice.record_and_transcribe(history, language=self.voice_language)
+            text = self.voice.record_and_transcribe(None, language=self.voice_language)
         except litellm.OpenAIError as err:
             self.io.tool_error(f"Unable to use OpenAI whisper model: {err}")
             return
 
         if text:
-            self.io.add_to_input_history(text)
-            self.io.print()
-            self.io.user_input(text, log_only=False)
-            self.io.print()
-
-        return text
+            self.io.placeholder = text
 
     def cmd_paste(self, args):
         """Paste image/text from the clipboard into the chat.\
@@ -1169,9 +1194,14 @@ class Commands:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
     def cmd_read_only(self, args):
-        "Add files to the chat that are for reference, not to be edited"
+        "Add files to the chat that are for reference only, or turn added files to read-only"
         if not args.strip():
-            self.io.tool_error("Please provide filenames or directories to read.")
+            # Convert all files in chat to read-only
+            for fname in list(self.coder.abs_fnames):
+                self.coder.abs_fnames.remove(fname)
+                self.coder.abs_read_only_fnames.add(fname)
+                rel_fname = self.coder.get_rel_fname(fname)
+                self.io.tool_output(f"Converted {rel_fname} to read-only")
             return
 
         filenames = parse_quoted_filenames(args)
@@ -1288,7 +1318,12 @@ class Commands:
                 continue
 
             self.io.tool_output(f"\nExecuting: {cmd}")
-            self.run(cmd)
+            try:
+                self.run(cmd)
+            except SwitchCoder:
+                self.io.tool_error(
+                    f"Command '{cmd}' is only supported in interactive mode, skipping."
+                )
 
     def completions_raw_save(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
@@ -1319,6 +1354,10 @@ class Commands:
             self.io.tool_output(f"Saved commands to {args.strip()}")
         except Exception as e:
             self.io.tool_error(f"Error saving commands to file: {e}")
+
+    def cmd_multiline_mode(self, args):
+        "Toggle multiline mode (swaps behavior of Enter and Meta+Enter)"
+        self.io.toggle_multiline_mode()
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
@@ -1367,6 +1406,50 @@ class Commands:
         user_input = pipe_editor(initial_content, suffix="md", editor=self.editor)
         if user_input.strip():
             self.io.set_placeholder(user_input.rstrip())
+
+    def cmd_copy_context(self, args=None):
+        """Copy the current chat context as markdown, suitable to paste into a web UI"""
+
+        chunks = self.coder.format_chat_chunks()
+
+        markdown = ""
+
+        # Only include specified chunks in order
+        for messages in [chunks.repo, chunks.readonly_files, chunks.chat_files]:
+            for msg in messages:
+                # Only include user messages
+                if msg["role"] != "user":
+                    continue
+
+                content = msg["content"]
+
+                # Handle image/multipart content
+                if isinstance(content, list):
+                    for part in content:
+                        if part.get("type") == "text":
+                            markdown += part["text"] + "\n\n"
+                else:
+                    markdown += content + "\n\n"
+
+        args = args or ""
+        markdown += f"""
+Just tell me how to edit the files to make the changes.
+Don't give me back entire files.
+Just show me the edits I need to make.
+
+{args}
+"""
+
+        try:
+            pyperclip.copy(markdown)
+            self.io.tool_output("Copied code context to clipboard.")
+        except pyperclip.PyperclipException as e:
+            self.io.tool_error(f"Failed to copy to clipboard: {str(e)}")
+            self.io.tool_output(
+                "You may need to install xclip or xsel on Linux, or pbcopy on macOS."
+            )
+        except Exception as e:
+            self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
 
 
 def expand_subdir(file_path):

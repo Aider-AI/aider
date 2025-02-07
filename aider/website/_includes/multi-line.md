@@ -5,7 +5,10 @@ You can send long, multi-line messages in the chat in a few ways:
   - Use Meta-ENTER to start a new line without sending the message (Esc+ENTER in some environments).
   - Use `/paste` to paste text from the clipboard into the chat.
   - Use the `/editor` command to open your editor to create the next chat message. See [editor configuration docs](/docs/config/editor.html) for more info.
-
+  - Use multiline-mode, which swaps the function of Meta-Enter and Enter, so that Enter inserts a newline, and Meta-Enter submits your command. To enable multiline mode:
+    - Use the `/multiline-mode` command to toggle it during a session.
+    - Use the `--multiline` switch.
+  
 Example with a tag:
 ```
 {python

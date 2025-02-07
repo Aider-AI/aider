@@ -2,23 +2,35 @@ import os
 import time
 from pathlib import Path, PurePosixPath
 
-import git
+try:
+    import git
+
+    ANY_GIT_ERROR = [
+        git.exc.ODBError,
+        git.exc.GitError,
+        git.exc.InvalidGitRepositoryError,
+    ]
+except ImportError:
+    git = None
+    ANY_GIT_ERROR = []
+
 import pathspec
 
 from aider import prompts, utils
-from aider.sendchat import simple_send_with_retries
 
 from .dump import dump  # noqa: F401
 
-ANY_GIT_ERROR = (
-    git.exc.ODBError,
-    git.exc.GitError,
+ANY_GIT_ERROR += [
     OSError,
     IndexError,
     BufferError,
     TypeError,
     ValueError,
-)
+    AttributeError,
+    AssertionError,
+    TimeoutError,
+]
+ANY_GIT_ERROR = tuple(ANY_GIT_ERROR)
 
 
 class GitRepo:
@@ -141,7 +153,7 @@ class GitRepo:
             os.environ["GIT_COMMITTER_NAME"] = committer_name
 
         if aider_edits and self.attribute_author:
-            original_auther_name_env = os.environ.get("GIT_AUTHOR_NAME")
+            original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
         try:
@@ -161,8 +173,8 @@ class GitRepo:
                     del os.environ["GIT_COMMITTER_NAME"]
 
             if aider_edits and self.attribute_author:
-                if original_auther_name_env is not None:
-                    os.environ["GIT_AUTHOR_NAME"] = original_auther_name_env
+                if original_author_name_env is not None:
+                    os.environ["GIT_AUTHOR_NAME"] = original_author_name_env
                 else:
                     del os.environ["GIT_AUTHOR_NAME"]
 
@@ -192,9 +204,7 @@ class GitRepo:
             max_tokens = model.info.get("max_input_tokens") or 0
             if max_tokens and num_tokens > max_tokens:
                 continue
-            commit_message = simple_send_with_retries(
-                model.name, messages, extra_params=model.extra_params
-            )
+            commit_message = model.simple_send_with_retries(messages)
             if commit_message:
                 break
 
@@ -278,9 +288,17 @@ class GitRepo:
                 files = self.tree_files[commit]
             else:
                 try:
-                    for blob in commit.tree.traverse():
-                        if blob.type == "blob":  # blob is a file
-                            files.add(blob.path)
+                    iterator = commit.tree.traverse()
+                    while True:
+                        try:
+                            blob = next(iterator)
+                            if blob.type == "blob":  # blob is a file
+                                files.add(blob.path)
+                        except IndexError:
+                            self.io.tool_warning(f"GitRepo: read error skipping {blob.path}")
+                            continue
+                        except StopIteration:
+                            break
                 except ANY_GIT_ERROR as err:
                     self.git_repo_error = err
                     self.io.tool_error(f"Unable to list files in git repo: {err}")
@@ -352,8 +370,8 @@ class GitRepo:
 
     def ignored_file_raw(self, fname):
         if self.subtree_only:
-            fname_path = Path(self.normalize_path(fname))
             try:
+                fname_path = Path(self.normalize_path(fname))
                 cwd_path = Path.cwd().resolve().relative_to(Path(self.root).resolve())
             except ValueError:
                 # Issue #1524

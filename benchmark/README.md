@@ -1,24 +1,23 @@
 
-# Aider code editing benchmark harness
+# Aider benchmark harness
 
-Aider uses a "code editing" benchmark to quantitatively measure how well it works
-with the GPT-3.5 and GPT-4 models.
+Aider uses benchmarks to quantitatively measure how well it works
+with various LLMs.
 This directory holds the harness and tools needed to run the benchmarking suite.
 
 ## Background
 
-The benchmark is based on the [Exercism
-python](https://github.com/exercism/python) coding exercises.
+The benchmark is based on the [Exercism](https://github.com/exercism/python) coding exercises.
 This
-benchmark evaluates how effectively aider and GPT can translate a
+benchmark evaluates how effectively aider and LLMs can translate a
 natural language coding request into executable code saved into
 files that pass unit tests.
 It provides an end-to-end evaluation of not just
-GPT's coding ability, but also its capacity to *edit existing code*
+the LLM's coding ability, but also its capacity to *edit existing code*
 and *format those code edits* so that aider can save the
 edits to the local source files.
 
-See [this writeup for a longer discussion about the benchmark and how to interpret the results](https://aider.chat/docs/benchmarks.html).
+See [this writeup for a longer discussion about the benchmark](https://aider.chat/2024/12/21/polyglot.html).
 
 The benchmark is intended to be run *inside a docker container*.
 This is because the benchmarking harness will be
@@ -33,7 +32,7 @@ There are 3 main tasks involved in benchmarking aider:
 
 1. Install and setup for benchmarking.
 
-2. Run the benchmark to measure performance across the 133 exercises.
+2. Run the benchmark to measure performance across all the exercises.
 
 3. Generate a summary report of how many of the exercises succeeded or failed.
 
@@ -50,11 +49,8 @@ git clone git@github.com:Aider-AI/aider.git
 cd aider
 mkdir tmp.benchmarks
 
-# Clone the exercism repo
-git clone git@github.com:exercism/python.git
-
-# Copy the practice exercises into the benchmark scratch dir
-cp -rp python/exercises/practice tmp.benchmarks/exercism-python
+# Clone the repo with the exercises
+git clone https://github.com/Aider-AI/polyglot-benchmark tmp.benchmarks/polyglot-benchmark
 
 # Build the docker container
 ./benchmark/docker_build.sh
@@ -70,21 +66,21 @@ Launch the docker container and run the benchmark inside it:
 
 # Inside the container, install aider as a development build.
 # This way you're running the code that you cloned above, including any local changes.
-pip install -e .
+pip install -e .[dev]
 
 # Run the benchmark:
-./benchmark/benchmark.py a-helpful-name-for-this-run --model gpt-3.5-turbo --edit-format whole --threads 10
+./benchmark/benchmark.py a-helpful-name-for-this-run --model gpt-3.5-turbo --edit-format whole --threads 10 --exercises-dir polyglot-benchmark
 ```
 
 The above will create a folder `tmp.benchmarks/YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run` with benchmarking results.
-Run like this, the script will run all 133 exercises in a random order.
+Run like this, the script will run all the exercises in a random order.
 
 You can run `./benchmark/benchmark.py --help` for a list of all the arguments, but here are the most useful to keep in mind:
 
 - `--model` is the name of the model, same as you would pass directly to `aider`.
 - `--edit-format` is the name of the edit format, same as you would pass directly to `aider`. When working with an experimental LLM, I recommend starting with `whole`
 - `--threads` specifies how many exercises to benchmark in parallel. Start with a single thread if you are working out the kinks on your benchmarking setup or working with a new model, etc. Once you are getting reliable results, you can speed up the process by running with more threads. 10 works well against the OpenAI APIs.
-- `--num-tests` specifies how many of the 133 tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
+- `--num-tests` specifies how many of the tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
 
 ### Benchmark report
@@ -102,7 +98,7 @@ The benchmark report is a yaml record with statistics about the run:
 
 ```yaml
 - dirname: 2024-07-04-14-32-08--claude-3.5-sonnet-diff-continue
-  test_cases: 133
+  test_cases: 225
   model: claude-3.5-sonnet
   edit_format: diff
   commit_hash: 35f21b5
@@ -143,7 +139,6 @@ You can see examples of the benchmark report yaml in the
 
 ## Limitations, notes
 
-- Benchmarking all 133 exercises against Claude 3.5 Sonnet will cost about $4.
 - Contributions of benchmark results are welcome! Submit results by opening a PR with edits to the
 [aider leaderboard data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 - These scripts are not intended for use by typical aider end users.

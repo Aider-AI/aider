@@ -1,6 +1,6 @@
 ---
 parent: Configuration
-nav_order: 15
+nav_order: 100
 description: How to configure a custom editor for aider's /editor command
 ---
 

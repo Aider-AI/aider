@@ -13,7 +13,7 @@ Model aliases allow you to create shorthand names for models you frequently use.
 You can define aliases when launching aider using the `--alias` option:
 
 ```bash
-aider --alias "fast:gpt-3.5-turbo" --alias "smart:gpt-4"
+aider --alias "fast:gpt-4o-mini" --alias "smart:o3-mini"
 ```
 
 Multiple aliases can be defined by using the `--alias` option multiple times. Each alias definition should be in the format `alias:model-name`.
@@ -24,8 +24,8 @@ You can also define aliases in your [`.aider.conf.yml` file](https://aider.chat/
 
 ```yaml
 alias:
-  - "fast:gpt-3.5-turbo"
-  - "smart:gpt-4"
+  - "fast:gpt-4o-mini"
+  - "smart:o3-mini"
   - "hacker:claude-3-sonnet-20240229"
 ```
 
@@ -34,8 +34,8 @@ alias:
 Once defined, you can use the alias instead of the full model name:
 
 ```bash
-aider --model fast  # Uses gpt-3.5-turbo
-aider --model smart  # Uses gpt-4
+aider --model fast  # Uses gpt-4o-mini
+aider --model smart  # Uses o3-mini
 ```
 
 ## Built-in Aliases
@@ -54,10 +54,12 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `35turbo`: gpt-3.5-turbo
 - `4`: gpt-4-0613
 - `4-turbo`: gpt-4-1106-preview
-- `4o`: gpt-4o-2024-08-06
-- `deepseek`: deepseek/deepseek-coder
+- `4o`: gpt-4o
+- `deepseek`: deepseek/deepseek-chat
+- `flash`: gemini/gemini-2.0-flash-exp
 - `haiku`: claude-3-5-haiku-20241022
 - `opus`: claude-3-opus-20240229
+- `r1`: deepseek/deepseek-reasoner
 - `sonnet`: claude-3-5-sonnet-20241022
 <!--[[[end]]]-->
 

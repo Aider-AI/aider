@@ -290,6 +290,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "elixir": ("ex", "Greeter"),
             "java": ("java", "Greeting"),
             "javascript": ("js", "Person"),
+            "kotlin": ("kt", "Greeting"),
             "ocaml": ("ml", "Greeter"),
             "php": ("php", "greet"),
             "python": ("py", "Person"),
@@ -302,6 +303,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "elisp": ("el", "greeter"),
             "elm": ("elm", "Person"),
             "go": ("go", "Greeter"),
+            "hcl": ("tf", "aws_vpc"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"

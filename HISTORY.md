@@ -1,13 +1,180 @@
 # Release history
 
-### main branch
+### Aider v0.74.1
+
+- Have o1 & o3-mini generate markdown by sending the magic "Formatting re-enabled." string.
+- Bugfix for multi-line inputs, which should not include the ". " continuation prompt.
+
+### Aider v0.74.0
+
+- Dynamically changes the Ollama context window to hold the current chat.
+- Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 especially via third-party API providers.
+- Remove `<think>` tags from R1 responses for commit messages (and other weak model uses).
+- Can now specify `use_temperature: <float>` in model settings, not just true/false.
+- The full docker container now includes `boto3` for Bedrock.
+- Docker containers now set `HOME=/app` which is the normal project mount-point, to persist `~/.aider`.
+- Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
+- Bugfix for `--timeout`
+- Bugfix so that `/model` now correctly reports that the weak model is not changed.
+- Bugfix so that multi-line mode persists through ^C at confirmation prompts.
+- Watch files now fully ignores top-level directories named in ignore files, to reduce the chance of hitting OS watch limits. Helpful to ignore giant subtrees like `node_modules`.
+- Fast startup with more providers and when model metadata provided in local files.
+- Improved .gitignore handling:
+  - Honor ignores already in effect regardless of how they've been configured.
+  - Check for .env only when the file exists.
+- Yes/No prompts now accept All/Skip as alias for Y/N even when not processing a group of confirmations.
+- Aider wrote 77% of the code in this release.
+
+### Aider v0.73.0
+
+- Full support for o3-mini: `aider --model o3-mini`
+- New `--reasoning-effort` argument: low, medium, high.
+- Improved handling of context window size limits, with better messaging and Ollama-specific guidance.
+- Added support for removing model-specific reasoning tags from responses with `remove_reasoning: tagname` model setting.
+- Auto-create parent directories when creating new files, by xqyz.
+- Support for R1 free on OpenRouter: `--model openrouter/deepseek/deepseek-r1:free`
+- Aider wrote 69% of the code in this release.
+
+### Aider v0.72.3
+
+- Enforce user/assistant turn order to avoid R1 errors, by miradnanali.
+- Case-insensitive model name matching while preserving original case.
+
+### Aider v0.72.2
+- Harden against user/assistant turn order problems which cause R1 errors.
+
+### Aider v0.72.1
+- Fix model metadata for `openrouter/deepseek/deepseek-r1`
+
+### Aider v0.72.0
+- Support for DeepSeek R1.
+  - Use shortcut: `--model r1`
+  - Also via OpenRouter: `--model openrouter/deepseek/deepseek-r1`
+- Added Kotlin syntax support to repo map, by Paul Walker.
+- Added `--line-endings` for file writing, by Titusz Pan.
+- Added examples_as_sys_msg=True for GPT-4o models, improves benchmark scores.
+- Bumped all dependencies, to pick up litellm support for o1 system messages.
+- Bugfix for turn taking when reflecting lint/test errors.
+- Aider wrote 52% of the code in this release.
+
+### Aider v0.71.1
+
+- Fix permissions issue in Docker images.
+- Added read-only file announcements.
+- Bugfix: ASCII fallback for unicode errors.
+- Bugfix: integer indices for list slicing in repomap calculations.
+
+### Aider v0.71.0
+
+- Prompts to help DeepSeek work better when alternating between `/ask` and `/code`.
+- Streaming pretty LLM responses is smoother and faster for long replies.
+- Streaming automatically turns of for model that don't support it
+  - Can now switch to/from `/model o1` and a streaming model
+- Pretty output remains enabled even when editing files with triple-backtick fences
+- Bare `/ask`, `/code` and `/architect` commands now switch the chat mode.
+- Increased default size of the repomap.
+- Increased max chat history tokens limit from 4k to 8k.
+- Turn off fancy input and watch files if terminal is dumb.
+- Added support for custom voice format and input device settings.
+- Disabled Streamlit email prompt, by apaz-cli.
+- Docker container runs as non-root user.
+- Fixed lint command handling of nested spaced strings, by Aaron Weisberg.
+- Added token count feedback when adding command output to chat.
+- Improved error handling for large audio files with automatic format conversion.
+- Improved handling of git repo index errors, by Krazer.
+- Improved unicode handling in console output with ASCII fallback.
+- Added AssertionError, AttributeError to git error handling.
+- Aider wrote 60% of the code in this release.
+
+### Aider v0.70.0
+
+- Full support for o1 models.
+- Watch files now honors `--subtree-only`, and only watches that subtree.
+- Improved prompting for watch files, to work more reliably with more models.
+- New install methods via uv, including one-liners.
+- Support for openrouter/deepseek/deepseek-chat model.
+- Better error handling when interactive commands are attempted via `/load` or `--load`.
+- Display read-only files with abs path if its shorter than rel path.
+- Ask 10% of users to opt-in to analytics.
+- Bugfix for auto-suggest.
+- Gracefully handle unicode errors in git path names.
+- Aider wrote 74% of the code in this release.
+
+### Aider v0.69.1
+
+- Fix for gemini model names in model metadata.
+- Show hints about AI! and AI? when user makes AI comments.
+- Support for running without git installed.
+- Improved environment variable setup messages on Windows.
+
+### Aider v0.69.0
+
+- [Watch files](https://aider.chat/docs/usage/watch.html) improvements:
+  - Use `# ... AI?` comments to trigger aider and ask questions about your code.
+  - Now watches *all* files, not just certain source files.
+  - Use `# AI comments`, `// AI comments`, or `-- AI comments` to give aider instructions in any text file.
+- Full support for Gemini Flash 2.0 Exp:
+  - `aider --model flash` or `aider --model gemini/gemini-2.0-flash-exp`
+- [New `--multiline` flag and `/multiline-mode` command](https://aider.chat/docs/usage/commands.html#entering-multi-line-chat-messages) makes ENTER a soft newline and META-ENTER send the message, by @miradnanali.
+- `/copy-context <instructions>` now takes optional "instructions" when [copying code context to the clipboard](https://aider.chat/docs/usage/copypaste.html#copy-aiders-code-context-to-your-clipboard-paste-into-the-web-ui).
+- Improved clipboard error handling with helpful requirements install info.
+- Ask 5% of users if they want to opt-in to analytics.
+- `/voice` now lets you edit the transcribed text before sending.
+- Disabled auto-complete in Y/N prompts.
+- Aider wrote 68% of the code in this release.
+
+### Aider v0.68.0
+
+- [Aider works with LLM web chat UIs](https://aider.chat/docs/usage/copypaste.html).
+  - New `--copy-paste` mode.
+  - New `/copy-context` command.
+- [Set API keys and other environment variables for all providers from command line or yaml conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
+  - New `--api-key provider=key` setting.
+  - New `--set-env VAR=value` setting.
+- Added bash and zsh support to `--watch-files`.
+- Better error messages when missing dependencies for Gemini and Bedrock models.
+- Control-D now properly exits the program.
+- Don't count token costs when API provider returns a hard error.
+- Bugfix so watch files works with files that don't have tree-sitter support.
+- Bugfix so o1 models can be used as weak model.
+- Updated shell command prompt.
+- Added docstrings for all Coders.
+- Reorganized command line arguments with improved help messages and grouping.
+- Use the exact `sys.python` for self-upgrades.
+- Added experimental Gemini models.
+- Aider wrote 71% of the code in this release.
+
+### Aider v0.67.0
+
+- [Use aider in your IDE or editor](https://aider.chat/docs/usage/watch.html).
+  - Run `aider --watch-files` and it will watch for instructions you add to your source files.
+  - One-liner `# ...` or `// ...` comments that start or end with "AI" are instructions to aider.
+  - When aider sees "AI!" it reads and follows all the instructions in AI comments.
+- Support for new Amazon Bedrock Nova models.
+- When `/run` or `/test` have non-zero exit codes, pre-fill "Fix that" into the next message prompt.
+- `/diff` now invokes `git diff` to use your preferred diff tool.
+- Added Ctrl-Z support for process suspension.
+- Spinner now falls back to ASCII art if fancy symbols throw unicode errors.
+- `--read` now expands `~` home dirs.
+- Enabled exception capture in analytics.
+- [Aider wrote 61% of the code in this release.](https://aider.chat/HISTORY.html)
+
+### Aider v0.66.0
 
 - PDF support for Sonnet and Gemini models.
+- Added `--voice-input-device` to select audio input device for voice recording, by @preynal.
+- Added `--timeout` option to configure API call timeouts.
 - Set cwd to repo root when running shell commands.
+- Added Ctrl-Up/Down keyboard shortcuts for per-message history navigation.
 - Improved error handling for failed .gitignore file operations.
 - Improved error handling for input history file permissions.
 - Improved error handling for analytics file access.
-- Aider wrote 85% of the code in this release.
+- Removed spurious warning about disabling pretty in VSCode.
+- Removed broken support for Dart.
+- Bugfix when scraping URLs found in chat messages.
+- Better handling of __version__ import errors.
+- Improved `/drop` command to support substring matching for non-glob patterns.
+- Aider wrote 82% of the code in this release.
 
 ### Aider v0.65.1
 

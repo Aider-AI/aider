@@ -2,7 +2,6 @@ import argparse
 
 from aider import models, prompts
 from aider.dump import dump  # noqa: F401
-from aider.sendchat import simple_send_with_retries
 
 
 class ChatSummary:
@@ -26,6 +25,12 @@ class ChatSummary:
         return sized
 
     def summarize(self, messages, depth=0):
+        messages = self.summarize_real(messages)
+        if messages and messages[-1]["role"] != "assistant":
+            messages.append(dict(role="assistant", content="Ok."))
+        return messages
+
+    def summarize_real(self, messages, depth=0):
         if not self.models:
             raise ValueError("No models available for summarization")
 
@@ -88,7 +93,7 @@ class ChatSummary:
         if summary_tokens + tail_tokens < self.max_tokens:
             return result
 
-        return self.summarize(result, depth + 1)
+        return self.summarize_real(result, depth + 1)
 
     def summarize_all(self, messages):
         content = ""
@@ -108,9 +113,7 @@ class ChatSummary:
 
         for model in self.models:
             try:
-                summary = simple_send_with_retries(
-                    model.name, summarize_messages, extra_params=model.extra_params
-                )
+                summary = model.simple_send_with_retries(summarize_messages)
                 if summary is not None:
                     summary = prompts.summary_prefix + summary
                     return [dict(role="user", content=summary)]

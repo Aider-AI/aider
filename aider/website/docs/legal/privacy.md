@@ -69,7 +69,7 @@ We make reasonable efforts to protect your information by using physical and ele
 
 ### Children’s Privacy
 
-We do not knowingly collect, maintain, or use personal information from children under 18 years of age, and no part of our Service(s) is directed to children. If you learn that a child has provided us with personal information in violation of this Privacy Policy, then you may alert us at [INSERT EMAIL ADDRESS].
+We do not knowingly collect, maintain, or use personal information from children under 18 years of age, and no part of our Service(s) is directed to children. If you learn that a child has provided us with personal information in violation of this Privacy Policy, then you may alert us at privacy@aider.chat.
 
 ### International Visitors
 
@@ -98,7 +98,7 @@ if result.returncode == 0:
     date = datetime.datetime.fromtimestamp(timestamp)
     cog.out(f"{date.strftime('%B %d, %Y.')}")
 ]]]-->
-October 31, 2024.
+December 06, 2024.
 <!--[[[end]]]-->
 
 </p>

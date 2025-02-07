@@ -1,6 +1,12 @@
 theme: just-the-docs
 url: "https://aider.chat"
 
+# Analytics configuration
+analytics:
+  enabled: false  # Single switch to control analytics and cookie consent
+  posthog_key: 'phc_99T7muzafUMMZX15H8XePbMSreEUzahHbtWjy3l5Qbv'
+  posthog_host: 'https://us.i.posthog.com'
+
 plugins:
   - jekyll-redirect-from
   - jekyll-sitemap

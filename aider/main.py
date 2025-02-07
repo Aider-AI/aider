@@ -9,7 +9,11 @@ import webbrowser
 from dataclasses import fields
 from pathlib import Path
 
-import git
+try:
+    import git
+except ImportError:
+    git = None
+
 import importlib_resources
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
@@ -20,6 +24,7 @@ from aider.args import get_parser
 from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
+from aider.copypaste import ClipboardWatcher
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -28,6 +33,7 @@ from aider.models import ModelSettings
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
+from aider.watch import FileWatcher
 
 from .dump import dump  # noqa: F401
 
@@ -91,6 +97,9 @@ def make_new_repo(git_root, io):
 
 
 def setup_git(git_root, io):
+    if git is None:
+        return
+
     try:
         cwd = Path.cwd()
     except OSError:
@@ -104,7 +113,9 @@ def setup_git(git_root, io):
         except ANY_GIT_ERROR:
             pass
     elif cwd == Path.home():
-        io.tool_warning("You should probably run aider in a directory, not your home dir.")
+        io.tool_warning(
+            "You should probably run aider in your project's directory, not your home dir."
+        )
         return
     elif cwd and io.confirm_ask(
         "No git repo found, create one to track aider's changes (recommended)?"
@@ -147,39 +158,39 @@ def check_gitignore(git_root, io, ask=True):
 
     try:
         repo = git.Repo(git_root)
-        if repo.ignored(".aider") and repo.ignored(".env"):
+        patterns_to_add = []
+
+        if not repo.ignored(".aider"):
+            patterns_to_add.append(".aider*")
+
+        env_path = Path(git_root) / ".env"
+        if env_path.exists() and not repo.ignored(".env"):
+            patterns_to_add.append(".env")
+
+        if not patterns_to_add:
             return
-    except ANY_GIT_ERROR:
-        pass
 
-    patterns = [".aider*", ".env"]
-    patterns_to_add = []
-
-    gitignore_file = Path(git_root) / ".gitignore"
-    if gitignore_file.exists():
-        try:
-            content = io.read_text(gitignore_file)
-            if content is None:
+        gitignore_file = Path(git_root) / ".gitignore"
+        if gitignore_file.exists():
+            try:
+                content = io.read_text(gitignore_file)
+                if content is None:
+                    return
+                if not content.endswith("\n"):
+                    content += "\n"
+            except OSError as e:
+                io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
                 return
-            existing_lines = content.splitlines()
-            for pat in patterns:
-                if pat not in existing_lines:
-                    patterns_to_add.append(pat)
-        except OSError as e:
-            io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
+        else:
+            content = ""
+    except ANY_GIT_ERROR:
+        return
+
+    if ask:
+        io.tool_output("You can skip this check with --no-gitignore")
+        if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
             return
-    else:
-        content = ""
-        patterns_to_add = patterns
 
-    if not patterns_to_add:
-        return
-
-    if ask and not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
-        return
-
-    if content and not content.endswith("\n"):
-        content += "\n"
     content += "\n".join(patterns_to_add) + "\n"
 
     try:
@@ -203,6 +214,22 @@ def check_streamlit_install(io):
     )
 
 
+def write_streamlit_credentials():
+    from streamlit.file_util import get_streamlit_file_path
+
+    # See https://github.com/Aider-AI/aider/issues/772
+
+    credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
+    if not os.path.exists(credential_path):
+        empty_creds = '[general]\nemail = ""\n'
+
+        os.makedirs(os.path.dirname(credential_path), exist_ok=True)
+        with open(credential_path, "w") as f:
+            f.write(empty_creds)
+    else:
+        print("Streamlit credentials already exist.")
+
+
 def launch_gui(args):
     from streamlit.web import cli
 
@@ -210,6 +237,9 @@ def launch_gui(args):
 
     print()
     print("CONTROL-C to exit...")
+
+    # Necessary so streamlit does not prompt the user for an email address.
+    write_streamlit_credentials()
 
     target = gui.__file__
 
@@ -348,18 +378,18 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
 
 
 def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
-    model_metatdata_files = []
+    model_metadata_files = []
 
     # Add the resource file path
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
-    model_metatdata_files.append(str(resource_metadata))
+    model_metadata_files.append(str(resource_metadata))
 
-    model_metatdata_files += generate_search_path_list(
+    model_metadata_files += generate_search_path_list(
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:
-        model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
+        model_metadata_files_loaded = models.register_litellm_models(model_metadata_files)
         if len(model_metadata_files_loaded) > 0 and verbose:
             io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
@@ -383,6 +413,12 @@ def sanity_check_repo(repo, io):
         if not repo.git_repo_error:
             return True
         error_msg = str(repo.git_repo_error)
+    except UnicodeDecodeError as exc:
+        error_msg = (
+            "Failed to read the Git repository. This issue is likely caused by a path encoded "
+            f'in a format different from the expected encoding "{sys.getfilesystemencoding()}".\n'
+            f"Internal error: {str(exc)}"
+        )
     except ANY_GIT_ERROR as exc:
         error_msg = str(exc)
         bad_ver = "version in (1, 2)" in error_msg
@@ -408,7 +444,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if argv is None:
         argv = sys.argv[1:]
 
-    if force_git_root:
+    if git is None:
+        git_root = None
+    elif force_git_root:
         git_root = force_git_root
     else:
         git_root = get_git_root()
@@ -455,6 +493,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
 
+    if git is None:
+        args.git = False
+
     if args.analytics_disable:
         analytics = Analytics(permanently_disable=True)
         print("Analytics have been permanently disabled.")
@@ -466,6 +507,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         litellm._load_litellm()
         litellm._lazy_module.client_session = httpx.Client(verify=False)
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
+
+    if args.timeout:
+        models.request_timeout = args.timeout
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
@@ -506,9 +550,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             code_theme=args.code_theme,
             dry_run=args.dry_run,
             encoding=args.encoding,
+            line_endings=args.line_endings,
             llm_history_file=args.llm_history_file,
             editingmode=editing_mode,
             fancy_input=args.fancy_input,
+            multiline_mode=args.multiline,
         )
 
     io = get_io(args.pretty)
@@ -519,6 +565,50 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             raise err
         io = get_io(False)
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
+
+    # Process any environment variables set via --set-env
+    if args.set_env:
+        for env_setting in args.set_env:
+            try:
+                name, value = env_setting.split("=", 1)
+                os.environ[name.strip()] = value.strip()
+            except ValueError:
+                io.tool_error(f"Invalid --set-env format: {env_setting}")
+                io.tool_output("Format should be: ENV_VAR_NAME=value")
+                return 1
+
+    # Process any API keys set via --api-key
+    if args.api_key:
+        for api_setting in args.api_key:
+            try:
+                provider, key = api_setting.split("=", 1)
+                env_var = f"{provider.strip().upper()}_API_KEY"
+                os.environ[env_var] = key.strip()
+            except ValueError:
+                io.tool_error(f"Invalid --api-key format: {api_setting}")
+                io.tool_output("Format should be: provider=key")
+                return 1
+
+    if args.anthropic_api_key:
+        os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
+
+    if args.openai_api_key:
+        os.environ["OPENAI_API_KEY"] = args.openai_api_key
+    if args.openai_api_base:
+        os.environ["OPENAI_API_BASE"] = args.openai_api_base
+    if args.openai_api_version:
+        io.tool_warning(
+            "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
+        )
+        os.environ["OPENAI_API_VERSION"] = args.openai_api_version
+    if args.openai_api_type:
+        io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
+        os.environ["OPENAI_API_TYPE"] = args.openai_api_type
+    if args.openai_organization_id:
+        io.tool_warning(
+            "--openai-organization-id is deprecated, use --set-env OPENAI_ORGANIZATION=<value>"
+        )
+        os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
     analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
     if args.analytics is not False:
@@ -547,9 +637,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
+            analytics.event("exit", reason="Streamlit not installed")
             return
         analytics.event("gui session")
         launch_gui(argv)
+        analytics.event("exit", reason="GUI session ended")
         return
 
     if args.verbose:
@@ -560,7 +652,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     fnames = [str(Path(fn).resolve()) for fn in all_files]
     read_only_fnames = []
     for fn in args.read or []:
-        path = Path(fn).resolve()
+        path = Path(fn).expanduser().resolve()
         if path.is_dir():
             read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
         else:
@@ -576,6 +668,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_output(
                 "Provide either a single directory of a git repo, or a list of one or more files."
             )
+            analytics.event("exit", reason="Invalid directory input")
             return 1
 
     git_dname = None
@@ -586,26 +679,31 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 fnames = []
             else:
                 io.tool_error(f"{all_files[0]} is a directory, but --no-git selected.")
+                analytics.event("exit", reason="Directory with --no-git")
                 return 1
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
     # the location of the config.yml and history files.
-    if args.git and not force_git_root:
+    if args.git and not force_git_root and git is not None:
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
+            analytics.event("exit", reason="Recursing with correct repo")
             return main(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
         update_available = check_version(io, just_check=True, verbose=args.verbose)
+        analytics.event("exit", reason="Just checking update")
         return 0 if not update_available else 1
 
     if args.install_main_branch:
         success = install_from_main_branch(io)
+        analytics.event("exit", reason="Installed main branch")
         return 0 if success else 1
 
     if args.upgrade:
         success = install_upgrade(io)
+        analytics.event("exit", reason="Upgrade completed")
         return 0 if success else 1
 
     if args.check_update:
@@ -613,6 +711,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.list_models:
         models.print_matching_models(io, args.list_models)
+        analytics.event("exit", reason="Listed models")
         return 0
 
     if args.git:
@@ -631,20 +730,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
     check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
-    if args.anthropic_api_key:
-        os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
-
-    if args.openai_api_key:
-        os.environ["OPENAI_API_KEY"] = args.openai_api_key
-    if args.openai_api_base:
-        os.environ["OPENAI_API_BASE"] = args.openai_api_base
-    if args.openai_api_version:
-        os.environ["OPENAI_API_VERSION"] = args.openai_api_version
-    if args.openai_api_type:
-        os.environ["OPENAI_API_TYPE"] = args.openai_api_type
-    if args.openai_organization_id:
-        os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
-
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
 
@@ -656,14 +741,32 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             if len(parts) != 2:
                 io.tool_error(f"Invalid alias format: {alias_def}")
                 io.tool_output("Format should be: alias:model-name")
+                analytics.event("exit", reason="Invalid alias format error")
                 return 1
             alias, model = parts
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
     if not args.model:
-        args.model = "gpt-4o-2024-08-06"
-        if os.environ.get("ANTHROPIC_API_KEY"):
-            args.model = "claude-3-5-sonnet-20241022"
+        # Select model based on available API keys
+        model_key_pairs = [
+            ("ANTHROPIC_API_KEY", "sonnet"),
+            ("DEEPSEEK_API_KEY", "deepseek"),
+            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.5-sonnet"),
+            ("OPENAI_API_KEY", "gpt-4o"),
+            ("GEMINI_API_KEY", "flash"),
+        ]
+
+        for env_key, model_name in model_key_pairs:
+            if os.environ.get(env_key):
+                args.model = model_name
+                io.tool_warning(
+                    f"Found {env_key} so using {model_name} since no --model was specified."
+                )
+                break
+        if not args.model:
+            io.tool_error("You need to specify a --model and an --api-key to use.")
+            io.offer_url(urls.models_and_keys, "Open documentation url for more info?")
+            return 1
 
     main_model = models.Model(
         args.model,
@@ -671,6 +774,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_model=args.editor_model,
         editor_edit_format=args.editor_edit_format,
     )
+
+    # add --reasoning-effort cli param
+    if args.reasoning_effort is not None:
+        if not getattr(main_model, "extra_params", None):
+            main_model.extra_params = {}
+        if "extra_body" not in main_model.extra_params:
+            main_model.extra_params["extra_body"] = {}
+        main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
+
+    if args.copy_paste and args.edit_format is None:
+        if main_model.edit_format in ("diff", "whole"):
+            main_model.edit_format = "editor-" + main_model.edit_format
 
     if args.verbose:
         io.tool_output("Model metadata:")
@@ -684,6 +799,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:
+        analytics.event("exit", reason="Invalid lint command format")
         return 1
 
     if args.show_model_warnings:
@@ -696,6 +812,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 io.offer_url(urls.model_warnings, "Open documentation url for more info?")
                 io.tool_output()
             except KeyboardInterrupt:
+                analytics.event("exit", reason="Keyboard interrupt during model warnings")
                 return 1
 
     repo = None
@@ -719,11 +836,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if not args.skip_sanity_check_repo:
         if not sanity_check_repo(repo, io):
+            analytics.event("exit", reason="Repository sanity check failed")
             return 1
+
+    if repo:
+        analytics.event("repo", num_files=len(repo.get_tracked_files()))
+    else:
+        analytics.event("no-repo")
 
     commands = Commands(
         io,
         None,
+        voice_language=args.voice_language,
+        voice_input_device=args.voice_input_device,
+        voice_format=args.voice_format,
         verify_ssl=args.verify_ssl,
         args=args,
         parser=parser,
@@ -746,6 +872,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    if args.map_tokens is None:
+        map_tokens = main_model.get_repo_map_tokens()
+    else:
+        map_tokens = args.map_tokens
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -758,7 +889,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
             dry_run=args.dry_run,
-            map_tokens=args.map_tokens,
+            map_tokens=map_tokens,
             verbose=args.verbose,
             stream=args.stream,
             use_git=args.git,
@@ -777,17 +908,41 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
             detect_urls=args.detect_urls,
+            auto_copy_context=args.copy_paste,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
         io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
+        analytics.event("exit", reason="Unknown edit format")
         return 1
     except ValueError as err:
         io.tool_error(str(err))
+        analytics.event("exit", reason="ValueError during coder creation")
         return 1
 
     if return_coder:
+        analytics.event("exit", reason="Returning coder object")
         return coder
+
+    ignores = []
+    if git_root:
+        ignores.append(str(Path(git_root) / ".gitignore"))
+    if args.aiderignore:
+        ignores.append(args.aiderignore)
+
+    if args.watch_files:
+        file_watcher = FileWatcher(
+            coder,
+            gitignores=ignores,
+            verbose=args.verbose,
+            analytics=analytics,
+            root=str(Path.cwd()) if args.subtree_only else None,
+        )
+        coder.file_watcher = file_watcher
+
+    if args.copy_paste:
+        analytics.event("copy-paste mode")
+        ClipboardWatcher(coder.io, verbose=args.verbose)
 
     coder.show_announcements()
 
@@ -797,6 +952,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         ]
         messages = coder.format_messages().all_messages()
         utils.show_messages(messages)
+        analytics.event("exit", reason="Showed prompts")
         return
 
     if args.lint:
@@ -805,10 +961,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.test:
         if not args.test_cmd:
             io.tool_error("No --test-cmd provided.")
+            analytics.event("exit", reason="No test command provided")
             return 1
-        test_errors = coder.commands.cmd_test(args.test_cmd)
-        if test_errors:
-            coder.run(test_errors)
+        coder.commands.cmd_test(args.test_cmd)
+        if io.placeholder:
+            coder.run(io.placeholder)
 
     if args.commit:
         if args.dry_run:
@@ -817,31 +974,32 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.commands.cmd_commit()
 
     if args.lint or args.test or args.commit:
+        analytics.event("exit", reason="Completed lint/test/commit")
         return
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
         if repo_map:
             io.tool_output(repo_map)
+        analytics.event("exit", reason="Showed repo map")
         return
 
     if args.apply:
         content = io.read_text(args.apply)
         if content is None:
+            analytics.event("exit", reason="Failed to read apply content")
             return
         coder.partial_response_content = content
+        # For testing #2879
+        # from aider.coders.base_coder import all_fences
+        # coder.fence = all_fences[1]
         coder.apply_updates()
+        analytics.event("exit", reason="Applied updates")
         return
 
     if args.apply_clipboard_edits:
         args.edit_format = main_model.editor_edit_format
         args.message = "/paste"
-
-    if "VSCODE_GIT_IPC_HANDLE" in os.environ:
-        args.pretty = False
-        io.tool_output("VSCode terminal detected, pretty output has been disabled.")
-
-    io.tool_output('Use /help <question> for help, run "aider --help" to see cmd line args')
 
     if args.show_release_notes is True:
         io.tool_output(f"Opening release notes: {urls.release_notes}")
@@ -874,6 +1032,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run(with_message=args.message)
         except SwitchCoder:
             pass
+        analytics.event("exit", reason="Completed --message")
         return
 
     if args.message_file:
@@ -883,13 +1042,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run(with_message=message_from_file)
         except FileNotFoundError:
             io.tool_error(f"Message file not found: {args.message_file}")
+            analytics.event("exit", reason="Message file not found")
             return 1
         except IOError as e:
             io.tool_error(f"Error reading message file: {e}")
+            analytics.event("exit", reason="Message file IO error")
             return 1
+
+        analytics.event("exit", reason="Completed --message-file")
         return
 
     if args.exit:
+        analytics.event("exit", reason="Exit flag set")
         return
 
     analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
@@ -897,6 +1061,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     while True:
         try:
             coder.run()
+            analytics.event("exit", reason="Completed main CLI coder.run")
             return
         except SwitchCoder as switch:
             kwargs = dict(io=io, from_coder=coder)
@@ -914,6 +1079,10 @@ def is_first_run_of_new_version(io, verbose=False):
     """Check if this is the first run of a new version/executable combination"""
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
+
+    # Never show notes for .dev versions
+    if ".dev" in __version__:
+        return False
 
     if verbose:
         io.tool_output(

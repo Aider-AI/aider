@@ -12,6 +12,7 @@ on:
       - "main"
     paths:
       - "aider/website/**"
+      - ".github/workflows/pages.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -36,7 +37,9 @@ jobs:
         working-directory: aider/website
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -53,10 +56,9 @@ jobs:
         env:
           JEKYLL_ENV: production
       - name: Upload artifact
-        # Automatically uploads an artifact from the './_site' directory by default
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: "aider/website/_site/"
+          path: "aider/website/_site"
 
   # Deployment job
   deploy:
@@ -68,7 +70,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
         
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
@@ -82,4 +84,4 @@ jobs:
 
       - name: Run linkchecker
         run: |
-          linkchecker https://aider.chat
+          linkchecker --ignore-url='.+\.(mp4|mov|avi)' https://aider.chat

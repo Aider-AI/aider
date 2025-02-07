@@ -4,14 +4,19 @@ on:
   push:
     paths-ignore:
       - 'aider/website/**'
-      - README.md
-      - HISTORY.md
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/windows-tests.yml'
     branches:
       - main
   pull_request:
     paths-ignore:
       - 'aider/website/**'
-      - README.md
+      - 'README.md'
+      - 'HISTORY.md'
+      - '.github/workflows/*'
+      - '!.github/workflows/windows-tests.yml'
     branches:
       - main
 
@@ -25,6 +30,8 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -38,6 +45,8 @@ jobs:
         pip install .
 
     - name: Run tests
+      env:
+        AIDER_ANALYTICS: false
       run: |
         pytest
         

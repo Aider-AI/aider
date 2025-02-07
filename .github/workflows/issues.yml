@@ -1,0 +1,29 @@
+name: Process GitHub Issues
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # Run every 12 hours
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  process-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write  # Required to modify issues
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests python-dotenv tqdm
+          
+      - name: Run issues script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/issues.py --yes

@@ -28,6 +28,8 @@ mixpanel
 pexpect
 json5
 psutil
+watchfiles
+pip
 
 # The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps

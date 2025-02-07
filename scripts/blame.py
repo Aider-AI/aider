@@ -12,6 +12,17 @@ import semver
 import yaml
 from tqdm import tqdm
 
+website_files = [
+    "aider/website/share/index.md",
+    "aider/website/_includes/head_custom.html",
+    "aider/website/docs/leaderboards/index.md",
+]
+
+exclude_files = [
+    "aider/website/install.ps1",
+    "aider/website/install.sh",
+]
+
 
 def blame(start_tag, end_tag=None):
     commits = get_all_commit_hashes_between_tags(start_tag, end_tag)
@@ -21,15 +32,18 @@ def blame(start_tag, end_tag=None):
 
     revision = end_tag if end_tag else "HEAD"
     files = run(["git", "ls-tree", "-r", "--name-only", revision]).strip().split("\n")
+    test_files = [f for f in files if f.startswith("tests/fixtures/languages/") and "/test." in f]
     files = [
         f
         for f in files
         if f.endswith((".js", ".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
-        or f == "aider/website/share/index.md"
-        or f == "aider/website/docs/leaderboards/index.md"
+        or f in website_files
+        or f in test_files
     ]
     files = [f for f in files if not f.endswith("prompts.py")]
+    files = [f for f in files if not f.startswith("tests/fixtures/watch")]
+    files = [f for f in files if f not in exclude_files]
 
     all_file_counts = {}
     grand_total = defaultdict(int)
@@ -203,9 +217,23 @@ def main():
 def get_counts_for_file(start_tag, end_tag, authors, fname):
     try:
         if end_tag:
-            text = run(["git", "blame", f"{start_tag}..{end_tag}", "--", fname])
+            text = run(
+                [
+                    "git",
+                    "blame",
+                    "-M",
+                    "-C",
+                    "-C",
+                    "--abbrev=9",
+                    f"{start_tag}..{end_tag}",
+                    "--",
+                    fname,
+                ]
+            )
         else:
-            text = run(["git", "blame", f"{start_tag}..HEAD", "--", fname])
+            text = run(
+                ["git", "blame", "-M", "-C", "-C", "--abbrev=9", f"{start_tag}..HEAD", "--", fname]
+            )
         if not text:
             return None
         text = text.splitlines()
