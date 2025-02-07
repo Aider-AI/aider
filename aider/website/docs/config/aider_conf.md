@@ -346,6 +346,17 @@ cog.outl("```")
 ## Enable/disable automatic linting after changes (default: True)
 #auto-lint: true
 
+## Specify fix commands to run for different languages, eg: "go: gofmt" (can be used multiple times)
+#fix-cmd: xxx
+## Specify multiple values like this:
+#fix-cmd:
+#  - xxx
+#  - yyy
+#  - zzz
+
+## Enable/disable automatic fixing after changes (default: True)
+#auto-fix: true
+
 ## Specify command to run tests
 #test-cmd: xxx
 
