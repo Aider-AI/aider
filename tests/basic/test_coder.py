@@ -943,10 +943,7 @@ This command will print 'Hello, World!' to the console."""
         original_content = coder.fmt_system_prompt(coder.gpt_prompts.main_system)
 
         # Check just the first line
-        self.assertEqual(
-            system_message["content"].split('\n')[0],
-            original_content.split('\n')[0]
-        )
+        self.assertEqual(system_message["content"].split("\n")[0], original_content.split("\n")[0])
 
     def test_system_prompt_prefix_empty(self):
         # Test behavior when system_prompt_prefix is empty string
@@ -967,10 +964,7 @@ This command will print 'Hello, World!' to the console."""
         original_content = coder.fmt_system_prompt(coder.gpt_prompts.main_system)
 
         # Check just the first line
-        self.assertEqual(
-            system_message["content"].split('\n')[0],
-            original_content.split('\n')[0]
-        )
+        self.assertEqual(system_message["content"].split("\n")[0], original_content.split("\n")[0])
 
     def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
