@@ -4,9 +4,9 @@
 #
 #    pip-compile --allow-unsafe --output-file=requirements.txt requirements/requirements.in
 #
-aiohappyeyeballs==2.4.4
+aiohappyeyeballs==2.4.6
     # via aiohttp
-aiohttp==3.11.11
+aiohttp==3.11.12
     # via litellm
 aiosignal==1.3.2
     # via aiohttp
@@ -26,9 +26,9 @@ backoff==2.2.1
     # via
     #   -r requirements/requirements.in
     #   posthog
-beautifulsoup4==4.12.3
+beautifulsoup4==4.13.3
     # via -r requirements/requirements.in
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   httpcore
     #   httpx
@@ -57,7 +57,7 @@ frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.12.0
+fsspec==2025.2.0
     # via huggingface-hub
 gitdb==4.0.12
     # via gitpython
@@ -69,11 +69,11 @@ h11==0.14.0
     # via httpcore
 httpcore==1.0.7
     # via httpx
-httpx==0.27.2
+httpx==0.28.1
     # via
     #   litellm
     #   openai
-huggingface-hub==0.28.0
+huggingface-hub==0.28.1
     # via tokenizers
 idna==3.10
     # via
@@ -99,7 +99,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.59.8
+litellm==1.60.6
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -124,7 +124,7 @@ numpy==1.26.4
     #   -r requirements/requirements.in
     #   scipy
     #   soundfile
-openai==1.60.2
+openai==1.61.1
     # via litellm
 packaging==24.2
     # via
@@ -208,7 +208,6 @@ smmap==5.0.2
 sniffio==1.3.1
     # via
     #   anyio
-    #   httpx
     #   openai
 sounddevice==0.5.1
     # via -r requirements/requirements.in
@@ -235,6 +234,7 @@ tree-sitter-languages==1.10.2
 typing-extensions==4.12.2
     # via
     #   anyio
+    #   beautifulsoup4
     #   huggingface-hub
     #   openai
     #   pydantic
