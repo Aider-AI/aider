@@ -489,6 +489,32 @@ class InputOutput:
             "Ignore Ctrl when pressing space bar"
             event.current_buffer.insert_text(" ")
 
+        @kb.add("left")
+        def _(event):
+            "Move left or wrap to previous line in multiline mode"
+            buf = event.current_buffer
+            if self.multiline_mode:
+                if buf.cursor_position == 0:
+                    return
+                if buf.document.cursor_position_col == 0:
+                    buf.cursor_up(count=1)
+                    buf.cursor_right(count=len(buf.document.current_line))
+                    return
+            buf.cursor_left(count=1)
+
+        @kb.add("right")
+        def _(event):
+            "Move right or wrap to next line in multiline mode"
+            buf = event.current_buffer
+            if self.multiline_mode:
+                if buf.cursor_position == len(buf.document.text):
+                    return
+                if buf.document.cursor_position_col == len(buf.document.current_line):
+                    buf.cursor_down(count=1)
+                    buf.cursor_left(count=len(buf.document.current_line))
+                    return
+            buf.cursor_right(count=1)
+
         @kb.add("c-up")
         def _(event):
             "Navigate backward through history"
