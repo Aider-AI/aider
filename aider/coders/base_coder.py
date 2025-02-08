@@ -264,6 +264,8 @@ class Coder:
 
         return lines
 
+    _cache_warming_stop = False
+
     def __init__(
         self,
         main_model,
@@ -1207,12 +1209,13 @@ class Coder:
         self.next_cache_warm = time.time() + delay
         self.warming_pings_left = self.num_cache_warming_pings
         self.cache_warming_chunks = chunks
+        self._cache_warming_stop = False
 
         if self.cache_warming_thread:
             return
 
         def warm_cache_worker():
-            while True:
+            while not self._cache_warming_stop:
                 dump(self.warming_pings_left)
                 time.sleep(1)
                 if self.warming_pings_left <= 0:
@@ -1537,6 +1540,10 @@ class Coder:
             self.io.tool_warning(res)
 
         return res
+
+    def __del__(self):
+        """Cleanup when the Coder object is destroyed."""
+        self._cache_warming_stop = True
 
     def add_assistant_reply_to_cur_messages(self):
         if self.partial_response_content:
