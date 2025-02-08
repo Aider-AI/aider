@@ -168,6 +168,7 @@ class Coder:
             use_kwargs.update(kwargs)  # override passed kwargs
 
             kwargs = use_kwargs
+            from_coder.ok_to_warm_cache = False
 
         for coder in coders.__all__:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
@@ -264,7 +265,7 @@ class Coder:
 
         return lines
 
-    _cache_warming_stop = False
+    ok_to_warm_cache = False
 
     def __init__(
         self,
@@ -1198,25 +1199,23 @@ class Coder:
         return chunks
 
     def warm_cache(self, chunks):
-        dump(self.add_cache_headers)
-        dump(self.num_cache_warming_pings)
         if not self.add_cache_headers:
             return
         if not self.num_cache_warming_pings:
             return
+        if not self.ok_to_warm_cache:
+            return
 
-        delay = 5  # * 60 - 5
+        delay = 5 * 60 - 5
         self.next_cache_warm = time.time() + delay
         self.warming_pings_left = self.num_cache_warming_pings
         self.cache_warming_chunks = chunks
-        self._cache_warming_stop = False
 
         if self.cache_warming_thread:
             return
 
         def warm_cache_worker():
-            while not self._cache_warming_stop:
-                dump(self.warming_pings_left)
+            while self.ok_to_warm_cache:
                 time.sleep(1)
                 if self.warming_pings_left <= 0:
                     continue
@@ -1543,7 +1542,7 @@ class Coder:
 
     def __del__(self):
         """Cleanup when the Coder object is destroyed."""
-        self._cache_warming_stop = True
+        self.ok_to_warm_cache = False
 
     def add_assistant_reply_to_cur_messages(self):
         if self.partial_response_content:
