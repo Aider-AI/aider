@@ -1196,12 +1196,14 @@ class Coder:
         return chunks
 
     def warm_cache(self, chunks):
+        dump(self.add_cache_headers)
+        dump(self.num_cache_warming_pings)
         if not self.add_cache_headers:
             return
         if not self.num_cache_warming_pings:
             return
 
-        delay = 5 * 60 - 5
+        delay = 5 #* 60 - 5
         self.next_cache_warm = time.time() + delay
         self.warming_pings_left = self.num_cache_warming_pings
         self.cache_warming_chunks = chunks
@@ -1211,6 +1213,7 @@ class Coder:
 
         def warm_cache_worker():
             while True:
+                dump(self.warming_pings_left)
                 time.sleep(1)
                 if self.warming_pings_left <= 0:
                     continue
