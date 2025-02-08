@@ -96,14 +96,7 @@ to keep aider's dependencies separated.
 You can use pip to install aider with python versions 3.9-3.12.
 
 ```bash
-# Install aider
 python -m pip install -U --upgrade-strategy only-if-needed aider-chat
-
-# To work with GPT-4o:
-aider --4o --openai-api-key sk-xxx...
-
-# To work with Claude 3.5 Sonnet:
-aider --sonnet --anthropic-api-key sk-xxx...
 ```
 
 {% include python-m-aider.md %}
