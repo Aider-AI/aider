@@ -285,26 +285,32 @@ class RepoMap:
         captures = query.captures(tree.root_node)
 
         saw = set()
-        for tag, nodes in captures.items():
-            for node in nodes:
-                if tag.startswith("name.definition."):
-                    kind = "def"
-                elif tag.startswith("name.reference."):
-                    kind = "ref"
-                else:
-                    continue
+        if USING_TSL_PACK:
+            all_nodes = []
+            for tag, nodes in captures.items():
+                all_nodes += [(node, tag) for node in nodes]
+        else:
+            all_nodes = list(captures)
 
-                saw.add(kind)
+        for node, tag in all_nodes:
+            if tag.startswith("name.definition."):
+                kind = "def"
+            elif tag.startswith("name.reference."):
+                kind = "ref"
+            else:
+                continue
 
-                result = Tag(
-                    rel_fname=rel_fname,
-                    fname=fname,
-                    name=node.text.decode("utf-8"),
-                    kind=kind,
-                    line=node.start_point[0],
-                )
+            saw.add(kind)
 
-                yield result
+            result = Tag(
+                rel_fname=rel_fname,
+                fname=fname,
+                name=node.text.decode("utf-8"),
+                kind=kind,
+                line=node.start_point[0],
+            )
+
+            yield result
 
         if "ref" in saw:
             return
