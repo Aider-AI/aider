@@ -16,10 +16,9 @@ description: Aider can connect to most LLMs for AI pair programming.
 
 Aider works best with these models, which are skilled at editing code:
 
-- [GPT-4o](/docs/llms/openai.html)
+- [DeepSeek R1 and V3](/docs/llms/deepseek.html)
 - [Claude 3.5 Sonnet](/docs/llms/anthropic.html)
-- [Claude 3 Opus](/docs/llms/anthropic.html)
-- [DeepSeek Coder V2](/docs/llms/deepseek.html)
+- [OpenAI o1, o3-mini and GPT-4o](/docs/llms/openai.html)
 
 
 ## Free models

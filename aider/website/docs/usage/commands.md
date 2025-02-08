@@ -22,11 +22,11 @@ cog.out(get_help_md())
 |Command|Description|
 |:------|:----------|
 | **/add** | Add files to the chat so aider can edit them or review them in detail |
-| **/architect** | Enter architect mode to discuss high-level design and architecture |
-| **/ask** | Ask questions about the code base without editing any files |
+| **/architect** | Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode. |
+| **/ask** | Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode. |
 | **/chat-mode** | Switch to a new chat mode |
 | **/clear** | Clear the chat history |
-| **/code** | Ask for changes to your code |
+| **/code** | Ask for changes to your code. If no prompt provided, switches to code mode. |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
 | **/copy** | Copy the last assistant message to the clipboard |
 | **/copy-context** | Copy the current chat context as markdown, suitable to paste into a web UI |

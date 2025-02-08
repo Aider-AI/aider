@@ -16,6 +16,7 @@ from types import SimpleNamespace
 from typing import List, Optional
 
 import git
+import importlib_resources
 import lox
 import pandas as pd
 import prompts
@@ -31,7 +32,7 @@ from aider.io import InputOutput
 
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
-EXERCISES_DIR_DEFAULT = "exercism-python"
+EXERCISES_DIR_DEFAULT = "polyglot-benchmark"
 
 app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
@@ -176,11 +177,6 @@ def main(
         "--replay",
         help="Replay previous .aider.chat.history.md responses from previous benchmark run",
     ),
-    max_apply_update_errors: int = typer.Option(
-        3,
-        "--max-apply-update-errors",
-        help="Maximum number of apply update errors before stopping the test",
-    ),
     keywords: str = typer.Option(
         None, "--keywords", "-k", help="Only run tests that contain keywords (comma sep)"
     ),
@@ -206,6 +202,9 @@ def main(
     num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
     num_ctx: Optional[int] = typer.Option(
         None, "--num-ctx", help="Override model context window size"
+    ),
+    read_model_settings: str = typer.Option(
+        None, "--read-model-settings", help="Load aider model settings from YAML file"
     ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
@@ -315,6 +314,22 @@ def main(
 
     test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
 
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
+    dump(model_metadata_files_loaded)
+
+    if read_model_settings:
+        try:
+            files_loaded = models.register_models([read_model_settings])
+            if verbose:
+                if files_loaded:
+                    print(f"Loaded model settings from: {files_loaded[0]}")
+                else:
+                    print(f"No model settings loaded from: {read_model_settings}")
+        except Exception as e:
+            print(f"Error loading model settings: {e}")
+            return 1
+
     if keywords:
         keywords = keywords.split(",")
         test_dnames = [dn for dn in test_dnames for keyword in keywords if keyword in dn]
@@ -342,7 +357,6 @@ def main(
                 verbose,
                 commit_hash,
                 replay,
-                max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
                 num_ctx,
@@ -367,7 +381,6 @@ def main(
                 verbose,
                 commit_hash,
                 replay,
-                max_apply_update_errors,
                 editor_model,
                 editor_edit_format,
             )
@@ -645,11 +658,11 @@ def run_test_real(
     verbose,
     commit_hash,
     replay,
-    max_apply_update_errors,
     editor_model,
     editor_edit_format,
     num_ctx=None,
     sleep=0,
+    read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -701,7 +714,7 @@ def run_test_real(
     ignore_files.update(example_files)
 
     # Remove any ignore files from the solution set that LLM will edit
-    solution_files.discard(ignore_files)
+    solution_files.difference_update(ignore_files)
 
     # Copy all solution files
     for file_path in solution_files:
@@ -724,17 +737,6 @@ def run_test_real(
                 shutil.copy(original_fname, src)
         else:
             print(f"Warning: Solution file not found: {src}")
-
-    # Copy all test files
-    for file_path in test_files:
-        src = testdir / Path(file_path)
-        if src.exists():
-            original_fname = original_dname / testdir.name / file_path
-            if original_fname.exists():
-                os.makedirs(src.parent, exist_ok=True)
-                shutil.copy(original_fname, src)
-        else:
-            print(f"Warning: Test file not found: {src}")
 
     file_list = " ".join(fname.name for fname in fnames)
 
@@ -766,6 +768,8 @@ def run_test_real(
         editor_edit_format=editor_edit_format,
     )
 
+    dump(main_model.max_chat_history_tokens)
+
     if num_ctx:
         if not main_model.extra_params:
             main_model.extra_params = {}
@@ -792,8 +796,8 @@ def run_test_real(
     )
     dump(coder.ignore_mentions)
 
-    coder.max_apply_update_errors = max_apply_update_errors
     coder.show_announcements()
+    coder.get_file_mentions = lambda x: set()  # No loading of any other files
 
     timeouts = 0
 
@@ -805,6 +809,7 @@ def run_test_real(
     test_outcomes = []
     for i in range(tries):
         start = time.time()
+
         if no_aider:
             pass
         elif replay:
@@ -818,6 +823,7 @@ def run_test_real(
             coder.apply_updates()
         else:
             response = coder.run(with_message=instructions, preproc=False)
+
         dur += time.time() - start
 
         if not no_aider:
@@ -861,6 +867,40 @@ def run_test_real(
         instructions = errors
         instructions += prompts.test_failures.format(file_list=file_list)
 
+    # Clean up build directories after all attempts
+    # Rust target/debug
+    target_dir = testdir / "target" / "debug"
+    if target_dir.exists():
+        try:
+            shutil.rmtree(target_dir)
+            if verbose:
+                print(f"Cleaned up Rust target/debug directory: {target_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Rust target/debug directory: {e}")
+
+    # Java build directories
+    java_build_dir = testdir / "build"
+    if java_build_dir.exists():
+        try:
+            shutil.rmtree(java_build_dir)
+            if verbose:
+                print(f"Cleaned up Java build directory: {java_build_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Java build directory: {e}")
+
+    # Node.js node_modules directories
+    node_modules_dir = testdir / "node_modules"
+    if node_modules_dir.exists():
+        try:
+            shutil.rmtree(node_modules_dir)
+            if verbose:
+                print(f"Cleaned up Node.js node_modules directory: {node_modules_dir}")
+        except (OSError, shutil.Error, PermissionError) as e:
+            if verbose:
+                print(f"Failed to clean up Node.js node_modules directory: {e}")
+
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
@@ -899,15 +939,6 @@ def run_test_real(
 def run_unit_tests(original_dname, testdir, history_fname, test_files):
     timeout = 60 * 3
 
-    # Remove @Disabled annotations from Java test files
-    for file_path in test_files:
-        if file_path.endswith(".java"):
-            test_file = testdir / file_path
-            if test_file.exists():
-                content = test_file.read_text()
-                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
-                test_file.write_text(content)
-
     # Map of file extensions to test commands
     TEST_COMMANDS = {
         ".py": ["pytest"],
@@ -933,11 +964,21 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
 
     # Copy test files from original directory
     for file_path in test_files:
-        src = original_dname / testdir.name / file_path
+        src = original_dname / Path(*testdir.parts[-4:]) / file_path
         dst = testdir / file_path
         if src.exists():
+            print("copying", src, dst)
             os.makedirs(dst.parent, exist_ok=True)
             shutil.copy(src, dst)
+
+    # Remove @Disabled annotations from Java test files
+    for file_path in test_files:
+        if file_path.endswith(".java"):
+            test_file = testdir / file_path
+            if test_file.exists():
+                content = test_file.read_text()
+                content = re.sub(r"@Disabled\([^)]*\)\s*\n", "", content)
+                test_file.write_text(content)
 
     print(" ".join(command))
 
@@ -948,6 +989,8 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
         text=True,
         timeout=timeout,
         cwd=testdir,
+        encoding="utf-8",
+        errors="replace",
     )
 
     success = result.returncode == 0

@@ -32,9 +32,8 @@ cog.out(text)
 
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
-Start a new project or work with an existing git repo.
-Aider works best with GPT-4o & Claude 3.5 Sonnet and can 
-[connect to almost any LLM](https://aider.chat/docs/llms.html).
+Start a new project or work with an existing code base.
+Aider works best with Claude 3.5 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o. Aider can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
 
 <!-- 
 <p align="center">
@@ -79,11 +78,20 @@ aider-install
 # Change directory into your code base
 cd /to/your/project
 
-# Work with Claude 3.5 Sonnet on your code
-aider --model sonnet --anthropic-api-key your-key-goes-here
+# Work with DeepSeek via DeepSeek's API
+aider --model deepseek --api-key deepseek=your-key-goes-here
 
-# Work with GPT-4o on your code
-aider --model gpt-4o --openai-api-key your-key-goes-here
+# Work with Claude 3.5 Sonnet via Anthropic's API
+aider --model sonnet --api-key anthropic=your-key-goes-here
+
+# Work with GPT-4o via OpenAI's API
+aider --model gpt-4o --api-key openai=your-key-goes-here
+
+# Work with Sonnet via OpenRouter's API
+aider --model openrouter/anthropic/claude-3.5-sonnet --api-key openrouter=your-key-goes-here
+
+# Work with DeepSeek via OpenRouter's API
+aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
 ```
 <!-- NOOP -->
 
@@ -99,21 +107,22 @@ for more details.
 - Ask for changes:
   - Add new features or test cases.
   - Describe a bug.
-  - Paste in an error message or or GitHub issue URL.
+  - Paste in an error message or GitHub issue URL.
   - Refactor code.
   - Update docs.
 - Aider will edit your files to complete your request.
 - Aider [automatically git commits](https://aider.chat/docs/git.html) changes with a sensible commit message.
+- [Use aider inside your favorite editor or IDE](https://aider.chat/docs/usage/watch.html).
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
-- Aider works best with GPT-4o & Claude 3.5 Sonnet and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 - Aider can edit multiple files at once for complex requests.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.
-- Edit files in your editor while chatting with aider,
+- Edit files in your editor or IDE while chatting with aider,
 and it will always use the latest version.
 Pair program with AI.
 - [Add images to the chat](https://aider.chat/docs/usage/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
 - [Add URLs to the chat](https://aider.chat/docs/usage/images-urls.html) and aider will read their content.
 - [Code with your voice](https://aider.chat/docs/usage/voice.html).
+- Aider works best with Claude 3.5 Sonnet, DeepSeek V3, o1 & GPT-4o and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
 
 ## Top tier performance

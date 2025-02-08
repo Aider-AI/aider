@@ -56,13 +56,6 @@ It is recommended to create a virtual environment outside of the repository to k
 python -m venv /path/to/venv
 ```
 
-#### Using `virtualenv` (for older Python versions)
-
-```
-pip install virtualenv
-virtualenv /path/to/venv
-```
-
 ### Activate the Virtual Environment
 
 #### On Windows

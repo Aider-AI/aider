@@ -141,6 +141,18 @@ When starting a fresh aider session, you can include recent git history in the c
 
 Remember, the chat history already includes recent changes made during the current session, so this tip is most useful when starting a new aider session and you want to provide context about recent work.
 
+You can also use aider to review PR branches:
+
+```
+/run git diff one-branch..another-branch
+
+...
+
+Add 6.9k tokens of command output to the chat? (Y)es/(N)o [Yes]: Yes
+
+/ask Are there any problems with the way this change works with the FooBar class?
+```
+
 {: .tip }
 The `/git` command will not work for this purpose, as its output is not included in the chat. 
 
@@ -237,11 +249,14 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>1,741,135</td><td class='right'>98.9%</td></tr>
-<tr><td>claude-3-5-haiku-20241022</td><td class='right'>14,008</td><td class='right'>0.8%</td></tr>
-<tr><td>gpt-4o</td><td class='right'>4,273</td><td class='right'>0.2%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>1,234</td><td class='right'>0.1%</td></tr>
-<tr><td>openai/gpt-4o-mini</td><td class='right'>141</td><td class='right'>0.0%</td></tr>
+<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>938,569</td><td class='right'>62.9%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-v3</td><td class='right'>273,005</td><td class='right'>18.3%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>97,745</td><td class='right'>6.6%</td></tr>
+<tr><td>o3-mini</td><td class='right'>75,400</td><td class='right'>5.1%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>65,251</td><td class='right'>4.4%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>39,430</td><td class='right'>2.6%</td></tr>
+<tr><td>gemini/REDACTED</td><td class='right'>1,859</td><td class='right'>0.1%</td></tr>
+<tr><td>ollama_chat/REDACTED</td><td class='right'>309</td><td class='right'>0.0%</td></tr>
 </table>
 
 {: .note :}

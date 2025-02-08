@@ -113,7 +113,9 @@ def setup_git(git_root, io):
         except ANY_GIT_ERROR:
             pass
     elif cwd == Path.home():
-        io.tool_warning("You should probably run aider in your project's directory, not your home dir.")
+        io.tool_warning(
+            "You should probably run aider in your project's directory, not your home dir."
+        )
         return
     elif cwd and io.confirm_ask(
         "No git repo found, create one to track aider's changes (recommended)?"
@@ -156,40 +158,39 @@ def check_gitignore(git_root, io, ask=True):
 
     try:
         repo = git.Repo(git_root)
-        if repo.ignored(".aider") and repo.ignored(".env"):
+        patterns_to_add = []
+
+        if not repo.ignored(".aider"):
+            patterns_to_add.append(".aider*")
+
+        env_path = Path(git_root) / ".env"
+        if env_path.exists() and not repo.ignored(".env"):
+            patterns_to_add.append(".env")
+
+        if not patterns_to_add:
             return
-    except ANY_GIT_ERROR:
-        pass
 
-    patterns = [".aider*", ".env"]
-    patterns_to_add = []
-
-    gitignore_file = Path(git_root) / ".gitignore"
-    if gitignore_file.exists():
-        try:
-            content = io.read_text(gitignore_file)
-            if content is None:
+        gitignore_file = Path(git_root) / ".gitignore"
+        if gitignore_file.exists():
+            try:
+                content = io.read_text(gitignore_file)
+                if content is None:
+                    return
+                if not content.endswith("\n"):
+                    content += "\n"
+            except OSError as e:
+                io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
                 return
-            existing_lines = content.splitlines()
-            for pat in patterns:
-                if pat not in existing_lines:
-                    if '*' in pat or (Path(git_root) / pat).exists():
-                        patterns_to_add.append(pat)
-        except OSError as e:
-            io.tool_error(f"Error when trying to read {gitignore_file}: {e}")
+        else:
+            content = ""
+    except ANY_GIT_ERROR:
+        return
+
+    if ask:
+        io.tool_output("You can skip this check with --no-gitignore")
+        if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
             return
-    else:
-        content = ""
-        patterns_to_add = patterns
 
-    if not patterns_to_add:
-        return
-
-    if ask and not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
-        return
-
-    if content and not content.endswith("\n"):
-        content += "\n"
     content += "\n".join(patterns_to_add) + "\n"
 
     try:
@@ -213,6 +214,22 @@ def check_streamlit_install(io):
     )
 
 
+def write_streamlit_credentials():
+    from streamlit.file_util import get_streamlit_file_path
+
+    # See https://github.com/Aider-AI/aider/issues/772
+
+    credential_path = Path(get_streamlit_file_path()) / "credentials.toml"
+    if not os.path.exists(credential_path):
+        empty_creds = '[general]\nemail = ""\n'
+
+        os.makedirs(os.path.dirname(credential_path), exist_ok=True)
+        with open(credential_path, "w") as f:
+            f.write(empty_creds)
+    else:
+        print("Streamlit credentials already exist.")
+
+
 def launch_gui(args):
     from streamlit.web import cli
 
@@ -220,6 +237,9 @@ def launch_gui(args):
 
     print()
     print("CONTROL-C to exit...")
+
+    # Necessary so streamlit does not prompt the user for an email address.
+    write_streamlit_credentials()
 
     target = gui.__file__
 
@@ -358,18 +378,18 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
 
 
 def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
-    model_metatdata_files = []
+    model_metadata_files = []
 
     # Add the resource file path
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
-    model_metatdata_files.append(str(resource_metadata))
+    model_metadata_files.append(str(resource_metadata))
 
-    model_metatdata_files += generate_search_path_list(
+    model_metadata_files += generate_search_path_list(
         ".aider.model.metadata.json", git_root, model_metadata_fname
     )
 
     try:
-        model_metadata_files_loaded = models.register_litellm_models(model_metatdata_files)
+        model_metadata_files_loaded = models.register_litellm_models(model_metadata_files)
         if len(model_metadata_files_loaded) > 0 and verbose:
             io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
@@ -395,8 +415,8 @@ def sanity_check_repo(repo, io):
         error_msg = str(repo.git_repo_error)
     except UnicodeDecodeError as exc:
         error_msg = (
-            f"Failed to read the Git repository. This issue is likely caused by a path encoded "
-            f"in a format different from the expected encoding \"{sys.getfilesystemencoding()}\".\n"
+            "Failed to read the Git repository. This issue is likely caused by a path encoded "
+            f'in a format different from the expected encoding "{sys.getfilesystemencoding()}".\n'
             f"Internal error: {str(exc)}"
         )
     except ANY_GIT_ERROR as exc:
@@ -489,8 +509,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
 
     if args.timeout:
-        litellm._load_litellm()
-        litellm._lazy_module.request_timeout = args.timeout
+        models.request_timeout = args.timeout
 
     if args.dark_mode:
         args.user_input_color = "#32FF32"
@@ -531,6 +550,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             code_theme=args.code_theme,
             dry_run=args.dry_run,
             encoding=args.encoding,
+            line_endings=args.line_endings,
             llm_history_file=args.llm_history_file,
             editingmode=editing_mode,
             fancy_input=args.fancy_input,
@@ -727,9 +747,26 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
     if not args.model:
-        args.model = "gpt-4o-2024-08-06"
-        if os.environ.get("ANTHROPIC_API_KEY"):
-            args.model = "claude-3-5-sonnet-20241022"
+        # Select model based on available API keys
+        model_key_pairs = [
+            ("ANTHROPIC_API_KEY", "sonnet"),
+            ("DEEPSEEK_API_KEY", "deepseek"),
+            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.5-sonnet"),
+            ("OPENAI_API_KEY", "gpt-4o"),
+            ("GEMINI_API_KEY", "flash"),
+        ]
+
+        for env_key, model_name in model_key_pairs:
+            if os.environ.get(env_key):
+                args.model = model_name
+                io.tool_warning(
+                    f"Found {env_key} so using {model_name} since no --model was specified."
+                )
+                break
+        if not args.model:
+            io.tool_error("You need to specify a --model and an --api-key to use.")
+            io.offer_url(urls.models_and_keys, "Open documentation url for more info?")
+            return 1
 
     main_model = models.Model(
         args.model,
@@ -737,6 +774,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_model=args.editor_model,
         editor_edit_format=args.editor_edit_format,
     )
+
+    # add --reasoning-effort cli param
+    if args.reasoning_effort is not None:
+        if not getattr(main_model, "extra_params", None):
+            main_model.extra_params = {}
+        if "extra_body" not in main_model.extra_params:
+            main_model.extra_params["extra_body"] = {}
+        main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
@@ -802,6 +847,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     commands = Commands(
         io,
         None,
+        voice_language=args.voice_language,
+        voice_input_device=args.voice_input_device,
+        voice_format=args.voice_format,
         verify_ssl=args.verify_ssl,
         args=args,
         parser=parser,
@@ -824,6 +872,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
         args.stream = False
 
+    if args.map_tokens is None:
+        map_tokens = main_model.get_repo_map_tokens()
+    else:
+        map_tokens = args.map_tokens
+
     try:
         coder = Coder.create(
             main_model=main_model,
@@ -836,7 +889,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
             dry_run=args.dry_run,
-            map_tokens=args.map_tokens,
+            map_tokens=map_tokens,
             verbose=args.verbose,
             stream=args.stream,
             use_git=args.git,
@@ -937,6 +990,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Failed to read apply content")
             return
         coder.partial_response_content = content
+        # For testing #2879
+        # from aider.coders.base_coder import all_fences
+        # coder.fence = all_fences[1]
         coder.apply_updates()
         analytics.event("exit", reason="Applied updates")
         return
@@ -1004,10 +1060,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     while True:
         try:
+            coder.ok_to_warm_cache = True
             coder.run()
             analytics.event("exit", reason="Completed main CLI coder.run")
             return
         except SwitchCoder as switch:
+            coder.ok_to_warm_cache = False
+
             kwargs = dict(io=io, from_coder=coder)
             kwargs.update(switch.kwargs)
             if "show_announcements" in kwargs:

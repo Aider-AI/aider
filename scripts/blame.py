@@ -32,12 +32,14 @@ def blame(start_tag, end_tag=None):
 
     revision = end_tag if end_tag else "HEAD"
     files = run(["git", "ls-tree", "-r", "--name-only", revision]).strip().split("\n")
+    test_files = [f for f in files if f.startswith("tests/fixtures/languages/") and "/test." in f]
     files = [
         f
         for f in files
         if f.endswith((".js", ".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
         or f in website_files
+        or f in test_files
     ]
     files = [f for f in files if not f.endswith("prompts.py")]
     files = [f for f in files if not f.startswith("tests/fixtures/watch")]

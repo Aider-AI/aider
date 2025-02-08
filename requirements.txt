@@ -4,20 +4,20 @@
 #
 #    pip-compile --allow-unsafe --output-file=requirements.txt requirements/requirements.in
 #
-aiohappyeyeballs==2.4.4
+aiohappyeyeballs==2.4.6
     # via aiohttp
-aiohttp==3.11.10
+aiohttp==3.11.12
     # via litellm
-aiosignal==1.3.1
+aiosignal==1.3.2
     # via aiohttp
 annotated-types==0.7.0
     # via pydantic
-anyio==4.7.0
+anyio==4.8.0
     # via
     #   httpx
     #   openai
     #   watchfiles
-attrs==24.2.0
+attrs==25.1.0
     # via
     #   aiohttp
     #   jsonschema
@@ -26,9 +26,9 @@ backoff==2.2.1
     # via
     #   -r requirements/requirements.in
     #   posthog
-beautifulsoup4==4.12.3
+beautifulsoup4==4.13.3
     # via -r requirements/requirements.in
-certifi==2024.8.30
+certifi==2025.1.31
     # via
     #   httpcore
     #   httpx
@@ -37,9 +37,9 @@ cffi==1.17.1
     # via
     #   sounddevice
     #   soundfile
-charset-normalizer==3.4.0
+charset-normalizer==3.4.1
     # via requests
-click==8.1.7
+click==8.1.8
     # via litellm
 configargparse==1.7
     # via -r requirements/requirements.in
@@ -49,7 +49,7 @@ diskcache==5.6.3
     # via -r requirements/requirements.in
 distro==1.9.0
     # via openai
-filelock==3.16.1
+filelock==3.17.0
     # via huggingface-hub
 flake8==7.1.1
     # via -r requirements/requirements.in
@@ -57,23 +57,23 @@ frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2024.10.0
+fsspec==2025.2.0
     # via huggingface-hub
-gitdb==4.0.11
+gitdb==4.0.12
     # via gitpython
-gitpython==3.1.43
+gitpython==3.1.44
     # via -r requirements/requirements.in
-grep-ast==0.4.1
+grep-ast==0.5.0
     # via -r requirements/requirements.in
 h11==0.14.0
     # via httpcore
 httpcore==1.0.7
     # via httpx
-httpx==0.27.2
+httpx==0.28.1
     # via
     #   litellm
     #   openai
-huggingface-hub==0.26.5
+huggingface-hub==0.28.1
     # via tokenizers
 idna==3.10
     # via
@@ -85,11 +85,11 @@ importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
     #   litellm
-importlib-resources==6.4.5
+importlib-resources==6.5.2
     # via -r requirements/requirements.in
-jinja2==3.1.4
+jinja2==3.1.5
     # via litellm
-jiter==0.8.0
+jiter==0.8.2
     # via openai
 json5==0.10.0
     # via -r requirements/requirements.in
@@ -99,7 +99,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.53.9
+litellm==1.60.6
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -123,7 +123,8 @@ numpy==1.26.4
     # via
     #   -r requirements/requirements.in
     #   scipy
-openai==1.57.0
+    #   soundfile
+openai==1.61.1
     # via litellm
 packaging==24.2
     # via
@@ -137,15 +138,15 @@ pexpect==4.9.0
     # via -r requirements/requirements.in
 pillow==10.4.0
     # via -r requirements/requirements.in
-posthog==3.7.4
+posthog==3.11.0
     # via -r requirements/requirements.in
-prompt-toolkit==3.0.48
+prompt-toolkit==3.0.50
     # via -r requirements/requirements.in
 propcache==0.2.1
     # via
     #   aiohttp
     #   yarl
-psutil==6.1.0
+psutil==6.1.1
     # via -r requirements/requirements.in
 ptyprocess==0.7.0
     # via pexpect
@@ -153,19 +154,19 @@ pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.10.3
+pydantic==2.10.6
     # via
     #   litellm
     #   openai
-pydantic-core==2.27.1
+pydantic-core==2.27.2
     # via pydantic
 pydub==0.25.1
     # via -r requirements/requirements.in
 pyflakes==3.2.0
     # via flake8
-pygments==2.18.0
+pygments==2.19.1
     # via rich
-pypandoc==1.14
+pypandoc==1.15
     # via -r requirements/requirements.in
 pyperclip==1.9.0
     # via -r requirements/requirements.in
@@ -177,7 +178,7 @@ pyyaml==6.0.2
     # via
     #   -r requirements/requirements.in
     #   huggingface-hub
-referencing==0.35.1
+referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
@@ -186,7 +187,6 @@ regex==2024.11.6
 requests==2.32.3
     # via
     #   huggingface-hub
-    #   litellm
     #   mixpanel
     #   posthog
     #   tiktoken
@@ -203,16 +203,15 @@ six==1.17.0
     #   mixpanel
     #   posthog
     #   python-dateutil
-smmap==5.0.1
+smmap==5.0.2
     # via gitdb
 sniffio==1.3.1
     # via
     #   anyio
-    #   httpx
     #   openai
 sounddevice==0.5.1
     # via -r requirements/requirements.in
-soundfile==0.12.1
+soundfile==0.13.1
     # via -r requirements/requirements.in
 soupsieve==2.6
     # via beautifulsoup4
@@ -235,15 +234,17 @@ tree-sitter-languages==1.10.2
 typing-extensions==4.12.2
     # via
     #   anyio
+    #   beautifulsoup4
     #   huggingface-hub
     #   openai
     #   pydantic
     #   pydantic-core
-urllib3==2.2.3
+    #   referencing
+urllib3==2.3.0
     # via
     #   mixpanel
     #   requests
-watchfiles==1.0.0
+watchfiles==1.0.4
     # via -r requirements/requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
@@ -253,5 +254,5 @@ zipp==3.21.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==24.3.1
+pip==25.0
     # via -r requirements/requirements.in

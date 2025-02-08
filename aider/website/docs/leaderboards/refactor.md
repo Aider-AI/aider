@@ -50,3 +50,29 @@ Therefore, results are available for fewer models.
 </script>
 
 
+<p class="post-date">
+By Paul Gauthier,
+last updated
+<!--[[[cog
+import subprocess
+import datetime
+
+files = [
+    'aider/website/docs/leaderboards/refactor.md',
+    'aider/website/_data/refactor_leaderboard.yml',
+]
+
+def get_last_modified_date(file):
+    result = subprocess.run(['git', 'log', '-1', '--format=%ct', file], capture_output=True, text=True)
+    if result.returncode == 0:
+        timestamp = int(result.stdout.strip())
+        return datetime.datetime.fromtimestamp(timestamp)
+    return datetime.datetime.min
+
+mod_dates = [get_last_modified_date(file) for file in files]
+latest_mod_date = max(mod_dates)
+cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
+]]]-->
+January 16, 2025.
+<!--[[[end]]]-->
+</p>

@@ -1,0 +1,138 @@
+
+
+
+- dirname: 2025-01-23-19-14-48--r1-architect-sonnet
+  test_cases: 225
+  model: R1+Sonnet
+  edit_format: architect
+  commit_hash: 05a77c7
+  editor_model: claude-3-5-sonnet-20241022
+  editor_edit_format: editor-diff
+  pass_rate_1: 27.1
+  pass_rate_2: 64.0
+  pass_num_1: 61
+  pass_num_2: 144
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 392
+  lazy_comments: 6
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --architect --model r1 --editor-model sonnet
+  date: 2025-01-23
+  versions: 0.72.3.dev
+  seconds_per_case: 251.6
+  total_cost: 13.2933
+
+- dirname: 2025-01-20-19-11-38--ds-turns-upd-cur-msgs-fix-with-summarizer
+  test_cases: 225
+  model: R1
+  edit_format: diff
+  commit_hash: 5650697-dirty
+  pass_rate_1: 26.7
+  pass_rate_2: 56.9
+  pass_num_1: 60
+  pass_num_2: 128
+  percent_cases_well_formed: 96.9
+  error_outputs: 8
+  num_malformed_responses: 7
+  num_with_malformed_responses: 7
+  user_asks: 15
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model r1
+  date: 2025-01-20
+  versions: 0.71.2.dev
+  seconds_per_case: 113.7
+  total_cost: 5.4193
+
+
+- dirname: 2024-12-21-19-23-03--polyglot-o1-hard-diff
+  test_cases: 224
+  model: o1
+  edit_format: diff
+  commit_hash: a755079-dirty
+  pass_rate_1: 23.7
+  pass_rate_2: 61.7
+  pass_num_1: 53
+  pass_num_2: 139
+  percent_cases_well_formed: 91.5
+  error_outputs: 25
+  num_malformed_responses: 24
+  num_with_malformed_responses: 19
+  user_asks: 16
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model o1
+  date: 2024-12-21
+  versions: 0.69.2.dev
+  seconds_per_case: 133.2
+  total_cost: 186.4958
+
+
+- dirname: 2024-12-25-13-31-51--deepseekv3preview-diff2
+  test_cases: 225
+  model: DeepSeek V3
+  edit_format: diff
+  commit_hash: 0a23c4a-dirty
+  pass_rate_1: 22.7
+  pass_rate_2: 48.4
+  pass_num_1: 51
+  pass_num_2: 109
+  percent_cases_well_formed: 98.7
+  error_outputs: 7
+  num_malformed_responses: 7
+  num_with_malformed_responses: 3
+  user_asks: 19
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 8
+  total_tests: 225
+  command: aider --model deepseek
+  date: 2024-12-25
+  versions: 0.69.2.dev
+  seconds_per_case: 34.8
+  total_cost: 0.3369
+
+
+
+- dirname: 2025-01-17-19-44-33--sonnet-baseline-jan-17
+  test_cases: 225
+  model: Sonnet
+  edit_format: diff
+  commit_hash: 6451d59
+  pass_rate_1: 22.2
+  pass_rate_2: 51.6
+  pass_num_1: 50
+  pass_num_2: 116
+  percent_cases_well_formed: 99.6
+  error_outputs: 2
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 11
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 8
+  total_tests: 225
+  command: aider --model sonnet
+  date: 2025-01-17
+  versions: 0.71.2.dev
+  seconds_per_case: 21.4
+  total_cost: 14.4063

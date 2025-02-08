@@ -30,7 +30,8 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--openai-api-deployment-id] [--openai-organization-id]
              [--set-env] [--api-key] [--list-models]
              [--model-settings-file] [--model-metadata-file]
-             [--alias] [--verify-ssl | --no-verify-ssl] [--timeout]
+             [--alias] [--reasoning-effort]
+             [--verify-ssl | --no-verify-ssl] [--timeout]
              [--edit-format] [--architect] [--weak-model]
              [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
@@ -73,7 +74,7 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--show-prompts] [--voice-format] [--voice-language]
              [--voice-input-device] [--file] [--read] [--vim]
              [--chat-language] [--yes-always] [-v] [--load]
-             [--encoding] [-c] [--env-file]
+             [--encoding] [--line-endings] [-c] [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
@@ -210,6 +211,10 @@ Environment variable: `AIDER_MODEL_METADATA_FILE`
 Add a model alias (can be used multiple times)  
 Environment variable: `AIDER_ALIAS`  
 
+### `--reasoning-effort VALUE`
+Set the reasoning_effort API parameter (default: not set)  
+Environment variable: `AIDER_REASONING_EFFORT`  
+
 ### `--verify-ssl`
 Verify the SSL cert when connecting to models (default: True)  
 Default: True  
@@ -275,7 +280,7 @@ Environment variable: `AIDER_CACHE_KEEPALIVE_PINGS`
 ## Repomap settings:
 
 ### `--map-tokens VALUE`
-Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)  
+Suggested number of tokens to use for repo map, use 0 to disable  
 Environment variable: `AIDER_MAP_TOKENS`  
 
 ### `--map-refresh VALUE`
@@ -704,6 +709,11 @@ Environment variable: `AIDER_LOAD`
 Specify the encoding for input and output (default: utf-8)  
 Default: utf-8  
 Environment variable: `AIDER_ENCODING`  
+
+### `--line-endings VALUE`
+Line endings to use when writing files (default: platform)  
+Default: platform  
+Environment variable: `AIDER_LINE_ENDINGS`  
 
 ### `--config CONFIG_FILE`
 Specify the config file (default: search for .aider.conf.yml in git root, cwd or home directory)  

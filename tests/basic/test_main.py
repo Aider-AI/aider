@@ -522,6 +522,15 @@ class TestMain(TestCase):
             os.unlink(external_file_path)
 
     def test_model_metadata_file(self):
+        # Re-init so we don't have old data lying around from earlier test cases
+        from aider import models
+
+        models.model_info_manager = models.ModelInfoManager()
+
+        from aider.llm import litellm
+
+        litellm._lazy_module = None
+
         with GitTemporaryDirectory():
             metadata_file = Path(".aider.model.metadata.json")
 
@@ -745,6 +754,64 @@ class TestMain(TestCase):
                 args, _ = mock_offer_url.call_args
                 self.assertEqual(args[0], "https://aider.chat/docs/more/edit-formats.html")
 
+    def test_default_model_selection(self):
+        with GitTemporaryDirectory():
+            # Test Anthropic API key
+            os.environ["ANTHROPIC_API_KEY"] = "test-key"
+            coder = main(
+                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+            )
+            self.assertIn("sonnet", coder.main_model.name.lower())
+            del os.environ["ANTHROPIC_API_KEY"]
+
+            # Test DeepSeek API key
+            os.environ["DEEPSEEK_API_KEY"] = "test-key"
+            coder = main(
+                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+            )
+            self.assertIn("deepseek", coder.main_model.name.lower())
+            del os.environ["DEEPSEEK_API_KEY"]
+
+            # Test OpenRouter API key
+            os.environ["OPENROUTER_API_KEY"] = "test-key"
+            coder = main(
+                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+            )
+            self.assertIn("openrouter/anthropic/claude", coder.main_model.name.lower())
+            del os.environ["OPENROUTER_API_KEY"]
+
+            # Test OpenAI API key
+            os.environ["OPENAI_API_KEY"] = "test-key"
+            coder = main(
+                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+            )
+            self.assertIn("gpt-4", coder.main_model.name.lower())
+            del os.environ["OPENAI_API_KEY"]
+
+            # Test Gemini API key
+            os.environ["GEMINI_API_KEY"] = "test-key"
+            coder = main(
+                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+            )
+            self.assertIn("flash", coder.main_model.name.lower())
+            del os.environ["GEMINI_API_KEY"]
+
+            # Test no API keys
+            result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
+            self.assertEqual(result, 1)
+
+    def test_model_precedence(self):
+        with GitTemporaryDirectory():
+            # Test that earlier API keys take precedence
+            os.environ["ANTHROPIC_API_KEY"] = "test-key"
+            os.environ["OPENAI_API_KEY"] = "test-key"
+            coder = main(
+                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+            )
+            self.assertIn("sonnet", coder.main_model.name.lower())
+            del os.environ["ANTHROPIC_API_KEY"]
+            del os.environ["OPENAI_API_KEY"]
+
     def test_chat_language_spanish(self):
         with GitTemporaryDirectory():
             coder = main(
@@ -766,3 +833,14 @@ class TestMain(TestCase):
             self.fail(f"main() raised an unexpected exception: {e}")
 
         self.assertIsNone(result, "main() should return None when called with --exit")
+
+    def test_reasoning_effort_option(self):
+        coder = main(
+            ["--reasoning-effort", "3", "--yes", "--exit"],
+            input=DummyInput(),
+            output=DummyOutput(),
+            return_coder=True,
+        )
+        self.assertEqual(
+            coder.main_model.extra_params.get("extra_body", {}).get("reasoning_effort"), "3"
+        )

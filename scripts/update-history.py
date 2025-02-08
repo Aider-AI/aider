@@ -24,6 +24,7 @@ def run_git_log():
         "git",
         "log",
         "-p",
+        "--pretty=full",
         f"v{base_ver}..HEAD",
         "--",
         "aider/",

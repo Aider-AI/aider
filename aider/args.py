@@ -204,6 +204,11 @@ def get_parser(default_config_files, git_root):
         help="Add a model alias (can be used multiple times)",
     )
     group.add_argument(
+        "--reasoning-effort",
+        type=str,
+        help="Set the reasoning_effort API parameter (default: not set)",
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -211,7 +216,7 @@ def get_parser(default_config_files, git_root):
     )
     group.add_argument(
         "--timeout",
-        type=int,
+        type=float,
         default=None,
         help="Timeout in seconds for API calls (default: None)",
     )
@@ -287,7 +292,7 @@ def get_parser(default_config_files, git_root):
         "--map-tokens",
         type=int,
         default=None,
-        help="Suggested number of tokens to use for repo map, use 0 to disable (default: 1024)",
+        help="Suggested number of tokens to use for repo map, use 0 to disable",
     )
     group.add_argument(
         "--map-refresh",
@@ -765,6 +770,12 @@ def get_parser(default_config_files, git_root):
         "--encoding",
         default="utf-8",
         help="Specify the encoding for input and output (default: utf-8)",
+    )
+    group.add_argument(
+        "--line-endings",
+        choices=["platform", "lf", "crlf"],
+        default="platform",
+        help="Line endings to use when writing files (default: platform)",
     )
     group.add_argument(
         "-c",

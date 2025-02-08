@@ -1,4 +1,5 @@
 import base64
+import functools
 import os
 import signal
 import time
@@ -17,6 +18,7 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
+from prompt_toolkit.output.vt100 import is_dumb_terminal
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
@@ -31,6 +33,23 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+
+def restore_multiline(func):
+    """Decorator to restore multiline mode after function execution"""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        orig_multiline = self.multiline_mode
+        self.multiline_mode = False
+        try:
+            return func(self, *args, **kwargs)
+        except Exception:
+            raise
+        finally:
+            self.multiline_mode = orig_multiline
+
+    return wrapper
 
 
 @dataclass
@@ -197,6 +216,7 @@ class InputOutput:
         completion_menu_current_bg_color=None,
         code_theme="default",
         encoding="utf-8",
+        line_endings="platform",
         dry_run=False,
         llm_history_file=None,
         editingmode=EditingMode.EMACS,
@@ -243,14 +263,29 @@ class InputOutput:
             self.chat_history_file = None
 
         self.encoding = encoding
+        valid_line_endings = {"platform", "lf", "crlf"}
+        if line_endings not in valid_line_endings:
+            raise ValueError(
+                f"Invalid line_endings value: {line_endings}. "
+                f"Must be one of: {', '.join(valid_line_endings)}"
+            )
+        self.newline = (
+            None if line_endings == "platform" else "\n" if line_endings == "lf" else "\r\n"
+        )
         self.dry_run = dry_run
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.prompt_session = None
+        self.is_dumb_terminal = is_dumb_terminal()
+
+        if self.is_dumb_terminal:
+            self.pretty = False
+            fancy_input = False
+
         if fancy_input:
-            # Initialize PromptSession
+            # Initialize PromptSession only if we have a capable terminal
             session_kwargs = {
                 "input": self.input,
                 "output": self.output,
@@ -269,6 +304,8 @@ class InputOutput:
                 self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
         else:
             self.console = Console(force_terminal=False, no_color=True)  # non-pretty
+            if self.is_dumb_terminal:
+                self.tool_output("Detected dumb terminal, disabling fancy input and pretty output.")
 
         self.file_watcher = file_watcher
         self.root = root
@@ -333,10 +370,6 @@ class InputOutput:
         try:
             with open(str(filename), "r", encoding=self.encoding) as f:
                 return f.read()
-        except OSError as err:
-            if not silent:
-                self.tool_error(f"{filename}: unable to read: {err}")
-            return
         except FileNotFoundError:
             if not silent:
                 self.tool_error(f"{filename}: file not found error")
@@ -344,6 +377,10 @@ class InputOutput:
         except IsADirectoryError:
             if not silent:
                 self.tool_error(f"{filename}: is a directory")
+            return
+        except OSError as err:
+            if not silent:
+                self.tool_error(f"{filename}: unable to read: {err}")
             return
         except UnicodeError as e:
             if not silent:
@@ -366,7 +403,7 @@ class InputOutput:
         delay = initial_delay
         for attempt in range(max_retries):
             try:
-                with open(str(filename), "w", encoding=self.encoding) as f:
+                with open(str(filename), "w", encoding=self.encoding, newline=self.newline) as f:
                     f.write(content)
                 return  # Successfully wrote the file
             except PermissionError as err:
@@ -499,6 +536,9 @@ class InputOutput:
                         if self.clipboard_watcher:
                             self.clipboard_watcher.start()
 
+                    def get_continuation(width, line_number, is_soft_wrap):
+                        return ". "
+
                     line = self.prompt_session.prompt(
                         show,
                         default=default,
@@ -508,6 +548,7 @@ class InputOutput:
                         style=style,
                         key_bindings=kb,
                         complete_while_typing=True,
+                        prompt_continuation=get_continuation,
                     )
                 else:
                     line = input(show)
@@ -643,6 +684,7 @@ class InputOutput:
             return True
         return False
 
+    @restore_multiline
     def confirm_ask(
         self,
         question,
@@ -652,9 +694,6 @@ class InputOutput:
         group=None,
         allow_never=False,
     ):
-        # Temporarily disable multiline mode for yes/no prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         question_id = (question, subject)
@@ -667,19 +706,22 @@ class InputOutput:
         if group:
             allow_never = True
 
-        valid_responses = ["yes", "no"]
+        valid_responses = ["yes", "no", "skip", "all"]
         options = " (Y)es/(N)o"
         if group:
             if not explicit_yes_required:
                 options += "/(A)ll"
-                valid_responses.append("all")
             options += "/(S)kip all"
-            valid_responses.append("skip")
         if allow_never:
             options += "/(D)on't ask again"
             valid_responses.append("don't")
 
-        question += options + " [Yes]: "
+        if default.lower().startswith("y"):
+            question += options + " [Yes]: "
+        elif default.lower().startswith("n"):
+            question += options + " [No]: "
+        else:
+            question += options + f" [{default}]: "
 
         if subject:
             self.tool_output()
@@ -718,7 +760,7 @@ class InputOutput:
                     res = input(question)
 
                 if not res:
-                    res = "y"  # Default to Yes if no input
+                    res = default
                     break
                 res = res.lower()
                 good = any(valid_response.startswith(res) for valid_response in valid_responses)
@@ -753,15 +795,10 @@ class InputOutput:
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
-
         return is_yes
 
+    @restore_multiline
     def prompt_ask(self, question, default="", subject=None):
-        # Temporarily disable multiline mode for prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         if subject:
@@ -790,9 +827,6 @@ class InputOutput:
         if self.yes in (True, False):
             self.tool_output(hist)
 
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
-
         return res
 
     def _tool_message(self, message="", strip=True, color=None):
@@ -804,9 +838,17 @@ class InputOutput:
                 hist = message.strip() if strip else message
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        message = Text(message)
+        if not isinstance(message, Text):
+            message = Text(message)
         style = dict(style=color) if self.pretty and color else dict()
-        self.console.print(message, **style)
+        try:
+            self.console.print(message, **style)
+        except UnicodeEncodeError:
+            # Fallback to ASCII-safe output
+            if isinstance(message, Text):
+                message = message.plain
+            message = str(message).encode("ascii", errors="replace").decode("ascii")
+            self.console.print(message, **style)
 
     def tool_error(self, message="", strip=True):
         self.num_error_outputs += 1
