@@ -1060,10 +1060,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     while True:
         try:
+            coder.ok_to_warm_cache = True
             coder.run()
             analytics.event("exit", reason="Completed main CLI coder.run")
             return
         except SwitchCoder as switch:
+            coder.ok_to_warm_cache = False
+
             kwargs = dict(io=io, from_coder=coder)
             kwargs.update(switch.kwargs)
             if "show_announcements" in kwargs:
