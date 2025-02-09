@@ -1060,7 +1060,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     while True:
         try:
-            coder.ok_to_warm_cache = True
+            coder.ok_to_warm_cache = bool(args.cache_keepalive_pings)
             coder.run()
             analytics.event("exit", reason="Completed main CLI coder.run")
             return
