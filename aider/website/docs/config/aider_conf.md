@@ -167,6 +167,9 @@ cog.outl("```")
 #  - yyy
 #  - zzz
 
+## Set the reasoning_effort API parameter (default: not set)
+#reasoning-effort: xxx
+
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true
 

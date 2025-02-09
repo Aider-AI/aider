@@ -1,4 +1,5 @@
 import base64
+import functools
 import os
 import signal
 import time
@@ -32,6 +33,23 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+
+def restore_multiline(func):
+    """Decorator to restore multiline mode after function execution"""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        orig_multiline = self.multiline_mode
+        self.multiline_mode = False
+        try:
+            return func(self, *args, **kwargs)
+        except Exception:
+            raise
+        finally:
+            self.multiline_mode = orig_multiline
+
+    return wrapper
 
 
 @dataclass
@@ -518,6 +536,9 @@ class InputOutput:
                         if self.clipboard_watcher:
                             self.clipboard_watcher.start()
 
+                    def get_continuation(width, line_number, is_soft_wrap):
+                        return ". "
+
                     line = self.prompt_session.prompt(
                         show,
                         default=default,
@@ -527,6 +548,7 @@ class InputOutput:
                         style=style,
                         key_bindings=kb,
                         complete_while_typing=True,
+                        prompt_continuation=get_continuation,
                     )
                 else:
                     line = input(show)
@@ -662,6 +684,7 @@ class InputOutput:
             return True
         return False
 
+    @restore_multiline
     def confirm_ask(
         self,
         question,
@@ -671,9 +694,6 @@ class InputOutput:
         group=None,
         allow_never=False,
     ):
-        # Temporarily disable multiline mode for yes/no prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         question_id = (question, subject)
@@ -686,19 +706,22 @@ class InputOutput:
         if group:
             allow_never = True
 
-        valid_responses = ["yes", "no"]
+        valid_responses = ["yes", "no", "skip", "all"]
         options = " (Y)es/(N)o"
         if group:
             if not explicit_yes_required:
                 options += "/(A)ll"
-                valid_responses.append("all")
             options += "/(S)kip all"
-            valid_responses.append("skip")
         if allow_never:
             options += "/(D)on't ask again"
             valid_responses.append("don't")
 
-        question += options + " [Yes]: "
+        if default.lower().startswith("y"):
+            question += options + " [Yes]: "
+        elif default.lower().startswith("n"):
+            question += options + " [No]: "
+        else:
+            question += options + f" [{default}]: "
 
         if subject:
             self.tool_output()
@@ -737,7 +760,7 @@ class InputOutput:
                     res = input(question)
 
                 if not res:
-                    res = "y"  # Default to Yes if no input
+                    res = default
                     break
                 res = res.lower()
                 good = any(valid_response.startswith(res) for valid_response in valid_responses)
@@ -772,15 +795,10 @@ class InputOutput:
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
-
         return is_yes
 
+    @restore_multiline
     def prompt_ask(self, question, default="", subject=None):
-        # Temporarily disable multiline mode for prompts
-        orig_multiline = self.multiline_mode
-        self.multiline_mode = False
         self.num_user_asks += 1
 
         if subject:
@@ -808,9 +826,6 @@ class InputOutput:
         self.append_chat_history(hist, linebreak=True, blockquote=True)
         if self.yes in (True, False):
             self.tool_output(hist)
-
-        # Restore original multiline mode
-        self.multiline_mode = orig_multiline
 
         return res
 

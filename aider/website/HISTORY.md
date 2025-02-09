@@ -23,12 +23,53 @@ cog.out(text)
 ]]]-->
 
 
-### v0.72.1
+### Aider v0.74.1
 
+- Have o1 & o3-mini generate markdown by sending the magic "Formatting re-enabled." string.
+- Bugfix for multi-line inputs, which should not include the ". " continuation prompt.
+
+### Aider v0.74.0
+
+- Dynamically changes the Ollama context window to hold the current chat.
+- Better support for o3-mini, DeepSeek V3 & R1, o1-mini, o1 especially via third-party API providers.
+- Remove `<think>` tags from R1 responses for commit messages (and other weak model uses).
+- Can now specify `use_temperature: <float>` in model settings, not just true/false.
+- The full docker container now includes `boto3` for Bedrock.
+- Docker containers now set `HOME=/app` which is the normal project mount-point, to persist `~/.aider`.
+- Bugfix to prevent creating incorrect filenames like `python`, `php`, etc.
+- Bugfix for `--timeout`
+- Bugfix so that `/model` now correctly reports that the weak model is not changed.
+- Bugfix so that multi-line mode persists through ^C at confirmation prompts.
+- Watch files now fully ignores top-level directories named in ignore files, to reduce the chance of hitting OS watch limits. Helpful to ignore giant subtrees like `node_modules`.
+- Fast startup with more providers and when model metadata provided in local files.
+- Improved .gitignore handling:
+  - Honor ignores already in effect regardless of how they've been configured.
+  - Check for .env only when the file exists.
+- Yes/No prompts now accept All/Skip as alias for Y/N even when not processing a group of confirmations.
+- Aider wrote 77% of the code in this release.
+
+### Aider v0.73.0
+
+- Full support for o3-mini: `aider --model o3-mini`
+- New `--reasoning-effort` argument: low, medium, high.
+- Improved handling of context window size limits, with better messaging and Ollama-specific guidance.
+- Added support for removing model-specific reasoning tags from responses with `remove_reasoning: tagname` model setting.
+- Auto-create parent directories when creating new files, by xqyz.
+- Support for R1 free on OpenRouter: `--model openrouter/deepseek/deepseek-r1:free`
+- Aider wrote 69% of the code in this release.
+
+### Aider v0.72.3
+
+- Enforce user/assistant turn order to avoid R1 errors, by miradnanali.
+- Case-insensitive model name matching while preserving original case.
+
+### Aider v0.72.2
+- Harden against user/assistant turn order problems which cause R1 errors.
+
+### Aider v0.72.1
 - Fix model metadata for `openrouter/deepseek/deepseek-r1`
 
-### v0.72.0
-
+### Aider v0.72.0
 - Support for DeepSeek R1.
   - Use shortcut: `--model r1`
   - Also via OpenRouter: `--model openrouter/deepseek/deepseek-r1`
@@ -37,8 +78,6 @@ cog.out(text)
 - Added examples_as_sys_msg=True for GPT-4o models, improves benchmark scores.
 - Bumped all dependencies, to pick up litellm support for o1 system messages.
 - Bugfix for turn taking when reflecting lint/test errors.
-- Improved message validation with better error reporting for malformed chat turns.
-- Disabled summarization by default to improve chat stability.
 - Aider wrote 52% of the code in this release.
 
 ### Aider v0.71.1

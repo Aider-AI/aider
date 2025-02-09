@@ -20,10 +20,16 @@ ENV PLAYWRIGHT_SKIP_BROWSER_GC=1
 
 # Create directories with proper permissions
 RUN mkdir -p /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers && \
-    chown -R appuser:appuser /home/appuser /app /venv
+    chown -R appuser:appuser /home/appuser /app /venv && \
+    chmod -R 777 /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers
 
 # So git doesn't complain about unusual permissions
 RUN git config --system --add safe.directory /app
+
+# This puts the container's ~/.aider into the host's project directory (usually host's cwd).
+# That way caches, version checks, etc get stored in the host filesystem not
+# simply discarded every time the container exits.
+ENV HOME=/app
 
 #########################
 FROM base AS aider-full
@@ -34,7 +40,7 @@ COPY . /tmp/aider
 
 # Install dependencies as root
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[help,browser,playwright] \
+    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[help,browser,playwright] boto3 \
        --extra-index-url https://download.pytorch.org/whl/cpu && \
     rm -rf /tmp/aider
 
@@ -58,7 +64,7 @@ COPY . /tmp/aider
 
 # Install dependencies as root
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[playwright] \
+    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[playwright] boto3 \
        --extra-index-url https://download.pytorch.org/whl/cpu && \
     rm -rf /tmp/aider
 

@@ -13,7 +13,7 @@ Model aliases allow you to create shorthand names for models you frequently use.
 You can define aliases when launching aider using the `--alias` option:
 
 ```bash
-aider --alias "fast:gpt-3.5-turbo" --alias "smart:gpt-4"
+aider --alias "fast:gpt-4o-mini" --alias "smart:o3-mini"
 ```
 
 Multiple aliases can be defined by using the `--alias` option multiple times. Each alias definition should be in the format `alias:model-name`.
@@ -24,8 +24,8 @@ You can also define aliases in your [`.aider.conf.yml` file](https://aider.chat/
 
 ```yaml
 alias:
-  - "fast:gpt-3.5-turbo"
-  - "smart:gpt-4"
+  - "fast:gpt-4o-mini"
+  - "smart:o3-mini"
   - "hacker:claude-3-sonnet-20240229"
 ```
 
@@ -34,8 +34,8 @@ alias:
 Once defined, you can use the alias instead of the full model name:
 
 ```bash
-aider --model fast  # Uses gpt-3.5-turbo
-aider --model smart  # Uses gpt-4
+aider --model fast  # Uses gpt-4o-mini
+aider --model smart  # Uses o3-mini
 ```
 
 ## Built-in Aliases
