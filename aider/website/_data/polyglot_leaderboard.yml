@@ -544,3 +544,29 @@
   versions: 0.72.2.dev
   seconds_per_case: 24.2
   total_cost: 0.0000
+
+- dirname: 2025-02-08-13-30-19--r1-distill-70b
+  test_cases: 225
+  model: DeepSeek-R1-70b
+  edit_format: diff
+  commit_hash: f7dd0fc-dirty
+  pass_rate_1: 2.2
+  pass_rate_2: 6.2
+  pass_num_1: 5
+  pass_num_2: 14
+  percent_cases_well_formed: 83.6
+  error_outputs: 79
+  num_malformed_responses: 78
+  num_with_malformed_responses: 37
+  user_asks: 48
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openrouter/deepseek/deepseek-r1-distill-llama-70b
+  date: 2025-02-08
+  versions: 0.74.2.dev
+  seconds_per_case: 141.9
+  total_cost: 1.3291
