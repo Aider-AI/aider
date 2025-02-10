@@ -620,7 +620,7 @@ class MixtureOfArchitectsCoder(Coder):
 
         # Create compiler coder instance
         compiler_coder = CompilerCoder(
-            main_model=self.main_model,
+            main_model=self.main_model.editor_model or self.main_model,
             io=self.io,
             fnames=list(self.abs_fnames),
             read_only_fnames=list(self.abs_read_only_fnames),
