@@ -25,16 +25,18 @@ from aider.utils import Spinner
 warnings.simplefilter("ignore", category=FutureWarning)
 from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
-dump(USING_TSL_PACK)
-
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
+CACHE_VERSION = 3
+if USING_TSL_PACK:
+    CACHE_VERSION = 4
+
+
 class RepoMap:
-    CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     warned_files = set()

@@ -219,7 +219,10 @@ def install_tree_sitter_language_pack(io):
         io,
         "tree_sitter_language_pack",
         "Install tree_sitter_language_pack?",
-        ["tree-sitter-language-pack", "tree-sitter"],
+        [
+            "tree-sitter-language-pack==0.4.0",
+            "tree-sitter==0.24.0",
+        ],
     )
 
 

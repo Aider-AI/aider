@@ -1,83 +1,3 @@
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789048}
-{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789048}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789051}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789055}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789055}
-{"event": "exit", "properties": {"reason": "Showed prompts"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789058}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789075}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789075}
-{"event": "exit", "properties": {"reason": "Showed prompts"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789078}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789101}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789102}
-{"event": "cli session", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789102}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789114}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789116}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789117}
-{"event": "cli session", "properties": {"main_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789117}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789124}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789142}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789220}
-{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789221}
-{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789221}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789224}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789224}
-{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789224}
-{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789232}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789243}
-{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 22069, "completion_tokens": 225, "total_tokens": 22294, "cost": 0.069582, "total_cost": 0.069582}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738789255}
-{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738791922}
-{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738791927}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792251}
-{"event": "exit", "properties": {"reason": "Listed models"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792253}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792268}
-{"event": "model warning", "properties": {"main_model": "gemini/REDACTED", "weak_model": "gemini/REDACTED", "editor_model": "gemini/REDACTED"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792269}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792272}
-{"event": "cli session", "properties": {"main_model": "gemini/REDACTED", "weak_model": "gemini/REDACTED", "editor_model": "gemini/REDACTED", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792272}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792273}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792277}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738792277}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797794}
-{"event": "model warning", "properties": {"main_model": "vertex_ai/REDACTED", "weak_model": "vertex_ai/REDACTED", "editor_model": "vertex_ai/REDACTED"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797796}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797798}
-{"event": "cli session", "properties": {"main_model": "vertex_ai/REDACTED", "weak_model": "vertex_ai/REDACTED", "editor_model": "vertex_ai/REDACTED", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797798}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797799}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797810}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797810}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797841}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797841}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797844}
-{"event": "model warning", "properties": {"main_model": "vertex_ai/REDACTED", "weak_model": "vertex_ai/REDACTED", "editor_model": "vertex_ai/REDACTED"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797846}
-{"event": "exit", "properties": {"reason": "Keyboard interrupt during model warnings"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797848}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797851}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797853}
-{"event": "cli session", "properties": {"main_model": "vertex_ai/REDACTED", "weak_model": "vertex_ai/REDACTED", "editor_model": "vertex_ai/REDACTED", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797853}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797854}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797864}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797864}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797870}
-{"event": "exit", "properties": {"reason": "Listed models"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797872}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797886}
-{"event": "exit", "properties": {"reason": "Listed models"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797888}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797894}
-{"event": "exit", "properties": {"reason": "Listed models"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797895}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797912}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797913}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738797913}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738798659}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738798661}
-{"event": "cli session", "properties": {"main_model": "gemini/REDACTED", "weak_model": "gemini/REDACTED", "editor_model": "gemini/REDACTED", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738798661}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738798663}
-{"event": "message_send", "properties": {"main_model": "gemini/REDACTED", "weak_model": "gemini/REDACTED", "editor_model": "gemini/REDACTED", "edit_format": "whole", "prompt_tokens": 1844, "completion_tokens": 15, "total_tokens": 1859, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738798664}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738798686}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738798686}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738799240}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738799240}
-{"event": "exit", "properties": {"reason": "Showed prompts"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738799243}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738799276}
-{"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738799276}
-{"event": "exit", "properties": {"reason": "Showed prompts"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738799279}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738857004}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738857006}
 {"event": "repo", "properties": {"num_files": 435}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738857009}
 {"event": "cli session", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738857009}
 {"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1738857012}
@@ -998,3 +918,83 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739143484}
 {"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 7990, "completion_tokens": 177, "total_tokens": 8167, "cost": 0.026625000000000003, "total_cost": 0.026625000000000003}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739143492}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739143492}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739143648}
+{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739143648}
+{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739143648}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150197}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150219}
+{"event": "exit", "properties": {"reason": "Install TSLP completed"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150231}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150237}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150238}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150238}
+{"event": "command_map", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150243}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150252}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150256}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150258}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150316}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150316}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150316}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150318}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150322}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150322}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150333}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150334}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150340}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150352}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150352}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739150359}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216211}
+{"event": "repo", "properties": {"num_files": 437}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216212}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216212}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216233}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff", "prompt_tokens": 11003, "completion_tokens": 765, "total_tokens": 11768, "cost": 0.044484, "total_cost": 0.044484}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216248}
+{"event": "command_diff", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216258}
+{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216362}
+{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216362}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216747}
+{"event": "repo", "properties": {"num_files": 437}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216747}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216747}
+{"event": "command_editor", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216752}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216773}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216773}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "ask", "prompt_tokens": 13452, "completion_tokens": 217, "total_tokens": 13669, "cost": 0.043611000000000004, "total_cost": 0.043611000000000004}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216781}
+{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216875}
+{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739216875}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224786}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224786}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224786}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224789}
+{"event": "command_map", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224794}
+{"event": "command_editor", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224849}
+{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224980}
+{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739224980}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225123}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225123}
+{"event": "cli session", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225123}
+{"event": "command_read-only", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225148}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225187}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225187}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "ask", "prompt_tokens": 6627, "completion_tokens": 213, "total_tokens": 6840, "cost": 0.023076, "total_cost": 0.023076}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225194}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225195}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "ask", "prompt_tokens": 7291, "completion_tokens": 130, "total_tokens": 7421, "cost": 0.023823, "total_cost": 0.046898999999999996}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225199}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225211}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225224}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "ask", "prompt_tokens": 7450, "completion_tokens": 195, "total_tokens": 7645, "cost": 0.025275000000000002, "total_cost": 0.072174}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225230}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225253}
+{"event": "message_send", "properties": {"main_model": "claude-3-5-sonnet-20241022", "weak_model": "claude-3-5-haiku-20241022", "editor_model": "claude-3-5-sonnet-20241022", "edit_format": "ask", "prompt_tokens": 7662, "completion_tokens": 179, "total_tokens": 7841, "cost": 0.025671, "total_cost": 0.097845}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225258}
+{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225261}
+{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225261}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225711}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225711}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739225716}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226193}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226194}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226216}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226226}
+{"event": "exit", "properties": {"reason": "Install TSLP completed"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226233}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226242}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226242}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226250}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226316}
+{"event": "repo", "properties": {"num_files": 438}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226316}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1739226319}
