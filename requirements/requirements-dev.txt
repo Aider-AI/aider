@@ -53,7 +53,7 @@ filelock==3.17.0
     #   virtualenv
 fonttools==4.56.0
     # via matplotlib
-identify==2.6.6
+identify==2.6.7
     # via pre-commit
 idna==3.10
     # via
@@ -218,13 +218,13 @@ urllib3==2.3.0
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   requests
-virtualenv==20.29.1
+virtualenv==20.29.2
     # via pre-commit
 wheel==0.45.1
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==25.0
+pip==25.0.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
