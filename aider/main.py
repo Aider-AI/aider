@@ -214,6 +214,15 @@ def check_streamlit_install(io):
     )
 
 
+def install_tree_sitter_language_pack(io):
+    return utils.check_pip_install_extra(
+        io,
+        "tree_sitter_language_pack",
+        "Install tree_sitter_language_pack?",
+        ["tree-sitter-language-pack", "tree-sitter"],
+    )
+
+
 def write_streamlit_credentials():
     from streamlit.file_util import get_streamlit_file_path
 
@@ -704,6 +713,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.upgrade:
         success = install_upgrade(io)
         analytics.event("exit", reason="Upgrade completed")
+        return 0 if success else 1
+
+    if args.install_tree_sitter_language_pack:
+        success = install_tree_sitter_language_pack(io)
+        analytics.event("exit", reason="Install TSLP completed")
         return 0 if success else 1
 
     if args.check_update:
