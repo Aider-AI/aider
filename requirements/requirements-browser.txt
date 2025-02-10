@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.25.2
+narwhals==1.26.0
     # via altair
 numpy==1.26.4
     # via

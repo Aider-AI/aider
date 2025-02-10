@@ -99,7 +99,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.60.6
+litellm==1.60.8
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -254,5 +254,5 @@ zipp==3.21.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==25.0
+pip==25.0.1
     # via -r requirements/requirements.in
