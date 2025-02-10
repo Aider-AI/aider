@@ -44,7 +44,7 @@ class Linter:
             return fname
 
     def run_cmd(self, cmd, rel_fname, code):
-        cmd += " " + rel_fname
+        cmd += " \"" + rel_fname + "\""
 
         returncode = 0
         stdout = ""
