@@ -174,7 +174,8 @@ def find_unlabeled_with_paul_comments(issues):
 def handle_unlabeled_issues(all_issues, auto_yes):
     print("\nFinding unlabeled issues with paul-gauthier comments...")
     unlabeled_issues = [
-        issue for issue in find_unlabeled_with_paul_comments(all_issues)
+        issue
+        for issue in find_unlabeled_with_paul_comments(all_issues)
         if "priority" not in [label["name"] for label in issue["labels"]]
     ]
 
