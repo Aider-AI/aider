@@ -7,8 +7,10 @@ description: How to configure reasoning model settings from secondary providers.
 # Reasoning models
 
 Many 
-"reasoning" models have restrictions on how they can be used.
-They sometimes prohibit streaming, use of temperature and/or the system prompt.
+"reasoning" models have restrictions on how they can be used:
+they sometimes prohibit streaming, use of temperature and/or the system prompt.
+Some also support different levels of "reasoning effort".
+
 Aider is configured to work properly with these models
 when served through major provider APIs.
 
@@ -18,6 +20,11 @@ and see errors related to temperature or system prompt.
 
 Include settings for your new provider in `.aider.model.setting.yml` file
 at the root of your project or in your home directory.
+
+## Reasoning effort
+
+You can use the `--reasoning-effort` switch to control the reasoning effort
+of models which support this setting.
 
 ## Temperature, streaming and system prompt
 

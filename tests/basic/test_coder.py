@@ -905,6 +905,25 @@ This command will print 'Hello, World!' to the console."""
         self.assertIsInstance(exc.valid_formats, list)
         self.assertTrue(len(exc.valid_formats) > 0)
 
+    def test_system_prompt_prefix(self):
+        # Test that system_prompt_prefix is properly set and used
+        io = InputOutput(yes=True)
+        test_prefix = "Test prefix. "
+
+        # Create a model with system_prompt_prefix
+        model = Model("gpt-3.5-turbo")
+        model.system_prompt_prefix = test_prefix
+
+        coder = Coder.create(model, None, io=io)
+
+        # Get the formatted messages
+        chunks = coder.format_messages()
+        messages = chunks.all_messages()
+
+        # Check if the system message contains our prefix
+        system_message = next(msg for msg in messages if msg["role"] == "system")
+        self.assertTrue(system_message["content"].startswith(test_prefix))
+
     def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)

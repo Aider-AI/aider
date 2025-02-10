@@ -73,7 +73,8 @@ cog.out(get_supported_languages_md())
 | gomod                | .gomod               |          |   ✓    |
 | hack                 | .hack                |          |   ✓    |
 | haskell              | .hs                  |          |   ✓    |
-| hcl                  | .hcl                 |          |   ✓    |
+| hcl                  | .hcl                 |    ✓     |   ✓    |
+| hcl                  | .tf                  |    ✓     |   ✓    |
 | html                 | .html                |          |   ✓    |
 | java                 | .java                |    ✓     |   ✓    |
 | javascript           | .js                  |    ✓     |   ✓    |

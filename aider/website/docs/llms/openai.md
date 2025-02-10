@@ -37,12 +37,14 @@ You can use `aider --model <model-name>` to use any other OpenAI model.
 For example, if you want to use a specific version of GPT-4 Turbo
 you could do `aider --model gpt-4-0125-preview`.
 
-## o1 models from other providers
+## Reasoning models from other providers
 
-Many of OpenAI's o1 
+Many of OpenAI's 
 "reasoning" models have restrictions on streaming and setting the temperature parameter.
+Some also support different levels of "reasoning effort".
 Aider is configured to work properly with these models
-when served through major provider APIs.
+when served through major provider APIs and
+has a `--reasoning-effort` setting.
 
 You may need to [configure reasoning model settings](/docs/config/reasoning.html)
 if you are using them through another provider

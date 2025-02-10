@@ -23,6 +23,17 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.74.2
+
+- Prevent more than one cache warming thread from becoming active.
+- Fixed continuation prompt ". " for multiline input.
+- Added HCL (Terraform) syntax support, by Warren Krewenki.
+
+### Aider v0.74.1
+
+- Have o1 & o3-mini generate markdown by sending the magic "Formatting re-enabled." string.
+- Bugfix for multi-line inputs, which should not include the ". " continuation prompt.
+
 ### Aider v0.74.0
 
 - Dynamically changes the Ollama context window to hold the current chat.

@@ -168,6 +168,7 @@ class Coder:
             use_kwargs.update(kwargs)  # override passed kwargs
 
             kwargs = use_kwargs
+            from_coder.ok_to_warm_cache = False
 
         # Check for mixture of architects case first
         if "architect_models" in kwargs:
@@ -278,6 +279,8 @@ class Coder:
             lines.append("Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
 
         return lines
+
+    ok_to_warm_cache = False
 
     def __init__(
         self,
@@ -1215,8 +1218,11 @@ class Coder:
             return
         if not self.num_cache_warming_pings:
             return
+        if not self.ok_to_warm_cache:
+            return
 
         delay = 5 * 60 - 5
+        delay = float(os.environ.get("AIDER_CACHE_KEEPALIVE_DELAY", delay))
         self.next_cache_warm = time.time() + delay
         self.warming_pings_left = self.num_cache_warming_pings
         self.cache_warming_chunks = chunks
@@ -1225,7 +1231,7 @@ class Coder:
             return
 
         def warm_cache_worker():
-            while True:
+            while self.ok_to_warm_cache:
                 time.sleep(1)
                 if self.warming_pings_left <= 0:
                     continue
@@ -1549,6 +1555,10 @@ class Coder:
             self.io.tool_warning(res)
 
         return res
+
+    def __del__(self):
+        """Cleanup when the Coder object is destroyed."""
+        self.ok_to_warm_cache = False
 
     def add_assistant_reply_to_cur_messages(self):
         if self.partial_response_content:

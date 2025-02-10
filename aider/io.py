@@ -530,7 +530,7 @@ class InputOutput:
             "Handle Enter key press"
             if self.multiline_mode:
                 # In multiline mode, Enter adds a newline
-                event.current_buffer.insert_text("\n. ")
+                event.current_buffer.insert_text("\n")
             else:
                 # In normal mode, Enter submits
                 event.current_buffer.validate_and_handle()
@@ -545,7 +545,7 @@ class InputOutput:
                 event.current_buffer.validate_and_handle()
             else:
                 # In normal mode, Alt+Enter adds a newline
-                event.current_buffer.insert_text("\n. ")
+                event.current_buffer.insert_text("\n")
 
         while True:
             if multiline_input:
@@ -564,6 +564,9 @@ class InputOutput:
                         if self.clipboard_watcher:
                             self.clipboard_watcher.start()
 
+                    def get_continuation(width, line_number, is_soft_wrap):
+                        return ". "
+
                     line = self.prompt_session.prompt(
                         show,
                         default=default,
@@ -573,6 +576,7 @@ class InputOutput:
                         style=style,
                         key_bindings=kb,
                         complete_while_typing=True,
+                        prompt_continuation=get_continuation,
                     )
                 else:
                     line = input(show)
