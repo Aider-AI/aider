@@ -925,7 +925,8 @@ class Commands:
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
+            self.io.tool_output(f"Output contains {k_tokens:.1f}k tokens")
+            add = self.io.confirm_ask("Add command output to the chat?")
 
         if add:
             num_lines = len(combined_output.strip().splitlines())

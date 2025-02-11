@@ -713,7 +713,9 @@ class InputOutput:
 
         style = self._get_style()
 
-        if self.yes is True:
+        if isinstance(self.yes, dict):
+            res = self.yes.get(question, "n" if explicit_yes_required else default)
+        elif self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
             res = "n"

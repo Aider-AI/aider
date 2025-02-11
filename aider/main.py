@@ -187,7 +187,9 @@ def check_gitignore(git_root, io, ask=True):
     if not patterns_to_add:
         return
 
-    if ask and not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
+    if ask and not io.confirm_ask(
+        "Add patterns to .gitignore (recommended)?", subject=", ".join(patterns_to_add)
+    ):
         return
 
     if content and not content.endswith("\n"):
