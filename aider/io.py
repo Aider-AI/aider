@@ -763,7 +763,6 @@ class InputOutput:
             res = (
                 "y" if self.yes[question] else "n"
             )  # Use a defaultdict to set a default value, otherwise raise KeyError
-            res = "n" if explicit_yes_required else res
         elif self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
