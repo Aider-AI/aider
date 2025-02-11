@@ -24,7 +24,7 @@ from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.exceptions import LiteLLMExceptions
 from aider.history import ChatSummary
-from aider.io import ConfirmGroup, InputOutput
+from aider.io import ConfirmGroup, InputOutput, Questions
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.models import RETRY_TIMEOUT
@@ -917,7 +917,7 @@ class Coder:
             if url not in self.rejected_urls:
                 url = url.rstrip(".',\"")
                 if self.io.confirm_ask(
-                    "Add URL to the chat?", subject=url, group=group, allow_never=True
+                    Questions.ADD_URL, subject=url, group=group, allow_never=True
                 ):
                     inp += "\n\n"
                     inp += self.commands.cmd_web(url, return_content=True)
@@ -1273,7 +1273,7 @@ class Coder:
                 " the context limit is exceeded."
             )
 
-            if not self.io.confirm_ask("Try to proceed anyway?"):
+            if not self.io.confirm_ask(Questions.TRY_PROCEED):
                 return False
         return True
 
@@ -1447,7 +1447,7 @@ class Coder:
             self.auto_commit(edited, context="Ran the linter")
             self.lint_outcome = not lint_errors
             if lint_errors:
-                ok = self.io.confirm_ask("Attempt to fix lint errors?")
+                ok = self.io.confirm_ask(Questions.FIX_LINT)
                 if ok:
                     self.reflected_message = lint_errors
                     return
@@ -1463,7 +1463,7 @@ class Coder:
             test_errors = self.commands.cmd_test(self.test_cmd)
             self.test_outcome = not test_errors
             if test_errors:
-                ok = self.io.confirm_ask("Attempt to fix test errors?")
+                ok = self.io.confirm_ask(Questions.FIX_TEST)
                 if ok:
                     self.reflected_message = test_errors
                     return
@@ -1612,7 +1612,7 @@ class Coder:
         group = ConfirmGroup(new_mentions)
         for rel_fname in sorted(new_mentions):
             if self.io.confirm_ask(
-                "Add file to the chat?", subject=rel_fname, group=group, allow_never=True
+                Questions.ADD_FILES, subject=rel_fname, group=group, allow_never=True
             ):
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
@@ -1966,7 +1966,7 @@ class Coder:
             return
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask("Create new file?", subject=path):
+            if not self.io.confirm_ask(Questions.CREATE_FILE, subject=path):
                 self.io.tool_output(f"Skipping edits to {path}")
                 return
 
@@ -1986,7 +1986,7 @@ class Coder:
             return True
 
         if not self.io.confirm_ask(
-            "Allow edits to file that has not been added to the chat?",
+            Questions.ALLOW_EDITS,
             subject=path,
         ):
             self.io.tool_output(f"Skipping edits to {path}")
@@ -2211,9 +2211,8 @@ class Coder:
 
     def handle_shell_commands(self, commands_str, group):
         commands = commands_str.strip().splitlines()
-        prompt = "Run shell command(s)?"
         if not self.io.confirm_ask(
-            prompt,
+            Questions.RUN_SHELL_COMMANDS,
             subject="\n".join(commands),
             explicit_yes_required=True,
             group=group,
@@ -2236,7 +2235,7 @@ class Coder:
                 accumulated_output += f"Output from {command}\n{output}\n"
 
         if accumulated_output.strip() and self.io.confirm_ask(
-            "Add command output to the chat?", allow_never=True
+            Questions.ADD_COMMAND_OUTPUT, allow_never=True
         ):
             num_lines = len(accumulated_output.strip().splitlines())
             line_plural = "line" if num_lines == 1 else "lines"

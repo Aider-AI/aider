@@ -7,6 +7,7 @@ import webbrowser
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 from io import StringIO
 from pathlib import Path
 from typing import Dict, Union
@@ -51,6 +52,24 @@ def restore_multiline(func):
             self.multiline_mode = orig_multiline
 
     return wrapper
+
+
+class Questions(str, Enum):
+    ADD_COMMAND_OUTPUT = "Add command output to the chat?"
+    RUN_SHELL_COMMANDS = "Run shell command(s)?"
+    ALLOW_EDITS = "Allow edits to file that has not been added to the chat?"
+    ADD_URL = "Add URL to the chat?"
+    TRY_PROCEED = "Try to proceed anyway?"
+    FIX_LINT = "Attempt to fix lint errors?"
+    FIX_TEST = "Attempt to fix test errors?"
+    ADD_FILES = "Add file to the chat?"
+    CREATE_FILE = "Create new file?"
+    OPEN_URL = "Open URL for more info?"
+    ARCHITECT_EDIT_FILES = "Edit the files?"
+    RUN_PIP_INSTALL = "Run pip install?"
+    INSTALL_PLAYWRIGHT = "Install Playwright?"
+    ADD_GITIGNORE = "Add patterns to .gitignore (recommended)?"
+    ALLOW_ANALYTICS = "Allow collection of anonymous analytics to help improve aider?"
 
 
 @dataclass
@@ -676,7 +695,7 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def offer_url(self, url, prompt="Open URL for more info?", allow_never=True):
+    def offer_url(self, url, prompt=Questions.OPEN_URL, allow_never=True):
         """Offer to open a URL in the browser, returns True if opened."""
         if url in self.never_prompts:
             return False
@@ -688,13 +707,16 @@ class InputOutput:
     @restore_multiline
     def confirm_ask(
         self,
-        question,
+        question: Union[str, Questions],
         default="y",
         subject=None,
         explicit_yes_required=False,
         group=None,
         allow_never=False,
     ):
+        if isinstance(question, Questions):
+            question = question.value
+
         self.num_user_asks += 1
 
         question_id = (question, subject)
