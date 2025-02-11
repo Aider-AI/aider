@@ -167,6 +167,9 @@ cog.outl("```")
 #  - yyy
 #  - zzz
 
+## Set the reasoning_effort API parameter (default: not set)
+#reasoning-effort: xxx
+
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true
 
@@ -487,5 +490,8 @@ cog.outl("```")
 
 ## Specify which editor to use for the /editor command
 #editor: xxx
+
+## Install the tree_sitter_language_pack (experimental)
+#install-tree-sitter-language-pack: false
 ```
 <!--[[[end]]]-->

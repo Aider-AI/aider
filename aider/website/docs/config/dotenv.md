@@ -142,6 +142,9 @@ cog.outl("```")
 ## Add a model alias (can be used multiple times)
 #AIDER_ALIAS=
 
+## Set the reasoning_effort API parameter (default: not set)
+#AIDER_REASONING_EFFORT=
+
 ## Verify the SSL cert when connecting to models (default: True)
 #AIDER_VERIFY_SSL=true
 
@@ -441,5 +444,8 @@ cog.outl("```")
 
 ## Specify which editor to use for the /editor command
 #AIDER_EDITOR=
+
+## Install the tree_sitter_language_pack (experimental)
+#AIDER_INSTALL_TREE_SITTER_LANGUAGE_PACK=false
 ```
 <!--[[[end]]]-->

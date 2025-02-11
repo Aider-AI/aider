@@ -401,6 +401,9 @@ missing_filename_err = (
     " {fence[0]}"
 )
 
+# Always be willing to treat triple-backticks as a fence when searching for filenames
+triple_backticks = "`" * 3
+
 
 def strip_filename(filename, fence):
     filename = filename.strip()
@@ -409,7 +412,7 @@ def strip_filename(filename, fence):
         return
 
     start_fence = fence[0]
-    if filename.startswith(start_fence):
+    if filename.startswith(start_fence) or filename.startswith(triple_backticks):
         return
 
     filename = filename.rstrip(":")
@@ -546,7 +549,7 @@ def find_filename(lines, fence, valid_fnames):
             filenames.append(filename)
 
         # Only continue as long as we keep seeing fences
-        if not line.startswith(fence[0]):
+        if not line.startswith(fence[0]) and not line.startswith(triple_backticks):
             break
 
     if not filenames:

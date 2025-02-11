@@ -4,6 +4,7 @@ FROM buildpack-deps:jammy
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     cmake \
+    libboost-all-dev \
     && add-apt-repository ppa:deadsnakes/ppa \
     && apt-get update \
     && apt-get install -y \

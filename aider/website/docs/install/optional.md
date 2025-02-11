@@ -17,21 +17,14 @@ Aider works best if you have git installed.
 Here are
 [instructions for installing git in various environments](https://github.com/git-guides/install-git).
 
-## Get your API key
+## Setup an API key
 
-To work with OpenAI's models like GPT-4o or o1-preview you need a paid
-[OpenAI API key](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key).
-Note that this is different than being a "ChatGPT Plus" subscriber.
+You need an key from an API provider to work with most models:
 
-To work with Anthropic's models like Claude 3.5 Sonnet you need a paid
-[Anthropic API key](https://docs.anthropic.com/claude/reference/getting-started-with-the-api).
-
-
-### Working with other LLMs
-
-{% include works-best.md %}
-
-### Store your api keys 
+- [OpenAI](https://help.openai.com/en/articles/4936850-where-do-i-find-my-secret-api-key) provides o1, o3-mini, gpt-4o and other models. Note that paying for an API key is different than being a "ChatGPT" subscriber.
+- [Anthropic](https://docs.anthropic.com/claude/reference/getting-started-with-the-api) provides Claude 3.5 Sonnet and Haiku.
+- [DeepSeek](https://platform.deepseek.com/api_keys) provides DeepSeek R1 and DeepSeek Chat V3.
+- [OpenRouter](https://openrouter.ai/keys) allows you to access models from many providers using a single key.
 
 You can [store your api keys in configuration or env files](/docs/config/api-keys.html)
 and they will be loaded automatically whenever you run aider.
@@ -105,11 +98,3 @@ please let us know by opening a
 [GitHub issue](https://github.com/Aider-AI/aider/issues).
 
 
-## Install the development version of aider 
-
-If you want the very latest development version of aider
-you can install it like this:
-
-```
-aider --install-main-branch
-```

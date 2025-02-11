@@ -303,6 +303,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "elisp": ("el", "greeter"),
             "elm": ("elm", "Person"),
             "go": ("go", "Greeter"),
+            "hcl": ("tf", "aws_vpc"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"

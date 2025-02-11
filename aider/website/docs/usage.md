@@ -68,11 +68,11 @@ relevant context from the rest of your repo.
 {% include works-best.md %}
 
 ```
-# GPT-4o
-$ aider --4o
+# o3-mini
+$ aider --model o3-mini --api-key openai=<key>
 
 # Claude 3.5 Sonnet
-$ aider --sonnet
+$ aider --model sonnet --api-key anthropic=<key>
 ```
 
 Or you can run `aider --model XXX` to launch aider with

@@ -33,8 +33,7 @@ cog.out(text)
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
 Start a new project or work with an existing code base.
-Aider works best with Claude 3.5 Sonnet, DeepSeek V3, o1 & GPT-4o and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
-
+Aider works best with Claude 3.5 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o. Aider can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
 
 <!-- 
 <p align="center">
@@ -79,14 +78,20 @@ aider-install
 # Change directory into your code base
 cd /to/your/project
 
-# Work with DeepSeek on your code
+# Work with DeepSeek via DeepSeek's API
 aider --model deepseek --api-key deepseek=your-key-goes-here
 
-# Work with Claude 3.5 Sonnet on your code
+# Work with Claude 3.5 Sonnet via Anthropic's API
 aider --model sonnet --api-key anthropic=your-key-goes-here
 
-# Work with GPT-4o on your code
+# Work with GPT-4o via OpenAI's API
 aider --model gpt-4o --api-key openai=your-key-goes-here
+
+# Work with Sonnet via OpenRouter's API
+aider --model openrouter/anthropic/claude-3.5-sonnet --api-key openrouter=your-key-goes-here
+
+# Work with DeepSeek via OpenRouter's API
+aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
 ```
 <!-- NOOP -->
 

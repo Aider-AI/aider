@@ -81,7 +81,7 @@ class Commands:
         "Switch to a new LLM"
 
         model_name = args.strip()
-        model = models.Model(model_name)
+        model = models.Model(model_name, weak_model=self.coder.main_model.weak_model.name)
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
@@ -756,6 +756,7 @@ class Commands:
 
             if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
                 try:
+                    fname.parent.mkdir(parents=True, exist_ok=True)
                     fname.touch()
                     all_matched_files.add(str(fname))
                 except OSError as e:

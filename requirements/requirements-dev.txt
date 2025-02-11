@@ -6,11 +6,11 @@
 #
 alabaster==1.0.0
     # via sphinx
-babel==2.16.0
+babel==2.17.0
     # via sphinx
 build==1.2.2.post1
     # via pip-tools
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -28,7 +28,7 @@ click==8.1.8
     #   -c requirements.txt
     #   pip-tools
     #   typer
-codespell==2.4.0
+codespell==2.4.1
     # via -r requirements/requirements-dev.in
 cogapp==3.4.1
     # via -r requirements/requirements-dev.in
@@ -51,9 +51,9 @@ filelock==3.17.0
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   virtualenv
-fonttools==4.55.7
+fonttools==4.56.0
     # via matplotlib
-identify==2.6.6
+identify==2.6.7
     # via pre-commit
 idna==3.10
     # via
@@ -156,7 +156,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   matplotlib
     #   pandas
-pytz==2024.2
+pytz==2025.1
     # via pandas
 pyyaml==6.0.2
     # via
@@ -218,13 +218,13 @@ urllib3==2.3.0
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   requests
-virtualenv==20.29.1
+virtualenv==20.29.2
     # via pre-commit
 wheel==0.45.1
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==25.0
+pip==25.0.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt

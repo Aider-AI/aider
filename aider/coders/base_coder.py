@@ -27,10 +27,10 @@ from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
+from aider.models import RETRY_TIMEOUT
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
-from aider.sendchat import RETRY_TIMEOUT, send_completion
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
@@ -60,7 +60,7 @@ def wrap_fence(name):
 
 all_fences = [
     ("`" * 3, "`" * 3),
-    ("`" * 4, "`" * 4),
+    ("`" * 4, "`" * 4),  # LLMs ignore and revert to triple-backtick, causing #2879
     wrap_fence("source"),
     wrap_fence("code"),
     wrap_fence("pre"),
@@ -85,7 +85,7 @@ class Coder:
     max_reflections = 3
     edit_format = None
     yield_stream = False
-    temperature = 0
+    temperature = None
     auto_lint = True
     auto_test = False
     test_cmd = None
@@ -144,7 +144,13 @@ class Coder:
             # the system prompt.
             done_messages = from_coder.done_messages
             if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
-                done_messages = from_coder.summarizer.summarize_all(done_messages)
+                try:
+                    done_messages = from_coder.summarizer.summarize_all(done_messages)
+                except ValueError:
+                    # If summarization fails, keep the original messages and warn the user
+                    io.tool_warning(
+                        "Chat history summarization failed, continuing with full history"
+                    )
 
             # Bring along context from the old Coder
             update = dict(
@@ -162,6 +168,7 @@ class Coder:
             use_kwargs.update(kwargs)  # override passed kwargs
 
             kwargs = use_kwargs
+            from_coder.ok_to_warm_cache = False
 
         for coder in coders.__all__:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
@@ -257,6 +264,8 @@ class Coder:
             lines.append("Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
 
         return lines
+
+    ok_to_warm_cache = False
 
     def __init__(
         self,
@@ -1055,14 +1064,26 @@ class Coder:
         else:
             language = "the same language they are using"
 
+        if self.fence[0] == "`" * 4:
+            quad_backtick_reminder = (
+                "\nIMPORTANT: Use *quadruple* backticks ```` as fences, not triple backticks!\n"
+            )
+        else:
+            quad_backtick_reminder = ""
+
         prompt = prompt.format(
             fence=self.fence,
+            quad_backtick_reminder=quad_backtick_reminder,
             lazy_prompt=lazy_prompt,
             platform=platform_text,
             shell_cmd_prompt=shell_cmd_prompt,
             shell_cmd_reminder=shell_cmd_reminder,
             language=language,
         )
+
+        if self.main_model.system_prompt_prefix:
+            prompt = self.main_model.system_prompt_prefix + prompt
+
         return prompt
 
     def format_chat_chunks(self):
@@ -1182,8 +1203,11 @@ class Coder:
             return
         if not self.num_cache_warming_pings:
             return
+        if not self.ok_to_warm_cache:
+            return
 
         delay = 5 * 60 - 5
+        delay = float(os.environ.get("AIDER_CACHE_KEEPALIVE_DELAY", delay))
         self.next_cache_warm = time.time() + delay
         self.warming_pings_left = self.num_cache_warming_pings
         self.cache_warming_chunks = chunks
@@ -1192,7 +1216,7 @@ class Coder:
             return
 
         def warm_cache_worker():
-            while True:
+            while self.ok_to_warm_cache:
                 time.sleep(1)
                 if self.warming_pings_left <= 0:
                     continue
@@ -1235,8 +1259,6 @@ class Coder:
         input_tokens = self.main_model.token_count(messages)
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
 
-        proceed = None
-
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
                 f"Your estimated chat context of {input_tokens:,} tokens exceeds the"
@@ -1246,26 +1268,13 @@ class Coder:
             self.io.tool_output("- Use /drop to remove unneeded files from the chat")
             self.io.tool_output("- Use /clear to clear the chat history")
             self.io.tool_output("- Break your code into smaller files")
-            proceed = "y"
             self.io.tool_output(
                 "It's probably safe to try and send the request, most providers won't charge if"
                 " the context limit is exceeded."
             )
 
-        # Special warning for Ollama models about context window size
-        if self.main_model.name.startswith(("ollama/", "ollama_chat/")):
-            extra_params = getattr(self.main_model, "extra_params", None) or {}
-            num_ctx = extra_params.get("num_ctx", 8192)
-            if max_input_tokens and max_input_tokens > num_ctx:
-                self.io.tool_waning(
-                    f"Your Ollama model is configured with num_ctx={num_ctx} tokens of"
-                    " context window\nSee"
-                    " https://aider.chat/docs/llms/ollama.html#setting-the-context-window-size"
-                    " for help configuring larger context windows."
-                )
-
-        if proceed and not self.io.confirm_ask("Try to proceed anyway?", default=proceed):
-            return False
+            if not self.io.confirm_ask("Try to proceed anyway?"):
+                return False
         return True
 
     def send_message(self, inp):
@@ -1339,7 +1348,7 @@ class Coder:
                         exhausted = True
                         break
 
-                    self.multi_response_content = self.get_multi_response_content()
+                    self.multi_response_content = self.get_multi_response_content_in_progress()
 
                     if messages[-1]["role"] == "assistant":
                         messages[-1]["content"] = self.multi_response_content
@@ -1359,7 +1368,10 @@ class Coder:
                 self.live_incremental_response(True)
                 self.mdstream = None
 
-            self.partial_response_content = self.get_multi_response_content(True)
+            self.partial_response_content = self.get_multi_response_content_in_progress(True)
+            self.partial_response_content = self.main_model.remove_reasoning_content(
+                self.partial_response_content
+            )
             self.multi_response_content = ""
 
         self.io.tool_output()
@@ -1529,6 +1541,10 @@ class Coder:
 
         return res
 
+    def __del__(self):
+        """Cleanup when the Coder object is destroyed."""
+        self.ok_to_warm_cache = False
+
     def add_assistant_reply_to_cur_messages(self):
         if self.partial_response_content:
             self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
@@ -1615,20 +1631,13 @@ class Coder:
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
-        if self.main_model.use_temperature:
-            temp = self.temperature
-        else:
-            temp = None
-
         completion = None
         try:
-            hash_object, completion = send_completion(
-                model.name,
+            hash_object, completion = model.send_completion(
                 messages,
                 functions,
                 self.stream,
-                temp,
-                extra_params=model.extra_params,
+                self.temperature,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
@@ -1755,7 +1764,7 @@ class Coder:
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
-        return self.get_multi_response_content()
+        return self.get_multi_response_content_in_progress()
 
     def calculate_and_show_tokens_and_cost(self, messages, completion=None):
         prompt_tokens = 0
@@ -1878,22 +1887,14 @@ class Coder:
         self.message_tokens_sent = 0
         self.message_tokens_received = 0
 
-    def get_multi_response_content(self, final=False):
+    def get_multi_response_content_in_progress(self, final=False):
         cur = self.multi_response_content or ""
         new = self.partial_response_content or ""
 
         if new.rstrip() != new and not final:
             new = new.rstrip()
 
-        res = cur + new
-
-        if self.main_model.remove_reasoning:
-            pattern = (
-                f"<{self.main_model.remove_reasoning}>.*?</{self.main_model.remove_reasoning}>"
-            )
-            res = re.sub(pattern, "", res, flags=re.DOTALL)
-
-        return res
+        return cur + new
 
     def get_rel_fname(self, fname):
         try:

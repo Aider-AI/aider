@@ -19,10 +19,9 @@ Their [status page](https://status.deepseek.com) notes an ongoing incident.
 
 If you're affected by these issues, several alternative providers offer access to DeepSeek V3. This article compares their performance on aider's polyglot benchmark to help you choose a reliable alternative.
 
-{: .note :}
-This article is being updated as benchmark runs complete.
-
 ## Providers
+{: .no_toc }
+
 * TOC
 {:toc}
 
@@ -104,6 +103,46 @@ Create a `.aider.model.settings.yml` file in your home directory or git project 
 ```
 
 
+## Hyperbolic
+
+You can use [Hyperbolic's API](https://hyperbolic.xyz) as an OpenAI-compatible provider:
+
+```bash
+# Set your API key using environment variables
+export OPENAI_API_BASE=https://api.hyperbolic.xyz/v1/
+export OPENAI_API_KEY=<your-key>
+aider --model openai/deepseek-ai/DeepSeek-V3
+
+# Or use the --api-key command line option
+aider --model openai/deepseek-ai/DeepSeek-V3 --api-key openai=<your-key>
+
+# Or add it to .aider.conf.yml in your home directory or project root:
+api-key:
+  - openai=<your-key>
+```
+
+Create a `.aider.model.settings.yml` file in your home directory or git project root with settings like this:
+
+```yaml
+- name: openai/deepseek-ai/DeepSeek-V3
+  edit_format: diff
+  weak_model_name: null
+  use_repo_map: true
+  send_undo_reply: false
+  lazy: false
+  reminder: sys
+  examples_as_sys_msg: true
+  cache_control: false
+  caches_by_default: true
+  use_system_prompt: true
+  use_temperature: true
+  streaming: true
+  editor_model_name: null
+  editor_edit_format: null
+  extra_params:
+    max_tokens: 65536
+```
+
 ## Ollama
 
 You can run [DeepSeek V3 via Ollama](https://ollama.com/library/deepseek-v3).
@@ -168,6 +207,7 @@ See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.
 
 ## Results
 
+
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
@@ -176,7 +216,6 @@ See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.
       <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
-      <th style="padding: 8px; text-align: center;">Total Cost</th>
     </tr>
   </thead>
   <tbody>
@@ -188,7 +227,6 @@ See [Advanced model settings](https://aider.chat/docs/config/adv-model-settings.
         <td style="padding: 8px; text-align: center;">{{ row.percent_cases_well_formed }}%</td>
         <td style="padding: 8px;"><code>{{ row.command }}</code></td>
         <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
-        <td style="padding: 8px; text-align: center;">{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</td>
       </tr>
     {% endfor %}
   </tbody>

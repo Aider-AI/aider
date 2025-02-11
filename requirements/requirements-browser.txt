@@ -17,7 +17,7 @@ blinker==1.9.0
     # via streamlit
 cachetools==5.5.1
     # via streamlit
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.24.0
+narwhals==1.26.0
     # via altair
 numpy==1.26.4
     # via
@@ -140,7 +140,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   pandas
-pytz==2024.2
+pytz==2025.1
     # via
     #   -c requirements/requirements-dev.txt
     #   pandas
@@ -180,7 +180,7 @@ smmap==5.0.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   gitdb
-streamlit==1.41.1
+streamlit==1.42.0
     # via -r requirements/requirements-browser.in
 tenacity==9.0.0
     # via

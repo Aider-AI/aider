@@ -23,7 +23,7 @@ from aider.utils import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
-from tree_sitter_languages import get_language, get_parser  # noqa: E402
+from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
@@ -31,8 +31,12 @@ Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
+CACHE_VERSION = 3
+if USING_TSL_PACK:
+    CACHE_VERSION = 4
+
+
 class RepoMap:
-    CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     warned_files = set()
@@ -282,10 +286,15 @@ class RepoMap:
         query = language.query(query_scm)
         captures = query.captures(tree.root_node)
 
-        captures = list(captures)
-
         saw = set()
-        for node, tag in captures:
+        if USING_TSL_PACK:
+            all_nodes = []
+            for tag, nodes in captures.items():
+                all_nodes += [(node, tag) for node in nodes]
+        else:
+            all_nodes = list(captures)
+
+        for node, tag in all_nodes:
             if tag.startswith("name.definition."):
                 kind = "def"
             elif tag.startswith("name.reference."):
@@ -732,8 +741,27 @@ def get_random_color():
 
 def get_scm_fname(lang):
     # Load the tags queries
+    if USING_TSL_PACK:
+        subdir = "tree-sitter-language-pack"
+        try:
+            path = resources.files(__package__).joinpath(
+                "queries",
+                subdir,
+                f"{lang}-tags.scm",
+            )
+            if path.exists():
+                return path
+        except KeyError:
+            pass
+
+    # Fall back to tree-sitter-languages
+    subdir = "tree-sitter-languages"
     try:
-        return resources.files(__package__).joinpath("queries", f"tree-sitter-{lang}-tags.scm")
+        return resources.files(__package__).joinpath(
+            "queries",
+            subdir,
+            f"{lang}-tags.scm",
+        )
     except KeyError:
         return
 
