@@ -55,21 +55,32 @@ def restore_multiline(func):
 
 
 class Questions(str, Enum):
-    ADD_COMMAND_OUTPUT = "Add command output to the chat?"
-    RUN_SHELL_COMMANDS = "Run shell command(s)?"
+    # Not yet configurable via scripting
     ALLOW_EDITS = "Allow edits to file that has not been added to the chat?"
-    ADD_URL = "Add URL to the chat?"
-    TRY_PROCEED = "Try to proceed anyway?"
-    FIX_LINT = "Attempt to fix lint errors?"
-    FIX_TEST = "Attempt to fix test errors?"
     ADD_FILES = "Add file to the chat?"
     CREATE_FILE = "Create new file?"
-    OPEN_URL = "Open URL for more info?"
+    TRY_PROCEED = "Try to proceed anyway?"
     ARCHITECT_EDIT_FILES = "Edit the files?"
     RUN_PIP_INSTALL = "Run pip install?"
+
+    # Partially configurable via args
+    # Will only ever run if --suggest-shell-commands is passed
+    # However, can not be auto approved
+    RUN_SHELL_COMMANDS = "Run shell command(s)?"
+    ADD_COMMAND_OUTPUT = "Add command output to the chat?"
+
+    # Will only ever run if --detect-urls is passed
+    ADD_URL = "Add URL to the chat?"
+    OPEN_URL = "Open URL for more info?"
     INSTALL_PLAYWRIGHT = "Install Playwright?"
-    ADD_GITIGNORE = "Add patterns to .gitignore (recommended)?"
-    ALLOW_ANALYTICS = "Allow collection of anonymous analytics to help improve aider?"
+
+    # Already configurable via args
+    ALLOW_ANALYTICS = (  # --analytics
+        "Allow collection of anonymous analytics to help improve aider?"
+    )
+    ADD_GITIGNORE = "Add patterns to .gitignore (recommended)?"  # --gitignore
+    FIX_LINT = "Attempt to fix lint errors?"  # --auto-lint
+    FIX_TEST = "Attempt to fix test errors?"  # --auto-test
 
 
 @dataclass
