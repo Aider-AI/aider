@@ -450,7 +450,7 @@ def sanity_check_repo(repo, io):
     return False
 
 
-def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False, force_model=None):
     report_uncaught_exceptions()
 
     if argv is None:
@@ -762,6 +762,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 return 1
             alias, model = parts
             models.MODEL_ALIASES[alias.strip()] = model.strip()
+
+    if force_model is not None:
+        args.Model=force_model
+        args.weak_model=force_model
+        args.editor_model=force_model
+        io.tool_warning(
+                    f"Model forced to: {force_model}."
+                )
 
     if not args.model:
         # Select model based on available API keys
@@ -1082,18 +1090,21 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Completed main CLI coder.run")
             return
         except SwitchCoder as switch:
-            coder.ok_to_warm_cache = False
+            coder = change_coder(coder, io, switch.kwargs)
 
-            kwargs = dict(io=io, from_coder=coder)
-            kwargs.update(switch.kwargs)
-            if "show_announcements" in kwargs:
-                del kwargs["show_announcements"]
 
-            coder = Coder.create(**kwargs)
+def change_coder(existing_coder, existing_io, new_args):
+    existing_coder.ok_to_warm_cache = False
+    kwargs = dict(io=existing_io, from_coder=existing_coder)
+    kwargs.update(new_args)
+    if "show_announcements" in kwargs:
+        del kwargs["show_announcements"]
 
-            if switch.kwargs.get("show_announcements") is not False:
-                coder.show_announcements()
+    coder = Coder.create(**kwargs)
+    return coder
 
+    if new_args.get("show_announcements") is not False:
+        coder.show_announcements()
 
 def is_first_run_of_new_version(io, verbose=False):
     """Check if this is the first run of a new version/executable combination"""
