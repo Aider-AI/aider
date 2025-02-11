@@ -713,11 +713,6 @@ class InputOutput:
 
         style = self._get_style()
 
-        def is_valid_response(text):
-            if not text:
-                return True
-            return text.lower() in valid_responses
-
         if self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
@@ -737,7 +732,7 @@ class InputOutput:
                     res = input(question)
 
                 if not res:
-                    res = "y"  # Default to Yes if no input
+                    res = default
                     break
                 res = res.lower()
                 good = any(valid_response.startswith(res) for valid_response in valid_responses)
