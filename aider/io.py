@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from io import StringIO
 from pathlib import Path
+from typing import Dict, Union
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
@@ -182,7 +183,7 @@ class InputOutput:
     def __init__(
         self,
         pretty=True,
-        yes=None,
+        yes: Union[None, bool, Dict[str, bool]] = None,
         input_history_file=None,
         chat_history_file=None,
         input=None,
@@ -714,7 +715,10 @@ class InputOutput:
         style = self._get_style()
 
         if isinstance(self.yes, dict):
-            res = self.yes.get(question, "n" if explicit_yes_required else default)
+            res = (
+                "y" if self.yes[question] else "n"
+            )  # Use a defaultdict to set a default value, otherwise raise KeyError
+            res = "n" if explicit_yes_required else res
         elif self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
