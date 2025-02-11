@@ -238,8 +238,6 @@ def write_streamlit_credentials():
         os.makedirs(os.path.dirname(credential_path), exist_ok=True)
         with open(credential_path, "w") as f:
             f.write(empty_creds)
-    else:
-        print("Streamlit credentials already exist.")
 
 
 def launch_gui(argv, parsed_args):
