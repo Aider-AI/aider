@@ -138,6 +138,10 @@ def get_parser(default_config_files, git_root):
         help="Specify the OpenAI API key",
     )
     group.add_argument(
+        "--openrouter-api-key",
+        help="Specify the OpenRouter API key",
+    )
+    group.add_argument(
         "--anthropic-api-key",
         help="Specify the Anthropic API key",
     )

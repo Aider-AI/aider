@@ -604,6 +604,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
 
+    if args.openrouter_api_key:
+        os.environ["OPENROUTER_API_KEY"] = args.openrouter_api_key
+
     if args.openai_api_key:
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
     if args.openai_api_base:
