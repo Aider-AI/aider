@@ -945,6 +945,7 @@ class Commands:
 
             if add and exit_status != 0:
                 self.io.placeholder = "What's wrong? Fix"
+                return combined_output
 
     def cmd_exit(self, args):
         "Exit the application"
