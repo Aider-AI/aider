@@ -87,13 +87,10 @@ def get_environment_editor(default=None):
 
 def discover_editor(editor_override=None):
     """
-    Discovers and returns the appropriate editor command as a list of arguments.
-
-    Handles cases where the editor command includes arguments, including quoted arguments
-    with spaces (e.g. 'vim -c "set noswapfile"').
-
-    :return: A list of command parts ready for subprocess execution
-    :rtype: list[str]
+    Discovers and returns the editor command parts and environment variables.
+    
+    Handles environment variables preceding the editor command (e.g. 'VAR=value editor').
+    Returns tuple of (command_parts, env_vars_dict)
     """
     system = platform.system()
     if system == "Windows":
@@ -106,10 +103,22 @@ def discover_editor(editor_override=None):
         editor = editor_override
     else:
         editor = get_environment_editor(default_editor)
+
     try:
-        return shlex.split(editor)
+        parts = shlex.split(editor)
     except ValueError as e:
         raise RuntimeError(f"Invalid editor command format '{editor}': {e}")
+
+    # Extract environment variables from the beginning of the command
+    env_vars = {}
+    while parts and '=' in parts[0]:
+        key, value = parts.pop(0).split('=', 1)
+        env_vars[key] = value
+
+    if not parts:
+        raise RuntimeError(f"Editor command missing after environment variables in '{editor}'")
+
+    return parts, env_vars
 
 
 def pipe_editor(input_data="", suffix=None, editor=None):
@@ -128,9 +137,13 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     :rtype: str
     """
     filepath = write_temp_file(input_data, suffix)
-    command_parts = discover_editor(editor)
+    command_parts, env_vars = discover_editor(editor)
     command_parts.append(filepath)
-    subprocess.call(command_parts)
+    
+    # Merge our environment variables with the current process environment
+    full_env = {**os.environ, **env_vars}
+    
+    subprocess.call(command_parts, env=full_env)
     with open(filepath, "r") as f:
         output_data = f.read()
     try:
