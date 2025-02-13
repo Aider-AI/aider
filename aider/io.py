@@ -368,8 +368,7 @@ class InputOutput:
             return self.read_image(filename)
 
         try:
-            # ignore decoding errors. ai!
-            with open(str(filename), "r", encoding=self.encoding) as f:
+            with open(str(filename), "r", encoding=self.encoding, errors='ignore') as f:
                 return f.read()
         except FileNotFoundError:
             if not silent:
