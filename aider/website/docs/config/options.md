@@ -79,6 +79,7 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
              [--detect-urls | --no-detect-urls] [--editor]
+             [--install-tree-sitter-language-pack]
 
 ```
 
@@ -761,4 +762,9 @@ Aliases:
 ### `--editor VALUE`
 Specify which editor to use for the /editor command  
 Environment variable: `AIDER_EDITOR`  
+
+### `--install-tree-sitter-language-pack`
+Install the tree_sitter_language_pack (experimental)  
+Default: False  
+Environment variable: `AIDER_INSTALL_TREE_SITTER_LANGUAGE_PACK`  
 <!--[[[end]]]-->

@@ -126,6 +126,11 @@ def find_oldest_issue(subject, all_issues):
 
 
 def comment_and_close_duplicate(issue, oldest_issue):
+    # Skip if issue is labeled as priority
+    if "priority" in [label["name"] for label in issue["labels"]]:
+        print(f"  - Skipping priority issue #{issue['number']}")
+        return
+
     comment_url = (
         f"{GITHUB_API_URL}/repos/{REPO_OWNER}/{REPO_NAME}/issues/{issue['number']}/comments"
     )
@@ -168,7 +173,11 @@ def find_unlabeled_with_paul_comments(issues):
 
 def handle_unlabeled_issues(all_issues, auto_yes):
     print("\nFinding unlabeled issues with paul-gauthier comments...")
-    unlabeled_issues = find_unlabeled_with_paul_comments(all_issues)
+    unlabeled_issues = [
+        issue
+        for issue in find_unlabeled_with_paul_comments(all_issues)
+        if "priority" not in [label["name"] for label in issue["labels"]]
+    ]
 
     if not unlabeled_issues:
         print("No unlabeled issues with paul-gauthier comments found.")
@@ -197,10 +206,12 @@ def handle_stale_issues(all_issues, auto_yes):
 
     for issue in all_issues:
         # Skip if not open, not a question, already stale, or has been reopened
+        labels = [label["name"] for label in issue["labels"]]
         if (
             issue["state"] != "open"
-            or "question" not in [label["name"] for label in issue["labels"]]
-            or "stale" in [label["name"] for label in issue["labels"]]
+            or "question" not in labels
+            or "stale" in labels
+            or "priority" in labels
             or has_been_reopened(issue["number"])
         ):
             continue
@@ -239,8 +250,9 @@ def handle_stale_closing(all_issues, auto_yes):
     print("\nChecking for issues to close or unstale...")
 
     for issue in all_issues:
-        # Skip if not open or not stale
-        if issue["state"] != "open" or "stale" not in [label["name"] for label in issue["labels"]]:
+        # Skip if not open, not stale, or is priority
+        labels = [label["name"] for label in issue["labels"]]
+        if issue["state"] != "open" or "stale" not in labels or "priority" in labels:
             continue
 
         # Get the timeline to find when the stale label was last added
@@ -324,9 +336,9 @@ def handle_fixed_issues(all_issues, auto_yes):
     print("\nChecking for fixed enhancement and bug issues to close...")
 
     for issue in all_issues:
-        # Skip if not open or doesn't have fixed label
+        # Skip if not open, doesn't have fixed label, or is priority
         labels = [label["name"] for label in issue["labels"]]
-        if issue["state"] != "open" or "fixed" not in labels:
+        if issue["state"] != "open" or "fixed" not in labels or "priority" in labels:
             continue
 
         # Check if it's an enhancement or bug

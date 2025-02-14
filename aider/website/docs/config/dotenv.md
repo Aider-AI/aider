@@ -444,5 +444,8 @@ cog.outl("```")
 
 ## Specify which editor to use for the /editor command
 #AIDER_EDITOR=
+
+## Install the tree_sitter_language_pack (experimental)
+#AIDER_INSTALL_TREE_SITTER_LANGUAGE_PACK=false
 ```
 <!--[[[end]]]-->
