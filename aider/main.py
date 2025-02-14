@@ -933,13 +933,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             architect_model_names = args.moa
             architect_models = [models.Model(m) for m in architect_model_names]
             
+            thinking_models = ["o1", "o3", "deepseek-reasoner", "r1"]
+
             if args.reasoning_effort is not None:
                 for architect_model in architect_models:
-                    if not getattr(architect_model, "extra_params", None):
-                        architect_model.extra_params = {}
-                    if "extra_body" not in architect_model.extra_params:
-                        architect_model.extra_params["extra_body"] = {}
-                    architect_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
+                    if any(sub in architect_model.name for sub in thinking_models):
+                        if not getattr(architect_model, "extra_params", None):
+                            architect_model.extra_params = {}
+                        if "extra_body" not in architect_model.extra_params:
+                            architect_model.extra_params["extra_body"] = {}
+                        architect_model.extra_params["extra_body"][
+                            "reasoning_effort"
+                        ] = args.reasoning_effort
 
             print(f"Using architect models: {architect_model_names}")
             coder_kwargs["architect_models"] = architect_models
