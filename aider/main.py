@@ -794,11 +794,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # add --reasoning-effort cli param
     if args.reasoning_effort is not None:
-        if not getattr(main_model, "extra_params", None):
-            main_model.extra_params = {}
-        if "extra_body" not in main_model.extra_params:
-            main_model.extra_params["extra_body"] = {}
-        main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
+        reasoning_models = ["o1", "o3", "deepseek-reasoner", "r1"]
+        if any(model in main_model.name for model in reasoning_models):
+            if not getattr(main_model, "extra_params", None):
+                main_model.extra_params = {}
+            if "extra_body" not in main_model.extra_params:
+                main_model.extra_params["extra_body"] = {}
+            main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
@@ -933,11 +935,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             architect_model_names = args.moa
             architect_models = [models.Model(m) for m in architect_model_names]
             
-            thinking_models = ["o1", "o3", "deepseek-reasoner", "r1"]
+            reasoning_models = ["o1", "o3", "deepseek-reasoner", "r1"]
 
             if args.reasoning_effort is not None:
                 for architect_model in architect_models:
-                    if any(sub in architect_model.name for sub in thinking_models):
+                    if any(sub in architect_model.name for sub in reasoning_models):
+                        print(f"Setting reasoning effort for {architect_model.name}")
                         if not getattr(architect_model, "extra_params", None):
                             architect_model.extra_params = {}
                         if "extra_body" not in architect_model.extra_params:
