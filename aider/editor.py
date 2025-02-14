@@ -130,7 +130,7 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     filepath = write_temp_file(input_data, suffix)
     command_parts = discover_editor(editor)
     command_parts.append(filepath)
-    subprocess.call(command_parts)
+    subprocess.call(command_parts, shell=True)
     with open(filepath, "r") as f:
         output_data = f.read()
     try:
