@@ -368,7 +368,7 @@ class InputOutput:
             return self.read_image(filename)
 
         try:
-            with open(str(filename), "r", encoding=self.encoding, errors="ignore") as f:
+            with open(str(filename), "r", encoding=self.encoding, errors="replace") as f:
                 return f.read()
         except FileNotFoundError:
             if not silent:
