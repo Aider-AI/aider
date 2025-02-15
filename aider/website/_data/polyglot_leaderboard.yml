@@ -547,7 +547,7 @@
 
 - dirname: 2025-02-15-19-51-22--chatgpt4o-feb15-diff
   test_cases: 223
-  model: chatgpt-4o-latest
+  model: chatgpt-4o-latest (2025-02-15)
   edit_format: diff
   commit_hash: 108ce18-dirty
   pass_rate_1: 9.0
