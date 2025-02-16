@@ -544,3 +544,29 @@
   versions: 0.72.2.dev
   seconds_per_case: 24.2
   total_cost: 0.0000
+
+- dirname: 2025-02-15-19-51-22--chatgpt4o-feb15-diff
+  test_cases: 223
+  model: chatgpt-4o-latest (2025-02-15)
+  edit_format: diff
+  commit_hash: 108ce18-dirty
+  pass_rate_1: 9.0
+  pass_rate_2: 27.1
+  pass_num_1: 20
+  pass_num_2: 61
+  percent_cases_well_formed: 93.3
+  error_outputs: 66
+  num_malformed_responses: 21
+  num_with_malformed_responses: 15
+  user_asks: 57
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model chatgpt-4o-latest
+  date: 2025-02-15
+  versions: 0.74.3.dev
+  seconds_per_case: 12.4
+  total_cost: 14.3703
