@@ -114,6 +114,9 @@ class Commands:
                         " them."
                     ),
                 ),
+                ("news", "Get summaries of the latest news."),
+                ("askv2", "Ask with auto approve."),
+
             ]
         )
 
@@ -1064,6 +1067,15 @@ class Commands:
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
+    
+    def cmd_askv2(self, args):
+        """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
+        return self._generic_chat_command(args, "askv2")
+    
+    def cmd_news(self, args):
+        """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
+        return self._generic_chat_command(args, "news")
+
 
     def cmd_code(self, args):
         """Ask for changes to your code. If no prompt provided, switches to code mode."""  # noqa

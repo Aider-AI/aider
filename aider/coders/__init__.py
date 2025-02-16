@@ -1,3 +1,5 @@
+from .ask_coder_auto import AutoApproveAskCoder
+from .news_coder import NewsCoder
 from .architect_coder import ArchitectCoder
 from .ask_coder import AskCoder
 from .base_coder import Coder
@@ -23,4 +25,6 @@ __all__ = [
     ArchitectCoder,
     EditorEditBlockCoder,
     EditorWholeFileCoder,
+    NewsCoder,
+    AutoApproveAskCoder,
 ]
