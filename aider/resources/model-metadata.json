@@ -31,6 +31,22 @@
         //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
+    "openai/deepseek/deepseek-r1-distill-qwen": {
+        "max_tokens": 8192,
+        "max_input_tokens": 32768,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.0,
+        "input_cost_per_token_cache_hit": 0.0,
+        "cache_read_input_token_cost": 0.0,
+        "cache_creation_input_token_cost": 0.0,
+        "output_cost_per_token": 0.0,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        //"supports_function_calling": true,
+        "supports_assistant_prefill": true,
+        //"supports_tool_choice": true,
+        "supports_prompt_caching": true
+    },
     "openrouter/deepseek/deepseek-r1:free": {
         "max_tokens": 8192,
         "max_input_tokens": 64000,
