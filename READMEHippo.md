@@ -100,3 +100,11 @@ If we want multi-step reasoning agent, there are 2 ways to do:
 
 # Prompt
 `format_chat_chunks` then `chunks.all_messages` is where aider get all prompts together, including system, readyonly_files, repo structure, done_messages (chat history or summary if history too long), chat files, current messages, reminder.
+
+the chat can be restored from chat history file, look at `__init__` in `base_coder.py`
+
+```
+if not self.done_messages and restore_chat_history:
+        history_md = self.io.read_text(self.io.chat_history_file)
+```
+ 
