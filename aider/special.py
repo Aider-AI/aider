@@ -41,6 +41,7 @@ ROOT_IMPORTANT_FILES = [
     "composer.lock",
     "pom.xml",
     "build.gradle",
+    "build.gradle.kts",
     "build.sbt",
     "go.mod",
     "go.sum",
