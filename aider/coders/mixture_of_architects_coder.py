@@ -8,6 +8,8 @@ from .ask_coder import AskCoder
 from .compiler_coder import CompilerCoder
 
 
+NATO_NAMES = ["bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel"]
+
 class ArbiterAgent:
     """Manages phased discussion and provides structured feedback"""
     
@@ -221,10 +223,9 @@ class MixtureOfArchitectsCoder(Coder):
         self.architects = [ArchitectAgent("alpha", main_model)]
 
         # Add additional architect models with NATO names
-        nato_names = ["bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel"]
         if architect_models:
             for i, amodel in enumerate(architect_models):
-                name = nato_names[i] if i < len(nato_names) else f"agent{i+2}"
+                name = NATO_NAMES[i] if i < len(NATO_NAMES) else f"agent{i+2}"
                 self.architects.append(ArchitectAgent(name, amodel))
 
     def get_architect_prompt(self, architect):
@@ -332,6 +333,8 @@ class MixtureOfArchitectsCoder(Coder):
             if not response.strip():
                 self.io.tool_warning(f"Warning: Empty response from {architect.name}")
 
+            self.total_cost += ask_coder.total_cost
+
             return architect, response
 
         except Exception as e:
@@ -393,9 +396,6 @@ class MixtureOfArchitectsCoder(Coder):
                                 "content": response,
                             })
 
-                            self.io.tool_output(
-                                f"Received {arch.name}'s response ({len(response)} chars)"
-                            )
                         except Exception as e:
                             self.io.tool_error(
                                 f"Failed to get response from {arch.name}: {str(e)}"
@@ -458,7 +458,9 @@ class MixtureOfArchitectsCoder(Coder):
                             # Yes is proxy for auto running code, As proxy for benchmarking
                             # TODO: Replace with a better testing strategy
                             if self.io.yes:
-                                self.run_coding_phase("lets implement best simplest solution")
+                                # Get last architect name
+                                last_architect_name = NATO_NAMES[len(self.architects) - 1]
+                                self.run_coding_phase(f"lets implement {last_architect_name}'s solution")
 
                             return
                         
@@ -529,11 +531,12 @@ class MixtureOfArchitectsCoder(Coder):
             # Add final divider
             self.io.rule()
         finally:
-            self.io.tool_output("Discussion round complete.")
+            self.io.tool_output(f"Discussion round complete. Total cost so far: {self.total_cost}", bold=True)
         # Yes is proxy for auto running code, As proxy for benchmarking
         # TODO: Replace with a better testing strategy
         if self.io.yes:
-            self.run_coding_phase("lets implement best simplest solution")
+            last_architect_name = NATO_NAMES[len(self.architects) - 1]
+            self.run_coding_phase(f"lets implement {last_architect_name}'s solution")
 
     def preproc_user_input(self, inp):
         if not inp:
@@ -638,9 +641,11 @@ class MixtureOfArchitectsCoder(Coder):
                 compiler_input += msg["content"]
                 compiler_input += "\n</user_message>\n\n"
             else:
-                compiler_input += f"<architect name='{msg['name']}'>\n"
-                compiler_input += msg["content"]
-                compiler_input += "\n</architect>\n\n"
+                # Send only the proposal content to the compiler
+                compiler_input += extract_proposal_content(msg["content"], msg["name"])
+                # compiler_input += f"<architect name='{msg['name']}'>\n"
+                # compiler_input += msg["content"]
+                # compiler_input += "\n</architect>\n\n"
 
         # Get compiled instructions
         self.io.tool_output("Compiler's instructions", bold=True)
@@ -648,6 +653,8 @@ class MixtureOfArchitectsCoder(Coder):
         compiler_coder.run(with_message=compiler_input, preproc=False)
         compiled_instructions = compiler_coder.partial_response_content
         compiled_instructions += "\n\nCompletely implement all steps in the instructions above. Do not return to me until you have done so."
+
+        self.total_cost = compiler_coder.total_cost
 
         # Debug print the compiled instructions
         if self.verbose:
@@ -689,6 +696,12 @@ class MixtureOfArchitectsCoder(Coder):
         self.io.rule()
         editor_coder.run(with_message=compiled_instructions, preproc=False)
 
+        self.total_cost = editor_coder.total_cost
+        self.aider_commit_hashes = editor_coder.aider_commit_hashes
+
+        # Add cost logging after coding
+        self.io.rule()
+        self.io.tool_output(f"Implementation complete. Total cost so far: {self.total_cost}", bold=True)
 
         # Inject implementation notice to discussion
         self.discussion_messages.append(
@@ -709,5 +722,3 @@ class MixtureOfArchitectsCoder(Coder):
         self.move_back_cur_messages(
             "Changes have been applied based on architects' consensus."
         )
-        self.total_cost = editor_coder.total_cost
-        self.aider_commit_hashes = editor_coder.aider_commit_hashes
