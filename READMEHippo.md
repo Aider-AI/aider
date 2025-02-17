@@ -96,3 +96,7 @@ If we want multi-step reasoning agent, there are 2 ways to do:
 - add commandline command for the new coder: in `Commands`, create function `cmd_yourcodercommand`; the code search for function with that prefix `cmd` to get commands
 
 - create coder prompt similarly
+
+
+# Prompt
+`format_chat_chunks` then `chunks.all_messages` is where aider get all prompts together, including system, readyonly_files, repo structure, done_messages (chat history or summary if history too long), chat files, current messages, reminder.
