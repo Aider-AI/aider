@@ -103,7 +103,7 @@ httpx==0.28.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   llama-index-core
-huggingface-hub[inference]==0.28.1
+huggingface-hub[inference]==0.29.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -130,7 +130,7 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.12.16.post1
+llama-index-core==0.12.19
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -255,7 +255,7 @@ tenacity==9.0.0
     # via llama-index-core
 threadpoolctl==3.5.0
     # via scikit-learn
-tiktoken==0.8.0
+tiktoken==0.9.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt

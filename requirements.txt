@@ -51,7 +51,7 @@ distro==1.9.0
     # via openai
 filelock==3.17.0
     # via huggingface-hub
-flake8==7.1.1
+flake8==7.1.2
     # via -r requirements/requirements.in
 frozenlist==1.5.0
     # via
@@ -63,7 +63,7 @@ gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
     # via -r requirements/requirements.in
-grep-ast==0.6.0
+grep-ast==0.6.1
     # via -r requirements/requirements.in
 h11==0.14.0
     # via httpcore
@@ -73,7 +73,7 @@ httpx==0.28.1
     # via
     #   litellm
     #   openai
-huggingface-hub==0.28.1
+huggingface-hub==0.29.0
     # via tokenizers
 idna==3.10
     # via
@@ -99,7 +99,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.60.8
+litellm==1.61.9
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -124,7 +124,7 @@ numpy==1.26.4
     #   -r requirements/requirements.in
     #   scipy
     #   soundfile
-openai==1.61.1
+openai==1.63.2
     # via litellm
 packaging==24.2
     # via
@@ -138,7 +138,7 @@ pexpect==4.9.0
     # via -r requirements/requirements.in
 pillow==10.4.0
     # via -r requirements/requirements.in
-posthog==3.11.0
+posthog==3.14.1
     # via -r requirements/requirements.in
 prompt-toolkit==3.0.50
     # via -r requirements/requirements.in
@@ -146,7 +146,7 @@ propcache==0.2.1
     # via
     #   aiohttp
     #   yarl
-psutil==6.1.1
+psutil==7.0.0
     # via -r requirements/requirements.in
 ptyprocess==0.7.0
     # via pexpect
@@ -215,7 +215,7 @@ soundfile==0.13.1
     # via -r requirements/requirements.in
 soupsieve==2.6
     # via beautifulsoup4
-tiktoken==0.8.0
+tiktoken==0.9.0
     # via litellm
 tokenizers==0.19.1
     # via
@@ -228,6 +228,7 @@ tqdm==4.67.1
 tree-sitter==0.21.3
     # via
     #   -r requirements/requirements.in
+    #   grep-ast
     #   tree-sitter-languages
 tree-sitter-languages==1.10.2
     # via grep-ast
