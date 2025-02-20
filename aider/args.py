@@ -5,6 +5,7 @@ import os
 import sys
 
 import configargparse
+from ast import literal_eval
 
 from aider import __version__
 from aider.args_formatter import (
@@ -828,6 +829,18 @@ def get_parser(default_config_files, git_root):
         action="store_true",
         help="Install the tree_sitter_language_pack (experimental)",
         default=False,
+    )
+    # Use ast.literal_eval() to parse Python dict syntax from command line:
+    #   --languages "{'m':'matlab', 'r':'R'}"  # Python dict literal
+    #   --languages '{"m":"matlab", "r":"R"}'  # JSON format also works
+    # Both create dict mapping file extensions to language names
+    # More flexible than json.loads() as it accepts both formats
+    group.add_argument(
+        "--languages",
+        type=literal_eval,
+        metavar="{'ext':'language'}",
+        help="map file extensions to languages. Format: --languages \"{'m':'matlab'}\" or '{\"m\":\"matlab\"}'",
+        default={},
     )
 
     return parser
