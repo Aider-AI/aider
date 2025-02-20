@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 from .chat_chunks import ChatChunks
+import json
 
 @dataclass
 class AutoApproveChatChunks(ChatChunks):
