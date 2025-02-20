@@ -570,3 +570,29 @@
   versions: 0.74.3.dev
   seconds_per_case: 12.4
   total_cost: 14.3703
+
+- dirname: 2025-02-16-09-31-59--deepseek-r1-distill-qwen-q4kl
+  test_cases: 225
+  model: DeepSeek-R1-Distill-Qwen-32B (Q4KL)
+  edit_format: diff
+  commit_hash: 771ee61
+  pass_rate_1: 3.1
+  pass_rate_2: 12.0
+  pass_num_1: 7
+  pass_num_2: 27
+  percent_cases_well_formed: 92.4
+  error_outputs: 46
+  num_malformed_responses: 46
+  num_with_malformed_responses: 17
+  user_asks: 43
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model openai/deepseek/deepseek-r1-distill-qwen
+  date: 2025-02-16
+  versions: 0.74.3.dev
+  seconds_per_case: 248.8
+  total_cost: 0.0000
