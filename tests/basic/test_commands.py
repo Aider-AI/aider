@@ -1722,6 +1722,73 @@ class TestCommands(TestCase):
             del coder
             del commands
 
+    def test_cmd_repeat_happy_path(self):
+        # Initialize the Commands and InputOutput objects
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Mock coder.run to track calls
+        with mock.patch.object(coder, 'run') as mock_run:
+            commands.cmd_repeat("3 fix the tests")
+
+            # Verify coder.run was called 3 times with the same message
+            self.assertEqual(mock_run.call_count, 3)
+            mock_run.assert_has_calls([
+                mock.call("fix the tests"),
+                mock.call("fix the tests"),
+                mock.call("fix the tests")
+            ])
+
+    def test_cmd_repeat_invalid_count(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Test invalid inputs
+        invalid_inputs = [
+            "abc fix tests",  # non-numeric count
+            "-1 fix tests",   # negative count
+            "0 fix tests",    # zero count
+            "",              # empty input
+        ]
+
+        with mock.patch.object(io, 'tool_error') as mock_error:
+            for invalid_input in invalid_inputs:
+                commands.cmd_repeat(invalid_input)
+                mock_error.assert_called_with("Usage: /repeat N 'message' - where N is a positive number")
+                mock_error.reset_mock()
+
+    def test_cmd_repeat_no_message(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        with mock.patch.object(io, 'tool_error') as mock_error:
+            commands.cmd_repeat("3")
+            mock_error.assert_called_with("Please provide a message to repeat")
+
+    def test_cmd_repeat_with_quoted_message(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        with mock.patch.object(coder, 'run') as mock_run:
+            commands.cmd_repeat('2 "fix the tests please"')
+
+            # First verify the number of calls
+            self.assertEqual(mock_run.call_count, 2)
+            
+            # Get the actual calls made to the mock
+            actual_calls = mock_run.call_args_list
+            
+            # Verify each call's argument
+            for call in actual_calls:
+                # Get the first (and only) positional argument
+                args = call[0]
+                # Verify the argument is what we expect
+                self.assertEqual(args[0], "\"fix the tests please\"")
+
     def test_cmd_load_with_switch_coder(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=True)
