@@ -71,12 +71,14 @@ Note that `run` with `with_message` param will be same as `run_one`. Otherwise, 
     - run any shell commands metioned in the response
     - perform linting and testing if configured to do so.
     - State management: tracks message history, handle interruptions 
+    - call to `self.reply_completed()` that has its own `llm` message send to do an extra step on the output of the `previous llm` call such as `edit code` while previous llm does `architect code`.
 
 
 So currently, llm only auto loops when llm requests more files to be added via `self.reflected_message`. Otherwise, the coder will go back to `run` loop and wait for user input.
-If we want multi-step reasoning agent, there are 2 ways to do:
+If we want multi-step reasoning agent, there are probably 3 ways to do:
     - make llm to response with continue or no, and extend `reflected_message` based on that.
     - or enable `run` loop to ask for agent input instead of user input.
+    - or use `self.reply_completed()` that has its own `llm` message send to do an extra step on the output of the `previous llm` call such as `edit code` while previous llm does `architect code`.
 
 
 *** New feature ***
