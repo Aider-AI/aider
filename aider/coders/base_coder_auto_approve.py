@@ -249,7 +249,7 @@ class AutoApproveCoder(Coder):
         # NOTE: all regions below add to reflected_message corresponding errors, 
         # etc. for llm to fix in the next iteration in the while loop in run_one
         
-        # 3. Apply updates 
+        # 3. Apply updates - by default is None - leaving editor to edit and apply updates
         # region Apply updates, commit
         # Apply updates (potentially on files)
         # This could have edit errors, which will be added to reflected_message
