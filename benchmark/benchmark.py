@@ -854,6 +854,18 @@ def run_test_real(
     if moa:
         # moa is already a list of models
         architect_models = [models.Model(m) for m in moa]
+
+        reasoning_models = ["o1", "o3", "deepseek-reasoner", "r1"]
+
+        for architect_model in architect_models:
+            if any(sub in architect_model.name for sub in reasoning_models):
+                print(f"Setting reasoning effort for {architect_model.name}")
+                if not getattr(architect_model, "extra_params", None):
+                    architect_model.extra_params = {}
+                if "extra_body" not in architect_model.extra_params:
+                    architect_model.extra_params["extra_body"] = {}
+                architect_model.extra_params["extra_body"]["reasoning_effort"] = "high"
+
         coder_kwargs["architect_models"] = architect_models
 
     coder = Coder.create(**coder_kwargs)
