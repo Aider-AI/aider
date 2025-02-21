@@ -233,6 +233,7 @@ def main(
     ),
     moa: Optional[List[str]] = typer.Option(
         None, "--moa", help="List of additional architect models"
+    ),
     read_model_settings: str = typer.Option(
         None, "--read-model-settings", help="Load aider model settings from YAML file"
     ),
@@ -349,7 +350,9 @@ def main(
 
     test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
 
-    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    resource_metadata = importlib_resources.files("aider.resources").joinpath(
+        "model-metadata.json"
+    )
     model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
     dump(model_metadata_files_loaded)
 

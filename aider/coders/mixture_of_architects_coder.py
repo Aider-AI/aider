@@ -10,10 +10,11 @@ from .compiler_coder import CompilerCoder
 
 NATO_NAMES = ["bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel"]
 
+
 class ArbiterAgent:
     """Manages phased discussion and provides structured feedback"""
-    
-    def __init__(self, model, io: InputOutput, discussion_messages, stream,verbose):
+
+    def __init__(self, model, io: InputOutput, discussion_messages, stream, verbose):
         self.model = model
         self.phases = ["brainstorm", "critique", "optimize"]
         self.current_phase = "brainstorm"
@@ -25,7 +26,7 @@ class ArbiterAgent:
 
         self.gpt_prompts = None
         self.discussion_messages = discussion_messages
-    
+
     def build_context_for_coder(self, target_coder):
         """Reuse the message formatting logic from get_architect_response"""
         for msg in self.discussion_messages:
@@ -36,32 +37,42 @@ class ArbiterAgent:
 
             match msg["role"]:
                 case "user":
-                    fenced_content = f"<user_message>\n{msg['content']}\n</user_message>\n\n"
+                    fenced_content = (
+                        f"<user_message>\n{msg['content']}\n</user_message>\n\n"
+                    )
                     if last_msg_is_user:
                         target_coder.cur_messages[-1]["content"] += fenced_content
                     else:
-                        target_coder.cur_messages.append({"role": "user", "content": fenced_content})
+                        target_coder.cur_messages.append(
+                            {"role": "user", "content": fenced_content}
+                        )
                 case "assistant":
                     if msg.get("name") == "ARBITER":
-                        target_coder.cur_messages.append({"role": "assistant", "content": msg["content"]})
+                        target_coder.cur_messages.append(
+                            {"role": "assistant", "content": msg["content"]}
+                        )
                     else:
-                        content = extract_proposal_content(msg["content"], msg.get("name", "unknown"), False)
+                        content = extract_proposal_content(
+                            msg["content"], msg.get("name", "unknown"), False
+                        )
                         if last_msg_is_user:
                             target_coder.cur_messages[-1]["content"] += content
                         else:
-                            target_coder.cur_messages.append({"role": "user", "content": content})
+                            target_coder.cur_messages.append(
+                                {"role": "user", "content": content}
+                            )
 
     def get_phase(self):
         """Get current phase name."""
         return self.current_phase
-    
+
     def get_next_phase(self):
         """Get the name of the next phase without advancing."""
         current_idx = self.phases.index(self.current_phase)
         if current_idx < len(self.phases) - 1:
             return self.phases[current_idx + 1]
         return self.current_phase
-    
+
     def advance_phase(self):
         """Advance to next phase and return the new phase name."""
         current_idx = self.phases.index(self.current_phase)
@@ -70,7 +81,7 @@ class ArbiterAgent:
             self.current_phase = next_phase
             return next_phase
         return None
-    
+
     def generate_round_feedback(self):
         """Generate arbiter message with targeted feedback."""
         ask_coder = AskCoder.create(
@@ -95,7 +106,7 @@ class ArbiterAgent:
         response = ask_coder.run(with_message=prompt, preproc=False)
 
         return response.strip()
-    
+
     def generate_phase_summary(self):
         """Generate summary of the current phase before transition."""
         ask_coder = AskCoder.create(
@@ -120,7 +131,6 @@ class ArbiterAgent:
         response = ask_coder.run(with_message=prompt, preproc=False)
         return response.strip()
 
-
     def get_arbiter_verdict(self, responses):
         """Determine if phase should advance based on responses."""
         ask_coder = AskCoder.create(
@@ -138,6 +148,7 @@ class ArbiterAgent:
         ask_coder.gpt_prompts = ArbiterPrompts()
         self.build_context_for_coder(ask_coder)
 
+        joined_responses = "\n".join(responses)
         prompt = f"""Review the current {self.get_phase()} phase discussion and determine if ready to advance.
         
         Consider:
@@ -153,10 +164,10 @@ class ArbiterAgent:
         Explain your decision in <reason> tags.
         
         Discussion context:
-        {"\n".join(responses)}"""
+        {joined_responses}"""
 
         response = ask_coder.run(with_message=prompt, preproc=False)
-        
+
         # Extract and show reasoning
         reason_match = re.search(r"<reason>(.*?)</reason>", response, re.DOTALL)
         if reason_match:
@@ -167,6 +178,7 @@ class ArbiterAgent:
             return "advance"
         return "continue"
 
+
 class ArchitectAgent:
     def __init__(self, name, model):
         self.name = name  # NATO name (alpha, bravo, etc)
@@ -175,7 +187,7 @@ class ArchitectAgent:
         self.last_response: str | None = None
 
 
-def extract_proposal_content(content, name, is_architect = True):
+def extract_proposal_content(content, name, is_architect=True):
     """
     Extracts proposal content from the given content string.
 
@@ -212,12 +224,18 @@ class MixtureOfArchitectsCoder(Coder):
 
     def __init__(self, main_model, io, architect_models=None, **kwargs):
         super().__init__(main_model, io, **kwargs)
-        
+
         # Add conversation history tracking
         self.discussion_messages = []  # List to store the full conversation
 
         # Add arbiter component
-        self.arbiter = ArbiterAgent(main_model, self.io, self.discussion_messages, self.stream, self.verbose,)
+        self.arbiter = ArbiterAgent(
+            main_model,
+            self.io,
+            self.discussion_messages,
+            self.stream,
+            self.verbose,
+        )
 
         # The main_model is always the first architect (alpha)
         self.architects = [ArchitectAgent("alpha", main_model)]
@@ -275,7 +293,10 @@ class MixtureOfArchitectsCoder(Coder):
                             )
                     case "assistant":
                         # If its the current architect, then we use role=assistant
-                        if msg["name"] == architect.name.upper() or msg["name"] == "ANY":
+                        if (
+                            msg["name"] == architect.name.upper()
+                            or msg["name"] == "ANY"
+                        ):
                             ask_coder.cur_messages.append(
                                 {"role": "assistant", "content": msg["content"]}
                             )
@@ -343,45 +364,48 @@ class MixtureOfArchitectsCoder(Coder):
             )
             return architect, f"Error: {str(e)}"
 
-
     def run_arbiter(self, user_message):
         try:
             initial_message = user_message
             # Store initial user message
-            self.discussion_messages.append({"role": "user", "content": initial_message})
-            
+            self.discussion_messages.append(
+                {"role": "user", "content": initial_message}
+            )
+
             while True:  # Outer loop - continues until all phases complete
                 phase = self.arbiter.get_phase()
                 is_final_phase = phase == self.arbiter.phases[-1]
-                
+
                 phase_prompt = self.gpt_prompts.phase_prompts[phase]
                 phase_message = f"""## Phase Context: {phase.capitalize()}
                 {phase_prompt}
 ### User Request:
                 {initial_message}"""
-                
+
                 # Get active architects
                 active_architects = [arch for arch in self.architects if arch.active]
                 if not active_architects:
                     self.io.tool_error("No active architects remaining!")
                     return
-                
+
                 # Debug: Show which architects are active
                 self.io.rule()
                 self.io.tool_output(
                     f"Active architects: {[arch.name for arch in active_architects]}"
                 )
-                
+
                 while True:  # Inner loop - continues until phase advances
                     responses = []
                     architect_names = []
-                    
+
                     # Process architects sequentially
                     for arch in active_architects:
                         self.io.tool_output(f"{arch.name}'s response...", bold=True)
                         self.io.rule()
                         try:
-                            arch, response = self.get_architect_response(arch, phase_message)
+                            arch, response = self.get_architect_response(
+                                arch, phase_message
+                            )
                             responses.append(response)
                             architect_names.append(arch.name)
 
@@ -390,11 +414,13 @@ class MixtureOfArchitectsCoder(Coder):
                                 continue
 
                             arch.last_response = response
-                            self.discussion_messages.append({
-                                "role": "assistant",
-                                "name": arch.name.upper(),
-                                "content": response,
-                            })
+                            self.discussion_messages.append(
+                                {
+                                    "role": "assistant",
+                                    "name": arch.name.upper(),
+                                    "content": response,
+                                }
+                            )
 
                         except Exception as e:
                             self.io.tool_error(
@@ -404,7 +430,9 @@ class MixtureOfArchitectsCoder(Coder):
                         # Show architect's proposal immediately if verbose
                         if self.verbose and arch.last_response:
                             self.io.rule()
-                            self.io.tool_output(f"{arch.name.upper()}'s Response:", bold=True)
+                            self.io.tool_output(
+                                f"{arch.name.upper()}'s Response:", bold=True
+                            )
                             self.io.tool_output(f"\n{arch.last_response}\n")
 
                     # Single arbiter feedback at end of round
@@ -413,14 +441,16 @@ class MixtureOfArchitectsCoder(Coder):
                     arbiter_feedback = self.arbiter.generate_round_feedback()
                     if arbiter_feedback.strip():
                         # self.io.tool_output("=== ARBITER FEEDBACK ===", color=self.arbiter.color)
-                        self.discussion_messages.append({
-                            "role": "assistant",
-                            "name": "ARBITER",
-                            "content": arbiter_feedback
-                        })
+                        self.discussion_messages.append(
+                            {
+                                "role": "assistant",
+                                "name": "ARBITER",
+                                "content": arbiter_feedback,
+                            }
+                        )
                         # self.io.tool_output(arbiter_feedback, color=self.arbiter.color)
                         # self.io.tool_output("=== END FEEDBACK ===", color=self.arbiter.color)
-                    
+
                     # Get arbiter verdict for phase advancement
                     self.io.tool_output("\nArbiter's Verdict:", bold=True)
                     verdict = self.arbiter.get_arbiter_verdict(responses)
@@ -428,51 +458,66 @@ class MixtureOfArchitectsCoder(Coder):
 
                         self.io.tool_output("\nArbiter's Summary:", bold=True)
                         transition_message = self.arbiter.generate_phase_summary()
-                        
+
                         # Announce phase completion and transition
                         self.io.tool_output("\nPhase Transition", bold=True)
                         self.io.tool_output("=" * 40, color=self.arbiter.color)
-                        self.io.tool_output(f"Completing {self.arbiter.current_phase} phase", color=self.arbiter.color)
-                        
+                        self.io.tool_output(
+                            f"Completing {self.arbiter.current_phase} phase",
+                            color=self.arbiter.color,
+                        )
+
                         next_phase = self.arbiter.get_next_phase()
                         if next_phase != self.arbiter.current_phase:
-                            self.io.tool_output(f"Moving to {next_phase} phase", bold=True, color=self.arbiter.color)
+                            self.io.tool_output(
+                                f"Moving to {next_phase} phase",
+                                bold=True,
+                                color=self.arbiter.color,
+                            )
                         else:
-                            self.io.tool_output("Remaining in final phase", color=self.arbiter.color)
+                            self.io.tool_output(
+                                "Remaining in final phase", color=self.arbiter.color
+                            )
                         self.io.tool_output("=" * 40, color=self.arbiter.color)
-                        
+
                         # Store transition in discussion history
-                        self.discussion_messages.append({
-                            "role": "assistant",
-                            "name": "ARBITER",
-                            "content": f"""<phase_transition>
+                        self.discussion_messages.append(
+                            {
+                                "role": "assistant",
+                                "name": "ARBITER",
+                                "content": f"""<phase_transition>
                                 {transition_message}
                                 Moving from {self.arbiter.current_phase} to {next_phase} phase.
-                                </phase_transition>"""
-                        })
-                        
+                                </phase_transition>""",
+                            }
+                        )
+
                         self.arbiter.advance_phase()
-                        
+
                         # If we completed the final phase, exit both loops
                         if is_final_phase:
                             # Yes is proxy for auto running code, As proxy for benchmarking
                             # TODO: Replace with a better testing strategy
                             if self.io.yes:
                                 # Get last architect name
-                                last_architect_name = NATO_NAMES[len(self.architects) - 1]
-                                self.run_coding_phase(f"lets implement {last_architect_name}'s solution")
+                                last_architect_name = NATO_NAMES[
+                                    len(self.architects) - 1
+                                ]
+                                self.run_coding_phase(
+                                    f"lets implement {last_architect_name}'s solution"
+                                )
 
                             return
-                        
+
                         # Break inner loop to move to next phase
                         break
                     else:
                         # Continue in current phase for another round of responses
                         continue
-                
+
                 # Add final divider between phases
                 self.io.rule()
-                
+
         finally:
             self.io.tool_output("All phases complete.")
 
@@ -531,11 +576,14 @@ class MixtureOfArchitectsCoder(Coder):
             # Add final divider
             self.io.rule()
         finally:
-            self.io.tool_output(f"Discussion round complete. Total cost so far: {self.total_cost}", bold=True)
+            self.io.tool_output(
+                f"Discussion round complete. Total cost so far: {self.total_cost}",
+                bold=True,
+            )
         # Yes is proxy for auto running code, As proxy for benchmarking
         # TODO: Replace with a better testing strategy
         if self.io.yes:
-            last_architect_name = NATO_NAMES[len(self.architects) - 1]
+            last_architect_name = NATO_NAMES[len(self.architects) - 2]
             self.run_coding_phase(f"lets implement {last_architect_name}'s solution")
 
     def preproc_user_input(self, inp):
@@ -548,7 +596,14 @@ class MixtureOfArchitectsCoder(Coder):
             cmd = words[0].lower()
             args = " ".join(words[1:])
 
-            if cmd in ["/ignore", "/discuss", "/code", "/clear", "/reset", "/arbiter",]:
+            if cmd in [
+                "/ignore",
+                "/discuss",
+                "/code",
+                "/clear",
+                "/reset",
+                "/arbiter",
+            ]:
                 cmd = cmd[1:]  # strip the /
                 return self.handle_discussion_commands(cmd, args)
 
@@ -701,7 +756,9 @@ class MixtureOfArchitectsCoder(Coder):
 
         # Add cost logging after coding
         self.io.rule()
-        self.io.tool_output(f"Implementation complete. Total cost so far: {self.total_cost}", bold=True)
+        self.io.tool_output(
+            f"Implementation complete. Total cost so far: {self.total_cost}", bold=True
+        )
 
         # Inject implementation notice to discussion
         self.discussion_messages.append(
@@ -717,7 +774,6 @@ class MixtureOfArchitectsCoder(Coder):
                 "content": "Okay, i'll refer to the latest code state",
             }
         )
-
 
         self.move_back_cur_messages(
             "Changes have been applied based on architects' consensus."
