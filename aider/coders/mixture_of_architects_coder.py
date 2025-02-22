@@ -586,6 +586,10 @@ class MixtureOfArchitectsCoder(Coder):
             last_architect_name = NATO_NAMES[len(self.architects) - 2]
             self.run_coding_phase(f"lets implement {last_architect_name}'s solution")
 
+            # TODO: Find better place to track this benchmarking command
+            # EXPORT API KEYS in docker image
+            # ./benchmark/benchmark.py moa-sonnet-o3-mini-high-run2 --model sonnet --edit-format diff --threads 10 --exercises-dir polyglot-benchmark --num-tests 2 --moa o3-mini
+
     def preproc_user_input(self, inp):
         if not inp:
             return
