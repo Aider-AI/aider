@@ -16,6 +16,8 @@ class AutoApproveCoder(Coder):
         self.chat_chunks = AutoApproveChatChunks()
         self.max_failures = 3
         self.failures = 0
+        self.exhauted = False # flag exhausted token error
+        self.interrupted = False # flag keyboard interrupted
 
     def run(self, with_message=None, preproc=True):
         """
@@ -80,39 +82,19 @@ class AutoApproveCoder(Coder):
                 
                 Right now, one boss coder who is planner/architect to control one editor coder. 
         """
+
         self.event("message_send_starting")
 
-        self.cur_messages += [
-            dict(role="user", content=inp),
-        ]
+        messages = self.preprocess_input(inp)
 
-        # Construct the full message including system prompt, etc. to be sent to the planner/architect
-        chunks = self.format_messages()
-        messages = chunks.all_messages()
-
-        if not self.check_tokens(messages):
-            return
-        self.warm_cache(chunks)
-
-        if self.verbose:
-            utils.show_messages(messages, functions=self.functions)
-
-        self.multi_response_content = ""
-        if self.show_pretty() and self.stream:
-            self.mdstream = self.io.get_assistant_mdstream()
-        else:
-            self.mdstream = None
-
-        retry_delay = 0.125
-
-        litellm_ex = LiteLLMExceptions()
-
-        self.usage_report = None
-        exhausted = False
-        interrupted = False
-        
         # 1. Send planning messages to POC: planner/architect
+        self.exhausted = False
+        self.interrupted = False
         try:
+            self.usage_report = None
+            retry_delay = 0.125
+            litellm_ex = LiteLLMExceptions()
+
             # while loop is only to retry sending message if having llm send exceptions
             while True:
                 try:
@@ -125,7 +107,7 @@ class AutoApproveCoder(Coder):
                     ex_info = litellm_ex.get_ex_info(err)
 
                     if ex_info.name == "ContextWindowExceededError":
-                        exhausted = True
+                        self.exhausted = True
                         break
 
                     should_retry = ex_info.retry
@@ -150,12 +132,12 @@ class AutoApproveCoder(Coder):
                     time.sleep(retry_delay)
                     continue
                 except KeyboardInterrupt:
-                    interrupted = True
+                    self.interrupted = True
                     break
                 except FinishReasonLength:
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
-                        exhausted = True
+                        self.exhausted = True
                         break
 
                     self.multi_response_content = self.get_multi_response_content_in_progress()
@@ -185,26 +167,156 @@ class AutoApproveCoder(Coder):
             )
             self.multi_response_content = ""
 
+        # report usage
         self.io.tool_output()
-
         self.show_usage_report()
 
-        self.add_assistant_reply_to_cur_messages()
+        if not self.process_response():
+            return
+        
 
-        # Messsage is too long now, add into to cur message and return
-        if exhausted:
-            if self.cur_messages and self.cur_messages[-1]["role"] == "user":
-                self.cur_messages += [
-                    dict(
-                        role="assistant",
-                        content="FinishReasonLength exception: you sent too many tokens",
-                    ),
-                ]
+        # 2. Send editing messages to the editor llm/worker
+        if not self.interrupted:
+            self.request_special_agents()
 
-            self.show_exhausted_error()
-            self.num_exhausted_context_windows += 1
+
+        # NOTE: all regions below add to reflected_message corresponding errors, 
+        # etc. for llm to fix in the next iteration in the while loop in run_one
+        
+        # 3. APPLY UPDATES - by default is None - leaving editor to edit and apply updates
+        edited = self.apply_updates()  # This could have edit errors, which will be added to reflected_message
+        self.create_commit_and_reset_cur_messages(edited)
+
+
+        # if edit has errors, add errors to reflected_message for llm to fix (via return to the llm loop in run_one)
+        if self.reflected_message:
             return
 
+        self.fix_lint(edited)
+        if self.reflected_message:
+            return
+        
+        # region shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
+        self.run_commands()
+        # endregion
+
+        # region test: test commands provided by user in coder init - not by llm
+        self.run_test(edited)
+        if self.reflected_message:
+            return
+        # endregion
+
+
+    def request_special_agents(self):
+        """
+        Request more agents to solve the task
+        """
+        try:
+            self.reply_completed()
+        except KeyboardInterrupt:
+            self.handle_keyboard_interrupted()
+
+    def create_commit_and_reset_cur_messages(self, edited):
+        if edited:
+            self.aider_edited_files.update(edited) # doesn't seem to be used
+            saved_message = self.auto_commit(edited)
+
+            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
+
+            self.move_back_cur_messages(saved_message)
+
+    def run_commands(self):
+        # shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
+    
+        shared_output = self.run_shell_commands()
+        if shared_output:
+            self.cur_messages += [
+                dict(role="user", content=shared_output),
+                dict(role="assistant", content="Ok"),
+            ]
+
+    def run_test(self, edited):
+        """
+        Run tests
+        """
+        if edited and self.auto_test:
+            test_errors = self.commands.cmd_test(self.test_cmd)
+            self.test_outcome = not test_errors
+            if test_errors:
+                ok = self.io.confirm_ask("Attempt to fix test errors?")
+                if ok:
+                    self.reflected_message = test_errors
+        return self.reflected_message
+    
+    def fix_lint(self, edited):
+        """
+        Fix lint errors
+        """
+        if edited and self.auto_lint:
+            lint_errors = self.lint_edited(edited)
+            self.auto_commit(edited, context="Ran the linter")
+            self.lint_outcome = not lint_errors
+            if lint_errors:
+                self.reflected_message = lint_errors
+        return self.reflected_message
+
+    def preprocess_input(self, inp):
+        """
+        Preprocesses the input message by appending it to the current messages,
+        formatting the message chunks, and checking token limits.
+
+        This method updates `self.cur_messages` with the input message and
+        constructs a complete message including system prompts to be sent to
+        the planner/architect. It checks if the message is within token limits
+        and prepares the cache if necessary. If verbose mode is enabled, it
+        displays the messages. It also initializes streaming settings for
+        pretty output if required.
+
+        Args:
+            inp (str): The input message from the user to be processed.
+
+        Returns:
+            list: The formatted messages ready for the planner/architect if
+            within token limits, otherwise returns None.
+        """
+
+        self.cur_messages += [
+            dict(role="user", content=inp),
+        ]
+
+        # Construct the full message including system prompt, etc. to be sent to the planner/architect
+        chunks = self.format_messages()
+        messages = chunks.all_messages()
+
+        if not self.check_tokens(messages):
+            return
+        self.warm_cache(chunks)
+
+        if self.verbose:
+            utils.show_messages(messages, functions=self.functions)
+
+        self.multi_response_content = ""
+        if self.show_pretty() and self.stream:
+            self.mdstream = self.io.get_assistant_mdstream()
+        else:
+            self.mdstream = None
+
+        return messages
+
+
+    def process_response(self):
+        self.add_assistant_reply_to_cur_messages()
+
+        # Output is too long, add info to cur message and return
+        if self.exhausted:
+            return self.handle_exhausted_token_error()
+        
+        # Keyboard interrupted during llm response
+        if self.interrupted:
+            return self.handle_keyboard_interrupted()
+
+        # extracts the content from LLM's response in two possible formats: function call and regular text
         if self.partial_response_function_call:
             args = self.parse_partial_args()
             if args:
@@ -216,94 +328,47 @@ class AutoApproveCoder(Coder):
         else:
             content = ""
 
-        # region check for file mentions and add them to reflected_message before returning to run_one
-        if not interrupted:
-            add_rel_files_message = self.check_for_file_mentions(content)
-            if add_rel_files_message:
-                if self.reflected_message:
-                    self.reflected_message += "\n\n" + add_rel_files_message
-                else:
-                    self.reflected_message = add_rel_files_message
-                return
-        # endregion
-
-        # 2. Send editing messages to the editor llm/worker
-        if not interrupted:
-            try:
-                self.reply_completed()
-            except KeyboardInterrupt:
-                interrupted = True
-
-        # region with keyboard interruption, adding info to cur_messages
-        if interrupted:
-            if self.cur_messages and self.cur_messages[-1]["role"] == "user":
-                self.cur_messages[-1]["content"] += "\n^C KeyboardInterrupt"
+        # check for file mentions and add them to reflected_message before returning to run_one
+        add_rel_files_message = self.check_for_file_mentions(content)
+        if add_rel_files_message:
+            if self.reflected_message:
+                self.reflected_message += "\n\n" + add_rel_files_message
             else:
-                self.cur_messages += [dict(role="user", content="^C KeyboardInterrupt")]
-            self.cur_messages += [
-                dict(role="assistant", content="I see that you interrupted my previous reply.")
-            ]
-            return
-        # endregion
-
-        # NOTE: all regions below add to reflected_message corresponding errors, 
-        # etc. for llm to fix in the next iteration in the while loop in run_one
+                self.reflected_message = add_rel_files_message
+            return 
         
-        # 3. Apply updates - by default is None - leaving editor to edit and apply updates
-        # region Apply updates, commit
-        # Apply updates (potentially on files)
-        # This could have edit errors, which will be added to reflected_message
-        edited = self.apply_updates()
+        return True
 
-        if edited:
-            self.aider_edited_files.update(edited)
-            saved_message = self.auto_commit(edited)
 
-            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
-                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
+    
 
-            self.move_back_cur_messages(saved_message)
+    def handle_exhausted_token_error(self) -> None:
+        # Messsage is too long 
+        # Add the info to cur message
 
-        # if edit has errors, add errors to reflected_message for llm to fix (via return to the llm loop in run_one)
-        if self.reflected_message:
-            return
-
-        # endregion
-
-        # region lint fix: less serious edit errors: fixing lint errors - same approach: setting reflected_message for llm to fix
-        if edited and self.auto_lint:
-            lint_errors = self.lint_edited(edited)
-            self.auto_commit(edited, context="Ran the linter")
-            self.lint_outcome = not lint_errors
-            if lint_errors:
-                ok = self.io.confirm_ask("Attempt to fix lint errors?")
-                if ok:
-                    self.reflected_message = lint_errors
-                    return
-
-        # endregion
-        
-        # region shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
-        shared_output = self.run_shell_commands()
-        if shared_output:
+        if self.cur_messages and self.cur_messages[-1]["role"] == "user":
             self.cur_messages += [
-                dict(role="user", content=shared_output),
-                dict(role="assistant", content="Ok"),
+                dict(
+                    role="assistant",
+                    content="FinishReasonLength exception: you sent too many tokens",
+                ),
             ]
 
-        # endregion
+        self.show_exhausted_error()
+        self.num_exhausted_context_windows += 1
 
-        # region test: test commands provided by user in coder init - not by llm
-        if edited and self.auto_test:
-            test_errors = self.commands.cmd_test(self.test_cmd)
-            self.test_outcome = not test_errors
-            if test_errors:
-                ok = self.io.confirm_ask("Attempt to fix test errors?")
-                if ok:
-                    self.reflected_message = test_errors
-                    return
-        # endregion
 
+    def handle_keyboard_interrupted(self) -> None:
+        # Keyboard interrupted during llm response
+        # Add the info to cur message
+
+        if self.cur_messages and self.cur_messages[-1]["role"] == "user":
+            self.cur_messages[-1]["content"] += "\n^C KeyboardInterrupt"
+        else:
+            self.cur_messages += [dict(role="user", content="^C KeyboardInterrupt")]
+        self.cur_messages += [
+            dict(role="assistant", content="I see that you interrupted my previous reply.")
+        ]
 
     def reply_completed(self):
         content = self.partial_response_content
@@ -349,9 +414,9 @@ class AutoApproveCoder(Coder):
         self.total_cost = editor_coder.total_cost
         self.aider_commit_hashes = editor_coder.aider_commit_hashes
 
-        next_step = self.get_next_step()
-        if next_step:
-            self.reflected_message = next_step
+        # next_step = self.get_next_step()
+        # if next_step:
+        #     self.reflected_message = next_step
 
 
     def run(self, with_message=None, preproc=True):
