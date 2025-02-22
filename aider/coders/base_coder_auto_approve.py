@@ -15,8 +15,6 @@ class AutoApproveCoder(Coder):
         super().__init__(*args, **kwargs)
         self.max_failures = 3
         self.failures = 0
-        self.exhauted = False # flag exhausted token error
-        self.interrupted = False # flag keyboard interrupted
 
     def run(self, with_message=None, preproc=True):
         """
@@ -61,7 +59,9 @@ class AutoApproveCoder(Coder):
 
     def send_message(self, inp):
         """
-        Send message to LLM department to solve the task
+        Send message to the POC for the task.
+        The POC is the main model.
+        POC will response with direct solution or with request for special agents to solve subtasks it is breaking down.
 
 
         This is the core controller of the coder, including:
@@ -86,19 +86,17 @@ class AutoApproveCoder(Coder):
 
         messages = self.preprocess_input(inp)
 
-        # 1. Send planning messages to POC: planner/architect
-        self.exhausted = False
-        self.interrupted = False
+        # 1. Message the POC --- the main model: planner/architect
+        exhausted = False
+        interrupted = False
+        self.usage_report = None
+        retry_delay = 0.125
+        litellm_ex = LiteLLMExceptions()
         try:
-            self.usage_report = None
-            retry_delay = 0.125
-            litellm_ex = LiteLLMExceptions()
-
             # while loop is only to retry sending message if having llm send exceptions
             while True:
                 try:
-                    planning_messages = messages
-                    yield from self.send(planning_messages, model=self.main_model, functions=self.functions)
+                    yield from self.send(messages, model=self.main_model, functions=self.functions)
                     break
 
                 # region exceptions: break if too long context window, too many retries, keyboard interrupt, hitting output limit (adding info to llm message), if other errors then raise event and return
@@ -106,7 +104,7 @@ class AutoApproveCoder(Coder):
                     ex_info = litellm_ex.get_ex_info(err)
 
                     if ex_info.name == "ContextWindowExceededError":
-                        self.exhausted = True
+                        exhausted = True
                         break
 
                     should_retry = ex_info.retry
@@ -131,12 +129,12 @@ class AutoApproveCoder(Coder):
                     time.sleep(retry_delay)
                     continue
                 except KeyboardInterrupt:
-                    self.interrupted = True
+                    interrupted = True
                     break
                 except FinishReasonLength:
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
-                        self.exhausted = True
+                        exhausted = True
                         break
 
                     self.multi_response_content = self.get_multi_response_content_in_progress()
@@ -156,6 +154,7 @@ class AutoApproveCoder(Coder):
                     return
                 # endregion
         finally:
+            # region clean up
             if self.mdstream:
                 self.live_incremental_response(True)
                 self.mdstream = None
@@ -165,19 +164,43 @@ class AutoApproveCoder(Coder):
                 self.partial_response_content
             )
             self.multi_response_content = ""
+            # endregion
 
         # report usage
         self.io.tool_output()
         self.show_usage_report()
 
-        if not self.process_response():
+        self.add_assistant_reply_to_cur_messages()
+
+        # poc responses with exception of token exhausted
+        if exhausted:
+            self.handle_exhausted_token_error()
+            return
+        
+        # user triggers keyboard interrupt
+        if interrupted:
+            self.handle_keyboard_interrupted()
+            return
+
+        # set reflected_message with file mentions 
+        # and next run_one's call to send_message will augment user message with file contents
+        if self.reflect_on_file_mentions():
+            return
+        
+        # set reflected_message with url mentions 
+        # and next run_one's call to send_message will augment user message with url contents
+        if self.reflect_on_url_mentions():
             return
         
 
-        # 2. Send editing messages to the editor llm/worker
-        if not self.interrupted:
-            self.request_special_agents()
+        # 2. Message Special Agents --- messages the editor llm/worker
+        # POC should tell what special agents for subtasks are needed if any
+        # These special agents should be running in threads either parallel or sequentially
+        # And so differently from base_coder, we dont catch keyboard interrupt here - we let special agents to catch it
+        self.request_special_agents()
 
+        if self.reflect_after_special_agents():
+            return
 
         # NOTE: all regions below add to reflected_message corresponding errors, 
         # etc. for llm to fix in the next iteration in the while loop in run_one
@@ -185,8 +208,6 @@ class AutoApproveCoder(Coder):
         # 3. APPLY UPDATES - by default is None - leaving editor to edit and apply updates
         edited = self.apply_updates()  # This could have edit errors, which will be added to reflected_message
         self.create_commit_and_reset_cur_messages(edited)
-
-
         # if edit has errors, add errors to reflected_message for llm to fix (via return to the llm loop in run_one)
         if self.reflected_message:
             return
@@ -195,15 +216,11 @@ class AutoApproveCoder(Coder):
         if self.reflected_message:
             return
         
-        # region shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
-        self.run_commands()
-        # endregion
-
-        # region test: test commands provided by user in coder init - not by llm
-        self.run_test(edited)
+        self.run_commands() # shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
+        
+        self.run_test(edited) # test commands provided by user in coder init - not by llm
         if self.reflected_message:
             return
-        # endregion
 
 
     def request_special_agents(self):
@@ -304,18 +321,16 @@ class AutoApproveCoder(Coder):
         return messages
 
 
-    def process_response(self):
-        self.add_assistant_reply_to_cur_messages()
+    def reflect_on_file_mentions(self):
+        """
+        Reflect on file mentions in the LLM's response and add them to the
+        reflected_message. This method checks if the response contains a
+        function call or regular text, extracts the content, and checks for
+        file mentions. If file mentions are found, it adds them to the
+        reflected_message. This method returns True if the reflected_message
+        is modified, otherwise it returns False.
+        """
 
-        # Output is too long, add info to cur message and return
-        if self.exhausted:
-            return self.handle_exhausted_token_error()
-        
-        # Keyboard interrupted during llm response
-        if self.interrupted:
-            return self.handle_keyboard_interrupted()
-
-        # extracts the content from LLM's response in two possible formats: function call and regular text
         if self.partial_response_function_call:
             args = self.parse_partial_args()
             if args:
@@ -334,11 +349,15 @@ class AutoApproveCoder(Coder):
                 self.reflected_message += "\n\n" + add_rel_files_message
             else:
                 self.reflected_message = add_rel_files_message
-            return 
+            return True
         
-        return True
+        return False
 
+    def reflect_after_special_agents(self):
+        return False
 
+    def reflect_on_url_mentions(self):
+        return False
     
 
     def handle_exhausted_token_error(self) -> None:
