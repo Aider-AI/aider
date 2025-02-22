@@ -13,7 +13,6 @@ class AutoApproveCoder(Coder):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.chat_chunks = AutoApproveChatChunks()
         self.max_failures = 3
         self.failures = 0
         self.exhauted = False # flag exhausted token error
