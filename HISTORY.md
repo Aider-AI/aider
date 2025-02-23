@@ -1,7 +1,8 @@
 # Release history
 
-### main branch
+### Aider v0.74.3
 
+- Downgrade streamlit dependency to avoid threading bug.
 - Added support for tree-sitter language pack.
 - Added openrouter/o3-mini-high model configuration.
 - Added build.gradle.kts to special files for Kotlin project support, by Lucas Shadler.
