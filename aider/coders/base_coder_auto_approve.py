@@ -7,6 +7,13 @@ from .base_coder import Coder, FinishReasonLength
 from aider import prompts, utils
 
 
+class ReflectionRequired(Exception):
+    def __init__(self, message, append=False):
+        self.append = append
+        self.message = message
+        super().__init__(message)
+
+
 class AutoApproveCoder(Coder):
     # This AutoApproveCoder auto approves to complete task.
     # Overload check_for_file_mentions to auto approve files.
@@ -170,9 +177,10 @@ class AutoApproveCoder(Coder):
         self.io.tool_output()
         self.show_usage_report()
 
+        # add assistant reply to cur messages
         self.add_assistant_reply_to_cur_messages()
 
-        # poc responses with exception of token exhausted
+        # POC agent responses with exception of token exhausted
         if exhausted:
             self.handle_exhausted_token_error()
             return
@@ -182,55 +190,61 @@ class AutoApproveCoder(Coder):
             self.handle_keyboard_interrupted()
             return
 
-        # set reflected_message with file mentions 
-        # and next run_one's call to send_message will augment user message with file contents
-        if self.reflect_on_file_mentions():
-            return
-        
-        # set reflected_message with url mentions 
-        # and next run_one's call to send_message will augment user message with url contents
-        if self.reflect_on_url_mentions():
-            return
-        
+        try:
+            # set reflected_message with file mentions 
+            # and next run_one's call to send_message will augment user message with file contents
+            self.reflect_on_possible_file_mentions()
+                
+            # set reflected_message with url mentions 
+            # and next run_one's call to send_message will augment user message with url contents
+            self.reflect_on_possible_url_mentions()
+            
+            # =================
+            # 2. Message Special Agents --- messages the editor llm/worker
+            # POC should tell what special agents for subtasks are needed if any
+            # These special agents should be running in threads either parallel or sequentially
+            # And so differently from base_coder, we dont catch keyboard interrupt here - we let special agents to catch it
+            self.request_special_agents() 
+            # =================       
 
-        # 2. Message Special Agents --- messages the editor llm/worker
-        # POC should tell what special agents for subtasks are needed if any
-        # These special agents should be running in threads either parallel or sequentially
-        # And so differently from base_coder, we dont catch keyboard interrupt here - we let special agents to catch it
-        self.request_special_agents()
-
-        if self.reflect_after_special_agents():
-            return
-
-        # NOTE: all regions below add to reflected_message corresponding errors, 
-        # etc. for llm to fix in the next iteration in the while loop in run_one
+            # NOTE: all regions below add to reflected_message corresponding errors, 
+            # etc. for llm to fix in the next iteration in the while loop in run_one
+            
+            # 3. APPLY UPDATES - by default is None - leaving editor to edit and apply updates
         
-        # 3. APPLY UPDATES - by default is None - leaving editor to edit and apply updates
-        edited = self.apply_updates()  # This could have edit errors, which will be added to reflected_message
-        self.create_commit_and_reset_cur_messages(edited)
-        # if edit has errors, add errors to reflected_message for llm to fix (via return to the llm loop in run_one)
-        if self.reflected_message:
-            return
+            edited = self.apply_updates()  # This could have edit errors, which will be added to reflected_message
+            self.create_commit_and_reset_cur_messages(edited)
 
-        self.fix_lint(edited)
-        if self.reflected_message:
+            self.fix_lint(edited)
+
+            self.run_commands() # shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
+        
+            self.run_test(edited) # test commands provided by user in coder init - not by llm
+        except ReflectionRequired as rr:
+            if rr.append and self.reflected_message:
+                self.reflected_message += "\n\n" + rr.message
+            else:
+                self.reflected_message = rr.message
             return
-        
-        self.run_commands() # shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
-        
-        self.run_test(edited) # test commands provided by user in coder init - not by llm
-        if self.reflected_message:
+        except KeyboardInterrupt:
+            self.handle_keyboard_interrupted()
             return
 
 
     def request_special_agents(self):
         """
-        Request more agents to solve the task
+        Request more agents to solve the task.
+        For now, be default, we only request the editor coder to solve the task.
         """
-        try:
-            self.reply_completed()
-        except KeyboardInterrupt:
-            self.handle_keyboard_interrupted()
+
+        editor_model = self.main_model.editor_model or self.main_model
+        self.request_editor_coder(model=editor_model)  
+
+        
+        # set your message and raise ReflectionRequired to loop back to run_one
+        # reflection_message = ""
+        # raise ReflectionRequired(reflection_message)
+
 
     def create_commit_and_reset_cur_messages(self, edited):
         if edited:
@@ -241,6 +255,9 @@ class AutoApproveCoder(Coder):
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
 
             self.move_back_cur_messages(saved_message)
+
+            if self.reflected_message:
+                raise ReflectionRequired(self.reflected_message)
 
     def run_commands(self):
         # shell command: currently only edit_coder processes llm response to extract possible shell commands to be executed
@@ -260,10 +277,7 @@ class AutoApproveCoder(Coder):
             test_errors = self.commands.cmd_test(self.test_cmd)
             self.test_outcome = not test_errors
             if test_errors:
-                ok = self.io.confirm_ask("Attempt to fix test errors?")
-                if ok:
-                    self.reflected_message = test_errors
-        return self.reflected_message
+                raise ReflectionRequired(test_errors)
     
     def fix_lint(self, edited):
         """
@@ -274,8 +288,7 @@ class AutoApproveCoder(Coder):
             self.auto_commit(edited, context="Ran the linter")
             self.lint_outcome = not lint_errors
             if lint_errors:
-                self.reflected_message = lint_errors
-        return self.reflected_message
+                raise ReflectionRequired(lint_errors)
 
     def preprocess_input(self, inp):
         """
@@ -321,7 +334,7 @@ class AutoApproveCoder(Coder):
         return messages
 
 
-    def reflect_on_file_mentions(self):
+    def reflect_on_possible_file_mentions(self):
         """
         Reflect on file mentions in the LLM's response and add them to the
         reflected_message. This method checks if the response contains a
@@ -345,19 +358,14 @@ class AutoApproveCoder(Coder):
         # check for file mentions and add them to reflected_message before returning to run_one
         add_rel_files_message = self.check_for_file_mentions(content)
         if add_rel_files_message:
-            if self.reflected_message:
-                self.reflected_message += "\n\n" + add_rel_files_message
-            else:
-                self.reflected_message = add_rel_files_message
-            return True
-        
-        return False
+            raise ReflectionRequired(add_rel_files_message, append=True)
+    
 
-    def reflect_after_special_agents(self):
-        return False
-
-    def reflect_on_url_mentions(self):
-        return False
+    def reflect_on_possible_url_mentions(self):
+        # set your message and raise ReflectionRequired to loop back to run_one
+        # reflection_message = ""
+        # raise ReflectionRequired(reflection_message)
+        pass
     
 
     def handle_exhausted_token_error(self) -> None:
@@ -388,14 +396,14 @@ class AutoApproveCoder(Coder):
             dict(role="assistant", content="I see that you interrupted my previous reply.")
         ]
 
-    def reply_completed(self):
+    def request_editor_coder(self, model):
         content = self.partial_response_content
         
         if not content or not content.strip():
             return
 
         kwargs = dict()
-        editor_model = self.main_model.editor_model or self.main_model
+        editor_model = model
         
         kwargs.update({
             "main_model": editor_model,
@@ -418,23 +426,11 @@ class AutoApproveCoder(Coder):
         if self.verbose:
             editor_coder.show_announcements()
 
-        try:
-            editor_coder.run(with_message=content, preproc=False)
-            self.failures = 0
-        except Exception as e:
-            self.failures += 1
-            if self.failures >= self.max_failures:
-                return None
-            self.reflected_message = f"Error: {str(e)}. Retrying."
-            return
+        editor_coder.run(with_message=content, preproc=False)
 
         self.move_back_cur_messages("Changes applied automatically.")
         self.total_cost = editor_coder.total_cost
         self.aider_commit_hashes = editor_coder.aider_commit_hashes
-
-        # next_step = self.get_next_step()
-        # if next_step:
-        #     self.reflected_message = next_step
 
 
     def run(self, with_message=None, preproc=True):
