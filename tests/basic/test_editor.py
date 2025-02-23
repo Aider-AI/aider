@@ -21,7 +21,7 @@ def test_get_environment_editor():
         assert get_environment_editor("default") == "default"
 
     # Test EDITOR precedence
-    with patch.dict(os.environ, {"EDITOR": "vim"}):
+    with patch.dict(os.environ, {"EDITOR": "vim"}, clear=True):
         assert get_environment_editor() == "vim"
 
     # Test VISUAL overrides EDITOR

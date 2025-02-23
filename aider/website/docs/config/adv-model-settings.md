@@ -796,6 +796,15 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
 
+- name: openrouter/openai/o3-mini-high
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4o-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   edit_format: diff
   weak_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
