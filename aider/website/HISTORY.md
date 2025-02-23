@@ -23,6 +23,12 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Added support for tree-sitter language pack.
+- Added openrouter/o3-mini-high model configuration.
+- Added build.gradle.kts to special files for Kotlin project support, by Lucas Shadler.
+
 ### Aider v0.74.2
 
 - Prevent more than one cache warming thread from becoming active.
