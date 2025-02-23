@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.26.0
+narwhals==1.27.1
     # via altair
 numpy==1.26.4
     # via
@@ -124,7 +124,7 @@ pillow==10.4.0
     #   streamlit
 protobuf==5.29.3
     # via streamlit
-pyarrow==19.0.0
+pyarrow==19.0.1
     # via streamlit
 pydeck==0.9.1
     # via streamlit
@@ -180,7 +180,7 @@ smmap==5.0.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   gitdb
-streamlit==1.42.0
+streamlit==1.41.1
     # via -r requirements/requirements-browser.in
 tenacity==9.0.0
     # via
