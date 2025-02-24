@@ -1,7 +1,10 @@
 # Release history
 
-### Aider v0.74.4
+### Aider v0.75.0
 
+- Basic support for Claude 3.7 Sonnet
+  - Use `--model sonnet` to use the new 3.7
+  - Thinking support coming soon.
 - Bugfix to `/editor` command.
 
 ### Aider v0.74.3
