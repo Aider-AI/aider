@@ -88,8 +88,10 @@ def test_pipe_editor_with_fake_editor():
     import sys
     import tempfile
 
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".log", delete=False) as log_f:
+        log_path = log_f.name
+
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-        log_path = f.name + ".log"
         f.write(f"""import sys
 with open("{log_path}", "w") as f:
     f.write(" ".join(sys.argv))
@@ -112,8 +114,7 @@ with open("{log_path}", "w") as f:
     finally:
         # Clean up
         os.unlink(script_path)
-        if os.path.exists(f"{script_path}.log"):
-            os.unlink(f"{script_path}.log")
+        os.unlink(log_path)
 
 
 def test_pipe_editor():
