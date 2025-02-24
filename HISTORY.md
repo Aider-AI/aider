@@ -1,5 +1,9 @@
 # Release history
 
+### Aider v0.75.1
+
+- Added support for `openrouter/anthropic/claude-3.7-sonnet`
+
 ### Aider v0.75.0
 
 - Basic support for Claude 3.7 Sonnet
