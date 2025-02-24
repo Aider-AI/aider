@@ -112,6 +112,7 @@ def discover_editor(editor_override=None):
 
     return editor
 
+
 def pipe_editor(input_data="", suffix=None, editor=None):
     """
     Opens the system editor with optional input data and returns the edited content.
