@@ -109,7 +109,7 @@ with open("{log_path}", "w") as f:
             called_args = f.read().strip()
 
         # Verify the editor was called with a .md file
-        assert called_args.endswith(".md")
+        assert called_args.endswith(".md"), called_args
 
     finally:
         # Clean up
