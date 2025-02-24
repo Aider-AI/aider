@@ -95,10 +95,10 @@ def test_pipe_editor_with_fake_editor():
     import tempfile
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-        f.write('''import sys
+        f.write("""import sys
 with open(sys.argv[0] + ".log", "w") as f:
     f.write(" ".join(sys.argv[1:]))
-''')
+""")
         script_path = f.name
 
     try:
