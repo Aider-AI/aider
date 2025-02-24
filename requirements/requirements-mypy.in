@@ -1,0 +1,13 @@
+-c ../requirements.txt
+
+mypy
+types-Pygments
+types-PyYAML
+types-beautifulsoup4
+types-jsonschema
+types-networkx
+types-pexpect
+types-psutil
+types-requests
+types-tqdm
+types-tree-sitter-languages
