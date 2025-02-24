@@ -91,32 +91,33 @@ def test_discover_editor_override():
 
 def test_pipe_editor_with_shell_script():
     # Create a temporary shell script that logs its arguments
-    import tempfile
     import stat
+    import tempfile
 
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.sh', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".sh", delete=False) as f:
         f.write('#!/bin/bash\necho "$@" > "$0.log"\n')
         script_path = f.name
-    
+
     # Make the script executable
     os.chmod(script_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
 
     try:
         # Use the script as editor and verify it's called with .md file
         result = pipe_editor("test content", suffix="md", editor=script_path)
-        
+
         # Read the log file to see what arguments were passed
         with open(f"{script_path}.log") as f:
             called_args = f.read().strip()
-        
+
         # Verify the editor was called with a .md file
         assert called_args.endswith(".md")
-        
+
     finally:
         # Clean up
         os.unlink(script_path)
         if os.path.exists(f"{script_path}.log"):
             os.unlink(f"{script_path}.log")
+
 
 def test_pipe_editor():
     # Test with default editor
