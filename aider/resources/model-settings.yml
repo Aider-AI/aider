@@ -622,7 +622,20 @@
   use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-chat
   editor_edit_format: editor-diff
-  
+
+- name: openai/deepseek/deepseek-r1-distill-qwen
+  edit_format: diff
+  weak_model_name: openai/deepseek/deepseek-r1-distill-qwen
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+    timeout: 9999999
+  caches_by_default: true
+  use_temperature: false
+  editor_model_name: openai/deepseek/deepseek-r1-distill-qwen
+  editor_edit_format: editor-diff
+
 - name: fireworks_ai/accounts/fireworks/models/deepseek-r1
   edit_format: diff
   weak_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
