@@ -158,10 +158,10 @@ class GUI:
             # st.container(height=150, border=False)
             # st.write("### Experimental")
 
-            st.warning(
-                "This browser version of aider is experimental. Please share feedback in [GitHub"
-                " issues](https://github.com/Aider-AI/aider/issues)."
-            )
+            # st.warning(
+            #     "This browser version of aider is experimental. Please share feedback in [GitHub"
+            #     " issues](https://github.com/Aider-AI/aider/issues)."
+            # )
 
     def do_settings_tab(self):
         pass
@@ -327,8 +327,8 @@ class GUI:
 
     def initialize_state(self):
         messages = [
-            dict(role="info", content=self.announce()),
-            dict(role="assistant", content="How can I help you?"),
+            # dict(role="info", content=self.announce()),
+            # dict(role="assistant", content="How can I help you?"),
         ]
 
         self.state.init("messages", messages)
@@ -369,7 +369,8 @@ class GUI:
         self.initialize_state()
 
         self.do_messages_container()
-        self.do_sidebar()
+        # self.do_sidebar()
+        self.do_clear_chat_history()
 
         user_inp = st.chat_input("Say something")
         if user_inp:
@@ -521,6 +522,9 @@ class GUI:
             self.prompt = reply
 
 
+import streamlit.components.v1 as components
+
+
 def gui_main():
     st.set_page_config(
         layout="wide",
@@ -531,6 +535,100 @@ def gui_main():
             "Report a bug": "https://github.com/Aider-AI/aider/issues",
             "About": "# Aider\nAI pair programming in your browser.",
         },
+    )
+    components.html(
+        """
+<script>
+const tweaks = () => {
+    const header = window.parent.document.querySelector("header");
+    if (header) {
+      header.remove();
+    }
+    let element = window.parent.document.querySelector(
+      '[data-testid="stBottomBlockContainer"]'
+    );
+    if (element) {
+      element.style.margin = "0";
+      element.style.padding = "0";
+    }
+
+    const chatInput = window.parent.document.querySelector('[data-testid="stChatInput"]');
+    if (chatInput) {
+        chatInput.style.cssText = "border-radius: 0 0 4px 4px;";
+
+        chatInput.firstChild.firstChild.style.cssText = "border-radius: 0 0 4px 4px;";
+    }
+
+    const paragraphs = window.parent.document.querySelectorAll("p");
+    paragraphs.forEach((p) => {
+      if (p.textContent.trim() === "Clear chat history") {
+        const buttonContainer = p.parentElement.parentElement.parentElement.parentElement;
+        buttonContainer.style.cssText = "position: fixed; top: 2px; right: 2px;"
+
+        p.parentElement.parentElement.style.cssText = "padding: 0 0.2rem; min-height: 0; opacity: 60%;"
+        p.style.cssText = "font-size: 12px";
+      }
+    });
+  };
+  setTimeout(tweaks, 10);
+  setTimeout(tweaks, 2000);
+  
+
+</script>
+
+
+    """,
+        height=0,
+    )
+
+    components.html(
+        """
+    <script>
+      // Wait until the DOM is loaded (or use a MutationObserver if needed)
+document.addEventListener("DOMContentLoaded", function() {
+    // Listen for messages from the parent frame
+    window.parent.addEventListener("message", function(event) {
+        // Check that the event data has our expected type and text
+        if (event.data && event.data.type === "autoFill") {
+            // Find the chat input element.
+            const chatInput = window.parent.document.querySelector("textarea[data-testid='stChatInputTextArea']");
+            if (chatInput) {
+                // Combine the new text with the existing value.
+                const newValue = event.data.text + " " + chatInput.value;
+                
+                // Use the native value setter to update the value.
+                const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
+                nativeInputValueSetter.call(chatInput, newValue);
+                
+                // Dispatch an 'input' event to simulate a user typing.
+                const eventInput = new Event('input', { bubbles: true });
+                chatInput.dispatchEvent(eventInput);
+            }
+        }
+    });
+});
+    </script>
+    """,
+        height=0,
+    )
+
+    st.markdown(
+        """
+<style>
+.stMainBlockContainer {
+    margin: 0;
+    padding: 0;
+}
+.stBottomBlockContainer {
+    margin: 0;
+    padding: 0;
+}
+.stVerticalBlock {
+    gap: 0;
+}
+</style>
+                """,
+        unsafe_allow_html=True,
     )
 
     # config_options = st.config._config_options

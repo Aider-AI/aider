@@ -257,11 +257,19 @@ def launch_gui(args):
 
     st_args = ["run", target]
 
+    baseUrlPath = os.environ["BASE_URL_PATH"]
+    port = os.environ["CODER_PORT"]
+
     st_args += [
         "--browser.gatherUsageStats=false",
         "--runner.magicEnabled=false",
         "--server.runOnSave=false",
+        "--server.port=" + port,
+        "--server.baseUrlPath=" + f"coder/{port}/{baseUrlPath}",
+        "--server.enableCORS=false",
+        "--server.enableXsrfProtection=false",
     ]
+    print(st_args)
 
     # https://github.com/Aider-AI/aider/issues/2193
     is_dev = "-dev" in str(__version__)
