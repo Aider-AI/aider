@@ -16,7 +16,7 @@ import tempfile
 
 from rich.console import Console
 
-from aider.dump import dump
+from aider.dump import dump  # noqa
 
 DEFAULT_EDITOR_NIX = "vi"
 DEFAULT_EDITOR_OS_X = "vim"
@@ -133,7 +133,7 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     command_parts = discover_editor(editor)
     command_parts.append(filepath)
     command_str = " ".join(shlex.quote(part) for part in command_parts)
-    dump(command_str)
+
     subprocess.call(command_str, shell=True)
     with open(filepath, "r") as f:
         output_data = f.read()
