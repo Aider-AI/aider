@@ -180,6 +180,12 @@ def get_parser(default_config_files, git_root):
     )
     group = parser.add_argument_group("Model settings")
     group.add_argument(
+        "--moa",
+        metavar="MODEL",
+        nargs="+",
+        help="Use Mixture of Architects with multiple models",
+    )
+    group.add_argument(
         "--list-models",
         "--models",
         metavar="MODEL",
