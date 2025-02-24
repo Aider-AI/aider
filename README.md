@@ -1,3 +1,7 @@
+NOTE: SET BLACK LINE LENGTH TO 100
+https://dev.to/adamlombard/vscode-setting-line-lengths-in-the-black-python-code-formatter-1g62
+
+
 
 <!-- Edit README.md, not index.md -->
 
