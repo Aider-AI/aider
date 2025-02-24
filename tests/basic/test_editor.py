@@ -34,17 +34,17 @@ def test_discover_editor_defaults():
         # Test Windows default
         mock_system.return_value = "Windows"
         with patch.dict(os.environ, {}, clear=True):
-            assert discover_editor() == [DEFAULT_EDITOR_WINDOWS]
+            assert discover_editor() == DEFAULT_EDITOR_WINDOWS
 
         # Test macOS default
         mock_system.return_value = "Darwin"
         with patch.dict(os.environ, {}, clear=True):
-            assert discover_editor() == [DEFAULT_EDITOR_OS_X]
+            assert discover_editor() == DEFAULT_EDITOR_OS_X
 
         # Test Linux default
         mock_system.return_value = "Linux"
         with patch.dict(os.environ, {}, clear=True):
-            assert discover_editor() == [DEFAULT_EDITOR_NIX]
+            assert discover_editor() == DEFAULT_EDITOR_NIX
 
 
 def test_write_temp_file():
@@ -81,8 +81,8 @@ def test_print_status_message(capsys):
 
 def test_discover_editor_override():
     # Test editor override
-    assert discover_editor("code") == ["code"]
-    assert discover_editor('vim -c "set noswapfile"') == ["vim", "-c", "set noswapfile"]
+    assert discover_editor("code") == "code"
+    assert discover_editor('vim -c "set noswapfile"') == 'vim -c "set noswapfile"'
 
     # Test invalid editor command
     with pytest.raises(RuntimeError):
