@@ -13,6 +13,7 @@ import platform
 import shlex
 import subprocess
 import tempfile
+from aider.dump import dump
 
 from rich.console import Console
 
@@ -130,7 +131,8 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     filepath = write_temp_file(input_data, suffix)
     command_parts = discover_editor(editor)
     command_parts.append(filepath)
-    subprocess.call(command_parts, shell=True)
+    dump(command_parts)
+    subprocess.call(command_parts) # why does adding shell=True launch the editor without the filepath? ai?
     with open(filepath, "r") as f:
         output_data = f.read()
     try:
