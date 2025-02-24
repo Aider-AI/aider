@@ -109,7 +109,10 @@ def discover_editor(editor_override=None):
     else:
         editor = get_environment_editor(default_editor)
     try:
-        return shlex.split(editor)
+        if system == "Windows":
+            return shlex.split(editor, posix=False)
+        else:
+            return shlex.split(editor)
     except ValueError as e:
         raise RuntimeError(f"Invalid editor command format '{editor}': {e}")
 
