@@ -1,3 +1,4 @@
+from pathlib import Path
 import time
 import traceback
 from aider.coders.chat_chunks_auto_approve import AutoApproveChatChunks
@@ -419,7 +420,7 @@ class AutoApproveCoder(Coder):
         new_kwargs = dict(io=self.io, from_coder=self)
         new_kwargs.update(kwargs)
 
-        editor_coder = Coder.create(**new_kwargs)
+        editor_coder = AutoApproveCoder.create(**new_kwargs)
         editor_coder.cur_messages = []
         editor_coder.done_messages = []
 
@@ -432,6 +433,53 @@ class AutoApproveCoder(Coder):
         self.total_cost = editor_coder.total_cost
         self.aider_commit_hashes = editor_coder.aider_commit_hashes
 
+
+    def allowed_to_edit(self, path):
+        full_path = self.abs_root_path(path)
+        if self.repo:
+            need_to_add = not self.repo.path_in_repo(path)
+        else:
+            need_to_add = False
+
+        if full_path in self.abs_fnames:
+            self.check_for_dirty_commit(path)
+            return True
+
+        if self.repo and self.repo.git_ignored_file(path):
+            self.io.tool_warning(f"Skipping edits to {path} that matches gitignore spec.")
+            return
+
+        if not Path(full_path).exists():
+            if not self.dry_run:
+                if not utils.touch_file(full_path):
+                    self.io.tool_error(f"Unable to create {path}, skipping edits.")
+                    return
+
+                # Seems unlikely that we needed to create the file, but it was
+                # actually already part of the repo.
+                # But let's only add if we need to, just to be safe.
+                if need_to_add:
+                    self.repo.repo.git.add(full_path)
+
+            self.abs_fnames.add(full_path)
+            self.check_added_files()
+            return True
+
+        if not self.io.confirm_ask(
+            "Allow edits to file that has not been added to the chat?",
+            subject=path,
+        ):
+            self.io.tool_output(f"Skipping edits to {path}")
+            return
+
+        if need_to_add:
+            self.repo.repo.git.add(full_path)
+
+        self.abs_fnames.add(full_path)
+        self.check_added_files()
+        self.check_for_dirty_commit(path)
+
+        return True
 
     def run(self, with_message=None, preproc=True):
         try:
