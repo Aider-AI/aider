@@ -1717,6 +1717,8 @@ class Coder:
             raise FinishReasonLength()
 
     def show_send_output_stream(self, completion):
+        reasoning_tag = self.main_model.remove_reasoning
+        reasoning = False
         for chunk in completion:
             if len(chunk.choices) == 0:
                 continue
@@ -1740,6 +1742,19 @@ class Coder:
 
             try:
                 text = chunk.choices[0].delta.content
+                if reasoning_tag:
+                    reasoning_content =  getattr(
+                    chunk.choices[0].delta, reasoning_tag, None
+                    )
+                    if reasoning_content is not None:
+                        if not reasoning:
+                            text = f"<{reasoning_tag}>\n{reasoning_content}"
+                            reasoning = True
+                        else:
+                            text = reasoning_content
+                    elif reasoning:
+                        text = f"\n</{reasoning_tag}>\n{text}"
+                        reasoning = False
                 if text:
                     self.partial_response_content += text
             except AttributeError:
