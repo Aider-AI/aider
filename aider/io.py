@@ -750,14 +750,17 @@ class InputOutput:
             self.user_input(f"{question}{res}", log_only=False)
         else:
             while True:
-                if self.prompt_session:
-                    res = self.prompt_session.prompt(
-                        question,
-                        style=style,
-                        complete_while_typing=False,
-                    )
-                else:
-                    res = input(question)
+                try:
+                    if self.prompt_session:
+                        res = self.prompt_session.prompt(
+                            question,
+                            style=style,
+                            complete_while_typing=False,
+                        )
+                    else:
+                        res = input(question)
+                except (EOFError, KeyboardInterrupt):
+                    return False
 
                 if not res:
                     res = default
