@@ -108,7 +108,7 @@ with open(sys.argv[0] + ".log", "w") as f:
         pipe_editor("test content", suffix="md", editor=editor_cmd)
 
         # Read the log file to see what arguments were passed
-        with open(f"{script_path}.log") as f:
+        with open(log_path) as f:
             called_args = f.read().strip()
 
         # Verify the editor was called with a .md file
