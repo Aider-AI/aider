@@ -13,9 +13,10 @@ import platform
 import shlex
 import subprocess
 import tempfile
-from aider.dump import dump
 
 from rich.console import Console
+
+from aider.dump import dump
 
 DEFAULT_EDITOR_NIX = "vi"
 DEFAULT_EDITOR_OS_X = "vim"
