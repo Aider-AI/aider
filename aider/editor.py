@@ -104,18 +104,13 @@ def discover_editor(editor_override=None):
         default_editor = DEFAULT_EDITOR_OS_X
     else:
         default_editor = DEFAULT_EDITOR_NIX
+
     if editor_override:
         editor = editor_override
     else:
         editor = get_environment_editor(default_editor)
-    try:
-        if system == "Windows":
-            return shlex.split(editor, posix=False)
-        else:
-            return shlex.split(editor)
-    except ValueError as e:
-        raise RuntimeError(f"Invalid editor command format '{editor}': {e}")
 
+    return editor
 
 def pipe_editor(input_data="", suffix=None, editor=None):
     """
@@ -133,9 +128,8 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     :rtype: str
     """
     filepath = write_temp_file(input_data, suffix)
-    command_parts = discover_editor(editor)
-    command_parts.append(filepath)
-    command_str = " ".join(shlex.quote(part) for part in command_parts)
+    command_str = discover_editor(editor)
+    command_str += " " + filepath
 
     subprocess.call(command_str, shell=True)
     with open(filepath, "r") as f:

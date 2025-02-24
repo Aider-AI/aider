@@ -84,10 +84,6 @@ def test_discover_editor_override():
     assert discover_editor("code") == "code"
     assert discover_editor('vim -c "set noswapfile"') == 'vim -c "set noswapfile"'
 
-    # Test invalid editor command
-    with pytest.raises(RuntimeError):
-        discover_editor('vim "unclosed quote')
-
 
 def test_pipe_editor_with_fake_editor():
     # Create a temporary Python script that logs its arguments
