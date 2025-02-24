@@ -1,8 +1,6 @@
 import os
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from aider.editor import (
     DEFAULT_EDITOR_NIX,
     DEFAULT_EDITOR_OS_X,
