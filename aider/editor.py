@@ -88,13 +88,13 @@ def get_environment_editor(default=None):
 
 def discover_editor(editor_override=None):
     """
-    Discovers and returns the appropriate editor command as a list of arguments.
+    Discovers and returns the appropriate editor command.
 
     Handles cases where the editor command includes arguments, including quoted arguments
     with spaces (e.g. 'vim -c "set noswapfile"').
 
-    :return: A list of command parts ready for subprocess execution
-    :rtype: list[str]
+    :return: The editor command as a string
+    :rtype: str
     """
     system = platform.system()
     if system == "Windows":
