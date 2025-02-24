@@ -104,7 +104,7 @@ def test_pipe_editor_with_shell_script():
     try:
         # Use the script as editor and verify it's called with .md file
         pipe_editor("test content", suffix="md", editor=script_path)
-        
+
         # Read the log file to see what arguments were passed
         with open(f"{script_path}.log") as f:
             called_args = f.read().strip()
