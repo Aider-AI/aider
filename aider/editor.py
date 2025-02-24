@@ -131,8 +131,9 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     filepath = write_temp_file(input_data, suffix)
     command_parts = discover_editor(editor)
     command_parts.append(filepath)
-    dump(command_parts)
-    subprocess.call(command_parts) # why does adding shell=True launch the editor without the filepath? ai?
+    command_str = " ".join(shlex.quote(part) for part in command_parts)
+    dump(command_str)
+    subprocess.call(command_str, shell=True)
     with open(filepath, "r") as f:
         output_data = f.read()
     try:
