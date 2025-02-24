@@ -3844,3 +3844,73 @@
     "Viktor Sz\xE9pe": 3
   start_tag: v0.73.0
   total_lines: 783
+- aider_percentage: 46.31
+  aider_total: 163
+  end_date: '2025-02-24'
+  end_tag: v0.75.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier: 7
+    aider/coders/base_coder.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 4
+    aider/commands.py:
+      FeepingCreature (aider): 6
+    aider/editor.py:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 5
+    aider/io.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 4
+    aider/linter.py:
+      Paul Gauthier: 1
+    aider/main.py:
+      Paul Gauthier: 16
+    aider/models.py:
+      Paul Gauthier: 4
+    aider/queries/tree-sitter-language-pack/javascript-tags.scm:
+      Paul Gauthier: 5
+    aider/queries/tree-sitter-languages/hcl-tags.scm:
+      Paul Gauthier: 3
+      Warren Krewenki: 74
+    aider/queries/tree-sitter-languages/javascript-tags.scm:
+      Paul Gauthier: 5
+    aider/repomap.py:
+      Paul Gauthier: 43
+      Paul Gauthier (aider): 11
+    aider/special.py:
+      Lucas Shadler: 1
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    benchmark/Dockerfile:
+      Paul Gauthier (aider): 1
+    benchmark/benchmark.py:
+      Paul Gauthier: 4
+    benchmark/cpp-test.sh:
+      Paul Gauthier: 1
+    scripts/blame.py:
+      Paul Gauthier (aider): 2
+    scripts/issues.py:
+      Paul Gauthier (aider): 17
+    tests/basic/test_coder.py:
+      Paul Gauthier (aider): 18
+    tests/basic/test_editor.py:
+      Antti Kaihola: 1
+      Paul Gauthier (aider): 41
+    tests/basic/test_models.py:
+      Paul Gauthier (aider): 1
+    tests/basic/test_repomap.py:
+      Paul Gauthier (aider): 1
+    tests/fixtures/languages/hcl/test.tf:
+      Paul Gauthier (aider): 52
+  grand_total:
+    Antti Kaihola: 1
+    FeepingCreature (aider): 6
+    Lucas Shadler: 1
+    Paul Gauthier: 113
+    Paul Gauthier (aider): 157
+    Warren Krewenki: 74
+  start_tag: v0.74.0
+  total_lines: 352

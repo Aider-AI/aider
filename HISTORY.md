@@ -6,6 +6,7 @@
   - Use `--model sonnet` to use the new 3.7
   - Thinking support coming soon.
 - Bugfix to `/editor` command.
+- Aider wrote 46% of the code in this release.
 
 ### Aider v0.74.3
 
