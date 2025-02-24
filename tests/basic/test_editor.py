@@ -89,21 +89,23 @@ def test_discover_editor_override():
         discover_editor('vim "unclosed quote')
 
 
-def test_pipe_editor_with_shell_script():
-    # Create a temporary shell script that logs its arguments
-    import stat
+def test_pipe_editor_with_fake_editor():
+    # Create a temporary Python script that logs its arguments
+    import sys
     import tempfile
 
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".sh", delete=False) as f:
-        f.write('#!/bin/bash\necho "$@" > "$0.log"\n')
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
+        f.write('''import sys
+with open(sys.argv[0] + ".log", "w") as f:
+    f.write(" ".join(sys.argv[1:]))
+''')
         script_path = f.name
 
-    # Make the script executable
-    os.chmod(script_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IXUSR)
-
     try:
-        # Use the script as editor and verify it's called with .md file
-        pipe_editor("test content", suffix="md", editor=script_path)
+        # Use the Python script as editor and verify it's called with .md file
+        python_exe = sys.executable
+        editor_cmd = f"{python_exe} {script_path}"
+        pipe_editor("test content", suffix="md", editor=editor_cmd)
 
         # Read the log file to see what arguments were passed
         with open(f"{script_path}.log") as f:
