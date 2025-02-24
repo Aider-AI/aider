@@ -570,3 +570,29 @@
   versions: 0.74.3.dev
   seconds_per_case: 12.4
   total_cost: 14.3703
+
+- dirname: 2025-02-24-19-54-07--sonnet37-diff
+  test_cases: 225
+  model: claude-3-7-sonnet-20250219
+  edit_format: diff
+  commit_hash: 75e9ee6
+  pass_rate_1: 24.4
+  pass_rate_2: 60.4
+  pass_num_1: 55
+  pass_num_2: 136
+  percent_cases_well_formed: 93.3
+  error_outputs: 16
+  num_malformed_responses: 16
+  num_with_malformed_responses: 15
+  user_asks: 12
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model sonnet
+  date: 2025-02-24
+  versions: 0.74.4.dev
+  seconds_per_case: 28.3
+  total_cost: 17.7191
