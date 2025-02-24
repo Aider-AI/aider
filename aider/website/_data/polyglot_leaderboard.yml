@@ -573,7 +573,7 @@
 
 - dirname: 2025-02-24-19-54-07--sonnet37-diff
   test_cases: 225
-  model: claude-3-7-sonnet-20250219
+  model: claude-3-7-sonnet-20250219 (no thinking)
   edit_format: diff
   commit_hash: 75e9ee6
   pass_rate_1: 24.4
