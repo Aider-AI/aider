@@ -246,6 +246,41 @@ class AutoApproveCoder(Coder):
         # reflection_message = ""
         # raise ReflectionRequired(reflection_message)
 
+    def request_editor_coder(self, model):
+        content = self.partial_response_content
+        
+        if not content or not content.strip():
+            return
+
+        kwargs = dict()
+        editor_model = model
+        
+        kwargs.update({
+            "main_model": editor_model,
+            "edit_format": self.main_model.editor_edit_format,
+            "suggest_shell_commands": False,
+            "map_tokens": 0,
+            "total_cost": self.total_cost,
+            "cache_prompts": False,
+            "num_cache_warming_pings": 0,
+            "summarize_from_coder": False
+        })
+
+        new_kwargs = dict(io=self.io, from_coder=self)
+        new_kwargs.update(kwargs)
+
+        editor_coder = AutoApproveCoder.create(**new_kwargs)
+        editor_coder.cur_messages = []
+        editor_coder.done_messages = []
+
+        if self.verbose:
+            editor_coder.show_announcements()
+
+        editor_coder.run(with_message=content, preproc=False)
+
+        self.move_back_cur_messages("Changes applied automatically.")
+        self.total_cost = editor_coder.total_cost
+        self.aider_commit_hashes = editor_coder.aider_commit_hashes
 
     def create_commit_and_reset_cur_messages(self, edited):
         if edited:
@@ -396,42 +431,6 @@ class AutoApproveCoder(Coder):
         self.cur_messages += [
             dict(role="assistant", content="I see that you interrupted my previous reply.")
         ]
-
-    def request_editor_coder(self, model):
-        content = self.partial_response_content
-        
-        if not content or not content.strip():
-            return
-
-        kwargs = dict()
-        editor_model = model
-        
-        kwargs.update({
-            "main_model": editor_model,
-            "edit_format": self.main_model.editor_edit_format,
-            "suggest_shell_commands": False,
-            "map_tokens": 0,
-            "total_cost": self.total_cost,
-            "cache_prompts": False,
-            "num_cache_warming_pings": 0,
-            "summarize_from_coder": False
-        })
-
-        new_kwargs = dict(io=self.io, from_coder=self)
-        new_kwargs.update(kwargs)
-
-        editor_coder = AutoApproveCoder.create(**new_kwargs)
-        editor_coder.cur_messages = []
-        editor_coder.done_messages = []
-
-        if self.verbose:
-            editor_coder.show_announcements()
-
-        editor_coder.run(with_message=content, preproc=False)
-
-        self.move_back_cur_messages("Changes applied automatically.")
-        self.total_cost = editor_coder.total_cost
-        self.aider_commit_hashes = editor_coder.aider_commit_hashes
 
 
     def allowed_to_edit(self, path):
