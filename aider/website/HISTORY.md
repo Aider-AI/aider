@@ -23,6 +23,10 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.74.4
+
+- Bugfix to `/editor` command.
+
 ### Aider v0.74.3
 
 - Downgrade streamlit dependency to avoid threading bug.
