@@ -596,3 +596,29 @@
   versions: 0.74.4.dev
   seconds_per_case: 28.3
   total_cost: 17.7191
+
+- dirname: 2025-02-24-21-47-23--sonnet37-diff-think-32k-64k
+  test_cases: 225
+  model: claude-3-7-sonnet-20250219 (32k thinking tokens)
+  edit_format: diff
+  commit_hash: 60d11a6, 93edbda
+  pass_rate_1: 29.3
+  pass_rate_2: 64.9
+  pass_num_1: 66
+  pass_num_2: 146
+  percent_cases_well_formed: 97.8
+  error_outputs: 66
+  num_malformed_responses: 5
+  num_with_malformed_responses: 5
+  user_asks: 5
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model anthropic/claude-3-7-sonnet-20250219
+  date: 2025-02-24
+  versions: 0.75.1.dev
+  seconds_per_case: 105.2
+  total_cost: 36.8343
