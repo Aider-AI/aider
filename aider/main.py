@@ -17,6 +17,7 @@ except ImportError:
 import importlib_resources
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
+from grep_ast import parsers as grep_ast_parsers
 
 from aider import __version__, models, urls, utils
 from aider.analytics import Analytics
@@ -504,6 +505,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+
+    # Override grep_ast's file extension to language mapping
+    # This allows users to customize language detection
+    if hasattr(args, 'languages') and args.languages:
+        for ext, lang in args.languages.items():
+            if not ext.startswith('.'):
+                ext = f'.{ext}'
+            grep_ast_parsers.PARSERS[ext] = lang
 
     if git is None:
         args.git = False
