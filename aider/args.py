@@ -46,7 +46,7 @@ def get_parser(default_config_files, git_root):
         const=opus_model,
         help=f"Use {opus_model} model for the main chat",
     )
-    sonnet_model = "claude-3-5-sonnet-20241022"
+    sonnet_model = "anthropic/claude-3-7-sonnet-20250219"
     group.add_argument(
         "--sonnet",
         action="store_const",
