@@ -47,7 +47,7 @@ thinking tokens by default.
 
 Enabling thinking currently requires manual configuration.
 You need to add the following to your `.aider.model.settings.yml` 
-[model settings file](http://127.0.0.1:4000/docs/config/adv-model-settings.html#model-settings).
+[model settings file](/docs/config/adv-model-settings.html#model-settings).
 Adjust the `budget_tokens` value to change the target number of thinking tokens.
 
 ```yaml
