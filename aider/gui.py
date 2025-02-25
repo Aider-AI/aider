@@ -10,9 +10,9 @@ from aider import urls
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import main as cli_main
+from aider.main import main as cli_main, change_coder
 from aider.scrape import Scraper
-
+from aider.commands import SwitchCoder
 
 class CaptureIO(InputOutput):
     lines = []
@@ -67,8 +67,8 @@ def get_state():
 
 
 @st.cache_resource
-def get_coder():
-    coder = cli_main(return_coder=True)
+def get_coder(force_model=None):
+    coder = cli_main(return_coder=True, force_model=force_model)
     if not isinstance(coder, Coder):
         raise ValueError(coder)
     if not coder.repo:
@@ -150,7 +150,7 @@ class GUI:
         with st.sidebar:
             st.title("Aider")
             # self.cmds_tab, self.settings_tab = st.tabs(["Commands", "Settings"])
-
+            self.do_model_selector()
             # self.do_recommended_actions()
             self.do_add_to_chat()
             self.do_recent_msgs()
@@ -277,6 +277,42 @@ class GUI:
                     disabled=self.prompt_pending(),
                 )
 
+    def get_available_models(self):
+     from aider.models import get_chat_models
+     return get_chat_models()
+
+    def do_model_selector(self):
+        current_model = self.coder.main_model.name
+        new_model = st.selectbox(
+            "Model",
+            options=self.get_available_models(),
+            index=self.get_available_models().index(current_model),
+            disabled=self.prompt_pending(),
+            help="Select the AI model to use",
+        )
+        if new_model != current_model:
+            # manually force the model switch, this seemed to work but was messy
+                #from aider.models import Model
+                #self.coder.main_model = Model(new_model)
+                # Reset the repo map when switching models
+                #self.coder.repo_map = None
+            
+            # try a full reinit ourselves recalling cli_main this does not work
+                # self.get_coder()
+            
+            try:
+                self.coder.commands.cmd_model(new_model)
+            except SwitchCoder as switch:
+                self.coder = change_coder(self.coder, self.coder.commands.io, switch.kwargs)
+
+            # these are similar to what self.get_coder()
+            self.coder.yield_stream = True
+            self.coder.stream = True
+            self.coder.pretty = False
+            self.initialize_state(re_initialize=True)
+            self.info(f"Switched to {new_model} model")
+            self.info(self.announce())
+
     def do_recent_msgs(self):
         if not self.recent_msgs_empty:
             self.recent_msgs_empty = st.empty()
@@ -325,13 +361,15 @@ class GUI:
                 else:
                     st.dict(msg)
 
-    def initialize_state(self):
+    def initialize_state(self,re_initialize=False):
         messages = [
             dict(role="info", content=self.announce()),
             dict(role="assistant", content="How can I help you?"),
         ]
 
         self.state.init("messages", messages)
+        if re_initialize:
+            return
         self.state.init("last_aider_commit_hash", self.coder.last_aider_commit_hash)
         self.state.init("last_undone_commit_hash")
         self.state.init("recent_msgs_num", 0)
