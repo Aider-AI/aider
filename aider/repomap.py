@@ -41,6 +41,38 @@ class RepoMap:
 
     warned_files = set()
 
+    @staticmethod
+    def get_file_stub(fname, io):
+        """Generate a complete structural outline of a source code file.
+
+        Args:
+            fname (str): Absolute path to the source file
+            io: InputOutput instance for file operations
+
+        Returns:
+            str: Formatted outline showing the file's structure
+        """
+        # Use cached instance if available
+        if not hasattr(RepoMap, '_stub_instance'):
+            RepoMap._stub_instance = RepoMap(map_tokens=0, io=io)
+
+        rm = RepoMap._stub_instance
+
+        rel_fname = rm.get_rel_fname(fname)
+
+        # Reuse existing tag parsing
+        tags = rm.get_tags(fname, rel_fname)
+        if not tags:
+            return f"# No outline available"
+
+        # Get all definition lines
+        lois = [tag.line for tag in tags if tag.kind == "def"]
+
+        # Reuse existing tree rendering
+        outline = rm.render_tree(fname, rel_fname, lois)
+
+        return f"{outline}"
+
     def __init__(
         self,
         map_tokens=1024,
