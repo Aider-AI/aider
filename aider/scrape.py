@@ -7,6 +7,7 @@ import pypandoc
 
 from aider import __version__, urls, utils
 from aider.dump import dump  # noqa: F401
+from aider.io import Questions
 
 aider_user_agent = f"Aider/{__version__} +{urls.website}"
 
@@ -49,7 +50,7 @@ See {urls.enable_playwright} for more info.
 """
 
     io.tool_output(text)
-    if not io.confirm_ask("Install playwright?", default="y"):
+    if not io.confirm_ask(Questions.INSTALL_PLAYWRIGHT, default="y"):
         return
 
     if not has_pip:
