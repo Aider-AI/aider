@@ -742,7 +742,22 @@
   extra_params:
     max_tokens: 8192
   cache_control: true
-  editor_model_name: openrouter/anthropic/claude-3.5-sonnet
+  editor_model_name: github_copilot/claude-3.5-sonnet
+  editor_edit_format: editor-diff
+  extra_params:
+    extra_headers:
+      editor-version: Neovim/0.9.0
+      Copilot-Integration-Id: vscode-chat
+
+- name: github_copilot/claude-3.7-sonnet
+  edit_format: diff
+  weak_model_name: github_copilot/claude-3-5-haiku
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: github_copilot/claude-3.7-sonnet
   editor_edit_format: editor-diff
   extra_params:
     extra_headers:
