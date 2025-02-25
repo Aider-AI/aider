@@ -242,6 +242,7 @@ def write_streamlit_credentials():
         print("Streamlit credentials already exist.")
 
 
+print("RUNNING PATCHED AIDER FOR DREAMLAB USE")
 def launch_gui(args):
     from streamlit.web import cli
 
