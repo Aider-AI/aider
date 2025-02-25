@@ -42,10 +42,11 @@ you could do `aider --model claude-3-opus-20240229`.
 
 ## Thinking tokens
 
-Aider can work with Sonnet 3.7's new thinking tokens, but it currently requires manual configuration.
-More streamlined support will be coming soon.
+Aider can work with Sonnet 3.7's new thinking tokens, but does not ask Sonnet to use
+thinking tokens by default.
 
-For now, you need to add the following to your `.aider.model.settings.yml` 
+Enabling thinking currently requires manual configuration.
+You need to add the following to your `.aider.model.settings.yml` 
 [model settings file](http://127.0.0.1:4000/docs/config/adv-model-settings.html#model-settings).
 Adjust the `budget_tokens` value to change the target number of thinking tokens.
 
@@ -68,3 +69,4 @@ Adjust the `budget_tokens` value to change the target number of thinking tokens.
   editor_edit_format: editor-diff
 ```
 
+More streamlined support will be coming soon.

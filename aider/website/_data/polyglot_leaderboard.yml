@@ -617,7 +617,7 @@
   exhausted_context_windows: 0
   test_timeouts: 1
   total_tests: 225
-  command: aider --model anthropic/claude-3-7-sonnet-20250219
+  command: aider --model anthropic/claude-3-7-sonnet-20250219 # plus yml config
   date: 2025-02-24
   versions: 0.75.1.dev
   seconds_per_case: 105.2
