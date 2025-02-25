@@ -751,7 +751,7 @@
 
 - name: github_copilot/claude-3.7-sonnet
   edit_format: diff
-  weak_model_name: github_copilot/claude-3-5-haiku
+  weak_model_name: github_copilot/claude-3.5-sonnet
   use_repo_map: true
   examples_as_sys_msg: true
   extra_params:
