@@ -23,12 +23,17 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.75.1
+
+- Added support for `openrouter/anthropic/claude-3.7-sonnet`
+
 ### Aider v0.75.0
 
 - Basic support for Claude 3.7 Sonnet
   - Use `--model sonnet` to use the new 3.7
   - Thinking support coming soon.
 - Bugfix to `/editor` command.
+- Aider wrote 46% of the code in this release.
 
 ### Aider v0.74.3
 
