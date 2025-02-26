@@ -27,7 +27,7 @@ dependencies = [
     "backoff",
     "pathspec",
     "diskcache",
-    "grep_ast",
+    "grep_ast>=0.6.1",
     "packaging",
     "sounddevice",
     "soundfile",
