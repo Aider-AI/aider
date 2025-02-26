@@ -1,5 +1,12 @@
 # Release history
 
+### main branch
+
+- Added support for `openrouter/anthropic/claude-3.7-sonnet:beta`.
+- Added support for Claude 3.7 Sonnet models on Bedrock and Vertex AI.
+- Fixed weak model names for Bedrock Claude models to match main model name patterns.
+- Aider wrote 47% of the code in this release.
+
 ### Aider v0.75.1
 
 - Added support for `openrouter/anthropic/claude-3.7-sonnet`
