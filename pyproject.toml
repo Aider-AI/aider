@@ -50,6 +50,7 @@ dependencies = [
     "numpy<2",
     "tokenizers==0.19.1",
     "mixpanel",
+    "posthog",
 ]
 
 [project.urls]
