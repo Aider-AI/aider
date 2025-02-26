@@ -49,6 +49,7 @@ dependencies = [
     "importlib-metadata<8.0.0",
     "numpy<2",
     "tokenizers==0.19.1",
+    "mixpanel",
 ]
 
 [project.urls]
