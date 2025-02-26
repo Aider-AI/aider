@@ -1,3 +1,29 @@
+- dirname: 2025-02-25-20-23-07--gemini-pro
+  test_cases: 225
+  model: gemini/gemini-2.0-pro-exp-02-05
+  edit_format: whole
+  commit_hash: 2fccd47
+  pass_rate_1: 20.4
+  pass_rate_2: 35.6
+  pass_num_1: 46
+  pass_num_2: 80
+  percent_cases_well_formed: 100.0
+  error_outputs: 430
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 13
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model gemini/gemini-2.0-pro-exp-02-05
+  date: 2025-02-25
+  versions: 0.75.2.dev
+  seconds_per_case: 34.8
+  total_cost: 0.0000
+
 - dirname: 2024-12-21-18-41-18--polyglot-gpt-4o-mini
   test_cases: 225
   model: gpt-4o-mini-2024-07-18
