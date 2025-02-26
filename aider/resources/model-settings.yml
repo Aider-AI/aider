@@ -251,7 +251,7 @@
 
 - name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
-  weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
+  weak_model_name: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
   examples_as_sys_msg: true
   extra_params:
@@ -264,7 +264,7 @@
 
 - name: bedrock_converse/anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
-  weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
+  weak_model_name: bedrock_converse/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
   examples_as_sys_msg: true
   extra_params:
@@ -277,7 +277,7 @@
 
 - name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
-  weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
+  weak_model_name: bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
   examples_as_sys_msg: true
   extra_params:
