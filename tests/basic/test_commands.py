@@ -1664,6 +1664,58 @@ class TestCommands(TestCase):
                 self.assertIn("-Further modified content", diff_output)
                 self.assertIn("+Final modified content", diff_output)
 
+    def test_cmd_model(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Test switching the main model
+        with self.assertRaises(SwitchCoder) as context:
+            commands.cmd_model("gpt-4")
+
+        # Check that the SwitchCoder exception contains the correct model configuration
+        self.assertEqual(context.exception.kwargs.get("main_model").name, "gpt-4")
+        self.assertEqual(
+            context.exception.kwargs.get("main_model").editor_model.name,
+            self.GPT35.editor_model.name,
+        )
+        self.assertEqual(
+            context.exception.kwargs.get("main_model").weak_model.name, self.GPT35.weak_model.name
+        )
+
+    def test_cmd_editor_model(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Test switching the editor model
+        with self.assertRaises(SwitchCoder) as context:
+            commands.cmd_editor_model("gpt-4")
+
+        # Check that the SwitchCoder exception contains the correct model configuration
+        self.assertEqual(context.exception.kwargs.get("main_model").name, self.GPT35.name)
+        self.assertEqual(context.exception.kwargs.get("main_model").editor_model.name, "gpt-4")
+        self.assertEqual(
+            context.exception.kwargs.get("main_model").weak_model.name, self.GPT35.weak_model.name
+        )
+
+    def test_cmd_weak_model(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Test switching the weak model
+        with self.assertRaises(SwitchCoder) as context:
+            commands.cmd_weak_model("gpt-4")
+
+        # Check that the SwitchCoder exception contains the correct model configuration
+        self.assertEqual(context.exception.kwargs.get("main_model").name, self.GPT35.name)
+        self.assertEqual(
+            context.exception.kwargs.get("main_model").editor_model.name,
+            self.GPT35.editor_model.name,
+        )
+        self.assertEqual(context.exception.kwargs.get("main_model").weak_model.name, "gpt-4")
+
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
