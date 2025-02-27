@@ -15,7 +15,7 @@ attrs==25.1.0
     #   referencing
 blinker==1.9.0
     # via streamlit
-cachetools==5.5.1
+cachetools==5.5.2
     # via streamlit
 certifi==2025.1.31
     # via
@@ -92,7 +92,7 @@ mdurl==0.1.2
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   markdown-it-py
-narwhals==1.27.1
+narwhals==1.28.0
     # via altair
 numpy==1.26.4
     # via
@@ -163,7 +163,7 @@ rich==13.9.4
     #   -c requirements.txt
     #   -c requirements/requirements-dev.txt
     #   streamlit
-rpds-py==0.22.3
+rpds-py==0.23.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -180,7 +180,7 @@ smmap==5.0.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   gitdb
-streamlit==1.41.1
+streamlit==1.42.2
     # via -r requirements/requirements-browser.in
 tenacity==9.0.0
     # via

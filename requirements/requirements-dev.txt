@@ -53,7 +53,7 @@ filelock==3.17.0
     #   virtualenv
 fonttools==4.56.0
     # via matplotlib
-identify==2.6.7
+identify==2.6.8
     # via pre-commit
 idna==3.10
     # via
@@ -173,7 +173,7 @@ rich==13.9.4
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   typer
-roman-numerals-py==3.0.0
+roman-numerals-py==3.1.0
     # via sphinx
 semver==3.0.4
     # via -r requirements/requirements-dev.in
@@ -186,7 +186,7 @@ six==1.17.0
     #   python-dateutil
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==8.2.0
+sphinx==8.2.1
     # via
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
@@ -231,5 +231,5 @@ pip==25.0.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   pip-tools
-setuptools==75.8.0
+setuptools==75.8.1
     # via pip-tools
