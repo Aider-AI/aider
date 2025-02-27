@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', function () {
         displayedData.push(row);
         leaderboardData.labels.push(row.model);
         leaderboardData.datasets[0].data.push(row.pass_rate);
-        leaderboardData.datasets[1].data.push(row.total_cost);
+        // Only include cost if it's not zero (placeholder for unknown)
+        leaderboardData.datasets[1].data.push(row.total_cost > 0 ? row.total_cost : null);
       }
     });
 
@@ -225,7 +226,8 @@ document.addEventListener('DOMContentLoaded', function () {
         displayedData.push(allData[i]);
         leaderboardData.labels.push(allData[i].model);
         leaderboardData.datasets[0].data.push(allData[i].pass_rate);
-        leaderboardData.datasets[1].data.push(allData[i].total_cost);
+        // Only include cost if it's not zero (placeholder for unknown)
+        leaderboardData.datasets[1].data.push(allData[i].total_cost > 0 ? allData[i].total_cost : null);
       } else {
         rows[i].style.display = 'none';
       }
