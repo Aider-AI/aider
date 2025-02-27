@@ -304,6 +304,7 @@ class Coder:
         ignore_mentions=None,
         file_watcher=None,
         auto_copy_context=False,
+        map_tags_cache_dir=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -459,6 +460,7 @@ class Coder:
                 max_inp_tokens,
                 map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
+                tags_cache_dir=map_tags_cache_dir,
             )
 
         self.summarizer = summarizer or ChatSummary(
