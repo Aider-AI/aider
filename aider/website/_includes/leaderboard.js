@@ -26,14 +26,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }, {
       label: 'Total Cost ($)',
       data: [],
-      type: 'line',
+      type: 'scatter',
       yAxisID: 'y1',
-      fill: false,
-      borderColor: 'rgba(153, 102, 255, 1)',
-      borderWidth: 2,
-      pointBackgroundColor: 'rgba(153, 102, 255, 1)',
-      pointBorderColor: '#fff',
-      pointRadius: 4
+      backgroundColor: 'rgba(153, 102, 255, 1)',
+      borderColor: '#fff',
+      borderWidth: 1,
+      pointRadius: 5,
+      pointHoverRadius: 7
     }]
   };
 
@@ -129,9 +128,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 {
                   text: 'Total Cost ($)',
-                  fillStyle: 'rgba(0, 0, 0, 0)',
-                  strokeStyle: 'rgba(153, 102, 255, 1)',
-                  lineWidth: 2
+                  fillStyle: 'rgba(153, 102, 255, 1)',
+                  strokeStyle: '#fff',
+                  lineWidth: 1,
+                  pointStyle: 'circle'
                 }
               ];
             }
