@@ -218,6 +218,9 @@ cog.outl("```")
 ## Multiplier for map tokens when no files are specified (default: 2)
 #map-multiplier-no-files: true
 
+## Specify the directory for the repo map tags cache (default: .aider.tags.cache)
+#map-tags-cache-dir: .aider.tags.cache
+
 ################
 # History Files:
 
