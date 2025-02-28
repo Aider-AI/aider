@@ -57,11 +57,17 @@ cog.out(model_list)
 ]]]-->
 - anthropic.claude-3-5-haiku-20241022-v1:0
 - anthropic.claude-3-5-sonnet-20241022-v2:0
+- anthropic.claude-3-7-sonnet-20250219-v1:0
 - claude-3-5-haiku-20241022
+- claude-3-5-haiku-latest
 - claude-3-5-sonnet-20240620
 - claude-3-5-sonnet-20241022
+- claude-3-5-sonnet-latest
+- claude-3-7-sonnet-20250219
+- claude-3-7-sonnet-latest
 - claude-3-haiku-20240307
 - claude-3-opus-20240229
+- claude-3-opus-latest
 - claude-3-sonnet-20240229
 - codestral/codestral-2405
 - codestral/codestral-latest
@@ -93,15 +99,18 @@ cog.out(model_list)
 - mistral/pixtral-large-2411
 - mistral/pixtral-large-latest
 - openrouter/anthropic/claude-3.5-sonnet
+- openrouter/anthropic/claude-3.7-sonnet
 - openrouter/deepseek/deepseek-r1
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
+- us.anthropic.claude-3-7-sonnet-20250219-v1:0
 - vertex_ai/claude-3-5-haiku
 - vertex_ai/claude-3-5-haiku@20241022
 - vertex_ai/claude-3-5-sonnet
 - vertex_ai/claude-3-5-sonnet-v2
 - vertex_ai/claude-3-5-sonnet-v2@20241022
 - vertex_ai/claude-3-5-sonnet@20240620
+- vertex_ai/claude-3-7-sonnet@20250219
 - vertex_ai/claude-3-haiku
 - vertex_ai/claude-3-haiku@20240307
 - vertex_ai/claude-3-opus

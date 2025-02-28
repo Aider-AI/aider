@@ -5,6 +5,15 @@ nav_order: 800
 
 # Benchmark notes
 
+## Notes on pricing
+
+All pricing information is the cost to run the benchmark at the time it was
+run.
+Providers change their pricing, and every benchmark run ends up with a slightly
+different cost.
+Pricing is provided on a *best efforts* basis, and may not always be current
+or fully accurate.
+
 ## Notes on benchmarking results
 
 The key benchmarking results are:

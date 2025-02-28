@@ -1,8 +1,6 @@
 import os
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from aider.editor import (
     DEFAULT_EDITOR_NIX,
     DEFAULT_EDITOR_OS_X,
@@ -21,7 +19,7 @@ def test_get_environment_editor():
         assert get_environment_editor("default") == "default"
 
     # Test EDITOR precedence
-    with patch.dict(os.environ, {"EDITOR": "vim"}):
+    with patch.dict(os.environ, {"EDITOR": "vim"}, clear=True):
         assert get_environment_editor() == "vim"
 
     # Test VISUAL overrides EDITOR
@@ -34,17 +32,17 @@ def test_discover_editor_defaults():
         # Test Windows default
         mock_system.return_value = "Windows"
         with patch.dict(os.environ, {}, clear=True):
-            assert discover_editor() == [DEFAULT_EDITOR_WINDOWS]
+            assert discover_editor() == DEFAULT_EDITOR_WINDOWS
 
         # Test macOS default
         mock_system.return_value = "Darwin"
         with patch.dict(os.environ, {}, clear=True):
-            assert discover_editor() == [DEFAULT_EDITOR_OS_X]
+            assert discover_editor() == DEFAULT_EDITOR_OS_X
 
         # Test Linux default
         mock_system.return_value = "Linux"
         with patch.dict(os.environ, {}, clear=True):
-            assert discover_editor() == [DEFAULT_EDITOR_NIX]
+            assert discover_editor() == DEFAULT_EDITOR_NIX
 
 
 def test_write_temp_file():
@@ -81,12 +79,44 @@ def test_print_status_message(capsys):
 
 def test_discover_editor_override():
     # Test editor override
-    assert discover_editor("code") == ["code"]
-    assert discover_editor('vim -c "set noswapfile"') == ["vim", "-c", "set noswapfile"]
+    assert discover_editor("code") == "code"
+    assert discover_editor('vim -c "set noswapfile"') == 'vim -c "set noswapfile"'
 
-    # Test invalid editor command
-    with pytest.raises(RuntimeError):
-        discover_editor('vim "unclosed quote')
+
+def test_pipe_editor_with_fake_editor():
+    # Create a temporary Python script that logs its arguments
+    import sys
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".log", delete=False) as log_f:
+        log_path = log_f.name
+        # Convert to raw string path to avoid escape issues on Windows
+        log_path_escaped = log_path.replace("\\", "\\\\")
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
+        f.write(f"""import sys
+with open(r"{log_path_escaped}", "w") as f:
+    f.write(" ".join(sys.argv))
+""")
+        script_path = f.name
+
+    try:
+        # Use the Python script as editor and verify it's called with .md file
+        python_exe = sys.executable
+        editor_cmd = f"{python_exe} {script_path}"
+        pipe_editor("test content", suffix="md", editor=editor_cmd)
+
+        # Read the log file to see what arguments were passed
+        with open(log_path) as f:
+            called_args = f.read().strip()
+
+        # Verify the editor was called with a .md file
+        assert called_args.endswith(".md"), f"Called args: {called_args!r}"
+
+    finally:
+        # Clean up
+        os.unlink(script_path)
+        os.unlink(log_path)
 
 
 def test_pipe_editor():

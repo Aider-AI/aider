@@ -79,6 +79,7 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
              [--detect-urls | --no-detect-urls] [--editor]
+             [--install-tree-sitter-language-pack]
 
 ```
 
@@ -101,7 +102,7 @@ Use claude-3-opus-20240229 model for the main chat
 Environment variable: `AIDER_OPUS`  
 
 ### `--sonnet`
-Use claude-3-5-sonnet-20241022 model for the main chat  
+Use anthropic/claude-3-7-sonnet-20250219 model for the main chat  
 Environment variable: `AIDER_SONNET`  
 
 ### `--haiku`
@@ -761,4 +762,9 @@ Aliases:
 ### `--editor VALUE`
 Specify which editor to use for the /editor command  
 Environment variable: `AIDER_EDITOR`  
+
+### `--install-tree-sitter-language-pack`
+Install the tree_sitter_language_pack (experimental)  
+Default: False  
+Environment variable: `AIDER_INSTALL_TREE_SITTER_LANGUAGE_PACK`  
 <!--[[[end]]]-->

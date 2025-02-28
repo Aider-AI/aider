@@ -77,7 +77,7 @@ cog.outl("```")
 ## Use claude-3-opus-20240229 model for the main chat
 #opus: false
 
-## Use claude-3-5-sonnet-20241022 model for the main chat
+## Use anthropic/claude-3-7-sonnet-20250219 model for the main chat
 #sonnet: false
 
 ## Use claude-3-5-haiku-20241022 model for the main chat
@@ -490,5 +490,8 @@ cog.outl("```")
 
 ## Specify which editor to use for the /editor command
 #editor: xxx
+
+## Install the tree_sitter_language_pack (experimental)
+#install-tree-sitter-language-pack: false
 ```
 <!--[[[end]]]-->
