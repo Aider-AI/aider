@@ -46,7 +46,7 @@ def get_parser(default_config_files, git_root):
         const=opus_model,
         help=f"Use {opus_model} model for the main chat",
     )
-    sonnet_model = "claude-3-5-sonnet-20241022"
+    sonnet_model = "anthropic/claude-3-7-sonnet-20250219"
     group.add_argument(
         "--sonnet",
         action="store_const",
@@ -822,6 +822,12 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--editor",
         help="Specify which editor to use for the /editor command",
+    )
+    group.add_argument(
+        "--install-tree-sitter-language-pack",
+        action="store_true",
+        help="Install the tree_sitter_language_pack (experimental)",
+        default=False,
     )
 
     return parser

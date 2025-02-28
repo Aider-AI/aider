@@ -29,6 +29,7 @@ pexpect
 json5
 psutil
 watchfiles
+socksio
 pip
 
 # The proper dependency is networkx[default], but this brings
