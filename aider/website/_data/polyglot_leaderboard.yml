@@ -674,3 +674,29 @@
   versions: 0.75.2.dev
   seconds_per_case: 113.5
   total_cost: 183.1802
+
+- dirname: 2025-02-18-08-06-47--NextCoder-32B-Instruct
+  test_cases: 225
+  model: NextCoder-32B-Instruct
+  edit_format: whole
+  commit_hash: fbc3f0c-dirty
+  pass_rate_1: 7.6
+  pass_rate_2: 21.8
+  pass_num_1: 17
+  pass_num_2: 49
+  percent_cases_well_formed: 99.6
+  error_outputs: 8
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 39
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 7
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model hosted_vllm//NextCoder-32B-Instruct
+  date: 2025-02-18
+  versions: 0.69.2.dev
+  seconds_per_case: 54.4
+  total_cost: 0.0000
