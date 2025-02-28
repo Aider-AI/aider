@@ -2194,6 +2194,9 @@ class Coder:
         return edits
 
     def run_shell_commands(self):
+        # I am 99% sure the web version of aider can't run shell commands. tried a lot of different ways and it just wouldn't do it. doing this for extra safety.
+        print("shell commands disabled")
+        return
         if not self.suggest_shell_commands:
             return ""
 
@@ -2210,6 +2213,8 @@ class Coder:
         return accumulated_output
 
     def handle_shell_commands(self, commands_str, group):
+        print("shell commands disabled")
+        return
         commands = commands_str.strip().splitlines()
         command_count = sum(
             1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#")
