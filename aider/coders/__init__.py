@@ -1,5 +1,7 @@
+from aider.aider.coders.game_architect_coder import GameArchitectCoder
 from .ask_coder_auto import AutoApproveAskCoder
 from .news_coder import NewsCoder
+from .review_coder import ReviewCoder
 from .architect_coder import ArchitectCoder
 from .ask_coder import AskCoder
 from .base_coder import Coder
@@ -27,4 +29,6 @@ __all__ = [
     EditorWholeFileCoder,
     NewsCoder,
     AutoApproveAskCoder,
+    ReviewCoder,
+    GameArchitectCoder,
 ]

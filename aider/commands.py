@@ -1076,6 +1076,10 @@ class Commands:
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "askv2")
     
+    def cmd_garchitect(self, args):
+        """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
+        return self._generic_chat_command(args, "garchitect")
+    
     def cmd_news(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "news")

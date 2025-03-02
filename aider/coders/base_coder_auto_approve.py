@@ -23,6 +23,7 @@ class AutoApproveCoder(Coder):
         super().__init__(*args, **kwargs)
         self.max_failures = 3
         self.failures = 0
+        self.max_reflections = 100
 
     def run(self, with_message=None, preproc=True):
         """
@@ -241,11 +242,17 @@ class AutoApproveCoder(Coder):
         editor_model = self.main_model.editor_model or self.main_model
         self.request_editor_coder(model=editor_model)  
 
+        self.review_changes()
+
+
         
         # set your message and raise ReflectionRequired to loop back to run_one
         # reflection_message = ""
         # raise ReflectionRequired(reflection_message)
 
+    def review_changes(self):
+        pass 
+    
     def request_editor_coder(self, model):
         content = self.partial_response_content
         
