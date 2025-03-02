@@ -71,7 +71,7 @@ relevant context from the rest of your repo.
 # o3-mini
 $ aider --model o3-mini --api-key openai=<key>
 
-# Claude 3.5 Sonnet
+# Claude 3.7 Sonnet
 $ aider --model sonnet --api-key anthropic=<key>
 ```
 

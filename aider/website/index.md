@@ -33,7 +33,7 @@ cog.out(text)
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
 Start a new project or work with an existing code base.
-Aider works best with Claude 3.5 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o. Aider can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
+Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o. Aider can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
 
 <!-- 
 <p align="center">
@@ -81,14 +81,14 @@ cd /to/your/project
 # Work with DeepSeek via DeepSeek's API
 aider --model deepseek --api-key deepseek=your-key-goes-here
 
-# Work with Claude 3.5 Sonnet via Anthropic's API
+# Work with Claude 3.7 Sonnet via Anthropic's API
 aider --model sonnet --api-key anthropic=your-key-goes-here
 
 # Work with GPT-4o via OpenAI's API
 aider --model gpt-4o --api-key openai=your-key-goes-here
 
 # Work with Sonnet via OpenRouter's API
-aider --model openrouter/anthropic/claude-3.5-sonnet --api-key openrouter=your-key-goes-here
+aider --model openrouter/anthropic/claude-3.7-sonnet --api-key openrouter=your-key-goes-here
 
 # Work with DeepSeek via OpenRouter's API
 aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
@@ -119,10 +119,10 @@ for more details.
 - Edit files in your editor or IDE while chatting with aider,
 and it will always use the latest version.
 Pair program with AI.
-- [Add images to the chat](https://aider.chat/docs/usage/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
+- [Add images to the chat](https://aider.chat/docs/usage/images-urls.html) (GPT-4o, Claude 3.7 Sonnet, etc).
 - [Add URLs to the chat](https://aider.chat/docs/usage/images-urls.html) and aider will read their content.
 - [Code with your voice](https://aider.chat/docs/usage/voice.html).
-- Aider works best with Claude 3.5 Sonnet, DeepSeek V3, o1 & GPT-4o and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
+- Aider works best with Claude 3.7 Sonnet, DeepSeek V3, o1 & GPT-4o and can [connect to almost any LLM](https://aider.chat/docs/llms.html).
 
 
 ## Top tier performance

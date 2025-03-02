@@ -35,8 +35,8 @@ Aider also sends the LLM a [map of your entire git repo](https://aider.chat/docs
 
 ## Use a more capable model
 
-If possible try using GPT-4o, Claude 3.5 Sonnet, DeepSeek V3 or DeepSeek R1.
-They are the strongest and most capable models.
+If possible try using GPT-4o, o3-mini, Claude 3.7 Sonnet, DeepSeek V3 or DeepSeek R1.
+They are the strong and capable models.
 
 Weaker models
 are more prone to

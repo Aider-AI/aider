@@ -38,6 +38,7 @@ def blame(start_tag, end_tag=None):
         for f in files
         if f.endswith((".js", ".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
+        or (f.startswith("aider/resources/") and f.endswith(".yml"))
         or f in website_files
         or f in test_files
     ]

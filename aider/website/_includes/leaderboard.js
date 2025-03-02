@@ -23,6 +23,16 @@ document.addEventListener('DOMContentLoaded', function () {
         return (label && label.includes(HIGHLIGHT_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
       },
       borderWidth: 1
+    }, {
+      label: 'Total Cost ($)',
+      data: [],
+      type: 'scatter',
+      yAxisID: 'y1',
+      backgroundColor: 'rgba(153, 102, 255, 1)',
+      borderColor: '#fff',
+      borderWidth: 1,
+      pointRadius: 5,
+      pointHoverRadius: 7
     }]
   };
 
@@ -32,7 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
       model: '{{ row.model }}',
       pass_rate: {{ row[pass_rate_field] }},
       percent_cases_well_formed: {{ row.percent_cases_well_formed }},
-      edit_format: '{{ row.edit_format | default: "diff" }}'
+      edit_format: '{{ row.edit_format | default: "diff" }}',
+      total_cost: {{ row.total_cost | default: 0 }}
     });
   {% endfor %}
 
@@ -43,6 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
     displayedData = [];
     leaderboardData.labels = [];
     leaderboardData.datasets[0].data = [];
+    leaderboardData.datasets[1].data = [];
 
     allData.forEach(function(row, index) {
       var rowElement = document.getElementById('edit-row-' + index);
@@ -53,6 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
         displayedData.push(row);
         leaderboardData.labels.push(row.model);
         leaderboardData.datasets[0].data.push(row.pass_rate);
+        // Only include cost if it's not zero (placeholder for unknown)
+        leaderboardData.datasets[1].data.push(row.total_cost > 0 ? row.total_cost : null);
       }
     });
 
@@ -111,8 +125,27 @@ document.addEventListener('DOMContentLoaded', function () {
                   fillStyle: blueDiagonalPattern,
                   strokeStyle: 'rgba(54, 162, 235, 1)',
                   lineWidth: 1
+                },
+                {
+                  text: 'Total Cost ($)',
+                  fillStyle: 'rgba(153, 102, 255, 1)',
+                  strokeStyle: '#fff',
+                  lineWidth: 1,
+                  pointStyle: 'circle'
                 }
               ];
+            }
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const datasetLabel = context.dataset.label || '';
+              const value = context.parsed.y;
+              if (datasetLabel === 'Total Cost ($)') {
+                return datasetLabel + ': $' + value.toFixed(2);
+              }
+              return datasetLabel + ': ' + value.toFixed(1) + '%';
             }
           }
         }
@@ -123,6 +156,17 @@ document.addEventListener('DOMContentLoaded', function () {
           title: {
             display: true,
             text: 'Percent completed correctly'
+          }
+        },
+        y1: {
+          beginAtZero: true,
+          position: 'right',
+          grid: {
+            drawOnChartArea: false
+          },
+          title: {
+            display: true,
+            text: 'Total Cost ($)'
           }
         },
         x: {
@@ -173,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
     displayedData = [];
     leaderboardData.labels = [];
     leaderboardData.datasets[0].data = [];
+    leaderboardData.datasets[1].data = [];
     
     for (var i = 0; i < rows.length; i++) {
       var rowText = rows[i].textContent;
@@ -181,6 +226,8 @@ document.addEventListener('DOMContentLoaded', function () {
         displayedData.push(allData[i]);
         leaderboardData.labels.push(allData[i].model);
         leaderboardData.datasets[0].data.push(allData[i].pass_rate);
+        // Only include cost if it's not zero (placeholder for unknown)
+        leaderboardData.datasets[1].data.push(allData[i].total_cost > 0 ? allData[i].total_cost : null);
       } else {
         rows[i].style.display = 'none';
       }
