@@ -49,8 +49,8 @@ tree-sitter==0.21.3
 # Uses importlib-metadata
 importlib-metadata<8.0.0
 
-# Because sentence-transformers doesn't like >=2
-numpy<2
+# Pin below 2.1.0 to retain Python 3.9 compatibility
+numpy<2.1.0
 
 # streamlit 1.39.0 depends on this, as far back as 1.22 which is ancient and doesn't have chat ui
 Pillow<11
