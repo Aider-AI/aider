@@ -294,6 +294,11 @@ Multiplier for map tokens when no files are specified (default: 2)
 Default: 2  
 Environment variable: `AIDER_MAP_MULTIPLIER_NO_FILES`  
 
+### `--map-tags-cache-dir TAGS_CACHE_DIR`
+Specify the directory for the repo map tags cache (default: .aider.tags.cache)
+Default: .aider.tags.cache
+Environment variable: `AIDER_MAP_TAGS_CACHE_DIR`
+
 ## History Files:
 
 ### `--input-history-file INPUT_HISTORY_FILE`
