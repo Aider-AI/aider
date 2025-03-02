@@ -111,7 +111,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-matplotlib==3.10.0
+matplotlib==3.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -277,7 +277,7 @@ sphinxcontrib-serializinghtml==2.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   sphinx
-typer==0.15.1
+typer==0.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -307,7 +307,7 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
-setuptools==75.8.1
+setuptools==75.8.2
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
