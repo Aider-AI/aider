@@ -9,7 +9,7 @@ aiohappyeyeballs==2.4.6
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   aiohttp
-aiohttp==3.11.12
+aiohttp==3.11.13
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -103,7 +103,7 @@ httpx==0.28.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   llama-index-core
-huggingface-hub[inference]==0.29.0
+huggingface-hub[inference]==0.29.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -130,11 +130,11 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.12.19
+llama-index-core==0.12.20
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
-llama-index-embeddings-huggingface==0.5.1
+llama-index-embeddings-huggingface==0.5.2
     # via -r requirements/requirements-help.in
 markupsafe==3.0.2
     # via
@@ -188,7 +188,7 @@ pillow==10.4.0
     #   -c requirements/requirements-dev.txt
     #   llama-index-core
     #   sentence-transformers
-propcache==0.2.1
+propcache==0.3.0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -228,7 +228,7 @@ requests==2.32.3
     #   llama-index-core
     #   tiktoken
     #   transformers
-safetensors==0.5.2
+safetensors==0.5.3
     # via transformers
 scikit-learn==1.6.1
     # via sentence-transformers

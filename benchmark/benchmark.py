@@ -342,6 +342,7 @@ def main(
     LONG_TIMEOUT = 24 * 60 * 60
     sendchat.RETRY_TIMEOUT = LONG_TIMEOUT
     base_coder.RETRY_TIMEOUT = LONG_TIMEOUT
+    models.RETRY_TIMEOUT = LONG_TIMEOUT
 
     if threads == 1:
         all_results = []

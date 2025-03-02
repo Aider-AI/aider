@@ -60,7 +60,7 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `haiku`: claude-3-5-haiku-20241022
 - `opus`: claude-3-opus-20240229
 - `r1`: deepseek/deepseek-reasoner
-- `sonnet`: claude-3-5-sonnet-20241022
+- `sonnet`: anthropic/claude-3-7-sonnet-20250219
 <!--[[[end]]]-->
 
 ## Priority

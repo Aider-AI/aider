@@ -41,8 +41,8 @@ Aider will directly edit the code in your local source files,
 and [git commit the changes](https://aider.chat/docs/git.html)
 with sensible commit messages.
 You can start a new project or work with an existing git repo.
-Aider works well with GPT 3.5, GPT-4, GPT-4 Turbo with Vision,
-and Claude 3 Opus.
+Aider works well with 
+GPT-4o, Sonnet 3.7, and DeepSeek Chat V3 & R1.
 It also supports [connecting to almost any LLM](https://aider.chat/docs/llms.html).
 
 Use the `--browser` switch to launch the browser version of aider:
