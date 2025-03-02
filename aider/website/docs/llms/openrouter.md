@@ -29,7 +29,7 @@ python -m pip install -U aider-chat
 export OPENROUTER_API_KEY=<key> # Mac/Linux
 setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx
 
-aider --model openrouter/anthropic/claude-3.5-sonnet
+aider --model openrouter/anthropic/claude-3.7-sonnet
 ```
 
 
@@ -54,7 +54,7 @@ Place that file in your home directory or the root of your git project, with
 entries like this:
 
 ```yaml
-- name: openrouter/anthropic/claude-3.5-sonnet
+- name: openrouter/anthropic/claude-3.7-sonnet
   extra_params:
     extra_body:
       provider:
