@@ -1,7 +1,3 @@
-#
-#    pip-compile requirements.in --upgrade
-#
-
 pydub
 configargparse
 GitPython
@@ -55,10 +51,6 @@ importlib-metadata<8.0.0
 
 # Because sentence-transformers doesn't like >=2
 numpy<2
-
-# Going past this makes dependencies unresolvable
-# Seems to be caused by sentence-transformers
-tokenizers==0.19.1
 
 # streamlit 1.39.0 depends on this, as far back as 1.22 which is ancient and doesn't have chat ui
 Pillow<11

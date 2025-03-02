@@ -3,25 +3,31 @@
 # exit when any command fails
 set -e
 
-# First compile the base requirements
+# First compile the common constraints of the full requirement suite
+# to make sure that all versions are mutually consistent across files
 pip-compile \
     --allow-unsafe \
+    --output-file=requirements/common-constraints.txt \
     requirements/requirements.in \
-    --output-file=requirements.txt \
+    requirements/requirements-*.in \
     $1
 
-# Then compile each additional requirements file in sequence
+# Compile the base requirements
+pip-compile \
+    --allow-unsafe \
+    --constraint=requirements/common-constraints.txt \
+    --output-file=requirements.txt \
+    requirements/requirements.in \
+    $1
+
+# Compile additional requirements files
 SUFFIXES=(dev help browser playwright)
-CONSTRAINTS="--constraint=requirements.txt"
 
 for SUFFIX in "${SUFFIXES[@]}"; do
     pip-compile \
         --allow-unsafe \
-        requirements/requirements-${SUFFIX}.in \
+        --constraint=requirements/common-constraints.txt \
         --output-file=requirements/requirements-${SUFFIX}.txt \
-        ${CONSTRAINTS} \
+        requirements/requirements-${SUFFIX}.in \
         $1
-    
-    # Add this file as a constraint for the next iteration
-    CONSTRAINTS+=" --constraint=requirements/requirements-${SUFFIX}.txt"
 done
