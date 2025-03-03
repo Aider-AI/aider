@@ -1,4 +1,4 @@
-from aider.aider.coders.game_architect_coder import GameArchitectCoder
+from .game_architect_coder import GameArchitectCoder
 from .ask_coder_auto import AutoApproveAskCoder
 from .news_coder import NewsCoder
 from .review_coder import ReviewCoder

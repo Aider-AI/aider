@@ -1,4 +1,4 @@
-from aider.aider.coders.base_coder_auto_approve import AutoApproveCoder
+from .base_coder_auto_approve import AutoApproveCoder
 from .architect_prompts import ArchitectPrompts
 from .base_coder import Coder
 
