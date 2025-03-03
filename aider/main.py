@@ -31,6 +31,7 @@ from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.models import ModelSettings
 from aider.repo import ANY_GIT_ERROR, GitRepo
+from aider.repo_directory import DirectoryRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
@@ -686,13 +687,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     git_dname = None
     if len(all_files) == 1:
         if Path(all_files[0]).is_dir():
-            if args.git:
-                git_dname = str(Path(all_files[0]).resolve())
-                fnames = []
-            else:
-                io.tool_error(f"{all_files[0]} is a directory, but --no-git selected.")
-                analytics.event("exit", reason="Directory with --no-git")
-                return 1
+            git_dname = str(Path(all_files[0]).resolve())
+            fnames = []
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
@@ -860,6 +856,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("repo", num_files=len(repo.get_tracked_files()))
     else:
         analytics.event("no-repo")
+
+    if not repo:
+        repo = DirectoryRepo(
+            git_dname,
+            args.aiderignore,
+        )
 
     commands = Commands(
         io,
