@@ -160,7 +160,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.61.16
+litellm==1.61.20
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -203,7 +203,7 @@ numpy==1.26.4
     #   -r requirements/requirements.in
     #   scipy
     #   soundfile
-openai==1.64.0
+openai==1.65.2
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -225,7 +225,7 @@ pillow==10.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==3.16.0
+posthog==3.18.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -360,7 +360,7 @@ tiktoken==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-tokenizers==0.19.1
+tokenizers==0.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm

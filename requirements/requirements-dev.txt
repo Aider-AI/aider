@@ -111,7 +111,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-matplotlib==3.10.0
+matplotlib==3.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -190,7 +190,7 @@ pyproject-hooks==1.2.0
     #   -c requirements/common-constraints.txt
     #   build
     #   pip-tools
-pytest==8.3.4
+pytest==8.3.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -240,7 +240,7 @@ snowballstemmer==2.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   sphinx
-sphinx==8.2.1
+sphinx==8.2.3
     # via
     #   -c requirements/common-constraints.txt
     #   sphinx-rtd-theme
@@ -277,7 +277,7 @@ sphinxcontrib-serializinghtml==2.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   sphinx
-typer==0.15.1
+typer==0.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -307,7 +307,7 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
-setuptools==75.8.1
+setuptools==75.8.2
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools

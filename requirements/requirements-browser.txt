@@ -70,7 +70,7 @@ mdurl==0.1.2
     # via
     #   -c requirements/common-constraints.txt
     #   markdown-it-py
-narwhals==1.28.0
+narwhals==1.29.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -173,7 +173,7 @@ urllib3==2.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-watchdog==4.0.2
+watchdog==6.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit

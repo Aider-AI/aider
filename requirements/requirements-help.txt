@@ -76,7 +76,7 @@ fsspec==2025.2.0
     #   huggingface-hub
     #   llama-index-core
     #   torch
-greenlet==3.0.3
+greenlet==3.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   sqlalchemy
@@ -115,7 +115,7 @@ joblib==1.4.2
     #   -c requirements/common-constraints.txt
     #   nltk
     #   scikit-learn
-llama-index-core==0.12.20
+llama-index-core==0.12.22
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -234,7 +234,7 @@ sqlalchemy[asyncio]==2.0.38
     #   -c requirements/common-constraints.txt
     #   llama-index-core
     #   sqlalchemy
-sympy==1.13.3
+sympy==1.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   torch
@@ -250,11 +250,11 @@ tiktoken==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-tokenizers==0.19.1
+tokenizers==0.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   transformers
-torch==2.2.2
+torch==2.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
@@ -266,7 +266,7 @@ tqdm==4.67.1
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.44.2
+transformers==4.49.0
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
@@ -299,3 +299,9 @@ yarl==1.18.3
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
+
+# The following packages are considered to be unsafe in a requirements file:
+setuptools==75.8.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   torch

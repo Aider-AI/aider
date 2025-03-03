@@ -124,7 +124,7 @@ gitpython==3.1.44
     # via
     #   -r requirements/requirements.in
     #   streamlit
-greenlet==3.0.3
+greenlet==3.1.1
     # via
     #   playwright
     #   sqlalchemy
@@ -189,9 +189,9 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.61.16
+litellm==1.61.20
     # via -r requirements/requirements.in
-llama-index-core==0.12.20
+llama-index-core==0.12.22
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -205,7 +205,7 @@ markupsafe==3.0.2
     # via jinja2
 marshmallow==3.26.1
     # via dataclasses-json
-matplotlib==3.10.0
+matplotlib==3.10.1
     # via -r requirements/requirements-dev.in
 mccabe==0.7.0
     # via flake8
@@ -225,7 +225,7 @@ multiprocess==0.70.17
     # via pathos
 mypy-extensions==1.0.0
     # via typing-inspect
-narwhals==1.28.0
+narwhals==1.29.0
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -251,7 +251,7 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
-openai==1.64.0
+openai==1.65.2
     # via litellm
 packaging==24.2
     # via
@@ -288,11 +288,11 @@ pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
 platformdirs==4.3.6
     # via virtualenv
-playwright==1.47.0
+playwright==1.50.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.5.0
     # via pytest
-posthog==3.16.0
+posthog==3.18.1
     # via -r requirements/requirements.in
 pox==0.3.5
     # via pathos
@@ -329,7 +329,7 @@ pydeck==0.9.1
     # via streamlit
 pydub==0.25.1
     # via -r requirements/requirements.in
-pyee==12.0.0
+pyee==12.1.1
     # via playwright
 pyflakes==3.2.0
     # via flake8
@@ -347,7 +347,7 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
-pytest==8.3.4
+pytest==8.3.5
     # via
     #   -r requirements/requirements-dev.in
     #   pytest-env
@@ -435,7 +435,7 @@ soundfile==0.13.1
     # via -r requirements/requirements.in
 soupsieve==2.6
     # via beautifulsoup4
-sphinx==8.2.1
+sphinx==8.2.3
     # via
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
@@ -461,7 +461,7 @@ sqlalchemy[asyncio]==2.0.38
     #   sqlalchemy
 streamlit==1.42.2
     # via -r requirements/requirements-browser.in
-sympy==1.13.3
+sympy==1.13.1
     # via torch
 tenacity==9.0.0
     # via
@@ -473,13 +473,13 @@ tiktoken==0.9.0
     # via
     #   litellm
     #   llama-index-core
-tokenizers==0.19.1
+tokenizers==0.21.0
     # via
     #   litellm
     #   transformers
 toml==0.10.2
     # via streamlit
-torch==2.2.2
+torch==2.6.0
     # via sentence-transformers
 tornado==6.4.2
     # via streamlit
@@ -491,7 +491,7 @@ tqdm==4.67.1
     #   openai
     #   sentence-transformers
     #   transformers
-transformers==4.44.2
+transformers==4.49.0
     # via sentence-transformers
 tree-sitter==0.21.3
     # via
@@ -500,7 +500,7 @@ tree-sitter==0.21.3
     #   tree-sitter-languages
 tree-sitter-languages==1.10.2
     # via grep-ast
-typer==0.15.1
+typer==0.15.2
     # via -r requirements/requirements-dev.in
 typing-extensions==4.12.2
     # via
@@ -531,7 +531,7 @@ urllib3==2.3.0
     #   requests
 virtualenv==20.29.2
     # via pre-commit
-watchdog==4.0.2
+watchdog==6.0.0
     # via streamlit
 watchfiles==1.0.4
     # via -r requirements/requirements.in
@@ -553,5 +553,7 @@ pip==25.0.1
     # via
     #   -r requirements/requirements.in
     #   pip-tools
-setuptools==75.8.1
-    # via pip-tools
+setuptools==75.8.2
+    # via
+    #   pip-tools
+    #   torch
