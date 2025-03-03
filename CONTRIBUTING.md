@@ -1,4 +1,3 @@
-
 # Contributing to the Project
 
 We welcome contributions in the form of bug reports, feature requests,
@@ -129,6 +128,24 @@ The project includes a `Dockerfile` for building a Docker image. You can build t
 ```
 docker build -t aider -f docker/Dockerfile .
 ```
+
+### Setting up the Development Environment using Docker
+
+To set up the development environment using Docker, follow these steps:
+
+1. Ensure you have Docker and Docker Compose installed on your machine.
+2. Clone the repository:
+   ```bash
+   git clone https://github.com/Aider-AI/aider.git
+   cd aider
+   ```
+3. Build and run the Docker container using `docker-compose`:
+   ```bash
+   docker-compose up --build
+   ```
+4. The development environment will be set up inside the Docker container, and you can start working on the project.
+
+The `docker-compose.yml` file defines the service for the development environment, using the `Dockerfile` located in the `benchmark` directory. It mounts the current directory to `/aider` inside the container and sets the working directory to `/aider`. Port 8000 is exposed for potential web server usage.
 
 ### Building the Documentation
 
