@@ -19,7 +19,7 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
-
+__all__ = [..., 'get_chat_models']
 RETRY_TIMEOUT = 60
 
 request_timeout = 600
@@ -775,9 +775,7 @@ def sanity_check_model(io, model):
     return show
 
 
-def fuzzy_match_models(name):
-    name = name.lower()
-
+def get_chat_models():
     chat_models = set()
     for orig_model, attrs in litellm.model_cost.items():
         model = orig_model.lower()
@@ -796,14 +794,11 @@ def fuzzy_match_models(name):
         chat_models.add(fq_model)
         chat_models.add(orig_model)
 
-    chat_models = sorted(chat_models)
-    # exactly matching model
-    # matching_models = [
-    #    (fq,m) for fq,m in chat_models
-    #    if name == fq or name == m
-    # ]
-    # if matching_models:
-    #    return matching_models
+    return sorted(chat_models)
+
+def fuzzy_match_models(name):
+    name = name.lower()
+    chat_models = get_chat_models()
 
     # Check for model names containing the name
     matching_models = [m for m in chat_models if name in m]
