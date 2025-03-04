@@ -72,6 +72,8 @@ def check_push_access():
         print(result.stderr)
         sys.exit(1)
     print("Push access to origin repository confirmed.")
+    print("Git output:")
+    print(result.stdout)
 
 
 def main():
