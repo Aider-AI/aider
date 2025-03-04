@@ -768,7 +768,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         model_key_pairs = [
             ("ANTHROPIC_API_KEY", "sonnet"),
             ("DEEPSEEK_API_KEY", "deepseek"),
-            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.5-sonnet"),
+            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.7-sonnet"),
             ("OPENAI_API_KEY", "gpt-4o"),
             ("GEMINI_API_KEY", "flash"),
         ]
