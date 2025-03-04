@@ -22,9 +22,7 @@ def check_branch():
 
 # Function to check if the working directory is clean
 def check_working_directory_clean():
-    status = subprocess.run(
-        ["git", "status", "--porcelain"], capture_output=True, text=True
-    ).stdout
+    status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout
     if status:
         print("Error: Working directory is not clean.")
         sys.exit(1)
@@ -68,9 +66,7 @@ def check_main_branch_up_to_date():
 # Function to check if we can push to the origin repository
 def check_push_access():
     print("Checking push access to origin repository...")
-    result = subprocess.run(
-        ["git", "push", "--dry-run", "origin"], capture_output=True, text=True
-    )
+    result = subprocess.run(["git", "push", "--dry-run", "origin"], capture_output=True, text=True)
     if result.returncode != 0:
         print("Error: Cannot push to origin repository.")
         print(result.stderr)
