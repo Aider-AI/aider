@@ -23,7 +23,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.75.2
 
 - Added support for Claude 3.7 Sonnet models on OpenRouter, Bedrock and Vertex AI.
 - Updated default model to Claude 3.7 Sonnet on OpenRouter.
