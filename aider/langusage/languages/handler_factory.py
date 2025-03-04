@@ -7,9 +7,9 @@ import logging
 from typing import Optional
 
 from aider.langusage.languages.base import LanguageHandler
-from languages.typescript import TypeScriptHandler
-from languages.kotlin import KotlinHandler
-from languages.java import JavaHandler
+from aider.langusage.languages.typescript import TypeScriptHandler
+from aider.langusage.languages.kotlin import KotlinHandler
+from aider.langusage.languages.java import JavaHandler
 
 # Configure logging
 logger = logging.getLogger(__name__)
