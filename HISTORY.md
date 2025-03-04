@@ -1,5 +1,13 @@
 # Release history
 
+### main branch
+
+- Aider wrote 74% of the code in this release.
+
+### Aider v0.75.3
+
+- Added support for GPT-4.5-preview model with full namespace (openai/gpt-4.5-preview).
+
 ### Aider v0.75.2
 
 - Added support for Claude 3.7 Sonnet models on OpenRouter, Bedrock and Vertex AI.
@@ -7,7 +15,6 @@
 - Added support for GPT-4.5-preview model.
 - Added support for Claude 3.7 Sonnet:beta on OpenRouter.
 - Fixed weak_model_name patterns to match main model name patterns for some models.
-- Aider wrote 66% of the code in this release.
 
 ### Aider v0.75.1
 
