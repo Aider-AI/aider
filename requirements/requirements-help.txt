@@ -4,7 +4,7 @@
 #
 #    pip-compile --allow-unsafe --constraint=requirements.txt --constraint=requirements/requirements-dev.txt --output-file=requirements/requirements-help.txt requirements/requirements-help.in
 #
-aiohappyeyeballs==2.4.6
+aiohappyeyeballs==2.4.8
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
@@ -130,7 +130,7 @@ joblib==1.4.2
     # via
     #   nltk
     #   scikit-learn
-llama-index-core==0.12.20
+llama-index-core==0.12.22
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface

@@ -73,12 +73,6 @@ jsonschema-specifications==2024.10.1
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   jsonschema
-markdown-it-py==3.0.0
-    # via
-    #   -c /Users/gauthier/Projects/aider/requirements.txt
-    #   -c requirements.txt
-    #   -c requirements/requirements-dev.txt
-    #   rich
 markupsafe==3.0.2
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
@@ -86,13 +80,7 @@ markupsafe==3.0.2
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   jinja2
-mdurl==0.1.2
-    # via
-    #   -c /Users/gauthier/Projects/aider/requirements.txt
-    #   -c requirements.txt
-    #   -c requirements/requirements-dev.txt
-    #   markdown-it-py
-narwhals==1.28.0
+narwhals==1.29.0
     # via altair
 numpy==1.26.4
     # via
@@ -128,12 +116,6 @@ pyarrow==19.0.1
     # via streamlit
 pydeck==0.9.1
     # via streamlit
-pygments==2.19.1
-    # via
-    #   -c /Users/gauthier/Projects/aider/requirements.txt
-    #   -c requirements.txt
-    #   -c requirements/requirements-dev.txt
-    #   rich
 python-dateutil==2.9.0.post0
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
@@ -157,12 +139,6 @@ requests==2.32.3
     #   -c requirements/requirements-dev.txt
     #   -c requirements/requirements-help.txt
     #   streamlit
-rich==13.9.4
-    # via
-    #   -c /Users/gauthier/Projects/aider/requirements.txt
-    #   -c requirements.txt
-    #   -c requirements/requirements-dev.txt
-    #   streamlit
 rpds-py==0.23.1
     # via
     #   -c /Users/gauthier/Projects/aider/requirements.txt
@@ -180,7 +156,7 @@ smmap==5.0.2
     #   -c /Users/gauthier/Projects/aider/requirements.txt
     #   -c requirements.txt
     #   gitdb
-streamlit==1.42.2
+streamlit==1.43.0
     # via -r requirements/requirements-browser.in
 tenacity==9.0.0
     # via

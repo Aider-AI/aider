@@ -4,7 +4,7 @@
 #
 #    pip-compile --allow-unsafe --output-file=requirements.txt requirements/requirements.in
 #
-aiohappyeyeballs==2.4.6
+aiohappyeyeballs==2.4.8
     # via aiohttp
 aiohttp==3.11.13
     # via litellm
@@ -101,7 +101,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-litellm==1.61.16
+litellm==1.62.1
     # via -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via rich
@@ -126,7 +126,7 @@ numpy==1.26.4
     #   -r requirements/requirements.in
     #   scipy
     #   soundfile
-openai==1.64.0
+openai==1.65.2
     # via litellm
 packaging==24.2
     # via
@@ -140,7 +140,7 @@ pexpect==4.9.0
     # via -r requirements/requirements.in
 pillow==10.4.0
     # via -r requirements/requirements.in
-posthog==3.16.0
+posthog==3.18.1
     # via -r requirements/requirements.in
 prompt-toolkit==3.0.50
     # via -r requirements/requirements.in
