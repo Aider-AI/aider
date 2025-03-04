@@ -64,8 +64,8 @@ def check_main_branch_up_to_date():
 
 
 # Function to check if we can push to the origin repository
-def check_push_access():
-    print("Checking push access to origin repository...")
+def check_ok_to_push():
+    print("Checking if it's ok to push to origin repository...")
     result = subprocess.run(["git", "push", "--dry-run", "origin"], capture_output=True, text=True)
     print(result.stdout)
     print(result.stderr)
@@ -74,7 +74,7 @@ def check_push_access():
         print("Error: Cannot push to origin repository.")
         sys.exit(1)
 
-    print("Push access to origin repository confirmed.")
+    print("Push to origin repository is possible.")
 
 
 def main():
@@ -91,7 +91,7 @@ def main():
     check_branch()
     check_working_directory_clean()
     check_main_branch_up_to_date()
-    check_push_access()
+    check_ok_to_push()
 
     new_version_str = args.new_version
     if not re.match(r"^\d+\.\d+\.\d+$", new_version_str):
