@@ -45,6 +45,7 @@ class Commands:
             parser=self.parser,
             verbose=self.verbose,
             editor=self.editor,
+            workon_source_dir=self.workon_source_dir,
         )
 
     def __init__(
@@ -59,6 +60,7 @@ class Commands:
         parser=None,
         verbose=False,
         editor=None,
+        workon_source_dir=None,
     ):
         self.io = io
         self.coder = coder
@@ -76,6 +78,7 @@ class Commands:
 
         self.help = None
         self.editor = editor
+        self.workon_source_dir = workon_source_dir
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -1327,8 +1330,11 @@ class Commands:
                     self.io.tool_error(f"Unsupported file type: {file_path}")
                     return
                 
-                # Extract src directory from file path
-                src_dir = extract_src_dir(abs_file_path)
+                # Extract src directory from file path or use configured source dir
+                if self.workon_source_dir:
+                    src_dir = self.workon_source_dir
+                else:
+                    src_dir = extract_src_dir(abs_file_path)
                 
                 # Custom output collector function
                 def collect_output(line):
@@ -1339,7 +1345,12 @@ class Commands:
             else:
                 # No arguments, list all exports using default handler
                 handler = get_default_handler()
-                src_dir = os.path.join(self.coder.root, 'src')
+                
+                # Use configured source dir or default to src in root
+                if self.workon_source_dir:
+                    src_dir = self.workon_source_dir
+                else:
+                    src_dir = os.path.join(self.coder.root, 'src')
                 
                 # Custom output collector function
                 def collect_output(line):
