@@ -828,10 +828,6 @@ def get_parser(default_config_files, git_root):
         help="Specify the source directory for the /workon command",
     )
     group.add_argument(
-        "--workon-source-dir",
-        help="Specify the source directory for the /workon command",
-    )
-    group.add_argument(
         "--install-tree-sitter-language-pack",
         action="store_true",
         help="Install the tree_sitter_language_pack (experimental)",
