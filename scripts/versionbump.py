@@ -67,13 +67,14 @@ def check_main_branch_up_to_date():
 def check_push_access():
     print("Checking push access to origin repository...")
     result = subprocess.run(["git", "push", "--dry-run", "origin"], capture_output=True, text=True)
+    print(result.stdout)
+    print(result.stderr)
+
     if result.returncode != 0:
         print("Error: Cannot push to origin repository.")
-        print(result.stderr)
         sys.exit(1)
+
     print("Push access to origin repository confirmed.")
-    print("Git output:")
-    print(result.stdout)
 
 
 def main():
