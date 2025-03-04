@@ -63,7 +63,9 @@ markupsafe==3.0.2
     #   -c requirements/common-constraints.txt
     #   jinja2
 narwhals==1.29.0
-    # via altair
+    # via
+    #   -c requirements/common-constraints.txt
+    #   altair
 numpy==1.26.4
     # via
     #   -c requirements/common-constraints.txt
@@ -92,7 +94,9 @@ pyarrow==19.0.1
     #   -c requirements/common-constraints.txt
     #   streamlit
 pydeck==0.9.1
-    # via streamlit
+    # via
+    #   -c requirements/common-constraints.txt
+    #   streamlit
 python-dateutil==2.9.0.post0
     # via
     #   -c requirements/common-constraints.txt
@@ -124,7 +128,9 @@ smmap==5.0.2
     #   -c requirements/common-constraints.txt
     #   gitdb
 streamlit==1.43.0
-    # via -r requirements/requirements-browser.in
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements-browser.in
 tenacity==9.0.0
     # via
     #   -c requirements/common-constraints.txt
@@ -151,7 +157,3 @@ urllib3==2.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-watchdog==6.0.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   streamlit

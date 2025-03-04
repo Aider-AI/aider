@@ -4,7 +4,7 @@
 #
 #    pip-compile --allow-unsafe --output-file=requirements/common-constraints.txt requirements/requirements-browser.in requirements/requirements-dev.in requirements/requirements-help.in requirements/requirements-playwright.in requirements/requirements.in
 #
-aiohappyeyeballs==2.4.6
+aiohappyeyeballs==2.4.8
     # via aiohttp
 aiohttp==3.11.13
     # via
@@ -189,7 +189,7 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.61.20
+litellm==1.62.1
     # via -r requirements/requirements.in
 llama-index-core==0.12.22
     # via
@@ -391,7 +391,6 @@ requests==2.32.3
 rich==13.9.4
     # via
     #   -r requirements/requirements.in
-    #   streamlit
     #   typer
 roman-numerals-py==3.1.0
     # via sphinx
@@ -459,9 +458,9 @@ sqlalchemy[asyncio]==2.0.38
     # via
     #   llama-index-core
     #   sqlalchemy
-streamlit==1.42.2
+streamlit==1.43.0
     # via -r requirements/requirements-browser.in
-sympy==1.13.1
+sympy==1.13.3
     # via torch
 tenacity==9.0.0
     # via
@@ -479,7 +478,7 @@ tokenizers==0.21.0
     #   transformers
 toml==0.10.2
     # via streamlit
-torch==2.6.0
+torch==2.2.2
     # via sentence-transformers
 tornado==6.4.2
     # via streamlit
@@ -531,8 +530,6 @@ urllib3==2.3.0
     #   requests
 virtualenv==20.29.2
     # via pre-commit
-watchdog==6.0.0
-    # via streamlit
 watchfiles==1.0.4
     # via -r requirements/requirements.in
 wcwidth==0.2.13
@@ -554,6 +551,4 @@ pip==25.0.1
     #   -r requirements/requirements.in
     #   pip-tools
 setuptools==75.8.2
-    # via
-    #   pip-tools
-    #   torch
+    # via pip-tools

@@ -234,7 +234,7 @@ sqlalchemy[asyncio]==2.0.38
     #   -c requirements/common-constraints.txt
     #   llama-index-core
     #   sqlalchemy
-sympy==1.13.1
+sympy==1.13.3
     # via
     #   -c requirements/common-constraints.txt
     #   torch
@@ -254,7 +254,7 @@ tokenizers==0.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   transformers
-torch==2.6.0
+torch==2.2.2
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
@@ -299,9 +299,3 @@ yarl==1.18.3
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-
-# The following packages are considered to be unsafe in a requirements file:
-setuptools==75.8.2
-    # via
-    #   -c requirements/common-constraints.txt
-    #   torch

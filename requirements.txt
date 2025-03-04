@@ -5,7 +5,9 @@
 #    pip-compile --allow-unsafe --constraint=requirements/common-constraints.txt --output-file=requirements.txt requirements/requirements.in
 #
 aiohappyeyeballs==2.4.8
-    # via aiohttp
+    # via
+    #   -c requirements/common-constraints.txt
+    #   aiohttp
 aiohttp==3.11.13
     # via
     #   -c requirements/common-constraints.txt
@@ -155,9 +157,13 @@ jsonschema==4.23.0
     #   -r requirements/requirements.in
     #   litellm
 jsonschema-specifications==2024.10.1
-    # via jsonschema
+    # via
+    #   -c requirements/common-constraints.txt
+    #   jsonschema
 litellm==1.62.1
-    # via -r requirements/requirements.in
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 markdown-it-py==3.0.0
     # via
     #   -c requirements/common-constraints.txt
@@ -198,7 +204,9 @@ numpy==1.26.4
     #   scipy
     #   soundfile
 openai==1.65.2
-    # via litellm
+    # via
+    #   -c requirements/common-constraints.txt
+    #   litellm
 packaging==24.2
     # via
     #   -c requirements/common-constraints.txt
@@ -214,9 +222,13 @@ pexpect==4.9.0
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
 pillow==10.4.0
-    # via -r requirements/requirements.in
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 posthog==3.18.1
-    # via -r requirements/requirements.in
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 prompt-toolkit==3.0.50
     # via
     #   -c requirements/common-constraints.txt
