@@ -76,6 +76,7 @@ def main():
     check_branch()
     check_working_directory_clean()
     check_main_branch_up_to_date()
+    # do a `git push --dry-run origin` check before proceeding. ai!
 
     new_version_str = args.new_version
     if not re.match(r"^\d+\.\d+\.\d+$", new_version_str):
