@@ -68,6 +68,20 @@ def main():
             else:
                 print("Error: The main branch and origin/main have diverged.")
             sys.exit(1)
+            
+    # Function to check if we can push to the origin repository
+    def check_push_access():
+        print("Checking push access to origin repository...")
+        result = subprocess.run(
+            ["git", "push", "--dry-run", "origin"], 
+            capture_output=True, 
+            text=True
+        )
+        if result.returncode != 0:
+            print("Error: Cannot push to origin repository.")
+            print(result.stderr)
+            sys.exit(1)
+        print("Push access to origin repository confirmed.")
 
     args = parser.parse_args()
     dry_run = args.dry_run
@@ -76,7 +90,7 @@ def main():
     check_branch()
     check_working_directory_clean()
     check_main_branch_up_to_date()
-    # do a `git push --dry-run origin` check before proceeding. ai!
+    check_push_access()
 
     new_version_str = args.new_version
     if not re.match(r"^\d+\.\d+\.\d+$", new_version_str):
