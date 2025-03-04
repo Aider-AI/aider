@@ -3,7 +3,11 @@
 ### main branch
 
 - Added support for Claude 3.7 Sonnet models on OpenRouter, Bedrock and Vertex AI.
-- Aider wrote 47% of the code in this release.
+- Updated default model to Claude 3.7 Sonnet on OpenRouter.
+- Added support for GPT-4.5-preview model.
+- Added support for Claude 3.7 Sonnet:beta on OpenRouter.
+- Fixed weak_model_name patterns to match main model name patterns for some models.
+- Aider wrote 66% of the code in this release.
 
 ### Aider v0.75.1
 
