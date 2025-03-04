@@ -204,6 +204,34 @@ def list_all_exports(handler, src_dir, output_func=print, detailed=False):
     
     return 0
 
+def workon(pattern, source_dir=None):
+    """
+    Search for files matching the pattern and return a list of matching files.
+    """
+    import glob
+    import os
+
+    # If source_dir is provided, change to that directory
+    original_dir = None
+    if source_dir:
+        original_dir = os.getcwd()
+        os.chdir(source_dir)
+
+    # Expand the pattern to match files
+    matches = glob.glob(pattern, recursive=True)
+
+    # Filter out directories
+    files = [match for match in matches if os.path.isfile(match)]
+
+    # If we changed directory, change back and update file paths
+    if original_dir:
+        # Convert to absolute paths before changing back
+        files = [os.path.abspath(f) for f in files]
+        os.chdir(original_dir)
+
+    return files
+
+
 def main():
     """Main function to traverse files and analyze imports/exports."""
     # Default src directory (will be overridden if file_path is provided)
