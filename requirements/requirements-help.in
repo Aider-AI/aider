@@ -1,10 +1,2 @@
--c ../requirements.txt
-#
-#    pip-compile --output-file=requirements-hf.txt requirements-hf.in --upgrade
-#
-
 llama-index-core
 llama-index-embeddings-huggingface
-
-# requirement-help and requirements-playwright choose different versions
-greenlet==3.0.3
