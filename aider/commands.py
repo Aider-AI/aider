@@ -685,6 +685,12 @@ class Commands:
         files = [self.quote_fname(fn) for fn in files]
         return files
 
+    def completions_workon(self):
+        files = set(self.coder.get_all_relative_files())
+        # files = files - set(self.coder.get_inchat_relative_files())
+        files = [self.quote_fname(fn) for fn in files]
+        return files
+
     def glob_filtered_to_repo(self, pattern):
         if not pattern.strip():
             return []
@@ -1299,6 +1305,37 @@ class Commands:
 
     def completions_raw_load(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
+    
+    def cmd_workon(self, args):
+        "WorkOn current file with dependencies"
+        output = None
+        try:
+            args = "python3 /Users/domagalm/IdeaProjects/python/aider_tools/workon.py " + args
+            # self.io.tool_output(args)
+            result = subprocess.run(
+                args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                shell=True,
+                encoding=self.io.encoding,
+                errors="replace",
+            )
+            output = result.stdout
+        except Exception as e:
+            self.io.tool_error(f"Error running workon: {e}")
+
+        # Split the output into an array that can be passed into cmd_add
+        if output is None:
+            self.io.tool_error("No files found")
+            return
+       
+        # Quote each line then replace each line break with a space.
+        output = " ".join(map(self.quote_fname, output.splitlines()))
+        # self.io.tool_output(output)
+        self.cmd_add(output)
+    
+    
 
     def cmd_load(self, args):
         "Load and execute commands from a file"
@@ -1454,7 +1491,7 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
-
+            
 
 def expand_subdir(file_path):
     if file_path.is_file():
