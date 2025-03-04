@@ -68,14 +68,12 @@ def main():
             else:
                 print("Error: The main branch and origin/main have diverged.")
             sys.exit(1)
-            
+
     # Function to check if we can push to the origin repository
     def check_push_access():
         print("Checking push access to origin repository...")
         result = subprocess.run(
-            ["git", "push", "--dry-run", "origin"], 
-            capture_output=True, 
-            text=True
+            ["git", "push", "--dry-run", "origin"], capture_output=True, text=True
         )
         if result.returncode != 0:
             print("Error: Cannot push to origin repository.")
