@@ -15,7 +15,11 @@ class LanguageHandler(ABC):
     
     @abstractmethod
     def find_files(self, start_dir: str) -> List[str]:
-        """Find all relevant files in the given directory and its subdirectories."""
+        """Find all relevant files in the given directory and its subdirectories.
+        
+        Returns:
+            A list of file paths (strings)
+        """
         pass
     
     @abstractmethod

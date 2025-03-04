@@ -20,6 +20,7 @@ class PythonHandler(LanguageHandler):
         """Find all Python files in the given directory and its subdirectories."""
         logger.debug(f"Scanning for Python files in: {start_dir}")
         file_count = 0
+        python_files = []
         for root, _, files in os.walk(start_dir):
             for file in files:
                 if file.endswith('.py'):
@@ -27,8 +28,9 @@ class PythonHandler(LanguageHandler):
                     file_count += 1
                     if file_count % 100 == 0:
                         logger.debug(f"Found {file_count} Python files so far...")
-                    yield file_path
+                    python_files.append(file_path)
         logger.debug(f"Total Python files found: {file_count}")
+        return python_files
     
     def extract_exports(self, file_path: str) -> Dict[str, List[str]]:
         """Extract exported classes, functions, etc. from a Python file."""

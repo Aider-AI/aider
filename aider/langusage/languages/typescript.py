@@ -19,6 +19,7 @@ class TypeScriptHandler(LanguageHandler):
         """Find all TypeScript and Vue files in the given directory and its subdirectories."""
         logger.debug(f"Scanning for TypeScript/Vue files in: {start_dir}")
         file_count = 0
+        ts_files = []
         for root, _, files in os.walk(start_dir):
             for file in files:
                 if file.endswith('.ts') or file.endswith('.vue'):
@@ -26,8 +27,9 @@ class TypeScriptHandler(LanguageHandler):
                     file_count += 1
                     if file_count % 100 == 0:
                         logger.debug(f"Found {file_count} TypeScript/Vue files so far...")
-                    yield file_path
+                    ts_files.append(file_path)
         logger.debug(f"Total TypeScript/Vue files found: {file_count}")
+        return ts_files
     
     def extract_exports(self, file_path: str) -> Dict[str, List[str]]:
         """Extract exported interfaces and classes from a TypeScript or Vue file."""

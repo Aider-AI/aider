@@ -19,6 +19,7 @@ class JavaHandler(LanguageHandler):
         """Find all Java files in the given directory and its subdirectories."""
         logger.debug(f"Scanning for Java files in: {start_dir}")
         file_count = 0
+        java_files = []
         for root, _, files in os.walk(start_dir):
             for file in files:
                 if file.endswith('.java'):
@@ -26,8 +27,9 @@ class JavaHandler(LanguageHandler):
                     file_count += 1
                     if file_count % 100 == 0:
                         logger.debug(f"Found {file_count} Java files so far...")
-                    yield file_path
+                    java_files.append(file_path)
         logger.debug(f"Total Java files found: {file_count}")
+        return java_files
     
     def extract_exports(self, file_path: str) -> Dict[str, List[str]]:
         """Extract exported classes, interfaces, etc. from a Java file."""

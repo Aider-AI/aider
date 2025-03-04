@@ -19,6 +19,7 @@ class KotlinHandler(LanguageHandler):
         """Find all Kotlin files in the given directory and its subdirectories."""
         logger.debug(f"Scanning for Kotlin files in: {start_dir}")
         file_count = 0
+        kotlin_files = []
         for root, _, files in os.walk(start_dir):
             for file in files:
                 if file.endswith('.kt') or file.endswith('.kts'):
@@ -26,8 +27,9 @@ class KotlinHandler(LanguageHandler):
                     file_count += 1
                     if file_count % 100 == 0:
                         logger.debug(f"Found {file_count} Kotlin files so far...")
-                    yield file_path
+                    kotlin_files.append(file_path)
         logger.debug(f"Total Kotlin files found: {file_count}")
+        return kotlin_files
     
     def extract_exports(self, file_path: str) -> Dict[str, List[str]]:
         """Extract exported classes, functions, etc. from a Kotlin file."""
