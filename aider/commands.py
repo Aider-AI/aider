@@ -1308,31 +1308,56 @@ class Commands:
     
     def cmd_workon(self, args):
         "WorkOn current file with dependencies"
-        output = None
+        from aider.langusage.workon import analyze_file_imports, list_all_exports
+        from aider.langusage.languages.handler_factory import get_handler_for_file, get_default_handler
+        from aider.langusage.languages.base import extract_src_dir
+        
+        # Capture output to a list
+        output_lines = []
+        
         try:
-            args = "python3 /Users/domagalm/IdeaProjects/python/aider_tools/workon.py " + args
-            # self.io.tool_output(args)
-            result = subprocess.run(
-                args,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True,
-                shell=True,
-                encoding=self.io.encoding,
-                errors="replace",
-            )
-            output = result.stdout
+            if args.strip():
+                # Analyze imports in a specific file
+                file_path = args.strip()
+                abs_file_path = self.coder.abs_root_path(file_path)
+                
+                # Get the appropriate handler for the file type
+                handler = get_handler_for_file(abs_file_path)
+                if not handler:
+                    self.io.tool_error(f"Unsupported file type: {file_path}")
+                    return
+                
+                # Extract src directory from file path
+                src_dir = extract_src_dir(abs_file_path)
+                
+                # Custom output collector function
+                def collect_output(line):
+                    output_lines.append(line)
+                
+                # Analyze the file's imports
+                analyze_file_imports(handler, abs_file_path, src_dir, collect_output)
+            else:
+                # No arguments, list all exports using default handler
+                handler = get_default_handler()
+                src_dir = os.path.join(self.coder.root, 'src')
+                
+                # Custom output collector function
+                def collect_output(line):
+                    output_lines.append(line)
+                
+                # List all exports
+                list_all_exports(handler, src_dir, collect_output)
+                
         except Exception as e:
             self.io.tool_error(f"Error running workon: {e}")
-
-        # Split the output into an array that can be passed into cmd_add
-        if output is None:
+            return
+        
+        if not output_lines:
             self.io.tool_error("No files found")
             return
-       
+        
         # Quote each line then replace each line break with a space.
-        output = " ".join(map(self.quote_fname, output.splitlines()))
-        # self.io.tool_output(output)
+        output = " ".join(map(self.quote_fname, output_lines))
         self.cmd_add(output)
     
     

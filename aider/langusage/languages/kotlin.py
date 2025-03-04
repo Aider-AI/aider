@@ -7,7 +7,7 @@ import re
 import logging
 from typing import Dict, List, Tuple, Set, Optional, Any
 
-from languages.base import LanguageHandler
+from aider.langusage.languages.base import LanguageHandler
 
 # Configure logging
 logger = logging.getLogger(__name__)
