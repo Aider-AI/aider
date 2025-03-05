@@ -750,14 +750,19 @@ class InputOutput:
             self.user_input(f"{question}{res}", log_only=False)
         else:
             while True:
-                if self.prompt_session:
-                    res = self.prompt_session.prompt(
-                        question,
-                        style=style,
-                        complete_while_typing=False,
-                    )
-                else:
-                    res = input(question)
+                try:
+                    if self.prompt_session:
+                        res = self.prompt_session.prompt(
+                            question,
+                            style=style,
+                            complete_while_typing=False,
+                        )
+                    else:
+                        res = input(question)
+                except EOFError:
+                    # Treat EOF (Ctrl+D) as if the user pressed Enter
+                    res = default
+                    break
 
                 if not res:
                     res = default
@@ -812,15 +817,19 @@ class InputOutput:
         elif self.yes is False:
             res = "no"
         else:
-            if self.prompt_session:
-                res = self.prompt_session.prompt(
-                    question + " ",
-                    default=default,
-                    style=style,
-                    complete_while_typing=True,
-                )
-            else:
-                res = input(question + " ")
+            try:
+                if self.prompt_session:
+                    res = self.prompt_session.prompt(
+                        question + " ",
+                        default=default,
+                        style=style,
+                        complete_while_typing=True,
+                    )
+                else:
+                    res = input(question + " ")
+            except EOFError:
+                # Treat EOF (Ctrl+D) as if the user pressed Enter
+                res = default
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
