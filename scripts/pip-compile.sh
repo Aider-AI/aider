@@ -3,10 +3,15 @@
 # exit when any command fails
 set -e
 
+# Add verbosity flag to see more details about dependency resolution
+VERBOSITY="-vv"  # Use -v for less detail, -vvv for even more detail
+
 # First compile the common constraints of the full requirement suite
 # to make sure that all versions are mutually consistent across files
 uv pip compile \
+    $VERBOSITY \
     --no-strip-extras \
+    --annotation-style=line \
     --output-file=requirements/common-constraints.txt \
     requirements/requirements.in \
     requirements/requirements-*.in \
@@ -14,7 +19,9 @@ uv pip compile \
 
 # Compile the base requirements
 uv pip compile \
+    $VERBOSITY \
     --no-strip-extras \
+    --annotation-style=line \
     --constraint=requirements/common-constraints.txt \
     --output-file=requirements.txt \
     requirements/requirements.in \
@@ -25,7 +32,9 @@ SUFFIXES=(dev help browser playwright)
 
 for SUFFIX in "${SUFFIXES[@]}"; do
     uv pip compile \
+        $VERBOSITY \
         --no-strip-extras \
+        --annotation-style=line \
         --constraint=requirements/common-constraints.txt \
         --output-file=requirements/requirements-${SUFFIX}.txt \
         requirements/requirements-${SUFFIX}.in \
