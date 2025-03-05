@@ -791,8 +791,10 @@ class TestMain(TestCase):
 
             # Set up main git config with include directive
             git_config = git_dir / ".git" / "config"
+            # Use normalized path with forward slashes for git config
+            include_path = str(include_config).replace("\\", "/")
             with open(git_config, "a") as f:
-                f.write(f"\n[include]\n    path = {include_config}\n")
+                f.write(f"\n[include]\n    path = {include_path}\n")
 
             # Read the modified config file
             modified_config_content = git_config.read_text()
