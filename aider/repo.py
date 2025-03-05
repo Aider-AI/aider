@@ -145,7 +145,7 @@ class GitRepo:
         else:
             cmd += ["-a"]
 
-        original_user_name = self.repo.config_reader().get_value("user", "name")
+        original_user_name = self.repo.git.config("--get", "user.name")
         original_committer_name_env = os.environ.get("GIT_COMMITTER_NAME")
         committer_name = f"{original_user_name} (aider)"
 

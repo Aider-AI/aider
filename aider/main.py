@@ -126,17 +126,8 @@ def setup_git(git_root, io):
     if not repo:
         return
 
-    user_name = None
-    user_email = None
-    with repo.config_reader() as config:
-        try:
-            user_name = config.get_value("user", "name", None)
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            pass
-        try:
-            user_email = config.get_value("user", "email", None)
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            pass
+    user_name = repo.git.config("--default", "", "--get", "user.name") or None
+    user_email = repo.git.config("--default", "", "--get", "user.email") or None
 
     if user_name and user_email:
         return repo.working_tree_dir
