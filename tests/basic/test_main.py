@@ -767,6 +767,36 @@ class TestMain(TestCase):
             repo = git.Repo(git_dir)  # Re-open repo to ensure we get fresh config
             self.assertEqual(repo.git.config("user.name"), "Included User")
             self.assertEqual(repo.git.config("user.email"), "included@example.com")
+            
+    def test_git_config_include_directive(self):
+        # Test that aider respects the include directive in git config
+        with GitTemporaryDirectory() as git_dir:
+            git_dir = Path(git_dir)
+            
+            # Create an includable config file with user settings
+            include_config = git_dir / "included.gitconfig"
+            include_config.write_text(
+                "[user]\n    name = Directive User\n    email = directive@example.com\n"
+            )
+            
+            # Set up main git config with include directive
+            git_config = git_dir / ".git" / "config"
+            original_config = git_config.read_text()
+            with open(git_config, "a") as f:
+                f.write(f'\n[include]\n    path = {include_config}\n')
+            
+            # Verify the config is set up correctly
+            repo = git.Repo(git_dir)
+            self.assertEqual(repo.git.config("user.name"), "Directive User")
+            self.assertEqual(repo.git.config("user.email"), "directive@example.com")
+            
+            # Run aider and verify it doesn't change the git config
+            main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+            
+            # Check that the user settings are still the same
+            repo = git.Repo(git_dir)  # Re-open repo to ensure we get fresh config
+            self.assertEqual(repo.git.config("user.name"), "Directive User")
+            self.assertEqual(repo.git.config("user.email"), "directive@example.com")
 
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
