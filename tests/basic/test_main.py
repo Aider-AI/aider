@@ -756,17 +756,26 @@ class TestMain(TestCase):
             repo = git.Repo(git_dir)
             repo.git.config("--local", "include.path", str(include_config))
 
-            # Verify the config is set up correctly
+            # Verify the config is set up correctly using git command
             self.assertEqual(repo.git.config("user.name"), "Included User")
             self.assertEqual(repo.git.config("user.email"), "included@example.com")
+
+            # Manually check the git config file to confirm include directive
+            git_config_path = git_dir / ".git" / "config"
+            git_config_content = git_config_path.read_text()
+            self.assertIn(f"include.path={include_config}", git_config_content)
 
             # Run aider and verify it doesn't change the git config
             main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
 
-            # Check that the user settings are still the same
+            # Check that the user settings are still the same using git command
             repo = git.Repo(git_dir)  # Re-open repo to ensure we get fresh config
             self.assertEqual(repo.git.config("user.name"), "Included User")
             self.assertEqual(repo.git.config("user.email"), "included@example.com")
+
+            # Manually check the git config file again to ensure it wasn't modified
+            git_config_content_after = git_config_path.read_text()
+            self.assertEqual(git_config_content, git_config_content_after)
 
     def test_git_config_include_directive(self):
         # Test that aider respects the include directive in git config
@@ -781,10 +790,18 @@ class TestMain(TestCase):
 
             # Set up main git config with include directive
             git_config = git_dir / ".git" / "config"
+            original_config_content = git_config.read_text()
             with open(git_config, "a") as f:
                 f.write(f"\n[include]\n    path = {include_config}\n")
+            
+            # Read the modified config file
+            modified_config_content = git_config.read_text()
+            
+            # Verify the include directive was added correctly
+            self.assertIn(f"[include]", modified_config_content)
+            self.assertIn(f"path = {include_config}", modified_config_content)
 
-            # Verify the config is set up correctly
+            # Verify the config is set up correctly using git command
             repo = git.Repo(git_dir)
             self.assertEqual(repo.git.config("user.name"), "Directive User")
             self.assertEqual(repo.git.config("user.email"), "directive@example.com")
@@ -792,7 +809,11 @@ class TestMain(TestCase):
             # Run aider and verify it doesn't change the git config
             main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
 
-            # Check that the user settings are still the same
+            # Check that the git config file wasn't modified
+            config_after_aider = git_config.read_text()
+            self.assertEqual(modified_config_content, config_after_aider)
+            
+            # Check that the user settings are still the same using git command
             repo = git.Repo(git_dir)  # Re-open repo to ensure we get fresh config
             self.assertEqual(repo.git.config("user.name"), "Directive User")
             self.assertEqual(repo.git.config("user.email"), "directive@example.com")
