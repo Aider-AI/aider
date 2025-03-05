@@ -781,7 +781,6 @@ class TestMain(TestCase):
 
             # Set up main git config with include directive
             git_config = git_dir / ".git" / "config"
-            original_config = git_config.read_text()
             with open(git_config, "a") as f:
                 f.write(f"\n[include]\n    path = {include_config}\n")
 
