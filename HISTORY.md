@@ -4,6 +4,10 @@
 
 - Aider wrote 74% of the code in this release.
 
+### Aider v0.75.3
+
+- Support for V3 free on OpenRouter: `--model openrouter/deepseek/deepseek-chat:free`
+
 ### Aider v0.75.2
 
 - Added support for Claude 3.7 Sonnet models on OpenRouter, Bedrock and Vertex AI.
