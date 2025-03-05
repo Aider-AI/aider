@@ -740,31 +740,29 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             result = main(["--api-key", "INVALID_FORMAT", "--exit", "--yes"])
             self.assertEqual(result, 1)
-            
+
     def test_git_config_include(self):
         # Test that aider respects git config includes for user.name and user.email
         with GitTemporaryDirectory() as git_dir:
             git_dir = Path(git_dir)
-            
+
             # Create an includable config file with user settings
             include_config = git_dir / "included.gitconfig"
             include_config.write_text(
-                "[user]\n"
-                "    name = Included User\n"
-                "    email = included@example.com\n"
+                "[user]\n    name = Included User\n    email = included@example.com\n"
             )
-            
+
             # Set up main git config to include the other file
             repo = git.Repo(git_dir)
             repo.git.config("--local", "include.path", str(include_config))
-            
+
             # Verify the config is set up correctly
             self.assertEqual(repo.git.config("user.name"), "Included User")
             self.assertEqual(repo.git.config("user.email"), "included@example.com")
-            
+
             # Run aider and verify it doesn't change the git config
             main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
-            
+
             # Check that the user settings are still the same
             repo = git.Repo(git_dir)  # Re-open repo to ensure we get fresh config
             self.assertEqual(repo.git.config("user.name"), "Included User")
