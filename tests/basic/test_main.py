@@ -790,7 +790,6 @@ class TestMain(TestCase):
 
             # Set up main git config with include directive
             git_config = git_dir / ".git" / "config"
-            original_config_content = git_config.read_text()
             with open(git_config, "a") as f:
                 f.write(f"\n[include]\n    path = {include_config}\n")
 
@@ -798,7 +797,7 @@ class TestMain(TestCase):
             modified_config_content = git_config.read_text()
 
             # Verify the include directive was added correctly
-            self.assertIn(f"[include]", modified_config_content)
+            self.assertIn("[include]", modified_config_content)
             self.assertIn(f"path = {include_config}", modified_config_content)
 
             # Verify the config is set up correctly using git command
