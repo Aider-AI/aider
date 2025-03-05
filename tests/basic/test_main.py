@@ -763,7 +763,8 @@ class TestMain(TestCase):
             # Manually check the git config file to confirm include directive
             git_config_path = git_dir / ".git" / "config"
             git_config_content = git_config_path.read_text()
-            self.assertIn(f"include.path={include_config}", git_config_content)
+            self.assertIn("[include]", git_config_content)
+            self.assertIn(f"path = {include_config}", git_config_content)
 
             # Run aider and verify it doesn't change the git config
             main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
