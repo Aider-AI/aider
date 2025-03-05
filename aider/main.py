@@ -37,6 +37,8 @@ from aider.watch import FileWatcher
 
 from .dump import dump  # noqa: F401
 
+print("LOADING MODIFIED VERSION OF AIDER FOR DREAMLAB")
+
 
 def check_config_files_for_yes(config_files):
     found = False

@@ -13,6 +13,7 @@ VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
 
 
 def install_from_main_branch(io):
+    return
     """
     Install the latest version of aider from the main branch of the GitHub repository.
     """
@@ -27,6 +28,7 @@ def install_from_main_branch(io):
 
 
 def install_upgrade(io, latest_version=None):
+    return
     """
     Install the latest version of aider from PyPI.
     """
@@ -62,6 +64,7 @@ def install_upgrade(io, latest_version=None):
 
 
 def check_version(io, just_check=False, verbose=False):
+    return
     if not just_check and VERSION_CHECK_FNAME.exists():
         day = 60 * 60 * 24
         since = time.time() - os.path.getmtime(VERSION_CHECK_FNAME)
