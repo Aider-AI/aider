@@ -45,6 +45,7 @@ class Commands:
             parser=self.parser,
             verbose=self.verbose,
             editor=self.editor,
+            workon_source_dir=self.workon_source_dir,
         )
 
     def __init__(
@@ -59,6 +60,7 @@ class Commands:
         parser=None,
         verbose=False,
         editor=None,
+        workon_source_dir=None,
     ):
         self.io = io
         self.coder = coder
@@ -76,6 +78,7 @@ class Commands:
 
         self.help = None
         self.editor = editor
+        self.workon_source_dir = workon_source_dir
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -682,6 +685,12 @@ class Commands:
     def completions_add(self):
         files = set(self.coder.get_all_relative_files())
         files = files - set(self.coder.get_inchat_relative_files())
+        files = [self.quote_fname(fn) for fn in files]
+        return files
+
+    def completions_workon(self):
+        files = set(self.coder.get_all_relative_files())
+        # files = files - set(self.coder.get_inchat_relative_files())
         files = [self.quote_fname(fn) for fn in files]
         return files
 
@@ -1299,6 +1308,70 @@ class Commands:
 
     def completions_raw_load(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
+    
+    def cmd_workon(self, args):
+        "WorkOn current file with dependencies"
+        from aider.langusage.workon import analyze_file_imports, list_all_exports
+        from aider.langusage.languages.handler_factory import get_handler_for_file, get_default_handler
+        from aider.langusage.languages.base import extract_src_dir
+        
+        # Capture output to a list
+        output_lines = []
+        
+        try:
+            if args.strip():
+                # Analyze imports in a specific file
+                file_path = args.strip()
+                abs_file_path = self.coder.abs_root_path(file_path)
+                
+                # Get the appropriate handler for the file type
+                handler = get_handler_for_file(abs_file_path)
+                if not handler:
+                    self.io.tool_error(f"Unsupported file type: {file_path}")
+                    return
+                
+                # Extract src directory from file path or use configured source dir
+                if self.workon_source_dir:
+                    src_dir = self.workon_source_dir
+                else:
+                    src_dir = extract_src_dir(abs_file_path)
+                
+                # Custom output collector function
+                def collect_output(line):
+                    output_lines.append(line)
+                
+                # Analyze the file's imports
+                analyze_file_imports(handler, abs_file_path, src_dir, collect_output)
+            else:
+                # No arguments, list all exports using default handler
+                handler = get_default_handler()
+                
+                # Use configured source dir or default to src in root
+                if self.workon_source_dir:
+                    src_dir = self.workon_source_dir
+                else:
+                    src_dir = os.path.join(self.coder.root, 'src')
+                
+                # Custom output collector function
+                def collect_output(line):
+                    output_lines.append(line)
+                
+                # List all exports
+                list_all_exports(handler, src_dir, collect_output)
+                
+        except Exception as e:
+            self.io.tool_error(f"Error running workon: {e}")
+            return
+        
+        if not output_lines:
+            self.io.tool_error("No files found")
+            return
+        
+        # Quote each line then replace each line break with a space.
+        output = " ".join(map(self.quote_fname, output_lines))
+        self.cmd_add(output)
+    
+    
 
     def cmd_load(self, args):
         "Load and execute commands from a file"
@@ -1454,7 +1527,7 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
-
+            
 
 def expand_subdir(file_path):
     if file_path.is_file():
