@@ -138,7 +138,11 @@ class ModelInfoManager:
         self.cache_file = self.cache_dir / "model_prices_and_context_window.json"
         self.content = None
         self.local_model_metadata = {}
+        self.verify_ssl = True
         self._load_cache()
+        
+    def set_verify_ssl(self, verify_ssl):
+        self.verify_ssl = verify_ssl
 
     def _load_cache(self):
         try:
@@ -154,8 +158,8 @@ class ModelInfoManager:
         try:
             import requests
 
-            # this needs to respect the --no-verify-ssl switch. ai!
-            response = requests.get(self.MODEL_INFO_URL, timeout=5)
+            # Respect the --no-verify-ssl switch
+            response = requests.get(self.MODEL_INFO_URL, timeout=5, verify=self.verify_ssl)
             if response.status_code == 200:
                 self.content = response.json()
                 try:
