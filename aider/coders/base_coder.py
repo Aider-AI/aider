@@ -1721,7 +1721,7 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         received_content = False
-        
+
         for chunk in completion:
             if len(chunk.choices) == 0:
                 continue
@@ -1765,9 +1765,9 @@ class Coder:
                     sys.stdout.write(safe_text)
                 sys.stdout.flush()
                 yield text
-        
+
         if not received_content:
-            self.io.tool_warning("Empty response received from LLM.")
+            self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)

@@ -933,6 +933,10 @@ class InputOutput:
         return mdStream
 
     def assistant_output(self, message, pretty=None):
+        if not message:
+            self.tool_warning("Empty response received from LLM. Check your provider account?")
+            return
+
         show_resp = message
 
         # Coder will force pretty off if fence is not triple-backticks
@@ -944,7 +948,7 @@ class InputOutput:
                 message, style=self.assistant_output_color, code_theme=self.code_theme
             )
         else:
-            show_resp = Text(message or "<no response>")
+            show_resp = Text(message or "(empty response)")
 
         self.console.print(show_resp)
 
