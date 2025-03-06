@@ -236,6 +236,7 @@ class InputOutput:
         file_watcher=None,
         multiline_mode=False,
         root=".",
+        notifications=False,
     ):
         self.placeholder = None
         self.interrupted = False
@@ -243,6 +244,7 @@ class InputOutput:
         self.editingmode = editingmode
         self.multiline_mode = multiline_mode
         self.bell_on_next_input = False
+        self.notifications = notifications
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
@@ -951,7 +953,7 @@ class InputOutput:
 
     def ring_bell(self):
         """Ring the terminal bell if needed and clear the flag"""
-        if self.bell_on_next_input:
+        if self.bell_on_next_input and self.notifications:
             print("\a", end="", flush=True)  # Ring the bell
             self.bell_on_next_input = False  # Clear the flag
 

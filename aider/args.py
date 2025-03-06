@@ -814,6 +814,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable multi-line input mode with Meta-Enter to submit (default: False)",
     )
     group.add_argument(
+        "--notifications",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable terminal bell notifications when LLM responses are ready (default: False)",
+    )
+    group.add_argument(
         "--detect-urls",
         action=argparse.BooleanOptionalAction,
         default=True,
