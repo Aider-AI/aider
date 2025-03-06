@@ -144,6 +144,55 @@ class TestModels(unittest.TestCase):
         model = Model("github/o1-preview")
         self.assertEqual(model.name, "github/o1-preview")
         self.assertEqual(model.use_temperature, False)
+        
+    @patch("aider.models.check_pip_install_extra")
+    def test_check_for_dependencies_bedrock(self, mock_check_pip):
+        """Test that check_for_dependencies calls check_pip_install_extra for Bedrock models"""
+        from aider.io import InputOutput
+        io = InputOutput()
+        
+        # Test with a Bedrock model
+        from aider.models import check_for_dependencies
+        check_for_dependencies(io, "bedrock/anthropic.claude-3-sonnet-20240229-v1:0")
+        
+        # Verify check_pip_install_extra was called with correct arguments
+        mock_check_pip.assert_called_once_with(
+            io, 
+            "boto3", 
+            "AWS Bedrock models require the boto3 package.", 
+            ["boto3"]
+        )
+        
+    @patch("aider.models.check_pip_install_extra")
+    def test_check_for_dependencies_vertex_ai(self, mock_check_pip):
+        """Test that check_for_dependencies calls check_pip_install_extra for Vertex AI models"""
+        from aider.io import InputOutput
+        io = InputOutput()
+        
+        # Test with a Vertex AI model
+        from aider.models import check_for_dependencies
+        check_for_dependencies(io, "vertex_ai/gemini-1.5-pro")
+        
+        # Verify check_pip_install_extra was called with correct arguments
+        mock_check_pip.assert_called_once_with(
+            io, 
+            "google.cloud.aiplatform", 
+            "Google Vertex AI models require the google-cloud-aiplatform package.", 
+            ["google-cloud-aiplatform"]
+        )
+        
+    @patch("aider.models.check_pip_install_extra")
+    def test_check_for_dependencies_other_model(self, mock_check_pip):
+        """Test that check_for_dependencies doesn't call check_pip_install_extra for other models"""
+        from aider.io import InputOutput
+        io = InputOutput()
+        
+        # Test with a non-Bedrock, non-Vertex AI model
+        from aider.models import check_for_dependencies
+        check_for_dependencies(io, "gpt-4")
+        
+        # Verify check_pip_install_extra was not called
+        mock_check_pip.assert_not_called()
 
     def test_get_repo_map_tokens(self):
         # Test default case (no max_input_tokens in info)
