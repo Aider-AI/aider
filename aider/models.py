@@ -620,6 +620,7 @@ class Model(ModelSettings):
         # If closing tag exists but opening tag might be missing, remove everything before closing tag
         closing_tag = f"</{self.remove_reasoning}>"
         if closing_tag in res:
+            # Split on the closing tag and keep everything after it
             parts = res.split(closing_tag, 1)
             res = parts[1].strip() if len(parts) > 1 else res
 
