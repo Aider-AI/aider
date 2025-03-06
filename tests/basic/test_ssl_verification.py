@@ -36,14 +36,14 @@ class TestSSLVerification(TestCase):
                 input=DummyInput(),
                 output=DummyOutput(),
             )
-            
+
             # Verify model_info_manager.set_verify_ssl was called with False
             mock_set_verify_ssl.assert_called_once_with(False)
-            
+
             # Verify httpx clients were created with verify=False
             mock_client.assert_called_once_with(verify=False)
             mock_async_client.assert_called_once_with(verify=False)
-            
+
             # Verify SSL_VERIFY environment variable was set to empty string
             self.assertEqual(os.environ.get("SSL_VERIFY"), "")
 
@@ -53,9 +53,9 @@ class TestSSLVerification(TestCase):
         with patch("aider.main.InputOutput"):
             with patch("aider.coders.Coder.create"):
                 main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
-                
+
                 # Verify model_info_manager.set_verify_ssl was not called
                 mock_set_verify_ssl.assert_not_called()
-                
+
                 # Verify SSL_VERIFY environment variable was not set
                 self.assertNotIn("SSL_VERIFY", os.environ)

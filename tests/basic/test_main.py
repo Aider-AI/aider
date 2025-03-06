@@ -683,7 +683,7 @@ class TestMain(TestCase):
                 return_coder=True,
             )
             self.assertTrue(coder.detect_urls)
-            
+
     @patch("aider.models.ModelInfoManager.set_verify_ssl")
     def test_no_verify_ssl_sets_model_info_manager(self, mock_set_verify_ssl):
         with GitTemporaryDirectory():
