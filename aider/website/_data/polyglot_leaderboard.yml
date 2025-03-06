@@ -674,3 +674,29 @@
   versions: 0.75.2.dev
   seconds_per_case: 113.5
   total_cost: 183.1802
+
+- dirname: 2025-03-06-17-40-24--qwq32b-diff-temp-topp-ex-sys-remind-user-for-real
+  test_cases: 225
+  model: qwq-32b
+  edit_format: diff
+  commit_hash: 51d118f-dirty
+  pass_rate_1: 8.0
+  pass_rate_2: 20.9
+  pass_num_1: 18
+  pass_num_2: 47
+  percent_cases_well_formed: 67.6
+  error_outputs: 145
+  num_malformed_responses: 143
+  num_with_malformed_responses: 73
+  user_asks: 17
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model fireworks_ai/accounts/fireworks/models/qwq-32b
+  date: 2025-03-06
+  versions: 0.75.3.dev
+  seconds_per_case: 228.6
+  total_cost: 0.0000
