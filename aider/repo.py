@@ -309,6 +309,7 @@ class GitRepo:
 
         # Add staged files
         index = self.repo.index
+        # index.entries.keys can throw ANY_GIT_ERROR ai!
         staged_files = [path for path, _ in index.entries.keys()]
         files.update(self.normalize_path(path) for path in staged_files)
 
