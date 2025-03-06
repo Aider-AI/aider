@@ -21,6 +21,10 @@ anyio==4.8.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
+async-timeout==5.0.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   aiohttp
 attrs==25.1.0
     # via
     #   -c requirements/common-constraints.txt
@@ -51,6 +55,14 @@ dirtyjson==1.0.8
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
+eval-type-backport==0.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   llama-index-core
+exceptiongroup==1.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   anyio
 filelock==3.17.0
     # via
     #   -c requirements/common-constraints.txt
@@ -273,6 +285,7 @@ typing-extensions==4.12.2
     #   anyio
     #   huggingface-hub
     #   llama-index-core
+    #   multidict
     #   pydantic
     #   pydantic-core
     #   sqlalchemy

@@ -22,6 +22,10 @@ anyio==4.8.0
     #   httpx
     #   openai
     #   watchfiles
+async-timeout==5.0.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   aiohttp
 attrs==25.1.0
     # via
     #   -c requirements/common-constraints.txt
@@ -73,6 +77,10 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
+exceptiongroup==1.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   anyio
 filelock==3.17.0
     # via
     #   -c requirements/common-constraints.txt
@@ -224,7 +232,7 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==3.18.1
+posthog==3.19.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -368,7 +376,7 @@ tqdm==4.67.1
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
     #   openai
-tree-sitter==0.24.0
+tree-sitter==0.23.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
@@ -394,10 +402,12 @@ typing-extensions==4.12.2
     #   anyio
     #   beautifulsoup4
     #   huggingface-hub
+    #   multidict
     #   openai
     #   pydantic
     #   pydantic-core
     #   referencing
+    #   rich
 urllib3==2.3.0
     # via
     #   -c requirements/common-constraints.txt
@@ -419,4 +429,4 @@ zipp==3.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   importlib-metadata
-    
+    #   importlib-resources

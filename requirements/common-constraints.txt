@@ -18,6 +18,8 @@ anyio==4.8.0
     #   httpx
     #   openai
     #   watchfiles
+async-timeout==5.0.1
+    # via aiohttp
 attrs==25.1.0
     # via
     #   aiohttp
@@ -61,7 +63,7 @@ cogapp==3.4.1
     # via -r requirements/requirements-dev.in
 configargparse==1.7
     # via -r requirements/requirements.in
-contourpy==1.3.1
+contourpy==1.3.0
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
@@ -85,6 +87,12 @@ distro==1.9.0
     # via
     #   openai
     #   posthog
+eval-type-backport==0.2.2
+    # via llama-index-core
+exceptiongroup==1.2.2
+    # via
+    #   anyio
+    #   pytest
 filelock==3.17.0
     # via
     #   huggingface-hub
@@ -146,9 +154,12 @@ imgcat==0.6.0
 importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
+    #   build
     #   litellm
 importlib-resources==6.5.2
-    # via -r requirements/requirements.in
+    # via
+    #   -r requirements/requirements.in
+    #   matplotlib
 iniconfig==2.0.0
     # via pytest
 jinja2==3.1.6
@@ -172,7 +183,7 @@ jsonschema==4.23.0
     #   litellm
 jsonschema-specifications==2024.10.1
     # via jsonschema
-kiwisolver==1.4.8
+kiwisolver==1.4.7
     # via matplotlib
 litellm==1.63.2
     # via -r requirements/requirements.in
@@ -190,7 +201,7 @@ markupsafe==3.0.2
     # via jinja2
 marshmallow==3.26.1
     # via dataclasses-json
-matplotlib==3.10.1
+matplotlib==3.9.4
     # via -r requirements/requirements-dev.in
 mccabe==0.7.0
     # via flake8
@@ -280,7 +291,7 @@ playwright==1.50.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.5.0
     # via pytest
-posthog==3.18.1
+posthog==3.19.0
     # via -r requirements/requirements.in
 pox==0.3.5
     # via pathos
@@ -439,6 +450,12 @@ tokenizers==0.21.0
     #   transformers
 toml==0.10.2
     # via streamlit
+tomli==2.2.1
+    # via
+    #   build
+    #   pip-tools
+    #   pytest
+    #   pytest-env
 torch==2.2.2
     # via
     #   -r requirements/requirements-help.in
@@ -455,7 +472,7 @@ tqdm==4.67.1
     #   transformers
 transformers==4.49.0
     # via sentence-transformers
-tree-sitter==0.24.0
+tree-sitter==0.23.2
     # via tree-sitter-language-pack
 tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
@@ -474,11 +491,13 @@ typing-extensions==4.12.2
     #   beautifulsoup4
     #   huggingface-hub
     #   llama-index-core
+    #   multidict
     #   openai
     #   pydantic
     #   pydantic-core
     #   pyee
     #   referencing
+    #   rich
     #   sqlalchemy
     #   streamlit
     #   torch
@@ -494,7 +513,7 @@ urllib3==2.3.0
     # via
     #   mixpanel
     #   requests
-uv==0.6.4
+uv==0.6.5
     # via -r requirements/requirements-dev.in
 virtualenv==20.29.3
     # via pre-commit
@@ -511,4 +530,6 @@ wrapt==1.17.2
 yarl==1.18.3
     # via aiohttp
 zipp==3.21.0
-    # via importlib-metadata
+    # via
+    #   importlib-metadata
+    #   importlib-resources
