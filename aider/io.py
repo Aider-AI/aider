@@ -959,10 +959,6 @@ class InputOutput:
         """Mark that the LLM has started processing, so we should ring the bell on next input"""
         self.bell_on_next_input = True
 
-    def llm_finished(self):
-        """Clear the bell flag (optional, as we'll clear it after ringing)"""
-        self.bell_on_next_input = False
-
     def get_default_notification_command(self):
         """Return a default notification command based on the operating system."""
         import platform

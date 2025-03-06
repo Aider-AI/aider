@@ -485,6 +485,12 @@ cog.outl("```")
 ## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
 #multiline: false
 
+## Enable/disable terminal bell notifications when LLM responses are ready (default: False)
+#notifications: false
+
+## Specify a command to run for notifications instead of the terminal bell. If not specified, a default command for your OS may be used.
+#notifications-command: xxx
+
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #detect-urls: true
 

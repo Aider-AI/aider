@@ -526,8 +526,11 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
   use_repo_map: true
+  examples_as_sys_msg: true
   extra_params:
     max_tokens: 32000
+    top_p: 0.95
+  use_temperature: 0.6
   editor_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
   editor_edit_format: editor-diff
   remove_reasoning: think
@@ -690,6 +693,18 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: groq/llama3-8b-8192
   examples_as_sys_msg: true
+
+- name: groq/qwen-qwq-32b
+  edit_format: diff
+  weak_model_name: groq/qwen-2.5-coder-32b
+  use_repo_map: true
+  extra_params:
+    max_tokens: 128000
+    top_p: 0.95
+  use_temperature: 0.6
+  editor_model_name: groq/qwen-2.5-coder-32b
+  editor_edit_format: editor-diff
+  remove_reasoning: think
 
 - name: o1
   edit_format: diff

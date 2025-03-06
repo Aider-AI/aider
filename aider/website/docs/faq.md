@@ -249,19 +249,18 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,645,250</td><td class='right'>87.0%</td></tr>
-<tr><td>claude-3-5-sonnet-20241022</td><td class='right'>70,564</td><td class='right'>3.7%</td></tr>
-<tr><td>o3-mini</td><td class='right'>54,253</td><td class='right'>2.9%</td></tr>
-<tr><td>openrouter/openai/gpt-4o</td><td class='right'>50,613</td><td class='right'>2.7%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>20,213</td><td class='right'>1.1%</td></tr>
-<tr><td>fireworks_ai/REDACTED</td><td class='right'>16,200</td><td class='right'>0.9%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>14,034</td><td class='right'>0.7%</td></tr>
-<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-v3</td><td class='right'>10,050</td><td class='right'>0.5%</td></tr>
-<tr><td>openai/REDACTED</td><td class='right'>3,724</td><td class='right'>0.2%</td></tr>
-<tr><td>anthropic/REDACTED</td><td class='right'>1,999</td><td class='right'>0.1%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>2,299,287</td><td class='right'>88.2%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-v3</td><td class='right'>148,071</td><td class='right'>5.7%</td></tr>
+<tr><td>o3-mini</td><td class='right'>53,030</td><td class='right'>2.0%</td></tr>
+<tr><td>openrouter/openai/gpt-4o</td><td class='right'>50,613</td><td class='right'>1.9%</td></tr>
+<tr><td>fireworks_ai/REDACTED</td><td class='right'>24,369</td><td class='right'>0.9%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>10,315</td><td class='right'>0.4%</td></tr>
+<tr><td>groq/REDACTED</td><td class='right'>8,742</td><td class='right'>0.3%</td></tr>
+<tr><td>openai/REDACTED</td><td class='right'>3,724</td><td class='right'>0.1%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>2,435</td><td class='right'>0.1%</td></tr>
 <tr><td>vertex_ai/REDACTED</td><td class='right'>1,966</td><td class='right'>0.1%</td></tr>
 <tr><td>fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct</td><td class='right'>1,921</td><td class='right'>0.1%</td></tr>
-<tr><td>bedrock/REDACTED</td><td class='right'>1,278</td><td class='right'>0.1%</td></tr>
+<tr><td>bedrock/REDACTED</td><td class='right'>1,278</td><td class='right'>0.0%</td></tr>
 </table>
 
 {: .note :}

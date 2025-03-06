@@ -78,6 +78,8 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
+             [--notifications | --no-notifications]
+             [--notifications-command]
              [--detect-urls | --no-detect-urls] [--editor]
              [--install-tree-sitter-language-pack]
 
@@ -750,6 +752,18 @@ Environment variable: `AIDER_MULTILINE`
 Aliases:
   - `--multiline`
   - `--no-multiline`
+
+### `--notifications`
+Enable/disable terminal bell notifications when LLM responses are ready (default: False)  
+Default: False  
+Environment variable: `AIDER_NOTIFICATIONS`  
+Aliases:
+  - `--notifications`
+  - `--no-notifications`
+
+### `--notifications-command COMMAND`
+Specify a command to run for notifications instead of the terminal bell. If not specified, a default command for your OS may be used.  
+Environment variable: `AIDER_NOTIFICATIONS_COMMAND`  
 
 ### `--detect-urls`
 Enable/disable detection and offering to add URLs to chat (default: True)  

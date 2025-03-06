@@ -8,7 +8,9 @@ description: Aider can notify you when it's waiting for your input.
 
 # Notifications
 
-Aider can notify you when it's waiting for your input, which is especially useful for long-running operations or when you're multitasking.
+Aider can notify you when it's done working and is
+waiting for your input. 
+This is especially useful for long-running operations or when you're multitasking.
 
 ## Usage
 
