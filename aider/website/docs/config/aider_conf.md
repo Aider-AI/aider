@@ -493,5 +493,10 @@ cog.outl("```")
 
 ## Install the tree_sitter_language_pack (experimental)
 #install-tree-sitter-language-pack: false
+
+## Add or override internal file extension-to-language mappings to customize language detection.
+#languages:
+#  m: matlab
+#  r: R
 ```
 <!--[[[end]]]-->
