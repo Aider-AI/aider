@@ -462,7 +462,7 @@ class InputOutput:
         edit_format=None,
     ):
         self.rule()
-        
+
         # Ring the bell if needed
         self.ring_bell()
 
@@ -717,7 +717,7 @@ class InputOutput:
         allow_never=False,
     ):
         self.num_user_asks += 1
-        
+
         # Ring the bell if needed
         self.ring_bell()
 
@@ -830,7 +830,7 @@ class InputOutput:
     @restore_multiline
     def prompt_ask(self, question, default="", subject=None):
         self.num_user_asks += 1
-        
+
         # Ring the bell if needed
         self.ring_bell()
 
@@ -944,17 +944,17 @@ class InputOutput:
     def llm_started(self):
         """Mark that the LLM has started processing, so we should ring the bell on next input"""
         self.bell_on_next_input = True
-        
+
     def llm_finished(self):
         """Clear the bell flag (optional, as we'll clear it after ringing)"""
         self.bell_on_next_input = False
-        
+
     def ring_bell(self):
         """Ring the terminal bell if needed and clear the flag"""
         if self.bell_on_next_input:
             print("\a", end="", flush=True)  # Ring the bell
             self.bell_on_next_input = False  # Clear the flag
-    
+
     def toggle_multiline_mode(self):
         """Toggle between normal and multiline input modes"""
         self.multiline_mode = not self.multiline_mode

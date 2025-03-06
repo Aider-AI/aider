@@ -1279,7 +1279,7 @@ class Coder:
 
     def send_message(self, inp):
         self.event("message_send_starting")
-        
+
         # Notify IO that LLM processing is starting
         self.io.llm_started()
 
