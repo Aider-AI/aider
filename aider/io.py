@@ -12,9 +12,6 @@ from datetime import datetime
 from io import StringIO
 from pathlib import Path
 
-# Constants
-NOTIFICATION_MESSAGE = "Aider is waiting for your input"
-
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
@@ -38,6 +35,9 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+# Constants
+NOTIFICATION_MESSAGE = "Aider is waiting for your input"
 
 
 def ensure_hash_prefix(color):
