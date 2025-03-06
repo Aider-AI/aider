@@ -207,6 +207,7 @@ class InputOutput:
     num_error_outputs = 0
     num_user_asks = 0
     clipboard_watcher = None
+    bell_on_next_input = False
 
     def __init__(
         self,
@@ -241,6 +242,7 @@ class InputOutput:
         self.never_prompts = set()
         self.editingmode = editingmode
         self.multiline_mode = multiline_mode
+        self.bell_on_next_input = False
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
@@ -460,6 +462,9 @@ class InputOutput:
         edit_format=None,
     ):
         self.rule()
+        
+        # Ring the bell if needed
+        self.ring_bell()
 
         rel_fnames = list(rel_fnames)
         show = ""
@@ -712,6 +717,9 @@ class InputOutput:
         allow_never=False,
     ):
         self.num_user_asks += 1
+        
+        # Ring the bell if needed
+        self.ring_bell()
 
         question_id = (question, subject)
 
@@ -822,6 +830,9 @@ class InputOutput:
     @restore_multiline
     def prompt_ask(self, question, default="", subject=None):
         self.num_user_asks += 1
+        
+        # Ring the bell if needed
+        self.ring_bell()
 
         if subject:
             self.tool_output()
@@ -930,6 +941,20 @@ class InputOutput:
     def print(self, message=""):
         print(message)
 
+    def llm_started(self):
+        """Mark that the LLM has started processing, so we should ring the bell on next input"""
+        self.bell_on_next_input = True
+        
+    def llm_finished(self):
+        """Clear the bell flag (optional, as we'll clear it after ringing)"""
+        self.bell_on_next_input = False
+        
+    def ring_bell(self):
+        """Ring the terminal bell if needed and clear the flag"""
+        if self.bell_on_next_input:
+            print("\a", end="", flush=True)  # Ring the bell
+            self.bell_on_next_input = False  # Clear the flag
+    
     def toggle_multiline_mode(self):
         """Toggle between normal and multiline input modes"""
         self.multiline_mode = not self.multiline_mode
