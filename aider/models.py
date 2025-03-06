@@ -770,24 +770,8 @@ def sanity_check_model(io, model):
         show = True
         io.tool_warning(f"Warning for {model}: Unknown which environment variables are required.")
 
-    # Check if this is a Bedrock model and ensure boto3 is installed
-    if model.name.startswith("bedrock/"):
-        from aider.utils import check_pip_install_extra
-
-        check_pip_install_extra(
-            io, "boto3", "AWS Bedrock models require the boto3 package.", ["boto3"]
-        )
-
-    # Check if this is a Vertex AI model and ensure google-cloud-aiplatform is installed
-    if model.name.startswith("vertex_ai/"):
-        from aider.utils import check_pip_install_extra
-
-        check_pip_install_extra(
-            io,
-            "google.cloud.aiplatform",
-            "Google Vertex AI models require the google-cloud-aiplatform package.",
-            ["google-cloud-aiplatform"],
-        )
+    # Check for model-specific dependencies
+    check_for_dependencies(io, model.name)
 
     if not model.info:
         show = True
