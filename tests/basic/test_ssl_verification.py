@@ -29,13 +29,16 @@ class TestSSLVerification(TestCase):
         # Mock the litellm._lazy_module to avoid AttributeError
         mock_load_litellm.return_value = None
         mock_module = MagicMock()
-        
+
         # Mock Model class to avoid actual model initialization
         with patch("aider.models.Model") as mock_model:
             # Configure the mock to avoid the TypeError
             mock_model.return_value.info = {}
-            mock_model.return_value.validate_environment.return_value = {"missing_keys": [], "keys_in_environment": []}
-            
+            mock_model.return_value.validate_environment.return_value = {
+                "missing_keys": [],
+                "keys_in_environment": [],
+            }
+
             with patch("aider.llm.litellm._lazy_module", mock_module):
                 # Run main with --no-verify-ssl flag
                 main(
@@ -43,14 +46,14 @@ class TestSSLVerification(TestCase):
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
-                
+
                 # Verify model_info_manager.set_verify_ssl was called with False
                 mock_set_verify_ssl.assert_called_once_with(False)
-                
+
                 # Verify httpx clients were created with verify=False
                 mock_client.assert_called_once_with(verify=False)
                 mock_async_client.assert_called_once_with(verify=False)
-                
+
                 # Verify SSL_VERIFY environment variable was set to empty string
                 self.assertEqual(os.environ.get("SSL_VERIFY"), "")
 

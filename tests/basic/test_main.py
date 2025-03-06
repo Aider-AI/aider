@@ -691,8 +691,11 @@ class TestMain(TestCase):
             with patch("aider.models.Model") as mock_model:
                 # Configure the mock to avoid the TypeError
                 mock_model.return_value.info = {}
-                mock_model.return_value.validate_environment.return_value = {"missing_keys": [], "keys_in_environment": []}
-                
+                mock_model.return_value.validate_environment.return_value = {
+                    "missing_keys": [],
+                    "keys_in_environment": [],
+                }
+
                 main(
                     ["--no-verify-ssl", "--exit", "--yes"],
                     input=DummyInput(),
