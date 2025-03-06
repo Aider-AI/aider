@@ -25,7 +25,13 @@ cog.out(text)
 
 ### main branch
 
-- Aider wrote 74% of the code in this release.
+- Added support for Qwen 32B model on Fireworks: `--model fireworks_ai/accounts/fireworks/models/qwq-32b`.
+- Enhanced handling of reasoning tags to better clean up model responses.
+- Improved error handling for EOF (Ctrl+D) in user input prompts.
+- Added helper function to ensure hex color values have a # prefix.
+- Fixed handling of Git errors when reading staged files.
+- Improved SSL verification control for model information requests.
+- Aider wrote 85% of the code in this release.
 
 ### Aider v0.75.3
 
