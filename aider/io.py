@@ -253,6 +253,7 @@ class InputOutput:
             self.notifications_command = self.get_default_notification_command()
         else:
             self.notifications_command = notifications_command
+
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
