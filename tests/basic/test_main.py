@@ -699,12 +699,11 @@ class TestMain(TestCase):
                 
                 # Mock fuzzy_match_models to avoid string operations on MagicMock
                 with patch("aider.models.fuzzy_match_models", return_value=[]):
-
-                main(
-                    ["--no-verify-ssl", "--exit", "--yes"],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
+                    main(
+                        ["--no-verify-ssl", "--exit", "--yes"],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
                 mock_set_verify_ssl.assert_called_once_with(False)
 
     def test_pytest_env_vars(self):
