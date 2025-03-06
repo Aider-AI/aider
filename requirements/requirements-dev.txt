@@ -144,7 +144,7 @@ pathos==0.3.3
     # via
     #   -c requirements/common-constraints.txt
     #   lox
-pillow==10.4.0
+pillow==11.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib

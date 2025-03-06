@@ -167,7 +167,7 @@ packaging==24.2
     #   huggingface-hub
     #   marshmallow
     #   transformers
-pillow==10.4.0
+pillow==11.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core

@@ -77,7 +77,7 @@ pandas==2.2.3
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-pillow==10.4.0
+pillow==11.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit

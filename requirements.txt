@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.62.1
+litellm==1.62.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -199,7 +199,7 @@ numpy==1.26.4
     #   -r requirements/requirements.in
     #   scipy
     #   soundfile
-openai==1.65.3
+openai==1.65.4
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -214,10 +214,6 @@ pathspec==0.12.1
     #   -r requirements/requirements.in
     #   grep-ast
 pexpect==4.9.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
-pillow==10.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
