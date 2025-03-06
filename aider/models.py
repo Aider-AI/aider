@@ -617,7 +617,8 @@ class Model(ModelSettings):
         pattern = f"<{self.remove_reasoning}>.*?</{self.remove_reasoning}>"
         res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
 
-        # If closing tag exists but opening tag might be missing, remove everything before closing tag
+        # If closing tag exists but opening tag might be missing, remove everything before closing
+        # tag
         closing_tag = f"</{self.remove_reasoning}>"
         if closing_tag in res:
             # Split on the closing tag and keep everything after it
