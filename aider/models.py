@@ -140,7 +140,7 @@ class ModelInfoManager:
         self.local_model_metadata = {}
         self.verify_ssl = True
         self._load_cache()
-        
+
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
 
