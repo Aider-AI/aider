@@ -10,3 +10,4 @@ pre-commit
 cogapp
 semver
 codespell
+uv
