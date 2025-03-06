@@ -963,9 +963,9 @@ class InputOutput:
     def get_default_notification_command(self):
         """Return a default notification command based on the operating system."""
         import platform
-        
+
         system = platform.system()
-        
+
         if system == "Darwin":  # macOS
             # Check for terminal-notifier first
             if shutil.which("terminal-notifier"):
@@ -992,7 +992,7 @@ class InputOutput:
                 " [System.Windows.Forms.MessageBox]::Show('Aider is waiting for your input',"
                 " 'Aider')\""
             )
-        
+
         return None  # Unknown system
 
     def ring_bell(self):
@@ -1000,9 +1000,11 @@ class InputOutput:
         if self.bell_on_next_input and self.notifications:
             if self.notifications_command:
                 try:
-                    result = subprocess.run(self.notifications_command, shell=True, capture_output=True)
+                    result = subprocess.run(
+                        self.notifications_command, shell=True, capture_output=True
+                    )
                     if result.returncode != 0 and result.stderr:
-                        error_msg = result.stderr.decode('utf-8', errors='replace')
+                        error_msg = result.stderr.decode("utf-8", errors="replace")
                         self.tool_warning(f"Failed to run notifications command: {error_msg}")
                 except Exception as e:
                     self.tool_warning(f"Failed to run notifications command: {e}")
