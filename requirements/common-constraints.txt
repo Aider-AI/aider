@@ -174,7 +174,7 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.62.4
+litellm==1.63.0
     # via -r requirements/requirements.in
 llama-index-core==0.12.22
     # via
@@ -210,7 +210,7 @@ multiprocess==0.70.17
     # via pathos
 mypy-extensions==1.0.0
     # via typing-inspect
-narwhals==1.29.0
+narwhals==1.29.1
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
