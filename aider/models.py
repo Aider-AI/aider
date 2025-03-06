@@ -19,6 +19,7 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
+from aider.utils import check_pip_install_extra
 
 RETRY_TIMEOUT = 60
 
@@ -791,13 +792,11 @@ def sanity_check_model(io, model):
 def check_for_dependencies(io, model_name):
     """
     Check for model-specific dependencies and install them if needed.
-
+    
     Args:
         io: The IO object for user interaction
         model_name: The name of the model to check dependencies for
     """
-    from aider.utils import check_pip_install_extra
-
     # Check if this is a Bedrock model and ensure boto3 is installed
     if model_name.startswith("bedrock/"):
         check_pip_install_extra(
