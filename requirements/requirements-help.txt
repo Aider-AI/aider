@@ -157,6 +157,7 @@ nltk==3.9.1
 numpy==1.26.4
     # via
     #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements-help.in
     #   llama-index-core
     #   scikit-learn
     #   scipy
