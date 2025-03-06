@@ -253,6 +253,7 @@ tokenizers==0.21.0
 torch==2.2.2
     # via
     #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements-help.in
     #   sentence-transformers
 tqdm==4.67.1
     # via

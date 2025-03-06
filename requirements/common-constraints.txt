@@ -478,7 +478,9 @@ tokenizers==0.21.0
 toml==0.10.2
     # via streamlit
 torch==2.2.2
-    # via sentence-transformers
+    # via
+    #   -r requirements/requirements-help.in
+    #   sentence-transformers
 tornado==6.4.2
     # via streamlit
 tqdm==4.67.1
