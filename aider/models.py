@@ -147,7 +147,7 @@ class ModelInfoManager:
     def _load_cache(self):
         if self._cache_loaded:
             return
-            
+
         try:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
             if self.cache_file.exists():
@@ -156,7 +156,7 @@ class ModelInfoManager:
                     self.content = json.loads(self.cache_file.read_text())
         except OSError:
             pass
-            
+
         self._cache_loaded = True
 
     def _update_cache(self):
@@ -186,7 +186,7 @@ class ModelInfoManager:
 
         # Ensure cache is loaded before checking content
         self._load_cache()
-            
+
         if not self.content:
             self._update_cache()
 
