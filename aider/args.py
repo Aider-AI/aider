@@ -820,6 +820,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable terminal bell notifications when LLM responses are ready (default: False)",
     )
     group.add_argument(
+        "--notifications-command",
+        metavar="COMMAND",
+        default=None,
+        help="Specify a command to run for notifications instead of the terminal bell",
+    )
+    group.add_argument(
         "--detect-urls",
         action=argparse.BooleanOptionalAction,
         default=True,

@@ -560,6 +560,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             fancy_input=args.fancy_input,
             multiline_mode=args.multiline,
             notifications=args.notifications,
+            notifications_command=args.notifications_command,
         )
 
     io = get_io(args.pretty)

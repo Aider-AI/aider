@@ -208,6 +208,7 @@ class InputOutput:
     num_user_asks = 0
     clipboard_watcher = None
     bell_on_next_input = False
+    notifications_command = None
 
     def __init__(
         self,
@@ -237,6 +238,7 @@ class InputOutput:
         multiline_mode=False,
         root=".",
         notifications=False,
+        notifications_command=None,
     ):
         self.placeholder = None
         self.interrupted = False
@@ -245,6 +247,7 @@ class InputOutput:
         self.multiline_mode = multiline_mode
         self.bell_on_next_input = False
         self.notifications = notifications
+        self.notifications_command = notifications_command
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
@@ -954,7 +957,14 @@ class InputOutput:
     def ring_bell(self):
         """Ring the terminal bell if needed and clear the flag"""
         if self.bell_on_next_input and self.notifications:
-            print("\a", end="", flush=True)  # Ring the bell
+            if self.notifications_command:
+                try:
+                    import subprocess
+                    subprocess.run(self.notifications_command, shell=True)
+                except Exception as e:
+                    self.tool_warning(f"Failed to run notifications command: {e}")
+            else:
+                print("\a", end="", flush=True)  # Ring the bell
             self.bell_on_next_input = False  # Clear the flag
 
     def toggle_multiline_mode(self):
