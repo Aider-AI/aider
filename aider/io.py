@@ -962,11 +962,14 @@ class InputOutput:
     def get_default_notification_command(self):
         """Return a default notification command based on the operating system."""
         import platform
-        
+
         system = platform.system()
-        
+
         if system == "Darwin":  # macOS
-            return "osascript -e 'display notification \"Aider is waiting for your input\" with title \"Aider\"'"
+            return (
+                'osascript -e \'display notification "Aider is waiting for your input" with title'
+                ' "Aider"\''
+            )
         elif system == "Linux":
             # Check for common Linux notification tools
             for cmd in ["notify-send", "zenity"]:
@@ -978,8 +981,13 @@ class InputOutput:
             return None  # No known notification tool found
         elif system == "Windows":
             # PowerShell notification
-            return "powershell -command \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Aider is waiting for your input', 'Aider')\""
-        
+            return (
+                "powershell -command"
+                " \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms');"
+                " [System.Windows.Forms.MessageBox]::Show('Aider is waiting for your input',"
+                " 'Aider')\""
+            )
+
         return None  # Unknown system
 
     def ring_bell(self):

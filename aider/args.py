@@ -826,7 +826,10 @@ def get_parser(default_config_files, git_root):
         "--notifications-command",
         metavar="COMMAND",
         default=None,
-        help="Specify a command to run for notifications instead of the terminal bell. If not specified, a default command for your OS may be used.",
+        help=(
+            "Specify a command to run for notifications instead of the terminal bell. If not"
+            " specified, a default command for your OS may be used."
+        ),
     )
     group.add_argument(
         "--detect-urls",
