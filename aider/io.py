@@ -960,6 +960,7 @@ class InputOutput:
             if self.notifications_command:
                 try:
                     import subprocess
+
                     subprocess.run(self.notifications_command, shell=True)
                 except Exception as e:
                     self.tool_warning(f"Failed to run notifications command: {e}")

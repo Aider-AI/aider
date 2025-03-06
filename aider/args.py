@@ -817,7 +817,10 @@ def get_parser(default_config_files, git_root):
         "--notifications",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Enable/disable terminal bell notifications when LLM responses are ready (default: False)",
+        help=(
+            "Enable/disable terminal bell notifications when LLM responses are ready (default:"
+            " False)"
+        ),
     )
     group.add_argument(
         "--notifications-command",
