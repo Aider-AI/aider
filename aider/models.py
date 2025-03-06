@@ -394,6 +394,16 @@ class Model(ModelSettings):
             self.use_repo_map = True
             return  # <--
 
+        if "qwq" in model and "32b" in model and "preview" not in model:
+            self.edit_format = "diff"
+            self.editor_edit_format = "editor-diff"
+            self.use_repo_map = True
+            self.remove_resoning = "think"
+            self.examples_as_sys_msg = True
+            self.use_temperature = 0.6
+            self.extra_params = dict(top_p=0.95)
+            return  # <--
+
         # use the defaults
         if self.edit_format == "diff":
             self.use_repo_map = True
