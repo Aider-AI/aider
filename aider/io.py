@@ -35,6 +35,17 @@ from .dump import dump  # noqa: F401
 from .utils import is_image_file
 
 
+def ensure_hash_prefix(color):
+    """Ensure hex color values have a # prefix."""
+    if not color:
+        return color
+    if isinstance(color, str) and color.strip() and not color.startswith("#"):
+        # Check if it's a valid hex color (3 or 6 hex digits)
+        if all(c in "0123456789ABCDEFabcdef" for c in color) and len(color) in (3, 6):
+            return f"#{color}"
+    return color
+
+
 def restore_multiline(func):
     """Decorator to restore multiline mode after function execution"""
 
@@ -234,15 +245,15 @@ class InputOutput:
         if no_color is not None and no_color != "":
             pretty = False
 
-        self.user_input_color = user_input_color if pretty else None
-        self.tool_output_color = tool_output_color if pretty else None
-        self.tool_error_color = tool_error_color if pretty else None
-        self.tool_warning_color = tool_warning_color if pretty else None
-        self.assistant_output_color = assistant_output_color
-        self.completion_menu_color = completion_menu_color if pretty else None
-        self.completion_menu_bg_color = completion_menu_bg_color if pretty else None
-        self.completion_menu_current_color = completion_menu_current_color if pretty else None
-        self.completion_menu_current_bg_color = completion_menu_current_bg_color if pretty else None
+        self.user_input_color = ensure_hash_prefix(user_input_color) if pretty else None
+        self.tool_output_color = ensure_hash_prefix(tool_output_color) if pretty else None
+        self.tool_error_color = ensure_hash_prefix(tool_error_color) if pretty else None
+        self.tool_warning_color = ensure_hash_prefix(tool_warning_color) if pretty else None
+        self.assistant_output_color = ensure_hash_prefix(assistant_output_color)
+        self.completion_menu_color = ensure_hash_prefix(completion_menu_color) if pretty else None
+        self.completion_menu_bg_color = ensure_hash_prefix(completion_menu_bg_color) if pretty else None
+        self.completion_menu_current_color = ensure_hash_prefix(completion_menu_current_color) if pretty else None
+        self.completion_menu_current_bg_color = ensure_hash_prefix(completion_menu_current_bg_color) if pretty else None
 
         self.code_theme = code_theme
 
