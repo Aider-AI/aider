@@ -98,7 +98,7 @@ gitpython==3.1.44
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-grep-ast==0.6.1
+grep-ast==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.63.0
+litellm==1.63.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -368,16 +368,26 @@ tqdm==4.67.1
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
     #   openai
-tree-sitter==0.21.3
+tree-sitter==0.24.0
     # via
     #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
-    #   grep-ast
-    #   tree-sitter-languages
-tree-sitter-languages==1.10.2
+    #   tree-sitter-language-pack
+tree-sitter-c-sharp==0.23.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   tree-sitter-language-pack
+tree-sitter-embedded-template==0.23.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   tree-sitter-language-pack
+tree-sitter-language-pack==0.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
+tree-sitter-yaml==0.7.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   tree-sitter-language-pack
 typing-extensions==4.12.2
     # via
     #   -c requirements/common-constraints.txt

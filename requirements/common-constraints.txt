@@ -116,7 +116,7 @@ greenlet==3.1.1
     # via
     #   playwright
     #   sqlalchemy
-grep-ast==0.6.1
+grep-ast==0.7.0
     # via -r requirements/requirements.in
 h11==0.14.0
     # via httpcore
@@ -174,7 +174,7 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.63.0
+litellm==1.63.2
     # via -r requirements/requirements.in
 llama-index-core==0.12.22
     # via
@@ -455,13 +455,16 @@ tqdm==4.67.1
     #   transformers
 transformers==4.49.0
     # via sentence-transformers
-tree-sitter==0.21.3
-    # via
-    #   -r requirements/requirements.in
-    #   grep-ast
-    #   tree-sitter-languages
-tree-sitter-languages==1.10.2
+tree-sitter==0.24.0
+    # via tree-sitter-language-pack
+tree-sitter-c-sharp==0.23.1
+    # via tree-sitter-language-pack
+tree-sitter-embedded-template==0.23.2
+    # via tree-sitter-language-pack
+tree-sitter-language-pack==0.6.0
     # via grep-ast
+tree-sitter-yaml==0.7.0
+    # via tree-sitter-language-pack
 typer==0.15.2
     # via -r requirements/requirements-dev.in
 typing-extensions==4.12.2
@@ -493,7 +496,7 @@ urllib3==2.3.0
     #   requests
 uv==0.6.4
     # via -r requirements/requirements-dev.in
-virtualenv==20.29.2
+virtualenv==20.29.3
     # via pre-commit
 watchfiles==1.0.4
     # via -r requirements/requirements.in
