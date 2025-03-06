@@ -12,6 +12,9 @@ from datetime import datetime
 from io import StringIO
 from pathlib import Path
 
+# Constants
+NOTIFICATION_MESSAGE = "Aider is waiting for your input"
+
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
@@ -969,10 +972,10 @@ class InputOutput:
         if system == "Darwin":  # macOS
             # Check for terminal-notifier first
             if shutil.which("terminal-notifier"):
-                return "terminal-notifier -title 'Aider' -message 'Aider is waiting for your input'"
+                return f"terminal-notifier -title 'Aider' -message '{NOTIFICATION_MESSAGE}'"
             # Fall back to osascript
             return (
-                'osascript -e \'display notification "Aider is waiting for your input" with title'
+                f'osascript -e \'display notification "{NOTIFICATION_MESSAGE}" with title'
                 ' "Aider"\''
             )
         elif system == "Linux":
@@ -980,16 +983,16 @@ class InputOutput:
             for cmd in ["notify-send", "zenity"]:
                 if shutil.which(cmd):
                     if cmd == "notify-send":
-                        return "notify-send 'Aider' 'Aider is waiting for your input'"
+                        return f"notify-send 'Aider' '{NOTIFICATION_MESSAGE}'"
                     elif cmd == "zenity":
-                        return "zenity --notification --text='Aider is waiting for your input'"
+                        return f"zenity --notification --text='{NOTIFICATION_MESSAGE}'"
             return None  # No known notification tool found
         elif system == "Windows":
             # PowerShell notification
             return (
                 "powershell -command"
                 " \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms');"
-                " [System.Windows.Forms.MessageBox]::Show('Aider is waiting for your input',"
+                f" [System.Windows.Forms.MessageBox]::Show('{NOTIFICATION_MESSAGE}',"
                 " 'Aider')\""
             )
 
