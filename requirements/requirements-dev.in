@@ -10,3 +10,6 @@ pre-commit
 cogapp
 semver
 codespell
+
+# https://github.com/Aider-AI/aider/issues/3391
+sphinx<8.2
