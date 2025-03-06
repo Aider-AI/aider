@@ -796,6 +796,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the .env file to load (default: .env in git root)",
     )
     group.add_argument(
+        "--notification",
+        choices=["bell", "desktop", "both", "none"],
+        default="bell",
+        help="Notification method when LLM completes (default: bell)",
+    )
+    group.add_argument(
         "--suggest-shell-commands",
         action=argparse.BooleanOptionalAction,
         default=True,

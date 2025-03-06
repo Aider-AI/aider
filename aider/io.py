@@ -8,6 +8,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from io import StringIO
+from notifypy import Notify
 from pathlib import Path
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
@@ -236,6 +237,7 @@ class InputOutput:
         file_watcher=None,
         multiline_mode=False,
         root=".",
+        notification="bell",
     ):
         self.placeholder = None
         self.interrupted = False
@@ -243,6 +245,7 @@ class InputOutput:
         self.editingmode = editingmode
         self.multiline_mode = multiline_mode
         self.bell_on_next_input = False
+        self.notification_type = notification
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
@@ -949,10 +952,25 @@ class InputOutput:
         """Clear the bell flag (optional, as we'll clear it after ringing)"""
         self.bell_on_next_input = False
 
+    def show_desktop_notification(self):
+        """Show a desktop notification that the LLM has completed"""
+        notification = Notify()
+        notification.title = "Aider"
+        notification.message = "LLM processing complete"
+        notification.send()
+        
     def ring_bell(self):
-        """Ring the terminal bell if needed and clear the flag"""
+        """Ring the terminal bell or show desktop notification if needed and clear the flag"""
         if self.bell_on_next_input:
-            print("\a", end="", flush=True)  # Ring the bell
+            if self.notification_type in ("bell", "both"):
+                print("\a", end="", flush=True)  # Ring the bell
+            
+            if self.notification_type in ("desktop", "both"):
+                try:
+                    self.show_desktop_notification()
+                except Exception as e:
+                    self.tool_warning(f"Desktop notification failed: {e}")
+            
             self.bell_on_next_input = False  # Clear the flag
 
     def toggle_multiline_mode(self):
