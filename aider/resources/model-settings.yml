@@ -856,4 +856,14 @@
   examples_as_sys_msg: true
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
+
+- name: fireworks_ai/accounts/fireworks/models/qwq-32b
+  remove_reasoning: think
+  edit_format: diff
+  weak_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  use_repo_map: true
+  editor_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  editor_edit_format: editor-diff
+  extra_params:
+      max_tokens: 32000
   
