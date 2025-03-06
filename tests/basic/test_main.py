@@ -696,7 +696,7 @@ class TestMain(TestCase):
                     "missing_keys": [],
                     "keys_in_environment": [],
                 }
-                
+
                 # Mock fuzzy_match_models to avoid string operations on MagicMock
                 with patch("aider.models.fuzzy_match_models", return_value=[]):
                     main(
