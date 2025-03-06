@@ -687,12 +687,18 @@ class TestMain(TestCase):
     @patch("aider.models.ModelInfoManager.set_verify_ssl")
     def test_no_verify_ssl_sets_model_info_manager(self, mock_set_verify_ssl):
         with GitTemporaryDirectory():
-            main(
-                ["--no-verify-ssl", "--exit", "--yes"],
-                input=DummyInput(),
-                output=DummyOutput(),
-            )
-            mock_set_verify_ssl.assert_called_once_with(False)
+            # Mock Model class to avoid actual model initialization
+            with patch("aider.models.Model") as mock_model:
+                # Configure the mock to avoid the TypeError
+                mock_model.return_value.info = {}
+                mock_model.return_value.validate_environment.return_value = {"missing_keys": [], "keys_in_environment": []}
+                
+                main(
+                    ["--no-verify-ssl", "--exit", "--yes"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                mock_set_verify_ssl.assert_called_once_with(False)
 
     def test_pytest_env_vars(self):
         # Verify that environment variables from pytest.ini are properly set
