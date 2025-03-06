@@ -154,6 +154,7 @@ class ModelInfoManager:
         try:
             import requests
 
+            # this needs to respect the --no-verify-ssl switch. ai!
             response = requests.get(self.MODEL_INFO_URL, timeout=5)
             if response.status_code == 200:
                 self.content = response.json()
