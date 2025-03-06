@@ -33,7 +33,7 @@ class TestInputOutput(unittest.TestCase):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
             io = InputOutput(fancy_input=False)
             self.assertFalse(io.pretty)
-            
+
     def test_color_initialization(self):
         """Test that color values are properly initialized with # prefix"""
         # Test with hex colors without #
@@ -42,32 +42,24 @@ class TestInputOutput(unittest.TestCase):
             tool_error_color="FF2222",
             tool_warning_color="FFA500",
             assistant_output_color="0088ff",
-            pretty=True
+            pretty=True,
         )
-        
+
         # Check that # was added to hex colors
         self.assertEqual(io.user_input_color, "#00cc00")
         self.assertEqual(io.tool_error_color, "#FF2222")
         self.assertEqual(io.tool_warning_color, "#FFA500")  # Already had #
         self.assertEqual(io.assistant_output_color, "#0088ff")
-        
+
         # Test with named colors (should be unchanged)
-        io = InputOutput(
-            user_input_color="blue",
-            tool_error_color="red",
-            pretty=True
-        )
-        
+        io = InputOutput(user_input_color="blue", tool_error_color="red", pretty=True)
+
         self.assertEqual(io.user_input_color, "blue")
         self.assertEqual(io.tool_error_color, "red")
-        
+
         # Test with pretty=False (should not modify colors)
-        io = InputOutput(
-            user_input_color="00cc00",
-            tool_error_color="FF2222",
-            pretty=False
-        )
-        
+        io = InputOutput(user_input_color="00cc00", tool_error_color="FF2222", pretty=False)
+
         self.assertIsNone(io.user_input_color)
         self.assertIsNone(io.tool_error_color)
 
@@ -429,11 +421,11 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         # Test prompt_ask()
         io.prompt_ask("Test prompt?")
         self.assertTrue(io.multiline_mode)  # Should be restored
-        
+
     def test_ensure_hash_prefix(self):
         """Test that ensure_hash_prefix correctly adds # to valid hex colors"""
         from aider.io import ensure_hash_prefix
-        
+
         # Test valid hex colors without #
         self.assertEqual(ensure_hash_prefix("000"), "#000")
         self.assertEqual(ensure_hash_prefix("fff"), "#fff")
@@ -441,11 +433,11 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         self.assertEqual(ensure_hash_prefix("123456"), "#123456")
         self.assertEqual(ensure_hash_prefix("abcdef"), "#abcdef")
         self.assertEqual(ensure_hash_prefix("ABCDEF"), "#ABCDEF")
-        
+
         # Test hex colors that already have #
         self.assertEqual(ensure_hash_prefix("#000"), "#000")
         self.assertEqual(ensure_hash_prefix("#123456"), "#123456")
-        
+
         # Test invalid inputs (should return unchanged)
         self.assertEqual(ensure_hash_prefix(""), "")
         self.assertEqual(ensure_hash_prefix(None), None)
