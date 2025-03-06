@@ -792,7 +792,7 @@ def sanity_check_model(io, model):
 def check_for_dependencies(io, model_name):
     """
     Check for model-specific dependencies and install them if needed.
-    
+
     Args:
         io: The IO object for user interaction
         model_name: The name of the model to check dependencies for
