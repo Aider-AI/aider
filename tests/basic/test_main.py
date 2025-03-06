@@ -691,10 +691,14 @@ class TestMain(TestCase):
             with patch("aider.models.Model") as mock_model:
                 # Configure the mock to avoid the TypeError
                 mock_model.return_value.info = {}
+                mock_model.return_value.name = "gpt-4"  # Add a string name
                 mock_model.return_value.validate_environment.return_value = {
                     "missing_keys": [],
                     "keys_in_environment": [],
                 }
+                
+                # Mock fuzzy_match_models to avoid string operations on MagicMock
+                with patch("aider.models.fuzzy_match_models", return_value=[]):
 
                 main(
                     ["--no-verify-ssl", "--exit", "--yes"],
