@@ -1,6 +1,7 @@
 import base64
 import functools
 import os
+import shutil
 import signal
 import subprocess
 import time
@@ -248,7 +249,10 @@ class InputOutput:
         self.multiline_mode = multiline_mode
         self.bell_on_next_input = False
         self.notifications = notifications
-        self.notifications_command = notifications_command
+        if notifications and notifications_command is None:
+            self.notifications_command = self.get_default_notification_command()
+        else:
+            self.notifications_command = notifications_command
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
@@ -954,6 +958,29 @@ class InputOutput:
     def llm_finished(self):
         """Clear the bell flag (optional, as we'll clear it after ringing)"""
         self.bell_on_next_input = False
+
+    def get_default_notification_command(self):
+        """Return a default notification command based on the operating system."""
+        import platform
+        
+        system = platform.system()
+        
+        if system == "Darwin":  # macOS
+            return "osascript -e 'display notification \"Aider is waiting for your input\" with title \"Aider\"'"
+        elif system == "Linux":
+            # Check for common Linux notification tools
+            for cmd in ["notify-send", "zenity"]:
+                if shutil.which(cmd):
+                    if cmd == "notify-send":
+                        return "notify-send 'Aider' 'Aider is waiting for your input'"
+                    elif cmd == "zenity":
+                        return "zenity --notification --text='Aider is waiting for your input'"
+            return None  # No known notification tool found
+        elif system == "Windows":
+            # PowerShell notification
+            return "powershell -command \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); [System.Windows.Forms.MessageBox]::Show('Aider is waiting for your input', 'Aider')\""
+        
+        return None  # Unknown system
 
     def ring_bell(self):
         """Ring the terminal bell if needed and clear the flag"""
