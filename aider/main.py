@@ -559,6 +559,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             editingmode=editing_mode,
             fancy_input=args.fancy_input,
             multiline_mode=args.multiline,
+            notification=args.notification,
         )
 
     io = get_io(args.pretty)
