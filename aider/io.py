@@ -975,8 +975,7 @@ class InputOutput:
                 return f"terminal-notifier -title 'Aider' -message '{NOTIFICATION_MESSAGE}'"
             # Fall back to osascript
             return (
-                f'osascript -e \'display notification "{NOTIFICATION_MESSAGE}" with title'
-                ' "Aider"\''
+                f'osascript -e \'display notification "{NOTIFICATION_MESSAGE}" with title "Aider"\''
             )
         elif system == "Linux":
             # Check for common Linux notification tools
