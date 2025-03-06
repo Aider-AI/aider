@@ -309,9 +309,11 @@ class GitRepo:
 
         # Add staged files
         index = self.repo.index
-        # index.entries.keys can throw ANY_GIT_ERROR ai!
-        staged_files = [path for path, _ in index.entries.keys()]
-        files.update(self.normalize_path(path) for path in staged_files)
+        try:
+            staged_files = [path for path, _ in index.entries.keys()]
+            files.update(self.normalize_path(path) for path in staged_files)
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to read staged files: {err}")
 
         res = [fname for fname in files if not self.ignored_file(fname)]
 
