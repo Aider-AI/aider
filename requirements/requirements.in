@@ -27,6 +27,7 @@ psutil
 watchfiles
 socksio
 pip
+pillow
 
 # The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps

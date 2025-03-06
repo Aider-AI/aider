@@ -275,6 +275,7 @@ pexpect==4.9.0
     # via -r requirements/requirements.in
 pillow==11.1.0
     # via
+    #   -r requirements/requirements.in
     #   llama-index-core
     #   matplotlib
     #   sentence-transformers
