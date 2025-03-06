@@ -613,8 +613,16 @@ class Model(ModelSettings):
         if not self.remove_reasoning:
             return res
 
+        # Try to match the complete tag pattern first
         pattern = f"<{self.remove_reasoning}>.*?</{self.remove_reasoning}>"
         res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
+        
+        # If closing tag exists but opening tag might be missing, remove everything before closing tag
+        closing_tag = f"</{self.remove_reasoning}>"
+        if closing_tag in res:
+            parts = res.split(closing_tag, 1)
+            res = parts[1].strip() if len(parts) > 1 else res
+            
         return res
 
     def simple_send_with_retries(self, messages):
