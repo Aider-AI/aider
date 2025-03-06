@@ -74,7 +74,7 @@ class TestModelInfoManager(TestCase):
         # Force cache update by making it look expired
         with patch("time.time", return_value=9999999999):
             # This should trigger _update_cache
-            result = self.manager.get_model_from_cached_json_db("test_model")
+            self.manager.get_model_from_cached_json_db("test_model")
 
             # Verify _update_cache was called with verify=False
             mock_get.assert_called_with(self.manager.MODEL_INFO_URL, timeout=5, verify=False)
