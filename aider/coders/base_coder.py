@@ -1720,6 +1720,8 @@ class Coder:
             raise FinishReasonLength()
 
     def show_send_output_stream(self, completion):
+        received_content = False
+        
         for chunk in completion:
             if len(chunk.choices) == 0:
                 continue
@@ -1738,6 +1740,7 @@ class Coder:
                         self.partial_response_function_call[k] += v
                     else:
                         self.partial_response_function_call[k] = v
+                received_content = True
             except AttributeError:
                 pass
 
@@ -1745,6 +1748,7 @@ class Coder:
                 text = chunk.choices[0].delta.content
                 if text:
                     self.partial_response_content += text
+                    received_content = True
             except AttributeError:
                 text = None
 
@@ -1761,6 +1765,9 @@ class Coder:
                     sys.stdout.write(safe_text)
                 sys.stdout.flush()
                 yield text
+        
+        if not received_content:
+            self.io.tool_warning("Empty response received from LLM.")
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
