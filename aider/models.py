@@ -804,6 +804,32 @@ def sanity_check_model(io, model):
     return show
 
 
+def check_for_dependencies(io, model_name):
+    """
+    Check for model-specific dependencies and install them if needed.
+    
+    Args:
+        io: The IO object for user interaction
+        model_name: The name of the model to check dependencies for
+    """
+    from aider.utils import check_pip_install_extra
+
+    # Check if this is a Bedrock model and ensure boto3 is installed
+    if model_name.startswith("bedrock/"):
+        check_pip_install_extra(
+            io, "boto3", "AWS Bedrock models require the boto3 package.", ["boto3"]
+        )
+    
+    # Check if this is a Vertex AI model and ensure google-cloud-aiplatform is installed
+    elif model_name.startswith("vertex_ai/"):
+        check_pip_install_extra(
+            io, 
+            "google.cloud.aiplatform", 
+            "Google Vertex AI models require the google-cloud-aiplatform package.", 
+            ["google-cloud-aiplatform"]
+        )
+
+
 def fuzzy_match_models(name):
     name = name.lower()
 
