@@ -81,6 +81,17 @@ def make_repo(path=None):
 
     return repo
 
+def get_canary_path(from_path=None):
+    """used by scripts/wait-for-aider.sh"""
+    return Path(get_repo_root(from_path or os.getcwd())) / ".aider.working"
+
+def get_repo_root(path):
+    """Get the repository root directory for the given path."""
+    try:
+        repo = git.Repo(path, search_parent_directories=True)
+        return repo.git.rev_parse("--show-toplevel")
+    except:
+        return path
 
 def is_image_file(file_name):
     """

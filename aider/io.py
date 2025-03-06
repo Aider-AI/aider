@@ -32,7 +32,7 @@ from rich.text import Text
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
-from .utils import is_image_file
+from .utils import is_image_file, get_canary_path
 
 
 def ensure_hash_prefix(color):
@@ -460,6 +460,14 @@ class InputOutput:
         edit_format=None,
     ):
         self.rule()
+
+        canary_path=get_canary_path(root)
+        try: # remove canary file if it exists, so wait-for-aider.sh can continue
+            if os.path.exists(canary_path):
+                os.remove(canary_path)
+        except:
+            pass # yes we don't care if it fails
+
 
         rel_fnames = list(rel_fnames)
         show = ""
