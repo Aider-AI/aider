@@ -251,9 +251,15 @@ class InputOutput:
         self.tool_warning_color = ensure_hash_prefix(tool_warning_color) if pretty else None
         self.assistant_output_color = ensure_hash_prefix(assistant_output_color)
         self.completion_menu_color = ensure_hash_prefix(completion_menu_color) if pretty else None
-        self.completion_menu_bg_color = ensure_hash_prefix(completion_menu_bg_color) if pretty else None
-        self.completion_menu_current_color = ensure_hash_prefix(completion_menu_current_color) if pretty else None
-        self.completion_menu_current_bg_color = ensure_hash_prefix(completion_menu_current_bg_color) if pretty else None
+        self.completion_menu_bg_color = (
+            ensure_hash_prefix(completion_menu_bg_color) if pretty else None
+        )
+        self.completion_menu_current_color = (
+            ensure_hash_prefix(completion_menu_current_color) if pretty else None
+        )
+        self.completion_menu_current_bg_color = (
+            ensure_hash_prefix(completion_menu_current_bg_color) if pretty else None
+        )
 
         self.code_theme = code_theme
 
