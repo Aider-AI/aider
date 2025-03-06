@@ -522,6 +522,16 @@ cog.out("```\n")
   extra_params:
     max_tokens: 128000
 
+- name: fireworks_ai/accounts/fireworks/models/qwq-32b
+  edit_format: diff
+  weak_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  use_repo_map: true
+  extra_params:
+    max_tokens: 32000
+  editor_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  editor_edit_format: editor-diff
+  remove_reasoning: think
+
 - name: gemini/gemini-1.5-flash-002
 
 - name: gemini/gemini-1.5-flash-exp-0827
@@ -851,7 +861,6 @@ cog.out("```\n")
   use_repo_map: true
   reminder: sys
   examples_as_sys_msg: true
-  editor_edit_format: editor-diff
 
 - name: openrouter/deepseek/deepseek-chat:free
   edit_format: diff
