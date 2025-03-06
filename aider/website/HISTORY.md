@@ -25,17 +25,21 @@ cog.out(text)
 
 ### main branch
 
-- Added support for Qwen 32B model on Fireworks: `--model fireworks_ai/accounts/fireworks/models/qwq-32b`.
 - Enhanced handling of reasoning tags to better clean up model responses.
 - Improved error handling for EOF (Ctrl+D) in user input prompts.
 - Added helper function to ensure hex color values have a # prefix.
 - Fixed handling of Git errors when reading staged files.
 - Improved SSL verification control for model information requests.
-- Aider wrote 85% of the code in this release.
+- Added support for QWQ 32B.
+- Added [notifications when LLM responses are ready](https://aider.chat/docs/usage/notifications.html) with `--notifications` flag.
+- Specify desktop notification command with `--notifications-command`.
+- Improved empty LLM response handling with clearer warning messages.
+- Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
+- Aider wrote 84% of the code in this release.
 
 ### Aider v0.75.3
 
-- Support for V3 free on OpenRouter: `--model openrouter/deepseek/deepseek-chat:free`
+- Support for V3 free on OpenRouter: `--model openrouter/deepseek/deepseek-chat:free`.
 
 ### Aider v0.75.2
 

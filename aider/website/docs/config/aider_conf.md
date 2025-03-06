@@ -496,8 +496,5 @@ cog.outl("```")
 
 ## Specify which editor to use for the /editor command
 #editor: xxx
-
-## Install the tree_sitter_language_pack (experimental)
-#install-tree-sitter-language-pack: false
 ```
 <!--[[[end]]]-->
