@@ -1391,7 +1391,7 @@ class Coder:
             self.multi_response_content = ""
 
         print()
-        print("="*20)
+        print("=" * 20)
         dump(self.partial_response_content)
 
         self.io.tool_output()
@@ -1695,25 +1695,25 @@ class Coder:
     def replace_reasoning_tags(self, text, tag_name):
         """
         Replace opening and closing reasoning tags with standard formatting.
-        
+
         Args:
             text (str): The text containing the tags
             tag_name (str): The name of the tag to replace
-            
+
         Returns:
             str: Text with reasoning tags replaced with standard format
         """
         if not text:
             return text
-            
+
         # Replace opening tag
         text = re.sub(f"<{tag_name}>", REASONING_START, text)
-        
+
         # Replace closing tag
         text = re.sub(f"</{tag_name}>", REASONING_END, text)
-        
+
         return text
-        
+
     def show_send_output(self, completion):
         if self.verbose:
             print(completion)
@@ -1757,12 +1757,13 @@ class Coder:
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
-            formatted_reasoning = self.replace_reasoning_tags(
-                f"<{REASONING_TAG}>\n\n"
-                + reasoning_content
-                + f"\n\n</{REASONING_TAG}>",
-                REASONING_TAG
-            ) + "\n\n"
+            formatted_reasoning = (
+                self.replace_reasoning_tags(
+                    f"<{REASONING_TAG}>\n\n" + reasoning_content + f"\n\n</{REASONING_TAG}>",
+                    REASONING_TAG,
+                )
+                + "\n\n"
+            )
             show_resp = formatted_reasoning + show_resp
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
