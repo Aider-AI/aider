@@ -1827,6 +1827,9 @@ class Coder:
             if self.show_pretty():
                 self.live_incremental_response(False)
             elif text:
+                # Apply reasoning tag formatting
+                if self.got_reasoning_content:
+                    text = self.replace_reasoning_tags(text, REASONING_TAG)
                 try:
                     sys.stdout.write(text)
                 except UnicodeEncodeError:
