@@ -1844,6 +1844,7 @@ class Coder:
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
+        # convert the tags to START/END ai!
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
