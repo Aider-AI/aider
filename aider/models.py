@@ -625,7 +625,7 @@ class Model(ModelSettings):
             kwargs["num_ctx"] = num_ctx
         key = json.dumps(kwargs, sort_keys=True).encode()
 
-        dump(kwargs)
+        # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
         if "timeout" not in kwargs:
