@@ -1758,6 +1758,8 @@ class Coder:
             try:
                 text = chunk.choices[0].delta.reasoning_content
                 if text:
+                    if not self.got_reasoning_content:
+                        self.partial_response_content += "> Thinking ...\n\n"
                     self.got_reasoning_content = True
                     self.partial_response_content += text
                     received_content = True
@@ -1768,7 +1770,7 @@ class Coder:
                 text = chunk.choices[0].delta.content
                 if text:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        tag = f"\n\n> Done thinking ...\n\n------\n\n</{REASONING_TAG}>\n\n"
+                        tag = f"\n\n> ... done thinking.\n\n------\n\n</{REASONING_TAG}>\n\n"
                         self.partial_response_content += tag
                         self.ended_reasoning_content = True
 
