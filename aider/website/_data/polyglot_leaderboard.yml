@@ -700,3 +700,31 @@
   versions: 0.75.3.dev
   seconds_per_case: 228.6
   total_cost: 0.0000
+
+- dirname: 2025-03-04-19-48-53--r1-architect-deepseek-editor
+  test_cases: 225
+  model: deepseek/deepseek-reasoner
+  edit_format: architect
+  commit_hash: cecfbc7
+  editor_model: deepseek/deepseek-chat
+  editor_edit_format: editor-diff
+  pass_rate_1: 28.0
+  pass_rate_2: 59.1
+  pass_num_1: 63
+  pass_num_2: 133
+  percent_cases_well_formed: 100.0
+  error_outputs: 379
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 403
+  lazy_comments: 3
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-03-04
+  versions: 0.75.2.dev
+  seconds_per_case: 2959.9
+  total_cost: 6.6960
