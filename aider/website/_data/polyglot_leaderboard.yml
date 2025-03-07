@@ -677,7 +677,7 @@
 
 - dirname: 2025-03-06-17-40-24--qwq32b-diff-temp-topp-ex-sys-remind-user-for-real
   test_cases: 225
-  model: qwq-32b
+  model: QwQ-32B
   edit_format: diff
   commit_hash: 51d118f-dirty
   pass_rate_1: 8.0
@@ -700,3 +700,31 @@
   versions: 0.75.3.dev
   seconds_per_case: 228.6
   total_cost: 0.0000
+
+- dirname: 2025-03-07-15-11-27--qwq32b-arch-temp-topp-again
+  test_cases: 225
+  model: QwQ-32B + Qwen 2.5 Coder Instruct
+  edit_format: architect
+  commit_hash: 52162a5
+  editor_model: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  editor_edit_format: editor-diff
+  pass_rate_1: 9.8
+  pass_rate_2: 26.2
+  pass_num_1: 22
+  pass_num_2: 59
+  percent_cases_well_formed: 100.0
+  error_outputs: 122
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 489
+  lazy_comments: 8
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model fireworks_ai/accounts/fireworks/models/qwq-32b --architect
+  date: 2025-03-07
+  versions: 0.75.3.dev
+  seconds_per_case: 137.4
+  total_cost: 0
