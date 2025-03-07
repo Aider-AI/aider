@@ -1,3 +1,6 @@
+; Based on https://github.com/tree-sitter/tree-sitter-c-sharp/blob/master/queries/tags.scm
+; MIT License.
+
 (class_declaration name: (identifier) @name.definition.class) @definition.class
 
 (class_declaration (base_list (_) @name.reference.class)) @reference.class
