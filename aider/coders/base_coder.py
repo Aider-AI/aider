@@ -1390,6 +1390,10 @@ class Coder:
             )
             self.multi_response_content = ""
 
+        print()
+        print("="*20)
+        dump(self.partial_response_content)
+
         self.io.tool_output()
 
         self.show_usage_report()
@@ -1731,7 +1735,12 @@ class Coder:
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
-            show_resp = REASONING_START + reasoning_content + REASONING_END + show_resp
+            show_resp = (
+                f"<{REASONING_TAG}>\n\n"
+                + reasoning_content
+                + f"\n\n</{REASONING_TAG}>\n\n"
+                + show_resp
+            )
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
 
@@ -1771,7 +1780,7 @@ class Coder:
                 reasoning_content = chunk.choices[0].delta.reasoning_content
                 if reasoning_content:
                     if not self.got_reasoning_content:
-                        text += REASONING_START
+                        text += f"<{REASONING_TAG}>\n\n"
                     text += reasoning_content
                     self.got_reasoning_content = True
                     received_content = True
@@ -1782,7 +1791,7 @@ class Coder:
                 content = chunk.choices[0].delta.content
                 if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"{REASONING_END}</{REASONING_TAG}>\n\n"
+                        text += f"\n\n</{REASONING_TAG}>\n\n"
                         self.ended_reasoning_content = True
 
                     text += content
