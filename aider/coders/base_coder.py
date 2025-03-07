@@ -1692,6 +1692,28 @@ class Coder:
                 if args:
                     self.io.ai_output(json.dumps(args, indent=4))
 
+    def replace_reasoning_tags(self, text, tag_name):
+        """
+        Replace opening and closing reasoning tags with standard formatting.
+        
+        Args:
+            text (str): The text containing the tags
+            tag_name (str): The name of the tag to replace
+            
+        Returns:
+            str: Text with reasoning tags replaced with standard format
+        """
+        if not text:
+            return text
+            
+        # Replace opening tag
+        text = re.sub(f"<{tag_name}>", REASONING_START, text)
+        
+        # Replace closing tag
+        text = re.sub(f"</{tag_name}>", REASONING_END, text)
+        
+        return text
+        
     def show_send_output(self, completion):
         if self.verbose:
             print(completion)
@@ -1735,12 +1757,13 @@ class Coder:
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
-            show_resp = (
+            formatted_reasoning = self.replace_reasoning_tags(
                 f"<{REASONING_TAG}>\n\n"
                 + reasoning_content
-                + f"\n\n</{REASONING_TAG}>\n\n"
-                + show_resp
-            )
+                + f"\n\n</{REASONING_TAG}>",
+                REASONING_TAG
+            ) + "\n\n"
+            show_resp = formatted_reasoning + show_resp
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
 
@@ -1780,7 +1803,7 @@ class Coder:
                 reasoning_content = chunk.choices[0].delta.reasoning_content
                 if reasoning_content:
                     if not self.got_reasoning_content:
-                        text += f"<{REASONING_TAG}>\n\n"
+                        text += REASONING_START
                     text += reasoning_content
                     self.got_reasoning_content = True
                     received_content = True
@@ -1791,7 +1814,7 @@ class Coder:
                 content = chunk.choices[0].delta.content
                 if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"\n\n</{REASONING_TAG}>\n\n"
+                        text += REASONING_END
                         self.ended_reasoning_content = True
 
                     text += content
