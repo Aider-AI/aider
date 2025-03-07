@@ -555,7 +555,8 @@ const tweaks = () => {
     const chatInput = window.parent.document.querySelector('[data-testid="stChatInput"]');
     if (chatInput) {
         chatInput.style.cssText = "border-radius: 0 0 4px 4px;";
-
+        chatInput.firstChild.firstChild.style.cssText = "border-radius: 0 0 4px 4px;";
+        chatInput.firstChild.style.cssText = "border-radius: 0 0 4px 4px;";
         chatInput.firstChild.firstChild.style.cssText = "border-radius: 0 0 4px 4px;";
     }
 
