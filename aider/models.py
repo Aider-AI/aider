@@ -625,7 +625,7 @@ class Model(ModelSettings):
             kwargs["num_ctx"] = num_ctx
         key = json.dumps(kwargs, sort_keys=True).encode()
 
-        # dump(kwargs)
+        dump(kwargs)
 
         hash_object = hashlib.sha1(key)
         if "timeout" not in kwargs:
@@ -633,17 +633,20 @@ class Model(ModelSettings):
         res = litellm.completion(**kwargs)
         return hash_object, res
 
-    def remove_reasoning_content(self, res):
-        if not self.remove_reasoning:
+    def remove_reasoning_content(self, res, reasoning_tag=None):
+        if not reasoning_tag:
+            reasoning_tag = self.remove_reasoning
+
+        if not reasoning_tag:
             return res
 
         # Try to match the complete tag pattern first
-        pattern = f"<{self.remove_reasoning}>.*?</{self.remove_reasoning}>"
+        pattern = f"<{reasoning_tag}>.*?</{reasoning_tag}>"
         res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
 
         # If closing tag exists but opening tag might be missing, remove everything before closing
         # tag
-        closing_tag = f"</{self.remove_reasoning}>"
+        closing_tag = f"</{reasoning_tag}>"
         if closing_tag in res:
             # Split on the closing tag and keep everything after it
             parts = res.split(closing_tag, 1)

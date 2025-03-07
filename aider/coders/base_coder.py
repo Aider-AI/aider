@@ -36,6 +36,8 @@ from aider.utils import format_content, format_messages, format_tokens, is_image
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
+REASONING_TAG = "reasoning-content-" + "7bbeb8e1441453ad999a0bbba8a46d4b"
+
 
 class UnknownEditFormat(ValueError):
     def __init__(self, edit_format, valid_formats):
@@ -1306,6 +1308,8 @@ class Coder:
 
         litellm_ex = LiteLLMExceptions()
 
+        self.got_reasoning_content = False
+        self.ended_reasoning_content = False
         self.usage_report = None
         exhausted = False
         interrupted = False
@@ -1372,8 +1376,15 @@ class Coder:
                 self.mdstream = None
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
+
+            if self.got_reasoning_content:
+                reasoning_tag = REASONING_TAG
+            else:
+                reasoning_tag = None
+
             self.partial_response_content = self.main_model.remove_reasoning_content(
-                self.partial_response_content
+                self.partial_response_content,
+                reasoning_tag=reasoning_tag,
             )
             self.multi_response_content = ""
 
@@ -1745,8 +1756,22 @@ class Coder:
                 pass
 
             try:
+                text = chunk.choices[0].delta.reasoning_content
+                if text:
+                    self.got_reasoning_content = True
+                    self.partial_response_content += text
+                    received_content = True
+            except AttributeError:
+                text = None
+
+            try:
                 text = chunk.choices[0].delta.content
                 if text:
+                    if self.got_reasoning_content and not self.ended_reasoning_content:
+                        tag = f"\n\n------\n\n</{REASONING_TAG}>\n\n"
+                        self.partial_response_content += tag
+                        self.ended_reasoning_content = True
+
                     self.partial_response_content += text
                     received_content = True
             except AttributeError:
