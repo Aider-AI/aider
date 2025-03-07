@@ -249,6 +249,7 @@ class RepoMap:
 
         # miss!
         data = list(self.get_tags_raw(fname, rel_fname))
+        dump(data)
 
         # Update the cache
         try:
@@ -287,6 +288,7 @@ class RepoMap:
         captures = query.captures(tree.root_node)
 
         saw = set()
+        dump(USING_TSL_PACK)
         if USING_TSL_PACK:
             all_nodes = []
             for tag, nodes in captures.items():
@@ -295,6 +297,7 @@ class RepoMap:
             all_nodes = list(captures)
 
         for node, tag in all_nodes:
+            dump(node, tag)
             if tag.startswith("name.definition."):
                 kind = "def"
             elif tag.startswith("name.reference."):
@@ -311,6 +314,7 @@ class RepoMap:
                 kind=kind,
                 line=node.start_point[0],
             )
+            dump(result)
 
             yield result
 
@@ -407,6 +411,7 @@ class RepoMap:
                 personalization[rel_fname] = personalize
 
             tags = list(self.get_tags(fname, rel_fname))
+            dump(tags)
             if tags is None:
                 continue
 
@@ -431,11 +436,22 @@ class RepoMap:
 
         G = nx.MultiDiGraph()
 
+        # Add a small self-edge for every definition that has no references
+        # Helps with tree-sitter 0.23.2 with ruby, where "def greet(name)"
+        # isn't counted as a def AND a ref. tree-sitter 0.24.0 does.
+        for ident in defines.keys():
+            dump(ident)
+            if ident in references:
+                continue
+            for definer in defines[ident]:
+                G.add_edge(definer, definer, weight=0.1, ident=ident)
+
         for ident in idents:
             if progress:
                 progress()
 
             definers = defines[ident]
+            dump(ident, definers)
             if ident in mentioned_idents:
                 mul = 10
             elif ident.startswith("_"):
@@ -454,6 +470,7 @@ class RepoMap:
 
                     G.add_edge(referencer, definer, weight=mul * num_refs, ident=ident)
 
+        dump(G.nodes)
         if not references:
             pass
 
