@@ -12,7 +12,8 @@
 - Specify desktop notification command with `--notifications-command`.
 - Improved empty LLM response handling with clearer warning messages.
 - Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
-- Aider wrote 84% of the code in this release.
+- Offer to install dependencies for Bedrock and Vertex AI models.
+- Aider wrote 81% of the code in this release.
 
 ### Aider v0.75.3
 
