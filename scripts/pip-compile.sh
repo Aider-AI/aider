@@ -21,9 +21,13 @@ uv pip compile \
     $VERBOSITY \
     --no-strip-extras \
     --constraint=requirements/common-constraints.txt \
-    --output-file=requirements.txt \
+    --output-file=tmp.requirements.txt \
     requirements/requirements.in \
     $1
+
+grep -v ^tree-sitter= tmp.requirements.txt \
+    | cat - requirements/tree-sitter.in \
+    > requirements.txt
 
 # Compile additional requirements files
 SUFFIXES=(dev help browser playwright)

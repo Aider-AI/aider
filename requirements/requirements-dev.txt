@@ -21,7 +21,7 @@ cogapp==3.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-contourpy==1.3.0
+contourpy==1.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
@@ -38,10 +38,6 @@ distlib==0.3.9
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-exceptiongroup==1.2.2
-    # via
-    #   -c requirements/common-constraints.txt
-    #   pytest
 filelock==3.17.0
     # via
     #   -c requirements/common-constraints.txt
@@ -58,19 +54,11 @@ imgcat==0.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-importlib-metadata==7.2.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   build
-importlib-resources==6.5.2
-    # via
-    #   -c requirements/common-constraints.txt
-    #   matplotlib
 iniconfig==2.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
-kiwisolver==1.4.7
+kiwisolver==1.4.8
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
@@ -82,7 +70,7 @@ markdown-it-py==3.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   rich
-matplotlib==3.9.4
+matplotlib==3.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -205,13 +193,6 @@ six==1.17.0
     # via
     #   -c requirements/common-constraints.txt
     #   python-dateutil
-tomli==2.2.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   build
-    #   pip-tools
-    #   pytest
-    #   pytest-env
 typer==0.15.2
     # via
     #   -c requirements/common-constraints.txt
@@ -219,7 +200,6 @@ typer==0.15.2
 typing-extensions==4.12.2
     # via
     #   -c requirements/common-constraints.txt
-    #   rich
     #   typer
 tzdata==2025.1
     # via
@@ -237,8 +217,3 @@ wheel==0.45.1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
-zipp==3.21.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   importlib-metadata
-    #   importlib-resources
