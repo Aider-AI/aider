@@ -1758,12 +1758,9 @@ class Coder:
 
         if reasoning_content:
             formatted_reasoning = (
-                self.replace_reasoning_tags(
-                    f"<{REASONING_TAG}>\n\n" + reasoning_content + f"\n\n</{REASONING_TAG}>",
-                    REASONING_TAG,
-                )
-                + "\n\n"
+                f"<{REASONING_TAG}>\n\n" + reasoning_content + f"\n\n</{REASONING_TAG}>"
             )
+            formatted_reasoning = self.replace_reasoning_tags(formatted_reasoning, REASONING_TAG) + "\n\n"
             show_resp = formatted_reasoning + show_resp
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
@@ -1844,7 +1841,9 @@ class Coder:
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
-        # convert the tags to START/END ai!
+        # Apply any reasoning tag formatting
+        if self.got_reasoning_content:
+            show_resp = self.replace_reasoning_tags(show_resp, REASONING_TAG)
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
