@@ -3,25 +3,41 @@
 # exit when any command fails
 set -e
 
-# First compile the base requirements
-pip-compile \
-    --allow-unsafe \
+# Add verbosity flag to see more details about dependency resolution
+VERBOSITY="-v"  # Use -v for less detail, -vvv for even more detail
+
+# First compile the common constraints of the full requirement suite
+# to make sure that all versions are mutually consistent across files
+uv pip compile \
+    $VERBOSITY \
+    --no-strip-extras \
+    --output-file=requirements/common-constraints.txt \
     requirements/requirements.in \
-    --output-file=requirements.txt \
+    requirements/requirements-*.in \
     $1
 
-# Then compile each additional requirements file in sequence
+# Compile the base requirements
+uv pip compile \
+    $VERBOSITY \
+    --no-strip-extras \
+    --constraint=requirements/common-constraints.txt \
+    --output-file=tmp.requirements.txt \
+    requirements/requirements.in \
+    $1
+
+grep -v ^tree-sitter= tmp.requirements.txt \
+    | cat - requirements/tree-sitter.in \
+    > requirements.txt
+
+# Compile additional requirements files
 SUFFIXES=(dev help browser playwright)
-CONSTRAINTS="--constraint=requirements.txt"
 
 for SUFFIX in "${SUFFIXES[@]}"; do
-    pip-compile \
-        --allow-unsafe \
-        requirements/requirements-${SUFFIX}.in \
+    uv pip compile \
+        $VERBOSITY \
+        --no-strip-extras \
+        --constraint=requirements/common-constraints.txt \
         --output-file=requirements/requirements-${SUFFIX}.txt \
-        ${CONSTRAINTS} \
+        requirements/requirements-${SUFFIX}.in \
         $1
-    
-    # Add this file as a constraint for the next iteration
-    CONSTRAINTS+=" --constraint=requirements/requirements-${SUFFIX}.txt"
 done

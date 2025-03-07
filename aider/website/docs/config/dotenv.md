@@ -439,13 +439,16 @@ cog.outl("```")
 ## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
 #AIDER_MULTILINE=false
 
+## Enable/disable terminal bell notifications when LLM responses are ready (default: False)
+#AIDER_NOTIFICATIONS=false
+
+## Specify a command to run for notifications instead of the terminal bell. If not specified, a default command for your OS may be used.
+#AIDER_NOTIFICATIONS_COMMAND=
+
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #AIDER_DETECT_URLS=true
 
 ## Specify which editor to use for the /editor command
 #AIDER_EDITOR=
-
-## Install the tree_sitter_language_pack (experimental)
-#AIDER_INSTALL_TREE_SITTER_LANGUAGE_PACK=false
 ```
 <!--[[[end]]]-->
