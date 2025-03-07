@@ -1804,7 +1804,7 @@ class Coder:
                 reasoning_content = chunk.choices[0].delta.reasoning_content
                 if reasoning_content:
                     if not self.got_reasoning_content:
-                        text += REASONING_START
+                        text += f"<{REASONING_TAG}>\n\n"
                     text += reasoning_content
                     self.got_reasoning_content = True
                     received_content = True
@@ -1815,7 +1815,7 @@ class Coder:
                 content = chunk.choices[0].delta.content
                 if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += REASONING_END
+                        text += f"\n\n</{REASONING_TAG}>\n\n"
                         self.ended_reasoning_content = True
 
                     text += content
