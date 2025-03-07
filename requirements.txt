@@ -98,7 +98,7 @@ gitpython==3.1.44
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-grep-ast==0.7.1
+grep-ast==0.7.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
