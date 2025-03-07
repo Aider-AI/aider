@@ -36,7 +36,9 @@ from aider.utils import format_content, format_messages, format_tokens, is_image
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
-REASONING_TAG = "reasoning-content-" + "7bbeb8e1441453ad999a0bbba8a46d4b"
+REASONING_TAG = "thinking-content-" + "7bbeb8e1441453ad999a0bbba8a46d4b"
+REASONING_START = "> Thinking ...\n\n"
+REASONING_END = "\n\n> ... done thinking.\n\n------\n\n"
 
 
 class UnknownEditFormat(ValueError):
@@ -1705,6 +1707,11 @@ class Coder:
             show_func_err = func_err
 
         try:
+            reasoning_content = completion.choices[0].message.reasoning_content
+        except AttributeError:
+            reasoning_content = None
+
+        try:
             self.partial_response_content = completion.choices[0].message.content or ""
         except AttributeError as content_err:
             show_content_err = content_err
@@ -1722,6 +1729,10 @@ class Coder:
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
+
+        if reasoning_content:
+            show_resp = REASONING_START + reasoning_content + REASONING_END + show_resp
+
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
 
         if (
@@ -1755,29 +1766,31 @@ class Coder:
             except AttributeError:
                 pass
 
+            text = ""
             try:
-                text = chunk.choices[0].delta.reasoning_content
-                if text:
+                reasoning_content = chunk.choices[0].delta.reasoning_content
+                if reasoning_content:
                     if not self.got_reasoning_content:
-                        self.partial_response_content += "> Thinking ...\n\n"
+                        text += REASONING_START
+                    text += reasoning_content
                     self.got_reasoning_content = True
-                    self.partial_response_content += text
                     received_content = True
             except AttributeError:
-                text = None
+                pass
 
             try:
-                text = chunk.choices[0].delta.content
-                if text:
+                content = chunk.choices[0].delta.content
+                if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        tag = f"\n\n> ... done thinking.\n\n------\n\n</{REASONING_TAG}>\n\n"
-                        self.partial_response_content += tag
+                        text += f"{REASONING_END}</{REASONING_TAG}>\n\n"
                         self.ended_reasoning_content = True
 
-                    self.partial_response_content += text
+                    text += content
                     received_content = True
             except AttributeError:
-                text = None
+                pass
+
+            self.partial_response_content += text
 
             if self.show_pretty():
                 self.live_incremental_response(False)
