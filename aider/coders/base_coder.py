@@ -37,8 +37,8 @@ from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
 REASONING_TAG = "thinking-content-" + "7bbeb8e1441453ad999a0bbba8a46d4b"
-REASONING_START = "> Thinking ...\n\n"
-REASONING_END = "\n\n> ... done thinking.\n\n------\n\n"
+REASONING_START = "> Thinking ..."
+REASONING_END = "> ... done thinking.\n\n------"
 
 
 class UnknownEditFormat(ValueError):
