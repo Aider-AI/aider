@@ -28,12 +28,16 @@ from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.models import RETRY_TIMEOUT
+from aider.reasoning_tags import (
+    REASONING_END,
+    REASONING_START,
+    REASONING_TAG,
+    detect_reasoning_tag,
+    format_reasoning_content,
+    replace_reasoning_tags,
+)
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
-from aider.reasoning_tags import (
-    REASONING_TAG, REASONING_START, REASONING_END,
-    replace_reasoning_tags, format_reasoning_content, detect_reasoning_tag
-)
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
@@ -1742,7 +1746,9 @@ class Coder:
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
-            formatted_reasoning = format_reasoning_content(reasoning_content, self.reasoning_tag_name) + "\n\n"
+            formatted_reasoning = (
+                format_reasoning_content(reasoning_content, self.reasoning_tag_name) + "\n\n"
+            )
             show_resp = formatted_reasoning + show_resp
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
