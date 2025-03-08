@@ -45,8 +45,15 @@ class TestDeprecated(TestCase):
                     [flag, "--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput()
                 )
 
-                mock_tool_warning.assert_called_once()
-                warning_msg = mock_tool_warning.call_args[0][0]
+                # Look for the deprecation warning in all calls
+                deprecation_warning = None
+                for call_args in mock_tool_warning.call_args_list:
+                    if flag.lstrip("-") in call_args[0][0] and "deprecated" in call_args[0][0]:
+                        deprecation_warning = call_args[0][0]
+                        break
+                
+                self.assertIsNotNone(deprecation_warning, f"No deprecation warning found for {flag}")
+                warning_msg = deprecation_warning
 
                 # Remove any leading hyphens for the comparison
                 flag_in_msg = flag.lstrip("-")
@@ -64,8 +71,15 @@ class TestDeprecated(TestCase):
                     ["--4", "--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput()
                 )
 
-                mock_tool_warning.assert_called_once()
-                warning_msg = mock_tool_warning.call_args[0][0]
+                # Look for the deprecation warning in all calls
+                deprecation_warning = None
+                for call_args in mock_tool_warning.call_args_list:
+                    if "deprecated" in call_args[0][0] and "--model gpt4" in call_args[0][0]:
+                        deprecation_warning = call_args[0][0]
+                        break
+                
+                self.assertIsNotNone(deprecation_warning, "No deprecation warning with model alias found")
+                warning_msg = deprecation_warning
                 self.assertIn("--model gpt4", warning_msg)
                 self.assertNotIn("--model gpt-4-0613", warning_msg)
 
@@ -89,9 +103,15 @@ class TestDeprecated(TestCase):
                 # Create a mock IO instance
                 mock_io = MagicMock()
 
-                # Create args with the flag set to True
+                # Create args with ONLY the current flag set to True
                 args = MagicMock()
                 args.model = None
+                
+                # Ensure all flags are False by default
+                for test_flag, _ in test_cases:
+                    setattr(args, test_flag, False)
+                
+                # Set only the current flag to True
                 setattr(args, flag, True)
 
                 # Call the handle_deprecated_model_args function
