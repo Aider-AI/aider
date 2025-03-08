@@ -120,7 +120,8 @@ class TestReasoning(unittest.TestCase):
         mock_hash.hexdigest.return_value = "mock_hash_digest"
 
         # Mock the model's send_completion to return the hash and completion
-        with patch.object(model, "send_completion", return_value=(mock_hash, chunks)):
+        with patch.object(model, "send_completion", return_value=(mock_hash, chunks)), \
+             patch.object(model, "token_count", return_value=10):  # Mock token count to avoid serialization issues
             # Set mdstream directly on the coder object
             coder.mdstream = mock_mdstream
 
@@ -243,7 +244,7 @@ class TestReasoning(unittest.TestCase):
 
         # Mock streaming response chunks
         class MockStreamingChunk:
-            def __init__(self, content=None, finish_reason=None):
+            def __init__(self, content=None, reasoning_content=None, finish_reason=None):
                 self.choices = [MagicMock()]
                 self.choices[0].delta = MagicMock()
                 self.choices[0].finish_reason = finish_reason
@@ -254,20 +255,27 @@ class TestReasoning(unittest.TestCase):
                 else:
                     # Need to handle attribute access that would raise AttributeError
                     delattr(self.choices[0].delta, "content")
+                
+                # Set reasoning_content if provided
+                if reasoning_content is not None:
+                    self.choices[0].delta.reasoning_content = reasoning_content
+                else:
+                    # Need to handle attribute access that would raise AttributeError
+                    delattr(self.choices[0].delta, "reasoning_content")
 
         # Create chunks to simulate streaming with think tags
         chunks = [
             # Start with open think tag
-            MockStreamingChunk(content="<think>\n"),
+            MockStreamingChunk(content="<think>\n", reasoning_content=None),
             # Reasoning content inside think tags
-            MockStreamingChunk(content="My step-by-step "),
-            MockStreamingChunk(content="reasoning process\n"),
+            MockStreamingChunk(content="My step-by-step ", reasoning_content=None),
+            MockStreamingChunk(content="reasoning process\n", reasoning_content=None),
             # Close think tag
-            MockStreamingChunk(content="</think>\n\n"),
+            MockStreamingChunk(content="</think>\n\n", reasoning_content=None),
             # Main content
-            MockStreamingChunk(content="Final "),
-            MockStreamingChunk(content="answer "),
-            MockStreamingChunk(content="after reasoning"),
+            MockStreamingChunk(content="Final ", reasoning_content=None),
+            MockStreamingChunk(content="answer ", reasoning_content=None),
+            MockStreamingChunk(content="after reasoning", reasoning_content=None),
             # End the response
             MockStreamingChunk(finish_reason="stop"),
         ]
