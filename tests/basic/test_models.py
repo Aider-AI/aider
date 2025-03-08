@@ -329,8 +329,6 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.editor_edit_format, "editor-diff")
         self.assertTrue(model.use_repo_map)
 
-
-
     def test_aider_extra_model_settings(self):
         import tempfile
 
