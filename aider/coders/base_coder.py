@@ -1772,11 +1772,9 @@ class Coder:
 
         if reasoning_content:
             formatted_reasoning = (
-                f"<{REASONING_TAG}>\n\n" + reasoning_content + f"\n\n</{REASONING_TAG}>"
+                f"<{self.reasoning_tag_name}>\n\n" + reasoning_content + f"\n\n</{self.reasoning_tag_name}>"
             )
-            formatted_reasoning = (
-                self.replace_reasoning_tags(formatted_reasoning, REASONING_TAG) + "\n\n"
-            )
+            formatted_reasoning = self.replace_reasoning_tags(formatted_reasoning) + "\n\n"
             show_resp = formatted_reasoning + show_resp
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
