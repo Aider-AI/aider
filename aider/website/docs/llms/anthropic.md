@@ -19,7 +19,7 @@ python -m pip install -U aider-chat
 export ANTHROPIC_API_KEY=<key> # Mac/Linux
 setx   ANTHROPIC_API_KEY <key> # Windows, restart shell after setx
 
-# Aider uses Claude 3.5 Sonnet by default (or use --sonnet)
+# Aider uses Claude 3.7 Sonnet by default (or use --sonnet)
 aider
 
 # Claude 3 Opus

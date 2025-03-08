@@ -1,7 +1,9 @@
 import base64
 import functools
 import os
+import shutil
 import signal
+import subprocess
 import time
 import webbrowser
 from collections import defaultdict
@@ -33,6 +35,20 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .utils import is_image_file
+
+# Constants
+NOTIFICATION_MESSAGE = "Aider is waiting for your input"
+
+
+def ensure_hash_prefix(color):
+    """Ensure hex color values have a # prefix."""
+    if not color:
+        return color
+    if isinstance(color, str) and color.strip() and not color.startswith("#"):
+        # Check if it's a valid hex color (3 or 6 hex digits)
+        if all(c in "0123456789ABCDEFabcdef" for c in color) and len(color) in (3, 6):
+            return f"#{color}"
+    return color
 
 
 def restore_multiline(func):
@@ -196,6 +212,8 @@ class InputOutput:
     num_error_outputs = 0
     num_user_asks = 0
     clipboard_watcher = None
+    bell_on_next_input = False
+    notifications_command = None
 
     def __init__(
         self,
@@ -224,25 +242,40 @@ class InputOutput:
         file_watcher=None,
         multiline_mode=False,
         root=".",
+        notifications=False,
+        notifications_command=None,
     ):
         self.placeholder = None
         self.interrupted = False
         self.never_prompts = set()
         self.editingmode = editingmode
         self.multiline_mode = multiline_mode
+        self.bell_on_next_input = False
+        self.notifications = notifications
+        if notifications and notifications_command is None:
+            self.notifications_command = self.get_default_notification_command()
+        else:
+            self.notifications_command = notifications_command
+
         no_color = os.environ.get("NO_COLOR")
         if no_color is not None and no_color != "":
             pretty = False
 
-        self.user_input_color = user_input_color if pretty else None
-        self.tool_output_color = tool_output_color if pretty else None
-        self.tool_error_color = tool_error_color if pretty else None
-        self.tool_warning_color = tool_warning_color if pretty else None
-        self.assistant_output_color = assistant_output_color
-        self.completion_menu_color = completion_menu_color if pretty else None
-        self.completion_menu_bg_color = completion_menu_bg_color if pretty else None
-        self.completion_menu_current_color = completion_menu_current_color if pretty else None
-        self.completion_menu_current_bg_color = completion_menu_current_bg_color if pretty else None
+        self.user_input_color = ensure_hash_prefix(user_input_color) if pretty else None
+        self.tool_output_color = ensure_hash_prefix(tool_output_color) if pretty else None
+        self.tool_error_color = ensure_hash_prefix(tool_error_color) if pretty else None
+        self.tool_warning_color = ensure_hash_prefix(tool_warning_color) if pretty else None
+        self.assistant_output_color = ensure_hash_prefix(assistant_output_color)
+        self.completion_menu_color = ensure_hash_prefix(completion_menu_color) if pretty else None
+        self.completion_menu_bg_color = (
+            ensure_hash_prefix(completion_menu_bg_color) if pretty else None
+        )
+        self.completion_menu_current_color = (
+            ensure_hash_prefix(completion_menu_current_color) if pretty else None
+        )
+        self.completion_menu_current_bg_color = (
+            ensure_hash_prefix(completion_menu_current_bg_color) if pretty else None
+        )
 
         self.code_theme = code_theme
 
@@ -443,6 +476,9 @@ class InputOutput:
         edit_format=None,
     ):
         self.rule()
+
+        # Ring the bell if needed
+        self.ring_bell()
 
         rel_fnames = list(rel_fnames)
         show = ""
@@ -696,6 +732,9 @@ class InputOutput:
     ):
         self.num_user_asks += 1
 
+        # Ring the bell if needed
+        self.ring_bell()
+
         question_id = (question, subject)
 
         if question_id in self.never_prompts:
@@ -750,14 +789,19 @@ class InputOutput:
             self.user_input(f"{question}{res}", log_only=False)
         else:
             while True:
-                if self.prompt_session:
-                    res = self.prompt_session.prompt(
-                        question,
-                        style=style,
-                        complete_while_typing=False,
-                    )
-                else:
-                    res = input(question)
+                try:
+                    if self.prompt_session:
+                        res = self.prompt_session.prompt(
+                            question,
+                            style=style,
+                            complete_while_typing=False,
+                        )
+                    else:
+                        res = input(question)
+                except EOFError:
+                    # Treat EOF (Ctrl+D) as if the user pressed Enter
+                    res = default
+                    break
 
                 if not res:
                     res = default
@@ -801,6 +845,9 @@ class InputOutput:
     def prompt_ask(self, question, default="", subject=None):
         self.num_user_asks += 1
 
+        # Ring the bell if needed
+        self.ring_bell()
+
         if subject:
             self.tool_output()
             self.tool_output(subject, bold=True)
@@ -812,15 +859,19 @@ class InputOutput:
         elif self.yes is False:
             res = "no"
         else:
-            if self.prompt_session:
-                res = self.prompt_session.prompt(
-                    question + " ",
-                    default=default,
-                    style=style,
-                    complete_while_typing=True,
-                )
-            else:
-                res = input(question + " ")
+            try:
+                if self.prompt_session:
+                    res = self.prompt_session.prompt(
+                        question + " ",
+                        default=default,
+                        style=style,
+                        complete_while_typing=True,
+                    )
+                else:
+                    res = input(question + " ")
+            except EOFError:
+                # Treat EOF (Ctrl+D) as if the user pressed Enter
+                res = default
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
@@ -882,6 +933,10 @@ class InputOutput:
         return mdStream
 
     def assistant_output(self, message, pretty=None):
+        if not message:
+            self.tool_warning("Empty response received from LLM. Check your provider account?")
+            return
+
         show_resp = message
 
         # Coder will force pretty off if fence is not triple-backticks
@@ -893,7 +948,7 @@ class InputOutput:
                 message, style=self.assistant_output_color, code_theme=self.code_theme
             )
         else:
-            show_resp = Text(message or "<no response>")
+            show_resp = Text(message or "(empty response)")
 
         self.console.print(show_resp)
 
@@ -903,6 +958,61 @@ class InputOutput:
 
     def print(self, message=""):
         print(message)
+
+    def llm_started(self):
+        """Mark that the LLM has started processing, so we should ring the bell on next input"""
+        self.bell_on_next_input = True
+
+    def get_default_notification_command(self):
+        """Return a default notification command based on the operating system."""
+        import platform
+
+        system = platform.system()
+
+        if system == "Darwin":  # macOS
+            # Check for terminal-notifier first
+            if shutil.which("terminal-notifier"):
+                return f"terminal-notifier -title 'Aider' -message '{NOTIFICATION_MESSAGE}'"
+            # Fall back to osascript
+            return (
+                f'osascript -e \'display notification "{NOTIFICATION_MESSAGE}" with title "Aider"\''
+            )
+        elif system == "Linux":
+            # Check for common Linux notification tools
+            for cmd in ["notify-send", "zenity"]:
+                if shutil.which(cmd):
+                    if cmd == "notify-send":
+                        return f"notify-send 'Aider' '{NOTIFICATION_MESSAGE}'"
+                    elif cmd == "zenity":
+                        return f"zenity --notification --text='{NOTIFICATION_MESSAGE}'"
+            return None  # No known notification tool found
+        elif system == "Windows":
+            # PowerShell notification
+            return (
+                "powershell -command"
+                " \"[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms');"
+                f" [System.Windows.Forms.MessageBox]::Show('{NOTIFICATION_MESSAGE}',"
+                " 'Aider')\""
+            )
+
+        return None  # Unknown system
+
+    def ring_bell(self):
+        """Ring the terminal bell if needed and clear the flag"""
+        if self.bell_on_next_input and self.notifications:
+            if self.notifications_command:
+                try:
+                    result = subprocess.run(
+                        self.notifications_command, shell=True, capture_output=True
+                    )
+                    if result.returncode != 0 and result.stderr:
+                        error_msg = result.stderr.decode("utf-8", errors="replace")
+                        self.tool_warning(f"Failed to run notifications command: {error_msg}")
+                except Exception as e:
+                    self.tool_warning(f"Failed to run notifications command: {e}")
+            else:
+                print("\a", end="", flush=True)  # Ring the bell
+            self.bell_on_next_input = False  # Clear the flag
 
     def toggle_multiline_mode(self):
         """Toggle between normal and multiline input modes"""

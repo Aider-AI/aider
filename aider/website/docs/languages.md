@@ -57,10 +57,10 @@ cog.out(get_supported_languages_md())
 |:--------:|:--------------:|:--------:|:------:|
 | bash                 | .bash                |          |   ✓    |
 | c                    | .c                   |    ✓     |   ✓    |
-| c_sharp              | .cs                  |    ✓     |   ✓    |
 | commonlisp           | .cl                  |          |   ✓    |
 | cpp                  | .cc                  |    ✓     |   ✓    |
 | cpp                  | .cpp                 |    ✓     |   ✓    |
+| csharp               | .cs                  |    ✓     |   ✓    |
 | css                  | .css                 |          |   ✓    |
 | dockerfile           | .dockerfile          |          |   ✓    |
 | dot                  | .dot                 |          |   ✓    |
@@ -85,12 +85,11 @@ cog.out(get_supported_languages_md())
 | kotlin               | .kt                  |    ✓     |   ✓    |
 | lua                  | .lua                 |          |   ✓    |
 | make                 | .mk                  |          |   ✓    |
+| markdown             | .md                  |          |   ✓    |
 | objc                 | .m                   |          |   ✓    |
-| ocaml                | .ml                  |    ✓     |   ✓    |
 | perl                 | .pl                  |          |   ✓    |
 | php                  | .php                 |    ✓     |   ✓    |
 | python               | .py                  |    ✓     |   ✓    |
-| ql                   | .ql                  |    ✓     |   ✓    |
 | r                    | .R                   |          |   ✓    |
 | r                    | .r                   |          |   ✓    |
 | regex                | .regex               |          |   ✓    |

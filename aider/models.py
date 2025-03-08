@@ -5,7 +5,6 @@ import json
 import math
 import os
 import platform
-import re
 import sys
 import time
 from dataclasses import dataclass, fields
@@ -19,6 +18,7 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
+from aider.utils import check_pip_install_extra
 
 RETRY_TIMEOUT = 60
 
@@ -137,9 +137,16 @@ class ModelInfoManager:
         self.cache_file = self.cache_dir / "model_prices_and_context_window.json"
         self.content = None
         self.local_model_metadata = {}
-        self._load_cache()
+        self.verify_ssl = True
+        self._cache_loaded = False
+
+    def set_verify_ssl(self, verify_ssl):
+        self.verify_ssl = verify_ssl
 
     def _load_cache(self):
+        if self._cache_loaded:
+            return
+
         try:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
             if self.cache_file.exists():
@@ -149,11 +156,14 @@ class ModelInfoManager:
         except OSError:
             pass
 
+        self._cache_loaded = True
+
     def _update_cache(self):
         try:
             import requests
 
-            response = requests.get(self.MODEL_INFO_URL, timeout=5)
+            # Respect the --no-verify-ssl switch
+            response = requests.get(self.MODEL_INFO_URL, timeout=5, verify=self.verify_ssl)
             if response.status_code == 200:
                 self.content = response.json()
                 try:
@@ -172,6 +182,9 @@ class ModelInfoManager:
         data = self.local_model_metadata.get(model)
         if data:
             return data
+
+        # Ensure cache is loaded before checking content
+        self._load_cache()
 
         if not self.content:
             self._update_cache()
@@ -378,6 +391,16 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.editor_edit_format = "editor-diff"
             self.use_repo_map = True
+            return  # <--
+
+        if "qwq" in model and "32b" in model and "preview" not in model:
+            self.edit_format = "diff"
+            self.editor_edit_format = "editor-diff"
+            self.use_repo_map = True
+            self.remove_resoning = "think"
+            self.examples_as_sys_msg = True
+            self.use_temperature = 0.6
+            self.extra_params = dict(top_p=0.95)
             return  # <--
 
         # use the defaults
@@ -609,14 +632,6 @@ class Model(ModelSettings):
         res = litellm.completion(**kwargs)
         return hash_object, res
 
-    def remove_reasoning_content(self, res):
-        if not self.remove_reasoning:
-            return res
-
-        pattern = f"<{self.remove_reasoning}>.*?</{self.remove_reasoning}>"
-        res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
-        return res
-
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
 
@@ -637,7 +652,9 @@ class Model(ModelSettings):
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
                 res = response.choices[0].message.content
-                return self.remove_reasoning_content(res)
+                from aider.reasoning_tags import remove_reasoning_content
+
+                return remove_reasoning_content(res, self.remove_reasoning)
 
             except litellm_ex.exceptions_tuple() as err:
                 ex_info = litellm_ex.get_ex_info(err)
@@ -760,6 +777,9 @@ def sanity_check_model(io, model):
         show = True
         io.tool_warning(f"Warning for {model}: Unknown which environment variables are required.")
 
+    # Check for model-specific dependencies
+    check_for_dependencies(io, model.name)
+
     if not model.info:
         show = True
         io.tool_warning(
@@ -773,6 +793,30 @@ def sanity_check_model(io, model):
                 io.tool_output(f"- {match}")
 
     return show
+
+
+def check_for_dependencies(io, model_name):
+    """
+    Check for model-specific dependencies and install them if needed.
+
+    Args:
+        io: The IO object for user interaction
+        model_name: The name of the model to check dependencies for
+    """
+    # Check if this is a Bedrock model and ensure boto3 is installed
+    if model_name.startswith("bedrock/"):
+        check_pip_install_extra(
+            io, "boto3", "AWS Bedrock models require the boto3 package.", ["boto3"]
+        )
+
+    # Check if this is a Vertex AI model and ensure google-cloud-aiplatform is installed
+    elif model_name.startswith("vertex_ai/"):
+        check_pip_install_extra(
+            io,
+            "google.cloud.aiplatform",
+            "Google Vertex AI models require the google-cloud-aiplatform package.",
+            ["google-cloud-aiplatform"],
+        )
 
 
 def fuzzy_match_models(name):

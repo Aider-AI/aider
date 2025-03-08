@@ -127,17 +127,8 @@ def setup_git(git_root, io):
     if not repo:
         return
 
-    user_name = None
-    user_email = None
-    with repo.config_reader() as config:
-        try:
-            user_name = config.get_value("user", "name", None)
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            pass
-        try:
-            user_email = config.get_value("user", "email", None)
-        except (configparser.NoSectionError, configparser.NoOptionError):
-            pass
+    user_name = repo.git.config("--default", "", "--get", "user.name") or None
+    user_email = repo.git.config("--default", "", "--get", "user.email") or None
 
     if user_name and user_email:
         return repo.working_tree_dir
@@ -212,18 +203,6 @@ def check_streamlit_install(io):
         "streamlit",
         "You need to install the aider browser feature",
         ["aider-chat[browser]"],
-    )
-
-
-def install_tree_sitter_language_pack(io):
-    return utils.check_pip_install_extra(
-        io,
-        "tree_sitter_language_pack",
-        "Install tree_sitter_language_pack?",
-        [
-            "tree-sitter-language-pack==0.4.0",
-            "tree-sitter==0.24.0",
-        ],
     )
 
 
@@ -538,6 +517,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         litellm._load_litellm()
         litellm._lazy_module.client_session = httpx.Client(verify=False)
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
+        # Set verify_ssl on the model_info_manager
+        models.model_info_manager.set_verify_ssl(False)
 
     if args.timeout:
         models.request_timeout = args.timeout
@@ -586,6 +567,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             editingmode=editing_mode,
             fancy_input=args.fancy_input,
             multiline_mode=args.multiline,
+            notifications=args.notifications,
+            notifications_command=args.notifications_command,
         )
 
     io = get_io(args.pretty)
@@ -743,11 +726,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="Upgrade completed")
         return 0 if success else 1
 
-    if args.install_tree_sitter_language_pack:
-        success = install_tree_sitter_language_pack(io)
-        analytics.event("exit", reason="Install TSLP completed")
-        return 0 if success else 1
-
     if args.check_update:
         check_version(io, verbose=args.verbose)
 
@@ -793,7 +771,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         model_key_pairs = [
             ("ANTHROPIC_API_KEY", "sonnet"),
             ("DEEPSEEK_API_KEY", "deepseek"),
-            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.5-sonnet"),
+            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.7-sonnet"),
             ("OPENAI_API_KEY", "gpt-4o"),
             ("GEMINI_API_KEY", "flash"),
         ]

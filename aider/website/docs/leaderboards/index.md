@@ -71,7 +71,7 @@ The model also has to successfully apply all its changes to the source file with
 <script>
 {% assign data_source = edit_sorted %}
 {% assign pass_rate_field = "pass_rate_2" %}
-{% assign highlight_model = "xxxxxxxxxxx" %}
+{% assign highlight_model = "xxxxxx" %}
 {% include leaderboard.js %}
 </script>
 <style>
@@ -116,6 +116,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-February 26, 2025.
+March 07, 2025.
 <!--[[[end]]]-->
 </p>

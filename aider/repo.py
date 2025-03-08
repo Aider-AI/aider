@@ -145,7 +145,7 @@ class GitRepo:
         else:
             cmd += ["-a"]
 
-        original_user_name = self.repo.config_reader().get_value("user", "name")
+        original_user_name = self.repo.git.config("--get", "user.name")
         original_committer_name_env = os.environ.get("GIT_COMMITTER_NAME")
         committer_name = f"{original_user_name} (aider)"
 
@@ -309,8 +309,11 @@ class GitRepo:
 
         # Add staged files
         index = self.repo.index
-        staged_files = [path for path, _ in index.entries.keys()]
-        files.update(self.normalize_path(path) for path in staged_files)
+        try:
+            staged_files = [path for path, _ in index.entries.keys()]
+            files.update(self.normalize_path(path) for path in staged_files)
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to read staged files: {err}")
 
         res = [fname for fname in files if not self.ignored_file(fname)]
 

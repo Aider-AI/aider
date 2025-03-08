@@ -198,7 +198,7 @@
 #user-input-color: #00cc00
 
 ## Set the color for tool output (default: None)
-#tool-output-color: xxx
+#tool-output-color: "xxx"
 
 ## Set the color for tool error messages (default: #FF2222)
 #tool-error-color: #FF2222
@@ -210,16 +210,16 @@
 #assistant-output-color: #0088ff
 
 ## Set the color for the completion menu (default: terminal's default text color)
-#completion-menu-color: xxx
+#completion-menu-color: "xxx"
 
 ## Set the background color for the completion menu (default: terminal's default background color)
-#completion-menu-bg-color: xxx
+#completion-menu-bg-color: "xxx"
 
 ## Set the color for the current item in the completion menu (default: terminal's default background color)
-#completion-menu-current-color: xxx
+#completion-menu-current-color: "xxx"
 
 ## Set the background color for the current item in the completion menu (default: terminal's default text color)
-#completion-menu-current-bg-color: xxx
+#completion-menu-current-bg-color: "xxx"
 
 ## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light, or a Pygments builtin style, see https://pygments.org/styles for available themes)
 #code-theme: default
@@ -431,11 +431,14 @@
 ## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
 #multiline: false
 
+## Enable/disable terminal bell notifications when LLM responses are ready (default: False)
+#notifications: false
+
+## Specify a command to run for notifications instead of the terminal bell. If not specified, a default command for your OS may be used.
+#notifications-command: xxx
+
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #detect-urls: true
 
 ## Specify which editor to use for the /editor command
 #editor: xxx
-
-## Install the tree_sitter_language_pack (experimental)
-#install-tree-sitter-language-pack: false

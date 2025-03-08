@@ -431,6 +431,15 @@ class RepoMap:
 
         G = nx.MultiDiGraph()
 
+        # Add a small self-edge for every definition that has no references
+        # Helps with tree-sitter 0.23.2 with ruby, where "def greet(name)"
+        # isn't counted as a def AND a ref. tree-sitter 0.24.0 does.
+        for ident in defines.keys():
+            if ident in references:
+                continue
+            for definer in defines[ident]:
+                G.add_edge(definer, definer, weight=0.1, ident=ident)
+
         for ident in idents:
             if progress:
                 progress()

@@ -522,6 +522,19 @@ cog.out("```\n")
   extra_params:
     max_tokens: 128000
 
+- name: fireworks_ai/accounts/fireworks/models/qwq-32b
+  edit_format: diff
+  weak_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 32000
+    top_p: 0.95
+  use_temperature: 0.6
+  editor_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  editor_edit_format: editor-diff
+  remove_reasoning: think
+
 - name: gemini/gemini-1.5-flash-002
 
 - name: gemini/gemini-1.5-flash-exp-0827
@@ -636,6 +649,16 @@ cog.out("```\n")
   use_repo_map: true
   reminder: sys
 
+- name: gpt-4.5-preview
+  edit_format: diff
+  weak_model_name: gpt-4o-mini
+  use_repo_map: true
+  lazy: true
+  reminder: sys
+  examples_as_sys_msg: true
+  editor_model_name: gpt-4o
+  editor_edit_format: editor-diff
+
 - name: gpt-4o
   edit_format: diff
   weak_model_name: gpt-4o-mini
@@ -670,6 +693,18 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: groq/llama3-8b-8192
   examples_as_sys_msg: true
+
+- name: groq/qwen-qwq-32b
+  edit_format: diff
+  weak_model_name: groq/qwen-2.5-coder-32b
+  use_repo_map: true
+  extra_params:
+    max_tokens: 128000
+    top_p: 0.95
+  use_temperature: 0.6
+  editor_model_name: groq/qwen-2.5-coder-32b
+  editor_edit_format: editor-diff
+  remove_reasoning: think
 
 - name: o1
   edit_format: diff
@@ -706,6 +741,16 @@ cog.out("```\n")
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+
+- name: openai/gpt-4.5-preview
+  edit_format: diff
+  weak_model_name: gpt-4o-mini
+  use_repo_map: true
+  lazy: true
+  reminder: sys
+  examples_as_sys_msg: true
+  editor_model_name: openai/gpt-4o
+  editor_edit_format: editor-diff
 
 - name: openai/gpt-4o
   edit_format: diff
@@ -831,6 +876,18 @@ cog.out("```\n")
   use_repo_map: true
   reminder: sys
   examples_as_sys_msg: true
+
+- name: openrouter/deepseek/deepseek-chat:free
+  edit_format: diff
+  weak_model_name: openrouter/deepseek/deepseek-chat:free
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+  use_temperature: false
+  editor_model_name: openrouter/deepseek/deepseek-chat:free
+  editor_edit_format: editor-diff
 
 - name: openrouter/deepseek/deepseek-coder
   edit_format: diff
