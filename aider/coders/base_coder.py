@@ -379,6 +379,8 @@ class Coder:
         self.pretty = self.io.pretty
 
         self.main_model = main_model
+        # Set the reasoning tag name based on model settings or default
+        self.reasoning_tag_name = self.main_model.remove_reasoning if self.main_model.remove_reasoning else REASONING_TAG
 
         self.stream = stream and main_model.streaming
 
@@ -1692,14 +1694,13 @@ class Coder:
                 if args:
                     self.io.ai_output(json.dumps(args, indent=4))
 
-    def replace_reasoning_tags(self, text, tag_name):
+    def replace_reasoning_tags(self, text):
         """
         Replace opening and closing reasoning tags with standard formatting.
         Ensures exactly one blank line before START and END markers.
 
         Args:
             text (str): The text containing the tags
-            tag_name (str): The name of the tag to replace
 
         Returns:
             str: Text with reasoning tags replaced with standard format
@@ -1717,14 +1718,14 @@ class Coder:
             return match.group(1)
 
         # Replace opening tag with proper spacing
-        text = re.sub(f"\\s*<{tag_name}>\\s*", f"\n\n{REASONING_START}\n\n", text)
-
+        text = re.sub(f"\\s*<{self.reasoning_tag_name}>\\s*", f"\n\n{REASONING_START}\n\n", text)
+        
         # Replace closing tag with proper spacing
-        text = re.sub(f"\\s*</{tag_name}>\\s*", f"\n\n{REASONING_END}\n\n", text)
-
+        text = re.sub(f"\\s*</{self.reasoning_tag_name}>\\s*", f"\n\n{REASONING_END}\n\n", text)
+        
         # Clean up any excessive newlines (more than 2 consecutive)
         text = re.sub(r"\n{3,}", "\n\n", text)
-
+        
         return text
 
     def show_send_output(self, completion):
@@ -1842,7 +1843,7 @@ class Coder:
             elif text:
                 # Apply reasoning tag formatting
                 if self.got_reasoning_content:
-                    text = self.replace_reasoning_tags(text, REASONING_TAG)
+                    text = self.replace_reasoning_tags(text)
                 try:
                     sys.stdout.write(text)
                 except UnicodeEncodeError:
