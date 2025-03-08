@@ -1382,7 +1382,7 @@ class Coder:
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
 
-            # make a helper method
+            # ai: make a helper method...
             self.partial_response_content = self.main_model.remove_reasoning_content(
                 self.partial_response_content,
                 self.reasoning_tag_name,
