@@ -75,30 +75,30 @@ class TestReasoning(unittest.TestCase):
         # Setup model and coder
         model = Model("gpt-3.5-turbo")
         coder = Coder.create(model, None, io=io, stream=True)
-        
+
         # Ensure the coder shows pretty output
         coder.show_pretty = MagicMock(return_value=True)
-        
+
         # Mock streaming response chunks
         class MockStreamingChunk:
             def __init__(self, content=None, reasoning_content=None, finish_reason=None):
                 self.choices = [MagicMock()]
                 self.choices[0].delta = MagicMock()
                 self.choices[0].finish_reason = finish_reason
-                
+
                 # Set content if provided
                 if content is not None:
                     self.choices[0].delta.content = content
                 else:
                     # Need to handle attribute access that would raise AttributeError
-                    delattr(self.choices[0].delta, 'content')
-                    
+                    delattr(self.choices[0].delta, "content")
+
                 # Set reasoning_content if provided
                 if reasoning_content is not None:
                     self.choices[0].delta.reasoning_content = reasoning_content
                 else:
                     # Need to handle attribute access that would raise AttributeError
-                    delattr(self.choices[0].delta, 'reasoning_content')
+                    delattr(self.choices[0].delta, "reasoning_content")
 
         # Create chunks to simulate streaming
         chunks = [
@@ -112,7 +112,7 @@ class TestReasoning(unittest.TestCase):
             MockStreamingChunk(content="answer "),
             MockStreamingChunk(content="after reasoning"),
             # End the response
-            MockStreamingChunk(finish_reason="stop")
+            MockStreamingChunk(finish_reason="stop"),
         ]
 
         # Create a mock hash object
@@ -127,22 +127,24 @@ class TestReasoning(unittest.TestCase):
 
             # Verify mdstream.update was called
             mock_mdstream.update.assert_called()
-            
+
             # Check the arguments of the final call to update
             final_call = mock_mdstream.update.call_args_list[-1]
-            self.assertTrue(final_call[1]['final'])
+            self.assertTrue(final_call[1]["final"])
             final_text = final_call[0][0]
-            
+
             # The final text should include both reasoning and main content with proper formatting
             self.assertIn("> Thinking ...", final_text)
             self.assertIn("My step-by-step reasoning process", final_text)
             self.assertIn("> ... done thinking", final_text)
             self.assertIn("Final answer after reasoning", final_text)
-            
+
             # Ensure proper order: reasoning first, then main content
             reasoning_pos = final_text.find("My step-by-step reasoning process")
             main_pos = final_text.find("Final answer after reasoning")
-            self.assertLess(reasoning_pos, main_pos, "Reasoning content should appear before main content")
+            self.assertLess(
+                reasoning_pos, main_pos, "Reasoning content should appear before main content"
+            )
 
     def test_send_with_think_tags(self):
         """Test that <think> tags are properly processed and formatted."""
