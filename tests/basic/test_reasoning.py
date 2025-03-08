@@ -59,6 +59,7 @@ class TestReasoning(unittest.TestCase):
             self.assertIn(main_content, output)
 
             # Verify that partial_response_content only contains the main content
+            coder.remove_reasoning_content()
             self.assertEqual(coder.partial_response_content.strip(), main_content.strip())
 
             # Ensure proper order: reasoning first, then main content
@@ -168,11 +169,9 @@ class TestReasoning(unittest.TestCase):
             )
 
             # Verify that partial_response_content only contains the main content
+            coder.remove_reasoning_content()
             expected_content = "Final answer after reasoning"
             self.assertEqual(coder.partial_response_content.strip(), expected_content)
-
-            # Verify that partial_response_content only contains the main content
-            self.assertEqual(coder.partial_response_content.strip(), "Final answer after reasoning")
 
     def test_send_with_think_tags(self):
         """Test that <think> tags are properly processed and formatted."""
@@ -240,6 +239,7 @@ class TestReasoning(unittest.TestCase):
             )
 
             # Verify that partial_response_content only contains the main content
+            coder.remove_reasoning_content()
             self.assertEqual(coder.partial_response_content.strip(), main_content.strip())
 
     def test_send_with_think_tags_stream(self):

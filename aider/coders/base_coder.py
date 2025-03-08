@@ -1381,11 +1381,7 @@ class Coder:
                 self.mdstream = None
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
-
-            self.partial_response_content = self.remove_reasoning_content(
-                self.partial_response_content,
-                self.reasoning_tag_name,
-            )
+            self.remove_reasoning_content()
             self.multi_response_content = ""
 
         ###
@@ -1833,9 +1829,13 @@ class Coder:
     def render_incremental_response(self, final):
         return self.get_multi_response_content_in_progress()
 
-    def remove_reasoning_content(self, content, reasoning_tag_name):
+    def remove_reasoning_content(self):
         """Remove reasoning content from the model's response."""
-        return self.main_model.remove_reasoning_content(content, reasoning_tag_name)
+
+        self.partial_response_content = self.main_model.remove_reasoning_content(
+            self.partial_response_content,
+            self.reasoning_tag_name,
+        )
 
     def calculate_and_show_tokens_and_cost(self, messages, completion=None):
         prompt_tokens = 0
