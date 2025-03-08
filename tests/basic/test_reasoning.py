@@ -123,7 +123,7 @@ class TestReasoning(unittest.TestCase):
         with patch.object(model, "send_completion", return_value=(mock_hash, chunks)):
             # Set mdstream directly on the coder object
             coder.mdstream = mock_mdstream
-            
+
             # Call send with a simple message
             messages = [{"role": "user", "content": "test prompt"}]
             list(coder.send(messages))
