@@ -249,17 +249,12 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>219,958</td><td class='right'>60.6%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>110,364</td><td class='right'>30.4%</td></tr>
-<tr><td>o3-mini</td><td class='right'>25,643</td><td class='right'>7.1%</td></tr>
-<tr><td>deepseek/deepseek-reasoner</td><td class='right'>4,432</td><td class='right'>1.2%</td></tr>
-<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>2,765</td><td class='right'>0.8%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,948,550</td><td class='right'>99.0%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>14,961</td><td class='right'>0.8%</td></tr>
+<tr><td>deepseek/deepseek-reasoner</td><td class='right'>4,430</td><td class='right'>0.2%</td></tr>
+<tr><td>o3-mini</td><td class='right'>97</td><td class='right'>0.0%</td></tr>
 <tr><td>claude-3-7-sonnet-20250219</td><td class='right'>93</td><td class='right'>0.0%</td></tr>
 </table>
-
-{: .note :}
-Some models show as REDACTED, because they are new or unpopular models.
-Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?

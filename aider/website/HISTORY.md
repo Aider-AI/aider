@@ -25,6 +25,7 @@ cog.out(text)
 
 ### main branch
 
+- Display thinking/reasoning content from LLMs which return it.
 - Enhanced handling of reasoning tags to better clean up model responses.
 - Improved error handling for EOF (Ctrl+D) in user input prompts.
 - Added helper function to ensure hex color values have a # prefix.
@@ -36,7 +37,7 @@ cog.out(text)
 - Improved empty LLM response handling with clearer warning messages.
 - Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
 - Offer to install dependencies for Bedrock and Vertex AI models.
-- Aider wrote 81% of the code in this release.
+- Aider wrote 82% of the code in this release.
 
 ### Aider v0.75.3
 
