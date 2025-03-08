@@ -5,6 +5,7 @@ from aider.coders.base_coder import Coder
 from aider.dump import dump  # noqa
 from aider.io import InputOutput
 from aider.models import Model
+from aider.reasoning_tags import remove_reasoning_content
 
 
 class TestReasoning(unittest.TestCase):
@@ -340,6 +341,66 @@ class TestReasoning(unittest.TestCase):
             self.assertLess(
                 reasoning_pos, main_pos, "Reasoning content should appear before main content"
             )
+
+    def test_remove_reasoning_content(self):
+        """Test the remove_reasoning_content function from reasoning_tags module."""
+        # Test with no removal configured
+        text = "Here is <think>some reasoning</think> and regular text"
+        self.assertEqual(remove_reasoning_content(text, None), text)
+
+        # Test with removal configured
+        text = """Here is some text
+<think>
+This is reasoning that should be removed
+Over multiple lines
+</think>
+And more text here"""
+        expected = """Here is some text
+
+And more text here"""
+        self.assertEqual(remove_reasoning_content(text, "think"), expected)
+
+        # Test with multiple reasoning blocks
+        text = """Start
+<think>Block 1</think>
+Middle
+<think>Block 2</think>
+End"""
+        expected = """Start
+
+Middle
+
+End"""
+        self.assertEqual(remove_reasoning_content(text, "think"), expected)
+
+        # Test with no reasoning blocks
+        text = "Just regular text"
+        self.assertEqual(remove_reasoning_content(text, "think"), text)
+
+    @patch("aider.models.litellm.completion")
+    def test_simple_send_with_retries_removes_reasoning(self, mock_completion):
+        """Test that simple_send_with_retries correctly removes reasoning content."""
+        model = Model("deepseek-r1")  # This model has remove_reasoning="think"
+
+        # Mock the completion response
+        mock_response = MagicMock()
+        mock_response.choices = [MagicMock(message=MagicMock(content="""Here is some text
+<think>
+This reasoning should be removed
+</think>
+And this text should remain"""))]
+        mock_completion.return_value = mock_response
+
+        messages = [{"role": "user", "content": "test"}]
+        result = model.simple_send_with_retries(messages)
+
+        expected = """Here is some text
+
+And this text should remain"""
+        self.assertEqual(result, expected)
+
+        # Verify the completion was called
+        mock_completion.assert_called_once()
 
 
 if __name__ == "__main__":
