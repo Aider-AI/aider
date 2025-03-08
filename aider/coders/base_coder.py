@@ -1808,7 +1808,7 @@ class Coder:
                 self.live_incremental_response(False)
             elif text:
                 # Apply reasoning tag formatting
-                text = self.replace_reasoning_tags(text)
+                text = replace_reasoning_tags(text, self.reasoning_tag_name)
                 try:
                     sys.stdout.write(text)
                 except UnicodeEncodeError:
@@ -1826,7 +1826,7 @@ class Coder:
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
         # Apply any reasoning tag formatting
-        show_resp = self.replace_reasoning_tags(show_resp)
+        show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
