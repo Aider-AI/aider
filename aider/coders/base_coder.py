@@ -1690,8 +1690,6 @@ class Coder:
                 if args:
                     self.io.ai_output(json.dumps(args, indent=4))
 
-    # Moved to aider/reasoning_tags.py
-
     def show_send_output(self, completion):
         if self.verbose:
             print(completion)
