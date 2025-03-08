@@ -33,7 +33,7 @@ class TestReasoning(unittest.TestCase):
         with patch.object(model, "send_completion", return_value=mock_completion):
             # Call send with a simple message
             messages = [{"role": "user", "content": "test prompt"}]
-            result = coder.send(messages)
+            coder.send(messages)
 
             # Format the response as it would happen in the normal flow
             coder.partial_response_content = mock_completion.content
