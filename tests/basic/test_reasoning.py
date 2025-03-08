@@ -130,18 +130,19 @@ class TestReasoning(unittest.TestCase):
 
             # Verify mdstream.update was called multiple times
             mock_mdstream.update.assert_called()
-            
+
             # Explicitly get all calls to update
             update_calls = mock_mdstream.update.call_args_list
-            
+
             # There should be at least two calls - one for streaming and one final
-            self.assertGreaterEqual(len(update_calls), 2, 
-                                   "Should have at least two calls to update (streaming + final)")
-            
+            self.assertGreaterEqual(
+                len(update_calls), 2, "Should have at least two calls to update (streaming + final)"
+            )
+
             # Check that at least one call has final=True (should be the last one)
-            has_final_true = any(call[1].get('final', False) for call in update_calls)
+            has_final_true = any(call[1].get("final", False) for call in update_calls)
             self.assertTrue(has_final_true, "At least one update call should have final=True")
-            
+
             # Get the text from the last update call
             final_text = update_calls[-1][0][0]
 
