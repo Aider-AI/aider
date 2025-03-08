@@ -1464,7 +1464,7 @@ Just show me the edits I need to make.
         export_dir = os.path.join(tempfile.gettempdir(), f"export_{timestamp}")
         os.makedirs(export_dir, exist_ok=True)
         return export_dir
-        
+
     def _get_context_files(self):
         """Get all files in the chat context (both editable and read-only)"""
         inchat_files = self.coder.get_inchat_relative_files()
@@ -1472,19 +1472,53 @@ Just show me the edits I need to make.
         all_files = sorted(set(inchat_files + read_only_files))
         return all_files
 
+    def _export_flat(self, files, export_dir):
+        """Export each file to its own file with flattened path"""
+        import os
+
+        count = 0
+        for rel_fname in files:
+            # Get content
+            abs_fname = self.coder.abs_root_path(rel_fname)
+            content = self.io.read_text(abs_fname)
+
+            if content is None:
+                self.io.tool_warning(f"Could not read {rel_fname}, skipping")
+                continue
+
+            # Flatten filename
+            flat_fname = rel_fname.replace('/', '|').replace('\\', '|')
+            out_path = os.path.join(export_dir, flat_fname)
+
+            # Write content
+            try:
+                with open(out_path, 'w', encoding=self.io.encoding) as f:
+                    f.write(content)
+                count += 1
+            except Exception as e:
+                self.io.tool_error(f"Error writing {flat_fname}: {str(e)}")
+
+        return count
+
     def cmd_export_context(self, args):
         "Export files in chat context to a timestamped directory"
 
+        # Parse arguments (we'll implement chunking later)
+        chunk_size = None
+
+        # Get files in context
         all_files = self._get_context_files()
         if not all_files:
             self.io.tool_output("No files in context to export.")
             return
 
+        # Create timestamped directory
         export_dir = self._create_export_directory()
-        self.io.tool_output(f"Will export {len(all_files)} files to {export_dir}")
-        for fname in all_files:
-            self.io.tool_output(f"  {fname}")
-        return
+
+        # Export files in flat mode
+        count = self._export_flat(all_files, export_dir)
+
+        self.io.tool_output(f"Exported {count} files to {export_dir}/")
 
 
 def expand_subdir(file_path):
