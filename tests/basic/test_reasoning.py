@@ -225,7 +225,7 @@ class TestReasoning(unittest.TestCase):
             self.assertLess(
                 reasoning_pos, main_pos, "Reasoning content should appear before main content"
             )
-    
+
     def test_send_with_think_tags_stream(self):
         """Test that streaming with <think> tags is properly processed and formatted."""
         # Setup IO with pretty output for streaming
