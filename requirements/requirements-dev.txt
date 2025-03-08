@@ -46,7 +46,7 @@ fonttools==4.56.0
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
-identify==2.6.8
+identify==2.6.9
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit

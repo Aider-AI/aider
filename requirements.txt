@@ -86,7 +86,7 @@ frozenlist==1.5.0
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   aiosignal
-fsspec==2025.2.0
+fsspec==2025.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.63.2
+litellm==1.63.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
