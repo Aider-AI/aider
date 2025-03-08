@@ -24,6 +24,7 @@ from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
 from aider.copypaste import ClipboardWatcher
+from aider.deprecated import handle_deprecated_model_args
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -588,6 +589,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.openai_api_key:
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
+        
+    # Handle deprecated model shortcut args
+    handle_deprecated_model_args(args, io)
     if args.openai_api_base:
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
     if args.openai_api_version:
