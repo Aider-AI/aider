@@ -1413,7 +1413,6 @@ class Commands:
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
-
         chunks = self.coder.format_chat_chunks()
 
         markdown = ""
@@ -1454,6 +1453,24 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+
+    def _create_export_directory(self):
+        """Create and return a timestamped directory for exports"""
+        from datetime import datetime
+        import os
+        import tempfile
+
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        export_dir = os.path.join(tempfile.gettempdir(), f"export_{timestamp}")
+        os.makedirs(export_dir, exist_ok=True)
+        return export_dir
+
+    def cmd_export_context(self, args):
+        "Export files in chat context to a timestamped directory"
+
+        export_dir = self._create_export_directory()
+        self.io.tool_output(f"Created directory: {export_dir}")
+        return
 
 
 def expand_subdir(file_path):
