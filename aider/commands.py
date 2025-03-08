@@ -1464,12 +1464,26 @@ Just show me the edits I need to make.
         export_dir = os.path.join(tempfile.gettempdir(), f"export_{timestamp}")
         os.makedirs(export_dir, exist_ok=True)
         return export_dir
+        
+    def _get_context_files(self):
+        """Get all files in the chat context (both editable and read-only)"""
+        inchat_files = self.coder.get_inchat_relative_files()
+        read_only_files = [self.coder.get_rel_fname(fname) for fname in self.coder.abs_read_only_fnames]
+        all_files = sorted(set(inchat_files + read_only_files))
+        return all_files
 
     def cmd_export_context(self, args):
         "Export files in chat context to a timestamped directory"
 
+        all_files = self._get_context_files()
+        if not all_files:
+            self.io.tool_output("No files in context to export.")
+            return
+
         export_dir = self._create_export_directory()
-        self.io.tool_output(f"Created directory: {export_dir}")
+        self.io.tool_output(f"Will export {len(all_files)} files to {export_dir}")
+        for fname in all_files:
+            self.io.tool_output(f"  {fname}")
         return
 
 
