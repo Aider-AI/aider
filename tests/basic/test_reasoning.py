@@ -4,14 +4,14 @@ from unittest.mock import MagicMock, patch
 from aider.coders.base_coder import Coder
 from aider.io import InputOutput
 from aider.models import Model
-
+from aider.dump import dump # noqa
 
 class TestReasoning(unittest.TestCase):
     def test_send_with_reasoning_content(self):
         """Test that reasoning content is properly formatted and output."""
         # Setup IO with no pretty
         io = InputOutput(pretty=False)
-        io.ai_output = MagicMock()
+        io.assistant_output = MagicMock()
 
         # Setup model and coder
         model = Model("gpt-3.5-turbo")
@@ -44,8 +44,10 @@ class TestReasoning(unittest.TestCase):
             list(coder.send(messages))
 
             # Now verify ai_output was called with the right content
-            io.ai_output.assert_called_once()
-            output = io.ai_output.call_args[0][0]
+            io.assistant_output.assert_called_once()
+            output = io.assistant_output.call_args[0][0]
+
+            dump(output)
 
             # Output should contain formatted reasoning tags
             self.assertIn("Thinking ...", output)
