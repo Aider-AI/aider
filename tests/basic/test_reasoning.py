@@ -34,15 +34,15 @@ class TestReasoning(unittest.TestCase):
             # Call send with a simple message
             messages = [{"role": "user", "content": "test prompt"}]
             result = coder.send(messages)
-            
+
             # Format the response as it would happen in the normal flow
             coder.partial_response_content = mock_completion.content
             coder.partial_response_reasoning_content = mock_completion.reasoning_content
             output = coder.get_multi_response_content_in_progress(final=True)
-            
+
             # Manually call ai_output to simulate the normal flow
             coder.io.ai_output(output)
-            
+
             # Now verify ai_output was called with the right content
             io.ai_output.assert_called_once()
             output = io.ai_output.call_args[0][0]
