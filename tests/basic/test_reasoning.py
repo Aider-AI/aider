@@ -120,8 +120,10 @@ class TestReasoning(unittest.TestCase):
         mock_hash.hexdigest.return_value = "mock_hash_digest"
 
         # Mock the model's send_completion to return the hash and completion
-        with patch.object(model, "send_completion", return_value=(mock_hash, chunks)), \
-             patch.object(model, "token_count", return_value=10):  # Mock token count to avoid serialization issues
+        with (
+            patch.object(model, "send_completion", return_value=(mock_hash, chunks)),
+            patch.object(model, "token_count", return_value=10),
+        ):  # Mock token count to avoid serialization issues
             # Set mdstream directly on the coder object
             coder.mdstream = mock_mdstream
 
@@ -255,7 +257,7 @@ class TestReasoning(unittest.TestCase):
                 else:
                     # Need to handle attribute access that would raise AttributeError
                     delattr(self.choices[0].delta, "content")
-                
+
                 # Set reasoning_content if provided
                 if reasoning_content is not None:
                     self.choices[0].delta.reasoning_content = reasoning_content
