@@ -29,21 +29,11 @@ class TestReasoning(unittest.TestCase):
 
         mock_completion = MockCompletion(main_content, reasoning_content)
 
-        # Mock the model's send_completion method
-        with patch.object(model, "send_completion", return_value=mock_completion):
+        # Mock the model's send_completion method to return the expected tuple format
+        with patch.object(model, "send_completion", return_value=(None, mock_completion)):
             # Call send with a simple message
             messages = [{"role": "user", "content": "test prompt"}]
             list(coder.send(messages))
-
-            # Format the response as it would happen in the normal flow
-            #coder.partial_response_content = mock_completion.content
-            #coder.partial_response_reasoning_content = mock_completion.reasoning_content
-            #output = coder.get_multi_response_content_in_progress(final=True)
-
-            # Manually call ai_output to simulate the normal flow
-            #coder.io.ai_output(output)
-
-            print(coder.partial_response_content)
 
             # Now verify ai_output was called with the right content
             io.ai_output.assert_called_once()
