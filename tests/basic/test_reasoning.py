@@ -26,6 +26,10 @@ class TestReasoning(unittest.TestCase):
             def __init__(self, content, reasoning_content):
                 self.content = content
                 self.reasoning_content = reasoning_content
+                # Add required attributes expected by show_send_output
+                self.choices = [MagicMock()]
+                self.choices[0].message.content = content
+                self.finish_reason = "stop"
 
         mock_completion = MockCompletion(main_content, reasoning_content)
 
