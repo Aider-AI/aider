@@ -29,8 +29,12 @@ class TestReasoning(unittest.TestCase):
 
         mock_completion = MockCompletion(main_content, reasoning_content)
 
+        # Create a mock hash object
+        mock_hash = MagicMock()
+        mock_hash.hexdigest.return_value = "mock_hash_digest"
+        
         # Mock the model's send_completion method to return the expected tuple format
-        with patch.object(model, "send_completion", return_value=(None, mock_completion)):
+        with patch.object(model, "send_completion", return_value=(mock_hash, mock_completion)):
             # Call send with a simple message
             messages = [{"role": "user", "content": "test prompt"}]
             list(coder.send(messages))
