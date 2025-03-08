@@ -4,11 +4,6 @@ from unittest.mock import MagicMock, patch
 from aider.coders.base_coder import Coder
 from aider.io import InputOutput
 from aider.models import Model
-from aider.reasoning_tags import (
-    REASONING_TAG,
-    format_reasoning_content,
-    replace_reasoning_tags,
-)
 
 
 class TestReasoning(unittest.TestCase):
