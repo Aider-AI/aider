@@ -1717,10 +1717,10 @@ class Coder:
             return match.group(1)
 
         # Replace opening tag with proper spacing
-        text = re.sub(f"\\s*<{tag_name}>\\s*", f"\n\n{REASONING_START}\n", text)
+        text = re.sub(f"\\s*<{tag_name}>\\s*", f"\n\n{REASONING_START}\n\n", text)
 
         # Replace closing tag with proper spacing
-        text = re.sub(f"\\s*</{tag_name}>\\s*", f"\n\n{REASONING_END}", text)
+        text = re.sub(f"\\s*</{tag_name}>\\s*", f"\n\n{REASONING_END}\n\n", text)
 
         # Clean up any excessive newlines (more than 2 consecutive)
         text = re.sub(r"\n{3,}", "\n\n", text)
