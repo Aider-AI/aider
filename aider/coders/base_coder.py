@@ -1830,9 +1830,12 @@ class Coder:
     def remove_reasoning_content(self):
         """Remove reasoning content from the model's response."""
 
-        self.partial_response_content = self.main_model.remove_reasoning_content(
+        from aider.reasoning_tags import remove_reasoning_content
+        
+        self.partial_response_content = remove_reasoning_content(
             self.partial_response_content,
             self.reasoning_tag_name,
+            self.main_model.remove_reasoning,
         )
 
     def calculate_and_show_tokens_and_cost(self, messages, completion=None):

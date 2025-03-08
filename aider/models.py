@@ -633,26 +633,6 @@ class Model(ModelSettings):
         res = litellm.completion(**kwargs)
         return hash_object, res
 
-    def remove_reasoning_content(self, res, reasoning_tag=None):
-        if not reasoning_tag:
-            reasoning_tag = self.remove_reasoning
-
-        if not reasoning_tag:
-            return res
-
-        # Try to match the complete tag pattern first
-        pattern = f"<{reasoning_tag}>.*?</{reasoning_tag}>"
-        res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
-
-        # If closing tag exists but opening tag might be missing, remove everything before closing
-        # tag
-        closing_tag = f"</{reasoning_tag}>"
-        if closing_tag in res:
-            # Split on the closing tag and keep everything after it
-            parts = res.split(closing_tag, 1)
-            res = parts[1].strip() if len(parts) > 1 else res
-
-        return res
 
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
@@ -674,7 +654,8 @@ class Model(ModelSettings):
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
                 res = response.choices[0].message.content
-                return self.remove_reasoning_content(res)
+                from aider.reasoning_tags import remove_reasoning_content
+                return remove_reasoning_content(res, self.remove_reasoning)
 
             except litellm_ex.exceptions_tuple() as err:
                 ex_info = litellm_ex.get_ex_info(err)

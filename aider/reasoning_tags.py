@@ -11,6 +11,39 @@ REASONING_START = "> Thinking ..."
 REASONING_END = "> ... done thinking.\n\n------"
 
 
+def remove_reasoning_content(res, reasoning_tag=None, model_remove_reasoning=None):
+    """
+    Remove reasoning content from text based on tags.
+    
+    Args:
+        res (str): The text to process
+        reasoning_tag (str): The tag name to remove
+        model_remove_reasoning (str): Fallback tag name from model settings
+        
+    Returns:
+        str: Text with reasoning content removed
+    """
+    if not reasoning_tag:
+        reasoning_tag = model_remove_reasoning
+
+    if not reasoning_tag:
+        return res
+
+    # Try to match the complete tag pattern first
+    pattern = f"<{reasoning_tag}>.*?</{reasoning_tag}>"
+    res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
+
+    # If closing tag exists but opening tag might be missing, remove everything before closing
+    # tag
+    closing_tag = f"</{reasoning_tag}>"
+    if closing_tag in res:
+        # Split on the closing tag and keep everything after it
+        parts = res.split(closing_tag, 1)
+        res = parts[1].strip() if len(parts) > 1 else res
+
+    return res
+
+
 def replace_reasoning_tags(text, tag_name):
     """
     Replace opening and closing reasoning tags with standard formatting.
