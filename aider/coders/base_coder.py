@@ -1831,7 +1831,7 @@ class Coder:
         """Remove reasoning content from the model's response."""
 
         from aider.reasoning_tags import remove_reasoning_content
-        
+
         self.partial_response_content = remove_reasoning_content(
             self.partial_response_content,
             self.reasoning_tag_name,

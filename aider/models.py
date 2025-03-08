@@ -633,7 +633,6 @@ class Model(ModelSettings):
         res = litellm.completion(**kwargs)
         return hash_object, res
 
-
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
 
@@ -655,6 +654,7 @@ class Model(ModelSettings):
                     return None
                 res = response.choices[0].message.content
                 from aider.reasoning_tags import remove_reasoning_content
+
                 return remove_reasoning_content(res, self.remove_reasoning)
 
             except litellm_ex.exceptions_tuple() as err:

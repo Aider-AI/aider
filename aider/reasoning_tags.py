@@ -14,12 +14,12 @@ REASONING_END = "> ... done thinking.\n\n------"
 def remove_reasoning_content(res, reasoning_tag=None, model_remove_reasoning=None):
     """
     Remove reasoning content from text based on tags.
-    
+
     Args:
         res (str): The text to process
         reasoning_tag (str): The tag name to remove
         model_remove_reasoning (str): Fallback tag name from model settings
-        
+
     Returns:
         str: Text with reasoning content removed
     """
