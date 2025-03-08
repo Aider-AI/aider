@@ -51,8 +51,10 @@ class TestDeprecated(TestCase):
                     if flag.lstrip("-") in call_args[0][0] and "deprecated" in call_args[0][0]:
                         deprecation_warning = call_args[0][0]
                         break
-                
-                self.assertIsNotNone(deprecation_warning, f"No deprecation warning found for {flag}")
+
+                self.assertIsNotNone(
+                    deprecation_warning, f"No deprecation warning found for {flag}"
+                )
                 warning_msg = deprecation_warning
 
                 # Remove any leading hyphens for the comparison
@@ -77,8 +79,10 @@ class TestDeprecated(TestCase):
                     if "deprecated" in call_args[0][0] and "--model gpt4" in call_args[0][0]:
                         deprecation_warning = call_args[0][0]
                         break
-                
-                self.assertIsNotNone(deprecation_warning, "No deprecation warning with model alias found")
+
+                self.assertIsNotNone(
+                    deprecation_warning, "No deprecation warning with model alias found"
+                )
                 warning_msg = deprecation_warning
                 self.assertIn("--model gpt4", warning_msg)
                 self.assertNotIn("--model gpt-4-0613", warning_msg)
@@ -106,11 +110,11 @@ class TestDeprecated(TestCase):
                 # Create args with ONLY the current flag set to True
                 args = MagicMock()
                 args.model = None
-                
+
                 # Ensure all flags are False by default
                 for test_flag, _ in test_cases:
                     setattr(args, test_flag, False)
-                
+
                 # Set only the current flag to True
                 setattr(args, flag, True)
 
