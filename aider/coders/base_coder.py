@@ -1695,6 +1695,7 @@ class Coder:
     def replace_reasoning_tags(self, text, tag_name):
         """
         Replace opening and closing reasoning tags with standard formatting.
+        Ensures exactly one blank line before START and END markers.
 
         Args:
             text (str): The text containing the tags
@@ -1706,12 +1707,24 @@ class Coder:
         if not text:
             return text
 
-        # Replace opening tag
-        text = re.sub(f"<{tag_name}>", REASONING_START, text)
+        # Helper function to ensure exactly one blank line before replacement
+        def ensure_one_blank_line(match):
+            content_before = match.string[:match.start()].rstrip()
+            # If we're not at the start of the text, add exactly one blank line
+            if content_before:
+                return f"{content_before}\n\n{match.group(1)}"
+            # If we're at the start, don't add extra newlines
+            return match.group(1)
 
-        # Replace closing tag
-        text = re.sub(f"</{tag_name}>", REASONING_END, text)
-
+        # Replace opening tag with proper spacing
+        text = re.sub(f"\\s*<{tag_name}>\\s*", f"\n\n{REASONING_START}\n", text)
+        
+        # Replace closing tag with proper spacing
+        text = re.sub(f"\\s*</{tag_name}>\\s*", f"\n\n{REASONING_END}", text)
+        
+        # Clean up any excessive newlines (more than 2 consecutive)
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        
         return text
 
     def show_send_output(self, completion):
