@@ -223,7 +223,7 @@ nltk==3.9.1
     # via llama-index-core
 nodeenv==1.9.1
     # via pre-commit
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   -r requirements/requirements-help.in
     #   contourpy
@@ -395,7 +395,9 @@ semver==3.0.4
 sentence-transformers==3.4.1
     # via llama-index-embeddings-huggingface
 setuptools==75.8.2
-    # via pip-tools
+    # via
+    #   pip-tools
+    #   torch
 shellingham==1.5.4
     # via typer
 six==1.17.0
@@ -421,7 +423,7 @@ sqlalchemy[asyncio]==2.0.38
     # via llama-index-core
 streamlit==1.43.1
     # via -r requirements/requirements-browser.in
-sympy==1.13.3
+sympy==1.13.1
     # via torch
 tenacity==9.0.0
     # via
@@ -439,7 +441,7 @@ tokenizers==0.21.0
     #   transformers
 toml==0.10.2
     # via streamlit
-torch==2.2.2
+torch==2.6.0
     # via
     #   -r requirements/requirements-help.in
     #   sentence-transformers
