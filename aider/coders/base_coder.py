@@ -30,15 +30,15 @@ from aider.llm import litellm
 from aider.models import RETRY_TIMEOUT
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
+from aider.reasoning_tags import (
+    REASONING_TAG, REASONING_START, REASONING_END,
+    replace_reasoning_tags, format_reasoning_content, detect_reasoning_tag
+)
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
-
-REASONING_TAG = "thinking-content-" + "7bbeb8e1441453ad999a0bbba8a46d4b"
-REASONING_START = "> Thinking ..."
-REASONING_END = "> ... done thinking.\n\n------"
 
 
 class UnknownEditFormat(ValueError):
@@ -1697,39 +1697,7 @@ class Coder:
                 if args:
                     self.io.ai_output(json.dumps(args, indent=4))
 
-    def replace_reasoning_tags(self, text):
-        """
-        Replace opening and closing reasoning tags with standard formatting.
-        Ensures exactly one blank line before START and END markers.
-
-        Args:
-            text (str): The text containing the tags
-
-        Returns:
-            str: Text with reasoning tags replaced with standard format
-        """
-        if not text:
-            return text
-
-        # Helper function to ensure exactly one blank line before replacement
-        def ensure_one_blank_line(match):
-            content_before = match.string[: match.start()].rstrip()
-            # If we're not at the start of the text, add exactly one blank line
-            if content_before:
-                return f"{content_before}\n\n{match.group(1)}"
-            # If we're at the start, don't add extra newlines
-            return match.group(1)
-
-        # Replace opening tag with proper spacing
-        text = re.sub(f"\\s*<{self.reasoning_tag_name}>\\s*", f"\n{REASONING_START}\n\n", text)
-
-        # Replace closing tag with proper spacing
-        text = re.sub(f"\\s*</{self.reasoning_tag_name}>\\s*", f"\n\n{REASONING_END}\n\n", text)
-
-        # Clean up any excessive newlines (more than 2 consecutive)
-        text = re.sub(r"\n{3,}", "\n\n", text)
-
-        return text
+    # Moved to aider/reasoning_tags.py
 
     def show_send_output(self, completion):
         if self.verbose:
@@ -1774,12 +1742,7 @@ class Coder:
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
-            formatted_reasoning = (
-                f"<{self.reasoning_tag_name}>\n\n"
-                + reasoning_content
-                + f"\n\n</{self.reasoning_tag_name}>"
-            )
-            formatted_reasoning = self.replace_reasoning_tags(formatted_reasoning) + "\n\n"
+            formatted_reasoning = format_reasoning_content(reasoning_content, self.reasoning_tag_name) + "\n\n"
             show_resp = formatted_reasoning + show_resp
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
