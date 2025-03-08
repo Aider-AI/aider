@@ -5,7 +5,6 @@ import json
 import math
 import os
 import platform
-import re
 import sys
 import time
 from dataclasses import dataclass, fields
