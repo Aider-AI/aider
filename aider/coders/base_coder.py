@@ -1384,14 +1384,9 @@ class Coder:
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
 
-            if self.got_reasoning_content:
-                reasoning_tag = REASONING_TAG
-            else:
-                reasoning_tag = None
-
             self.partial_response_content = self.main_model.remove_reasoning_content(
                 self.partial_response_content,
-                reasoning_tag=reasoning_tag,
+                self.reasoning_tag_name,
             )
             self.multi_response_content = ""
 
