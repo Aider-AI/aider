@@ -380,7 +380,9 @@ class Coder:
 
         self.main_model = main_model
         # Set the reasoning tag name based on model settings or default
-        self.reasoning_tag_name = self.main_model.remove_reasoning if self.main_model.remove_reasoning else REASONING_TAG
+        self.reasoning_tag_name = (
+            self.main_model.remove_reasoning if self.main_model.remove_reasoning else REASONING_TAG
+        )
 
         self.stream = stream and main_model.streaming
 
@@ -1719,13 +1721,13 @@ class Coder:
 
         # Replace opening tag with proper spacing
         text = re.sub(f"\\s*<{self.reasoning_tag_name}>\\s*", f"\n\n{REASONING_START}\n\n", text)
-        
+
         # Replace closing tag with proper spacing
         text = re.sub(f"\\s*</{self.reasoning_tag_name}>\\s*", f"\n\n{REASONING_END}\n\n", text)
-        
+
         # Clean up any excessive newlines (more than 2 consecutive)
         text = re.sub(r"\n{3,}", "\n\n", text)
-        
+
         return text
 
     def show_send_output(self, completion):
@@ -1772,7 +1774,9 @@ class Coder:
 
         if reasoning_content:
             formatted_reasoning = (
-                f"<{self.reasoning_tag_name}>\n\n" + reasoning_content + f"\n\n</{self.reasoning_tag_name}>"
+                f"<{self.reasoning_tag_name}>\n\n"
+                + reasoning_content
+                + f"\n\n</{self.reasoning_tag_name}>"
             )
             formatted_reasoning = self.replace_reasoning_tags(formatted_reasoning) + "\n\n"
             show_resp = formatted_reasoning + show_resp
