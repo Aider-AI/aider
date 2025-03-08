@@ -2,9 +2,10 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from aider.coders.base_coder import Coder
+from aider.dump import dump  # noqa
 from aider.io import InputOutput
 from aider.models import Model
-from aider.dump import dump # noqa
+
 
 class TestReasoning(unittest.TestCase):
     def test_send_with_reasoning_content(self):
@@ -63,7 +64,7 @@ class TestReasoning(unittest.TestCase):
             self.assertLess(
                 reasoning_pos, main_pos, "Reasoning content should appear before main content"
             )
-            
+
     def test_send_with_think_tags(self):
         """Test that <think> tags are properly processed and formatted."""
         # Setup IO with no pretty
@@ -78,7 +79,7 @@ class TestReasoning(unittest.TestCase):
         # Test data
         reasoning_content = "My step-by-step reasoning process"
         main_content = "Final answer after reasoning"
-        
+
         # Create content with think tags
         combined_content = f"""<think>
 {reasoning_content}
