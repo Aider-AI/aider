@@ -21,7 +21,10 @@ class TestDeprecated(TestCase):
         os.environ.update(self.original_env)
 
     @patch("aider.io.InputOutput.tool_warning")
-    def test_deprecated_args_show_warnings(self, mock_tool_warning):
+    @patch("aider.io.InputOutput.offer_url")
+    def test_deprecated_args_show_warnings(self, mock_offer_url, mock_tool_warning):
+        # Prevent URL launches during tests
+        mock_offer_url.return_value = False
         # Test all deprecated flags to ensure they show warnings
         deprecated_flags = [
             "--opus",
@@ -65,7 +68,10 @@ class TestDeprecated(TestCase):
                 self.assertIn("use --model", warning_msg.lower())
 
     @patch("aider.io.InputOutput.tool_warning")
-    def test_model_alias_in_warning(self, mock_tool_warning):
+    @patch("aider.io.InputOutput.offer_url")
+    def test_model_alias_in_warning(self, mock_offer_url, mock_tool_warning):
+        # Prevent URL launches during tests
+        mock_offer_url.return_value = False
         # Test that the warning uses the model alias if available
         with patch("aider.models.MODEL_ALIASES", {"gpt4": "gpt-4-0613"}):
             with patch("aider.models.Model"):
