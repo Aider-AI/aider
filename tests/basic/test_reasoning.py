@@ -57,7 +57,7 @@ class TestReasoning(unittest.TestCase):
             # Output should include both reasoning and main content
             self.assertIn(reasoning_content, output)
             self.assertIn(main_content, output)
-            
+
             # Verify that partial_response_content only contains the main content
             self.assertEqual(coder.partial_response_content.strip(), main_content.strip())
 
@@ -166,11 +166,11 @@ class TestReasoning(unittest.TestCase):
             self.assertLess(
                 reasoning_pos, main_pos, "Reasoning content should appear before main content"
             )
-            
+
             # Verify that partial_response_content only contains the main content
             expected_content = "Final answer after reasoning"
             self.assertEqual(coder.partial_response_content.strip(), expected_content)
-            
+
             # Verify that partial_response_content only contains the main content
             self.assertEqual(coder.partial_response_content.strip(), "Final answer after reasoning")
 
@@ -238,7 +238,7 @@ class TestReasoning(unittest.TestCase):
             self.assertLess(
                 reasoning_pos, main_pos, "Reasoning content should appear before main content"
             )
-            
+
             # Verify that partial_response_content only contains the main content
             self.assertEqual(coder.partial_response_content.strip(), main_content.strip())
 
