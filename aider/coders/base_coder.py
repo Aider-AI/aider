@@ -1743,10 +1743,12 @@ class Coder:
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
-            formatted_reasoning = (
-                format_reasoning_content(reasoning_content, self.reasoning_tag_name) + "\n\n"
+            formatted_reasoning = format_reasoning_content(
+                reasoning_content, self.reasoning_tag_name
             )
             show_resp = formatted_reasoning + show_resp
+
+        show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
 
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
 
