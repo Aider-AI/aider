@@ -9,8 +9,8 @@ from aider.models import Model
 class TestReasoning(unittest.TestCase):
     def test_send_with_reasoning_content(self):
         """Test that reasoning content is properly formatted and output."""
-        # Setup IO with no streaming, no pretty
-        io = InputOutput(pretty=False, stream=False)
+        # Setup IO with no pretty
+        io = InputOutput(pretty=False)
         io.ai_output = MagicMock()
 
         # Setup model and coder
