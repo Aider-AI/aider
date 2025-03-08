@@ -1709,7 +1709,7 @@ class Coder:
 
         # Helper function to ensure exactly one blank line before replacement
         def ensure_one_blank_line(match):
-            content_before = match.string[:match.start()].rstrip()
+            content_before = match.string[: match.start()].rstrip()
             # If we're not at the start of the text, add exactly one blank line
             if content_before:
                 return f"{content_before}\n\n{match.group(1)}"
@@ -1718,13 +1718,13 @@ class Coder:
 
         # Replace opening tag with proper spacing
         text = re.sub(f"\\s*<{tag_name}>\\s*", f"\n\n{REASONING_START}\n", text)
-        
+
         # Replace closing tag with proper spacing
         text = re.sub(f"\\s*</{tag_name}>\\s*", f"\n\n{REASONING_END}", text)
-        
+
         # Clean up any excessive newlines (more than 2 consecutive)
-        text = re.sub(r'\n{3,}', '\n\n', text)
-        
+        text = re.sub(r"\n{3,}", "\n\n", text)
+
         return text
 
     def show_send_output(self, completion):
