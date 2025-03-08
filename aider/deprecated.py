@@ -96,30 +96,30 @@ def handle_deprecated_model_args(args, io):
         "4_turbo": "gpt-4-1106-preview",
         "35turbo": "gpt-3.5-turbo",
         "deepseek": "deepseek/deepseek-chat",
-        "o1_mini": "o1-mini", 
+        "o1_mini": "o1-mini",
         "o1_preview": "o1-preview",
     }
-    
+
     # Check if any deprecated args are used
     for arg_name, model_name in model_map.items():
         arg_name_clean = arg_name.replace("-", "_")
         if hasattr(args, arg_name_clean) and getattr(args, arg_name_clean):
             # Find preferred name to display in warning
             from aider.models import MODEL_ALIASES
-            
+
             display_name = model_name
             # Check if there's a shorter alias for this model
             for alias, full_name in MODEL_ALIASES.items():
                 if full_name == model_name:
                     display_name = alias
                     break
-            
+
             # Show the warning
             io.tool_warning(
-                f"The --{arg_name.replace('_', '-')} flag is deprecated and will be removed in a future version. "
-                f"Please use --model {display_name} instead."
+                f"The --{arg_name.replace('_', '-')} flag is deprecated and will be removed in a"
+                f" future version. Please use --model {display_name} instead."
             )
-            
+
             # Set the model
             args.model = model_name
             break

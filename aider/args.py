@@ -39,7 +39,7 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Specify the model to use for the main chat",
     )
-    
+
     # Add deprecated model shortcut arguments
     add_deprecated_model_args(parser, group)
 

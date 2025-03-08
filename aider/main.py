@@ -589,7 +589,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.openai_api_key:
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
-        
+
     # Handle deprecated model shortcut args
     handle_deprecated_model_args(args, io)
     if args.openai_api_base:
