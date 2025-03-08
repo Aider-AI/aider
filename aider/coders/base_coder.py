@@ -1315,8 +1315,6 @@ class Coder:
 
         litellm_ex = LiteLLMExceptions()
 
-        self.got_reasoning_content = False
-        self.ended_reasoning_content = False
         self.usage_report = None
         exhausted = False
         interrupted = False
@@ -1644,6 +1642,9 @@ class Coder:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
 
     def send(self, messages, model=None, functions=None):
+        self.got_reasoning_content = False
+        self.ended_reasoning_content = False
+
         if not model:
             model = self.main_model
 

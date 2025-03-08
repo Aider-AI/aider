@@ -131,6 +131,8 @@ class TestReasoning(unittest.TestCase):
             # Verify mdstream.update was called multiple times
             mock_mdstream.update.assert_called()
 
+            coder.live_incremental_response(True)
+
             # Explicitly get all calls to update
             update_calls = mock_mdstream.update.call_args_list
 
