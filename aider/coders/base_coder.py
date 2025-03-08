@@ -29,10 +29,7 @@ from aider.linter import Linter
 from aider.llm import litellm
 from aider.models import RETRY_TIMEOUT
 from aider.reasoning_tags import (
-    REASONING_END,
-    REASONING_START,
     REASONING_TAG,
-    detect_reasoning_tag,
     format_reasoning_content,
     replace_reasoning_tags,
 )
