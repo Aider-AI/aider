@@ -817,6 +817,10 @@ class Commands:
         all_files = files + read_only_files
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
+        
+    def completions_export_context(self):
+        """Return possible completions for export-context command"""
+        return ["100", "1000", "5000"]
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
@@ -1472,6 +1476,22 @@ Just show me the edits I need to make.
         all_files = sorted(set(inchat_files + read_only_files))
         return all_files
 
+    def _parse_chunk_size(self, args):
+        """Parse the chunk size argument, return None for flat mode or a valid chunk size"""
+        if not args.strip():
+            return None
+
+        try:
+            chunk_size = int(args.strip())
+            if chunk_size < 50:
+                chunk_size = 50
+                self.io.tool_warning(f"Chunk size must be at least 50. Using default: 50")
+        except ValueError:
+            chunk_size = 50
+            self.io.tool_warning(f"Invalid chunk size. Using default: 50")
+
+        return chunk_size
+
     def _export_flat(self, files, export_dir):
         """Export each file to its own file with flattened path"""
         import os
@@ -1500,11 +1520,79 @@ Just show me the edits I need to make.
 
         return count
 
+    def _export_chunked(self, files, export_dir, chunk_size):
+        """Export files as chunks, treating each file as atomic"""
+        import os
+
+        # Collect file contents with line counts (excluding empty lines)
+        file_data = []
+        for rel_fname in files:
+            abs_fname = self.coder.abs_root_path(rel_fname)
+            content = self.io.read_text(abs_fname)
+
+            if content is None:
+                self.io.tool_warning(f"Could not read {rel_fname}, skipping")
+                continue
+
+            # Count non-empty lines
+            non_empty_lines = len([line for line in content.splitlines() if line.strip()])
+            file_data.append((rel_fname, content, non_empty_lines))
+
+        # Create chunks (treating each file as atomic)
+        chunks = []
+        current_chunk = []
+        current_chunk_size = 0
+
+        for rel_fname, content, lines in file_data:
+            # If adding this file would exceed chunk size and we already have files,
+            # start a new chunk (unless this is the first file in a new chunk)
+            if current_chunk and current_chunk_size + lines > chunk_size:
+                chunks.append(current_chunk)
+                current_chunk = []
+                current_chunk_size = 0
+
+            # Add file to current chunk
+            current_chunk.append((rel_fname, content))
+            current_chunk_size += lines
+
+        # Add the last chunk if not empty
+        if current_chunk:
+            chunks.append(current_chunk)
+
+        # Write chunk files
+        count = 0
+        for i, chunk in enumerate(chunks, 1):
+            # Create chunk filename - different format if only one file in the chunk
+            if len(chunk) == 1:
+                # Just use the single filename for single-file chunks
+                chunk_fname = f"{chunk[0][0]}_chunk_{i}.txt"
+            else:
+                # Get first and last file in chunk for multi-file chunks
+                first_file = chunk[0][0]
+                last_file = chunk[-1][0]
+                chunk_fname = f"{first_file}...{last_file}_chunk_{i}.txt"
+            # Replace path separators with pipe characters for better readability
+            chunk_fname = chunk_fname.replace('/', '|').replace('\\', '|')
+            out_path = os.path.join(export_dir, chunk_fname)
+
+            # Write content with file markers
+            try:
+                with open(out_path, 'w', encoding=self.io.encoding) as f:
+                    for rel_fname, content in chunk:
+                        f.write(f"========== START FILE: {rel_fname} ==========\n")
+                        f.write(content)
+                        f.write("\n\n")
+                count += 1
+            except Exception as e:
+                self.io.tool_error(f"Error writing chunk {i}: {str(e)}")
+
+        return count
+
     def cmd_export_context(self, args):
         "Export files in chat context to a timestamped directory"
 
-        # Parse arguments (we'll implement chunking later)
-        chunk_size = None
+        # Parse arguments
+        chunk_size = self._parse_chunk_size(args)
 
         # Get files in context
         all_files = self._get_context_files()
@@ -1515,10 +1603,13 @@ Just show me the edits I need to make.
         # Create timestamped directory
         export_dir = self._create_export_directory()
 
-        # Export files in flat mode
-        count = self._export_flat(all_files, export_dir)
-
-        self.io.tool_output(f"Exported {count} files to {export_dir}/")
+        # Export files based on mode
+        if chunk_size is None:
+            count = self._export_flat(all_files, export_dir)
+            self.io.tool_output(f"Exported {count} files to {export_dir}/")
+        else:
+            count = self._export_chunked(all_files, export_dir, chunk_size)
+            self.io.tool_output(f"Exported {count} chunk files to {export_dir}/")
 
 
 def expand_subdir(file_path):
