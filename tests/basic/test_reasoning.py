@@ -15,7 +15,7 @@ class TestReasoning(unittest.TestCase):
 
         # Setup model and coder
         model = Model("gpt-3.5-turbo")
-        coder = Coder.create(model, None, io=io)
+        coder = Coder.create(model, None, io=io, stream=False)
 
         # Test data
         reasoning_content = "My step-by-step reasoning process"
