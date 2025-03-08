@@ -1394,9 +1394,10 @@ class Coder:
             )
             self.multi_response_content = ""
 
-        print()
-        print("=" * 20)
-        dump(self.partial_response_content)
+        ###
+        # print()
+        # print("=" * 20)
+        # dump(self.partial_response_content)
 
         self.io.tool_output()
 
@@ -1720,7 +1721,7 @@ class Coder:
             return match.group(1)
 
         # Replace opening tag with proper spacing
-        text = re.sub(f"\\s*<{self.reasoning_tag_name}>\\s*", f"\n\n{REASONING_START}\n\n", text)
+        text = re.sub(f"\\s*<{self.reasoning_tag_name}>\\s*", f"\n{REASONING_START}\n\n", text)
 
         # Replace closing tag with proper spacing
         text = re.sub(f"\\s*</{self.reasoning_tag_name}>\\s*", f"\n\n{REASONING_END}\n\n", text)
@@ -1844,8 +1845,7 @@ class Coder:
                 self.live_incremental_response(False)
             elif text:
                 # Apply reasoning tag formatting
-                if self.got_reasoning_content:
-                    text = self.replace_reasoning_tags(text)
+                text = self.replace_reasoning_tags(text)
                 try:
                     sys.stdout.write(text)
                 except UnicodeEncodeError:
@@ -1863,8 +1863,7 @@ class Coder:
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
         # Apply any reasoning tag formatting
-        if self.got_reasoning_content:
-            show_resp = self.replace_reasoning_tags(show_resp)
+        show_resp = self.replace_reasoning_tags(show_resp)
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
