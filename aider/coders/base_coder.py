@@ -1858,7 +1858,9 @@ class Coder:
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
-        show_resp = self.replace_reasoning_tags(show_resp, REASONING_TAG)
+        # Apply any reasoning tag formatting
+        if self.got_reasoning_content:
+            show_resp = self.replace_reasoning_tags(show_resp)
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
