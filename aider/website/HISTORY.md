@@ -25,6 +25,7 @@ cog.out(text)
 
 ### main branch
 
+- Added `--thinking-tokens` CLI option to control token budget for models that support thinking.
 - Display thinking/reasoning content from LLMs which return it.
 - Enhanced handling of reasoning tags to better clean up model responses.
 - Improved error handling for EOF (Ctrl+D) in user input prompts.
@@ -37,7 +38,9 @@ cog.out(text)
 - Improved empty LLM response handling with clearer warning messages.
 - Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
 - Offer to install dependencies for Bedrock and Vertex AI models.
-- Aider wrote 82% of the code in this release.
+- Deprecated model shortcut args (like --4o, --opus) in favor of the --model flag.
+- Added deprecation warning for `remove_reasoning` setting, now replaced by `reasoning_tag`.
+- Aider wrote 84% of the code in this release.
 
 ### Aider v0.75.3
 

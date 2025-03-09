@@ -101,7 +101,7 @@ frozenlist==1.5.0
     # via
     #   aiohttp
     #   aiosignal
-fsspec==2025.2.0
+fsspec==2025.3.0
     # via
     #   huggingface-hub
     #   llama-index-core
@@ -133,7 +133,7 @@ huggingface-hub[inference]==0.29.2
     #   sentence-transformers
     #   tokenizers
     #   transformers
-identify==2.6.8
+identify==2.6.9
     # via pre-commit
 idna==3.10
     # via
@@ -174,9 +174,9 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.63.2
+litellm==1.63.3
     # via -r requirements/requirements.in
-llama-index-core==0.12.22
+llama-index-core==0.12.23.post2
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -419,7 +419,7 @@ soupsieve==2.6
     # via beautifulsoup4
 sqlalchemy[asyncio]==2.0.38
     # via llama-index-core
-streamlit==1.43.0
+streamlit==1.43.1
     # via -r requirements/requirements-browser.in
 sympy==1.13.3
     # via torch

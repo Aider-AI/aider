@@ -26,6 +26,7 @@ from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
 from aider.copypaste import ClipboardWatcher
+from aider.deprecated import handle_deprecated_model_args
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
@@ -608,6 +609,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.openai_api_key:
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
+
+    # Handle deprecated model shortcut args
+    handle_deprecated_model_args(args, io)
     if args.openai_api_base:
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
     if args.openai_api_version:
@@ -795,13 +799,19 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_edit_format=args.editor_edit_format,
     )
 
-    # add --reasoning-effort cli param
+    # Check if deprecated remove_reasoning is set
+    if main_model.remove_reasoning is not None:
+        io.tool_warning(
+            "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
+        )
+
+    # Set reasoning effort if specified
     if args.reasoning_effort is not None:
-        if not getattr(main_model, "extra_params", None):
-            main_model.extra_params = {}
-        if "extra_body" not in main_model.extra_params:
-            main_model.extra_params["extra_body"] = {}
-        main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
+        main_model.set_reasoning_effort(args.reasoning_effort)
+
+    # Set thinking tokens if specified
+    if args.thinking_tokens is not None:
+        main_model.set_thinking_tokens(args.thinking_tokens)
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):

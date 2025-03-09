@@ -383,7 +383,7 @@ class Coder:
         self.main_model = main_model
         # Set the reasoning tag name based on model settings or default
         self.reasoning_tag_name = (
-            self.main_model.remove_reasoning if self.main_model.remove_reasoning else REASONING_TAG
+            self.main_model.reasoning_tag if self.main_model.reasoning_tag else REASONING_TAG
         )
 
         self.stream = stream and main_model.streaming

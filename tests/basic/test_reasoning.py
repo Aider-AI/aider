@@ -5,7 +5,11 @@ from aider.coders.base_coder import Coder
 from aider.dump import dump  # noqa
 from aider.io import InputOutput
 from aider.models import Model
-from aider.reasoning_tags import remove_reasoning_content
+from aider.reasoning_tags import (
+    REASONING_END,
+    REASONING_START,
+    remove_reasoning_content,
+)
 
 
 class TestReasoning(unittest.TestCase):
@@ -52,8 +56,8 @@ class TestReasoning(unittest.TestCase):
             dump(output)
 
             # Output should contain formatted reasoning tags
-            self.assertIn("Thinking ...", output)
-            self.assertIn("... done thinking", output)
+            self.assertIn(REASONING_START, output)
+            self.assertIn(REASONING_END, output)
 
             # Output should include both reasoning and main content
             self.assertIn(reasoning_content, output)
@@ -157,9 +161,9 @@ class TestReasoning(unittest.TestCase):
             final_text = update_calls[-1][0][0]
 
             # The final text should include both reasoning and main content with proper formatting
-            self.assertIn("> Thinking ...", final_text)
+            self.assertIn(REASONING_START, final_text)
             self.assertIn("My step-by-step reasoning process", final_text)
-            self.assertIn("> ... done thinking", final_text)
+            self.assertIn(REASONING_END, final_text)
             self.assertIn("Final answer after reasoning", final_text)
 
             # Ensure proper order: reasoning first, then main content
@@ -182,7 +186,7 @@ class TestReasoning(unittest.TestCase):
 
         # Setup model and coder
         model = Model("gpt-3.5-turbo")
-        model.remove_reasoning = "think"  # Set to remove <think> tags
+        model.reasoning_tag = "think"  # Set to remove <think> tags
         coder = Coder.create(model, None, io=io, stream=False)
 
         # Test data
@@ -225,8 +229,8 @@ class TestReasoning(unittest.TestCase):
             dump(output)
 
             # Output should contain formatted reasoning tags
-            self.assertIn("Thinking ...", output)
-            self.assertIn("... done thinking", output)
+            self.assertIn(REASONING_START, output)
+            self.assertIn(REASONING_END, output)
 
             # Output should include both reasoning and main content
             self.assertIn(reasoning_content, output)
@@ -252,7 +256,7 @@ class TestReasoning(unittest.TestCase):
 
         # Setup model and coder
         model = Model("gpt-3.5-turbo")
-        model.remove_reasoning = "think"  # Set to remove <think> tags
+        model.reasoning_tag = "think"  # Set to remove <think> tags
         coder = Coder.create(model, None, io=io, stream=True)
 
         # Ensure the coder shows pretty output
@@ -330,9 +334,9 @@ class TestReasoning(unittest.TestCase):
             final_text = update_calls[-1][0][0]
 
             # The final text should include both reasoning and main content with proper formatting
-            self.assertIn("> Thinking ...", final_text)
+            self.assertIn(REASONING_START, final_text)
             self.assertIn("My step-by-step reasoning process", final_text)
-            self.assertIn("> ... done thinking", final_text)
+            self.assertIn(REASONING_END, final_text)
             self.assertIn("Final answer after reasoning", final_text)
 
             # Ensure proper order: reasoning first, then main content
@@ -380,7 +384,7 @@ End"""
     @patch("aider.models.litellm.completion")
     def test_simple_send_with_retries_removes_reasoning(self, mock_completion):
         """Test that simple_send_with_retries correctly removes reasoning content."""
-        model = Model("deepseek-r1")  # This model has remove_reasoning="think"
+        model = Model("deepseek-r1")  # This model has reasoning_tag="think"
 
         # Mock the completion response
         mock_response = MagicMock()

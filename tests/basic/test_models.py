@@ -277,7 +277,7 @@ class TestModels(unittest.TestCase):
         self.assertTrue(model.use_repo_map)
         self.assertTrue(model.examples_as_sys_msg)
         self.assertFalse(model.use_temperature)
-        self.assertEqual(model.remove_reasoning, "think")
+        self.assertEqual(model.reasoning_tag, "think")
 
         # Test provider/deepseek-r1 case
         model = Model("someprovider/deepseek-r1")
@@ -285,7 +285,7 @@ class TestModels(unittest.TestCase):
         self.assertTrue(model.use_repo_map)
         self.assertTrue(model.examples_as_sys_msg)
         self.assertFalse(model.use_temperature)
-        self.assertEqual(model.remove_reasoning, "think")
+        self.assertEqual(model.reasoning_tag, "think")
 
         # Test provider/deepseek-v3 case
         model = Model("anotherprovider/deepseek-v3")
