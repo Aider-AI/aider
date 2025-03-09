@@ -81,7 +81,7 @@ def main():
     # Construct and run the aider command
     message = history_prompt.format(aider_line=aider_line)
 
-    cmd = ["aider", hist_path, "--read", diff_path, "--msg", message, "--no-auto-commit"]
+    cmd = ["aider", hist_path, "--read", diff_path, "--msg", message, "--no-git", "--no-auto-lint"]
     subprocess.run(cmd)
 
     # Read back the updated history
