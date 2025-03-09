@@ -420,7 +420,9 @@ End"""
                 # Add required attributes expected by show_send_output
                 self.choices = [MagicMock()]
                 self.choices[0].message.content = content
-                self.choices[0].message.reasoning = reasoning  # Using reasoning instead of reasoning_content
+                self.choices[0].message.reasoning = (
+                    reasoning  # Using reasoning instead of reasoning_content
+                )
                 self.finish_reason = "stop"
 
         mock_completion = MockCompletion(main_content, reasoning_content)
