@@ -424,6 +424,7 @@ End"""
                 self.choices[0].message.reasoning = (
                     reasoning  # Using reasoning instead of reasoning_content
                 )
+                delattr(self.choices[0].message, "reasoning_content")
                 self.finish_reason = "stop"
 
         mock_completion = MockCompletion(main_content, reasoning_content)
