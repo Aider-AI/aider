@@ -400,7 +400,8 @@ End"""
         self.assertEqual(remove_reasoning_content(text, "think"), text)
 
     def test_send_with_reasoning(self):
-        """Test that reasoning content from the 'reasoning' attribute is properly formatted and output."""
+        """Test that reasoning content from the 'reasoning' attribute is properly formatted
+        and output."""
         # Setup IO with no pretty
         io = InputOutput(pretty=False)
         io.assistant_output = MagicMock()
@@ -463,7 +464,8 @@ End"""
             )
 
     def test_send_with_reasoning_stream(self):
-        """Test that streaming reasoning content from the 'reasoning' attribute is properly formatted and output."""
+        """Test that streaming reasoning content from the 'reasoning' attribute is properly 
+        formatted and output."""
         # Setup IO with pretty output for streaming
         io = InputOutput(pretty=True)
         mock_mdstream = MagicMock()
@@ -506,7 +508,8 @@ End"""
                     # Need to handle attribute access that would raise AttributeError
                     delattr(self.choices[0].delta, "reasoning")
 
-        # Create chunks to simulate streaming - using reasoning attribute instead of reasoning_content
+        # Create chunks to simulate streaming - using reasoning attribute instead of
+        # reasoning_content
         chunks = [
             # First chunk with reasoning content starts the tag
             MockStreamingChunk(reasoning="My step-by-step "),
