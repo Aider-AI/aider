@@ -7,8 +7,8 @@ from aider.dump import dump  # noqa
 # Standard tag identifier
 REASONING_TAG = "thinking-content-" + "7bbeb8e1441453ad999a0bbba8a46d4b"
 # Output formatting
-REASONING_START = "-----\n**► THINKING**"
-REASONING_END = "-----\n**► ANSWER**"
+REASONING_START = "--------------\n► **THINKING**"
+REASONING_END = "------------\n► **ANSWER**"
 
 
 def remove_reasoning_content(res, reasoning_tag):
