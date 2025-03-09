@@ -773,14 +773,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_edit_format=args.editor_edit_format,
     )
 
-    # add --reasoning-effort cli param
+    # Set reasoning effort if specified
     if args.reasoning_effort is not None:
-        # move this into a Model.set_reasoning_effort() method. ai!
-        if not getattr(main_model, "extra_params", None):
-            main_model.extra_params = {}
-        if "extra_body" not in main_model.extra_params:
-            main_model.extra_params["extra_body"] = {}
-        main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
+        main_model.set_reasoning_effort(args.reasoning_effort)
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):

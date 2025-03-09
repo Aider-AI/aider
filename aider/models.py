@@ -582,6 +582,15 @@ class Model(ModelSettings):
             map_tokens = max(map_tokens, 1024)
         return map_tokens
 
+    def set_reasoning_effort(self, effort):
+        """Set the reasoning effort parameter for models that support it"""
+        if effort is not None:
+            if not self.extra_params:
+                self.extra_params = {}
+            if "extra_body" not in self.extra_params:
+                self.extra_params["extra_body"] = {}
+            self.extra_params["extra_body"]["reasoning_effort"] = effort
+    
     def is_deepseek_r1(self):
         name = self.name.lower()
         if "deepseek" not in name:
