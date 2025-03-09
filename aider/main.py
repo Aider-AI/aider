@@ -773,6 +773,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         editor_edit_format=args.editor_edit_format,
     )
 
+    # Check if deprecated remove_reasoning is set
+    if main_model.remove_reasoning is not None:
+        io.tool_warning("'remove_reasoning' is deprecated, please use 'reasoning_tag' instead.")
+
     # Set reasoning effort if specified
     if args.reasoning_effort is not None:
         main_model.set_reasoning_effort(args.reasoning_effort)
