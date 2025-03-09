@@ -5,7 +5,11 @@ from aider.coders.base_coder import Coder
 from aider.dump import dump  # noqa
 from aider.io import InputOutput
 from aider.models import Model
-from aider.reasoning_tags import remove_reasoning_content, REASONING_START, REASONING_END
+from aider.reasoning_tags import (
+    REASONING_END,
+    REASONING_START,
+    remove_reasoning_content,
+)
 
 
 class TestReasoning(unittest.TestCase):
