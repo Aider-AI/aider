@@ -90,7 +90,7 @@ class TestReasoning(unittest.TestCase):
 
         # Mock streaming response chunks
         class MockStreamingChunk:
-            def __init__(self, content=None, reasoning_content=None, finish_reason=None):
+            def __init__(self, content=None, reasoning_content=None, reasoning=None, finish_reason=None):
                 self.choices = [MagicMock()]
                 self.choices[0].delta = MagicMock()
                 self.choices[0].finish_reason = finish_reason
@@ -108,6 +108,13 @@ class TestReasoning(unittest.TestCase):
                 else:
                     # Need to handle attribute access that would raise AttributeError
                     delattr(self.choices[0].delta, "reasoning_content")
+                
+                # Set reasoning if provided
+                if reasoning is not None:
+                    self.choices[0].delta.reasoning = reasoning
+                else:
+                    # Need to handle attribute access that would raise AttributeError
+                    delattr(self.choices[0].delta, "reasoning")
 
         # Create chunks to simulate streaming
         chunks = [
@@ -264,7 +271,7 @@ class TestReasoning(unittest.TestCase):
 
         # Mock streaming response chunks
         class MockStreamingChunk:
-            def __init__(self, content=None, reasoning_content=None, finish_reason=None):
+            def __init__(self, content=None, reasoning_content=None, reasoning=None, finish_reason=None):
                 self.choices = [MagicMock()]
                 self.choices[0].delta = MagicMock()
                 self.choices[0].finish_reason = finish_reason
@@ -282,6 +289,13 @@ class TestReasoning(unittest.TestCase):
                 else:
                     # Need to handle attribute access that would raise AttributeError
                     delattr(self.choices[0].delta, "reasoning_content")
+                
+                # Set reasoning if provided
+                if reasoning is not None:
+                    self.choices[0].delta.reasoning = reasoning
+                else:
+                    # Need to handle attribute access that would raise AttributeError
+                    delattr(self.choices[0].delta, "reasoning")
 
         # Create chunks to simulate streaming with think tags
         chunks = [
