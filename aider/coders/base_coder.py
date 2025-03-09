@@ -1778,31 +1778,27 @@ class Coder:
                 pass
 
             text = ""
+            dump(chunk)
             try:
                 reasoning_content = chunk.choices[0].delta.reasoning_content
-                if reasoning_content:
-                    if not self.got_reasoning_content:
-                        text += f"<{self.reasoning_tag_name}>\n\n"
-                    text += reasoning_content
-                    self.got_reasoning_content = True
-                    received_content = True
             except AttributeError:
                 try:
                     reasoning_content = chunk.choices[0].delta.reasoning
-                    if reasoning_content:
-                        if not self.got_reasoning_content:
-                            text += f"<{self.reasoning_tag_name}>\n\n"
-                        text += reasoning_content
-                        self.got_reasoning_content = True
-                        received_content = True
                 except AttributeError:
-                    pass
+                    reasoning_content = None
+
+            if reasoning_content:
+                if not self.got_reasoning_content:
+                    text += f"<{REASONING_TAG}>\n\n"
+                text += reasoning_content
+                self.got_reasoning_content = True
+                received_content = True
 
             try:
                 content = chunk.choices[0].delta.content
                 if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"\n\n</{REASONING_TAG}>\n\n"
+                        text += f"\n\n</{self.reasoning_tag_name}>\n\n"
                         self.ended_reasoning_content = True
 
                     text += content
