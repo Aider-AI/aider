@@ -40,9 +40,6 @@ def get_parser(default_config_files, git_root):
         help="Specify the model to use for the main chat",
     )
 
-    # Add deprecated model shortcut arguments
-    add_deprecated_model_args(parser, group)
-
     ##########
     group = parser.add_argument_group("API Keys and settings")
     group.add_argument(
@@ -753,6 +750,11 @@ def get_parser(default_config_files, git_root):
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
+
+    ##########
+    group = parser.add_argument_group("Deprecated model settings")
+    # Add deprecated model shortcut arguments
+    add_deprecated_model_args(parser, group)
 
     return parser
 
