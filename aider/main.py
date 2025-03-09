@@ -775,7 +775,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Check if deprecated remove_reasoning is set
     if main_model.remove_reasoning is not None:
-        io.tool_warning("'remove_reasoning' is deprecated, please use 'reasoning_tag' instead.")
+        io.tool_warning(
+            "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
+        )
 
     # Set reasoning effort if specified
     if args.reasoning_effort is not None:
