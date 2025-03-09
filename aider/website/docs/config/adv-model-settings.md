@@ -172,6 +172,7 @@ cog.out("```\n")
   streaming: true
   editor_model_name: null
   editor_edit_format: null
+  reasoning_tag: null
   remove_reasoning: null
   system_prompt_prefix: null
 
@@ -512,7 +513,7 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
   editor_edit_format: editor-diff
-  remove_reasoning: think
+  reasoning_tag: think
 
 - name: fireworks_ai/accounts/fireworks/models/deepseek-v3
   edit_format: diff
@@ -533,7 +534,7 @@ cog.out("```\n")
   use_temperature: 0.6
   editor_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
   editor_edit_format: editor-diff
-  remove_reasoning: think
+  reasoning_tag: think
 
 - name: gemini/gemini-1.5-flash-002
 
@@ -704,7 +705,7 @@ cog.out("```\n")
   use_temperature: 0.6
   editor_model_name: groq/qwen-2.5-coder-32b
   editor_edit_format: editor-diff
-  remove_reasoning: think
+  reasoning_tag: think
 
 - name: o1
   edit_format: diff
@@ -902,6 +903,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
+    include_reasoning: true
   caches_by_default: true
   use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-chat
