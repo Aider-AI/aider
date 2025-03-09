@@ -107,7 +107,7 @@ class TestDeprecated(TestCase):
             ("4o", "gpt-4o"),
             ("mini", "gpt-4o-mini"),
             ("4_turbo", "gpt-4-1106-preview"),
-            ("35_turbo", "gpt-3.5-turbo"),
+            ("35turbo", "gpt-3.5-turbo"),
             ("deepseek", "deepseek/deepseek-chat"),
             ("o1_mini", "o1-mini"),
             ("o1_preview", "o1-preview"),
@@ -130,6 +130,8 @@ class TestDeprecated(TestCase):
 
                 # Set only the current flag to True
                 setattr(args, flag, True)
+
+                dump(args)
 
                 # Call the handle_deprecated_model_args function
                 handle_deprecated_model_args(args, mock_io)
