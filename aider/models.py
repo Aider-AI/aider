@@ -351,7 +351,7 @@ class Model(ModelSettings):
             self.examples_as_sys_msg = True
             self.use_temperature = False
             self.reasoning_tag = "think"
-            self.remove_reasoning = "think"  # For backward compatibility
+            self.reasoning_tag = "think"
             return  # <--
 
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
