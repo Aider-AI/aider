@@ -52,8 +52,8 @@ class TestReasoning(unittest.TestCase):
             dump(output)
 
             # Output should contain formatted reasoning tags
-            self.assertIn("Thinking ...", output)
-            self.assertIn("... done thinking", output)
+            self.assertIn("THINKING", output)
+            self.assertIn("ANSWER", output)
 
             # Output should include both reasoning and main content
             self.assertIn(reasoning_content, output)
@@ -157,9 +157,9 @@ class TestReasoning(unittest.TestCase):
             final_text = update_calls[-1][0][0]
 
             # The final text should include both reasoning and main content with proper formatting
-            self.assertIn("> Thinking ...", final_text)
+            self.assertIn("THINKING", final_text)
             self.assertIn("My step-by-step reasoning process", final_text)
-            self.assertIn("> ... done thinking", final_text)
+            self.assertIn("ANSWER", final_text)
             self.assertIn("Final answer after reasoning", final_text)
 
             # Ensure proper order: reasoning first, then main content
@@ -225,8 +225,8 @@ class TestReasoning(unittest.TestCase):
             dump(output)
 
             # Output should contain formatted reasoning tags
-            self.assertIn("Thinking ...", output)
-            self.assertIn("... done thinking", output)
+            self.assertIn("THINKING", output)
+            self.assertIn("ANSWER", output)
 
             # Output should include both reasoning and main content
             self.assertIn(reasoning_content, output)
@@ -330,9 +330,9 @@ class TestReasoning(unittest.TestCase):
             final_text = update_calls[-1][0][0]
 
             # The final text should include both reasoning and main content with proper formatting
-            self.assertIn("> Thinking ...", final_text)
+            self.assertIn("THINKING", final_text)
             self.assertIn("My step-by-step reasoning process", final_text)
-            self.assertIn("> ... done thinking", final_text)
+            self.assertIn("ANSWER", final_text)
             self.assertIn("Final answer after reasoning", final_text)
 
             # Ensure proper order: reasoning first, then main content
