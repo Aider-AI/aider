@@ -113,7 +113,8 @@ class ModelSettings:
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
-    remove_reasoning: Optional[str] = None
+    reasoning_tag: Optional[str] = None
+    remove_reasoning: Optional[str] = None  # Deprecated alias for reasoning_tag
     system_prompt_prefix: Optional[str] = None
 
 
@@ -271,6 +272,11 @@ class Model(ModelSettings):
         for field in fields(ModelSettings):
             val = getattr(source, field.name)
             setattr(self, field.name, val)
+        
+        # Handle backward compatibility: if remove_reasoning is set but reasoning_tag isn't,
+        # use remove_reasoning's value for reasoning_tag
+        if self.reasoning_tag is None and self.remove_reasoning is not None:
+            self.reasoning_tag = self.remove_reasoning
 
     def configure_model_settings(self, model):
         # Look for exact model match
@@ -344,7 +350,7 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.examples_as_sys_msg = True
             self.use_temperature = False
-            self.remove_reasoning = "think"
+            self.reasoning_tag = "think"
             return  # <--
 
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
@@ -397,7 +403,7 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.editor_edit_format = "editor-diff"
             self.use_repo_map = True
-            self.remove_resoning = "think"
+            self.reasoning_tag = "think"
             self.examples_as_sys_msg = True
             self.use_temperature = 0.6
             self.extra_params = dict(top_p=0.95)
@@ -671,7 +677,7 @@ class Model(ModelSettings):
                 res = response.choices[0].message.content
                 from aider.reasoning_tags import remove_reasoning_content
 
-                return remove_reasoning_content(res, self.remove_reasoning)
+                return remove_reasoning_content(res, self.reasoning_tag)
 
             except litellm_ex.exceptions_tuple() as err:
                 ex_info = litellm_ex.get_ex_info(err)
