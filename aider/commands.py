@@ -1506,8 +1506,10 @@ Just show me the edits I need to make.
                 self.io.tool_warning(f"Could not read {rel_fname}, skipping")
                 continue
 
-            # Flatten filename
+            # Flatten filename and ensure .txt extension
             flat_fname = rel_fname.replace('/', '|').replace('\\', '|')
+            if not flat_fname.endswith('.txt'):
+                flat_fname += '.txt'
             out_path = os.path.join(export_dir, flat_fname)
 
             # Write content
@@ -1565,14 +1567,17 @@ Just show me the edits I need to make.
             # Create chunk filename - different format if only one file in the chunk
             if len(chunk) == 1:
                 # Just use the single filename for single-file chunks
-                chunk_fname = f"{chunk[0][0]}_chunk_{i}.txt"
+                chunk_fname = f"{chunk[0][0]}_chunk_{i}"
             else:
                 # Get first and last file in chunk for multi-file chunks
                 first_file = chunk[0][0]
                 last_file = chunk[-1][0]
-                chunk_fname = f"{first_file}...{last_file}_chunk_{i}.txt"
+                chunk_fname = f"{first_file}...{last_file}_chunk_{i}"
             # Replace path separators with pipe characters for better readability
             chunk_fname = chunk_fname.replace('/', '|').replace('\\', '|')
+            # Ensure .txt extension
+            if not chunk_fname.endswith('.txt'):
+                chunk_fname += '.txt'
             out_path = os.path.join(export_dir, chunk_fname)
 
             # Write content with file markers
