@@ -1,0 +1,15 @@
+# Blocklist of dependencies.
+#
+# `pip-compile` does not support scenarios where a Python package
+# (e.g. `tree-sitter`) is only available for specific architectures,
+# OSes, or Python versions. [1]
+# This blocklist works around that limitation.
+#
+# The requirements listed below are to be excluded from all
+# requirements files, and maintained by hand in additional *.txt
+# files, where PEP 508 environment markers can be used.
+#
+# [1]: https://github.com/jazzband/pip-tools/issues/639#issuecomment-374316252
+
+# See tree-sitter.txt
+tree-sitter
