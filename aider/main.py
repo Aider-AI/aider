@@ -776,6 +776,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Set reasoning effort if specified
     if args.reasoning_effort is not None:
         main_model.set_reasoning_effort(args.reasoning_effort)
+        
+    # Set thinking tokens if specified
+    if args.thinking_tokens is not None:
+        main_model.set_thinking_tokens(args.thinking_tokens)
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):

@@ -590,7 +590,18 @@ class Model(ModelSettings):
             if "extra_body" not in self.extra_params:
                 self.extra_params["extra_body"] = {}
             self.extra_params["extra_body"]["reasoning_effort"] = effort
-
+    
+    def set_thinking_tokens(self, num):
+        """Set the thinking token budget for models that support it"""
+        if num is not None:
+            self.use_temperature = False
+            if not self.extra_params:
+                self.extra_params = {}
+            self.extra_params["thinking"] = {
+                "type": "enabled",
+                "budget_tokens": num
+            }
+    
     def is_deepseek_r1(self):
         name = self.name.lower()
         if "deepseek" not in name:
