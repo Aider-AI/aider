@@ -186,7 +186,7 @@ class TestReasoning(unittest.TestCase):
 
         # Setup model and coder
         model = Model("gpt-3.5-turbo")
-        model.remove_reasoning = "think"  # Set to remove <think> tags
+        model.reasoning_tag = "think"  # Set to remove <think> tags
         coder = Coder.create(model, None, io=io, stream=False)
 
         # Test data
@@ -256,7 +256,7 @@ class TestReasoning(unittest.TestCase):
 
         # Setup model and coder
         model = Model("gpt-3.5-turbo")
-        model.remove_reasoning = "think"  # Set to remove <think> tags
+        model.reasoning_tag = "think"  # Set to remove <think> tags
         coder = Coder.create(model, None, io=io, stream=True)
 
         # Ensure the coder shows pretty output
@@ -384,7 +384,7 @@ End"""
     @patch("aider.models.litellm.completion")
     def test_simple_send_with_retries_removes_reasoning(self, mock_completion):
         """Test that simple_send_with_retries correctly removes reasoning content."""
-        model = Model("deepseek-r1")  # This model has remove_reasoning="think"
+        model = Model("deepseek-r1")  # This model has reasoning_tag="think"
 
         # Mock the completion response
         mock_response = MagicMock()
