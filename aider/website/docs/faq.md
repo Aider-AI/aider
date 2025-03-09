@@ -249,8 +249,9 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>770,834</td><td class='right'>99.5%</td></tr>
-<tr><td>groq/REDACTED</td><td class='right'>3,914</td><td class='right'>0.5%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>939,906</td><td class='right'>96.5%</td></tr>
+<tr><td>openrouter/deepseek/deepseek-r1</td><td class='right'>30,179</td><td class='right'>3.1%</td></tr>
+<tr><td>groq/REDACTED</td><td class='right'>3,914</td><td class='right'>0.4%</td></tr>
 </table>
 
 {: .note :}
