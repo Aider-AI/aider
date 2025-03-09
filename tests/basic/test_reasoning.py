@@ -464,7 +464,7 @@ End"""
             )
 
     def test_send_with_reasoning_stream(self):
-        """Test that streaming reasoning content from the 'reasoning' attribute is properly 
+        """Test that streaming reasoning content from the 'reasoning' attribute is properly
         formatted and output."""
         # Setup IO with pretty output for streaming
         io = InputOutput(pretty=True)
