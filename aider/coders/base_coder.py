@@ -212,6 +212,9 @@ class Coder:
         main_model = self.main_model
         weak_model = main_model.weak_model
 
+        if main_model.copy_paste_no_api:
+            lines.append("Running in copy-paste mode instead of using API")
+
         if weak_model is not main_model:
             prefix = "Main model"
         else:
