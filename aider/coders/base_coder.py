@@ -1712,7 +1712,10 @@ class Coder:
         try:
             reasoning_content = completion.choices[0].message.reasoning_content
         except AttributeError:
-            reasoning_content = None
+            try:
+                reasoning_content = completion.choices[0].message.reasoning
+            except AttributeError:
+                reasoning_content = None
 
         try:
             self.partial_response_content = completion.choices[0].message.content or ""
