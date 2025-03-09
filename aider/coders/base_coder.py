@@ -1778,7 +1778,7 @@ class Coder:
                 pass
 
             text = ""
-            dump(chunk)
+
             try:
                 reasoning_content = chunk.choices[0].delta.reasoning_content
             except AttributeError:
