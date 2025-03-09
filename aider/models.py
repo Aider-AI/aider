@@ -272,7 +272,7 @@ class Model(ModelSettings):
         for field in fields(ModelSettings):
             val = getattr(source, field.name)
             setattr(self, field.name, val)
-        
+
         # Handle backward compatibility: if remove_reasoning is set but reasoning_tag isn't,
         # use remove_reasoning's value for reasoning_tag
         if self.reasoning_tag is None and self.remove_reasoning is not None:
