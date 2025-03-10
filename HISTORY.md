@@ -2,21 +2,24 @@
 
 ### main branch
 
-- Added `--thinking-tokens` CLI option to control token budget for models that support thinking.
-- Display thinking/reasoning content from LLMs which return it.
-- Enhanced handling of reasoning tags to better clean up model responses.
+- Improved support for thinking/reasoningmodels:
+  - Added `--thinking-tokens` CLI option to control token budget for models that support thinking.
+  - Display thinking/reasoning content from LLMs which return it.
+  - Enhanced handling of reasoning tags to better clean up model responses.
+  - Added deprecation warning for `remove_reasoning` setting, now replaced by `reasoning_tag`.
+- Aider will notify you when it's completed the last request and needs your input:
+  - Added [notifications when LLM responses are ready](https://aider.chat/docs/usage/notifications.html) with `--notifications` flag.
+  - Specify desktop notification command with `--notifications-command`.
+- Added support for QWQ 32B.
+- Switch to `tree-sitter-language-pack` for tree sitter support.
 - Improved error handling for EOF (Ctrl+D) in user input prompts.
 - Added helper function to ensure hex color values have a # prefix.
 - Fixed handling of Git errors when reading staged files.
 - Improved SSL verification control for model information requests.
-- Added support for QWQ 32B.
-- Added [notifications when LLM responses are ready](https://aider.chat/docs/usage/notifications.html) with `--notifications` flag.
-- Specify desktop notification command with `--notifications-command`.
 - Improved empty LLM response handling with clearer warning messages.
 - Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
 - Offer to install dependencies for Bedrock and Vertex AI models.
 - Deprecated model shortcut args (like --4o, --opus) in favor of the --model flag.
-- Added deprecation warning for `remove_reasoning` setting, now replaced by `reasoning_tag`.
 - Added C# language support for tree-sitter parsing.
 - Improved handling of NO_COLOR environment variable for disabling colored output.
 - Simplified reasoning content handling in stream processing.

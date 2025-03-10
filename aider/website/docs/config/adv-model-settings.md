@@ -905,7 +905,6 @@ cog.out("```\n")
     max_tokens: 8192
     include_reasoning: true
   caches_by_default: true
-  use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-chat
   editor_edit_format: editor-diff
 
