@@ -11,6 +11,32 @@ You will need to have an AWS account with access to the Bedrock service.
 To configure Aider to use the Amazon Bedrock API, you need to set up your AWS credentials.
 This can be done using the AWS CLI or by setting environment variables.
 
+## Select a Model from Amazon Bedrock
+
+Before you can use a model through Amazon Bedrock, you must "enable" the model under the **Model
+Access** screen in the AWS Management Console.
+To find the `Model ID`, open the **Model Catalog** area in the Bedrock console, select the model 
+you want to use, and the find the `modelId` property under the "Usage" heading.
+
+### Bedrock Inference Profiles
+
+Amazon Bedrock has added support for a new feature called [cross-region "inference profiles."](https://aws.amazon.com/about-aws/whats-new/2024/09/amazon-bedrock-knowledge-bases-cross-region-inference/)
+Some models hosted in Bedrock _only_ support these inference profiles.
+If you're using one of these models, then you will need to use the `Inference Profile ID` 
+instead of the `Model ID` from the **Model Catalog** screen, in the AWS Management Console.
+For example, the Claude Sonnet 3.7 model, release in February 2025, exclusively supports
+inference through inference profiles. To use this model, you would use the 
+`us.anthropic.claude-3-7-sonnet-20250219-v1:0` Inference Profile ID.
+In the Amazon Bedrock console, go to Inference and Assessment ➡️ Cross-region Inference
+to find the `Inference Profile ID` value.
+
+If you attempt to use a `Model ID` for a model that exclusively supports the Inference Profile
+feature, you will receive an error message like the following:
+
+> litellm.BadRequestError: BedrockException - b'{"message":"Invocation of model ID
+anthropic.claude-3-7-sonnet-20250219-v1:0 with on-demand throughput isn\xe2\x80\x99t supported. Retry your
+request with the ID or ARN of an inference profile that contains this model."}'
+
 ## AWS CLI Configuration
 
 If you haven't already, install the [AWS CLI](https://aws.amazon.com/cli/) and configure it with your credentials:
@@ -38,6 +64,16 @@ export AWS_PROFILE=your-profile
 
 You can add these to your 
 [.env file](/docs/config/dotenv.html).
+
+### Set Environment Variables with PowerShell
+
+If you're using PowerShell on MacOS, Linux, or Windows, you can set the same AWS configuration environment variables with these commands.
+
+```pwsh
+$env:AWS_ACCESS_KEY_ID = 'your_access_key'
+$env:AWS_SECRET_ACCESS_KEY = 'your_secret_key'
+$env:AWS_REGION = 'us-west-2'   # Put whichever AWS region that you'd like, that the Bedrock service supports.
+```
 
 ## Install boto3
 

@@ -1,5 +1,39 @@
 # Release history
 
+### Aider v0.76.0
+
+- Improved support for thinking/reasoningmodels:
+  - Added `--thinking-tokens` CLI option to control token budget for models that support thinking.
+  - Display thinking/reasoning content from LLMs which return it.
+  - Enhanced handling of reasoning tags to better clean up model responses.
+  - Added deprecation warning for `remove_reasoning` setting, now replaced by `reasoning_tag`.
+- Aider will notify you when it's completed the last request and needs your input:
+  - Added [notifications when LLM responses are ready](https://aider.chat/docs/usage/notifications.html) with `--notifications` flag.
+  - Specify desktop notification command with `--notifications-command`.
+- Added support for QWQ 32B.
+- Switch to `tree-sitter-language-pack` for tree sitter support.
+- Improved error handling for EOF (Ctrl+D) in user input prompts.
+- Added helper function to ensure hex color values have a # prefix.
+- Fixed handling of Git errors when reading staged files.
+- Improved SSL verification control for model information requests.
+- Improved empty LLM response handling with clearer warning messages.
+- Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
+- Offer to install dependencies for Bedrock and Vertex AI models.
+- Deprecated model shortcut args (like --4o, --opus) in favor of the --model flag.
+- Aider wrote 85% of the code in this release.
+
+### Aider v0.75.3
+
+- Support for V3 free on OpenRouter: `--model openrouter/deepseek/deepseek-chat:free`.
+
+### Aider v0.75.2
+
+- Added support for Claude 3.7 Sonnet models on OpenRouter, Bedrock and Vertex AI.
+- Updated default model to Claude 3.7 Sonnet on OpenRouter.
+- Added support for GPT-4.5-preview model.
+- Added support for Claude 3.7 Sonnet:beta on OpenRouter.
+- Fixed weak_model_name patterns to match main model name patterns for some models.
+
 ### Aider v0.75.1
 
 - Added support for `openrouter/anthropic/claude-3.7-sonnet`

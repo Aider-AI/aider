@@ -148,11 +148,14 @@ class YamlHelpFormatter(argparse.HelpFormatter):
             parts.append(f"#{switch}: xxx")
             parts.append("## Specify multiple values like this:")
             parts.append(f"#{switch}:")
-            parts.append(f"#  - xxx")
-            parts.append(f"#  - yyy")
-            parts.append(f"#  - zzz")
+            parts.append("#  - xxx")
+            parts.append("#  - yyy")
+            parts.append("#  - zzz")
         else:
-            parts.append(f"#{switch}: xxx\n")
+            if switch.endswith("color"):
+                parts.append(f'#{switch}: "xxx"\n')
+            else:
+                parts.append(f"#{switch}: xxx\n")
 
         ###
         # parts.append(str(action))
