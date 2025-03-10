@@ -37,7 +37,7 @@ if USING_TSL_PACK:
 
 
 class RepoMap:
-    TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
+    TAGS_CACHE_DIR = ".aider.tags.cache"
 
     warned_files = set()
 
@@ -52,6 +52,7 @@ class RepoMap:
         max_context_window=None,
         map_mul_no_files=8,
         refresh="auto",
+        tags_cache_dir=None,
     ):
         self.io = io
         self.verbose = verbose
@@ -60,6 +61,8 @@ class RepoMap:
         if not root:
             root = os.getcwd()
         self.root = root
+
+        self.TAGS_CACHE_DIR = f"{tags_cache_dir or self.TAGS_CACHE_DIR}.v{CACHE_VERSION}"
 
         self.load_tags_cache()
         self.cache_threshold = 0.95

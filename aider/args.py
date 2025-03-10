@@ -223,6 +223,18 @@ def get_parser(default_config_files, git_root):
         default=2,
         help="Multiplier for map tokens when no files are specified (default: 2)",
     )
+    default_map_tags_cache_dir = (
+        os.path.join(git_root, ".aider.tags.cache") if git_root else ".aider.tags.cache"
+    )
+    group.add_argument(
+        "--map-tags-cache-dir",
+        metavar="MAP_TAGS_CACHE_DIR",
+        default=default_map_tags_cache_dir,
+        help=(
+            "Specify the directory for the repo map tags cache (default:"
+            f" {default_map_tags_cache_dir})"
+        ),
+    )
 
     ##########
     group = parser.add_argument_group("History Files")
