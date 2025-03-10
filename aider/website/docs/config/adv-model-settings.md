@@ -903,6 +903,7 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
+    include_reasoning: true
   caches_by_default: true
   use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-chat
