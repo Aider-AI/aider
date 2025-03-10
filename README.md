@@ -65,8 +65,14 @@ aider --model openrouter/anthropic/claude-3.7-sonnet --api-key openrouter=your-k
 
 # Work with DeepSeek via OpenRouter's API
 aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
+
+# Work with Github Copilot
+aider --model github_copilot/claude-3.7-sonnet-thought
 ```
 <!--[[[end]]]-->
+
+> [!TIP]
+> If you have not authenticated with Github Copilot before, the first time you run Aider with the `github_copilot` model, you will be prompted to authenticate with Github Copilot using device code authentication. Follow the instructions in the terminal to authenticate.
 
 See the
 [installation instructions](https://aider.chat/docs/install.html)
