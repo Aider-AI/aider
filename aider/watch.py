@@ -140,7 +140,10 @@ class FileWatcher:
             roots_to_watch = self.get_roots_to_watch()
 
             for changes in watch(
-                *roots_to_watch, watch_filter=self.filter_func, stop_event=self.stop_event
+                *roots_to_watch,
+                watch_filter=self.filter_func,
+                stop_event=self.stop_event,
+                ignore_permission_denied=True,
             ):
                 if self.handle_changes(changes):
                     return
