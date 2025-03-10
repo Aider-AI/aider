@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.76.0
 
 - Improved support for thinking/reasoningmodels:
   - Added `--thinking-tokens` CLI option to control token budget for models that support thinking.

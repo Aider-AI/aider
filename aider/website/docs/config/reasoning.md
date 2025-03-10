@@ -6,6 +6,8 @@ description: How to configure reasoning model settings from secondary providers.
 
 # Reasoning models
 
+![Thinking demo](/assets/thinking.jpg)
+
 ## Reasoning effort
 
 You can use the `--reasoning-effort` switch to control the reasoning effort
