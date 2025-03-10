@@ -7,11 +7,13 @@ import os
 import platform
 import sys
 import time
+import uuid
 from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional, Union
 
 import json5
+import pyperclip
 import yaml
 from PIL import Image
 
@@ -226,7 +228,7 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None, copy_paste_no_api=False, io=None):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
@@ -235,6 +237,9 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
+
+        self.io = io
+        self.copy_paste_no_api=copy_paste_no_api        
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -253,7 +258,7 @@ class Model(ModelSettings):
         # with minimum 1k and maximum 8k
         self.max_chat_history_tokens = min(max(max_input_tokens / 16, 1024), 8192)
 
-        self.configure_model_settings(model)
+        self.configure_model_settings(model)        
         if weak_model is False:
             self.weak_model_name = None
         else:
@@ -263,6 +268,10 @@ class Model(ModelSettings):
             self.editor_model_name = None
         else:
             self.get_editor_model(editor_model, editor_edit_format)
+
+        if self.copy_paste_no_api:
+            self.weak_model = self
+            self.editor_model = self
 
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
@@ -616,6 +625,9 @@ class Model(ModelSettings):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
     def send_completion(self, messages, functions, stream, temperature=None):
+        if self.copy_paste_no_api:
+            return self.copy_paste_completion(messages)
+        
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
@@ -655,6 +667,57 @@ class Model(ModelSettings):
             kwargs["timeout"] = request_timeout
         res = litellm.completion(**kwargs)
         return hash_object, res
+
+    def copy_paste_completion(self, messages):
+        formatted_messages = "\n".join(
+            f"{msg['content']}" for msg in messages if msg.get("content")
+        )
+    
+        pyperclip.copy(formatted_messages)
+
+        if self.io is not None:
+            self.io.tool_output(
+"""✓ Request copied to clipboard
+→ Paste into LLM web UI
+← Copy response back to clipboard
+Monitoring clipboard for changes..."""
+)
+    
+        last_clipboard = pyperclip.paste()
+        while last_clipboard == pyperclip.paste():
+            time.sleep(0.5)
+    
+        response = pyperclip.paste()
+    
+        completion = litellm.ModelResponse(
+            id=f"chatcmpl-{uuid.uuid4()}",
+            choices=[
+                {
+                    "message": {
+                        "role": "assistant",
+                        "content": response,
+                        "function_call": None,
+                    },
+                    "finish_reason": "stop",
+                    "index": 0,
+                }
+            ],
+            created=int(time.time()),
+            model=self.name,
+            usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+            object="chat.completion",
+        )
+    
+        kwargs = dict(
+            model=self.name,
+            messages=messages,
+            stream=False
+        )
+    
+        key = json.dumps(kwargs, sort_keys=True).encode()
+        hash_object = hashlib.sha1(key)
+    
+        return hash_object, completion
 
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
@@ -782,6 +845,9 @@ def sanity_check_models(io, main_model):
 
 def sanity_check_model(io, model):
     show = False
+
+    if model.copy_paste_no_api:
+        return show
 
     if model.missing_keys:
         show = True

@@ -771,6 +771,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         weak_model=args.weak_model,
         editor_model=args.editor_model,
         editor_edit_format=args.editor_edit_format,
+        copy_paste_no_api=args.copy_paste_no_api,
+        io=io,
     )
 
     # Check if deprecated remove_reasoning is set
@@ -869,6 +871,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.cache_prompts and args.map_refresh == "auto":
         args.map_refresh = "files"
 
+    if args.copy_paste_no_api:
+        args.stream = False
+    
     if not main_model.streaming:
         if args.stream:
             io.tool_warning(

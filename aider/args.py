@@ -585,6 +585,12 @@ def get_parser(default_config_files, git_root):
         help="Enable automatic copy/paste of chat between aider and web UI (default: False)",
     )
     group.add_argument(
+        "--copy-paste-no-api",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use automatic copy/paste of chat between aider and web UI instead of API (default: False)",
+    )
+    group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
