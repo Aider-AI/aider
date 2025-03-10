@@ -62,7 +62,7 @@ narwhals==1.29.1
     # via
     #   -c requirements/common-constraints.txt
     #   altair
-numpy==1.26.4
+numpy==2.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
