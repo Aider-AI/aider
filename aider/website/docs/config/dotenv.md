@@ -64,39 +64,6 @@ cog.outl("```")
 ## Specify the model to use for the main chat
 #AIDER_MODEL=
 
-## Use claude-3-opus-20240229 model for the main chat
-#AIDER_OPUS=
-
-## Use anthropic/claude-3-7-sonnet-20250219 model for the main chat
-#AIDER_SONNET=
-
-## Use claude-3-5-haiku-20241022 model for the main chat
-#AIDER_HAIKU=
-
-## Use gpt-4-0613 model for the main chat
-#AIDER_4=
-
-## Use gpt-4o model for the main chat
-#AIDER_4O=
-
-## Use gpt-4o-mini model for the main chat
-#AIDER_MINI=
-
-## Use gpt-4-1106-preview model for the main chat
-#AIDER_4_TURBO=
-
-## Use gpt-3.5-turbo model for the main chat
-#AIDER_35TURBO=
-
-## Use deepseek/deepseek-chat model for the main chat
-#AIDER_DEEPSEEK=
-
-## Use o1-mini model for the main chat
-#AIDER_O1_MINI=
-
-## Use o1-preview model for the main chat
-#AIDER_O1_PREVIEW=
-
 ########################
 # API Keys and settings:
 
@@ -144,6 +111,9 @@ cog.outl("```")
 
 ## Set the reasoning_effort API parameter (default: not set)
 #AIDER_REASONING_EFFORT=
+
+## Set the thinking token budget for models that support it (default: not set)
+#AIDER_THINKING_TOKENS=
 
 ## Verify the SSL cert when connecting to models (default: True)
 #AIDER_VERIFY_SSL=true
@@ -439,13 +409,52 @@ cog.outl("```")
 ## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
 #AIDER_MULTILINE=false
 
+## Enable/disable terminal bell notifications when LLM responses are ready (default: False)
+#AIDER_NOTIFICATIONS=false
+
+## Specify a command to run for notifications instead of the terminal bell. If not specified, a default command for your OS may be used.
+#AIDER_NOTIFICATIONS_COMMAND=
+
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #AIDER_DETECT_URLS=true
 
 ## Specify which editor to use for the /editor command
 #AIDER_EDITOR=
 
-## Install the tree_sitter_language_pack (experimental)
-#AIDER_INSTALL_TREE_SITTER_LANGUAGE_PACK=false
+############################
+# Deprecated model settings:
+
+## Use claude-3-opus-20240229 model for the main chat (deprecated, use --model)
+#AIDER_OPUS=false
+
+## Use anthropic/claude-3-7-sonnet-20250219 model for the main chat (deprecated, use --model)
+#AIDER_SONNET=false
+
+## Use claude-3-5-haiku-20241022 model for the main chat (deprecated, use --model)
+#AIDER_HAIKU=false
+
+## Use gpt-4-0613 model for the main chat (deprecated, use --model)
+#AIDER_4=false
+
+## Use gpt-4o model for the main chat (deprecated, use --model)
+#AIDER_4O=false
+
+## Use gpt-4o-mini model for the main chat (deprecated, use --model)
+#AIDER_MINI=false
+
+## Use gpt-4-1106-preview model for the main chat (deprecated, use --model)
+#AIDER_4_TURBO=false
+
+## Use gpt-3.5-turbo model for the main chat (deprecated, use --model)
+#AIDER_35TURBO=false
+
+## Use deepseek/deepseek-chat model for the main chat (deprecated, use --model)
+#AIDER_DEEPSEEK=false
+
+## Use o1-mini model for the main chat (deprecated, use --model)
+#AIDER_O1_MINI=false
+
+## Use o1-preview model for the main chat (deprecated, use --model)
+#AIDER_O1_PREVIEW=false
 ```
 <!--[[[end]]]-->

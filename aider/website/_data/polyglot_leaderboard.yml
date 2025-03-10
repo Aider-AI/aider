@@ -1,3 +1,29 @@
+- dirname: 2025-02-25-20-23-07--gemini-pro
+  test_cases: 225
+  model: gemini/gemini-2.0-pro-exp-02-05
+  edit_format: whole
+  commit_hash: 2fccd47
+  pass_rate_1: 20.4
+  pass_rate_2: 35.6
+  pass_num_1: 46
+  pass_num_2: 80
+  percent_cases_well_formed: 100.0
+  error_outputs: 430
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 13
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model gemini/gemini-2.0-pro-exp-02-05
+  date: 2025-02-25
+  versions: 0.75.2.dev
+  seconds_per_case: 34.8
+  total_cost: 0.0000
+
 - dirname: 2024-12-21-18-41-18--polyglot-gpt-4o-mini
   test_cases: 225
   model: gpt-4o-mini-2024-07-18
@@ -622,3 +648,83 @@
   versions: 0.75.1.dev
   seconds_per_case: 105.2
   total_cost: 36.8343
+
+- dirname: 2025-02-27-20-26-15--gpt45-diff3
+  test_cases: 224
+  model: gpt-4.5-preview
+  edit_format: diff
+  commit_hash: b462e55-dirty
+  pass_rate_1: 22.3
+  pass_rate_2: 44.9
+  pass_num_1: 50
+  pass_num_2: 101
+  percent_cases_well_formed: 97.3
+  error_outputs: 10
+  num_malformed_responses: 8
+  num_with_malformed_responses: 6
+  user_asks: 15
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openai/gpt-4.5-preview
+  date: 2025-02-27
+  versions: 0.75.2.dev
+  seconds_per_case: 113.5
+  total_cost: 183.1802
+
+- dirname: 2025-03-06-17-40-24--qwq32b-diff-temp-topp-ex-sys-remind-user-for-real
+  test_cases: 225
+  model: QwQ-32B
+  edit_format: diff
+  commit_hash: 51d118f-dirty
+  pass_rate_1: 8.0
+  pass_rate_2: 20.9
+  pass_num_1: 18
+  pass_num_2: 47
+  percent_cases_well_formed: 67.6
+  error_outputs: 145
+  num_malformed_responses: 143
+  num_with_malformed_responses: 73
+  user_asks: 17
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model fireworks_ai/accounts/fireworks/models/qwq-32b
+  date: 2025-03-06
+  versions: 0.75.3.dev
+  seconds_per_case: 228.6
+  total_cost: 0.0000
+
+- dirname: 2025-03-07-15-11-27--qwq32b-arch-temp-topp-again
+  test_cases: 225
+  model: QwQ-32B + Qwen 2.5 Coder Instruct
+  edit_format: architect
+  commit_hash: 52162a5
+  editor_model: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
+  editor_edit_format: editor-diff
+  pass_rate_1: 9.8
+  pass_rate_2: 26.2
+  pass_num_1: 22
+  pass_num_2: 59
+  percent_cases_well_formed: 100.0
+  error_outputs: 122
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 489
+  lazy_comments: 8
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model fireworks_ai/accounts/fireworks/models/qwq-32b --architect
+  date: 2025-03-07
+  versions: 0.75.3.dev
+  seconds_per_case: 137.4
+  total_cost: 0

@@ -10,64 +10,79 @@ import sys
 from packaging import version
 
 
+# Function to check if we are on the main branch
+def check_branch():
+    branch = subprocess.run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True
+    ).stdout.strip()
+    if branch != "main":
+        print("Error: Not on the main branch.")
+        sys.exit(1)
+
+
+# Function to check if the working directory is clean
+def check_working_directory_clean():
+    status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout
+    if status:
+        print("Error: Working directory is not clean.")
+        sys.exit(1)
+
+
+# Function to fetch the latest changes and check if the main branch is up to date
+def check_main_branch_up_to_date():
+    subprocess.run(["git", "fetch", "origin"], check=True)
+    local_main = subprocess.run(
+        ["git", "rev-parse", "main"], capture_output=True, text=True
+    ).stdout.strip()
+    print(f"Local main commit hash: {local_main}")
+    origin_main = subprocess.run(
+        ["git", "rev-parse", "origin/main"], capture_output=True, text=True
+    ).stdout.strip()
+    print(f"Origin main commit hash: {origin_main}")
+    if local_main != origin_main:
+        local_date = subprocess.run(
+            ["git", "show", "-s", "--format=%ci", "main"], capture_output=True, text=True
+        ).stdout.strip()
+        origin_date = subprocess.run(
+            ["git", "show", "-s", "--format=%ci", "origin/main"], capture_output=True, text=True
+        ).stdout.strip()
+        local_date = datetime.datetime.strptime(local_date, "%Y-%m-%d %H:%M:%S %z")
+        origin_date = datetime.datetime.strptime(origin_date, "%Y-%m-%d %H:%M:%S %z")
+        if local_date < origin_date:
+            print(
+                "Error: The local main branch is behind origin/main. Please pull the latest"
+                " changes."
+            )
+        elif local_date > origin_date:
+            print(
+                "Error: The origin/main branch is behind the local main branch. Please push"
+                " your changes."
+            )
+        else:
+            print("Error: The main branch and origin/main have diverged.")
+        sys.exit(1)
+
+
+# Function to check if we can push to the origin repository
+def check_ok_to_push():
+    print("Checking if it's ok to push to origin repository...")
+    result = subprocess.run(["git", "push", "--dry-run", "origin"], capture_output=True, text=True)
+    print(result.stdout)
+    print(result.stderr)
+
+    if result.returncode != 0:
+        print("Error: Cannot push to origin repository.")
+        sys.exit(1)
+
+    print("Push to origin repository is possible.")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Bump version")
     parser.add_argument("new_version", help="New version in x.y.z format")
     parser.add_argument(
         "--dry-run", action="store_true", help="Print each step without actually executing them"
     )
-
-    # Function to check if we are on the main branch
-    def check_branch():
-        branch = subprocess.run(
-            ["git", "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True
-        ).stdout.strip()
-        if branch != "main":
-            print("Error: Not on the main branch.")
-            sys.exit(1)
-
-    # Function to check if the working directory is clean
-    def check_working_directory_clean():
-        status = subprocess.run(
-            ["git", "status", "--porcelain"], capture_output=True, text=True
-        ).stdout
-        if status:
-            print("Error: Working directory is not clean.")
-            sys.exit(1)
-
-    # Function to fetch the latest changes and check if the main branch is up to date
-    def check_main_branch_up_to_date():
-        subprocess.run(["git", "fetch", "origin"], check=True)
-        local_main = subprocess.run(
-            ["git", "rev-parse", "main"], capture_output=True, text=True
-        ).stdout.strip()
-        print(f"Local main commit hash: {local_main}")
-        origin_main = subprocess.run(
-            ["git", "rev-parse", "origin/main"], capture_output=True, text=True
-        ).stdout.strip()
-        print(f"Origin main commit hash: {origin_main}")
-        if local_main != origin_main:
-            local_date = subprocess.run(
-                ["git", "show", "-s", "--format=%ci", "main"], capture_output=True, text=True
-            ).stdout.strip()
-            origin_date = subprocess.run(
-                ["git", "show", "-s", "--format=%ci", "origin/main"], capture_output=True, text=True
-            ).stdout.strip()
-            local_date = datetime.datetime.strptime(local_date, "%Y-%m-%d %H:%M:%S %z")
-            origin_date = datetime.datetime.strptime(origin_date, "%Y-%m-%d %H:%M:%S %z")
-            if local_date < origin_date:
-                print(
-                    "Error: The local main branch is behind origin/main. Please pull the latest"
-                    " changes."
-                )
-            elif local_date > origin_date:
-                print(
-                    "Error: The origin/main branch is behind the local main branch. Please push"
-                    " your changes."
-                )
-            else:
-                print("Error: The main branch and origin/main have diverged.")
-            sys.exit(1)
 
     args = parser.parse_args()
     dry_run = args.dry_run
@@ -76,6 +91,7 @@ def main():
     check_branch()
     check_working_directory_clean()
     check_main_branch_up_to_date()
+    check_ok_to_push()
 
     new_version_str = args.new_version
     if not re.match(r"^\d+\.\d+\.\d+$", new_version_str):

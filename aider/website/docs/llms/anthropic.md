@@ -19,11 +19,11 @@ python -m pip install -U aider-chat
 export ANTHROPIC_API_KEY=<key> # Mac/Linux
 setx   ANTHROPIC_API_KEY <key> # Windows, restart shell after setx
 
-# Aider uses Claude 3.5 Sonnet by default (or use --sonnet)
+# Aider uses Claude 3.7 Sonnet by default
 aider
 
 # Claude 3 Opus
-aider --opus
+aider --model claude-3-opus-20240229
 
 # List models available from Anthropic
 aider --list-models anthropic/
@@ -47,7 +47,7 @@ thinking tokens by default.
 
 Enabling thinking currently requires manual configuration.
 You need to add the following to your `.aider.model.settings.yml` 
-[model settings file](http://127.0.0.1:4000/docs/config/adv-model-settings.html#model-settings).
+[model settings file](/docs/config/adv-model-settings.html#model-settings).
 Adjust the `budget_tokens` value to change the target number of thinking tokens.
 
 ```yaml

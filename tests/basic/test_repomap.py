@@ -291,10 +291,10 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "java": ("java", "Greeting"),
             "javascript": ("js", "Person"),
             "kotlin": ("kt", "Greeting"),
-            "ocaml": ("ml", "Greeter"),
+            # "ocaml": ("ml", "Greeter"), # not supported in tsl-pack (yet?)
             "php": ("php", "greet"),
             "python": ("py", "Person"),
-            "ql": ("ql", "greet"),
+            # "ql": ("ql", "greet"), # not supported in tsl-pack (yet?)
             "ruby": ("rb", "greet"),
             "rust": ("rs", "Person"),
             "typescript": ("ts", "greet"),
