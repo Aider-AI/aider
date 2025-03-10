@@ -20,10 +20,6 @@
 - Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
 - Offer to install dependencies for Bedrock and Vertex AI models.
 - Deprecated model shortcut args (like --4o, --opus) in favor of the --model flag.
-- Added C# language support for tree-sitter parsing.
-- Improved handling of NO_COLOR environment variable for disabling colored output.
-- Simplified reasoning content handling in stream processing.
-- Added support for both reasoning and reasoning_content fields from different models.
 - Aider wrote 85% of the code in this release.
 
 ### Aider v0.75.3
