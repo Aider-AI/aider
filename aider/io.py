@@ -9,8 +9,10 @@ import webbrowser
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
+from enum import Enum
 from io import StringIO
 from pathlib import Path
+from typing import Dict, Union
 
 from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
@@ -66,6 +68,35 @@ def restore_multiline(func):
             self.multiline_mode = orig_multiline
 
     return wrapper
+
+
+class Questions(str, Enum):
+    # Not yet configurable via scripting
+    ALLOW_EDITS = "Allow edits to file that has not been added to the chat?"
+    ADD_FILES = "Add file to the chat?"
+    CREATE_FILE = "Create new file?"
+    TRY_PROCEED = "Try to proceed anyway?"
+    ARCHITECT_EDIT_FILES = "Edit the files?"
+    RUN_PIP_INSTALL = "Run pip install?"
+
+    # Partially configurable via args
+    # Will only ever run if --suggest-shell-commands is passed
+    # However, can not be auto approved
+    RUN_SHELL_COMMANDS = "Run shell command(s)?"
+    ADD_COMMAND_OUTPUT = "Add command output to the chat?"
+
+    # Will only ever run if --detect-urls is passed
+    ADD_URL = "Add URL to the chat?"
+    OPEN_URL = "Open URL for more info?"
+    INSTALL_PLAYWRIGHT = "Install Playwright?"
+
+    # Already configurable via args
+    ALLOW_ANALYTICS = (  # --analytics
+        "Allow collection of anonymous analytics to help improve aider?"
+    )
+    ADD_GITIGNORE = "Add patterns to .gitignore (recommended)?"  # --gitignore
+    FIX_LINT = "Attempt to fix lint errors?"  # --auto-lint
+    FIX_TEST = "Attempt to fix test errors?"  # --auto-test
 
 
 @dataclass
@@ -218,7 +249,7 @@ class InputOutput:
     def __init__(
         self,
         pretty=True,
-        yes=None,
+        yes: Union[None, bool, Dict[str, bool]] = None,
         input_history_file=None,
         chat_history_file=None,
         input=None,
@@ -711,7 +742,7 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def offer_url(self, url, prompt="Open URL for more info?", allow_never=True):
+    def offer_url(self, url, prompt=Questions.OPEN_URL, allow_never=True):
         """Offer to open a URL in the browser, returns True if opened."""
         if url in self.never_prompts:
             return False
@@ -723,13 +754,16 @@ class InputOutput:
     @restore_multiline
     def confirm_ask(
         self,
-        question,
+        question: Union[str, Questions],
         default="y",
         subject=None,
         explicit_yes_required=False,
         group=None,
         allow_never=False,
     ):
+        if isinstance(question, Questions):
+            question = question.value
+
         self.num_user_asks += 1
 
         # Ring the bell if needed
@@ -775,12 +809,11 @@ class InputOutput:
 
         style = self._get_style()
 
-        def is_valid_response(text):
-            if not text:
-                return True
-            return text.lower() in valid_responses
-
-        if self.yes is True:
+        if isinstance(self.yes, dict):
+            res = (
+                "y" if self.yes[question] else "n"
+            )  # Use a defaultdict to set a default value, otherwise raise KeyError
+        elif self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
             res = "n"

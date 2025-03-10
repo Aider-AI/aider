@@ -8,7 +8,8 @@ import tempfile
 import time
 from pathlib import Path
 
-from aider.dump import dump  # noqa: F401
+from aider.dump import dump
+from aider.io import Questions  # noqa: F401
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
 
@@ -349,7 +350,9 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=Fal
         print(printable_shell_command(cmd))  # plain print so it doesn't line-wrap
         return
 
-    if not io.confirm_ask("Run pip install?", default="y", subject=printable_shell_command(cmd)):
+    if not io.confirm_ask(
+        Questions.RUN_PIP_INSTALL, default="y", subject=printable_shell_command(cmd)
+    ):
         return
 
     success, output = run_install(cmd)
