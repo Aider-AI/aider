@@ -46,9 +46,8 @@ aider --notifications-command "say 'Aider is ready'"
 
 ### Remote Notifications
 
-For remote notifications you can use [Apprise](https://github.com/caronc/apprise)
-
-It's a cross-platform Python library for sending notifications to various services.
+For remote notifications you could use [Apprise](https://github.com/caronc/apprise),
+which is a cross-platform Python library for sending notifications to various services.
 
 We can use Apprise to send notifications to Slack
 
