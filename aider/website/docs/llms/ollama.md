@@ -11,8 +11,8 @@ Aider can connect to local Ollama models.
 # Pull the model
 ollama pull <model>
 
-# Start your ollama server
-ollama serve
+# Start your ollama server, increasing the context window to 8k tokens
+OLLAMA_CONTEXT_LENGTH=8192 ollama serve
 
 # In another terminal window...
 python -m pip install -U aider-chat
