@@ -71,6 +71,7 @@ cog.out(get_supported_languages_md())
 | erlang               | .erl                 |          |   ✓    |
 | go                   | .go                  |    ✓     |   ✓    |
 | gomod                | .gomod               |          |   ✓    |
+| gleam                | .gleam               |    ✓     |   ✓    |
 | hack                 | .hack                |          |   ✓    |
 | haskell              | .hs                  |          |   ✓    |
 | hcl                  | .hcl                 |    ✓     |   ✓    |

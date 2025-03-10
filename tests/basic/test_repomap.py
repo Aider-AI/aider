@@ -304,6 +304,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "elm": ("elm", "Person"),
             "go": ("go", "Greeter"),
             "hcl": ("tf", "aws_vpc"),
+            "gleam": ("gleam", "greeter"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
