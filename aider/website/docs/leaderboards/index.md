@@ -88,6 +88,14 @@ The model also has to successfully apply all its changes to the source file with
   td:nth-child(3), td:nth-child(4) {
     font-size: 12px;
   }
+  
+  /* Hide command and edit format columns on mobile */
+  @media screen and (max-width: 767px) {
+    th:nth-child(4), td:nth-child(4), /* Command column */
+    th:nth-child(5), td:nth-child(5) { /* Edit format column */
+      display: none;
+    }
+  }
 </style>
 
 
