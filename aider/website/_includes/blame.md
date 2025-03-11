@@ -9,7 +9,7 @@
 .chart-container {
     position: relative;
     width: 100%;
-    min-height: 300px;
+    height: 300px;
 }
 </style>
 
@@ -18,21 +18,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    var blameCanvas = document.getElementById('blameChart');
-    var linesCanvas = document.getElementById('linesChart');
-    var blameCtx = blameCanvas.getContext('2d');
-    var linesCtx = linesCanvas.getContext('2d');
-    
-    function getChartHeight() {
-        var width = window.innerWidth;
-        // For mobile (smaller screens), make charts taller
-        return width < 768 ? 400 : 300;
-    }
-    
-    // Set initial heights
-    document.querySelectorAll('.chart-container').forEach(function(container) {
-        container.style.height = getChartHeight() + 'px';
-    });
+    var blameCtx = document.getElementById('blameChart').getContext('2d');
+    var linesCtx = document.getElementById('linesChart').getContext('2d');
     
     var labels = [{% for row in site.data.blame %}'{{ row.end_tag }}',{% endfor %}];
     
@@ -166,16 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         }
-    });
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        var newHeight = getChartHeight();
-        document.querySelectorAll('.chart-container').forEach(function(container) {
-            container.style.height = newHeight + 'px';
-        });
-        blameChart.resize();
-        linesChart.resize();
     });
 });
 </script>
