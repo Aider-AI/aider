@@ -41,11 +41,11 @@ The model also has to successfully apply all its changes to the source file with
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center;">Percent completed correctly</th>
+      <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
-      <th style="padding: 8px; text-align: center;">Total Cost</th>
+      <th style="padding: 8px; text-align: center;">Cost</th>
     </tr>
   </thead>
   <tbody>
