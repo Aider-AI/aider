@@ -1282,12 +1282,12 @@ class TestCommands(TestCase):
 
             # Verify the file was not added
             self.assertEqual(len(coder.abs_fnames), 0)
-            
+
     def test_cmd_think_tokens(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
-        
+
         # Test with various formats
         test_values = {
             "8k": 8000,
@@ -1296,21 +1296,27 @@ class TestCommands(TestCase):
             "0.5M": 500000,
             "1000": 1000,
         }
-        
+
         for input_value, expected_tokens in test_values.items():
             with mock.patch.object(io, "tool_output") as mock_tool_output:
                 commands.cmd_think_tokens(input_value)
-                
+
                 # Check that the model's thinking tokens were updated
-                self.assertEqual(coder.main_model.extra_params["thinking"]["budget_tokens"], expected_tokens)
-                
+                self.assertEqual(
+                    coder.main_model.extra_params["thinking"]["budget_tokens"], expected_tokens
+                )
+
                 # Check that the tool output shows the correct value
-                mock_tool_output.assert_any_call(f"Set thinking token budget to {expected_tokens:,} tokens.")
-        
+                mock_tool_output.assert_any_call(
+                    f"Set thinking token budget to {expected_tokens:,} tokens."
+                )
+
         # Test with no value provided
         with mock.patch.object(io, "tool_error") as mock_tool_error:
             commands.cmd_think_tokens("")
-            mock_tool_error.assert_called_once_with("Please specify a token budget (e.g., 8k, 10k, 0.5M).")
+            mock_tool_error.assert_called_once_with(
+                "Please specify a token budget (e.g., 8k, 10k, 0.5M)."
+            )
 
     def test_cmd_add_aiderignored_file(self):
         with GitTemporaryDirectory():
@@ -1750,28 +1756,28 @@ class TestCommands(TestCase):
 
             del coder
             del commands
-            
+
     def test_cmd_reasoning_effort(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
         commands = Commands(io, coder)
-        
+
         # Test with numeric values
         with mock.patch.object(io, "tool_output") as mock_tool_output:
             commands.cmd_reasoning_effort("0.8")
             mock_tool_output.assert_any_call("Set reasoning effort to 0.8")
-            
+
         # Test with text values (low/medium/high)
         for effort_level in ["low", "medium", "high"]:
             with mock.patch.object(io, "tool_output") as mock_tool_output:
                 commands.cmd_reasoning_effort(effort_level)
                 mock_tool_output.assert_any_call(f"Set reasoning effort to {effort_level}")
-                
+
         # Check model's reasoning effort was updated
         with mock.patch.object(coder.main_model, "set_reasoning_effort") as mock_set_effort:
             commands.cmd_reasoning_effort("0.5")
             mock_set_effort.assert_called_once_with("0.5")
-            
+
         # Test with no value provided
         with mock.patch.object(io, "tool_error") as mock_tool_error:
             commands.cmd_reasoning_effort("")
