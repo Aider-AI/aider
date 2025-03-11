@@ -606,30 +606,30 @@ class Model(ModelSettings):
         """
         Parse a token value string into an integer.
         Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
-        
+
         Args:
             value: String or int token value
-            
+
         Returns:
             Integer token value
         """
         if isinstance(value, int):
             return value
-            
+
         if not isinstance(value, str):
             return int(value)  # Try to convert to int
-            
+
         value = value.strip().upper()
-        
-        if value.endswith('K'):
+
+        if value.endswith("K"):
             multiplier = 1024
             value = value[:-1]
-        elif value.endswith('M'):
+        elif value.endswith("M"):
             multiplier = 1024 * 1024
             value = value[:-1]
         else:
             multiplier = 1
-            
+
         # Convert to float first to handle decimal values like "10.5k"
         return int(float(value) * multiplier)
 
