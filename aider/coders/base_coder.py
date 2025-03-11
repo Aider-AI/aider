@@ -207,10 +207,6 @@ class Coder:
             prefix = "Model"
 
         output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
-        if self.add_cache_headers or main_model.caches_by_default:
-            output += ", prompt cache"
-        if main_model.info.get("supports_assistant_prefill"):
-            output += ", infinite output"
 
         # Check for thinking token budget
         if (
@@ -233,6 +229,11 @@ class Coder:
                 else:
                     formatted_budget = f"{value:.1f}k"
             output += f", {formatted_budget} think tokens"
+
+        if self.add_cache_headers or main_model.caches_by_default:
+            output += ", prompt cache"
+        if main_model.info.get("supports_assistant_prefill"):
+            output += ", infinite output"
 
         lines.append(output)
 
