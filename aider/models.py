@@ -602,13 +602,48 @@ class Model(ModelSettings):
                 self.extra_params["extra_body"] = {}
             self.extra_params["extra_body"]["reasoning_effort"] = effort
 
-    def set_thinking_tokens(self, num):
-        """Set the thinking token budget for models that support it"""
-        if num is not None:
+    def parse_token_value(self, value):
+        """
+        Parse a token value string into an integer.
+        Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
+        
+        Args:
+            value: String or int token value
+            
+        Returns:
+            Integer token value
+        """
+        if isinstance(value, int):
+            return value
+            
+        if not isinstance(value, str):
+            return int(value)  # Try to convert to int
+            
+        value = value.strip().upper()
+        
+        if value.endswith('K'):
+            multiplier = 1024
+            value = value[:-1]
+        elif value.endswith('M'):
+            multiplier = 1024 * 1024
+            value = value[:-1]
+        else:
+            multiplier = 1
+            
+        # Convert to float first to handle decimal values like "10.5k"
+        return int(float(value) * multiplier)
+
+    def set_thinking_tokens(self, value):
+        """
+        Set the thinking token budget for models that support it.
+        Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
+        """
+        if value is not None:
+            num_tokens = self.parse_token_value(value)
             self.use_temperature = False
             if not self.extra_params:
                 self.extra_params = {}
-            self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num}
+            self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
     def is_deepseek_r1(self):
         name = self.name.lower()
