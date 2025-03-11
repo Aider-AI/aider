@@ -130,7 +130,7 @@ def setup_git(git_root, io):
         user_name = repo.git.config("--get", "user.name") or None
     except git.exc.GitCommandError:
         user_name = None
-    
+
     try:
         user_email = repo.git.config("--get", "user.email") or None
     except git.exc.GitCommandError:
