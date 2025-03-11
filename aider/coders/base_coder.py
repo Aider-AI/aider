@@ -229,9 +229,9 @@ class Coder:
             else:
                 value = budget / 1000
                 if value == int(value):
-                    formatted_budget = f"{int(value)}K"
+                    formatted_budget = f"{int(value)}k"
                 else:
-                    formatted_budget = f"{value:.1f}K"
+                    formatted_budget = f"{value:.1f}k"
             output += f", {formatted_budget} think tokens"
 
         lines.append(output)
