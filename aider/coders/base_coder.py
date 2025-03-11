@@ -229,6 +229,15 @@ class Coder:
                 else:
                     formatted_budget = f"{value:.1f}k"
             output += f", {formatted_budget} think tokens"
+            
+        # Check for reasoning effort
+        if (
+            main_model.extra_params
+            and "extra_body" in main_model.extra_params
+            and "reasoning_effort" in main_model.extra_params["extra_body"]
+        ):
+            reasoning_effort = main_model.extra_params["extra_body"]["reasoning_effort"]
+            output += f", reasoning {reasoning_effort}"
 
         if self.add_cache_headers or main_model.caches_by_default:
             output += ", prompt cache"
