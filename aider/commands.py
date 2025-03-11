@@ -1423,6 +1423,10 @@ class Commands:
 
         budget = model.extra_params["thinking"].get("budget_tokens")
         self.io.tool_output(f"Set thinking token budget to {budget:,} tokens.")
+        
+        # Output announcements
+        announcements = "\n".join(self.coder.get_announcements())
+        self.io.tool_output(announcements)
 
     def cmd_reasoning_effort(self, args):
         "Set the reasoning effort level (values: number or low/medium/high depending on model)"
@@ -1436,6 +1440,10 @@ class Commands:
         model = self.coder.main_model
         model.set_reasoning_effort(value)
         self.io.tool_output(f"Set reasoning effort to {value}")
+        
+        # Output announcements
+        announcements = "\n".join(self.coder.get_announcements())
+        self.io.tool_output(announcements)
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
