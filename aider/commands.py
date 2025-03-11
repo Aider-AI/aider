@@ -1413,12 +1413,19 @@ class Commands:
 
     def cmd_think_tokens(self, args):
         "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M)"
+        model = self.coder.main_model
+        
         if not args.strip():
-            self.io.tool_error("Please specify a token budget (e.g., 8k, 10k, 0.5M).")
+            # Display current value if no args are provided
+            formatted_budget = model.get_thinking_tokens(model)
+            if formatted_budget is None:
+                self.io.tool_output("Thinking tokens are not currently set.")
+            else:
+                budget = model.extra_params["thinking"].get("budget_tokens")
+                self.io.tool_output(f"Current thinking token budget: {budget:,} tokens ({formatted_budget}).")
             return
 
         value = args.strip()
-        model = self.coder.main_model
         model.set_thinking_tokens(value)
 
         formatted_budget = model.get_thinking_tokens(model)
@@ -1432,19 +1439,23 @@ class Commands:
         self.io.tool_output(announcements)
 
     def cmd_think(self, args):
-        "Alias for think-tokens command"
+        "Alias for think-tokens command to set or display the thinking token budget"
         return self.cmd_think_tokens(args)
 
     def cmd_reasoning_effort(self, args):
         "Set the reasoning effort level (values: number or low/medium/high depending on model)"
+        model = self.coder.main_model
+        
         if not args.strip():
-            self.io.tool_error(
-                "Please specify a reasoning effort value (a number or low/medium/high)."
-            )
+            # Display current value if no args are provided
+            reasoning_value = model.get_reasoning_effort(model)
+            if reasoning_value is None:
+                self.io.tool_output("Reasoning effort is not currently set.")
+            else:
+                self.io.tool_output(f"Current reasoning effort: {reasoning_value}")
             return
 
         value = args.strip()
-        model = self.coder.main_model
         model.set_reasoning_effort(value)
         reasoning_value = model.get_reasoning_effort(model)
         self.io.tool_output(f"Set reasoning effort to {reasoning_value}")
@@ -1455,7 +1466,7 @@ class Commands:
         self.io.tool_output(announcements)
 
     def cmd_reason(self, args):
-        "Alias for reasoning-effort command"
+        "Alias for reasoning-effort command to set or display the reasoning effort"
         return self.cmd_reasoning_effort(args)
 
     def cmd_copy_context(self, args=None):
