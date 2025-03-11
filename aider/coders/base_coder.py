@@ -221,9 +221,17 @@ class Coder:
             budget = main_model.extra_params["thinking"]["budget_tokens"]
             # Format as xx.yK for thousands, xx.yM for millions
             if budget >= 1000000:
-                formatted_budget = f"{budget / 1000000:.1f}M"
+                value = budget / 1000000
+                if value == int(value):
+                    formatted_budget = f"{int(value)}M"
+                else:
+                    formatted_budget = f"{value:.1f}M"
             else:
-                formatted_budget = f"{budget / 1000:.1f}K"
+                value = budget / 1000
+                if value == int(value):
+                    formatted_budget = f"{int(value)}K"
+                else:
+                    formatted_budget = f"{value:.1f}K"
             output += f", {formatted_budget} think tokens"
 
         lines.append(output)
