@@ -220,14 +220,14 @@ class Coder:
         ):
             budget = main_model.extra_params["thinking"]["budget_tokens"]
             # Format as xx.yK for thousands, xx.yM for millions
-            if budget >= 1000000:
-                value = budget / 1000000
+            if budget >= 1024 * 1024:
+                value = budget / (1024 * 1024)
                 if value == int(value):
                     formatted_budget = f"{int(value)}M"
                 else:
                     formatted_budget = f"{value:.1f}M"
             else:
-                value = budget / 1000
+                value = budget / 1024
                 if value == int(value):
                     formatted_budget = f"{int(value)}k"
                 else:
