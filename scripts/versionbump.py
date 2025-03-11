@@ -123,7 +123,7 @@ def main():
         ["git", "add", "aider/__init__.py"],
         ["git", "commit", "-m", f"version bump to {new_version}"],
         ["git", "tag", f"v{new_version}"],
-        ["git", "push", "origin"],
+        ["git", "push", "origin", "--no-verify"],
         ["git", "push", "origin", f"v{new_version}", "--no-verify"],
     ]
 
