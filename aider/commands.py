@@ -1423,7 +1423,7 @@ class Commands:
 
         budget = model.extra_params["thinking"].get("budget_tokens")
         self.io.tool_output(f"Set thinking token budget to {budget:,} tokens.")
-        
+
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
@@ -1440,7 +1440,7 @@ class Commands:
         model = self.coder.main_model
         model.set_reasoning_effort(value)
         self.io.tool_output(f"Set reasoning effort to {value}")
-        
+
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
