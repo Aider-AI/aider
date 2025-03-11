@@ -126,8 +126,15 @@ def setup_git(git_root, io):
     if not repo:
         return
 
-    user_name = repo.git.config("--get", "user.name") or None
-    user_email = repo.git.config("--get", "user.email") or None
+    try:
+        user_name = repo.git.config("--get", "user.name") or None
+    except git.exc.GitCommandError:
+        user_name = None
+    
+    try:
+        user_email = repo.git.config("--get", "user.email") or None
+    except git.exc.GitCommandError:
+        user_email = None
 
     if user_name and user_email:
         return repo.working_tree_dir
