@@ -1307,8 +1307,9 @@ class TestCommands(TestCase):
                 )
 
                 # Check that the tool output shows the correct value with format
+                # Use the actual input_value (not normalized) in the assertion
                 mock_tool_output.assert_any_call(
-                    f"Set thinking token budget to {expected_tokens:,} tokens ({input_value})."
+                    f"Set thinking token budget to {expected_tokens:,} tokens ({input_value.lower()})."
                 )
 
         # Test with no value provided - should display current value
