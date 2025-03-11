@@ -211,6 +211,19 @@ class Coder:
             output += ", prompt cache"
         if main_model.info.get("supports_assistant_prefill"):
             output += ", infinite output"
+        
+        # Check for thinking token budget
+        if (main_model.extra_params and 
+            "thinking" in main_model.extra_params and 
+            "budget_tokens" in main_model.extra_params["thinking"]):
+            budget = main_model.extra_params["thinking"]["budget_tokens"]
+            # Format as xx.yK for thousands, xx.yM for millions
+            if budget >= 1000000:
+                formatted_budget = f"{budget/1000000:.1f}M"
+            else:
+                formatted_budget = f"{budget/1000:.1f}K"
+            output += f", {formatted_budget} think tokens"
+        
         lines.append(output)
 
         if self.edit_format == "architect":
