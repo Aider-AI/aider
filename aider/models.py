@@ -153,7 +153,11 @@ class ModelInfoManager:
             if self.cache_file.exists():
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
-                    self.content = json.loads(self.cache_file.read_text())
+                    try:
+                        self.content = json.loads(self.cache_file.read_text())
+                    except json.JSONDecodeError:
+                        # If the cache file is corrupted, treat it as missing
+                        self.content = None
         except OSError:
             pass
 
