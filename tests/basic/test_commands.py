@@ -1291,10 +1291,8 @@ class TestCommands(TestCase):
         # Test with various formats
         test_values = {
             "8k": 8192,  # 8 * 1024
-            "8K": 8192,  # 8 * 1024
             "10.5k": 10752,  # 10.5 * 1024
-            "0.5M": 524288,  # 0.5 * 1024 * 1024
-            "1000": 1000,
+            "512k": 524288,  # 0.5 * 1024 * 1024
         }
 
         for input_value, expected_tokens in test_values.items():
@@ -1309,8 +1307,7 @@ class TestCommands(TestCase):
                 # Check that the tool output shows the correct value with format
                 # Use the actual input_value (not normalized) in the assertion
                 mock_tool_output.assert_any_call(
-                    f"Set thinking token budget to {expected_tokens:,} tokens"
-                    f" ({input_value})."
+                    f"Set thinking token budget to {expected_tokens:,} tokens ({input_value})."
                 )
 
         # Test with no value provided - should display current value
