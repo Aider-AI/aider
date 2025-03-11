@@ -209,34 +209,13 @@ class Coder:
         output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
 
         # Check for thinking token budget
-        if (
-            main_model.extra_params
-            and "thinking" in main_model.extra_params
-            and "budget_tokens" in main_model.extra_params["thinking"]
-        ):
-            budget = main_model.extra_params["thinking"]["budget_tokens"]
-            # Format as xx.yK for thousands, xx.yM for millions
-            if budget >= 1024 * 1024:
-                value = budget / (1024 * 1024)
-                if value == int(value):
-                    formatted_budget = f"{int(value)}M"
-                else:
-                    formatted_budget = f"{value:.1f}M"
-            else:
-                value = budget / 1024
-                if value == int(value):
-                    formatted_budget = f"{int(value)}k"
-                else:
-                    formatted_budget = f"{value:.1f}k"
-            output += f", {formatted_budget} think tokens"
+        thinking_tokens = self.get_thinking_tokens(main_model)
+        if thinking_tokens:
+            output += f", {thinking_tokens} think tokens"
 
         # Check for reasoning effort
-        if (
-            main_model.extra_params
-            and "extra_body" in main_model.extra_params
-            and "reasoning_effort" in main_model.extra_params["extra_body"]
-        ):
-            reasoning_effort = main_model.extra_params["extra_body"]["reasoning_effort"]
+        reasoning_effort = self.get_reasoning_effort(main_model)
+        if reasoning_effort:
             output += f", reasoning {reasoning_effort}"
 
         if self.add_cache_headers or main_model.caches_by_default:

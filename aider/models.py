@@ -645,6 +645,39 @@ class Model(ModelSettings):
                 self.extra_params = {}
             self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
+    def get_thinking_tokens(self, model):
+        """Get formatted thinking token budget if available"""
+        if (
+            model.extra_params
+            and "thinking" in model.extra_params
+            and "budget_tokens" in model.extra_params["thinking"]
+        ):
+            budget = model.extra_params["thinking"]["budget_tokens"]
+            # Format as xx.yK for thousands, xx.yM for millions
+            if budget >= 1024 * 1024:
+                value = budget / (1024 * 1024)
+                if value == int(value):
+                    return f"{int(value)}M"
+                else:
+                    return f"{value:.1f}M"
+            else:
+                value = budget / 1024
+                if value == int(value):
+                    return f"{int(value)}k"
+                else:
+                    return f"{value:.1f}k"
+        return None
+
+    def get_reasoning_effort(self, model):
+        """Get reasoning effort value if available"""
+        if (
+            model.extra_params
+            and "extra_body" in model.extra_params
+            and "reasoning_effort" in model.extra_params["extra_body"]
+        ):
+            return model.extra_params["extra_body"]["reasoning_effort"]
+        return None
+
     def is_deepseek_r1(self):
         name = self.name.lower()
         if "deepseek" not in name:
