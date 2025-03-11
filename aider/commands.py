@@ -1421,9 +1421,10 @@ class Commands:
         model = self.coder.main_model
         model.set_thinking_tokens(value)
 
+        formatted_budget = model.get_thinking_tokens(model)
         budget = model.extra_params["thinking"].get("budget_tokens")
 
-        self.io.tool_output(f"Set thinking token budget to {budget:,} tokens.")
+        self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
         self.io.tool_output()
 
         # Output announcements
@@ -1445,7 +1446,8 @@ class Commands:
         value = args.strip()
         model = self.coder.main_model
         model.set_reasoning_effort(value)
-        self.io.tool_output(f"Set reasoning effort to {value}")
+        reasoning_value = model.get_reasoning_effort(model)
+        self.io.tool_output(f"Set reasoning effort to {reasoning_value}")
         self.io.tool_output()
 
         # Output announcements
