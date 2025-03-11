@@ -1430,7 +1430,7 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
-        
+
     def cmd_think(self, args):
         "Alias for think-tokens command"
         return self.cmd_think_tokens(args)
@@ -1453,7 +1453,7 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
-        
+
     def cmd_reason(self, args):
         "Alias for reasoning-effort command"
         return self.cmd_reasoning_effort(args)
