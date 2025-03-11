@@ -1414,7 +1414,7 @@ class Commands:
     def cmd_think_tokens(self, args):
         "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M)"
         model = self.coder.main_model
-        
+
         if not args.strip():
             # Display current value if no args are provided
             formatted_budget = model.get_thinking_tokens(model)
@@ -1422,7 +1422,9 @@ class Commands:
                 self.io.tool_output("Thinking tokens are not currently set.")
             else:
                 budget = model.extra_params["thinking"].get("budget_tokens")
-                self.io.tool_output(f"Current thinking token budget: {budget:,} tokens ({formatted_budget}).")
+                self.io.tool_output(
+                    f"Current thinking token budget: {budget:,} tokens ({formatted_budget})."
+                )
             return
 
         value = args.strip()
@@ -1445,7 +1447,7 @@ class Commands:
     def cmd_reasoning_effort(self, args):
         "Set the reasoning effort level (values: number or low/medium/high depending on model)"
         model = self.coder.main_model
-        
+
         if not args.strip():
             # Display current value if no args are provided
             reasoning_value = model.get_reasoning_effort(model)
