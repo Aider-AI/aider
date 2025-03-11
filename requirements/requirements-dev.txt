@@ -181,7 +181,7 @@ semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-setuptools==75.8.2
+setuptools==76.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools

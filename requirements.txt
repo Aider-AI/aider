@@ -139,7 +139,7 @@ jinja2==3.1.6
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-jiter==0.8.2
+jiter==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   openai
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.63.3
+litellm==1.63.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -198,7 +198,7 @@ numpy==1.26.4
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.65.4
+openai==1.65.5
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -224,7 +224,7 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==3.19.0
+posthog==3.19.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in

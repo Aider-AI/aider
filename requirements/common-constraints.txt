@@ -157,7 +157,7 @@ jinja2==3.1.6
     #   litellm
     #   pydeck
     #   torch
-jiter==0.8.2
+jiter==0.9.0
     # via openai
 joblib==1.4.2
     # via
@@ -174,7 +174,7 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.63.3
+litellm==1.63.5
     # via -r requirements/requirements.in
 llama-index-core==0.12.23.post2
     # via
@@ -210,7 +210,7 @@ multiprocess==0.70.17
     # via pathos
 mypy-extensions==1.0.0
     # via typing-inspect
-narwhals==1.29.1
+narwhals==1.30.0
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -236,7 +236,7 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
-openai==1.65.4
+openai==1.65.5
     # via litellm
 packaging==24.2
     # via
@@ -280,7 +280,7 @@ playwright==1.50.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.5.0
     # via pytest
-posthog==3.19.0
+posthog==3.19.1
     # via -r requirements/requirements.in
 pox==0.3.5
     # via pathos
@@ -394,7 +394,7 @@ semver==3.0.4
     # via -r requirements/requirements-dev.in
 sentence-transformers==3.4.1
     # via llama-index-embeddings-huggingface
-setuptools==75.8.2
+setuptools==76.0.0
     # via pip-tools
 shellingham==1.5.4
     # via typer
