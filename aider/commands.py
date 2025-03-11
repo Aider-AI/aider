@@ -1429,6 +1429,10 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+        
+    def cmd_think(self, args):
+        "Alias for think-tokens command"
+        return self.cmd_think_tokens(args)
 
     def cmd_reasoning_effort(self, args):
         "Set the reasoning effort level (values: number or low/medium/high depending on model)"
@@ -1447,6 +1451,10 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+        
+    def cmd_reason(self, args):
+        "Alias for reasoning-effort command"
+        return self.cmd_reasoning_effort(args)
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
