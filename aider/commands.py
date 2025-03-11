@@ -1425,21 +1425,15 @@ class Commands:
         self.io.tool_output(f"Set thinking token budget to {budget:,} tokens.")
 
     def cmd_reasoning_effort(self, args):
-        "Set the reasoning effort level (valid values depend on the model, typically 0-1)"
+        "Set the reasoning effort level (valid values: number or low/medium/high depending on model)"
         if not args.strip():
-            self.io.tool_error("Please specify a reasoning effort value (typically between 0-1).")
+            self.io.tool_error("Please specify a reasoning effort value (a number or low/medium/high).")
             return
 
         value = args.strip()
-        try:
-            effort = float(value)
-        except ValueError:
-            self.io.tool_error(f"Invalid reasoning effort value: {value}. Please use a number.")
-            return
-
         model = self.coder.main_model
-        model.set_reasoning_effort(effort)
-        self.io.tool_output(f"Set reasoning effort to {effort}")
+        model.set_reasoning_effort(value)
+        self.io.tool_output(f"Set reasoning effort to {value}")
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
