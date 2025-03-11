@@ -25,6 +25,11 @@ cog.out(text)
 
 ### main branch
 
+- Added ignore_permission_denied option to file watcher to prevent errors when accessing restricted files, by Yutaka Matsubara.
+- Aider wrote 0% of the code in this release.
+
+### Aider v0.76.0
+
 - Improved support for thinking/reasoningmodels:
   - Added `--thinking-tokens` CLI option to control token budget for models that support thinking.
   - Display thinking/reasoning content from LLMs which return it.
@@ -43,10 +48,6 @@ cog.out(text)
 - Fixed Git identity retrieval to respect global configuration, by Akira Komamura.
 - Offer to install dependencies for Bedrock and Vertex AI models.
 - Deprecated model shortcut args (like --4o, --opus) in favor of the --model flag.
-- Added C# language support for tree-sitter parsing.
-- Improved handling of NO_COLOR environment variable for disabling colored output.
-- Simplified reasoning content handling in stream processing.
-- Added support for both reasoning and reasoning_content fields from different models.
 - Aider wrote 85% of the code in this release.
 
 ### Aider v0.75.3

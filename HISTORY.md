@@ -1,5 +1,10 @@
 # Release history
 
+### Aider v0.76.1
+
+- Added ignore_permission_denied option to file watcher to prevent errors when accessing restricted files, by Yutaka Matsubara.
+- Aider wrote 0% of the code in this release.
+
 ### Aider v0.76.0
 
 - Improved support for thinking/reasoningmodels:
