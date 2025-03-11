@@ -1425,7 +1425,7 @@ class Commands:
         self.io.tool_output(f"Set thinking token budget to {budget:,} tokens.")
 
     def cmd_reasoning_effort(self, args):
-        "Set the reasoning effort level (valid values: number or low/medium/high depending on model)"
+        "Set the reasoning effort level (values: number or low/medium/high depending on model)"
         if not args.strip():
             self.io.tool_error(
                 "Please specify a reasoning effort value (a number or low/medium/high)."
