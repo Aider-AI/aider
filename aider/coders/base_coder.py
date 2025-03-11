@@ -229,7 +229,7 @@ class Coder:
                 else:
                     formatted_budget = f"{value:.1f}k"
             output += f", {formatted_budget} think tokens"
-            
+
         # Check for reasoning effort
         if (
             main_model.extra_params
