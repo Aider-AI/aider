@@ -1416,18 +1416,18 @@ class Commands:
         if not args.strip():
             self.io.tool_error("Please specify a token budget (e.g., 8k, 10k, 0.5M).")
             return
-            
+
         value = args.strip()
         model = self.coder.main_model
         model.set_thinking_tokens(value)
-        
+
         # Try to display the actual value that was set
         if model.extra_params and "thinking" in model.extra_params:
             budget = model.extra_params["thinking"].get("budget_tokens")
             self.io.tool_output(f"Set thinking token budget to {budget:,} tokens.")
         else:
             self.io.tool_output(f"Set thinking token budget to {value}.")
-    
+
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
 
