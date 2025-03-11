@@ -1,5 +1,11 @@
 # Release history
 
+### Aider v0.76.2
+
+- Fixed handling of JSONDecodeError when loading model cache file.
+- Fixed handling of GitCommandError when retrieving git user configuration.
+- Aider wrote 75% of the code in this release.
+
 ### Aider v0.76.1
 
 - Added ignore_permission_denied option to file watcher to prevent errors when accessing restricted files, by Yutaka Matsubara.
