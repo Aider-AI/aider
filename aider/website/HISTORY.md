@@ -23,6 +23,15 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Added `/think-tokens` command to set thinking token budget with support for human-readable formats (8k, 10.5k, 0.5M).
+- Added `/reasoning-effort` command to control model reasoning level.
+- Improved display of thinking token budget in model information.
+- Added reasoning effort level display in model information.
+- Changed `--thinking-tokens` argument to accept string values with human-readable formats.
+- Aider wrote 97% of the code in this release.
+
 ### Aider v0.76.2
 
 - Fixed handling of JSONDecodeError when loading model cache file.
