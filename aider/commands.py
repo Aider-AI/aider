@@ -356,6 +356,7 @@ class Commands:
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
         self.coder.abs_read_only_fnames = set()
+        self.coder.abs_read_only_stubs_fnames = set()
 
     def _clear_chat_history(self):
         self.coder.done_messages = []
@@ -429,6 +430,15 @@ class Commands:
 
         file_res.sort()
         res.extend(file_res)
+
+        # stub files
+        for fname in self.coder.abs_read_only_stubs_fnames:
+            relative_fname = self.coder.get_rel_fname(fname)
+            if not is_image_file(relative_fname):
+                stub = self.coder.get_file_stub(fname)
+                content = f"{relative_fname} (stub)\n{fence}\n" + stub + "{fence}\n"
+                tokens = self.coder.main_model.token_count(content)
+                res.append((tokens, f"{relative_fname} (read-only stub)", "/drop to remove"))
 
         self.io.tool_output(
             f"Approximate context window usage for {self.coder.main_model.name}, in tokens:"
@@ -622,6 +632,9 @@ class Commands:
             fname = f'"{fname}"'
         return fname
 
+    def completions_raw_read_only_stub(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
+
     def completions_raw_read_only(self, document, complete_event):
         # Get the text before the cursor
         text = document.text_before_cursor
@@ -782,6 +795,17 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat as an editable file")
                 continue
+            elif abs_file_path in self.coder.abs_read_only_stubs_fnames:
+                if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
+                    self.coder.abs_read_only_stubs_fnames.remove(abs_file_path)
+                    self.coder.abs_fnames.add(abs_file_path)
+                    self.io.tool_output(
+                        f"Moved {matched_file} from read-only (stub) to editable files in the chat"
+                    )
+                else:
+                    self.io.tool_error(
+                        f"Cannot add {matched_file} as it's not part of the repository"
+                    )
             elif abs_file_path in self.coder.abs_read_only_fnames:
                 if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
                     self.coder.abs_read_only_fnames.remove(abs_file_path)
@@ -813,10 +837,30 @@ class Commands:
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
-        read_only_files = [self.coder.get_rel_fname(fn) for fn in self.coder.abs_read_only_fnames]
+        read_only_files = [self.coder.get_rel_fname(fn) for fn in self.coder.abs_read_only_fnames | self.coder.abs_read_only_stubs_fnames]
         all_files = files + read_only_files
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
+
+    def _handle_read_only_files(self, expanded_word, file_set, description=""):
+        """Handle read-only files with substring matching and samefile check"""
+        matched = []
+        for f in file_set:
+            if expanded_word in f:
+                matched.append(f)
+                continue
+
+            # Try samefile comparison for relative paths
+            try:
+                abs_word = os.path.abspath(expanded_word)
+                if os.path.samefile(abs_word, f):
+                    matched.append(f)
+            except (FileNotFoundError, OSError):
+                continue
+
+        for matched_file in matched:
+            file_set.remove(matched_file)
+            self.io.tool_output(f"Removed {description} file {matched_file} from the chat")
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
@@ -831,24 +875,9 @@ class Commands:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
 
-            # Handle read-only files with substring matching and samefile check
-            read_only_matched = []
-            for f in self.coder.abs_read_only_fnames:
-                if expanded_word in f:
-                    read_only_matched.append(f)
-                    continue
-
-                # Try samefile comparison for relative paths
-                try:
-                    abs_word = os.path.abspath(expanded_word)
-                    if os.path.samefile(abs_word, f):
-                        read_only_matched.append(f)
-                except (FileNotFoundError, OSError):
-                    continue
-
-            for matched_file in read_only_matched:
-                self.coder.abs_read_only_fnames.remove(matched_file)
-                self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
+            # Handle read-only files
+            self._handle_read_only_files(expanded_word, self.coder.abs_read_only_fnames, "read-only")
+            self._handle_read_only_files(expanded_word, self.coder.abs_read_only_stubs_fnames, "read-only (stub)")
 
             # For editable files, use glob if word contains glob chars, otherwise use substring
             if any(c in expanded_word for c in "*?[]"):
@@ -967,6 +996,7 @@ class Commands:
         other_files = []
         chat_files = []
         read_only_files = []
+        read_only_stub_files = []
         for file in files:
             abs_file_path = self.coder.abs_root_path(file)
             if abs_file_path in self.coder.abs_fnames:
@@ -979,7 +1009,12 @@ class Commands:
             rel_file_path = self.coder.get_rel_fname(abs_file_path)
             read_only_files.append(rel_file_path)
 
-        if not chat_files and not other_files and not read_only_files:
+        # Add read-only stub files
+        for abs_file_path in self.coder.abs_read_only_stubs_fnames:
+            rel_file_path = self.coder.get_rel_fname(abs_file_path)
+            read_only_stub_files.append(rel_file_path)
+
+        if not chat_files and not other_files and not read_only_files and not read_only_stub_files:
             self.io.tool_output("\nNo files in chat, git repo, or read-only list.")
             return
 
@@ -988,10 +1023,13 @@ class Commands:
         for file in other_files:
             self.io.tool_output(f"  {file}")
 
-        if read_only_files:
+        # Read-only files:
+        if read_only_files or read_only_stub_files:
             self.io.tool_output("\nRead-only files:\n")
         for file in read_only_files:
             self.io.tool_output(f"  {file}")
+        for file in read_only_stub_files:
+            self.io.tool_output(f"  {file} (stub)")
 
         if chat_files:
             self.io.tool_output("\nFiles in chat:\n")
@@ -1197,15 +1235,23 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
-    def cmd_read_only(self, args):
-        "Add files to the chat that are for reference only, or turn added files to read-only"
+    def _cmd_read_only_base(self, args, source_set, target_set, source_mode, target_mode):
+        """Base implementation for read-only and read-only-stub commands"""
         if not args.strip():
-            # Convert all files in chat to read-only
+            # Handle editable files
             for fname in list(self.coder.abs_fnames):
                 self.coder.abs_fnames.remove(fname)
-                self.coder.abs_read_only_fnames.add(fname)
+                target_set.add(fname)
                 rel_fname = self.coder.get_rel_fname(fname)
-                self.io.tool_output(f"Converted {rel_fname} to read-only")
+                self.io.tool_output(f"Converted {rel_fname} from editable to {target_mode}")
+
+            # Handle source set files if provided
+            if source_set:
+                for fname in list(source_set):
+                    source_set.remove(fname)
+                    target_set.add(fname)
+                    rel_fname = self.coder.get_rel_fname(fname)
+                    self.io.tool_output(f"Converted {rel_fname} from {source_mode} to {target_mode}")
             return
 
         filenames = parse_quoted_filenames(args)
@@ -1230,13 +1276,13 @@ class Commands:
         for path in sorted(all_paths):
             abs_path = self.coder.abs_root_path(path)
             if os.path.isfile(abs_path):
-                self._add_read_only_file(abs_path, path)
+                self._add_read_only_file(abs_path, path, target_set, source_set, source_mode=source_mode, target_mode=target_mode)
             elif os.path.isdir(abs_path):
-                self._add_read_only_directory(abs_path, path)
+                self._add_read_only_directory(abs_path, path, source_set, target_set, target_mode)
             else:
                 self.io.tool_error(f"Not a file or directory: {abs_path}")
 
-    def _add_read_only_file(self, abs_path, original_name):
+    def _add_read_only_file(self, abs_path, original_name, target_set, source_set, source_mode="read-only", target_mode="read-only"):
         if is_image_file(original_name) and not self.coder.main_model.info.get("supports_vision"):
             self.io.tool_error(
                 f"Cannot add image file {original_name} as the"
@@ -1244,37 +1290,64 @@ class Commands:
             )
             return
 
-        if abs_path in self.coder.abs_read_only_fnames:
-            self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
+        if abs_path in target_set:
+            self.io.tool_error(f"{original_name} is already in the chat as a {target_mode} file")
             return
         elif abs_path in self.coder.abs_fnames:
             self.coder.abs_fnames.remove(abs_path)
-            self.coder.abs_read_only_fnames.add(abs_path)
+            target_set.add(abs_path)
             self.io.tool_output(
-                f"Moved {original_name} from editable to read-only files in the chat"
+                f"Moved {original_name} from editable to {target_mode} files in the chat"
+            )
+        elif source_set and abs_path in source_set:
+            source_set.remove(abs_path)
+            target_set.add(abs_path)
+            self.io.tool_output(
+                f"Moved {original_name} from {source_mode} to {target_mode} files in the chat"
             )
         else:
-            self.coder.abs_read_only_fnames.add(abs_path)
-            self.io.tool_output(f"Added {original_name} to read-only files.")
+            target_set.add(abs_path)
+            self.io.tool_output(f"Added {original_name} to {target_mode} files.")
 
-    def _add_read_only_directory(self, abs_path, original_name):
+    def _add_read_only_directory(self, abs_path, original_name, source_set, target_set, target_mode):
         added_files = 0
         for root, _, files in os.walk(abs_path):
             for file in files:
                 file_path = os.path.join(root, file)
                 if (
                     file_path not in self.coder.abs_fnames
-                    and file_path not in self.coder.abs_read_only_fnames
+                    and file_path not in target_set
+                    and (source_set is None or file_path not in source_set)
                 ):
-                    self.coder.abs_read_only_fnames.add(file_path)
+                    target_set.add(file_path)
                     added_files += 1
 
         if added_files > 0:
             self.io.tool_output(
-                f"Added {added_files} files from directory {original_name} to read-only files."
+                f"Added {added_files} files from directory {original_name} to {target_mode} files."
             )
         else:
             self.io.tool_output(f"No new files added from directory {original_name}.")
+
+    def cmd_read_only(self, args):
+        "Add files to the chat that are for reference only, or turn added files to read-only"
+        self._cmd_read_only_base(
+            args,
+            source_set=self.coder.abs_read_only_stubs_fnames,
+            target_set=self.coder.abs_read_only_fnames,
+            source_mode="read-only (stub)",
+            target_mode="read-only"
+        )
+
+    def cmd_read_only_stub(self, args):
+        "Add files to the chat as read-only stubs, or turn added files to read-only (stubs)"
+        self._cmd_read_only_base(
+            args,
+            source_set=self.coder.abs_read_only_fnames,
+            target_set=self.coder.abs_read_only_stubs_fnames,
+            source_mode="read-only",
+            target_mode="read-only (stub)"
+        )
 
     def cmd_map(self, args):
         "Print out the current repository map"
@@ -1354,6 +1427,14 @@ class Commands:
                         f.write(f"/read-only {rel_fname}\n")
                     else:
                         f.write(f"/read-only {fname}\n")
+                # Write commands to add read-only stubs files
+                for fname in sorted(self.coder.abs_read_only_stubs_fnames):
+                    # Use absolute path for files outside repo root, relative path for files inside
+                    if Path(fname).is_relative_to(self.coder.root):
+                        rel_fname = self.coder.get_rel_fname(fname)
+                        f.write(f"/read-only-stub {rel_fname}\n")
+                    else:
+                        f.write(f"/read-only-stub {fname}\n")
 
             self.io.tool_output(f"Saved commands to {args.strip()}")
         except Exception as e:
