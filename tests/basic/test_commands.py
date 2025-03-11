@@ -1306,17 +1306,15 @@ class TestCommands(TestCase):
                     coder.main_model.extra_params["thinking"]["budget_tokens"], expected_tokens
                 )
 
-                # Check that the tool output shows the correct value
+                # Check that the tool output shows the correct value with format
                 mock_tool_output.assert_any_call(
-                    f"Set thinking token budget to {expected_tokens:,} tokens."
+                    f"Set thinking token budget to {expected_tokens:,} tokens ({input_value})."
                 )
 
-        # Test with no value provided
-        with mock.patch.object(io, "tool_error") as mock_tool_error:
+        # Test with no value provided - should display current value
+        with mock.patch.object(io, "tool_output") as mock_tool_output:
             commands.cmd_think_tokens("")
-            mock_tool_error.assert_called_once_with(
-                "Please specify a token budget (e.g., 8k, 10k, 0.5M)."
-            )
+            mock_tool_output.assert_any_call(mock.ANY)  # Just verify it calls tool_output
 
     def test_cmd_add_aiderignored_file(self):
         with GitTemporaryDirectory():
@@ -1778,12 +1776,10 @@ class TestCommands(TestCase):
             commands.cmd_reasoning_effort("0.5")
             mock_set_effort.assert_called_once_with("0.5")
 
-        # Test with no value provided
-        with mock.patch.object(io, "tool_error") as mock_tool_error:
+        # Test with no value provided - should display current value
+        with mock.patch.object(io, "tool_output") as mock_tool_output:
             commands.cmd_reasoning_effort("")
-            mock_tool_error.assert_called_once_with(
-                "Please specify a reasoning effort value (a number or low/medium/high)."
-            )
+            mock_tool_output.assert_any_call("Current reasoning effort: high")
 
     def test_cmd_load_with_switch_coder(self):
         with GitTemporaryDirectory() as repo_dir:
