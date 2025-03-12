@@ -8,11 +8,12 @@ import sys
 SPEEDUP = 1.25
 
 # Regular expression to match ANSI escape sequences
-ANSI_ESCAPE_PATTERN = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~]|\([0-9A-Z=])')
+ANSI_ESCAPE_PATTERN = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~]|\([0-9A-Z=])")
+
 
 def strip_ansi(text):
     """Remove ANSI escape sequences from text"""
-    return ANSI_ESCAPE_PATTERN.sub('', text)
+    return ANSI_ESCAPE_PATTERN.sub("", text)
 
 
 def process_file(input_path, output_path):
