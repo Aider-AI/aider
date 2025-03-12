@@ -313,6 +313,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "commonlisp": ("lisp", "greet"),
             "pony": ("pony", "Greeter"),
             "properties": ("properties", "database.url"),
+            "r": ("r", "calculate"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
