@@ -288,127 +288,99 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         self._test_language_repo_map("c", ("c", "main"), self.fixtures_dir)
 
     def test_language_cpp(self):
-
         self._test_language_repo_map("cpp", ("cpp", "main"), self.fixtures_dir)
 
     def test_language_d(self):
-
         self._test_language_repo_map("d", ("d", "main"), self.fixtures_dir)
 
     def test_language_dart(self):
-
         self._test_language_repo_map("dart", ("dart", "Person"), self.fixtures_dir)
 
     def test_language_elixir(self):
-
         self._test_language_repo_map("elixir", ("ex", "Greeter"), self.fixtures_dir)
 
     def test_language_gleam(self):
-
         self._test_language_repo_map("gleam", ("gleam", "greet"), self.fixtures_dir)
 
     def test_language_java(self):
-
         self._test_language_repo_map("java", ("java", "Greeting"), self.fixtures_dir)
 
     def test_language_javascript(self):
-
         self._test_language_repo_map("javascript", ("js", "Person"), self.fixtures_dir)
 
     def test_language_kotlin(self):
-
         self._test_language_repo_map("kotlin", ("kt", "Greeting"), self.fixtures_dir)
 
     def test_language_lua(self):
-
         self._test_language_repo_map("lua", ("lua", "greet"), self.fixtures_dir)
 
     # "ocaml": ("ml", "Greeter"), # not supported in tsl-pack (yet?)
 
     def test_language_php(self):
-
         self._test_language_repo_map("php", ("php", "greet"), self.fixtures_dir)
 
     def test_language_python(self):
-
         self._test_language_repo_map("python", ("py", "Person"), self.fixtures_dir)
 
     # "ql": ("ql", "greet"), # not supported in tsl-pack (yet?)
 
     def test_language_ruby(self):
-
         self._test_language_repo_map("ruby", ("rb", "greet"), self.fixtures_dir)
 
     def test_language_rust(self):
-
         self._test_language_repo_map("rust", ("rs", "Person"), self.fixtures_dir)
 
     def test_language_typescript(self):
-
         self._test_language_repo_map("typescript", ("ts", "greet"), self.fixtures_dir)
 
     def test_language_tsx(self):
-
         self._test_language_repo_map("tsx", ("tsx", "UserProps"), self.fixtures_dir)
 
     def test_language_csharp(self):
-
         self._test_language_repo_map("csharp", ("cs", "IGreeter"), self.fixtures_dir)
 
     def test_language_elisp(self):
-
         self._test_language_repo_map("elisp", ("el", "greeter"), self.fixtures_dir)
 
     def test_language_elm(self):
-
         self._test_language_repo_map("elm", ("elm", "Person"), self.fixtures_dir)
 
     def test_language_go(self):
-
         self._test_language_repo_map("go", ("go", "Greeter"), self.fixtures_dir)
 
     def test_language_hcl(self):
-
         self._test_language_repo_map("hcl", ("tf", "aws_vpc"), self.fixtures_dir)
 
     def test_language_arduino(self):
-
         self._test_language_repo_map("arduino", ("ino", "setup"), self.fixtures_dir)
 
     def test_language_chatito(self):
-
         self._test_language_repo_map("chatito", ("chatito", "intent"), self.fixtures_dir)
 
     def test_language_commonlisp(self):
-
         self._test_language_repo_map("commonlisp", ("lisp", "greet"), self.fixtures_dir)
 
     def test_language_pony(self):
-
         self._test_language_repo_map("pony", ("pony", "Greeter"), self.fixtures_dir)
 
     def test_language_properties(self):
-
-        self._test_language_repo_map("properties", ("properties", "database.url"), self.fixtures_dir)
+        self._test_language_repo_map(
+            "properties", ("properties", "database.url"), self.fixtures_dir
+        )
 
     def test_language_r(self):
-
         self._test_language_repo_map("r", ("r", "calculate"), self.fixtures_dir)
 
     def test_language_racket(self):
-
         self._test_language_repo_map("racket", ("rkt", "greet"), self.fixtures_dir)
 
     def test_language_solidity(self):
-
         self._test_language_repo_map("solidity", ("sol", "SimpleStorage"), self.fixtures_dir)
 
     def test_language_swift(self):
-
         self._test_language_repo_map("swift", ("swift", "Greeter"), self.fixtures_dir)
 
     def test_language_udev(self):
-
         self._test_language_repo_map("udev", ("rules", "USB_DRIVER"), self.fixtures_dir)
 
     def _test_language_repo_map(self, lang, key_symbol, fixtures_dir):
