@@ -4,6 +4,9 @@ import sys
 import os
 import json
 
+# Speed up factor for the recording
+SPEEDUP = 1.25
+
 def process_file(input_path, output_path):
     """
     Process an asciinema cast v2 file to filter out certain sections based on ANSI cursor commands.
@@ -74,7 +77,8 @@ def process_file(input_path, output_path):
                     # Ensure timestamps never go backward
                     adjusted_timestamp = max(adjusted_timestamp, last_timestamp)
                     last_timestamp = adjusted_timestamp
-                    record[0] = adjusted_timestamp
+                    # Apply speedup factor to the timestamp
+                    record[0] = adjusted_timestamp / SPEEDUP
                     outfile.write(json.dumps(record) + '\n')
                     
                 # If we're in skip mode, check if we should exit it
@@ -102,7 +106,8 @@ def process_file(input_path, output_path):
                         # Ensure timestamps never go backward
                         adjusted_timestamp = max(adjusted_timestamp, last_timestamp)
                         last_timestamp = adjusted_timestamp
-                        record[0] = adjusted_timestamp
+                        # Apply speedup factor to the timestamp
+                        record[0] = adjusted_timestamp / SPEEDUP
                         outfile.write(json.dumps(record) + '\n')
                     # Otherwise we're still in skip mode, don't write anything
             
