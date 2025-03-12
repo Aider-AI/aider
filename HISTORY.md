@@ -4,6 +4,7 @@
 
 - Added `/think-tokens` command to set thinking token budget with support for human-readable formats (8k, 10.5k, 0.5M).
 - Added `/reasoning-effort` command to control model reasoning level.
+- The `/think-tokens` and `/reasoning-effort` commands now display current settings when called without arguments.
 - Improved display of thinking token budget in model information.
 - Added reasoning effort level display in model information.
 - Changed `--thinking-tokens` argument to accept string values with human-readable formats.

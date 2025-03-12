@@ -27,11 +27,10 @@ cog.out(text)
 
 - Added `/think-tokens` command to set thinking token budget with support for human-readable formats (8k, 10.5k, 0.5M).
 - Added `/reasoning-effort` command to control model reasoning level.
+- The `/think-tokens` and `/reasoning-effort` commands now display current settings when called without arguments.
 - Improved display of thinking token budget in model information.
 - Added reasoning effort level display in model information.
 - Changed `--thinking-tokens` argument to accept string values with human-readable formats.
-- Added short command aliases `/think` and `/reason` for `/think-tokens` and `/reasoning-effort` respectively.
-- Commands `/think` and `/reason` now display current values when called without arguments.
 - The bare `/drop` command now preserves original read-only files provided via args.read.
 - Aider wrote 96% of the code in this release.
 
