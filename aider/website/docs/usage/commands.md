@@ -34,6 +34,7 @@ cog.out(get_help_md())
 | **/drop** | Remove files from the chat session to free up context space |
 | **/editor** | Open an editor to write a prompt |
 | **/exit** | Exit the application |
+| **/general** | Ask questions and edit general documents. If no prompt provided, switches to general mode. |
 | **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
 | **/lint** | Lint and fix in-chat files or all dirty files if none in chat |

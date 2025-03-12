@@ -118,6 +118,7 @@ class Commands:
                         " them."
                     ),
                 ),
+                ("general", "Ask general questions and edit using diff format."),
             ]
         )
 
@@ -144,7 +145,7 @@ class Commands:
         if ef == "code":
             edit_format = self.coder.main_model.edit_format
             summarize_from_coder = False
-        elif ef == "ask":
+        elif ef == "ask" or ef == "general":
             summarize_from_coder = False
 
         raise SwitchCoder(
@@ -1099,6 +1100,10 @@ class Commands:
     def cmd_architect(self, args):
         """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
         return self._generic_chat_command(args, "architect")
+
+    def cmd_general(self, args):
+        """Ask questions and edit general documents. If no prompt provided, switches to general mode."""  # noqa
+        return self._generic_chat_command(args, "general")
 
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
