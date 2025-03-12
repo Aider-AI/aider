@@ -61,11 +61,11 @@ def main():
         sys.exit(1)
 
     print(f"Found {len(lang_defs)} language definitions")
-    
+
     # Process each language
     successes = 0
     total = len(lang_defs)
-    
+
     for lang, config in lang_defs.items():
         print(f"Processing {lang}...")
 
@@ -87,7 +87,7 @@ def main():
         if len(parts) < 5:
             print(f"Skipping {lang}: Invalid GitHub URL format")
             continue
-            
+
         owner = parts[-2]
         repo = parts[-1]
 
@@ -101,19 +101,19 @@ def main():
         # 1. Branch specified in the config
         # 2. Default branch from GitHub API
         # 3. Common branch names (main, master, etc.)
-        
+
         branches_to_try = []
-        
+
         # 1. Branch from config (if specified)
         config_branch = config.get("branch")
         if config_branch:
             branches_to_try.append(config_branch)
-        
+
         # 2. Default branch from GitHub API
         default_branch = get_default_branch(owner, repo)
         if default_branch and default_branch not in branches_to_try:
             branches_to_try.append(default_branch)
-            
+
         # 3. Add common branch names
         for branch in common_branches:
             if branch not in branches_to_try:
@@ -127,10 +127,10 @@ def main():
                 success = True
                 successes += 1
                 break
-                
+
         if not success:
             print(f"Failed to download tags for {lang} after trying all branches")
-            
+
         # Be nice to GitHub's API
         time.sleep(0.1)
 
