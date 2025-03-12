@@ -286,127 +286,127 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_c(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("c", ("c", "main"), fixtures_dir)
-    
+
     def test_language_cpp(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("cpp", ("cpp", "main"), fixtures_dir)
-    
+
     def test_language_d(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("d", ("d", "main"), fixtures_dir)
-    
+
     def test_language_dart(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("dart", ("dart", "Person"), fixtures_dir)
-    
+
     def test_language_elixir(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("elixir", ("ex", "Greeter"), fixtures_dir)
-    
+
     def test_language_gleam(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("gleam", ("gleam", "greet"), fixtures_dir)
-    
+
     def test_language_java(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("java", ("java", "Greeting"), fixtures_dir)
-    
+
     def test_language_javascript(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("javascript", ("js", "Person"), fixtures_dir)
-    
+
     def test_language_kotlin(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("kotlin", ("kt", "Greeting"), fixtures_dir)
-    
+
     def test_language_lua(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("lua", ("lua", "greet"), fixtures_dir)
-    
+
     # "ocaml": ("ml", "Greeter"), # not supported in tsl-pack (yet?)
-    
+
     def test_language_php(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("php", ("php", "greet"), fixtures_dir)
-    
+
     def test_language_python(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("python", ("py", "Person"), fixtures_dir)
-    
+
     # "ql": ("ql", "greet"), # not supported in tsl-pack (yet?)
-    
+
     def test_language_ruby(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("ruby", ("rb", "greet"), fixtures_dir)
-    
+
     def test_language_rust(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("rust", ("rs", "Person"), fixtures_dir)
-    
+
     def test_language_typescript(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("typescript", ("ts", "greet"), fixtures_dir)
-    
+
     def test_language_tsx(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("tsx", ("tsx", "UserProps"), fixtures_dir)
-    
+
     def test_language_csharp(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("csharp", ("cs", "IGreeter"), fixtures_dir)
-    
+
     def test_language_elisp(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("elisp", ("el", "greeter"), fixtures_dir)
-    
+
     def test_language_elm(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("elm", ("elm", "Person"), fixtures_dir)
-    
+
     def test_language_go(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("go", ("go", "Greeter"), fixtures_dir)
-    
+
     def test_language_hcl(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("hcl", ("tf", "aws_vpc"), fixtures_dir)
-    
+
     def test_language_arduino(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("arduino", ("ino", "setup"), fixtures_dir)
-    
+
     def test_language_chatito(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("chatito", ("chatito", "intent"), fixtures_dir)
-    
+
     def test_language_commonlisp(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("commonlisp", ("lisp", "greet"), fixtures_dir)
-    
+
     def test_language_pony(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("pony", ("pony", "Greeter"), fixtures_dir)
-    
+
     def test_language_properties(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("properties", ("properties", "database.url"), fixtures_dir)
-    
+
     def test_language_r(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("r", ("r", "calculate"), fixtures_dir)
-    
+
     def test_language_racket(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("racket", ("rkt", "greet"), fixtures_dir)
-    
+
     def test_language_solidity(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("solidity", ("sol", "SimpleStorage"), fixtures_dir)
-    
+
     def test_language_swift(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("swift", ("swift", "Greeter"), fixtures_dir)
-    
+
     def test_language_udev(self):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
         self._test_language_repo_map("udev", ("rules", "USB_DRIVER"), fixtures_dir)
