@@ -25,6 +25,9 @@ cog.out(text)
 
 ### main branch
 
+- Big upgrade in [programming languages supported](https://aider.chat/docs/languages.html) by adopting [tree-sitter-language-pack](https://github.com/Goldziher/tree-sitter-language-pack/).
+  - 130 new languages with linter support.
+  - 20 new languages with repo-map support.
 - Added `/think-tokens` command to set thinking token budget with support for human-readable formats (8k, 10.5k, 0.5M).
 - Added `/reasoning-effort` command to control model reasoning level.
 - The `/think-tokens` and `/reasoning-effort` commands now display current settings when called without arguments.
@@ -35,7 +38,7 @@ cog.out(text)
 - Fixed a bug where default model would be set by deprecated `--shortcut` switches even when already specified in the command line.
 - Added `--auto-accept-architect` flag (default: true) to automatically accept changes from architect coder format without confirmation.
 - Improved AutoCompleter to require 3 characters for autocompletion to reduce noise.
-- Aider wrote 92% of the code in this release.
+- Aider wrote 72% of the code in this release.
 
 ### Aider v0.76.2
 
