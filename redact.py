@@ -2,38 +2,64 @@
 import re
 import sys
 import os
+import json
 
 def process_file(input_path, output_path):
     """
-    Process a text file to filter out certain sections based on ANSI cursor commands.
-
-    If a line contains "\u001b[ROW;COL]H" followed by "Atuin", skip it and all subsequent
-    lines until finding a line with "\u001b[ROW;(COL-1)H".
+    Process an asciinema cast v2 file to filter out certain sections based on ANSI cursor commands.
+    
+    Format: First line is a JSON header. Subsequent lines are JSON arrays: [timestamp, "o", "text"]
+    
+    If a text field contains "\u001b[ROW;COL]H" followed by "Atuin", skip it and all subsequent
+    records until finding a text with "\u001b[ROW;(COL-1)H".
     """
     skip_mode = False
     target_pattern = None
-    ansi_pattern = re.compile(r'\\u001b\[(\d+);(\d+)H')
+    ansi_pattern = re.compile(r'\u001b\[(\d+);(\d+)H')
+    is_first_line = True
 
     with open(input_path, 'r', encoding='utf-8') as infile, open(output_path, 'w', encoding='utf-8') as outfile:
         for line in infile:
-            # If we're not in skip mode, check if we need to enter it
-            if not skip_mode:
-                if '\\u001b[' in line and 'Atuin' in line:
-                    match = ansi_pattern.search(line)
-                    if match:
-                        row = match.group(1)
-                        col = int(match.group(2))
-                        # Create pattern for the line that will end the skip section
-                        target_pattern = f'\\u001b[{row};{col-1}H'
-                        skip_mode = True
-                        continue  # Skip this line
-                # If we're not skipping, write the line
+            # Always include the header (first line)
+            if is_first_line:
                 outfile.write(line)
-            # If we're in skip mode, check if we should exit it
-            else:
-                if target_pattern in line:
-                    skip_mode = False
-                    outfile.write(line)  # Include the matching line
+                is_first_line = False
+                continue
+            
+            # Parse the JSON record
+            try:
+                record = json.loads(line)
+                if not isinstance(record, list) or len(record) != 3 or record[1] != "o":
+                    # If not a valid record, just write it out
+                    outfile.write(line)
+                    continue
+                
+                text = record[2]  # The text content
+                
+                # If we're not in skip mode, check if we need to enter it
+                if not skip_mode:
+                    if '\u001b[' in text and 'Atuin' in text:
+                        match = ansi_pattern.search(text)
+                        if match:
+                            row = match.group(1)
+                            col = int(match.group(2))
+                            # Create pattern for the ending sequence
+                            target_pattern = f'\u001b[{row};{col-1}H'
+                            skip_mode = True
+                            continue  # Skip this record
+                    
+                    # If we're not skipping, write the record
+                    outfile.write(line)
+                    
+                # If we're in skip mode, check if we should exit it
+                else:
+                    if target_pattern in text:
+                        skip_mode = False
+                        outfile.write(line)  # Include the matching record
+            
+            except json.JSONDecodeError:
+                # If we can't parse the line as JSON, include it anyway
+                outfile.write(line)
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
