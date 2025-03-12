@@ -361,7 +361,7 @@ class Commands:
         self.coder.abs_fnames = set()
 
         # When dropping all files, keep those that were originally provided via args.read
-        if hasattr(self, "original_read_only_fnames") and self.original_read_only_fnames:
+        if self.original_read_only_fnames:
             # Keep only the original read-only files
             to_keep = set()
             for abs_fname in self.coder.abs_read_only_fnames:
