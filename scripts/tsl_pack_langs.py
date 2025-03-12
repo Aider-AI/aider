@@ -96,7 +96,7 @@ def main():
         queries_dir = os.path.join(lang_dir, "queries")
         os.makedirs(queries_dir, exist_ok=True)
         output_file = os.path.join(queries_dir, "tags.scm")
-        
+
         # Skip if file already exists
         if os.path.exists(output_file):
             print(f"Skipping {lang}: tags.scm already exists")
