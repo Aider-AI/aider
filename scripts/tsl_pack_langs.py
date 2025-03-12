@@ -96,6 +96,12 @@ def main():
         queries_dir = os.path.join(lang_dir, "queries")
         os.makedirs(queries_dir, exist_ok=True)
         output_file = os.path.join(queries_dir, "tags.scm")
+        
+        # Skip if file already exists
+        if os.path.exists(output_file):
+            print(f"Skipping {lang}: tags.scm already exists")
+            successes += 1
+            continue
 
         # Try branches in this order:
         # 1. Branch specified in the config
