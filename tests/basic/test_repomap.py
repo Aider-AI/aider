@@ -294,6 +294,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "java": ("java", "Greeting"),
             "javascript": ("js", "Person"),
             "kotlin": ("kt", "Greeting"),
+            "lua": ("lua", "greet"),
             # "ocaml": ("ml", "Greeter"), # not supported in tsl-pack (yet?)
             "php": ("php", "greet"),
             "python": ("py", "Person"),
