@@ -70,7 +70,7 @@ def main():
         # Extract repo URL from the config
         repo_url = config.get("repo")
         print(f"Processing {lang} ({repo_url})...")
-        
+
         if not repo_url:
             print(f"Skipping {lang}: No repository URL found")
             continue
