@@ -3,7 +3,6 @@
 import json
 import os
 import sys
-from pathlib import Path
 
 import requests
 
@@ -50,10 +49,12 @@ def main():
         _, _, _, owner, repo = repo_url.rstrip("/").split("/")
 
         # Construct the raw file URL
+        # Build the GitHub raw content path
+        base_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}"
         if directory:
-            tags_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{directory}/queries/tags.scm"
+            tags_url = f"{base_url}/{directory}/queries/tags.scm"
         else:
-            tags_url = f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/queries/tags.scm"
+            tags_url = f"{base_url}/queries/tags.scm"
 
         # Create the language directory in the output path
         lang_dir = os.path.join(output_dir, lang)
