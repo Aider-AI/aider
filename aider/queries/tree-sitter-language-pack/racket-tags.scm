@@ -5,8 +5,8 @@
   .
   (list
     .
-    (symbol) @name) @definition.function)
+    (symbol) @name.definition.function) @definition.function)
 
 (list
   .
-  (symbol) @reference.call)
+  (symbol) @name.reference.call)
