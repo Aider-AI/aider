@@ -1,7 +1,6 @@
-
 # Credits
 
-Aider uses modified versions of the tags.scm files from these open source 
+Aider uses modified versions of the tags.scm files from these open source
 tree-sitter language implementations:
 
 * [https://github.com/tree-sitter/tree-sitter-c](https://github.com/tree-sitter/tree-sitter-c) — licensed under the MIT License.
@@ -10,6 +9,7 @@ tree-sitter language implementations:
 * [https://github.com/Wilfred/tree-sitter-elisp](https://github.com/Wilfred/tree-sitter-elisp) — licensed under the MIT License.
 * [https://github.com/elixir-lang/tree-sitter-elixir](https://github.com/elixir-lang/tree-sitter-elixir) — licensed under the Apache License, Version 2.0.
 * [https://github.com/elm-tooling/tree-sitter-elm](https://github.com/elm-tooling/tree-sitter-elm) — licensed under the MIT License.
+* [https://github.com/gleam-lang/tree-sitter-gleam](https://github.com/gleam-lang/tree-sitter-gleam) — licensed under the Apache License, Version 2.0.
 * [https://github.com/tree-sitter/tree-sitter-go](https://github.com/tree-sitter/tree-sitter-go) — licensed under the MIT License.
 * [https://github.com/tree-sitter/tree-sitter-java](https://github.com/tree-sitter/tree-sitter-java) — licensed under the MIT License.
 * [https://github.com/tree-sitter/tree-sitter-javascript](https://github.com/tree-sitter/tree-sitter-javascript) — licensed under the MIT License.
