@@ -317,12 +317,14 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "racket": ("rkt", "greet"),
             "solidity": ("sol", "SimpleStorage"),
             "swift": ("swift", "Greeter"),
-            "udev": ("rules", "SUBSYSTEM"),
+            "udev": ("rules", "USB_DRIVER"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
 
         for lang, key_symbol in language_files.items():
+            # make the inside of this loop into a helper method ai!
+
             # Get the fixture file path and name based on language
             fixture_dir = fixtures_dir / lang
             ext, key_symbol = language_files[lang]
