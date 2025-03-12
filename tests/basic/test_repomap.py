@@ -323,49 +323,51 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
 
         for lang, key_symbol in language_files.items():
-            # make the inside of this loop into a helper method ai!
+            self._test_language_repo_map(lang, key_symbol, fixtures_dir)
 
-            # Get the fixture file path and name based on language
-            fixture_dir = fixtures_dir / lang
-            ext, key_symbol = language_files[lang]
-            filename = f"test.{ext}"
-            fixture_path = fixture_dir / filename
-            self.assertTrue(
-                fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}"
+    def _test_language_repo_map(self, lang, key_symbol, fixtures_dir):
+        """Helper method to test repo map generation for a specific language."""
+        # Get the fixture file path and name based on language
+        fixture_dir = fixtures_dir / lang
+        ext, key_symbol = key_symbol
+        filename = f"test.{ext}"
+        fixture_path = fixture_dir / filename
+        self.assertTrue(
+            fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}"
+        )
+
+        # Read the fixture content
+        with open(fixture_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        with GitTemporaryDirectory() as temp_dir:
+            test_file = os.path.join(temp_dir, filename)
+            with open(test_file, "w", encoding="utf-8") as f:
+                f.write(content)
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            other_files = [test_file]
+            result = repo_map.get_repo_map([], other_files)
+            dump(lang)
+            dump(result)
+
+            self.assertGreater(len(result.strip().splitlines()), 1)
+
+            # Check if the result contains all the expected files and symbols
+            self.assertIn(
+                filename, result, f"File for language {lang} not found in repo map: {result}"
+            )
+            self.assertIn(
+                key_symbol,
+                result,
+                (
+                    f"Key symbol '{key_symbol}' for language {lang} not found in repo map:"
+                    f" {result}"
+                ),
             )
 
-            # Read the fixture content
-            with open(fixture_path, "r", encoding="utf-8") as f:
-                content = f.read()
-            with GitTemporaryDirectory() as temp_dir:
-                test_file = os.path.join(temp_dir, filename)
-                with open(test_file, "w", encoding="utf-8") as f:
-                    f.write(content)
-
-                io = InputOutput()
-                repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
-                other_files = [test_file]
-                result = repo_map.get_repo_map([], other_files)
-                dump(lang)
-                dump(result)
-
-                self.assertGreater(len(result.strip().splitlines()), 1)
-
-                # Check if the result contains all the expected files and symbols
-                self.assertIn(
-                    filename, result, f"File for language {lang} not found in repo map: {result}"
-                )
-                self.assertIn(
-                    key_symbol,
-                    result,
-                    (
-                        f"Key symbol '{key_symbol}' for language {lang} not found in repo map:"
-                        f" {result}"
-                    ),
-                )
-
-                # close the open cache files, so Windows won't error
-                del repo_map
+            # close the open cache files, so Windows won't error
+            del repo_map
 
     def test_repo_map_sample_code_base(self):
         # Path to the sample code base
