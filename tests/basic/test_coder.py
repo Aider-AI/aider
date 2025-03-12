@@ -38,6 +38,7 @@ class TestCoder(unittest.TestCase):
 
             # YES!
             io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock()  # Mock the confirm_ask method
             coder = Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
