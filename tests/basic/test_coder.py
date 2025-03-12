@@ -1073,6 +1073,8 @@ This command will print 'Hello, World!' to the console."""
                 coder.auto_accept_architect = True
                 coder.verbose = False
                 coder.total_cost = 0
+                coder.cur_messages = []
+                coder.done_messages = []
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
@@ -1104,6 +1106,10 @@ This command will print 'Hello, World!' to the console."""
                 coder.auto_accept_architect = False
                 coder.verbose = False
                 coder.total_cost = 0
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.cur_messages = []
+                coder.done_messages = []
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
