@@ -77,7 +77,7 @@ class Commands:
 
         self.help = None
         self.editor = editor
-        
+
         # Store the original read-only filenames provided via args.read
         self.original_read_only_fnames = set(original_read_only_fnames or [])
 
@@ -359,14 +359,17 @@ class Commands:
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
-        
+
         # When dropping all files, keep those that were originally provided via args.read
-        if hasattr(self, 'original_read_only_fnames') and self.original_read_only_fnames:
+        if hasattr(self, "original_read_only_fnames") and self.original_read_only_fnames:
             # Keep only the original read-only files
             to_keep = set()
             for abs_fname in self.coder.abs_read_only_fnames:
                 rel_fname = self.coder.get_rel_fname(abs_fname)
-                if abs_fname in self.original_read_only_fnames or rel_fname in self.original_read_only_fnames:
+                if (
+                    abs_fname in self.original_read_only_fnames
+                    or rel_fname in self.original_read_only_fnames
+                ):
                     to_keep.add(abs_fname)
             self.coder.abs_read_only_fnames = to_keep
         else:
@@ -838,7 +841,9 @@ class Commands:
 
         if not args.strip():
             if self.original_read_only_fnames:
-                self.io.tool_output("Dropping all files from the chat session except originally read-only files.")
+                self.io.tool_output(
+                    "Dropping all files from the chat session except originally read-only files."
+                )
             else:
                 self.io.tool_output("Dropping all files from the chat session.")
             self._drop_all_files()
