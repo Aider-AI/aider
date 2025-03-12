@@ -44,7 +44,7 @@ def main():
     lang_def_path = "../../tmp/tree-sitter-language-pack/sources/language_definitions.json"
 
     # Path to store the tags.scm files
-    output_dir = os.path.expanduser("~/tmp/tsl-pack")
+    output_dir = "aider/queries/tree-sitter-language-pack"
 
     # Create the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
@@ -91,11 +91,9 @@ def main():
         owner = parts[-2]
         repo = parts[-1]
 
-        # Create the language directory in the output path
-        lang_dir = os.path.join(output_dir, lang)
-        queries_dir = os.path.join(lang_dir, "queries")
-        os.makedirs(queries_dir, exist_ok=True)
-        output_file = os.path.join(queries_dir, "tags.scm")
+        # Create output directory and set output file path
+        os.makedirs(output_dir, exist_ok=True)
+        output_file = os.path.join(output_dir, f"{lang}-tags.scm")
 
         # Skip if file already exists
         if os.path.exists(output_file):
