@@ -7,7 +7,8 @@
 - Improved display of thinking token budget in model information.
 - Added reasoning effort level display in model information.
 - Changed `--thinking-tokens` argument to accept string values with human-readable formats.
-- Aider wrote 97% of the code in this release.
+- The bare `/drop` command now preserves original read-only files provided via args.read.
+- Aider wrote 96% of the code in this release.
 
 ### Aider v0.76.2
 
