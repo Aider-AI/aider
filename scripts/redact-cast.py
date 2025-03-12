@@ -7,6 +7,13 @@ import sys
 # Speed up factor for the recording
 SPEEDUP = 1.25
 
+# Regular expression to match ANSI escape sequences
+ANSI_ESCAPE_PATTERN = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~]|\([0-9A-Z=])')
+
+def strip_ansi(text):
+    """Remove ANSI escape sequences from text"""
+    return ANSI_ESCAPE_PATTERN.sub('', text)
+
 
 def process_file(input_path, output_path):
     """
@@ -53,9 +60,10 @@ def process_file(input_path, output_path):
 
                 # If we're not in skip mode, check if we need to enter it
                 if not skip_mode:
-                    if "\u001b[" in text and "Atuin" in text:
+                    # First check for cursor positioning command
+                    if "\u001b[" in text:
                         match = ansi_pattern.search(text)
-                        if match:
+                        if match and "Atuin" in strip_ansi(text):
                             row = match.group(1)
                             col = int(match.group(2))
                             # Create pattern for the ending sequence
