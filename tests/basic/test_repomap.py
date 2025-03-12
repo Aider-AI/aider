@@ -311,6 +311,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "arduino": ("ino", "setup"),
             "chatito": ("chatito", "intent"),
             "commonlisp": ("lisp", "greet"),
+            "pony": ("pony", "Greeter"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
