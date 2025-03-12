@@ -288,6 +288,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "c": ("c", "main"),
             "cpp": ("cpp", "main"),
             "d": ("d", "main"),
+            "dart": ("dart", "Person"),
             "elixir": ("ex", "Greeter"),
             "java": ("java", "Greeting"),
             "javascript": ("js", "Person"),
