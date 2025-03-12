@@ -1,14 +1,14 @@
-(module (expression_statement (assignment left: (identifier) @name) @definition.constant))
+(module (expression_statement (assignment left: (identifier) @name.definition.constant) @definition.constant))
 
 (class_definition
-  name: (identifier) @name) @definition.class
+  name: (identifier) @name.definition.class) @definition.class
 
 (function_definition
-  name: (identifier) @name) @definition.function
+  name: (identifier) @name.definition.function) @definition.function
 
 (call
   function: [
-      (identifier) @name
+      (identifier) @name.reference.call
       (attribute
-        attribute: (identifier) @name)
+        attribute: (identifier) @name.reference.call)
   ]) @reference.call
