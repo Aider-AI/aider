@@ -1753,6 +1753,92 @@ class TestCommands(TestCase):
 
             del coder
             del commands
+            
+    def test_reset_with_original_read_only_files(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            orig_read_only = Path(repo_dir) / "orig_read_only.txt"
+            orig_read_only.write_text("Original read-only file")
+
+            added_file = Path(repo_dir) / "added_file.txt"
+            added_file.write_text("Added file")
+
+            added_read_only = Path(repo_dir) / "added_read_only.txt"
+            added_read_only.write_text("Added read-only file")
+
+            # Initialize commands with original read-only files
+            commands = Commands(io, coder, original_read_only_fnames=[str(orig_read_only)])
+
+            # Add files to the chat
+            coder.abs_read_only_fnames.add(str(orig_read_only))
+            coder.abs_fnames.add(str(added_file))
+            coder.abs_read_only_fnames.add(str(added_read_only))
+
+            # Add some messages to the chat history
+            coder.cur_messages = [{"role": "user", "content": "Test message"}]
+            coder.done_messages = [{"role": "assistant", "content": "Test response"}]
+
+            # Verify initial state
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertEqual(len(coder.abs_read_only_fnames), 2)
+            self.assertEqual(len(coder.cur_messages), 1)
+            self.assertEqual(len(coder.done_messages), 1)
+
+            # Test reset command
+            with mock.patch.object(io, "tool_output") as mock_tool_output:
+                commands.cmd_reset("")
+
+            # Verify that original read-only file is preserved, but other files and messages are cleared
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+            self.assertIn(str(orig_read_only), coder.abs_read_only_fnames)
+            self.assertNotIn(str(added_read_only), coder.abs_read_only_fnames)
+            
+            # Chat history should be cleared
+            self.assertEqual(len(coder.cur_messages), 0)
+            self.assertEqual(len(coder.done_messages), 0)
+            
+    def test_reset_with_no_original_read_only_files(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            added_file = Path(repo_dir) / "added_file.txt"
+            added_file.write_text("Added file")
+
+            added_read_only = Path(repo_dir) / "added_read_only.txt"
+            added_read_only.write_text("Added read-only file")
+
+            # Initialize commands with no original read-only files
+            commands = Commands(io, coder)
+
+            # Add files to the chat
+            coder.abs_fnames.add(str(added_file))
+            coder.abs_read_only_fnames.add(str(added_read_only))
+
+            # Add some messages to the chat history
+            coder.cur_messages = [{"role": "user", "content": "Test message"}]
+            coder.done_messages = [{"role": "assistant", "content": "Test response"}]
+
+            # Verify initial state
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+            self.assertEqual(len(coder.cur_messages), 1)
+            self.assertEqual(len(coder.done_messages), 1)
+
+            # Test reset command
+            with mock.patch.object(io, "tool_output") as mock_tool_output:
+                commands.cmd_reset("")
+
+            # Verify that all files and messages are cleared
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+            self.assertEqual(len(coder.cur_messages), 0)
+            self.assertEqual(len(coder.done_messages), 0)
 
     def test_cmd_reasoning_effort(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
