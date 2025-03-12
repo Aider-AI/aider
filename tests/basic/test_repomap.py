@@ -332,9 +332,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         ext, key_symbol = key_symbol
         filename = f"test.{ext}"
         fixture_path = fixture_dir / filename
-        self.assertTrue(
-            fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}"
-        )
+        self.assertTrue(fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}")
 
         # Read the fixture content
         with open(fixture_path, "r", encoding="utf-8") as f:
@@ -360,10 +358,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             self.assertIn(
                 key_symbol,
                 result,
-                (
-                    f"Key symbol '{key_symbol}' for language {lang} not found in repo map:"
-                    f" {result}"
-                ),
+                f"Key symbol '{key_symbol}' for language {lang} not found in repo map: {result}",
             )
 
             # close the open cache files, so Windows won't error
