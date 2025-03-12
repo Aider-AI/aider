@@ -59,6 +59,7 @@ class Commands:
         parser=None,
         verbose=False,
         editor=None,
+        original_read_only_fnames=None,
     ):
         self.io = io
         self.coder = coder
@@ -76,6 +77,9 @@ class Commands:
 
         self.help = None
         self.editor = editor
+        
+        # Store the original read-only filenames provided via args.read
+        self.original_read_only_fnames = set(original_read_only_fnames or [])
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -355,7 +359,18 @@ class Commands:
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
-        self.coder.abs_read_only_fnames = set()
+        
+        # When dropping all files, keep those that were originally provided via args.read
+        if hasattr(self, 'original_read_only_fnames') and self.original_read_only_fnames:
+            # Keep only the original read-only files
+            to_keep = set()
+            for abs_fname in self.coder.abs_read_only_fnames:
+                rel_fname = self.coder.get_rel_fname(abs_fname)
+                if abs_fname in self.original_read_only_fnames or rel_fname in self.original_read_only_fnames:
+                    to_keep.add(abs_fname)
+            self.coder.abs_read_only_fnames = to_keep
+        else:
+            self.coder.abs_read_only_fnames = set()
 
     def _clear_chat_history(self):
         self.coder.done_messages = []
@@ -822,7 +837,10 @@ class Commands:
         "Remove files from the chat session to free up context space"
 
         if not args.strip():
-            self.io.tool_output("Dropping all files from the chat session.")
+            if self.original_read_only_fnames:
+                self.io.tool_output("Dropping all files from the chat session except originally read-only files.")
+            else:
+                self.io.tool_output("Dropping all files from the chat session.")
             self._drop_all_files()
             return
 
