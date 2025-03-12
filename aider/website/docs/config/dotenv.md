@@ -127,6 +127,9 @@ cog.outl("```")
 ## Use architect edit format for the main chat
 #AIDER_ARCHITECT=
 
+## Enable/disable automatic acceptance of architect changes (default: True)
+#AIDER_AUTO_ACCEPT_ARCHITECT=true
+
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #AIDER_WEAK_MODEL=
 

@@ -152,6 +152,9 @@ cog.outl("```")
 ## Use architect edit format for the main chat
 #architect: false
 
+## Enable/disable automatic acceptance of architect changes (default: True)
+#auto-accept-architect: true
+
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #weak-model: xxx
 

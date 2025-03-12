@@ -30,6 +30,7 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--model-metadata-file] [--alias] [--reasoning-effort]
              [--thinking-tokens] [--verify-ssl | --no-verify-ssl]
              [--timeout] [--edit-format] [--architect]
+             [--auto-accept-architect | --no-auto-accept-architect]
              [--weak-model] [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
              [--max-chat-history-tokens]
@@ -190,6 +191,14 @@ Aliases:
 ### `--architect`
 Use architect edit format for the main chat  
 Environment variable: `AIDER_ARCHITECT`  
+
+### `--auto-accept-architect`
+Enable/disable automatic acceptance of architect changes (default: True)  
+Default: True  
+Environment variable: `AIDER_AUTO_ACCEPT_ARCHITECT`  
+Aliases:
+  - `--auto-accept-architect`
+  - `--no-auto-accept-architect`
 
 ### `--weak-model WEAK_MODEL`
 Specify the model to use for commit messages and chat history summarization (default depends on --model)  

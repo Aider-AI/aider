@@ -10,7 +10,9 @@
 - Changed `--thinking-tokens` argument to accept string values with human-readable formats.
 - The bare `/drop` command now preserves original read-only files provided via args.read.
 - Fixed a bug where default model would be set by deprecated `--shortcut` switches even when already specified in the command line.
-- Aider wrote 96% of the code in this release.
+- Added `--auto-accept-architect` flag (default: true) to automatically accept changes from architect coder format without confirmation.
+- Improved AutoCompleter to require 3 characters for autocompletion to reduce noise.
+- Aider wrote 92% of the code in this release.
 
 ### Aider v0.76.2
 
