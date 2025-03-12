@@ -68,6 +68,9 @@ def process_file(input_path, output_path):
                         # Calculate how much time to subtract from future timestamps
                         time_offset += (current_timestamp - skip_start_time)
                         
+                        # Add a 0.5 second pause after each skip section
+                        last_timestamp += 0.5
+                        
                         # Write this record with adjusted timestamp
                         adjusted_timestamp = max(current_timestamp - time_offset, last_timestamp)
                         last_timestamp = adjusted_timestamp
