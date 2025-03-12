@@ -290,6 +290,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "d": ("d", "main"),
             "dart": ("dart", "Person"),
             "elixir": ("ex", "Greeter"),
+            "gleam": ("gleam", "greet"),
             "java": ("java", "Greeting"),
             "javascript": ("js", "Person"),
             "kotlin": ("kt", "Greeting"),
