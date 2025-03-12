@@ -1,0 +1,8 @@
+# udev rules for custom USB device
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="1234", ATTRS{idProduct}=="5678", GROUP="plugdev", MODE="0666"
+
+# Rule for disk device
+SUBSYSTEM=="block", KERNEL=="sd[a-z]", ATTRS{vendor}=="SanDisk", SYMLINK+="sandisk_drive"
+
+# Run a script when a specific device is connected
+ACTION=="add", SUBSYSTEM=="usb", ATTRS{idVendor}=="abcd", ATTRS{idProduct}=="ef01", RUN+="/usr/local/bin/device_script.sh"
