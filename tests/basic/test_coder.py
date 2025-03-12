@@ -37,8 +37,9 @@ class TestCoder(unittest.TestCase):
             repo.git.commit("-m", "init")
 
             # YES!
-            io = InputOutput(yes=True)
-            io.confirm_ask = MagicMock()  # Mock the confirm_ask method
+            # Use a completely mocked IO object instead of a real one
+            io = MagicMock()
+            io.confirm_ask = MagicMock(return_value=True)
             coder = Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
