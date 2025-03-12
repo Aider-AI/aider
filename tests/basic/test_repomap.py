@@ -314,6 +314,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "pony": ("pony", "Greeter"),
             "properties": ("properties", "database.url"),
             "r": ("r", "calculate"),
+            "racket": ("rkt", "greet"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
@@ -338,7 +339,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
                 io = InputOutput()
                 repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
-                other_files = [filename]
+                other_files = [test_file]
                 result = repo_map.get_repo_map([], other_files)
                 dump(lang)
                 dump(result)
