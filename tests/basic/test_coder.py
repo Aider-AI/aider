@@ -1075,6 +1075,8 @@ This command will print 'Hello, World!' to the console."""
                 coder.total_cost = 0
                 coder.cur_messages = []
                 coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
@@ -1108,8 +1110,12 @@ This command will print 'Hello, World!' to the console."""
                 coder.total_cost = 0
                 coder.cur_messages = []
                 coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
                 coder.cur_messages = []
                 coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
