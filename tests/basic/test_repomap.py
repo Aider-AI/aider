@@ -315,6 +315,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             "properties": ("properties", "database.url"),
             "r": ("r", "calculate"),
             "racket": ("rkt", "greet"),
+            "solidity": ("sol", "SimpleStorage"),
         }
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
