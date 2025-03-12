@@ -287,6 +287,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         language_files = {
             "c": ("c", "main"),
             "cpp": ("cpp", "main"),
+            "d": ("d", "main"),
             "elixir": ("ex", "Greeter"),
             "java": ("java", "Greeting"),
             "javascript": ("js", "Person"),
