@@ -9,6 +9,7 @@
 - Added reasoning effort level display in model information.
 - Changed `--thinking-tokens` argument to accept string values with human-readable formats.
 - The bare `/drop` command now preserves original read-only files provided via args.read.
+- Fixed a bug where default model would be set by deprecated `--shortcut` switches even when already specified in the command line.
 - Aider wrote 96% of the code in this release.
 
 ### Aider v0.76.2

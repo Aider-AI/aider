@@ -6,6 +6,8 @@ Only add new items not already listed.
 Do NOT edit or update existing history entries.
 Do NOT add duplicate entries for changes that have existing history entries.
 
+Don't add entries for changes which may have been later undone, removed or superseded.
+
 End each bullet with a period.
 
 If the change was made by someone other than Paul Gauthier note it at the end of the bullet point as ", by XXX."
