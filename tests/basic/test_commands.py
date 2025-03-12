@@ -1788,10 +1788,10 @@ class TestCommands(TestCase):
             self.assertEqual(len(coder.done_messages), 1)
 
             # Test reset command
-            with mock.patch.object(io, "tool_output") as mock_tool_output:
-                commands.cmd_reset("")
+            commands.cmd_reset("")
 
-            # Verify that original read-only file is preserved, but other files and messages are cleared
+            # Verify that original read-only file is preserved
+            # but other files and messages are cleared
             self.assertEqual(len(coder.abs_fnames), 0)
             self.assertEqual(len(coder.abs_read_only_fnames), 1)
             self.assertIn(str(orig_read_only), coder.abs_read_only_fnames)
@@ -1831,8 +1831,7 @@ class TestCommands(TestCase):
             self.assertEqual(len(coder.done_messages), 1)
 
             # Test reset command
-            with mock.patch.object(io, "tool_output") as mock_tool_output:
-                commands.cmd_reset("")
+            commands.cmd_reset("")
 
             # Verify that all files and messages are cleared
             self.assertEqual(len(coder.abs_fnames), 0)
