@@ -42,9 +42,16 @@ def process_file(input_path, output_path):
         open(output_path, "w", encoding="utf-8") as outfile,
     ):
         for line in infile:
-            # Always include the header (first line)
+            # Process the header (first line)
             if is_first_line:
-                outfile.write(line)
+                try:
+                    header = json.loads(line)
+                    if 'env' in header:
+                        del header['env']
+                    outfile.write(json.dumps(header) + "\n")
+                except json.JSONDecodeError:
+                    # If we can't parse the header, keep it as is
+                    outfile.write(line)
                 is_first_line = False
                 continue
 
