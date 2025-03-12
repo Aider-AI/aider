@@ -7,13 +7,12 @@
   - 20 new languages with repo-map support.
 - Added `/think-tokens` command to set thinking token budget with support for human-readable formats (8k, 10.5k, 0.5M).
 - Added `/reasoning-effort` command to control model reasoning level.
-- The `/think-tokens` and `/reasoning-effort` commands now display current settings when called without arguments.
-- Improved display of thinking token budget in model information.
-- Added reasoning effort level display in model information.
+- The `/think-tokens` and `/reasoning-effort` commands display current settings when called without arguments.
+- Display of thinking token budget and reasoning effort in model information.
 - Changed `--thinking-tokens` argument to accept string values with human-readable formats.
+- Added `--auto-accept-architect` flag (default: true) to automatically accept changes from architect coder format without confirmation.
 - The bare `/drop` command now preserves original read-only files provided via args.read.
 - Fixed a bug where default model would be set by deprecated `--shortcut` switches even when already specified in the command line.
-- Added `--auto-accept-architect` flag (default: true) to automatically accept changes from architect coder format without confirmation.
 - Improved AutoCompleter to require 3 characters for autocompletion to reduce noise.
 - Aider wrote 72% of the code in this release.
 
