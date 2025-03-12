@@ -1753,7 +1753,7 @@ class TestCommands(TestCase):
 
             del coder
             del commands
-            
+
     def test_reset_with_original_read_only_files(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=True)
@@ -1796,11 +1796,11 @@ class TestCommands(TestCase):
             self.assertEqual(len(coder.abs_read_only_fnames), 1)
             self.assertIn(str(orig_read_only), coder.abs_read_only_fnames)
             self.assertNotIn(str(added_read_only), coder.abs_read_only_fnames)
-            
+
             # Chat history should be cleared
             self.assertEqual(len(coder.cur_messages), 0)
             self.assertEqual(len(coder.done_messages), 0)
-            
+
     def test_reset_with_no_original_read_only_files(self):
         with GitTemporaryDirectory() as repo_dir:
             io = InputOutput(pretty=False, fancy_input=False, yes=True)
