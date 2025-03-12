@@ -2,7 +2,7 @@
 ;;; Function Definitions ;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun_header
-  function_name: (sym_lit) @name) @definition.function
+  function_name: (sym_lit) @name.definition.function) @definition.function
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Function Calls ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -37,9 +37,9 @@
 ;;
 ;; - exclude var, var2
 ;; - the same for let*, flet, labels, macrolet, symbol-macrolet
-(list_lit . [(sym_lit) (package_lit)] @name
+(list_lit . [(sym_lit) (package_lit)] @name.reference.call
           . (list_lit (list_lit . [(sym_lit) (package_lit)] @ignore))
-          (#match? @name
+          (#match? @name.reference.call
                    "(?i)^(cl:)?(let|let\\*|flet|labels|macrolet|symbol-macrolet)$")
   )
 
@@ -76,18 +76,18 @@
 
 ;; Include all other cases - list literal with symbol as the
 ;; first element
-(list_lit . [(sym_lit) (package_lit)] @name) @reference.call
+(list_lit . [(sym_lit) (package_lit)] @name.reference.call) @reference.call
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; classes
 
 (list_lit . [(sym_lit) (package_lit)] @ignore
-          . [(sym_lit) (package_lit)] @name
+          . [(sym_lit) (package_lit)] @name.definition.class
   (#match? @ignore "(?i)^(cl:)?defclass$")
           ) @definition.class
 
 (list_lit . [(sym_lit) (package_lit)] @ignore
-          . (quoting_lit [(sym_lit) (package_lit)] @name)
+          . (quoting_lit [(sym_lit) (package_lit)] @name.reference.class)
   (#match? @ignore "(?i)^(cl:)?make-instance$")
           ) @reference.class
 
