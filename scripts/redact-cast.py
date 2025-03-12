@@ -46,8 +46,8 @@ def process_file(input_path, output_path):
             if is_first_line:
                 try:
                     header = json.loads(line)
-                    if 'env' in header:
-                        del header['env']
+                    if "env" in header:
+                        del header["env"]
                     outfile.write(json.dumps(header) + "\n")
                 except json.JSONDecodeError:
                     # If we can't parse the header, keep it as is
