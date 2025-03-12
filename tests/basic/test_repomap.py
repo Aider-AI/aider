@@ -283,6 +283,8 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
 
+    # instead of one giant test with a loop, make each language have its own
+    # test_xxx case that calls self._test_language_repo_map ai!
     def test_get_repo_map_all_languages(self):
         language_files = {
             "c": ("c", "main"),
@@ -322,6 +324,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
         fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
 
+        dump(len(language_files))
         for lang, key_symbol in language_files.items():
             self._test_language_repo_map(lang, key_symbol, fixtures_dir)
 
