@@ -67,10 +67,10 @@ def main():
     total = len(lang_defs)
 
     for lang, config in lang_defs.items():
-        print(f"Processing {lang}...")
-
         # Extract repo URL from the config
         repo_url = config.get("repo")
+        print(f"Processing {lang} ({repo_url})...")
+        
         if not repo_url:
             print(f"Skipping {lang}: No repository URL found")
             continue
