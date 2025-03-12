@@ -1,3 +1,5 @@
+from aider.io import Questions
+
 from .architect_prompts import ArchitectPrompts
 from .ask_coder import AskCoder
 from .base_coder import Coder
@@ -13,7 +15,7 @@ class ArchitectCoder(AskCoder):
         if not content or not content.strip():
             return
 
-        if not self.io.confirm_ask("Edit the files?"):
+        if not self.io.confirm_ask(Questions.ARCHITECT_EDIT_FILES):
             return
 
         kwargs = dict()

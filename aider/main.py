@@ -27,7 +27,7 @@ from aider.copypaste import ClipboardWatcher
 from aider.deprecated import handle_deprecated_model_args
 from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
-from aider.io import InputOutput
+from aider.io import InputOutput, Questions
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.models import ModelSettings
 from aider.repo import ANY_GIT_ERROR, GitRepo
@@ -186,7 +186,7 @@ def check_gitignore(git_root, io, ask=True):
 
     if ask:
         io.tool_output("You can skip this check with --no-gitignore")
-        if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
+        if not io.confirm_ask(Questions.ADD_GITIGNORE, subject=", ".join(patterns_to_add)):
             return
 
     content += "\n".join(patterns_to_add) + "\n"
@@ -623,9 +623,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 " personal info."
             )
             io.tool_output(f"For more info: {urls.analytics}")
-            disable = not io.confirm_ask(
-                "Allow collection of anonymous analytics to help improve aider?"
-            )
+            disable = not io.confirm_ask(Questions.ALLOW_ANALYTICS)
 
             analytics.asked_opt_in = True
             if disable:

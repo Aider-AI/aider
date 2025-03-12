@@ -17,6 +17,7 @@ from aider import models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
+from aider.io import Questions
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
@@ -330,7 +331,7 @@ class Commands:
                 continue
 
             self.io.tool_output(errors)
-            if not self.io.confirm_ask(f"Fix lint errors in {fname}?", default="y"):
+            if not self.io.confirm_ask(Questions.FIX_LINT, subject=fname, default="y"):
                 continue
 
             # Commit everything before we start fixing lint errors
@@ -776,7 +777,8 @@ class Commands:
                 self.io.tool_output(f"You can add to git with: /git add {fname}")
                 continue
 
-            if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
+            self.io.tool_output(f"No files matched '{word}'.")
+            if self.io.confirm_ask(Questions.CREATE_FILE, subject=fname):
                 try:
                     fname.parent.mkdir(parents=True, exist_ok=True)
                     fname.touch()
@@ -953,7 +955,8 @@ class Commands:
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
+            self.io.tool_output(f"Output contains {k_tokens:.1f}k tokens")
+            add = self.io.confirm_ask(Questions.ADD_COMMAND_OUTPUT)
 
         if add:
             num_lines = len(combined_output.strip().splitlines())
