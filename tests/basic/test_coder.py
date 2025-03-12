@@ -1064,6 +1064,7 @@ This command will print 'Hello, World!' to the console."""
     def test_architect_coder_auto_accept_true(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=True)
 
             # Create an ArchitectCoder with auto_accept_architect=True
             with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
