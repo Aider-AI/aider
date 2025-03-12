@@ -59,7 +59,7 @@ def process_file(input_path, output_path):
                             row = match.group(1)
                             col = int(match.group(2))
                             # Create pattern for the ending sequence
-                            target_pattern = f"\u001b[{row};{col-1}H"
+                            target_pattern = f"\u001b[{row};{col - 1}H"
                             skip_mode = True
                             # Start tracking time to subtract
                             skip_start_time = current_timestamp
