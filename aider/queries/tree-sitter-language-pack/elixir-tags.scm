@@ -3,7 +3,7 @@
 ; * modules and protocols
 (call
   target: (identifier) @ignore
-  (arguments (alias) @name)
+  (arguments (alias) @name.definition.module)
   (#any-of? @ignore "defmodule" "defprotocol")) @definition.module
 
 ; * functions/macros
@@ -12,12 +12,12 @@
   (arguments
     [
       ; zero-arity functions with no parentheses
-      (identifier) @name
+      (identifier) @name.definition.function
       ; regular function clause
-      (call target: (identifier) @name)
+      (call target: (identifier) @name.definition.function)
       ; function clause with a guard clause
       (binary_operator
-        left: (call target: (identifier) @name)
+        left: (call target: (identifier) @name.definition.function)
         operator: "when")
     ])
   (#any-of? @ignore "def" "defp" "defdelegate" "defguard" "defguardp" "defmacro" "defmacrop" "defn" "defnp")) @definition.function
@@ -39,16 +39,16 @@
 (call
   target: [
    ; local
-   (identifier) @name
+   (identifier) @name.reference.call
    ; remote
    (dot
-     right: (identifier) @name)
+     right: (identifier) @name.reference.call)
   ]) @reference.call
 
 ; * pipe into function call
 (binary_operator
   operator: "|>"
-  right: (identifier) @name) @reference.call
+  right: (identifier) @name.reference.call) @reference.call
 
 ; * modules
-(alias) @name @reference.module
+(alias) @name.reference.module @reference.module
