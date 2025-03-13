@@ -6,6 +6,7 @@ from .editblock_fenced_coder import EditBlockFencedCoder
 from .editor_editblock_coder import EditorEditBlockCoder
 from .editor_whole_coder import EditorWholeFileCoder
 from .help_coder import HelpCoder
+from .mixture_of_architects_coder import MixtureOfArchitectsCoder
 from .udiff_coder import UnifiedDiffCoder
 from .wholefile_coder import WholeFileCoder
 
@@ -23,4 +24,5 @@ __all__ = [
     ArchitectCoder,
     EditorEditBlockCoder,
     EditorWholeFileCoder,
+    MixtureOfArchitectsCoder,
 ]

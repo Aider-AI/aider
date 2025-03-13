@@ -788,7 +788,16 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Set reasoning effort if specified
     if args.reasoning_effort is not None:
-        main_model.set_reasoning_effort(args.reasoning_effort)
+        if args.moa:
+            reasoning_models = ["o1", "o3", "deepseek-reasoner", "r1"]
+            if any(model in main_model.name for model in reasoning_models):
+                if not getattr(main_model, "extra_params", None):
+                    main_model.extra_params = {}
+                if "extra_body" not in main_model.extra_params:
+                    main_model.extra_params["extra_body"] = {}
+                main_model.extra_params["extra_body"]["reasoning_effort"] = args.reasoning_effort
+        else:
+            main_model.set_reasoning_effort(args.reasoning_effort)
 
     # Set thinking tokens if specified
     if args.thinking_tokens is not None:
@@ -890,7 +899,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         map_tokens = args.map_tokens
 
     try:
-        coder = Coder.create(
+        coder_kwargs = dict(
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
@@ -923,6 +932,31 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
         )
+
+        if args.moa:
+            # Parse space-separated model names and convert to Model objects
+            architect_model_names = args.moa
+            architect_models = [models.Model(m) for m in architect_model_names]
+            
+            reasoning_models = ["o1", "o3", "deepseek-reasoner", "r1"]
+
+            if args.reasoning_effort is not None:
+                for architect_model in architect_models:
+                    if any(sub in architect_model.name for sub in reasoning_models):
+                        print(f"Setting reasoning effort for {architect_model.name}")
+                        if not getattr(architect_model, "extra_params", None):
+                            architect_model.extra_params = {}
+                        if "extra_body" not in architect_model.extra_params:
+                            architect_model.extra_params["extra_body"] = {}
+                        architect_model.extra_params["extra_body"][
+                            "reasoning_effort"
+                        ] = args.reasoning_effort
+
+            print(f"Using architect models: {architect_model_names}")
+            coder_kwargs["architect_models"] = architect_models
+            coder = Coder.create(**coder_kwargs)
+        else:
+            coder = Coder.create(**coder_kwargs)
     except UnknownEditFormat as err:
         io.tool_error(str(err))
         io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
