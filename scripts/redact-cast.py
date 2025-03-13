@@ -45,38 +45,35 @@ def main():
             # Fast initial check on raw line before JSON parsing
             raw_line_has_atuin_chars = any(char in line for char in atuin_chars)
 
+            if raw_line_has_atuin_chars:
+                check_terminal = True
+
             # Only parse JSON if we're checking terminal or need to check
-            if check_terminal or raw_line_has_atuin_chars:
-                event = json.loads(line)
-
-                # For output events, check for potential "Atuin" content
-                if len(event) >= 3 and event[1] == "o":
-                    output_text = event[2]
-
-                    # Only start checking terminal if we found Atuin chars
-                    if raw_line_has_atuin_chars:
-                        check_terminal = True
-
-                    if check_terminal:
-                        stream.feed(output_text)
-
-                        # Check if "Atuin" is visible on screen
-                        atuin_visible = False
-                        for display_line in screen.display:
-                            if "Atuin" in "".join(display_line):
-                                atuin_visible = True
-                                break
-
-                        # Reset flag if Atuin is no longer visible
-                        if not atuin_visible:
-                            check_terminal = False
-                        else:
-                            continue  # Skip this event if Atuin is visible
-
-                # Write event to output file for non-skipped events
+            if not check_terminal:
                 fout.write(line)
-            else:
-                # No need to parse JSON if we're not checking terminal
+                continue
+
+            event = json.loads(line)
+
+            if not (len(event) >= 3 and event[1] == "o"):
+                fout.write(line)
+                continue
+
+            output_text = event[2]
+
+            stream.feed(output_text)
+
+            # Check if "Atuin" is visible on screen
+            atuin_visible = False
+            for display_line in screen.display:
+                if "Atuin" in "".join(display_line):
+                    atuin_visible = True
+                    break
+
+            # Reset flag if Atuin is no longer visible
+            check_terminal = atuin_visible
+
+            if not atuin_visible:
                 fout.write(line)
 
 
