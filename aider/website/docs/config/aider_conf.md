@@ -74,39 +74,6 @@ cog.outl("```")
 ## Specify the model to use for the main chat
 #model: xxx
 
-## Use claude-3-opus-20240229 model for the main chat
-#opus: false
-
-## Use anthropic/claude-3-7-sonnet-20250219 model for the main chat
-#sonnet: false
-
-## Use claude-3-5-haiku-20241022 model for the main chat
-#haiku: false
-
-## Use gpt-4-0613 model for the main chat
-#4: false
-
-## Use gpt-4o model for the main chat
-#4o: false
-
-## Use gpt-4o-mini model for the main chat
-#mini: false
-
-## Use gpt-4-1106-preview model for the main chat
-#4-turbo: false
-
-## Use gpt-3.5-turbo model for the main chat
-#35turbo: false
-
-## Use deepseek/deepseek-chat model for the main chat
-#deepseek: false
-
-## Use o1-mini model for the main chat
-#o1-mini: false
-
-## Use o1-preview model for the main chat
-#o1-preview: false
-
 ########################
 # API Keys and settings:
 
@@ -170,6 +137,9 @@ cog.outl("```")
 ## Set the reasoning_effort API parameter (default: not set)
 #reasoning-effort: xxx
 
+## Set the thinking token budget for models that support it (default: not set)
+#thinking-tokens: xxx
+
 ## Verify the SSL cert when connecting to models (default: True)
 #verify-ssl: true
 
@@ -181,6 +151,9 @@ cog.outl("```")
 
 ## Use architect edit format for the main chat
 #architect: false
+
+## Enable/disable automatic acceptance of architect changes (default: True)
+#auto-accept-architect: true
 
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #weak-model: xxx
@@ -252,7 +225,7 @@ cog.outl("```")
 #user-input-color: #00cc00
 
 ## Set the color for tool output (default: None)
-#tool-output-color: xxx
+#tool-output-color: "xxx"
 
 ## Set the color for tool error messages (default: #FF2222)
 #tool-error-color: #FF2222
@@ -264,16 +237,16 @@ cog.outl("```")
 #assistant-output-color: #0088ff
 
 ## Set the color for the completion menu (default: terminal's default text color)
-#completion-menu-color: xxx
+#completion-menu-color: "xxx"
 
 ## Set the background color for the completion menu (default: terminal's default background color)
-#completion-menu-bg-color: xxx
+#completion-menu-bg-color: "xxx"
 
 ## Set the color for the current item in the completion menu (default: terminal's default background color)
-#completion-menu-current-color: xxx
+#completion-menu-current-color: "xxx"
 
 ## Set the background color for the current item in the completion menu (default: terminal's default text color)
-#completion-menu-current-bg-color: xxx
+#completion-menu-current-bg-color: "xxx"
 
 ## Set the markdown code theme (default: default, other options include monokai, solarized-dark, solarized-light, or a Pygments builtin style, see https://pygments.org/styles for available themes)
 #code-theme: default
@@ -496,5 +469,41 @@ cog.outl("```")
 
 ## Specify which editor to use for the /editor command
 #editor: xxx
+
+############################
+# Deprecated model settings:
+
+## Use claude-3-opus-20240229 model for the main chat (deprecated, use --model)
+#opus: false
+
+## Use anthropic/claude-3-7-sonnet-20250219 model for the main chat (deprecated, use --model)
+#sonnet: false
+
+## Use claude-3-5-haiku-20241022 model for the main chat (deprecated, use --model)
+#haiku: false
+
+## Use gpt-4-0613 model for the main chat (deprecated, use --model)
+#4: false
+
+## Use gpt-4o model for the main chat (deprecated, use --model)
+#4o: false
+
+## Use gpt-4o-mini model for the main chat (deprecated, use --model)
+#mini: false
+
+## Use gpt-4-1106-preview model for the main chat (deprecated, use --model)
+#4-turbo: false
+
+## Use gpt-3.5-turbo model for the main chat (deprecated, use --model)
+#35turbo: false
+
+## Use deepseek/deepseek-chat model for the main chat (deprecated, use --model)
+#deepseek: false
+
+## Use o1-mini model for the main chat (deprecated, use --model)
+#o1-mini: false
+
+## Use o1-preview model for the main chat (deprecated, use --model)
+#o1-preview: false
 ```
 <!--[[[end]]]-->

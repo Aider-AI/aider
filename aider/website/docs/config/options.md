@@ -22,18 +22,16 @@ from aider.args import get_md_help
 cog.out(get_md_help())
 ]]]-->
 ```
-usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
-             [--4o] [--mini] [--4-turbo] [--35turbo] [--deepseek]
-             [--o1-mini] [--o1-preview] [--openai-api-key]
-             [--anthropic-api-key] [--openai-api-base]
-             [--openai-api-type] [--openai-api-version]
-             [--openai-api-deployment-id] [--openai-organization-id]
-             [--set-env] [--api-key] [--list-models]
-             [--model-settings-file] [--model-metadata-file]
-             [--alias] [--reasoning-effort]
-             [--verify-ssl | --no-verify-ssl] [--timeout]
-             [--edit-format] [--architect] [--weak-model]
-             [--editor-model] [--editor-edit-format]
+usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
+             [--openai-api-base] [--openai-api-type]
+             [--openai-api-version] [--openai-api-deployment-id]
+             [--openai-organization-id] [--set-env] [--api-key]
+             [--list-models] [--model-settings-file]
+             [--model-metadata-file] [--alias] [--reasoning-effort]
+             [--thinking-tokens] [--verify-ssl | --no-verify-ssl]
+             [--timeout] [--edit-format] [--architect]
+             [--auto-accept-architect | --no-auto-accept-architect]
+             [--weak-model] [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
              [--max-chat-history-tokens]
              [--cache-prompts | --no-cache-prompts]
@@ -80,7 +78,9 @@ usage: aider [-h] [--model] [--opus] [--sonnet] [--haiku] [--4]
              [--multiline | --no-multiline]
              [--notifications | --no-notifications]
              [--notifications-command]
-             [--detect-urls | --no-detect-urls] [--editor]
+             [--detect-urls | --no-detect-urls] [--editor] [--opus]
+             [--sonnet] [--haiku] [--4] [--4o] [--mini] [--4-turbo]
+             [--35turbo] [--deepseek] [--o1-mini] [--o1-preview]
 
 ```
 
@@ -97,58 +97,6 @@ Aliases:
 ### `--model MODEL`
 Specify the model to use for the main chat  
 Environment variable: `AIDER_MODEL`  
-
-### `--opus`
-Use claude-3-opus-20240229 model for the main chat  
-Environment variable: `AIDER_OPUS`  
-
-### `--sonnet`
-Use anthropic/claude-3-7-sonnet-20250219 model for the main chat  
-Environment variable: `AIDER_SONNET`  
-
-### `--haiku`
-Use claude-3-5-haiku-20241022 model for the main chat  
-Environment variable: `AIDER_HAIKU`  
-
-### `--4`
-Use gpt-4-0613 model for the main chat  
-Environment variable: `AIDER_4`  
-Aliases:
-  - `--4`
-  - `-4`
-
-### `--4o`
-Use gpt-4o model for the main chat  
-Environment variable: `AIDER_4O`  
-
-### `--mini`
-Use gpt-4o-mini model for the main chat  
-Environment variable: `AIDER_MINI`  
-
-### `--4-turbo`
-Use gpt-4-1106-preview model for the main chat  
-Environment variable: `AIDER_4_TURBO`  
-
-### `--35turbo`
-Use gpt-3.5-turbo model for the main chat  
-Environment variable: `AIDER_35TURBO`  
-Aliases:
-  - `--35turbo`
-  - `--35-turbo`
-  - `--3`
-  - `-3`
-
-### `--deepseek`
-Use deepseek/deepseek-chat model for the main chat  
-Environment variable: `AIDER_DEEPSEEK`  
-
-### `--o1-mini`
-Use o1-mini model for the main chat  
-Environment variable: `AIDER_O1_MINI`  
-
-### `--o1-preview`
-Use o1-preview model for the main chat  
-Environment variable: `AIDER_O1_PREVIEW`  
 
 ## API Keys and settings:
 
@@ -217,6 +165,10 @@ Environment variable: `AIDER_ALIAS`
 Set the reasoning_effort API parameter (default: not set)  
 Environment variable: `AIDER_REASONING_EFFORT`  
 
+### `--thinking-tokens VALUE`
+Set the thinking token budget for models that support it (default: not set)  
+Environment variable: `AIDER_THINKING_TOKENS`  
+
 ### `--verify-ssl`
 Verify the SSL cert when connecting to models (default: True)  
 Default: True  
@@ -239,6 +191,14 @@ Aliases:
 ### `--architect`
 Use architect edit format for the main chat  
 Environment variable: `AIDER_ARCHITECT`  
+
+### `--auto-accept-architect`
+Enable/disable automatic acceptance of architect changes (default: True)  
+Default: True  
+Environment variable: `AIDER_AUTO_ACCEPT_ARCHITECT`  
+Aliases:
+  - `--auto-accept-architect`
+  - `--no-auto-accept-architect`
 
 ### `--weak-model WEAK_MODEL`
 Specify the model to use for commit messages and chat history summarization (default depends on --model)  
@@ -775,4 +735,69 @@ Aliases:
 ### `--editor VALUE`
 Specify which editor to use for the /editor command  
 Environment variable: `AIDER_EDITOR`  
+
+## Deprecated model settings:
+
+### `--opus`
+Use claude-3-opus-20240229 model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_OPUS`  
+
+### `--sonnet`
+Use anthropic/claude-3-7-sonnet-20250219 model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_SONNET`  
+
+### `--haiku`
+Use claude-3-5-haiku-20241022 model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_HAIKU`  
+
+### `--4`
+Use gpt-4-0613 model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_4`  
+Aliases:
+  - `--4`
+  - `-4`
+
+### `--4o`
+Use gpt-4o model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_4O`  
+
+### `--mini`
+Use gpt-4o-mini model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_MINI`  
+
+### `--4-turbo`
+Use gpt-4-1106-preview model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_4_TURBO`  
+
+### `--35turbo`
+Use gpt-3.5-turbo model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_35TURBO`  
+Aliases:
+  - `--35turbo`
+  - `--35-turbo`
+  - `--3`
+  - `-3`
+
+### `--deepseek`
+Use deepseek/deepseek-chat model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_DEEPSEEK`  
+
+### `--o1-mini`
+Use o1-mini model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_O1_MINI`  
+
+### `--o1-preview`
+Use o1-preview model for the main chat (deprecated, use --model)  
+Default: False  
+Environment variable: `AIDER_O1_PREVIEW`  
 <!--[[[end]]]-->

@@ -28,6 +28,12 @@ from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
 from aider.models import RETRY_TIMEOUT
+from aider.reasoning_tags import (
+    REASONING_TAG,
+    format_reasoning_content,
+    remove_reasoning_content,
+    replace_reasoning_tags,
+)
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
@@ -201,10 +207,22 @@ class Coder:
             prefix = "Model"
 
         output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
+
+        # Check for thinking token budget
+        thinking_tokens = main_model.get_thinking_tokens(main_model)
+        if thinking_tokens:
+            output += f", {thinking_tokens} think tokens"
+
+        # Check for reasoning effort
+        reasoning_effort = main_model.get_reasoning_effort(main_model)
+        if reasoning_effort:
+            output += f", reasoning {reasoning_effort}"
+
         if self.add_cache_headers or main_model.caches_by_default:
             output += ", prompt cache"
         if main_model.info.get("supports_assistant_prefill"):
             output += ", infinite output"
+
         lines.append(output)
 
         if self.edit_format == "architect":
@@ -304,6 +322,7 @@ class Coder:
         ignore_mentions=None,
         file_watcher=None,
         auto_copy_context=False,
+        auto_accept_architect=True,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -316,6 +335,7 @@ class Coder:
         self.abs_root_path_cache = {}
 
         self.auto_copy_context = auto_copy_context
+        self.auto_accept_architect = auto_accept_architect
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -375,6 +395,10 @@ class Coder:
         self.pretty = self.io.pretty
 
         self.main_model = main_model
+        # Set the reasoning tag name based on model settings or default
+        self.reasoning_tag_name = (
+            self.main_model.reasoning_tag if self.main_model.reasoning_tag else REASONING_TAG
+        )
 
         self.stream = stream and main_model.streaming
 
@@ -1372,10 +1396,13 @@ class Coder:
                 self.mdstream = None
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
-            self.partial_response_content = self.main_model.remove_reasoning_content(
-                self.partial_response_content
-            )
+            self.remove_reasoning_content()
             self.multi_response_content = ""
+
+        ###
+        # print()
+        # print("=" * 20)
+        # dump(self.partial_response_content)
 
         self.io.tool_output()
 
@@ -1626,6 +1653,9 @@ class Coder:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
 
     def send(self, messages, model=None, functions=None):
+        self.got_reasoning_content = False
+        self.ended_reasoning_content = False
+
         if not model:
             model = self.main_model
 
@@ -1694,6 +1724,14 @@ class Coder:
             show_func_err = func_err
 
         try:
+            reasoning_content = completion.choices[0].message.reasoning_content
+        except AttributeError:
+            try:
+                reasoning_content = completion.choices[0].message.reasoning
+            except AttributeError:
+                reasoning_content = None
+
+        try:
             self.partial_response_content = completion.choices[0].message.content or ""
         except AttributeError as content_err:
             show_content_err = content_err
@@ -1711,6 +1749,15 @@ class Coder:
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
+
+        if reasoning_content:
+            formatted_reasoning = format_reasoning_content(
+                reasoning_content, self.reasoning_tag_name
+            )
+            show_resp = formatted_reasoning + show_resp
+
+        show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
+
         self.io.assistant_output(show_resp, pretty=self.show_pretty())
 
         if (
@@ -1744,17 +1791,42 @@ class Coder:
             except AttributeError:
                 pass
 
+            text = ""
+
             try:
-                text = chunk.choices[0].delta.content
-                if text:
-                    self.partial_response_content += text
+                reasoning_content = chunk.choices[0].delta.reasoning_content
+            except AttributeError:
+                try:
+                    reasoning_content = chunk.choices[0].delta.reasoning
+                except AttributeError:
+                    reasoning_content = None
+
+            if reasoning_content:
+                if not self.got_reasoning_content:
+                    text += f"<{REASONING_TAG}>\n\n"
+                text += reasoning_content
+                self.got_reasoning_content = True
+                received_content = True
+
+            try:
+                content = chunk.choices[0].delta.content
+                if content:
+                    if self.got_reasoning_content and not self.ended_reasoning_content:
+                        text += f"\n\n</{self.reasoning_tag_name}>\n\n"
+                        self.ended_reasoning_content = True
+
+                    text += content
                     received_content = True
             except AttributeError:
-                text = None
+                pass
+
+            self.partial_response_content += text
 
             if self.show_pretty():
                 self.live_incremental_response(False)
             elif text:
+                # Apply reasoning tag formatting
+                text = replace_reasoning_tags(text, self.reasoning_tag_name)
                 try:
                     sys.stdout.write(text)
                 except UnicodeEncodeError:
@@ -1771,10 +1843,20 @@ class Coder:
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
+        # Apply any reasoning tag formatting
+        show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
         self.mdstream.update(show_resp, final=final)
 
     def render_incremental_response(self, final):
         return self.get_multi_response_content_in_progress()
+
+    def remove_reasoning_content(self):
+        """Remove reasoning content from the model's response."""
+
+        self.partial_response_content = remove_reasoning_content(
+            self.partial_response_content,
+            self.reasoning_tag_name,
+        )
 
     def calculate_and_show_tokens_and_cost(self, messages, completion=None):
         prompt_tokens = 0

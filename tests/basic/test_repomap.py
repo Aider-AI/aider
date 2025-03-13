@@ -282,74 +282,142 @@ class TestRepoMapTypescript(unittest.TestCase):
 class TestRepoMapAllLanguages(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
+        self.fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
 
-    def test_get_repo_map_all_languages(self):
-        language_files = {
-            "c": ("c", "main"),
-            "cpp": ("cpp", "main"),
-            "elixir": ("ex", "Greeter"),
-            "java": ("java", "Greeting"),
-            "javascript": ("js", "Person"),
-            "kotlin": ("kt", "Greeting"),
-            # "ocaml": ("ml", "Greeter"), # not supported in tsl-pack (yet?)
-            "php": ("php", "greet"),
-            "python": ("py", "Person"),
-            # "ql": ("ql", "greet"), # not supported in tsl-pack (yet?)
-            "ruby": ("rb", "greet"),
-            "rust": ("rs", "Person"),
-            "typescript": ("ts", "greet"),
-            "tsx": ("tsx", "UserProps"),
-            "csharp": ("cs", "IGreeter"),
-            "elisp": ("el", "greeter"),
-            "elm": ("elm", "Person"),
-            "go": ("go", "Greeter"),
-            "hcl": ("tf", "aws_vpc"),
-        }
+    def test_language_c(self):
+        self._test_language_repo_map("c", "c", "main")
 
-        fixtures_dir = Path(__file__).parent.parent / "fixtures" / "languages"
+    def test_language_cpp(self):
+        self._test_language_repo_map("cpp", "cpp", "main")
 
-        for lang, key_symbol in language_files.items():
-            # Get the fixture file path and name based on language
-            fixture_dir = fixtures_dir / lang
-            ext, key_symbol = language_files[lang]
-            filename = f"test.{ext}"
-            fixture_path = fixture_dir / filename
-            self.assertTrue(
-                fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}"
+    def test_language_d(self):
+        self._test_language_repo_map("d", "d", "main")
+
+    def test_language_dart(self):
+        self._test_language_repo_map("dart", "dart", "Person")
+
+    def test_language_elixir(self):
+        self._test_language_repo_map("elixir", "ex", "Greeter")
+
+    def test_language_gleam(self):
+        self._test_language_repo_map("gleam", "gleam", "greet")
+
+    def test_language_java(self):
+        self._test_language_repo_map("java", "java", "Greeting")
+
+    def test_language_javascript(self):
+        self._test_language_repo_map("javascript", "js", "Person")
+
+    def test_language_kotlin(self):
+        self._test_language_repo_map("kotlin", "kt", "Greeting")
+
+    def test_language_lua(self):
+        self._test_language_repo_map("lua", "lua", "greet")
+
+    # "ocaml": ("ml", "Greeter"), # not supported in tsl-pack (yet?)
+
+    def test_language_php(self):
+        self._test_language_repo_map("php", "php", "greet")
+
+    def test_language_python(self):
+        self._test_language_repo_map("python", "py", "Person")
+
+    # "ql": ("ql", "greet"), # not supported in tsl-pack (yet?)
+
+    def test_language_ruby(self):
+        self._test_language_repo_map("ruby", "rb", "greet")
+
+    def test_language_rust(self):
+        self._test_language_repo_map("rust", "rs", "Person")
+
+    def test_language_typescript(self):
+        self._test_language_repo_map("typescript", "ts", "greet")
+
+    def test_language_tsx(self):
+        self._test_language_repo_map("tsx", "tsx", "UserProps")
+
+    def test_language_csharp(self):
+        self._test_language_repo_map("csharp", "cs", "IGreeter")
+
+    def test_language_elisp(self):
+        self._test_language_repo_map("elisp", "el", "greeter")
+
+    def test_language_elm(self):
+        self._test_language_repo_map("elm", "elm", "Person")
+
+    def test_language_go(self):
+        self._test_language_repo_map("go", "go", "Greeter")
+
+    def test_language_hcl(self):
+        self._test_language_repo_map("hcl", "tf", "aws_vpc")
+
+    def test_language_arduino(self):
+        self._test_language_repo_map("arduino", "ino", "setup")
+
+    def test_language_chatito(self):
+        self._test_language_repo_map("chatito", "chatito", "intent")
+
+    def test_language_commonlisp(self):
+        self._test_language_repo_map("commonlisp", "lisp", "greet")
+
+    def test_language_pony(self):
+        self._test_language_repo_map("pony", "pony", "Greeter")
+
+    def test_language_properties(self):
+        self._test_language_repo_map("properties", "properties", "database.url")
+
+    def test_language_r(self):
+        self._test_language_repo_map("r", "r", "calculate")
+
+    def test_language_racket(self):
+        self._test_language_repo_map("racket", "rkt", "greet")
+
+    def test_language_solidity(self):
+        self._test_language_repo_map("solidity", "sol", "SimpleStorage")
+
+    def test_language_swift(self):
+        self._test_language_repo_map("swift", "swift", "Greeter")
+
+    def test_language_udev(self):
+        self._test_language_repo_map("udev", "rules", "USB_DRIVER")
+
+    def _test_language_repo_map(self, lang, key, symbol):
+        """Helper method to test repo map generation for a specific language."""
+        # Get the fixture file path and name based on language
+        fixture_dir = self.fixtures_dir / lang
+        filename = f"test.{key}"
+        fixture_path = fixture_dir / filename
+        self.assertTrue(fixture_path.exists(), f"Fixture file missing for {lang}: {fixture_path}")
+
+        # Read the fixture content
+        with open(fixture_path, "r", encoding="utf-8") as f:
+            content = f.read()
+        with GitTemporaryDirectory() as temp_dir:
+            test_file = os.path.join(temp_dir, filename)
+            with open(test_file, "w", encoding="utf-8") as f:
+                f.write(content)
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            other_files = [test_file]
+            result = repo_map.get_repo_map([], other_files)
+            dump(lang)
+            dump(result)
+
+            self.assertGreater(len(result.strip().splitlines()), 1)
+
+            # Check if the result contains all the expected files and symbols
+            self.assertIn(
+                filename, result, f"File for language {lang} not found in repo map: {result}"
+            )
+            self.assertIn(
+                symbol,
+                result,
+                f"Key symbol '{symbol}' for language {lang} not found in repo map: {result}",
             )
 
-            # Read the fixture content
-            with open(fixture_path, "r", encoding="utf-8") as f:
-                content = f.read()
-            with GitTemporaryDirectory() as temp_dir:
-                test_file = os.path.join(temp_dir, filename)
-                with open(test_file, "w", encoding="utf-8") as f:
-                    f.write(content)
-
-                io = InputOutput()
-                repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
-                other_files = [filename]
-                result = repo_map.get_repo_map([], other_files)
-                dump(lang)
-                dump(result)
-
-                self.assertGreater(len(result.strip().splitlines()), 1)
-
-                # Check if the result contains all the expected files and symbols
-                self.assertIn(
-                    filename, result, f"File for language {lang} not found in repo map: {result}"
-                )
-                self.assertIn(
-                    key_symbol,
-                    result,
-                    (
-                        f"Key symbol '{key_symbol}' for language {lang} not found in repo map:"
-                        f" {result}"
-                    ),
-                )
-
-                # close the open cache files, so Windows won't error
-                del repo_map
+            # close the open cache files, so Windows won't error
+            del repo_map
 
     def test_repo_map_sample_code_base(self):
         # Path to the sample code base

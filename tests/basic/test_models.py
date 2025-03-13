@@ -160,6 +160,51 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.name, "github/o1-preview")
         self.assertEqual(model.use_temperature, False)
 
+    def test_parse_token_value(self):
+        # Create a model instance to test the parse_token_value method
+        model = Model("gpt-4")
+
+        # Test integer inputs
+        self.assertEqual(model.parse_token_value(8096), 8096)
+        self.assertEqual(model.parse_token_value(1000), 1000)
+
+        # Test string inputs
+        self.assertEqual(model.parse_token_value("8096"), 8096)
+
+        # Test k/K suffix (kilobytes)
+        self.assertEqual(model.parse_token_value("8k"), 8 * 1024)
+        self.assertEqual(model.parse_token_value("8K"), 8 * 1024)
+        self.assertEqual(model.parse_token_value("10.5k"), 10.5 * 1024)
+        self.assertEqual(model.parse_token_value("0.5K"), 0.5 * 1024)
+
+        # Test m/M suffix (megabytes)
+        self.assertEqual(model.parse_token_value("1m"), 1 * 1024 * 1024)
+        self.assertEqual(model.parse_token_value("1M"), 1 * 1024 * 1024)
+        self.assertEqual(model.parse_token_value("0.5M"), 0.5 * 1024 * 1024)
+
+        # Test with spaces
+        self.assertEqual(model.parse_token_value(" 8k "), 8 * 1024)
+
+        # Test conversion from other types
+        self.assertEqual(model.parse_token_value(8.0), 8)
+
+    def test_set_thinking_tokens(self):
+        # Test that set_thinking_tokens correctly sets the tokens with different formats
+        model = Model("gpt-4")
+
+        # Test with integer
+        model.set_thinking_tokens(8096)
+        self.assertEqual(model.extra_params["thinking"]["budget_tokens"], 8096)
+        self.assertFalse(model.use_temperature)
+
+        # Test with string
+        model.set_thinking_tokens("10k")
+        self.assertEqual(model.extra_params["thinking"]["budget_tokens"], 10 * 1024)
+
+        # Test with decimal value
+        model.set_thinking_tokens("0.5M")
+        self.assertEqual(model.extra_params["thinking"]["budget_tokens"], 0.5 * 1024 * 1024)
+
     @patch("aider.models.check_pip_install_extra")
     def test_check_for_dependencies_bedrock(self, mock_check_pip):
         """Test that check_for_dependencies calls check_pip_install_extra for Bedrock models"""
@@ -277,7 +322,7 @@ class TestModels(unittest.TestCase):
         self.assertTrue(model.use_repo_map)
         self.assertTrue(model.examples_as_sys_msg)
         self.assertFalse(model.use_temperature)
-        self.assertEqual(model.remove_reasoning, "think")
+        self.assertEqual(model.reasoning_tag, "think")
 
         # Test provider/deepseek-r1 case
         model = Model("someprovider/deepseek-r1")
@@ -285,7 +330,7 @@ class TestModels(unittest.TestCase):
         self.assertTrue(model.use_repo_map)
         self.assertTrue(model.examples_as_sys_msg)
         self.assertFalse(model.use_temperature)
-        self.assertEqual(model.remove_reasoning, "think")
+        self.assertEqual(model.reasoning_tag, "think")
 
         # Test provider/deepseek-v3 case
         model = Model("anotherprovider/deepseek-v3")
@@ -328,66 +373,6 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.edit_format, "diff")
         self.assertEqual(model.editor_edit_format, "editor-diff")
         self.assertTrue(model.use_repo_map)
-
-    def test_remove_reasoning_content(self):
-        # Test with no removal configured
-        model = Model("gpt-4")
-        text = "Here is <think>some reasoning</think> and regular text"
-        self.assertEqual(model.remove_reasoning_content(text), text)
-
-        # Test with removal configured
-        model = Model("deepseek-r1")  # This model has remove_reasoning="think"
-        text = """Here is some text
-<think>
-This is reasoning that should be removed
-Over multiple lines
-</think>
-And more text here"""
-        expected = """Here is some text
-
-And more text here"""
-        self.assertEqual(model.remove_reasoning_content(text), expected)
-
-        # Test with multiple reasoning blocks
-        text = """Start
-<think>Block 1</think>
-Middle
-<think>Block 2</think>
-End"""
-        expected = """Start
-
-Middle
-
-End"""
-        self.assertEqual(model.remove_reasoning_content(text), expected)
-
-        # Test with no reasoning blocks
-        text = "Just regular text"
-        self.assertEqual(model.remove_reasoning_content(text), text)
-
-    @patch("aider.models.litellm.completion")
-    def test_simple_send_with_retries_removes_reasoning(self, mock_completion):
-        model = Model("deepseek-r1")  # This model has remove_reasoning="think"
-
-        # Mock the completion response
-        mock_response = MagicMock()
-        mock_response.choices = [MagicMock(message=MagicMock(content="""Here is some text
-<think>
-This reasoning should be removed
-</think>
-And this text should remain"""))]
-        mock_completion.return_value = mock_response
-
-        messages = [{"role": "user", "content": "test"}]
-        result = model.simple_send_with_retries(messages)
-
-        expected = """Here is some text
-
-And this text should remain"""
-        self.assertEqual(result, expected)
-
-        # Verify the completion was called
-        mock_completion.assert_called_once()
 
     def test_aider_extra_model_settings(self):
         import tempfile

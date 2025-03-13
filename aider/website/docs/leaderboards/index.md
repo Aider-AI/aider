@@ -41,11 +41,11 @@ The model also has to successfully apply all its changes to the source file with
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center;">Percent completed correctly</th>
+      <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
-      <th style="padding: 8px; text-align: center;">Total Cost</th>
+      <th style="padding: 8px; text-align: center;">Cost</th>
     </tr>
   </thead>
   <tbody>
@@ -71,7 +71,7 @@ The model also has to successfully apply all its changes to the source file with
 <script>
 {% assign data_source = edit_sorted %}
 {% assign pass_rate_field = "pass_rate_2" %}
-{% assign highlight_model = "xxxxxxxxxxx" %}
+{% assign highlight_model = "xxxxxx" %}
 {% include leaderboard.js %}
 </script>
 <style>
@@ -87,6 +87,14 @@ The model also has to successfully apply all its changes to the source file with
   }
   td:nth-child(3), td:nth-child(4) {
     font-size: 12px;
+  }
+  
+  /* Hide command and edit format columns on mobile */
+  @media screen and (max-width: 767px) {
+    th:nth-child(4), td:nth-child(4), /* Command column */
+    th:nth-child(5), td:nth-child(5) { /* Edit format column */
+      display: none;
+    }
   }
 </style>
 
@@ -116,6 +124,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-March 06, 2025.
+March 11, 2025.
 <!--[[[end]]]-->
 </p>

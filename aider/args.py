@@ -12,6 +12,7 @@ from aider.args_formatter import (
     MarkdownHelpFormatter,
     YamlHelpFormatter,
 )
+from aider.deprecated import add_deprecated_model_args
 
 from .dump import dump  # noqa: F401
 
@@ -37,98 +38,6 @@ def get_parser(default_config_files, git_root):
         metavar="MODEL",
         default=None,
         help="Specify the model to use for the main chat",
-    )
-    opus_model = "claude-3-opus-20240229"
-    group.add_argument(
-        "--opus",
-        action="store_const",
-        dest="model",
-        const=opus_model,
-        help=f"Use {opus_model} model for the main chat",
-    )
-    sonnet_model = "anthropic/claude-3-7-sonnet-20250219"
-    group.add_argument(
-        "--sonnet",
-        action="store_const",
-        dest="model",
-        const=sonnet_model,
-        help=f"Use {sonnet_model} model for the main chat",
-    )
-    haiku_model = "claude-3-5-haiku-20241022"
-    group.add_argument(
-        "--haiku",
-        action="store_const",
-        dest="model",
-        const=haiku_model,
-        help=f"Use {haiku_model} model for the main chat",
-    )
-    gpt_4_model = "gpt-4-0613"
-    group.add_argument(
-        "--4",
-        "-4",
-        action="store_const",
-        dest="model",
-        const=gpt_4_model,
-        help=f"Use {gpt_4_model} model for the main chat",
-    )
-    gpt_4o_model = "gpt-4o"
-    group.add_argument(
-        "--4o",
-        action="store_const",
-        dest="model",
-        const=gpt_4o_model,
-        help=f"Use {gpt_4o_model} model for the main chat",
-    )
-    gpt_4o_mini_model = "gpt-4o-mini"
-    group.add_argument(
-        "--mini",
-        action="store_const",
-        dest="model",
-        const=gpt_4o_mini_model,
-        help=f"Use {gpt_4o_mini_model} model for the main chat",
-    )
-    gpt_4_turbo_model = "gpt-4-1106-preview"
-    group.add_argument(
-        "--4-turbo",
-        action="store_const",
-        dest="model",
-        const=gpt_4_turbo_model,
-        help=f"Use {gpt_4_turbo_model} model for the main chat",
-    )
-    gpt_3_model_name = "gpt-3.5-turbo"
-    group.add_argument(
-        "--35turbo",
-        "--35-turbo",
-        "--3",
-        "-3",
-        action="store_const",
-        dest="model",
-        const=gpt_3_model_name,
-        help=f"Use {gpt_3_model_name} model for the main chat",
-    )
-    deepseek_model = "deepseek/deepseek-chat"
-    group.add_argument(
-        "--deepseek",
-        action="store_const",
-        dest="model",
-        const=deepseek_model,
-        help=f"Use {deepseek_model} model for the main chat",
-    )
-    o1_mini_model = "o1-mini"
-    group.add_argument(
-        "--o1-mini",
-        action="store_const",
-        dest="model",
-        const=o1_mini_model,
-        help=f"Use {o1_mini_model} model for the main chat",
-    )
-    o1_preview_model = "o1-preview"
-    group.add_argument(
-        "--o1-preview",
-        action="store_const",
-        dest="model",
-        const=o1_preview_model,
-        help=f"Use {o1_preview_model} model for the main chat",
     )
 
     ##########
@@ -209,6 +118,11 @@ def get_parser(default_config_files, git_root):
         help="Set the reasoning_effort API parameter (default: not set)",
     )
     group.add_argument(
+        "--thinking-tokens",
+        type=str,
+        help="Set the thinking token budget for models that support it (default: not set)",
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -233,6 +147,12 @@ def get_parser(default_config_files, git_root):
         dest="edit_format",
         const="architect",
         help="Use architect edit format for the main chat",
+    )
+    group.add_argument(
+        "--auto-accept-architect",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable automatic acceptance of architect changes (default: True)",
     )
     group.add_argument(
         "--weak-model",
@@ -841,6 +761,11 @@ def get_parser(default_config_files, git_root):
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
+
+    ##########
+    group = parser.add_argument_group("Deprecated model settings")
+    # Add deprecated model shortcut arguments
+    add_deprecated_model_args(parser, group)
 
     return parser
 

@@ -1283,6 +1283,38 @@ class TestCommands(TestCase):
             # Verify the file was not added
             self.assertEqual(len(coder.abs_fnames), 0)
 
+    def test_cmd_think_tokens(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Test with various formats
+        test_values = {
+            "8k": 8192,  # 8 * 1024
+            "10.5k": 10752,  # 10.5 * 1024
+            "512k": 524288,  # 0.5 * 1024 * 1024
+        }
+
+        for input_value, expected_tokens in test_values.items():
+            with mock.patch.object(io, "tool_output") as mock_tool_output:
+                commands.cmd_think_tokens(input_value)
+
+                # Check that the model's thinking tokens were updated
+                self.assertEqual(
+                    coder.main_model.extra_params["thinking"]["budget_tokens"], expected_tokens
+                )
+
+                # Check that the tool output shows the correct value with format
+                # Use the actual input_value (not normalized) in the assertion
+                mock_tool_output.assert_any_call(
+                    f"Set thinking token budget to {expected_tokens:,} tokens ({input_value})."
+                )
+
+        # Test with no value provided - should display current value
+        with mock.patch.object(io, "tool_output") as mock_tool_output:
+            commands.cmd_think_tokens("")
+            mock_tool_output.assert_any_call(mock.ANY)  # Just verify it calls tool_output
+
     def test_cmd_add_aiderignored_file(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -1721,6 +1753,213 @@ class TestCommands(TestCase):
 
             del coder
             del commands
+
+    def test_reset_with_original_read_only_files(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            orig_read_only = Path(repo_dir) / "orig_read_only.txt"
+            orig_read_only.write_text("Original read-only file")
+
+            added_file = Path(repo_dir) / "added_file.txt"
+            added_file.write_text("Added file")
+
+            added_read_only = Path(repo_dir) / "added_read_only.txt"
+            added_read_only.write_text("Added read-only file")
+
+            # Initialize commands with original read-only files
+            commands = Commands(io, coder, original_read_only_fnames=[str(orig_read_only)])
+
+            # Add files to the chat
+            coder.abs_read_only_fnames.add(str(orig_read_only))
+            coder.abs_fnames.add(str(added_file))
+            coder.abs_read_only_fnames.add(str(added_read_only))
+
+            # Add some messages to the chat history
+            coder.cur_messages = [{"role": "user", "content": "Test message"}]
+            coder.done_messages = [{"role": "assistant", "content": "Test response"}]
+
+            # Verify initial state
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertEqual(len(coder.abs_read_only_fnames), 2)
+            self.assertEqual(len(coder.cur_messages), 1)
+            self.assertEqual(len(coder.done_messages), 1)
+
+            # Test reset command
+            commands.cmd_reset("")
+
+            # Verify that original read-only file is preserved
+            # but other files and messages are cleared
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+            self.assertIn(str(orig_read_only), coder.abs_read_only_fnames)
+            self.assertNotIn(str(added_read_only), coder.abs_read_only_fnames)
+
+            # Chat history should be cleared
+            self.assertEqual(len(coder.cur_messages), 0)
+            self.assertEqual(len(coder.done_messages), 0)
+
+    def test_reset_with_no_original_read_only_files(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            added_file = Path(repo_dir) / "added_file.txt"
+            added_file.write_text("Added file")
+
+            added_read_only = Path(repo_dir) / "added_read_only.txt"
+            added_read_only.write_text("Added read-only file")
+
+            # Initialize commands with no original read-only files
+            commands = Commands(io, coder)
+
+            # Add files to the chat
+            coder.abs_fnames.add(str(added_file))
+            coder.abs_read_only_fnames.add(str(added_read_only))
+
+            # Add some messages to the chat history
+            coder.cur_messages = [{"role": "user", "content": "Test message"}]
+            coder.done_messages = [{"role": "assistant", "content": "Test response"}]
+
+            # Verify initial state
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+            self.assertEqual(len(coder.cur_messages), 1)
+            self.assertEqual(len(coder.done_messages), 1)
+
+            # Test reset command
+            commands.cmd_reset("")
+
+            # Verify that all files and messages are cleared
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+            self.assertEqual(len(coder.cur_messages), 0)
+            self.assertEqual(len(coder.done_messages), 0)
+
+    def test_cmd_reasoning_effort(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Test with numeric values
+        with mock.patch.object(io, "tool_output") as mock_tool_output:
+            commands.cmd_reasoning_effort("0.8")
+            mock_tool_output.assert_any_call("Set reasoning effort to 0.8")
+
+        # Test with text values (low/medium/high)
+        for effort_level in ["low", "medium", "high"]:
+            with mock.patch.object(io, "tool_output") as mock_tool_output:
+                commands.cmd_reasoning_effort(effort_level)
+                mock_tool_output.assert_any_call(f"Set reasoning effort to {effort_level}")
+
+        # Check model's reasoning effort was updated
+        with mock.patch.object(coder.main_model, "set_reasoning_effort") as mock_set_effort:
+            commands.cmd_reasoning_effort("0.5")
+            mock_set_effort.assert_called_once_with("0.5")
+
+        # Test with no value provided - should display current value
+        with mock.patch.object(io, "tool_output") as mock_tool_output:
+            commands.cmd_reasoning_effort("")
+            mock_tool_output.assert_any_call("Current reasoning effort: high")
+
+    def test_drop_with_original_read_only_files(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            orig_read_only = Path(repo_dir) / "orig_read_only.txt"
+            orig_read_only.write_text("Original read-only file")
+
+            added_file = Path(repo_dir) / "added_file.txt"
+            added_file.write_text("Added file")
+
+            added_read_only = Path(repo_dir) / "added_read_only.txt"
+            added_read_only.write_text("Added read-only file")
+
+            # Initialize commands with original read-only files
+            commands = Commands(io, coder, original_read_only_fnames=[str(orig_read_only)])
+
+            # Add files to the chat
+            coder.abs_read_only_fnames.add(str(orig_read_only))
+            coder.abs_fnames.add(str(added_file))
+            coder.abs_read_only_fnames.add(str(added_read_only))
+
+            # Verify initial state
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertEqual(len(coder.abs_read_only_fnames), 2)
+
+            # Test bare drop command
+            with mock.patch.object(io, "tool_output") as mock_tool_output:
+                commands.cmd_drop("")
+                mock_tool_output.assert_called_with(
+                    "Dropping all files from the chat session except originally read-only files."
+                )
+
+            # Verify that original read-only file is preserved, but other files are dropped
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+            self.assertIn(str(orig_read_only), coder.abs_read_only_fnames)
+            self.assertNotIn(str(added_read_only), coder.abs_read_only_fnames)
+
+    def test_drop_specific_original_read_only_file(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test file
+            orig_read_only = Path(repo_dir) / "orig_read_only.txt"
+            orig_read_only.write_text("Original read-only file")
+
+            # Initialize commands with original read-only files
+            commands = Commands(io, coder, original_read_only_fnames=[str(orig_read_only)])
+
+            # Add file to the chat
+            coder.abs_read_only_fnames.add(str(orig_read_only))
+
+            # Verify initial state
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            # Test specific drop command
+            commands.cmd_drop("orig_read_only.txt")
+
+            # Verify that the original read-only file is dropped when specified explicitly
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+    def test_drop_with_no_original_read_only_files(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            added_file = Path(repo_dir) / "added_file.txt"
+            added_file.write_text("Added file")
+
+            added_read_only = Path(repo_dir) / "added_read_only.txt"
+            added_read_only.write_text("Added read-only file")
+
+            # Initialize commands with no original read-only files
+            commands = Commands(io, coder)
+
+            # Add files to the chat
+            coder.abs_fnames.add(str(added_file))
+            coder.abs_read_only_fnames.add(str(added_read_only))
+
+            # Verify initial state
+            self.assertEqual(len(coder.abs_fnames), 1)
+            self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+            # Test bare drop command
+            with mock.patch.object(io, "tool_output") as mock_tool_output:
+                commands.cmd_drop("")
+                mock_tool_output.assert_called_with("Dropping all files from the chat session.")
+
+            # Verify that all files are dropped
+            self.assertEqual(len(coder.abs_fnames), 0)
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
     def test_cmd_load_with_switch_coder(self):
         with GitTemporaryDirectory() as repo_dir:

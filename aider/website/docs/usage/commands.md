@@ -47,12 +47,14 @@ cog.out(get_help_md())
 | **/paste** | Paste image/text from the clipboard into the chat.        Optionally provide a name for the image. |
 | **/quit** | Exit the application |
 | **/read-only** | Add files to the chat that are for reference only, or turn added files to read-only |
+| **/reasoning-effort** | Set the reasoning effort level (values: number or low/medium/high depending on model) |
 | **/report** | Report a problem by opening a GitHub Issue |
 | **/reset** | Drop all files and clear the chat history |
 | **/run** | Run a shell command and optionally add the output to the chat (alias: !) |
 | **/save** | Save commands to a file that can reconstruct the current chat session's files |
 | **/settings** | Print out the current settings |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
+| **/think-tokens** | Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M) |
 | **/tokens** | Report on the number of tokens used by the current chat context |
 | **/undo** | Undo the last git commit if it was done by aider |
 | **/voice** | Record and transcribe voice input |

@@ -59,6 +59,7 @@ class Commands:
         parser=None,
         verbose=False,
         editor=None,
+        original_read_only_fnames=None,
     ):
         self.io = io
         self.coder = coder
@@ -76,6 +77,9 @@ class Commands:
 
         self.help = None
         self.editor = editor
+
+        # Store the original read-only filenames provided via args.read
+        self.original_read_only_fnames = set(original_read_only_fnames or [])
 
     def cmd_model(self, args):
         "Switch to a new LLM"
@@ -358,7 +362,21 @@ class Commands:
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
-        self.coder.abs_read_only_fnames = set()
+
+        # When dropping all files, keep those that were originally provided via args.read
+        if self.original_read_only_fnames:
+            # Keep only the original read-only files
+            to_keep = set()
+            for abs_fname in self.coder.abs_read_only_fnames:
+                rel_fname = self.coder.get_rel_fname(abs_fname)
+                if (
+                    abs_fname in self.original_read_only_fnames
+                    or rel_fname in self.original_read_only_fnames
+                ):
+                    to_keep.add(abs_fname)
+            self.coder.abs_read_only_fnames = to_keep
+        else:
+            self.coder.abs_read_only_fnames = set()
 
     def _clear_chat_history(self):
         self.coder.done_messages = []
@@ -825,7 +843,12 @@ class Commands:
         "Remove files from the chat session to free up context space"
 
         if not args.strip():
-            self.io.tool_output("Dropping all files from the chat session.")
+            if self.original_read_only_fnames:
+                self.io.tool_output(
+                    "Dropping all files from the chat session except originally read-only files."
+                )
+            else:
+                self.io.tool_output("Dropping all files from the chat session.")
             self._drop_all_files()
             return
 
@@ -1426,6 +1449,58 @@ class Commands:
         user_input = pipe_editor(initial_content, suffix="md", editor=self.editor)
         if user_input.strip():
             self.io.set_placeholder(user_input.rstrip())
+
+    def cmd_think_tokens(self, args):
+        "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M)"
+        model = self.coder.main_model
+
+        if not args.strip():
+            # Display current value if no args are provided
+            formatted_budget = model.get_thinking_tokens(model)
+            if formatted_budget is None:
+                self.io.tool_output("Thinking tokens are not currently set.")
+            else:
+                budget = model.extra_params["thinking"].get("budget_tokens")
+                self.io.tool_output(
+                    f"Current thinking token budget: {budget:,} tokens ({formatted_budget})."
+                )
+            return
+
+        value = args.strip()
+        model.set_thinking_tokens(value)
+
+        formatted_budget = model.get_thinking_tokens(model)
+        budget = model.extra_params["thinking"].get("budget_tokens")
+
+        self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
+        self.io.tool_output()
+
+        # Output announcements
+        announcements = "\n".join(self.coder.get_announcements())
+        self.io.tool_output(announcements)
+
+    def cmd_reasoning_effort(self, args):
+        "Set the reasoning effort level (values: number or low/medium/high depending on model)"
+        model = self.coder.main_model
+
+        if not args.strip():
+            # Display current value if no args are provided
+            reasoning_value = model.get_reasoning_effort(model)
+            if reasoning_value is None:
+                self.io.tool_output("Reasoning effort is not currently set.")
+            else:
+                self.io.tool_output(f"Current reasoning effort: {reasoning_value}")
+            return
+
+        value = args.strip()
+        model.set_reasoning_effort(value)
+        reasoning_value = model.get_reasoning_effort(model)
+        self.io.tool_output(f"Set reasoning effort to {reasoning_value}")
+        self.io.tool_output()
+
+        # Output announcements
+        announcements = "\n".join(self.coder.get_announcements())
+        self.io.tool_output(announcements)
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""

@@ -36,3 +36,24 @@ main =
     div [ class "greeting" ]
         [ text (greet Formal defaultPerson)
         ]
+module Main exposing (..)
+
+-- Define a Person type
+type alias Person =
+    { name : String
+    , age : Int
+    }
+
+-- Create a person
+newPerson : String -> Int -> Person
+newPerson name age =
+    { name = name
+    , age = age
+    }
+
+-- Main function
+main =
+    let
+        person = newPerson "John Doe" 30
+    in
+    text ("Hello, " ++ person.name)

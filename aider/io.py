@@ -194,6 +194,11 @@ class AutoCompleter(Completer):
         candidates = [word if type(word) is tuple else (word, word) for word in candidates]
 
         last_word = words[-1]
+
+        # Only provide completions if the user has typed at least 3 characters
+        if len(last_word) < 3:
+            return
+
         completions = []
         for word_match, word_insert in candidates:
             if word_match.lower().startswith(last_word.lower()):
