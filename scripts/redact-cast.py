@@ -29,9 +29,13 @@ def main():
         height = header_data.get("height", 24)
         print(f"Terminal dimensions: {width}x{height}")
 
-        # Initialize terminal emulator
+        # Initialize terminal emulator but don't use it unless necessary
         screen = pyte.Screen(width, height)
         stream = pyte.Stream(screen)
+        
+        # Track if we need to check the terminal (if "Atuin" might be on screen)
+        check_terminal = False
+        atuin_chars = set("Atuin")
 
         # Process events line by line
         for line in tqdm(fin, desc="Processing events", total=total_lines - 1):
@@ -40,20 +44,34 @@ def main():
 
             event = json.loads(line)
 
-            # Only run terminal emulation for output events
+            # For output events, check for potential "Atuin" content
             if len(event) >= 3 and event[1] == "o":
-                stream.feed(event[2])
-
-                # Check if "Atuin" is visible on screen - exit early if found
-                atuin_visible = False
-                for display_line in screen.display:
-                    if "Atuin" in display_line:
-                        atuin_visible = True
-                        break
-
-                if atuin_visible:
-                    continue  # Skip this event
-
+                output_text = event[2]
+                
+                # Fast check: if any letters of "Atuin" are in the output
+                if any(char in output_text for char in atuin_chars):
+                    # Only now feed to terminal emulator
+                    stream.feed(output_text)
+                    check_terminal = True
+                elif check_terminal:
+                    # If we're already checking the terminal, continue feeding
+                    stream.feed(output_text)
+                
+                # If we need to check the terminal, do so
+                if check_terminal:
+                    # Check if "Atuin" is visible on screen
+                    atuin_visible = False
+                    for display_line in screen.display:
+                        if "Atuin" in "".join(display_line):
+                            atuin_visible = True
+                            break
+                    
+                    # Reset flag if Atuin is no longer visible
+                    if not atuin_visible:
+                        check_terminal = False
+                    else:
+                        continue  # Skip this event if Atuin is visible
+                
             # Write event to output file
             fout.write(json.dumps(event) + "\n")
 
