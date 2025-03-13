@@ -46,8 +46,10 @@ def main():
                 stream.feed(event[2])
 
                 # Check if "Atuin" is visible on screen
-                display_content = "\n".join("".join(line) for line in screen.display)
-                if "Atuin" in display_content:
+                if any(
+                        ("Atuin" in line)
+                        for line in screen.display
+                ):
                     continue  # Skip this event
 
             # Write this event directly to the output file
