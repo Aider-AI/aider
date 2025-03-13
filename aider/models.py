@@ -230,7 +230,9 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False):
+    def __init__(
+        self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False
+    ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
