@@ -23,7 +23,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.77.0
 
 - Big upgrade in [programming languages supported](https://aider.chat/docs/languages.html) by adopting [tree-sitter-language-pack](https://github.com/Goldziher/tree-sitter-language-pack/).
   - 130 new languages with linter support.
