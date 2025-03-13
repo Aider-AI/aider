@@ -50,11 +50,9 @@ def main():
 
                 # Fast check: if any letters of "Atuin" are in the output
                 if any(char in output_text for char in atuin_chars):
-                    # Only now feed to terminal emulator
-                    stream.feed(output_text)
                     check_terminal = True
-                elif check_terminal:
-                    # If we're already checking the terminal, continue feeding
+
+                if check_terminal:
                     stream.feed(output_text)
 
                 # If we need to check the terminal, do so
