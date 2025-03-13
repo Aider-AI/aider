@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
+import re
 import sys
 
 import pyte
@@ -35,7 +36,7 @@ def main():
 
         # Track if we need to check the terminal (if "Atuin" might be on screen)
         check_terminal = False
-        atuin_chars = set("Atuin")
+        atuin_pattern = re.compile(r"A.*t.*u.*i.*n")
 
         # Process events line by line
         for line in tqdm(fin, desc="Processing events", total=total_lines - 1):
@@ -43,9 +44,9 @@ def main():
                 continue
 
             # Fast initial check on raw line before JSON parsing
-            raw_line_has_atuin_chars = any(char in line for char in atuin_chars)
+            raw_line_has_atuin = bool(atuin_pattern.search(line))
 
-            if raw_line_has_atuin_chars:
+            if raw_line_has_atuin:
                 check_terminal = True
 
             # Only parse JSON if we're checking terminal or need to check
