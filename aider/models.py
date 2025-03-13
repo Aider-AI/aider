@@ -100,6 +100,7 @@ class ModelSettings:
     name: str
     edit_format: str = "whole"
     weak_model_name: Optional[str] = None
+    infinite_output_model_name: Optional[str] = None
     use_repo_map: bool = False
     send_undo_reply: bool = False
     lazy: bool = False
@@ -230,7 +231,7 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None, infinite_output_model=None):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
@@ -239,6 +240,7 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
+        self.infinite_output_model = None
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -267,6 +269,11 @@ class Model(ModelSettings):
             self.editor_model_name = None
         else:
             self.get_editor_model(editor_model, editor_edit_format)
+
+        if infinite_output_model is False:
+            self.infinite_output_model_name = None
+        else:
+            self.get_infinite_output_model(infinite_output_model)
 
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
@@ -443,6 +450,24 @@ class Model(ModelSettings):
 
     def commit_message_models(self):
         return [self.weak_model, self]
+
+    def get_infinite_output_model(self, provided_infinite_output_model_name):
+        # If infinite_output_model_name is provided, override the model settings
+        if provided_infinite_output_model_name:
+            self.infinite_output_model_name = provided_infinite_output_model_name
+
+        if not self.infinite_output_model_name:
+            return None
+            
+        if self.infinite_output_model_name == self.name:
+            return self
+            
+        self.infinite_output_model = Model(
+            self.infinite_output_model_name,
+            weak_model=False,
+            editor_model=False,
+        )
+        return self.infinite_output_model
 
     def get_editor_model(self, provided_editor_model_name, editor_edit_format):
         # If editor_model_name is provided, override the model settings

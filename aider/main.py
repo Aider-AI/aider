@@ -778,6 +778,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         weak_model=args.weak_model,
         editor_model=args.editor_model,
         editor_edit_format=args.editor_edit_format,
+        infinite_output_model=args.infinite_output_model,
     )
 
     # Check if deprecated remove_reasoning is set
