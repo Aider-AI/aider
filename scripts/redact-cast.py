@@ -30,13 +30,11 @@ def main():
         height = header_data.get("height", 24)
         print(f"Terminal dimensions: {width}x{height}")
 
-        # Initialize terminal emulator but don't use it unless necessary
-        screen = pyte.Screen(width, height)
-        stream = pyte.Stream(screen)
-
         # Track if we need to check the terminal (if "Atuin" might be on screen)
-        check_terminal = False
+
         atuin_pattern = re.compile(r"A.*t.*u.*i.*n")
+
+        screen = stream = None
 
         # Process events line by line
         for line in tqdm(fin, desc="Processing events", total=total_lines - 1):
@@ -47,10 +45,11 @@ def main():
             raw_line_has_atuin = bool(atuin_pattern.search(line))
 
             if raw_line_has_atuin:
-                check_terminal = True
+                screen = pyte.Screen(width, height)
+                stream = pyte.Stream(screen)
 
             # Only parse JSON if we're checking terminal or need to check
-            if not check_terminal:
+            if not screen:
                 fout.write(line)
                 continue
 
@@ -71,10 +70,8 @@ def main():
                     atuin_visible = True
                     break
 
-            # Reset flag if Atuin is no longer visible
-            check_terminal = atuin_visible
-
             if not atuin_visible:
+                screen = stream = None
                 fout.write(line)
 
 
