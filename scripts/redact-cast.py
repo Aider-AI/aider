@@ -33,26 +33,22 @@ def main():
         # Read the events
         events = [json.loads(line) for line in f if line.strip()]
 
-    filtered_events = []
-
-    # Process each event through the terminal emulator
-    for event in tqdm(events, desc="Processing events"):
-        # Process the event in the terminal
-        if len(event) >= 3 and event[1] == "o":  # Output event
-            stream.feed(event[2])
-
-            # Check if "Atuin" is visible on screen
-            display_content = "\n".join("".join(line) for line in screen.display)
-            if "Atuin" in display_content:
-                continue  # Skip this event
-
-        # Keep this event
-        filtered_events.append(event)
-
-    # Write the filtered content to the output file
+    # Write the header to the output file
     with open(output_file, "w") as f:
         f.write(header + "\n")
-        for event in filtered_events:
+        
+        # Process each event through the terminal emulator and stream to file
+        for event in tqdm(events, desc="Processing events"):
+            # Process the event in the terminal
+            if len(event) >= 3 and event[1] == "o":  # Output event
+                stream.feed(event[2])
+
+                # Check if "Atuin" is visible on screen
+                display_content = "\n".join("".join(line) for line in screen.display)
+                if "Atuin" in display_content:
+                    continue  # Skip this event
+
+            # Write this event directly to the output file
             f.write(json.dumps(event) + "\n")
 
 
