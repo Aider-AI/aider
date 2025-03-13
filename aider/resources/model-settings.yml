@@ -883,3 +883,15 @@
       max_tokens: 128000
       top_p: 0.95
 
+- name: cohere_chat/command-a-03-2025
+  examples_as_sys_msg: true
+
+- name: openrouter/cohere/command-a-03-2025
+  examples_as_sys_msg: true
+
+- name: gemini/gemma-3-27b-it
+  use_system_prompt: false
+  
+- name: openrouter/google/gemma-3-27b-it:free
+  use_system_prompt: false
+  
