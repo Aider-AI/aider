@@ -5,6 +5,7 @@ import re
 import sys
 
 import pyte
+from tqdm import tqdm
 
 
 def main():
@@ -30,7 +31,7 @@ def main():
     filtered_events = []
 
     # Process each event through the terminal emulator
-    for event in events:
+    for event in tqdm(events, desc="Processing events"):
         # Process the event in the terminal
         if len(event) >= 3 and event[1] == "o":  # Output event
             stream.feed(event[2])
