@@ -8,7 +8,7 @@ nav_order: 9999
 <link rel="stylesheet" type="text/css" href="/assets/asciinema-player.css" />
 
 
-<div id="demo"></div>
+<div id="demo" style="width: 100%;"></div>
 <script src="/assets/asciinema-player.min.js"></script>
 
 <script>
