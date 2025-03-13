@@ -36,7 +36,7 @@ def main():
     # Write the header to the output file
     with open(output_file, "w") as f:
         f.write(header + "\n")
-        
+
         # Process each event through the terminal emulator and stream to file
         for event in tqdm(events, desc="Processing events"):
             # Process the event in the terminal
