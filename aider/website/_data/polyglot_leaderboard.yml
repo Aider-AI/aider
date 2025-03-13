@@ -728,3 +728,29 @@
   versions: 0.75.3.dev
   seconds_per_case: 137.4
   total_cost: 0
+
+- dirname: 2025-03-13-20-46-30--cmda-whole
+  test_cases: 225
+  model: command-a-03-2025
+  edit_format: whole
+  commit_hash: 024b913-dirty
+  pass_rate_1: 2.2
+  pass_rate_2: 4.9
+  pass_num_1: 5
+  pass_num_2: 11
+  percent_cases_well_formed: 100.0
+  error_outputs: 38
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 231
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model cohere_chat/command-a-03-2025
+  date: 2025-03-13
+  versions: 0.76.3.dev
+  seconds_per_case: 106.3
+  total_cost: 0.0000  
