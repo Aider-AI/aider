@@ -11,6 +11,7 @@
 - Display of thinking token budget and reasoning effort in model information.
 - Changed `--thinking-tokens` argument to accept string values with human-readable formats.
 - Added `--auto-accept-architect` flag (default: true) to automatically accept changes from architect coder format without confirmation.
+- Added support for `cohere_chat/command-a-03-2025` and `gemini/gemma-3-27b-it`
 - The bare `/drop` command now preserves original read-only files provided via args.read.
 - Fixed a bug where default model would be set by deprecated `--shortcut` switches even when already specified in the command line.
 - Improved AutoCompleter to require 3 characters for autocompletion to reduce noise.
