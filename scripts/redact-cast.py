@@ -32,7 +32,7 @@ def main():
         # Initialize terminal emulator but don't use it unless necessary
         screen = pyte.Screen(width, height)
         stream = pyte.Stream(screen)
-        
+
         # Track if we need to check the terminal (if "Atuin" might be on screen)
         check_terminal = False
         atuin_chars = set("Atuin")
@@ -47,7 +47,7 @@ def main():
             # For output events, check for potential "Atuin" content
             if len(event) >= 3 and event[1] == "o":
                 output_text = event[2]
-                
+
                 # Fast check: if any letters of "Atuin" are in the output
                 if any(char in output_text for char in atuin_chars):
                     # Only now feed to terminal emulator
@@ -56,7 +56,7 @@ def main():
                 elif check_terminal:
                     # If we're already checking the terminal, continue feeding
                     stream.feed(output_text)
-                
+
                 # If we need to check the terminal, do so
                 if check_terminal:
                     # Check if "Atuin" is visible on screen
@@ -65,13 +65,13 @@ def main():
                         if "Atuin" in "".join(display_line):
                             atuin_visible = True
                             break
-                    
+
                     # Reset flag if Atuin is no longer visible
                     if not atuin_visible:
                         check_terminal = False
                     else:
                         continue  # Skip this event if Atuin is visible
-                
+
             # Write event to output file
             fout.write(json.dumps(event) + "\n")
 
