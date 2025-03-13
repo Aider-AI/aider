@@ -25,6 +25,8 @@ def main():
         header_data = json.loads(header)
         width = header_data.get("width", 80)
         height = header_data.get("height", 24)
+        
+        print(f"Terminal dimensions: {width}x{height}")
 
         # Initialize pyte screen and stream with dimensions from header
         screen = pyte.Screen(width, height)
