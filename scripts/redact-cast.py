@@ -44,11 +44,11 @@ def main():
 
             # Fast initial check on raw line before JSON parsing
             raw_line_has_atuin_chars = any(char in line for char in atuin_chars)
-            
+
             # Only parse JSON if we're checking terminal or need to check
             if check_terminal or raw_line_has_atuin_chars:
                 event = json.loads(line)
-                
+
                 # For output events, check for potential "Atuin" content
                 if len(event) >= 3 and event[1] == "o":
                     output_text = event[2]
@@ -72,7 +72,7 @@ def main():
                             check_terminal = False
                         else:
                             continue  # Skip this event if Atuin is visible
-                
+
                 # Write event to output file for non-skipped events
                 fout.write(line)
             else:
