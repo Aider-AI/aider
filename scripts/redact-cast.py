@@ -20,12 +20,12 @@ def main():
     with open(input_file, "r") as f:
         # First line is header
         header = f.readline().strip()
-        
+
         # Parse header to extract terminal dimensions
         header_data = json.loads(header)
         width = header_data.get("width", 80)
         height = header_data.get("height", 24)
-        
+
         # Initialize pyte screen and stream with dimensions from header
         screen = pyte.Screen(width, height)
         stream = pyte.Stream(screen)
