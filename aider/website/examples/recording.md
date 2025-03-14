@@ -88,7 +88,7 @@ layout: minimal
 }
 </style>
 
-<div class="page-container" style="max-height: 80vh; aspect-ratio: auto; margin-left: auto; margin-right: auto; display: block;">
+<div class="page-container">
 <div class="terminal-container">
   <div class="terminal-header">
     <div class="terminal-buttons">
