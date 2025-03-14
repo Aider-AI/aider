@@ -19,6 +19,7 @@ layout: minimal
 
 <div class="page-container">
 <div class="toast-container" id="toast-container"></div>
+
 <div class="terminal-container">
   <div class="terminal-header">
     <div class="terminal-buttons">
