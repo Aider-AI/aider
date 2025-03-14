@@ -212,8 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (listItem) {
         listItem.classList.add('active-marker');
         
-        // Scroll the list item into view if needed
-        listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // No longer scrolling into view to avoid shifting focus
       }
     }
   }
