@@ -9,7 +9,7 @@ layout: minimal
 <link rel="stylesheet" type="text/css" href="/assets/asciinema/asciinema-player.css" />
 
 
-<div id="demo"></div>
+<div id="demo" style="max-height: 80vh; overflow: hidden;"></div>
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 
 <script>
