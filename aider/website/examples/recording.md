@@ -88,7 +88,7 @@ layout: minimal
 }
 </style>
 
-<div class="page-container">
+<div class="page-container" style="max-height: 80vh; max-width: 900px; margin-left: auto; margin-right: auto;">
 <div class="terminal-container">
   <div class="terminal-header">
     <div class="terminal-buttons">
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<div class="transcript-container" style="margin-top: 30px; padding: 20px; background-color: #f8f8f8; border-radius: 6px; max-height: 50vh; overflow-y: auto; font-family: monospace; white-space: pre-wrap; line-height: 1.5;">
+<div class="transcript-container" style="margin-top: 30px; padding: 20px; background-color: #f8f8f8; border-radius: 6px; max-height: 20vh: auto; font-family: monospace; white-space: pre-wrap; line-height: 1.5;">
   <div id="transcript-content">
   </div>
 </div>
