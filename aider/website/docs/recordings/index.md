@@ -11,7 +11,7 @@ description: Screen recordings of aider building aider.
 Below are a series of screen recordings of the aider developer using aider
 to enhance aider.
 They contain commentary that describes how aider is being used,
-and might provide some inspiration or new ideas for your use of aider.
+and might provide some inspiration for your own use of aider.
 
 - [Add --auto-accept-architect feature](./auto-accept-architect.html) - See how a new command-line option is added to automatically accept edits proposed by the architect model, with implementation. Aider also updates the project's HISTORY file.
 
