@@ -9,6 +9,58 @@ layout: minimal
 <link rel="stylesheet" type="text/css" href="/assets/asciinema/asciinema-player.css" />
 
 <style>
+/* Terminal header styling */
+.terminal-header {
+  background-color: #e0e0e0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 6px;
+  margin-right: 12px;
+}
+
+.terminal-button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.terminal-close {
+  background-color: #ff5f56;
+  border: 1px solid #e0443e;
+}
+
+.terminal-minimize {
+  background-color: #ffbd2e;
+  border: 1px solid #dea123;
+}
+
+.terminal-expand {
+  background-color: #27c93f;
+  border: 1px solid #1aab29;
+}
+
+.terminal-title {
+  flex-grow: 1;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  color: #666;
+}
+
+.terminal-container {
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
   --term-color-foreground: #444444;  /* colour238 */
@@ -36,7 +88,17 @@ layout: minimal
 }
 </style>
 
-<div id="demo" style="max-height: 80vh;"></div>
+<div class="terminal-container">
+  <div class="terminal-header">
+    <div class="terminal-buttons">
+      <div class="terminal-button terminal-close"></div>
+      <div class="terminal-button terminal-minimize"></div>
+      <div class="terminal-button terminal-expand"></div>
+    </div>
+    <div class="terminal-title">aider terminal</div>
+  </div>
+  <div id="demo" style="max-height: 80vh;"></div>
+</div>
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 
 <script>
