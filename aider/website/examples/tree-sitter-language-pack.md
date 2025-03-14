@@ -33,6 +33,8 @@ layout: minimal
 </div>
 </div>
 
+<div class="keyboard-shortcuts">Keyboard shortcuts: <kbd>Space</kbd> Play/pause, <kbd>f</kbd> Fullscreen, <kbd>←</kbd><kbd>→</kbd> ±5s, <kbd>Shift</kbd>+<kbd>←</kbd><kbd>→</kbd> ±10%, <kbd>[</kbd><kbd>]</kbd> Previous/next marker</div>
+
 ## Commentary
 
 - 0:01 We're going to add a ton of new languages to aider via tree-sitter-language-pack.

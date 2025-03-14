@@ -129,6 +129,29 @@ li.active-marker {
 .transcript-item:hover {
   background-color: #f0f0f0;
 }
+
+/* Keyboard shortcuts styling */
+.keyboard-shortcuts {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.keyboard-shortcuts kbd {
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  color: #333;
+  display: inline-block;
+  font-family: monospace;
+  line-height: 1;
+  margin: 0 2px;
+  padding: 3px 5px;
+  white-space: nowrap;
+}
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
   --term-color-foreground: #444444;  /* colour238 */
