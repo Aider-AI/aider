@@ -87,6 +87,18 @@
   margin-bottom: 20px;
   position: relative;
 }
+
+/* Timestamp link styling */
+.timestamp-link {
+  color: #0366d6;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.timestamp-link:hover {
+  text-decoration: underline;
+}
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
   --term-color-foreground: #444444;  /* colour238 */

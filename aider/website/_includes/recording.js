@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Parse the transcript section to create markers
+  let player; // Store player reference to make it accessible to click handlers
+  
+  // Parse the transcript section to create markers and convert timestamps to links
   function parseTranscript() {
     const markers = [];
     // Find the Transcript heading
@@ -20,7 +22,29 @@ document.addEventListener('DOMContentLoaded', function() {
             const minutes = parseInt(match[1], 10);
             const seconds = parseInt(match[2], 10);
             const timeInSeconds = minutes * 60 + seconds;
+            const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             const message = match[3].trim();
+            
+            // Create link for the timestamp
+            const timeLink = document.createElement('a');
+            timeLink.href = '#';
+            timeLink.textContent = formattedTime;
+            timeLink.className = 'timestamp-link';
+            timeLink.dataset.time = timeInSeconds;
+            
+            // Add click event to seek the player
+            timeLink.addEventListener('click', function(e) {
+              e.preventDefault();
+              if (player && typeof player.seek === 'function') {
+                player.seek(timeInSeconds);
+                player.play();
+              }
+            });
+            
+            // Replace text with the link + message
+            item.textContent = '';
+            item.appendChild(timeLink);
+            item.appendChild(document.createTextNode(' ' + message));
             
             markers.push([timeInSeconds, message]);
           }
@@ -39,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const markers = parseTranscript();
   
   // Create player with a single call
-  const player = AsciinemaPlayer.create(
+  player = AsciinemaPlayer.create(
     url,
     document.getElementById('demo'),
     {
