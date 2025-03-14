@@ -78,9 +78,7 @@ layout: minimal
   font-size: 18px;
   text-align: center;
   display: inline-block;
-  min-width: 120px;
   max-width: 90%;
-  white-space: nowrap;
 }
 
 /* Page container styling */
