@@ -102,45 +102,52 @@ layout: minimal
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 
 <script>
-url = "https://gist.githubusercontent.com/paul-gauthier/3011ab9455c2d28c0e5a60947202752f/raw/5a5b3dbf68a9c2b22b4954af287efedecdf79d52/tmp.redacted.cast";
-AsciinemaPlayer.create(
-     url,
-     document.getElementById('demo'),
-     {
-         speed: 1.25,
-         idleTimeLimit: 1,
-         theme : "aider",
-         poster : "npt:0:01",
-         markers : [
-             [3.0, "Hello!"],
-             [300.0, "Hello!"],
-         ],
-     }
- );
- 
-AsciinemaPlayer.create(
-     url,
-     document.getElementById('demo'),
-     {
-         speed: 1.25,
-         idleTimeLimit: 1,
-         theme : "aider",
-         poster : "npt:0:01",
-         markers : [
-             [3.0, "Hello!"],
-             [300.0, "Hello!"],
-         ],
-     }
- ).addEventListener('marker', ({ index, time, label }) => {
-  console.log(`marker! ${index} - ${time} - ${label}`);
+document.addEventListener('DOMContentLoaded', function() {
+  const url = "https://gist.githubusercontent.com/paul-gauthier/3011ab9455c2d28c0e5a60947202752f/raw/5a5b3dbf68a9c2b22b4954af287efedecdf79d52/tmp.redacted.cast";
   
-  // Add the marker label to the transcript
-  const transcriptContent = document.getElementById('transcript-content');
-  const markerElement = document.createElement('div');
-  markerElement.textContent = label;
-  markerElement.style.fontWeight = 'bold';
-  markerElement.style.marginTop = '10px';
-  transcriptContent.appendChild(markerElement);
+  // Create player with a single call
+  const player = AsciinemaPlayer.create(
+    url,
+    document.getElementById('demo'),
+    {
+      speed: 1.25,
+      idleTimeLimit: 1,
+      theme: "aider",
+      poster: "npt:0:01",
+      markers: [
+        [3.0, "Hello!"],
+        [300.0, "Hello!"],
+      ],
+    }
+  );
+  
+  // Make sure transcript container exists
+  if (!document.getElementById('transcript-content')) {
+    const container = document.createElement('div');
+    container.id = 'transcript-content';
+    document.querySelector('.transcript-container').appendChild(container);
+  }
+  
+  // Add event listener with safety checks
+  if (player && typeof player.addEventListener === 'function') {
+    player.addEventListener('marker', function(event) {
+      try {
+        const { index, time, label } = event;
+        console.log(`marker! ${index} - ${time} - ${label}`);
+        
+        const transcriptContent = document.getElementById('transcript-content');
+        if (transcriptContent) {
+          const markerElement = document.createElement('div');
+          markerElement.textContent = label;
+          markerElement.style.fontWeight = 'bold';
+          markerElement.style.marginTop = '10px';
+          transcriptContent.appendChild(markerElement);
+        }
+      } catch (error) {
+        console.error('Error in marker event handler:', error);
+      }
+    });
+  }
 });
 </script>
 
