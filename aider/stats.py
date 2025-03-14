@@ -3,14 +3,31 @@ import sys
 
 from collections import defaultdict
 
+# Length of abbreviated git hash used in blame output
 hash_len = len("44e6fefc2")
 
 def run(cmd):
-    # Get all commit hashes since the specified tag
+    """Execute a git command and return its output.
+    
+    Args:
+        cmd: List containing the command and its arguments
+        
+    Returns:
+        String output of the command
+    """
     result = subprocess.run(cmd, capture_output=True, text=True, check=True)
     return result.stdout
 
 def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
+    """Get all commit hashes between two tags or from a tag to HEAD.
+    
+    Args:
+        start_tag: Starting tag or commit hash
+        end_tag: Ending tag or commit hash (defaults to HEAD)
+        
+    Returns:
+        List of commit hashes or None if no commits found
+    """
     if end_tag:
         res = run(["git", "rev-list", f"{start_tag}..{end_tag}"])
     else:
@@ -19,8 +36,17 @@ def get_all_commit_hashes_between_tags(start_tag, end_tag=None):
     if res:
         commit_hashes = res.strip().split("\n")
         return commit_hashes
+    return None
 
 def get_commit_authors(commits):
+    """Map commit hashes to their authors, marking aider-generated commits.
+    
+    Args:
+        commits: List of commit hashes
+        
+    Returns:
+        Dictionary mapping commit hashes to author names
+    """
     commit_to_author = dict()
     for commit in commits:
         author = run(["git", "show", "-s", "--format=%an", commit]).strip()
@@ -31,6 +57,17 @@ def get_commit_authors(commits):
     return commit_to_author
 
 def get_counts_for_file(start_tag, end_tag, authors, fname):
+    """Count lines attributed to each author in a file using git blame.
+    
+    Args:
+        start_tag: Starting tag or commit hash
+        end_tag: Ending tag or commit hash (defaults to HEAD)
+        authors: Dictionary mapping commit hashes to author names
+        fname: File path to analyze
+        
+    Returns:
+        Dictionary mapping author names to line counts, or None if file not found
+    """
     try:
         if end_tag:
             text = run(
