@@ -57,11 +57,11 @@ layout: minimal
 
 /* Toast notification styling */
 .toast-container {
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1000;
+  z-index: 9999;
   pointer-events: none;
 }
 
@@ -162,7 +162,34 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Function to display toast notification
   function showToast(text) {
-    const toastContainer = document.getElementById('toast-container');
+    // Get the appropriate container based on fullscreen state
+    let container = document.getElementById('toast-container');
+    const isFullscreen = document.fullscreenElement || 
+                         document.webkitFullscreenElement || 
+                         document.mozFullScreenElement || 
+                         document.msFullscreenElement;
+    
+    // If in fullscreen, check if we need to create a fullscreen toast container
+    if (isFullscreen) {
+      // Target the fullscreen element as the container parent
+      const fullscreenElement = document.fullscreenElement || 
+                               document.webkitFullscreenElement || 
+                               document.mozFullScreenElement || 
+                               document.msFullscreenElement;
+      
+      // Look for an existing fullscreen toast container
+      let fsContainer = fullscreenElement.querySelector('.fs-toast-container');
+      
+      if (!fsContainer) {
+        // Create a new container for fullscreen mode
+        fsContainer = document.createElement('div');
+        fsContainer.className = 'toast-container fs-toast-container';
+        fsContainer.id = 'fs-toast-container';
+        fullscreenElement.appendChild(fsContainer);
+      }
+      
+      container = fsContainer;
+    }
     
     // Create toast element
     const toast = document.createElement('div');
@@ -170,7 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
     toast.textContent = text;
     
     // Add to container
-    toastContainer.appendChild(toast);
+    container.appendChild(toast);
     
     // Trigger animation
     setTimeout(() => {
@@ -181,7 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
       toast.style.opacity = '0';
       setTimeout(() => {
-        toastContainer.removeChild(toast);
+        if (container && container.contains(toast)) {
+          container.removeChild(toast);
+        }
       }, 300); // Wait for fade out animation
     }, 3000);
   }
