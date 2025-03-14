@@ -95,7 +95,7 @@ layout: minimal
       <div class="terminal-button terminal-minimize"></div>
       <div class="terminal-button terminal-expand"></div>
     </div>
-    <div class="terminal-title">aider terminal</div>
+    <div class="terminal-title">aider</div>
   </div>
   <div id="demo" style="max-height: 80vh;"></div>
 </div>
