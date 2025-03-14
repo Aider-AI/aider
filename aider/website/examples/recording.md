@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
       theme: "aider",
       poster: "npt:0:01",
       markers: [
-        [3.0, "Hello!"],
+        [3.0, "Hello, this is a test. This is only a test."],
         [300.0, "Hello!"],
       ],
     }
