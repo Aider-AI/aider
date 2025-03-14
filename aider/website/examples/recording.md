@@ -8,6 +8,7 @@ layout: minimal
 
 <link rel="stylesheet" type="text/css" href="/assets/asciinema/asciinema-player.css" />
 
+<style>
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
   --term-color-foreground: #444444;  /* colour238 */
@@ -33,6 +34,7 @@ layout: minimal
   --term-color-14: #a4ffff;
   --term-color-15: #ffffff;
 }
+</style>
 
 <div id="demo" style="max-height: 80vh; overflow: hidden;"></div>
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
