@@ -61,10 +61,6 @@ layout: minimal
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
 }
 
 .terminal-container {
