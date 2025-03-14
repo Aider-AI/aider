@@ -88,6 +88,7 @@ layout: minimal
 }
 </style>
 
+<div class="page-container" style="max-height: 80vh;">
 <div class="terminal-container">
   <div class="terminal-header">
     <div class="terminal-buttons">
@@ -97,7 +98,7 @@ layout: minimal
     </div>
     <div class="terminal-title">aider</div>
   </div>
-  <div id="demo" style="max-height: 80vh;"></div>
+  <div id="demo"></div>
 </div>
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 
@@ -177,5 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
   <div id="transcript-content">
   </div>
 </div>
+</div>
 
-  
+
