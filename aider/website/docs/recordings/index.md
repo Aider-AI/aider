@@ -2,6 +2,7 @@
 title: Screen recordings
 has_children: true
 nav_order: 75
+toc: false
 ---
 
 # Screen recordings
