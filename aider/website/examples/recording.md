@@ -78,6 +78,7 @@ layout: minimal
   font-size: 18px;
   text-align: center;
   display: inline-block;
+  min-width: 200px;
   max-width: 90%;
 }
 
@@ -153,8 +154,8 @@ document.addEventListener('DOMContentLoaded', function() {
       theme: "aider",
       poster: "npt:0:01",
       markers: [
-        [3.0, "Hello, this is a test. This is only a test."],
-        [300.0, "Hello!"],
+        [1.0, "Hello!"],
+        [5.0, "Hello, this is a test. This is only a test."],
       ],
     }
   );
