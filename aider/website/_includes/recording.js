@@ -107,6 +107,26 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   );
   
+  // Focus on the player element so keyboard shortcuts work immediately
+  setTimeout(() => {
+    // Use setTimeout to ensure the player is fully initialized
+    if (player && typeof player.focus === 'function') {
+      player.focus();
+    } else {
+      // If player doesn't have a focus method, try to find and focus the terminal element
+      const playerElement = document.querySelector('.asciinema-terminal');
+      if (playerElement) {
+        playerElement.focus();
+      } else {
+        // Last resort - try to find element with tabindex
+        const tabbableElement = document.querySelector('[tabindex]');
+        if (tabbableElement) {
+          tabbableElement.focus();
+        }
+      }
+    }
+  }, 100);
+  
   // Function to display toast notification
   function showToast(text) {
     // Get the appropriate container based on fullscreen state
