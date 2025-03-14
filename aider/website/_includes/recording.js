@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
             timeLink.textContent = formattedTime;
             timeLink.className = 'timestamp-link';
             timeLink.dataset.time = timeInSeconds;
+            timeLink.dataset.message = message;
             
             // Add click event to seek the player
             timeLink.addEventListener('click', function(e) {
@@ -38,6 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
               if (player && typeof player.seek === 'function') {
                 player.seek(timeInSeconds);
                 player.play();
+                
+                // Also trigger toast and speech
+                showToast(message);
+                speakText(message);
               }
             });
             
