@@ -973,6 +973,29 @@ class Commands:
             if add and exit_status != 0:
                 self.io.placeholder = "What's wrong? Fix"
 
+    def cmd_process_ai_comment(self, args=""):
+        "Process any AI comments in tracked files"
+        from aider.watch import FileWatcher
+
+        class ManualFileWatcher(FileWatcher):
+            def start(self):
+                # Override to do nothing
+                pass
+
+            def stop(self):
+                # Override to do nothing
+                pass
+
+        # Create a manual watcher that won't do file monitoring
+        watcher = ManualFileWatcher(self.coder)
+
+        # Get all files in chat
+        for fname in self.coder.abs_fnames:
+            watcher.changed_files.add(fname)
+
+        # Process the changes without any file monitoring
+        return watcher.process_changes()
+
     def cmd_exit(self, args):
         "Exit the application"
         self.coder.event("exit", reason="/exit")
