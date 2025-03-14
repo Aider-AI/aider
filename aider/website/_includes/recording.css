@@ -99,6 +99,22 @@
 .timestamp-link:hover {
   text-decoration: underline;
 }
+
+/* Active timestamp styling */
+.timestamp-active {
+  background-color: #f0f8ff; /* Light blue background */
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+/* Highlight the list item containing the active timestamp */
+li.active-marker {
+  background-color: #f6f8fa;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-left: -8px;
+}
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
   --term-color-foreground: #444444;  /* colour238 */

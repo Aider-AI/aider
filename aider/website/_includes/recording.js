@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Also trigger toast and speech
                 showToast(message);
                 speakText(message);
+                
+                // Highlight this timestamp
+                highlightTimestamp(timeInSeconds);
               }
             });
             
@@ -153,6 +156,43 @@ document.addEventListener('DOMContentLoaded', function() {
       console.warn('Speech synthesis not supported in this browser');
     }
   }
+  
+  // Function to highlight the active timestamp in the transcript
+  function highlightTimestamp(timeInSeconds) {
+    // Remove previous highlights
+    document.querySelectorAll('.timestamp-active').forEach(el => {
+      el.classList.remove('timestamp-active');
+    });
+    
+    document.querySelectorAll('.active-marker').forEach(el => {
+      el.classList.remove('active-marker');
+    });
+    
+    // Find the timestamp link with matching time
+    const timestampLinks = document.querySelectorAll('.timestamp-link');
+    let activeLink = null;
+    
+    for (const link of timestampLinks) {
+      if (parseInt(link.dataset.time) === timeInSeconds) {
+        activeLink = link;
+        break;
+      }
+    }
+    
+    if (activeLink) {
+      // Add highlight class to the link
+      activeLink.classList.add('timestamp-active');
+      
+      // Also highlight the parent list item
+      const listItem = activeLink.closest('li');
+      if (listItem) {
+        listItem.classList.add('active-marker');
+        
+        // Scroll the list item into view if needed
+        listItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }
 
   // Add event listener with safety checks
   if (player && typeof player.addEventListener === 'function') {
@@ -164,6 +204,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Speak the marker label and show toast
         speakText(label);
         showToast(label);
+        
+        // Highlight the corresponding timestamp in the transcript
+        highlightTimestamp(time);
       } catch (error) {
         console.error('Error in marker event handler:', error);
       }
