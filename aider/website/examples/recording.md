@@ -77,9 +77,10 @@ layout: minimal
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 18px;
   text-align: center;
-  width: fit-content;
+  display: inline-block;
+  min-width: 120px;
   max-width: 90%;
-  white-space: normal;
+  white-space: nowrap;
 }
 
 /* Page container styling */
