@@ -14,7 +14,7 @@ layout: minimal
   background-color: #e0e0e0;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
-  padding: 8px 12px;
+  padding: 4px 10px;
   display: flex;
   align-items: center;
   border-bottom: 1px solid #c0c0c0;
@@ -22,13 +22,13 @@ layout: minimal
 
 .terminal-buttons {
   display: flex;
-  gap: 6px;
-  margin-right: 12px;
+  gap: 4px;
+  margin-right: 10px;
 }
 
 .terminal-button {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
 }
 
@@ -51,7 +51,7 @@ layout: minimal
   flex-grow: 1;
   text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   color: #666;
 }
 
