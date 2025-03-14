@@ -10,10 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
       idleTimeLimit: 1,
       theme: "aider",
       poster: "npt:0:01",
-      markers: [
-        [1.0, "Hello!"],
-        [5.0, "Hello, this is a test. This is only a test."],
-      ],
+      markers: markers
     }
   );
   
