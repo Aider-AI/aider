@@ -1,6 +1,6 @@
 ---
 parent: Example chat transcripts
-nav_order: 9999
+nav_order: 0
 layout: minimal
 ---
 
@@ -14,6 +14,7 @@ layout: minimal
 
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 <script>
+const recording_url = "https://gist.githubusercontent.com/paul-gauthier/3011ab9455c2d28c0e5a60947202752f/raw/5a5b3dbf68a9c2b22b4954af287efedecdf79d52/tmp.redacted.cast";
 {% include recording.js %}
 </script>
 
