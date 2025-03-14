@@ -526,7 +526,7 @@ def get_parser(default_config_files, git_root):
         "--stats",
         metavar="REVISIONS",
         nargs="?",
-        const="",
+        const="HEAD",
         help="Show code changes statistics between revisions",
     )
 
