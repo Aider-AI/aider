@@ -14,7 +14,7 @@ layout: minimal
   --term-color-foreground: #444444;  /* colour238 */
 
   /* Background color */
-  --term-color-background: #fff000; 
+  --term-color-background: #dadada;  /* colour253 */
 
   /* Palette of 16 standard ANSI colors */
   --term-color-0: #21222c;
@@ -36,7 +36,7 @@ layout: minimal
 }
 </style>
 
-<div id="demo" style="max-height: 80vh; overflow: hidden;"></div>
+<div id="demo" style="max-height: 80vh;"></div>
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 
 <script>
