@@ -4017,3 +4017,161 @@
     gmoz22: 4
   start_tag: v0.75.0
   total_lines: 1875
+- aider_percentage: 71.93
+  aider_total: 1399
+  end_date: '2025-03-13'
+  end_tag: v0.77.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier (aider): 5
+    aider/coders/architect_coder.py:
+      Paul Gauthier (aider): 2
+    aider/coders/base_coder.py:
+      Paul Gauthier (aider): 14
+    aider/commands.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 71
+    aider/deprecated.py:
+      Paul Gauthier: 2
+    aider/io.py:
+      Paul Gauthier (aider): 5
+    aider/main.py:
+      Paul Gauthier (aider): 12
+    aider/models.py:
+      Paul Gauthier (aider): 83
+    aider/queries/tree-sitter-language-pack/arduino-tags.scm:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 2
+    aider/queries/tree-sitter-language-pack/c-tags.scm:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 5
+    aider/queries/tree-sitter-language-pack/chatito-tags.scm:
+      Paul Gauthier: 11
+      Paul Gauthier (aider): 5
+    aider/queries/tree-sitter-language-pack/commonlisp-tags.scm:
+      Paul Gauthier: 116
+      Paul Gauthier (aider): 6
+    aider/queries/tree-sitter-language-pack/cpp-tags.scm:
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 8
+    aider/queries/tree-sitter-language-pack/d-tags.scm:
+      Paul Gauthier: 9
+      Paul Gauthier (aider): 17
+    aider/queries/tree-sitter-language-pack/dart-tags.scm:
+      Paul Gauthier: 42
+      Paul Gauthier (aider): 19
+    aider/queries/tree-sitter-language-pack/elisp-tags.scm:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 2
+    aider/queries/tree-sitter-language-pack/elixir-tags.scm:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 8
+    aider/queries/tree-sitter-language-pack/elm-tags.scm:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 11
+    aider/queries/tree-sitter-language-pack/gleam-tags.scm:
+      Paul Gauthier: 26
+      Paul Gauthier (aider): 15
+    aider/queries/tree-sitter-language-pack/go-tags.scm:
+      Paul Gauthier: 14
+      Paul Gauthier (aider): 14
+    aider/queries/tree-sitter-language-pack/java-tags.scm:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 7
+    aider/queries/tree-sitter-language-pack/lua-tags.scm:
+      Paul Gauthier: 25
+      Paul Gauthier (aider): 9
+    aider/queries/tree-sitter-language-pack/pony-tags.scm:
+      Paul Gauthier: 20
+      Paul Gauthier (aider): 19
+    aider/queries/tree-sitter-language-pack/properties-tags.scm:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 2
+    aider/queries/tree-sitter-language-pack/python-tags.scm:
+      Paul Gauthier: 9
+      Paul Gauthier (aider): 5
+    aider/queries/tree-sitter-language-pack/r-tags.scm:
+      Paul Gauthier: 17
+      Paul Gauthier (aider): 4
+    aider/queries/tree-sitter-language-pack/racket-tags.scm:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 2
+    aider/queries/tree-sitter-language-pack/ruby-tags.scm:
+      Paul Gauthier: 23
+      Paul Gauthier (aider): 12
+    aider/queries/tree-sitter-language-pack/rust-tags.scm:
+      Paul Gauthier: 41
+      Paul Gauthier (aider): 14
+    aider/queries/tree-sitter-language-pack/solidity-tags.scm:
+      Paul Gauthier: 30
+      Paul Gauthier (aider): 13
+    aider/queries/tree-sitter-language-pack/swift-tags.scm:
+      Paul Gauthier: 39
+      Paul Gauthier (aider): 12
+    aider/queries/tree-sitter-language-pack/udev-tags.scm:
+      Paul Gauthier: 15
+      Paul Gauthier (aider): 5
+    aider/resources/model-settings.yml:
+      Paul Gauthier: 9
+    aider/watch.py:
+      Yutaka Matsubara: 4
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 8
+    scripts/redact-cast.py:
+      Paul Gauthier: 27
+      Paul Gauthier (aider): 98
+    scripts/tsl_pack_langs.py:
+      Paul Gauthier (aider): 145
+    scripts/versionbump.py:
+      Paul Gauthier (aider): 1
+    tests/basic/test_coder.py:
+      Paul Gauthier (aider): 104
+    tests/basic/test_commands.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 190
+    tests/basic/test_models.py:
+      Paul Gauthier (aider): 44
+    tests/basic/test_repomap.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 125
+    tests/fixtures/languages/arduino/test.ino:
+      Paul Gauthier (aider): 21
+    tests/fixtures/languages/c/test.c:
+      Paul Gauthier (aider): 12
+    tests/fixtures/languages/chatito/test.chatito:
+      Paul Gauthier (aider): 20
+    tests/fixtures/languages/commonlisp/test.lisp:
+      Paul Gauthier (aider): 17
+    tests/fixtures/languages/d/test.d:
+      Paul Gauthier (aider): 26
+    tests/fixtures/languages/dart/test.dart:
+      Paul Gauthier (aider): 21
+    tests/fixtures/languages/elm/test.elm:
+      Paul Gauthier (aider): 16
+    tests/fixtures/languages/gleam/test.gleam:
+      Paul Gauthier (aider): 10
+    tests/fixtures/languages/lua/test.lua:
+      Paul Gauthier (aider): 25
+    tests/fixtures/languages/pony/test.pony:
+      Paul Gauthier (aider): 8
+    tests/fixtures/languages/properties/test.properties:
+      Paul Gauthier (aider): 14
+    tests/fixtures/languages/r/test.r:
+      Paul Gauthier (aider): 17
+    tests/fixtures/languages/racket/test.rkt:
+      Paul Gauthier (aider): 8
+    tests/fixtures/languages/solidity/test.sol:
+      Paul Gauthier (aider): 21
+    tests/fixtures/languages/swift/test.swift:
+      Paul Gauthier (aider): 18
+    tests/fixtures/languages/udev/test.rules:
+      Paul Gauthier (aider): 22
+  grand_total:
+    Paul Gauthier: 542
+    Paul Gauthier (aider): 1399
+    Yutaka Matsubara: 4
+  start_tag: v0.76.0
+  total_lines: 1945

@@ -230,11 +230,14 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+    def __init__(
+        self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False
+    ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
         self.name = model
+        self.verbose = verbose
 
         self.max_chat_history_tokens = 1024
         self.weak_model = None
@@ -725,6 +728,8 @@ class Model(ModelSettings):
         hash_object = hashlib.sha1(key)
         if "timeout" not in kwargs:
             kwargs["timeout"] = request_timeout
+        if self.verbose:
+            dump(kwargs)
         res = litellm.completion(**kwargs)
         return hash_object, res
 

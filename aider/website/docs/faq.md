@@ -249,9 +249,15 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,846,141</td><td class='right'>98.1%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>36,357</td><td class='right'>1.9%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,755,049</td><td class='right'>96.4%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>45,196</td><td class='right'>2.5%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>17,585</td><td class='right'>1.0%</td></tr>
+<tr><td>cohere_chat/REDACTED</td><td class='right'>1,893</td><td class='right'>0.1%</td></tr>
 </table>
+
+{: .note :}
+Some models show as REDACTED, because they are new or unpopular models.
+Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?
