@@ -205,7 +205,7 @@ tzdata==2025.1
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-uv==0.6.5
+uv==0.6.6
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in

@@ -37,7 +37,9 @@ class TestCoder(unittest.TestCase):
             repo.git.commit("-m", "init")
 
             # YES!
-            io = InputOutput(yes=True)
+            # Use a completely mocked IO object instead of a real one
+            io = MagicMock()
+            io.confirm_ask = MagicMock(return_value=True)
             coder = Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
@@ -1058,6 +1060,112 @@ This command will print 'Hello, World!' to the console."""
             # Verify message structure remains valid
             sanity_check_messages(coder.cur_messages)
             self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
+
+    def test_architect_coder_auto_accept_true(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=True)
+
+            # Create an ArchitectCoder with auto_accept_architect=True
+            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+                from aider.coders.architect_coder import ArchitectCoder
+
+                coder = ArchitectCoder()
+                coder.io = io
+                coder.main_model = self.GPT35
+                coder.auto_accept_architect = True
+                coder.verbose = False
+                coder.total_cost = 0
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
+
+                # Mock editor_coder creation and execution
+                mock_editor = MagicMock()
+                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                    # Set partial response content
+                    coder.partial_response_content = "Make these changes to the code"
+
+                    # Call reply_completed
+                    coder.reply_completed()
+
+                    # Verify that confirm_ask was not called (auto-accepted)
+                    io.confirm_ask.assert_not_called()
+
+                    # Verify that editor coder was created and run
+                    mock_editor.run.assert_called_once()
+
+    def test_architect_coder_auto_accept_false_confirmed(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=False)
+            io.confirm_ask = MagicMock(return_value=True)
+
+            # Create an ArchitectCoder with auto_accept_architect=False
+            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+                from aider.coders.architect_coder import ArchitectCoder
+
+                coder = ArchitectCoder()
+                coder.io = io
+                coder.main_model = self.GPT35
+                coder.auto_accept_architect = False
+                coder.verbose = False
+                coder.total_cost = 0
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
+
+                # Mock editor_coder creation and execution
+                mock_editor = MagicMock()
+                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                    # Set partial response content
+                    coder.partial_response_content = "Make these changes to the code"
+
+                    # Call reply_completed
+                    coder.reply_completed()
+
+                    # Verify that confirm_ask was called
+                    io.confirm_ask.assert_called_once_with("Edit the files?")
+
+                    # Verify that editor coder was created and run
+                    mock_editor.run.assert_called_once()
+
+    def test_architect_coder_auto_accept_false_rejected(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=False)
+            io.confirm_ask = MagicMock(return_value=False)
+
+            # Create an ArchitectCoder with auto_accept_architect=False
+            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+                from aider.coders.architect_coder import ArchitectCoder
+
+                coder = ArchitectCoder()
+                coder.io = io
+                coder.main_model = self.GPT35
+                coder.auto_accept_architect = False
+                coder.verbose = False
+                coder.total_cost = 0
+
+                # Mock editor_coder creation and execution
+                mock_editor = MagicMock()
+                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                    # Set partial response content
+                    coder.partial_response_content = "Make these changes to the code"
+
+                    # Call reply_completed
+                    coder.reply_completed()
+
+                    # Verify that confirm_ask was called
+                    io.confirm_ask.assert_called_once_with("Edit the files?")
+
+                    # Verify that editor coder was NOT created or run
+                    # (because user rejected the changes)
+                    mock_editor.run.assert_not_called()
 
 
 if __name__ == "__main__":

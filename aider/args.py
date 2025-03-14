@@ -149,6 +149,12 @@ def get_parser(default_config_files, git_root):
         help="Use architect edit format for the main chat",
     )
     group.add_argument(
+        "--auto-accept-architect",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable automatic acceptance of architect changes (default: True)",
+    )
+    group.add_argument(
         "--weak-model",
         metavar="WEAK_MODEL",
         default=None,
