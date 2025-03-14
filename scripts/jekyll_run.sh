@@ -8,7 +8,7 @@ docker run \
        -e HISTFILE=/site/.bash_history \
        -e JEKYLL_ENV=development \
        -it \
-       my-jekyll-site bundle exec jekyll serve --incremental --livereload
+       my-jekyll-site bundle exec jekyll serve --host 0.0.0.0 --incremental --livereload
 
 # Additional options:
 # --incremental: Only rebuilds files that changed
