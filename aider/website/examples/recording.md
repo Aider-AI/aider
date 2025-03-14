@@ -118,10 +118,30 @@ AsciinemaPlayer.create(
      }
  );
  
-player.addEventListener('marker', ({ index, time, label }) => {
+AsciinemaPlayer.create(
+     url,
+     document.getElementById('demo'),
+     {
+         speed: 1.25,
+         idleTimeLimit: 1,
+         theme : "aider",
+         poster : "npt:0:01",
+         markers : [
+             [3.0, "Hello!"],
+             [300.0, "Hello!"],
+         ],
+     }
+ ).addEventListener('marker', ({ index, time, label }) => {
   console.log(`marker! ${index} - ${time} - ${label}`);
-}
-})
+  
+  // Add the marker label to the transcript
+  const transcriptContent = document.getElementById('transcript-content');
+  const markerElement = document.createElement('div');
+  markerElement.textContent = label;
+  markerElement.style.fontWeight = 'bold';
+  markerElement.style.marginTop = '10px';
+  transcriptContent.appendChild(markerElement);
+});
 </script>
 
 <div class="transcript-container" style="margin-top: 30px; padding: 20px; background-color: #f8f8f8; border-radius: 6px; max-height: 50vh; overflow-y: auto; font-family: monospace; white-space: pre-wrap; line-height: 1.5;">
