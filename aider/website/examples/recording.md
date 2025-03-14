@@ -110,6 +110,7 @@ AsciinemaPlayer.create(
          speed: 1.25,
          idleTimeLimit: 1,
          theme : "aider",
+         poster : "npt:0:01",
      }
  );
 </script>
