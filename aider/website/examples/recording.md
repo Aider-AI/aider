@@ -55,12 +55,38 @@ layout: minimal
   color: #666;
 }
 
+/* Toast notification styling */
+.toast-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.toast-notification {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  text-align: center;
+  max-width: 80%;
+}
+
 /* Page container styling */
 .page-container {
   max-height: 80vh;
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
 }
 
 .terminal-container {
@@ -68,6 +94,7 @@ layout: minimal
   overflow: hidden;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+  position: relative;
 }
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
@@ -97,6 +124,7 @@ layout: minimal
 </style>
 
 <div class="page-container">
+<div class="toast-container" id="toast-container"></div>
 <div class="terminal-container">
   <div class="terminal-header">
     <div class="terminal-buttons">
@@ -130,11 +158,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   );
   
-  // Make sure transcript container exists
-  if (!document.getElementById('transcript-content')) {
-    const container = document.createElement('div');
-    container.id = 'transcript-content';
-    document.querySelector('.transcript-container').appendChild(container);
+  // Function to display toast notification
+  function showToast(text) {
+    const toastContainer = document.getElementById('toast-container');
+    
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = 'toast-notification';
+    toast.textContent = text;
+    
+    // Add to container
+    toastContainer.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => {
+      toast.style.opacity = '1';
+    }, 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      setTimeout(() => {
+        toastContainer.removeChild(toast);
+      }, 300); // Wait for fade out animation
+    }, 3000);
   }
   
   // Function to speak text using the Web Speech API
@@ -163,17 +210,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const { index, time, label } = event;
         console.log(`marker! ${index} - ${time} - ${label}`);
         
-        // Speak the marker label
+        // Speak the marker label and show toast
         speakText(label);
-        
-        const transcriptContent = document.getElementById('transcript-content');
-        if (transcriptContent) {
-          const markerElement = document.createElement('div');
-          markerElement.textContent = label;
-          markerElement.style.fontWeight = 'bold';
-          markerElement.style.marginTop = '10px';
-          transcriptContent.appendChild(markerElement);
-        }
+        showToast(label);
       } catch (error) {
         console.error('Error in marker event handler:', error);
       }
@@ -182,10 +221,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<div class="transcript-container" style="margin-top: 30px; padding: 20px; background-color: #f8f8f8; border-radius: 6px; max-height: 20vh: auto; font-family: monospace; white-space: pre-wrap; line-height: 1.5;">
-  <div id="transcript-content">
-  </div>
-</div>
 </div>
 
 
