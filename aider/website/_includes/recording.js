@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Parse the transcript section to create markers and convert timestamps to links
   function parseTranscript() {
     const markers = [];
-    // Find the Transcript heading
-    const transcriptHeading = Array.from(document.querySelectorAll('h1')).find(el => el.textContent.trim() === 'Transcript');
+    // Find the Commentary heading
+    const transcriptHeading = Array.from(document.querySelectorAll('h1')).find(el => el.textContent.trim() === 'Commentary');
     
     if (transcriptHeading) {
       // Get all list items after the transcript heading
