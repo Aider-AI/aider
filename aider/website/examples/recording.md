@@ -10,10 +10,10 @@ layout: minimal
 
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
-  --term-color-foreground: #f8f8f2;
+  --term-color-foreground: #444444;  /* colour238 */
 
   /* Background color */
-  --term-color-background: #282a36;
+  --term-color-background: #dadada;  /* colour253 */
 
   /* Palette of 16 standard ANSI colors */
   --term-color-0: #21222c;
