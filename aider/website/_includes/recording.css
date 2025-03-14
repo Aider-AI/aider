@@ -115,6 +115,19 @@ li.active-marker {
   padding: 4px 8px;
   margin-left: -8px;
 }
+
+/* Make list items clickable */
+.transcript-item {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 4px 8px;
+  margin-left: -8px;
+  border-radius: 4px;
+}
+
+.transcript-item:hover {
+  background-color: #f0f0f0;
+}
 .asciinema-player-theme-aider {
   /* Foreground (default text) color */
   --term-color-foreground: #444444;  /* colour238 */

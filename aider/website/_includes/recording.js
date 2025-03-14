@@ -54,6 +54,30 @@ document.addEventListener('DOMContentLoaded', function() {
             item.appendChild(timeLink);
             item.appendChild(document.createTextNode(' ' + message));
             
+            // Add class and click handler to the entire list item
+            item.classList.add('transcript-item');
+            item.dataset.time = timeInSeconds;
+            item.dataset.message = message;
+            
+            item.addEventListener('click', function(e) {
+              // Prevent click event if the user clicked directly on the timestamp link
+              // This prevents double-firing of the event
+              if (e.target !== timeLink) {
+                e.preventDefault();
+                if (player && typeof player.seek === 'function') {
+                  player.seek(timeInSeconds);
+                  player.play();
+                  
+                  // Also trigger toast and speech
+                  showToast(message);
+                  speakText(message);
+                  
+                  // Highlight this timestamp
+                  highlightTimestamp(timeInSeconds);
+                }
+              }
+            });
+            
             markers.push([timeInSeconds, message]);
           }
         });
