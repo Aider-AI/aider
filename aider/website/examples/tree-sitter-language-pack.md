@@ -43,7 +43,7 @@ layout: minimal
 - 1:45 We need all the tags files from each language's repository. Let's have aider write a script to fetch them all.
 - 2:05 Let aider read the language definitions json file.
 - 3:37 Looks like it can't find most of the tags.scm files.
-- 4:00 Have it try other branches besides master.
+- 4:19 Have it try other branches besides master.
 - 5:02 Ok, it's downloading them now.
 - 5:55 Let's make it so we can re-run and avoid re-downloading.
 - 6:12 I see lots of tags files.
