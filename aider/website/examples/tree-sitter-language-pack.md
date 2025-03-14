@@ -39,7 +39,9 @@ layout: minimal
 - 0:10 First, lets try and find which languages it supports.
 - 1:00 Ok, there's a language definitions json file
 - 1:10 Does it have the github repos for each language?
-- 1:57 We need all the tags files from each language's repository. Let's have aider write a script to fetch them all.
+- 1:29 Ok, this is what we need.
+- 1:45 We need all the tags files from each language's repository. Let's have aider write a script to fetch them all.
+- 2:05 Let aider read the language definitions json file.
 - 3:37 Looks like it can't find most of the tags.scm files.
 - 4:00 Have it try other branches besides master.
 - 5:02 Ok, it's downloading them now.
