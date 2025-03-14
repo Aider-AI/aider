@@ -3,6 +3,7 @@ title: Screen recordings
 has_children: true
 nav_order: 75
 has_toc: false
+description: Screen recordings of aider building aider.
 ---
 
 # Screen recordings
