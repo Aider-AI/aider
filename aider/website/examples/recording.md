@@ -114,4 +114,37 @@ AsciinemaPlayer.create(
      }
  );
 </script>
+
+## Transcript
+
+<div class="transcript-container" style="margin-top: 30px; padding: 20px; background-color: #f8f8f8; border-radius: 6px; max-height: 50vh; overflow-y: auto; font-family: monospace; white-space: pre-wrap; line-height: 1.5;">
+  <div id="transcript-content">
+    Loading transcript...
+  </div>
+</div>
+
+<script>
+// Function to fetch and display the transcript
+async function loadTranscript() {
+  try {
+    // You can either use the same URL as the cast file or a dedicated transcript file
+    const transcriptUrl = "https://gist.githubusercontent.com/paul-gauthier/3011ab9455c2d28c0e5a60947202752f/raw/transcript.txt";
+    const response = await fetch(transcriptUrl);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const text = await response.text();
+    document.getElementById('transcript-content').textContent = text;
+  } catch (error) {
+    console.error("Failed to load transcript:", error);
+    document.getElementById('transcript-content').textContent = 
+      "Failed to load transcript. The transcript file may need to be created separately from the recording.";
+  }
+}
+
+// Call the function to load the transcript
+loadTranscript();
+</script>
   
