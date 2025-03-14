@@ -111,24 +111,21 @@ AsciinemaPlayer.create(
          idleTimeLimit: 1,
          theme : "aider",
          poster : "npt:0:01",
+         markers : [
+             [3.0, "Hello!"],
+             [300.0, "Hello!"],
+         ],
      }
  );
+ 
+player.addEventListener('marker', ({ index, time, label }) => {
+  console.log(`marker! ${index} - ${time} - ${label}`);
+}
+})
 </script>
 
 <div class="transcript-container" style="margin-top: 30px; padding: 20px; background-color: #f8f8f8; border-radius: 6px; max-height: 50vh; overflow-y: auto; font-family: monospace; white-space: pre-wrap; line-height: 1.5;">
   <div id="transcript-content">
-  Transcript goes here...<br/>
-
-  Transcript goes here...<br/>
-
-  Transcript goes here...<br/>
-
-  Transcript goes here...<br/>
-
-  Transcript goes here...<br/>
-
-  Transcript goes here...<br/>
-
   </div>
 </div>
 
