@@ -14,7 +14,7 @@ layout: minimal
   --term-color-foreground: #444444;  /* colour238 */
 
   /* Background color */
-  --term-color-background: #dadada;  /* colour253 */
+  --term-color-background: #fff000; 
 
   /* Palette of 16 standard ANSI colors */
   --term-color-0: #21222c;
@@ -47,7 +47,7 @@ AsciinemaPlayer.create(
      {
          speed: 1.25,
          idleTimeLimit: 1,
-         theme : "auto/solarized-light",
+         theme : "aider",
      }
  );
 </script>
