@@ -34,10 +34,9 @@ layout: minimal
 </div>
 
 <div class="keyboard-shortcuts">
-    <kbd>Space</kbd> Play/pause, 
-    <kbd>f</kbd> Fullscreen, 
-    <kbd>←</kbd><kbd>→</kbd> ±5s, 
-    <kbd>[</kbd><kbd>]</kbd> Previous/next marker
+    <kbd>Space</kbd> Play/pause --
+    <kbd>f</kbd> Fullscreen --
+    <kbd>←</kbd><kbd>→</kbd> ±5s
 </div>
 
 ## Commentary
