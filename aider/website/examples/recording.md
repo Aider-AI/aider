@@ -14,10 +14,6 @@ layout: minimal
 
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 <script>
-var markers = [
-        [1.0, "Hello!"],
-        [5.0, "Hello, this is a test. This is only a test."],
-      ];
 {% include recording.js %}
 </script>
 

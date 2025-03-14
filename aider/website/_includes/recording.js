@@ -1,5 +1,42 @@
 document.addEventListener('DOMContentLoaded', function() {
+  // Parse the transcript section to create markers
+  function parseTranscript() {
+    const markers = [];
+    // Find the Transcript heading
+    const transcriptHeading = Array.from(document.querySelectorAll('h1')).find(el => el.textContent.trim() === 'Transcript');
+    
+    if (transcriptHeading) {
+      // Get all list items after the transcript heading
+      let currentElement = transcriptHeading.nextElementSibling;
+      
+      while (currentElement && currentElement.tagName === 'UL') {
+        const listItems = currentElement.querySelectorAll('li');
+        
+        listItems.forEach(item => {
+          const text = item.textContent.trim();
+          const match = text.match(/(\d+):(\d+)\s+(.*)/);
+          
+          if (match) {
+            const minutes = parseInt(match[1], 10);
+            const seconds = parseInt(match[2], 10);
+            const timeInSeconds = minutes * 60 + seconds;
+            const message = match[3].trim();
+            
+            markers.push([timeInSeconds, message]);
+          }
+        });
+        
+        currentElement = currentElement.nextElementSibling;
+      }
+    }
+    
+    return markers;
+  }
+
   const url = "https://gist.githubusercontent.com/paul-gauthier/3011ab9455c2d28c0e5a60947202752f/raw/5a5b3dbf68a9c2b22b4954af287efedecdf79d52/tmp.redacted.cast";
+  
+  // Parse transcript and create markers
+  const markers = parseTranscript();
   
   // Create player with a single call
   const player = AsciinemaPlayer.create(
