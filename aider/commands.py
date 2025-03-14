@@ -1492,7 +1492,7 @@ class Commands:
             /stats                   Compare against main/master branch
             /stats <revision>        Compare against specific revision
             /stats rev1..rev2        Compare between two specific revisions
-            
+
         Examples:
             /stats                   Show stats vs main/master branch
             /stats HEAD~5            Show stats vs 5 commits ago
@@ -1523,6 +1523,11 @@ class Commands:
             source_revision, target_revision = args.split("..") if ".." in args else (args, "HEAD")
             commits = get_all_commit_hashes_between_tags(source_revision, target_revision)
             commits = [commit[:hash_len] for commit in commits] if commits else []
+            if not commits:
+                self.io.tool_error(
+                    f"There are no commits between the specified revisions from {source_revision} to {target_revision}."
+                )
+                return
             authors = get_commit_authors(commits)
 
             # Get files changed between revisions
