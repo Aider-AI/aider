@@ -1,5 +1,5 @@
 ---
-parent: Example chat transcripts
+parent: Screen recordings
 nav_order: 1
 layout: minimal
 ---
