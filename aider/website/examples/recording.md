@@ -55,6 +55,18 @@ layout: minimal
   color: #666;
 }
 
+/* Page container styling */
+.page-container {
+  max-height: 80vh;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .terminal-container {
   border-radius: 6px;
   overflow: hidden;
@@ -88,7 +100,7 @@ layout: minimal
 }
 </style>
 
-<div class="page-container" style="max-height: 80vh; max-width: 900px; margin-left: auto; margin-right: auto;">
+<div class="page-container">
 <div class="terminal-container">
   <div class="terminal-header">
     <div class="terminal-buttons">
