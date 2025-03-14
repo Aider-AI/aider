@@ -33,7 +33,7 @@ layout: minimal
 </div>
 </div>
 
-# Transcript
+## Commentary
 
 - 0:01 We're going to add a ton of new languages to aider via tree-sitter-language-pack.
 - 0:10 First, lets try and find which languages it supports.

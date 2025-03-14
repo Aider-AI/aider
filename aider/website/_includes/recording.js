@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function parseTranscript() {
     const markers = [];
     // Find the Commentary heading
-    const transcriptHeading = Array.from(document.querySelectorAll('h1')).find(el => el.textContent.trim() === 'Commentary');
+    const transcriptHeading = Array.from(document.querySelectorAll('h2')).find(el => el.textContent.trim() === 'Commentary');
     
     if (transcriptHeading) {
       // Get all list items after the transcript heading
