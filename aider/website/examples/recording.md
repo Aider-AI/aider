@@ -128,12 +128,34 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.transcript-container').appendChild(container);
   }
   
+  // Function to speak text using the Web Speech API
+  function speakText(text) {
+    // Check if speech synthesis is supported
+    if ('speechSynthesis' in window) {
+      // Create a new speech synthesis utterance
+      const utterance = new SpeechSynthesisUtterance(text);
+      
+      // Optional: Configure voice properties
+      utterance.rate = 1.0; // Speech rate (0.1 to 10)
+      utterance.pitch = 1.0; // Speech pitch (0 to 2)
+      utterance.volume = 1.0; // Speech volume (0 to 1)
+      
+      // Speak the text
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.warn('Speech synthesis not supported in this browser');
+    }
+  }
+
   // Add event listener with safety checks
   if (player && typeof player.addEventListener === 'function') {
     player.addEventListener('marker', function(event) {
       try {
         const { index, time, label } = event;
         console.log(`marker! ${index} - ${time} - ${label}`);
+        
+        // Speak the marker label
+        speakText(label);
         
         const transcriptContent = document.getElementById('transcript-content');
         if (transcriptContent) {
