@@ -34,8 +34,8 @@ layout: minimal
 </div>
 
 <div class="keyboard-shortcuts">
-    <kbd>Space</kbd> Play/pause --
-    <kbd>f</kbd> Fullscreen --
+    <kbd>Space</kbd> Play/pause —
+    <kbd>f</kbd> Fullscreen —
     <kbd>←</kbd><kbd>→</kbd> ±5s
 </div>
 
