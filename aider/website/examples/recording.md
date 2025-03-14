@@ -68,16 +68,18 @@ layout: minimal
 .toast-notification {
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 10px 20px;
+  padding: 12px 25px;
   border-radius: 8px;
   margin-bottom: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  font-size: 16px;
+  font-size: 18px;
   text-align: center;
-  max-width: 80%;
+  min-width: 250px;
+  max-width: 90%;
+  white-space: nowrap;
 }
 
 /* Page container styling */
