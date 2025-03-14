@@ -68,7 +68,7 @@ layout: minimal
 - 28:45 Let aider read the fixtures directory listing.
 - 29:20 Just fixing the bash to correctly iterate through the list of tags files.
 - 30:11 Improve the prompt to make sure aider creates a fixture for each language.
-- 31:00 Lets run the repo-map tests.
+- 31:00 Lets run the repo-map tests to see if the new test works.
 - 31:11 Arduino failed, with an empty repo-map?
 - 33:16 Oh! I'm not using the updated grep AST yet.
 - 33:26 Ok, now we're parsing Arduino code properly.
