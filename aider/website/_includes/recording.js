@@ -211,17 +211,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Create and play audio
     const audio = new Audio(audioPath);
     
+    // Flag to track if we've already used the TTS fallback
+    let fallbackUsed = false;
+    
     // Error handling with fallback to browser TTS
     audio.onerror = () => {
       console.warn(`Failed to load audio: ${audioPath}`);
-      useBrowserTTS(text);
+      if (!fallbackUsed) {
+        fallbackUsed = true;
+        useBrowserTTS(text);
+      }
     };
     
     // Play the audio
     audio.play().catch(e => {
       console.warn(`Error playing audio: ${e.message}`);
       // Also fall back to browser TTS if play() fails
-      useBrowserTTS(text);
+      if (!fallbackUsed) {
+        fallbackUsed = true;
+        useBrowserTTS(text);
+      }
     });
   }
   
