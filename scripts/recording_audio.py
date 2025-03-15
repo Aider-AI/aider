@@ -134,6 +134,7 @@ def main():
 
     # Create output directory
     output_dir = os.path.join(args.output_dir, recording_id)
+    print(f"Audio directory: {output_dir}")
     if not args.dry_run:
         os.makedirs(output_dir, exist_ok=True)
 
