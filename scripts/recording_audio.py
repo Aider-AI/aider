@@ -92,10 +92,10 @@ def main():
     )
 
     args = parser.parse_args()
-    
+
     # Use args.voice directly instead of modifying global VOICE
     selected_voice = args.voice
-    
+
     recording_id = extract_recording_id(args.markdown_file)
     print(f"Processing recording: {recording_id}")
 
