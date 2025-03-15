@@ -84,28 +84,31 @@ def generate_audio_openai(text, output_file, voice=VOICE):
 def load_metadata(output_dir):
     """Load the audio metadata JSON file if it exists."""
     metadata_file = os.path.join(output_dir, "metadata.json")
-    
+
     if os.path.exists(metadata_file):
         try:
             with open(metadata_file, "r") as f:
                 return json.load(f)
         except json.JSONDecodeError:
             print(f"Warning: Could not parse metadata file {metadata_file}, will recreate it")
-    
+
     return {}
+
 
 def save_metadata(output_dir, metadata):
     """Save the audio metadata to JSON file."""
     metadata_file = os.path.join(output_dir, "metadata.json")
-    
+
     with open(metadata_file, "w") as f:
         json.dump(metadata, f, indent=2)
+
 
 def get_timestamp_key(time_sec):
     """Generate a consistent timestamp key format for metadata."""
     minutes = time_sec // 60
     seconds = time_sec % 60
     return f"{minutes:02d}-{seconds:02d}"
+
 
 def main():
     parser = argparse.ArgumentParser(description="Generate TTS audio for recording commentary.")
@@ -145,19 +148,19 @@ def main():
 
     # Load existing metadata
     metadata = load_metadata(output_dir)
-    
+
     # Create a dictionary of current markers for easier comparison
     current_markers = {}
     for time_sec, message in markers:
         timestamp_key = get_timestamp_key(time_sec)
         current_markers[timestamp_key] = message
-    
+
     # Track files that need to be deleted (no longer in the markdown)
     files_to_delete = []
     for timestamp_key in metadata:
         if timestamp_key not in current_markers:
             files_to_delete.append(f"{timestamp_key}.mp3")
-    
+
     # Delete files that are no longer needed
     if files_to_delete and not args.dry_run:
         for filename in files_to_delete:
@@ -173,22 +176,21 @@ def main():
         timestamp_key = get_timestamp_key(time_sec)
         filename = f"{timestamp_key}.mp3"
         output_file = os.path.join(output_dir, filename)
-        
+
         # Check if we need to generate this file
         needs_update = args.force or (
-            timestamp_key not in metadata or 
-            metadata[timestamp_key] != message
+            timestamp_key not in metadata or metadata[timestamp_key] != message
         )
-        
+
         minutes = time_sec // 60
         seconds = time_sec % 60
-        
+
         print(f"Marker at {minutes}:{seconds:02d} - {message}")
-        
+
         if not needs_update:
             print(f"  ✓ Audio file already exists with correct content")
             continue
-        
+
         if args.dry_run:
             print(f"  Would generate: {output_file}")
         else:
@@ -200,14 +202,14 @@ def main():
                 metadata[timestamp_key] = message
             else:
                 print(f"  ✗ Failed to generate audio")
-    
+
     # Save updated metadata
     if not args.dry_run:
         # Remove entries for deleted files
         for timestamp_key in list(metadata.keys()):
             if timestamp_key not in current_markers:
                 del metadata[timestamp_key]
-        
+
         save_metadata(output_dir, metadata)
 
 
