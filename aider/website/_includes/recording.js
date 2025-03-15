@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
   let player; // Store player reference to make it accessible to click handlers
+  let globalAudio; // Global audio element to be reused
   
   // Parse the transcript section to create markers and convert timestamps to links
   function parseTranscript() {
@@ -180,17 +181,32 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
   }
   
-  // Function to use browser's TTS as fallback
+  // Improved browser TTS function
   function useBrowserTTS(text) {
     if ('speechSynthesis' in window) {
       console.log('Using browser TTS fallback');
+      
+      // Cancel any ongoing speech
+      window.speechSynthesis.cancel();
+      
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
+      
+      // For iOS, use a shorter utterance if possible
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+        utterance.text = text.length > 100 ? text.substring(0, 100) + '...' : text;
+      }
+      
+      utterance.onstart = () => console.log('Speech started');
+      utterance.onend = () => console.log('Speech ended');
+      utterance.onerror = (e) => console.warn('Speech error:', e);
+      
       window.speechSynthesis.speak(utterance);
       return true;
     }
+    console.warn('SpeechSynthesis not supported');
     return false;
   }
   
@@ -208,30 +224,53 @@ document.addEventListener('DOMContentLoaded', function() {
     // Construct audio file path
     const audioPath = `/assets/audio/${recordingId}/${formattedTime}.mp3`;
     
-    // Create and play audio
-    const audio = new Audio(audioPath);
+    // Log for debugging
+    console.log(`Attempting to play audio: ${audioPath}`);
     
-    // Flag to track if we've already used the TTS fallback
-    let fallbackUsed = false;
+    // Detect iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    console.log(`Device is iOS: ${isIOS}`);
     
-    // Error handling with fallback to browser TTS
-    audio.onerror = () => {
-      console.warn(`Failed to load audio: ${audioPath}`);
-      if (!fallbackUsed) {
-        fallbackUsed = true;
-        useBrowserTTS(text);
+    try {
+      // Create or reuse audio element
+      if (!globalAudio) {
+        globalAudio = new Audio();
+        console.log("Created new global Audio element");
       }
-    };
-    
-    // Play the audio
-    audio.play().catch(e => {
-      console.warn(`Error playing audio: ${e.message}`);
-      // Also fall back to browser TTS if play() fails
-      if (!fallbackUsed) {
-        fallbackUsed = true;
+      
+      // Set up event handlers
+      globalAudio.onerror = (e) => {
+        console.warn(`Audio error: ${e.type}`, e);
         useBrowserTTS(text);
+      };
+      
+      // For iOS, preload might help with subsequent plays
+      if (isIOS) {
+        globalAudio.preload = "auto";
       }
-    });
+      
+      // Set the new source
+      globalAudio.src = audioPath;
+      
+      // Play with proper error handling
+      const playPromise = globalAudio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.warn(`Play error: ${error.message}`);
+          
+          // On iOS, a user gesture might be required
+          if (isIOS) {
+            console.log("iOS playback failed, trying SpeechSynthesis");
+          }
+          
+          useBrowserTTS(text);
+        });
+      }
+    } catch (e) {
+      console.error(`Exception in audio playback: ${e.message}`);
+      useBrowserTTS(text);
+    }
   }
   
   // Function to highlight the active timestamp in the transcript
