@@ -7,7 +7,7 @@ from aider.dump import dump  # noqa: F401
 class ExInfo:
     name: str
     retry: bool
-    description: str
+    description: str | None
 
 
 EXCEPTIONS = [
