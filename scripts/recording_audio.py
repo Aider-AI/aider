@@ -73,19 +73,22 @@ def compress_audio(input_file, output_file, bitrate=MP3_BITRATE):
     if not check_ffmpeg():
         print("Warning: FFmpeg not found, skipping compression")
         return False
-    
+
     try:
         subprocess.run(
             [
-                "ffmpeg", 
-                "-i", input_file, 
-                "-b:a", bitrate, 
-                "-ac", "1",  # Mono audio
+                "ffmpeg",
+                "-i",
+                input_file,
+                "-b:a",
+                bitrate,
+                "-ac",
+                "1",  # Mono audio
                 "-y",  # Overwrite output file
-                output_file
+                output_file,
             ],
-            stdout=subprocess.PIPE, 
-            stderr=subprocess.PIPE
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         return True
     except subprocess.SubprocessError as e:
@@ -111,13 +114,13 @@ def generate_audio_openai(text, output_file, voice=VOICE, bitrate=MP3_BITRATE):
             with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as temp_file:
                 temp_path = temp_file.name
                 temp_file.write(response.content)
-            
+
             # Get original file size
             original_size = os.path.getsize(temp_path)
-            
+
             # Compress the audio to reduce file size
             success = compress_audio(temp_path, output_file, bitrate)
-            
+
             # If compression failed or FFmpeg not available, use the original file
             if not success:
                 with open(output_file, "wb") as f:
@@ -126,14 +129,17 @@ def generate_audio_openai(text, output_file, voice=VOICE, bitrate=MP3_BITRATE):
             else:
                 compressed_size = os.path.getsize(output_file)
                 reduction = (1 - compressed_size / original_size) * 100
-                print(f"  ℹ Compressed: {original_size} → {compressed_size} bytes ({reduction:.1f}% reduction)")
-            
+                print(
+                    f"  ℹ Compressed: {original_size} → {compressed_size} bytes ({reduction:.1f}%"
+                    " reduction)"
+                )
+
             # Clean up the temporary file
             try:
                 os.unlink(temp_path)
             except OSError:
                 pass
-                
+
             return True
         else:
             print(f"Error: {response.status_code}, {response.text}")
@@ -186,10 +192,14 @@ def main():
         "--force", action="store_true", help="Force regeneration of all audio files"
     )
     parser.add_argument(
-        "--bitrate", default=MP3_BITRATE, help=f"MP3 bitrate for compression (default: {MP3_BITRATE})"
+        "--bitrate",
+        default=MP3_BITRATE,
+        help=f"MP3 bitrate for compression (default: {MP3_BITRATE})",
     )
     parser.add_argument(
-        "--compress-only", action="store_true", help="Only compress existing files without generating new ones"
+        "--compress-only",
+        action="store_true",
+        help="Only compress existing files without generating new ones",
     )
 
     args = parser.parse_args()
@@ -211,7 +221,7 @@ def main():
     print(f"Audio directory: {output_dir}")
     if not args.dry_run:
         os.makedirs(output_dir, exist_ok=True)
-        
+
     # If compress-only flag is set, just compress existing files
     if args.compress_only:
         print("Compressing existing files only...")
@@ -219,11 +229,11 @@ def main():
         for timestamp_key in metadata:
             filename = f"{timestamp_key}.mp3"
             file_path = os.path.join(output_dir, filename)
-            
+
             if os.path.exists(file_path):
                 temp_file = f"{file_path}.temp"
                 print(f"Compressing: {filename}")
-                
+
                 if not args.dry_run:
                     success = compress_audio(file_path, temp_file, selected_bitrate)
                     if success:
@@ -231,17 +241,20 @@ def main():
                         original_size = os.path.getsize(file_path)
                         compressed_size = os.path.getsize(temp_file)
                         reduction = (1 - compressed_size / original_size) * 100
-                        
+
                         # Replace original with compressed version
                         os.replace(temp_file, file_path)
-                        print(f"  ✓ Compressed: {original_size} → {compressed_size} bytes ({reduction:.1f}% reduction)")
+                        print(
+                            f"  ✓ Compressed: {original_size} → {compressed_size} bytes"
+                            f" ({reduction:.1f}% reduction)"
+                        )
                     else:
                         print(f"  ✗ Failed to compress")
                         if os.path.exists(temp_file):
                             os.remove(temp_file)
                 else:
                     print(f"  Would compress: {file_path}")
-        
+
         return
 
     # Extract commentary markers
@@ -302,7 +315,9 @@ def main():
             print(f"  Would generate: {output_file}")
         else:
             print(f"  Generating: {output_file}")
-            success = generate_audio_openai(message, output_file, voice=selected_voice, bitrate=selected_bitrate)
+            success = generate_audio_openai(
+                message, output_file, voice=selected_voice, bitrate=selected_bitrate
+            )
             if success:
                 print(f"  ✓ Generated audio file")
                 # Update metadata with the new message
