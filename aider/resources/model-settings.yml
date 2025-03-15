@@ -895,3 +895,6 @@
 - name: openrouter/google/gemma-3-27b-it:free
   use_system_prompt: false
   
+- name: openrouter/google/gemma-3-27b-it
+  use_system_prompt: false
+  

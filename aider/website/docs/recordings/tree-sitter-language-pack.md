@@ -6,39 +6,12 @@ layout: minimal
 
 # Add language support via tree-sitter-language-pack
 
-<link rel="stylesheet" type="text/css" href="/assets/asciinema/asciinema-player.css" />
-
-<style>
-{% include recording.css %}
-</style>
-
-<script src="/assets/asciinema/asciinema-player.min.js"></script>
 <script>
 const recording_url = "https://gist.githubusercontent.com/paul-gauthier/a990333449b09e2793088a45eb1587f4/raw/364124781cca282907ccdc7567cdfc588a9b438b/tmp.redacted.cast";
-{% include recording.js %}
 </script>
 
-<div class="page-container">
-<div class="toast-container" id="toast-container"></div>
+{% include recording.md %}
 
-<div class="terminal-container">
-  <div class="terminal-header">
-    <div class="terminal-buttons">
-      <div class="terminal-button terminal-close"></div>
-      <div class="terminal-button terminal-minimize"></div>
-      <div class="terminal-button terminal-expand"></div>
-    </div>
-    <div class="terminal-title">aider</div>
-  </div>
-  <div id="demo"></div>
-</div>
-</div>
-
-<div class="keyboard-shortcuts">
-    <kbd>Space</kbd> Play/pause —
-    <kbd>f</kbd> Fullscreen —
-    <kbd>←</kbd><kbd>→</kbd> ±5s
-</div>
 
 ## Commentary
 
