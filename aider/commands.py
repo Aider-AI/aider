@@ -18,7 +18,7 @@ from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
 from aider.llm import litellm
-from aider.repo import ANY_GIT_ERROR
+from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
@@ -286,7 +286,7 @@ class Commands:
             self.io.tool_error(f"Unable to complete commit: {err}")
 
     def raw_cmd_commit(self, args=None):
-        if not self.coder.repo:
+        if not isinstance(self.coder.repo, GitRepo):
             self.io.tool_error("No git repository found.")
             return
 
@@ -300,7 +300,7 @@ class Commands:
     def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"
 
-        if not self.coder.repo:
+        if not isinstance(self.coder.repo, GitRepo):
             self.io.tool_error("No git repository found.")
             return
 
@@ -501,7 +501,7 @@ class Commands:
             self.io.tool_error(f"Unable to complete undo: {err}")
 
     def raw_cmd_undo(self, args):
-        if not self.coder.repo:
+        if not isinstance(self.coder.repo, GitRepo):
             self.io.tool_error("No git repository found.")
             return
 
@@ -603,7 +603,7 @@ class Commands:
             self.io.tool_error(f"Unable to complete diff: {err}")
 
     def raw_cmd_diff(self, args=""):
-        if not self.coder.repo:
+        if not isinstance(self.coder.repo, GitRepo):
             self.io.tool_error("No git repository found.")
             return
 
