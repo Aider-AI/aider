@@ -2,6 +2,25 @@ document.addEventListener('DOMContentLoaded', function() {
   let player; // Store player reference to make it accessible to click handlers
   let globalAudio; // Global audio element to be reused
   
+  // Detect if device likely has no physical keyboard
+  function detectNoKeyboard() {
+    // Check if it's a touch device (most mobile devices)
+    const isTouchDevice = ('ontouchstart' in window) || 
+                         (navigator.maxTouchPoints > 0) ||
+                         (navigator.msMaxTouchPoints > 0);
+                         
+    // Check common mobile user agents as additional signal
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // If it's a touch device and has a mobile user agent, likely has no physical keyboard
+    if (isTouchDevice && isMobileUA) {
+      document.body.classList.add('no-physical-keyboard');
+    }
+  }
+  
+  // Run detection
+  detectNoKeyboard();
+  
   // Parse the transcript section to create markers and convert timestamps to links
   function parseTranscript() {
     const markers = [];

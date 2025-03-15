@@ -138,6 +138,11 @@ li.active-marker {
   margin-bottom: 20px;
 }
 
+/* Hide keyboard shortcuts on devices likely without physical keyboards */
+.no-physical-keyboard .keyboard-shortcuts {
+  display: none;
+}
+
 .keyboard-shortcuts kbd {
   background-color: #f7f7f7;
   border: 1px solid #ccc;
