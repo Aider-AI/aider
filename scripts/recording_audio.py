@@ -55,7 +55,7 @@ def extract_commentary(markdown_file):
     return markers
 
 
-def generate_audio_openai(text, output_file):
+def generate_audio_openai(text, output_file, voice=VOICE):
     """Generate audio using OpenAI TTS API."""
     if not OPENAI_API_KEY:
         print("Error: OPENAI_API_KEY environment variable not set")
@@ -63,7 +63,7 @@ def generate_audio_openai(text, output_file):
 
     url = "https://api.openai.com/v1/audio/speech"
     headers = {"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"}
-    data = {"model": "tts-1", "input": text, "voice": VOICE}
+    data = {"model": "tts-1", "input": text, "voice": voice}
 
     try:
         response = requests.post(url, headers=headers, json=data)
@@ -92,11 +92,10 @@ def main():
     )
 
     args = parser.parse_args()
-
-    # Update globals with any command line overrides
-    global VOICE
-    VOICE = args.voice
-
+    
+    # Use args.voice directly instead of modifying global VOICE
+    selected_voice = args.voice
+    
     recording_id = extract_recording_id(args.markdown_file)
     print(f"Processing recording: {recording_id}")
 
@@ -127,7 +126,7 @@ def main():
             print(f"  Would generate: {output_file}")
         else:
             print(f"  Generating: {output_file}")
-            success = generate_audio_openai(message, output_file)
+            success = generate_audio_openai(message, output_file, voice=selected_voice)
             if success:
                 print(f"  ✓ Generated audio file")
             else:
