@@ -6,6 +6,7 @@ import signal
 import subprocess
 import time
 import webbrowser
+import sys
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -543,6 +544,9 @@ class InputOutput:
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             "Handle Enter key press"
+            buffer_text = event.current_buffer.text
+            if buffer_text.strip() == "quit":
+                sys.exit()
             if self.multiline_mode:
                 # In multiline mode, Enter adds a newline
                 event.current_buffer.insert_text("\n")
