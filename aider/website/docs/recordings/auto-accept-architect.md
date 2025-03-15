@@ -21,7 +21,7 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/e7383fbc
 - 0:48 Now we need to implement the functionality.
 - 1:00 Let's do some manual testing.
 - 1:28 That worked. Let's make sure we can turn it off too.
-- 1:44 That worked too. Let's have aider update the HISTORY file to document the new feature.
+- 1:42 That worked too. Let's have aider update the HISTORY file to document the new feature.
 - 2:00 Let's quickly tidy up the changes to HISTORY.
 - 2:05 All done!
 
