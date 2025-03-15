@@ -16,8 +16,8 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/c2e7b275
 ## Commentary
 
 - 0:01 We're going to update the /drop command to keep any read only files that were originally specified at launch.
-- 0:10 We've added files that handle the main C.L.I. and in-chat slash commands like /drop.
-- 0:20 Explain the needed change to aider.
+- 0:10 We've added files that handle the main CLI and in-chat slash commands like /drop.
+- 0:20 Let's explain the needed change to aider.
 - 1:20 Ok, let's look at the code.
 - 1:30 I'd prefer not to use "hasattr()", let's ask for improvements.
 - 1:45 Let's try some manual testing.

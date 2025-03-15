@@ -7,6 +7,7 @@ layout: minimal
 # Add language support via tree-sitter-language-pack
 
 <script>
+const recording_id = "tree-sitter-language-pack";
 const recording_url = "https://gist.githubusercontent.com/paul-gauthier/a990333449b09e2793088a45eb1587f4/raw/364124781cca282907ccdc7567cdfc588a9b438b/tmp.redacted.cast";
 </script>
 
@@ -28,10 +29,10 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/a9903334
 - 5:55 Let's make it so we can re-run and avoid re-downloading.
 - 6:12 I see lots of tags files.
 - 6:30 Ok, restart to run with latest code. This will take awhile to fetch them all.
-- 9:02 The grep AST module needs to know about all the new languages.
+- 9:02 The grep-ast module needs to know about all the new languages.
 - 9:45 Let's have aider add them all, including their file extensions.
 - 10:15 Some of the languages need to be recognized by their base name, not extension.
-- 11:15 Let's sanity check if grep AST can handle PowerShell now.
+- 11:15 Let's sanity check if grep-ast can handle PowerShell now.
 - 12:00 Looks like it's parsing PowerShell fine.
 - 13:00 Ok, let's download the tags into the right spot in the aider repo.
 - 14:00 This will take a minute...
@@ -54,7 +55,7 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/a9903334
 - 30:25 Lets run the repo-map tests to see if the new test works.
 - 30:37 Arduino failed, with an empty repo-map?
 - 31:52 Can aider figure out what's wrong?
-- 32:42 Oh! I'm not using the updated grep AST yet.
+- 32:42 Oh! I'm not using the updated grep-ast yet.
 - 32:54 Ok, now we're parsing Arduino code properly. Undo that bogus test fix.
 - 33:05 A regression with tsx?
 - 33:20 Can aider figure out why?

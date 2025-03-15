@@ -7,6 +7,7 @@ layout: minimal
 # Add --auto-accept-architect feature
 
 <script>
+const recording_id = "auto-accept-architect";
 const recording_url = "https://gist.githubusercontent.com/paul-gauthier/e7383fbc29c9bb343ee6fb7ee5d77e15/raw/c2194334085304bb1c6bb80814d791704d9719b6/707774.cast";
 </script>
 
@@ -21,7 +22,7 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/e7383fbc
 - 1:00 Let's do some manual testing.
 - 1:28 That worked. Let's make sure we can turn it off too.
 - 1:44 That worked too. Let's have aider update the HISTORY file to document the new feature.
-- 2:00 Quickly tidy up the changes to HISTORY.
+- 2:00 Let's quickly tidy up the changes to HISTORY.
 - 2:05 All done!
 
 
