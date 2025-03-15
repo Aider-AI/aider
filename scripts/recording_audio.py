@@ -9,7 +9,6 @@ import json
 import os
 import re
 import subprocess
-import sys
 import tempfile
 from pathlib import Path
 
@@ -249,7 +248,7 @@ def main():
                             f" ({reduction:.1f}% reduction)"
                         )
                     else:
-                        print(f"  ✗ Failed to compress")
+                        print("  ✗ Failed to compress")
                         if os.path.exists(temp_file):
                             os.remove(temp_file)
                 else:
@@ -308,7 +307,7 @@ def main():
         print(f"Marker at {minutes}:{seconds:02d} - {message}")
 
         if not needs_update:
-            print(f"  ✓ Audio file already exists with correct content")
+            print("  ✓ Audio file already exists with correct content")
             continue
 
         if args.dry_run:
@@ -319,11 +318,11 @@ def main():
                 message, output_file, voice=selected_voice, bitrate=selected_bitrate
             )
             if success:
-                print(f"  ✓ Generated audio file")
+                print("  ✓ Generated audio file")
                 # Update metadata with the new message
                 metadata[timestamp_key] = message
             else:
-                print(f"  ✗ Failed to generate audio")
+                print("  ✗ Failed to generate audio")
 
     # Save updated metadata
     if not args.dry_run:
