@@ -55,7 +55,11 @@ You can install aider with uv:
 
 ```bash
 python -m pip install uv  # If you need to install uv
+ # just the base functionality
 uv tool install --force --python python3.12 aider-chat@latest
+# or
+# if you want the extras; `playwright`, `help` and `browser` are available:
+uv tool install --force --python python3.12 'aider-chat[playwright,help]@latest'
 ```
 
 This will install uv using your existing python version 3.8-3.13,
