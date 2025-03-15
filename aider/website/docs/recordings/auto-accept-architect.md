@@ -6,6 +6,8 @@ layout: minimal
 
 # Add --auto-accept-architect feature
 
+
+// ai...
 <link rel="stylesheet" type="text/css" href="/assets/asciinema/asciinema-player.css" />
 
 <style>
@@ -14,6 +16,7 @@ layout: minimal
 
 <script src="/assets/asciinema/asciinema-player.min.js"></script>
 <script>
+// just keep this variable in this file:
 const recording_url = "https://gist.githubusercontent.com/paul-gauthier/e7383fbc29c9bb343ee6fb7ee5d77e15/raw/c2194334085304bb1c6bb80814d791704d9719b6/707774.cast";
 {% include recording.js %}
 </script>
@@ -39,6 +42,7 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/e7383fbc
     <kbd>f</kbd> Fullscreen —
     <kbd>←</kbd><kbd>→</kbd> ±5s
 </div>
+// ... refactor all this into recording.md ai!
 
 ## Commentary
 
