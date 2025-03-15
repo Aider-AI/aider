@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Also trigger toast and speech
                 showToast(message);
-                speakText(message);
+                speakText(message, timeInSeconds);
                 
                 // Highlight this timestamp
                 highlightTimestamp(timeInSeconds);
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
                   
                   // Also trigger toast and speech
                   showToast(message);
-                  speakText(message);
+                  speakText(message, timeInSeconds);
                   
                   // Highlight this timestamp
                   highlightTimestamp(timeInSeconds);
@@ -180,23 +180,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
   }
   
-  // Function to speak text using the Web Speech API
-  function speakText(text) {
-    // Check if speech synthesis is supported
-    if ('speechSynthesis' in window) {
-      // Create a new speech synthesis utterance
-      const utterance = new SpeechSynthesisUtterance(text);
-      
-      // Optional: Configure voice properties
-      utterance.rate = 1.0; // Speech rate (0.1 to 10)
-      utterance.pitch = 1.0; // Speech pitch (0 to 2)
-      utterance.volume = 1.0; // Speech volume (0 to 1)
-      
-      // Speak the text
-      window.speechSynthesis.speak(utterance);
-    } else {
-      console.warn('Speech synthesis not supported in this browser');
-    }
+  // Function to play pre-generated TTS audio files
+  function speakText(text, timeInSeconds) {
+    // Format time for filename (MM-SS)
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    const formattedTime = `${minutes.toString().padStart(2, '0')}-${seconds.toString().padStart(2, '0')}`;
+    
+    // Get recording_id from the page or use default from the URL
+    const recordingId = typeof recording_id !== 'undefined' ? recording_id : 
+                       window.location.pathname.split('/').pop().replace('.html', '');
+                       
+    // Construct audio file path
+    const audioPath = `/assets/audio/${recordingId}/${formattedTime}.mp3`;
+    
+    // Create and play audio
+    const audio = new Audio(audioPath);
+    
+    // Error handling with fallback to browser TTS
+    audio.onerror = () => {
+      console.warn(`Failed to load audio: ${audioPath}`);
+      // Fallback to browser TTS
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    };
+    
+    // Play the audio
+    audio.play().catch(e => {
+      console.warn(`Error playing audio: ${e.message}`);
+    });
   }
   
   // Function to highlight the active timestamp in the transcript
@@ -243,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`marker! ${index} - ${time} - ${label}`);
         
         // Speak the marker label and show toast
-        speakText(label);
+        speakText(label, time);
         showToast(label);
         
         // Highlight the corresponding timestamp in the transcript

@@ -7,6 +7,7 @@ layout: minimal
 # Don't /drop read-only files added at launch
 
 <script>
+const recording_id = "dont-drop-original-read-files";
 const recording_url = "https://gist.githubusercontent.com/paul-gauthier/c2e7b2751925fb7bb47036cdd37ec40d/raw/08e62ab539e2b5d4b52c15c31d9a0d241377c17c/707583.cast";
 </script>
 
