@@ -8,7 +8,7 @@ from .editor_whole_coder import EditorWholeFileCoder
 from .help_coder import HelpCoder
 from .udiff_coder import UnifiedDiffCoder
 from .wholefile_coder import WholeFileCoder
-
+from .iterate_coder import IterateCoder
 # from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 
 __all__ = [
@@ -17,6 +17,7 @@ __all__ = [
     Coder,
     EditBlockCoder,
     EditBlockFencedCoder,
+    IterateCoder,
     WholeFileCoder,
     UnifiedDiffCoder,
     #    SingleWholeFileFunctionCoder,
