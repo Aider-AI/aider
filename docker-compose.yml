@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  aider-dev:
+    build:
+      context: .
+      dockerfile: benchmark/Dockerfile
+    volumes:
+      - .:/aider
+    working_dir: /aider
+    ports:
+      - "8000:8000"
