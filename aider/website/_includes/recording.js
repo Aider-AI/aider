@@ -180,6 +180,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
   }
   
+  // Function to use browser's TTS as fallback
+  function useBrowserTTS(text) {
+    if ('speechSynthesis' in window) {
+      console.log('Using browser TTS fallback');
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      window.speechSynthesis.speak(utterance);
+      return true;
+    }
+    return false;
+  }
+  
   // Function to play pre-generated TTS audio files
   function speakText(text, timeInSeconds) {
     // Format time for filename (MM-SS)
@@ -200,19 +214,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Error handling with fallback to browser TTS
     audio.onerror = () => {
       console.warn(`Failed to load audio: ${audioPath}`);
-      // Fallback to browser TTS
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-        window.speechSynthesis.speak(utterance);
-      }
+      useBrowserTTS(text);
     };
     
     // Play the audio
     audio.play().catch(e => {
       console.warn(`Error playing audio: ${e.message}`);
+      // Also fall back to browser TTS if play() fails
+      useBrowserTTS(text);
     });
   }
   
