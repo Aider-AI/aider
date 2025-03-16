@@ -737,10 +737,8 @@ class Commands:
         res = list(map(str, matched_files))
         return res
 
-    def cmd_add(self, args):
-        "Add files to the chat so aider can edit them or review them in detail"
-
-        # First try to execute any subshell commands in the args
+    def _expand_shell_args(self, args):
+        """Helper function to expand any subshell commands in arguments"""
         try:
             # Use shell to expand any $(...) expressions
             expanded_args = subprocess.run(
@@ -750,8 +748,17 @@ class Commands:
                 text=True,
                 cwd=self.coder.root
             ).stdout.strip()
+            return expanded_args
         except Exception as e:
             self.io.tool_error(f"Error expanding subshell in arguments: {e}")
+            return None
+
+    def cmd_add(self, args):
+        "Add files to the chat so aider can edit them or review them in detail"
+
+        # Expand any subshell commands in the args
+        expanded_args = self._expand_shell_args(args)
+        if expanded_args is None:
             return
 
         all_matched_files = set()
@@ -1246,7 +1253,12 @@ class Commands:
                 self.io.tool_output(f"Converted {rel_fname} to read-only")
             return
 
-        filenames = parse_quoted_filenames(args)
+        # Expand any subshell commands in the args
+        expanded_args = self._expand_shell_args(args)
+        if expanded_args is None:
+            return
+
+        filenames = parse_quoted_filenames(expanded_args)
         all_paths = []
 
         # First collect all expanded paths
