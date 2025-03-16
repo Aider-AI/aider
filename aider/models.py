@@ -240,7 +240,13 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False, copy_paste_no_api=False, io=None):
+    COPY_PASTE_PREFIX = "cp:"
+    
+    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False, io=None):
+        self.io = io
+        self.copy_paste_instead_of_api = model.startswith(self.COPY_PASTE_PREFIX)
+        model = model.removeprefix(self.COPY_PASTE_PREFIX)
+        
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
@@ -250,9 +256,6 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
-
-        self.io = io
-        self.copy_paste_no_api=copy_paste_no_api        
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -271,7 +274,7 @@ class Model(ModelSettings):
         # with minimum 1k and maximum 8k
         self.max_chat_history_tokens = min(max(max_input_tokens / 16, 1024), 8192)
 
-        self.configure_model_settings(model)        
+        self.configure_model_settings(model)
         if weak_model is False:
             self.weak_model_name = None
         else:
@@ -281,10 +284,6 @@ class Model(ModelSettings):
             self.editor_model_name = None
         else:
             self.get_editor_model(editor_model, editor_edit_format)
-
-        if self.copy_paste_no_api:
-            self.weak_model = self
-            self.editor_model = self
 
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
@@ -319,7 +318,7 @@ class Model(ModelSettings):
         # If no exact match, try generic settings
         if not exact_match:
             self.apply_generic_model_settings(model)
-
+ 
         # Apply override settings last if they exist
         if (
             self.extra_model_settings
@@ -479,6 +478,9 @@ class Model(ModelSettings):
         # If weak_model_name is provided, override the model settings
         if provided_weak_model_name:
             self.weak_model_name = provided_weak_model_name
+        elif self.copy_paste_instead_of_api:
+            self.weak_model = self
+            return
 
         if not self.weak_model_name:
             self.weak_model = self
@@ -492,7 +494,7 @@ class Model(ModelSettings):
             self.weak_model_name,
             weak_model=False,
         )
-        return self.weak_model
+        return
 
     def commit_message_models(self):
         return [self.weak_model, self]
@@ -501,6 +503,9 @@ class Model(ModelSettings):
         # If editor_model_name is provided, override the model settings
         if provided_editor_model_name:
             self.editor_model_name = provided_editor_model_name
+        elif self.copy_paste_instead_of_api:
+            self.editor_model_name = self.name
+        
         if editor_edit_format:
             self.editor_edit_format = editor_edit_format
 
@@ -775,7 +780,7 @@ class Model(ModelSettings):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
     def send_completion(self, messages, functions, stream, temperature=None):
-        if self.copy_paste_no_api:
+        if self.copy_paste_instead_of_api:
             return self.copy_paste_completion(messages)
         
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
@@ -833,7 +838,8 @@ class Model(ModelSettings):
 """✓ Request copied to clipboard
 → Paste into LLM web UI
 ← Copy response back to clipboard
-Monitoring clipboard for changes..."""
+
+Monitoring clipboard for changes (press Ctrl+C to cancel)..."""
 )
     
         last_clipboard = pyperclip.paste()
@@ -999,7 +1005,8 @@ def sanity_check_models(io, main_model):
 def sanity_check_model(io, model):
     show = False
 
-    if model.copy_paste_no_api:
+    # Skip sanity check if using copy paste mode instead of api
+    if model.copy_paste_instead_of_api:
         return show
 
     if model.missing_keys:
