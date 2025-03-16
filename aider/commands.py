@@ -738,20 +738,55 @@ class Commands:
         return res
 
     def _expand_shell_args(self, args):
-        """Helper function to expand any subshell commands in arguments"""
-        try:
-            # Use shell to expand any $(...) expressions
-            expanded_args = subprocess.run(
-                f"echo {args}",
-                shell=True,
-                capture_output=True,
-                text=True,
-                cwd=self.coder.root
-            ).stdout.strip()
-            return expanded_args
-        except Exception as e:
-            self.io.tool_error(f"Error expanding subshell in arguments: {e}")
-            return None
+        """Helper function to expand any subshell commands in arguments while preserving quoted strings"""
+        # Split into quoted and unquoted parts
+        parts = []
+        current = ""
+        in_quote = None
+        for char in args:
+            if char in ('"', "'"):
+                if in_quote == char:
+                    # Closing quote
+                    parts.append(current)
+                    current = ""
+                    in_quote = None
+                elif in_quote is None:
+                    # Opening quote
+                    if current:
+                        parts.append(current)
+                    current = char
+                    in_quote = char
+                else:
+                    # Nested quote
+                    current += char
+            else:
+                current += char
+        
+        if current:
+            parts.append(current)
+
+        # Process each part - expand subshells in unquoted parts
+        expanded_parts = []
+        for part in parts:
+            if part.startswith(('"', "'")):
+                # Preserve quoted parts exactly
+                expanded_parts.append(part)
+            else:
+                # Expand subshells in unquoted parts
+                try:
+                    expanded = subprocess.run(
+                        f"echo {part}",
+                        shell=True,
+                        capture_output=True,
+                        text=True,
+                        cwd=self.coder.root
+                    ).stdout.strip()
+                    expanded_parts.append(expanded)
+                except Exception as e:
+                    self.io.tool_error(f"Error expanding subshell in arguments: {e}")
+                    return None
+
+        return " ".join(expanded_parts)
 
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
