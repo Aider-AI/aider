@@ -740,9 +740,24 @@ class Commands:
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
 
+        # First try to execute any subshell commands in the args
+        try:
+            # Use shell to expand any $(...) expressions
+            expanded_args = subprocess.run(
+                f"echo {args}",
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=self.coder.root
+            ).stdout.strip()
+        except Exception as e:
+            self.io.tool_error(f"Error expanding subshell in arguments: {e}")
+            return
+
         all_matched_files = set()
 
-        filenames = parse_quoted_filenames(args)
+        # Now parse the expanded arguments
+        filenames = parse_quoted_filenames(expanded_args)
         for word in filenames:
             if Path(word).is_absolute():
                 fname = Path(word)
