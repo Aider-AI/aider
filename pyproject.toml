@@ -1,7 +1,7 @@
-
 [project]
 name = "aider-chat"
 description = "Aider is AI pair programming in your terminal"
+license = { text = "Apache-2.0" }
 readme = "README.md"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -17,7 +17,76 @@ classifiers = [
     "Topic :: Software Development",
 ]
 requires-python = ">=3.9,<3.13"
-dynamic = ["dependencies", "optional-dependencies", "version"]
+dynamic = ["version"]
+dependencies = [
+    "backoff",
+    "beautifulsoup4",
+    "configargparse",
+    "diff-match-patch",
+    "diskcache",
+    "flake8",
+    "GitPython",
+    "grep_ast",
+    "importlib_resources",
+    "json5",
+    "jsonschema",
+    "litellm",
+    "mixpanel",
+    "packaging",
+    "pathspec",
+    "pexpect",
+    "pillow",
+    "pip",
+    "posthog",
+    "prompt_toolkit",
+    "psutil",
+    "pydub",
+    "pypandoc",
+    "pyperclip",
+    "PyYAML",
+    "rich",
+    "socksio",
+    "sounddevice",
+    "soundfile",
+
+    "tree-sitter (==0.23.2); python_version < '3.10'",
+    "tree-sitter (>=0.24.0); python_version >= '3.10'",
+
+    "watchfiles",
+
+    # The proper dependency is networkx[default], but this brings
+    # in matplotlib and a bunch of other deps
+    # https://github.com/networkx/networkx/blob/d7132daa8588f653eacac7a5bae1ee85a183fa43/pyproject.toml#L57
+    # We really only need networkx itself and scipy for the repomap.
+    # Pin below v3.3 to retain python 3.9 compatibility.
+    "networkx (<3.3)",
+
+    # This is the one networkx dependency that we need.
+    # Including it here explicitly because we
+    # didn't specify networkx[default] above.
+    # Pin below 1.14 to retain python 3.9 compatibility.
+    "scipy (<1.14)",
+
+    # GitHub Release action failing on "KeyError: 'home-page'"
+    # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
+    # Uses importlib-metadata
+    "importlib-metadata (<8.0.0)",
+]
+
+[project.optional-dependencies]
+help = [
+    "llama-index-core",
+    "llama-index-embeddings-huggingface",
+
+    # Because sentence-transformers doesn't like >=2
+    "numpy (<2)",
+
+    # Mac x86 only supports 2.2.2
+    # https://discuss.pytorch.org/t/why-no-macosx-x86-64-build-after-torch-2-2-2-cp39-none-macosx-10-9-x86-64-whl/204546/2
+    "torch (==2.2.2)",
+]
+browser = ["streamlit"]
+playwright = ["playwright"]
 
 [project.urls]
 Homepage = "https://github.com/Aider-AI/aider"
@@ -25,28 +94,42 @@ Homepage = "https://github.com/Aider-AI/aider"
 [project.scripts]
 aider = "aider.main:main"
 
-[tool.setuptools.dynamic]
-dependencies = { file = "requirements.txt" }
-
-[tool.setuptools.dynamic.optional-dependencies]
-dev = { file = "requirements/requirements-dev.txt" }
-help = { file = "requirements/requirements-help.txt" }
-browser = { file = "requirements/requirements-browser.txt" }
-playwright = { file = "requirements/requirements-playwright.txt" }
-
-[tool.setuptools]
-include-package-data = true
-
-[tool.setuptools.packages.find]
-include = ["aider"]
-
 [build-system]
-requires = ["setuptools>=68", "setuptools_scm[toml]>=8"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "uv-dynamic-versioning"]
+build-backend = "hatchling.build"
 
-[tool.setuptools_scm]
-write_to = "aider/_version.py"
+[dependency-groups]
+dev = [
+    "codespell",
+    "cogapp",
+    "imgcat",
+    "lox",
+    "matplotlib",
+    "pandas",
+    "pre",
+    "semver",
+    "typer",
+]
+test = [
+    "pytest",
+    "pytest-env",
+]
 
 [tool.codespell]
 skip = "*.svg,Gemfile.lock"
 write-changes = true
+
+[tool.hatch.build.hooks.version]
+path = "aider/_version.py"
+template = '''
+version = "{version}"
+'''
+
+[tool.hatch.build.targets.wheel]
+packages = ["aider"]
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv]
+default-groups = ["dev", "test"]
