@@ -240,9 +240,9 @@ class ModelInfoManager:
         """
         url_part = model[len("openrouter/"):]
         url = "https://openrouter.ai/" + url_part
-        import requests
         try:
-            response = requests.get(url, timeout=5)
+            import requests
+            response = requests.get(url, timeout=5, verify=self.verify_ssl)
             if response.status_code != 200:
                 return {}
             html = response.text
