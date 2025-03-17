@@ -249,9 +249,10 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,755,049</td><td class='right'>96.4%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>45,196</td><td class='right'>2.5%</td></tr>
-<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>17,585</td><td class='right'>1.0%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>2,122,863</td><td class='right'>97.5%</td></tr>
+<tr><td>o3-mini</td><td class='right'>25,153</td><td class='right'>1.2%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>17,585</td><td class='right'>0.8%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>8,839</td><td class='right'>0.4%</td></tr>
 <tr><td>cohere_chat/REDACTED</td><td class='right'>1,893</td><td class='right'>0.1%</td></tr>
 </table>
 

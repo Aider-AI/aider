@@ -4,7 +4,7 @@ altair==5.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-attrs==25.2.0
+attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.30.0
+narwhals==1.31.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair

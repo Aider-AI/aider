@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.11.13
+aiohttp==3.11.14
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -17,11 +17,11 @@ annotated-types==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
-anyio==4.8.0
+anyio==4.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
-attrs==25.2.0
+attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -51,7 +51,7 @@ dirtyjson==1.0.8
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-filelock==3.17.0
+filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -111,7 +111,7 @@ joblib==1.4.2
     #   -c requirements/common-constraints.txt
     #   nltk
     #   scikit-learn
-llama-index-core==0.12.23.post2
+llama-index-core==0.12.24.post1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -132,7 +132,7 @@ mpmath==1.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   sympy
-multidict==6.1.0
+multidict==6.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -238,7 +238,7 @@ tenacity==9.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-threadpoolctl==3.5.0
+threadpoolctl==3.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   scikit-learn
@@ -246,7 +246,7 @@ tiktoken==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-tokenizers==0.21.0
+tokenizers==0.21.1
     # via
     #   -c requirements/common-constraints.txt
     #   transformers

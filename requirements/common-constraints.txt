@@ -2,7 +2,7 @@
 #    uv pip compile --no-strip-extras --output-file=requirements/common-constraints.txt requirements/requirements.in requirements/requirements-browser.in requirements/requirements-dev.in requirements/requirements-help.in requirements/requirements-playwright.in
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.11.13
+aiohttp==3.11.14
     # via
     #   huggingface-hub
     #   litellm
@@ -13,12 +13,12 @@ altair==5.5.0
     # via streamlit
 annotated-types==0.7.0
     # via pydantic
-anyio==4.8.0
+anyio==4.9.0
     # via
     #   httpx
     #   openai
     #   watchfiles
-attrs==25.2.0
+attrs==25.3.0
     # via
     #   aiohttp
     #   jsonschema
@@ -85,7 +85,7 @@ distro==1.9.0
     # via
     #   openai
     #   posthog
-filelock==3.17.0
+filelock==3.18.0
     # via
     #   huggingface-hub
     #   torch
@@ -174,9 +174,9 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.63.7
+litellm==1.63.11
     # via -r requirements/requirements.in
-llama-index-core==0.12.23.post2
+llama-index-core==0.12.24.post1
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -202,7 +202,7 @@ monotonic==1.6
     # via posthog
 mpmath==1.3.0
     # via sympy
-multidict==6.1.0
+multidict==6.2.0
     # via
     #   aiohttp
     #   yarl
@@ -210,7 +210,7 @@ multiprocess==0.70.17
     # via pathos
 mypy-extensions==1.0.0
     # via typing-inspect
-narwhals==1.30.0
+narwhals==1.31.0
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -280,7 +280,7 @@ playwright==1.50.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.5.0
     # via pytest
-posthog==3.19.1
+posthog==3.21.0
     # via -r requirements/requirements.in
 pox==0.3.5
     # via pathos
@@ -427,13 +427,13 @@ tenacity==9.0.0
     # via
     #   llama-index-core
     #   streamlit
-threadpoolctl==3.5.0
+threadpoolctl==3.6.0
     # via scikit-learn
 tiktoken==0.9.0
     # via
     #   litellm
     #   llama-index-core
-tokenizers==0.21.0
+tokenizers==0.21.1
     # via
     #   litellm
     #   transformers
@@ -461,7 +461,7 @@ tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
 tree-sitter-embedded-template==0.23.2
     # via tree-sitter-language-pack
-tree-sitter-language-pack==0.6.0
+tree-sitter-language-pack==0.6.1
     # via grep-ast
 tree-sitter-yaml==0.7.0
     # via tree-sitter-language-pack

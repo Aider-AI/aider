@@ -1,5 +1,10 @@
 # Release history
 
+### main branch
+
+- Added support for `openrouter/google/gemma-3-27b-it` model.
+- Aider wrote 96% of the code in this release.
+
 ### Aider v0.77.0
 
 - Big upgrade in [programming languages supported](https://aider.chat/docs/languages.html) by adopting [tree-sitter-language-pack](https://github.com/Goldziher/tree-sitter-language-pack/).

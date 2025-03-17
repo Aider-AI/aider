@@ -941,6 +941,9 @@ cog.out("```\n")
   editor_model_name: openrouter/deepseek/deepseek-r1:free
   editor_edit_format: editor-diff
 
+- name: openrouter/google/gemma-3-27b-it
+  use_system_prompt: false
+
 - name: openrouter/google/gemma-3-27b-it:free
   use_system_prompt: false
 

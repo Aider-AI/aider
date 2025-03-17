@@ -38,7 +38,7 @@ distlib==0.3.9
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-filelock==3.17.0
+filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv

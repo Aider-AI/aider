@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.11.13
+aiohttp==3.11.14
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -16,13 +16,13 @@ annotated-types==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
-anyio==4.8.0
+anyio==4.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
     #   openai
     #   watchfiles
-attrs==25.2.0
+attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -73,7 +73,7 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
-filelock==3.17.0
+filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.63.7
+litellm==1.63.11
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -184,7 +184,7 @@ monotonic==1.6
     # via
     #   -c requirements/common-constraints.txt
     #   posthog
-multidict==6.1.0
+multidict==6.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -224,7 +224,7 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==3.19.1
+posthog==3.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -359,7 +359,7 @@ tiktoken==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-tokenizers==0.21.0
+tokenizers==0.21.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -379,7 +379,7 @@ tree-sitter-embedded-template==0.23.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-tree-sitter-language-pack==0.6.0
+tree-sitter-language-pack==0.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
