@@ -211,7 +211,7 @@ class ModelInfoManager:
 
     def get_model_info(self, model):
         cached_info = self.get_model_from_cached_json_db(model)
- 
+
         litellm_info = None
         if litellm._lazy_module or not cached_info:
             try:
@@ -219,15 +219,15 @@ class ModelInfoManager:
             except Exception as ex:
                 if "model_prices_and_context_window.json" not in str(ex):
                     print(str(ex))
- 
+
         if litellm_info:
             return litellm_info
- 
+
         if not cached_info and model.startswith("openrouter/"):
             openrouter_info = self.fetch_openrouter_model_info(model)
             if openrouter_info:
                 return openrouter_info
- 
+
         return cached_info
 
 
@@ -264,7 +264,7 @@ class ModelInfoManager:
         except Exception as e:
             print("Error fetching openrouter info:", str(e))
             return {}
- 
+
 model_info_manager = ModelInfoManager()
 
 
