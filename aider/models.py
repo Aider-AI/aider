@@ -260,7 +260,9 @@ class ModelInfoManager:
             output_cost_match = re.search(r"\$\s*0\s*/M output tokens", text, re.IGNORECASE)
             input_cost = 0 if input_cost_match else None
             output_cost = 0 if output_cost_match else None
-            return {"max_input_tokens": context_size, "input_cost": input_cost, "output_cost": output_cost}
+            params = {"max_input_tokens": context_size, "input_cost": input_cost, "output_cost": output_cost}
+            print("Parsed model parameters:", params)
+            return params
         except Exception as e:
             print("Error fetching openrouter info:", str(e))
             return {}
