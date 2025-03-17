@@ -246,10 +246,8 @@ class ModelInfoManager:
             if response.status_code != 200:
                 return {}
             html = response.text
-            from bs4 import BeautifulSoup
-            soup = BeautifulSoup(html, "html.parser")
-            text = soup.get_text()
             import re
+            text = re.sub(r'<[^>]+>', ' ', html)
             context_match = re.search(r"([\d,]+)\s*context", text)
             if context_match:
                 context_str = context_match.group(1).replace(",", "")
