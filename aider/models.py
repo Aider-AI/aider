@@ -236,7 +236,7 @@ class ModelInfoManager:
         Fetch model info by scraping the openrouter model page.
         Expected URL: https://openrouter.ai/<model_route>
         Example: openrouter/qwen/qwen-2.5-72b-instruct:free
-        Returns a dict with keys: max_input_tokens, input_cost, output_cost.
+        Returns a dict with keys: max_tokens, max_input_tokens, max_output_tokens, input_cost_per_token, output_cost_per_token.
         """
         url_part = model[len("openrouter/"):]
         url = "https://openrouter.ai/" + url_part
@@ -258,7 +258,13 @@ class ModelInfoManager:
             output_cost_match = re.search(r"\$\s*([\d.]+)\s*/M output tokens", text, re.IGNORECASE)
             input_cost = float(input_cost_match.group(1)) if input_cost_match else None
             output_cost = float(output_cost_match.group(1)) if output_cost_match else None
-            params = {"max_input_tokens": context_size, "input_cost": input_cost, "output_cost": output_cost}
+            params = {
+                "max_input_tokens": context_size,
+                "max_tokens": context_size,
+                "max_output_tokens": context_size,
+                "input_cost_per_token": input_cost,
+                "output_cost_per_token": output_cost,
+            }
             print(f"Model '{model}': Parsed parameters: {params}")
             return params
         except Exception as e:
