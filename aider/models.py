@@ -211,7 +211,7 @@ class ModelInfoManager:
 
     def get_model_info(self, model):
         cached_info = self.get_model_from_cached_json_db(model)
-
+ 
         litellm_info = None
         if litellm._lazy_module or not cached_info:
             try:
@@ -219,13 +219,52 @@ class ModelInfoManager:
             except Exception as ex:
                 if "model_prices_and_context_window.json" not in str(ex):
                     print(str(ex))
-
+ 
         if litellm_info:
             return litellm_info
-
+ 
+        if not cached_info and model.startswith("openrouter/"):
+            openrouter_info = self.fetch_openrouter_model_info(model)
+            if openrouter_info:
+                return openrouter_info
+ 
         return cached_info
 
 
+    def fetch_openrouter_model_info(self, model):
+        """
+        Fetch model info by scraping the openrouter model page.
+        Expected URL: https://openrouter.ai/<model_route>
+        Example: openrouter/qwen/qwen-2.5-72b-instruct:free
+        Returns a dict with keys: max_input_tokens, input_cost, output_cost.
+        """
+        url_part = model[len("openrouter/"):]
+        url = "https://openrouter.ai/" + url_part
+        import requests
+        try:
+            response = requests.get(url, timeout=5)
+            if response.status_code != 200:
+                return {}
+            html = response.text
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(html, "html.parser")
+            text = soup.get_text()
+            import re
+            context_match = re.search(r"([\d,]+)\s*context", text)
+            if context_match:
+                context_str = context_match.group(1).replace(",", "")
+                context_size = int(context_str)
+            else:
+                context_size = None
+            input_cost_match = re.search(r"\$\s*0\s*/M input tokens", text, re.IGNORECASE)
+            output_cost_match = re.search(r"\$\s*0\s*/M output tokens", text, re.IGNORECASE)
+            input_cost = 0 if input_cost_match else None
+            output_cost = 0 if output_cost_match else None
+            return {"max_input_tokens": context_size, "input_cost": input_cost, "output_cost": output_cost}
+        except Exception as e:
+            print("Error fetching openrouter info:", str(e))
+            return {}
+ 
 model_info_manager = ModelInfoManager()
 
 
