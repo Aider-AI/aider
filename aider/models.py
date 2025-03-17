@@ -254,10 +254,10 @@ class ModelInfoManager:
                 context_size = int(context_str)
             else:
                 context_size = None
-            input_cost_match = re.search(r"\$\s*0\s*/M input tokens", text, re.IGNORECASE)
-            output_cost_match = re.search(r"\$\s*0\s*/M output tokens", text, re.IGNORECASE)
-            input_cost = 0 if input_cost_match else None
-            output_cost = 0 if output_cost_match else None
+            input_cost_match = re.search(r"\$\s*([\d.]+)\s*/M input tokens", text, re.IGNORECASE)
+            output_cost_match = re.search(r"\$\s*([\d.]+)\s*/M output tokens", text, re.IGNORECASE)
+            input_cost = float(input_cost_match.group(1)) if input_cost_match else None
+            output_cost = float(output_cost_match.group(1)) if output_cost_match else None
             params = {"max_input_tokens": context_size, "input_cost": input_cost, "output_cost": output_cost}
             print(f"Model '{model}': Parsed parameters: {params}")
             return params
