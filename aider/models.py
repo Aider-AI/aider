@@ -246,6 +246,9 @@ class ModelInfoManager:
             if response.status_code != 200:
                 return {}
             html = response.text
+            if f'The model "{url_part}" is not available' in html:
+                print(f"Error: Model '{url_part}' is not available")
+                sys.exit(1)
             import re
             text = re.sub(r'<[^>]+>', ' ', html)
             context_match = re.search(r"([\d,]+)\s*context", text)
