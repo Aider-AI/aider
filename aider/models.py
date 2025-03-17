@@ -258,6 +258,8 @@ class ModelInfoManager:
             output_cost_match = re.search(r"\$\s*([\d.]+)\s*/M output tokens", text, re.IGNORECASE)
             input_cost = float(input_cost_match.group(1)) / 1000000 if input_cost_match else None
             output_cost = float(output_cost_match.group(1)) / 1000000 if output_cost_match else None
+            if context_size is None or input_cost is None or output_cost is None:
+                return {}
             params = {
                 "max_input_tokens": context_size,
                 "max_tokens": context_size,
