@@ -259,7 +259,7 @@ class ModelInfoManager:
             input_cost = 0 if input_cost_match else None
             output_cost = 0 if output_cost_match else None
             params = {"max_input_tokens": context_size, "input_cost": input_cost, "output_cost": output_cost}
-            print("Parsed model parameters:", params)
+            print(f"Model '{model}': Parsed parameters: {params}")
             return params
         except Exception as e:
             print("Error fetching openrouter info:", str(e))
