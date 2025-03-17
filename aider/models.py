@@ -270,7 +270,6 @@ class ModelInfoManager:
                 "input_cost_per_token": input_cost,
                 "output_cost_per_token": output_cost,
             }
-            print(f"Model '{model}': Parsed parameters: {params}")
             return params
         except Exception as e:
             print("Error fetching openrouter info:", str(e))
