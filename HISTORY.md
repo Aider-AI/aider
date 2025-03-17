@@ -2,6 +2,7 @@
 
 ### main branch
 
+- Bumped dependencies to pickup litellm fix for Ollama.
 - Added support for `openrouter/google/gemma-3-27b-it` model.
 - Aider wrote 96% of the code in this release.
 
