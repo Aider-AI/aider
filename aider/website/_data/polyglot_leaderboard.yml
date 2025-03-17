@@ -753,4 +753,30 @@
   date: 2025-03-14
   versions: 0.77.1.dev
   seconds_per_case: 85.1
-  total_cost: 0.0000  
+  total_cost: 0.0000
+
+- dirname: 2025-03-15-01-21-24--gemma3-27b-or
+  test_cases: 225
+  model: gemma-3-27b-it
+  edit_format: whole
+  commit_hash: fd21f51-dirty
+  pass_rate_1: 1.8
+  pass_rate_2: 4.9
+  pass_num_1: 4
+  pass_num_2: 11
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 181
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model openrouter/google/gemma-3-27b-it
+  date: 2025-03-15
+  versions: 0.77.1.dev
+  seconds_per_case: 79.7
+  total_cost: 0.0000
