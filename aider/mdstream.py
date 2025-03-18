@@ -52,6 +52,7 @@ class NoInsetCodeBlock(CodeBlock):
 
     def __rich_console__(self, console, options):
         code = str(self.text).rstrip()
+        dump(code)
         syntax = Syntax(code, self.lexer_name, theme=self.theme, word_wrap=True, padding=0)
         yield syntax
 
@@ -62,6 +63,7 @@ class NoInsetMarkdown(Markdown):
     @classmethod
     def make_elements(cls):
         elements = super().make_elements()
+        elements["fence"] = NoInsetCodeBlock
         elements["code_block"] = NoInsetCodeBlock
         return elements
 
