@@ -249,7 +249,7 @@ class ModelInfoManager:
             import re
             if re.search(rf'The model\s*.*{re.escape(url_part)}.* is not available', html, re.IGNORECASE):
                 print(f"\033[91mError: Model '{url_part}' is not available\033[0m")
-                sys.exit(1)
+                return {}
             text = re.sub(r'<[^>]+>', ' ', html)
             context_match = re.search(r"([\d,]+)\s*context", text)
             if context_match:
