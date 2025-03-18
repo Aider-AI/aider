@@ -20,4 +20,5 @@ and might provide some inspiration for your own use of aider.
 
 - [Don't /drop read-only files added at launch](./dont-drop-original-read-files.html) - Follow along as aider is modified to preserve read-only files specified at launch when using the /drop command. Aider does this implementation and adds test coverage.
 
+- [Warn when users apply unsupported reasoning settings](./model-accepts-settings.html) - Watch the implementation of a warning system that alerts users when they try to apply reasoning settings to models that don't support them. Includes adding model metadata, confirmation dialogs, refactoring, and comprehensive test coverage.
 
