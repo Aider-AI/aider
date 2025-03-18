@@ -2,6 +2,7 @@
 parent: Screen recordings
 nav_order: 1
 layout: minimal
+description: See how a new command-line option is added to automatically accept edits proposed by the architect model, with implementation. Aider also updates the project's HISTORY file.
 ---
 
 # Add --auto-accept-architect feature
