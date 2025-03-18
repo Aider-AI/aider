@@ -787,27 +787,30 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
         )
 
-    # Set reasoning effort if specified
+    # Set reasoning effort and thinking tokens if specified
     if args.reasoning_effort is not None:
-        if args.check_model_accepts_settings and (
+        main_model.set_reasoning_effort(args.reasoning_effort)
+        
+    if args.thinking_tokens is not None:
+        main_model.set_thinking_tokens(args.thinking_tokens)
+        
+    # Show warnings about unsupported settings after all model settings are fully resolved
+    if args.check_model_accepts_settings:
+        if args.reasoning_effort is not None and (
             not main_model.accepts_settings or "reasoning_effort" not in main_model.accepts_settings
         ):
             io.tool_warning(
                 f"Warning: The model {main_model.name} may not support the 'reasoning_effort'"
                 " setting."
             )
-        main_model.set_reasoning_effort(args.reasoning_effort)
-
-    # Set thinking tokens if specified
-    if args.thinking_tokens is not None:
-        if args.check_model_accepts_settings and (
+            
+        if args.thinking_tokens is not None and (
             not main_model.accepts_settings or "thinking_tokens" not in main_model.accepts_settings
         ):
             io.tool_warning(
                 f"Warning: The model {main_model.name} may not support the 'thinking_tokens'"
                 " setting."
             )
-        main_model.set_thinking_tokens(args.thinking_tokens)
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
