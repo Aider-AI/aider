@@ -14,7 +14,6 @@
 - Added support for `openrouter/google/gemma-3-27b-it` model.
 - Improved code block rendering in markdown output with better padding.
 - Updated exclude patterns for documentation.
-- Aider wrote 95% of the code in this release.
 
 ### Aider v0.77.0
 
