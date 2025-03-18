@@ -800,19 +800,19 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if args.reasoning_effort is not None and (
             not main_model.accepts_settings or "reasoning_effort" not in main_model.accepts_settings
         ):
-            # Refactor this to warn_setting = "reasoning_effort"
-            # Show the warning below by the ask. ai!
+            warn_setting = "reasoning_effort"
             io.tool_warning(
-                f"Warning: {main_model.name} may not support the 'reasoning_effort'"
+                f"Warning: The model {main_model.name} may not support the '{warn_setting}'"
                 " setting."
             )
             warned = True
-
+            
         if args.thinking_tokens is not None and (
             not main_model.accepts_settings or "thinking_tokens" not in main_model.accepts_settings
         ):
+            warn_setting = "thinking_tokens"
             io.tool_warning(
-                f"Warning: {main_model.name} may not support the 'thinking_tokens'"
+                f"Warning: The model {main_model.name} may not support the '{warn_setting}'"
                 " setting."
             )
             warned = True
