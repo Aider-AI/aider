@@ -185,7 +185,7 @@ class AutoCompleter(Completer):
             # don't keep completing after a space
             return
 
-        if text[0] == "/":
+        if text[0] == "/" and len(text.split()) == 1:
             yield from self.get_command_completions(document, complete_event, text, words)
             return
 
