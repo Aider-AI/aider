@@ -799,12 +799,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         warned = False
         settings_to_check = [
             {"arg": args.reasoning_effort, "name": "reasoning_effort"},
-            {"arg": args.thinking_tokens, "name": "thinking_tokens"}
+            {"arg": args.thinking_tokens, "name": "thinking_tokens"},
         ]
-        
+
         for setting in settings_to_check:
             if setting["arg"] is not None and (
-                not main_model.accepts_settings or setting["name"] not in main_model.accepts_settings
+                not main_model.accepts_settings
+                or setting["name"] not in main_model.accepts_settings
             ):
                 io.tool_warning(
                     f"Warning: The model {main_model.name} may not support the '{setting['name']}'"
