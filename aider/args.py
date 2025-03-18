@@ -185,7 +185,9 @@ def get_parser(default_config_files, git_root):
         "--check-model-accepts-settings",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)",
+        help=(
+            "Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)"
+        ),
     )
     group.add_argument(
         "--max-chat-history-tokens",
