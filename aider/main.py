@@ -797,25 +797,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Show warnings about unsupported settings after all model settings are fully resolved
     if args.check_model_accepts_settings:
         warned = False
-        if args.reasoning_effort is not None and (
-            not main_model.accepts_settings or "reasoning_effort" not in main_model.accepts_settings
-        ):
-            warn_setting = "reasoning_effort"
-            io.tool_warning(
-                f"Warning: The model {main_model.name} may not support the '{warn_setting}'"
-                " setting."
-            )
-            warned = True
-
-        if args.thinking_tokens is not None and (
-            not main_model.accepts_settings or "thinking_tokens" not in main_model.accepts_settings
-        ):
-            warn_setting = "thinking_tokens"
-            io.tool_warning(
-                f"Warning: The model {main_model.name} may not support the '{warn_setting}'"
-                " setting."
-            )
-            warned = True
+        settings_to_check = [
+            {"arg": args.reasoning_effort, "name": "reasoning_effort"},
+            {"arg": args.thinking_tokens, "name": "thinking_tokens"}
+        ]
+        
+        for setting in settings_to_check:
+            if setting["arg"] is not None and (
+                not main_model.accepts_settings or setting["name"] not in main_model.accepts_settings
+            ):
+                io.tool_warning(
+                    f"Warning: The model {main_model.name} may not support the '{setting['name']}'"
+                    " setting."
+                )
+                warned = True
 
         if warned:
             if not io.confirm_ask(
