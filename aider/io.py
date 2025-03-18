@@ -185,7 +185,11 @@ class AutoCompleter(Completer):
             # don't keep completing after a space
             return
 
-        if text[0] == "/" and len(text.split()) == 1:
+        # Let /ask, /code, /architect do code symbol completions.
+        if text.startswith("/ask") or text.startswith("/code") or text.startswith("/architect"):
+            pass
+        elif text[0] == "/":
+            # All other slash commands (incl /add) do normal command completions (no code symbols).
             yield from self.get_command_completions(document, complete_event, text, words)
             return
 
