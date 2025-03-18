@@ -800,8 +800,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if args.reasoning_effort is not None and (
             not main_model.accepts_settings or "reasoning_effort" not in main_model.accepts_settings
         ):
+            # Refactor this to warn_setting = "reasoning_effort"
+            # Show the warning below by the ask. ai!
             io.tool_warning(
-                f"Warning: The model {main_model.name} may not support the 'reasoning_effort'"
+                f"Warning: {main_model.name} may not support the 'reasoning_effort'"
                 " setting."
             )
             warned = True
@@ -810,14 +812,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             not main_model.accepts_settings or "thinking_tokens" not in main_model.accepts_settings
         ):
             io.tool_warning(
-                f"Warning: The model {main_model.name} may not support the 'thinking_tokens'"
+                f"Warning: {main_model.name} may not support the 'thinking_tokens'"
                 " setting."
             )
             warned = True
 
         if warned:
             if not io.confirm_ask(
-                "Sending unsupported parameters can cause API calls to fail. Continue anyway?"
+                "Sending unsupported parameters can cause API calls to fail. Continue?"
             ):
                 analytics.event("exit", reason="User canceled after parameter warning")
                 return 1
