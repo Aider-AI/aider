@@ -121,7 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
       idleTimeLimit: 1,
       theme: "aider",
       poster: "npt:0:01",
-      markers: markers
+      markers: markers,
+      controls: true
     }
   );
   
