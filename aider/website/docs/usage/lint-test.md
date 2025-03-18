@@ -29,6 +29,33 @@ This is how most linters normally operate.
 By default, aider will lint any files which it edits.
 You can disable this with the `--no-auto-lint` switch.
 
+### Per-language linters
+
+To specify different linters based on the code language, use `--lint "language: cmd"`.
+
+### Code formatting "linters"
+
+Many people use code formatters as linters, to format and pretty their code.
+These tools sometimes return non-zero exit codes if they make changes, which will
+confuse aider into thinking there's an actual lint error that needs to be fixed.
+
+You can use formatters by wrapping them in a shell script like this and setting
+the script as your linter.
+
+```bash
+#!/bin/bash
+
+# Run it twice.
+#
+# First attempt may reformat/modify files, and therefore exit with non-zero status.
+#
+# Second attempt will not do anything and exit 0 unless there's a real problem beyond
+# the code formatting that was completed.
+
+pre-commit run --files $* >/dev/null \
+    || pre-commit run --files $*
+```
+
 ## Testing
 
 You can run tests with `/test <test-command>`.
