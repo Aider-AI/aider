@@ -789,7 +789,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Set reasoning effort if specified
     if args.reasoning_effort is not None:
-        if main_model.accepts_settings and "reasoning_effort" not in main_model.accepts_settings:
+        if not main_model.accepts_settings or "reasoning_effort" not in main_model.accepts_settings:
             io.tool_warning(
                 f"Warning: The model {main_model.name} may not support the 'reasoning_effort'"
                 " setting."
@@ -798,7 +798,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Set thinking tokens if specified
     if args.thinking_tokens is not None:
-        if main_model.accepts_settings and "thinking_tokens" not in main_model.accepts_settings:
+        if not main_model.accepts_settings or "thinking_tokens" not in main_model.accepts_settings:
             io.tool_warning(
                 f"Warning: The model {main_model.name} may not support the 'thinking_tokens'"
                 " setting."
