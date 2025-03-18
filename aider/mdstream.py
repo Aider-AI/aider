@@ -5,7 +5,7 @@ import time
 
 from rich.console import Console
 from rich.live import Live
-from rich.markdown import Markdown, CodeBlock
+from rich.markdown import CodeBlock, Markdown
 from rich.syntax import Syntax
 from rich.text import Text
 
@@ -49,18 +49,16 @@ The end.
 
 class NoInsetCodeBlock(CodeBlock):
     """A code block with syntax highlighting and no padding."""
-    
+
     def __rich_console__(self, console, options):
         code = str(self.text).rstrip()
-        syntax = Syntax(
-            code, self.lexer_name, theme=self.theme, word_wrap=True, padding=0
-        )
+        syntax = Syntax(code, self.lexer_name, theme=self.theme, word_wrap=True, padding=0)
         yield syntax
 
 
 class NoInsetMarkdown(Markdown):
     """Markdown with code blocks that have no padding."""
-    
+
     @classmethod
     def make_elements(cls):
         elements = super().make_elements()
