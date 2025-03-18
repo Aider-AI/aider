@@ -52,8 +52,7 @@ class NoInsetCodeBlock(CodeBlock):
 
     def __rich_console__(self, console, options):
         code = str(self.text).rstrip()
-        dump(code)
-        syntax = Syntax(code, self.lexer_name, theme=self.theme, word_wrap=True, padding=0)
+        syntax = Syntax(code, self.lexer_name, theme=self.theme, word_wrap=True, padding=(1, 0))
         yield syntax
 
 
