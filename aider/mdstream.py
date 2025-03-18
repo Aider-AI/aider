@@ -60,12 +60,11 @@ class NoInsetCodeBlock(CodeBlock):
 class NoInsetMarkdown(Markdown):
     """Markdown with code blocks that have no padding."""
 
-    @classmethod
-    def make_elements(cls):
-        elements = super().make_elements()
-        elements["fence"] = NoInsetCodeBlock
-        elements["code_block"] = NoInsetCodeBlock
-        return elements
+    elements = {
+        **Markdown.elements,
+        "fence": NoInsetCodeBlock,
+        "code_block": NoInsetCodeBlock,
+    }
 
 
 class MarkdownStream:
