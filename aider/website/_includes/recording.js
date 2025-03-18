@@ -200,10 +200,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
   }
   
+  // Track if TTS is currently in progress to prevent duplicates
+  let ttsInProgress = false;
+  
   // Improved browser TTS function
   function useBrowserTTS(text) {
+    // Don't start new speech if already in progress
+    if (ttsInProgress) {
+      console.log('Speech synthesis already in progress, skipping');
+      return false;
+    }
+    
     if ('speechSynthesis' in window) {
       console.log('Using browser TTS fallback');
+      
+      // Set flag to prevent duplicate speech
+      ttsInProgress = true;
       
       // Cancel any ongoing speech
       window.speechSynthesis.cancel();
@@ -219,8 +231,14 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       utterance.onstart = () => console.log('Speech started');
-      utterance.onend = () => console.log('Speech ended');
-      utterance.onerror = (e) => console.warn('Speech error:', e);
+      utterance.onend = () => {
+        console.log('Speech ended');
+        ttsInProgress = false; // Reset flag when speech completes
+      };
+      utterance.onerror = (e) => {
+        console.warn('Speech error:', e);
+        ttsInProgress = false; // Reset flag on error
+      };
       
       window.speechSynthesis.speak(utterance);
       return true;
@@ -250,6 +268,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     console.log(`Device is iOS: ${isIOS}`);
     
+    // Flag to track if we've already fallen back to TTS
+    let fallenBackToTTS = false;
+    
     try {
       // Create or reuse audio element
       if (!globalAudio) {
@@ -260,7 +281,10 @@ document.addEventListener('DOMContentLoaded', function() {
       // Set up event handlers
       globalAudio.onerror = (e) => {
         console.warn(`Audio error: ${e.type}`, e);
-        useBrowserTTS(text);
+        if (!fallenBackToTTS) {
+          fallenBackToTTS = true;
+          useBrowserTTS(text);
+        }
       };
       
       // For iOS, preload might help with subsequent plays
@@ -283,7 +307,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("iOS playback failed, trying SpeechSynthesis");
           }
           
-          useBrowserTTS(text);
+          if (!fallenBackToTTS) {
+            fallenBackToTTS = true;
+            useBrowserTTS(text);
+          }
         });
       }
     } catch (e) {
