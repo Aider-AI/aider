@@ -10,4 +10,10 @@ exclude_website_pats = [
     "docs/unified-diffs.md",
     "docs/leaderboards/index.md",
     "assets/**",
+    ".jekyll-metadata",
+    "Gemfile.lock",
+    "Gemfile",
+    "_config.yml",
+    "**/OLD/**",
+    "OLD/**",
 ]
