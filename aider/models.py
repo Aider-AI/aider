@@ -363,7 +363,6 @@ class Model(ModelSettings):
             self.examples_as_sys_msg = True
             self.use_temperature = False
             self.reasoning_tag = "think"
-            self.accepts_settings = ["reasoning_effort", "thinking_tokens"]
             return  # <--
 
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
@@ -394,7 +393,6 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.examples_as_sys_msg = True
             self.reminder = "user"
-            self.accepts_settings = ["reasoning_effort"]
             return  # <--
 
         if model.startswith("o1-") or "/o1-" in model:
