@@ -796,7 +796,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Show warnings about unsupported settings after all model settings are fully resolved
     if args.check_model_accepts_settings:
-        warned = False
+        warn_setting = False
         settings_to_check = [
             {"arg": args.reasoning_effort, "name": "reasoning_effort"},
             {"arg": args.thinking_tokens, "name": "thinking_tokens"},
@@ -811,9 +811,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                     f"Warning: The model {main_model.name} may not support the '{setting['name']}'"
                     " setting."
                 )
-                warned = True
+                warn_setting = True
 
-        if warned:
+        if warn_setting:
             if not io.confirm_ask(
                 "Sending unsupported parameters can cause API calls to fail. Continue?"
             ):
