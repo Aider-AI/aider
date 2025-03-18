@@ -808,8 +808,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 or setting["name"] not in main_model.accepts_settings
             ):
                 io.tool_warning(
-                    f"Warning: The model {main_model.name} may not support the '{setting['name']}'"
-                    " setting."
+                    f"Warning: {main_model.name} may not support the '{setting['name']}' setting."
                 )
                 warn_setting = True
 
