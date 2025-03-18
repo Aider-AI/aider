@@ -2,6 +2,7 @@
 parent: Screen recordings
 nav_order: 1
 layout: minimal
+highlight_image: /assets/recordings.jpg
 description: Watch the implementation of a warning system that alerts users when they try to apply reasoning settings to models that don't support them. Includes adding model metadata, confirmation dialogs, refactoring, and comprehensive test coverage.
 ---
 

@@ -2,6 +2,7 @@
 parent: Screen recordings
 nav_order: 1
 layout: minimal
+highlight_image: /assets/recordings.jpg
 description: Follow along as aider is modified to preserve read-only files specified at launch when using the /drop command. Aider does this implementation and adds test coverage.
 ---
 

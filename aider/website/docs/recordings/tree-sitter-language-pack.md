@@ -2,6 +2,7 @@
 parent: Screen recordings
 nav_order: 0
 layout: minimal
+highlight_image: /assets/recordings.jpg
 description: Watch how aider adds support for tons of new programming languages by integrating with tree-sitter-language-pack. Demonstrates using aider to script downloading a collection of files, and using ad-hoc bash scripts to have aider modify a collection of files.
 ---
 
