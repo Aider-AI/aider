@@ -327,6 +327,8 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.use_temperature = False
             self.system_prompt_prefix = "Formatting re-enabled. "
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
             return  # <--
 
         if "/o1-mini" in model:
@@ -348,6 +350,8 @@ class Model(ModelSettings):
             self.use_temperature = False
             self.streaming = False
             self.system_prompt_prefix = "Formatting re-enabled. "
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
             return  # <--
 
         if "deepseek" in model and "v3" in model:
@@ -388,6 +392,15 @@ class Model(ModelSettings):
             self.reminder = "sys"
             return  # <--
 
+        if "3-7-sonnet" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.examples_as_sys_msg = True
+            self.reminder = "user"
+            if "thinking_tokens" not in self.accepts_settings:
+                self.accepts_settings.append("thinking_tokens")
+            return  # <--
+            
         if "3.5-sonnet" in model or "3-5-sonnet" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
