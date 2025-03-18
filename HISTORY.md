@@ -1,5 +1,13 @@
 # Release history
 
+### main branch
+
+- Added model setting validation to warn users when a model may not support specific settings like `--reasoning-effort` and `--thinking-tokens`.
+- Added a confirmation prompt when attempting to use unsupported model parameters that could cause API calls to fail.
+- Added `--check-model-accepts-settings` flag (default: true) to control warnings for unsupported model settings.
+- Annotated which models support reasoning_effort and thinking_tokens settings in the model settings data.
+- Aider wrote 96% of the code in this release.
+
 ### Aider v0.77.1
 
 - Bumped dependencies to pickup litellm fix for Ollama.

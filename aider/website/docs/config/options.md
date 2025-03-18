@@ -33,6 +33,7 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--auto-accept-architect | --no-auto-accept-architect]
              [--weak-model] [--editor-model] [--editor-edit-format]
              [--show-model-warnings | --no-show-model-warnings]
+             [--check-model-accepts-settings | --no-check-model-accepts-settings]
              [--max-chat-history-tokens]
              [--cache-prompts | --no-cache-prompts]
              [--cache-keepalive-pings] [--map-tokens]
@@ -219,6 +220,14 @@ Environment variable: `AIDER_SHOW_MODEL_WARNINGS`
 Aliases:
   - `--show-model-warnings`
   - `--no-show-model-warnings`
+
+### `--check-model-accepts-settings`
+Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)  
+Default: True  
+Environment variable: `AIDER_CHECK_MODEL_ACCEPTS_SETTINGS`  
+Aliases:
+  - `--check-model-accepts-settings`
+  - `--no-check-model-accepts-settings`
 
 ### `--max-chat-history-tokens VALUE`
 Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.  
