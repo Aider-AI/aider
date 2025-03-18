@@ -182,6 +182,12 @@ def get_parser(default_config_files, git_root):
         help="Only work with models that have meta-data available (default: True)",
     )
     group.add_argument(
+        "--check-model-accepts-settings",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)",
+    )
+    group.add_argument(
         "--max-chat-history-tokens",
         type=int,
         default=None,
