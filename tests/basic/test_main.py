@@ -1012,5 +1012,5 @@ class TestMain(TestCase):
             return_coder=True,
         )
         self.assertEqual(
-            coder.main_model.extra_params.get("extra_body", {}).get("thinking_tokens"), "1000"
+            coder.main_model.extra_params.get("thinking", {}).get("budget_tokens"), 1000
         )
