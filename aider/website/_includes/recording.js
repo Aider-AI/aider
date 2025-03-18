@@ -145,6 +145,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, 100);
   
+  // Track active toast elements
+  let activeToast = null;
+  
   // Function to display toast notification
   function showToast(text) {
     // Get the appropriate container based on fullscreen state
@@ -176,6 +179,11 @@ document.addEventListener('DOMContentLoaded', function() {
       container = fsContainer;
     }
     
+    // Remove any existing toast
+    if (activeToast) {
+      hideToast(activeToast);
+    }
+    
     // Create toast element
     const toast = document.createElement('div');
     toast.className = 'toast-notification';
@@ -184,24 +192,40 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add to container
     container.appendChild(toast);
     
+    // Store reference to active toast
+    activeToast = {
+      element: toast,
+      container: container
+    };
+    
     // Trigger animation
     setTimeout(() => {
       toast.style.opacity = '1';
     }, 10);
     
-    // Remove after 3 seconds
+    return activeToast;
+  }
+  
+  // Function to hide a toast
+  function hideToast(toastInfo) {
+    if (!toastInfo || !toastInfo.element) return;
+    
+    toastInfo.element.style.opacity = '0';
     setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => {
-        if (container && container.contains(toast)) {
-          container.removeChild(toast);
-        }
-      }, 300); // Wait for fade out animation
-    }, 3000);
+      if (toastInfo.container && toastInfo.container.contains(toastInfo.element)) {
+        toastInfo.container.removeChild(toastInfo.element);
+      }
+      
+      // If this was the active toast, clear the reference
+      if (activeToast === toastInfo) {
+        activeToast = null;
+      }
+    }, 300); // Wait for fade out animation
   }
   
   // Track if TTS is currently in progress to prevent duplicates
   let ttsInProgress = false;
+  let currentToast = null;
   
   // Improved browser TTS function
   function useBrowserTTS(text) {
@@ -234,10 +258,22 @@ document.addEventListener('DOMContentLoaded', function() {
       utterance.onend = () => {
         console.log('Speech ended');
         ttsInProgress = false; // Reset flag when speech completes
+        
+        // Hide toast when speech ends
+        if (currentToast) {
+          hideToast(currentToast);
+          currentToast = null;
+        }
       };
       utterance.onerror = (e) => {
         console.warn('Speech error:', e);
         ttsInProgress = false; // Reset flag on error
+        
+        // Also hide toast on error
+        if (currentToast) {
+          hideToast(currentToast);
+          currentToast = null;
+        }
       };
       
       window.speechSynthesis.speak(utterance);
@@ -249,6 +285,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Function to play pre-generated TTS audio files
   function speakText(text, timeInSeconds) {
+    // Show the toast and keep reference
+    currentToast = showToast(text);
+    
     // Format time for filename (MM-SS)
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
@@ -279,11 +318,24 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       // Set up event handlers
+      globalAudio.onended = () => {
+        console.log('Audio playback ended');
+        // Hide toast when audio ends
+        if (currentToast) {
+          hideToast(currentToast);
+          currentToast = null;
+        }
+      };
+      
       globalAudio.onerror = (e) => {
         console.warn(`Audio error: ${e.type}`, e);
         if (!fallenBackToTTS) {
           fallenBackToTTS = true;
           useBrowserTTS(text);
+        } else if (currentToast) {
+          // If we've already tried TTS and that failed too, hide the toast
+          hideToast(currentToast);
+          currentToast = null;
         }
       };
       
@@ -362,9 +414,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const { index, time, label } = event;
         console.log(`marker! ${index} - ${time} - ${label}`);
         
-        // Speak the marker label and show toast
+        // Speak the marker label (toast is now shown within speakText)
         speakText(label, time);
-        showToast(label);
         
         // Highlight the corresponding timestamp in the transcript
         highlightTimestamp(time);
