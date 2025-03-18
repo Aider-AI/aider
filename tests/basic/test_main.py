@@ -690,14 +690,21 @@ class TestMain(TestCase):
             # Test model that accepts the thinking_tokens setting
             with patch("aider.io.InputOutput.tool_warning") as mock_warning:
                 main(
-                    ["--model", "anthropic/claude-3-7-sonnet-20250219", "--thinking-tokens", "1000", "--yes", "--exit"],
+                    [
+                        "--model",
+                        "anthropic/claude-3-7-sonnet-20250219",
+                        "--thinking-tokens",
+                        "1000",
+                        "--yes",
+                        "--exit",
+                    ],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
                 # No warning should be shown as this model accepts thinking_tokens
                 for call in mock_warning.call_args_list:
                     self.assertNotIn("thinking_tokens", call[0][0])
-                
+
             # Test model that doesn't have accepts_settings for thinking_tokens
             with patch("aider.io.InputOutput.tool_warning") as mock_warning:
                 main(
@@ -711,7 +718,7 @@ class TestMain(TestCase):
                     if "thinking_tokens" in call[0][0]:
                         warning_shown = True
                 self.assertTrue(warning_shown)
-                
+
             # Test model that accepts the reasoning_effort setting
             with patch("aider.io.InputOutput.tool_warning") as mock_warning:
                 main(
@@ -722,7 +729,7 @@ class TestMain(TestCase):
                 # No warning should be shown as this model accepts reasoning_effort
                 for call in mock_warning.call_args_list:
                     self.assertNotIn("reasoning_effort", call[0][0])
-                
+
             # Test model that doesn't have accepts_settings for reasoning_effort
             with patch("aider.io.InputOutput.tool_warning") as mock_warning:
                 main(
@@ -736,7 +743,7 @@ class TestMain(TestCase):
                     if "reasoning_effort" in call[0][0]:
                         warning_shown = True
                 self.assertTrue(warning_shown)
-    
+
     @patch("aider.models.ModelInfoManager.set_verify_ssl")
     def test_no_verify_ssl_sets_model_info_manager(self, mock_set_verify_ssl):
         with GitTemporaryDirectory():
@@ -996,7 +1003,7 @@ class TestMain(TestCase):
         self.assertEqual(
             coder.main_model.extra_params.get("extra_body", {}).get("reasoning_effort"), "3"
         )
-        
+
     def test_thinking_tokens_option(self):
         coder = main(
             ["--thinking-tokens", "1000", "--yes", "--exit"],
