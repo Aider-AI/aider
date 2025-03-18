@@ -26,7 +26,7 @@ This switch is useful for Sonnet 3.7.
 
 ### Model compatibility warnings
 
-Not all models support both settings. Aider will warn you when you use a setting that may not be supported by your chosen model:
+Not all models support these settings. Aider will warn you when you use a setting that may not be supported by your chosen model:
 
 ```
 Warning: The model claude-3-sonnet@20240229 may not support the 'reasoning_effort' setting.
@@ -37,8 +37,8 @@ You can disable these warnings with the `--no-check-model-accepts-settings` flag
 
 Each model has a predefined list of supported settings in its configuration. For example:
 
-- OpenAI models generally support `reasoning_effort`
-- Anthropic models (Claude) generally support `thinking_tokens`
+- OpenAI reasoning models generally support `reasoning_effort`
+- Anthropic reasoning models generally support `thinking_tokens`
 
 
 ## Thinking tokens in XML tags
@@ -65,13 +65,6 @@ Aider will rely on the non-thinking output for instructions on how to make code 
 ### Model-specific reasoning tags
 
 Different models use different XML tags for their reasoning:
-
-| Model | Reasoning Tag |
-|-------|---------------|
-| DeepSeek R1 | `think` |
-| Deepseek V3 | `thinking` |
-| Google Gemini | `reasoning` |
-
 When using custom or self-hosted models, you may need to specify the appropriate reasoning tag in your configuration.
 
 ```yaml
@@ -94,18 +87,6 @@ they sometimes prohibit streaming, use of temperature and/or the system prompt.
 
 Aider is configured to work properly with these models
 when served through major provider APIs.
-
-### Model settings compatibility matrix
-
-Here's a summary of common reasoning settings compatibility:
-
-| Model Type | `reasoning_effort` | `thinking_tokens` | Notes |
-|------------|-------------------|-------------------|-------|
-| OpenAI reasoning models | ✅ | ❌ | Supports values 0-1 |
-| Claude 3.7+ | ❌ | ✅ | Supports integer values | 
-| Claude 3.0-3.5 | ❌ | ❌ | Uses built-in reasoning |
-| Google Gemini | ❌ | ❌ | Uses built-in reasoning |
-| DeepSeek | ❌ | ❌ | Uses built-in reasoning |
 
 If you're using a model through a different provider (like Azure or custom deployment),
 you may need to [configure model settings](/docs/config/adv-model-settings.html)
@@ -135,6 +116,7 @@ for the model you are interested in, say o3-mini:
   use_temperature: false             # <---
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
+  accepts_settings: ["reasoning_effort"]
 ```
 
 Pay attention to these settings, which must be set to `false`
@@ -159,6 +141,7 @@ settings for a different provider.
   use_temperature: false             # <---
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
+  accepts_settings: ["reasoning_effort"]
 ```
 
 ### Accepting settings configuration
@@ -166,14 +149,12 @@ settings for a different provider.
 Models define which reasoning settings they accept using the `accepts_settings` property:
 
 ```yaml
-- name: gpt-4o
+- name: a-fancy-reasoning-model
   edit_format: diff
-  weak_model_name: gpt-4o-mini
   use_repo_map: true
-  editor_model_name: gpt-4o
-  editor_edit_format: editor-diff
   accepts_settings:                  # <---
     - reasoning_effort               # <---
 ```
 
-This tells Aider that the model accepts the `reasoning_effort` setting but not `thinking_tokens`, which is why you'll get a warning if you try to use `--thinking-tokens` with this model.
+This tells Aider that the model accepts the `reasoning_effort` setting but not `thinking_tokens`.
+So you would get a warning if you try to use `--thinking-tokens` with this model.
