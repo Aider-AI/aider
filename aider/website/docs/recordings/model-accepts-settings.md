@@ -17,7 +17,7 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/66b1b5aa
 
 ## Commentary
 
-- 0:01 Users sometimes tell aider to apply reasoning effort settings to models that don't support them. This can cause LLM API calls to completely fail, with non-specific error messages from the API provider. We're going to warn users up front to prevent this.
+- 0:01 Users sometimes run aider with "reasoning" settings that aren't supported by the model they're using. This can cause LLM API calls to completely fail, with non-specific error messages from the API provider. We're going to warn users up front to prevent this.
 - 0:25 Ok, let's ask aider to add a new model setting where we can note which reasoning settings it supports. And then print a warning if the user tries to apply an unsupported setting.
 - 1:30 Looks like it's including some extra changes we don't want.
 - 1:45 Let's have a look at the models code and clean up some stray lines.
