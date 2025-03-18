@@ -806,7 +806,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 " setting."
             )
             warned = True
-            
+
         if args.thinking_tokens is not None and (
             not main_model.accepts_settings or "thinking_tokens" not in main_model.accepts_settings
         ):
