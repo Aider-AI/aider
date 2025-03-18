@@ -790,10 +790,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Set reasoning effort and thinking tokens if specified
     if args.reasoning_effort is not None:
         main_model.set_reasoning_effort(args.reasoning_effort)
-        
+
     if args.thinking_tokens is not None:
         main_model.set_thinking_tokens(args.thinking_tokens)
-        
+
     # Show warnings about unsupported settings after all model settings are fully resolved
     if args.check_model_accepts_settings:
         warned = False
@@ -805,7 +805,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 " setting."
             )
             warned = True
-            
+
         if args.thinking_tokens is not None and (
             not main_model.accepts_settings or "thinking_tokens" not in main_model.accepts_settings
         ):
@@ -814,9 +814,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 " setting."
             )
             warned = True
-            
+
         if warned:
-            if not io.confirm_ask("Sending unsupported parameters can cause API calls to fail. Continue anyway?"):
+            if not io.confirm_ask(
+                "Sending unsupported parameters can cause API calls to fail. Continue anyway?"
+            ):
                 analytics.event("exit", reason="User canceled after parameter warning")
                 return 1
 
