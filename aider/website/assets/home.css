@@ -193,6 +193,7 @@ nav {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     overflow: hidden;
+    aspect-ratio: 2656 / 2160;
 }
 
 .video-container video {
