@@ -35,6 +35,7 @@ def run_git_log():
     result = subprocess.run(cmd, capture_output=True, text=True)
     return result.stdout
 
+
 def run_git_diff():
     latest_ver = get_latest_version_from_history()
     cmd = [
@@ -85,7 +86,7 @@ def main():
     with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".log") as tmp_log:
         tmp_log.write(log_content)
         log_path = tmp_log.name
-        
+
     with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".diff") as tmp_diff:
         tmp_diff.write(diff_content)
         diff_path = tmp_diff.name
@@ -101,7 +102,17 @@ def main():
     # Construct and run the aider command
     message = history_prompt.format(aider_line=aider_line)
 
-    cmd = ["aider", hist_path, "--read", log_path, diff_path, "--msg", message, "--no-git", "--no-auto-lint"]
+    cmd = [
+        "aider",
+        hist_path,
+        "--read",
+        log_path,
+        diff_path,
+        "--msg",
+        message,
+        "--no-git",
+        "--no-auto-lint",
+    ]
     subprocess.run(cmd)
 
     # Read back the updated history
