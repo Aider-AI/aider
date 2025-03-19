@@ -225,6 +225,7 @@
             border-radius: 8px;
             padding: 30px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: opacity 0.3s ease;
         }
         
         .testimonial-text {
@@ -638,50 +639,75 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
         const initialTestimonials = shuffledTestimonials.slice(0, displayCount);
         
         // Function to create a testimonial card
-        function createTestimonialCard(testimonial) {
+        function createTestimonialCard(testimonial, index) {
             return `
-                <div class="testimonial-card">
+                <div class="testimonial-card" id="testimonial-${index}">
                     <p class="testimonial-text">"${testimonial.text}"</p>
                     <p class="testimonial-author">— <a href="${testimonial.link}" target="_blank">${testimonial.author}</a></p>
                 </div>
             `;
         }
 
-        // Function to update the display
-        function updateTestimonials() {
+        // Function to initialize the display
+        function initializeTestimonials() {
             const container = document.getElementById('testimonial-container');
             let html = '';
             
             for (let i = 0; i < displayCount; i++) {
-                html += createTestimonialCard(initialTestimonials[i]);
+                html += createTestimonialCard(initialTestimonials[i], i);
             }
             
             container.innerHTML = html;
         }
 
+        // Function to update a single testimonial
+        function updateSingleTestimonial(index) {
+            // Get a new testimonial not currently displayed
+            const remainingTestimonials = testimonials.filter(
+                t => !initialTestimonials.some(it => it.author === t.author && it.text === t.text)
+            );
+            
+            let newTestimonial;
+            if (remainingTestimonials.length > 0) {
+                const randomIndex = Math.floor(Math.random() * remainingTestimonials.length);
+                newTestimonial = remainingTestimonials[randomIndex];
+            } else {
+                // If we've used all testimonials, pick a random one
+                const randomIndex = Math.floor(Math.random() * testimonials.length);
+                newTestimonial = testimonials[randomIndex];
+            }
+            
+            // Replace the testimonial at the given index
+            initialTestimonials[index] = newTestimonial;
+            
+            // Update the displayed testimonial
+            const testimonialElement = document.getElementById(`testimonial-${index}`);
+            if (testimonialElement) {
+                testimonialElement.innerHTML = `
+                    <p class="testimonial-text">"${newTestimonial.text}"</p>
+                    <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
+                `;
+                
+                // Add a brief animation effect
+                testimonialElement.style.opacity = 0;
+                setTimeout(() => {
+                    testimonialElement.style.opacity = 1;
+                }, 300);
+            }
+        }
+
         // Initialize testimonials
         document.addEventListener('DOMContentLoaded', function() {
-            updateTestimonials();
+            initializeTestimonials();
             
-            // Rotate testimonials
+            let currentIndex = 0;
+            
+            // Rotate one testimonial at a time
             setInterval(function() {
-                // Remove first testimonial and add a random one from the remaining pool
-                initialTestimonials.shift();
+                updateSingleTestimonial(currentIndex);
                 
-                const remainingTestimonials = testimonials.filter(
-                    t => !initialTestimonials.some(it => it.author === t.author && it.text === t.text)
-                );
-                
-                if (remainingTestimonials.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * remainingTestimonials.length);
-                    initialTestimonials.push(remainingTestimonials[randomIndex]);
-                } else {
-                    // If we've used all testimonials, reshuffle and start over
-                    const newShuffled = shuffleArray([...testimonials]);
-                    initialTestimonials.push(newShuffled[0]);
-                }
-                
-                updateTestimonials();
+                // Move to the next index
+                currentIndex = (currentIndex + 1) % displayCount;
             }, 3000);
         });
     </script>
