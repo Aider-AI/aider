@@ -311,62 +311,67 @@
         
         .stats-container {
             margin-bottom: 40px;
-            background: linear-gradient(135deg, rgba(76, 110, 245, 0.1) 0%, rgba(76, 110, 245, 0.2) 100%);
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(76, 110, 245, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
             max-width: 800px;
             margin-left: auto;
             margin-right: auto;
         }
         
-        .stats-heading {
-            margin-bottom: 20px;
-            color: var(--primary);
-            font-size: 1.6rem;
-            text-align: center;
-            font-weight: 700;
+        .github-badge {
+            display: inline-flex;
+            height: 28px;
+            border-radius: 4px;
+            overflow: hidden;
+            font-size: 0.85rem;
+            font-weight: 600;
+            line-height: 1;
+            text-decoration: none;
+            transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
         }
         
-        .stats-grid {
+        .github-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .badge-label {
             display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
+            align-items: center;
+            padding: 0 10px;
+            background-color: #555;
+            color: white;
+            height: 100%;
         }
         
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            min-width: 160px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid rgba(76, 110, 245, 0.1);
+        .badge-value {
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            background-color: var(--primary);
+            color: white;
+            height: 100%;
         }
         
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(76, 110, 245, 0.15);
+        .badge-stars .badge-value {
+            background-color: #f1c40f;
+            color: #333;
         }
         
-        .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
+        .badge-installs .badge-value {
+            background-color: #2ecc71;
         }
         
-        .stat-number {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 5px;
-            line-height: 1.1;
+        .badge-router .badge-value {
+            background-color: #9b59b6;
         }
         
-        .stat-label {
-            color: #495057;
-            font-weight: 500;
+        .badge-tokens .badge-value {
+            background-color: #e74c3c;
         }
         
         @media (max-width: 768px) {
@@ -415,23 +420,22 @@
             <p>Aider lets you pair program with LLMs, to edit code in your local git repository. Start a new project or work with an existing code base.</p>
             
             <div class="stats-container">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">🚀</div>
-                        <div class="stat-number">1.6M</div>
-                        <div class="stat-label">Installs</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🏆</div>
-                        <div class="stat-number">Top 20</div>
-                        <div class="stat-label">OpenRouter</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📈</div>
-                        <div class="stat-number">15B</div>
-                        <div class="stat-label">Tokens/week</div>
-                    </div>
-                </div>
+                <a href="https://github.com/Aider-AI/aider" class="github-badge badge-stars">
+                    <span class="badge-label">⭐ GitHub Stars</span>
+                    <span class="badge-value">29k</span>
+                </a>
+                <a href="https://pypi.org/project/aider-chat/" class="github-badge badge-installs">
+                    <span class="badge-label">📦 Installs</span>
+                    <span class="badge-value">1.6M</span>
+                </a>
+                <a href="#" class="github-badge badge-tokens">
+                    <span class="badge-label">📈 Weekly Tokens</span>
+                    <span class="badge-value">15B</span>
+                </a>
+                <a href="https://openrouter.ai/" class="github-badge badge-router">
+                    <span class="badge-label">🏆 OpenRouter</span>
+                    <span class="badge-value">Top 20</span>
+                </a>
             </div>
             
             <div class="buttons">
