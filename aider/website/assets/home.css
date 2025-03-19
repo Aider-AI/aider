@@ -463,8 +463,7 @@ footer {
 }
 
 .stats-container {
-    margin-bottom: 40px;
-    margin-top: 50px;
+    margin-top: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -548,6 +547,7 @@ footer {
     
     .hero-video {
         order: 2;
+        margin: 0;
     }
     
     .hero h1 {
