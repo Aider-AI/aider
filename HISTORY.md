@@ -6,13 +6,13 @@
 - Added `--check-model-accepts-settings` flag (default: true) to force unsupported model settings.
 - Annotated which models support reasoning_effort and thinking_tokens settings in the model settings data.
 - Consolidated model setting validation checks into a single loop for better code organization.
+- Improved code block rendering in markdown output with better padding using NoInsetMarkdown.
 - Aider wrote 96% of the code in this release.
 
 ### Aider v0.77.1
 
 - Bumped dependencies to pickup litellm fix for Ollama.
 - Added support for `openrouter/google/gemma-3-27b-it` model.
-- Improved code block rendering in markdown output with better padding.
 - Updated exclude patterns for documentation.
 
 ### Aider v0.77.0
