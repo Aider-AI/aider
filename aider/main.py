@@ -787,16 +787,21 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
         )
 
-    # Set reasoning effort and thinking tokens if specified
+    # Set reasoning effort and thinking tokens if specified and supported
     if args.reasoning_effort is not None:
-        main_model.set_reasoning_effort(args.reasoning_effort)
+        if not args.check_model_accepts_settings or (
+            main_model.accepts_settings and "reasoning_effort" in main_model.accepts_settings
+        ):
+            main_model.set_reasoning_effort(args.reasoning_effort)
 
     if args.thinking_tokens is not None:
-        main_model.set_thinking_tokens(args.thinking_tokens)
+        if not args.check_model_accepts_settings or (
+            main_model.accepts_settings and "thinking_tokens" in main_model.accepts_settings
+        ):
+            main_model.set_thinking_tokens(args.thinking_tokens)
 
-    # Show warnings about unsupported settings after all model settings are fully resolved
+    # Show warnings about unsupported settings that are being ignored
     if args.check_model_accepts_settings:
-        warn_setting = False
         settings_to_check = [
             {"arg": args.reasoning_effort, "name": "reasoning_effort"},
             {"arg": args.thinking_tokens, "name": "thinking_tokens"},
@@ -808,16 +813,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 or setting["name"] not in main_model.accepts_settings
             ):
                 io.tool_warning(
-                    f"Warning: {main_model.name} may not support the '{setting['name']}' setting."
+                    f"Warning: {main_model.name} does not support the '{setting['name']}' setting. This parameter will be ignored."
                 )
-                warn_setting = True
-
-        if warn_setting:
-            if not io.confirm_ask(
-                "Sending unsupported parameters can cause API calls to fail. Continue?"
-            ):
-                analytics.event("exit", reason="User canceled after parameter warning")
-                return 1
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
