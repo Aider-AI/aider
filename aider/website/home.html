@@ -706,11 +706,22 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
         document.addEventListener('DOMContentLoaded', function() {
             initializeTestimonials();
             
+            // Track the last flipped card index to avoid repeats
+            let lastFlippedIndex = -1;
+            
             // Rotate one testimonial at a time, randomly selecting which one to change
             setInterval(function() {
-                // Randomly select which testimonial to update
-                const randomIndex = Math.floor(Math.random() * displayCount);
+                // Select a random index that's different from the last flipped one
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * displayCount);
+                } while (randomIndex === lastFlippedIndex && displayCount > 1);
+                
+                // Update the selected testimonial
                 updateSingleTestimonial(randomIndex);
+                
+                // Store this index as the last flipped
+                lastFlippedIndex = randomIndex;
             }, 3000);
         });
     </script>
