@@ -787,14 +787,16 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
         )
 
-    # Set reasoning effort and thinking tokens if specified and supported
+    # Set reasoning effort and thinking tokens if specified
     if args.reasoning_effort is not None:
+        # Apply if check is disabled or model explicitly supports it
         if not args.check_model_accepts_settings or (
             main_model.accepts_settings and "reasoning_effort" in main_model.accepts_settings
         ):
             main_model.set_reasoning_effort(args.reasoning_effort)
 
     if args.thinking_tokens is not None:
+        # Apply if check is disabled or model explicitly supports it
         if not args.check_model_accepts_settings or (
             main_model.accepts_settings and "thinking_tokens" in main_model.accepts_settings
         ):

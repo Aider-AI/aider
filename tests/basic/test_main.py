@@ -1015,7 +1015,7 @@ class TestMain(TestCase):
 
     def test_reasoning_effort_option(self):
         coder = main(
-            ["--reasoning-effort", "3", "--yes", "--exit"],
+            ["--reasoning-effort", "3", "--no-check-model-accepts-settings", "--yes", "--exit"],
             input=DummyInput(),
             output=DummyOutput(),
             return_coder=True,
