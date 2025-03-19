@@ -225,7 +225,10 @@
             border-radius: 8px;
             padding: 30px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            transition: opacity 0.3s ease;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            backface-visibility: hidden;
         }
         
         .testimonial-text {
@@ -683,15 +686,18 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
             // Update the displayed testimonial
             const testimonialElement = document.getElementById(`testimonial-${index}`);
             if (testimonialElement) {
-                testimonialElement.innerHTML = `
-                    <p class="testimonial-text">"${newTestimonial.text}"</p>
-                    <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
-                `;
+                // Start the flip animation
+                testimonialElement.style.transform = "rotateY(90deg)";
                 
-                // Add a brief animation effect
-                testimonialElement.style.opacity = 0;
+                // Update content when card is perpendicular to view (hidden)
                 setTimeout(() => {
-                    testimonialElement.style.opacity = 1;
+                    testimonialElement.innerHTML = `
+                        <p class="testimonial-text">"${newTestimonial.text}"</p>
+                        <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
+                    `;
+                    
+                    // Complete the flip
+                    testimonialElement.style.transform = "rotateY(0deg)";
                 }, 300);
             }
         }
