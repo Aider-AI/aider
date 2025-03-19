@@ -10,9 +10,10 @@ Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mi
 
 Folks love aider:
 
-- 1.6M installs
-- Top 20 app on OpenRouter
-- 9B tokens/week total traffic
+- 29k GitHub stars
+- 1.6M Installs
+- 87B Tokens processed
+- Top 20 on OpenRouter
 
 <!-- SCREENCAST START -->
 <p align="center">
@@ -95,9 +96,6 @@ for more details.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
 - Aider can edit multiple files at once for complex requests.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.
-- Edit files in your editor or IDE while chatting with aider,
-and it will always use the latest version.
-Pair program with AI.
 - [Add images to the chat](https://aider.chat/docs/usage/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
 - [Add URLs to the chat](https://aider.chat/docs/usage/images-urls.html) and aider will read their content.
 - [Code with your voice](https://aider.chat/docs/usage/voice.html).
