@@ -511,9 +511,16 @@ footer {
     }
     
     .buttons {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: center;
+        gap: 10px;
+    }
+    
+    .btn {
+        min-width: 120px;
+        text-align: center;
     }
     
     .stats-container {
@@ -583,6 +590,15 @@ footer {
 @media (max-width: 576px) {
     body {
         font-size: 0.9rem;
+    }
+    
+    .buttons {
+        gap: 8px;
+    }
+    
+    .btn {
+        min-width: 100px;
+        padding: 8px 12px;
     }
     
     nav {
