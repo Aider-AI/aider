@@ -121,6 +121,9 @@ nav {
 
 .hero-content {
     text-align: left;
+    max-width: 90%;
+    padding-left: 20px;
+    border-left: 4px solid var(--primary);
 }
 
 .hero-video {
@@ -134,21 +137,24 @@ nav {
     font-size: 2.5rem;
     margin-bottom: 24px;
     color: var(--dark);
-    text-align: center;
+    text-align: left;
+    line-height: 1.2;
 }
 
 .hero p {
     font-size: 1.2rem;
-    max-width: 700px;
-    margin: 0 0 40px;
+    max-width: 90%;
+    margin: 0 0 32px;
     color: #495057;
+    line-height: 1.6;
+    font-weight: 400;
 }
 
 .buttons {
     display: flex;
     gap: 20px;
     justify-content: flex-start;
-    margin-top: 32px;
+    margin-top: 10px;
     margin-bottom: 0;
 }
 
