@@ -24,8 +24,22 @@ def run_git_log():
     cmd = [
         "git",
         "log",
-        "-p",
         "--pretty=full",
+        f"v{latest_ver}..HEAD",
+        "--",
+        "aider/",
+        ":!aider/website/",
+        ":!scripts/",
+        ":!HISTORY.md",
+    ]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    return result.stdout
+
+def run_git_diff():
+    latest_ver = get_latest_version_from_history()
+    cmd = [
+        "git",
+        "diff",
         f"v{latest_ver}..HEAD",
         "--",
         "aider/",
@@ -38,8 +52,9 @@ def run_git_log():
 
 
 def main():
-    # Get the git log output
-    diff_content = run_git_log()
+    # Get the git log and diff output
+    log_content = run_git_log()
+    diff_content = run_git_diff()
 
     # Extract relevant portion of HISTORY.md
     latest_ver = get_latest_version_from_history()
@@ -67,6 +82,10 @@ def main():
         relevant_history = history_content[start_idx:next_version_idx]
 
     # Save relevant portions to temporary files
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".log") as tmp_log:
+        tmp_log.write(log_content)
+        log_path = tmp_log.name
+        
     with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".diff") as tmp_diff:
         tmp_diff.write(diff_content)
         diff_path = tmp_diff.name
@@ -82,7 +101,7 @@ def main():
     # Construct and run the aider command
     message = history_prompt.format(aider_line=aider_line)
 
-    cmd = ["aider", hist_path, "--read", diff_path, "--msg", message, "--no-git", "--no-auto-lint"]
+    cmd = ["aider", hist_path, "--read", log_path, diff_path, "--msg", message, "--no-git", "--no-auto-lint"]
     subprocess.run(cmd)
 
     # Read back the updated history
@@ -109,6 +128,7 @@ def main():
     subprocess.run(["scripts/update-docs.sh"])
 
     # Cleanup
+    os.unlink(log_path)
     os.unlink(diff_path)
     os.unlink(hist_path)
 
