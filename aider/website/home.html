@@ -6,6 +6,11 @@
     <title>Aider - AI Pair Programming in Your Terminal</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <style>
+        @font-face {
+            font-family: GlassTTYVT220;
+            src: local("Glass TTY VT220"), local("Glass TTY VT220 Medium"), url(/font/Glass_TTY_VT220.ttf) format("truetype");
+        }
+        
         :root {
             --primary: #4C6EF5;
             --primary-dark: #3b5bdb;
@@ -14,6 +19,7 @@
             --light: #F8F9FA;
             --gray: #ADB5BD;
             --code-bg: #282a36;
+            --terminal-green: #18d818;
         }
         
         * {
@@ -54,8 +60,10 @@
         .logo {
             font-size: 1.8rem;
             font-weight: 700;
-            color: var(--primary);
+            font-family: 'GlassTTYVT220', monospace;
+            color: var(--terminal-green);
             text-decoration: none;
+            letter-spacing: 0.5px;
         }
         
         .nav-links {
