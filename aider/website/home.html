@@ -76,28 +76,51 @@
         
         .hero {
             padding: 80px 0;
-            text-align: center;
             background: linear-gradient(135deg, #f5f7ff 0%, #e9ecf8 100%);
+        }
+        
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .hero-content {
+            text-align: left;
+        }
+        
+        .hero-video {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .hero h1 {
             font-size: 3rem;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             color: var(--dark);
+            text-align: left;
         }
         
         .hero p {
             font-size: 1.2rem;
             max-width: 700px;
-            margin: 0 auto 40px;
+            margin: 0 0 40px;
             color: #495057;
         }
         
         .buttons {
             display: flex;
             gap: 20px;
-            justify-content: center;
-            margin-bottom: 40px;
+            justify-content: flex-start;
+            margin-top: 32px;
+            margin-bottom: 0;
+        }
+        
+        .btn-primary {
+            padding: 14px 28px;
+            font-size: 1.1rem;
         }
         
         .btn {
@@ -416,37 +439,45 @@
     
     <section class="hero">
         <div class="container">
-            <h1>AI Pair Programming in Your Terminal</h1>
-            <p>Aider lets you pair program with LLMs, to edit code in your local git repository. Start a new project or work with an existing code base.</p>
-            
-            <div class="stats-container">
-                <a href="https://github.com/Aider-AI/aider" class="github-badge badge-stars">
-                    <span class="badge-label">⭐ GitHub Stars</span>
-                    <span class="badge-value">29k</span>
-                </a>
-                <a href="https://pypi.org/project/aider-chat/" class="github-badge badge-installs">
-                    <span class="badge-label">📦 Installs</span>
-                    <span class="badge-value">1.6M</span>
-                </a>
-                <div class="github-badge badge-tokens">
-                    <span class="badge-label">📈 Token Processed</span>
-                    <span class="badge-value">87B</span>
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <h1>AI Pair Programming in Your Terminal</h1>
+                    
+                    <div class="stats-container">
+                        <a href="https://github.com/Aider-AI/aider" class="github-badge badge-stars">
+                            <span class="badge-label">⭐ GitHub Stars</span>
+                            <span class="badge-value">29k</span>
+                        </a>
+                        <a href="https://pypi.org/project/aider-chat/" class="github-badge badge-installs">
+                            <span class="badge-label">📦 Installs</span>
+                            <span class="badge-value">1.6M</span>
+                        </a>
+                        <div class="github-badge badge-tokens">
+                            <span class="badge-label">📈 Token Processed</span>
+                            <span class="badge-value">87B</span>
+                        </div>
+                        <a href="https://openrouter.ai/" class="github-badge badge-router">
+                            <span class="badge-label">🏆 OpenRouter</span>
+                            <span class="badge-value">Top 20</span>
+                        </a>
+                    </div>
+                    
+                    <p>Aider lets you pair program with LLMs, to edit code in your local git repository. Start a new project or work with an existing code base.</p>
+                    
+                    <div class="buttons">
+                        <a href="#getting-started" class="btn btn-primary">Get Started</a>
+                        <a href="https://aider.chat/docs/" class="btn btn-secondary">Documentation</a>
+                    </div>
                 </div>
-                <a href="https://openrouter.ai/" class="github-badge badge-router">
-                    <span class="badge-label">🏆 OpenRouter</span>
-                    <span class="badge-value">Top 20</span>
-                </a>
-            </div>
-            
-            <div class="buttons">
-                <a href="#getting-started" class="btn btn-primary">Get Started</a>
-                <a href="https://aider.chat/docs/" class="btn btn-secondary">Documentation</a>
-            </div>
-            <div class="video-container">
-                <video autoplay loop muted playsinline>
-                    <source src="/assets/shell-cmds-small.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                
+                <div class="hero-video">
+                    <div class="video-container">
+                        <video autoplay loop muted playsinline>
+                            <source src="/assets/shell-cmds-small.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
