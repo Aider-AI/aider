@@ -23,7 +23,7 @@ const recording_url = "https://gist.githubusercontent.com/paul-gauthier/66b1b5aa
 - 1:45 Let's have a look at the models code and clean up some stray lines.
 - 2:00 It also made the warning logic too conservative. We want to warn unless the setting is explicitly known to be supported.
 - 3:00 Ok, good. Now lets add a setting to silence these warnings for power users who are doing something intentional.
-- 3:45 Now we need to update the database of model settings to annotate which models support which reasoning settings. We'll start with the code that handles "fallback" settings.
+- 3:45 Now we need to update the database of model settings to annotate which models support which reasoning settings. We'll start with the code that handles "fallback" settings for known models on unknown providers.
 - 4:45 Oh, we forgot to give aider the actual file with that code! Aider asks to see it.
 - 5:00 Ok, we've confused aider by asking it to change code it couldn't see.
 - 5:10 Let's clear the chat and refine the prompt and try again.
