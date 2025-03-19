@@ -83,7 +83,7 @@
 .macos-backdrop {
   background: linear-gradient(135deg, #ff9966, #ff5e62, #6666ff, #0066ff);
   border-radius: 12px;
-  padding: 50px 20px; // i want to scale with width on the sides based on screen size from 5px for narrow screens to 50px for wide screens ai!
+  padding: 50px clamp(5px, 5vw, 50px);
   margin: 20px 0;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   position: relative;
