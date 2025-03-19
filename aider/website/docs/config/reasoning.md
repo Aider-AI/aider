@@ -155,7 +155,7 @@ settings for a different provider.
   accepts_settings: ["reasoning_effort"]
 ```
 
-### Accepting settings configuration
+### How `accepts_settings` works
 
 Models define which reasoning settings they accept using the `accepts_settings` property:
 
@@ -167,5 +167,18 @@ Models define which reasoning settings they accept using the `accepts_settings` 
     - reasoning_effort               # <---
 ```
 
-This tells Aider that the model accepts the `reasoning_effort` setting but not `thinking_tokens`.
-So you would get a warning if you try to use `--thinking-tokens` with this model.
+This configuration:
+1. Tells Aider that the model accepts the `reasoning_effort` setting
+2. Indicates the model does NOT accept `thinking_tokens` (since it's not listed)
+3. Causes Aider to ignore any `--thinking-tokens` value passed for this model
+4. Generates a warning if you try to use `--thinking-tokens` with this model
+
+You can override this behavior with `--no-check-model-accepts-settings`, which will:
+1. Force Aider to apply all settings passed via command line
+2. Skip all compatibility checks
+3. Potentially cause API errors if the model truly doesn't support the setting
+
+This is useful when:
+- Testing new models
+- Using models through custom providers
+- Working with models that support settings but don't advertise them correctly
