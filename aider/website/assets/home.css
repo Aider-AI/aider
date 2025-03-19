@@ -476,6 +476,10 @@ footer {
 }
 
 @media (max-width: 992px) {
+    body {
+        font-size: 0.95rem;
+    }
+    
     .hero-grid {
         grid-template-columns: 1fr;
     }
@@ -490,7 +494,7 @@ footer {
     }
     
     .hero h1 {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         text-align: center;
         margin-bottom: 20px;
     }
@@ -512,10 +516,90 @@ footer {
     }
     
     .section-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+    }
+    
+    .feature-title {
+        font-size: 1.1rem;
+    }
+    
+    .feature-card p {
+        font-size: 0.9rem;
+    }
+    
+    .feature-icon {
+        font-size: 1.5rem;
+    }
+    
+    .testimonial-text {
+        font-size: 0.9rem;
+    }
+    
+    .testimonial-author {
+        font-size: 0.8rem;
+    }
+    
+    .code-block {
+        font-size: 0.9rem;
+    }
+    
+    .info-content {
+        font-size: 0.95rem;
     }
     
     .nav-links {
         display: none;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+    
+    .btn-primary {
+        padding: 12px 24px;
+        font-size: 1rem;
+    }
+    
+    .github-badge {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    body {
+        font-size: 0.9rem;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    .section-title {
+        font-size: 1.6rem;
+        margin-bottom: 40px;
+    }
+    
+    .feature-title {
+        font-size: 1rem;
+    }
+    
+    .code-block {
+        font-size: 0.8rem;
+        padding: 15px;
+    }
+    
+    .btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .btn-primary {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+    }
+    
+    .logo {
+        font-size: 1.5rem;
     }
 }
