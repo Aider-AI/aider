@@ -865,7 +865,7 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
                 // Update content when card is perpendicular to view (hidden)
                 setTimeout(() => {
                     testimonialElement.innerHTML = `
-                        <p class="testimonial-text">"${newTestimonial.text}"</p>
+                        <p class="testimonial-text">${newTestimonial.text}</p>
                         <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
                     `;
                     
