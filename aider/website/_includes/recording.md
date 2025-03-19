@@ -12,16 +12,18 @@
 <div class="page-container">
   <div class="toast-container" id="toast-container"></div>
 
-  <div class="terminal-container">
-    <div class="terminal-header">
-      <div class="terminal-buttons">
-        <div class="terminal-button terminal-close"></div>
-        <div class="terminal-button terminal-minimize"></div>
-        <div class="terminal-button terminal-expand"></div>
+  <div class="macos-backdrop">
+    <div class="terminal-container">
+      <div class="terminal-header">
+        <div class="terminal-buttons">
+          <div class="terminal-button terminal-close"></div>
+          <div class="terminal-button terminal-minimize"></div>
+          <div class="terminal-button terminal-expand"></div>
+        </div>
+        <div class="terminal-title">aider</div>
       </div>
-      <div class="terminal-title">aider</div>
+      <div id="demo"></div>
     </div>
-    <div id="demo"></div>
   </div>
 </div>
 
