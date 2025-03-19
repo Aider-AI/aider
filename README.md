@@ -1,7 +1,6 @@
 
 <!-- Edit README.md, not index.md -->
 
-# Aider is AI pair programming in your terminal
 
 <p align="center">
   <a href="https://github.com/Aider-AI/aider/stargazers">
@@ -15,6 +14,8 @@
     <img alt="OpenRouter Ranking" src="https://img.shields.io/badge/OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/>
   </a>
 </p>
+
+# Aider is AI pair programming in your terminal
 
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
