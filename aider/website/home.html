@@ -664,20 +664,40 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
         }
 
         // Function to update a single testimonial
-        function updateSingleTestimonial(index) {
-            // Get a new testimonial not currently displayed
-            const remainingTestimonials = testimonials.filter(
-                t => !initialTestimonials.some(it => it.author === t.author && it.text === t.text)
-            );
+        function updateSingleTestimonial(index, recentlyRemoved = []) {
+            // Get a new testimonial not currently displayed and not recently removed
+            const remainingTestimonials = testimonials.filter(t => {
+                // Not currently displayed in any card
+                const notCurrentlyDisplayed = !initialTestimonials.some(
+                    it => it.author === t.author && it.text === t.text
+                );
+                
+                // Not in the recently removed list
+                const notRecentlyRemoved = !recentlyRemoved.some(
+                    rt => rt.author === t.author && rt.text === t.text
+                );
+                
+                return notCurrentlyDisplayed && notRecentlyRemoved;
+            });
             
             let newTestimonial;
             if (remainingTestimonials.length > 0) {
                 const randomIndex = Math.floor(Math.random() * remainingTestimonials.length);
                 newTestimonial = remainingTestimonials[randomIndex];
             } else {
-                // If we've used all testimonials, pick a random one
-                const randomIndex = Math.floor(Math.random() * testimonials.length);
-                newTestimonial = testimonials[randomIndex];
+                // If we've used all available testimonials, pick a random one that's at least not currently displayed
+                const notDisplayed = testimonials.filter(
+                    t => !initialTestimonials.some(it => it.author === t.author && it.text === t.text)
+                );
+                
+                if (notDisplayed.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * notDisplayed.length);
+                    newTestimonial = notDisplayed[randomIndex];
+                } else {
+                    // Absolute fallback - just pick any random testimonial
+                    const randomIndex = Math.floor(Math.random() * testimonials.length);
+                    newTestimonial = testimonials[randomIndex];
+                }
             }
             
             // Replace the testimonial at the given index
@@ -709,6 +729,9 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
             // Track the last flipped card index to avoid repeats
             let lastFlippedIndex = -1;
             
+            // Track recently removed testimonials to prevent immediate reuse
+            let recentlyRemovedTestimonials = [];
+            
             // Rotate one testimonial at a time, randomly selecting which one to change
             setInterval(function() {
                 // Select a random index that's different from the last flipped one
@@ -717,8 +740,17 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
                     randomIndex = Math.floor(Math.random() * displayCount);
                 } while (randomIndex === lastFlippedIndex && displayCount > 1);
                 
-                // Update the selected testimonial
-                updateSingleTestimonial(randomIndex);
+                // Store the testimonial being removed to prevent immediate reuse
+                const removedTestimonial = initialTestimonials[randomIndex];
+                recentlyRemovedTestimonials.push(removedTestimonial);
+                
+                // Limit the recently removed list to avoid depleting the pool too much
+                if (recentlyRemovedTestimonials.length > 3) {
+                    recentlyRemovedTestimonials.shift(); // Remove oldest entry
+                }
+                
+                // Update the selected testimonial, passing the list of testimonials to avoid
+                updateSingleTestimonial(randomIndex, recentlyRemovedTestimonials);
                 
                 // Store this index as the last flipped
                 lastFlippedIndex = randomIndex;
