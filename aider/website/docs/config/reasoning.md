@@ -16,17 +16,18 @@ Different models support different reasoning settings. Aider provides several wa
 
 You can use the `--reasoning-effort` switch to control the reasoning effort
 of models which support this setting.
-This switch is useful for OpenAI's reasoning models.
+This switch is useful for OpenAI's reasoning models, which accept "low", "medium" and "high".
 
 ### Thinking tokens
 
 You can use the `--thinking-tokens` switch to request
 the model use a certain number of thinking tokens.
 This switch is useful for Sonnet 3.7.
+You can specify the token budget like "1024", "1k", "8k" or "0.01M".
 
 ### Model compatibility and settings
 
-Not all models support these settings. Aider uses the 
+Not all models support these two settings. Aider uses the 
 [model's metadata](/docs/config/adv-model-settings.html)
 to determine which settings each model accepts:
 
@@ -55,6 +56,32 @@ Each model has a predefined list of supported settings in its configuration. For
 - Anthropic reasoning models generally support `thinking_tokens`
 
 
+### How `accepts_settings` works
+
+Models define which reasoning settings they accept using the `accepts_settings` property:
+
+```yaml
+- name: a-fancy-reasoning-model
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings:                  # <---
+    - reasoning_effort               # <---
+```
+
+This configuration:
+1. Tells Aider that the model accepts the `reasoning_effort` setting
+2. Indicates the model does NOT accept `thinking_tokens` (since it's not listed)
+3. Causes Aider to ignore any `--thinking-tokens` value passed for this model
+4. Generates a warning if you try to use `--thinking-tokens` with this model
+
+You can override this behavior with `--no-check-model-accepts-settings`, which will:
+1. Force Aider to apply all settings passed via command line
+2. Skip all compatibility checks
+3. Potentially cause API errors if the model truly doesn't support the setting
+
+This is useful when testing new models or using models through custom API providers.
+
+
 ## Thinking tokens in XML tags
 
 There is also a `reasoning_tag` setting, which takes the name of an XML tag
@@ -73,7 +100,7 @@ Hello!
 ```
 
 Aider will display the thinking/reasoning output, 
-but it won't be used for file editing instructions, etc.
+but it won't be used for file editing instructions, added to the chat history, etc.
 Aider will rely on the non-thinking output for instructions on how to make code changes, etc.
 
 ### Model-specific reasoning tags
@@ -98,8 +125,7 @@ When using custom or self-hosted models, you may need to specify the appropriate
 
 Many "reasoning" models have restrictions on how they can be used:
 they sometimes prohibit streaming, use of temperature and/or the system prompt.
-
-Aider is configured to work properly with these models
+Aider is configured to work properly with popular models
 when served through major provider APIs.
 
 If you're using a model through a different provider (like Azure or custom deployment),
@@ -119,7 +145,8 @@ Reasoning models often have specific requirements for these settings:
 | `streaming` | Whether to stream responses | Some reasoning models don't support streaming |
 | `use_system_prompt` | Whether to use system prompt | Some reasoning models don't support system prompts |
 
-You should find one of the existing model setting configuration entries
+It may be helpful to find one of the 
+[existing model setting configuration entries](https://github.com/Aider-AI/aider/blob/main/aider/resources/model-settings.yml)
 for the model you are interested in, say o3-mini:
 
 ```yaml
@@ -157,29 +184,3 @@ settings for a different provider.
   editor_edit_format: editor-diff
   accepts_settings: ["reasoning_effort"]
 ```
-
-### How `accepts_settings` works
-
-Models define which reasoning settings they accept using the `accepts_settings` property:
-
-```yaml
-- name: a-fancy-reasoning-model
-  edit_format: diff
-  use_repo_map: true
-  accepts_settings:                  # <---
-    - reasoning_effort               # <---
-```
-
-This configuration:
-1. Tells Aider that the model accepts the `reasoning_effort` setting
-2. Indicates the model does NOT accept `thinking_tokens` (since it's not listed)
-3. Causes Aider to ignore any `--thinking-tokens` value passed for this model
-4. Generates a warning if you try to use `--thinking-tokens` with this model
-
-You can override this behavior with `--no-check-model-accepts-settings`, which will:
-1. Force Aider to apply all settings passed via command line
-2. Skip all compatibility checks
-3. Potentially cause API errors if the model truly doesn't support the setting
-
-This is useful when testing new models or using models through custom API providers.
-
