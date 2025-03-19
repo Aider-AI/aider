@@ -480,6 +480,10 @@ footer {
         font-size: 0.95rem;
     }
     
+    nav {
+        padding: 12px 0;
+    }
+    
     .hero-grid {
         grid-template-columns: 1fr;
     }
@@ -578,6 +582,14 @@ footer {
 @media (max-width: 576px) {
     body {
         font-size: 0.9rem;
+    }
+    
+    nav {
+        padding: 8px 0;
+    }
+    
+    .logo {
+        font-size: 1.4rem;
     }
     
     .hero h1 {
