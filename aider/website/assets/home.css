@@ -567,6 +567,10 @@ footer {
     .hero-content {
         text-align: center;
         order: 1;
+        max-width: 100%;
+        padding-left: 0;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     .hero-video {
@@ -578,12 +582,15 @@ footer {
         font-size: 2.2rem;
         text-align: center;
         margin-bottom: 20px;
+        width: 100%;
     }
     
     .hero p {
         font-size: 1rem;
         margin-left: auto;
         margin-right: auto;
+        max-width: 100%;
+        text-align: center;
     }
     
     .buttons {
@@ -592,6 +599,9 @@ footer {
         align-items: center;
         justify-content: center;
         gap: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100%;
     }
     
     .btn {
