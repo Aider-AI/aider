@@ -523,6 +523,15 @@ footer {
         font-size: 1.1rem;
     }
     
+    .feature-card {
+        padding: 20px;
+    }
+    
+    .feature-card-header {
+        padding: 10px 12px;
+        margin-bottom: 15px;
+    }
+    
     .feature-card p {
         font-size: 0.9rem;
     }
@@ -582,6 +591,15 @@ footer {
     
     .feature-title {
         font-size: 1rem;
+    }
+    
+    .feature-card {
+        padding: 15px;
+    }
+    
+    .feature-card-header {
+        padding: 8px 10px;
+        margin-bottom: 12px;
     }
     
     .code-block {
