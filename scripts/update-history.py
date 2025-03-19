@@ -107,6 +107,7 @@ def main():
         hist_path,
         "--read",
         log_path,
+        "--read",
         diff_path,
         "--msg",
         message,
