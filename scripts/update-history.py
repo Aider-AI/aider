@@ -13,9 +13,9 @@ from aider import __version__
 def get_latest_version_from_history():
     with open("HISTORY.md", "r") as f:
         history_content = f.read()
-    
+
     # Find most recent version header
-    match = re.search(r'### Aider v(\d+\.\d+\.\d+)', history_content)
+    match = re.search(r"### Aider v(\d+\.\d+\.\d+)", history_content)
     if not match:
         raise ValueError("Could not find version header in HISTORY.md")
     return match.group(1)
