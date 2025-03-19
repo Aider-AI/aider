@@ -254,10 +254,7 @@ nav {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    padding: 12px 15px;
-    background-color: rgba(76, 110, 245, 0.1);
-    border-radius: 6px;
-    border-bottom: 1px solid rgba(76, 110, 245, 0.2);
+    padding: 0 0 12px 0;
 }
 
 .feature-icon {
@@ -275,6 +272,18 @@ nav {
     font-size: 1.3rem;
     color: var(--dark);
     margin: 0;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.feature-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary);
 }
 
 .models {
