@@ -122,8 +122,7 @@ nav {
 .hero-content {
     text-align: left;
     max-width: 90%;
-    padding-left: 20px;
-    border-left: 4px solid var(--primary);
+    padding-left: 0;
 }
 
 .hero-video {
