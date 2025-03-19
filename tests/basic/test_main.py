@@ -716,7 +716,7 @@ class TestMain(TestCase):
                 patch("aider.models.Model.set_thinking_tokens") as mock_set_thinking,
             ):
                 main(
-                    ["--model", "gpt-4o", "--thinking-tokens", "1000", "--yes", "--exit"],
+                    ["--model", "gpt-4o", "--thinking-tokens", "1000", "--check-model-accepts-settings", "--yes", "--exit"],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
@@ -726,8 +726,8 @@ class TestMain(TestCase):
                     if "thinking_tokens" in call[0][0]:
                         warning_shown = True
                 self.assertTrue(warning_shown)
-                # Method should still be called by default
-                mock_set_thinking.assert_called_once_with("1000")
+                # Method should NOT be called because model doesn't support it and check flag is on
+                mock_set_thinking.assert_not_called()
 
             # Test model that accepts the reasoning_effort setting
             with (
