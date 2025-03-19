@@ -688,8 +688,10 @@ class TestMain(TestCase):
         # Test that appropriate warnings are shown based on accepts_settings configuration
         with GitTemporaryDirectory():
             # Test model that accepts the thinking_tokens setting
-            with patch("aider.io.InputOutput.tool_warning") as mock_warning, \
-                 patch("aider.models.Model.set_thinking_tokens") as mock_set_thinking:
+            with (
+                patch("aider.io.InputOutput.tool_warning") as mock_warning,
+                patch("aider.models.Model.set_thinking_tokens") as mock_set_thinking,
+            ):
                 main(
                     [
                         "--model",
@@ -709,8 +711,10 @@ class TestMain(TestCase):
                 mock_set_thinking.assert_called_once_with("1000")
 
             # Test model that doesn't have accepts_settings for thinking_tokens
-            with patch("aider.io.InputOutput.tool_warning") as mock_warning, \
-                 patch("aider.models.Model.set_thinking_tokens") as mock_set_thinking:
+            with (
+                patch("aider.io.InputOutput.tool_warning") as mock_warning,
+                patch("aider.models.Model.set_thinking_tokens") as mock_set_thinking,
+            ):
                 main(
                     ["--model", "gpt-4o", "--thinking-tokens", "1000", "--yes", "--exit"],
                     input=DummyInput(),
@@ -726,8 +730,10 @@ class TestMain(TestCase):
                 mock_set_thinking.assert_called_once_with("1000")
 
             # Test model that accepts the reasoning_effort setting
-            with patch("aider.io.InputOutput.tool_warning") as mock_warning, \
-                 patch("aider.models.Model.set_reasoning_effort") as mock_set_reasoning:
+            with (
+                patch("aider.io.InputOutput.tool_warning") as mock_warning,
+                patch("aider.models.Model.set_reasoning_effort") as mock_set_reasoning,
+            ):
                 main(
                     ["--model", "o1", "--reasoning-effort", "3", "--yes", "--exit"],
                     input=DummyInput(),
@@ -740,8 +746,10 @@ class TestMain(TestCase):
                 mock_set_reasoning.assert_called_once_with("3")
 
             # Test model that doesn't have accepts_settings for reasoning_effort
-            with patch("aider.io.InputOutput.tool_warning") as mock_warning, \
-                 patch("aider.models.Model.set_reasoning_effort") as mock_set_reasoning:
+            with (
+                patch("aider.io.InputOutput.tool_warning") as mock_warning,
+                patch("aider.models.Model.set_reasoning_effort") as mock_set_reasoning,
+            ):
                 main(
                     ["--model", "gpt-3.5-turbo", "--reasoning-effort", "3", "--yes", "--exit"],
                     input=DummyInput(),
@@ -1026,7 +1034,7 @@ class TestMain(TestCase):
         self.assertEqual(
             coder.main_model.extra_params.get("thinking", {}).get("budget_tokens"), 1000
         )
-    
+
     def test_check_model_accepts_settings_flag(self):
         # Test that --check-model-accepts-settings affects whether settings are applied
         with GitTemporaryDirectory():
@@ -1034,31 +1042,38 @@ class TestMain(TestCase):
             with patch("aider.models.Model.set_thinking_tokens") as mock_set_thinking:
                 main(
                     [
-                        "--model", "gpt-4o", 
-                        "--thinking-tokens", "1000", 
+                        "--model",
+                        "gpt-4o",
+                        "--thinking-tokens",
+                        "1000",
                         "--check-model-accepts-settings",
-                        "--yes", "--exit"
+                        "--yes",
+                        "--exit",
                     ],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
                 # Method should not be called because model doesn't support it and flag is on
                 mock_set_thinking.assert_not_called()
-            
+
             # When flag is off, setting should be applied regardless of support
             with patch("aider.models.Model.set_reasoning_effort") as mock_set_reasoning:
                 main(
                     [
-                        "--model", "gpt-3.5-turbo", 
-                        "--reasoning-effort", "3", 
+                        "--model",
+                        "gpt-3.5-turbo",
+                        "--reasoning-effort",
+                        "3",
                         "--no-check-model-accepts-settings",
-                        "--yes", "--exit"
+                        "--yes",
+                        "--exit",
                     ],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
                 # Method should be called because flag is off
                 mock_set_reasoning.assert_called_once_with("3")
+
     def test_model_accepts_settings_attribute(self):
         with GitTemporaryDirectory():
             # Test with a model where we override the accepts_settings attribute
@@ -1067,24 +1082,31 @@ class TestMain(TestCase):
                 mock_instance = MockModel.return_value
                 mock_instance.name = "test-model"
                 mock_instance.accepts_settings = ["reasoning_effort"]
-                mock_instance.validate_environment.return_value = {"missing_keys": [], "keys_in_environment": []}
+                mock_instance.validate_environment.return_value = {
+                    "missing_keys": [],
+                    "keys_in_environment": [],
+                }
                 mock_instance.info = {}
                 mock_instance.weak_model_name = None
                 mock_instance.get_weak_model.return_value = None
-                
+
                 # Run with both settings, but model only accepts reasoning_effort
                 main(
                     [
-                        "--model", "test-model",
-                        "--reasoning-effort", "3",
-                        "--thinking-tokens", "1000",
+                        "--model",
+                        "test-model",
+                        "--reasoning-effort",
+                        "3",
+                        "--thinking-tokens",
+                        "1000",
                         "--check-model-accepts-settings",
-                        "--yes", "--exit"
+                        "--yes",
+                        "--exit",
                     ],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
-                
+
                 # Only set_reasoning_effort should be called, not set_thinking_tokens
                 mock_instance.set_reasoning_effort.assert_called_once_with("3")
                 mock_instance.set_thinking_tokens.assert_not_called()
