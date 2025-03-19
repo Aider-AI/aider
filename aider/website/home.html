@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aider - AI Pair Programming in Your Terminal</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        :root {
+            --primary: #4C6EF5;
+            --primary-dark: #3b5bdb;
+            --secondary: #12B886;
+            --dark: #212529;
+            --light: #F8F9FA;
+            --gray: #ADB5BD;
+            --code-bg: #282a36;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f7ff 0%, #e9ecf8 100%);
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: #495057;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f8f9fa;
+            transform: translateY(-2px);
+        }
+        
+        .video-container {
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .video-container video {
+            width: 100%;
+            display: block;
+        }
+        
+        .features {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            font-size: 2.5rem;
+            color: var(--dark);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .models {
+            padding: 80px 0;
+            background-color: #f8f9fb;
+        }
+        
+        .code-block {
+            background-color: var(--code-bg);
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            font-family: monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .testimonials {
+            padding: 80px 0;
+        }
+        
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .testimonial-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .testimonial-text {
+            margin-bottom: 20px;
+            font-style: italic;
+            color: #495057;
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .info-section {
+            padding: 80px 0;
+            background-color: #f8f9fb;
+        }
+        
+        .info-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .info-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .info-content ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .info-content li {
+            margin-bottom: 10px;
+        }
+        
+        .info-content a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">Aider</a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#getting-started">Getting Started</a>
+                    <a href="#more-info">Documentation</a>
+                    <a href="https://discord.gg/Tv2uQnR88V">Discord</a>
+                    <a href="https://github.com/Aider-AI/aider">GitHub</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>AI Pair Programming in Your Terminal</h1>
+            <p>Aider lets you pair program with LLMs, to edit code in your local git repository. Start a new project or work with an existing code base.</p>
+            <div class="buttons">
+                <a href="#getting-started" class="btn btn-primary">Get Started</a>
+                <a href="https://aider.chat/docs/" class="btn btn-secondary">Documentation</a>
+            </div>
+            <div class="video-container">
+                <video autoplay loop muted playsinline>
+                    <source src="/assets/shell-cmds-small.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </section>
+    
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3 class="feature-title">Seamless Git Integration</h3>
+                    <p>Aider automatically commits changes with sensible commit messages, making version control seamless.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3 class="feature-title">Multiple File Editing</h3>
+                    <p>Edit multiple files at once for complex requests, making large-scale changes easier.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3 class="feature-title">Repository Mapping</h3>
+                    <p>Uses a map of your entire git repo, which helps it work well in larger codebases.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👁️</div>
+                    <h3 class="feature-title">Real-time File Watching</h3>
+                    <p>Edit files in your editor while chatting with aider, and it will always use the latest version.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🖼️</div>
+                    <h3 class="feature-title">Image & URL Support</h3>
+                    <p>Add images to the chat and share URLs, helping with visual context and references.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗣️</div>
+                    <h3 class="feature-title">Voice Coding</h3>
+                    <p>Code with your voice for an even more natural programming experience.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="models" id="getting-started">
+        <div class="container">
+            <h2 class="section-title">Getting Started</h2>
+            <div class="info-content">
+                <p>If you already have python 3.8-3.13 installed, you can get started quickly like this:</p>
+                <div class="code-block">
+                    <pre>python -m pip install aider-install
+aider-install
+
+# Change directory into your code base
+cd /to/your/project
+
+# Work with DeepSeek via DeepSeek's API
+aider --model deepseek --api-key deepseek=your-key-goes-here
+
+# Work with Claude 3.7 Sonnet via Anthropic's API
+aider --model sonnet --api-key anthropic=your-key-goes-here
+
+# Work with GPT-4o via OpenAI's API
+aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
+                </div>
+                <p>Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Users Say</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Aider ... has easily quadrupled my coding productivity."</p>
+                    <p class="testimonial-author">— SOLAR_FIELDS</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"It's really like having your senior developer live right in your Git repo - truly amazing!"</p>
+                    <p class="testimonial-author">— rappster</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"THANK YOU for Aider! It really feels like a glimpse into the future of coding."</p>
+                    <p class="testimonial-author">— derwiki</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"The best AI coding assistant so far."</p>
+                    <p class="testimonial-author">— Matthew Berman</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"Amazing project, definitely the best AI coding assistant I've used."</p>
+                    <p class="testimonial-author">— joshuavial</p>
+                </div>
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"I absolutely love using Aider ... It makes software development feel so much lighter as an experience."</p>
+                    <p class="testimonial-author">— principalideal0</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="info-section" id="more-info">
+        <div class="container">
+            <h2 class="section-title">More Information</h2>
+            <div class="info-content">
+                <h2>Top Tier Performance</h2>
+                <p>Aider has one of the top scores on SWE Bench. SWE Bench is a challenging software engineering benchmark where aider solved real GitHub issues from popular open source projects like django, scikitlearn, matplotlib, etc.</p>
+                
+                <h2>Resources</h2>
+                <ul>
+                    <li><a href="https://aider.chat/">Documentation</a></li>
+                    <li><a href="https://aider.chat/docs/install.html">Installation</a></li>
+                    <li><a href="https://aider.chat/docs/usage.html">Usage</a></li>
+                    <li><a href="https://aider.chat/docs/usage/tutorials.html">Tutorial videos</a></li>
+                    <li><a href="https://aider.chat/docs/llms.html">Connecting to LLMs</a></li>
+                    <li><a href="https://aider.chat/docs/config.html">Configuration</a></li>
+                    <li><a href="https://aider.chat/docs/troubleshooting.html">Troubleshooting</a></li>
+                    <li><a href="https://aider.chat/docs/leaderboards/">LLM Leaderboards</a></li>
+                    <li><a href="https://github.com/Aider-AI/aider">GitHub</a></li>
+                    <li><a href="https://discord.gg/Tv2uQnR88V">Discord</a></li>
+                    <li><a href="https://aider.chat/blog/">Blog</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="https://aider.chat/docs/">Documentation</a>
+                <a href="https://github.com/Aider-AI/aider">GitHub</a>
+                <a href="https://discord.gg/Tv2uQnR88V">Discord</a>
+                <a href="https://aider.chat/blog/">Blog</a>
+            </div>
+            <p class="copyright">© 2025 Aider. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
