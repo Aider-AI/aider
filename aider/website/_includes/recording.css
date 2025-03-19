@@ -116,9 +116,11 @@
     radial-gradient(circle at 80% 70%, transparent 0%, transparent 40%, rgba(255,255,255,0.1) 41%, transparent 42%),
     radial-gradient(circle at 40% 90%, transparent 0%, transparent 70%, rgba(255,255,255,0.1) 71%, transparent 72%),
     radial-gradient(circle at 60% 10%, transparent 0%, transparent 50%, rgba(255,255,255,0.1) 51%, transparent 52%);
-  background-size: 100% 100%;
+  background-size: it.100% 100%;
   opacity: 0.8;
   pointer-events: none;
+  /* Ensure the lines don't appear inside the terminal */
+  z-index: -1;
 }
 
 .terminal-container {
@@ -128,6 +130,8 @@
   margin-top: 0;
   margin-bottom: 0;
   position: relative;
+  background-color: white; /* Add background color to terminal container */
+  z-index: 1; /* Ensure terminal appears above the backdrop effects */
 }
 
 /* Timestamp link styling */
