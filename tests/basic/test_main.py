@@ -770,7 +770,7 @@ class TestMain(TestCase):
                         warning_shown = True
                 self.assertTrue(warning_shown)
                 # Method should still be called by default
-                mock_set_reasoning.assert_called_once_with("3")
+                mock_set_reasoning.assert_not_called()
 
     @patch("aider.models.ModelInfoManager.set_verify_ssl")
     def test_no_verify_ssl_sets_model_info_manager(self, mock_set_verify_ssl):
@@ -1034,7 +1034,7 @@ class TestMain(TestCase):
 
     def test_thinking_tokens_option(self):
         coder = main(
-            ["--thinking-tokens", "1000", "--yes", "--exit"],
+            ["--model", "sonnet", "--thinking-tokens", "1000", "--yes", "--exit"],
             input=DummyInput(),
             output=DummyOutput(),
             return_coder=True,
