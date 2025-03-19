@@ -7,8 +7,6 @@ import tempfile
 
 from history_prompts import history_prompt
 
-from aider import __version__
-
 
 def get_latest_version_from_history():
     with open("HISTORY.md", "r") as f:
