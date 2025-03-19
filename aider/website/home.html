@@ -663,7 +663,7 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
         document.addEventListener('DOMContentLoaded', function() {
             updateTestimonials();
             
-            // Rotate testimonials every 30 seconds
+            // Rotate testimonials
             setInterval(function() {
                 // Remove first testimonial and add a random one from the remaining pool
                 initialTestimonials.shift();
@@ -682,7 +682,7 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
                 }
                 
                 updateTestimonials();
-            }, 30000);
+            }, 3000);
         });
     </script>
     
