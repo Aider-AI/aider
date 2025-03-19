@@ -29,6 +29,10 @@ cog.out(text)
 - Added a confirmation prompt when attempting to use unsupported model parameters that could cause API calls to fail.
 - Added `--check-model-accepts-settings` flag (default: true) to control warnings for unsupported model settings.
 - Annotated which models support reasoning_effort and thinking_tokens settings in the model settings data.
+- Simplified warning messages for unsupported model settings to improve readability.
+- Changed behavior to ignore unsupported model settings with a warning instead of prompting for confirmation.
+- Added option to force usage of model settings via `--no-check-model-accepts-settings` flag.
+- Consolidated model setting validation checks into a single loop for better code organization.
 - Aider wrote 96% of the code in this release.
 
 ### Aider v0.77.1
@@ -37,7 +41,6 @@ cog.out(text)
 - Added support for `openrouter/google/gemma-3-27b-it` model.
 - Improved code block rendering in markdown output with better padding.
 - Updated exclude patterns for documentation.
-- Aider wrote 95% of the code in this release.
 
 ### Aider v0.77.0
 
