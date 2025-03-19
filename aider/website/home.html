@@ -238,6 +238,16 @@
             color: var(--dark);
         }
         
+        .testimonial-author a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .testimonial-author a:hover {
+            text-decoration: underline;
+        }
+        
         .info-section {
             padding: 80px 0;
             background-color: #f8f9fb;
@@ -500,34 +510,181 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
     <section class="testimonials">
         <div class="container">
             <h2 class="section-title">What Users Say</h2>
-            <div class="testimonial-grid">
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"Aider ... has easily quadrupled my coding productivity."</p>
-                    <p class="testimonial-author">— SOLAR_FIELDS</p>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"It's really like having your senior developer live right in your Git repo - truly amazing!"</p>
-                    <p class="testimonial-author">— rappster</p>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"THANK YOU for Aider! It really feels like a glimpse into the future of coding."</p>
-                    <p class="testimonial-author">— derwiki</p>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"The best AI coding assistant so far."</p>
-                    <p class="testimonial-author">— Matthew Berman</p>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"Amazing project, definitely the best AI coding assistant I've used."</p>
-                    <p class="testimonial-author">— joshuavial</p>
-                </div>
-                <div class="testimonial-card">
-                    <p class="testimonial-text">"I absolutely love using Aider ... It makes software development feel so much lighter as an experience."</p>
-                    <p class="testimonial-author">— principalideal0</p>
-                </div>
+            <div class="testimonial-grid" id="testimonial-container">
+                <!-- Testimonials will be dynamically inserted here -->
             </div>
         </div>
     </section>
+
+    <script>
+        // All testimonials from the README
+        const testimonials = [
+            {
+                text: "The best free open source AI coding assistant.",
+                author: "IndyDevDan",
+                link: "https://youtu.be/YALpX8oOn78"
+            },
+            {
+                text: "The best AI coding assistant so far.",
+                author: "Matthew Berman",
+                link: "https://www.youtube.com/watch?v=df8afeb1FY8"
+            },
+            {
+                text: "Aider ... has easily quadrupled my coding productivity.",
+                author: "SOLAR_FIELDS",
+                link: "https://news.ycombinator.com/item?id=36212100"
+            },
+            {
+                text: "It's a cool workflow... Aider's ergonomics are perfect for me.",
+                author: "qup",
+                link: "https://news.ycombinator.com/item?id=38185326"
+            },
+            {
+                text: "It's really like having your senior developer live right in your Git repo - truly amazing!",
+                author: "rappster",
+                link: "https://github.com/Aider-AI/aider/issues/124"
+            },
+            {
+                text: "What an amazing tool. It's incredible.",
+                author: "valyagolev",
+                link: "https://github.com/Aider-AI/aider/issues/6#issue-1722897858"
+            },
+            {
+                text: "Aider is such an astounding thing!",
+                author: "cgrothaus",
+                link: "https://github.com/Aider-AI/aider/issues/82#issuecomment-1631876700"
+            },
+            {
+                text: "It was WAY faster than I would be getting off the ground and making the first few working versions.",
+                author: "Daniel Feldman",
+                link: "https://twitter.com/d_feldman/status/1662295077387923456"
+            },
+            {
+                text: "THANK YOU for Aider! It really feels like a glimpse into the future of coding.",
+                author: "derwiki",
+                link: "https://news.ycombinator.com/item?id=38205643"
+            },
+            {
+                text: "It's just amazing. It is freeing me to do things I felt were out my comfort zone before.",
+                author: "Dougie",
+                link: "https://discord.com/channels/1131200896827654144/1174002618058678323/1174084556257775656"
+            },
+            {
+                text: "This project is stellar.",
+                author: "funkytaco",
+                link: "https://github.com/Aider-AI/aider/issues/112#issuecomment-1637429008"
+            },
+            {
+                text: "Amazing project, definitely the best AI coding assistant I've used.",
+                author: "joshuavial",
+                link: "https://github.com/Aider-AI/aider/issues/84"
+            },
+            {
+                text: "I absolutely love using Aider ... It makes software development feel so much lighter as an experience.",
+                author: "principalideal0",
+                link: "https://discord.com/channels/1131200896827654144/1133421607499595858/1229689636012691468"
+            },
+            {
+                text: "I have been recovering from multiple shoulder surgeries ... and have used aider extensively. It has allowed me to continue productivity.",
+                author: "codeninja",
+                link: "https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG"
+            },
+            {
+                text: "I am an aider addict. I'm getting so much more work done, but in less time.",
+                author: "dandandan",
+                link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470"
+            },
+            {
+                text: "After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever.",
+                author: "SystemSculpt",
+                link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548"
+            },
+            {
+                text: "Aider is amazing, coupled with Sonnet 3.5 it's quite mind blowing.",
+                author: "Josh Dingus",
+                link: "https://discord.com/channels/1131200896827654144/1133060684540813372/1262374225298198548"
+            },
+            {
+                text: "Hands down, this is the best AI coding assistant tool so far.",
+                author: "IndyDevDan",
+                link: "https://www.youtube.com/watch?v=MPYFPvxfGZs"
+            },
+            {
+                text: "[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life.",
+                author: "maledorak",
+                link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264"
+            },
+            {
+                text: "Best agent for actual dev work in existing codebases.",
+                author: "Nick Dobos",
+                link: "https://twitter.com/NickADobos/status/1690408967963652097?s=20"
+            }
+        ];
+
+        // Function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Shuffle the testimonials for initial display
+        const shuffledTestimonials = shuffleArray([...testimonials]);
+        
+        // Select the first 6 for display
+        const displayCount = Math.min(6, shuffledTestimonials.length);
+        const initialTestimonials = shuffledTestimonials.slice(0, displayCount);
+        
+        // Function to create a testimonial card
+        function createTestimonialCard(testimonial) {
+            return `
+                <div class="testimonial-card">
+                    <p class="testimonial-text">"${testimonial.text}"</p>
+                    <p class="testimonial-author">— <a href="${testimonial.link}" target="_blank">${testimonial.author}</a></p>
+                </div>
+            `;
+        }
+
+        // Function to update the display
+        function updateTestimonials() {
+            const container = document.getElementById('testimonial-container');
+            let html = '';
+            
+            for (let i = 0; i < displayCount; i++) {
+                html += createTestimonialCard(initialTestimonials[i]);
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Initialize testimonials
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTestimonials();
+            
+            // Rotate testimonials every 30 seconds
+            setInterval(function() {
+                // Remove first testimonial and add a random one from the remaining pool
+                initialTestimonials.shift();
+                
+                const remainingTestimonials = testimonials.filter(
+                    t => !initialTestimonials.some(it => it.author === t.author && it.text === t.text)
+                );
+                
+                if (remainingTestimonials.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * remainingTestimonials.length);
+                    initialTestimonials.push(remainingTestimonials[randomIndex]);
+                } else {
+                    // If we've used all testimonials, reshuffle and start over
+                    const newShuffled = shuffleArray([...testimonials]);
+                    initialTestimonials.push(newShuffled[0]);
+                }
+                
+                updateTestimonials();
+            }, 30000);
+        });
+    </script>
     
     <section class="info-section" id="more-info">
         <div class="container">
