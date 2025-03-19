@@ -289,7 +289,7 @@ nav {
 }
 
 .testimonial-card {
-    background: linear-gradient(135deg, rgba(76, 110, 245, 0.08) 0%, rgba(20, 176, 20, 0.05) 50%, rgba(76, 110, 245, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(20, 176, 20, 0.05) 0%, rgba(76, 110, 245, 0.15) 100%);
     border-radius: 8px;
     padding: 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
