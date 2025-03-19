@@ -198,7 +198,7 @@ nav {
     height: 0;
     /* Calculate exact padding-bottom based on aspect ratio: (2160/2656) × 100% */
     padding-bottom: calc(2160 / 2656 * 100%);
-    background-color: #f5f5f5; /* Light background while video loads */
+    background-color: rgba(180, 200, 255, 0.3); /* Semi-transparent blue that matches the gradient */
 }
 
 .video-container video {
