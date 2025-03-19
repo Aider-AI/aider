@@ -312,6 +312,29 @@
             color: #495057;
             position: relative;
             z-index: 1;
+            padding: 0 10px;
+        }
+        
+        .testimonial-text::before,
+        .testimonial-text::after {
+            font-family: Georgia, serif;
+            font-size: 1.6em;
+            line-height: 0.1;
+            position: relative;
+        }
+        
+        .testimonial-text::before {
+            content: "\201C"; /* Opening fancy quote */
+            color: var(--primary);
+            margin-right: 4px;
+            vertical-align: -0.3em;
+        }
+        
+        .testimonial-text::after {
+            content: "\201D"; /* Closing fancy quote */
+            color: var(--primary);
+            margin-left: 4px;
+            vertical-align: -0.3em;
         }
         
         .testimonial-card:hover {
@@ -775,7 +798,7 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
         function createTestimonialCard(testimonial, index) {
             return `
                 <div class="testimonial-card" id="testimonial-${index}">
-                    <p class="testimonial-text">"${testimonial.text}"</p>
+                    <p class="testimonial-text">${testimonial.text}</p>
                     <p class="testimonial-author">— <a href="${testimonial.link}" target="_blank">${testimonial.author}</a></p>
                 </div>
             `;
