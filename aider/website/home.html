@@ -397,18 +397,39 @@
             background-color: #e74c3c;
         }
         
-        @media (max-width: 768px) {
+        @media (max-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-content {
+                text-align: center;
+                order: 1;
+            }
+            
+            .hero-video {
+                order: 2;
+            }
+            
             .hero h1 {
                 font-size: 2.5rem;
+                text-align: center;
             }
             
             .hero p {
                 font-size: 1rem;
+                margin-left: auto;
+                margin-right: auto;
             }
             
             .buttons {
                 flex-direction: column;
                 align-items: center;
+                justify-content: center;
+            }
+            
+            .stats-container {
+                justify-content: center;
             }
             
             .section-title {
