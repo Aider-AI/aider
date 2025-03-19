@@ -700,14 +700,11 @@ aider --model gpt-4o --api-key openai=your-key-goes-here</pre>
         document.addEventListener('DOMContentLoaded', function() {
             initializeTestimonials();
             
-            let currentIndex = 0;
-            
-            // Rotate one testimonial at a time
+            // Rotate one testimonial at a time, randomly selecting which one to change
             setInterval(function() {
-                updateSingleTestimonial(currentIndex);
-                
-                // Move to the next index
-                currentIndex = (currentIndex + 1) % displayCount;
+                // Randomly select which testimonial to update
+                const randomIndex = Math.floor(Math.random() * displayCount);
+                updateSingleTestimonial(randomIndex);
             }, 3000);
         });
     </script>
