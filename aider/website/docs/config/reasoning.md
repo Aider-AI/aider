@@ -26,17 +26,20 @@ This switch is useful for Sonnet 3.7.
 
 ### Model compatibility and settings
 
-Not all models support these settings. Aider uses the model's metadata to determine which settings each model accepts:
+Not all models support these settings. Aider uses the 
+[model's metadata](/docs/config/adv-model-settings.html)
+to determine which settings each model accepts:
 
 ```yaml
-- name: gpt-4o
+- name: o3-mini
+  ...
   accepts_settings: ["reasoning_effort"]
 ```
 
 If you try to use a setting that a model doesn't explicitly support, Aider will warn you:
 
 ```
-Warning: gpt-4o does not support 'thinking_tokens', ignoring.
+Warning: o3-mini does not support 'thinking_tokens', ignoring.
 Use --no-check-model-accepts-settings to force the 'thinking_tokens' setting.
 ```
 
@@ -178,7 +181,5 @@ You can override this behavior with `--no-check-model-accepts-settings`, which w
 2. Skip all compatibility checks
 3. Potentially cause API errors if the model truly doesn't support the setting
 
-This is useful when:
-- Testing new models
-- Using models through custom providers
-- Working with models that support settings but don't advertise them correctly
+This is useful when testing new models or using models through custom API providers.
+
