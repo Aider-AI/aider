@@ -815,8 +815,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 or setting["name"] not in main_model.accepts_settings
             ):
                 io.tool_warning(
-                    f"Warning: {main_model.name} does not support the '{setting['name']}' setting."
-                    " This parameter will be ignored."
+                    f"Warning: {main_model.name} does not support '{setting['name']}', ignoring."
+                )
+                io.tool_output(
+                    f"Use --no-check-model-accepts-settings to force the '{setting['name']}'"
+                    " setting."
                 )
 
     if args.copy_paste and args.edit_format is None:
