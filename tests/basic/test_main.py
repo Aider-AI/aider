@@ -716,7 +716,15 @@ class TestMain(TestCase):
                 patch("aider.models.Model.set_thinking_tokens") as mock_set_thinking,
             ):
                 main(
-                    ["--model", "gpt-4o", "--thinking-tokens", "1000", "--check-model-accepts-settings", "--yes", "--exit"],
+                    [
+                        "--model",
+                        "gpt-4o",
+                        "--thinking-tokens",
+                        "1000",
+                        "--check-model-accepts-settings",
+                        "--yes",
+                        "--exit",
+                    ],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
