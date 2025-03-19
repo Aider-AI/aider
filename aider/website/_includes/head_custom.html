@@ -8,11 +8,18 @@
 
 <!-- Custom site title styling -->
 <style>
+  @font-face {
+    font-family: GlassTTYVT220;
+    src: local("Glass TTY VT220"), local("Glass TTY VT220 Medium"), url(/assets/Glass_TTY_VT220.ttf) format("truetype");
+  }
+  
   .site-title {
-    font-size: 24px;
+    font-size: 1.8rem;
     font-weight: 700;
-    color: #157878;
-    /* Add any other CSS properties you want to override */
+    font-family: 'GlassTTYVT220', monospace;
+    color: #14b014; /* terminal green color */
+    text-decoration: none;
+    letter-spacing: 0.5px;
   }
 </style>
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{ site.url }}/feed.xml">
