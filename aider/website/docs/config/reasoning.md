@@ -24,16 +24,27 @@ You can use the `--thinking-tokens` switch to request
 the model use a certain number of thinking tokens.
 This switch is useful for Sonnet 3.7.
 
-### Model compatibility warnings
+### Model compatibility and settings
 
-Not all models support these settings. Aider will warn you when you use a setting that may not be supported by your chosen model:
+Not all models support these settings. Aider uses the model's metadata to determine which settings each model accepts:
+
+```yaml
+- name: gpt-4o
+  accepts_settings: ["reasoning_effort"]
+```
+
+If you try to use a setting that a model doesn't explicitly support, Aider will warn you:
 
 ```
-Warning: The model claude-3-sonnet@20240229 may not support the 'reasoning_effort' setting.
-Sending unsupported parameters can cause API calls to fail. Continue? [y/N]
+Warning: gpt-4o does not support 'thinking_tokens', ignoring.
+Use --no-check-model-accepts-settings to force the 'thinking_tokens' setting.
 ```
 
-You can disable these warnings with the `--no-check-model-accepts-settings` flag.
+The warning informs you that:
+1. The setting won't be applied because the model doesn't list it in `accepts_settings`
+2. You can use `--no-check-model-accepts-settings` to force the setting anyway
+
+This functionality helps prevent API errors while still allowing you to experiment with settings when needed.
 
 Each model has a predefined list of supported settings in its configuration. For example:
 
