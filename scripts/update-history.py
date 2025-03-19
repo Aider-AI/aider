@@ -10,22 +10,25 @@ from history_prompts import history_prompt
 from aider import __version__
 
 
-def get_base_version():
-    # Parse current version like "0.64.2.dev" to get major.minor
-    match = re.match(r"(\d+\.\d+)", __version__)
+def get_latest_version_from_history():
+    with open("HISTORY.md", "r") as f:
+        history_content = f.read()
+    
+    # Find most recent version header
+    match = re.search(r'### Aider v(\d+\.\d+\.\d+)', history_content)
     if not match:
-        raise ValueError(f"Could not parse version: {__version__}")
-    return match.group(1) + ".0"
+        raise ValueError("Could not find version header in HISTORY.md")
+    return match.group(1)
 
 
 def run_git_log():
-    base_ver = get_base_version()
+    latest_ver = get_latest_version_from_history()
     cmd = [
         "git",
         "log",
         "-p",
         "--pretty=full",
-        f"v{base_ver}..HEAD",
+        f"v{latest_ver}..HEAD",
         "--",
         "aider/",
         ":!aider/website/",
@@ -41,12 +44,12 @@ def main():
     diff_content = run_git_log()
 
     # Extract relevant portion of HISTORY.md
-    base_ver = get_base_version()
+    latest_ver = get_latest_version_from_history()
     with open("HISTORY.md", "r") as f:
         history_content = f.read()
 
     # Find the section for this version
-    version_header = f"### Aider v{base_ver}"
+    version_header = f"### Aider v{latest_ver}"
     start_idx = history_content.find("# Release history")
     if start_idx == -1:
         raise ValueError("Could not find start of release history")
