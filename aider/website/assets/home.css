@@ -357,30 +357,82 @@ nav {
     background-color: #f8f9fb;
 }
 
-.info-content {
-    max-width: 800px;
+.info-columns {
+    display: flex;
+    gap: 40px;
+    max-width: 1000px;
     margin: 0 auto;
-    font-size: 1.1rem;
 }
 
-.info-content h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+.info-column {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-left: 3px solid var(--primary);
+}
+
+.info-column:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.info-column-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
     color: var(--dark);
+    position: relative;
+    padding-bottom: 12px;
 }
 
-.info-content ul {
-    margin-left: 20px;
+.info-column-title::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background-color: var(--primary);
+}
+
+.info-column-desc {
+    color: #495057;
     margin-bottom: 20px;
+    font-size: 1rem;
 }
 
-.info-content li {
-    margin-bottom: 10px;
+.info-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
 }
 
-.info-content a {
+.info-list li {
+    margin-bottom: 12px;
+    padding-left: 24px;
+    position: relative;
+}
+
+.info-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+.info-list a {
     color: var(--primary);
     text-decoration: none;
+    transition: color 0.2s, transform 0.2s;
+    display: inline-block;
+}
+
+.info-list a:hover {
+    color: var(--primary-dark);
+    transform: translateX(3px);
 }
 
 footer {
@@ -564,8 +616,12 @@ footer {
         font-size: 0.8rem;
     }
     
-    .info-content {
-        font-size: 0.95rem;
+    .info-columns {
+        flex-direction: column;
+    }
+    
+    .info-column {
+        margin-bottom: 20px;
     }
     
     .nav-links {
@@ -634,6 +690,14 @@ footer {
     .code-block {
         font-size: 0.8rem;
         padding: 15px;
+    }
+    
+    .info-column-title {
+        font-size: 1.3rem;
+    }
+    
+    .info-column {
+        padding: 20px;
     }
     
     .btn {
