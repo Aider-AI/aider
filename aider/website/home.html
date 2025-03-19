@@ -295,20 +295,28 @@
         }
         
         .testimonial-card {
-            background-color: white;
+            background: linear-gradient(135deg, rgba(18, 184, 134, 0.05) 0%, rgba(20, 176, 20, 0.1) 50%, rgba(76, 110, 245, 0.15) 100%);
             border-radius: 8px;
             padding: 30px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.6s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.6s, box-shadow 0.3s;
             transform-style: preserve-3d;
             perspective: 1000px;
             backface-visibility: hidden;
+            border-left: 3px solid var(--primary);
         }
         
         .testimonial-text {
             margin-bottom: 20px;
             font-style: italic;
             color: #495057;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .testimonial-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(135deg, rgba(18, 184, 134, 0.1) 0%, rgba(20, 176, 20, 0.15) 50%, rgba(76, 110, 245, 0.2) 100%);
         }
         
         .testimonial-author {
