@@ -112,15 +112,14 @@
   right: 0;
   bottom: 0;
   background-image: 
-    radial-gradient(circle at 20% 30%, transparent 0%, transparent 60%, rgba(255,255,255,0.1) 61%, transparent 62%),
-    radial-gradient(circle at 80% 70%, transparent 0%, transparent 40%, rgba(255,255,255,0.1) 41%, transparent 42%),
-    radial-gradient(circle at 40% 90%, transparent 0%, transparent 70%, rgba(255,255,255,0.1) 71%, transparent 72%),
-    radial-gradient(circle at 60% 10%, transparent 0%, transparent 50%, rgba(255,255,255,0.1) 51%, transparent 52%);
-  background-size: it.100% 100%;
-  opacity: 0.8;
+    radial-gradient(circle at 20% 30%, transparent 0%, transparent 60%, rgba(255,255,255,0.2) 61%, transparent 62%),
+    radial-gradient(circle at 80% 70%, transparent 0%, transparent 40%, rgba(255,255,255,0.2) 41%, transparent 42%),
+    radial-gradient(circle at 40% 90%, transparent 0%, transparent 70%, rgba(255,255,255,0.2) 71%, transparent 72%),
+    radial-gradient(circle at 60% 10%, transparent 0%, transparent 50%, rgba(255,255,255,0.2) 51%, transparent 52%);
+  background-size: 100% 100%;
+  opacity: 1;
   pointer-events: none;
-  /* Ensure the lines don't appear inside the terminal */
-  z-index: -1;
+  z-index: 0;
 }
 
 .terminal-container {
@@ -131,7 +130,7 @@
   margin-bottom: 0;
   position: relative;
   background-color: white; /* Add background color to terminal container */
-  z-index: 1; /* Ensure terminal appears above the backdrop effects */
+  z-index: 2; /* Ensure terminal appears above the backdrop effects */
 }
 
 /* Timestamp link styling */
