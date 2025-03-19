@@ -5,6 +5,28 @@
 <meta property="og:image" content="{{ site.url }}/assets/aider.jpg">
 <meta property="twitter:image" content="{{ site.url }}/assets/aider-square.jpg">
 {% endif %}
+
+<!-- Custom site title styling -->
+<style>
+  @font-face {
+    font-family: GlassTTYVT220;
+    src: local("Glass TTY VT220"), local("Glass TTY VT220 Medium"), url(/assets/Glass_TTY_VT220.ttf) format("truetype");
+  }
+  
+  .site-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: 'GlassTTYVT220', monospace;
+    color: #14b014; /* terminal green color */
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+ 
+  /* Sidebar gradient styling to match hero section */
+  .side-bar { 
+    background: linear-gradient(135deg, #ffffff 0%, rgba(20, 176, 20, 0.1) 40%, rgba(220, 230, 255, 0.5) 60%, rgba(205, 218, 255, 0.6) 80%, #F5F6FA 100%);
+  }
+</style>
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{ site.url }}/feed.xml">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
