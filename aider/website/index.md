@@ -30,16 +30,24 @@ cog.out(text)
 
 # Aider is AI pair programming in your terminal
 
+<p align="center">
+  <a href="https://github.com/Aider-AI/aider/stargazers">
+    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/>
+  </a>
+  <a href="https://pypi.org/project/aider-chat/">
+    <img alt="PyPI Downloads" src="https://img.shields.io/badge/Installs-1.6M-2ecc71?style=flat-square&labelColor=555555"/>
+  </a>
+  <img alt="Tokens per week" src="https://img.shields.io/badge/Tokens%2Fweek-14.7B-e74c3c?style=flat-square&labelColor=555555"/>
+  <a href="https://openrouter.ai/">
+    <img alt="OpenRouter Ranking" src="https://img.shields.io/badge/OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/>
+  </a>
+</p>
+
 Aider lets you pair program with LLMs,
 to edit code in your local git repository.
 Start a new project or work with an existing code base.
 Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o. Aider can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
 
-Folks love aider:
-
-- 1.6M installs
-- Top 20 app on OpenRouter
-- 9B tokens/week total traffic
 
 <!-- 
 <p align="center">
@@ -59,14 +67,6 @@ Folks love aider:
 </p>
 <!-- -->
 
-<p align="center">
-  <a href="https://discord.gg/Tv2uQnR88V">
-    <img src="https://img.shields.io/badge/Join-Discord-blue.svg"/>
-  </a>
-  <a href="https://aider.chat/docs/install.html">
-    <img src="https://img.shields.io/badge/Read-Docs-green.svg"/>
-  </a>
-</p>
 
 ## Getting started
 <!-- NOOP 
@@ -122,9 +122,6 @@ for more details.
 - Aider works with [most popular languages](https://aider.chat/docs/languages.html): python, javascript, typescript, php, html, css, and more...
 - Aider can edit multiple files at once for complex requests.
 - Aider uses a [map of your entire git repo](https://aider.chat/docs/repomap.html), which helps it work well in larger codebases.
-- Edit files in your editor or IDE while chatting with aider,
-and it will always use the latest version.
-Pair program with AI.
 - [Add images to the chat](https://aider.chat/docs/usage/images-urls.html) (GPT-4o, Claude 3.5 Sonnet, etc).
 - [Add URLs to the chat](https://aider.chat/docs/usage/images-urls.html) and aider will read their content.
 - [Code with your voice](https://aider.chat/docs/usage/voice.html).
