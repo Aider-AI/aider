@@ -285,6 +285,66 @@
             font-size: 0.9rem;
         }
         
+        .stats-container {
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, rgba(76, 110, 245, 0.1) 0%, rgba(76, 110, 245, 0.2) 100%);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(76, 110, 245, 0.1);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .stats-heading {
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.6rem;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .stats-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 160px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(76, 110, 245, 0.1);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(76, 110, 245, 0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 5px;
+            line-height: 1.1;
+        }
+        
+        .stat-label {
+            color: #495057;
+            font-weight: 500;
+        }
+        
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -330,13 +390,25 @@
             <h1>AI Pair Programming in Your Terminal</h1>
             <p>Aider lets you pair program with LLMs, to edit code in your local git repository. Start a new project or work with an existing code base.</p>
             
-            <div style="margin-bottom: 30px; background: rgba(76, 110, 245, 0.1); padding: 20px; border-radius: 8px; display: inline-block;">
-                <h3 style="margin-bottom: 15px; color: var(--primary);">Folks love aider:</h3>
-                <ul style="list-style-type: none; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
-                    <li style="font-weight: 600;"><span style="font-size: 1.5rem; color: var(--primary); display: block;">1.6M</span> installs</li>
-                    <li style="font-weight: 600;"><span style="font-size: 1.5rem; color: var(--primary); display: block;">Top 20</span> app on OpenRouter</li>
-                    <li style="font-weight: 600;"><span style="font-size: 1.5rem; color: var(--primary); display: block;">9B</span> tokens/week</li>
-                </ul>
+            <div class="stats-container">
+                <h3 class="stats-heading">Folks love aider:</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number">1.6M</div>
+                        <div class="stat-label">installs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-number">Top 20</div>
+                        <div class="stat-label">app on OpenRouter</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💬</div>
+                        <div class="stat-number">9B</div>
+                        <div class="stat-label">tokens/week</div>
+                    </div>
+                </div>
             </div>
             
             <div class="buttons">
