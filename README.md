@@ -2,7 +2,7 @@
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
 </p>
 
-# Aider - AI Pair Programming in Your Terminal
+# AI Pair Programming in Your Terminal
 
 <p align="center">
   <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
