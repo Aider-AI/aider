@@ -551,6 +551,10 @@ footer {
     background-color: #e74c3c;
 }
 
+.badge-coded .badge-value {
+    background-color: #3498db;
+}
+
 @media (max-width: 992px) {
     body {
         font-size: 0.95rem;
