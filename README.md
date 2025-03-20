@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300">
+</p>
+
 # Aider - AI Pair Programming in Your Terminal
 
 <p align="center">
