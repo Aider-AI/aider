@@ -50,10 +50,6 @@ aider --model o3-mini --api-key openai=<key>
 
 See the [installation instructions](https://aider.chat/docs/install.html) and [usage documentation](https://aider.chat/docs/usage.html) for more details.
 
-## Top Tier Performance
-
-[Aider has one of the top scores on SWE Bench](https://aider.chat/2024/06/02/main-swe-bench.html). SWE Bench is a challenging software engineering benchmark where aider solved *real* GitHub issues from popular open source projects like django, scikitlearn, matplotlib, etc.
-
 ## More Information
 
 ### Documentation
