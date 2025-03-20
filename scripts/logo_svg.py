@@ -34,7 +34,7 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
     char_width = 40
     width = len(text) * char_width + 40  # Add padding
     height = 100
-    text_x = 20
+    text_x = width / 2  # Center point of the SVG width
     text_y = 65
 
     # Create the SVG with embedded font
@@ -51,6 +51,7 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
       font-family: 'GlassTTYVT220', monospace;
       font-size: 60px;
       fill: {color};
+      text-anchor: middle; /* Center the text horizontally */
     }}
     .background {{
       fill: black;
