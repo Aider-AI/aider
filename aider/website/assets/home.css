@@ -58,6 +58,11 @@ nav {
     letter-spacing: 0.5px;
 }
 
+.logo-svg {
+    height: 32px;
+    vertical-align: middle;
+}
+
 .nav-links {
     display: flex;
     gap: 30px;
