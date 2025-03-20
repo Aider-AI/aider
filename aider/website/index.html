@@ -6,6 +6,8 @@
     <title>Aider - AI Pair Programming in Your Terminal</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="/assets/home.css">
+    <!-- Add Prism.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
 <body>
     <header>
@@ -184,7 +186,7 @@
             <h2 class="section-title">Getting Started</h2>
             <div class="info-content">
                 <div class="code-block">
-                    <pre>python -m pip install aider-install
+                    <pre><code class="language-bash">python -m pip install aider-install
 aider-install
 
 # Change directory into your codebase
@@ -197,7 +199,7 @@ aider --model deepseek --api-key deepseek=&lt;key&gt;
 aider --model sonnet --api-key anthropic=&lt;key&gt;
 
 # o3-mini
-aider --model o3-mini --api-key openai=&lt;key&gt;</pre>
+aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
                 </div>
                 <div class="cta-container">
                   <p class="cta-text">Want more details?</p>
@@ -499,5 +501,9 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</pre>
             <p class="copyright">© 2025 Aider AI. All rights reserved.</p>
         </div>
     </footer>
+    
+    <!-- Add Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 </body>
 </html>
