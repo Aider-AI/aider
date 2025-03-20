@@ -8,6 +8,7 @@
   <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" src="https://img.shields.io/badge/Installs-1.6M-2ecc71?style=flat-square&labelColor=555555"/></a>
   <img alt="Tokens per week" src="https://img.shields.io/badge/Tokens%2Fweek-15B-e74c3c?style=flat-square&labelColor=555555"/>
   <a href="https://openrouter.ai/"><img alt="OpenRouter Ranking" src="https://img.shields.io/badge/OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
+  <a href="https://aider.chat/HISTORY.html"><img alt="Codes Itself" src="https://img.shields.io/badge/🧠%20Codes%20Itself-72%25-3498db?style=flat-square&labelColor=555555"/></a>
 </p>
 
 
