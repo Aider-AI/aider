@@ -209,13 +209,13 @@ def get_badges_html():
     if stars is None:
         stars_formatted = "0"
     elif stars >= 1_000_000_000:
-        stars_formatted = f"{stars // 1_000_000_000}B"
+        stars_formatted = f"{round(stars / 1_000_000_000)}B"
     elif stars >= 1_000_000:
-        stars_formatted = f"{stars // 1_000_000}M"
+        stars_formatted = f"{round(stars / 1_000_000)}M"
     elif stars >= 1_000:
-        stars_formatted = f"{stars // 1_000}K"
+        stars_formatted = f"{round(stars / 1_000)}K"
     else:
-        stars_formatted = str(stars)
+        stars_formatted = str(int(round(stars)))
     aider_percent_rounded = round(percentage)
 
     # Generate HTML badges
