@@ -8,7 +8,7 @@
   <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" src="https://img.shields.io/badge/🔄%20Singularity-72%25-3498db?style=flat-square&labelColor=555555"/></a>
 </p>
 
-Aider lets you pair program with LLMs to start a new project or build on your existing codebase. Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
+Aider lets you pair program with LLMs to start a new project or build on your existing codebase. 
 
 <p align="center">
   <img
