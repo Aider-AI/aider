@@ -452,4 +452,4 @@ class TestRepo(unittest.TestCase):
 
             # Verify the commit was actually made
             latest_commit_msg = raw_repo.head.commit.message
-            self.assertEqual(latest_commit_msg, "Should succeed")
+            self.assertEqual(latest_commit_msg.strip(), "Should succeed")
