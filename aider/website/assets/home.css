@@ -564,6 +564,10 @@ footer {
         padding: 12px 0;
     }
     
+    .hero {
+        padding: 50px 0;
+    }
+    
     .hero-grid {
         grid-template-columns: 1fr;
     }
@@ -684,6 +688,10 @@ footer {
 @media (max-width: 576px) {
     body {
         font-size: 0.9rem;
+    }
+    
+    .hero {
+        padding: 30px 0;
     }
     
     .buttons {
