@@ -9,6 +9,7 @@ import argparse
 import base64
 import os
 import tempfile
+
 from fontTools.subset import main as subset_main
 from fontTools.ttLib import TTFont
 
@@ -16,21 +17,21 @@ from fontTools.ttLib import TTFont
 def subset_font(font_path, text):
     """
     Create a subset of the font containing only the characters needed for the text.
-    
+
     Args:
         font_path (str): Path to the TTF font file
         text (str): Text for which to extract characters
-        
+
     Returns:
         bytes: The subsetted font data
     """
     # Create a temporary file to store the subset font
     with tempfile.NamedTemporaryFile(suffix=".ttf", delete=False) as tmp_file:
         tmp_path = tmp_file.name
-    
+
     # Get unique characters from the text
     unique_chars = set(text.lower() + text.upper())
-    
+
     # Create the subsetting command
     subset_args = [
         font_path,
@@ -40,17 +41,17 @@ def subset_font(font_path, text):
         "--recalc-bounds",
         "--drop-tables=",  # Don't drop any tables by default
     ]
-    
+
     # Run the subsetting
     subset_main(subset_args)
-    
+
     # Read the subsetted font
     with open(tmp_path, "rb") as f:
         font_data = f.read()
-    
+
     # Clean up the temporary file
     os.unlink(tmp_path)
-    
+
     return font_data
 
 
@@ -138,9 +139,7 @@ def main():
         help="Path to save the SVG file",
     )
     parser.add_argument(
-        "--verbose", 
-        action="store_true",
-        help="Print additional information about font subsetting"
+        "--verbose", action="store_true", help="Print additional information about font subsetting"
     )
 
     args = parser.parse_args()
@@ -159,15 +158,15 @@ def main():
     # Generate the SVG
     if args.verbose:
         print(f"Subsetting font {args.font} to include only characters for: {args.text}")
-        
+
     svg = generate_svg_with_embedded_font(
         args.font, text=args.text, color=args.color, output_path=args.output
     )
-    
+
     if args.verbose and args.output:
         # Calculate size savings
         original_size = os.path.getsize(args.font)
-        output_size = len(svg.encode('utf-8'))
+        output_size = len(svg.encode("utf-8"))
         print(f"Original font size: {original_size/1024:.2f} KB")
         print(f"Output SVG size: {output_size/1024:.2f} KB")
 
