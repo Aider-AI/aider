@@ -205,7 +205,17 @@ def get_badges_html():
 
     # Format values
     downloads_formatted = format_number(total_downloads)
-    stars_formatted = format_number(stars) if stars is not None else "0"
+    # Stars should be rounded to whole numbers
+    if stars is None:
+        stars_formatted = "0"
+    elif stars >= 1_000_000_000:
+        stars_formatted = f"{stars // 1_000_000_000}B"
+    elif stars >= 1_000_000:
+        stars_formatted = f"{stars // 1_000_000}M"
+    elif stars >= 1_000:
+        stars_formatted = f"{stars // 1_000}K"
+    else:
+        stars_formatted = str(stars)
     aider_percent_rounded = round(percentage)
 
     # Generate HTML badges
