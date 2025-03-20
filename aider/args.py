@@ -437,6 +437,12 @@ def get_parser(default_config_files, git_root):
         help="Prefix all commit messages with 'aider: ' (default: False)",
     )
     group.add_argument(
+        "--git-commit-verify",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable git pre-commit hooks with --no-verify (default: True)",
+    )
+    group.add_argument(
         "--commit",
         action="store_true",
         help="Commit all pending changes with a suitable commit message, then exit",

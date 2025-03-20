@@ -869,6 +869,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 attribute_commit_message_committer=args.attribute_commit_message_committer,
                 commit_prompt=args.commit_prompt,
                 subtree_only=args.subtree_only,
+                git_commit_verify=args.git_commit_verify,
             )
         except FileNotFoundError:
             pass
