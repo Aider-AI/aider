@@ -3,9 +3,9 @@
 import argparse
 import os
 import sys
-import yaml
 
 import requests
+import yaml
 from dotenv import load_dotenv
 
 
@@ -56,24 +56,27 @@ def get_aider_percentage():
     """
     blame_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "aider", "website", "_data", "blame.yml"
+        "aider",
+        "website",
+        "_data",
+        "blame.yml",
     )
-    
+
     try:
-        with open(blame_path, 'r') as f:
+        with open(blame_path, "r") as f:
             blame_data = yaml.safe_load(f)
-        
+
         # Get the most recent release (first entry in the list)
         if blame_data and len(blame_data) > 0:
             latest_release = blame_data[0]
-            percentage = latest_release.get('aider_percentage', 0)
-            version = latest_release.get('end_tag', 'unknown')
+            percentage = latest_release.get("aider_percentage", 0)
+            version = latest_release.get("end_tag", "unknown")
             return percentage, version
-        
-        return 0, 'unknown'
+
+        return 0, "unknown"
     except Exception as e:
         print(f"Error reading blame data: {e}", file=sys.stderr)
-        return 0, 'unknown'
+        return 0, "unknown"
 
 
 def main():
@@ -115,7 +118,7 @@ def main():
     stars = get_github_stars(args.github_repo)
     if stars is not None:
         print(f"GitHub stars for {args.github_repo}: {stars:,}")
-    
+
     # Get Aider contribution percentage in latest release
     percentage, version = get_aider_percentage()
     print(f"Aider wrote {percentage:.2f}% of code in the latest release ({version})")
