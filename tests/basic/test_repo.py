@@ -420,14 +420,14 @@ class TestRepo(unittest.TestCase):
             fname = Path("test_file.txt")
             fname.write_text("initial content")
             raw_repo.git.add(str(fname))
-            
+
             # Do the initial commit
             raw_repo.git.commit("-m", "Initial commit")
-            
+
             # Now create a pre-commit hook that always fails
             hooks_dir = Path(raw_repo.git_dir) / "hooks"
             hooks_dir.mkdir(exist_ok=True)
-            
+
             pre_commit_hook = hooks_dir / "pre-commit"
             pre_commit_hook.write_text("#!/bin/sh\nexit 1\n")  # Always fail
             pre_commit_hook.chmod(0o755)  # Make executable
