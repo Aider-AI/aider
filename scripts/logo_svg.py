@@ -8,7 +8,6 @@ in terminal green (#14b014) on a white background.
 import argparse
 import base64
 import os
-from pathlib import Path
 
 
 def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", output_path=None):
