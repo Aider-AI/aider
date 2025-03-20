@@ -14,10 +14,6 @@
       text-anchor: middle; /* Center the text horizontally */
       dominant-baseline: middle; /* Center the text vertically */
     }
-    .background {
-      fill: white;
-    }
   </style>
-  <rect class="background" width="200" height="60" x="0" y="0" />
   <text x="100.0" y="37.2" class="logo-text">aider</text>
 </svg>
