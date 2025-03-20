@@ -68,16 +68,16 @@ def get_latest_release_aider_percentage():
 
         if not blame_data or len(blame_data) == 0:
             return 0, "unknown"
-        
+
         # Find the latest release by parsing version numbers
         latest_version = None
         latest_release = None
-        
+
         for release in blame_data:
             version_tag = release.get("end_tag", "")
             if not version_tag.startswith("v"):
                 continue
-                
+
             # Parse version like "v0.77.0" into a tuple (0, 77, 0)
             try:
                 version_parts = tuple(int(part) for part in version_tag[1:].split("."))
@@ -87,7 +87,7 @@ def get_latest_release_aider_percentage():
             except ValueError:
                 # Skip if version can't be parsed as integers
                 continue
-        
+
         if latest_release:
             percentage = latest_release.get("aider_percentage", 0)
             version = latest_release.get("end_tag", "unknown")
