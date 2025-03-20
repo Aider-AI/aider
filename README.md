@@ -11,10 +11,10 @@
 </p>
 
 
-Aider lets you pair program with LLMs,
-to edit code in your local git repository.
-Start a new project or work with an existing code base.
-Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o. Aider can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
+Aider lets you pair program with LLMs, to edit your local code base. 
+Start a new project or work with existing code.
+Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o. 
+Aider can [connect to almost any LLM, including local models](https://aider.chat/docs/llms.html).
 
 
 <!-- SCREENCAST START -->
