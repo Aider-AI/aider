@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="240" height="100" viewBox="0 0 240 100" xmlns="http://www.w3.org/2000/svg">
+<svg width="200" height="60" viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
   <style>
     @font-face {
       font-family: 'GlassTTYVT220';
@@ -11,11 +11,13 @@
       font-family: 'GlassTTYVT220', monospace;
       font-size: 60px;
       fill: #14b014;
+      text-anchor: middle; /* Center the text horizontally */
+      dominant-baseline: middle; /* Center the text vertically */
     }
     .background {
       fill: white;
     }
   </style>
-  <rect class="background" width="240" height="100" x="0" y="0" />
-  <text x="20" y="65" class="logo-text">aider</text>
+  <rect class="background" width="200" height="60" x="0" y="0" />
+  <text x="100.0" y="37.2" class="logo-text">aider</text>
 </svg>
