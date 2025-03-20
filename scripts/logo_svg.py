@@ -37,9 +37,15 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
     text_x = width / 2  # Center point of the SVG width
     text_y = height * 0.62  # Center point of the SVG height
 
-    # Create the SVG with embedded font
+    # Create the SVG with embedded font and glow effect
     svg = f"""<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
   <style>
     @font-face {{
       font-family: 'GlassTTYVT220';
@@ -53,6 +59,7 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
       fill: {color};
       text-anchor: middle; /* Center the text horizontally */
       dominant-baseline: middle; /* Center the text vertically */
+      filter: url(#glow);
     }}
   </style>
   <text x="{text_x}" y="{text_y}" class="logo-text">{text}</text>
