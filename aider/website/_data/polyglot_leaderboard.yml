@@ -675,30 +675,30 @@
   seconds_per_case: 113.5
   total_cost: 183.1802
 
-- dirname: 2025-03-06-17-40-24--qwq32b-diff-temp-topp-ex-sys-remind-user-for-real
+- dirname: 2025-03-16-05-09-35--QwQ32B_exl2_6.0bpw
   test_cases: 225
-  model: QwQ-32B
-  edit_format: diff
-  commit_hash: 51d118f-dirty
-  pass_rate_1: 8.0
-  pass_rate_2: 20.9
-  pass_num_1: 18
-  pass_num_2: 47
-  percent_cases_well_formed: 67.6
-  error_outputs: 145
-  num_malformed_responses: 143
-  num_with_malformed_responses: 73
-  user_asks: 17
-  lazy_comments: 0
+  model: openai/Dracones_QwQ-32B_exl2_6.0bpw
+  edit_format: whole
+  commit_hash: 4f4b10f
+  pass_rate_1: 11.1
+  pass_rate_2: 28.9
+  pass_num_1: 25
+  pass_num_2: 65
+  percent_cases_well_formed: 97.8
+  error_outputs: 33
+  num_malformed_responses: 7
+  num_with_malformed_responses: 5
+  user_asks: 166
+  lazy_comments: 17
   syntax_errors: 0
   indentation_errors: 0
-  exhausted_context_windows: 1
+  exhausted_context_windows: 0
   test_timeouts: 4
   total_tests: 225
-  command: aider --model fireworks_ai/accounts/fireworks/models/qwq-32b
-  date: 2025-03-06
-  versions: 0.75.3.dev
-  seconds_per_case: 228.6
+  command: aider --model openai/Dracones_QwQ-32B_exl2_6.0bpw
+  date: 2025-03-16
+  versions: 0.77.1.dev
+  seconds_per_case: 1094.1
   total_cost: 0.0000
 
 - dirname: 2025-03-07-15-11-27--qwq32b-arch-temp-topp-again
