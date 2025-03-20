@@ -13,7 +13,7 @@
     <header>
         <div class="container">
             <nav>
-                <a href="#" class="logo">aider</a>
+                <a href="#" class="logo" id="logo-container">aider</a>
                 <div class="nav-links">
                     <a href="#features">Features</a>
                     <a href="#getting-started">Getting Started</a>
@@ -505,5 +505,31 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
     <!-- Add Prism.js for syntax highlighting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <!-- Logo Progressive Enhancement -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoContainer = document.getElementById('logo-container');
+            const textContent = logoContainer.textContent; // Save the text for fallback
+            
+            // Create new image element
+            const logoImg = new Image();
+            logoImg.src = '/assets/logo.svg';
+            logoImg.alt = 'Aider Logo';
+            logoImg.style.height = '1.8rem';
+            logoImg.style.verticalAlign = 'middle';
+            
+            // Only replace if image loads successfully
+            logoImg.onload = function() {
+                logoContainer.textContent = ''; // Clear text
+                logoContainer.appendChild(logoImg);
+            };
+            
+            // If image fails to load, do nothing (keep the text)
+            logoImg.onerror = function() {
+                console.log('SVG logo failed to load, keeping text fallback');
+            };
+        });
+    </script>
 </body>
 </html>
