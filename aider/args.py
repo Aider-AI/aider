@@ -439,8 +439,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--git-commit-verify",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Enable/disable git pre-commit hooks with --no-verify (default: True)",
+        default=False,
+        help="Enable/disable git pre-commit hooks with --no-verify (default: False)",
     )
     group.add_argument(
         "--commit",
