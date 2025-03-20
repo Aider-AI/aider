@@ -99,6 +99,47 @@ def get_latest_release_aider_percentage():
         return 0, "unknown"
 
 
+def format_number(number):
+    """
+    Format a large number with K, M, B suffixes with 1 decimal place
+    """
+    if number is None:
+        return "0"
+    
+    if number >= 1_000_000_000:
+        return f"{number/1_000_000_000:.1f}B"
+    elif number >= 1_000_000:
+        return f"{number/1_000_000:.1f}M"
+    elif number >= 1_000:
+        return f"{number/1_000:.1f}K"
+    else:
+        return str(number)
+
+
+def generate_badges_md(downloads, stars, aider_percentage):
+    """
+    Generate markdown for badges with updated values
+    """
+    # Format downloads to 1 decimal place with M suffix
+    downloads_formatted = format_number(downloads)
+    
+    # Round aider percentage to whole number
+    aider_percent_rounded = round(aider_percentage)
+    
+    markdown = f"""  <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" title="Total number of GitHub stars the Aider project has received"
+src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
+  <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" title="Total number of installations via pip from PyPI"
+src="https://img.shields.io/badge/📦%20Installs-{downloads_formatted}-2ecc71?style=flat-square&labelColor=555555"/></a>
+  <img alt="Tokens per week" title="Number of tokens processed weekly by Aider users"
+src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-e74c3c?style=flat-square&labelColor=555555"/>
+  <a href="https://openrouter.ai/"><img alt="OpenRouter Ranking" title="Aider's ranking among applications on the OpenRouter platform"
+src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
+  <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="Percentage of the new code in Aider's last release written by Aider itself"
+src="https://img.shields.io/badge/🔄%20Singularity-{aider_percent_rounded}%25-3498db?style=flat-square&labelColor=555555"/></a>"""
+
+    return markdown
+
+
 def main():
     # Load environment variables from .env file
     load_dotenv()
@@ -118,6 +159,9 @@ def main():
         "--github-repo",
         default="paul-gauthier/aider",
         help="GitHub repository (default: paul-gauthier/aider)",
+    )
+    parser.add_argument(
+        "--markdown", action="store_true", help="Generate markdown badges block"
     )
     args = parser.parse_args()
 
@@ -142,6 +186,11 @@ def main():
     # Get Aider contribution percentage in latest release
     percentage, version = get_latest_release_aider_percentage()
     print(f"Aider wrote {percentage:.2f}% of code in the LATEST release ({version})")
+    
+    # Generate and print badges markdown
+    badges_md = generate_badges_md(total_downloads, stars, percentage)
+    print("\nBadges markdown:\n")
+    print(badges_md)
 
 
 if __name__ == "__main__":
