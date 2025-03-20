@@ -66,9 +66,29 @@ def get_latest_release_aider_percentage():
         with open(blame_path, "r") as f:
             blame_data = yaml.safe_load(f)
 
-        # The blame data is ordered chronologically, with the most recent release first
-        if blame_data and len(blame_data) > 0:
-            latest_release = blame_data[0]
+        if not blame_data or len(blame_data) == 0:
+            return 0, "unknown"
+        
+        # Find the latest release by parsing version numbers
+        latest_version = None
+        latest_release = None
+        
+        for release in blame_data:
+            version_tag = release.get("end_tag", "")
+            if not version_tag.startswith("v"):
+                continue
+                
+            # Parse version like "v0.77.0" into a tuple (0, 77, 0)
+            try:
+                version_parts = tuple(int(part) for part in version_tag[1:].split("."))
+                if latest_version is None or version_parts > latest_version:
+                    latest_version = version_parts
+                    latest_release = release
+            except ValueError:
+                # Skip if version can't be parsed as integers
+                continue
+        
+        if latest_release:
             percentage = latest_release.get("aider_percentage", 0)
             version = latest_release.get("end_tag", "unknown")
             return percentage, version
