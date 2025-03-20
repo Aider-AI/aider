@@ -486,6 +486,23 @@ footer {
     font-size: 0.9rem;
 }
 
+.cta-container {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.cta-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
 .stats-container {
     margin-top: 70px;
     display: flex;
