@@ -2,7 +2,7 @@
 """
 Script to generate an SVG logo for Aider with embedded font.
 Reads the Glass_TTY_VT220.ttf font and creates an SVG with the word "aider"
-in terminal green (#14b014) on a white background.
+in terminal green (#14b014) on a transparent background.
 """
 
 import argparse
@@ -54,11 +54,7 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
       text-anchor: middle; /* Center the text horizontally */
       dominant-baseline: middle; /* Center the text vertically */
     }}
-    .background {{
-      fill: white;
-    }}
   </style>
-  <rect class="background" width="{width}" height="{height}" x="0" y="0" />
   <text x="{text_x}" y="{text_y}" class="logo-text">{text}</text>
 </svg>"""  # noqa
 
