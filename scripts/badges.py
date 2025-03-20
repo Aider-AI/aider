@@ -109,11 +109,11 @@ def format_number(number):
         return "0"
 
     if number >= 1_000_000_000:
-        return f"{number/1_000_000_000:.1f}B"
+        return f"{number / 1_000_000_000:.1f}B"
     elif number >= 1_000_000:
-        return f"{number/1_000_000:.1f}M"
+        return f"{number / 1_000_000:.1f}M"
     elif number >= 1_000:
-        return f"{number/1_000:.1f}K"
+        return f"{number / 1_000:.1f}K"
     else:
         return str(number)
 
