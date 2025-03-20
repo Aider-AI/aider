@@ -228,7 +228,7 @@ def get_badges_html():
 <a href="/HISTORY.html" class="github-badge badge-coded" title="{SINGULARITY_TOOLTIP}">
     <span class="badge-label">🔄 Singularity</span>
     <span class="badge-value">{aider_percent_rounded}%</span>
-</a>"""
+</a>"""  # noqa
 
     return html
 

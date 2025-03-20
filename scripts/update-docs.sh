@@ -17,6 +17,7 @@ fi
 # README.md before index.md, because index.md uses cog to include README.md
 cog $ARG \
     README.md \
+    aider/website/index.html \
     aider/website/HISTORY.md \
     aider/website/docs/usage/commands.md \
     aider/website/docs/languages.md \
