@@ -178,6 +178,61 @@ def get_badges_md():
     return generate_badges_md(total_downloads, stars, percentage)
 
 
+def get_badges_html():
+    """
+    Get all statistics and return HTML-formatted badges
+    """
+    # Load environment variables from .env file
+    load_dotenv()
+    
+    # Get API key from environment variable
+    api_key = os.environ.get("PEPY_API_KEY")
+    if not api_key:
+        print(
+            "API key not provided. Please set PEPY_API_KEY environment variable",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    
+    # Get PyPI downloads for the default package
+    total_downloads = get_total_downloads(api_key, "aider-chat")
+    
+    # Get GitHub stars for the default repo
+    stars = get_github_stars("paul-gauthier/aider")
+    
+    # Get Aider contribution percentage in latest release
+    percentage, _ = get_latest_release_aider_percentage()
+    
+    # Format values
+    downloads_formatted = format_number(total_downloads)
+    stars_formatted = format_number(stars) if stars is not None else "0"
+    aider_percent_rounded = round(percentage)
+    
+    # Generate HTML badges
+    html = f'''<a href="https://github.com/Aider-AI/aider" class="github-badge badge-stars" title="{GITHUB_STARS_TOOLTIP}">
+    <span class="badge-label">⭐ GitHub Stars</span>
+    <span class="badge-value">{stars_formatted}</span>
+</a>
+<a href="https://pypi.org/project/aider-chat/" class="github-badge badge-installs" title="{PYPI_DOWNLOADS_TOOLTIP}">
+    <span class="badge-label">📦 Installs</span>
+    <span class="badge-value">{downloads_formatted}</span>
+</a>
+<div class="github-badge badge-tokens" title="{TOKENS_WEEKLY_TOOLTIP}">
+    <span class="badge-label">📈 Tokens/week</span>
+    <span class="badge-value">{TOKENS_PER_WEEK}</span>
+</div>
+<a href="https://openrouter.ai/" class="github-badge badge-router" title="{OPENROUTER_TOOLTIP}">
+    <span class="badge-label">🏆 OpenRouter</span>
+    <span class="badge-value">Top 20</span>
+</a>
+<a href="/HISTORY.html" class="github-badge badge-coded" title="{SINGULARITY_TOOLTIP}">
+    <span class="badge-label">🔄 Singularity</span>
+    <span class="badge-value">{aider_percent_rounded}%</span>
+</a>'''
+
+    return html
+
+
 def main():
     # Load environment variables from .env file
     load_dotenv()
