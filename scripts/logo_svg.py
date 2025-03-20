@@ -53,7 +53,7 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
       fill: {color};
     }}
     .background {{
-      fill: white;
+      fill: black;
     }}
   </style>
   <rect class="background" width="{width}" height="{height}" x="0" y="0" />
