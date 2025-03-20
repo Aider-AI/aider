@@ -135,7 +135,7 @@ src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-e74c3c?style=flat-squ
   <a href="https://openrouter.ai/"><img alt="OpenRouter Ranking" title="Aider's ranking among applications on the OpenRouter platform"
 src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
   <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="Percentage of the new code in Aider's last release written by Aider itself"
-src="https://img.shields.io/badge/🔄%20Singularity-{aider_percent_rounded}%25-3498db?style=flat-square&labelColor=555555"/></a>""" # noqa
+src="https://img.shields.io/badge/🔄%20Singularity-{aider_percent_rounded}%25-3498db?style=flat-square&labelColor=555555"/></a>"""  # noqa
 
     return markdown
 
@@ -146,7 +146,7 @@ def get_badges_md():
     """
     # Load environment variables from .env file
     load_dotenv()
-    
+
     # Get API key from environment variable
     api_key = os.environ.get("PEPY_API_KEY")
     if not api_key:
@@ -155,16 +155,16 @@ def get_badges_md():
             file=sys.stderr,
         )
         sys.exit(1)
-    
+
     # Get PyPI downloads for the default package
     total_downloads = get_total_downloads(api_key, "aider-chat")
-    
+
     # Get GitHub stars for the default repo
     stars = get_github_stars("paul-gauthier/aider")
-    
+
     # Get Aider contribution percentage in latest release
     percentage, _ = get_latest_release_aider_percentage()
-    
+
     # Generate and return badges markdown
     return generate_badges_md(total_downloads, stars, percentage)
 
