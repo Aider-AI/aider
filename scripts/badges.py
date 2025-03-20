@@ -34,14 +34,14 @@ def get_github_stars(repo="paul-gauthier/aider"):
     """
     url = f"https://api.github.com/repos/{repo}"
     headers = {"Accept": "application/vnd.github.v3+json"}
-    
+
     try:
         response = requests.get(url, headers=headers)
         response.raise_for_status()  # Raise an exception for HTTP errors
-        
+
         data = response.json()
         stars = data.get("stargazers_count", 0)
-        
+
         return stars
     except requests.exceptions.RequestException as e:
         print(f"Error fetching GitHub stars: {e}", file=sys.stderr)
@@ -52,9 +52,7 @@ def main():
     # Load environment variables from .env file
     load_dotenv()
 
-    parser = argparse.ArgumentParser(
-        description="Get total downloads and GitHub stars for aider"
-    )
+    parser = argparse.ArgumentParser(description="Get total downloads and GitHub stars for aider")
     parser.add_argument(
         "--api-key",
         help=(
@@ -66,7 +64,9 @@ def main():
         "--package", default="aider-chat", help="Package name (default: aider-chat)"
     )
     parser.add_argument(
-        "--github-repo", default="paul-gauthier/aider", help="GitHub repository (default: paul-gauthier/aider)"
+        "--github-repo",
+        default="paul-gauthier/aider",
+        help="GitHub repository (default: paul-gauthier/aider)",
     )
     args = parser.parse_args()
 
@@ -82,7 +82,7 @@ def main():
     # Get PyPI downloads
     total_downloads = get_total_downloads(api_key, args.package)
     print(f"Total downloads for {args.package}: {total_downloads:,}")
-    
+
     # Get GitHub stars
     stars = get_github_stars(args.github_repo)
     if stars is not None:
