@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300">
+    <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
 </p>
 
 # Aider - AI Pair Programming in Your Terminal
