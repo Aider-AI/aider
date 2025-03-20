@@ -2,10 +2,14 @@
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
 </p>
 
-# AI Pair Programming in Your Terminal
+<h1 align="center">
+AI Pair Programming in Your Terminal
+</h1>
 
 
+<p align="center">
 Aider lets you pair program with LLMs to start a new project or build on your existing codebase. 
+</p>
 
 <p align="center">
   <img
