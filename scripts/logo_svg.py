@@ -1,13 +1,57 @@
 #!/usr/bin/env python3
 """
 Script to generate an SVG logo for Aider with embedded font.
-Reads the Glass_TTY_VT220.ttf font and creates an SVG with the word "aider"
-in terminal green (#14b014) on a transparent background.
+Reads the Glass_TTY_VT220.ttf font, subsets it to only include the letters needed,
+and creates an SVG with the word "aider" in terminal green (#14b014) on a transparent background.
 """
 
 import argparse
 import base64
 import os
+import tempfile
+from fontTools.subset import main as subset_main
+from fontTools.ttLib import TTFont
+
+
+def subset_font(font_path, text):
+    """
+    Create a subset of the font containing only the characters needed for the text.
+    
+    Args:
+        font_path (str): Path to the TTF font file
+        text (str): Text for which to extract characters
+        
+    Returns:
+        bytes: The subsetted font data
+    """
+    # Create a temporary file to store the subset font
+    with tempfile.NamedTemporaryFile(suffix=".ttf", delete=False) as tmp_file:
+        tmp_path = tmp_file.name
+    
+    # Get unique characters from the text
+    unique_chars = set(text.lower() + text.upper())
+    
+    # Create the subsetting command
+    subset_args = [
+        font_path,
+        "--output-file=" + tmp_path,
+        "--unicodes=" + ",".join([f"U+{ord(c):04X}" for c in unique_chars]),
+        "--name-IDs=*",  # Keep all name records
+        "--recalc-bounds",
+        "--drop-tables=",  # Don't drop any tables by default
+    ]
+    
+    # Run the subsetting
+    subset_main(subset_args)
+    
+    # Read the subsetted font
+    with open(tmp_path, "rb") as f:
+        font_data = f.read()
+    
+    # Clean up the temporary file
+    os.unlink(tmp_path)
+    
+    return font_data
 
 
 def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", output_path=None):
@@ -23,10 +67,10 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
     Returns:
         str: The SVG content
     """
-    # Read the font file and encode it as base64
-    with open(font_path, "rb") as f:
-        font_data = f.read()
+    # Subset the font to only include the needed characters
+    font_data = subset_font(font_path, text)
 
+    # Encode the font data as base64
     font_base64 = base64.b64encode(font_data).decode("utf-8")
 
     # Calculate SVG dimensions based on text length
@@ -93,6 +137,11 @@ def main():
         default="aider/website/assets/logo.svg",
         help="Path to save the SVG file",
     )
+    parser.add_argument(
+        "--verbose", 
+        action="store_true",
+        help="Print additional information about font subsetting"
+    )
 
     args = parser.parse_args()
 
@@ -108,9 +157,19 @@ def main():
             os.makedirs(output_dir)
 
     # Generate the SVG
-    generate_svg_with_embedded_font(
+    if args.verbose:
+        print(f"Subsetting font {args.font} to include only characters for: {args.text}")
+        
+    svg = generate_svg_with_embedded_font(
         args.font, text=args.text, color=args.color, output_path=args.output
     )
+    
+    if args.verbose and args.output:
+        # Calculate size savings
+        original_size = os.path.getsize(args.font)
+        output_size = len(svg.encode('utf-8'))
+        print(f"Original font size: {original_size/1024:.2f} KB")
+        print(f"Output SVG size: {output_size/1024:.2f} KB")
 
 
 if __name__ == "__main__":
