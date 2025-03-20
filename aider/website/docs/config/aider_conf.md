@@ -290,6 +290,9 @@ cog.outl("```")
 ## Prefix all commit messages with 'aider: ' (default: False)
 #attribute-commit-message-committer: false
 
+## Enable/disable git pre-commit hooks with --no-verify (default: False)
+#git-commit-verify: false
+
 ## Commit all pending changes with a suitable commit message, then exit
 #commit: false
 

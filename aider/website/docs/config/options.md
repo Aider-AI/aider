@@ -56,6 +56,7 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--attribute-committer | --no-attribute-committer]
              [--attribute-commit-message-author | --no-attribute-commit-message-author]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
+             [--git-commit-verify | --no-git-commit-verify]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--skip-sanity-check-repo]
              [--watch-files | --no-watch-files] [--lint]
@@ -441,6 +442,14 @@ Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER`
 Aliases:
   - `--attribute-commit-message-committer`
   - `--no-attribute-commit-message-committer`
+
+### `--git-commit-verify`
+Enable/disable git pre-commit hooks with --no-verify (default: False)  
+Default: False  
+Environment variable: `AIDER_GIT_COMMIT_VERIFY`  
+Aliases:
+  - `--git-commit-verify`
+  - `--no-git-commit-verify`
 
 ### `--commit`
 Commit all pending changes with a suitable commit message, then exit  
