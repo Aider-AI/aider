@@ -586,6 +586,10 @@ footer {
         margin: 0;
     }
     
+    .stats-container {
+        margin-top: 40px;
+    }
+    
     .hero h1 {
         font-size: 2.2rem;
         text-align: center;
@@ -692,6 +696,10 @@ footer {
     
     .hero {
         padding: 30px 0;
+    }
+    
+    .stats-container {
+        margin-top: 25px;
     }
     
     .buttons {
