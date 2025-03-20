@@ -5,9 +5,8 @@
 - Added model setting validation to ignore `--reasoning-effort` and `--thinking-tokens` if the model doesn't support them.
 - Added `--check-model-accepts-settings` flag (default: true) to force unsupported model settings.
 - Annotated which models support reasoning_effort and thinking_tokens settings in the model settings data.
-- Consolidated model setting validation checks into a single loop for better code organization.
 - Improved code block rendering in markdown output with better padding using NoInsetMarkdown.
-- Aider wrote 96% of the code in this release.
+- Aider wrote 89% of the code in this release.
 
 ### Aider v0.77.1
 
