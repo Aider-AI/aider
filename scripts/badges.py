@@ -105,7 +105,7 @@ def format_number(number):
     """
     if number is None:
         return "0"
-    
+
     if number >= 1_000_000_000:
         return f"{number/1_000_000_000:.1f}B"
     elif number >= 1_000_000:
@@ -122,10 +122,10 @@ def generate_badges_md(downloads, stars, aider_percentage):
     """
     # Format downloads to 1 decimal place with M suffix
     downloads_formatted = format_number(downloads)
-    
+
     # Round aider percentage to whole number
     aider_percent_rounded = round(aider_percentage)
-    
+
     markdown = f"""  <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" title="Total number of GitHub stars the Aider project has received"
 src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
   <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" title="Total number of installations via pip from PyPI"
@@ -160,9 +160,7 @@ def main():
         default="paul-gauthier/aider",
         help="GitHub repository (default: paul-gauthier/aider)",
     )
-    parser.add_argument(
-        "--markdown", action="store_true", help="Generate markdown badges block"
-    )
+    parser.add_argument("--markdown", action="store_true", help="Generate markdown badges block")
     args = parser.parse_args()
 
     # Get API key from args or environment variable (which may be loaded from .env)
@@ -186,7 +184,7 @@ def main():
     # Get Aider contribution percentage in latest release
     percentage, version = get_latest_release_aider_percentage()
     print(f"Aider wrote {percentage:.2f}% of code in the LATEST release ({version})")
-    
+
     # Generate and print badges markdown
     badges_md = generate_badges_md(total_downloads, stars, percentage)
     print("\nBadges markdown:\n")
