@@ -31,12 +31,16 @@ def get_total_downloads(api_key, package_name="aider-chat"):
 def main():
     # Load environment variables from .env file
     load_dotenv()
-    
+
     parser = argparse.ArgumentParser(
         description="Get total downloads for a Python package from pepy.tech"
     )
     parser.add_argument(
-        "--api-key", help="pepy.tech API key (can also be set via PEPY_API_KEY in .env file or environment variable)"
+        "--api-key",
+        help=(
+            "pepy.tech API key (can also be set via PEPY_API_KEY in .env file or environment"
+            " variable)"
+        ),
     )
     parser.add_argument(
         "--package", default="aider-chat", help="Package name (default: aider-chat)"
