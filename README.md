@@ -4,13 +4,6 @@
 
 # AI Pair Programming in Your Terminal
 
-<p align="center">
-  <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
-  <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" src="https://img.shields.io/badge/📦%20Installs-1.6M-2ecc71?style=flat-square&labelColor=555555"/></a>
-  <img alt="Tokens per week" src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-e74c3c?style=flat-square&labelColor=555555"/>
-  <a href="https://openrouter.ai/"><img alt="OpenRouter Ranking" src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
-  <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" src="https://img.shields.io/badge/🔄%20Singularity-72%25-3498db?style=flat-square&labelColor=555555"/></a>
-</p>
 
 Aider lets you pair program with LLMs to start a new project or build on your existing codebase. 
 
@@ -19,6 +12,14 @@ Aider lets you pair program with LLMs to start a new project or build on your ex
     src="https://aider.chat/assets/screencast.svg"
     alt="aider screencast"
   >
+</p>
+
+<p align="center">
+  <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
+  <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" src="https://img.shields.io/badge/📦%20Installs-1.6M-2ecc71?style=flat-square&labelColor=555555"/></a>
+  <img alt="Tokens per week" src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-e74c3c?style=flat-square&labelColor=555555"/>
+  <a href="https://openrouter.ai/"><img alt="OpenRouter Ranking" src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
+  <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" src="https://img.shields.io/badge/🔄%20Singularity-72%25-3498db?style=flat-square&labelColor=555555"/></a>
 </p>
 
 ## Features
