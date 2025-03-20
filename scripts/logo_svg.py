@@ -43,7 +43,8 @@ def generate_svg_with_embedded_font(font_path, text="aider", color="#14b014", ou
   <defs>
     <filter id="glow" x="-40%" y="-30%" width="180%" height="160%">
       <feGaussianBlur stdDeviation="5 1" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+      <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.5 0" result="lighter-blur"/>
+      <feComposite in="SourceGraphic" in2="lighter-blur" operator="over" />
     </filter>
   </defs>
   <style>
