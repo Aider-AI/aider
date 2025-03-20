@@ -11,7 +11,6 @@ import os
 import tempfile
 
 from fontTools.subset import main as subset_main
-from fontTools.ttLib import TTFont
 
 
 def subset_font(font_path, text):
@@ -167,8 +166,8 @@ def main():
         # Calculate size savings
         original_size = os.path.getsize(args.font)
         output_size = len(svg.encode("utf-8"))
-        print(f"Original font size: {original_size/1024:.2f} KB")
-        print(f"Output SVG size: {output_size/1024:.2f} KB")
+        print(f"Original font size: {original_size / 1024:.2f} KB")
+        print(f"Output SVG size: {output_size / 1024:.2f} KB")
 
 
 if __name__ == "__main__":
