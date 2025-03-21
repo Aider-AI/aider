@@ -51,4 +51,19 @@ callouts:
   note:
     title: Note
     color: yellow
+
+# Custom CSS for our table of contents
+kramdown:
+  syntax_highlighter_opts:
+    css_class: highlight
     
+sass:
+  style: compressed
+  
+# Additional CSS
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  startings: []
+  
