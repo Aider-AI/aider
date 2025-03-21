@@ -13,12 +13,11 @@ from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
-from aider.io import CommandCompletionException
-
 from aider import models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
+from aider.io import CommandCompletionException
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
@@ -1092,14 +1091,17 @@ class Commands:
 
     def completions_ask(self):
         from aider.io import CommandCompletionException
+
         raise CommandCompletionException()
 
     def completions_code(self):
         from aider.io import CommandCompletionException
+
         raise CommandCompletionException()
 
     def completions_architect(self):
         from aider.io import CommandCompletionException
+
         raise CommandCompletionException()
 
     def cmd_ask(self, args):
