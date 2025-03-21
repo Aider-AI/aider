@@ -264,7 +264,7 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>3,629,711</td><td class='right'>99.1%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>3,519,400</td><td class='right'>99.1%</td></tr>
 <tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>11,761</td><td class='right'>0.3%</td></tr>
 <tr><td>openrouter/openai/o3-mini</td><td class='right'>11,138</td><td class='right'>0.3%</td></tr>
 <tr><td>o3-mini</td><td class='right'>8,491</td><td class='right'>0.2%</td></tr>

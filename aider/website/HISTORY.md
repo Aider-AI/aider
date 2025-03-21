@@ -24,7 +24,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.78.0
 
 - Added model setting validation to ignore `--reasoning-effort` and `--thinking-tokens` if the model doesn't support them.
 - Added `--check-model-accepts-settings` flag (default: true) to force unsupported model settings.
@@ -37,7 +37,8 @@ cog.out(text)
 - Added commands to switch between model types: `/model` for Main Model, `/editor-model` for Editor Model, and `/weak-model` for Weak Model.
 - Added AWS_PROFILE support for Bedrock models, allowing use of AWS profiles instead of explicit credentials.
 - Enhanced `--aiderignore` argument to resolve both absolute and relative paths.
-- Aider wrote 91% of the code in this release.
+- Improved platform information handling to gracefully handle retrieval errors.
+- Aider wrote 92% of the code in this release.
 
 ### Aider v0.77.1
 
