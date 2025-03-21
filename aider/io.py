@@ -71,6 +71,7 @@ def restore_multiline(func):
 
 class CommandCompletionException(Exception):
     """Raised when a command should use the normal autocompleter instead of command-specific completion."""
+
     pass
 
 
@@ -553,7 +554,10 @@ class InputOutput:
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             "Handle Enter key press"
-            if self.multiline_mode and not (self.editingmode == EditingMode.VI and event.app.vi_state.input_mode == InputMode.NAVIGATION):
+            if self.multiline_mode and not (
+                self.editingmode == EditingMode.VI
+                and event.app.vi_state.input_mode == InputMode.NAVIGATION
+            ):
                 # In multiline mode and if not in vi-mode or vi navigation/normal mode, Enter adds a newline
                 event.current_buffer.insert_text("\n")
             else:
