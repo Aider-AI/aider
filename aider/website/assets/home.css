@@ -18,12 +18,58 @@
     --body-line-height: 1.7;
     --paragraph-spacing: 1.6rem;
     --heading-spacing: 1.8rem;
+    
+    /* Typographic scale */
+    --text-xs: 0.75rem;    /* 12px */
+    --text-sm: 0.875rem;   /* 14px */
+    --text-base: 1rem;     /* 16px */
+    --text-md: 1.125rem;   /* 18px */
+    --text-lg: 1.25rem;    /* 20px */
+    --text-xl: 1.5rem;     /* 24px */
+    --text-2xl: 1.875rem;  /* 30px */
+    --text-3xl: 2.25rem;   /* 36px */
+    --text-4xl: 3rem;      /* 48px */
+    
+    /* Spacing rhythm values */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.025em;
+    font-weight: 700;
+}
+
+h1 {
+    font-size: var(--text-4xl);
+    line-height: 1.1;
+    font-weight: 800;
+}
+
+h2 {
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+}
+
+h3 {
+    font-size: var(--text-xl);
+    line-height: 1.3;
 }
 
 body {
@@ -61,7 +107,7 @@ nav {
 
 .logo {
     font-size: 1.8rem;
-    font-weight: 700;
+    font-weight: 600;
     font-family: 'GlassTTYVT220', monospace;
     color: var(--terminal-green);
     text-decoration: none;
@@ -78,6 +124,9 @@ nav {
     text-decoration: none;
     font-weight: 500;
     transition: color 0.3s;
+    font-size: var(--text-sm);
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
 }
 
 .nav-links a:hover {
@@ -252,7 +301,7 @@ nav {
     border-radius: 8px;
     padding: 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
     border-left: 3px solid var(--primary);
     display: block;
     color: inherit;
@@ -262,7 +311,14 @@ nav {
 
 .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    background-color: rgba(76, 110, 245, 0.03);
+}
+
+.feature-card p {
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: rgba(33, 37, 41, 0.9);
 }
 
 .feature-card-header {
@@ -284,14 +340,14 @@ nav {
 }
 
 .feature-title {
-    font-size: 1.35rem;
+    font-size: var(--text-lg);
     color: var(--dark);
     margin: 0;
     position: relative;
-    padding-bottom: 12px;
+    padding-bottom: var(--space-3);
     font-weight: 600;
-    letter-spacing: -0.25px;
-    line-height: var(--heading-line-height);
+    letter-spacing: -0.01em;
+    line-height: 1.3;
 }
 
 .feature-title::after {
@@ -309,17 +365,24 @@ nav {
     background-color: #f8f9fb;
 }
 
+code, pre, .code-block {
+    font-family: 'Fira Code', 'JetBrains Mono', 'SF Mono', Consolas, Monaco, 'Andale Mono', monospace;
+    font-feature-settings: "liga" 1, "calt" 1; /* Enable ligatures */
+    letter-spacing: -0.025em;
+    font-size: 0.95em;
+}
+
 .code-block {
     background-color: var(--code-bg);
     border-radius: 8px;
     padding: 1.5rem;
     color: white;
-    font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, 'Liberation Mono', Menlo, monospace;
     font-size: 1.1rem;
-    line-height: 1.6;
+    line-height: 1.5;
     margin: 1.5rem 0;
     overflow-x: auto;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    tab-size: 2;
 }
 
 .testimonials {
@@ -353,6 +416,8 @@ nav {
     padding: 0 10px;
     font-size: 1.1rem;
     line-height: var(--body-line-height);
+    text-wrap: balance;
+    hanging-punctuation: first;
 }
 
 .testimonial-text::before,
@@ -546,12 +611,15 @@ footer {
     height: 28px;
     border-radius: 4px;
     overflow: hidden;
-    font-size: 0.85rem;
+    font-size: var(--text-xs);
     font-weight: 600;
     line-height: 1;
     text-decoration: none;
     transition: transform 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
 }
 
 .github-badge:hover {
@@ -737,6 +805,30 @@ footer {
     
     .github-badge {
         font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        /* Adjust scale for mobile */
+        --text-4xl: 2.5rem;
+        --text-2xl: 1.75rem;
+        --text-xl: 1.25rem;
+    }
+    
+    body {
+        line-height: 1.5;
+    }
+    
+    .feature-card p {
+        font-size: 0.9375rem;
+    }
+    
+    /* Optimize testimonial display on mobile */
+    .testimonial-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        text-wrap: pretty; /* Modern browsers will balance text */
     }
 }
 
