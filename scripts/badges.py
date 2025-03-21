@@ -35,11 +35,24 @@ def get_downloads_from_bigquery(credentials_path=None, package_name="aider-chat"
         # Create a client
         client = bigquery.Client(credentials=credentials)
 
-        # Query to get total downloads for the package
+        # Query to get total downloads for the package, excluding CI/CD systems
         query = f"""
             SELECT COUNT(*) as total_downloads
             FROM `bigquery-public-data.pypi.file_downloads`
             WHERE file.project = '{package_name}'
+            AND NOT (
+                -- Exclude common CI/CD systems based on installer name patterns
+                LOWER(details.installer.name) LIKE '%github%' OR
+                LOWER(details.installer.name) LIKE '%travis%' OR
+                LOWER(details.installer.name) LIKE '%circle%' OR
+                LOWER(details.installer.name) LIKE '%jenkins%' OR
+                LOWER(details.installer.name) LIKE '%gitlab%' OR
+                LOWER(details.installer.name) LIKE '%azure%' OR
+                LOWER(details.installer.name) LIKE '%ci%' OR
+                LOWER(details.installer.name) LIKE '%cd%' OR
+                LOWER(details.installer.name) LIKE '%bot%' OR
+                LOWER(details.installer.name) LIKE '%build%'
+            )
         """
 
         # Execute the query
