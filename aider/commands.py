@@ -1090,18 +1090,12 @@ class Commands:
         )
 
     def completions_ask(self):
-        from aider.io import CommandCompletionException
-
         raise CommandCompletionException()
 
     def completions_code(self):
-        from aider.io import CommandCompletionException
-
         raise CommandCompletionException()
 
     def completions_architect(self):
-        from aider.io import CommandCompletionException
-
         raise CommandCompletionException()
 
     def cmd_ask(self, args):
