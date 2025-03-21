@@ -1089,13 +1089,16 @@ class Commands:
         )
 
     def completions_ask(self):
-        raise NotImplementedError("Use normal autocompleter")
+        from aider.io import CommandCompletionException
+        raise CommandCompletionException()
 
     def completions_code(self):
-        raise NotImplementedError("Use normal autocompleter")
+        from aider.io import CommandCompletionException
+        raise CommandCompletionException()
 
     def completions_architect(self):
-        raise NotImplementedError("Use normal autocompleter")
+        from aider.io import CommandCompletionException
+        raise CommandCompletionException()
 
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
