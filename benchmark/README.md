@@ -58,8 +58,8 @@ git clone https://github.com/Aider-AI/polyglot-benchmark tmp.benchmarks/polyglot
 
 ### Running the benchmark
 
-Launch the docker container and run the benchmark inside it:
-
+If your model requires ENV variables, such as `OPENAI_API_KEY`, add them to
+your `.env` file. Then, run a docker container and a benchmark inside it:
 ```
 # Launch the docker container
 ./benchmark/docker.sh
