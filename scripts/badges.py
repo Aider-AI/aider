@@ -27,13 +27,16 @@ SINGULARITY_TOOLTIP = "Percentage of the new code in Aider's last release writte
 CACHE_DIR = os.path.expanduser("~/.cache/aider-badges")
 CACHE_DURATION = 24 * 60 * 60  # 24 hours in seconds
 
+
 def ensure_cache_dir():
     """Create the cache directory if it doesn't exist"""
     os.makedirs(CACHE_DIR, exist_ok=True)
 
+
 def get_cache_path(package_name):
     """Get the path to the cache file for a package"""
     return os.path.join(CACHE_DIR, f"{package_name}_downloads.json")
+
 
 def read_from_cache(package_name):
     """
@@ -41,41 +44,42 @@ def read_from_cache(package_name):
     Returns (downloads, is_valid) tuple where is_valid is True if cache is valid
     """
     cache_path = get_cache_path(package_name)
-    
+
     if not os.path.exists(cache_path):
         return None, False
-    
+
     try:
-        with open(cache_path, 'r') as f:
+        with open(cache_path, "r") as f:
             cache_data = json.load(f)
-        
+
         # Check if cache is expired
-        timestamp = cache_data.get('timestamp', 0)
+        timestamp = cache_data.get("timestamp", 0)
         current_time = time.time()
-        
+
         if current_time - timestamp > CACHE_DURATION:
             return None, False
-        
-        return cache_data.get('downloads'), True
+
+        return cache_data.get("downloads"), True
     except Exception as e:
         print(f"Error reading from cache: {e}", file=sys.stderr)
         return None, False
 
+
 def write_to_cache(package_name, downloads):
     """Write download statistics to cache"""
     cache_path = get_cache_path(package_name)
-    
+
     try:
         ensure_cache_dir()
         cache_data = {
-            'downloads': downloads,
-            'timestamp': time.time(),
-            'datetime': datetime.now().isoformat()
+            "downloads": downloads,
+            "timestamp": time.time(),
+            "datetime": datetime.now().isoformat(),
         }
-        
-        with open(cache_path, 'w') as f:
+
+        with open(cache_path, "w") as f:
             json.dump(cache_data, f)
-        
+
         return True
     except Exception as e:
         print(f"Error writing to cache: {e}", file=sys.stderr)
@@ -92,9 +96,9 @@ def get_downloads_from_bigquery(credentials_path=None, package_name="aider-chat"
     if is_valid:
         print(f"Using cached download statistics for {package_name} (valid for 24 hours)")
         return cached_downloads
-    
+
     print(f"Cache invalid or expired, fetching fresh download statistics for {package_name}")
-    
+
     try:
         # Initialize credentials if path provided
         credentials = None
@@ -410,7 +414,7 @@ def get_badges_html():
 def main():
     # Load environment variables from .env file
     load_dotenv()
-    
+
     # Ensure cache directory exists
     ensure_cache_dir()
 
