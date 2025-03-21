@@ -79,9 +79,11 @@ def get_total_downloads(
     Otherwise uses pepy.tech API (requires api_key).
     """
     if use_bigquery:
+        print(f"Using BigQuery to fetch download statistics for {package_name}")
         return get_downloads_from_bigquery(credentials_path, package_name)
 
     # Fall back to pepy.tech API
+    print(f"Using pepy.tech API to fetch download statistics for {package_name}")
     if not api_key:
         print("API key not provided for pepy.tech", file=sys.stderr)
         sys.exit(1)
