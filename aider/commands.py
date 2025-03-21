@@ -1089,13 +1089,13 @@ class Commands:
         )
 
     def completions_ask(self):
-        return self.completions_add()
+        raise NotImplementedError("Use normal autocompleter")
 
     def completions_code(self):
-        return self.completions_add()
+        raise NotImplementedError("Use normal autocompleter")
 
     def completions_architect(self):
-        return self.completions_add()
+        raise NotImplementedError("Use normal autocompleter")
 
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
