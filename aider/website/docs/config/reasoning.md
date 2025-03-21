@@ -8,6 +8,29 @@ description: How to configure reasoning model settings from secondary providers.
 
 ![Thinking demo](/assets/thinking.jpg)
 
+## Basic usage
+
+Aider is configured to work with most popular reasoning models out of the box. 
+You can use them like this:
+
+```bash
+# Sonnet uses a thinking token budget
+aider --model sonnet --thinking-tokens 8k
+
+# o3-mini uses low/medium/high reasoning effort
+aider --model o3-mini --reasoning-effort high
+
+# R1 doesn't have configurable thinking/reasoning
+aider --model r1
+```
+
+Inside the aider chat, you can use `/thinking-tokens 4k` or `/reasoning-effort low` to change
+the amount of reasoning.
+
+The rest of this document describes more advanced details which are mainly needed
+if you're configuring aider to work with a lesser known reasoning model or one served
+via an unusual provider.
+
 ## Reasoning settings
 
 Different models support different reasoning settings. Aider provides several ways to control reasoning behavior:
