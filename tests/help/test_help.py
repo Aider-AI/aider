@@ -1,7 +1,8 @@
-import unittest
 import time
+import unittest
 from unittest.mock import MagicMock
-from requests.exceptions import ReadTimeout, ConnectionError
+
+from requests.exceptions import ConnectionError, ReadTimeout
 
 import aider
 from aider.coders import Coder
@@ -16,23 +17,23 @@ class TestHelp(unittest.TestCase):
     def retry_with_backoff(func, max_time=60, initial_delay=1, backoff_factor=2):
         """
         Execute a function with exponential backoff retry logic.
-        
+
         Args:
             func: Function to execute
             max_time: Maximum time in seconds to keep retrying
             initial_delay: Initial delay between retries in seconds
             backoff_factor: Multiplier for delay after each retry
-            
+
         Returns:
             The result of the function if successful
-            
+
         Raises:
             The last exception encountered if all retries fail
         """
         start_time = time.time()
         delay = initial_delay
         last_exception = None
-        
+
         while time.time() - start_time < max_time:
             try:
                 return func()
@@ -40,12 +41,12 @@ class TestHelp(unittest.TestCase):
                 last_exception = e
                 time.sleep(delay)
                 delay = min(delay * backoff_factor, 15)  # Cap max delay at 15 seconds
-        
+
         # If we've exhausted our retry time, raise the last exception
         if last_exception:
             raise last_exception
         raise Exception("Retry timeout exceeded but no exception was caught")
-        
+
     @classmethod
     def setUpClass(cls):
         io = InputOutput(pretty=False, yes=True)
@@ -69,7 +70,7 @@ class TestHelp(unittest.TestCase):
 
         # Use retry with backoff for the help command that loads models
         cls.retry_with_backoff(run_help_command)
-        
+
         help_coder_run.assert_called_once()
 
     def test_init(self):
