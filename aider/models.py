@@ -663,16 +663,26 @@ class Model(ModelSettings):
             self.use_temperature = False
             if not self.extra_params:
                 self.extra_params = {}
-            self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                
+            # OpenRouter models use 'reasoning' instead of 'thinking'
+            if self.name.startswith('openrouter/'):
+                self.extra_params["reasoning"] = {"max_tokens": num_tokens}
+            else:
+                self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
     def get_thinking_tokens(self, model):
         """Get formatted thinking token budget if available"""
-        if (
-            model.extra_params
-            and "thinking" in model.extra_params
-            and "budget_tokens" in model.extra_params["thinking"]
-        ):
-            budget = model.extra_params["thinking"]["budget_tokens"]
+        budget = None
+        
+        if model.extra_params:
+            # Check for OpenRouter reasoning format
+            if "reasoning" in model.extra_params and "max_tokens" in model.extra_params["reasoning"]:
+                budget = model.extra_params["reasoning"]["max_tokens"]
+            # Check for standard thinking format
+            elif "thinking" in model.extra_params and "budget_tokens" in model.extra_params["thinking"]:
+                budget = model.extra_params["thinking"]["budget_tokens"]
+                
+        if budget is not None:
             # Format as xx.yK for thousands, xx.yM for millions
             if budget >= 1024 * 1024:
                 value = budget / (1024 * 1024)
