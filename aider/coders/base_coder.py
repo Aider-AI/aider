@@ -1033,7 +1033,7 @@ class Coder:
         platform_text = ""
         try:
             platform_text = f"- Platform: {platform.platform()}\n"
-        except (Exception, KeyError):
+        except KeyError:
             # Skip platform info if it can't be retrieved
             platform_text = "- Platform information unavailable\n"
 
