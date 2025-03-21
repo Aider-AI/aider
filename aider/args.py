@@ -18,6 +18,15 @@ from aider.deprecated import add_deprecated_model_args
 from .dump import dump  # noqa: F401
 
 
+def resolve_aiderignore_path(path_str, git_root=None):
+    path = Path(path_str)
+    if path.is_absolute():
+        return str(path)
+    elif git_root:
+        return str(Path(git_root) / path)
+    return str(path)
+
+
 def default_env_file(git_root):
     return os.path.join(git_root, ".env") if git_root else ".env"
 
@@ -390,18 +399,10 @@ def get_parser(default_config_files, git_root):
         os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
     )
 
-    def resolve_aiderignore_path(path_str):
-        path = Path(path_str)
-        if path.is_absolute():
-            return str(path)
-        elif git_root:
-            return str(Path(git_root) / path)
-        return str(path)
-
     group.add_argument(
         "--aiderignore",
         metavar="AIDERIGNORE",
-        type=resolve_aiderignore_path,
+        type=lambda path_str: resolve_aiderignore_path(path_str, git_root),
         default=default_aiderignore_file,
         help="Specify the aider ignore file (default: .aiderignore in git root)",
     )
