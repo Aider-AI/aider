@@ -10,7 +10,10 @@
 - Added support for thinking tokens for OpenRouter Sonnet 3.7.
 - Added autocompletion for `/ask`, `/code`, and `/architect` commands.
 - Added vi-like behavior when pressing enter in multiline-mode while in vi normal/navigation-mode, by Marco Mayer.
-- Aider wrote 90% of the code in this release.
+- Added commands to switch between model types: `/model` for Main Model, `/editor-model` for Editor Model, and `/weak-model` for Weak Model.
+- Added AWS_PROFILE support for Bedrock models, allowing use of AWS profiles instead of explicit credentials.
+- Enhanced `--aiderignore` argument to resolve both absolute and relative paths.
+- Aider wrote 91% of the code in this release.
 
 ### Aider v0.77.1
 
