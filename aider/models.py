@@ -589,6 +589,21 @@ class Model(ModelSettings):
 
         model = self.name
         res = litellm.validate_environment(model)
+
+        # If missing AWS credential keys but AWS_PROFILE is set, consider AWS credentials valid
+        if res["missing_keys"] and any(
+            key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"] for key in res["missing_keys"]
+        ):
+            if model.startswith("bedrock/") or model.startswith("us.anthropic."):
+                if os.environ.get("AWS_PROFILE"):
+                    res["missing_keys"] = [
+                        k
+                        for k in res["missing_keys"]
+                        if k not in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
+                    ]
+                    if not res["missing_keys"]:
+                        res["keys_in_environment"] = True
+
         if res["keys_in_environment"]:
             return res
         if res["missing_keys"]:
