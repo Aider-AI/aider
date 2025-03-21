@@ -70,7 +70,8 @@ def restore_multiline(func):
 
 
 class CommandCompletionException(Exception):
-    """Raised when a command should use the normal autocompleter instead of command-specific completion."""
+    """Raised when a command should use the normal autocompleter instead of 
+    command-specific completion."""
 
     pass
 
