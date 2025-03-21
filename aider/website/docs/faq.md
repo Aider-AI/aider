@@ -264,9 +264,9 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>3,875,546</td><td class='right'>95.9%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>117,490</td><td class='right'>2.9%</td></tr>
-<tr><td>o3-mini</td><td class='right'>46,704</td><td class='right'>1.2%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>3,842,637</td><td class='right'>96.8%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>118,893</td><td class='right'>3.0%</td></tr>
+<tr><td>o3-mini</td><td class='right'>8,491</td><td class='right'>0.2%</td></tr>
 </table>
 <!--[[[end]]]-->
 
