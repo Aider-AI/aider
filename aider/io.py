@@ -18,6 +18,7 @@ from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.filters import Condition, is_searching
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.key_binding.vi_state import InputMode
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.output.vt100 import is_dumb_terminal
@@ -543,8 +544,8 @@ class InputOutput:
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             "Handle Enter key press"
-            if self.multiline_mode:
-                # In multiline mode, Enter adds a newline
+            if self.multiline_mode and not (self.editingmode == EditingMode.VI and event.app.vi_state.input_mode == InputMode.NAVIGATION):
+                # In multiline mode and if not in vi-mode or vi navigation/normal mode, Enter adds a newline
                 event.current_buffer.insert_text("\n")
             else:
                 # In normal mode, Enter submits
