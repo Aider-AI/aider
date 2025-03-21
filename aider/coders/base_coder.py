@@ -1036,7 +1036,7 @@ class Coder:
         except (Exception, KeyError):
             # Skip platform info if it can't be retrieved
             platform_text = "- Platform information unavailable\n"
-            
+
         shell_var = "COMSPEC" if os.name == "nt" else "SHELL"
         shell_val = os.getenv(shell_var)
         platform_text += f"- Shell: {shell_var}={shell_val}\n"
