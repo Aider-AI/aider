@@ -8,11 +8,11 @@
 - Improved code block rendering in markdown output with better padding using NoInsetMarkdown.
 - Added `--git-commit-verify` flag (default: False) to control whether git commit hooks are bypassed.
 - Added support for thinking tokens for OpenRouter Sonnet 3.7.
-- Added autocompletion for `/ask`, `/code`, and `/architect` commands.
+- Fixed autocompletion for `/ask`, `/code`, and `/architect` commands, by shladnik.
 - Added vi-like behavior when pressing enter in multiline-mode while in vi normal/navigation-mode, by Marco Mayer.
-- Added commands to switch between model types: `/model` for Main Model, `/editor-model` for Editor Model, and `/weak-model` for Weak Model.
-- Added AWS_PROFILE support for Bedrock models, allowing use of AWS profiles instead of explicit credentials.
-- Enhanced `--aiderignore` argument to resolve both absolute and relative paths.
+- Added commands to switch between model types: `/editor-model` for Editor Model, and `/weak-model` for Weak Model, by csala.
+- Added AWS_PROFILE support for Bedrock models, allowing use of AWS profiles instead of explicit credentials, by lentil32.
+- Enhanced `--aiderignore` argument to resolve both absolute and relative paths, by mopemope.
 - Improved platform information handling to gracefully handle retrieval errors.
 - Aider wrote 92% of the code in this release.
 
