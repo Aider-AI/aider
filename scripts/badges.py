@@ -220,9 +220,10 @@ def get_badges_md():
     # Load environment variables from .env file
     load_dotenv()
 
-    # Check if we should use BigQuery
-    use_bigquery = os.environ.get("USE_BIGQUERY", "false").lower() in ("true", "1", "yes")
-    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    # Check if we should use BigQuery and get credentials path
+    bigquery_env = os.environ.get("USE_BIGQUERY", "false")
+    use_bigquery = bigquery_env.lower() in ("true", "1", "yes") or os.path.exists(bigquery_env)
+    credentials_path = bigquery_env if os.path.exists(bigquery_env) else None
 
     # Get API key from environment variable if not using BigQuery
     api_key = None
@@ -258,9 +259,10 @@ def get_badges_html():
     # Load environment variables from .env file
     load_dotenv()
 
-    # Check if we should use BigQuery
-    use_bigquery = os.environ.get("USE_BIGQUERY", "false").lower() in ("true", "1", "yes")
-    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    # Check if we should use BigQuery and get credentials path
+    bigquery_env = os.environ.get("USE_BIGQUERY", "false")
+    use_bigquery = bigquery_env.lower() in ("true", "1", "yes") or os.path.exists(bigquery_env)
+    credentials_path = bigquery_env if os.path.exists(bigquery_env) else None
 
     # Get API key from environment variable if not using BigQuery
     api_key = None
@@ -356,13 +358,12 @@ def main():
     )
     args = parser.parse_args()
 
-    # Determine whether to use BigQuery
-    use_bigquery = args.use_bigquery or os.environ.get("USE_BIGQUERY", "false").lower() in (
-        "true",
-        "1",
-        "yes",
-    )
-    credentials_path = args.credentials_path or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    # Determine whether to use BigQuery and get credentials path
+    bigquery_env = os.environ.get("USE_BIGQUERY", "false")
+    use_bigquery = args.use_bigquery or bigquery_env.lower() in (
+        "true", "1", "yes"
+    ) or os.path.exists(bigquery_env)
+    credentials_path = args.credentials_path or (bigquery_env if os.path.exists(bigquery_env) else None)
 
     # Check for required parameters
     api_key = None
@@ -382,7 +383,7 @@ def main():
         print(
             (
                 "BigQuery enabled but no credentials provided. Please set"
-                " GOOGLE_APPLICATION_CREDENTIALS environment variable or use --credentials-path"
+                " USE_BIGQUERY to path of credentials file or use --credentials-path"
             ),
             file=sys.stderr,
         )
