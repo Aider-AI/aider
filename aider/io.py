@@ -187,6 +187,7 @@ class AutoCompleter(Completer):
             return
 
         if text[0] == "/":
+            # catch and handle here; make a purpose built exception for this. ai!
             yield from self.get_command_completions(document, complete_event, text, words)
             return
 
