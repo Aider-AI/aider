@@ -565,11 +565,11 @@ footer {
 }
 
 .badge-tokens .badge-value {
-    background-color: #e74c3c;
+    background-color: #3498db;
 }
 
 .badge-coded .badge-value {
-    background-color: #3498db;
+    background-color: #e74c3c;
 }
 
 @media (max-width: 992px) {
