@@ -360,10 +360,14 @@ def main():
 
     # Determine whether to use BigQuery and get credentials path
     bigquery_env = os.environ.get("USE_BIGQUERY", "false")
-    use_bigquery = args.use_bigquery or bigquery_env.lower() in (
-        "true", "1", "yes"
-    ) or os.path.exists(bigquery_env)
-    credentials_path = args.credentials_path or (bigquery_env if os.path.exists(bigquery_env) else None)
+    use_bigquery = (
+        args.use_bigquery
+        or bigquery_env.lower() in ("true", "1", "yes")
+        or os.path.exists(bigquery_env)
+    )
+    credentials_path = args.credentials_path or (
+        bigquery_env if os.path.exists(bigquery_env) else None
+    )
 
     # Check for required parameters
     api_key = None
