@@ -13,11 +13,7 @@ Aider is AI pair programming in your terminal. This documentation will help you 
 {% for page in pages_list %}
   {% if page.title and page.url != "/" and page.parent == nil and page.nav_exclude != true %}
     <li>
-      <a href="{{ page.url | absolute_url }}">{{ page.title }}</a>
-      {% if page.description %}
-        <br>
-        <span style="margin-left: 1em; font-size: 0.9em; font-style: italic;">{{ page.description }}</span>
-      {% endif %}
+      <a href="{{ page.url | absolute_url }}">{{ page.title }}</a>{% if page.description %} <span style="font-size: 0.9em; font-style: italic;">— {{ page.description }}</span>{% endif %}
       
       {% assign children = site.html_pages | where: "parent", page.title | sort: "nav_order" %}
       {% if children.size > 0 %}
@@ -25,11 +21,7 @@ Aider is AI pair programming in your terminal. This documentation will help you 
         {% for child in children %}
           {% if child.title %}
             <li>
-              <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>
-              {% if child.description %}
-                <br>
-                <span style="margin-left: 1em; font-size: 0.9em; font-style: italic;">{{ child.description }}</span>
-              {% endif %}
+              <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>{% if child.description %} <span style="font-size: 0.9em; font-style: italic;">— {{ child.description }}</span>{% endif %}
               
               {% assign grandchildren = site.html_pages | where: "parent", child.title | sort: "nav_order" %}
               {% if grandchildren.size > 0 %}
@@ -37,11 +29,7 @@ Aider is AI pair programming in your terminal. This documentation will help you 
                 {% for grandchild in grandchildren %}
                   {% if grandchild.title %}
                     <li>
-                      <a href="{{ grandchild.url | absolute_url }}">{{ grandchild.title }}</a>
-                      {% if grandchild.description %}
-                        <br>
-                        <span style="margin-left: 1em; font-size: 0.9em; font-style: italic;">{{ grandchild.description }}</span>
-                      {% endif %}
+                      <a href="{{ grandchild.url | absolute_url }}">{{ grandchild.title }}</a>{% if grandchild.description %} <span style="font-size: 0.9em; font-style: italic;">— {{ grandchild.description }}</span>{% endif %}
                     </li>
                   {% endif %}
                 {% endfor %}
