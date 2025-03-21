@@ -1033,10 +1033,10 @@ class Coder:
         platform_text = ""
         try:
             platform_text = f"- Platform: {platform.platform()}\n"
-        except Exception:
+        except (Exception, KeyError):
             # Skip platform info if it can't be retrieved
-            pass
-
+            platform_text = "- Platform information unavailable\n"
+            
         shell_var = "COMSPEC" if os.name == "nt" else "SHELL"
         shell_val = os.getenv(shell_var)
         platform_text += f"- Shell: {shell_var}={shell_val}\n"
