@@ -927,24 +927,23 @@ class TestMain(TestCase):
             repo = git.Repo(git_dir)  # Re-open repo to ensure we get fresh config
             self.assertEqual(repo.git.config("user.name"), "Directive User")
             self.assertEqual(repo.git.config("user.email"), "directive@example.com")
-            
+
     def test_resolve_aiderignore_path(self):
         # Import the function directly to test it
         from aider.args import resolve_aiderignore_path
-        
+
         # Test with absolute path
         abs_path = os.path.abspath("/tmp/test/.aiderignore")
         self.assertEqual(resolve_aiderignore_path(abs_path), abs_path)
-        
+
         # Test with relative path and git root
         git_root = "/path/to/git/root"
         rel_path = ".aiderignore"
         expected = os.path.join(git_root, rel_path)
         self.assertEqual(
-            resolve_aiderignore_path(rel_path, git_root), 
-            str(Path(git_root) / rel_path)
+            resolve_aiderignore_path(rel_path, git_root), str(Path(git_root) / rel_path)
         )
-        
+
         # Test with relative path and no git root
         rel_path = ".aiderignore"
         self.assertEqual(resolve_aiderignore_path(rel_path), rel_path)
