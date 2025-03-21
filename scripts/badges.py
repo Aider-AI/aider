@@ -7,6 +7,8 @@ import sys
 import requests
 import yaml
 from dotenv import load_dotenv
+from google.cloud import bigquery
+from google.oauth2 import service_account
 
 TOKENS_PER_WEEK = "15B"
 
@@ -18,10 +20,58 @@ OPENROUTER_TOOLTIP = "Aider's ranking among applications on the OpenRouter platf
 SINGULARITY_TOOLTIP = "Percentage of the new code in Aider's last release written by Aider itself"
 
 
-def get_total_downloads(api_key, package_name="aider-chat"):
+def get_downloads_from_bigquery(credentials_path=None, package_name="aider-chat"):
     """
-    Fetch total downloads for a Python package from pepy.tech API
+    Fetch download statistics for a package from Google BigQuery PyPI dataset
     """
+    try:
+        # Initialize credentials if path provided
+        credentials = None
+        if credentials_path:
+            credentials = service_account.Credentials.from_service_account_file(
+                credentials_path, 
+                scopes=["https://www.googleapis.com/auth/cloud-platform"]
+            )
+        
+        # Create a client
+        client = bigquery.Client(credentials=credentials)
+        
+        # Query to get total downloads for the package
+        query = f"""
+            SELECT COUNT(*) as total_downloads
+            FROM `bigquery-public-data.pypi.file_downloads`
+            WHERE file.project = '{package_name}'
+        """
+        
+        # Execute the query
+        query_job = client.query(query)
+        results = query_job.result()
+        
+        # Get the first (and only) row
+        for row in results:
+            return row.total_downloads
+            
+        return 0
+    except Exception as e:
+        print(f"Error fetching download statistics from BigQuery: {e}", file=sys.stderr)
+        return None
+
+
+def get_total_downloads(api_key=None, package_name="aider-chat", use_bigquery=False, credentials_path=None):
+    """
+    Fetch total downloads for a Python package
+    
+    If use_bigquery is True, fetches from BigQuery.
+    Otherwise uses pepy.tech API (requires api_key).
+    """
+    if use_bigquery:
+        return get_downloads_from_bigquery(credentials_path, package_name)
+    
+    # Fall back to pepy.tech API
+    if not api_key:
+        print("API key not provided for pepy.tech", file=sys.stderr)
+        sys.exit(1)
+        
     url = f"https://api.pepy.tech/api/v2/projects/{package_name}"
     headers = {"X-API-Key": api_key}
 
@@ -34,7 +84,7 @@ def get_total_downloads(api_key, package_name="aider-chat"):
 
         return total_downloads
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching download statistics: {e}", file=sys.stderr)
+        print(f"Error fetching download statistics from pepy.tech: {e}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -156,17 +206,23 @@ def get_badges_md():
     # Load environment variables from .env file
     load_dotenv()
 
-    # Get API key from environment variable
-    api_key = os.environ.get("PEPY_API_KEY")
-    if not api_key:
-        print(
-            "API key not provided. Please set PEPY_API_KEY environment variable",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    # Check if we should use BigQuery
+    use_bigquery = os.environ.get("USE_BIGQUERY", "false").lower() in ("true", "1", "yes")
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    
+    # Get API key from environment variable if not using BigQuery
+    api_key = None
+    if not use_bigquery:
+        api_key = os.environ.get("PEPY_API_KEY")
+        if not api_key:
+            print(
+                "API key not provided and BigQuery not enabled. Please set PEPY_API_KEY environment variable",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
     # Get PyPI downloads for the default package
-    total_downloads = get_total_downloads(api_key, "aider-chat")
+    total_downloads = get_total_downloads(api_key, "aider-chat", use_bigquery, credentials_path)
 
     # Get GitHub stars for the default repo
     stars = get_github_stars("paul-gauthier/aider")
@@ -185,17 +241,23 @@ def get_badges_html():
     # Load environment variables from .env file
     load_dotenv()
 
-    # Get API key from environment variable
-    api_key = os.environ.get("PEPY_API_KEY")
-    if not api_key:
-        print(
-            "API key not provided. Please set PEPY_API_KEY environment variable",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    # Check if we should use BigQuery
+    use_bigquery = os.environ.get("USE_BIGQUERY", "false").lower() in ("true", "1", "yes")
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    
+    # Get API key from environment variable if not using BigQuery
+    api_key = None
+    if not use_bigquery:
+        api_key = os.environ.get("PEPY_API_KEY")
+        if not api_key:
+            print(
+                "API key not provided and BigQuery not enabled. Please set PEPY_API_KEY environment variable",
+                file=sys.stderr,
+            )
+            sys.exit(1)
 
     # Get PyPI downloads for the default package
-    total_downloads = get_total_downloads(api_key, "aider-chat")
+    total_downloads = get_total_downloads(api_key, "aider-chat", use_bigquery, credentials_path)
 
     # Get GitHub stars for the default repo
     stars = get_github_stars("paul-gauthier/aider")
@@ -264,19 +326,42 @@ def main():
         help="GitHub repository (default: paul-gauthier/aider)",
     )
     parser.add_argument("--markdown", action="store_true", help="Generate markdown badges block")
+    parser.add_argument(
+        "--use-bigquery", action="store_true", 
+        help="Use BigQuery to fetch download statistics instead of pepy.tech"
+    )
+    parser.add_argument(
+        "--credentials-path",
+        help="Path to Google Cloud service account credentials JSON file"
+    )
     args = parser.parse_args()
 
-    # Get API key from args or environment variable (which may be loaded from .env)
-    api_key = args.api_key or os.environ.get("PEPY_API_KEY")
-    if not api_key:
+    # Determine whether to use BigQuery
+    use_bigquery = args.use_bigquery or os.environ.get("USE_BIGQUERY", "false").lower() in ("true", "1", "yes")
+    credentials_path = args.credentials_path or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    
+    # Check for required parameters
+    api_key = None
+    if not use_bigquery:
+        # Get API key from args or environment variable
+        api_key = args.api_key or os.environ.get("PEPY_API_KEY")
+        if not api_key:
+            print(
+                "API key not provided and BigQuery not enabled. Please set PEPY_API_KEY environment variable, "
+                "use --api-key, or enable BigQuery with --use-bigquery",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+    elif use_bigquery and not credentials_path and not args.credentials_path:
         print(
-            "API key not provided. Please set PEPY_API_KEY environment variable or use --api-key",
+            "BigQuery enabled but no credentials provided. Please set GOOGLE_APPLICATION_CREDENTIALS "
+            "environment variable or use --credentials-path",
             file=sys.stderr,
         )
-        sys.exit(1)
+        # Continue execution - BigQuery might work without explicit credentials in some environments
 
     # Get PyPI downloads
-    total_downloads = get_total_downloads(api_key, args.package)
+    total_downloads = get_total_downloads(api_key, args.package, use_bigquery, credentials_path)
     print(f"Total downloads for {args.package}: {total_downloads:,}")
 
     # Get GitHub stars
