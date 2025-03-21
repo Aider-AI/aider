@@ -406,11 +406,6 @@ def main():
     percentage, version = get_latest_release_aider_percentage()
     print(f"Aider wrote {percentage:.2f}% of code in the LATEST release ({version})")
 
-    # Generate and print badges markdown
-    badges_md = generate_badges_md(total_downloads, stars, percentage)
-    print("\nBadges markdown:\n")
-    print(badges_md)
-
 
 if __name__ == "__main__":
     main()
