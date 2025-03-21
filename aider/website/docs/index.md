@@ -12,31 +12,36 @@ Aider is AI pair programming in your terminal. This documentation will help you 
 ## Table of Contents
 
 <div class="toc">
-{% assign pages_list = site.html_pages | sort:"nav_order" %}
-{% assign top_level_pages = pages_list | where_exp:"item", "item.parent == nil and item.title != nil and item.nav_exclude != true" %}
+{% assign pages_list = site.html_pages | sort: "nav_order" %}
 
 <ul>
-{% for page in top_level_pages %}
-  {% if page.title != nil and page.url != "/" %}
+{% for page in pages_list %}
+  {% if page.title and page.url != "/" and page.parent == nil and page.nav_exclude != true %}
     <li>
       <a href="{{ page.url | absolute_url }}">{{ page.title }}</a>
-      {% assign children = pages_list | where:"parent", page.title | sort:"nav_order" %}
+      
+      {% assign children = site.html_pages | where: "parent", page.title | sort: "nav_order" %}
       {% if children.size > 0 %}
         <ul>
         {% for child in children %}
-          <li>
-            <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>
-            {% assign grandchildren = pages_list | where:"parent", child.title | sort:"nav_order" %}
-            {% if grandchildren.size > 0 %}
-              <ul>
-              {% for grandchild in grandchildren %}
-                <li>
-                  <a href="{{ grandchild.url | absolute_url }}">{{ grandchild.title }}</a>
-                </li>
-              {% endfor %}
-              </ul>
-            {% endif %}
-          </li>
+          {% if child.title %}
+            <li>
+              <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>
+              
+              {% assign grandchildren = site.html_pages | where: "parent", child.title | sort: "nav_order" %}
+              {% if grandchildren.size > 0 %}
+                <ul>
+                {% for grandchild in grandchildren %}
+                  {% if grandchild.title %}
+                    <li>
+                      <a href="{{ grandchild.url | absolute_url }}">{{ grandchild.title }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+                </ul>
+              {% endif %}
+            </li>
+          {% endif %}
         {% endfor %}
         </ul>
       {% endif %}
