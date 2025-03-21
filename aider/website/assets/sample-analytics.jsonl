@@ -1,43 +1,3 @@
-{"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406067}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406067}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 16770, "completion_tokens": 1065, "total_tokens": 17835, "cost": 0.066285, "total_cost": 2.171826}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406088}
-{"event": "command_diff", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406149}
-{"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406243}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406256}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 16321, "completion_tokens": 864, "total_tokens": 17185, "cost": 0.061923, "total_cost": 2.233749}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406273}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406352}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 16836, "completion_tokens": 1130, "total_tokens": 17966, "cost": 0.067458, "total_cost": 2.301207}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406374}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406447}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406461}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406463}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406467}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406710}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406727}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 15785, "completion_tokens": 498, "total_tokens": 16283, "cost": 0.054825, "total_cost": 2.356032}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406737}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406842}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406847}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 15821, "completion_tokens": 637, "total_tokens": 16458, "cost": 0.057018, "total_cost": 2.4130499999999997}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406858}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406861}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406869}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406876}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406879}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 15895, "completion_tokens": 425, "total_tokens": 16320, "cost": 0.05406, "total_cost": 2.46711}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406887}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406898}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406927}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 16156, "completion_tokens": 518, "total_tokens": 16674, "cost": 0.056238, "total_cost": 2.523348}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406940}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406971}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 16462, "completion_tokens": 713, "total_tokens": 17175, "cost": 0.060080999999999996, "total_cost": 2.5834289999999998}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742406987}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407020}
-{"event": "command_editor", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407022}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407054}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 15893, "completion_tokens": 648, "total_tokens": 16541, "cost": 0.057399, "total_cost": 2.640828}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407067}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407115}
-{"event": "command_editor", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407123}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407161}
-{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 15823, "completion_tokens": 1617, "total_tokens": 17440, "cost": 0.07172400000000001, "total_cost": 2.712552}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407188}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407306}
-{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407315}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407315}
 {"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "ask", "prompt_tokens": 12672, "completion_tokens": 742, "total_tokens": 13414, "cost": 0.049146, "total_cost": 2.761698}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407331}
 {"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407343}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742407343}
@@ -998,3 +958,43 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574180}
 {"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 11378, "completion_tokens": 745, "total_tokens": 12123, "cost": 0.045309, "total_cost": 0.045309}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574200}
 {"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574200}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574201}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574215}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574325}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574469}
+{"event": "repo", "properties": {"num_files": 608}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574469}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574469}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574472}
+{"event": "command_run", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574476}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574499}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574507}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 16368, "completion_tokens": 2240, "total_tokens": 18608, "cost": 0.082704, "total_cost": 0.082704}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574546}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742574608}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580138}
+{"event": "repo", "properties": {"num_files": 608}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580138}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580138}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580148}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580211}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 25431, "completion_tokens": 736, "total_tokens": 26167, "cost": 0.087333, "total_cost": 0.087333}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580232}
+{"event": "command_drop", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580248}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580250}
+{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580253}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580255}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 22050, "completion_tokens": 1947, "total_tokens": 23997, "cost": 0.095355, "total_cost": 0.182688}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580289}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580306}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 24216, "completion_tokens": 696, "total_tokens": 24912, "cost": 0.08308800000000001, "total_cost": 0.265776}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580320}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580320}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff", "prompt_tokens": 24805, "completion_tokens": 479, "total_tokens": 25284, "cost": 0.08159999999999999, "total_cost": 0.347376}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580334}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580434}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580434}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580470}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580477}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580753}
+{"event": "repo", "properties": {"num_files": 608}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580754}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580754}
+{"event": "command_run", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580759}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580765}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580766}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580771}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "fireworks_ai/accounts/fireworks/models/deepseek-v3", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "ask", "prompt_tokens": 17797, "completion_tokens": 520, "total_tokens": 18317, "cost": 0.061191, "total_cost": 0.061191}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580786}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1742580804}
