@@ -31,6 +31,7 @@ cog.out(text)
 - Annotated which models support reasoning_effort and thinking_tokens settings in the model settings data.
 - Improved code block rendering in markdown output with better padding using NoInsetMarkdown.
 - Added `--git-commit-verify` flag (default: False) to control whether git commit hooks are bypassed.
+- Added support for thinking tokens for OpenRouter Sonnet 3.7.
 - Aider wrote 90% of the code in this release.
 
 ### Aider v0.77.1
