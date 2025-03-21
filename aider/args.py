@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 
 import configargparse
 
@@ -388,9 +389,19 @@ def get_parser(default_config_files, git_root):
     default_aiderignore_file = (
         os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
     )
+
+    def resolve_aiderignore_path(path_str):
+        path = Path(path_str)
+        if path.is_absolute():
+            return str(path)
+        elif git_root:
+            return str(Path(git_root) / path)
+        return str(path)
+
     group.add_argument(
         "--aiderignore",
         metavar="AIDERIGNORE",
+        type=resolve_aiderignore_path,
         default=default_aiderignore_file,
         help="Specify the aider ignore file (default: .aiderignore in git root)",
     )
