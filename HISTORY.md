@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.77.2
 
 - Added model setting validation to ignore `--reasoning-effort` and `--thinking-tokens` if the model doesn't support them.
 - Added `--check-model-accepts-settings` flag (default: true) to force unsupported model settings.
