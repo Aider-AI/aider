@@ -95,6 +95,7 @@ The interactive prompt is built with [prompt-toolkit](https://github.com/prompt-
 - `Ctrl-N` : Move down to the next history entry.
 - `Ctrl-P` : Move up to the previous history entry.
 - `Ctrl-R` : Reverse search in command history.
+- `Ctrl-Y` : Paste (yank) text that was previously cut.
 
 
 ### Vi
