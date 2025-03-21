@@ -7,11 +7,12 @@ description: Release notes and stats on aider writing its own code.
 
 # Release history
 
-{% include blame.md %}
-
-The above 
-[stats are based on the git commit history](/docs/faq.html#how-are-the-aider-wrote-xx-of-code-stats-computed)
+Aider writes most of its own code, usually about 70-80% of the new code in each release.
+These
+[statistics are based on the git commit history](/docs/faq.html#how-are-the-aider-wrote-xx-of-code-stats-computed)
 of the aider repo.
+
+{% include blame.md %}
 
 ## Release notes
 
