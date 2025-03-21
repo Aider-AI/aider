@@ -2,15 +2,15 @@
 
 ### Aider v0.78.0
 
+- Added support for thinking tokens for OpenRouter Sonnet 3.7.
+- Added commands to switch between model types: `/editor-model` for Editor Model, and `/weak-model` for Weak Model, by csala.
 - Added model setting validation to ignore `--reasoning-effort` and `--thinking-tokens` if the model doesn't support them.
 - Added `--check-model-accepts-settings` flag (default: true) to force unsupported model settings.
 - Annotated which models support reasoning_effort and thinking_tokens settings in the model settings data.
 - Improved code block rendering in markdown output with better padding using NoInsetMarkdown.
 - Added `--git-commit-verify` flag (default: False) to control whether git commit hooks are bypassed.
-- Added support for thinking tokens for OpenRouter Sonnet 3.7.
 - Fixed autocompletion for `/ask`, `/code`, and `/architect` commands, by shladnik.
 - Added vi-like behavior when pressing enter in multiline-mode while in vi normal/navigation-mode, by Marco Mayer.
-- Added commands to switch between model types: `/editor-model` for Editor Model, and `/weak-model` for Weak Model, by csala.
 - Added AWS_PROFILE support for Bedrock models, allowing use of AWS profiles instead of explicit credentials, by lentil32.
 - Enhanced `--aiderignore` argument to resolve both absolute and relative paths, by mopemope.
 - Improved platform information handling to gracefully handle retrieval errors.
@@ -20,7 +20,7 @@
 
 - Bumped dependencies to pickup litellm fix for Ollama.
 - Added support for `openrouter/google/gemma-3-27b-it` model.
-- Updated exclude patterns for documentation.
+- Updated exclude patterns for help documentation.
 
 ### Aider v0.77.0
 
