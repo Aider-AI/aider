@@ -1088,6 +1088,15 @@ class Commands:
             show_announcements=False,
         )
 
+    def completions_ask(self):
+        return self.completions_add()
+
+    def completions_code(self):
+        return self.completions_add()
+
+    def completions_architect(self):
+        return self.completions_add()
+
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
