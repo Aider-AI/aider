@@ -939,7 +939,6 @@ class TestMain(TestCase):
         # Test with relative path and git root
         git_root = "/path/to/git/root"
         rel_path = ".aiderignore"
-        expected = os.path.join(git_root, rel_path)
         self.assertEqual(
             resolve_aiderignore_path(rel_path, git_root), str(Path(git_root) / rel_path)
         )
