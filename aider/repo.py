@@ -1,18 +1,23 @@
 import os
 import time
 from pathlib import Path, PurePosixPath
+from typing import TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     import git
+    _ANY_GIT_ERROR = []
+else:
+    try:
+        import git
 
-    ANY_GIT_ERROR = [
-        git.exc.ODBError,
-        git.exc.GitError,
-        git.exc.InvalidGitRepositoryError,
-    ]
-except ImportError:
-    git = None
-    ANY_GIT_ERROR = []
+        _ANY_GIT_ERROR = [
+            git.exc.ODBError,
+            git.exc.GitError,
+            git.exc.InvalidGitRepositoryError,
+        ]
+    except ImportError:
+        git = None
+        _ANY_GIT_ERROR = []
 
 import pathspec
 
@@ -20,7 +25,7 @@ from aider import prompts, utils
 
 from .dump import dump  # noqa: F401
 
-ANY_GIT_ERROR += [
+_ANY_GIT_ERROR += [
     OSError,
     IndexError,
     BufferError,
@@ -30,8 +35,7 @@ ANY_GIT_ERROR += [
     AssertionError,
     TimeoutError,
 ]
-ANY_GIT_ERROR = tuple(ANY_GIT_ERROR)
-
+ANY_GIT_ERROR = tuple(_ANY_GIT_ERROR)
 
 class GitRepo:
     repo = None
