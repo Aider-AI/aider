@@ -714,8 +714,8 @@ class Model(ModelSettings):
 
         if functions is not None:
             function = functions[0]
-            kwargs["tools"] = [dict(type="function", function=function)]
-            kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+            kwargs["tools"] = functions # dict(type="function", function=function)
+            # kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
         if self.extra_params:
             kwargs.update(self.extra_params)
         if self.is_ollama() and "num_ctx" not in kwargs:
@@ -731,6 +731,7 @@ class Model(ModelSettings):
         if self.verbose:
             dump(kwargs)
         res = litellm.completion(**kwargs)
+
         return hash_object, res
 
     def simple_send_with_retries(self, messages):

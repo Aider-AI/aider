@@ -1768,6 +1768,7 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         received_content = False
+        final_tool_calls = {}
 
         for chunk in completion:
             if len(chunk.choices) == 0:
@@ -1780,14 +1781,22 @@ class Coder:
                 raise FinishReasonLength()
 
             try:
-                func = chunk.choices[0].delta.function_call
-                # dump(func)
-                for k, v in func.items():
-                    if k in self.partial_response_function_call:
-                        self.partial_response_function_call[k] += v
+                # Process each tool call in the current message
+                for tool_call in chunk.choices[0].delta.tool_calls or []:
+                    index = tool_call.index 
+                    if index not in final_tool_calls:
+                        final_tool_calls[index] = tool_call
                     else:
-                        self.partial_response_function_call[k] = v
-                received_content = True
+                        # Before appending, ensure existing arguments are a string.
+                        if final_tool_calls[index].function.arguments is None:
+                            final_tool_calls[index].function.arguments = ""
+                        # Append additional arguments from the new chunk if they exist.
+                        if tool_call.function.arguments:
+                            final_tool_calls[index].function.arguments += tool_call.function.arguments
+
+                        k = final_tool_calls[index].function.name
+                        self.partial_response_function_call[k] = final_tool_calls[index].function.arguments
+                    received_content = True
             except AttributeError:
                 pass
 
