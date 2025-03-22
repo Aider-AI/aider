@@ -447,15 +447,16 @@ class RepoMap:
             definers = defines[ident]
 
             mul = 1.0
-            # Check for snake_case (contains underscore, no uppercase)
-            if "_" in ident and not any(c.isupper() for c in ident):
-                mul *= 10
-            # Check for camelCase (no underscore, starts with lowercase, has uppercase)
-            elif not "_" in ident and ident[0].islower() and any(c.isupper() for c in ident):
-                mul *= 10
+
+            is_snake = ("_" in ident) and any(c.isalpha() for c in ident)
+            is_camel = any(c.isupper() for c in ident) and any(c.islower() for c in ident)
             if ident in mentioned_idents:
                 mul *= 10
+            if (is_snake or is_camel) and len(ident) >= 8:
+                mul *= 10
             if ident.startswith("_"):
+                mul *= 0.1
+            if len(defines[ident]) > 5:
                 mul *= 0.1
 
             for referencer, num_refs in Counter(references[ident]).items():

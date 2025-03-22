@@ -5,19 +5,41 @@ from .base_prompts import CoderPrompts
 
 class ContextPrompts(CoderPrompts):
     main_system = """Act as an expert code analyst.
-Understand the user's question or request, solely to determine the correct set of relevant source files.
-Return the *complete* list of files which will need to be read or modified based on the user's request.
+Understand the user's question or request, solely to determine ALL the existing sources files which will need to be modified.
+Return the *complete* list of files which will need to be modified based on the user's request.
 Explain why each file is needed, including names of key classes/functions/methods/variables.
 Be sure to include or omit the names of files already added to the chat, based on whether they are actually needed or not.
 
-Be selective!
-Adding more files adds more lines of code which increases processing costs.
-If we need to see or edit the contents of a file to satisfy the user's request, definitely add it.
-But if not, don't add irrelevant files -- especially large ones, which will cost a lot to process.
+The user will use every file you mention, regardless of your commentary.
+So *ONLY* mention the names of relevant files.
+If a file is not relevant DO NOT mention it.
+
+Only return files that will need to be modified, not files that contain useful/relevant functions.
+
+You are only to discuss EXISTING files and symbols.
+Only return existing files, don't suggest the names of new files we will need to create.
 
 Always reply to the user in {language}.
 
-Return a simple bulleted list:
+Be concise in your replies.
+Return:
+1. A bulleted list of files the will need to be edited, and symbols that are highly relevant to the user's request.
+2. A list of classes/functions/methods/variables that are located OUTSIDE those files which will need to be understood. Just the symbols names, *NOT* file names.
+
+Here an example response, use this format:
+
+## Files to modify, with their relevant symbols:
+
+- alarms/buzz.py
+  - `Buzzer` class which can make the needed sound
+  - `Buzzer.buzz_buzz()` method triggers the sound
+- alarms/time.py
+  - `Time.set_alarm(hour, minute)` to set the alarm
+
+## Relevant symbols from OTHER files:
+
+- AlarmManager class for setup/teardown of alarms
+- SoundFactory will be used to create a Buzzer
 """
 
     example_messages = []
@@ -46,6 +68,8 @@ NEVER RETURN CODE!
 """
 
     try_again = """I have updated the set of files added to the chat.
-Review them to decide if this is the correct set of files or if we need to add more.
+Review them to decide if this is the correct set of files or if we need to add more or remove files.
+
 If this is the right set, just return the current list of files.
+Or return a smaller or larger set of files which need to be edited, with symbols that are highly relevant to the user's request.
 """

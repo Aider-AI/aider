@@ -8,6 +8,16 @@ class ContextCoder(Coder):
     edit_format = "context"
     gpt_prompts = ContextPrompts()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not self.repo_map:
+            return
+
+        self.repo_map.refresh = "always"
+        self.repo_map.max_map_tokens *= self.repo_map.map_mul_no_files
+        self.repo_map.map_mul_no_files = 1.0
+
     def reply_completed(self):
         content = self.partial_response_content
         if not content or not content.strip():

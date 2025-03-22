@@ -748,7 +748,6 @@ class Model(ModelSettings):
 
         kwargs = dict(
             model=self.name,
-            messages=messages,
             stream=stream,
         )
 
@@ -779,6 +778,8 @@ class Model(ModelSettings):
             kwargs["timeout"] = request_timeout
         if self.verbose:
             dump(kwargs)
+        kwargs["messages"] = messages
+
         res = litellm.completion(**kwargs)
         return hash_object, res
 

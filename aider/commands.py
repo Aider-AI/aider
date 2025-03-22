@@ -149,7 +149,7 @@ class Commands:
                 ),
                 (
                     "context",
-                    "Work with surrounding code context for more contextually-aware edits.",
+                    "Automatically identify which files will need to be edited.",
                 ),
             ]
         )
