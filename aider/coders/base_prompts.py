@@ -14,7 +14,7 @@ You NEVER leave comments describing code without implementing it!
 You always COMPLETELY IMPLEMENT the needed code!
 """
 
-    overeager_prompt = """Pay careful attention to the scope of the user's request. 
+    overeager_prompt = """Pay careful attention to the scope of the user's request.
 Do what they ask, but no more."""
 
     example_messages = []
