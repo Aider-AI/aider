@@ -1606,7 +1606,7 @@ class Coder:
         words = set(word.rstrip(",.!;:?") for word in words)
 
         # strip away all kinds of quotes
-        quotes = "".join(['"', "'", "`"])
+        quotes = "\"'`*_"
         words = set(word.strip(quotes) for word in words)
 
         addable_rel_fnames = self.get_addable_relative_files()
