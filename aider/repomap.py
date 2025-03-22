@@ -448,7 +448,12 @@ class RepoMap:
             definers = defines[ident]
 
             mul = 1.0
-            # if ident is snake_case or camelCase, mul * 10 ai!
+            # Check for snake_case (contains underscore, no uppercase)
+            if "_" in ident and not any(c.isupper() for c in ident):
+                mul *= 10
+            # Check for camelCase (no underscore, starts with lowercase, has uppercase)
+            elif not "_" in ident and ident[0].islower() and any(c.isupper() for c in ident):
+                mul *= 10
             if ident in mentioned_idents:
                 mul *= 10
             if ident.startswith("_"):
