@@ -363,7 +363,7 @@ class TestCoder(unittest.TestCase):
                     f"Files to modify:\n- **{test_files[0]}**\n- **{test_files[4]}**",
                     {test_files[0], test_files[4]},
                 ),
-                (f"Files mentioned like **aider/args.py** should be detected", set()),
+                ("Files mentioned like **aider/args.py** should be detected", set()),
             ]
 
             for content, expected_mentions in test_cases:
