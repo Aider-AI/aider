@@ -559,7 +559,8 @@ class InputOutput:
                 self.editingmode == EditingMode.VI
                 and event.app.vi_state.input_mode == InputMode.NAVIGATION
             ):
-                # In multiline mode and if not in vi-mode or vi navigation/normal mode, Enter adds a newline
+                # In multiline mode and if not in vi-mode or vi navigation/normal mode,
+                # Enter adds a newline
                 event.current_buffer.insert_text("\n")
             else:
                 # In normal mode, Enter submits
