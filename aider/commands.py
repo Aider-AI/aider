@@ -147,6 +147,10 @@ class Commands:
                         " them."
                     ),
                 ),
+                (
+                    "context",
+                    "Work with surrounding code context for more contextually-aware edits."
+                ),
             ]
         )
 
@@ -1125,6 +1129,9 @@ class Commands:
 
     def completions_architect(self):
         raise CommandCompletionException()
+        
+    def completions_context(self):
+        raise CommandCompletionException()
 
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
@@ -1137,6 +1144,10 @@ class Commands:
     def cmd_architect(self, args):
         """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
         return self._generic_chat_command(args, "architect")
+        
+    def cmd_context(self, args):
+        """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
+        return self._generic_chat_command(args, "context")
 
     def _generic_chat_command(self, args, edit_format):
         if not args.strip():
