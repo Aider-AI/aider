@@ -70,7 +70,7 @@ def restore_multiline(func):
 
 
 class CommandCompletionException(Exception):
-    """Raised when a command should use the normal autocompleter instead of 
+    """Raised when a command should use the normal autocompleter instead of
     command-specific completion."""
 
     pass
@@ -577,7 +577,7 @@ class InputOutput:
 
         while True:
             if multiline_input:
-                show = ". "
+                show = "> "
 
             try:
                 if self.prompt_session:
@@ -593,7 +593,7 @@ class InputOutput:
                             self.clipboard_watcher.start()
 
                     def get_continuation(width, line_number, is_soft_wrap):
-                        return ". "
+                        return "> "
 
                     line = self.prompt_session.prompt(
                         show,
