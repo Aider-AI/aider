@@ -103,6 +103,7 @@ class ModelSettings:
     use_repo_map: bool = False
     send_undo_reply: bool = False
     lazy: bool = False
+    overeager: bool = False
     reminder: str = "user"
     examples_as_sys_msg: bool = False
     extra_params: Optional[dict] = None
