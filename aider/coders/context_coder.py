@@ -1,5 +1,3 @@
-from aider.dump import dump
-
 from .base_coder import Coder
 from .context_prompts import ContextPrompts
 
