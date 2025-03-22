@@ -320,7 +320,8 @@ class TestCoder(unittest.TestCase):
                 (f"```\n{test_files[3]}\n```", {test_files[3]}),
                 # Files in code blocks with language specifier
                 # (
-                #    f"```python\nwith open('{test_files[1]}', 'r') as f:\n    data = f.read()\n```",
+                #    f"```python\nwith open('{test_files[1]}', 'r') as f:\n"
+                #    f"    data = f.read()\n```",
                 #    {test_files[1]},
                 # ),
                 # Files with Windows-style paths
