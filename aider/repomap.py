@@ -105,7 +105,6 @@ class RepoMap:
         mentioned_idents=None,
         force_refresh=False,
     ):
-
         if self.max_map_tokens <= 0:
             return
         if not other_files:
