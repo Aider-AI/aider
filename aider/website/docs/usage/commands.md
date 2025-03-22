@@ -35,6 +35,7 @@ cog.out(get_help_md())
 | **/editor** | Open an editor to write a prompt |
 | **/editor-model** | Switch the Editor Model to a new LLM |
 | **/exit** | Exit the application |
+| **/general** | Ask questions and edit general documents. If no prompt provided, switches to general mode. |
 | **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
 | **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
