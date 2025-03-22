@@ -44,3 +44,8 @@ If you need to see the full contents of any files to answer my questions, ask me
     system_reminder = """
 NEVER RETURN CODE!
 """
+
+    try_again = """I have updated the set of files added to the chat.
+Review them to decide if this is the correct set of files or if we need to add more.
+If this is the right set, just return the current list of files.
+"""

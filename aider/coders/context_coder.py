@@ -1,3 +1,5 @@
+from aider.dump import dump
+
 from .base_coder import Coder
 from .context_prompts import ContextPrompts
 
@@ -7,3 +9,28 @@ class ContextCoder(Coder):
 
     edit_format = "context"
     gpt_prompts = ContextPrompts()
+
+    def reply_completed(self):
+        content = self.partial_response_content
+        if not content or not content.strip():
+            return True
+
+        dump(repr(content))
+        current_rel_fnames = set(self.get_inchat_relative_files())
+        mentioned_rel_fnames = set(self.get_file_mentions(content, ignore_current=True))
+
+        dump(current_rel_fnames)
+        dump(mentioned_rel_fnames)
+        dump(current_rel_fnames == mentioned_rel_fnames)
+
+        if mentioned_rel_fnames != current_rel_fnames:
+            self.abs_fnames = set()
+            for fname in mentioned_rel_fnames:
+                self.add_rel_fname(fname)
+            dump(self.get_inchat_relative_files())
+            self.reflected_message = self.gpt_prompts.try_again
+
+        return True
+
+    def check_for_file_mentions(self, content):
+        pass
