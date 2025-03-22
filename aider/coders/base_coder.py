@@ -1079,7 +1079,7 @@ class Coder:
     def fmt_system_prompt(self, prompt):
         if self.main_model.lazy:
             lazy_prompt = self.gpt_prompts.lazy_prompt
-        elif hasattr(self.main_model, 'overager') and self.main_model.overager:
+        elif hasattr(self.main_model, "overager") and self.main_model.overager:
             lazy_prompt = self.gpt_prompts.overeager_prompt
         else:
             lazy_prompt = ""
