@@ -19,9 +19,9 @@ class ContextCoder(Coder):
         current_rel_fnames = set(self.get_inchat_relative_files())
         mentioned_rel_fnames = set(self.get_file_mentions(content, ignore_current=True))
 
-        dump(current_rel_fnames)
-        dump(mentioned_rel_fnames)
-        dump(current_rel_fnames == mentioned_rel_fnames)
+        #dump(current_rel_fnames)
+        #dump(mentioned_rel_fnames)
+        #dump(current_rel_fnames == mentioned_rel_fnames)
 
         if mentioned_rel_fnames == current_rel_fnames:
             return True
@@ -32,7 +32,7 @@ class ContextCoder(Coder):
         self.abs_fnames = set()
         for fname in mentioned_rel_fnames:
             self.add_rel_fname(fname)
-        dump(self.get_inchat_relative_files())
+        #dump(self.get_inchat_relative_files())
 
         self.reflected_message = self.gpt_prompts.try_again
 
