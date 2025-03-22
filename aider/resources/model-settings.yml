@@ -185,6 +185,7 @@
   editor_edit_format: editor-diff
 
 - name: anthropic/claude-3-7-sonnet-20250219
+  overeager: true
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
