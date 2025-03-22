@@ -73,20 +73,64 @@
 
 /* Page container styling */
 .page-container {
-  max-height: 80vh;
-  max-width: 900px;
+  max-width: 950px;
   margin-left: auto;
   margin-right: auto;
   position: relative;
 }
 
-.terminal-container {
-  border-radius: 6px;
-  overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  margin-bottom: 20px;
+/* macOS backdrop styling */
+.macos-backdrop {
+  background: linear-gradient(135deg, #ff9966, #ff5e62, #6666ff, #0066ff);
+  border-radius: 12px;
+  padding: clamp(5px, 5vw, 50px) clamp(5px, 2.5vw, 50px);
+  margin: 20px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle wave animation to backdrop */
+.macos-backdrop::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Add decorative curved lines to the backdrop */
+.macos-backdrop::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, transparent 0%, transparent 60%, rgba(255,255,255,0.2) 61%, transparent 62%),
+    radial-gradient(circle at 80% 70%, transparent 0%, transparent 40%, rgba(255,255,255,0.2) 41%, transparent 42%),
+    radial-gradient(circle at 40% 90%, transparent 0%, transparent 70%, rgba(255,255,255,0.2) 71%, transparent 72%),
+    radial-gradient(circle at 60% 10%, transparent 0%, transparent 50%, rgba(255,255,255,0.2) 51%, transparent 52%);
+  background-size: 100% 100%;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.terminal-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  margin-top: 0;
+  margin-bottom: 0;
+  position: relative;
+  background-color: white; /* Add background color to terminal container */
+  z-index: 2; /* Ensure terminal appears above the backdrop effects */
 }
 
 /* Timestamp link styling */
@@ -137,6 +181,11 @@ li.active-marker {
   color: #666;
   margin-top: 10px;
   margin-bottom: 20px;
+}
+
+/* Hide keyboard shortcuts on devices likely without physical keyboards */
+.no-physical-keyboard .keyboard-shortcuts {
+  display: none;
 }
 
 .keyboard-shortcuts kbd {

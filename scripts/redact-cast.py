@@ -7,6 +7,8 @@ import sys
 import pyte
 from tqdm import tqdm
 
+from aider.dump import dump  # noqa
+
 
 def main():
     if len(sys.argv) != 3:
@@ -30,27 +32,12 @@ def main():
         height = header_data.get("height", 24)
         print(f"Terminal dimensions: {width}x{height}")
 
-        # Track if we need to check the terminal (if "Atuin" might be on screen)
-
-        atuin_pattern = re.compile(r"A.*t.*u.*i.*n")
-
-        screen = stream = None
+        screen = pyte.Screen(width, height)
+        stream = pyte.Stream(screen)
 
         # Process events line by line
         for line in tqdm(fin, desc="Processing events", total=total_lines - 1):
             if not line.strip():
-                continue
-
-            # Fast initial check on raw line before JSON parsing
-            raw_line_has_atuin = bool(atuin_pattern.search(line))
-
-            if raw_line_has_atuin:
-                screen = pyte.Screen(width, height)
-                stream = pyte.Stream(screen)
-
-            # Only parse JSON if we're checking terminal or need to check
-            if not screen:
-                fout.write(line)
                 continue
 
             event = json.loads(line)
@@ -60,18 +47,16 @@ def main():
                 continue
 
             output_text = event[2]
-
             stream.feed(output_text)
 
             # Check if "Atuin" is visible on screen
             atuin_visible = False
             for display_line in screen.display:
-                if "Atuin" in "".join(display_line):
+                if "Atuin" in display_line or "[    GLOBAL    ]" in display_line:
                     atuin_visible = True
                     break
 
             if not atuin_visible:
-                screen = stream = None
                 fout.write(line)
 
 

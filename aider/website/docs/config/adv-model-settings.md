@@ -175,6 +175,7 @@ cog.out("```\n")
   reasoning_tag: null
   remove_reasoning: null
   system_prompt_prefix: null
+  accepts_settings: null
 
 - name: anthropic/claude-3-5-haiku-20241022
   edit_format: diff
@@ -236,6 +237,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: anthropic/claude-3-7-sonnet-20250219
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: anthropic/claude-3-7-sonnet-latest
   edit_format: diff
@@ -249,6 +252,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: anthropic/claude-3-7-sonnet-latest
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: anthropic/claude-3-haiku-20240307
   weak_model_name: anthropic/claude-3-haiku-20240307
@@ -266,6 +271,8 @@ cog.out("```\n")
   streaming: false
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
+  accepts_settings:
+  - reasoning_effort
 
 - name: azure/o1-mini
   weak_model_name: azure/gpt-4o-mini
@@ -292,6 +299,8 @@ cog.out("```\n")
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   edit_format: diff
@@ -327,6 +336,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: bedrock/anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
@@ -340,6 +351,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: bedrock_converse/anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
@@ -353,6 +366,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: bedrock_converse/anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
@@ -366,6 +381,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: claude-3-5-haiku-20241022
   edit_format: diff
@@ -415,6 +432,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: claude-3-7-sonnet-20250219
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: claude-3-7-sonnet-latest
   edit_format: diff
@@ -428,6 +447,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: claude-3-7-sonnet-latest
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: claude-3-haiku-20240307
   weak_model_name: claude-3-haiku-20240307
@@ -722,6 +743,8 @@ cog.out("```\n")
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: o1-mini
   weak_model_name: gpt-4o-mini
@@ -748,6 +771,8 @@ cog.out("```\n")
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: openai/gpt-4.5-preview
   edit_format: diff
@@ -798,6 +823,8 @@ cog.out("```\n")
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: openai/o1-mini
   weak_model_name: openai/gpt-4o-mini
@@ -824,6 +851,8 @@ cog.out("```\n")
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: openrouter/anthropic/claude-3-opus
   edit_format: diff
@@ -864,6 +893,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: openrouter/anthropic/claude-3.7-sonnet
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: openrouter/anthropic/claude-3.7-sonnet:beta
   edit_format: diff
@@ -877,6 +908,8 @@ cog.out("```\n")
   cache_control: true
   editor_model_name: openrouter/anthropic/claude-3.7-sonnet
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: openrouter/cohere/command-a-03-2025
   examples_as_sys_msg: true
@@ -941,6 +974,9 @@ cog.out("```\n")
   editor_model_name: openrouter/deepseek/deepseek-r1:free
   editor_edit_format: editor-diff
 
+- name: openrouter/google/gemma-3-27b-it
+  use_system_prompt: false
+
 - name: openrouter/google/gemma-3-27b-it:free
   use_system_prompt: false
 
@@ -967,6 +1003,8 @@ cog.out("```\n")
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: openrouter/openai/o1-mini
   weak_model_name: openrouter/openai/gpt-4o-mini
@@ -995,6 +1033,8 @@ cog.out("```\n")
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: openrouter/openai/o3-mini-high
   edit_format: diff
@@ -1004,6 +1044,8 @@ cog.out("```\n")
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   edit_format: diff
@@ -1021,6 +1063,8 @@ cog.out("```\n")
     max_tokens: 64000
   editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: vertex_ai/claude-3-5-haiku@20241022
   edit_format: diff
@@ -1058,6 +1102,8 @@ cog.out("```\n")
     max_tokens: 64000
   editor_model_name: vertex_ai/claude-3-7-sonnet@20250219
   editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: vertex_ai/claude-3-opus@20240229
   edit_format: diff

@@ -167,6 +167,9 @@ cog.outl("```")
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
 
+## Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)
+#check-model-accepts-settings: true
+
 ## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #max-chat-history-tokens: xxx
 
@@ -286,6 +289,9 @@ cog.outl("```")
 
 ## Prefix all commit messages with 'aider: ' (default: False)
 #attribute-commit-message-committer: false
+
+## Enable/disable git pre-commit hooks with --no-verify (default: False)
+#git-commit-verify: false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #commit: false

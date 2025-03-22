@@ -153,6 +153,21 @@ Add 6.9k tokens of command output to the chat? (Y)es/(N)o [Yes]: Yes
 /ask Are there any problems with the way this change works with the FooBar class?
 ```
 
+And of course you can prepare diff output outside of aider and provide it as
+a file for aider to read:
+
+```
+$ git diff -C10 v1..v2 > v1-v2-changes.diff
+$ aider --read v1-v2-changes.diff
+
+Aider v0.77.2.dev+import
+Main model: anthropic/claude-3-7-sonnet-20250219 with diff edit format, 8k think tokens
+──────────────────────────────────
+v1-v2-changes.diff
+> Do you see any potential bugs in this PR?
+```
+
+
 {: .tip }
 The `/git` command will not work for this purpose, as its output is not included in the chat. 
 
@@ -249,15 +264,11 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,755,049</td><td class='right'>96.4%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>45,196</td><td class='right'>2.5%</td></tr>
-<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>17,585</td><td class='right'>1.0%</td></tr>
-<tr><td>cohere_chat/REDACTED</td><td class='right'>1,893</td><td class='right'>0.1%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>3,069,752</td><td class='right'>99.0%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>11,761</td><td class='right'>0.4%</td></tr>
+<tr><td>openrouter/openai/o3-mini</td><td class='right'>11,138</td><td class='right'>0.4%</td></tr>
+<tr><td>o3-mini</td><td class='right'>8,491</td><td class='right'>0.3%</td></tr>
 </table>
-
-{: .note :}
-Some models show as REDACTED, because they are new or unpopular models.
-Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?

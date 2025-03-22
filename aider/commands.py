@@ -17,6 +17,7 @@ from aider import models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
+from aider.io import CommandCompletionException
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
@@ -82,10 +83,38 @@ class Commands:
         self.original_read_only_fnames = set(original_read_only_fnames or [])
 
     def cmd_model(self, args):
-        "Switch to a new LLM"
+        "Switch the Main Model to a new LLM"
 
         model_name = args.strip()
-        model = models.Model(model_name, weak_model=self.coder.main_model.weak_model.name)
+        model = models.Model(
+            model_name,
+            editor_model=self.coder.main_model.editor_model.name,
+            weak_model=self.coder.main_model.weak_model.name,
+        )
+        models.sanity_check_models(self.io, model)
+        raise SwitchCoder(main_model=model)
+
+    def cmd_editor_model(self, args):
+        "Switch the Editor Model to a new LLM"
+
+        model_name = args.strip()
+        model = models.Model(
+            self.coder.main_model.name,
+            editor_model=model_name,
+            weak_model=self.coder.main_model.weak_model.name,
+        )
+        models.sanity_check_models(self.io, model)
+        raise SwitchCoder(main_model=model)
+
+    def cmd_weak_model(self, args):
+        "Switch the Weak Model to a new LLM"
+
+        model_name = args.strip()
+        model = models.Model(
+            self.coder.main_model.name,
+            editor_model=self.coder.main_model.editor_model.name,
+            weak_model=model_name,
+        )
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
@@ -1090,6 +1119,15 @@ class Commands:
             map_mul_no_files=map_mul_no_files,
             show_announcements=False,
         )
+
+    def completions_ask(self):
+        raise CommandCompletionException()
+
+    def completions_code(self):
+        raise CommandCompletionException()
+
+    def completions_architect(self):
+        raise CommandCompletionException()
 
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa

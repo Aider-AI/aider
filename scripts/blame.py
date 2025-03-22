@@ -13,8 +13,10 @@ import yaml
 from tqdm import tqdm
 
 website_files = [
+    "aider/website/index.html",
     "aider/website/share/index.md",
     "aider/website/_includes/head_custom.html",
+    "aider/website/_includes/home.css",
     "aider/website/docs/leaderboards/index.md",
 ]
 

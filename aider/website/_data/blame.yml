@@ -4175,3 +4175,95 @@
     Yutaka Matsubara: 4
   start_tag: v0.76.0
   total_lines: 1945
+- aider_percentage: 91.79
+  aider_total: 2626
+  end_date: '2025-03-21'
+  end_tag: v0.78.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier (aider): 21
+      Yutaka Matsubara: 2
+    aider/coders/base_coder.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 6
+    aider/commands.py:
+      Carles Sala (aider): 24
+      Paul Gauthier (aider): 10
+    aider/help_pats.py:
+      Paul Gauthier: 6
+    aider/io.py:
+      Marco Mayer: 2
+      Paul Gauthier (aider): 17
+    aider/main.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 28
+    aider/mdstream.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 22
+    aider/models.py:
+      Paul Gauthier (aider): 37
+      lentil32 (aider): 15
+    aider/repo.py:
+      Paul Gauthier (aider): 5
+    aider/resources/model-settings.yml:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 22
+    aider/website/_includes/head_custom.html:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 53
+    aider/website/_includes/recording.js:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 424
+    aider/website/assets/asciinema/asciinema-player.min.js:
+      Paul Gauthier: 1
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    aider/website/index.html:
+      Paul Gauthier: 170
+      Paul Gauthier (aider): 374
+    scripts/badges.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 496
+    scripts/blame.py:
+      Paul Gauthier: 2
+    scripts/jekyll_run.sh:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 5
+    scripts/logo_svg.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 169
+    scripts/recording_audio.py:
+      Paul Gauthier (aider): 338
+    scripts/redact-cast.py:
+      Paul Gauthier: 22
+      Paul Gauthier (aider): 37
+    scripts/tmux_record.sh:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 17
+    scripts/update-docs.sh:
+      Paul Gauthier: 1
+    scripts/update-history.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 45
+    tests/basic/test_aws_credentials.py:
+      lentil32 (aider): 169
+    tests/basic/test_commands.py:
+      Carles Sala (aider): 40
+    tests/basic/test_main.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 162
+    tests/basic/test_repo.py:
+      Paul Gauthier (aider): 41
+    tests/help/test_help.py:
+      Paul Gauthier (aider): 49
+  grand_total:
+    Carles Sala (aider): 64
+    Marco Mayer: 2
+    Paul Gauthier: 231
+    Paul Gauthier (aider): 2378
+    Yutaka Matsubara: 2
+    lentil32 (aider): 184
+  start_tag: v0.77.0
+  total_lines: 2861

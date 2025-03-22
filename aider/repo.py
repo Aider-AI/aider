@@ -56,6 +56,7 @@ class GitRepo:
         attribute_commit_message_committer=False,
         commit_prompt=None,
         subtree_only=False,
+        git_commit_verify=True,
     ):
         self.io = io
         self.models = models
@@ -69,6 +70,7 @@ class GitRepo:
         self.attribute_commit_message_committer = attribute_commit_message_committer
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
+        self.git_commit_verify = git_commit_verify
         self.ignore_file_cache = {}
 
         if git_dname:
@@ -133,7 +135,9 @@ class GitRepo:
         # if context:
         #    full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
-        cmd = ["-m", full_commit_message, "--no-verify"]
+        cmd = ["-m", full_commit_message]
+        if not self.git_commit_verify:
+            cmd.append("--no-verify")
         if fnames:
             fnames = [str(self.abs_root_path(fn)) for fn in fnames]
             for fname in fnames:

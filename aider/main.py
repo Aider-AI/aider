@@ -787,13 +787,40 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             "Model setting 'remove_reasoning' is deprecated, please use 'reasoning_tag' instead."
         )
 
-    # Set reasoning effort if specified
+    # Set reasoning effort and thinking tokens if specified
     if args.reasoning_effort is not None:
-        main_model.set_reasoning_effort(args.reasoning_effort)
+        # Apply if check is disabled or model explicitly supports it
+        if not args.check_model_accepts_settings or (
+            main_model.accepts_settings and "reasoning_effort" in main_model.accepts_settings
+        ):
+            main_model.set_reasoning_effort(args.reasoning_effort)
 
-    # Set thinking tokens if specified
     if args.thinking_tokens is not None:
-        main_model.set_thinking_tokens(args.thinking_tokens)
+        # Apply if check is disabled or model explicitly supports it
+        if not args.check_model_accepts_settings or (
+            main_model.accepts_settings and "thinking_tokens" in main_model.accepts_settings
+        ):
+            main_model.set_thinking_tokens(args.thinking_tokens)
+
+    # Show warnings about unsupported settings that are being ignored
+    if args.check_model_accepts_settings:
+        settings_to_check = [
+            {"arg": args.reasoning_effort, "name": "reasoning_effort"},
+            {"arg": args.thinking_tokens, "name": "thinking_tokens"},
+        ]
+
+        for setting in settings_to_check:
+            if setting["arg"] is not None and (
+                not main_model.accepts_settings
+                or setting["name"] not in main_model.accepts_settings
+            ):
+                io.tool_warning(
+                    f"Warning: {main_model.name} does not support '{setting['name']}', ignoring."
+                )
+                io.tool_output(
+                    f"Use --no-check-model-accepts-settings to force the '{setting['name']}'"
+                    " setting."
+                )
 
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole"):
@@ -842,6 +869,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 attribute_commit_message_committer=args.attribute_commit_message_committer,
                 commit_prompt=args.commit_prompt,
                 subtree_only=args.subtree_only,
+                git_commit_verify=args.git_commit_verify,
             )
         except FileNotFoundError:
             pass

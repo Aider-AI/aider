@@ -7,11 +7,12 @@ description: Release notes and stats on aider writing its own code.
 
 # Release history
 
-{% include blame.md %}
-
-The above 
-[stats are based on the git commit history](/docs/faq.html#how-are-the-aider-wrote-xx-of-code-stats-computed)
+Aider writes most of its own code, usually about 70-80% of the new code in each release.
+These
+[statistics are based on the git commit history](/docs/faq.html#how-are-the-aider-wrote-xx-of-code-stats-computed)
 of the aider repo.
+
+{% include blame.md %}
 
 ## Release notes
 
@@ -22,6 +23,28 @@ text = text.replace("# Release history", "")
 cog.out(text)
 ]]]-->
 
+
+### Aider v0.78.0
+
+- Added support for thinking tokens for OpenRouter Sonnet 3.7.
+- Added commands to switch between model types: `/editor-model` for Editor Model, and `/weak-model` for Weak Model, by csala.
+- Added model setting validation to ignore `--reasoning-effort` and `--thinking-tokens` if the model doesn't support them.
+- Added `--check-model-accepts-settings` flag (default: true) to force unsupported model settings.
+- Annotated which models support reasoning_effort and thinking_tokens settings in the model settings data.
+- Improved code block rendering in markdown output with better padding using NoInsetMarkdown.
+- Added `--git-commit-verify` flag (default: False) to control whether git commit hooks are bypassed.
+- Fixed autocompletion for `/ask`, `/code`, and `/architect` commands, by shladnik.
+- Added vi-like behavior when pressing enter in multiline-mode while in vi normal/navigation-mode, by Marco Mayer.
+- Added AWS_PROFILE support for Bedrock models, allowing use of AWS profiles instead of explicit credentials, by lentil32.
+- Enhanced `--aiderignore` argument to resolve both absolute and relative paths, by mopemope.
+- Improved platform information handling to gracefully handle retrieval errors.
+- Aider wrote 92% of the code in this release.
+
+### Aider v0.77.1
+
+- Bumped dependencies to pickup litellm fix for Ollama.
+- Added support for `openrouter/google/gemma-3-27b-it` model.
+- Updated exclude patterns for help documentation.
 
 ### Aider v0.77.0
 

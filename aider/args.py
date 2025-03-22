@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 
 import configargparse
 
@@ -15,6 +16,15 @@ from aider.args_formatter import (
 from aider.deprecated import add_deprecated_model_args
 
 from .dump import dump  # noqa: F401
+
+
+def resolve_aiderignore_path(path_str, git_root=None):
+    path = Path(path_str)
+    if path.is_absolute():
+        return str(path)
+    elif git_root:
+        return str(Path(git_root) / path)
+    return str(path)
 
 
 def default_env_file(git_root):
@@ -180,6 +190,14 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Only work with models that have meta-data available (default: True)",
+    )
+    group.add_argument(
+        "--check-model-accepts-settings",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)"
+        ),
     )
     group.add_argument(
         "--max-chat-history-tokens",
@@ -380,9 +398,11 @@ def get_parser(default_config_files, git_root):
     default_aiderignore_file = (
         os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
     )
+
     group.add_argument(
         "--aiderignore",
         metavar="AIDERIGNORE",
+        type=lambda path_str: resolve_aiderignore_path(path_str, git_root),
         default=default_aiderignore_file,
         help="Specify the aider ignore file (default: .aiderignore in git root)",
     )
@@ -427,6 +447,12 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=False,
         help="Prefix all commit messages with 'aider: ' (default: False)",
+    )
+    group.add_argument(
+        "--git-commit-verify",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable git pre-commit hooks with --no-verify (default: False)",
     )
     group.add_argument(
         "--commit",
