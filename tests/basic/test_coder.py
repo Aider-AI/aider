@@ -349,6 +349,13 @@ class TestCoder(unittest.TestCase):
                     ),
                     {test_files[1]},
                 ),
+                
+                # Files mentioned in markdown bold format
+                (f"You should check **{test_files[0]}** for issues", {test_files[0]}),
+                (f"Look at both **{test_files[1]}** and **{test_files[2]}**", {test_files[1], test_files[2]}),
+                (f"The file **{test_files[3].replace('/', '\\')}** needs updating", {test_files[3]}),
+                (f"Files to modify:\n- **{test_files[0]}**\n- **{test_files[4]}**", {test_files[0], test_files[4]}),
+                (f"Files mentioned like **aider/args.py** should be detected", set()),
             ]
 
             for content, expected_mentions in test_cases:
