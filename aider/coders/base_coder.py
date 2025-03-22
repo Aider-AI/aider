@@ -1077,8 +1077,12 @@ class Coder:
         return platform_text
 
     def fmt_system_prompt(self, prompt):
-        # if model lazy: lazy_prompt elif model overager overeager_prompt else "" ai!
-        lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
+        if self.main_model.lazy:
+            lazy_prompt = self.gpt_prompts.lazy_prompt
+        elif hasattr(self.main_model, 'overager') and self.main_model.overager:
+            lazy_prompt = self.gpt_prompts.overeager_prompt
+        else:
+            lazy_prompt = ""
 
         platform_text = self.get_platform_info()
 
