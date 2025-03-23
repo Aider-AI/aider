@@ -1167,12 +1167,22 @@ class Commands:
         user_msg = args
         coder.run(user_msg)
 
-        raise SwitchCoder(
-            edit_format=self.coder.edit_format,
-            summarize_from_coder=False,
-            from_coder=coder,
-            show_announcements=False,
-        )
+        # When using context command, set the placeholder to the args
+        if edit_format == "context" and args.strip():
+            raise SwitchCoder(
+                edit_format=self.coder.edit_format,
+                summarize_from_coder=False,
+                from_coder=coder,
+                show_announcements=False,
+                placeholder=args,
+            )
+        else:
+            raise SwitchCoder(
+                edit_format=self.coder.edit_format,
+                summarize_from_coder=False,
+                from_coder=coder,
+                show_announcements=False,
+            )
 
     def get_help_md(self):
         "Show help about all commands in markdown"
