@@ -1482,7 +1482,7 @@ class Commands:
         user_input = pipe_editor(initial_content, suffix="md", editor=self.editor)
         if user_input.strip():
             self.io.set_placeholder(user_input.rstrip())
-            
+
     def cmd_edit(self, args=""):
         "Alias for /editor: Open an editor to write a prompt"
         return self.cmd_editor(args)
