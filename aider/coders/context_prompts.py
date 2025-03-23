@@ -17,7 +17,7 @@ If a file is not relevant DO NOT mention it.
 Only return files that will need to be modified, not files that contain useful/relevant functions.
 
 You are only to discuss EXISTING files and symbols.
-Only return existing files, don't suggest the names of new files we will need to create.
+Only return existing files, don't suggest the names of new files or functions that we will need to create.
 
 Always reply to the user in {language}.
 
@@ -26,9 +26,9 @@ Return:
 1. A bulleted list of files the will need to be edited, and symbols that are highly relevant to the user's request.
 2. A list of classes/functions/methods/variables that are located OUTSIDE those files which will need to be understood. Just the symbols names, *NOT* file names.
 
-Here an example response, use this format:
+# Your response *MUST* use this format:
 
-## Files to modify, with their relevant symbols:
+## ALL files we need to modify, with their relevant symbols:
 
 - alarms/buzz.py
   - `Buzzer` class which can make the needed sound

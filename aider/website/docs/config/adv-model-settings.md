@@ -162,6 +162,7 @@ cog.out("```\n")
   use_repo_map: false
   send_undo_reply: false
   lazy: false
+  overeager: false
   reminder: user
   examples_as_sys_msg: false
   extra_params: null
@@ -229,6 +230,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -244,6 +246,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -328,6 +331,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -343,6 +347,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -358,6 +363,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: bedrock_converse/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -373,6 +379,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -439,6 +446,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -885,6 +893,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -900,6 +909,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     extra_headers:
@@ -1058,6 +1068,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 64000
@@ -1097,6 +1108,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
+  overeager: true
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 64000
