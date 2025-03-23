@@ -1148,9 +1148,9 @@ class Commands:
 
     def cmd_context(self, args):
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
-        return self._generic_chat_command(args, "context")
+        return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
 
-    def _generic_chat_command(self, args, edit_format):
+    def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
             # Switch to the corresponding chat mode if no args provided
             return self.cmd_chat_mode(edit_format)
@@ -1167,22 +1167,14 @@ class Commands:
         user_msg = args
         coder.run(user_msg)
 
-        # When using context command, set the placeholder to the args
-        if edit_format == "context" and args.strip():
-            raise SwitchCoder(
-                edit_format=self.coder.edit_format,
-                summarize_from_coder=False,
-                from_coder=coder,
-                show_announcements=False,
-                placeholder=args,
-            )
-        else:
-            raise SwitchCoder(
-                edit_format=self.coder.edit_format,
-                summarize_from_coder=False,
-                from_coder=coder,
-                show_announcements=False,
-            )
+        # Use the provided placeholder if any
+        raise SwitchCoder(
+            edit_format=self.coder.edit_format,
+            summarize_from_coder=False,
+            from_coder=coder,
+            show_announcements=False,
+            placeholder=placeholder,
+        )
 
     def get_help_md(self):
         "Show help about all commands in markdown"
