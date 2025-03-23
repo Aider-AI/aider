@@ -1110,7 +1110,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.ok_to_warm_cache = False
 
             # Set the placeholder if provided
-            if hasattr(switch, 'placeholder') and switch.placeholder is not None:
+            if hasattr(switch, "placeholder") and switch.placeholder is not None:
                 io.placeholder = switch.placeholder
 
             kwargs = dict(io=io, from_coder=coder)
