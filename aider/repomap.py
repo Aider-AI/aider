@@ -445,12 +445,19 @@ class RepoMap:
                 progress()
 
             definers = defines[ident]
+
+            mul = 1.0
+
+            is_snake = ("_" in ident) and any(c.isalpha() for c in ident)
+            is_camel = any(c.isupper() for c in ident) and any(c.islower() for c in ident)
             if ident in mentioned_idents:
-                mul = 10
-            elif ident.startswith("_"):
-                mul = 0.1
-            else:
-                mul = 1
+                mul *= 10
+            if (is_snake or is_camel) and len(ident) >= 8:
+                mul *= 10
+            if ident.startswith("_"):
+                mul *= 0.1
+            if len(defines[ident]) > 5:
+                mul *= 0.1
 
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
@@ -458,10 +465,14 @@ class RepoMap:
                     # if referencer == definer:
                     #    continue
 
+                    use_mul = mul
+                    if referencer in chat_rel_fnames:
+                        use_mul *= 50
+
                     # scale down so high freq (low value) mentions don't dominate
                     num_refs = math.sqrt(num_refs)
 
-                    G.add_edge(referencer, definer, weight=mul * num_refs, ident=ident)
+                    G.add_edge(referencer, definer, weight=use_mul * num_refs, ident=ident)
 
         if not references:
             pass

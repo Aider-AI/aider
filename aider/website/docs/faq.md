@@ -153,6 +153,21 @@ Add 6.9k tokens of command output to the chat? (Y)es/(N)o [Yes]: Yes
 /ask Are there any problems with the way this change works with the FooBar class?
 ```
 
+And of course you can prepare diff output outside of aider and provide it as
+a file for aider to read:
+
+```
+$ git diff -C10 v1..v2 > v1-v2-changes.diff
+$ aider --read v1-v2-changes.diff
+
+Aider v0.77.2.dev+import
+Main model: anthropic/claude-3-7-sonnet-20250219 with diff edit format, 8k think tokens
+──────────────────────────────────
+v1-v2-changes.diff
+> Do you see any potential bugs in this PR?
+```
+
+
 {: .tip }
 The `/git` command will not work for this purpose, as its output is not included in the chat. 
 
@@ -249,14 +264,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>974,381</td><td class='right'>95.9%</td></tr>
-<tr><td>openrouter/deepseek/deepseek-r1</td><td class='right'>37,995</td><td class='right'>3.7%</td></tr>
-<tr><td>groq/REDACTED</td><td class='right'>3,914</td><td class='right'>0.4%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-v3</td><td class='right'>2,871,926</td><td class='right'>51.3%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,969,998</td><td class='right'>35.2%</td></tr>
+<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>380,307</td><td class='right'>6.8%</td></tr>
+<tr><td>gpt-4o</td><td class='right'>243,123</td><td class='right'>4.3%</td></tr>
+<tr><td>claude-3-5-haiku-20241022</td><td class='right'>81,038</td><td class='right'>1.4%</td></tr>
+<tr><td>o3-mini</td><td class='right'>48,351</td><td class='right'>0.9%</td></tr>
 </table>
-
-{: .note :}
-Some models show as REDACTED, because they are new or unpopular models.
-Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?

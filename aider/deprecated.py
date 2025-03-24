@@ -121,5 +121,6 @@ def handle_deprecated_model_args(args, io):
             )
 
             # Set the model
-            args.model = model_name
+            if not args.model:
+                args.model = model_name
             break

@@ -127,6 +127,9 @@ cog.outl("```")
 ## Use architect edit format for the main chat
 #AIDER_ARCHITECT=
 
+## Enable/disable automatic acceptance of architect changes (default: True)
+#AIDER_AUTO_ACCEPT_ARCHITECT=true
+
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #AIDER_WEAK_MODEL=
 
@@ -138,6 +141,9 @@ cog.outl("```")
 
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true
+
+## Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)
+#AIDER_CHECK_MODEL_ACCEPTS_SETTINGS=true
 
 ## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
@@ -258,6 +264,9 @@ cog.outl("```")
 
 ## Prefix all commit messages with 'aider: ' (default: False)
 #AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER=false
+
+## Enable/disable git pre-commit hooks with --no-verify (default: False)
+#AIDER_GIT_COMMIT_VERIFY=false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #AIDER_COMMIT=false
