@@ -333,8 +333,8 @@ nav {
     height: 40px;
     padding: 8px;
     border-radius: 8px;
-    background: rgba(76, 110, 245, 0.1);
-    color: var(--primary);
+    background: rgba(18, 184, 134, 0.1);
+    color: var(--secondary);
     margin-right: 12px;
     flex-shrink: 0;
     transition: transform 0.3s, background 0.3s;
@@ -342,7 +342,8 @@ nav {
 
 .feature-card:hover .feature-icon {
     transform: scale(1.1);
-    background: rgba(76, 110, 245, 0.2);
+    background: rgba(18, 184, 134, 0.2);
+    color: var(--secondary);
 }
 
 .feature-title {
