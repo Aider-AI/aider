@@ -265,8 +265,9 @@ tr:hover { background-color: #f5f5f5; }
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
 <tr><td>fireworks_ai/accounts/fireworks/models/deepseek-v3</td><td class='right'>2,871,926</td><td class='right'>51.3%</td></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,969,998</td><td class='right'>35.2%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,663,572</td><td class='right'>29.7%</td></tr>
 <tr><td>fireworks_ai/accounts/fireworks/models/deepseek-r1</td><td class='right'>380,307</td><td class='right'>6.8%</td></tr>
+<tr><td>deepseek/deepseek-chat</td><td class='right'>312,589</td><td class='right'>5.6%</td></tr>
 <tr><td>gpt-4o</td><td class='right'>243,123</td><td class='right'>4.3%</td></tr>
 <tr><td>claude-3-5-haiku-20241022</td><td class='right'>81,038</td><td class='right'>1.4%</td></tr>
 <tr><td>o3-mini</td><td class='right'>48,351</td><td class='right'>0.9%</td></tr>
