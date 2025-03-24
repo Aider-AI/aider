@@ -76,7 +76,7 @@ Use aider from within your favorite IDE or editor. Ask for changes by adding com
 
 ### [Images & web pages](https://aider.chat/docs/usage/images-urls.html)
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/web.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/image-multiple.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
 Add images and web pages to the chat to provide visual context, screenshots, reference docs, etc.
 
 <br>
@@ -90,7 +90,7 @@ Speak with aider about your code! Request new features, test cases or bug fixes 
 
 ### [Linting & testing](https://aider.chat/docs/usage/lint-test.html)
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/test-tube.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/check-all.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
 Automatically lint and test your code every time aider makes changes. Aider can fix problems detected by your linters and test suites.
 
 <br>
