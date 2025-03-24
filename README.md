@@ -39,23 +39,66 @@ src="https://img.shields.io/badge/🔄%20Singularity-92%25-e74c3c?style=flat-squ
 
 ## Features
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/brain.svg" width="24" height="24" alt="Brain Icon"> **[Cloud and local LLMs](https://aider.chat/docs/llms.html)** - Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/brain.svg" width="32" height="32" align="left" style="margin-right:10px">
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/map-outline.svg" width="24" height="24" alt="Map Icon"> **[Maps your codebase](https://aider.chat/docs/repomap.html)** - Aider makes a map of your entire codebase, which helps it work well in larger projects.
+### [Cloud and local LLMs](https://aider.chat/docs/llms.html)
+Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/code-tags.svg" width="24" height="24" alt="Code Icon"> **[100+ code languages](https://aider.chat/docs/languages.html)** - Aider works with most popular programming languages: python, javascript, rust, ruby, go, cpp, php, html, css, and dozens more.
+<br>
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/source-branch.svg" width="24" height="24" alt="Git Icon"> **[Git integration](https://aider.chat/docs/git.html)** - Aider automatically commits changes with sensible commit messages. Use familiar git tools to easily diff, manage and undo AI changes.
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/map-outline.svg" width="32" height="32" align="left" style="margin-right:10px">
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/monitor.svg" width="24" height="24" alt="Monitor Icon"> **[Use in your IDE](https://aider.chat/docs/usage/watch.html)** - Use aider from within your favorite IDE or editor. Ask for changes by adding comments to your code and aider will get to work.
+### [Maps your codebase](https://aider.chat/docs/repomap.html)
+Aider makes a map of your entire codebase, which helps it work well in larger projects.
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/image.svg" width="24" height="24" alt="Image Icon"> **[Images & web pages](https://aider.chat/docs/usage/images-urls.html)** - Add images and web pages to the chat to provide visual context, screenshots, reference docs, etc.
+<br>
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/microphone.svg" width="24" height="24" alt="Microphone Icon"> **[Voice-to-code](https://aider.chat/docs/usage/voice.html)** - Speak with aider about your code! Request new features, test cases or bug fixes using your voice and let aider implement the changes.
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/code-tags.svg" width="32" height="32" align="left" style="margin-right:10px">
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/check.svg" width="24" height="24" alt="Check Icon"> **[Linting & testing](https://aider.chat/docs/usage/lint-test.html)** - Automatically lint and test your code every time aider makes changes. Aider can fix problems detected by your linters and test suites.
+### [100+ code languages](https://aider.chat/docs/languages.html)
+Aider works with most popular programming languages: python, javascript, rust, ruby, go, cpp, php, html, css, and dozens more.
 
-<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/content-copy.svg" width="24" height="24" alt="Copy Icon"> **[Copy/paste to web chat](https://aider.chat/docs/usage/copypaste.html)** - Work with any LLM via its web chat interface. Aider streamlines copy/pasting code context and edits back and forth with a browser.
+<br>
+
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/source-branch.svg" width="32" height="32" align="left" style="margin-right:10px">
+
+### [Git integration](https://aider.chat/docs/git.html)
+Aider automatically commits changes with sensible commit messages. Use familiar git tools to easily diff, manage and undo AI changes.
+
+<br>
+
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/monitor.svg" width="32" height="32" align="left" style="margin-right:10px">
+
+### [Use in your IDE](https://aider.chat/docs/usage/watch.html)
+Use aider from within your favorite IDE or editor. Ask for changes by adding comments to your code and aider will get to work.
+
+<br>
+
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/image.svg" width="32" height="32" align="left" style="margin-right:10px">
+
+### [Images & web pages](https://aider.chat/docs/usage/images-urls.html)
+Add images and web pages to the chat to provide visual context, screenshots, reference docs, etc.
+
+<br>
+
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/microphone.svg" width="32" height="32" align="left" style="margin-right:10px">
+
+### [Voice-to-code](https://aider.chat/docs/usage/voice.html)
+Speak with aider about your code! Request new features, test cases or bug fixes using your voice and let aider implement the changes.
+
+<br>
+
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/check.svg" width="32" height="32" align="left" style="margin-right:10px">
+
+### [Linting & testing](https://aider.chat/docs/usage/lint-test.html)
+Automatically lint and test your code every time aider makes changes. Aider can fix problems detected by your linters and test suites.
+
+<br>
+
+<img src="https://cdn.jsdelivr.net/npm/@mdi/svg@latest/svg/content-copy.svg" width="32" height="32" align="left" style="margin-right:10px">
+
+### [Copy/paste to web chat](https://aider.chat/docs/usage/copypaste.html)
+Work with any LLM via its web chat interface. Aider streamlines copy/pasting code context and edits back and forth with a browser.
 
 ## Getting Started
 
