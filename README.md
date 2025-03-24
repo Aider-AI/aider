@@ -39,7 +39,7 @@ src="https://img.shields.io/badge/🔄%20Singularity-92%25-e74c3c?style=flat-squ
 
 ## Features
 
-- <img src="assets/icons/dna.svg" width="16" height="16" alt="DNA Icon"> **[Cloud and local LLMs](https://aider.chat/docs/llms.html)** - Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
+- <img src="assets/icons/dna.svg" width="16" height="16" alt="Brain Icon"> **[Cloud and local LLMs](https://aider.chat/docs/llms.html)** - Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
 - <img src="assets/icons/arrows.svg" width="16" height="16" alt="Arrows Icon"> **[Maps your codebase](https://aider.chat/docs/repomap.html)** - Aider makes a map of your entire codebase, which helps it work well in larger projects.
 - <img src="assets/icons/code.svg" width="16" height="16" alt="Code Icon"> **[100+ code languages](https://aider.chat/docs/languages.html)** - Aider works with most popular programming languages: python, javascript, rust, ruby, go, cpp, php, html, css, and dozens more.
 - <img src="assets/icons/key.svg" width="16" height="16" alt="Key Icon"> **[Git integration](https://aider.chat/docs/git.html)** - Aider automatically commits changes with sensible commit messages. Use familiar git tools to easily diff, manage and undo AI changes.
