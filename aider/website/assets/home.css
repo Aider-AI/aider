@@ -329,14 +329,20 @@ nav {
 }
 
 .feature-icon {
-    font-size: 1.8rem;
-    color: var(--primary);
-    margin-right: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 40px;
     height: 40px;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(76, 110, 245, 0.1);
+    color: var(--primary);
+    margin-right: 12px;
+    flex-shrink: 0;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1);
+    background: rgba(76, 110, 245, 0.2);
 }
 
 .feature-title {
