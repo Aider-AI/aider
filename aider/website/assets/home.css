@@ -329,19 +329,19 @@ nav {
 }
 
 .feature-icon {
-    width: 40px;
-    height: 40px;
-    padding: 8px;
-    border-radius: 8px;
+    width: 48px;
+    height: 48px;
+    padding: 10px;
+    border-radius: 10px;
     background: rgba(18, 184, 134, 0.1);
     color: var(--secondary);
-    margin-right: 12px;
+    margin-right: 14px;
     flex-shrink: 0;
     transition: transform 0.3s, background 0.3s;
 }
 
 .feature-card:hover .feature-icon {
-    transform: scale(1.1);
+    transform: scale(1.15);
     background: rgba(18, 184, 134, 0.2);
     color: var(--secondary);
 }
