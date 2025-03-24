@@ -686,8 +686,8 @@ class Model(ModelSettings):
             else:
                 self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
-    def get_thinking_tokens(self, model):
-        """Get formatted thinking token budget if available"""
+    def get_thinking_tokens(self, model, format=True):
+        """Get (optionally) formatted thinking token budget if available"""
         budget = None
 
         if model.extra_params:
@@ -704,21 +704,22 @@ class Model(ModelSettings):
             ):
                 budget = model.extra_params["thinking"]["budget_tokens"]
 
-        if budget is not None:
-            # Format as xx.yK for thousands, xx.yM for millions
-            if budget >= 1024 * 1024:
-                value = budget / (1024 * 1024)
-                if value == int(value):
-                    return f"{int(value)}M"
-                else:
-                    return f"{value:.1f}M"
+        if budget is None or not format:
+            return budget
+
+        # Format as xx.yK for thousands, xx.yM for millions
+        if budget >= 1024 * 1024:
+            value = budget / (1024 * 1024)
+            if value == int(value):
+                return f"{int(value)}M"
             else:
-                value = budget / 1024
-                if value == int(value):
-                    return f"{int(value)}k"
-                else:
-                    return f"{value:.1f}k"
-        return None
+                return f"{value:.1f}M"
+        else:
+            value = budget / 1024
+            if value == int(value):
+                return f"{int(value)}k"
+            else:
+                return f"{value:.1f}k"
 
     def get_reasoning_effort(self, model):
         """Get reasoning effort value if available"""
