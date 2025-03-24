@@ -329,7 +329,7 @@ nav {
 }
 
 .feature-icon {
-    font-size: 24px;
+    font-size: 28px;
     width: 48px;
     height: 48px;
     display: flex;
@@ -341,6 +341,13 @@ nav {
     margin-right: 14px;
     flex-shrink: 0;
     transition: transform 0.3s, background 0.3s;
+    transform: scale(1.1);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.25);
+    background: rgba(18, 184, 134, 0.2);
+    color: var(--secondary);
 }
 
 .feature-card:hover .feature-icon {
