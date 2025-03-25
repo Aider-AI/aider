@@ -975,7 +975,10 @@ def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
-    for orig_model, attrs in litellm.model_cost.items():
+    model_metadata = list(litellm.model_cost.items())
+    model_metadata += list(model_info_manager.local_model_metadata.items())
+
+    for orig_model, attrs in model_metadata:
         model = orig_model.lower()
         if attrs.get("mode") != "chat":
             continue
