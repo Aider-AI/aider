@@ -1,6 +1,6 @@
 - dirname: 2025-02-25-20-23-07--gemini-pro
   test_cases: 225
-  model: gemini/gemini-2.0-pro-exp-02-05
+  model: Gemini 2.0 Pro exp-02-05
   edit_format: whole
   commit_hash: 2fccd47
   pass_rate_1: 20.4
@@ -809,7 +809,7 @@
 
 - dirname: 2025-03-25-19-46-45--gemini-25-pro-exp-diff-fenced
   test_cases: 225
-  model: Gemini Pro 2.5
+  model: Gemini 2.5 Pro exp-03-25
   edit_format: diff-fenced
   commit_hash: 33413ec
   pass_rate_1: 39.1
