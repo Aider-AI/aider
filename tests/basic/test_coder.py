@@ -302,6 +302,7 @@ class TestCoder(unittest.TestCase):
 
             # Pre-format the Windows path to avoid backslash issues in f-string expressions
             windows_path = test_files[2].replace("/", "\\")
+            win_path3 = test_files[3].replace('/', '\\')
 
             for fname in test_files:
                 fpath = Path(fname)
@@ -336,7 +337,7 @@ class TestCoder(unittest.TestCase):
                     (
                         f"First, edit `{test_files[0]}`. Then modify {test_files[1]}.\n"
                         f"```js\n// Update this file\nconst file = '{test_files[2]}';\n```\n"
-                        f"Finally check {test_files[3].replace('/', '\\')}"
+                        f"Finally check {win_path3}"
                     ),
                     {test_files[0], test_files[1], test_files[2], test_files[3]},
                 ),
@@ -347,7 +348,7 @@ class TestCoder(unittest.TestCase):
                     {test_files[1], test_files[2]},
                 ),
                 (
-                    f"The file **{test_files[3].replace('/', '\\')}** needs updating",
+                    f"The file **{win_path3}** needs updating",
                     {test_files[3]},
                 ),
                 (
