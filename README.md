@@ -41,63 +41,63 @@ src="https://img.shields.io/badge/🔄%20Singularity-92%25-e74c3c?style=flat-squ
 
 ### [Cloud and local LLMs](https://aider.chat/docs/llms.html)
 
-<img src="https://aider.chat/assets/icons/brain.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/llms.html"><img src="https://aider.chat/assets/icons/brain.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
 
 <br>
 
 ### [Maps your codebase](https://aider.chat/docs/repomap.html)
 
-<img src="https://aider.chat/assets/icons/map-outline.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/repomap.html"><img src="https://aider.chat/assets/icons/map-outline.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Aider makes a map of your entire codebase, which helps it work well in larger projects.
 
 <br>
 
 ### [100+ code languages](https://aider.chat/docs/languages.html)
 
-<img src="https://aider.chat/assets/icons/code-tags.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/languages.html"><img src="https://aider.chat/assets/icons/code-tags.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Aider works with most popular programming languages: python, javascript, rust, ruby, go, cpp, php, html, css, and dozens more.
 
 <br>
 
 ### [Git integration](https://aider.chat/docs/git.html)
 
-<img src="https://aider.chat/assets/icons/source-branch.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/git.html"><img src="https://aider.chat/assets/icons/source-branch.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Aider automatically commits changes with sensible commit messages. Use familiar git tools to easily diff, manage and undo AI changes.
 
 <br>
 
 ### [Use in your IDE](https://aider.chat/docs/usage/watch.html)
 
-<img src="https://aider.chat/assets/icons/monitor.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/usage/watch.html"><img src="https://aider.chat/assets/icons/monitor.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Use aider from within your favorite IDE or editor. Ask for changes by adding comments to your code and aider will get to work.
 
 <br>
 
 ### [Images & web pages](https://aider.chat/docs/usage/images-urls.html)
 
-<img src="https://aider.chat/assets/icons/image-multiple.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/usage/images-urls.html"><img src="https://aider.chat/assets/icons/image-multiple.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Add images and web pages to the chat to provide visual context, screenshots, reference docs, etc.
 
 <br>
 
 ### [Voice-to-code](https://aider.chat/docs/usage/voice.html)
 
-<img src="https://aider.chat/assets/icons/microphone.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/usage/voice.html"><img src="https://aider.chat/assets/icons/microphone.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Speak with aider about your code! Request new features, test cases or bug fixes using your voice and let aider implement the changes.
 
 <br>
 
 ### [Linting & testing](https://aider.chat/docs/usage/lint-test.html)
 
-<img src="https://aider.chat/assets/icons/check-all.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/usage/lint-test.html"><img src="https://aider.chat/assets/icons/check-all.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Automatically lint and test your code every time aider makes changes. Aider can fix problems detected by your linters and test suites.
 
 <br>
 
 ### [Copy/paste to web chat](https://aider.chat/docs/usage/copypaste.html)
 
-<img src="https://aider.chat/assets/icons/content-copy.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px">
+<a href="https://aider.chat/docs/usage/copypaste.html"><img src="https://aider.chat/assets/icons/content-copy.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
 Work with any LLM via its web chat interface. Aider streamlines copy/pasting code context and edits back and forth with a browser.
 
 ## Getting Started
