@@ -806,3 +806,29 @@
   versions: 0.78.1.dev
   seconds_per_case: 290.0
   total_cost: 1.1164
+
+- dirname: 2025-03-25-19-46-45--gemini-25-pro-exp-diff-fenced
+  test_cases: 225
+  model: Gemini Pro 2.5
+  edit_format: diff-fenced
+  commit_hash: 33413ec
+  pass_rate_1: 39.1
+  pass_rate_2: 72.9
+  pass_num_1: 88
+  pass_num_2: 164
+  percent_cases_well_formed: 89.8
+  error_outputs: 30
+  num_malformed_responses: 30
+  num_with_malformed_responses: 23
+  user_asks: 57
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-exp-03-25
+  date: 2025-03-25
+  versions: 0.78.1.dev
+  seconds_per_case: 47.1
+  total_cost: 0.0000
