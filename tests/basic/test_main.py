@@ -1068,8 +1068,8 @@ class TestMain(TestCase):
             # Create a temporary model-metadata.json with test models
             metadata_file = Path(".aider.model.metadata.json")
             test_models = {
-                "test-provider/unique-model-name": {"max_input_tokens": 8192},
-                "another-provider/another-unique-model": {"max_input_tokens": 4096},
+                "unique-model-name": {"max_input_tokens": 8192, "litellm_provider": "test-provider"},
+                "another-unique-model": {"max_input_tokens": 4096, "litellm_provider": "another-provider"},
             }
             metadata_file.write_text(json.dumps(test_models))
 
@@ -1097,7 +1097,7 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             # Create a temporary model-metadata.json with test models
             metadata_file = Path(".aider.model.metadata.json")
-            test_models = {"test-provider/metadata-only-model": {"max_input_tokens": 8192}}
+            test_models = {"metadata-only-model": {"max_input_tokens": 8192, "litellm_provider": "test-provider"}}
             metadata_file.write_text(json.dumps(test_models))
 
             # Patch litellm.model_cost to include a test model
@@ -1150,7 +1150,7 @@ class TestMain(TestCase):
         # Test that models from resources/model-metadata.json are included in list-models output
         with GitTemporaryDirectory():
             # Mock the importlib.resources.open_text to return a custom model-metadata.json
-            test_resource_models = {"resource-provider/special-model": {"max_input_tokens": 8192}}
+            test_resource_models = {"special-model": {"max_input_tokens": 8192, "litellm_provider": "resource-provider"}}
 
             mock_file = MagicMock()
             mock_file.read.return_value = json.dumps(test_resource_models)
