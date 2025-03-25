@@ -4175,21 +4175,21 @@
     Yutaka Matsubara: 4
   start_tag: v0.76.0
   total_lines: 1945
-- aider_percentage: 91.79
-  aider_total: 2626
+- aider_percentage: 91.82
+  aider_total: 2682
   end_date: '2025-03-21'
   end_tag: v0.78.0
   file_counts:
     aider/__init__.py:
       Paul Gauthier: 1
     aider/args.py:
-      Paul Gauthier (aider): 21
+      Paul Gauthier (aider): 24
       Yutaka Matsubara: 2
     aider/coders/base_coder.py:
       Paul Gauthier: 1
       Paul Gauthier (aider): 6
     aider/commands.py:
-      Carles Sala (aider): 24
+      Carles Sala (aider): 30
       Paul Gauthier (aider): 10
     aider/help_pats.py:
       Paul Gauthier: 6
@@ -4198,17 +4198,17 @@
       Paul Gauthier (aider): 17
     aider/main.py:
       Paul Gauthier: 5
-      Paul Gauthier (aider): 28
+      Paul Gauthier (aider): 29
     aider/mdstream.py:
       Paul Gauthier: 1
       Paul Gauthier (aider): 22
     aider/models.py:
-      Paul Gauthier (aider): 37
+      Paul Gauthier (aider): 41
       lentil32 (aider): 15
     aider/repo.py:
       Paul Gauthier (aider): 5
     aider/resources/model-settings.yml:
-      Paul Gauthier: 2
+      Paul Gauthier: 3
       Paul Gauthier (aider): 22
     aider/website/_includes/head_custom.html:
       Paul Gauthier: 3
@@ -4221,8 +4221,8 @@
     aider/website/docs/leaderboards/index.md:
       Paul Gauthier: 1
     aider/website/index.html:
-      Paul Gauthier: 170
-      Paul Gauthier (aider): 374
+      Paul Gauthier: 173
+      Paul Gauthier (aider): 371
     scripts/badges.py:
       Paul Gauthier: 1
       Paul Gauthier (aider): 496
@@ -4246,24 +4246,76 @@
       Paul Gauthier: 1
     scripts/update-history.py:
       Paul Gauthier: 1
-      Paul Gauthier (aider): 45
+      Paul Gauthier (aider): 52
     tests/basic/test_aws_credentials.py:
       lentil32 (aider): 169
     tests/basic/test_commands.py:
       Carles Sala (aider): 40
     tests/basic/test_main.py:
       Paul Gauthier: 2
-      Paul Gauthier (aider): 162
+      Paul Gauthier (aider): 193
     tests/basic/test_repo.py:
-      Paul Gauthier (aider): 41
+      Paul Gauthier (aider): 48
     tests/help/test_help.py:
       Paul Gauthier (aider): 49
   grand_total:
-    Carles Sala (aider): 64
+    Carles Sala (aider): 70
     Marco Mayer: 2
-    Paul Gauthier: 231
-    Paul Gauthier (aider): 2378
+    Paul Gauthier: 235
+    Paul Gauthier (aider): 2428
     Yutaka Matsubara: 2
     lentil32 (aider): 184
   start_tag: v0.77.0
-  total_lines: 2861
+  total_lines: 2921
+- aider_percentage: 65.38
+  aider_total: 221
+  end_date: '2025-03-25'
+  end_tag: v0.79.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/coders/__init__.py:
+      Paul Gauthier: 2
+    aider/coders/base_coder.py:
+      Paul Gauthier: 15
+      Paul Gauthier (aider): 5
+    aider/coders/context_coder.py:
+      Paul Gauthier: 45
+      Paul Gauthier (aider): 8
+    aider/commands.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 20
+    aider/io.py:
+      Paul Gauthier: 11
+      Paul Gauthier (aider): 2
+    aider/main.py:
+      Paul Gauthier (aider): 4
+    aider/models.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 1
+    aider/repomap.py:
+      Paul Gauthier: 17
+    aider/resources/model-settings.yml:
+      Paul Gauthier: 13
+      Paul Gauthier (aider): 10
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    aider/website/index.html:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 16
+    scripts/badges.py:
+      Paul Gauthier (aider): 2
+    scripts/blame.py:
+      Paul Gauthier (aider): 16
+    scripts/dl_icons.py:
+      Paul Gauthier (aider): 60
+    scripts/tmux_record.sh:
+      Paul Gauthier: 1
+    tests/basic/test_coder.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 77
+  grand_total:
+    Paul Gauthier: 117
+    Paul Gauthier (aider): 221
+  start_tag: v0.78.0
+  total_lines: 338
