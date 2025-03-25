@@ -1092,7 +1092,8 @@ class TestMain(TestCase):
                 self.assertIn("test-provider/unique-model-name", output)
 
     def test_list_models_includes_all_model_sources(self):
-        # Test that models from both litellm.model_cost and model-metadata.json appear in list-models
+        # Test that models from both litellm.model_cost and model-metadata.json
+        # appear in list-models
         with GitTemporaryDirectory():
             # Create a temporary model-metadata.json with test models
             metadata_file = Path(".aider.model.metadata.json")
