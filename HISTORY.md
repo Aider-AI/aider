@@ -1,5 +1,13 @@
 # Release history
 
+### main branch
+
+- Added support for Gemini 2.5 Pro models.
+- Added a new `/context` command that automatically identifies which files need to be edited for a given request.
+- Added `/edit` as an alias for the `/editor` command.
+- Added "overeager" mode for Claude 3.7 Sonnet models to try and keep it working within the requested scope.
+- Aider wrote 66% of the code in this release.
+
 ### Aider v0.78.0
 
 - Added support for thinking tokens for OpenRouter Sonnet 3.7.
