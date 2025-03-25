@@ -300,6 +300,9 @@ class TestCoder(unittest.TestCase):
                 "special_chars!@#.md",
             ]
 
+            # Pre-format the Windows path to avoid backslash issues in f-string expressions
+            windows_path = test_files[2].replace('/', '\\')
+
             for fname in test_files:
                 fpath = Path(fname)
                 fpath.parent.mkdir(parents=True, exist_ok=True)
