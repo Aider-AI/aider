@@ -1071,10 +1071,12 @@ class TestMain(TestCase):
                 "unique-model-name": {
                     "max_input_tokens": 8192,
                     "litellm_provider": "test-provider",
+                    "mode": "chat",  # Added mode attribute
                 },
                 "another-provider/another-unique-model": {
                     "max_input_tokens": 4096,
                     "litellm_provider": "another-provider",
+                    "mode": "chat",  # Added mode attribute
                 },
             }
             metadata_file.write_text(json.dumps(test_models))
