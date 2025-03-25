@@ -325,8 +325,6 @@ class TestCoder(unittest.TestCase):
                 #    {test_files[1]},
                 # ),
                 # Files with Windows-style paths
-                # Pre-format the Windows path to avoid backslash issues in f-string expressions
-                windows_path = test_files[2].replace('/', '\\')
                 (f"Edit the file {windows_path}", {test_files[2]}),
                 # Files with different quote styles
                 (f'Check "{test_files[5]}" now', {test_files[5]}),
