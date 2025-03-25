@@ -381,6 +381,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_udev(self):
         self._test_language_repo_map("udev", "rules", "USB_DRIVER")
 
+    def test_language_scala(self):
+        self._test_language_repo_map("scala", "scala", "Greeter")
+
     def _test_language_repo_map(self, lang, key, symbol):
         """Helper method to test repo map generation for a specific language."""
         # Get the fixture file path and name based on language
