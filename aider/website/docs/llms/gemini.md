@@ -21,6 +21,9 @@ setx   GEMINI_API_KEY <key> # Windows, restart shell after setx
 
 aider --model gemini/gemini-1.5-pro-latest
 
+# You can also run the Gemini 2.5 Pro model with:
+aider --model gemini-2.5-pro
+
 # List models available from Gemini
 aider --list-models gemini/
 ```
