@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.79.0
 
 - Added support for Gemini 2.5 Pro models.
 - Added support for DeepSeek V3 0324 model.
