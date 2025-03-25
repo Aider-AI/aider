@@ -1061,7 +1061,7 @@ class TestMain(TestCase):
         self.assertEqual(
             coder.main_model.extra_params.get("thinking", {}).get("budget_tokens"), 1000
         )
-        
+
     def test_list_models_includes_metadata_models(self):
         # Test that models from model-metadata.json appear in list-models output
         with GitTemporaryDirectory():
@@ -1069,46 +1069,57 @@ class TestMain(TestCase):
             metadata_file = Path(".aider.model.metadata.json")
             test_models = {
                 "test-provider/unique-model-name": {"max_input_tokens": 8192},
-                "another-provider/another-unique-model": {"max_input_tokens": 4096}
+                "another-provider/another-unique-model": {"max_input_tokens": 4096},
             }
             metadata_file.write_text(json.dumps(test_models))
-            
+
             # Capture stdout to check the output
             with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
                 main(
-                    ["--list-models", "unique-model", "--model-metadata-file", str(metadata_file), "--yes"],
+                    [
+                        "--list-models",
+                        "unique-model",
+                        "--model-metadata-file",
+                        str(metadata_file),
+                        "--yes",
+                    ],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
                 output = mock_stdout.getvalue()
-                
+
                 # Check that the unique model name from our metadata file is listed
                 self.assertIn("test-provider/unique-model-name", output)
-                
+
     def test_list_models_includes_all_model_sources(self):
         # Test that models from both litellm.model_cost and model-metadata.json appear in list-models
         with GitTemporaryDirectory():
             # Create a temporary model-metadata.json with test models
             metadata_file = Path(".aider.model.metadata.json")
-            test_models = {
-                "test-provider/metadata-only-model": {"max_input_tokens": 8192}
-            }
+            test_models = {"test-provider/metadata-only-model": {"max_input_tokens": 8192}}
             metadata_file.write_text(json.dumps(test_models))
-            
+
             # Patch litellm.model_cost to include a test model
             litellm_test_model = "litellm-only-model"
-            with patch("aider.models.litellm.model_cost", {
-                litellm_test_model: {"mode": "chat", "litellm_provider": "test-provider"}
-            }):
+            with patch(
+                "aider.models.litellm.model_cost",
+                {litellm_test_model: {"mode": "chat", "litellm_provider": "test-provider"}},
+            ):
                 # Capture stdout to check the output
                 with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
                     main(
-                        ["--list-models", "model", "--model-metadata-file", str(metadata_file), "--yes"],
+                        [
+                            "--list-models",
+                            "model",
+                            "--model-metadata-file",
+                            str(metadata_file),
+                            "--yes",
+                        ],
                         input=DummyInput(),
                         output=DummyOutput(),
                     )
                     output = mock_stdout.getvalue()
-                    
+
                     # Check that both models appear in the output
                     self.assertIn("test-provider/metadata-only-model", output)
                     self.assertIn(litellm_test_model, output)
@@ -1133,19 +1144,17 @@ class TestMain(TestCase):
                 )
                 # Method should not be called because model doesn't support it and flag is on
                 mock_set_thinking.assert_not_called()
-                
+
     def test_list_models_with_direct_resource_patch(self):
         # Test that models from resources/model-metadata.json are included in list-models output
         with GitTemporaryDirectory():
             # Mock the importlib.resources.open_text to return a custom model-metadata.json
-            test_resource_models = {
-                "resource-provider/special-model": {"max_input_tokens": 8192}
-            }
-            
+            test_resource_models = {"resource-provider/special-model": {"max_input_tokens": 8192}}
+
             mock_file = MagicMock()
             mock_file.read.return_value = json.dumps(test_resource_models)
             mock_file.__enter__.return_value = mock_file
-            
+
             with patch("importlib.resources.open_text", return_value=mock_file):
                 # Capture stdout to check the output
                 with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
@@ -1155,7 +1164,7 @@ class TestMain(TestCase):
                         output=DummyOutput(),
                     )
                     output = mock_stdout.getvalue()
-                    
+
                     # Check that the resource model appears in the output
                     self.assertIn("resource-provider/special-model", output)
 
