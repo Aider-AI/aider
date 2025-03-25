@@ -84,7 +84,21 @@ Files loaded last will take priority.
 The yaml file should be a list of dictionary objects for each model.
 
 
-### Global extra params
+### Passing extra params to litellm.completion
+
+The `extra_params` attribute of model settings is used to pass arbitrary
+extra parameters to the `litellm.completion()` call when sending data
+to the given model.
+
+For example:
+
+```yaml
+- name: some-provider/my-special-model
+  extra_params:
+    extra_headers:
+      Custom-Header: value
+    max_tokens: 8192
+```
 
 You can use the special model name `aider/extra_params` to define 
 `extra_params` that will be passed to `litellm.completion()` for all models.
