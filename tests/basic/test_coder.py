@@ -301,7 +301,7 @@ class TestCoder(unittest.TestCase):
             ]
 
             # Pre-format the Windows path to avoid backslash issues in f-string expressions
-            windows_path = test_files[2].replace('/', '\\')
+            windows_path = test_files[2].replace("/", "\\")
 
             for fname in test_files:
                 fpath = Path(fname)
