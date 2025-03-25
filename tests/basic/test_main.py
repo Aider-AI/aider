@@ -1072,7 +1072,7 @@ class TestMain(TestCase):
                     "max_input_tokens": 8192,
                     "litellm_provider": "test-provider",
                 },
-                "another-unique-model": {
+                "another-provider/another-unique-model": {
                     "max_input_tokens": 4096,
                     "litellm_provider": "another-provider",
                 },
@@ -1088,6 +1088,7 @@ class TestMain(TestCase):
                         "--model-metadata-file",
                         str(metadata_file),
                         "--yes",
+                        "--no-gitignore",
                     ],
                     input=DummyInput(),
                     output=DummyOutput(),
