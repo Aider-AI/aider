@@ -7,7 +7,7 @@
 - Added a new `/context` command that automatically identifies which files need to be edited for a given request.
 - Added `/edit` as an alias for the `/editor` command.
 - Added "overeager" mode for Claude 3.7 Sonnet models to try and keep it working within the requested scope.
-- Aider wrote 66% of the code in this release.
+- Aider wrote 65% of the code in this release.
 
 ### Aider v0.78.0
 
