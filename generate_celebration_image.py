@@ -76,19 +76,57 @@ line4_y = (
 # --- Generate SVG Content ---
 svg_elements = []
 
-# Background with pattern
+# Background with terminal-like pattern and subtle code
 svg_elements.append(f"""<defs>
     <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
         <rect width="40" height="40" fill="{BG_COLOR}"/>
         <path d="M 40 0 L 0 0 0 40" stroke="{GRID_COLOR}" stroke-width="0.5" fill="none" opacity="0.3"/>
     </pattern>
+    
+    <!-- GitHub octocat logo -->
+    <g id="github-logo">
+        <path fill="#FFFFFF" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+    </g>
+    
+    <!-- More complex glow filter -->
+    <filter id="enhanced-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur1"/>
+        <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur2"/>
+        <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur3"/>
+        <feMerge result="merged-blur">
+            <feMergeNode in="blur1"/>
+            <feMergeNode in="blur2"/>
+            <feMergeNode in="blur3"/>
+        </feMerge>
+        <feColorMatrix in="merged-blur" type="matrix" values="1 0 0 0 0 
+                                                             0 1 0 0 0 
+                                                             0 0 1 0 0 
+                                                             0 0 0 0.8 0" result="glow"/>
+        <feComposite in="SourceGraphic" in2="glow" operator="over"/>
+    </filter>
+    
+    <!-- Terminal code background pattern -->
+    <pattern id="code-pattern" width="600" height="400" patternUnits="userSpaceOnUse" patternTransform="scale(0.5)">
+        <rect width="600" height="400" fill="{BG_COLOR}"/>
+        <text x="20" y="30" font-family="'Fira Code', monospace" font-size="14" fill="#4CAF50" opacity="0.15">$ git commit -m "Initial commit"</text>
+        <text x="20" y="60" font-family="'Fira Code', monospace" font-size="14" fill="#4CAF50" opacity="0.15">$ aider --model gpt-4</text>
+        <text x="20" y="90" font-family="'Fira Code', monospace" font-size="14" fill="#4CAF50" opacity="0.15">def hello_world():</text>
+        <text x="40" y="120" font-family="'Fira Code', monospace" font-size="14" fill="#4CAF50" opacity="0.15">print("Hello from Aider!")</text>
+    </pattern>
 </defs>""")
-svg_elements.append(f'<rect width="100%" height="100%" fill="url(#grid-pattern)"/>')
 
-# Terminal-like border
+# Background with code pattern
+svg_elements.append(f'<rect width="100%" height="100%" fill="url(#code-pattern)"/>')
+
+# Terminal-like border with more authentic styling
 svg_elements.append(
     f'<rect x="30" y="30" width="{WIDTH-60}" height="{HEIGHT-60}" fill="none"'
-    f' stroke="{PRIMARY_COLOR}" stroke-width="2" rx="8" ry="8"/>'
+    f' stroke="{PRIMARY_COLOR}" stroke-width="3" rx="6" ry="6" stroke-dasharray="5,3" opacity="0.8"/>'
+)
+
+# Add GitHub logo in corner
+svg_elements.append(
+    f'<use href="#github-logo" x="{WIDTH-80}" y="50" width="40" height="40" opacity="0.8"/>'
 )
 
 # Logo with glow
@@ -105,33 +143,49 @@ svg_elements.append(
     f' font-size="{FONT_SIZE_MEDIUM - 5}" fill="{TEXT_COLOR}" text-anchor="middle"'
     f' dominant-baseline="middle">{line1}</text>'
 )
-# Add star decorations around the 30,000 number
-for i in range(5):
+# Add animated star decorations around the 30,000 number
+star_colors = ["#FFD700", "#FFA500", "#FF6347", "#FF69B4", "#00FFFF"]
+for i in range(8):
     # Left side stars
-    x_left = center_x - 300 + (i * 50)
-    y_left = line2_y - 50
-    size_factor = 0.5 + (i % 3) * 0.15  # Vary sizes
+    x_left = center_x - 320 + (i * 70)
+    y_left = line2_y - 60 + (i % 3 * 10)
+    size_factor = 0.4 + (i % 4) * 0.2  # More size variation
     rotation = i * 15  # Different rotations
+    color = star_colors[i % len(star_colors)]
     svg_elements.append(
-        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{PRIMARY_COLOR}" opacity="0.7" '
-        f'transform="translate({x_left}, {y_left}) scale({size_factor}) rotate({rotation})"/>'
+        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{color}" opacity="0.9" '
+        f'transform="translate({x_left}, {y_left}) scale({size_factor}) rotate({rotation})" filter="url(#enhanced-glow)">'
+        f'<animate attributeName="opacity" values="0.7;1;0.7" dur="{3 + i%2}s" repeatCount="indefinite"/>'
+        f'<animateTransform attributeName="transform" type="scale" values="{size_factor};{size_factor*1.3};{size_factor}" dur="{4 + i%3}s" repeatCount="indefinite"/>'
+        f'</path>'
     )
 
     # Right side stars
-    x_right = center_x + 150 + (i * 50)
-    y_right = line2_y - 45
-    size_factor = 0.4 + (i % 3) * 0.15  # Vary sizes
+    x_right = center_x + 180 + (i * 70)
+    y_right = line2_y - 50 - (i % 3 * 10)
+    size_factor = 0.3 + (i % 4) * 0.25  # More size variation
     rotation = i * 20  # Different rotations
+    color = star_colors[(i+2) % len(star_colors)]
     svg_elements.append(
-        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{PRIMARY_COLOR}" opacity="0.7" '
-        f'transform="translate({x_right}, {y_right}) scale({size_factor}) rotate({rotation})"/>'
+        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{color}" opacity="0.9" '
+        f'transform="translate({x_right}, {y_right}) scale({size_factor}) rotate({rotation})" filter="url(#enhanced-glow)">'
+        f'<animate attributeName="opacity" values="0.7;1;0.7" dur="{2 + i%3}s" repeatCount="indefinite"/>'
+        f'<animateTransform attributeName="transform" type="scale" values="{size_factor};{size_factor*1.4};{size_factor}" dur="{3 + i%2}s" repeatCount="indefinite"/>'
+        f'</path>'
     )
 
-# Enhanced 30,000 number with improved glow
+# Enhanced 30,000 number with multi-layer glow and GitHub reference
 svg_elements.append(
     f'<text x="{center_x}" y="{line2_y}" font-family="{FONT_FAMILY_BOLD}"'
     f' font-size="{FONT_SIZE_LARGE}" fill="{PRIMARY_COLOR}" text-anchor="middle"'
-    f' dominant-baseline="middle" filter="url(#number-glow)">{line2}</text>'
+    f' dominant-baseline="middle" filter="url(#enhanced-glow)">{line2}</text>'
+)
+
+# Add GitHub reference text
+svg_elements.append(
+    f'<text x="{center_x}" y="{line2_y + 40}" font-family="{FONT_FAMILY_REGULAR}"'
+    f' font-size="20" fill="#FFFFFF" text-anchor="middle"'
+    f' dominant-baseline="middle" opacity="0.8">GitHub Stars</text>'
 )
 svg_elements.append(
     f'<text x="{center_x}" y="{line3_y}" font-family="{FONT_FAMILY_MEDIUM}"'
