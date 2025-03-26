@@ -61,7 +61,7 @@ def generate_confetti(count=150, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
         shape_type = random.choice(["rect", "circle", "star"])
 
         if shape_type == "rect":
-            shape = f"""<rect x="{x}" y="{y}" width="{size}" height="{size}" fill="{color}" 
+            shape = f"""<rect x="{x}" y="{y}" width="{size}" height="{size}" fill="{color}"
                     transform="rotate({rotation}, {x + size/2}, {y + size/2})">
                 <animate attributeName="opacity" from="1" to="0" dur="{duration}s" begin="{delay}s" repeatCount="indefinite" />
                 <animate attributeName="y" from="{y}" to="{y + random.randint(200, 400)}" dur="{duration}s" begin="{delay}s" repeatCount="indefinite" />
@@ -87,7 +87,7 @@ def generate_confetti(count=150, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
                 points.append(f"{inner_x},{inner_y}")
 
             points_str = " ".join(points)
-            shape = f"""<polygon points="{points_str}" fill="{color}" 
+            shape = f"""<polygon points="{points_str}" fill="{color}"
                     transform="rotate({rotation}, {x}, {y})">
                 <animate attributeName="opacity" from="1" to="0" dur="{duration}s" begin="{delay}s" repeatCount="indefinite" />
                 <animate attributeName="transform" from="rotate({rotation}, {x}, {y})" to="rotate({rotation + 360}, {x}, {y})" dur="{duration*2}s" begin="{delay}s" repeatCount="indefinite" />
@@ -143,23 +143,23 @@ def generate_celebration_svg(output_path=None, width=DEFAULT_WIDTH, height=DEFAU
     .tagline {{ font-family: sans-serif; font-size: 32px; fill: {LIGHT_COLOR}; text-anchor: middle; }}
     .footer {{ font-family: sans-serif; font-size: 24px; fill: {LIGHT_COLOR}; text-anchor: middle; opacity: 0.8; }}
   </style>
-  
+
   <g clip-path="url(#rounded-rect)">
     <!-- Background with pattern -->
     <rect class="main-bg" x="0" y="0" width="{width}" height="{height}" />
-    
+
     <!-- Pattern overlay -->
     <rect width="{width}" height="{height}" fill="url(#bg-gradient)" opacity="0.9" />
-    
+
     <!-- Confetti animation -->
     {confetti}
-    
+
     <!-- Main content -->
     <text x="{width/2}" y="{height/2 - 100}" class="aider-logo">aider</text>
-    <text x="{width/2}" y="{height/2 + 20}" class="stars-text">30,000 STARS</text>
+    <text x="{width/2}" y="{height/2 + 20}" class="stars-text">30,000 GitHub stars!</text>
     <text x="{width/2}" y="{height/2 + 100}" class="tagline">Thank you to our amazing community!</text>
     <text x="{width/2}" y="{height - 50}" class="footer">github.com/Aider-AI/aider</text>
-    
+
     <!-- Star icon -->
     <g transform="translate({width/2 - 300}, {height/2 + 10}) scale(0.8)">
       <path d="M20,7L31,7L31,7L40,26L31,45L20,45L9,26L20,7Z" fill="{GOLD_COLOR}" transform="rotate(18)">
