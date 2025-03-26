@@ -155,3 +155,12 @@ def test_ai_comment_pattern():
     assert (
         question_js_has_bang == "?"
     ), "Expected at least one bang (!) comment in watch_question.js fixture"
+    
+    # Test Lisp fixture
+    lisp_path = fixtures_dir / "watch.lisp"
+    lisp_lines, lisp_comments, lisp_has_bang = watcher.get_ai_comments(str(lisp_path))
+    lisp_expected = 7
+    assert (
+        len(lisp_lines) == lisp_expected
+    ), f"Expected {lisp_expected} AI comments in Lisp fixture, found {len(lisp_lines)}"
+    assert lisp_has_bang == "!", "Expected at least one bang (!) comment in Lisp fixture"
