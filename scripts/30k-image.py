@@ -48,25 +48,33 @@ def generate_confetti(count=150, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     confetti = []
     colors = [AIDER_GREEN, AIDER_BLUE, GOLD_COLOR, "#e74c3c", "#9b59b6", "#3498db", "#2ecc71"]
 
-    # Define text safe zone - centered area where text will be displayed
+    # Define text safe zones
+    # Main content safe zone (centered area)
     safe_zone_x_min = width * 0.2
     safe_zone_x_max = width * 0.8
     safe_zone_y_min = height * 0.25
     safe_zone_y_max = height * 0.75
+    
+    # Footer safe zone (for GitHub URL)
+    footer_safe_zone_x_min = width * 0.25
+    footer_safe_zone_x_max = width * 0.75
+    footer_safe_zone_y_min = height - 100  # 100px from bottom
+    footer_safe_zone_y_max = height        # Bottom of image
 
     # Keep trying until we have enough confetti pieces
     attempts = 0
     confetti_count = 0
-
+    
     while confetti_count < count and attempts < count * 3:
         attempts += 1
-
+        
         # Generate random position
         x = random.randint(0, width)
         y = random.randint(0, height)
-
-        # Skip if the position is in the text safe zone
-        if (safe_zone_x_min < x < safe_zone_x_max) and (safe_zone_y_min < y < safe_zone_y_max):
+        
+        # Skip if the position is in either of the safe zones
+        if ((safe_zone_x_min < x < safe_zone_x_max) and (safe_zone_y_min < y < safe_zone_y_max)) or \
+           ((footer_safe_zone_x_min < x < footer_safe_zone_x_max) and (footer_safe_zone_y_min < y < footer_safe_zone_y_max)):
             continue
 
         confetti_count += 1
