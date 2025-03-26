@@ -262,7 +262,7 @@ class FileWatcher:
                     line_nums.append(i)
                     comments.append(comment)
                     comment = comment.lower()
-                    comment = comment.lstrip("/#-")
+                    comment = comment.lstrip("/#-;")  # Added semicolon for Lisp comments
                     comment = comment.strip()
                     if comment.startswith("ai!") or comment.endswith("ai!"):
                         has_action = "!"
