@@ -121,7 +121,8 @@ svg_elements.append(f'<rect width="100%" height="100%" fill="url(#code-pattern)"
 # Terminal-like border with more authentic styling
 svg_elements.append(
     f'<rect x="30" y="30" width="{WIDTH-60}" height="{HEIGHT-60}" fill="none"'
-    f' stroke="{PRIMARY_COLOR}" stroke-width="3" rx="6" ry="6" stroke-dasharray="5,3" opacity="0.8"/>'
+    f' stroke="{PRIMARY_COLOR}" stroke-width="3" rx="6" ry="6" stroke-dasharray="5,3"'
+    ' opacity="0.8"/>'
 )
 
 # Add GitHub logo in corner
@@ -153,11 +154,12 @@ for i in range(8):
     rotation = i * 15  # Different rotations
     color = star_colors[i % len(star_colors)]
     svg_elements.append(
-        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{color}" opacity="0.9" '
-        f'transform="translate({x_left}, {y_left}) scale({size_factor}) rotate({rotation})" filter="url(#enhanced-glow)">'
-        f'<animate attributeName="opacity" values="0.7;1;0.7" dur="{3 + i%2}s" repeatCount="indefinite"/>'
-        f'<animateTransform attributeName="transform" type="scale" values="{size_factor};{size_factor*1.3};{size_factor}" dur="{4 + i%3}s" repeatCount="indefinite"/>'
-        f'</path>'
+        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{color}" opacity="0.9"'
+        f' transform="translate({x_left}, {y_left}) scale({size_factor}) rotate({rotation})"'
+        ' filter="url(#enhanced-glow)"><animate attributeName="opacity" values="0.7;1;0.7"'
+        f' dur="{3 + i%2}s" repeatCount="indefinite"/><animateTransform attributeName="transform"'
+        f' type="scale" values="{size_factor};{size_factor*1.3};{size_factor}" dur="{4 + i%3}s"'
+        ' repeatCount="indefinite"/></path>'
     )
 
     # Right side stars
@@ -165,13 +167,14 @@ for i in range(8):
     y_right = line2_y - 50 - (i % 3 * 10)
     size_factor = 0.3 + (i % 4) * 0.25  # More size variation
     rotation = i * 20  # Different rotations
-    color = star_colors[(i+2) % len(star_colors)]
+    color = star_colors[(i + 2) % len(star_colors)]
     svg_elements.append(
-        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{color}" opacity="0.9" '
-        f'transform="translate({x_right}, {y_right}) scale({size_factor}) rotate({rotation})" filter="url(#enhanced-glow)">'
-        f'<animate attributeName="opacity" values="0.7;1;0.7" dur="{2 + i%3}s" repeatCount="indefinite"/>'
-        f'<animateTransform attributeName="transform" type="scale" values="{size_factor};{size_factor*1.4};{size_factor}" dur="{3 + i%2}s" repeatCount="indefinite"/>'
-        f'</path>'
+        f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{color}" opacity="0.9"'
+        f' transform="translate({x_right}, {y_right}) scale({size_factor}) rotate({rotation})"'
+        ' filter="url(#enhanced-glow)"><animate attributeName="opacity" values="0.7;1;0.7"'
+        f' dur="{2 + i%3}s" repeatCount="indefinite"/><animateTransform attributeName="transform"'
+        f' type="scale" values="{size_factor};{size_factor*1.4};{size_factor}" dur="{3 + i%2}s"'
+        ' repeatCount="indefinite"/></path>'
     )
 
 # Enhanced 30,000 number with multi-layer glow and GitHub reference
@@ -184,8 +187,8 @@ svg_elements.append(
 # Add GitHub reference text
 svg_elements.append(
     f'<text x="{center_x}" y="{line2_y + 40}" font-family="{FONT_FAMILY_REGULAR}"'
-    f' font-size="20" fill="#FFFFFF" text-anchor="middle"'
-    f' dominant-baseline="middle" opacity="0.8">GitHub Stars</text>'
+    ' font-size="20" fill="#FFFFFF" text-anchor="middle"'
+    ' dominant-baseline="middle" opacity="0.8">GitHub Stars</text>'
 )
 svg_elements.append(
     f'<text x="{center_x}" y="{line3_y}" font-family="{FONT_FAMILY_MEDIUM}"'
