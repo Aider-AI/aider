@@ -6,6 +6,7 @@ This creates a shareable social media graphic with confetti animation.
 
 import argparse
 import base64
+import math
 import os
 import random
 from pathlib import Path
@@ -100,8 +101,6 @@ def generate_confetti(count=150, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
 
 def generate_celebration_svg(output_path=None, width=DEFAULT_WIDTH, height=DEFAULT_HEIGHT):
     """Generate a celebratory SVG for 30K GitHub stars."""
-    # Import math here to avoid the error in generate_confetti
-    import math
 
     # Font embedding
     font_data = embed_font()
