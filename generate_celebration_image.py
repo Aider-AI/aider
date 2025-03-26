@@ -1,5 +1,5 @@
-import os
 import base64
+import os
 
 # --- Configuration ---
 WIDTH = 1200  # Image width
@@ -29,7 +29,7 @@ line4 = "github.com/Aider-AI/aider"
 # --- Load and Encode Logo ---
 logo_data_uri = None
 logo_width = 200  # Default width from logo.svg
-logo_height = 60   # Default height from logo.svg
+logo_height = 60  # Default height from logo.svg
 try:
     if os.path.exists(LOGO_PATH):
         with open(LOGO_PATH, "rb") as f:
@@ -60,7 +60,7 @@ line2_y = current_y + FONT_SIZE_LARGE / 2
 current_y += FONT_SIZE_LARGE + 15
 line3_y = current_y + FONT_SIZE_MEDIUM / 2
 current_y += FONT_SIZE_MEDIUM + 60
-line4_y = HEIGHT - FONT_SIZE_SMALL - 30 + FONT_SIZE_SMALL / 2 # Position near bottom
+line4_y = HEIGHT - FONT_SIZE_SMALL - 30 + FONT_SIZE_SMALL / 2  # Position near bottom
 
 # --- Generate SVG Content ---
 svg_elements = []
@@ -77,20 +77,24 @@ if logo_data_uri:
 
 # Text Lines
 svg_elements.append(
-    f'<text x="{center_x}" y="{line1_y}" font-family="{FONT_FAMILY_MEDIUM}" font-size="{FONT_SIZE_MEDIUM}" '
-    f'fill="{TEXT_COLOR}" text-anchor="middle" dominant-baseline="middle">{line1}</text>'
+    f'<text x="{center_x}" y="{line1_y}" font-family="{FONT_FAMILY_MEDIUM}"'
+    f' font-size="{FONT_SIZE_MEDIUM}" fill="{TEXT_COLOR}" text-anchor="middle"'
+    f' dominant-baseline="middle">{line1}</text>'
 )
 svg_elements.append(
-    f'<text x="{center_x}" y="{line2_y}" font-family="{FONT_FAMILY_BOLD}" font-size="{FONT_SIZE_LARGE}" '
-    f'fill="{PRIMARY_COLOR}" text-anchor="middle" dominant-baseline="middle">{line2}</text>'
+    f'<text x="{center_x}" y="{line2_y}" font-family="{FONT_FAMILY_BOLD}"'
+    f' font-size="{FONT_SIZE_LARGE}" fill="{PRIMARY_COLOR}" text-anchor="middle"'
+    f' dominant-baseline="middle">{line2}</text>'
 )
 svg_elements.append(
-    f'<text x="{center_x}" y="{line3_y}" font-family="{FONT_FAMILY_MEDIUM}" font-size="{FONT_SIZE_MEDIUM}" '
-    f'fill="{TEXT_COLOR}" text-anchor="middle" dominant-baseline="middle">{line3}</text>'
+    f'<text x="{center_x}" y="{line3_y}" font-family="{FONT_FAMILY_MEDIUM}"'
+    f' font-size="{FONT_SIZE_MEDIUM}" fill="{TEXT_COLOR}" text-anchor="middle"'
+    f' dominant-baseline="middle">{line3}</text>'
 )
 svg_elements.append(
-    f'<text x="{center_x}" y="{line4_y}" font-family="{FONT_FAMILY_REGULAR}" font-size="{FONT_SIZE_SMALL}" '
-    f'fill="{TEXT_COLOR}" text-anchor="middle" dominant-baseline="middle">{line4}</text>'
+    f'<text x="{center_x}" y="{line4_y}" font-family="{FONT_FAMILY_REGULAR}"'
+    f' font-size="{FONT_SIZE_SMALL}" fill="{TEXT_COLOR}" text-anchor="middle"'
+    f' dominant-baseline="middle">{line4}</text>'
 )
 
 # Combine into final SVG
@@ -130,4 +134,4 @@ except Exception as e:
 
 # --- Define Font Families Used in Text Elements ---
 # These need to match the font-family attributes used in the <text> tags
-FONT_FAMILY_MEDIUM = FONT_FAMILY_BOLD # Using Bold for Medium as per original Pillow logic attempt
+FONT_FAMILY_MEDIUM = FONT_FAMILY_BOLD  # Using Bold for Medium as per original Pillow logic attempt
