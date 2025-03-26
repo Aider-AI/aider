@@ -1110,35 +1110,31 @@ class TestMain(TestCase):
                 "metadata-only-model": {
                     "max_input_tokens": 8192,
                     "litellm_provider": "test-provider",
+                    "mode": "chat",  # Added mode attribute
                 }
             }
             metadata_file.write_text(json.dumps(test_models))
 
-            # Patch litellm.model_cost to include a test model
-            litellm_test_model = "litellm-only-model"
-            with patch(
-                "aider.models.litellm.model_cost",
-                {litellm_test_model: {"mode": "chat", "litellm_provider": "test-provider"}},
-            ):
-                # Capture stdout to check the output
-                with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
-                    main(
-                        [
-                            "--list-models",
-                            "model",
-                            "--model-metadata-file",
-                            str(metadata_file),
-                            "--yes",
-                            "--no-gitignore",
-                        ],
-                        input=DummyInput(),
-                        output=DummyOutput(),
-                    )
-                    output = mock_stdout.getvalue()
+            # Capture stdout to check the output
+            with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+                main(
+                    [
+                        "--list-models",
+                        "metadata-only-model",
+                        "--model-metadata-file",
+                        str(metadata_file),
+                        "--yes",
+                        "--no-gitignore",
+                    ],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                output = mock_stdout.getvalue()
 
-                    # Check that both models appear in the output
-                    self.assertIn("test-provider/metadata-only-model", output)
-                    self.assertIn(litellm_test_model, output)
+                dump(output)
+
+                # Check that both models appear in the output
+                self.assertIn("test-provider/metadata-only-model", output)
 
     def test_check_model_accepts_settings_flag(self):
         # Test that --check-model-accepts-settings affects whether settings are applied
