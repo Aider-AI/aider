@@ -1079,7 +1079,13 @@ class Coder:
         return platform_text
 
     def fmt_system_prompt(self, prompt):
-        lazy_prompt = self.gpt_prompts.lazy_prompt if self.main_model.lazy else ""
+        if self.main_model.lazy:
+            lazy_prompt = self.gpt_prompts.lazy_prompt
+        elif self.main_model.overeager:
+            lazy_prompt = self.gpt_prompts.overeager_prompt
+        else:
+            lazy_prompt = ""
+
         platform_text = self.get_platform_info()
 
         if self.suggest_shell_commands:
@@ -1471,7 +1477,8 @@ class Coder:
                 return
 
             try:
-                self.reply_completed()
+                if self.reply_completed():
+                    return
             except KeyboardInterrupt:
                 interrupted = True
 
@@ -1614,22 +1621,26 @@ class Coder:
                 )
             ]
 
-    def get_file_mentions(self, content):
+    def get_file_mentions(self, content, ignore_current=False):
         words = set(word for word in content.split())
 
         # drop sentence punctuation from the end
         words = set(word.rstrip(",.!;:?") for word in words)
 
         # strip away all kinds of quotes
-        quotes = "".join(['"', "'", "`"])
+        quotes = "\"'`*_"
         words = set(word.strip(quotes) for word in words)
 
-        addable_rel_fnames = self.get_addable_relative_files()
+        if ignore_current:
+            addable_rel_fnames = self.get_all_relative_files()
+            existing_basenames = {}
+        else:
+            addable_rel_fnames = self.get_addable_relative_files()
 
-        # Get basenames of files already in chat or read-only
-        existing_basenames = {os.path.basename(f) for f in self.get_inchat_relative_files()} | {
-            os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
-        }
+            # Get basenames of files already in chat or read-only
+            existing_basenames = {os.path.basename(f) for f in self.get_inchat_relative_files()} | {
+                os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
+            }
 
         mentioned_rel_fnames = set()
         fname_to_rel_fnames = {}

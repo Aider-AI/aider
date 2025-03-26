@@ -90,6 +90,7 @@ MODEL_ALIASES = {
     "deepseek": "deepseek/deepseek-chat",
     "r1": "deepseek/deepseek-reasoner",
     "flash": "gemini/gemini-2.0-flash-exp",
+    "gemini-2.5-pro": "gemini/gemini-2.5-pro-exp-03-25",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -103,6 +104,7 @@ class ModelSettings:
     use_repo_map: bool = False
     send_undo_reply: bool = False
     lazy: bool = False
+    overeager: bool = False
     reminder: str = "user"
     examples_as_sys_msg: bool = False
     extra_params: Optional[dict] = None
@@ -747,7 +749,6 @@ class Model(ModelSettings):
 
         kwargs = dict(
             model=self.name,
-            messages=messages,
             stream=stream,
         )
 
@@ -779,6 +780,8 @@ class Model(ModelSettings):
             kwargs["timeout"] = request_timeout
         if self.verbose:
             dump(kwargs)
+        kwargs["messages"] = messages
+
         res = litellm.completion(**kwargs)
 
         return hash_object, res
@@ -974,7 +977,10 @@ def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
-    for orig_model, attrs in litellm.model_cost.items():
+    model_metadata = list(litellm.model_cost.items())
+    model_metadata += list(model_info_manager.local_model_metadata.items())
+
+    for orig_model, attrs in model_metadata:
         model = orig_model.lower()
         if attrs.get("mode") != "chat":
             continue

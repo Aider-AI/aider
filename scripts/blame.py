@@ -224,9 +224,10 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
                 [
                     "git",
                     "blame",
-                    "-M",
-                    "-C",
-                    "-C",
+                    "-M100",  # Detect moved lines within a file with 100% similarity
+                    "-C100",  # Detect moves across files with 100% similarity
+                    "-C",  # Increase detection effort
+                    "-C",  # Increase detection effort even more
                     "--abbrev=9",
                     f"{start_tag}..{end_tag}",
                     "--",
@@ -235,7 +236,18 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
             )
         else:
             text = run(
-                ["git", "blame", "-M", "-C", "-C", "--abbrev=9", f"{start_tag}..HEAD", "--", fname]
+                [
+                    "git",
+                    "blame",
+                    "-M100",  # Detect moved lines within a file with 100% similarity
+                    "-C100",  # Detect moves across files with 100% similarity
+                    "-C",  # Increase detection effort
+                    "-C",  # Increase detection effort even more
+                    "--abbrev=9",
+                    f"{start_tag}..HEAD",
+                    "--",
+                    fname,
+                ]
             )
         if not text:
             return None

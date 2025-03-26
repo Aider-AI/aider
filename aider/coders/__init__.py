@@ -5,6 +5,7 @@ from .review_coder import ReviewCoder
 from .architect_coder import ArchitectCoder
 from .ask_coder import AskCoder
 from .base_coder import Coder
+from .context_coder import ContextCoder
 from .editblock_coder import EditBlockCoder
 from .editblock_fenced_coder import EditBlockFencedCoder
 from .editor_editblock_coder import EditorEditBlockCoder
@@ -31,4 +32,5 @@ __all__ = [
     AutoApproveAskCoder,
     ReviewCoder,
     GameArchitectCoder,
+    ContextCoder,
 ]

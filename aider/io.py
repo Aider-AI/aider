@@ -70,7 +70,7 @@ def restore_multiline(func):
 
 
 class CommandCompletionException(Exception):
-    """Raised when a command should use the normal autocompleter instead of 
+    """Raised when a command should use the normal autocompleter instead of
     command-specific completion."""
 
     pass
@@ -504,11 +504,16 @@ class InputOutput:
                 get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
             ]
             show = self.format_files_for_input(rel_fnames, rel_read_only_fnames)
+
+        prompt_prefix = ""
         if edit_format:
-            show += edit_format
+            prompt_prefix += edit_format
         if self.multiline_mode:
-            show += (" " if edit_format else "") + "multi"
-        show += "> "
+            prompt_prefix += (" " if edit_format else "") + "multi"
+        prompt_prefix += "> "
+
+        show += prompt_prefix
+        self.prompt_prefix = prompt_prefix
 
         inp = ""
         multiline_input = False
@@ -559,7 +564,8 @@ class InputOutput:
                 self.editingmode == EditingMode.VI
                 and event.app.vi_state.input_mode == InputMode.NAVIGATION
             ):
-                # In multiline mode and if not in vi-mode or vi navigation/normal mode, Enter adds a newline
+                # In multiline mode and if not in vi-mode or vi navigation/normal mode,
+                # Enter adds a newline
                 event.current_buffer.insert_text("\n")
             else:
                 # In normal mode, Enter submits
@@ -577,7 +583,7 @@ class InputOutput:
 
         while True:
             if multiline_input:
-                show = ". "
+                show = self.prompt_prefix
 
             try:
                 if self.prompt_session:
@@ -593,7 +599,7 @@ class InputOutput:
                             self.clipboard_watcher.start()
 
                     def get_continuation(width, line_number, is_soft_wrap):
-                        return ". "
+                        return self.prompt_prefix
 
                     line = self.prompt_session.prompt(
                         show,

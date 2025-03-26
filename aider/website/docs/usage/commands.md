@@ -28,10 +28,12 @@ cog.out(get_help_md())
 | **/clear** | Clear the chat history |
 | **/code** | Ask for changes to your code. If no prompt provided, switches to code mode. |
 | **/commit** | Commit edits to the repo made outside the chat (commit message optional) |
+| **/context** | Enter context mode to see surrounding code context. If no prompt provided, switches to context mode. |
 | **/copy** | Copy the last assistant message to the clipboard |
 | **/copy-context** | Copy the current chat context as markdown, suitable to paste into a web UI |
 | **/diff** | Display the diff of changes since the last message |
 | **/drop** | Remove files from the chat session to free up context space |
+| **/edit** | Alias for /editor: Open an editor to write a prompt |
 | **/editor** | Open an editor to write a prompt |
 | **/editor-model** | Switch the Editor Model to a new LLM |
 | **/exit** | Exit the application |

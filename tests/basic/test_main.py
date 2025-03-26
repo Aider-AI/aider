@@ -1062,6 +1062,80 @@ class TestMain(TestCase):
             coder.main_model.extra_params.get("thinking", {}).get("budget_tokens"), 1000
         )
 
+    def test_list_models_includes_metadata_models(self):
+        # Test that models from model-metadata.json appear in list-models output
+        with GitTemporaryDirectory():
+            # Create a temporary model-metadata.json with test models
+            metadata_file = Path(".aider.model.metadata.json")
+            test_models = {
+                "unique-model-name": {
+                    "max_input_tokens": 8192,
+                    "litellm_provider": "test-provider",
+                    "mode": "chat",  # Added mode attribute
+                },
+                "another-provider/another-unique-model": {
+                    "max_input_tokens": 4096,
+                    "litellm_provider": "another-provider",
+                    "mode": "chat",  # Added mode attribute
+                },
+            }
+            metadata_file.write_text(json.dumps(test_models))
+
+            # Capture stdout to check the output
+            with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+                main(
+                    [
+                        "--list-models",
+                        "unique-model",
+                        "--model-metadata-file",
+                        str(metadata_file),
+                        "--yes",
+                        "--no-gitignore",
+                    ],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                output = mock_stdout.getvalue()
+
+                # Check that the unique model name from our metadata file is listed
+                self.assertIn("test-provider/unique-model-name", output)
+
+    def test_list_models_includes_all_model_sources(self):
+        # Test that models from both litellm.model_cost and model-metadata.json
+        # appear in list-models
+        with GitTemporaryDirectory():
+            # Create a temporary model-metadata.json with test models
+            metadata_file = Path(".aider.model.metadata.json")
+            test_models = {
+                "metadata-only-model": {
+                    "max_input_tokens": 8192,
+                    "litellm_provider": "test-provider",
+                    "mode": "chat",  # Added mode attribute
+                }
+            }
+            metadata_file.write_text(json.dumps(test_models))
+
+            # Capture stdout to check the output
+            with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+                main(
+                    [
+                        "--list-models",
+                        "metadata-only-model",
+                        "--model-metadata-file",
+                        str(metadata_file),
+                        "--yes",
+                        "--no-gitignore",
+                    ],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
+                output = mock_stdout.getvalue()
+
+                dump(output)
+
+                # Check that both models appear in the output
+                self.assertIn("test-provider/metadata-only-model", output)
+
     def test_check_model_accepts_settings_flag(self):
         # Test that --check-model-accepts-settings affects whether settings are applied
         with GitTemporaryDirectory():
@@ -1082,6 +1156,41 @@ class TestMain(TestCase):
                 )
                 # Method should not be called because model doesn't support it and flag is on
                 mock_set_thinking.assert_not_called()
+
+    def test_list_models_with_direct_resource_patch(self):
+        # Test that models from resources/model-metadata.json are included in list-models output
+        with GitTemporaryDirectory():
+            # Create a temporary file with test model metadata
+            test_file = Path(self.tempdir) / "test-model-metadata.json"
+            test_resource_models = {
+                "special-model": {
+                    "max_input_tokens": 8192,
+                    "litellm_provider": "resource-provider",
+                    "mode": "chat",
+                }
+            }
+            test_file.write_text(json.dumps(test_resource_models))
+
+            # Create a mock for the resource file path
+            mock_resource_path = MagicMock()
+            mock_resource_path.__str__.return_value = str(test_file)
+
+            # Create a mock for the files function that returns an object with joinpath
+            mock_files = MagicMock()
+            mock_files.joinpath.return_value = mock_resource_path
+
+            with patch("aider.main.importlib_resources.files", return_value=mock_files):
+                # Capture stdout to check the output
+                with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
+                    main(
+                        ["--list-models", "special", "--yes", "--no-gitignore"],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
+                    output = mock_stdout.getvalue()
+
+                    # Check that the resource model appears in the output
+                    self.assertIn("resource-provider/special-model", output)
 
             # When flag is off, setting should be applied regardless of support
             with patch("aider.models.Model.set_reasoning_effort") as mock_set_reasoning:

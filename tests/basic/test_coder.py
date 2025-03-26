@@ -285,6 +285,87 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
+    def test_get_file_mentions_various_formats(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            test_files = [
+                "file1.txt",
+                "file2.py",
+                "dir/nested_file.js",
+                "dir/subdir/deep_file.html",
+                "file99.txt",
+                "special_chars!@#.md",
+            ]
+
+            # Pre-format the Windows path to avoid backslash issues in f-string expressions
+            windows_path = test_files[2].replace("/", "\\")
+            win_path3 = test_files[3].replace("/", "\\")
+
+            for fname in test_files:
+                fpath = Path(fname)
+                fpath.parent.mkdir(parents=True, exist_ok=True)
+                fpath.touch()
+
+            # Mock get_addable_relative_files to return our test files
+            coder.get_addable_relative_files = MagicMock(return_value=set(test_files))
+
+            # Test different mention formats
+            test_cases = [
+                # Simple plain text mentions
+                (f"You should edit {test_files[0]} first", {test_files[0]}),
+                # Multiple files in plain text
+                (f"Edit both {test_files[0]} and {test_files[1]}", {test_files[0], test_files[1]}),
+                # Files in backticks
+                (f"Check the file `{test_files[2]}`", {test_files[2]}),
+                # Files in code blocks
+                (f"```\n{test_files[3]}\n```", {test_files[3]}),
+                # Files in code blocks with language specifier
+                # (
+                #    f"```python\nwith open('{test_files[1]}', 'r') as f:\n"
+                #    f"    data = f.read()\n```",
+                #    {test_files[1]},
+                # ),
+                # Files with Windows-style paths
+                (f"Edit the file {windows_path}", {test_files[2]}),
+                # Files with different quote styles
+                (f'Check "{test_files[5]}" now', {test_files[5]}),
+                # All files in one complex message
+                (
+                    (
+                        f"First, edit `{test_files[0]}`. Then modify {test_files[1]}.\n"
+                        f"```js\n// Update this file\nconst file = '{test_files[2]}';\n```\n"
+                        f"Finally check {win_path3}"
+                    ),
+                    {test_files[0], test_files[1], test_files[2], test_files[3]},
+                ),
+                # Files mentioned in markdown bold format
+                (f"You should check **{test_files[0]}** for issues", {test_files[0]}),
+                (
+                    f"Look at both **{test_files[1]}** and **{test_files[2]}**",
+                    {test_files[1], test_files[2]},
+                ),
+                (
+                    f"The file **{win_path3}** needs updating",
+                    {test_files[3]},
+                ),
+                (
+                    f"Files to modify:\n- **{test_files[0]}**\n- **{test_files[4]}**",
+                    {test_files[0], test_files[4]},
+                ),
+            ]
+
+            for content, expected_mentions in test_cases:
+                with self.subTest(content=content):
+                    mentioned_files = coder.get_file_mentions(content)
+                    self.assertEqual(
+                        mentioned_files,
+                        expected_mentions,
+                        f"Failed to extract mentions from: {content}",
+                    )
+
     def test_get_file_mentions_path_formats(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)

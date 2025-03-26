@@ -28,8 +28,9 @@ from .dump import dump  # noqa: F401
 
 
 class SwitchCoder(Exception):
-    def __init__(self, **kwargs):
+    def __init__(self, placeholder=None, **kwargs):
         self.kwargs = kwargs
+        self.placeholder = placeholder
 
 
 class Commands:
@@ -150,6 +151,10 @@ class Commands:
                 ("news", "Get summaries of the latest news."),
                 ("askv2", "Ask with auto approve."),
 
+                (
+                    "context",
+                    "Automatically identify which files will need to be edited.",
+                ),
             ]
         )
 
@@ -1129,6 +1134,9 @@ class Commands:
     def completions_architect(self):
         raise CommandCompletionException()
 
+    def completions_context(self):
+        raise CommandCompletionException()
+
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
@@ -1154,7 +1162,11 @@ class Commands:
         """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
         return self._generic_chat_command(args, "architect")
 
-    def _generic_chat_command(self, args, edit_format):
+    def cmd_context(self, args):
+        """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
+        return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
+
+    def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
             # Switch to the corresponding chat mode if no args provided
             return self.cmd_chat_mode(edit_format)
@@ -1171,11 +1183,13 @@ class Commands:
         user_msg = args
         coder.run(user_msg)
 
+        # Use the provided placeholder if any
         raise SwitchCoder(
             edit_format=self.coder.edit_format,
             summarize_from_coder=False,
             from_coder=coder,
             show_announcements=False,
+            placeholder=placeholder,
         )
 
     def get_help_md(self):
@@ -1487,6 +1501,10 @@ class Commands:
         user_input = pipe_editor(initial_content, suffix="md", editor=self.editor)
         if user_input.strip():
             self.io.set_placeholder(user_input.rstrip())
+
+    def cmd_edit(self, args=""):
+        "Alias for /editor: Open an editor to write a prompt"
+        return self.cmd_editor(args)
 
     def cmd_think_tokens(self, args):
         "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M)"

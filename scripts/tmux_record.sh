@@ -14,5 +14,5 @@ TMUX_SIZE=$(tmux display -p '#{window_width}x#{window_height}')
 echo "Using terminal size: $TMUX_SIZE"
 
 # Start asciinema recording with the tmux window size
-asciinema rec -c "tmux attach -t 0 -r" tmp.cast --headless --append --tty-size $TMUX_SIZE $*
+asciinema rec -c "tmux attach -t 0 -r" --headless --tty-size $TMUX_SIZE $*
 

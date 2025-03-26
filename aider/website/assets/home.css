@@ -329,14 +329,31 @@ nav {
 }
 
 .feature-icon {
-    font-size: 1.8rem;
-    color: var(--primary);
-    margin-right: 12px;
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    border-radius: 10px;
+    background: rgba(18, 184, 134, 0.1);
+    color: var(--secondary);
+    margin-right: 14px;
+    flex-shrink: 0;
+    transition: transform 0.3s, background 0.3s;
+    transform: scale(1.1);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.25);
+    background: rgba(18, 184, 134, 0.2);
+    color: var(--secondary);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.15);
+    background: rgba(18, 184, 134, 0.2);
+    color: var(--secondary);
 }
 
 .feature-title {

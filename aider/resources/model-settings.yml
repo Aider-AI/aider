@@ -185,6 +185,7 @@
   editor_edit_format: editor-diff
 
 - name: anthropic/claude-3-7-sonnet-20250219
+  overeager: true
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
@@ -199,6 +200,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: anthropic/claude-3-7-sonnet-latest
+  overeager: true
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
@@ -227,6 +229,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: claude-3-7-sonnet-latest
+  overeager: true
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
   use_repo_map: true
@@ -241,6 +244,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: bedrock/anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -255,6 +259,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -269,6 +274,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: bedrock_converse/anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock_converse/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -283,6 +289,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -297,6 +304,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: vertex_ai/claude-3-7-sonnet@20250219
+  overeager: true
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
@@ -308,6 +316,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
+  overeager: true
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
@@ -319,6 +328,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: openrouter/anthropic/claude-3.7-sonnet
+  overeager: true
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
@@ -333,6 +343,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: openrouter/anthropic/claude-3.7-sonnet:beta
+  overeager: true
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
@@ -919,3 +930,15 @@
 - name: openrouter/google/gemma-3-27b-it
   use_system_prompt: false
   
+- name: gemini/gemini-2.5-pro-exp-03-25
+  edit_format: diff-fenced
+  use_repo_map: true
+
+- name: openrouter/google/gemini-2.5-pro-exp-03-25:free
+  edit_format: diff-fenced
+  use_repo_map: true
+
+- name: vertex_ai/gemini-2.5-pro-exp-03-25
+  edit_format: diff-fenced
+  use_repo_map: true
+

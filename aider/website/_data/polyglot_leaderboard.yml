@@ -1,6 +1,6 @@
 - dirname: 2025-02-25-20-23-07--gemini-pro
   test_cases: 225
-  model: gemini/gemini-2.0-pro-exp-02-05
+  model: Gemini 2.0 Pro exp-02-05
   edit_format: whole
   commit_hash: 2fccd47
   pass_rate_1: 20.4
@@ -338,7 +338,7 @@
 
 - dirname: 2024-12-25-13-31-51--deepseekv3preview-diff2
   test_cases: 225
-  model: DeepSeek Chat V3
+  model: DeepSeek Chat V3 (prev)
   edit_format: diff
   commit_hash: 0a23c4a-dirty
   pass_rate_1: 22.7
@@ -779,4 +779,56 @@
   date: 2025-03-15
   versions: 0.77.1.dev
   seconds_per_case: 79.7
+  total_cost: 0.0000
+
+- dirname: 2025-03-24-15-41-33--deepseek-v3-0324-polyglot-diff
+  test_cases: 225
+  model: DeepSeek V3 (0324)
+  edit_format: diff
+  commit_hash: 502b863
+  pass_rate_1: 28.0
+  pass_rate_2: 55.1
+  pass_num_1: 63
+  pass_num_2: 124
+  percent_cases_well_formed: 99.6
+  error_outputs: 32
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 96
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model deepseek/deepseek-chat
+  date: 2025-03-24
+  versions: 0.78.1.dev
+  seconds_per_case: 290.0
+  total_cost: 1.1164
+
+- dirname: 2025-03-25-19-46-45--gemini-25-pro-exp-diff-fenced
+  test_cases: 225
+  model: Gemini 2.5 Pro exp-03-25
+  edit_format: diff-fenced
+  commit_hash: 33413ec
+  pass_rate_1: 39.1
+  pass_rate_2: 72.9
+  pass_num_1: 88
+  pass_num_2: 164
+  percent_cases_well_formed: 89.8
+  error_outputs: 30
+  num_malformed_responses: 30
+  num_with_malformed_responses: 23
+  user_asks: 57
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-exp-03-25
+  date: 2025-03-25
+  versions: 0.78.1.dev
+  seconds_per_case: 47.1
   total_cost: 0.0000
