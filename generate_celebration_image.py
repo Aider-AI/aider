@@ -1,98 +1,24 @@
 import os
-
-from PIL import Image, ImageDraw, ImageFont
+import base64
 
 # --- Configuration ---
-WIDTH = 1200  # Twitter card image width
-HEIGHT = 675  # Twitter card image height
+WIDTH = 1200  # Image width
+HEIGHT = 675  # Image height
 BG_COLOR = "#282a36"  # Aider code background color
 PRIMARY_COLOR = "#14b014"  # Aider terminal green
 TEXT_COLOR = "#FFFFFF"  # White for contrast
 FONT_SIZE_LARGE = 110
 FONT_SIZE_MEDIUM = 55
 FONT_SIZE_SMALL = 30
-OUTPUT_FILENAME = "aider_30k_stars_celebration.png"
+OUTPUT_FILENAME = "aider_30k_stars_celebration.svg"
+
+# Font families - SVG will try these in order. Ensure viewers have suitable fonts.
+FONT_FAMILY_BOLD = "'DejaVu Sans Bold', 'Arial Bold', 'Helvetica Bold', sans-serif-bold, sans-serif"
+FONT_FAMILY_REGULAR = "'DejaVu Sans', 'Arial', 'Helvetica', sans-serif"
 
 # --- Paths (Adjust if needed) ---
 # Assumes the script is run from the root of the aider repo
-LOGO_PATH = "aider/website/assets/logo.png"  # NEEDS TO BE PNG, not SVG!
-# Try to find a suitable bold font. Adjust path if necessary, or install one.
-# Common locations/names:
-FONT_PATHS_BOLD = [
-    "DejaVuSans-Bold.ttf",  # Common on Linux
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
-    "Arial Bold.ttf",  # Common on Windows/macOS
-    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
-    "arialbd.ttf",
-]
-FONT_PATHS_REGULAR = [
-    "DejaVuSans.ttf",
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    "Arial.ttf",
-    "/System/Library/Fonts/Supplemental/Arial.ttf",
-    "arial.ttf",
-]
-
-
-# --- Helper Function to Find Font ---
-def find_font(font_paths, default_size):
-    for path in font_paths:
-        try:
-            return ImageFont.truetype(path, default_size)
-        except IOError:
-            continue  # Try next path
-    print(f"Warning: Could not find any of the preferred fonts: {font_paths}. Using default.")
-    # Pillow's default font doesn't support sizing well, return None to handle later
-    return None
-
-
-# --- Load Fonts ---
-font_large = find_font(FONT_PATHS_BOLD, FONT_SIZE_LARGE)
-font_medium = find_font(FONT_PATHS_BOLD, FONT_SIZE_MEDIUM)
-font_small = find_font(FONT_PATHS_REGULAR, FONT_SIZE_SMALL)
-
-# Use Pillow's basic default only if absolutely necessary (will look bad)
-if not font_large:
-    font_large = ImageFont.load_default()
-if not font_medium:
-    font_medium = ImageFont.load_default()
-if not font_small:
-    font_small = ImageFont.load_default()
-
-
-# --- Create Base Image ---
-image = Image.new("RGB", (WIDTH, HEIGHT), color=BG_COLOR)
-draw = ImageDraw.Draw(image)
-
-# --- Load and Place Logo (Optional) ---
-logo_img = None
-logo_height = 0
-logo_y_pos = HEIGHT * 0.15  # Start logo about 15% down
-try:
-    if os.path.exists(LOGO_PATH):
-        logo_img = Image.open(LOGO_PATH)
-        # Resize logo to fit nicely, maintaining aspect ratio
-        max_logo_h = 120
-        if logo_img.height > max_logo_h:
-            ratio = max_logo_h / logo_img.height
-            new_w = int(logo_img.width * ratio)
-            logo_img = logo_img.resize((new_w, max_logo_h), Image.Resampling.LANCZOS)
-
-        logo_height = logo_img.height
-        logo_x = (WIDTH - logo_img.width) // 2
-        # Paste logo, handling transparency if PNG has alpha channel
-        if logo_img.mode == "RGBA":
-            image.paste(logo_img, (logo_x, int(logo_y_pos)), logo_img)
-        else:
-            image.paste(logo_img, (logo_x, int(logo_y_pos)))
-        print(f"Logo loaded from {LOGO_PATH}")
-    else:
-        print(f"Info: Logo not found at {LOGO_PATH}, skipping logo.")
-        logo_y_pos = HEIGHT * 0.1  # Start text higher if no logo
-except Exception as e:
-    print(f"Warning: Could not load or process logo: {e}")
-    logo_img = None
-    logo_y_pos = HEIGHT * 0.1  # Start text higher if no logo
+LOGO_PATH = "aider/website/assets/logo.svg"
 
 # --- Text Content ---
 line1 = "Thank You!"
@@ -100,32 +26,108 @@ line2 = "30,000"
 line3 = "GitHub Stars"
 line4 = "github.com/Aider-AI/aider"
 
-# --- Calculate Text Positions ---
+# --- Load and Encode Logo ---
+logo_data_uri = None
+logo_width = 200  # Default width from logo.svg
+logo_height = 60   # Default height from logo.svg
+try:
+    if os.path.exists(LOGO_PATH):
+        with open(LOGO_PATH, "rb") as f:
+            logo_content = f.read()
+        encoded_logo = base64.b64encode(logo_content).decode("utf-8")
+        logo_data_uri = f"data:image/svg+xml;base64,{encoded_logo}"
+        print(f"Logo loaded and encoded from {LOGO_PATH}")
+        # Optional: Could parse SVG to get width/height, but using defaults is simpler
+    else:
+        print(f"Warning: Logo not found at {LOGO_PATH}, skipping logo.")
+except Exception as e:
+    print(f"Warning: Could not load or encode logo: {e}")
+
+# --- Calculate Positions ---
 center_x = WIDTH / 2
-current_y = logo_y_pos + logo_height + 40  # Start text below logo (or top if no logo)
+logo_y_pos = HEIGHT * 0.15
+logo_x_pos = center_x - (logo_width / 2)
 
-# --- Draw Text ---
-# Line 1: "Thank You!"
-draw.text((center_x, current_y), line1, fill=TEXT_COLOR, font=font_medium, anchor="mt")
+# Adjust text start based on whether logo is present
+text_start_y = logo_y_pos + logo_height + 40 if logo_data_uri else HEIGHT * 0.2
+
+current_y = text_start_y
+
+# Calculate Y positions for each line (using dominant-baseline="middle" for vertical centering)
+line1_y = current_y + FONT_SIZE_MEDIUM / 2
 current_y += FONT_SIZE_MEDIUM + 30
-
-# Line 2: "30,000"
-draw.text((center_x, current_y), line2, fill=PRIMARY_COLOR, font=font_large, anchor="mt")
+line2_y = current_y + FONT_SIZE_LARGE / 2
 current_y += FONT_SIZE_LARGE + 15
-
-# Line 3: "GitHub Stars"
-draw.text((center_x, current_y), line3, fill=TEXT_COLOR, font=font_medium, anchor="mt")
+line3_y = current_y + FONT_SIZE_MEDIUM / 2
 current_y += FONT_SIZE_MEDIUM + 60
+line4_y = HEIGHT - FONT_SIZE_SMALL - 30 + FONT_SIZE_SMALL / 2 # Position near bottom
 
-# Line 4: Repo URL (smaller at bottom)
-draw.text(
-    (center_x, HEIGHT - FONT_SIZE_SMALL - 30), line4, fill=TEXT_COLOR, font=font_small, anchor="mb"
+# --- Generate SVG Content ---
+svg_elements = []
+
+# Background
+svg_elements.append(f'<rect width="100%" height="100%" fill="{BG_COLOR}"/>')
+
+# Logo
+if logo_data_uri:
+    svg_elements.append(
+        f'<image href="{logo_data_uri}" x="{logo_x_pos}" y="{logo_y_pos}" '
+        f'width="{logo_width}" height="{logo_height}" />'
+    )
+
+# Text Lines
+svg_elements.append(
+    f'<text x="{center_x}" y="{line1_y}" font-family="{FONT_FAMILY_MEDIUM}" font-size="{FONT_SIZE_MEDIUM}" '
+    f'fill="{TEXT_COLOR}" text-anchor="middle" dominant-baseline="middle">{line1}</text>'
+)
+svg_elements.append(
+    f'<text x="{center_x}" y="{line2_y}" font-family="{FONT_FAMILY_BOLD}" font-size="{FONT_SIZE_LARGE}" '
+    f'fill="{PRIMARY_COLOR}" text-anchor="middle" dominant-baseline="middle">{line2}</text>'
+)
+svg_elements.append(
+    f'<text x="{center_x}" y="{line3_y}" font-family="{FONT_FAMILY_MEDIUM}" font-size="{FONT_SIZE_MEDIUM}" '
+    f'fill="{TEXT_COLOR}" text-anchor="middle" dominant-baseline="middle">{line3}</text>'
+)
+svg_elements.append(
+    f'<text x="{center_x}" y="{line4_y}" font-family="{FONT_FAMILY_REGULAR}" font-size="{FONT_SIZE_SMALL}" '
+    f'fill="{TEXT_COLOR}" text-anchor="middle" dominant-baseline="middle">{line4}</text>'
 )
 
+# Combine into final SVG
+svg_content = f"""\
+<svg width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 {WIDTH} {HEIGHT}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <style>
+    /* Define font styles - adjust font family names as needed */
+    @font-face {{
+        font-family: 'DejaVu Sans Bold'; /* Example */
+        /* Add src url() if using web fonts */
+    }}
+     @font-face {{
+        font-family: 'DejaVu Sans'; /* Example */
+        /* Add src url() if using web fonts */
+    }}
+    /* Basic text styling */
+    text {{
+        font-weight: normal; /* Default */
+    }}
+    /* You can define classes here too if preferred */
+    .font-bold {{ font-family: {FONT_FAMILY_BOLD}; font-weight: bold; }}
+    .font-medium {{ font-family: {FONT_FAMILY_BOLD}; font-weight: bold; }} /* Using bold for medium too */
+    .font-regular {{ font-family: {FONT_FAMILY_REGULAR}; }}
 
-# --- Save Image ---
+  </style>
+  {''.join(svg_elements)}
+</svg>
+"""
+
+# --- Save SVG Image ---
 try:
-    image.save(OUTPUT_FILENAME)
-    print(f"Celebration image saved as '{OUTPUT_FILENAME}'")
+    with open(OUTPUT_FILENAME, "w", encoding="utf-8") as f:
+        f.write(svg_content)
+    print(f"Celebration SVG image saved as '{OUTPUT_FILENAME}'")
 except Exception as e:
-    print(f"Error saving image: {e}")
+    print(f"Error saving SVG image: {e}")
+
+# --- Define Font Families Used in Text Elements ---
+# These need to match the font-family attributes used in the <text> tags
+FONT_FAMILY_MEDIUM = FONT_FAMILY_BOLD # Using Bold for Medium as per original Pillow logic attempt
