@@ -35,6 +35,7 @@ from rich.text import Text
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
+from .editor import pipe_editor
 from .utils import is_image_file
 
 # Constants
@@ -556,6 +557,18 @@ class InputOutput:
         def _(event):
             "Navigate forward through history"
             event.current_buffer.history_forward()
+            
+        @kb.add("c-x", "c-e")
+        def _(event):
+            "Edit current input in external editor (like Bash)"
+            buffer = event.current_buffer
+            current_text = buffer.text
+            
+            # Open the editor with the current text
+            edited_text = pipe_editor(input_data=current_text)
+            
+            # Replace the buffer with the edited text
+            buffer.text = edited_text
 
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
