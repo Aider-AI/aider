@@ -64,7 +64,7 @@ class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     # Compiled regex pattern for AI comments
-    ai_comment_pattern = re.compile(r"(?:#|//|--) *(ai\b.*|ai\b.*|.*\bai[?!]?) *$", re.IGNORECASE)
+    ai_comment_pattern = re.compile(r"(?:#|//|--|;+) *(ai\b.*|ai\b.*|.*\bai[?!]?) *$", re.IGNORECASE)
 
     def __init__(self, coder, gitignores=None, verbose=False, analytics=None, root=None):
         self.coder = coder
@@ -262,7 +262,7 @@ class FileWatcher:
                     line_nums.append(i)
                     comments.append(comment)
                     comment = comment.lower()
-                    comment = comment.lstrip("/#-")
+                    comment = comment.lstrip("/#-;")  # Added semicolon for Lisp comments
                     comment = comment.strip()
                     if comment.startswith("ai!") or comment.endswith("ai!"):
                         has_action = "!"
