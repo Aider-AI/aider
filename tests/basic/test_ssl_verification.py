@@ -26,8 +26,13 @@ class TestSSLVerification(TestCase):
     @patch("httpx.AsyncClient")
     @patch("aider.models.fuzzy_match_models", return_value=[])
     def test_no_verify_ssl_flag_sets_model_info_manager(
-        self, mock_fuzzy_match, mock_async_client, mock_client, mock_load_litellm, 
-        mock_set_verify_ssl, mock_offer_url
+        self,
+        mock_fuzzy_match,
+        mock_async_client,
+        mock_client,
+        mock_load_litellm,
+        mock_set_verify_ssl,
+        mock_offer_url,
     ):
         # Prevent actual URL opening
         mock_offer_url.return_value = False
