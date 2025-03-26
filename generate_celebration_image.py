@@ -77,16 +77,19 @@ line4_y = (
 svg_elements = []
 
 # Background with pattern
-svg_elements.append(f'''<defs>
+svg_elements.append(f"""<defs>
     <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
         <rect width="40" height="40" fill="{BG_COLOR}"/>
         <path d="M 40 0 L 0 0 0 40" stroke="{GRID_COLOR}" stroke-width="0.5" fill="none" opacity="0.3"/>
     </pattern>
-</defs>''')
+</defs>""")
 svg_elements.append(f'<rect width="100%" height="100%" fill="url(#grid-pattern)"/>')
 
 # Terminal-like border
-svg_elements.append(f'<rect x="30" y="30" width="{WIDTH-60}" height="{HEIGHT-60}" fill="none" stroke="{PRIMARY_COLOR}" stroke-width="2" rx="8" ry="8"/>')
+svg_elements.append(
+    f'<rect x="30" y="30" width="{WIDTH-60}" height="{HEIGHT-60}" fill="none"'
+    f' stroke="{PRIMARY_COLOR}" stroke-width="2" rx="8" ry="8"/>'
+)
 
 # Logo with glow
 if logo_data_uri:
@@ -113,7 +116,7 @@ for i in range(5):
         f'<path d="M 0,0 L 5,-15 L 0,-5 L -5,-15 L 0,0 Z" fill="{PRIMARY_COLOR}" opacity="0.7" '
         f'transform="translate({x_left}, {y_left}) scale({size_factor}) rotate({rotation})"/>'
     )
-    
+
     # Right side stars
     x_right = center_x + 150 + (i * 50)
     y_right = line2_y - 45
