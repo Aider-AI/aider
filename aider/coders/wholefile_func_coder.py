@@ -108,7 +108,7 @@ class WholeFileFunctionCoder(Coder):
         return "\n".join(show_diff)
 
     def _update_files(self):
-        name = self.partial_response_function_call.get("name")
+        name = self.partial_response_function_call[0].get("function").get("name")
         if name and name != "write_file":
             raise ValueError(f'Unknown function_call name="{name}", use name="write_file"')
 

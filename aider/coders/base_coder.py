@@ -825,10 +825,10 @@ class Coder:
 
         return {"role": "user", "content": image_messages}
 
-    def run_stream(self, user_message):
+    def run_stream(self, user_message, tool_call_id=None):
         self.io.user_input(user_message)
         self.init_before_message()
-        yield from self.send_message(user_message)
+        yield from self.send_message(user_message, tool_call_id=tool_call_id)
 
     def init_before_message(self):
         self.aider_edited_files = set()
@@ -890,7 +890,7 @@ class Coder:
 
         return inp
 
-    def run_one(self, user_message, preproc):
+    def run_one(self, user_message, preproc, tool_call_id=None):
         self.init_before_message()
 
         if preproc:
@@ -900,7 +900,9 @@ class Coder:
 
         while message:
             self.reflected_message = None
-            list(self.send_message(message))
+
+            list(self.send_message(message, tool_call_id=tool_call_id))
+            tool_call_id = None
 
             if not self.reflected_message:
                 break
@@ -1167,6 +1169,7 @@ class Coder:
         chunks.examples = example_messages
 
         self.summarize_end()
+
         chunks.done = self.done_messages
 
         chunks.repo = self.get_repo_messages()
@@ -1307,15 +1310,21 @@ class Coder:
                 return False
         return True
 
-    def send_message(self, inp):
+    def send_message(self, inp, tool_call_id=None):
         self.event("message_send_starting")
 
         # Notify IO that LLM processing is starting
         self.io.llm_started()
 
-        self.cur_messages += [
-            dict(role="user", content=inp),
-        ]
+        if tool_call_id is None:
+            self.cur_messages += [
+                dict(role="user", content=inp),
+            ]
+        else:
+            self.cur_messages += [
+                dict(role="tool", content=inp, tool_call_id=tool_call_id),
+            ]
+
 
         chunks = self.format_messages()
         messages = chunks.all_messages()
@@ -1345,7 +1354,9 @@ class Coder:
                     yield from self.send(messages, functions=self.functions)
                     break
                 except litellm_ex.exceptions_tuple() as err:
+
                     ex_info = litellm_ex.get_ex_info(err)
+                    err_msg = str(err)
 
                     if ex_info.name == "ContextWindowExceededError":
                         exhausted = True
@@ -1360,9 +1371,18 @@ class Coder:
                     if not should_retry:
                         self.mdstream = None
                         self.check_and_open_urls(err, ex_info.description)
-                        break
 
-                    err_msg = str(err)
+                        if ex_info.name == "BadRequestError":
+                            # delete the last msg with tool_call_id
+                            msg = self.cur_messages.pop()
+                            self.io.tool_output("BadRequestError, removing last bad message")
+                            if "tool_call_id" in err_msg:
+                                msg = self.cur_messages.pop()
+                                self.io.tool_output("BadRequestError, removing tool call message with particular tool_call_id")
+                            
+                            self.format_messages()                            
+                        break
+                    
                     if ex_info.description:
                         self.io.tool_warning(err_msg)
                         self.io.tool_error(ex_info.description)
@@ -1403,6 +1423,7 @@ class Coder:
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
             self.remove_reasoning_content()
+            # may want to remove tool_call content and replace with user msg
             self.multi_response_content = ""
 
         ###
@@ -1429,7 +1450,7 @@ class Coder:
             self.num_exhausted_context_windows += 1
             return
 
-        if self.partial_response_function_call:
+        if self.partial_response_function_call and len(self.partial_response_function_call) > 0:
             args = self.parse_partial_args()
             if args:
                 content = args.get("explanation") or ""
@@ -1584,12 +1605,12 @@ class Coder:
     def add_assistant_reply_to_cur_messages(self):
         if self.partial_response_content:
             self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
-        if self.partial_response_function_call:
+        if self.partial_response_function_call and len(self.partial_response_function_call) > 0:
             self.cur_messages += [
                 dict(
                     role="assistant",
                     content=None,
-                    function_call=self.partial_response_function_call,
+                    tool_calls=self.partial_response_function_call,
                 )
             ]
 
@@ -1666,7 +1687,7 @@ class Coder:
             model = self.main_model
 
         self.partial_response_content = ""
-        self.partial_response_function_call = dict()
+        self.partial_response_function_call = []# dict()
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
@@ -1705,7 +1726,7 @@ class Coder:
 
             if self.partial_response_content:
                 self.io.ai_output(self.partial_response_content)
-            elif self.partial_response_function_call:
+            elif self.partial_response_function_call and len(self.partial_response_function_call) > 0:
                 # TODO: push this into subclasses
                 args = self.parse_partial_args()
                 if args:
@@ -1723,9 +1744,7 @@ class Coder:
         show_content_err = None
         try:
             if completion.choices[0].message.tool_calls:
-                self.partial_response_function_call = (
-                    completion.choices[0].message.tool_calls[0].function
-                )
+                self.partial_response_function_call = completion.choices[0].message.tool_calls
         except AttributeError as func_err:
             show_func_err = func_err
 
@@ -1790,24 +1809,40 @@ class Coder:
                 # Process each tool call in the current message
                 for tool_call in chunk.choices[0].delta.tool_calls or []:
                     index = tool_call.index 
+                    
+                    # Convert to dict immediately
+                    tool_call_dict = {
+                        "id": tool_call.id,
+                        "type": tool_call.type,
+                        "index": tool_call.index,
+                        "function": {
+                            "name": tool_call.function.name if hasattr(tool_call.function, "name") else None,
+                            "arguments": tool_call.function.arguments if hasattr(tool_call.function, "arguments") else ""
+                        }
+                    }
+                    
                     if index not in final_tool_calls:
-                        final_tool_calls[index] = tool_call
+                        final_tool_calls[index] = tool_call_dict
                     else:
-                        # Before appending, ensure existing arguments are a string.
-                        if final_tool_calls[index].function.arguments is None:
-                            final_tool_calls[index].function.arguments = ""
-                        # Append additional arguments from the new chunk if they exist.
-                        if tool_call.function.arguments:
-                            final_tool_calls[index].function.arguments += tool_call.function.arguments
+                        # Update existing tool call dict
+                        if tool_call_dict["function"]["name"]:
+                            final_tool_calls[index]["function"]["name"] = tool_call_dict["function"]["name"]
+                        if tool_call_dict["function"]["arguments"]:
+                            if not final_tool_calls[index]["function"]["arguments"]:
+                                final_tool_calls[index]["function"]["arguments"] = ""
+                            final_tool_calls[index]["function"]["arguments"] += tool_call_dict["function"]["arguments"]
 
-                        k = final_tool_calls[index].function.name
-                        self.partial_response_function_call[k] = final_tool_calls[index].function.arguments
+                    # Update partial response function call list
+                    if len(self.partial_response_function_call) <= index:
+                        self.partial_response_function_call.append(final_tool_calls[index])
+                    else:
+                        self.partial_response_function_call[index] = final_tool_calls[index]
+
                     received_content = True
             except AttributeError:
                 pass
 
             text = ""
-
             try:
                 reasoning_content = chunk.choices[0].delta.reasoning_content
             except AttributeError:
@@ -2207,7 +2242,7 @@ class Coder:
     def parse_partial_args(self):
         # dump(self.partial_response_function_call)
 
-        data = self.partial_response_function_call.get("arguments")
+        data = self.partial_response_function_call[0]["function"]["arguments"]
         if not data:
             return
 

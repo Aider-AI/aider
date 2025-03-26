@@ -760,15 +760,16 @@ class Model(ModelSettings):
 
             kwargs["temperature"] = temperature
 
-        if functions is not None:
-            function = functions[0]
-            kwargs["tools"] = functions # dict(type="function", function=function)
-            # kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+            if functions is not None and len(functions) > 0:  # Only add tools if we have valid ones
+                kwargs["tools"] = functions # don't assign empty array tools as that will result in weird responses
+
+                # kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
         if self.extra_params:
             kwargs.update(self.extra_params)
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
+
         key = json.dumps(kwargs, sort_keys=True).encode()
 
         # dump(kwargs)
