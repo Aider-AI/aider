@@ -179,17 +179,6 @@ def generate_celebration_svg(output_path=None, width=DEFAULT_WIDTH, height=DEFAU
     <text x="{width/2}" y="{height/2 + 100}" class="tagline">Thank you to our amazing community!</text>
     <text x="{width/2}" y="{height - 50}" class="footer">github.com/Aider-AI/aider</text>
 
-    <!-- Star icon -->
-    <g transform="translate({width/2 - 300}, {height/2 + 10}) scale(0.8)">
-      <path d="M20,7L31,7L31,7L40,26L31,45L20,45L9,26L20,7Z" fill="{GOLD_COLOR}" transform="rotate(18)">
-        <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" />
-      </path>
-    </g>
-    <g transform="translate({width/2 + 300}, {height/2 + 10}) scale(0.8)">
-      <path d="M20,7L31,7L31,7L40,26L31,45L20,45L9,26L20,7Z" fill="{GOLD_COLOR}" transform="rotate(18)">
-        <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite" />
-      </path>
-    </g>
   </g>
 </svg>
 """
