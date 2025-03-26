@@ -13,7 +13,9 @@ FONT_SIZE_SMALL = 30
 OUTPUT_FILENAME = "aider_30k_stars_celebration.svg"
 
 # Font families - SVG will try these in order. Prioritize Inter, then fall back.
-FONT_FAMILY_BOLD = "'Inter Bold', 'DejaVu Sans Bold', 'Arial Bold', 'Helvetica Bold', sans-serif-bold, sans-serif"
+FONT_FAMILY_BOLD = (
+    "'Inter Bold', 'DejaVu Sans Bold', 'Arial Bold', 'Helvetica Bold', sans-serif-bold, sans-serif"
+)
 FONT_FAMILY_REGULAR = "'Inter', 'DejaVu Sans', 'Arial', 'Helvetica', sans-serif"
 # Use Bold for Medium for consistency and visual weight
 FONT_FAMILY_MEDIUM = FONT_FAMILY_BOLD
@@ -51,20 +53,24 @@ logo_y_pos = HEIGHT * 0.15
 logo_x_pos = center_x - (logo_width / 2)
 
 # Adjust text start based on whether logo is present
-text_start_y = logo_y_pos + logo_height + 30 if logo_data_uri else HEIGHT * 0.2 # Slightly reduced gap
+text_start_y = (
+    logo_y_pos + logo_height + 30 if logo_data_uri else HEIGHT * 0.2
+)  # Slightly reduced gap
 
 current_y = text_start_y
 
 # Calculate Y positions for each line (using dominant-baseline="middle" for vertical centering)
 line1_y = current_y + FONT_SIZE_MEDIUM / 2
-current_y += FONT_SIZE_MEDIUM + 25 # Reduced gap
+current_y += FONT_SIZE_MEDIUM + 25  # Reduced gap
 line2_y = current_y + FONT_SIZE_LARGE / 2
-current_y += FONT_SIZE_LARGE + 10 # Reduced gap
+current_y += FONT_SIZE_LARGE + 10  # Reduced gap
 line3_y = current_y + FONT_SIZE_MEDIUM / 2
 # Removed large gap calculation here, line4_y is positioned from bottom
 
 # Position line 4 relative to the bottom edge
-line4_y = HEIGHT - FONT_SIZE_SMALL - 25 + FONT_SIZE_SMALL / 2 # Position near bottom, slightly higher
+line4_y = (
+    HEIGHT - FONT_SIZE_SMALL - 25 + FONT_SIZE_SMALL / 2
+)  # Position near bottom, slightly higher
 
 # --- Generate SVG Content ---
 svg_elements = []
@@ -88,7 +94,7 @@ svg_elements.append(
 svg_elements.append(
     f'<text x="{center_x}" y="{line2_y}" font-family="{FONT_FAMILY_BOLD}"'
     f' font-size="{FONT_SIZE_LARGE}" fill="{PRIMARY_COLOR}" text-anchor="middle"'
-    f' dominant-baseline="middle" filter="url(#text-glow)">{line2}</text>' # Added glow filter
+    f' dominant-baseline="middle" filter="url(#text-glow)">{line2}</text>'  # Added glow filter
 )
 svg_elements.append(
     f'<text x="{center_x}" y="{line3_y}" font-family="{FONT_FAMILY_MEDIUM}"'
