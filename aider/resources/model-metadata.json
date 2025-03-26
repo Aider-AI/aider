@@ -244,7 +244,7 @@
     "gemini/gemini-2.5-pro-exp-03-25": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
-        "max_output_tokens": 8192,
+        "max_output_tokens": 64000,
         "max_images_per_prompt": 3000,
         "max_videos_per_prompt": 10,
         "max_video_length": 1,
@@ -281,7 +281,7 @@
     "vertex_ai/gemini-2.5-pro-exp-03-25": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
-        "max_output_tokens": 8192,
+        "max_output_tokens": 64000,
         "max_images_per_prompt": 3000,
         "max_videos_per_prompt": 10,
         "max_video_length": 1,
@@ -317,7 +317,7 @@
     "openrouter/google/gemini-2.5-pro-exp-03-25:free": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
-        "max_output_tokens": 8192,
+        "max_output_tokens": 64000,
         "max_images_per_prompt": 3000,
         "max_videos_per_prompt": 10,
         "max_video_length": 1,
