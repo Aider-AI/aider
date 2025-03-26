@@ -1129,6 +1129,7 @@ class TestMain(TestCase):
                             "--model-metadata-file",
                             str(metadata_file),
                             "--yes",
+                            "--no-gitignore",
                         ],
                         input=DummyInput(),
                         output=DummyOutput(),
@@ -1176,7 +1177,7 @@ class TestMain(TestCase):
                 # Capture stdout to check the output
                 with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
                     main(
-                        ["--list-models", "special", "--yes"],
+                        ["--list-models", "special", "--yes", "--no-gitignore"],
                         input=DummyInput(),
                         output=DummyOutput(),
                     )
