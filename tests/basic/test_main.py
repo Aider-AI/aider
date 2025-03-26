@@ -1164,16 +1164,26 @@ class TestMain(TestCase):
     def test_list_models_with_direct_resource_patch(self):
         # Test that models from resources/model-metadata.json are included in list-models output
         with GitTemporaryDirectory():
-            # Mock the importlib.resources.open_text to return a custom model-metadata.json
+            # Create a temporary file with test model metadata
+            test_file = Path(self.tempdir) / "test-model-metadata.json"
             test_resource_models = {
-                "special-model": {"max_input_tokens": 8192, "litellm_provider": "resource-provider"}
+                "special-model": {
+                    "max_input_tokens": 8192, 
+                    "litellm_provider": "resource-provider", 
+                    "mode": "chat"
+                }
             }
-
-            mock_file = MagicMock()
-            mock_file.read.return_value = json.dumps(test_resource_models)
-            mock_file.__enter__.return_value = mock_file
-
-            with patch("importlib.resources.open_text", return_value=mock_file):
+            test_file.write_text(json.dumps(test_resource_models))
+            
+            # Create a mock for the resource file path
+            mock_resource_path = MagicMock()
+            mock_resource_path.__str__.return_value = str(test_file)
+            
+            # Create a mock for the files function that returns an object with joinpath
+            mock_files = MagicMock()
+            mock_files.joinpath.return_value = mock_resource_path
+            
+            with patch("aider.main.importlib_resources.files", return_value=mock_files):
                 # Capture stdout to check the output
                 with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
                     main(
@@ -1182,7 +1192,7 @@ class TestMain(TestCase):
                         output=DummyOutput(),
                     )
                     output = mock_stdout.getvalue()
-
+                    
                     # Check that the resource model appears in the output
                     self.assertIn("resource-provider/special-model", output)
 
