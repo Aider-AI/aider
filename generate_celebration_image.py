@@ -15,6 +15,8 @@ OUTPUT_FILENAME = "aider_30k_stars_celebration.svg"
 # Font families - SVG will try these in order. Ensure viewers have suitable fonts.
 FONT_FAMILY_BOLD = "'DejaVu Sans Bold', 'Arial Bold', 'Helvetica Bold', sans-serif-bold, sans-serif"
 FONT_FAMILY_REGULAR = "'DejaVu Sans', 'Arial', 'Helvetica', sans-serif"
+# Use Bold for Medium as per original Pillow logic attempt
+FONT_FAMILY_MEDIUM = FONT_FAMILY_BOLD
 
 # --- Paths (Adjust if needed) ---
 # Assumes the script is run from the root of the aider repo
@@ -99,12 +101,15 @@ svg_elements.append(
 
 # Combine into final SVG
 svg_content = f"""\
-<svg width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 {WIDTH} {HEIGHT}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="{WIDTH}" height="{HEIGHT}" viewBox="0 0 {WIDTH} {HEIGHT}"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
   <style>
     /* Define font styles - adjust font family names as needed */
     @font-face {{
         font-family: 'DejaVu Sans Bold'; /* Example */
-        /* Add src url() if using web fonts */
+        /* Add src url() if using web fonts, e.g.: */
+        /* src: url(...) format(...); */
     }}
      @font-face {{
         font-family: 'DejaVu Sans'; /* Example */
@@ -116,7 +121,8 @@ svg_content = f"""\
     }}
     /* You can define classes here too if preferred */
     .font-bold {{ font-family: {FONT_FAMILY_BOLD}; font-weight: bold; }}
-    .font-medium {{ font-family: {FONT_FAMILY_BOLD}; font-weight: bold; }} /* Using bold for medium too */
+    /* Using bold for medium too */
+    .font-medium {{ font-family: {FONT_FAMILY_BOLD}; font-weight: bold; }}
     .font-regular {{ font-family: {FONT_FAMILY_REGULAR}; }}
 
   </style>
@@ -131,7 +137,3 @@ try:
     print(f"Celebration SVG image saved as '{OUTPUT_FILENAME}'")
 except Exception as e:
     print(f"Error saving SVG image: {e}")
-
-# --- Define Font Families Used in Text Elements ---
-# These need to match the font-family attributes used in the <text> tags
-FONT_FAMILY_MEDIUM = FONT_FAMILY_BOLD  # Using Bold for Medium as per original Pillow logic attempt
