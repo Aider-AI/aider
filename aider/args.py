@@ -671,6 +671,11 @@ def get_parser(default_config_files, git_root):
     ######
     group = parser.add_argument_group("Other settings")
     group.add_argument(
+        "--placeholder-fix",
+        default="What's wrong? Fix",
+        help="Placeholder text shown after cmd failures (default: %(default)s)",
+    )
+    group.add_argument(
         "--file",
         action="append",
         metavar="FILE",
