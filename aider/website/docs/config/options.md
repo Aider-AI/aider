@@ -652,6 +652,10 @@ Environment variable: `AIDER_VOICE_INPUT_DEVICE`
 
 ## Other settings:
 
+### `--placeholder-fix TEXT`
+specify shell command non-zero exit placeholder text
+Environment variable: `AIDER_PLACEHOLDER_FIX`
+
 ### `--file FILE`
 specify a file to edit (can be used multiple times)  
 Environment variable: `AIDER_FILE`  

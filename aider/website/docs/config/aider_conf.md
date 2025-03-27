@@ -412,6 +412,9 @@ cog.outl("```")
 #################
 # Other settings:
 
+## Specify shell command non-zero exit placeholder text
+# placeholder-fix: What's wrong? Fix
+
 ## specify a file to edit (can be used multiple times)
 #file: xxx
 ## Specify multiple values like this:
