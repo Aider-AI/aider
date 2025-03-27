@@ -1,5 +1,13 @@
 # Release history
 
+### main branch
+
+- Aider wrote 85% of the code in this release.
+
+### Aider v0.79.1
+
+- Improved model listing to include all models in fuzzy matching, including those provided by aider (not litellm).
+
 ### Aider v0.79.0
 
 - Added support for Gemini 2.5 Pro models.
