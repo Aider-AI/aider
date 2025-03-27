@@ -78,5 +78,5 @@ def test_openrouter_error():
     )
 
     ex_info = ex.get_ex_info(openrouter_error)
-    assert ex_info.retry is False
+    assert ex_info.retry is True
     assert "OpenRouter API provider is down" in ex_info.description
