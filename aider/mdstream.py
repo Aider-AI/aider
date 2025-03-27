@@ -85,7 +85,7 @@ class NoInsetMarkdown(Markdown):
         **Markdown.elements,
         "fence": NoInsetCodeBlock,
         "code_block": NoInsetCodeBlock,
-        "heading_open": LeftHeading,  # Use the correct token type key
+        "heading_open": LeftHeading,
     }
 
 
