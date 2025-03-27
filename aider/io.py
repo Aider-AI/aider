@@ -567,8 +567,11 @@ class InputOutput:
             # Open the editor with the current text
             edited_text = pipe_editor(input_data=current_text)
             
-            # Replace the buffer with the edited text
-            buffer.text = edited_text
+            # Replace the buffer with the edited text, strip any trailing newlines
+            buffer.text = edited_text.rstrip('\n')
+            
+            # Move cursor to the end of the text
+            buffer.cursor_position = len(buffer.text)
 
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
