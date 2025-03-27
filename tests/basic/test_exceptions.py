@@ -72,11 +72,11 @@ def test_openrouter_error():
 
     # Create an APIConnectionError with OpenrouterException message
     openrouter_error = APIConnectionError(
-        message="APIConnectionError: OpenrouterException - 'choices'", 
-        model="openrouter/model", 
-        llm_provider="openrouter"
+        message="APIConnectionError: OpenrouterException - 'choices'",
+        model="openrouter/model",
+        llm_provider="openrouter",
     )
-    
+
     ex_info = ex.get_ex_info(openrouter_error)
     assert ex_info.retry is False
     assert "OpenRouter API provider is down" in ex_info.description
