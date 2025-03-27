@@ -948,6 +948,15 @@ cog.out("```\n")
   reminder: sys
   examples_as_sys_msg: true
 
+- name: openrouter/deepseek/deepseek-chat-v3-0324
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+
 - name: openrouter/deepseek/deepseek-chat:free
   edit_format: diff
   weak_model_name: openrouter/deepseek/deepseek-chat:free

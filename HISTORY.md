@@ -2,7 +2,12 @@
 
 ### main branch
 
-- Aider wrote 85% of the code in this release.
+- Added 'gemini' alias for gemini-2.5-pro model.
+- Updated Gemini 2.5 Pro max output tokens to 64k.
+- Added support for Lisp-style semicolon comments in file watcher, by Matteo Landi.
+- Added OpenRouter API error detection and retries.
+- Added openrouter/deepseek-chat-v3-0324 model.
+- Aider wrote 93% of the code in this release.
 
 ### Aider v0.79.1
 

@@ -264,8 +264,8 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,350,691</td><td class='right'>66.5%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>629,723</td><td class='right'>31.0%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>1,337,936</td><td class='right'>66.3%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>629,723</td><td class='right'>31.2%</td></tr>
 <tr><td>deepseek/deepseek-chat</td><td class='right'>30,307</td><td class='right'>1.5%</td></tr>
 <tr><td>openrouter/google/gemini-2.5-pro-exp-03-25:free</td><td class='right'>11,449</td><td class='right'>0.6%</td></tr>
 <tr><td>gemini/REDACTED</td><td class='right'>5,772</td><td class='right'>0.3%</td></tr>
