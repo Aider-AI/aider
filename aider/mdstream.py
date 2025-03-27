@@ -5,7 +5,7 @@ import time
 
 from rich.console import Console
 from rich.live import Live
-from rich.markdown import CodeBlock, Markdown
+from rich.markdown import CodeBlock, Heading, Markdown
 from rich.syntax import Syntax
 from rich.text import Text
 
@@ -56,13 +56,28 @@ class NoInsetCodeBlock(CodeBlock):
         yield syntax
 
 
+class LeftHeading(Heading):
+    """A heading class that renders left-justified."""
+
+    def __rich_console__(self, console, options):
+        text = self.text
+        text.justify = "left"  # Override justification
+        yield text
+
+
 class NoInsetMarkdown(Markdown):
-    """Markdown with code blocks that have no padding."""
+    """Markdown with code blocks that have no padding and left-justified headings."""
 
     elements = {
         **Markdown.elements,
         "fence": NoInsetCodeBlock,
         "code_block": NoInsetCodeBlock,
+        "heading1": LeftHeading,
+        "heading2": LeftHeading,
+        "heading3": LeftHeading,
+        "heading4": LeftHeading,
+        "heading5": LeftHeading,
+        "heading6": LeftHeading,
     }
 
 
