@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.79.2
 
 - Added 'gemini' alias for gemini-2.5-pro model.
 - Updated Gemini 2.5 Pro max output tokens to 64k.
