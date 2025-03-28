@@ -58,7 +58,7 @@ The `/copy-context <instructions>` command can be used in chat to copy aider's c
 It will include:
 
 - All the files which have been added to the chat via `/add`.
-- Any read only files which have been added via `/read`.
+- Any read only files which have been added via `/read-only`.
 - Aider's [repository map](https://aider.chat/docs/repomap.html) that brings in code context related to the above files from elsewhere in your git repo.
 - Some instructions to the LLM that ask it to output change instructions concisely.
 - If you include `<instructions>`, they will be copied too.
@@ -80,7 +80,7 @@ This works best if you run aider with `--edit-format editor-diff` or `--edit-for
 
 Aider has a `--copy-paste` mode that streamlines this entire process:
 
-- Whenever you `/add` or `/read` files, aider will automatically copy the entire, updated
+- Whenever you `/add` or `/read-only` files, aider will automatically copy the entire, updated
 code context to your clipboard. 
 You'll see "Copied code context to clipboard" whenever this happens.
 - When you copy the LLM reply to your clipboard outside aider, aider will automatically notice
