@@ -544,6 +544,62 @@ def get_parser(default_config_files, git_root):
     )
 
     #########
+    group = parser.add_argument_group("Model Context Protocol (MCP)")
+    group.add_argument(
+        "--mcp",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable Model Context Protocol (MCP) support (default: False)",
+    )
+    group.add_argument(
+        "--mcp-servers",
+        action="append",
+        metavar="SERVER_NAME",
+        help="Specify MCP server names to enable (can be used multiple times)",
+        default=[],
+    )
+    group.add_argument(
+        "--mcp-server-command",
+        action="append",
+        metavar="SERVER_NAME:COMMAND",
+        help="Specify the command to execute for an MCP server (can be used multiple times)",
+        default=[],
+    )
+
+    group.add_argument(
+        "--mcp-server-env",
+        action="append",
+        metavar="SERVER_NAME:ENV_VAR=VALUE",
+        help="Specify environment variables for an MCP server (can be used multiple times)",
+        default=[],
+    )
+    group.add_argument(
+        "--mcp-tool-permission",
+        action="append",
+        metavar="SERVER_NAME:TOOL_NAME=PERMISSION",
+        help="Specify permission ('manual' or 'auto') for an MCP tool (can be used multiple times)",
+        default=[],
+    )
+    group.add_argument(
+        "--list-mcp-servers",
+        action="store_true",
+        help="List all configured MCP servers and exit",
+        default=False,
+    )
+    group.add_argument(
+        "--list-mcp-tools",
+        action="store_true",
+        help="List all available MCP tools and exit",
+        default=False,
+    )
+    group.add_argument(
+        "--mcp-wait-for-stdio",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Wait for STDIO MCP clients to complete tool discovery (default: False)",
+    )
+
+    #########
     group = parser.add_argument_group("Upgrading")
     group.add_argument(
         "--just-check-update",

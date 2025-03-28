@@ -1,5 +1,25 @@
 class CoderPrompts:
     system_reminder = ""
+    
+    mcp_tools_prefix = """# MCP Tools
+
+You can use Model Context Protocol (MCP) tools to interact with external systems. To use a tool, include a tool execution request in your response using the following format:
+
+```
+<use_mcp_tool>
+<server_name>server name here</server_name>
+<tool_name>tool name here</tool_name>
+<arguments>
+{
+  "param1": "value1",
+  "param2": "value2"
+}
+</arguments>
+</use_mcp_tool>
+```
+
+The available tools will be listed below if any are connected.
+"""
 
     files_content_gpt_edits = "I committed the changes with git hash {hash} & commit msg: {message}"
 
