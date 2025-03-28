@@ -1265,6 +1265,7 @@ class Coder:
 
                 kwargs = dict(self.main_model.extra_params) or dict()
                 kwargs["max_tokens"] = 1
+                kwargs["headers"] = {"x-coding-assistant": f"aider-{__version__}"}
 
                 try:
                     completion = litellm.completion(
