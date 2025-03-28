@@ -1265,3 +1265,4 @@ def load_slow_imports(swallow=True):
 
 if __name__ == "__main__":
     status = main()
+    sys.exit(status)
