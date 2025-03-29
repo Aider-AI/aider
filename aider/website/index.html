@@ -244,8 +244,20 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
             transition: opacity 0.4s ease, transform 0.4s ease, height 0.4s ease;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .testimonial-text {
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .testimonial-author {
+            margin-top: auto;
+            padding-top: 10px;
         }
     </style>
 
@@ -455,6 +467,9 @@ const testimonials = [
                 const height = card.offsetHeight;
                 maxHeight = Math.max(maxHeight, height);
             });
+            
+            // Add a bit of extra padding to ensure enough space
+            maxHeight += 20;
             
             // Set the max height on all cards
             cards.forEach(card => {
