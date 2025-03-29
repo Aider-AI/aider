@@ -4,12 +4,11 @@ import http.server
 import os
 import secrets
 import socketserver
+import sys
 import threading
 import time
 import webbrowser
 from urllib.parse import parse_qs, urlparse
-
-import sys
 
 import requests
 
