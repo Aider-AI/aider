@@ -832,3 +832,29 @@
   versions: 0.78.1.dev
   seconds_per_case: 47.1
   total_cost: 0.0000
+
+- dirname: 2025-03-29-05-24-55--chatgpt4o-mar28-diff
+  test_cases: 225
+  model: chatgpt-4o-latest (2025-03-29)
+  edit_format: diff
+  commit_hash: 0decbad
+  pass_rate_1: 16.4
+  pass_rate_2: 45.3
+  pass_num_1: 37
+  pass_num_2: 102
+  percent_cases_well_formed: 64.4
+  error_outputs: 85
+  num_malformed_responses: 85
+  num_with_malformed_responses: 80
+  user_asks: 174
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model chatgpt-4o-latest
+  date: 2025-03-29
+  versions: 0.79.3.dev
+  seconds_per_case: 10.3
+  total_cost: 19.7416
