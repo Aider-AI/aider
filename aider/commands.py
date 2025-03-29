@@ -93,7 +93,17 @@ class Commands:
             weak_model=self.coder.main_model.weak_model.name,
         )
         models.sanity_check_models(self.io, model)
-        raise SwitchCoder(main_model=model)
+
+        # Check if the current edit format is the default for the old model
+        old_model_edit_format = self.coder.main_model.edit_format
+        current_edit_format = self.coder.edit_format
+
+        new_edit_format = current_edit_format
+        if current_edit_format == old_model_edit_format:
+            # If the user was using the old model's default, switch to the new model's default
+            new_edit_format = model.edit_format
+
+        raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
     def cmd_editor_model(self, args):
         "Switch the Editor Model to a new LLM"
