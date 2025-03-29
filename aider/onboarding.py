@@ -87,10 +87,10 @@ def select_default_model(args, io, analytics):
             # Fall through to the final error message
 
     # Final fallback if no key found and OAuth not attempted or failed/declined
-    io.tool_error(
-        "No model specified and no API key found or configured.\n"
-        "Please set an API key environment variable (e.g., OPENAI_API_KEY),\n"
-        "use the OpenRouter authentication flow (if offered),\n"
+    io.tool_error("No model specified and no API key found or configured.")
+    io.tool_output(
+        "Please set an API key environment variable (e.g., OPENAI_API_KEY),"
+        "use the OpenRouter authentication flow,"
         "or specify both --model and --api-key."
     )
     io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
@@ -263,7 +263,7 @@ def start_openrouter_oauth_flow(io, analytics):
     io.tool_output(
         "\nPlease open the following URL in your web browser to authorize Aider with OpenRouter:"
     )
-    io.tool_output(auth_url)
+    print(auth_url)
     io.tool_output("\nWaiting for authentication... (Timeout: 2 minutes)")
 
     try:
