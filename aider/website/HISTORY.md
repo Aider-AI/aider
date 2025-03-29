@@ -25,12 +25,14 @@ cog.out(text)
 
 
 ### main branch
+- Offer to OAuth against OpenRouter if no model and keys are provided.
 - Prioritize `gemini/gemini-2.5-pro-exp-03-25` if `GEMINI_API_KEY` is set, and `vertex_ai/gemini-2.5-pro-exp-03-25` if `VERTEXAI_PROJECT` is set, when no model is specified.
+- Select OpenRouter default model based on free/paid tier status if `OPENROUTER_API_KEY` is set and no model is specified.
 - Warn at startup if `--stream` and `--cache-prompts` are used together, as cost estimates may be inaccurate.
 - Boost repomap ranking for files whose path components match identifiers mentioned in the chat.
 - Change web scraping timeout from an error to a warning, allowing scraping to continue with potentially incomplete content.
 - Left-align markdown headings in the terminal output, by Peter Schilling.
-- Aider wrote 89% of the code in this release.
+- Aider wrote 90% of the code in this release.
 
 ### Aider v0.79.2
 
