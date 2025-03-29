@@ -19,10 +19,10 @@ from aider.utils import check_pip_install_extra
 def check_openrouter_tier(api_key):
     """
     Checks if the user is on a free tier for OpenRouter.
-    
+
     Args:
         api_key: The OpenRouter API key to check.
-    
+
     Returns:
         A boolean indicating if the user is on a free tier (True) or paid tier (False).
         Returns False if the check fails.
@@ -31,7 +31,7 @@ def check_openrouter_tier(api_key):
         response = requests.get(
             "https://openrouter.ai/api/v1/auth/key",
             headers={"Authorization": f"Bearer {api_key}"},
-            timeout=5  # Add a reasonable timeout
+            timeout=5,  # Add a reasonable timeout
         )
         response.raise_for_status()
         data = response.json()
@@ -59,7 +59,7 @@ def try_to_select_default_model():
             return "openrouter/google/gemini-2.5-pro-exp-03-25:free"
         else:
             return "openrouter/anthropic/claude-3.7-sonnet"
-    
+
     # Select model based on other available API keys
     model_key_pairs = [
         ("ANTHROPIC_API_KEY", "sonnet"),
