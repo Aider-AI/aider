@@ -695,16 +695,16 @@ class Model(ModelSettings):
         if self.extra_params:
             # Check for OpenRouter reasoning format
             if (
-                "reasoning" in model.extra_params
-                and "max_tokens" in model.extra_params["reasoning"]
+                "reasoning" in self.extra_params
+                and "max_tokens" in self.extra_params["reasoning"]
             ):
-                budget = model.extra_params["reasoning"]["max_tokens"]
+                budget = self.extra_params["reasoning"]["max_tokens"]
             # Check for standard thinking format
             elif (
-                "thinking" in model.extra_params
-                and "budget_tokens" in model.extra_params["thinking"]
+                "thinking" in self.extra_params
+                and "budget_tokens" in self.extra_params["thinking"]
             ):
-                budget = model.extra_params["thinking"]["budget_tokens"]
+                budget = self.extra_params["thinking"]["budget_tokens"]
 
         return budget
 
