@@ -19,7 +19,7 @@ from aider.utils import check_pip_install_extra
 def try_to_select_default_model():
     """
     Attempts to select a default model based on available API keys.
-    
+
     Returns:
         The name of the selected model, or None if no suitable default is found.
     """
@@ -36,9 +36,7 @@ def try_to_select_default_model():
     selected_model = None
     for env_key, model_name in model_key_pairs:
         api_key_value = os.environ.get(env_key)
-        # Special check for Vertex AI project which isn't a key but acts like one for selection
-        is_vertex = env_key == "VERTEXAI_PROJECT" and api_key_value
-        if api_key_value and (not is_vertex or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")):
+        if api_key_value:
             selected_model = model_name
             break
 
@@ -48,11 +46,11 @@ def try_to_select_default_model():
 def offer_openrouter_oauth(io, analytics):
     """
     Offers OpenRouter OAuth flow to the user if no API keys are found.
-    
+
     Args:
         io: The InputOutput object for user interaction.
         analytics: The Analytics object for tracking events.
-        
+
     Returns:
         True if authentication was successful, False otherwise.
     """
@@ -111,13 +109,13 @@ def select_default_model(args, io, analytics):
 
     model = try_to_select_default_model()
     if model:
-        io.tool_warning(f"Using {model} model with detected API key.")
+        io.tool_warning(f"Using {model} model with API key from environment.")
         analytics.event("auto_model_selection", model=model)
         return model
 
     # Try OAuth if no model was detected
     offer_openrouter_oauth(io, analytics)
-    
+
     # Check again after potential OAuth success
     return try_to_select_default_model()
 
@@ -340,6 +338,7 @@ def start_openrouter_oauth_flow(io, analytics):
             config_dir = os.path.expanduser("~/.aider")
             os.makedirs(config_dir, exist_ok=True)
             key_file = os.path.join(config_dir, "oauth-keys.env")
+            # append ai!
             with open(key_file, "w", encoding="utf-8") as f:
                 f.write(f'OPENROUTER_API_KEY="{api_key}"\n')
             io.tool_output(f"Successfully obtained OpenRouter API key and saved it to {key_file}")
