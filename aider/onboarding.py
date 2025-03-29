@@ -25,7 +25,7 @@ def check_openrouter_tier(api_key):
 
     Returns:
         A boolean indicating if the user is on a free tier (True) or paid tier (False).
-        Returns False if the check fails.
+        Returns True if the check fails.
     """
     try:
         response = requests.get(
