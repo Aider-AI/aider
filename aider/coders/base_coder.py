@@ -17,9 +17,10 @@ from collections import defaultdict
 from datetime import datetime
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Tuple
 
 from aider import __version__, models, prompts, urls, utils
+from aider.mcp import is_mcp_enabled, get_available_tools_prompt, process_llm_tool_requests, stop_mcp_servers
 from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.exceptions import LiteLLMExceptions
@@ -957,6 +958,7 @@ class Coder:
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
             self.io.tool_warning("\n\n^C KeyboardInterrupt")
             self.event("exit", reason="Control-C")
+            stop_mcp_servers()
             sys.exit()
 
         self.io.tool_warning("\n\n^C again to exit")
@@ -1106,6 +1108,11 @@ class Coder:
             )
         else:
             quad_backtick_reminder = ""
+            
+        # Add MCP tools information if MCP is enabled
+        mcp_tools_info = ""
+        if is_mcp_enabled():
+            mcp_tools_info = self.gpt_prompts.mcp_tools_prefix + "\n\n" + get_available_tools_prompt()
 
         prompt = prompt.format(
             fence=self.fence,
@@ -1119,6 +1126,10 @@ class Coder:
 
         if self.main_model.system_prompt_prefix:
             prompt = self.main_model.system_prompt_prefix + prompt
+            
+        # Append MCP tools information to the end of the prompt
+        if mcp_tools_info:
+            prompt += "\n\n" + mcp_tools_info
 
         return prompt
 
@@ -1455,6 +1466,14 @@ class Coder:
                     self.reflected_message = add_rel_files_message
                 return
 
+            tool_results = self.check_for_tool_calls(content)
+            for tool_result in tool_results:
+                if self.reflected_message:
+                    self.reflected_message += "\n\n" + tool_result
+                else:
+                    self.reflected_message = tool_result
+                return
+
             try:
                 if self.reply_completed():
                     return
@@ -1646,6 +1665,13 @@ class Coder:
                 mentioned_rel_fnames.add(rel_fnames[0])
 
         return mentioned_rel_fnames
+
+    def check_for_tool_calls(self, content):
+        """Process the LLM's response after it's completed."""
+        if is_mcp_enabled():
+            return process_llm_tool_requests(content, self.io)
+        else:
+            return []
 
     def check_for_file_mentions(self, content):
         mentioned_rel_fnames = self.get_file_mentions(content)
