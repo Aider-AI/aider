@@ -1737,6 +1737,25 @@ class TestCommands(TestCase):
         )
         self.assertEqual(context.exception.kwargs.get("main_model").weak_model.name, "gpt-4")
 
+    def test_cmd_model_updates_default_edit_format(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        # Use gpt-3.5-turbo (default 'diff')
+        coder = Coder.create(self.GPT35, None, io)
+        # Ensure current edit format is the default
+        self.assertEqual(coder.edit_format, self.GPT35.edit_format)
+        commands = Commands(io, coder)
+
+        # Mock sanity check to avoid network calls
+        with mock.patch("aider.models.sanity_check_models"):
+            # Test switching the main model to gpt-4 (default 'whole')
+            with self.assertRaises(SwitchCoder) as context:
+                commands.cmd_model("gpt-4")
+
+        # Check that the SwitchCoder exception contains the correct model configuration
+        self.assertEqual(context.exception.kwargs.get("main_model").name, "gpt-4")
+        # Check that the edit format is updated to the new model's default
+        self.assertEqual(context.exception.kwargs.get("edit_format"), "whole")
+
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
