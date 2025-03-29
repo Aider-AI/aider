@@ -999,7 +999,7 @@ class TestMain(TestCase):
             coder = main(
                 ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
             )
-            self.assertIn("flash", coder.main_model.name.lower())
+            self.assertIn("gemini", coder.main_model.name.lower())
             del os.environ["GEMINI_API_KEY"]
 
             # Test no API keys
