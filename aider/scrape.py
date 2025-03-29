@@ -159,7 +159,7 @@ class Scraper:
                 try:
                     response = page.goto(url, wait_until="networkidle", timeout=5000)
                 except PlaywrightTimeoutError:
-                    self.print_error(f"Page didn't quiesce, scraping content anyway: {url}")
+                    print(f"Page didn't quiesce, scraping content anyway: {url}")
                     response = None
                 except PlaywrightError as e:
                     self.print_error(f"Error navigating to {url}: {str(e)}")
