@@ -398,13 +398,30 @@ class RepoMap:
 
             # dump(fname)
             rel_fname = self.get_rel_fname(fname)
+            current_pers = 0.0  # Start with 0 personalization score
 
             if fname in chat_fnames:
-                personalization[rel_fname] = personalize
+                current_pers += personalize
                 chat_rel_fnames.add(rel_fname)
 
             if rel_fname in mentioned_fnames:
-                personalization[rel_fname] = personalize
+                # Use max to avoid double counting if in chat_fnames and mentioned_fnames
+                current_pers = max(current_pers, personalize)
+
+            # Check path components against mentioned_idents
+            path_obj = Path(rel_fname)
+            path_components = set(path_obj.parts)
+            basename_with_ext = path_obj.name
+            basename_without_ext, _ = os.path.splitext(basename_with_ext)
+            components_to_check = path_components.union({basename_with_ext, basename_without_ext})
+
+            matched_idents = components_to_check.intersection(mentioned_idents)
+            if matched_idents:
+                # Add personalization *once* if any path component matches a mentioned ident
+                current_pers += personalize
+
+            if current_pers > 0:
+                personalization[rel_fname] = current_pers  # Assign the final calculated value
 
             tags = list(self.get_tags(fname, rel_fname))
             if tags is None:
