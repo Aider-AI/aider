@@ -758,7 +758,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             ("DEEPSEEK_API_KEY", "deepseek"),
             ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.7-sonnet"),
             ("OPENAI_API_KEY", "gpt-4o"),
-            ("GEMINI_API_KEY", "flash"),
+            ("GEMINI_API_KEY", "gemini/gemini-2.5-pro-exp-03-25"),
+            ("VERTEX_AI_API_KEY", "gemini/gemini-2.5-pro-exp-03-25"),
         ]
 
         for env_key, model_name in model_key_pairs:
