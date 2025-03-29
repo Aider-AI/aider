@@ -926,7 +926,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Track auto-commits configuration
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
-    
+
     try:
         coder = Coder.create(
             main_model=main_model,
