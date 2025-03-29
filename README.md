@@ -163,7 +163,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"One of my favorite pieces of software. Blazing trails on new paradigms!"* — [Chris Wall](https://x.com/chris65536/status/1905053299251798432)
 - *"Aider has been revolutionary for me and my work."* — [Starry Hope](https://x.com/starryhopeblog/status/1904985812137132056)
 - *"Try aider! One of the best ways to vibe code."* — [Chris Wall](https://x.com/Chris65536/status/1905053418961391929)
-- *"Per my use case (fixing bugs and adding features to large monorepo codebases), Aider is hands down the best. And it's free and opensource."* — [AriyaSavakaLurker](https://www.reddit.com/r/ChatGPTCoding/comments/1ik16y6/whats_your_take_on_aider/mbip39n/)
+- *"Aider is hands down the best. And it's free and opensource."* — [AriyaSavakaLurker](https://www.reddit.com/r/ChatGPTCoding/comments/1ik16y6/whats_your_take_on_aider/mbip39n/)
 - *"Aider is also my best friend."* — [jzn21](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27dcnb/)
 - *"Try Aider, it's worth it."* — [jorgejhms](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27cp99/)
 - *"I like aider :)"* — [Chenwei Cui](https://x.com/ccui42/status/1904965344999145698)
