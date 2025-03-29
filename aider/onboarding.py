@@ -273,19 +273,32 @@ def start_openrouter_oauth_flow(io, analytics):
         io.tool_output("Please manually open the URL above.")
 
     # Wait for the callback to set the auth_code or for timeout/error
-    shutdown_server.wait(timeout=120)  # 2 minute timeout
+    interrupted = False
+    try:
+        shutdown_server.wait(timeout=120)  # 2 minute timeout
+    except KeyboardInterrupt:
+        io.tool_warning("\nOAuth flow interrupted by user.")
+        analytics.event("oauth_flow_failed", provider="openrouter", reason="user_interrupt")
+        interrupted = True
+        # Ensure the server thread is signaled to shut down
+        shutdown_server.set()
 
     # Join the server thread to ensure it's cleaned up
     server_thread.join(timeout=1)
+
+    if interrupted:
+        return None # Return None if interrupted by user
 
     if server_error:
         io.tool_error(f"Authentication failed: {server_error}")
         analytics.event("oauth_flow_failed", provider="openrouter", reason=server_error)
         return None
 
-    if not auth_code:
+    if not auth_code and not interrupted: # Only show timeout if not interrupted
         io.tool_error("Authentication timed out. No code received from OpenRouter.")
         analytics.event("oauth_flow_failed", provider="openrouter", reason="timeout")
+        return None
+    elif not auth_code: # If interrupted, we already printed a message and returned
         return None
 
     io.tool_output("Authentication code received. Exchanging for API key...")
