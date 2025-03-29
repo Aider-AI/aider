@@ -241,7 +241,11 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
         .testimonial-card {
             opacity: 1;
             transform: translateY(0);
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.4s ease, transform 0.4s ease, height 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
         }
     </style>
 
@@ -433,6 +437,29 @@ const testimonials = [
             }
             
             container.innerHTML = html;
+            
+            // Set a fixed height for all testimonial cards after they've been created
+            setTimeout(setMaxTestimonialHeight, 50);
+        }
+        
+        // Calculate and set the maximum height for all testimonial cards
+        function setMaxTestimonialHeight() {
+            const cards = document.querySelectorAll('.testimonial-card');
+            if (!cards.length) return;
+            
+            // Find the maximum height among all cards
+            let maxHeight = 0;
+            cards.forEach(card => {
+                // Temporarily remove any set height to get the natural height
+                card.style.height = 'auto';
+                const height = card.offsetHeight;
+                maxHeight = Math.max(maxHeight, height);
+            });
+            
+            // Set the max height on all cards
+            cards.forEach(card => {
+                card.style.height = `${maxHeight}px`;
+            });
         }
 
         // Function to update a single testimonial
@@ -485,10 +512,16 @@ const testimonials = [
                 
                 // Update content when fully faded out
                 setTimeout(() => {
+                    // Keep the current height during the content swap
+                    const currentHeight = testimonialElement.style.height;
+                    
                     testimonialElement.innerHTML = `
                         <p class="testimonial-text">${newTestimonial.text}</p>
                         <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
                     `;
+                    
+                    // Ensure the height remains consistent
+                    testimonialElement.style.height = currentHeight;
                     
                     // Start fade in
                     setTimeout(() => {
