@@ -1005,7 +1005,7 @@ class Commands:
             ]
 
             if add and exit_status != 0:
-                self.io.placeholder = "What's wrong? Fix"
+                self.io.placeholder = self.args.placeholder_fix
 
     def cmd_exit(self, args):
         "Exit the application"
