@@ -449,11 +449,11 @@ def get_testimonials_js():
                         {"text": quote_match, "author": author_match, "link": link_match}
                     )
 
-        # Format as JavaScript array
+        # Format as JavaScript array with script tags
         if not testimonials:
-            return "const testimonials = [];"
+            return "<script>\nconst testimonials = [];\n</script>"
 
-        js_array = "const testimonials = [\n"
+        js_array = "<script>\nconst testimonials = [\n"
         for i, t in enumerate(testimonials):
             js_array += "    {\n"
             js_array += f"        text: \"{t['text']}\",\n"
@@ -463,14 +463,14 @@ def get_testimonials_js():
             if i < len(testimonials) - 1:
                 js_array += ","
             js_array += "\n"
-        js_array += "];"
+        js_array += "];\n</script>"
 
         return js_array
 
     except Exception as e:
         print(f"Error reading testimonials from README: {e}", file=sys.stderr)
         # Return empty array as fallback
-        return "const testimonials = [];"
+        return "<script>\nconst testimonials = [];\n</script>"
 
 
 def main():
