@@ -416,13 +416,12 @@ def get_testimonials_js():
     """
     # Path to README.md, relative to this script
     readme_path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "README.md"
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "README.md"
     )
-    
+
     testimonials = []
     in_testimonials_section = False
-    
+
     try:
         with open(readme_path, "r", encoding="utf-8") as f:
             for line in f:
@@ -430,32 +429,30 @@ def get_testimonials_js():
                 if line.strip() == "## Kind Words From Users":
                     in_testimonials_section = True
                     continue
-                
+
                 # If we've hit another section after testimonials, stop
                 if in_testimonials_section and line.startswith("##"):
                     break
-                
+
                 # Process testimonial lines
-                if in_testimonials_section and line.strip().startswith("- *\""):
+                if in_testimonials_section and line.strip().startswith('- *"'):
                     # Extract the quote text: between *" and "*
-                    quote_match = line.split("*\"")[1].split("\"*")[0].strip()
-                    
+                    quote_match = line.split('*"')[1].split('"*')[0].strip()
+
                     # Extract the author: between "— [" and "]"
                     author_match = line.split("— [")[1].split("]")[0].strip()
-                    
+
                     # Extract the link: between "(" and ")"
                     link_match = line.split("](")[1].split(")")[0].strip()
-                    
-                    testimonials.append({
-                        "text": quote_match,
-                        "author": author_match,
-                        "link": link_match
-                    })
-        
+
+                    testimonials.append(
+                        {"text": quote_match, "author": author_match, "link": link_match}
+                    )
+
         # Format as JavaScript array
         if not testimonials:
             return "const testimonials = [];"
-        
+
         js_array = "const testimonials = [\n"
         for i, t in enumerate(testimonials):
             js_array += f"    {{\n"
@@ -467,9 +464,9 @@ def get_testimonials_js():
                 js_array += ","
             js_array += "\n"
         js_array += "];"
-        
+
         return js_array
-    
+
     except Exception as e:
         print(f"Error reading testimonials from README: {e}", file=sys.stderr)
         # Return empty array as fallback
