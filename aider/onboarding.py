@@ -4,7 +4,6 @@ import http.server
 import os
 import secrets
 import socketserver
-import sys
 import threading
 import time
 import webbrowser
