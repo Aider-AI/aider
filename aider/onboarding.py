@@ -140,7 +140,7 @@ def select_default_model(args, io, analytics):
     io.tool_warning(no_model_msg)
 
     # Try OAuth if no model was detected
-    # offer_openrouter_oauth(io, analytics)
+    offer_openrouter_oauth(io, analytics)
 
     # Check again after potential OAuth success
     model = try_to_select_default_model()
