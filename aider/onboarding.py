@@ -308,12 +308,26 @@ def start_openrouter_oauth_flow(io, analytics):
     api_key = exchange_code_for_key(auth_code, code_verifier, io)
 
     if api_key:
-        io.tool_output("Successfully obtained and configured OpenRouter API key.")
-        # Securely store this key? For now, set env var for the session.
+        # Set env var for the current session immediately
         os.environ["OPENROUTER_API_KEY"] = api_key
-        io.tool_warning("Set OPENROUTER_API_KEY environment variable for this session.")
-        analytics.event("oauth_flow_success", provider="openrouter")
-        return api_key
+
+        # Save the key to the oauth-keys.env file
+        try:
+            config_dir = os.path.expanduser("~/.aider")
+            os.makedirs(config_dir, exist_ok=True)
+            key_file = os.path.join(config_dir, "oauth-keys.env")
+            with open(key_file, "w", encoding="utf-8") as f:
+                f.write(f'OPENROUTER_API_KEY="{api_key}"\n')
+            io.tool_output(f"Successfully obtained OpenRouter API key and saved it to {key_file}")
+            io.tool_output("Aider will load this key automatically in future sessions.")
+            analytics.event("oauth_flow_success", provider="openrouter")
+            return api_key
+        except Exception as e:
+            io.tool_error(f"Successfully obtained key, but failed to save it to file: {e}")
+            io.tool_warning("Set OPENROUTER_API_KEY environment variable for this session only.")
+            # Still return the key for the current session even if saving failed
+            analytics.event("oauth_flow_save_failed", provider="openrouter", reason=str(e))
+            return api_key
     else:
         io.tool_error("Failed to obtain OpenRouter API key from code.")
         analytics.event("oauth_flow_failed", provider="openrouter", reason="code_exchange_failed")
