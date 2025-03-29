@@ -59,10 +59,14 @@ def select_default_model(args, io, analytics):
         return selected_model
 
     # No API keys found - Offer OpenRouter OAuth
-    io.tool_warning("No API key environment variables found (e.g., OPENAI_API_KEY, ANTHROPIC_API_KEY...).")
+    io.tool_warning(
+        "No API key environment variables found (e.g., OPENAI_API_KEY, ANTHROPIC_API_KEY...)."
+    )
     # Use confirm_ask which handles non-interactive cases
     if io.confirm_ask(
-        "Authenticate with OpenRouter via browser to get an API key?", default="y", group="openrouter_oauth"
+        "Authenticate with OpenRouter via browser to get an API key?",
+        default="y",
+        group="openrouter_oauth",
     ):
         analytics.event("oauth_flow_initiated", provider="openrouter")
         openrouter_key = start_openrouter_oauth_flow(io, analytics)
@@ -70,7 +74,7 @@ def select_default_model(args, io, analytics):
             # Successfully got key via OAuth, use the default OpenRouter model
             # Ensure OPENROUTER_API_KEY is now set in the environment for later use
             os.environ["OPENROUTER_API_KEY"] = openrouter_key
-            selected_model = "openrouter/anthropic/claude-3.7-sonnet" # Default OR model
+            selected_model = "openrouter/anthropic/claude-3.7-sonnet"  # Default OR model
             io.tool_warning(f"Using {selected_model} model via OpenRouter OAuth.")
             # Track OAuth success leading to model selection
             analytics.event("auto_model_selection", api_key="OPENROUTER_API_KEY_OAUTH")
@@ -89,7 +93,7 @@ def select_default_model(args, io, analytics):
         "or specify both --model and --api-key."
     )
     io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
-    analytics.event("auto_model_selection", api_key=None) # Track failure
+    analytics.event("auto_model_selection", api_key=None)  # Track failure
     return None
 
 
@@ -138,7 +142,9 @@ def exchange_code_for_key(code, code_verifier, io):
         io.tool_error("Error: Request to OpenRouter timed out during code exchange.")
         return None
     except requests.exceptions.HTTPError as e:
-        io.tool_error(f"Error exchanging code for OpenRouter key: {e.status_code} {e.response.reason}")
+        io.tool_error(
+            f"Error exchanging code for OpenRouter key: {e.status_code} {e.response.reason}"
+        )
         io.tool_error(f"Response: {e.response.text}")
         return None
     except requests.exceptions.RequestException as e:
@@ -215,15 +221,15 @@ def start_openrouter_oauth_flow(io, analytics):
                 server_started.set()  # Signal that the server is ready
                 # Wait until shutdown is requested or timeout occurs (handled by main thread)
                 while not shutdown_server.is_set():
-                    httpd.handle_request() # Handle one request at a time
+                    httpd.handle_request()  # Handle one request at a time
                     # Add a small sleep to prevent busy-waiting if needed,
                     # though handle_request should block appropriately.
                     time.sleep(0.1)
                 io.tool_output("Shutting down temporary server.", log_only=True)
         except Exception as e:
             server_error = f"Failed to start or run temporary server: {e}"
-            server_started.set() # Signal even if failed, error will be checked
-            shutdown_server.set() # Ensure shutdown logic proceeds
+            server_started.set()  # Signal even if failed, error will be checked
+            shutdown_server.set()  # Ensure shutdown logic proceeds
 
     server_thread = threading.Thread(target=run_server, daemon=True)
     server_thread.start()
@@ -231,14 +237,14 @@ def start_openrouter_oauth_flow(io, analytics):
     # Wait briefly for the server to start, or for an error
     if not server_started.wait(timeout=5):
         io.tool_error("Temporary authentication server failed to start in time.")
-        shutdown_server.set() # Ensure thread exits if it eventually starts
+        shutdown_server.set()  # Ensure thread exits if it eventually starts
         server_thread.join(timeout=1)
         return None
 
     # Check if server failed during startup
     if server_error:
         io.tool_error(server_error)
-        shutdown_server.set() # Ensure thread exits
+        shutdown_server.set()  # Ensure thread exits
         server_thread.join(timeout=1)
         return None
 
@@ -246,7 +252,9 @@ def start_openrouter_oauth_flow(io, analytics):
     code_verifier, code_challenge = generate_pkce_codes()
     auth_url = f"https://openrouter.ai/auth?callback_url={callback_url}&code_challenge={code_challenge}&code_challenge_method=S256"
 
-    io.tool_output("\nPlease open the following URL in your web browser to authorize Aider with OpenRouter:")
+    io.tool_output(
+        "\nPlease open the following URL in your web browser to authorize Aider with OpenRouter:"
+    )
     io.tool_output(auth_url)
     io.tool_output("\nWaiting for authentication... (Timeout: 2 minutes)")
 
@@ -257,7 +265,7 @@ def start_openrouter_oauth_flow(io, analytics):
         io.tool_output("Please manually open the URL above.")
 
     # Wait for the callback to set the auth_code or for timeout/error
-    shutdown_server.wait(timeout=120) # 2 minute timeout
+    shutdown_server.wait(timeout=120)  # 2 minute timeout
 
     # Join the server thread to ensure it's cleaned up
     server_thread.join(timeout=1)
