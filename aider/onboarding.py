@@ -49,7 +49,7 @@ def select_default_model(args, io, analytics):
         is_vertex = env_key == "VERTEXAI_PROJECT" and api_key_value
         if api_key_value and (not is_vertex or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")):
             selected_model = model_name
-            found_key_env_var = env_key
+            # found_key_env_var = env_key # Not used
             io.tool_warning(f"Using {model_name} model with {env_key} environment variable.")
             # Track which API key was used for auto-selection
             analytics.event("auto_model_selection", api_key=env_key)
@@ -101,9 +101,11 @@ def select_default_model(args, io, analytics):
 def find_available_port(start_port=8484, end_port=8584):
     for port in range(start_port, end_port + 1):
         try:
-            with socketserver.TCPServer(("localhost", port), None) as s:
+            # Check if the port is available by trying to bind to it
+            with socketserver.TCPServer(("localhost", port), None):
                 return port
         except OSError:
+            # Port is likely already in use
             continue
     return None
 
@@ -250,7 +252,13 @@ def start_openrouter_oauth_flow(io, analytics):
 
     # Generate codes and URL
     code_verifier, code_challenge = generate_pkce_codes()
-    auth_url = f"https://openrouter.ai/auth?callback_url={callback_url}&code_challenge={code_challenge}&code_challenge_method=S256"
+    auth_url_base = "https://openrouter.ai/auth"
+    auth_params = {
+        "callback_url": callback_url,
+        "code_challenge": code_challenge,
+        "code_challenge_method": "S256",
+    }
+    auth_url = f"{auth_url_base}?{'&'.join(f'{k}={v}' for k, v in auth_params.items())}"
 
     io.tool_output(
         "\nPlease open the following URL in your web browser to authorize Aider with OpenRouter:"
