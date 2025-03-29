@@ -30,6 +30,7 @@ from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.models import ModelSettings
+from aider.onboarding import select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
@@ -754,29 +755,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             alias, model = parts
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
-    if not args.model:
-        # Select model based on available API keys
-        model_key_pairs = [
-            ("ANTHROPIC_API_KEY", "sonnet"),
-            ("DEEPSEEK_API_KEY", "deepseek"),
-            ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.7-sonnet"),
-            ("OPENAI_API_KEY", "gpt-4o"),
-            ("GEMINI_API_KEY", "gemini/gemini-2.5-pro-exp-03-25"),
-            ("VERTEXAI_PROJECT", "vertex_ai/gemini-2.5-pro-exp-03-25"),
-        ]
-
-        for env_key, model_name in model_key_pairs:
-            if os.environ.get(env_key):
-                args.model = model_name
-                io.tool_warning(f"Using {model_name} model with {env_key} environment variable.")
-                # Track which API key was used for auto-selection
-                analytics.event("auto_model_selection", api_key=env_key)
-                break
-        if not args.model:
-            io.tool_error("You need to specify a --model and an --api-key to use.")
-            io.offer_url(urls.models_and_keys, "Open documentation url for more info?")
-            analytics.event("auto_model_selection", api_key=None)
-            return 1
+    selected_model_name = select_default_model(args, io, analytics)
+    if not selected_model_name:
+        # Error message and analytics event are handled within select_default_model
+        return 1
+    args.model = selected_model_name  # Update args with the selected model
 
     main_model = models.Model(
         args.model,
