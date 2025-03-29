@@ -209,12 +209,12 @@ class Coder:
         output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
 
         # Check for thinking token budget
-        thinking_tokens = main_model.get_thinking_tokens(main_model)
+        thinking_tokens = main_model.get_thinking_tokens()
         if thinking_tokens:
             output += f", {thinking_tokens} think tokens"
 
         # Check for reasoning effort
-        reasoning_effort = main_model.get_reasoning_effort(main_model)
+        reasoning_effort = main_model.get_reasoning_effort()
         if reasoning_effort:
             output += f", reasoning {reasoning_effort}"
 
