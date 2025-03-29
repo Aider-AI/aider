@@ -77,7 +77,7 @@ filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
-flake8==7.2.0
+flake8==7.1.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -245,7 +245,7 @@ ptyprocess==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   pexpect
-pycodestyle==2.13.0
+pycodestyle==2.12.1
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
@@ -266,7 +266,7 @@ pydub==0.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pyflakes==3.3.0
+pyflakes==3.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
