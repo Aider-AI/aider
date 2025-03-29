@@ -172,7 +172,7 @@ def start_openrouter_oauth_flow(io, analytics):
         io.tool_error("Please ensure a port in this range is free, or configure manually.")
         return None
 
-    callback_url = f"http://localhost:{port}/callback"
+    callback_url = f"http://localhost:{port}/callback/aider"
     auth_code = None
     server_error = None
     server_started = threading.Event()
@@ -182,7 +182,7 @@ def start_openrouter_oauth_flow(io, analytics):
         def do_GET(self):
             nonlocal auth_code, server_error
             parsed_path = urlparse(self.path)
-            if parsed_path.path == "/callback":
+            if parsed_path.path == "/callback/aider":
                 query_params = parse_qs(parsed_path.query)
                 if "code" in query_params:
                     auth_code = query_params["code"][0]
