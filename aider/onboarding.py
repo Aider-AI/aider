@@ -325,7 +325,6 @@ def main():
         yes=False,
         input_history_file=None,
         chat_history_file=None,
-        stream=True,
         tool_output_color="BLUE",
         tool_error_color="RED",
     )
