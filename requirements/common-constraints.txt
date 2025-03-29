@@ -27,7 +27,7 @@ backoff==2.2.1
     # via
     #   -r requirements/requirements.in
     #   posthog
-banks==2.0.0
+banks==2.1.0
     # via llama-index-core
 beautifulsoup4==4.13.3
     # via -r requirements/requirements.in
@@ -99,7 +99,7 @@ filelock==3.18.0
     #   virtualenv
 filetype==1.2.0
     # via llama-index-core
-flake8==7.1.2
+flake8==7.2.0
     # via -r requirements/requirements.in
 fonttools==4.56.0
     # via matplotlib
@@ -124,7 +124,7 @@ greenlet==3.1.1
     #   sqlalchemy
 grep-ast==0.8.1
     # via -r requirements/requirements.in
-griffe==1.7.0
+griffe==1.7.1
     # via banks
 h11==0.14.0
     # via httpcore
@@ -311,7 +311,7 @@ ptyprocess==0.7.0
     # via pexpect
 pyarrow==19.0.1
     # via streamlit
-pycodestyle==2.12.1
+pycodestyle==2.13.0
     # via flake8
 pycparser==2.22
     # via cffi
@@ -329,7 +329,7 @@ pydub==0.25.1
     # via -r requirements/requirements.in
 pyee==12.1.1
     # via playwright
-pyflakes==3.2.0
+pyflakes==3.3.0
     # via flake8
 pygments==2.19.1
     # via rich
@@ -402,8 +402,10 @@ scipy==1.13.1
     #   sentence-transformers
 semver==3.0.4
     # via -r requirements/requirements-dev.in
-sentence-transformers==4.0.1
-    # via llama-index-embeddings-huggingface
+sentence-transformers==3.4.1
+    # via
+    #   -r requirements/requirements-help.in
+    #   llama-index-embeddings-huggingface
 setuptools==78.1.0
     # via pip-tools
 shellingham==1.5.4
@@ -489,7 +491,6 @@ typing-extensions==4.13.0
     #   pydantic-core
     #   pyee
     #   referencing
-    #   sentence-transformers
     #   sqlalchemy
     #   streamlit
     #   torch

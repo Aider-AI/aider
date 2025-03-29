@@ -7,3 +7,6 @@ numpy<2
 # Mac x86 only supports 2.2.2
 # https://discuss.pytorch.org/t/why-no-macosx-x86-64-build-after-torch-2-2-2-cp39-none-macosx-10-9-x86-64-whl/204546/2
 torch==2.2.2
+
+# 4.0.1 fails in GitHub Actions ubuntu and windows
+sentence-transformers<4
