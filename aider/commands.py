@@ -1500,7 +1500,7 @@ class Commands:
             if formatted_budget is None:
                 self.io.tool_output("Thinking tokens are not currently set.")
             else:
-                budget = model.extra_params["thinking"].get("budget_tokens")
+                budget = model.get_raw_thinking_tokens()
                 self.io.tool_output(
                     f"Current thinking token budget: {budget:,} tokens ({formatted_budget})."
                 )
@@ -1510,7 +1510,7 @@ class Commands:
         model.set_thinking_tokens(value)
 
         formatted_budget = model.get_thinking_tokens()
-        budget = model.extra_params["thinking"].get("budget_tokens")
+        budget = model.get_raw_thinking_tokens()
 
         self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
         self.io.tool_output()
