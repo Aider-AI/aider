@@ -9,9 +9,12 @@ import time
 import webbrowser
 from urllib.parse import parse_qs, urlparse
 
+import sys
+
 import requests
 
 from aider import urls
+from aider.io import InputOutput
 from aider.utils import check_pip_install_extra
 
 
@@ -305,3 +308,49 @@ def start_openrouter_oauth_flow(io, analytics):
         io.tool_error("Failed to obtain OpenRouter API key from code.")
         analytics.event("oauth_flow_failed", provider="openrouter", reason="code_exchange_failed")
         return None
+
+
+# Dummy Analytics class for testing
+class DummyAnalytics:
+    def event(self, *args, **kwargs):
+        # print(f"Analytics Event: {args} {kwargs}") # Optional: print events
+        pass
+
+
+def main():
+    """Main function to test the OpenRouter OAuth flow."""
+    print("Starting OpenRouter OAuth flow test...")
+
+    # Use a real IO object for interaction
+    io = InputOutput(
+        pretty=True,
+        yes=False,
+        input_history_file=None,
+        chat_history_file=None,
+        stream=True,
+        tool_output_color="BLUE",
+        tool_error_color="RED",
+    )
+    # Use a dummy analytics object
+    analytics = DummyAnalytics()
+
+    # Ensure OPENROUTER_API_KEY is not set, to trigger the flow naturally
+    # (though start_openrouter_oauth_flow doesn't check this itself)
+    if "OPENROUTER_API_KEY" in os.environ:
+        print("Warning: OPENROUTER_API_KEY is already set in environment.")
+        # del os.environ["OPENROUTER_API_KEY"] # Optionally unset it for testing
+
+    api_key = start_openrouter_oauth_flow(io, analytics)
+
+    if api_key:
+        print("\nOAuth flow completed successfully!")
+        print(f"Obtained API Key (first 5 chars): {api_key[:5]}...")
+        # Be careful printing the key, even partially
+    else:
+        print("\nOAuth flow failed or was cancelled.")
+
+    print("\nOpenRouter OAuth flow test finished.")
+
+
+if __name__ == "__main__":
+    main()
