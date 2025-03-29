@@ -20,7 +20,7 @@ Aider lets you pair program with LLMs to start a new project or build on your ex
 
 <p align="center">
 <!--[[[cog
-from scripts.badges import get_badges_md
+from scripts.homepage import get_badges_md
 text = get_badges_md()
 cog.out(text)
 ]]]-->
