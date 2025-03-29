@@ -56,13 +56,13 @@ def offer_openrouter_oauth(io, analytics):
     """
     # No API keys found - Offer OpenRouter OAuth
     io.tool_warning(
-        "No API key environment variables found (e.g., OPENAI_API_KEY, ANTHROPIC_API_KEY...)."
+        "No model was specified and no API keys were provided."
     )
+    io.tool_output("OpenRouter provides free and paid access to many LLMs.")
     # Use confirm_ask which handles non-interactive cases
     if io.confirm_ask(
-        "Authenticate with OpenRouter via browser to get an API key?",
+        "Would you like to login to OpenRouter or create a free account?",
         default="y",
-        group="openrouter_oauth",
     ):
         analytics.event("oauth_flow_initiated", provider="openrouter")
         openrouter_key = start_openrouter_oauth_flow(io, analytics)
@@ -285,7 +285,10 @@ def start_openrouter_oauth_flow(io, analytics):
     io.tool_output(
         "\nPlease open the following URL in your web browser to authorize Aider with OpenRouter:"
     )
+    io.tool_output()
     print(auth_url)
+
+    MINUTES=5 # ai!
     io.tool_output("\nWaiting for authentication... (Timeout: 2 minutes)")
 
     try:
