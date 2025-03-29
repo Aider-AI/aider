@@ -16,32 +16,13 @@ from aider.io import InputOutput
 from aider.utils import check_pip_install_extra
 
 
-def select_default_model(args, io, analytics):
+def try_to_select_default_model():
     """
-    Selects a default model based on available API keys if no model is specified.
-    Offers OAuth flow for OpenRouter if no keys are found.
-
-    Args:
-        args: The command line arguments object.
-        io: The InputOutput object for user interaction.
-        analytics: The Analytics object for tracking events.
-
+    Attempts to select a default model based on available API keys.
+    
     Returns:
         The name of the selected model, or None if no suitable default is found.
     """
-    if args.model:
-        return args.model  # Model already specified
-
-
-    model = try_to_select_default_model()
-    if model:
-        return model
-
-    offer_openrouter_oauth()
-    return try_to_select_default_model()
-
-    # ai: refactor this into try_to_select_default_model() ai!
-
     # Select model based on available API keys
     model_key_pairs = [
         ("ANTHROPIC_API_KEY", "sonnet"),
@@ -53,23 +34,28 @@ def select_default_model(args, io, analytics):
     ]
 
     selected_model = None
-    # found_key_env_var = None # Not used
     for env_key, model_name in model_key_pairs:
         api_key_value = os.environ.get(env_key)
         # Special check for Vertex AI project which isn't a key but acts like one for selection
         is_vertex = env_key == "VERTEXAI_PROJECT" and api_key_value
         if api_key_value and (not is_vertex or os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")):
             selected_model = model_name
-            # found_key_env_var = env_key # Not used
-            io.tool_warning(f"Using {model_name} model with {env_key} environment variable.")
-            # Track which API key was used for auto-selection
-            analytics.event("auto_model_selection", api_key=env_key)
             break
 
     return selected_model
 
-    # ai: refactor this into offer_openrouter_oaut() ...
 
+def offer_openrouter_oauth(io, analytics):
+    """
+    Offers OpenRouter OAuth flow to the user if no API keys are found.
+    
+    Args:
+        io: The InputOutput object for user interaction.
+        analytics: The Analytics object for tracking events.
+        
+    Returns:
+        True if authentication was successful, False otherwise.
+    """
     # No API keys found - Offer OpenRouter OAuth
     io.tool_warning(
         "No API key environment variables found (e.g., OPENAI_API_KEY, ANTHROPIC_API_KEY...)."
@@ -104,7 +90,36 @@ def select_default_model(args, io, analytics):
         "or specify both --model and --api-key."
     )
     io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
-    return None
+    return False
+
+
+def select_default_model(args, io, analytics):
+    """
+    Selects a default model based on available API keys if no model is specified.
+    Offers OAuth flow for OpenRouter if no keys are found.
+
+    Args:
+        args: The command line arguments object.
+        io: The InputOutput object for user interaction.
+        analytics: The Analytics object for tracking events.
+
+    Returns:
+        The name of the selected model, or None if no suitable default is found.
+    """
+    if args.model:
+        return args.model  # Model already specified
+
+    model = try_to_select_default_model()
+    if model:
+        io.tool_warning(f"Using {model} model with detected API key.")
+        analytics.event("auto_model_selection", model=model)
+        return model
+
+    # Try OAuth if no model was detected
+    offer_openrouter_oauth(io, analytics)
+    
+    # Check again after potential OAuth success
+    return try_to_select_default_model()
 
 
 # Helper function to find an available port
