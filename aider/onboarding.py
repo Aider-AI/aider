@@ -42,7 +42,7 @@ def select_default_model(args, io, analytics):
     ]
 
     selected_model = None
-    found_key_env_var = None
+    # found_key_env_var = None # Not used
     for env_key, model_name in model_key_pairs:
         api_key_value = os.environ.get(env_key)
         # Special check for Vertex AI project which isn't a key but acts like one for selection
