@@ -38,8 +38,8 @@ def check_openrouter_tier(api_key):
         # According to the documentation, 'is_free_tier' will be true if the user has never paid
         return data.get("data", {}).get("is_free_tier", True)  # Default to True if not found
     except Exception:
-        # If there's any error, we'll default to assuming paid tier to be safe
-        return False
+        # If there's any error, we'll default to assuming free tier
+        return True
 
 
 def try_to_select_default_model():
