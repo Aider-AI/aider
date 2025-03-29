@@ -195,20 +195,19 @@ def start_openrouter_oauth_flow(io, analytics):
                         b"You can close this browser tab.</p></body></html>"
                     )
                     # Signal the main thread to shut down the server
+                    # Signal the main thread to shut down the server
                     shutdown_server.set()
                 else:
-                    server_error = "Missing 'code' parameter in callback URL."
-                    self.send_response(400)
-                    self.send_header("Content-type", "text/html")
+                    # Redirect to aider website if 'code' is missing (e.g., user visited manually)
+                    self.send_response(302)  # Found (temporary redirect)
+                    self.send_header("Location", urls.website)
                     self.end_headers()
-                    self.wfile.write(
-                        b"<html><body><h1>Error</h1>"
-                        b"<p>Missing 'code' parameter in callback URL.</p>"
-                        b"<p>Please check the Aider terminal.</p></body></html>"
-                    )
+                    # No need to set server_error, just redirect and shut down
                     shutdown_server.set()
             else:
-                self.send_response(404)
+                # Redirect anything else to the main website as well
+                self.send_response(302)
+                self.send_header("Location", urls.website)
                 self.end_headers()
                 self.wfile.write(b"Not Found")
 
