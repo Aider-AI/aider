@@ -23,7 +23,7 @@ aider --model o3-mini --api-key openai=<key>
 aider --model o1-mini --api-key openai=<key>
 
 # GPT-4o
-aider --4o --api-key openai=<key>
+aider --model gpt-4o --api-key openai=<key>
 
 # List models available from OpenAI
 aider --list-models openai/

@@ -1,0 +1,228 @@
+/* Terminal header styling */
+.terminal-header {
+  background-color: #e0e0e0;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 4px;
+  margin-right: 10px;
+}
+
+.terminal-button {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-close {
+  background-color: #ff5f56;
+  border: 1px solid #e0443e;
+}
+
+.terminal-minimize {
+  background-color: #ffbd2e;
+  border: 1px solid #dea123;
+}
+
+.terminal-expand {
+  background-color: #27c93f;
+  border: 1px solid #1aab29;
+}
+
+.terminal-title {
+  flex-grow: 1;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  color: #666;
+}
+
+/* Toast notification styling */
+.toast-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast-notification {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  text-align: center;
+  display: inline-block;
+  min-width: 200px;
+  max-width: 90%;
+}
+
+/* Page container styling */
+.page-container {
+  max-width: 950px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+/* macOS backdrop styling */
+.macos-backdrop {
+  background: linear-gradient(135deg, #ff9966, #ff5e62, #6666ff, #0066ff);
+  border-radius: 12px;
+  padding: clamp(5px, 5vw, 50px) clamp(5px, 2.5vw, 50px);
+  margin: 20px 0;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add subtle wave animation to backdrop */
+.macos-backdrop::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Add decorative curved lines to the backdrop */
+.macos-backdrop::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 30%, transparent 0%, transparent 60%, rgba(255,255,255,0.2) 61%, transparent 62%),
+    radial-gradient(circle at 80% 70%, transparent 0%, transparent 40%, rgba(255,255,255,0.2) 41%, transparent 42%),
+    radial-gradient(circle at 40% 90%, transparent 0%, transparent 70%, rgba(255,255,255,0.2) 71%, transparent 72%),
+    radial-gradient(circle at 60% 10%, transparent 0%, transparent 50%, rgba(255,255,255,0.2) 51%, transparent 52%);
+  background-size: 100% 100%;
+  opacity: 1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.terminal-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  margin-top: 0;
+  margin-bottom: 0;
+  position: relative;
+  background-color: white; /* Add background color to terminal container */
+  z-index: 2; /* Ensure terminal appears above the backdrop effects */
+}
+
+/* Timestamp link styling */
+.timestamp-link {
+  color: #0366d6;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.timestamp-link:hover {
+  text-decoration: underline;
+}
+
+/* Active timestamp styling */
+.timestamp-active {
+  background-color: #f0f8ff; /* Light blue background */
+  border-radius: 3px;
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+/* Highlight the list item containing the active timestamp */
+li.active-marker {
+  background-color: #f6f8fa;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-left: -8px;
+}
+
+/* Make list items clickable */
+.transcript-item {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  padding: 4px 8px;
+  margin-left: -8px;
+  border-radius: 4px;
+}
+
+.transcript-item:hover {
+  background-color: #f0f0f0;
+}
+
+/* Keyboard shortcuts styling */
+.keyboard-shortcuts {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+/* Hide keyboard shortcuts on devices likely without physical keyboards */
+.no-physical-keyboard .keyboard-shortcuts {
+  display: none;
+}
+
+.keyboard-shortcuts kbd {
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  color: #333;
+  display: inline-block;
+  font-family: monospace;
+  line-height: 1;
+  margin: 0 2px;
+  padding: 3px 5px;
+  white-space: nowrap;
+}
+.asciinema-player-theme-aider {
+  /* Foreground (default text) color */
+  --term-color-foreground: #444444;  /* colour238 */
+
+  /* Background color */
+  --term-color-background: #dadada;  /* colour253 */
+
+  /* Palette of 16 standard ANSI colors */
+  --term-color-0: #21222c;
+  --term-color-1: #ff5555;
+  --term-color-2: #50fa7b;
+  --term-color-3: #f1fa8c;
+  --term-color-4: #bd93f9;
+  --term-color-5: #ff79c6;
+  --term-color-6: #8be9fd;
+  --term-color-7: #f8f8f2;
+  --term-color-8: #6272a4;
+  --term-color-9: #ff6e6e;
+  --term-color-10: #69ff94;
+  --term-color-11: #ffffa5;
+  --term-color-12: #d6acff;
+  --term-color-13: #ff92df;
+  --term-color-14: #a4ffff;
+  --term-color-15: #ffffff;
+}

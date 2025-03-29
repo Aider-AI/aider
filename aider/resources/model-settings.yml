@@ -185,6 +185,7 @@
   editor_edit_format: editor-diff
 
 - name: anthropic/claude-3-7-sonnet-20250219
+  overeager: true
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
@@ -196,8 +197,10 @@
   cache_control: true
   editor_model_name: anthropic/claude-3-7-sonnet-20250219
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: anthropic/claude-3-7-sonnet-latest
+  overeager: true
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
   use_repo_map: true
@@ -209,6 +212,7 @@
   cache_control: true
   editor_model_name: anthropic/claude-3-7-sonnet-latest
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: claude-3-7-sonnet-20250219
   edit_format: diff
@@ -222,8 +226,10 @@
   cache_control: true
   editor_model_name: claude-3-7-sonnet-20250219
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: claude-3-7-sonnet-latest
+  overeager: true
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
   use_repo_map: true
@@ -235,8 +241,10 @@
   cache_control: true
   editor_model_name: claude-3-7-sonnet-latest
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: bedrock/anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -248,8 +256,10 @@
   cache_control: true
   editor_model_name: bedrock/anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -261,8 +271,10 @@
   cache_control: true
   editor_model_name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: bedrock_converse/anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock_converse/anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -274,8 +286,10 @@
   cache_control: true
   editor_model_name: bedrock_converse/anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
+  overeager: true
   edit_format: diff
   weak_model_name: bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0
   use_repo_map: true
@@ -287,8 +301,10 @@
   cache_control: true
   editor_model_name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: vertex_ai/claude-3-7-sonnet@20250219
+  overeager: true
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
@@ -297,8 +313,10 @@
     max_tokens: 64000
   editor_model_name: vertex_ai/claude-3-7-sonnet@20250219
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
+  overeager: true
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
@@ -307,8 +325,10 @@
     max_tokens: 64000
   editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: openrouter/anthropic/claude-3.7-sonnet
+  overeager: true
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
@@ -320,8 +340,10 @@
   cache_control: true
   editor_model_name: openrouter/anthropic/claude-3.7-sonnet
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: openrouter/anthropic/claude-3.7-sonnet:beta
+  overeager: true
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
   use_repo_map: true
@@ -333,6 +355,7 @@
   cache_control: true
   editor_model_name: openrouter/anthropic/claude-3.7-sonnet
   editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
 
 - name: bedrock/anthropic.claude-3-5-sonnet-20241022-v2:0
   edit_format: diff
@@ -547,8 +570,8 @@
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 8192
+    include_reasoning: true
   caches_by_default: true
-  use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-chat
   editor_edit_format: editor-diff
 
@@ -635,6 +658,15 @@
   reminder: sys
   examples_as_sys_msg: true
 
+- name: openrouter/deepseek/deepseek-chat-v3-0324
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+  caches_by_default: true
+
 - name: openrouter/openai/gpt-4o
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4o-mini
@@ -694,6 +726,7 @@
   streaming: false
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
+  accepts_settings: ["reasoning_effort"]
 
 - name: o1-preview
   edit_format: architect
@@ -732,6 +765,7 @@
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
 
 - name: openai/o1
   edit_format: diff
@@ -742,6 +776,7 @@
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
 
 - name: o1
   edit_format: diff
@@ -752,6 +787,7 @@
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
 
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   edit_format: diff
@@ -780,7 +816,7 @@
   streaming: true
   editor_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
   editor_edit_format: editor-diff
-  remove_reasoning: think
+  reasoning_tag: think
   extra_params:
       max_tokens: 160000
 
@@ -800,6 +836,7 @@
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
   
 - name: o3-mini
   edit_format: diff
@@ -809,6 +846,7 @@
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
 
 - name: openrouter/openai/o3-mini
   edit_format: diff
@@ -818,6 +856,7 @@
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
 
 - name: openrouter/openai/o3-mini-high
   edit_format: diff
@@ -827,6 +866,7 @@
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
 
 - name: azure/o3-mini
   edit_format: diff
@@ -836,6 +876,7 @@
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
 
 - name: gpt-4.5-preview
   edit_format: diff
@@ -858,7 +899,7 @@
   editor_edit_format: editor-diff
 
 - name: fireworks_ai/accounts/fireworks/models/qwq-32b
-  remove_reasoning: think
+  reasoning_tag: think
   edit_format: diff
   weak_model_name: fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct
   use_repo_map: true
@@ -872,7 +913,7 @@
       top_p: 0.95
 
 - name: groq/qwen-qwq-32b
-  remove_reasoning: think
+  reasoning_tag: think
   edit_format: diff
   weak_model_name: groq/qwen-2.5-coder-32b
   use_repo_map: true
@@ -1003,3 +1044,30 @@
     extra_headers:
       editor-version: Neovim/0.9.0
       Copilot-Integration-Id: vscode-chat
+
+- name: cohere_chat/command-a-03-2025
+  examples_as_sys_msg: true
+
+- name: openrouter/cohere/command-a-03-2025
+  examples_as_sys_msg: true
+
+- name: gemini/gemma-3-27b-it
+  use_system_prompt: false
+  
+- name: openrouter/google/gemma-3-27b-it:free
+  use_system_prompt: false
+  
+- name: openrouter/google/gemma-3-27b-it
+  use_system_prompt: false
+  
+- name: gemini/gemini-2.5-pro-exp-03-25
+  edit_format: diff-fenced
+  use_repo_map: true
+
+- name: openrouter/google/gemini-2.5-pro-exp-03-25:free
+  edit_format: diff-fenced
+  use_repo_map: true
+
+- name: vertex_ai/gemini-2.5-pro-exp-03-25
+  edit_format: diff-fenced
+  use_repo_map: true

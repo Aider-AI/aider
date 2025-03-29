@@ -18,6 +18,7 @@ from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.filters import Condition, is_searching
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.key_binding.vi_state import InputMode
 from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.output.vt100 import is_dumb_terminal
@@ -34,6 +35,7 @@ from rich.text import Text
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
+from .editor import pipe_editor
 from .utils import is_image_file
 
 # Constants
@@ -66,6 +68,13 @@ def restore_multiline(func):
             self.multiline_mode = orig_multiline
 
     return wrapper
+
+
+class CommandCompletionException(Exception):
+    """Raised when a command should use the normal autocompleter instead of
+    command-specific completion."""
+
+    pass
 
 
 @dataclass
@@ -186,14 +195,23 @@ class AutoCompleter(Completer):
             return
 
         if text[0] == "/":
-            yield from self.get_command_completions(document, complete_event, text, words)
-            return
+            try:
+                yield from self.get_command_completions(document, complete_event, text, words)
+                return
+            except CommandCompletionException:
+                # Fall through to normal completion
+                pass
 
         candidates = self.words
         candidates.update(set(self.fname_to_rel_fnames))
         candidates = [word if type(word) is tuple else (word, word) for word in candidates]
 
         last_word = words[-1]
+
+        # Only provide completions if the user has typed at least 3 characters
+        if len(last_word) < 3:
+            return
+
         completions = []
         for word_match, word_insert in candidates:
             if word_match.lower().startswith(last_word.lower()):
@@ -487,11 +505,16 @@ class InputOutput:
                 get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
             ]
             show = self.format_files_for_input(rel_fnames, rel_read_only_fnames)
+
+        prompt_prefix = ""
         if edit_format:
-            show += edit_format
+            prompt_prefix += edit_format
         if self.multiline_mode:
-            show += (" " if edit_format else "") + "multi"
-        show += "> "
+            prompt_prefix += (" " if edit_format else "") + "multi"
+        prompt_prefix += "> "
+
+        show += prompt_prefix
+        self.prompt_prefix = prompt_prefix
 
         inp = ""
         multiline_input = False
@@ -534,12 +557,31 @@ class InputOutput:
         def _(event):
             "Navigate forward through history"
             event.current_buffer.history_forward()
+            
+        @kb.add("c-x", "c-e")
+        def _(event):
+            "Edit current input in external editor (like Bash)"
+            buffer = event.current_buffer
+            current_text = buffer.text
+            
+            # Open the editor with the current text
+            edited_text = pipe_editor(input_data=current_text)
+            
+            # Replace the buffer with the edited text, strip any trailing newlines
+            buffer.text = edited_text.rstrip('\n')
+            
+            # Move cursor to the end of the text
+            buffer.cursor_position = len(buffer.text)
 
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             "Handle Enter key press"
-            if self.multiline_mode:
-                # In multiline mode, Enter adds a newline
+            if self.multiline_mode and not (
+                self.editingmode == EditingMode.VI
+                and event.app.vi_state.input_mode == InputMode.NAVIGATION
+            ):
+                # In multiline mode and if not in vi-mode or vi navigation/normal mode,
+                # Enter adds a newline
                 event.current_buffer.insert_text("\n")
             else:
                 # In normal mode, Enter submits
@@ -557,7 +599,7 @@ class InputOutput:
 
         while True:
             if multiline_input:
-                show = ". "
+                show = self.prompt_prefix
 
             try:
                 if self.prompt_session:
@@ -573,7 +615,7 @@ class InputOutput:
                             self.clipboard_watcher.start()
 
                     def get_continuation(width, line_number, is_soft_wrap):
-                        return ". "
+                        return self.prompt_prefix
 
                     line = self.prompt_session.prompt(
                         show,

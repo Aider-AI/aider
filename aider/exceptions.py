@@ -83,4 +83,8 @@ class LiteLLMExceptions:
                 )
             if "boto3" in str(ex):
                 return ExInfo("APIConnectionError", False, "You need to: pip install boto3")
+            if "OpenrouterException" in str(ex) and "'choices'" in str(ex):
+                return ExInfo(
+                    "APIConnectionError", True, "The OpenRouter API provider is down or overloaded."
+                )
         return self.exceptions.get(ex.__class__, ExInfo(None, None, None))

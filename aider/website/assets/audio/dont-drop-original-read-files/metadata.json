@@ -1,0 +1,11 @@
+{
+  "00-10": "We've added files that handle the main CLI and in-chat slash commands like /drop.",
+  "00-20": "Let's explain the needed change to aider.",
+  "01-20": "Ok, let's look at the code.",
+  "01-30": "I'd prefer not to use \"hasattr()\", let's ask for improvements.",
+  "01-45": "Let's try some manual testing.",
+  "02-10": "Looks good. Let's check the existing test suite to ensure we didn't break anything.",
+  "02-19": "Let's ask aider to add tests for this.",
+  "02-50": "Tests look reasonable, we're done!",
+  "00-01": "We're going to update the /drop command to keep any read only files that were originally specified at launch."
+}

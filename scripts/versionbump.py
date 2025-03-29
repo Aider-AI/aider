@@ -66,9 +66,7 @@ def check_main_branch_up_to_date():
 # Function to check if we can push to the origin repository
 def check_ok_to_push():
     print("Checking if it's ok to push to origin repository...")
-    result = subprocess.run(["git", "push", "--dry-run", "origin"], capture_output=True, text=True)
-    print(result.stdout)
-    print(result.stderr)
+    result = subprocess.run(["git", "push", "--dry-run", "origin"])
 
     if result.returncode != 0:
         print("Error: Cannot push to origin repository.")
@@ -123,7 +121,7 @@ def main():
         ["git", "add", "aider/__init__.py"],
         ["git", "commit", "-m", f"version bump to {new_version}"],
         ["git", "tag", f"v{new_version}"],
-        ["git", "push", "origin"],
+        ["git", "push", "origin", "--no-verify"],
         ["git", "push", "origin", f"v{new_version}", "--no-verify"],
     ]
 

@@ -87,6 +87,8 @@ Aider optimizes the repo map by
 selecting the most important parts of the codebase
 which will
 fit into the active token budget.
+The optimization identifies and maps the portions of the code base
+which are most relevant to the current state of the chat.
 
 The token budget is
 influenced by the `--map-tokens` switch, which defaults to 1k tokens.

@@ -1,0 +1,11 @@
+{
+  "00-01": "We're going to add a new feature to automatically accept edits proposed by the architect model.",
+  "00-11": "First, let's add the new switch.",
+  "00-40": "Aider figured out that it should be passed to the Coder class.",
+  "00-48": "Now we need to implement the functionality.",
+  "01-00": "Let's do some manual testing.",
+  "01-28": "That worked. Let's make sure we can turn it off too.",
+  "02-00": "Let's quickly tidy up the changes to HISTORY.",
+  "02-05": "All done!",
+  "01-42": "That worked too. Let's have aider update the HISTORY file to document the new feature."
+}

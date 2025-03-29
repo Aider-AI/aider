@@ -3,9 +3,12 @@
 import io
 import time
 
+from rich import box
 from rich.console import Console
 from rich.live import Live
-from rich.markdown import Markdown
+from rich.markdown import CodeBlock, Heading, Markdown
+from rich.panel import Panel
+from rich.syntax import Syntax
 from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
@@ -44,6 +47,46 @@ _text_suffix = """
 The end.
 
 """  # noqa: E501
+
+
+class NoInsetCodeBlock(CodeBlock):
+    """A code block with syntax highlighting and no padding."""
+
+    def __rich_console__(self, console, options):
+        code = str(self.text).rstrip()
+        syntax = Syntax(code, self.lexer_name, theme=self.theme, word_wrap=True, padding=(1, 0))
+        yield syntax
+
+
+class LeftHeading(Heading):
+    """A heading class that renders left-justified."""
+
+    def __rich_console__(self, console, options):
+        text = self.text
+        text.justify = "left"  # Override justification
+        if self.tag == "h1":
+            # Draw a border around h1s, but keep text left-aligned
+            yield Panel(
+                text,
+                box=box.HEAVY,
+                style="markdown.h1.border",
+            )
+        else:
+            # Styled text for h2 and beyond
+            if self.tag == "h2":
+                yield Text("")  # Keep the blank line before h2
+            yield text
+
+
+class NoInsetMarkdown(Markdown):
+    """Markdown with code blocks that have no padding and left-justified headings."""
+
+    elements = {
+        **Markdown.elements,
+        "fence": NoInsetCodeBlock,
+        "code_block": NoInsetCodeBlock,
+        "heading_open": LeftHeading,
+    }
 
 
 class MarkdownStream:
@@ -88,7 +131,7 @@ class MarkdownStream:
         # Render the markdown to a string buffer
         string_io = io.StringIO()
         console = Console(file=string_io, force_terminal=True)
-        markdown = Markdown(text, **self.mdargs)
+        markdown = NoInsetMarkdown(text, **self.mdargs)
         console.print(markdown)
         output = string_io.getvalue()
 
@@ -186,6 +229,7 @@ if __name__ == "__main__":
     _text = _text * 10
 
     pm = MarkdownStream()
+    print("Using NoInsetMarkdown for code blocks with padding=0")
     for i in range(6, len(_text), 5):
         pm.update(_text[:i])
         time.sleep(0.01)

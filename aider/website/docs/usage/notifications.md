@@ -44,6 +44,29 @@ For example, on macOS you might use:
 aider --notifications-command "say 'Aider is ready'"
 ```
 
+### Remote Notifications
+
+For remote notifications you could use [Apprise](https://github.com/caronc/apprise),
+which is a cross-platform Python library for sending notifications to various services.
+
+We can use Apprise to send notifications to Slack
+
+```bash
+aider --notifications-command "apprise -b 'Aider is ready' 'slack://your-slack-webhook-token'"
+```
+
+or Discord
+```bash
+aider --notifications-command "apprise -b 'Aider is ready' 'discord://your-discord-webhook-token'"
+```
+
+or even to your phone via Pushbullet
+```bash
+aider --notifications-command "apprise -b 'Aider is ready' 'pbul://your-pushbullet-access-token'"
+```
+
+Check more how to use and configure Apprise on their GitHub page.
+
 ## Configuration
 
 You can add these settings to your configuration file:

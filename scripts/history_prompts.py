@@ -1,10 +1,14 @@
 history_prompt = """
-Update the history with changes shown in the diffs.
+Update the history doc with changes shown in the diffs.
 Describe actual user-facing changes, not every single commit that was made implementing them.
 
 Only add new items not already listed.
 Do NOT edit or update existing history entries.
 Do NOT add duplicate entries for changes that have existing history entries.
+
+Pay attention to see if changes are later modified or superseded.
+The history doc should only reflect the *final* version of changes which have evolved within a version's commit history.
+If the history doc already describes the final behavior, don't document the changes that led us there.
 
 End each bullet with a period.
 

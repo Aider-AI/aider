@@ -16,6 +16,6 @@ export DEEPSEEK_API_KEY=<key> # Mac/Linux
 setx   DEEPSEEK_API_KEY <key> # Windows, restart shell after setx
 
 # Use DeepSeek Chat v3
-aider --deepseek
+aider --model deepseek/deepseek-chat
 ```
 

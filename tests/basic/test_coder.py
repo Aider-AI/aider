@@ -37,7 +37,9 @@ class TestCoder(unittest.TestCase):
             repo.git.commit("-m", "init")
 
             # YES!
-            io = InputOutput(yes=True)
+            # Use a completely mocked IO object instead of a real one
+            io = MagicMock()
+            io.confirm_ask = MagicMock(return_value=True)
             coder = Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
@@ -282,6 +284,87 @@ class TestCoder(unittest.TestCase):
             coder.check_for_file_mentions(f"Please check `{fname}`")
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
+
+    def test_get_file_mentions_various_formats(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            test_files = [
+                "file1.txt",
+                "file2.py",
+                "dir/nested_file.js",
+                "dir/subdir/deep_file.html",
+                "file99.txt",
+                "special_chars!@#.md",
+            ]
+
+            # Pre-format the Windows path to avoid backslash issues in f-string expressions
+            windows_path = test_files[2].replace("/", "\\")
+            win_path3 = test_files[3].replace("/", "\\")
+
+            for fname in test_files:
+                fpath = Path(fname)
+                fpath.parent.mkdir(parents=True, exist_ok=True)
+                fpath.touch()
+
+            # Mock get_addable_relative_files to return our test files
+            coder.get_addable_relative_files = MagicMock(return_value=set(test_files))
+
+            # Test different mention formats
+            test_cases = [
+                # Simple plain text mentions
+                (f"You should edit {test_files[0]} first", {test_files[0]}),
+                # Multiple files in plain text
+                (f"Edit both {test_files[0]} and {test_files[1]}", {test_files[0], test_files[1]}),
+                # Files in backticks
+                (f"Check the file `{test_files[2]}`", {test_files[2]}),
+                # Files in code blocks
+                (f"```\n{test_files[3]}\n```", {test_files[3]}),
+                # Files in code blocks with language specifier
+                # (
+                #    f"```python\nwith open('{test_files[1]}', 'r') as f:\n"
+                #    f"    data = f.read()\n```",
+                #    {test_files[1]},
+                # ),
+                # Files with Windows-style paths
+                (f"Edit the file {windows_path}", {test_files[2]}),
+                # Files with different quote styles
+                (f'Check "{test_files[5]}" now', {test_files[5]}),
+                # All files in one complex message
+                (
+                    (
+                        f"First, edit `{test_files[0]}`. Then modify {test_files[1]}.\n"
+                        f"```js\n// Update this file\nconst file = '{test_files[2]}';\n```\n"
+                        f"Finally check {win_path3}"
+                    ),
+                    {test_files[0], test_files[1], test_files[2], test_files[3]},
+                ),
+                # Files mentioned in markdown bold format
+                (f"You should check **{test_files[0]}** for issues", {test_files[0]}),
+                (
+                    f"Look at both **{test_files[1]}** and **{test_files[2]}**",
+                    {test_files[1], test_files[2]},
+                ),
+                (
+                    f"The file **{win_path3}** needs updating",
+                    {test_files[3]},
+                ),
+                (
+                    f"Files to modify:\n- **{test_files[0]}**\n- **{test_files[4]}**",
+                    {test_files[0], test_files[4]},
+                ),
+            ]
+
+            for content, expected_mentions in test_cases:
+                with self.subTest(content=content):
+                    mentioned_files = coder.get_file_mentions(content)
+                    self.assertEqual(
+                        mentioned_files,
+                        expected_mentions,
+                        f"Failed to extract mentions from: {content}",
+                    )
 
     def test_get_file_mentions_path_formats(self):
         with GitTemporaryDirectory():
@@ -1058,6 +1141,112 @@ This command will print 'Hello, World!' to the console."""
             # Verify message structure remains valid
             sanity_check_messages(coder.cur_messages)
             self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
+
+    def test_architect_coder_auto_accept_true(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=True)
+
+            # Create an ArchitectCoder with auto_accept_architect=True
+            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+                from aider.coders.architect_coder import ArchitectCoder
+
+                coder = ArchitectCoder()
+                coder.io = io
+                coder.main_model = self.GPT35
+                coder.auto_accept_architect = True
+                coder.verbose = False
+                coder.total_cost = 0
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
+
+                # Mock editor_coder creation and execution
+                mock_editor = MagicMock()
+                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                    # Set partial response content
+                    coder.partial_response_content = "Make these changes to the code"
+
+                    # Call reply_completed
+                    coder.reply_completed()
+
+                    # Verify that confirm_ask was not called (auto-accepted)
+                    io.confirm_ask.assert_not_called()
+
+                    # Verify that editor coder was created and run
+                    mock_editor.run.assert_called_once()
+
+    def test_architect_coder_auto_accept_false_confirmed(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=False)
+            io.confirm_ask = MagicMock(return_value=True)
+
+            # Create an ArchitectCoder with auto_accept_architect=False
+            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+                from aider.coders.architect_coder import ArchitectCoder
+
+                coder = ArchitectCoder()
+                coder.io = io
+                coder.main_model = self.GPT35
+                coder.auto_accept_architect = False
+                coder.verbose = False
+                coder.total_cost = 0
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
+
+                # Mock editor_coder creation and execution
+                mock_editor = MagicMock()
+                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                    # Set partial response content
+                    coder.partial_response_content = "Make these changes to the code"
+
+                    # Call reply_completed
+                    coder.reply_completed()
+
+                    # Verify that confirm_ask was called
+                    io.confirm_ask.assert_called_once_with("Edit the files?")
+
+                    # Verify that editor coder was created and run
+                    mock_editor.run.assert_called_once()
+
+    def test_architect_coder_auto_accept_false_rejected(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=False)
+            io.confirm_ask = MagicMock(return_value=False)
+
+            # Create an ArchitectCoder with auto_accept_architect=False
+            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+                from aider.coders.architect_coder import ArchitectCoder
+
+                coder = ArchitectCoder()
+                coder.io = io
+                coder.main_model = self.GPT35
+                coder.auto_accept_architect = False
+                coder.verbose = False
+                coder.total_cost = 0
+
+                # Mock editor_coder creation and execution
+                mock_editor = MagicMock()
+                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                    # Set partial response content
+                    coder.partial_response_content = "Make these changes to the code"
+
+                    # Call reply_completed
+                    coder.reply_completed()
+
+                    # Verify that confirm_ask was called
+                    io.confirm_ask.assert_called_once_with("Edit the files?")
+
+                    # Verify that editor coder was NOT created or run
+                    # (because user rejected the changes)
+                    mock_editor.run.assert_not_called()
 
 
 if __name__ == "__main__":
