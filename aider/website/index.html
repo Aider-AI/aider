@@ -63,7 +63,7 @@ layout: none
             
             <div class="stats-container">
 <!--[[[cog
-from scripts.badges import get_badges_html
+from scripts.homepage import get_badges_html
 text = get_badges_html()
 cog.out(text)
 ]]]-->
@@ -262,7 +262,7 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
     </style>
 
 <!--[[[cog
-from scripts.badges import get_testimonials_js
+from scripts.homepage import get_testimonials_js
 text = get_testimonials_js()
 cog.out(text)
 ]]]-->
