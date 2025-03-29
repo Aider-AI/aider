@@ -338,8 +338,7 @@ def start_openrouter_oauth_flow(io, analytics):
             config_dir = os.path.expanduser("~/.aider")
             os.makedirs(config_dir, exist_ok=True)
             key_file = os.path.join(config_dir, "oauth-keys.env")
-            # append ai!
-            with open(key_file, "w", encoding="utf-8") as f:
+            with open(key_file, "a", encoding="utf-8") as f:
                 f.write(f'OPENROUTER_API_KEY="{api_key}"\n')
             io.tool_output(f"Successfully obtained OpenRouter API key and saved it to {key_file}")
             io.tool_output("Aider will load this key automatically in future sessions.")
