@@ -16,31 +16,65 @@ from aider.io import InputOutput
 from aider.utils import check_pip_install_extra
 
 
+def check_openrouter_tier(api_key):
+    """
+    Checks if the user is on a free tier for OpenRouter.
+    
+    Args:
+        api_key: The OpenRouter API key to check.
+    
+    Returns:
+        A boolean indicating if the user is on a free tier (True) or paid tier (False).
+        Returns False if the check fails.
+    """
+    try:
+        response = requests.get(
+            "https://openrouter.ai/api/v1/auth/key",
+            headers={"Authorization": f"Bearer {api_key}"},
+            timeout=5  # Add a reasonable timeout
+        )
+        response.raise_for_status()
+        data = response.json()
+        # According to the documentation, 'is_free_tier' will be true if the user has never paid
+        return data.get("data", {}).get("is_free_tier", True)  # Default to True if not found
+    except Exception:
+        # If there's any error, we'll default to assuming paid tier to be safe
+        return False
+
+
 def try_to_select_default_model():
     """
     Attempts to select a default model based on available API keys.
+    Checks OpenRouter tier status to select appropriate model.
 
     Returns:
         The name of the selected model, or None if no suitable default is found.
     """
-    # Select model based on available API keys
+    # Special handling for OpenRouter
+    openrouter_key = os.environ.get("OPENROUTER_API_KEY")
+    if openrouter_key:
+        # Check if the user is on a free tier
+        is_free_tier = check_openrouter_tier(openrouter_key)
+        if is_free_tier:
+            return "openrouter/google/gemini-2.5-pro-exp-03-25:free"
+        else:
+            return "openrouter/anthropic/claude-3.7-sonnet"
+    
+    # Select model based on other available API keys
     model_key_pairs = [
         ("ANTHROPIC_API_KEY", "sonnet"),
         ("DEEPSEEK_API_KEY", "deepseek"),
-        ("OPENROUTER_API_KEY", "openrouter/anthropic/claude-3.7-sonnet"),
         ("OPENAI_API_KEY", "gpt-4o"),
         ("GEMINI_API_KEY", "gemini/gemini-2.5-pro-exp-03-25"),
         ("VERTEXAI_PROJECT", "vertex_ai/gemini-2.5-pro-exp-03-25"),
     ]
 
-    selected_model = None
     for env_key, model_name in model_key_pairs:
         api_key_value = os.environ.get(env_key)
         if api_key_value:
-            selected_model = model_name
-            break
+            return model_name
 
-    return selected_model
+    return None
 
 
 def offer_openrouter_oauth(io, analytics):
