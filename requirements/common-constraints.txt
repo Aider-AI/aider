@@ -27,8 +27,6 @@ backoff==2.2.1
     # via
     #   -r requirements/requirements.in
     #   posthog
-banks==2.0.0
-    # via llama-index-core
 beautifulsoup4==4.13.3
     # via -r requirements/requirements.in
 blinker==1.9.0
@@ -61,8 +59,6 @@ codespell==2.4.1
     # via -r requirements/requirements-dev.in
 cogapp==3.4.1
     # via -r requirements/requirements-dev.in
-colorama==0.4.6
-    # via griffe
 configargparse==1.7
     # via -r requirements/requirements.in
 contourpy==1.3.1
@@ -72,9 +68,7 @@ cycler==0.12.1
 dataclasses-json==0.6.7
     # via llama-index-core
 deprecated==1.2.18
-    # via
-    #   banks
-    #   llama-index-core
+    # via llama-index-core
 diff-match-patch==20241021
     # via -r requirements/requirements.in
 dill==0.3.9
@@ -124,8 +118,6 @@ greenlet==3.1.1
     #   sqlalchemy
 grep-ast==0.8.1
     # via -r requirements/requirements.in
-griffe==1.7.0
-    # via banks
 h11==0.14.0
     # via httpcore
 httpcore==1.0.7
@@ -157,12 +149,11 @@ importlib-metadata==7.2.1
     #   litellm
 importlib-resources==6.5.2
     # via -r requirements/requirements.in
-iniconfig==2.1.0
+iniconfig==2.0.0
     # via pytest
 jinja2==3.1.6
     # via
     #   altair
-    #   banks
     #   litellm
     #   pydeck
     #   torch
@@ -183,9 +174,9 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.65.0
+litellm==1.63.11
     # via -r requirements/requirements.in
-llama-index-core==0.12.27
+llama-index-core==0.12.24.post1
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -219,7 +210,7 @@ multiprocess==0.70.17
     # via pathos
 mypy-extensions==1.0.0
     # via typing-inspect
-narwhals==1.32.0
+narwhals==1.31.0
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -245,7 +236,7 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
-openai==1.69.0
+openai==1.66.3
     # via litellm
 packaging==24.2
     # via
@@ -283,27 +274,27 @@ pip==25.0.1
     #   pip-tools
 pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
-platformdirs==4.3.7
+platformdirs==4.3.6
     # via virtualenv
-playwright==1.51.0
+playwright==1.50.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.5.0
     # via pytest
-posthog==3.23.0
+posthog==3.21.0
     # via -r requirements/requirements.in
 pox==0.3.5
     # via pathos
 ppft==1.7.6.9
     # via pathos
-pre-commit==4.2.0
+pre-commit==4.1.0
     # via -r requirements/requirements-dev.in
 prompt-toolkit==3.0.50
     # via -r requirements/requirements.in
-propcache==0.3.1
+propcache==0.3.0
     # via
     #   aiohttp
     #   yarl
-protobuf==5.29.4
+protobuf==5.29.3
     # via streamlit
 psutil==7.0.0
     # via -r requirements/requirements.in
@@ -315,13 +306,12 @@ pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.11.1
+pydantic==2.10.6
     # via
-    #   banks
     #   litellm
     #   llama-index-core
     #   openai
-pydantic-core==2.33.0
+pydantic-core==2.27.2
     # via pydantic
 pydeck==0.9.1
     # via streamlit
@@ -335,7 +325,7 @@ pygments==2.19.1
     # via rich
 pypandoc==1.15
     # via -r requirements/requirements.in
-pyparsing==3.2.3
+pyparsing==3.2.1
     # via matplotlib
 pyperclip==1.9.0
     # via -r requirements/requirements.in
@@ -354,9 +344,9 @@ python-dateutil==2.9.0.post0
     #   matplotlib
     #   pandas
     #   posthog
-python-dotenv==1.1.0
+python-dotenv==1.0.1
     # via litellm
-pytz==2025.2
+pytz==2025.1
     # via pandas
 pyyaml==6.0.2
     # via
@@ -387,7 +377,7 @@ rich==13.9.4
     # via
     #   -r requirements/requirements.in
     #   typer
-rpds-py==0.24.0
+rpds-py==0.23.1
     # via
     #   jsonschema
     #   referencing
@@ -402,9 +392,9 @@ scipy==1.13.1
     #   sentence-transformers
 semver==3.0.4
     # via -r requirements/requirements-dev.in
-sentence-transformers==4.0.1
+sentence-transformers==3.4.1
     # via llama-index-embeddings-huggingface
-setuptools==78.1.0
+setuptools==76.0.0
     # via pip-tools
 shellingham==1.5.4
     # via typer
@@ -427,9 +417,9 @@ soundfile==0.13.1
     # via -r requirements/requirements.in
 soupsieve==2.6
     # via beautifulsoup4
-sqlalchemy[asyncio]==2.0.40
+sqlalchemy[asyncio]==2.0.39
     # via llama-index-core
-streamlit==1.44.0
+streamlit==1.43.2
     # via -r requirements/requirements-browser.in
 sympy==1.13.3
     # via torch
@@ -463,7 +453,7 @@ tqdm==4.67.1
     #   openai
     #   sentence-transformers
     #   transformers
-transformers==4.50.3
+transformers==4.49.0
     # via sentence-transformers
 tree-sitter==0.24.0
     # via tree-sitter-language-pack
@@ -477,7 +467,7 @@ tree-sitter-yaml==0.7.0
     # via tree-sitter-language-pack
 typer==0.15.2
     # via -r requirements/requirements-dev.in
-typing-extensions==4.13.0
+typing-extensions==4.12.2
     # via
     #   altair
     #   anyio
@@ -489,26 +479,22 @@ typing-extensions==4.13.0
     #   pydantic-core
     #   pyee
     #   referencing
-    #   sentence-transformers
     #   sqlalchemy
     #   streamlit
     #   torch
     #   typer
     #   typing-inspect
-    #   typing-inspection
 typing-inspect==0.9.0
     # via
     #   dataclasses-json
     #   llama-index-core
-typing-inspection==0.4.0
-    # via pydantic
-tzdata==2025.2
+tzdata==2025.1
     # via pandas
 urllib3==2.3.0
     # via
     #   mixpanel
     #   requests
-uv==0.6.10
+uv==0.6.6
     # via -r requirements/requirements-dev.in
 virtualenv==20.29.3
     # via pre-commit

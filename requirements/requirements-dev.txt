@@ -54,7 +54,7 @@ imgcat==0.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-iniconfig==2.1.0
+iniconfig==2.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
@@ -118,7 +118,7 @@ pip-tools==7.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-platformdirs==4.3.7
+platformdirs==4.3.6
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
@@ -134,7 +134,7 @@ ppft==1.7.6.9
     # via
     #   -c requirements/common-constraints.txt
     #   pathos
-pre-commit==4.2.0
+pre-commit==4.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -142,7 +142,7 @@ pygments==2.19.1
     # via
     #   -c requirements/common-constraints.txt
     #   rich
-pyparsing==3.2.3
+pyparsing==3.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
@@ -165,7 +165,7 @@ python-dateutil==2.9.0.post0
     #   -c requirements/common-constraints.txt
     #   matplotlib
     #   pandas
-pytz==2025.2
+pytz==2025.1
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
@@ -181,7 +181,7 @@ semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-setuptools==78.1.0
+setuptools==76.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
@@ -197,15 +197,15 @@ typer==0.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-typing-extensions==4.13.0
+typing-extensions==4.12.2
     # via
     #   -c requirements/common-constraints.txt
     #   typer
-tzdata==2025.2
+tzdata==2025.1
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-uv==0.6.10
+uv==0.6.6
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
