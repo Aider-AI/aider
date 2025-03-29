@@ -32,6 +32,16 @@ def select_default_model(args, io, analytics):
     if args.model:
         return args.model  # Model already specified
 
+
+    model = try_to_select_default_model()
+    if model:
+        return model
+
+    offer_openrouter_oauth()
+    return try_to_select_default_model()
+
+    # ai: refactor this into try_to_select_default_model() ai!
+
     # Select model based on available API keys
     model_key_pairs = [
         ("ANTHROPIC_API_KEY", "sonnet"),
@@ -56,8 +66,9 @@ def select_default_model(args, io, analytics):
             analytics.event("auto_model_selection", api_key=env_key)
             break
 
-    if selected_model:
-        return selected_model
+    return selected_model
+
+    # ai: refactor this into offer_openrouter_oaut() ...
 
     # No API keys found - Offer OpenRouter OAuth
     io.tool_warning(
@@ -75,16 +86,15 @@ def select_default_model(args, io, analytics):
             # Successfully got key via OAuth, use the default OpenRouter model
             # Ensure OPENROUTER_API_KEY is now set in the environment for later use
             os.environ["OPENROUTER_API_KEY"] = openrouter_key
-            selected_model = "openrouter/anthropic/claude-3.7-sonnet"  # Default OR model
-            io.tool_warning(f"Using {selected_model} model via OpenRouter OAuth.")
             # Track OAuth success leading to model selection
-            analytics.event("auto_model_selection", api_key="OPENROUTER_API_KEY_OAUTH")
-            return selected_model
-        else:
-            # OAuth failed or was cancelled by user implicitly (e.g., closing browser)
-            # Error messages are handled within start_openrouter_oauth_flow
-            io.tool_error("OpenRouter authentication did not complete successfully.")
-            # Fall through to the final error message
+            analytics.event("oauth_flow_success")
+            return True
+
+        # OAuth failed or was cancelled by user implicitly (e.g., closing browser)
+        # Error messages are handled within start_openrouter_oauth_flow
+        analytics.event("oauth_flow_failure")
+        io.tool_error("OpenRouter authentication did not complete successfully.")
+        # Fall through to the final error message
 
     # Final fallback if no key found and OAuth not attempted or failed/declined
     io.tool_error("No model specified and no API key found or configured.")
@@ -94,7 +104,6 @@ def select_default_model(args, io, analytics):
         "or specify both --model and --api-key."
     )
     io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
-    analytics.event("auto_model_selection", api_key=None)  # Track failure
     return None
 
 
