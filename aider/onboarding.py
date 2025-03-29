@@ -322,7 +322,7 @@ def start_openrouter_oauth_flow(io, analytics):
 
     try:
         webbrowser.open(auth_url)
-    except Exception as e:
+    except Exception:
         pass
 
     # Wait for the callback to set the auth_code or for timeout/error
