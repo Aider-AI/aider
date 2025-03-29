@@ -768,16 +768,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         for env_key, model_name in model_key_pairs:
             if os.environ.get(env_key):
                 args.model = model_name
-                io.tool_warning(
-                    f"Found {env_key} so using {model_name} since no --model was specified."
-                )
+                io.tool_warning(f"Using {model_name} model with {env_key} environment variable.")
                 # Track which API key was used for auto-selection
-                analytics.event("auto_model_selection", api_key=env_key, main_model=model_name)
+                analytics.event("auto_model_selection", api_key=env_key)
                 break
         if not args.model:
             io.tool_error("You need to specify a --model and an --api-key to use.")
             io.offer_url(urls.models_and_keys, "Open documentation url for more info?")
-            analytics.event("auto_model_selection", api_key=None, main_model=None)
+            analytics.event("auto_model_selection", api_key=None)
             return 1
 
     main_model = models.Model(
