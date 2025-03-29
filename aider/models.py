@@ -723,14 +723,14 @@ class Model(ModelSettings):
                     return f"{value:.1f}k"
         return None
 
-    def get_reasoning_effort(self, model):
+    def get_reasoning_effort(self):
         """Get reasoning effort value if available"""
         if (
-            model.extra_params
-            and "extra_body" in model.extra_params
-            and "reasoning_effort" in model.extra_params["extra_body"]
+            self.extra_params
+            and "extra_body" in self.extra_params
+            and "reasoning_effort" in self.extra_params["extra_body"]
         ):
-            return model.extra_params["extra_body"]["reasoning_effort"]
+            return self.extra_params["extra_body"]["reasoning_effort"]
         return None
 
     def is_deepseek_r1(self):
