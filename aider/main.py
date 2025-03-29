@@ -771,6 +771,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 io.tool_warning(
                     f"Found {env_key} so using {model_name} since no --model was specified."
                 )
+                # Track which API key was used for auto-selection
+                analytics.event("auto_model_selection", api_key=env_key, model_selected=model_name)
                 break
         if not args.model:
             io.tool_error("You need to specify a --model and an --api-key to use.")
@@ -922,6 +924,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         map_tokens = args.map_tokens
 
+    # Track auto-commits configuration
+    analytics.event("auto_commits", enabled=bool(args.auto_commits))
+    
     try:
         coder = Coder.create(
             main_model=main_model,
