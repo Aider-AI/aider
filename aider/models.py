@@ -688,11 +688,11 @@ class Model(ModelSettings):
             else:
                 self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
-    def get_thinking_tokens(self, model):
+    def get_raw_thinking_tokens(self):
         """Get formatted thinking token budget if available"""
         budget = None
 
-        if model.extra_params:
+        if self.extra_params:
             # Check for OpenRouter reasoning format
             if (
                 "reasoning" in model.extra_params
@@ -705,6 +705,11 @@ class Model(ModelSettings):
                 and "budget_tokens" in model.extra_params["thinking"]
             ):
                 budget = model.extra_params["thinking"]["budget_tokens"]
+
+        return budget
+
+    def get_thinking_tokens(self):
+        budget = self.get_raw_thinking_tokens()
 
         if budget is not None:
             # Format as xx.yK for thousands, xx.yM for millions
