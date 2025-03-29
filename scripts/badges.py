@@ -455,7 +455,7 @@ def get_testimonials_js():
 
         js_array = "const testimonials = [\n"
         for i, t in enumerate(testimonials):
-            js_array += f"    {{\n"
+            js_array += "    {\n"
             js_array += f"        text: \"{t['text']}\",\n"
             js_array += f"        author: \"{t['author']}\",\n"
             js_array += f"        link: \"{t['link']}\"\n"
