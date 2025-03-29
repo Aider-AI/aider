@@ -55,9 +55,7 @@ def offer_openrouter_oauth(io, analytics):
         True if authentication was successful, False otherwise.
     """
     # No API keys found - Offer OpenRouter OAuth
-    io.tool_warning(
-        "No model was specified and no API keys were provided."
-    )
+    io.tool_warning("No model was specified and no API keys were provided.")
     io.tool_output("OpenRouter provides free and paid access to many LLMs.")
     # Use confirm_ask which handles non-interactive cases
     if io.confirm_ask(
