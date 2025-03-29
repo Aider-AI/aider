@@ -470,19 +470,24 @@ const testimonials = [
             // Update the displayed testimonial
             const testimonialElement = document.getElementById(`testimonial-${index}`);
             if (testimonialElement) {
-                // Start the flip animation
-                testimonialElement.style.transform = "rotateY(90deg)";
+                // Start fade out with slight upward movement
+                testimonialElement.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+                testimonialElement.style.opacity = "0";
+                testimonialElement.style.transform = "translateY(10px)";
                 
-                // Update content when card is perpendicular to view (hidden)
+                // Update content when fully faded out
                 setTimeout(() => {
                     testimonialElement.innerHTML = `
                         <p class="testimonial-text">${newTestimonial.text}</p>
                         <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
                     `;
                     
-                    // Complete the flip
-                    testimonialElement.style.transform = "rotateY(0deg)";
-                }, 300);
+                    // Start fade in
+                    setTimeout(() => {
+                        testimonialElement.style.opacity = "1";
+                        testimonialElement.style.transform = "translateY(0)";
+                    }, 50);
+                }, 400);
             }
         }
 
