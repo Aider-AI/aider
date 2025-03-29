@@ -202,10 +202,10 @@ def start_openrouter_oauth_flow(io, analytics):
                     self.send_response(302)  # Found (temporary redirect)
                     self.send_header("Location", urls.website)
                     self.end_headers()
-                    # No need to set server_error, just redirect and shut down
-                    shutdown_server.set()
+                    # No need to set server_error, just redirect.
+                    # Do NOT shut down the server here; wait for timeout or success.
             else:
-                # Redirect anything else to the main website as well
+                # Redirect anything else (e.g., favicon.ico) to the main website as well
                 self.send_response(302)
                 self.send_header("Location", urls.website)
                 self.end_headers()
