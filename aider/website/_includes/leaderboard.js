@@ -171,6 +171,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         x: {
           ticks: {
+            autoSkip: false, // Prevent labels from being automatically skipped
+            maxRotation: 90, // Allow labels to rotate up to 90 degrees
+            minRotation: 90, // Force labels to rotate 90 degrees if needed
             callback: function(value, index) {
               const label = this.getLabelForValue(value);
               if (label.length <= "claude-3-5-sonnet".length) {
