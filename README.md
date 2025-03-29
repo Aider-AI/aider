@@ -160,3 +160,6 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"Hands down, this is the best AI coding assistant tool so far."* — [IndyDevDan](https://www.youtube.com/watch?v=MPYFPvxfGZs)
 - *"[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life."* — [maledorak](https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264)
 - *"Best agent for actual dev work in existing codebases."* — [Nick Dobos](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
+- *"One of my favorite pieces of software. Blazing trails on new paradigms!"* — [Chris Wall](https://x.com/chris65536/status/1905053299251798432)
+- *"Aider has been revolutionary for me and my work."* — [Starry Hope](https://x.com/starryhopeblog/status/1904985812137132056)
+- *"Try aider! One of the best ways to vibe code."* — [Chris Wall](https://x.com/Chris65536/status/1905053418961391929)
