@@ -287,18 +287,18 @@ def start_openrouter_oauth_flow(io, analytics):
     server_thread.join(timeout=1)
 
     if interrupted:
-        return None # Return None if interrupted by user
+        return None  # Return None if interrupted by user
 
     if server_error:
         io.tool_error(f"Authentication failed: {server_error}")
         analytics.event("oauth_flow_failed", provider="openrouter", reason=server_error)
         return None
 
-    if not auth_code and not interrupted: # Only show timeout if not interrupted
+    if not auth_code and not interrupted:  # Only show timeout if not interrupted
         io.tool_error("Authentication timed out. No code received from OpenRouter.")
         analytics.event("oauth_flow_failed", provider="openrouter", reason="timeout")
         return None
-    elif not auth_code: # If interrupted, we already printed a message and returned
+    elif not auth_code:  # If interrupted, we already printed a message and returned
         return None
 
     io.tool_output("Authentication code received. Exchanging for API key...")
