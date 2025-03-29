@@ -288,8 +288,8 @@ def start_openrouter_oauth_flow(io, analytics):
     io.tool_output()
     print(auth_url)
 
-    MINUTES=5 # ai!
-    io.tool_output("\nWaiting for authentication... (Timeout: 2 minutes)")
+    MINUTES = 5
+    io.tool_output(f"\nWaiting for authentication... (Timeout: {MINUTES} minutes)")
 
     try:
         webbrowser.open(auth_url)
@@ -300,7 +300,7 @@ def start_openrouter_oauth_flow(io, analytics):
     # Wait for the callback to set the auth_code or for timeout/error
     interrupted = False
     try:
-        shutdown_server.wait(timeout=120)  # 2 minute timeout
+        shutdown_server.wait(timeout=MINUTES * 60)  # Convert minutes to seconds
     except KeyboardInterrupt:
         io.tool_warning("\nOAuth flow interrupted by user.")
         analytics.event("oauth_flow_failed", provider="openrouter", reason="user_interrupt")
