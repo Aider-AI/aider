@@ -568,6 +568,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io = get_io(False)
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
 
+    if args.stream and args.cache_prompts:
+        io.tool_warning("Caching costs may be inaccurate when using --stream.")
+
     # Process any environment variables set via --set-env
     if args.set_env:
         for env_setting in args.set_env:

@@ -1961,11 +1961,6 @@ class Coder:
             f" ${format_cost(self.total_cost)} session."
         )
 
-        if self.add_cache_headers and self.stream:
-            warning = " Use --no-stream for accurate caching costs."
-            self.usage_report = tokens_report + "\n" + cost_report + warning
-            return
-
         if cache_hit_tokens and cache_write_tokens:
             sep = "\n"
         else:
