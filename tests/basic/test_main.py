@@ -1277,7 +1277,7 @@ class TestMain(TestCase):
         mock_io_instance = MockInputOutput.return_value
         with GitTemporaryDirectory():
             main(
-                ["--cache-prompts", "--exit", "--yes"],
+                ["--cache-prompts", "--exit", "--yes", "--no-stream"],
                 input=DummyInput(),
                 output=DummyOutput(),
             )
