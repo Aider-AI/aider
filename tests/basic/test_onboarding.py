@@ -15,7 +15,6 @@ from aider.onboarding import (
     generate_pkce_codes,
     offer_openrouter_oauth,
     select_default_model,
-    start_openrouter_oauth_flow,
     try_to_select_default_model,
 )
 
@@ -457,7 +456,7 @@ class TestOnboarding(unittest.TestCase):
         mock_check_pip,
     ):
         """Test the successful path of start_openrouter_oauth_flow."""
-        io_mock = DummyIO()
+        # We don't need io_mock since we're mocking the entire oauth flow process
         analytics_mock = DummyAnalytics()
         analytics_mock.event = MagicMock()
 
