@@ -98,7 +98,7 @@ if result.returncode == 0:
     date = datetime.datetime.fromtimestamp(timestamp)
     cog.out(f"{date.strftime('%B %d, %Y.')}")
 ]]]-->
-December 06, 2024.
+December 07, 2024.
 <!--[[[end]]]-->
 
 </p>

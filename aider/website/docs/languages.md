@@ -81,7 +81,7 @@ cog.out(get_supported_languages_md())
 | clojure              | .clj                 |          |   ✓    |
 | clojure              | .cljc                |          |   ✓    |
 | clojure              | .cljs                |          |   ✓    |
-| clojure              | .edn                 |          |   ✓    |
+| clojure              | .end                 |          |   ✓    |
 | cmake                | .cmake               |          |   ✓    |
 | cmake                | CMakeLists.txt       |          |   ✓    |
 | commonlisp           | .cl                  |    ✓     |   ✓    |
@@ -215,8 +215,8 @@ cog.out(get_supported_languages_md())
 | rst                  | .rst                 |          |   ✓    |
 | ruby                 | .rb                  |    ✓     |   ✓    |
 | rust                 | .rs                  |    ✓     |   ✓    |
-| scala                | .sc                  |          |   ✓    |
-| scala                | .scala               |          |   ✓    |
+| scala                | .sc                  |    ✓     |   ✓    |
+| scala                | .scala               |    ✓     |   ✓    |
 | scheme               | .scm                 |          |   ✓    |
 | scheme               | .ss                  |          |   ✓    |
 | scss                 | .scss                |          |   ✓    |

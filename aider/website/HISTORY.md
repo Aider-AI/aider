@@ -25,14 +25,21 @@ cog.out(text)
 
 
 ### main branch
-- Offer to OAuth against OpenRouter if no model and keys are provided.
+- OpenRouter OAuth integration:
+  - Offer to OAuth against OpenRouter if no model and keys are provided.
+  - Select OpenRouter default model based on free/paid tier status if `OPENROUTER_API_KEY` is set and no model is specified.
 - Prioritize `gemini/gemini-2.5-pro-exp-03-25` if `GEMINI_API_KEY` is set, and `vertex_ai/gemini-2.5-pro-exp-03-25` if `VERTEXAI_PROJECT` is set, when no model is specified.
-- Select OpenRouter default model based on free/paid tier status if `OPENROUTER_API_KEY` is set and no model is specified.
 - Warn at startup if `--stream` and `--cache-prompts` are used together, as cost estimates may be inaccurate.
 - Boost repomap ranking for files whose path components match identifiers mentioned in the chat.
 - Change web scraping timeout from an error to a warning, allowing scraping to continue with potentially incomplete content.
 - Left-align markdown headings in the terminal output, by Peter Schilling.
-- Aider wrote 90% of the code in this release.
+- Update edit format to the new model's default when switching models with `/model`, if the user was using the old model's default format.
+- Add `Ctrl-X Ctrl-E` keybinding to edit the current input buffer in an external editor, by Matteo Landi.
+- Fix linting errors for filepaths containing shell metacharacters, by Mir Adnan ALI.
+- Add repomap support for the Scala language, by Vasil Markoukin.
+- Add support for GitHub Copilot models.
+- Fix completion menu current item color styling, by Andrey Ivanov.
+- Aider wrote 81% of the code in this release.
 
 ### Aider v0.79.2
 
