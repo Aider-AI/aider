@@ -25,10 +25,6 @@ attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-banks==2.1.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   llama-index-core
 certifi==2025.1.31
     # via
     #   -c requirements/common-constraints.txt
@@ -43,10 +39,6 @@ click==8.1.8
     # via
     #   -c requirements/common-constraints.txt
     #   nltk
-colorama==0.4.6
-    # via
-    #   -c requirements/common-constraints.txt
-    #   griffe
 dataclasses-json==0.6.7
     # via
     #   -c requirements/common-constraints.txt
@@ -54,7 +46,6 @@ dataclasses-json==0.6.7
 deprecated==1.2.18
     # via
     #   -c requirements/common-constraints.txt
-    #   banks
     #   llama-index-core
 dirtyjson==1.0.8
     # via
@@ -85,10 +76,6 @@ greenlet==3.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   sqlalchemy
-griffe==1.7.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   banks
 h11==0.14.0
     # via
     #   -c requirements/common-constraints.txt
@@ -118,14 +105,13 @@ idna==3.10
 jinja2==3.1.6
     # via
     #   -c requirements/common-constraints.txt
-    #   banks
     #   torch
 joblib==1.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   nltk
     #   scikit-learn
-llama-index-core==0.12.27
+llama-index-core==0.12.24.post1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -195,7 +181,6 @@ propcache==0.3.1
 pydantic==2.11.1
     # via
     #   -c requirements/common-constraints.txt
-    #   banks
     #   llama-index-core
 pydantic-core==2.33.0
     # via

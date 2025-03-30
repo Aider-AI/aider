@@ -266,7 +266,7 @@ pydub==0.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pyflakes==3.3.0
+pyflakes==3.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
