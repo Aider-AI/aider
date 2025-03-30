@@ -1143,8 +1143,9 @@ class TestCommands(TestCase):
             self.assertIsNotNone(result)
             self.assertIn(expected_output_fragment, result)
             # Check that the output was also added to cur_messages
-            self.assertTrue(any(expected_output_fragment in msg["content"] for msg in coder.cur_messages))
-
+            self.assertTrue(
+                any(expected_output_fragment in msg["content"] for msg in coder.cur_messages)
+            )
 
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
