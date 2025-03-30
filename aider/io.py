@@ -27,6 +27,7 @@ from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from rich.columns import Columns
+from rich.color import ColorParseError
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.style import Style as RichStyle
