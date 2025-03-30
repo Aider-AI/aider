@@ -77,7 +77,7 @@ filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
-flake8==7.1.2
+flake8==7.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -86,7 +86,7 @@ frozenlist==1.5.0
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   aiosignal
-fsspec==2025.3.0
+fsspec==2025.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.63.11
+litellm==1.65.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -198,7 +198,7 @@ numpy==1.26.4
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.66.3
+openai==1.69.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -224,7 +224,7 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==3.21.0
+posthog==3.23.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -232,7 +232,7 @@ prompt-toolkit==3.0.50
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-propcache==0.3.0
+propcache==0.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -245,7 +245,7 @@ ptyprocess==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   pexpect
-pycodestyle==2.12.1
+pycodestyle==2.13.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
@@ -253,12 +253,12 @@ pycparser==2.22
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
-pydantic==2.10.6
+pydantic==2.11.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-pydantic-core==2.27.2
+pydantic-core==2.33.0
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
@@ -266,7 +266,7 @@ pydub==0.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pyflakes==3.2.0
+pyflakes==3.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
@@ -286,7 +286,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c requirements/common-constraints.txt
     #   posthog
-python-dotenv==1.0.1
+python-dotenv==1.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -311,11 +311,11 @@ requests==2.32.3
     #   mixpanel
     #   posthog
     #   tiktoken
-rich==13.9.4
+rich==14.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-rpds-py==0.23.1
+rpds-py==0.24.0
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
@@ -387,7 +387,7 @@ tree-sitter-yaml==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-typing-extensions==4.12.2
+typing-extensions==4.13.0
     # via
     #   -c requirements/common-constraints.txt
     #   anyio
@@ -397,6 +397,11 @@ typing-extensions==4.12.2
     #   pydantic
     #   pydantic-core
     #   referencing
+    #   typing-inspection
+typing-inspection==0.4.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   pydantic
 urllib3==2.3.0
     # via
     #   -c requirements/common-constraints.txt

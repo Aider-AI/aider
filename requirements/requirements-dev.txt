@@ -111,7 +111,7 @@ imgcat==0.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
@@ -176,7 +176,7 @@ pip-tools==7.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-platformdirs==4.3.6
+platformdirs==4.3.7
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
@@ -192,7 +192,7 @@ ppft==1.7.6.9
     # via
     #   -c requirements/common-constraints.txt
     #   pathos
-pre-commit==4.1.0
+pre-commit==4.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -200,7 +200,7 @@ proto-plus==1.26.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
-protobuf==5.29.3
+protobuf==5.29.4
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -220,7 +220,7 @@ pygments==2.19.1
     # via
     #   -c requirements/common-constraints.txt
     #   rich
-pyparsing==3.2.1
+pyparsing==3.2.3
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
@@ -244,7 +244,7 @@ python-dateutil==2.9.0.post0
     #   google-cloud-bigquery
     #   matplotlib
     #   pandas
-pytz==2025.1
+pytz==2025.2
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
@@ -257,7 +257,7 @@ requests==2.32.3
     #   -c requirements/common-constraints.txt
     #   google-api-core
     #   google-cloud-bigquery
-rich==13.9.4
+rich==14.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   typer
@@ -269,7 +269,7 @@ semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-setuptools==76.0.0
+setuptools==78.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
@@ -285,11 +285,11 @@ typer==0.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-typing-extensions==4.12.2
+typing-extensions==4.13.0
     # via
     #   -c requirements/common-constraints.txt
     #   typer
-tzdata==2025.1
+tzdata==2025.2
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
@@ -297,7 +297,7 @@ urllib3==2.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.6.6
+uv==0.6.11
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
