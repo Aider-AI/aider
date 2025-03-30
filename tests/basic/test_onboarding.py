@@ -445,7 +445,6 @@ class TestOnboarding(unittest.TestCase):
     @patch("os.makedirs")
     @patch("builtins.open", new_callable=mock_open)
     @patch.dict(os.environ, {}, clear=True)  # Start with clean env
-    @patch("aider.onboarding.threading")  # Add a patch for threading
     def test_start_openrouter_oauth_flow_success_path(
         self,
         mock_open_file,
