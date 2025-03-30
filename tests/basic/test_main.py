@@ -1002,9 +1002,12 @@ class TestMain(TestCase):
             self.assertIn("gemini", coder.main_model.name.lower())
             del os.environ["GEMINI_API_KEY"]
 
-            # Test no API keys
-            result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
-            self.assertEqual(result, 1)
+            # Test no API keys - should offer OpenRouter OAuth
+            with patch("aider.onboarding.offer_openrouter_oauth") as mock_offer_oauth:
+                mock_offer_oauth.return_value = None  # Simulate user declining or failure
+                result = main(["--exit", "--yes"], input=DummyInput(), output=DummyOutput())
+                self.assertEqual(result, 1)  # Expect failure since no model could be selected
+                mock_offer_oauth.assert_called_once()
 
     def test_model_precedence(self):
         with GitTemporaryDirectory():
