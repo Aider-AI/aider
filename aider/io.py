@@ -26,8 +26,8 @@ from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
-from rich.columns import Columns
 from rich.color import ColorParseError
+from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.style import Style as RichStyle
@@ -386,10 +386,10 @@ class InputOutput:
                     RichStyle(color=color_value)
                 except ColorParseError as e:
                     self.console.print(
-                        f"[bold red]Warning:[/bold red] Invalid configuration for"
+                        "[bold red]Warning:[/bold red] Invalid configuration for"
                         f" {attr_name}: '{color_value}'. {e}. Disabling this color."
                     )
-                    setattr(self, attr_name, None) # Reset invalid color to None
+                    setattr(self, attr_name, None)  # Reset invalid color to None
 
     def _get_style(self):
         style_dict = {}
@@ -587,19 +587,19 @@ class InputOutput:
         def _(event):
             "Navigate forward through history"
             event.current_buffer.history_forward()
-            
+
         @kb.add("c-x", "c-e")
         def _(event):
             "Edit current input in external editor (like Bash)"
             buffer = event.current_buffer
             current_text = buffer.text
-            
+
             # Open the editor with the current text
             edited_text = pipe_editor(input_data=current_text)
-            
+
             # Replace the buffer with the edited text, strip any trailing newlines
-            buffer.text = edited_text.rstrip('\n')
-            
+            buffer.text = edited_text.rstrip("\n")
+
             # Move cursor to the end of the text
             buffer.cursor_position = len(buffer.text)
 
