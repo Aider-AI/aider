@@ -198,7 +198,8 @@ def exchange_code_for_key(code, code_verifier, io):
         return None
     except requests.exceptions.HTTPError as e:
         io.tool_error(
-            f"Error exchanging code for OpenRouter key: {e.response.status_code} {e.response.reason}"
+            "Error exchanging code for OpenRouter key:"
+            f" {e.response.status_code} {e.response.reason}"
         )
         io.tool_error(f"Response: {e.response.text}")
         return None
