@@ -963,6 +963,7 @@ class InputOutput:
 
         if not isinstance(message, Text):
             message = Text(message)
+        color = ensure_hash_prefix(color) if color else None
         style = dict(style=color) if self.pretty and color else dict()
         try:
             self.console.print(message, **style)
@@ -993,7 +994,7 @@ class InputOutput:
         style = dict()
         if self.pretty:
             if self.tool_output_color:
-                style["color"] = self.tool_output_color
+                style["color"] = ensure_hash_prefix(self.tool_output_color)
             style["reverse"] = bold
 
         style = RichStyle(**style)
