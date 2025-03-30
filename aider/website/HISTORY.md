@@ -39,7 +39,6 @@ cog.out(text)
 - Add `Ctrl-X Ctrl-E` keybinding to edit the current input buffer in an external editor, by Matteo Landi.
 - Fix linting errors for filepaths containing shell metacharacters, by Mir Adnan ALI.
 - Add repomap support for the Scala language, by Vasil Markoukin.
-- Add support for GitHub Copilot models, by Son H. Nguyen.
 - Fixed bug in `/run` that was preventing auto-testing.
 - Fix completion menu current item color styling, by Andrey Ivanov.
 - Aider wrote 82% of the code in this release.

@@ -169,3 +169,4 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"I like aider :)"* — [Chenwei Cui](https://x.com/ccui42/status/1904965344999145698)
 - *"Aider is the precision tool of LLM code gen. It is minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control."* — [Reilly Sweetland](https://x.com/rsweetland/status/1904963807237259586)
 - *"Cannot believe aider vibe coded a 650 LOC feature across service and cli today in 1 shot."* - [autopoietist](https://discord.com/channels/1131200896827654144/1131200896827654149/1355675042259796101)
+
