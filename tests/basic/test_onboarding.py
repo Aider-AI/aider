@@ -478,7 +478,10 @@ class TestOnboarding(unittest.TestCase):
         # and verify subsequent steps (exchange_code_for_key, saving key) are called.
 
         # We need to set auth_code within the function, so let's patch it directly
-        with patch("aider.onboarding.start_openrouter_oauth_flow.__globals__", {"auth_code": "mock_auth_code"}):
+        with patch(
+            "aider.onboarding.start_openrouter_oauth_flow.__globals__",
+            {"auth_code": "mock_auth_code"},
+        ):
             mock_event_cls.side_effect = [mock_server_started_event, mock_shutdown_event]
 
         # Mock the server thread itself
@@ -489,10 +492,10 @@ class TestOnboarding(unittest.TestCase):
         # just test that the mocks were set up correctly ---
         mock_server_started_event.wait.return_value = True
         mock_shutdown_event.wait.return_value = True
-        
-        # Return our mock function's value directly 
+
+        # Return our mock function's value directly
         mock_exchange.return_value = "oauth_api_key"
-        
+
         # Skip assertions about the return value which is hard to test
         # in a threaded context
         self.assertTrue(True)
