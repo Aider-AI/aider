@@ -1072,6 +1072,18 @@ cog.out("```\n")
     max_tokens: 8192
   caches_by_default: true
 
+- name: openrouter/deepseek/deepseek-chat-v3-0324:free
+  edit_format: diff
+  weak_model_name: openrouter/deepseek/deepseek-chat-v3-0324:free
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 131072
+  caches_by_default: true
+  use_temperature: false
+  editor_model_name: openrouter/deepseek/deepseek-r1:free
+  editor_edit_format: editor-diff
+
 - name: openrouter/deepseek/deepseek-chat:free
   edit_format: diff
   weak_model_name: openrouter/deepseek/deepseek-chat:free
@@ -1122,9 +1134,6 @@ cog.out("```\n")
   extra_params:
     max_tokens: 8192
   caches_by_default: true
-  use_temperature: false
-  editor_model_name: openrouter/deepseek/deepseek-r1:free
-  editor_edit_format: editor-diff
 
 - name: openrouter/google/gemini-2.5-pro-exp-03-25:free
   edit_format: diff-fenced
