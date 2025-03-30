@@ -459,18 +459,36 @@ def get_testimonials_js():
                                     link = ""
 
                                     # Try to extract author and link if they exist
+                                    # Check for the em dash format first: "— [author](link)"
                                     if "— [" in full_line and "](" in full_line:
                                         author_parts = full_line.split("— [")
                                         if len(author_parts) > 1:
                                             author = author_parts[1].split("]")[0].strip()
-
+                                            
                                             # Extract the link if it exists
                                             link_parts = full_line.split("](")
                                             if len(link_parts) > 1:
                                                 link = link_parts[1].split(")")[0].strip()
+                                    # Check for regular dash format: "- [author](link)"
+                                    elif " - [" in full_line and "](" in full_line:
+                                        author_parts = full_line.split(" - [")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].split("]")[0].strip()
+                                            
+                                            # Extract the link if it exists
+                                            link_parts = full_line.split("](")
+                                            if len(link_parts) > 1:
+                                                link = link_parts[1].split(")")[0].strip()
+                                    # Check for em dash without link: "— author"
                                     elif "— " in full_line:
                                         # Format without a link, just plain text author
                                         author_parts = full_line.split("— ")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].strip()
+                                    # Check for regular dash without link: "- author"
+                                    elif " - " in full_line:
+                                        # Format without a link, just plain text author
+                                        author_parts = full_line.split(" - ")
                                         if len(author_parts) > 1:
                                             author = author_parts[1].strip()
 
