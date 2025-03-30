@@ -308,7 +308,11 @@ def find_common_root(abs_fnames):
     except OSError:
         pass
 
-    return safe_abs_path(os.getcwd())
+    try:
+        return safe_abs_path(os.getcwd())
+    except FileNotFoundError:
+        # Fallback if cwd is deleted
+        return "."
 
 
 def format_tokens(count):
