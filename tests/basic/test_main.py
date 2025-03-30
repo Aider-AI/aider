@@ -1246,3 +1246,40 @@ class TestMain(TestCase):
                 # Only set_reasoning_effort should be called, not set_thinking_tokens
                 mock_instance.set_reasoning_effort.assert_called_once_with("3")
                 mock_instance.set_thinking_tokens.assert_not_called()
+
+    @patch("aider.main.InputOutput")
+    def test_stream_and_cache_warning(self, MockInputOutput):
+        mock_io_instance = MockInputOutput.return_value
+        with GitTemporaryDirectory():
+            main(
+                ["--stream", "--cache-prompts", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+        mock_io_instance.tool_warning.assert_called_with(
+            "Cost estimates may be inaccurate when using streaming and caching."
+        )
+
+    @patch("aider.main.InputOutput")
+    def test_stream_without_cache_no_warning(self, MockInputOutput):
+        mock_io_instance = MockInputOutput.return_value
+        with GitTemporaryDirectory():
+            main(
+                ["--stream", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+        for call in mock_io_instance.tool_warning.call_args_list:
+            self.assertNotIn("Cost estimates may be inaccurate", call[0][0])
+
+    @patch("aider.main.InputOutput")
+    def test_cache_without_stream_no_warning(self, MockInputOutput):
+        mock_io_instance = MockInputOutput.return_value
+        with GitTemporaryDirectory():
+            main(
+                ["--cache-prompts", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+        for call in mock_io_instance.tool_warning.call_args_list:
+            self.assertNotIn("Cost estimates may be inaccurate", call[0][0])
