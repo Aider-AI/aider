@@ -555,6 +555,11 @@ def main():
     percentage, version = get_latest_release_aider_percentage()
     print(f"Aider wrote {percentage:.2f}% of code in the LATEST release ({version})")
 
+    # Get testimonials JavaScript
+    testimonials_js = get_testimonials_js()
+    print("\nTestimonials JavaScript:")
+    print(testimonials_js)
+
 
 if __name__ == "__main__":
     main()
