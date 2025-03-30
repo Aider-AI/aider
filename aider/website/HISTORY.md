@@ -40,8 +40,10 @@ cog.out(text)
 - Fix linting errors for filepaths containing shell metacharacters, by Mir Adnan ALI.
 - Add repomap support for the Scala language, by Vasil Markoukin.
 - Fixed bug in `/run` that was preventing auto-testing.
+- Handle `GitCommandNotFound` error if git is not installed or not in PATH.
+- Handle `FileNotFoundError` if the current working directory is deleted while aider is running.
 - Fix completion menu current item color styling, by Andrey Ivanov.
-- Aider wrote 82% of the code in this release.
+- Aider wrote 86% of the code in this release.
 
 ### Aider v0.79.2
 
