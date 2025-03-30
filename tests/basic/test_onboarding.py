@@ -2,12 +2,22 @@ import argparse
 import base64
 import hashlib
 import os
-import secrets
-import socketserver
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 
 import requests
+
+# Import the functions to be tested
+from aider.onboarding import (
+    check_openrouter_tier,
+    exchange_code_for_key,
+    find_available_port,
+    generate_pkce_codes,
+    offer_openrouter_oauth,
+    select_default_model,
+    start_openrouter_oauth_flow,
+    try_to_select_default_model,
+)
 
 
 # Mock the Analytics class as it's used in some functions
