@@ -1014,8 +1014,14 @@ class Commands:
                 dict(role="assistant", content="Ok."),
             ]
 
-            if add and exit_status != 0:
+            if add_on_nonzero_exit and exit_status != 0:
+                # Return the formatted output message for test failures
+                return msg
+            elif add and exit_status != 0:
                 self.io.placeholder = "What's wrong? Fix"
+
+        # Return None if output wasn't added or command succeeded
+        return None
 
     def cmd_exit(self, args):
         "Exit the application"
