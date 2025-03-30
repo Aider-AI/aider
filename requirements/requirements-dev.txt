@@ -4,10 +4,22 @@ build==1.2.2.post1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
+cachetools==5.5.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-auth
+certifi==2025.1.31
+    # via
+    #   -c requirements/common-constraints.txt
+    #   requests
 cfgv==3.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
+charset-normalizer==3.4.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   requests
 click==8.1.8
     # via
     #   -c requirements/common-constraints.txt
@@ -46,10 +58,55 @@ fonttools==4.56.0
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
+google-api-core[grpc]==2.24.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-cloud-bigquery
+    #   google-cloud-core
+google-auth==2.38.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+    #   google-cloud-bigquery
+    #   google-cloud-core
+google-cloud-bigquery==3.31.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements-dev.in
+google-cloud-core==2.4.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-cloud-bigquery
+google-crc32c==1.7.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-resumable-media
+google-resumable-media==2.7.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-cloud-bigquery
+googleapis-common-protos==1.69.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+    #   grpcio-status
+grpcio==1.71.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+    #   grpcio-status
+grpcio-status==1.71.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
 identify==2.6.9
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
+idna==3.10
+    # via
+    #   -c requirements/common-constraints.txt
+    #   requests
 imgcat==0.6.0
     # via
     #   -c requirements/common-constraints.txt
@@ -96,6 +153,7 @@ packaging==24.2
     # via
     #   -c requirements/common-constraints.txt
     #   build
+    #   google-cloud-bigquery
     #   matplotlib
     #   pytest
 pandas==2.2.3
@@ -138,6 +196,26 @@ pre-commit==4.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
+proto-plus==1.26.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+protobuf==5.29.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+    #   googleapis-common-protos
+    #   grpcio-status
+    #   proto-plus
+pyasn1==0.6.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   pyasn1-modules
+    #   rsa
+pyasn1-modules==0.4.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-auth
 pygments==2.19.1
     # via
     #   -c requirements/common-constraints.txt
@@ -163,6 +241,7 @@ pytest-env==1.1.5
 python-dateutil==2.9.0.post0
     # via
     #   -c requirements/common-constraints.txt
+    #   google-cloud-bigquery
     #   matplotlib
     #   pandas
 pytz==2025.1
@@ -173,10 +252,19 @@ pyyaml==6.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
+requests==2.32.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+    #   google-cloud-bigquery
 rich==13.9.4
     # via
     #   -c requirements/common-constraints.txt
     #   typer
+rsa==4.9
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-auth
 semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
@@ -205,6 +293,10 @@ tzdata==2025.1
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
+urllib3==2.3.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   requests
 uv==0.6.6
     # via
     #   -c requirements/common-constraints.txt

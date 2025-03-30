@@ -34,7 +34,9 @@ blinker==1.9.0
 build==1.2.2.post1
     # via pip-tools
 cachetools==5.5.2
-    # via streamlit
+    # via
+    #   google-auth
+    #   streamlit
 certifi==2025.1.31
     # via
     #   httpcore
@@ -112,12 +114,39 @@ gitpython==3.1.44
     # via
     #   -r requirements/requirements.in
     #   streamlit
+google-api-core[grpc]==2.24.2
+    # via
+    #   google-cloud-bigquery
+    #   google-cloud-core
+google-auth==2.38.0
+    # via
+    #   google-api-core
+    #   google-cloud-bigquery
+    #   google-cloud-core
+google-cloud-bigquery==3.31.0
+    # via -r requirements/requirements-dev.in
+google-cloud-core==2.4.3
+    # via google-cloud-bigquery
+google-crc32c==1.7.1
+    # via google-resumable-media
+google-resumable-media==2.7.2
+    # via google-cloud-bigquery
+googleapis-common-protos==1.69.2
+    # via
+    #   google-api-core
+    #   grpcio-status
 greenlet==3.1.1
     # via
     #   playwright
     #   sqlalchemy
 grep-ast==0.8.1
     # via -r requirements/requirements.in
+grpcio==1.71.0
+    # via
+    #   google-api-core
+    #   grpcio-status
+grpcio-status==1.71.0
+    # via google-api-core
 h11==0.14.0
     # via httpcore
 httpcore==1.0.7
@@ -243,6 +272,7 @@ packaging==24.2
     #   -r requirements/requirements.in
     #   altair
     #   build
+    #   google-cloud-bigquery
     #   huggingface-hub
     #   marshmallow
     #   matplotlib
@@ -294,14 +324,27 @@ propcache==0.3.0
     # via
     #   aiohttp
     #   yarl
+proto-plus==1.26.1
+    # via google-api-core
 protobuf==5.29.3
-    # via streamlit
+    # via
+    #   google-api-core
+    #   googleapis-common-protos
+    #   grpcio-status
+    #   proto-plus
+    #   streamlit
 psutil==7.0.0
     # via -r requirements/requirements.in
 ptyprocess==0.7.0
     # via pexpect
 pyarrow==19.0.1
     # via streamlit
+pyasn1==0.6.1
+    # via
+    #   pyasn1-modules
+    #   rsa
+pyasn1-modules==0.4.2
+    # via google-auth
 pycodestyle==2.12.1
     # via flake8
 pycparser==2.22
@@ -341,6 +384,7 @@ pytest-env==1.1.5
     # via -r requirements/requirements-dev.in
 python-dateutil==2.9.0.post0
     # via
+    #   google-cloud-bigquery
     #   matplotlib
     #   pandas
     #   posthog
@@ -366,6 +410,8 @@ regex==2024.11.6
     #   transformers
 requests==2.32.3
     # via
+    #   google-api-core
+    #   google-cloud-bigquery
     #   huggingface-hub
     #   llama-index-core
     #   mixpanel
@@ -381,6 +427,8 @@ rpds-py==0.23.1
     # via
     #   jsonschema
     #   referencing
+rsa==4.9
+    # via google-auth
 safetensors==0.5.3
     # via transformers
 scikit-learn==1.6.1
