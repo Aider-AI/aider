@@ -364,9 +364,9 @@ class TestOnboarding(unittest.TestCase):
         self.assertEqual(selected_model, "openrouter/google/gemini-2.5-pro-exp-03-25:free")
         self.assertEqual(mock_try_select.call_count, 2)  # Called before and after oauth
         mock_offer_oauth.assert_called_once_with(io_mock, analytics_mock)
-        # First warning about no keys, second about using the model found after OAuth
-        self.assertEqual(io_mock.tool_warning.call_count, 2)
-        io_mock.tool_warning.assert_any_call(
+        # Only one warning is expected: "No LLM model..."
+        self.assertEqual(io_mock.tool_warning.call_count, 1)
+        io_mock.tool_warning.assert_called_once_with(
             "No LLM model was specified and no API keys were provided."
         )
         # The second call to try_select finds the model, so the *outer* function logs the usage.
@@ -447,7 +447,6 @@ class TestOnboarding(unittest.TestCase):
     @patch.dict(os.environ, {}, clear=True)  # Start with clean env
     def test_start_openrouter_oauth_flow_success_path(
         self,
-        mock_env,
         mock_open_file,
         mock_makedirs,
         mock_exchange,
