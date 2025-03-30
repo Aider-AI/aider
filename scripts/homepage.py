@@ -464,7 +464,7 @@ def get_testimonials_js():
                                         author_parts = full_line.split("— [")
                                         if len(author_parts) > 1:
                                             author = author_parts[1].split("]")[0].strip()
-                                            
+
                                             # Extract the link if it exists
                                             link_parts = full_line.split("](")
                                             if len(link_parts) > 1:
@@ -474,7 +474,7 @@ def get_testimonials_js():
                                         author_parts = full_line.split(" - [")
                                         if len(author_parts) > 1:
                                             author = author_parts[1].split("]")[0].strip()
-                                            
+
                                             # Extract the link if it exists
                                             link_parts = full_line.split("](")
                                             if len(link_parts) > 1:
