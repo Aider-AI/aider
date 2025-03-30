@@ -8,7 +8,12 @@
 - Boost repomap ranking for files whose path components match identifiers mentioned in the chat.
 - Change web scraping timeout from an error to a warning, allowing scraping to continue with potentially incomplete content.
 - Left-align markdown headings in the terminal output, by Peter Schilling.
-- Aider wrote 90% of the code in this release.
+- Update edit format to the new model's default when switching models with `/model`, if the user was using the old model's default format.
+- Add `Ctrl-X Ctrl-E` keybinding to edit the current input buffer in an external editor, by Matteo Landi.
+- Fix linting errors for filepaths containing shell metacharacters, by Mir Adnan ALI.
+- Add repomap support for the Scala language, by Vasil Markoukin.
+- Add support for GitHub Copilot models.
+- Aider wrote 75% of the code in this release.
 
 ### Aider v0.79.2
 
