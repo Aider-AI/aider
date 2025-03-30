@@ -9,6 +9,7 @@ try:
         git.exc.ODBError,
         git.exc.GitError,
         git.exc.InvalidGitRepositoryError,
+        git.exc.GitCommandNotFound,
     ]
 except ImportError:
     git = None
