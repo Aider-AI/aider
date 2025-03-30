@@ -1124,6 +1124,28 @@ class TestCommands(TestCase):
             # Check that the output was added to cur_messages
             self.assertTrue(any("exit 1" in msg["content"] for msg in coder.cur_messages))
 
+    def test_cmd_test_returns_output_on_failure(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Define a command that prints to stderr and exits with non-zero status
+            test_cmd = "echo 'error output' >&2 && exit 1"
+            expected_output_fragment = "error output"
+
+            # Run cmd_test
+            result = commands.cmd_test(test_cmd)
+
+            # Assert that the result contains the expected output
+            self.assertIsNotNone(result)
+            self.assertIn(expected_output_fragment, result)
+            # Check that the output was also added to cur_messages
+            self.assertTrue(any(expected_output_fragment in msg["content"] for msg in coder.cur_messages))
+
+
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
