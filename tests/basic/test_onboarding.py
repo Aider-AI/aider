@@ -34,19 +34,6 @@ class DummyIO:
         pass
 
 
-# Import the functions to be tested
-from aider.onboarding import (
-    check_openrouter_tier,
-    exchange_code_for_key,
-    find_available_port,
-    generate_pkce_codes,
-    offer_openrouter_oauth,
-    select_default_model,
-    start_openrouter_oauth_flow,
-    try_to_select_default_model,
-)
-
-
 class TestOnboarding(unittest.TestCase):
     @patch("requests.get")
     def test_check_openrouter_tier_free(self, mock_get):
@@ -372,11 +359,10 @@ class TestOnboarding(unittest.TestCase):
         io_mock.tool_warning.assert_any_call(
             "No LLM model was specified and no API keys were provided."
         )
-        # The second call to try_select finds the model, so the *outer* function logs the usage
-        # Note: The actual warning comes from the second call within select_default_model, not try_select itself
-        # Let's refine this check - the warning should happen *after* the second try_select call
-        # We can't easily check call order between mocks like this without more complex setup.
-        # Instead, let's verify the final state and model returned.
+        # The second call to try_select finds the model, so the *outer* function logs the usage.
+        # Note: The warning comes from the second call within select_default_model,
+        # not try_select itself.
+        # We verify the final state and model returned.
 
     # --- Tests for offer_openrouter_oauth ---
     @patch("aider.onboarding.start_openrouter_oauth_flow", return_value="new_or_key")
@@ -473,15 +459,14 @@ class TestOnboarding(unittest.TestCase):
         mock_shutdown_event.is_set.side_effect = [False, True]  # Loop once, then shutdown
         mock_shutdown_event.wait.return_value = True  # Callback received before timeout
 
-        # Need to simulate the callback setting the auth_code *within* the flow
+        # Need to simulate the callback setting the auth_code *within* the flow.
         # This is tricky because it happens in a separate thread in reality.
-        # We'll simulate it by having `shutdown_server.wait` return, and then check `auth_code`.
-        # The actual setting of `auth_code` happens inside the mocked handler, which we don't run here.
-        # Instead, we'll patch `exchange_code_for_key` which is called *after* the wait if successful.
+        # We'll simulate it by having `shutdown_server.wait` return.
+        # The actual setting of `auth_code` happens inside the mocked handler (not run here).
+        # Instead, we patch `exchange_code_for_key` called after the wait if successful.
 
-        # Let's refine the approach: We can't easily mock the internal state (`auth_code`) set by the
-        # server thread. Instead, we'll assume the wait completes successfully (simulating the callback)
-        # and verify that the subsequent steps (exchange_code_for_key, saving key) are called.
+        # Refined approach: Assume the wait completes successfully (simulating the callback)
+        # and verify subsequent steps (exchange_code_for_key, saving key) are called.
 
         mock_event_cls.side_effect = [mock_server_started_event, mock_shutdown_event]
 
