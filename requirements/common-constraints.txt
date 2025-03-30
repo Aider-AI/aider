@@ -203,7 +203,7 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.63.11
+litellm==1.65.0
     # via -r requirements/requirements.in
 llama-index-core==0.12.24.post1
     # via
