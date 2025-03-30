@@ -424,33 +424,68 @@ def get_testimonials_js():
 
     try:
         with open(readme_path, "r", encoding="utf-8") as f:
-            for line in f:
-                # Check if we're entering the testimonials section
+            lines = f.readlines()
+            
+            # Find the testimonials section
+            for i, line in enumerate(lines):
                 if line.strip() == "## Kind Words From Users":
                     in_testimonials_section = True
-                    continue
-
-                # If we've hit another section after testimonials, stop
-                if in_testimonials_section and line.startswith("##"):
+                    # Start processing from the next line
+                    start_idx = i + 1
                     break
-
-                # Process testimonial lines
-                if in_testimonials_section and line.strip().startswith('- *"'):
-                    # Extract the quote text: between *" and "*
-                    quote_match = line.split('*"')[1].split('"*')[0].strip()
-
-                    # Extract the author: between "— [" and "]"
-                    author_match = line.split("— [")[1].split("]")[0].strip()
-
-                    # Extract the link: between "(" and ")"
-                    link_match = line.split("](")[1].split(")")[0].strip()
-
-                    testimonials.append(
-                        {"text": quote_match, "author": author_match, "link": link_match}
-                    )
+            
+            # If we found the section
+            if in_testimonials_section:
+                for i in range(start_idx, len(lines)):
+                    line = lines[i]
+                    # If we've hit another section, stop
+                    if line.startswith("##"):
+                        break
+                    
+                    # Process testimonial lines
+                    if line.strip().startswith('- *"'):
+                        try:
+                            # Get the full line
+                            full_line = line.strip()
+                            
+                            # Extract the quote text between *" and "*
+                            if '*"' in full_line and '"*' in full_line:
+                                quote_parts = full_line.split('*"')
+                                if len(quote_parts) > 1:
+                                    quote_text = quote_parts[1].split('"*')[0].strip()
+                                    
+                                    # Default values
+                                    author = "Anonymous"
+                                    link = ""
+                                    
+                                    # Try to extract author and link if they exist
+                                    if "— [" in full_line and "](" in full_line:
+                                        author_parts = full_line.split("— [")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].split("]")[0].strip()
+                                            
+                                            # Extract the link if it exists
+                                            link_parts = full_line.split("](")
+                                            if len(link_parts) > 1:
+                                                link = link_parts[1].split(")")[0].strip()
+                                    elif "— " in full_line:
+                                        # Format without a link, just plain text author
+                                        author_parts = full_line.split("— ")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].strip()
+                                    
+                                    testimonials.append({
+                                        "text": quote_text,
+                                        "author": author,
+                                        "link": link
+                                    })
+                        except Exception as e:
+                            print(f"Error parsing testimonial line: {line}. Error: {e}", file=sys.stderr)
+                            continue
 
         # Format as JavaScript array with script tags
         if not testimonials:
+            print("No testimonials found in README.md", file=sys.stderr)
             return "<script>\nconst testimonials = [];\n</script>"
 
         js_array = "<script>\nconst testimonials = [\n"
