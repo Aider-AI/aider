@@ -361,6 +361,35 @@ class InputOutput:
         self.file_watcher = file_watcher
         self.root = root
 
+        # Validate color settings after console is initialized
+        self._validate_color_settings()
+
+    def _validate_color_settings(self):
+        """Validate configured color strings and reset invalid ones."""
+        color_attributes = [
+            "user_input_color",
+            "tool_output_color",
+            "tool_error_color",
+            "tool_warning_color",
+            "assistant_output_color",
+            "completion_menu_color",
+            "completion_menu_bg_color",
+            "completion_menu_current_color",
+            "completion_menu_current_bg_color",
+        ]
+        for attr_name in color_attributes:
+            color_value = getattr(self, attr_name, None)
+            if color_value:
+                try:
+                    # Try creating a style to validate the color
+                    RichStyle(color=color_value)
+                except ColorParseError as e:
+                    self.console.print(
+                        f"[bold red]Warning:[/bold red] Invalid configuration for"
+                        f" {attr_name}: '{color_value}'. {e}. Disabling this color."
+                    )
+                    setattr(self, attr_name, None) # Reset invalid color to None
+
     def _get_style(self):
         style_dict = {}
         if not self.pretty:
