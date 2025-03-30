@@ -13,6 +13,7 @@
 - Fix linting errors for filepaths containing shell metacharacters, by Mir Adnan ALI.
 - Add repomap support for the Scala language, by Vasil Markoukin.
 - Add support for GitHub Copilot models.
+- Fix completion menu current item color styling, by Andrey Ivanov.
 - Aider wrote 75% of the code in this release.
 
 ### Aider v0.79.2
