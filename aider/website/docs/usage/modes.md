@@ -42,16 +42,17 @@ There is also a special shortcut `--architect` to launch in `--chat-mode archite
 
 ## Recommended workflow
 
-A highly recommended workflow is to bounce back and forth between `/ask` and `/code` modes.
-Use the ask mode to discuss what you want to do, get suggestions or options from aider
+A recommended workflow is to bounce back and forth between `/ask` and `/code` modes.
+
+Use ask mode to discuss what you want to do, get suggestions or options from aider
 and provide feedback on the approach.
 Once aider understands the mission, switch to code mode to have it start editing
 your files.
-All of the conversation and decision making from the ask mode discussion will
-be taken into account to help ensure the correct code changes are performed.
+All the conversation and decision making from ask mode will
+help ensure that the correct code changes are performed.
 
 You can be very terse when you finally switch from ask to code mode.
-Saying something as simple as "go ahead" in code mode is enough to
+Saying something as simple as "go ahead" in code mode will
 have aider execute on the plan you've been discussing.
 
 ````
@@ -80,6 +81,9 @@ def main():
 ```
 
 ````
+
+You can think of this ask/code workflow as a more fluid version of
+architect mode, but working just with the one main model the whole time.
 
 ## Architect mode and the editor model
 
