@@ -75,11 +75,12 @@ popular phrase to use for small demo programs.
 
 > /code do 4
 
-```python
+hello.py
+>>>>>>> SEARCH
+=======
 def main():
     print("I think, therefore I print.")
-```
-
+<<<<<<< REPLACE
 ````
 
 You can think of this ask/code workflow as a more fluid version of
