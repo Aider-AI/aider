@@ -81,7 +81,7 @@ cog.out(get_supported_languages_md())
 | clojure              | .clj                 |          |   ✓    |
 | clojure              | .cljc                |          |   ✓    |
 | clojure              | .cljs                |          |   ✓    |
-| clojure              | .end                 |          |   ✓    |
+| clojure              | .edn                 |          |   ✓    |
 | cmake                | .cmake               |          |   ✓    |
 | cmake                | CMakeLists.txt       |          |   ✓    |
 | commonlisp           | .cl                  |    ✓     |   ✓    |
