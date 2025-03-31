@@ -9,9 +9,9 @@ description: Using the code, architect, ask and help chat modes.
 Aider has a few different chat modes:
 
 - `code` - Aider will make changes to your code to satisfy your requests.
-- `ask` - Aider will answer questions about your code, but never edit it.
+- `ask` - Aider will discuss your code and answer questions about it, but never make changes.
 - `architect` - Like code mode, aider will change your files. An architect model will propose changes and an editor model will translate that proposal into specific file edits.
-- `help` - Aider will answer questions about using aider, configuring, troubleshooting, etc.
+- `help` - Aider will answer questions about aider: usage, configuration, troubleshooting, etc.
 
 By default, aider starts in "code" mode. As you are talking, you can
 send individual messages in a specific mode using 
@@ -110,20 +110,21 @@ architect mode, but working just with one model the whole time.
 
 ## Architect mode and the editor model
 
-When you are in architect mode, aider sends your request to two models:
+When you are in architect mode, aider sends your requests to two models:
 
-1. First, it sends your request to the main active model.
+1. First, it sends your request to the main model which will act as an architect
+to propose how to solve your coding request.
 The main model is configured with `/model` or `--model`.
 
-2. To edit the files, aider sends a second LLM request asking for specific code editing instructions.
-This request goes to the "editor" model.
+2. Aider then sends another request to an "editor model",
+asking it to turn the architect's proposal into specific file editing instructions.
 Aider has built in defaults to select an editor model based on your main model.
 Or, you can choose a specific editor model with `--editor-model <model>`.
 
 Certain LLMs aren't able to propose coding solutions *and*
 specify detailed file edits all in one go.
-Architect mode can produce better results than code mode
-by pairing these models
+For these models, architect mode can produce better results than code mode
+by pairing them
 with an editor model that is responsible for generating the file editing instructions.
 But this uses two LLM requests,
 which can take longer and increase costs.
