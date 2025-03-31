@@ -40,7 +40,7 @@ Or you can switch between coding modes using these commands without arguments:
 Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
 There is also a special shortcut `--architect` to launch in `--chat-mode architect`.
 
-## Recommended workflow
+## Ask/code workflow
 
 A recommended workflow is to bounce back and forth between `/ask` and `/code` modes.
 
