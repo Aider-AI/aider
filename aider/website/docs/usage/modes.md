@@ -40,6 +40,47 @@ Or you can switch between coding modes using these commands without arguments:
 Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
 There is also a special shortcut `--architect` to launch in `--chat-mode architect`.
 
+## Recommended workflow
+
+A highly recommended workflow is to bounce back and forth between `/ask` and `/code` modes.
+Use the ask mode to discuss what you want to do, get suggestions or options from aider
+and provide feedback on the approach.
+Once aider understands the mission, switch to code mode to have it start editing
+your files.
+All of the conversation and decision making from the ask mode discussion will
+be taken into account to help ensure the correct code changes are performed.
+
+You can be very terse when you finally switch from ask to code mode.
+Saying something as simple as "go ahead" in code mode is enough to
+have aider execute on the plan you've been discussing.
+
+````
+─────────────────────────────────────────────────────────────────────────────────────
+Aider v0.79.0
+Model: gemini/gemini-2.5-pro-exp-03-25 with diff-fenced edit format
+
+> /ask What's the best thing to print if we're making a quick little demo program?
+
+It sounds like you'd like to write a "Hello, world!" program. That's a very
+popular phrase to use for small demo programs.
+
+> /ask Yes, that's the idea. What are some more creative options?
+
+1. "Greetings, Earthlings!"
+2. "Beep boop, I am a computer!"
+3. "To code, or not to code, that is the question."
+4. "I think, therefore I print."
+5. "01001000 01101001!" (Binary for "Hi!")
+
+> /code do 4
+
+```python
+def main():
+    print("I think, therefore I print.")
+```
+
+````
+
 ## Architect mode and the editor model
 
 When you are in architect mode, aider sends your request to two models:
