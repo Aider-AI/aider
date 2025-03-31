@@ -1108,11 +1108,6 @@ class Coder:
             )
         else:
             quad_backtick_reminder = ""
-            
-        # Add MCP tools information if MCP is enabled
-        mcp_tools_info = ""
-        if is_mcp_enabled():
-            mcp_tools_info = self.gpt_prompts.mcp_tools_prefix + "\n\n" + get_available_tools_prompt()
 
         prompt = prompt.format(
             fence=self.fence,
@@ -1126,10 +1121,10 @@ class Coder:
 
         if self.main_model.system_prompt_prefix:
             prompt = self.main_model.system_prompt_prefix + prompt
-            
+
         # Append MCP tools information to the end of the prompt
-        if mcp_tools_info:
-            prompt += "\n\n" + mcp_tools_info
+        if is_mcp_enabled():
+            prompt += "\n\n" + self.gpt_prompts.mcp_tools_prefix + "\n\n" + get_available_tools_prompt()
 
         return prompt
 

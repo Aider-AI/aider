@@ -85,7 +85,6 @@ class McpManager:
 
             # Ignore messages for other servers
             if msg.server_name != server.name:
-                self.message_queue.task_done()
                 continue
 
             try:

@@ -67,7 +67,7 @@ def execute_mcp_tool(server_name: str, tool_name: str, arguments: dict, io) -> s
     """
     return _execute_mcp_tool(server_name, tool_name, arguments, io)
 
-def process_llm_tool_requests(text: str, io) -> list[Tuple[str, bool]]:
+def process_llm_tool_requests(text: str, io) -> list[str]:
     """
     Process tools execution request from the LLM.
 
@@ -76,7 +76,7 @@ def process_llm_tool_requests(text: str, io) -> list[Tuple[str, bool]]:
         io: InputOutput object for logging messages
 
     Returns:
-        A list of (result, is_error) if a request was processed,
+        A list of results from processed tool requests
     """
     tool_requests = McpToolParser.extract_tool_requests(text)
 
