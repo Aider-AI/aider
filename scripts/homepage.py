@@ -410,6 +410,123 @@ def get_badges_html():
     return html
 
 
+def get_testimonials_js():
+    """
+    Extract testimonials from README.md and format them as JavaScript array
+    """
+    # Path to README.md, relative to this script
+    readme_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "README.md"
+    )
+
+    testimonials = []
+    in_testimonials_section = False
+
+    try:
+        with open(readme_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+
+            # Find the testimonials section
+            for i, line in enumerate(lines):
+                if line.strip() == "## Kind Words From Users":
+                    in_testimonials_section = True
+                    # Start processing from the next line
+                    start_idx = i + 1
+                    break
+
+            # If we found the section
+            if in_testimonials_section:
+                for i in range(start_idx, len(lines)):
+                    line = lines[i]
+                    # If we've hit another section, stop
+                    if line.startswith("##"):
+                        break
+
+                    # Process testimonial lines
+                    if line.strip().startswith('- *"'):
+                        try:
+                            # Get the full line
+                            full_line = line.strip()
+
+                            # Extract the quote text between *" and "*
+                            if '*"' in full_line and '"*' in full_line:
+                                quote_parts = full_line.split('*"')
+                                if len(quote_parts) > 1:
+                                    quote_text = quote_parts[1].split('"*')[0].strip()
+
+                                    # Default values
+                                    author = "Anonymous"
+                                    link = ""
+
+                                    # Try to extract author and link if they exist
+                                    # Check for the em dash format first: "— [author](link)"
+                                    if "— [" in full_line and "](" in full_line:
+                                        author_parts = full_line.split("— [")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].split("]")[0].strip()
+
+                                            # Extract the link if it exists
+                                            link_parts = full_line.split("](")
+                                            if len(link_parts) > 1:
+                                                link = link_parts[1].split(")")[0].strip()
+                                    # Check for regular dash format: "- [author](link)"
+                                    elif " - [" in full_line and "](" in full_line:
+                                        author_parts = full_line.split(" - [")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].split("]")[0].strip()
+
+                                            # Extract the link if it exists
+                                            link_parts = full_line.split("](")
+                                            if len(link_parts) > 1:
+                                                link = link_parts[1].split(")")[0].strip()
+                                    # Check for em dash without link: "— author"
+                                    elif "— " in full_line:
+                                        # Format without a link, just plain text author
+                                        author_parts = full_line.split("— ")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].strip()
+                                    # Check for regular dash without link: "- author"
+                                    elif " - " in full_line:
+                                        # Format without a link, just plain text author
+                                        author_parts = full_line.split(" - ")
+                                        if len(author_parts) > 1:
+                                            author = author_parts[1].strip()
+
+                                    testimonials.append(
+                                        {"text": quote_text, "author": author, "link": link}
+                                    )
+                        except Exception as e:
+                            print(
+                                f"Error parsing testimonial line: {line}. Error: {e}",
+                                file=sys.stderr,
+                            )
+                            continue
+
+        # Format as JavaScript array with script tags
+        if not testimonials:
+            print("No testimonials found in README.md", file=sys.stderr)
+            return "<script>\nconst testimonials = [];\n</script>"
+
+        js_array = "<script>\nconst testimonials = [\n"
+        for i, t in enumerate(testimonials):
+            js_array += "    {\n"
+            js_array += f"        text: \"{t['text']}\",\n"
+            js_array += f"        author: \"{t['author']}\",\n"
+            js_array += f"        link: \"{t['link']}\"\n"
+            js_array += "    }"
+            if i < len(testimonials) - 1:
+                js_array += ","
+            js_array += "\n"
+        js_array += "];\n</script>"
+
+        return js_array
+
+    except Exception as e:
+        print(f"Error reading testimonials from README: {e}", file=sys.stderr)
+        # Return empty array as fallback
+        return "<script>\nconst testimonials = [];\n</script>"
+
+
 def main():
     # Load environment variables from .env file
     load_dotenv()
@@ -491,6 +608,11 @@ def main():
     # Get Aider contribution percentage in latest release
     percentage, version = get_latest_release_aider_percentage()
     print(f"Aider wrote {percentage:.2f}% of code in the LATEST release ({version})")
+
+    # Get testimonials JavaScript
+    testimonials_js = get_testimonials_js()
+    print("\nTestimonials JavaScript:")
+    print(testimonials_js)
 
 
 if __name__ == "__main__":

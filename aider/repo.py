@@ -9,6 +9,7 @@ try:
         git.exc.ODBError,
         git.exc.GitError,
         git.exc.InvalidGitRepositoryError,
+        git.exc.GitCommandNotFound,
     ]
 except ImportError:
     git = None
@@ -293,13 +294,19 @@ class GitRepo:
             else:
                 try:
                     iterator = commit.tree.traverse()
+                    blob = None  # Initialize blob
                     while True:
                         try:
                             blob = next(iterator)
                             if blob.type == "blob":  # blob is a file
                                 files.add(blob.path)
                         except IndexError:
-                            self.io.tool_warning(f"GitRepo: read error skipping {blob.path}")
+                            # Handle potential index error during tree traversal
+                            # without relying on potentially unassigned 'blob'
+                            self.io.tool_warning(
+                                "GitRepo: Index error encountered while reading git tree object."
+                                " Skipping."
+                            )
                             continue
                         except StopIteration:
                             break

@@ -447,6 +447,34 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         self.assertEqual(ensure_hash_prefix("xyz"), "xyz")  # Invalid hex chars
         self.assertEqual(ensure_hash_prefix("12345g"), "12345g")  # Invalid hex chars
 
+    def test_tool_output_color_handling(self):
+        """Test that tool_output correctly handles hex colors without # prefix"""
+        from unittest.mock import patch
+
+        from rich.text import Text
+
+        # Create IO with hex color without # for tool_output_color
+        io = InputOutput(tool_output_color="FFA500", pretty=True)
+
+        # Patch console.print to avoid actual printing
+        with patch.object(io.console, "print") as mock_print:
+            # This would raise ColorParseError without the fix
+            io.tool_output("Test message")
+
+            # Verify the call was made without error
+            mock_print.assert_called_once()
+
+            # Verify the style was correctly created with # prefix
+            # The first argument is the message, second would be the style
+            kwargs = mock_print.call_args.kwargs
+            self.assertIn("style", kwargs)
+
+        # Test with other hex color
+        io = InputOutput(tool_output_color="00FF00", pretty=True)
+        with patch.object(io.console, "print") as mock_print:
+            io.tool_output("Test message")
+            mock_print.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()

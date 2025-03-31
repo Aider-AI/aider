@@ -9,9 +9,9 @@ description: Using the code, architect, ask and help chat modes.
 Aider has a few different chat modes:
 
 - `code` - Aider will make changes to your code to satisfy your requests.
-- `architect` - Aider will first propose a solution, then ask if you want it to turn that proposal into edits to your files.
-- `ask` - Aider will answer questions about your code, but never edit it.
-- `help` - Aider will answer questions about using aider, configuring, troubleshooting, etc.
+- `ask` - Aider will discuss your code and answer questions about it, but never make changes.
+- `architect` - Like code mode, aider will change your files. An architect model will propose changes and an editor model will translate that proposal into specific file edits.
+- `help` - Aider will answer questions about aider: usage, configuration, troubleshooting, etc.
 
 By default, aider starts in "code" mode. As you are talking, you can
 send individual messages in a specific mode using 
@@ -40,31 +40,104 @@ Or you can switch between coding modes using these commands without arguments:
 Or you can launch aider in one of the modes with the `--chat-mode <mode>` switch.
 There is also a special shortcut `--architect` to launch in `--chat-mode architect`.
 
+The aider prompt will indicate the active mode:
+
+```
+> This is code mode.
+ask> This is ask mode.
+architect> This is architect mode.
+```
+
+
+## Ask/code workflow
+
+A recommended workflow is to bounce back and forth between `/ask` and `/code` modes.
+
+Use ask mode to discuss what you want to do, get suggestions or options from aider
+and provide feedback on the approach.
+Once aider understands the mission, switch to code mode to have it start editing
+your files.
+All the conversation and decision making from ask mode will
+help ensure that the correct code changes are performed.
+
+You can be very terse when you finally switch from ask to code mode.
+Saying something as simple as "go ahead" in code mode will
+have aider execute on the plan you've been discussing.
+
+Here's an example with two ask mode messages to agree on the plan, 
+followed by two terse code mode messages to edit the code.
+
+````
+─────────────────────────────────────────────────────────────────────────────────────
+Aider v0.79.0
+Model: gemini/gemini-2.5-pro-exp-03-25 with diff-fenced edit format
+
+> /ask What's the best thing to print if we're making a quick little demo program?
+
+It sounds like you'd like to write a "Hello, world!" program. That's a very
+popular phrase to use for small demo programs.
+
+> /ask Yes, that's the idea. What are some more creative options?
+
+1. "Greetings, Earthlings!"
+2. "Beep boop, I am a computer!"
+3. "To code, or not to code, that is the question."
+4. "I think, therefore I print."
+5. "01001000 01101001!" (Binary for "Hi!")
+
+> do 4
+
+hello.py
+>>>>>>> SEARCH
+=======
+def main():
+    print("I think, therefore I print.")
+<<<<<<< REPLACE
+
+> ALL CAPS!
+
+hello.py
+>>>>>>> SEARCH
+    print("I think, therefore I print.")
+=======
+    print("I THINK, THEREFORE I PRINT!")
+<<<<<<< REPLACE
+
+````
+
+You can think of this ask/code workflow as a more fluid version of
+architect mode, but working just with one model the whole time.
+
 ## Architect mode and the editor model
 
-When you are in architect mode, aider sends your request to two models:
+When you are in architect mode, aider sends your requests to two models:
 
-1. First, it sends your request to the main active model.
-The main model is configured with `/model`, `--model` or the shortcut switches like `--sonnet`. 
-After the main model replies, aider will offer to edit the files based on the response.
+1. First, it sends your request to the main model which will act as an architect
+to propose how to solve your coding request.
+The main model is configured with `/model` or `--model`.
 
-2. To edit the files, aider sends a second LLM request asking for specific code editing instructions.
-This request goes to the "editor" model.
+2. Aider then sends another request to an "editor model",
+asking it to turn the architect's proposal into specific file editing instructions.
 Aider has built in defaults to select an editor model based on your main model.
-Or, you can choose an editor model yourself with `--editor-model <model>`.
+Or, you can choose a specific editor model with `--editor-model <model>`.
 
-Architect mode produces better results than code mode, but uses two LLM requests.
-This probably makes it slower and more expensive than using code mode.
+Certain LLMs aren't able to propose coding solutions *and*
+specify detailed file edits all in one go.
+For these models, architect mode can produce better results than code mode
+by pairing them
+with an editor model that is responsible for generating the file editing instructions.
+But this uses two LLM requests,
+which can take longer and increase costs.
 
 Architect mode is especially useful with OpenAI's o1 models, which are strong at
 reasoning but less capable at editing files.
 Pairing an o1 architect with an editor model like GPT-4o or Sonnet will
 give the best results.
 
-But architect mode is also quite helpful when you use GPT-4o or Sonnet
-at both the architect and the editor.
+But architect mode can also be helpful when you use the same model
+as both the architect and the editor.
 Allowing the model two requests to solve the problem and edit the files
-usually provides a better result.
+can sometimes provide better results.
 
 The editor model uses one of aider's edit formats to let the LLM
 edit source files.
@@ -91,9 +164,9 @@ for more details.
 
 #### /ask What is this repo?
 
-This is the source code to the popular django package.
+This is collection of python functions that compute various math functions.
 
-#### /help How do I use ollama?
+#### /help How do I use aider with ollama?
 
 Run `aider --model ollama/<ollama-model>`.
 See these docs for more info: https://aider.chat/docs/llms/ollama.html
@@ -121,8 +194,6 @@ Yes, you could replace the `factorial()` function with a call to the `math.facto
 builtin. 
 This way you don't have to maintain a custom factorial implementation,
 and the builtin function is well optimized.
-
-> Edit the files? (Y)es/(N)o [Yes]: Yes
 
 ```python
 <<<<<<< SEARCH

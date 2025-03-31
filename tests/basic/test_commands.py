@@ -1124,6 +1124,29 @@ class TestCommands(TestCase):
             # Check that the output was added to cur_messages
             self.assertTrue(any("exit 1" in msg["content"] for msg in coder.cur_messages))
 
+    def test_cmd_test_returns_output_on_failure(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Define a command that prints to stderr and exits with non-zero status
+            test_cmd = "echo 'error output' >&2 && exit 1"
+            expected_output_fragment = "error output"
+
+            # Run cmd_test
+            result = commands.cmd_test(test_cmd)
+
+            # Assert that the result contains the expected output
+            self.assertIsNotNone(result)
+            self.assertIn(expected_output_fragment, result)
+            # Check that the output was also added to cur_messages
+            self.assertTrue(
+                any(expected_output_fragment in msg["content"] for msg in coder.cur_messages)
+            )
+
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -1682,6 +1705,27 @@ class TestCommands(TestCase):
         self.assertEqual(
             context.exception.kwargs.get("main_model").weak_model.name, self.GPT35.weak_model.name
         )
+        # Check that the edit format is updated to the new model's default
+        self.assertEqual(context.exception.kwargs.get("edit_format"), "diff")
+
+    def test_cmd_model_preserves_explicit_edit_format(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        # Use gpt-3.5-turbo (default 'diff')
+        coder = Coder.create(self.GPT35, None, io)
+        # Explicitly set edit format to something else
+        coder.edit_format = "udiff"
+        commands = Commands(io, coder)
+
+        # Mock sanity check to avoid network calls
+        with mock.patch("aider.models.sanity_check_models"):
+            # Test switching the main model to gpt-4 (default 'whole')
+            with self.assertRaises(SwitchCoder) as context:
+                commands.cmd_model("gpt-4")
+
+        # Check that the SwitchCoder exception contains the correct model configuration
+        self.assertEqual(context.exception.kwargs.get("main_model").name, "gpt-4")
+        # Check that the edit format is preserved
+        self.assertEqual(context.exception.kwargs.get("edit_format"), "udiff")
 
     def test_cmd_editor_model(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
@@ -1715,6 +1759,25 @@ class TestCommands(TestCase):
             self.GPT35.editor_model.name,
         )
         self.assertEqual(context.exception.kwargs.get("main_model").weak_model.name, "gpt-4")
+
+    def test_cmd_model_updates_default_edit_format(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        # Use gpt-3.5-turbo (default 'diff')
+        coder = Coder.create(self.GPT35, None, io)
+        # Ensure current edit format is the default
+        self.assertEqual(coder.edit_format, self.GPT35.edit_format)
+        commands = Commands(io, coder)
+
+        # Mock sanity check to avoid network calls
+        with mock.patch("aider.models.sanity_check_models"):
+            # Test switching the main model to gpt-4 (default 'whole')
+            with self.assertRaises(SwitchCoder) as context:
+                commands.cmd_model("gpt-4")
+
+        # Check that the SwitchCoder exception contains the correct model configuration
+        self.assertEqual(context.exception.kwargs.get("main_model").name, "gpt-4")
+        # Check that the edit format is updated to the new model's default
+        self.assertEqual(context.exception.kwargs.get("edit_format"), "diff")
 
     def test_cmd_ask(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)

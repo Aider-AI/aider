@@ -63,7 +63,7 @@ layout: none
             
             <div class="stats-container">
 <!--[[[cog
-from scripts.badges import get_badges_html
+from scripts.homepage import get_badges_html
 text = get_badges_html()
 cog.out(text)
 ]]]-->
@@ -85,7 +85,7 @@ cog.out(text)
 </a>
 <a href="/HISTORY.html" class="github-badge badge-coded" title="Percentage of the new code in Aider's last release written by Aider itself">
     <span class="badge-label">🔄 Singularity</span>
-    <span class="badge-value">65%</span>
+    <span class="badge-value">87%</span>
 </a>
 <!--[[[end]]]-->  
             </div>
@@ -237,110 +237,186 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
         </div>
     </section>
 
-    <script>
-        // All testimonials from the README
-        const testimonials = [
-            {
-                text: "The best free open source AI coding assistant.",
-                author: "IndyDevDan",
-                link: "https://youtu.be/YALpX8oOn78"
-            },
-            {
-                text: "The best AI coding assistant so far.",
-                author: "Matthew Berman",
-                link: "https://www.youtube.com/watch?v=df8afeb1FY8"
-            },
-            {
-                text: "Aider ... has easily quadrupled my coding productivity.",
-                author: "SOLAR_FIELDS",
-                link: "https://news.ycombinator.com/item?id=36212100"
-            },
-            {
-                text: "It's a cool workflow... Aider's ergonomics are perfect for me.",
-                author: "qup",
-                link: "https://news.ycombinator.com/item?id=38185326"
-            },
-            {
-                text: "It's really like having your senior developer live right in your Git repo - truly amazing!",
-                author: "rappster",
-                link: "https://github.com/Aider-AI/aider/issues/124"
-            },
-            {
-                text: "What an amazing tool. It's incredible.",
-                author: "valyagolev",
-                link: "https://github.com/Aider-AI/aider/issues/6#issue-1722897858"
-            },
-            {
-                text: "Aider is such an astounding thing!",
-                author: "cgrothaus",
-                link: "https://github.com/Aider-AI/aider/issues/82#issuecomment-1631876700"
-            },
-            {
-                text: "It was WAY faster than I would be getting off the ground and making the first few working versions.",
-                author: "Daniel Feldman",
-                link: "https://twitter.com/d_feldman/status/1662295077387923456"
-            },
-            {
-                text: "THANK YOU for Aider! It really feels like a glimpse into the future of coding.",
-                author: "derwiki",
-                link: "https://news.ycombinator.com/item?id=38205643"
-            },
-            {
-                text: "It's just amazing. It is freeing me to do things I felt were out my comfort zone before.",
-                author: "Dougie",
-                link: "https://discord.com/channels/1131200896827654144/1174002618058678323/1174084556257775656"
-            },
-            {
-                text: "This project is stellar.",
-                author: "funkytaco",
-                link: "https://github.com/Aider-AI/aider/issues/112#issuecomment-1637429008"
-            },
-            {
-                text: "Amazing project, definitely the best AI coding assistant I've used.",
-                author: "joshuavial",
-                link: "https://github.com/Aider-AI/aider/issues/84"
-            },
-            {
-                text: "I absolutely love using Aider ... It makes software development feel so much lighter as an experience.",
-                author: "principalideal0",
-                link: "https://discord.com/channels/1131200896827654144/1133421607499595858/1229689636012691468"
-            },
-            {
-                text: "I have been recovering from multiple shoulder surgeries ... and have used aider extensively. It has allowed me to continue productivity.",
-                author: "codeninja",
-                link: "https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG"
-            },
-            {
-                text: "I am an aider addict. I'm getting so much more work done, but in less time.",
-                author: "dandandan",
-                link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470"
-            },
-            {
-                text: "After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever.",
-                author: "SystemSculpt",
-                link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548"
-            },
-            {
-                text: "Aider is amazing, coupled with Sonnet 3.5 it's quite mind blowing.",
-                author: "Josh Dingus",
-                link: "https://discord.com/channels/1131200896827654144/1133060684540813372/1262374225298198548"
-            },
-            {
-                text: "Hands down, this is the best AI coding assistant tool so far.",
-                author: "IndyDevDan",
-                link: "https://www.youtube.com/watch?v=MPYFPvxfGZs"
-            },
-            {
-                text: "[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life.",
-                author: "maledorak",
-                link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264"
-            },
-            {
-                text: "Best agent for actual dev work in existing codebases.",
-                author: "Nick Dobos",
-                link: "https://twitter.com/NickADobos/status/1690408967963652097?s=20"
-            }
-        ];
+    <style>
+        .testimonial-card {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.4s ease, height 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .testimonial-text {
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .testimonial-author {
+            margin-top: auto;
+            padding-top: 10px;
+        }
+    </style>
+
+<!--[[[cog
+from scripts.homepage import get_testimonials_js
+text = get_testimonials_js()
+cog.out(text)
+]]]-->
+<script>
+const testimonials = [
+    {
+        text: "The best free open source AI coding assistant.",
+        author: "IndyDevDan",
+        link: "https://youtu.be/YALpX8oOn78"
+    },
+    {
+        text: "The best AI coding assistant so far.",
+        author: "Matthew Berman",
+        link: "https://www.youtube.com/watch?v=df8afeb1FY8"
+    },
+    {
+        text: "Aider ... has easily quadrupled my coding productivity.",
+        author: "SOLAR_FIELDS",
+        link: "https://news.ycombinator.com/item?id=36212100"
+    },
+    {
+        text: "It's a cool workflow... Aider's ergonomics are perfect for me.",
+        author: "qup",
+        link: "https://news.ycombinator.com/item?id=38185326"
+    },
+    {
+        text: "It's really like having your senior developer live right in your Git repo - truly amazing!",
+        author: "rappster",
+        link: "https://github.com/Aider-AI/aider/issues/124"
+    },
+    {
+        text: "What an amazing tool. It's incredible.",
+        author: "valyagolev",
+        link: "https://github.com/Aider-AI/aider/issues/6#issue-1722897858"
+    },
+    {
+        text: "Aider is such an astounding thing!",
+        author: "cgrothaus",
+        link: "https://github.com/Aider-AI/aider/issues/82#issuecomment-1631876700"
+    },
+    {
+        text: "It was WAY faster than I would be getting off the ground and making the first few working versions.",
+        author: "Daniel Feldman",
+        link: "https://twitter.com/d_feldman/status/1662295077387923456"
+    },
+    {
+        text: "THANK YOU for Aider! It really feels like a glimpse into the future of coding.",
+        author: "derwiki",
+        link: "https://news.ycombinator.com/item?id=38205643"
+    },
+    {
+        text: "It's just amazing. It is freeing me to do things I felt were out my comfort zone before.",
+        author: "Dougie",
+        link: "https://discord.com/channels/1131200896827654144/1174002618058678323/1174084556257775656"
+    },
+    {
+        text: "This project is stellar.",
+        author: "funkytaco",
+        link: "https://github.com/Aider-AI/aider/issues/112#issuecomment-1637429008"
+    },
+    {
+        text: "Amazing project, definitely the best AI coding assistant I've used.",
+        author: "joshuavial",
+        link: "https://github.com/Aider-AI/aider/issues/84"
+    },
+    {
+        text: "I absolutely love using Aider ... It makes software development feel so much lighter as an experience.",
+        author: "principalideal0",
+        link: "https://discord.com/channels/1131200896827654144/1133421607499595858/1229689636012691468"
+    },
+    {
+        text: "I have been recovering from multiple shoulder surgeries ... and have used aider extensively. It has allowed me to continue productivity.",
+        author: "codeninja",
+        link: "https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG"
+    },
+    {
+        text: "I am an aider addict. I'm getting so much more work done, but in less time.",
+        author: "dandandan",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470"
+    },
+    {
+        text: "After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever.",
+        author: "SystemSculpt",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548"
+    },
+    {
+        text: "Aider is amazing, coupled with Sonnet 3.5 it's quite mind blowing.",
+        author: "Josh Dingus",
+        link: "https://discord.com/channels/1131200896827654144/1133060684540813372/1262374225298198548"
+    },
+    {
+        text: "Hands down, this is the best AI coding assistant tool so far.",
+        author: "IndyDevDan",
+        link: "https://www.youtube.com/watch?v=MPYFPvxfGZs"
+    },
+    {
+        text: "[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life.",
+        author: "maledorak",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264"
+    },
+    {
+        text: "Best agent for actual dev work in existing codebases.",
+        author: "Nick Dobos",
+        link: "https://twitter.com/NickADobos/status/1690408967963652097?s=20"
+    },
+    {
+        text: "One of my favorite pieces of software. Blazing trails on new paradigms!",
+        author: "Chris Wall",
+        link: "https://x.com/chris65536/status/1905053299251798432"
+    },
+    {
+        text: "Aider has been revolutionary for me and my work.",
+        author: "Starry Hope",
+        link: "https://x.com/starryhopeblog/status/1904985812137132056"
+    },
+    {
+        text: "Try aider! One of the best ways to vibe code.",
+        author: "Chris Wall",
+        link: "https://x.com/Chris65536/status/1905053418961391929"
+    },
+    {
+        text: "Aider is hands down the best. And it's free and opensource.",
+        author: "AriyaSavakaLurker",
+        link: "https://www.reddit.com/r/ChatGPTCoding/comments/1ik16y6/whats_your_take_on_aider/mbip39n/"
+    },
+    {
+        text: "Aider is also my best friend.",
+        author: "jzn21",
+        link: "https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27dcnb/"
+    },
+    {
+        text: "Try Aider, it's worth it.",
+        author: "jorgejhms",
+        link: "https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27cp99/"
+    },
+    {
+        text: "I like aider :)",
+        author: "Chenwei Cui",
+        link: "https://x.com/ccui42/status/1904965344999145698"
+    },
+    {
+        text: "Aider is the precision tool of LLM code gen. It is minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control.",
+        author: "Reilly Sweetland",
+        link: "https://x.com/rsweetland/status/1904963807237259586"
+    },
+    {
+        text: "Cannot believe aider vibe coded a 650 LOC feature across service and cli today in 1 shot.",
+        author: "autopoietist",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1355675042259796101"
+    }
+];
+</script>
+<!--[[[end]]]-->
+<script>
 
         // Function to shuffle array
         function shuffleArray(array) {
@@ -378,6 +454,32 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
             }
             
             container.innerHTML = html;
+            
+            // Set a fixed height for all testimonial cards after they've been created
+            setTimeout(setMaxTestimonialHeight, 50);
+        }
+        
+        // Calculate and set the maximum height for all testimonial cards
+        function setMaxTestimonialHeight() {
+            const cards = document.querySelectorAll('.testimonial-card');
+            if (!cards.length) return;
+            
+            // Find the maximum height among all cards
+            let maxHeight = 0;
+            cards.forEach(card => {
+                // Temporarily remove any set height to get the natural height
+                card.style.height = 'auto';
+                const height = card.offsetHeight;
+                maxHeight = Math.max(maxHeight, height);
+            });
+            
+            // Add a bit of extra padding to ensure enough space
+            maxHeight += 20;
+            
+            // Set the max height on all cards
+            cards.forEach(card => {
+                card.style.height = `${maxHeight}px`;
+            });
         }
 
         // Function to update a single testimonial
@@ -423,19 +525,30 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
             // Update the displayed testimonial
             const testimonialElement = document.getElementById(`testimonial-${index}`);
             if (testimonialElement) {
-                // Start the flip animation
-                testimonialElement.style.transform = "rotateY(90deg)";
+                // Start fade out with slight upward movement
+                testimonialElement.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+                testimonialElement.style.opacity = "0";
+                testimonialElement.style.transform = "translateY(10px)";
                 
-                // Update content when card is perpendicular to view (hidden)
+                // Update content when fully faded out
                 setTimeout(() => {
+                    // Keep the current height during the content swap
+                    const currentHeight = testimonialElement.style.height;
+                    
                     testimonialElement.innerHTML = `
                         <p class="testimonial-text">${newTestimonial.text}</p>
                         <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
                     `;
                     
-                    // Complete the flip
-                    testimonialElement.style.transform = "rotateY(0deg)";
-                }, 300);
+                    // Ensure the height remains consistent
+                    testimonialElement.style.height = currentHeight;
+                    
+                    // Start fade in
+                    setTimeout(() => {
+                        testimonialElement.style.opacity = "1";
+                        testimonialElement.style.transform = "translateY(0)";
+                    }, 50);
+                }, 400);
             }
         }
 
@@ -471,7 +584,7 @@ aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
                 
                 // Store this index as the last flipped
                 lastFlippedIndex = randomIndex;
-            }, 3000);
+            }, 1500);
         });
     </script>
     

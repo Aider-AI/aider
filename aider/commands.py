@@ -93,7 +93,17 @@ class Commands:
             weak_model=self.coder.main_model.weak_model.name,
         )
         models.sanity_check_models(self.io, model)
-        raise SwitchCoder(main_model=model)
+
+        # Check if the current edit format is the default for the old model
+        old_model_edit_format = self.coder.main_model.edit_format
+        current_edit_format = self.coder.edit_format
+
+        new_edit_format = current_edit_format
+        if current_edit_format == old_model_edit_format:
+            # If the user was using the old model's default, switch to the new model's default
+            new_edit_format = model.edit_format
+
+        raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
     def cmd_editor_model(self, args):
         "Switch the Editor Model to a new LLM"
@@ -1004,8 +1014,14 @@ class Commands:
                 dict(role="assistant", content="Ok."),
             ]
 
-            if add and exit_status != 0:
+            if add_on_nonzero_exit and exit_status != 0:
+                # Return the formatted output message for test failures
+                return msg
+            elif add and exit_status != 0:
                 self.io.placeholder = self.args.placeholder_fix
+
+        # Return None if output wasn't added or command succeeded
+        return None
 
     def cmd_exit(self, args):
         "Exit the application"
@@ -1496,11 +1512,11 @@ class Commands:
 
         if not args.strip():
             # Display current value if no args are provided
-            formatted_budget = model.get_thinking_tokens(model)
+            formatted_budget = model.get_thinking_tokens()
             if formatted_budget is None:
                 self.io.tool_output("Thinking tokens are not currently set.")
             else:
-                budget = model.extra_params["thinking"].get("budget_tokens")
+                budget = model.get_raw_thinking_tokens()
                 self.io.tool_output(
                     f"Current thinking token budget: {budget:,} tokens ({formatted_budget})."
                 )
@@ -1509,8 +1525,8 @@ class Commands:
         value = args.strip()
         model.set_thinking_tokens(value)
 
-        formatted_budget = model.get_thinking_tokens(model)
-        budget = model.extra_params["thinking"].get("budget_tokens")
+        formatted_budget = model.get_thinking_tokens()
+        budget = model.get_raw_thinking_tokens()
 
         self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
         self.io.tool_output()
@@ -1525,7 +1541,7 @@ class Commands:
 
         if not args.strip():
             # Display current value if no args are provided
-            reasoning_value = model.get_reasoning_effort(model)
+            reasoning_value = model.get_reasoning_effort()
             if reasoning_value is None:
                 self.io.tool_output("Reasoning effort is not currently set.")
             else:
@@ -1534,7 +1550,7 @@ class Commands:
 
         value = args.strip()
         model.set_reasoning_effort(value)
-        reasoning_value = model.get_reasoning_effort(model)
+        reasoning_value = model.get_reasoning_effort()
         self.io.tool_output(f"Set reasoning effort to {reasoning_value}")
         self.io.tool_output()
 

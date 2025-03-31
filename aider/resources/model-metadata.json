@@ -63,6 +63,33 @@
         //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
+    "openrouter/deepseek/deepseek-chat-v3-0324": {
+        "max_tokens": 8192,
+        "max_input_tokens": 64000,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.00000055,
+        "input_cost_per_token_cache_hit": 0.00000014,
+        "cache_read_input_token_cost": 0.00000014,
+        "cache_creation_input_token_cost": 0.0,
+        "output_cost_per_token": 0.00000219,
+        "litellm_provider": "openrouter",
+        "mode": "chat",
+        //"supports_function_calling": true, 
+        "supports_assistant_prefill": true,
+        //"supports_tool_choice": true,
+        "supports_prompt_caching": true
+    },
+    "openrouter/deepseek/deepseek-chat-v3-0324:free": {
+        "max_tokens": 131072,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 0,
+        "output_cost_per_token": 0,
+        "litellm_provider": "openrouter",
+        "supports_prompt_caching": true,
+        "mode": "chat",
+        "supports_tool_choice": true
+    },
     "fireworks_ai/accounts/fireworks/models/deepseek-r1": {
         "max_tokens": 160000,
         "max_input_tokens": 128000,
@@ -244,7 +271,7 @@
     "gemini/gemini-2.5-pro-exp-03-25": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
-        "max_output_tokens": 8192,
+        "max_output_tokens": 64000,
         "max_images_per_prompt": 3000,
         "max_videos_per_prompt": 10,
         "max_video_length": 1,
@@ -281,7 +308,7 @@
     "vertex_ai/gemini-2.5-pro-exp-03-25": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
-        "max_output_tokens": 8192,
+        "max_output_tokens": 64000,
         "max_images_per_prompt": 3000,
         "max_videos_per_prompt": 10,
         "max_video_length": 1,
@@ -317,7 +344,7 @@
     "openrouter/google/gemini-2.5-pro-exp-03-25:free": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
-        "max_output_tokens": 8192,
+        "max_output_tokens": 64000,
         "max_images_per_prompt": 3000,
         "max_videos_per_prompt": 10,
         "max_video_length": 1,

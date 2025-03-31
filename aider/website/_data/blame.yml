@@ -4319,3 +4319,94 @@
     Paul Gauthier (aider): 221
   start_tag: v0.78.0
   total_lines: 338
+- aider_percentage: 86.86
+  aider_total: 1837
+  end_date: '2025-03-31'
+  end_tag: v0.80.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/coders/base_coder.py:
+      Paul Gauthier: 2
+    aider/commands.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 20
+    aider/exceptions.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 3
+    aider/io.py:
+      Andrey Ivanov: 2
+      Matteo Landi (aider): 11
+      Paul Gauthier (aider): 38
+    aider/linter.py:
+      Mir Adnan ALI: 2
+    aider/main.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 21
+    aider/mdstream.py:
+      Peter Schilling (aider) (aider): 25
+    aider/models.py:
+      Paul Gauthier: 12
+      Paul Gauthier (aider): 9
+    aider/onboarding.py:
+      Paul Gauthier: 44
+      Paul Gauthier (aider): 389
+    aider/queries/tree-sitter-languages/scala-tags.scm:
+      Vasil Markoukin: 65
+    aider/repo.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 7
+    aider/repomap.py:
+      Paul Gauthier (aider): 19
+    aider/resources/model-settings.yml:
+      Paul Gauthier (aider): 13
+    aider/scrape.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 1
+    aider/utils.py:
+      Paul Gauthier (aider): 5
+    aider/watch.py:
+      Matteo Landi (aider): 2
+    aider/website/_includes/leaderboard.js:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 2
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    aider/website/index.html:
+      Paul Gauthier: 51
+      Paul Gauthier (aider): 175
+    scripts/30k-image.py:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 227
+    scripts/homepage.py:
+      Paul Gauthier (aider): 122
+    tests/basic/test_commands.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 48
+    tests/basic/test_exceptions.py:
+      Paul Gauthier (aider): 17
+    tests/basic/test_io.py:
+      Paul Gauthier (aider): 28
+    tests/basic/test_main.py:
+      Paul Gauthier: 15
+      Paul Gauthier (aider): 199
+    tests/basic/test_onboarding.py:
+      Paul Gauthier (aider): 439
+    tests/basic/test_repomap.py:
+      Vasil Markoukin: 3
+    tests/basic/test_ssl_verification.py:
+      Paul Gauthier (aider): 8
+    tests/basic/test_watch.py:
+      Matteo Landi (aider): 9
+    tests/fixtures/languages/scala/test.scala:
+      Vasil Markoukin: 61
+  grand_total:
+    Andrey Ivanov: 2
+    Matteo Landi (aider): 22
+    Mir Adnan ALI: 2
+    Paul Gauthier: 145
+    Paul Gauthier (aider): 1790
+    Peter Schilling (aider) (aider): 25
+    Vasil Markoukin: 129
+  start_tag: v0.79.0
+  total_lines: 2115

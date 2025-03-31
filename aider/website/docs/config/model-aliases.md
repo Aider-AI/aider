@@ -80,6 +80,7 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `4o`: gpt-4o
 - `deepseek`: deepseek/deepseek-chat
 - `flash`: gemini/gemini-2.0-flash-exp
+- `gemini`: gemini/gemini-2.5-pro-exp-03-25
 - `gemini-2.5-pro`: gemini/gemini-2.5-pro-exp-03-25
 - `haiku`: claude-3-5-haiku-20241022
 - `opus`: claude-3-opus-20240229

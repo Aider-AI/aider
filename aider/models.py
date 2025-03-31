@@ -91,6 +91,7 @@ MODEL_ALIASES = {
     "r1": "deepseek/deepseek-reasoner",
     "flash": "gemini/gemini-2.0-flash-exp",
     "gemini-2.5-pro": "gemini/gemini-2.5-pro-exp-03-25",
+    "gemini": "gemini/gemini-2.5-pro-exp-03-25",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -687,23 +688,24 @@ class Model(ModelSettings):
             else:
                 self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
-    def get_thinking_tokens(self, model):
+    def get_raw_thinking_tokens(self):
         """Get formatted thinking token budget if available"""
         budget = None
 
-        if model.extra_params:
+        if self.extra_params:
             # Check for OpenRouter reasoning format
-            if (
-                "reasoning" in model.extra_params
-                and "max_tokens" in model.extra_params["reasoning"]
-            ):
-                budget = model.extra_params["reasoning"]["max_tokens"]
+            if "reasoning" in self.extra_params and "max_tokens" in self.extra_params["reasoning"]:
+                budget = self.extra_params["reasoning"]["max_tokens"]
             # Check for standard thinking format
             elif (
-                "thinking" in model.extra_params
-                and "budget_tokens" in model.extra_params["thinking"]
+                "thinking" in self.extra_params and "budget_tokens" in self.extra_params["thinking"]
             ):
-                budget = model.extra_params["thinking"]["budget_tokens"]
+                budget = self.extra_params["thinking"]["budget_tokens"]
+
+        return budget
+
+    def get_thinking_tokens(self):
+        budget = self.get_raw_thinking_tokens()
 
         if budget is not None:
             # Format as xx.yK for thousands, xx.yM for millions
@@ -721,14 +723,14 @@ class Model(ModelSettings):
                     return f"{value:.1f}k"
         return None
 
-    def get_reasoning_effort(self, model):
+    def get_reasoning_effort(self):
         """Get reasoning effort value if available"""
         if (
-            model.extra_params
-            and "extra_body" in model.extra_params
-            and "reasoning_effort" in model.extra_params["extra_body"]
+            self.extra_params
+            and "extra_body" in self.extra_params
+            and "reasoning_effort" in self.extra_params["extra_body"]
         ):
-            return model.extra_params["extra_body"]["reasoning_effort"]
+            return self.extra_params["extra_body"]["reasoning_effort"]
         return None
 
     def is_deepseek_r1(self):

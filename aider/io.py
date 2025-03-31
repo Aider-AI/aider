@@ -26,6 +26,7 @@ from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
+from rich.color import ColorParseError
 from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
@@ -35,6 +36,7 @@ from rich.text import Text
 from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
+from .editor import pipe_editor
 from .utils import is_image_file
 
 # Constants
@@ -360,6 +362,35 @@ class InputOutput:
         self.file_watcher = file_watcher
         self.root = root
 
+        # Validate color settings after console is initialized
+        self._validate_color_settings()
+
+    def _validate_color_settings(self):
+        """Validate configured color strings and reset invalid ones."""
+        color_attributes = [
+            "user_input_color",
+            "tool_output_color",
+            "tool_error_color",
+            "tool_warning_color",
+            "assistant_output_color",
+            "completion_menu_color",
+            "completion_menu_bg_color",
+            "completion_menu_current_color",
+            "completion_menu_current_bg_color",
+        ]
+        for attr_name in color_attributes:
+            color_value = getattr(self, attr_name, None)
+            if color_value:
+                try:
+                    # Try creating a style to validate the color
+                    RichStyle(color=color_value)
+                except ColorParseError as e:
+                    self.console.print(
+                        "[bold red]Warning:[/bold red] Invalid configuration for"
+                        f" {attr_name}: '{color_value}'. {e}. Disabling this color."
+                    )
+                    setattr(self, attr_name, None)  # Reset invalid color to None
+
     def _get_style(self):
         style_dict = {}
         if not self.pretty:
@@ -385,9 +416,9 @@ class InputOutput:
         # Conditionally add 'completion-menu.completion.current' style
         completion_menu_current_style = []
         if self.completion_menu_current_bg_color:
-            completion_menu_current_style.append(f"bg:{self.completion_menu_current_bg_color}")
+            completion_menu_current_style.append(self.completion_menu_current_bg_color)
         if self.completion_menu_current_color:
-            completion_menu_current_style.append(self.completion_menu_current_color)
+            completion_menu_current_style.append(f"bg:{self.completion_menu_current_color}")
         if completion_menu_current_style:
             style_dict["completion-menu.completion.current"] = " ".join(
                 completion_menu_current_style
@@ -556,6 +587,21 @@ class InputOutput:
         def _(event):
             "Navigate forward through history"
             event.current_buffer.history_forward()
+
+        @kb.add("c-x", "c-e")
+        def _(event):
+            "Edit current input in external editor (like Bash)"
+            buffer = event.current_buffer
+            current_text = buffer.text
+
+            # Open the editor with the current text
+            edited_text = pipe_editor(input_data=current_text)
+
+            # Replace the buffer with the edited text, strip any trailing newlines
+            buffer.text = edited_text.rstrip("\n")
+
+            # Move cursor to the end of the text
+            buffer.cursor_position = len(buffer.text)
 
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
@@ -917,6 +963,7 @@ class InputOutput:
 
         if not isinstance(message, Text):
             message = Text(message)
+        color = ensure_hash_prefix(color) if color else None
         style = dict(style=color) if self.pretty and color else dict()
         try:
             self.console.print(message, **style)
@@ -947,7 +994,7 @@ class InputOutput:
         style = dict()
         if self.pretty:
             if self.tool_output_color:
-                style["color"] = self.tool_output_color
+                style["color"] = ensure_hash_prefix(self.tool_output_color)
             style["reverse"] = bold
 
         style = RichStyle(**style)
