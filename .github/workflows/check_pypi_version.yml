@@ -33,18 +33,15 @@ jobs:
           fi
           echo "Raw aider --version output: $aider_version_output"
 
-          # Extract version number (assuming format "aider vX.Y.Z")
-          aider_version=$(echo "$aider_version_output" | grep -oP 'v\d+\.\d+\.\d+')
+          # Extract version number (format X.Y.Z)
+          version_num=$(echo "$aider_version_output" | grep -oP '\d+\.\d+\.\d+')
 
           # Check if grep found anything
-          if [ -z "$aider_version" ]; then
-            echo "Error: Could not extract version using grep -oP 'v\d+\.\d+\.\d+' from output: $aider_version_output"
+          if [ -z "$version_num" ]; then
+            echo "Error: Could not extract version number using grep -oP '\d+\.\d+\.\d+' from output: $aider_version_output"
             exit 1
           fi
 
-          echo "Installed aider version: $aider_version"
-          # Remove 'v' prefix for comparison
-          version_num=${aider_version#v}
           echo "Extracted version number: $version_num"
           echo "version=$version_num" >> $GITHUB_OUTPUT
 
