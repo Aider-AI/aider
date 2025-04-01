@@ -1,6 +1,8 @@
 name: Check PyPI Version
 
-# Check to be sure `pip install aider-chat installs the most recently published version
+# Check to be sure `pip install aider-chat` installs the most recently published version.
+# If dependencies get yanked, it may render the latest version uninstallable.
+# See https://github.com/Aider-AI/aider/issues/3699 for example.
 
 on:
   schedule:
