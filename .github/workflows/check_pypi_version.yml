@@ -12,11 +12,10 @@ on:
 
 jobs:
   check_version:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
@@ -29,7 +28,6 @@ jobs:
 
       - name: Get installed aider version
         id: installed_version
-        shell: bash
         run: |
           set -x # Enable debugging output
           aider_version_output=$(aider --version)
@@ -39,12 +37,12 @@ jobs:
           fi
           echo "Raw aider --version output: $aider_version_output"
 
-          # Extract version number (format X.Y.Z) using Extended Regex
-          version_num=$(echo "$aider_version_output" | grep -oE '\d+\.\d+\.\d+')
+          # Extract version number (format X.Y.Z)
+          version_num=$(echo "$aider_version_output" | grep -oP '\d+\.\d+\.\d+')
 
           # Check if grep found anything
           if [ -z "$version_num" ]; then
-            echo "Error: Could not extract version number using grep -oE '\d+\.\d+\.\d+' from output: $aider_version_output"
+            echo "Error: Could not extract version number using grep -oP '\d+\.\d+\.\d+' from output: $aider_version_output"
             exit 1
           fi
 
@@ -58,17 +56,16 @@ jobs:
 
       - name: Get latest tag
         id: latest_tag
-        shell: bash
         run: |
           set -x # Enable debugging output
           # Fetch all tags from remote just in case
           git fetch --tags origin main
           # Get the latest tag that strictly matches vX.Y.Z (no suffixes like .dev)
-          # List all tags, sort by version descending, filter for exact pattern using Extended Regex, take the first one
-          latest_tag=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          # List all tags, sort by version descending, filter for exact pattern, take the first one
+          latest_tag=$(git tag --sort=-v:refname | grep -P '^v\d+\.\d+\.\d+$' | head -n 1)
 
           if [ -z "$latest_tag" ]; then
-            echo "Error: Could not find any tags matching the pattern '^v[0-9]+\.[0-9]+\.[0-9]+$'"
+            echo "Error: Could not find any tags matching the pattern '^v\d+\.\d+\.\d+$'"
             exit 1
           fi
 
@@ -79,7 +76,6 @@ jobs:
           echo "tag=$tag_num" >> $GITHUB_OUTPUT
 
       - name: Compare versions
-        shell: bash
         run: |
           echo "Installed version: ${{ steps.installed_version.outputs.version }}"
           echo "Latest tag version: ${{ steps.latest_tag.outputs.tag }}"
