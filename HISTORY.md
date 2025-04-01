@@ -1,5 +1,11 @@
 # Release history
 
+### Aider v0.80.1
+
+- Updated deps for yanked fsspec and aiohttp packages #3699
+- Removed redundant dependency check during OpenRouter OAuth flow, by Claudia Pellegrino.
+- Aider wrote 0% of the code in this release.
+
 ### Aider v0.80.0
 
 - OpenRouter OAuth integration:
