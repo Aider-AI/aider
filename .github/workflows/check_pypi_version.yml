@@ -1,0 +1,55 @@
+name: Check PyPI Version
+
+on:
+  schedule:
+    # Run once a day at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  check_version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install aider-chat
+        run: pip install aider-chat
+
+      - name: Get installed aider version
+        id: installed_version
+        run: |
+          aider_version_output=$(aider --version)
+          # Extract version number (assuming format "aider vX.Y.Z")
+          aider_version=$(echo "$aider_version_output" | grep -oP 'v\d+\.\d+\.\d+')
+          echo "Installed aider version: $aider_version"
+          # Remove 'v' prefix for comparison
+          echo "version=${aider_version#v}" >> $GITHUB_OUTPUT
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all tags
+
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          # Fetch all tags from remote just in case
+          git fetch --tags origin main
+          # Get the latest tag that looks like vX.Y.Z (no 'dev')
+          latest_tag=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n 1)
+          echo "Latest non-dev tag: $latest_tag"
+          # Remove 'v' prefix for comparison
+          echo "tag=${latest_tag#v}" >> $GITHUB_OUTPUT
+
+      - name: Compare versions
+        run: |
+          echo "Installed version: ${{ steps.installed_version.outputs.version }}"
+          echo "Latest tag version: ${{ steps.latest_tag.outputs.tag }}"
+          if [ "${{ steps.installed_version.outputs.version }}" != "${{ steps.latest_tag.outputs.tag }}" ]; then
+            echo "Error: Installed aider version (${{ steps.installed_version.outputs.version }}) does not match the latest tag (${{ steps.latest_tag.outputs.tag }})."
+            exit 1
+          fi
+          echo "Versions match."
