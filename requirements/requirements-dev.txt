@@ -301,7 +301,7 @@ uv==0.6.11
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-virtualenv==20.29.3
+virtualenv==20.30.0
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit

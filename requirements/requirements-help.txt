@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.11.14
+aiohttp==3.11.12
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -25,7 +25,7 @@ attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-banks==2.1.0
+banks==2.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -75,7 +75,7 @@ frozenlist==1.5.0
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   aiosignal
-fsspec==2025.3.1
+fsspec==2025.3.2
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -101,7 +101,7 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-huggingface-hub[inference]==0.29.3
+huggingface-hub[inference]==0.30.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -146,7 +146,7 @@ mpmath==1.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   sympy
-multidict==6.2.0
+multidict==6.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -187,6 +187,10 @@ pillow==11.1.0
     #   -c requirements/common-constraints.txt
     #   llama-index-core
     #   sentence-transformers
+platformdirs==4.3.7
+    # via
+    #   -c requirements/common-constraints.txt
+    #   banks
 propcache==0.3.1
     # via
     #   -c requirements/common-constraints.txt
