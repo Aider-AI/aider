@@ -1,5 +1,7 @@
 name: Check PyPI Version
 
+# Check to be sure `pip install aider-chat installs the most recently published version
+
 on:
   schedule:
     # Run once a day at midnight UTC
