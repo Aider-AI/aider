@@ -1,7 +1,7 @@
 # Release history
 
-### main branch
-- Add the `openrouter/deepseek-chat-v3-0324:free` model.
+### Aider v0.80.0
+
 - OpenRouter OAuth integration:
   - Offer to OAuth against OpenRouter if no model and keys are provided.
   - Select OpenRouter default model based on free/paid tier status if `OPENROUTER_API_KEY` is set and no model is specified.
@@ -14,6 +14,7 @@
 - Update edit format to the new model's default when switching models with `/model`, if the user was using the old model's default format.
 - Add `Ctrl-X Ctrl-E` keybinding to edit the current input buffer in an external editor, by Matteo Landi.
 - Fix linting errors for filepaths containing shell metacharacters, by Mir Adnan ALI.
+- Add the `openrouter/deepseek-chat-v3-0324:free` model.
 - Add repomap support for the Scala language, by Vasil Markoukin.
 - Fixed bug in `/run` that was preventing auto-testing.
 - Fix bug preventing `UnboundLocalError` during git tree traversal.
