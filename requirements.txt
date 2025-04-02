@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.11.12
+aiohttp==3.11.16
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -143,7 +143,7 @@ jiter==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   openai
-json5==0.10.0
+json5==0.11.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.65.0
+litellm==1.65.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -184,7 +184,7 @@ monotonic==1.6
     # via
     #   -c requirements/common-constraints.txt
     #   posthog
-multidict==6.3.0
+multidict==6.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp

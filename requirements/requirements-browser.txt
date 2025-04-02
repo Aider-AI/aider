@@ -123,11 +123,11 @@ smmap==5.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   gitdb
-streamlit==1.44.0
+streamlit==1.44.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-browser.in
-tenacity==9.0.0
+tenacity==9.1.2
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
