@@ -950,7 +950,8 @@
   
 - name: openrouter/google/gemma-3-27b-it
   use_system_prompt: false
-  
+
+# Update these 2.5 pro entries with the correct flash 2 model from the same provider as weak model ai!
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
