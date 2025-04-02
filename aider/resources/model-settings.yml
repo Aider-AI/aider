@@ -959,9 +959,10 @@
 - name: openrouter/google/gemini-2.5-pro-exp-03-25:free
   edit_format: diff-fenced
   use_repo_map: true
-  weak_model_name: openrouter/google/gemini-2.0-flash:free
+  weak_model_name: openrouter/google/gemini-2.0-flash-exp:free
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
-  weak_model_name: vertex_ai/gemini-2.0-flash
+  # Need metadata for this one...
+  #weak_model_name: vertex_ai/gemini-2.0-flash
