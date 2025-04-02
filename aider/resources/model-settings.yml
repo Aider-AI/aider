@@ -951,15 +951,17 @@
 - name: openrouter/google/gemma-3-27b-it
   use_system_prompt: false
 
-# Update these 2.5 pro entries with the correct flash 2 model from the same provider as weak model ai!
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
+  weak_model_name: gemini/gemini-2.0-flash
 
 - name: openrouter/google/gemini-2.5-pro-exp-03-25:free
   edit_format: diff-fenced
   use_repo_map: true
+  weak_model_name: openrouter/google/gemini-2.0-flash:free
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
+  weak_model_name: vertex_ai/gemini-2.0-flash
