@@ -734,8 +734,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if servers:
             io.tool_output("Configured MCP servers:")
             for server in servers:
-                status = "Enabled" if server.enabled else "Disabled"
-                io.tool_output(f"  - {server.name} ({status})")
+                io.tool_output(f"  - {server.name}")
                 if server.command:
                     io.tool_output(f"    Command: {server.command}")
                 if server.env_vars:
@@ -746,6 +745,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         else:
             io.tool_output("No MCP servers configured.")
         analytics.event("exit", reason="Listed MCP servers")
+        mcp.stop_mcp_servers()
         return 0
 
     if args.list_mcp_tools:
@@ -761,6 +761,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         else:
             io.tool_output("No MCP tools available.")
         analytics.event("exit", reason="Listed MCP tools")
+        mcp.stop_mcp_servers()
         return 0
 
     if args.git:

@@ -1,6 +1,8 @@
 from contextlib import AsyncExitStack
 from dataclasses import dataclass
-import re
+import json
+import os
+import pathlib
 import shlex
 import threading
 import queue
@@ -8,6 +10,7 @@ from typing import Dict, List, Optional
 import asyncio
 
 from mcp import ClientSession, StdioServerParameters, stdio_client
+import yaml
 
 from aider.mcp.mcp_server import McpServer
 from aider.mcp.mcp_tool import McpTool
@@ -105,61 +108,41 @@ class McpManager:
 
     def configure_from_args(self, args) -> None:
         """Configure MCP from command-line arguments."""
-        self.enabled = args.mcp
+        self.enabled = args.mcp_configuration is not None
 
         # If MCP is not enabled, don't process further
         if not self.enabled:
             return
 
-        # Add servers specified in --mcp-servers
-        for server_name in args.mcp_servers:
-            self.add_server(server_name)
-            self.servers[server_name].enabled = True
+        # Read file from the running directory
+        expanded_path = os.path.expanduser(args.mcp_configuration)
+        absolute_mcp_config_path = os.path.abspath(expanded_path)
 
-        # Process server commands
-        for cmd_spec in args.mcp_server_command:
-            parts = cmd_spec.split(":", 1)
-            if len(parts) != 2:
-                continue
-            server_name, command = parts
-            self.add_server(server_name)
-            self.servers[server_name].command = command
+        # Check if the file exists
+        if not os.path.exists(absolute_mcp_config_path):
+            raise FileNotFoundError(f"MCP configuration file '{absolute_mcp_config_path}' not found")
 
-        # Process server environment variables
-        for env_spec in args.mcp_server_env:
-            match = re.match(r"([^:]+):([^=]+)=(.*)", env_spec)
-            if not match:
-                continue
-            server_name, env_var, value = match.groups()
-            self.add_server(server_name)
-            self.servers[server_name].env_vars[env_var] = value
+        with open(absolute_mcp_config_path) as f:
+            mcp_configuration = yaml.safe_load(f)
 
-        # Process tool permissions
-        for perm_spec in args.mcp_tool_permission:
-            match = re.match(r"([^:]+):([^=]+)=(.*)", perm_spec)
-            if not match:
-                continue
-            server_name, tool_name, permission = match.groups()
-            if permission not in ["manual", "auto"]:
-                continue
-            self.add_server(server_name)
-            if tool_name not in self.servers[server_name].tools:
-                self.servers[server_name].add_tool(tool_name)
-            self.servers[server_name].set_tool_permission(tool_name, permission)
+            # Add servers specified in mcp.servers
+            for server_info in mcp_configuration.get("servers", []):
+                server = McpServer(
+                    name=server_info.get("name"),
+                    command=server_info.get("command"),
+                    env_vars=server_info.get("envs", {}),
+                )
 
-    def add_server(self, server_name: str) -> McpServer:
-        """Add a new server if it doesn't exist, or return the existing one."""
-        if server_name not in self.servers:
-            self.servers[server_name] = McpServer(server_name)
-        return self.servers[server_name]
+                for name, perm in server_info.get("permissions", []).items():
+                    if perm not in ["manual", "auto"]:
+                        continue
+                    server.set_tool_permission(name, perm)
+
+                self.servers[server_info.get("name")] = server
 
     def get_server(self, server_name: str) -> Optional[McpServer]:
         """Get a server by name, or None if it doesn't exist."""
         return self.servers.get(server_name)
-
-    def get_enabled_servers(self) -> List[McpServer]:
-        """Get a list of all enabled servers."""
-        return [server for server in self.servers.values() if server.enabled]
 
     def list_servers(self) -> List[McpServer]:
         """Get a list of all servers."""
@@ -184,7 +167,7 @@ class McpManager:
 
         loop = self._get_event_loop()
 
-        for server in self.get_enabled_servers():
+        for server in self.servers.values():
             if server.command:
                 t = threading.Thread(target=self._server_loop, args=(server, loop))
                 t.start()
@@ -201,7 +184,7 @@ class McpManager:
         if not self.enabled:
             return
 
-        for server in self.get_enabled_servers():
+        for server in self.servers.values():
             # Check if the server configuration is valid
             if not server.is_valid():
                 if io:
@@ -244,10 +227,6 @@ class McpManager:
         if not server:
             io.tool_error(f"MCP server '{server_name}' not found")
             return f"MCP server '{server_name}' not found"
-
-        if not server.enabled:
-            io.tool_error(f"MCP server '{server_name}' is not enabled")
-            return f"MCP server '{server_name}' is not enabled"
 
         if tool_name not in server.tools:
             io.tool_error(f"Tool '{tool_name}' not found in server '{server_name}'")

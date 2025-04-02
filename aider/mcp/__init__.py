@@ -109,11 +109,6 @@ def process_llm_tool_request(server_name: str, tool_name: str, arguments: dict, 
         io.tool_error(error)
         return McpToolParser.format_tool_error(identifier, error), True
 
-    if not server.enabled:
-        error = f"MCP server '{server_name}' is not enabled"
-        io.tool_error(error)
-        return McpToolParser.format_tool_error(identifier, error), True
-
     if tool_name not in server.tools:
         error = f"Tool '{tool_name}' not found in server '{server_name}'"
         io.tool_error(error)

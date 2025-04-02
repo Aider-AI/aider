@@ -1551,8 +1551,7 @@ class Commands:
         if servers:
             self.io.tool_output("Configured MCP servers:")
             for server in servers:
-                status = "Enabled" if server.enabled else "Disabled"
-                self.io.tool_output(f"  - {server.name} ({status})")
+                self.io.tool_output(f"  - {server.name}")
                 if server.command:
                     self.io.tool_output(f"    Command: {server.command}")
                 if server.env_vars:
