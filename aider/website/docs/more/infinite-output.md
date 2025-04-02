@@ -71,6 +71,7 @@ cog.out(model_list)
 - claude-3-sonnet-20240229
 - codestral/codestral-2405
 - codestral/codestral-latest
+- databricks/databricks-claude-3-7-sonnet
 - deepseek/deepseek-chat
 - deepseek/deepseek-coder
 - deepseek/deepseek-reasoner

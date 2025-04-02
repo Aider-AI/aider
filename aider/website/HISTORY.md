@@ -24,6 +24,11 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.80.2
+
+- Bumped deps to pickup litellm change to properly display the root cause of OpenRouter "choices" errors.
+- Aider wrote 89% of the code in this release.
+
 ### Aider v0.80.1
 
 - Updated deps for yanked fsspec and aiohttp packages #3699
