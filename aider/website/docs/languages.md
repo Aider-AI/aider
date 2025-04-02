@@ -36,17 +36,16 @@ If you can find and share that file in a
 [GitHub issue](https://github.com/Aider-AI/aider/issues),
 then it may be possible to add repo map support.
 
-If aider doesn't support linting, it will be complicated to
-add linting and repo map support.
-That is because aider relies on 
-[py-tree-sitter-languages](https://github.com/grantjenks/py-tree-sitter-languages)
+If aider doesn't already support linting your language, 
+it will be more complicated to add support.
+Aider relies on
+[tree-sitter-language-pack](https://github.com/Goldziher/tree-sitter-language-pack)
 to provide pre-packaged versions of tree-sitter
-parsers for many languages.
-
-Aider needs to be easy for users to install in many environments,
-and it is probably too complex to add dependencies on
-additional individual tree-sitter parsers.
-
+language parsers.
+This makes it easy for users to install aider in many diverse environments.
+You probably need to work with that project to get your language
+supported, which will easily allow aider to lint that language.
+For repo-map support, you will also need to find or create a `tags.scm` file.
 
 <!--[[[cog
 from aider.repomap import get_supported_languages_md
