@@ -24,6 +24,13 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Improve error message for OpenRouter API connection issues to mention potential rate limiting or upstream provider issues.
+- Configure weak models (`gemini/gemini-2.0-flash` and `openrouter/google/gemini-2.0-flash-exp:free`) for Gemini 2.5 Pro models, by Aider.
+- Add model metadata for `openrouter/google/gemini-2.0-flash-exp:free`, by Aider.
+- Aider wrote 85% of the code in this release.
+
 ### Aider v0.80.2
 
 - Bumped deps to pickup litellm change to properly display the root cause of OpenRouter "choices" errors.

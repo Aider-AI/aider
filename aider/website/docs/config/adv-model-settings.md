@@ -612,6 +612,7 @@ cog.out("```\n")
 
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
+  weak_model_name: gemini/gemini-2.0-flash
   use_repo_map: true
 
 - name: gemini/gemini-exp-1114
@@ -1022,6 +1023,7 @@ cog.out("```\n")
 
 - name: openrouter/google/gemini-2.5-pro-exp-03-25:free
   edit_format: diff-fenced
+  weak_model_name: openrouter/google/gemini-2.0-flash-exp:free
   use_repo_map: true
 
 - name: openrouter/google/gemma-3-27b-it
