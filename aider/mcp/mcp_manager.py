@@ -1,11 +1,10 @@
 from contextlib import AsyncExitStack
 from dataclasses import dataclass
-import json
 import os
-import pathlib
 import shlex
 import threading
 import queue
+import time
 from typing import Dict, List, Optional
 import asyncio
 
@@ -34,6 +33,7 @@ class McpManager:
         self.enabled: bool = False
         self.message_queue = queue.Queue()
         self.result_queue = queue.Queue()
+        self.mcp_thread = threading.Thread(target=self._servers_loop, args=(self.servers.values(),))
 
     def _get_event_loop(self) -> asyncio.AbstractEventLoop:
         """Get the current event loop or create a new one if none exists."""
@@ -45,16 +45,20 @@ class McpManager:
     def _call(self, io, server_name, function, args: dict = {}):
         """Sync call to the thread with queues."""
 
-        self.message_queue.put(CallArguments(server_name, function, args))
-        result = self.result_queue.get()
-        self.result_queue.task_done()
+        try:
+            self.message_queue.put_nowait(CallArguments(server_name, function, args))
+            result = self.result_queue.get()
 
-        if result.error:
+            if result.error:
+                if io:
+                    io.tool_error(result.error)
+                return None
+
+            return result.response
+        except Exception as e:
             if io:
-                io.tool_error(result.error)
-            return None
-
-        return result.response
+                io.tool_error(f"Error in MCP call: {str(e)}")
+            return CallResponse(str(e), None)
 
     async def _async_server_loop(self, server: McpServer) -> None:
         """Run the async server loop for a given server."""
@@ -80,31 +84,40 @@ class McpManager:
         await session.initialize()
 
         while True:
-            msg: CallArguments = self.message_queue.get()
-
-            # Exit the loop if the exit message is received
-            if msg.function == "exit":
-                break
-
-            # Ignore messages for other servers
-            if msg.server_name != server.name:
-                continue
-
             try:
-                if msg.function == "call_tool":
-                    response = await session.call_tool(**msg.args)
-                    self.result_queue.put(CallResponse(None, response))
-                elif msg.function == "list_tools":
-                    response = await session.list_tools()
-                    self.result_queue.put(CallResponse(None, response))
-            except Exception as e:
-                self.result_queue.put(CallResponse(str(e), None))
-            finally:
-                self.message_queue.task_done()
+                msg: CallArguments = self.message_queue.get_nowait()
 
-    def _server_loop(self, server: McpServer, loop: asyncio.AbstractEventLoop) -> None:
+                # Exit the loop if the exit message is received
+                if msg.function == "exit":
+                    break
+
+                # Ignore messages for other servers
+                if msg.server_name != server.name:
+                    continue
+
+                try:
+                    if msg.function == "call_tool":
+                        response = await session.call_tool(**msg.args)
+                        self.result_queue.put_nowait(CallResponse(None, response))
+                    elif msg.function == "list_tools":
+                        response = await session.list_tools()
+                        self.result_queue.put_nowait(CallResponse(None, response))
+                except Exception as e:
+                    self.result_queue.put_nowait(CallResponse(str(e), None))
+            except queue.Empty:
+                await asyncio.sleep(0.1)
+            except Exception as e:
+                self.result_queue.put_nowait(CallResponse(str(e), None))
+
+    async def _async_servers_loop(self, servers: list[McpServer]) -> None:
+        """Run the async server loop for all servers in parallel."""
+        tasks = [self._async_server_loop(server) for server in servers]
+        await asyncio.gather(*tasks)
+
+    def _servers_loop(self, servers: list[McpServer]) -> None:
         """Wrap the async server loop for a given server."""
-        loop.run_until_complete(self._async_server_loop(server))
+        loop = self._get_event_loop()
+        loop.run_until_complete(self._async_servers_loop(servers))
 
     def configure_from_args(self, args) -> None:
         """Configure MCP from command-line arguments."""
@@ -136,7 +149,8 @@ class McpManager:
                 for name, perm in server_info.get("permissions", []).items():
                     if perm not in ["manual", "auto"]:
                         continue
-                    server.set_tool_permission(name, perm)
+
+                    server.set_tool(tool_name=name, permission=perm)
 
                 self.servers[server_info.get("name")] = server
 
@@ -165,24 +179,7 @@ class McpManager:
         if not self.enabled:
             return
 
-        loop = self._get_event_loop()
-
-        for server in self.servers.values():
-            if server.command:
-                t = threading.Thread(target=self._server_loop, args=(server, loop))
-                t.start()
-            else:
-                io.tool_warning(f"MCP server '{server.name}' has no command configured")
-
-
-    def discover_tools(self, io) -> None:
-        """Discover tools from all enabled servers.
-
-        Args:
-            io: InputOutput object for logging messages
-        """
-        if not self.enabled:
-            return
+        self.mcp_thread.start()
 
         for server in self.servers.values():
             # Check if the server configuration is valid
@@ -205,7 +202,12 @@ class McpManager:
                     permission = server.tools[name].permission
 
                 # Add the tool to the server configuration
-                server.add_tool(name, permission, description, input_schema)
+                server.set_tool(
+                    tool_name=name,
+                    permission=permission,
+                    description=description,
+                    input_schema=input_schema
+                )
 
     def execute_tool(self, server_name: str, tool_name: str, arguments: dict, io) -> str:
         """Execute an MCP tool with the given arguments.
@@ -265,3 +267,4 @@ class McpManager:
     def stop_servers(self) -> None:
         """Stop all running MCP servers."""
         self.message_queue.put(CallArguments("", "exit", {}))
+        self.mcp_thread.join()

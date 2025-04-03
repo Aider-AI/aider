@@ -1475,11 +1475,12 @@ class Coder:
                 return
 
             tool_results = self.check_for_tool_calls(content)
-            for tool_result in tool_results:
-                if self.mcp_tool_results:
-                    self.mcp_tool_results += "\n" + tool_result
-                else:
-                    self.mcp_tool_results = tool_result
+            if len(tool_results) > 1:
+                for tool_result in tool_results:
+                    if self.mcp_tool_results:
+                        self.mcp_tool_results += "\n" + tool_result
+                    else:
+                        self.mcp_tool_results = tool_result
                 return
 
             try:

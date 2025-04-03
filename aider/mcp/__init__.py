@@ -37,7 +37,6 @@ def initialize_mcp_servers(io) -> None:
         io: InputOutput object for logging messages
     """
     mcp_manager.initialize_servers(io)
-    mcp_manager.discover_tools(io)
 
 def _execute_mcp_tool(server_name: str, tool_name: str, arguments: dict, io) -> str:
     """Execute an MCP tool with the given arguments.
