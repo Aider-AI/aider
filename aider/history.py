@@ -63,12 +63,10 @@ class ChatSummary:
         if split_index <= min_split:
             return self.summarize_all(messages)
 
-        head = messages[:split_index]
         tail = messages[split_index:]
-
-        sized = sized[:split_index]
-        head.reverse()
-        sized.reverse()
+        
+        sized_head = sized[:split_index]
+        sized_head.reverse()
         keep = []
         total = 0
 
@@ -76,11 +74,11 @@ class ChatSummary:
         model_max_input_tokens = self.models[0].info.get("max_input_tokens") or 4096
         model_max_input_tokens -= 512
 
-        for i in range(split_index):
-            total += sized[i][0]
+        for tokens, msg in sized_head:
+            total += tokens
             if total > model_max_input_tokens:
                 break
-            keep.append(head[i])
+            keep.append(msg)
 
         keep.reverse()
 
