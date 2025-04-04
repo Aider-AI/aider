@@ -4410,3 +4410,41 @@
     Vasil Markoukin: 129
   start_tag: v0.79.0
   total_lines: 2115
+- aider_percentage: 85.55
+  aider_total: 225
+  end_date: '2025-04-04'
+  end_tag: v0.81.0
+  file_counts:
+    .github/workflows/check_pypi_version.yml:
+      Paul Gauthier: 11
+      Paul Gauthier (aider): 75
+    .github/workflows/windows_check_pypi_version.yml:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 86
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/coders/base_coder.py:
+      Paul Gauthier (aider): 4
+    aider/exceptions.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 12
+    aider/main.py:
+      Paul Gauthier (aider): 40
+    aider/models.py:
+      Paul Gauthier (aider): 2
+    aider/resources/model-settings.yml:
+      Paul Gauthier: 9
+      Paul Gauthier (aider): 1
+    aider/website/_includes/leaderboard.js:
+      Paul Gauthier (aider): 5
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    aider/website/index.html:
+      Paul Gauthier: 3
+    tests/basic/test_exceptions.py:
+      Paul Gauthier: 3
+  grand_total:
+    Paul Gauthier: 38
+    Paul Gauthier (aider): 225
+  start_tag: v0.80.0
+  total_lines: 263
