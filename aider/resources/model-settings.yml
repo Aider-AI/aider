@@ -949,6 +949,11 @@
 - name: openrouter/google/gemma-3-27b-it
   use_system_prompt: false
 
+- name: gemini/gemini-2.5-pro-preview-03-25
+  edit_format: diff-fenced
+  use_repo_map: true
+  weak_model_name: gemini/gemini-2.0-flash
+
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
@@ -960,6 +965,12 @@
   weak_model_name: openrouter/google/gemini-2.0-flash-exp:free
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
+  edit_format: diff-fenced
+  use_repo_map: true
+  # Need metadata for this one...
+  #weak_model_name: vertex_ai/gemini-2.0-flash
+
+- name: vertex_ai/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
   use_repo_map: true
   # Need metadata for this one...
