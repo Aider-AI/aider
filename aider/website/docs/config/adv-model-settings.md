@@ -1097,6 +1097,11 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: openrouter/openrouter/quasar-alpha
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+
 - name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   edit_format: diff
   weak_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
