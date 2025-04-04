@@ -963,8 +963,6 @@ cog.out("```\n")
   weak_model_name: openrouter/deepseek/deepseek-chat-v3-0324:free
   use_repo_map: true
   examples_as_sys_msg: true
-  extra_params:
-    max_tokens: 131072
   caches_by_default: true
   use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-r1:free
