@@ -92,7 +92,8 @@ MODEL_ALIASES = {
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
     "gemini-2.5-pro": "gemini/gemini-2.5-pro-exp-03-25",
-    "gemini": "gemini/gemini-2.5-pro-exp-03-25",
+    "gemini": "gemini/gemini-2.5-pro-preview-03-25",
+    "gemini-free": "gemini/gemini-2.5-pro-exp-03-25",
 }
 # Model metadata loaded from resources and user's files.
 
