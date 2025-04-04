@@ -964,3 +964,8 @@
   use_repo_map: true
   # Need metadata for this one...
   #weak_model_name: vertex_ai/gemini-2.0-flash
+
+- name: openrouter/openrouter/quasar-alpha
+  use_repo_map: true
+  edit_format: diff
+  examples_as_sys_msg: true
