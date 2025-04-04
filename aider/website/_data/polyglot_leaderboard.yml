@@ -858,3 +858,29 @@
   versions: 0.79.3.dev
   seconds_per_case: 10.3
   total_cost: 19.7416
+
+- dirname: 2025-04-04-02-57-25--qalpha-diff-exsys
+  test_cases: 225
+  model: Quasar Alpha
+  edit_format: diff
+  commit_hash: 8a34a6c-dirty
+  pass_rate_1: 21.8
+  pass_rate_2: 54.7
+  pass_num_1: 49
+  pass_num_2: 123
+  percent_cases_well_formed: 98.2
+  error_outputs: 4
+  num_malformed_responses: 4
+  num_with_malformed_responses: 4
+  user_asks: 187
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model openrouter/openrouter/quasar-alpha
+  date: 2025-04-04
+  versions: 0.80.5.dev
+  seconds_per_case: 14.8
+  total_cost: 0.0000
