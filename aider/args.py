@@ -544,6 +544,27 @@ def get_parser(default_config_files, git_root):
     )
 
     #########
+    group = parser.add_argument_group("Model Context Protocol (MCP)")
+    group.add_argument(
+        "--mcp-configuration",
+        default=None,
+        help="Specify the MCP configuration file (default: None)",
+    )
+
+    group.add_argument(
+        "--list-mcp-servers",
+        action="store_true",
+        help="List all configured MCP servers and exit",
+        default=False,
+    )
+    group.add_argument(
+        "--list-mcp-tools",
+        action="store_true",
+        help="List all available MCP tools and exit",
+        default=False,
+    )
+
+    #########
     group = parser.add_argument_group("Upgrading")
     group.add_argument(
         "--just-check-update",
