@@ -922,7 +922,8 @@ class Coder:
         else:
             self.io.tool_error(text)
 
-        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*)")
+        # Exclude double quotes from the matched URL characters
+        url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*)')
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
             url = url.rstrip(".',\"")
@@ -934,7 +935,8 @@ class Coder:
         if not self.detect_urls:
             return inp
 
-        url_pattern = re.compile(r"(https?://[^\s/$.?#].[^\s]*[^\s,.])")
+        # Exclude double quotes from the matched URL characters
+        url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*[^\s,.])')
         urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
         group = ConfirmGroup(urls)
         for url in urls:
