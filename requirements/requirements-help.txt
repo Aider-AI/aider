@@ -146,7 +146,7 @@ mpmath==1.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   sympy
-multidict==6.2.0
+multidict==6.3.2
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -196,12 +196,12 @@ propcache==0.3.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-pydantic==2.11.1
+pydantic==2.11.2
     # via
     #   -c requirements/common-constraints.txt
     #   banks
     #   llama-index-core
-pydantic-core==2.33.0
+pydantic-core==2.33.1
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
@@ -237,7 +237,7 @@ scipy==1.13.1
     #   -c requirements/common-constraints.txt
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==4.0.1
+sentence-transformers==4.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -286,7 +286,7 @@ transformers==4.50.3
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
-typing-extensions==4.13.0
+typing-extensions==4.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   anyio

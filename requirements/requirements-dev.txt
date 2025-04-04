@@ -54,7 +54,7 @@ filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-fonttools==4.56.0
+fonttools==4.57.0
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
@@ -285,7 +285,7 @@ typer==0.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-typing-extensions==4.13.0
+typing-extensions==4.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   typer
@@ -297,7 +297,7 @@ urllib3==2.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.6.11
+uv==0.6.12
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in

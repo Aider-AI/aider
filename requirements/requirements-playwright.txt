@@ -12,7 +12,7 @@ pyee==12.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   playwright
-typing-extensions==4.13.0
+typing-extensions==4.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   pyee

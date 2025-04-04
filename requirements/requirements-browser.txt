@@ -139,7 +139,7 @@ tornado==6.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-typing-extensions==4.13.0
+typing-extensions==4.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   altair

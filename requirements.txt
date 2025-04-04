@@ -143,7 +143,7 @@ jiter==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   openai
-json5==0.11.0
+json5==0.12.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.65.1
+litellm==1.65.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -184,7 +184,7 @@ monotonic==1.6
     # via
     #   -c requirements/common-constraints.txt
     #   posthog
-multidict==6.2.0
+multidict==6.3.2
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -253,12 +253,12 @@ pycparser==2.22
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
-pydantic==2.11.1
+pydantic==2.11.2
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-pydantic-core==2.33.0
+pydantic-core==2.33.1
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
@@ -387,7 +387,7 @@ tree-sitter-yaml==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-typing-extensions==4.13.0
+typing-extensions==4.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   anyio
