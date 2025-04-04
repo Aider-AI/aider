@@ -765,8 +765,32 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     selected_model_name = select_default_model(args, io, analytics)
     if not selected_model_name:
         # Error message and analytics event are handled within select_default_model
+        # It might have already offered OAuth if no model/keys were found.
+        # If it failed here, we exit.
         return 1
     args.model = selected_model_name  # Update args with the selected model
+
+    # Check if an OpenRouter model was selected/specified but the key is missing
+    if args.model.startswith("openrouter/") and not os.environ.get("OPENROUTER_API_KEY"):
+        io.tool_warning(f"The specified model '{args.model}' requires an OpenRouter API key, which was not found.")
+        # Attempt OAuth flow because the specific model needs it
+        if offer_openrouter_oauth(io, analytics):
+            # OAuth succeeded, the key should now be in os.environ.
+            # Check if the key is now present after the flow.
+            if os.environ.get("OPENROUTER_API_KEY"):
+                 io.tool_output("OpenRouter successfully connected.") # Inform user connection worked
+            else:
+                 # This case should ideally not happen if offer_openrouter_oauth succeeded
+                 # but check defensively.
+                 io.tool_error("OpenRouter authentication seemed successful, but the key is still missing.")
+                 analytics.event("exit", reason="OpenRouter key missing after successful OAuth for specified model")
+                 return 1
+        else:
+            # OAuth failed or was declined by the user
+            io.tool_error(f"Unable to proceed without an OpenRouter API key for model '{args.model}'.")
+            io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
+            analytics.event("exit", reason="OpenRouter key missing for specified model and OAuth failed/declined")
+            return 1
 
     main_model = models.Model(
         args.model,
