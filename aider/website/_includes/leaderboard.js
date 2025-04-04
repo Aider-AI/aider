@@ -4,7 +4,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const redDiagonalPattern = pattern.draw('diagonal', 'rgba(255, 99, 132, 0.2)');
   let displayedData = [];
 
-  const HIGHLIGHT_MODEL = '{{ highlight_model | default: "no no no" }}';
+  // Get highlight model from query string or Jekyll variable
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryHighlight = urlParams.get('highlight');
+  const HIGHLIGHT_MODEL = queryHighlight || '{{ highlight_model | default: "no no no" }}';
+
   var leaderboardData = {
     labels: [],
     datasets: [{
