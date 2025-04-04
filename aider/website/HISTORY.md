@@ -24,10 +24,14 @@ cog.out(text)
 ]]]-->
 
 
-### Aider v0.81.0
+### main branch
 
 - Added support for the `openrouter/openrouter/quasar-alpha` model.
-- Aider wrote 81% of the code in this release.
+  - Run with `aider --model quasar`
+- Offer OpenRouter OAuth authentication if an OpenRouter model is specified but the API key is missing.
+- Prevent retrying API calls when the provider reports insufficient credits.
+- Improve URL detection to exclude trailing double quotes.
+- Aider wrote 86% of the code in this release.
 
 ### Aider v0.80.4
 

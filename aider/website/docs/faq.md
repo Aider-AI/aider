@@ -264,11 +264,12 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>496,722</td><td class='right'>75.7%</td></tr>
-<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>144,371</td><td class='right'>22.0%</td></tr>
-<tr><td>openrouter/deepseek/deepseek-chat-v3-0324:free</td><td class='right'>11,324</td><td class='right'>1.7%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>1,755</td><td class='right'>0.3%</td></tr>
-<tr><td>vertex_ai/REDACTED</td><td class='right'>1,739</td><td class='right'>0.3%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>900,070</td><td class='right'>83.0%</td></tr>
+<tr><td>anthropic/claude-3-7-sonnet-20250219</td><td class='right'>144,371</td><td class='right'>13.3%</td></tr>
+<tr><td>openrouter/openrouter/quasar-alpha</td><td class='right'>25,535</td><td class='right'>2.4%</td></tr>
+<tr><td>openrouter/deepseek/deepseek-chat-v3-0324:free</td><td class='right'>11,324</td><td class='right'>1.0%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>1,755</td><td class='right'>0.2%</td></tr>
+<tr><td>vertex_ai/REDACTED</td><td class='right'>1,739</td><td class='right'>0.2%</td></tr>
 </table>
 
 {: .note :}

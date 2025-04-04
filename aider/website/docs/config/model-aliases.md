@@ -84,6 +84,7 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `gemini-2.5-pro`: gemini/gemini-2.5-pro-exp-03-25
 - `haiku`: claude-3-5-haiku-20241022
 - `opus`: claude-3-opus-20240229
+- `quasar`: openrouter/openrouter/quasar-alpha
 - `r1`: deepseek/deepseek-reasoner
 - `sonnet`: anthropic/claude-3-7-sonnet-20250219
 <!--[[[end]]]-->
