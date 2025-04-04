@@ -1,5 +1,9 @@
 # Release history
 
+### Aider v0.80.4
+
+- Bumped deps to pickup litellm change to properly display the root cause of OpenRouter "choices" errors.
+
 ### Aider v0.80.3
 
 - Improve error message for OpenRouter API connection issues to mention potential rate limiting or upstream provider issues.
@@ -9,7 +13,7 @@
 
 ### Aider v0.80.2
 
-- Bumped deps to pickup litellm change to properly display the root cause of OpenRouter "choices" errors.
+- Bumped deps.
 
 ### Aider v0.80.1
 
