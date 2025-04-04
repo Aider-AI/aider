@@ -1,8 +1,9 @@
 # Release history
 
-### main branch
+### Aider v0.81.0
 
-- Aider wrote 84% of the code in this release.
+- Added support for the `openrouter/openrouter/quasar-alpha` model.
+- Aider wrote 81% of the code in this release.
 
 ### Aider v0.80.4
 
