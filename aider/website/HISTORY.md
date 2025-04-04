@@ -24,7 +24,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.81.0
 
 - Added support for the `openrouter/openrouter/quasar-alpha` model.
   - Run with `aider --model quasar`
