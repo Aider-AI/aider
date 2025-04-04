@@ -24,6 +24,13 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.81.1
+
+- Added support for the `gemini/gemini-2.5-pro-preview-03-25` model.
+- Updated the `gemini` alias to point to `gemini/gemini-2.5-pro-preview-03-25`.
+- Added the `gemini-exp` alias for `gemini/gemini-2.5-pro-exp-03-25`.
+- Aider wrote 87% of the code in this release.
+
 ### Aider v0.81.0
 
 - Added support for the `openrouter/openrouter/quasar-alpha` model.

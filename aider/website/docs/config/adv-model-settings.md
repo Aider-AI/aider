@@ -615,6 +615,11 @@ cog.out("```\n")
   weak_model_name: gemini/gemini-2.0-flash
   use_repo_map: true
 
+- name: gemini/gemini-2.5-pro-preview-03-25
+  edit_format: diff-fenced
+  weak_model_name: gemini/gemini-2.0-flash
+  use_repo_map: true
+
 - name: gemini/gemini-exp-1114
   edit_format: diff
   use_repo_map: true
@@ -1171,6 +1176,10 @@ cog.out("```\n")
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
+  edit_format: diff-fenced
+  use_repo_map: true
+
+- name: vertex_ai/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
   use_repo_map: true
 
