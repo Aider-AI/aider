@@ -439,9 +439,9 @@
         "input_cost_per_video_per_second": 0,
         "input_cost_per_audio_per_second": 0,
         "input_cost_per_token": 0,
-        "input_cost_per_character": 0, 
-        "input_cost_per_token_above_128k_tokens": 0, 
-        "input_cost_per_character_above_128k_tokens": 0, 
+        "input_cost_per_character": 0,
+        "input_cost_per_token_above_128k_tokens": 0,
+        "input_cost_per_character_above_128k_tokens": 0,
         "input_cost_per_image_above_128k_tokens": 0,
         "input_cost_per_video_per_second_above_128k_tokens": 0,
         "input_cost_per_audio_per_second_above_128k_tokens": 0,
@@ -461,7 +461,7 @@
         "supports_tool_choice": true,
         "source": "https://cloud.google.com/vertex-ai/generative-ai/pricing"
     },
-  "openrouter/google/gemini-2.0-flash-exp:free": {
+    "openrouter/google/gemini-2.0-flash-exp:free": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,
         "max_output_tokens": 8192,
