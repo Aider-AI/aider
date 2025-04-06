@@ -264,10 +264,10 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>788,594</td><td class='right'>92.0%</td></tr>
-<tr><td>openrouter/openrouter/quasar-alpha</td><td class='right'>36,847</td><td class='right'>4.3%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>16,646</td><td class='right'>1.9%</td></tr>
-<tr><td>openrouter/deepseek/deepseek-chat-v3-0324:free</td><td class='right'>11,324</td><td class='right'>1.3%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>701,602</td><td class='right'>85.1%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>71,324</td><td class='right'>8.6%</td></tr>
+<tr><td>openrouter/openrouter/quasar-alpha</td><td class='right'>36,847</td><td class='right'>4.5%</td></tr>
+<tr><td>openrouter/deepseek/deepseek-chat-v3-0324:free</td><td class='right'>11,324</td><td class='right'>1.4%</td></tr>
 <tr><td>openrouter/REDACTED</td><td class='right'>1,755</td><td class='right'>0.2%</td></tr>
 <tr><td>vertex_ai/REDACTED</td><td class='right'>1,739</td><td class='right'>0.2%</td></tr>
 </table>
