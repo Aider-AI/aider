@@ -884,3 +884,29 @@
   versions: 0.80.5.dev
   seconds_per_case: 14.8
   total_cost: 0.0000
+
+- dirname: 2025-04-06-08-39-52--llama-4-maverick-17b-128e-instruct-polyglot-whole
+  test_cases: 225
+  model: Llama 4 Maverick
+  edit_format: whole
+  commit_hash: 9445a31
+  pass_rate_1: 4.4
+  pass_rate_2: 15.6
+  pass_num_1: 10
+  pass_num_2: 35
+  percent_cases_well_formed: 99.1
+  error_outputs: 12
+  num_malformed_responses: 2
+  num_with_malformed_responses: 2
+  user_asks: 248
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model nvidia_nim/meta/llama-4-maverick-17b-128e-instruct
+  date: 2025-04-06
+  versions: 0.81.2.dev
+  seconds_per_case: 20.5
+  total_cost: 0.0000
