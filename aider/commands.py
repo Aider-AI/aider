@@ -22,7 +22,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
+from aider.utils import is_image_file, is_likely_binary
 
 from .dump import dump  # noqa: F401
 
@@ -1648,6 +1648,55 @@ class Commands:
             pass
 
         return sorted(symbols)
+
+    def cmd_search(self, args):
+        "Search for exact string matches in files and add matching files to chat"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a text string to search for.")
+            return
+
+        search_string = args.strip()
+        found_files = set()
+
+        # Create a spinner for user feedback
+        self.io.tool_output(f"Searching for '{search_string}'...")
+        chat_files = set(self.coder.abs_fnames)
+        other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+        # Search through all files
+        for fname in other_files:
+            # Skip binary files
+            if is_likely_binary(fname):
+                continue
+
+            # Read file with silent=True to suppress error messages
+            content = self.io.read_text(fname, silent=True)
+            if content and search_string in content:
+                found_files.add(fname)
+                rel_fname = self.coder.get_rel_fname(fname)
+                self.io.tool_output(f"Found '{search_string}' in {rel_fname}")
+
+        if not found_files:
+            self.io.tool_error(f"No files found containing '{search_string}'.")
+            return
+
+        # Add the files to the chat
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to the chat")
+                self.coder.check_added_files()
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""

@@ -2190,3 +2190,77 @@ class TestCommands(TestCase):
                 
             # Verify no files were added
             self.assertEqual(len(coder.abs_fnames), 0)
+            
+    def test_cmd_search(self):
+        from unittest import mock
+        
+        # Create test environment
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            
+            # Setup test files
+            file1_path = Path(repo_dir) / "file1.py"
+            file2_path = Path(repo_dir) / "file2.py" 
+            file3_path = Path(repo_dir) / "file3.py"  # File without the search string
+            file1_path.write_text("def test_function(): pass")
+            file2_path.write_text("# This file contains search_string in a comment")
+            file3_path.write_text("# This file has no reference to the search term")
+            
+            # Mock get_all_abs_files to return our test files
+            coder.get_all_abs_files = mock.MagicMock(return_value=[
+                str(file1_path),
+                str(file2_path),
+                str(file3_path)
+            ])
+            
+            # Mock read_text to return the actual file contents
+            def mock_read_text(fname, silent=False):
+                if str(file1_path) in str(fname):
+                    return "def test_function(): pass"
+                elif str(file2_path) in str(fname):
+                    return "# This file contains search_string in a comment"
+                elif str(file3_path) in str(fname):
+                    return "# This file has no reference to the search term"
+                return None
+                
+            io.read_text = mock.MagicMock(side_effect=mock_read_text)
+            
+            # Run the search command
+            commands = Commands(io, coder)
+            # Test searching for a string that exists
+            commands.cmd_search("search_string")
+            
+            # Check that the expected files were added to the chat
+            self.assertEqual(len(coder.abs_fnames), 1)
+            
+            # Convert abs_fnames to a list of rel paths for easier comparison
+            added_files = [str(Path(path).name) for path in coder.abs_fnames]
+            self.assertIn("file2.py", added_files)
+            self.assertNotIn("file1.py", added_files)
+            self.assertNotIn("file3.py", added_files)
+            
+            # Clear added files
+            coder.abs_fnames.clear()
+            
+            # Test searching for a string in a single file
+            io.read_text = mock.MagicMock(side_effect=mock_read_text)
+            commands.cmd_search("test_function")
+            
+            # Check that only the file with "test_function" was added
+            self.assertEqual(len(coder.abs_fnames), 1)
+            added_files = [str(Path(path).name) for path in coder.abs_fnames]
+            self.assertIn("file1.py", added_files)
+            self.assertNotIn("file2.py", added_files)
+            self.assertNotIn("file3.py", added_files)
+            
+            # Clear added files
+            coder.abs_fnames.clear()
+            
+            # Test searching for a non-existent string
+            with mock.patch.object(io, "tool_error") as mock_tool_error:
+                commands.cmd_search("nonexistent_string")
+                mock_tool_error.assert_called_with("No files found containing 'nonexistent_string'.")
+                
+            # Verify no files were added
+            self.assertEqual(len(coder.abs_fnames), 0)
