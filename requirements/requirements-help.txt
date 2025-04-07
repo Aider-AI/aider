@@ -101,7 +101,7 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-huggingface-hub[inference]==0.30.1
+huggingface-hub[inference]==0.30.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -159,7 +159,7 @@ nest-asyncio==1.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -168,7 +168,7 @@ nltk==3.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-numpy==1.26.4
+numpy==2.2.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -196,7 +196,7 @@ propcache==0.3.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-pydantic==2.11.2
+pydantic==2.11.3
     # via
     #   -c requirements/common-constraints.txt
     #   banks
@@ -232,7 +232,7 @@ scikit-learn==1.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
-scipy==1.13.1
+scipy==1.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   scikit-learn
@@ -269,7 +269,7 @@ tokenizers==0.21.1
     # via
     #   -c requirements/common-constraints.txt
     #   transformers
-torch==2.2.2
+torch==2.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -282,14 +282,13 @@ tqdm==4.67.1
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.50.3
+transformers==4.51.1
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
 typing-extensions==4.13.1
     # via
     #   -c requirements/common-constraints.txt
-    #   anyio
     #   huggingface-hub
     #   llama-index-core
     #   pydantic
@@ -317,7 +316,10 @@ wrapt==1.17.2
     #   -c requirements/common-constraints.txt
     #   deprecated
     #   llama-index-core
-yarl==1.18.3
+yarl==1.19.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

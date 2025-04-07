@@ -115,7 +115,7 @@ httpx==0.28.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-huggingface-hub==0.30.1
+huggingface-hub==0.30.2
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.65.3
+litellm==1.65.4.post1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -189,16 +189,16 @@ multidict==6.3.2
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-numpy==1.26.4
+numpy==2.2.4
     # via
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.70.0
+openai==1.71.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -217,10 +217,6 @@ pexpect==4.9.0
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
 pillow==11.1.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
-pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -253,7 +249,7 @@ pycparser==2.22
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
-pydantic==2.11.2
+pydantic==2.11.3
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -320,7 +316,7 @@ rpds-py==0.24.0
     #   -c requirements/common-constraints.txt
     #   jsonschema
     #   referencing
-scipy==1.13.1
+scipy==1.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -368,9 +364,6 @@ tqdm==4.67.1
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
     #   openai
-    # via
-    #   -c requirements/common-constraints.txt
-    #   tree-sitter-language-pack
 tree-sitter-c-sharp==0.23.1
     # via
     #   -c requirements/common-constraints.txt
@@ -379,7 +372,7 @@ tree-sitter-embedded-template==0.23.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-tree-sitter-language-pack==0.6.1
+tree-sitter-language-pack==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
@@ -390,13 +383,11 @@ tree-sitter-yaml==0.7.0
 typing-extensions==4.13.1
     # via
     #   -c requirements/common-constraints.txt
-    #   anyio
     #   beautifulsoup4
     #   huggingface-hub
     #   openai
     #   pydantic
     #   pydantic-core
-    #   referencing
     #   typing-inspection
 typing-inspection==0.4.0
     # via
@@ -407,7 +398,7 @@ urllib3==2.3.0
     #   -c requirements/common-constraints.txt
     #   mixpanel
     #   requests
-watchfiles==1.0.4
+watchfiles==1.0.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -415,7 +406,7 @@ wcwidth==0.2.13
     # via
     #   -c requirements/common-constraints.txt
     #   prompt-toolkit
-yarl==1.18.3
+yarl==1.19.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -423,6 +414,9 @@ zipp==3.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   importlib-metadata
-    
+
 tree-sitter==0.23.2; python_version < "3.10"
 tree-sitter==0.24.0; python_version >= "3.10"
+
+# Remove if Python 3.13 support https://github.com/jiaaro/pydub/pull/816 gets released
+audioop-lts>=0.2.1; python_version >= "3.13"

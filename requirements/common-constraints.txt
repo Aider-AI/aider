@@ -164,7 +164,7 @@ httpx==0.28.1
     #   litellm
     #   llama-index-core
     #   openai
-huggingface-hub[inference]==0.30.1
+huggingface-hub[inference]==0.30.2
     # via
     #   llama-index-embeddings-huggingface
     #   sentence-transformers
@@ -212,7 +212,7 @@ jsonschema-specifications==2024.10.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.65.3
+litellm==1.65.4.post1
     # via -r requirements/requirements.in
 llama-index-core==0.12.26
     # via
@@ -248,11 +248,11 @@ multiprocess==0.70.17
     # via pathos
 mypy-extensions==1.0.0
     # via typing-inspect
-narwhals==1.33.0
+narwhals==1.34.0
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -r requirements/requirements.in
     #   llama-index-core
@@ -261,7 +261,7 @@ nltk==3.9.1
     # via llama-index-core
 nodeenv==1.9.1
     # via pre-commit
-numpy==1.26.4
+numpy==2.2.4
     # via
     #   -r requirements/requirements-help.in
     #   contourpy
@@ -274,7 +274,7 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
-openai==1.70.0
+openai==1.71.0
     # via litellm
 packaging==24.2
     # via
@@ -307,10 +307,6 @@ pillow==11.1.0
     #   matplotlib
     #   sentence-transformers
     #   streamlit
-pip==25.0.1
-    # via
-    #   -r requirements/requirements.in
-    #   pip-tools
 pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
 platformdirs==4.3.7
@@ -360,7 +356,7 @@ pycodestyle==2.13.0
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.11.2
+pydantic==2.11.3
     # via
     #   banks
     #   litellm
@@ -445,7 +441,7 @@ safetensors==0.5.3
     # via transformers
 scikit-learn==1.6.1
     # via sentence-transformers
-scipy==1.13.1
+scipy==1.15.2
     # via
     #   -r requirements/requirements.in
     #   scikit-learn
@@ -454,8 +450,6 @@ semver==3.0.4
     # via -r requirements/requirements-dev.in
 sentence-transformers==4.0.2
     # via llama-index-embeddings-huggingface
-setuptools==78.1.0
-    # via pip-tools
 shellingham==1.5.4
     # via typer
 six==1.17.0
@@ -499,7 +493,7 @@ tokenizers==0.21.1
     #   transformers
 toml==0.10.2
     # via streamlit
-torch==2.2.2
+torch==2.6.0
     # via
     #   -r requirements/requirements-help.in
     #   sentence-transformers
@@ -513,7 +507,7 @@ tqdm==4.67.1
     #   openai
     #   sentence-transformers
     #   transformers
-transformers==4.50.3
+transformers==4.51.1
     # via sentence-transformers
 tree-sitter==0.24.0
     # via tree-sitter-language-pack
@@ -521,7 +515,7 @@ tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
 tree-sitter-embedded-template==0.23.2
     # via tree-sitter-language-pack
-tree-sitter-language-pack==0.6.1
+tree-sitter-language-pack==0.7.0
     # via grep-ast
 tree-sitter-yaml==0.7.0
     # via tree-sitter-language-pack
@@ -530,7 +524,6 @@ typer==0.15.2
 typing-extensions==4.13.1
     # via
     #   altair
-    #   anyio
     #   beautifulsoup4
     #   huggingface-hub
     #   llama-index-core
@@ -538,7 +531,6 @@ typing-extensions==4.13.1
     #   pydantic
     #   pydantic-core
     #   pyee
-    #   referencing
     #   sentence-transformers
     #   sqlalchemy
     #   streamlit
@@ -558,11 +550,11 @@ urllib3==2.3.0
     # via
     #   mixpanel
     #   requests
-uv==0.6.12
+uv==0.6.13
     # via -r requirements/requirements-dev.in
 virtualenv==20.30.0
     # via pre-commit
-watchfiles==1.0.4
+watchfiles==1.0.5
     # via -r requirements/requirements.in
 wcwidth==0.2.13
     # via prompt-toolkit
@@ -572,7 +564,11 @@ wrapt==1.17.2
     # via
     #   deprecated
     #   llama-index-core
-yarl==1.18.3
+yarl==1.19.0
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
+
+# The following packages are considered to be unsafe in a requirements file:
+# pip
+# setuptools
