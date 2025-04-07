@@ -194,8 +194,8 @@ class TestCoder(unittest.TestCase):
             mock.return_value = set([str(fname1), str(fname2), str(fname3)])
             coder.repo.get_tracked_files = mock
 
-            # Check that file mentions skip files with duplicate basenames
-            mentioned = coder.get_file_mentions(f"Check {fname2} and {fname3}")
+            # Check that file mentions of a pure basename skips files with duplicate basenames
+            mentioned = coder.get_file_mentions(f"Check {fname2.name} and {fname3}")
             self.assertEqual(mentioned, {str(fname3)})
 
             # Add a read-only file with same basename
