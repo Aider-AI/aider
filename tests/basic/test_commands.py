@@ -2264,3 +2264,83 @@ class TestCommands(TestCase):
                 
             # Verify no files were added
             self.assertEqual(len(coder.abs_fnames), 0)
+            
+    def test_cmd_regex(self):
+        from unittest import mock
+        
+        # Create test environment
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            
+            # Setup test files
+            file1_path = Path(repo_dir) / "file1.py"
+            file2_path = Path(repo_dir) / "file2.py" 
+            file3_path = Path(repo_dir) / "file3.py"
+            file1_path.write_text("def test_function(): pass")
+            file2_path.write_text("# This file contains search_string in a comment")
+            file3_path.write_text("def another_function(value=123): return value")
+            
+            # Mock get_all_abs_files to return our test files
+            coder.get_all_abs_files = mock.MagicMock(return_value=[
+                str(file1_path),
+                str(file2_path),
+                str(file3_path)
+            ])
+            
+            # Mock read_text to return the actual file contents
+            def mock_read_text(fname, silent=False):
+                if str(file1_path) in str(fname):
+                    return "def test_function(): pass"
+                elif str(file2_path) in str(fname):
+                    return "# This file contains search_string in a comment"
+                elif str(file3_path) in str(fname):
+                    return "def another_function(value=123): return value"
+                return None
+                
+            io.read_text = mock.MagicMock(side_effect=mock_read_text)
+            
+            # Run the regex command
+            commands = Commands(io, coder)
+            
+            # Test searching with a regex pattern that matches multiple files
+            commands.cmd_regex(r"def\s+\w+\(")
+            
+            # Check that the expected files were added to the chat
+            self.assertEqual(len(coder.abs_fnames), 2)
+            
+            # Convert abs_fnames to a list of rel paths for easier comparison
+            added_files = [str(Path(path).name) for path in coder.abs_fnames]
+            self.assertIn("file1.py", added_files)
+            self.assertIn("file3.py", added_files)
+            self.assertNotIn("file2.py", added_files)
+            
+            # Clear added files
+            coder.abs_fnames.clear()
+            
+            # Test searching with a regex that only matches one file
+            commands.cmd_regex(r"value=\d+")
+            
+            # Check that only the file with the pattern was added
+            self.assertEqual(len(coder.abs_fnames), 1)
+            added_files = [str(Path(path).name) for path in coder.abs_fnames]
+            self.assertIn("file3.py", added_files)
+            self.assertNotIn("file1.py", added_files)
+            self.assertNotIn("file2.py", added_files)
+            
+            # Clear added files
+            coder.abs_fnames.clear()
+            
+            # Test with an invalid regex pattern
+            with mock.patch.object(io, "tool_error") as mock_tool_error:
+                commands.cmd_regex(r"[invalid regex")
+                mock_tool_error.assert_called_with(mock.ANY)  # Should call tool_error with an error message
+                
+            # Test searching for a non-matching pattern
+            coder.abs_fnames.clear()
+            with mock.patch.object(io, "tool_error") as mock_tool_error:
+                commands.cmd_regex(r"nonexistent_pattern\d+")
+                mock_tool_error.assert_called_with("No files found matching regex pattern 'nonexistent_pattern\\d+'.")
+                
+            # Verify no files were added
+            self.assertEqual(len(coder.abs_fnames), 0)
