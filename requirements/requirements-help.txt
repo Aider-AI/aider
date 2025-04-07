@@ -172,7 +172,7 @@ nltk==3.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-numpy==1.26.4
+numpy==2.2.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -273,7 +273,7 @@ tokenizers==0.21.1
     # via
     #   -c requirements/common-constraints.txt
     #   transformers
-torch==2.2.2
+torch==2.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -293,7 +293,6 @@ transformers==4.51.3
 typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
-    #   anyio
     #   huggingface-hub
     #   llama-index-core
     #   pydantic
@@ -325,3 +324,6 @@ yarl==1.20.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

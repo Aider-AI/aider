@@ -25,9 +25,11 @@ uv pip compile \
     requirements/requirements.in \
     $1
 
-grep -v ^tree-sitter= tmp.requirements.txt \
-    | cat - requirements/tree-sitter.in \
-    > requirements.txt
+{
+  grep -v ^tree-sitter= tmp.requirements.txt
+  echo; cat requirements/tree-sitter.in
+  echo; cat requirements/pydub.in
+} > requirements.txt
 
 # Compile additional requirements files
 SUFFIXES=(dev help browser playwright)
