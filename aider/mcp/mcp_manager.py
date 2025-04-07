@@ -33,7 +33,7 @@ class McpManager:
         self.enabled: bool = False
         self.message_queue = queue.Queue()
         self.result_queue = queue.Queue()
-        self.mcp_thread = threading.Thread(target=self._servers_loop, args=(self.servers.values(),))
+        self.mcp_thread = threading.Thread(target=self._servers_loop, args=(self.servers.values(),),)
 
     def _get_event_loop(self) -> asyncio.AbstractEventLoop:
         """Get the current event loop or create a new one if none exists."""
@@ -45,22 +45,32 @@ class McpManager:
     def _call(self, io, server_name, function, args: dict = {}):
         """Sync call to the thread with queues."""
 
-        try:
-            self.message_queue.put_nowait(CallArguments(server_name, function, args))
-            result = self.result_queue.get()
+        self.message_queue.put_nowait(CallArguments(server_name, function, args))
 
-            if result.error:
+        while True:
+            try:
+                print("Waiting for result")
+                result = self.result_queue.get_nowait()
+                print("Got result", result)
+
+                if result.error:
+                    if io:
+                        io.tool_error(result.error)
+                    return None
+
+                return result.response
+            except KeyboardInterrupt:
                 if io:
-                    io.tool_error(result.error)
-                return None
+                    io.tool_error("Keyboard interrupt in MCP call")
+                return CallResponse("Keyboard interrupt", None)
+            except queue.Empty:
+                time.sleep(0.1)
+            except Exception as e:
+                if io:
+                    io.tool_error(f"Error in MCP call: {str(e)}")
+                return CallResponse(str(e), None)
 
-            return result.response
-        except Exception as e:
-            if io:
-                io.tool_error(f"Error in MCP call: {str(e)}")
-            return CallResponse(str(e), None)
-
-    async def _async_server_loop(self, server: McpServer) -> None:
+    async def _start_server_session(self, server: McpServer, exit_stack: AsyncExitStack) -> ClientSession:
         """Run the async server loop for a given server."""
 
         # Parse the server exec command
@@ -74,50 +84,62 @@ class McpManager:
             env=server.env_vars,
         )
 
-        # Run the async server loop
-        exit_stack = AsyncExitStack()
-
         stdio_transport = await exit_stack.enter_async_context(stdio_client(server_params))
         stdio, write = stdio_transport
         session = await exit_stack.enter_async_context(ClientSession(stdio, write))
 
         await session.initialize()
-
-        while True:
-            try:
-                msg: CallArguments = self.message_queue.get_nowait()
-
-                # Exit the loop if the exit message is received
-                if msg.function == "exit":
-                    break
-
-                # Ignore messages for other servers
-                if msg.server_name != server.name:
-                    continue
-
-                try:
-                    if msg.function == "call_tool":
-                        response = await session.call_tool(**msg.args)
-                        self.result_queue.put_nowait(CallResponse(None, response))
-                    elif msg.function == "list_tools":
-                        response = await session.list_tools()
-                        self.result_queue.put_nowait(CallResponse(None, response))
-                except Exception as e:
-                    self.result_queue.put_nowait(CallResponse(str(e), None))
-            except queue.Empty:
-                await asyncio.sleep(0.1)
-            except Exception as e:
-                self.result_queue.put_nowait(CallResponse(str(e), None))
+        return session
 
     async def _async_servers_loop(self, servers: list[McpServer]) -> None:
         """Run the async server loop for all servers in parallel."""
-        tasks = [self._async_server_loop(server) for server in servers]
-        await asyncio.gather(*tasks)
+        exit_stack = AsyncExitStack()
+
+        sessions = { server.name: (server, await self._start_server_session(server, exit_stack)) for server in servers }
+
+        try:
+            while True:
+                try:
+                    msg: CallArguments = self.message_queue.get_nowait()
+                    print("Got message", msg)
+
+                    # Exit the loop if the exit message is received
+                    if msg.function == "exit":
+                        print("Exit message received")
+                        break
+
+                    # Find the server and session for the given server name
+                    server, session = sessions.get(msg.server_name, (None, None))
+                    if not server:
+                        print(f"Server '{msg.server_name}' not found")
+                        continue
+
+                    try:
+                        if msg.function == "call_tool":
+                            response = await session.call_tool(**msg.args)
+                            print("Put response in queue 1")
+                            self.result_queue.put_nowait(CallResponse(None, response))
+                        elif msg.function == "list_tools":
+                            response = await session.list_tools()
+                            print("Put response in queue 2")
+                            self.result_queue.put_nowait(CallResponse(None, response))
+                    except Exception as e:
+                        print("Put response in queue 3")
+                        self.result_queue.put_nowait(CallResponse(str(e), None))
+                except queue.Empty:
+                    await asyncio.sleep(0.1)
+        except:
+            print("Error in async server loop")
 
     def _servers_loop(self, servers: list[McpServer]) -> None:
         """Wrap the async server loop for a given server."""
-        loop = self._get_event_loop()
-        loop.run_until_complete(self._async_servers_loop(servers))
+        try:
+            loop = self._get_event_loop()
+            loop.run_until_complete(self._async_servers_loop(servers))
+        except Exception as e:
+            print(f"Error in servers loop: {str(e)}")
+        finally:
+            loop.close()
 
     def configure_from_args(self, args) -> None:
         """Configure MCP from command-line arguments."""
@@ -249,6 +271,7 @@ class McpManager:
                 "name": tool_name,
                 "arguments": arguments
             })
+            print(type(response))
 
             # Process the response
             result = ""
