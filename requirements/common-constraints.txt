@@ -271,7 +271,7 @@ narwhals==1.37.0
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -r requirements/requirements.in
     #   llama-index-core
@@ -280,7 +280,7 @@ nltk==3.9.1
     # via llama-index-core
 nodeenv==1.9.1
     # via pre-commit
-numpy==1.26.4
+numpy==2.2.4
     # via
     #   -r requirements/requirements-help.in
     #   contourpy
@@ -471,7 +471,7 @@ safetensors==0.5.3
     # via transformers
 scikit-learn==1.6.1
     # via sentence-transformers
-scipy==1.13.1
+scipy==1.15.2
     # via
     #   -r requirements/requirements.in
     #   scikit-learn
@@ -525,7 +525,7 @@ tokenizers==0.21.1
     #   transformers
 toml==0.10.2
     # via streamlit
-torch==2.2.2
+torch==2.6.0
     # via
     #   -r requirements/requirements-help.in
     #   sentence-transformers
@@ -557,7 +557,6 @@ typer==0.15.2
 typing-extensions==4.13.2
     # via
     #   altair
-    #   anyio
     #   beautifulsoup4
     #   google-generativeai
     #   huggingface-hub
@@ -566,7 +565,6 @@ typing-extensions==4.13.2
     #   pydantic
     #   pydantic-core
     #   pyee
-    #   referencing
     #   sentence-transformers
     #   sqlalchemy
     #   streamlit
@@ -606,3 +604,7 @@ yarl==1.20.0
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
+
+# The following packages are considered to be unsafe in a requirements file:
+# pip
+# setuptools

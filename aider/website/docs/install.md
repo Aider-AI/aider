@@ -75,7 +75,7 @@ python -m pip install pipx  # If you need to install pipx
 pipx install aider-chat
 ```
 
-You can use pipx to install aider with python versions 3.9-3.12.
+You can use pipx to install aider with python versions 3.10-3.13.
 
 Also see the
 [docs on other methods for installing pipx itself](https://pipx.pypa.io/stable/installation/).
@@ -93,7 +93,7 @@ using a
 to keep aider's dependencies separated.
 
 
-You can use pip to install aider with python versions 3.9-3.12.
+You can use pip to install aider with python versions 3.10-3.13.
 
 ```bash
 python -m pip install -U --upgrade-strategy only-if-needed aider-chat
@@ -112,4 +112,3 @@ they often install aider with incorrect dependencies.
 
 There are some [optional install steps](/docs/install/optional.html) you could consider.
 See the [usage instructions](https://aider.chat/docs/usage.html) to start coding with aider.
-
