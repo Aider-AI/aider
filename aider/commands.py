@@ -1558,6 +1558,97 @@ class Commands:
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
 
+    def cmd_find(self, args):
+        "Find files containing a specific symbol (function, class, variable) and add to chat"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a symbol to search for.")
+            return
+
+        symbol = args.strip()
+        found_files = set()
+
+        # We need a repo map to find symbols
+        if not self.coder.repo_map:
+            self.io.tool_error("Repository map is not available. Cannot search for symbols.")
+            return
+
+        # Get all tags from repo map
+        try:
+            # Create a spinner for user feedback
+            self.io.tool_output(f"Searching for symbol '{symbol}'...")
+            chat_files = set(self.coder.abs_fnames)
+            other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+            # Get tags for all files
+            all_tags = []
+            rel_fname_to_abs = {}
+
+            for fname in other_files:
+                rel_fname = self.coder.get_rel_fname(fname)
+                rel_fname_to_abs[rel_fname] = fname
+                tags = self.coder.repo_map.get_tags(fname, rel_fname)
+                all_tags.extend(tags)
+
+            # Find matching symbols
+            for tag in all_tags:
+                if tag.name == symbol:
+                    abs_fname = rel_fname_to_abs.get(tag.rel_fname) or tag.fname
+                    found_files.add(abs_fname)
+                    if tag.kind == "def":
+                        self.io.tool_output(
+                            f"Found definition of '{symbol}' in {tag.rel_fname} (line {tag.line})"
+                        )
+                    else:
+                        self.io.tool_output(f"Found reference to '{symbol}' in {tag.rel_fname}")
+        except Exception as e:
+            self.io.tool_error(f"Error searching for symbol: {e}")
+            return
+
+        if not found_files:
+            self.io.tool_error(f"No files found containing the symbol '{symbol}'.")
+            return
+
+        # Add the files to the chat
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to the chat")
+                self.coder.check_added_files()
+
+    def completions_find(self):
+        """Return completions for the find command - symbols from repo"""
+        if not self.coder.repo_map:
+            return []
+
+        symbols = set()
+
+        # Get symbols from all files
+        try:
+            chat_files = set(self.coder.abs_fnames)
+            other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+            for fname in other_files:
+                rel_fname = self.coder.get_rel_fname(fname)
+                tags = self.coder.repo_map.get_tags(fname, rel_fname)
+                for tag in tags:
+                    if tag.kind == "def":  # Only add definition symbols
+                        symbols.add(tag.name)
+        except Exception:
+            pass
+
+        return sorted(symbols)
+
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
 

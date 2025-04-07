@@ -2105,3 +2105,88 @@ class TestCommands(TestCase):
                     mock_tool_error.assert_any_call(
                         "Command '/model gpt-4' is only supported in interactive mode, skipping."
                     )
+                    
+    def test_cmd_find(self):
+        from unittest import mock
+        from collections import namedtuple
+        
+        # Create test environment
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+            
+            # Create a fake Tag for testing
+            Tag = namedtuple("Tag", "rel_fname fname line name kind")
+            
+            # Mock repo_map
+            coder.repo_map = mock.MagicMock()
+            
+            # Setup test files
+            file1_path = Path(repo_dir) / "file1.py"
+            file2_path = Path(repo_dir) / "file2.py" 
+            file3_path = Path(repo_dir) / "file3.py"  # File without the symbol
+            file1_path.write_text("def test_symbol(): pass")
+            file2_path.write_text("x = test_symbol()")
+            file3_path.write_text("# This file has no reference to the symbol")
+            
+            # Mock get_all_abs_files to return our test files
+            coder.get_all_abs_files = mock.MagicMock(return_value=[
+                str(file1_path),
+                str(file2_path),
+                str(file3_path)
+            ])
+            
+            # Create fake tags that will be returned by get_tags
+            tag1 = Tag(
+                rel_fname="file1.py",
+                fname=str(file1_path),
+                line=1,
+                name="test_symbol",
+                kind="def"
+            )
+            
+            tag2 = Tag(
+                rel_fname="file2.py",
+                fname=str(file2_path),
+                line=1,
+                name="test_symbol",
+                kind="ref"
+            )
+            
+            # Mock repo_map.get_tags method to return our fake tags
+            def mock_get_tags(fname, rel_fname):
+                if "file1.py" in fname:
+                    return [tag1]
+                elif "file2.py" in fname:
+                    return [tag2]
+                elif "file3.py" in fname:
+                    # Return empty list for file3.py to simulate no matches
+                    return []
+                return []
+                
+            coder.repo_map.get_tags = mock.MagicMock(side_effect=mock_get_tags)
+            
+            # Run the find command
+            commands = Commands(io, coder)
+            # Test finding a symbol that exists
+            commands.cmd_find("test_symbol")
+            
+            # Check that the expected files were added to the chat
+            self.assertEqual(len(coder.abs_fnames), 2)
+            
+            # Convert abs_fnames to a list of rel paths for easier comparison
+            added_files = [str(Path(path).name) for path in coder.abs_fnames]
+            self.assertIn("file1.py", added_files)
+            self.assertIn("file2.py", added_files)
+            self.assertNotIn("file3.py", added_files)  # Verify file3.py was NOT added
+            
+            # Clear added files
+            coder.abs_fnames.clear()
+            
+            # Test finding a non-existent symbol
+            with mock.patch.object(io, "tool_error") as mock_tool_error:
+                commands.cmd_find("nonexistent_symbol")
+                mock_tool_error.assert_called_with("No files found containing the symbol 'nonexistent_symbol'.")
+                
+            # Verify no files were added
+            self.assertEqual(len(coder.abs_fnames), 0)
