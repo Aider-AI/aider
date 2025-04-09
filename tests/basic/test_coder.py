@@ -194,8 +194,8 @@ class TestCoder(unittest.TestCase):
             mock.return_value = set([str(fname1), str(fname2), str(fname3)])
             coder.repo.get_tracked_files = mock
 
-            # Check that file mentions skip files with duplicate basenames
-            mentioned = coder.get_file_mentions(f"Check {fname2} and {fname3}")
+            # Check that file mentions of a pure basename skips files with duplicate basenames
+            mentioned = coder.get_file_mentions(f"Check {fname2.name} and {fname3}")
             self.assertEqual(mentioned, {str(fname3)})
 
             # Add a read-only file with same basename
@@ -365,6 +365,45 @@ class TestCoder(unittest.TestCase):
                         expected_mentions,
                         f"Failed to extract mentions from: {content}",
                     )
+
+    def test_get_file_mentions_multiline_backticks(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, yes=True)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create test files
+            test_files = [
+                "swebench/harness/test_spec/python.py",
+                "swebench/harness/test_spec/javascript.py",
+            ]
+            for fname in test_files:
+                fpath = Path(fname)
+                fpath.parent.mkdir(parents=True, exist_ok=True)
+                fpath.touch()
+
+            # Mock get_addable_relative_files to return our test files
+            coder.get_addable_relative_files = MagicMock(return_value=set(test_files))
+
+            # Input text with multiline backticked filenames
+            content = """
+Could you please **add the following files to the chat**?
+
+1.  `swebench/harness/test_spec/python.py`
+2.  `swebench/harness/test_spec/javascript.py`
+
+Once I have these, I can show you precisely how to do the thing.
+"""
+            expected_mentions = {
+                "swebench/harness/test_spec/python.py",
+                "swebench/harness/test_spec/javascript.py",
+            }
+
+            mentioned_files = coder.get_file_mentions(content)
+            self.assertEqual(
+                mentioned_files,
+                expected_mentions,
+                f"Failed to extract mentions from multiline backticked content: {content}",
+            )
 
     def test_get_file_mentions_path_formats(self):
         with GitTemporaryDirectory():

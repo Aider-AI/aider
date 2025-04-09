@@ -1626,10 +1626,6 @@ class Coder:
         mentioned_rel_fnames = set()
         fname_to_rel_fnames = {}
         for rel_fname in addable_rel_fnames:
-            # Skip files that share a basename with files already in chat
-            if os.path.basename(rel_fname) in existing_basenames:
-                continue
-
             normalized_rel_fname = rel_fname.replace("\\", "/")
             normalized_words = set(word.replace("\\", "/") for word in words)
             if normalized_rel_fname in normalized_words:
@@ -1644,6 +1640,10 @@ class Coder:
                 fname_to_rel_fnames[fname].append(rel_fname)
 
         for fname, rel_fnames in fname_to_rel_fnames.items():
+            # If the basename is already in chat, don't add based on a basename mention
+            if fname in existing_basenames:
+                continue
+            # If the basename mention is unique among addable files and present in the text
             if len(rel_fnames) == 1 and fname in words:
                 mentioned_rel_fnames.add(rel_fnames[0])
 
