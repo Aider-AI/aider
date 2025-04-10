@@ -847,8 +847,8 @@ class InputOutput:
 
         style = self._get_style()
 
-        if self.yes is True:
-            res = "n" if explicit_yes_required else "y"
+        if self.yes is True and not explicit_yes_required:
+            res = "y"
         elif self.yes is False:
             res = "n"
         elif group and group.preference:
