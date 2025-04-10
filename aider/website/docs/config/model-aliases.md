@@ -83,7 +83,9 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `gemini`: gemini/gemini-2.5-pro-preview-03-25
 - `gemini-2.5-pro`: gemini/gemini-2.5-pro-exp-03-25
 - `gemini-exp`: gemini/gemini-2.5-pro-exp-03-25
+- `grok3`: xai/grok-3-beta
 - `haiku`: claude-3-5-haiku-20241022
+- `optimus`: openrouter/openrouter/optimus-alpha
 - `opus`: claude-3-opus-20240229
 - `quasar`: openrouter/openrouter/quasar-alpha
 - `r1`: deepseek/deepseek-reasoner

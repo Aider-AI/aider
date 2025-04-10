@@ -1110,6 +1110,11 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: openrouter/openrouter/optimus-alpha
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+
 - name: openrouter/openrouter/quasar-alpha
   edit_format: diff
   use_repo_map: true
@@ -1121,6 +1126,13 @@ cog.out("```\n")
   use_repo_map: true
   editor_model_name: openrouter/qwen/qwen-2.5-coder-32b-instruct
   editor_edit_format: editor-diff
+
+- name: openrouter/x-ai/grok-3-beta
+  edit_format: diff
+  use_repo_map: true
+
+- name: openrouter/x-ai/grok-3-mini-beta
+  use_repo_map: true
 
 - name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
   edit_format: diff
@@ -1193,6 +1205,13 @@ cog.out("```\n")
 
 - name: vertex_ai/gemini-pro-experimental
   edit_format: diff-fenced
+  use_repo_map: true
+
+- name: xai/grok-3-beta
+  edit_format: diff
+  use_repo_map: true
+
+- name: xai/grok-3-mini-beta
   use_repo_map: true
 ```
 <!--[[[end]]]-->
