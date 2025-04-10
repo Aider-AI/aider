@@ -1133,6 +1133,8 @@ cog.out("```\n")
 
 - name: openrouter/x-ai/grok-3-mini-beta
   use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
 
 - name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
   edit_format: diff
@@ -1210,6 +1212,8 @@ cog.out("```\n")
 - name: xai/grok-3-beta
   edit_format: diff
   use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
 
 - name: xai/grok-3-mini-beta
   use_repo_map: true
