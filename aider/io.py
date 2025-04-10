@@ -847,11 +847,6 @@ class InputOutput:
 
         style = self._get_style()
 
-        def is_valid_response(text):
-            if not text:
-                return True
-            return text.lower() in valid_responses
-
         if self.yes is True:
             res = "n" if explicit_yes_required else "y"
         elif self.yes is False:
