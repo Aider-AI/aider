@@ -81,9 +81,7 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="Print each step without actually executing them"
     )
-    parser.add_argument(
-        "--force", action="store_true", help="Skip pre-push checks"
-    )
+    parser.add_argument("--force", action="store_true", help="Skip pre-push checks")
 
     args = parser.parse_args()
     dry_run = args.dry_run
