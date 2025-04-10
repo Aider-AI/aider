@@ -660,6 +660,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="GUI session ended")
         return
 
+    if args.server and not return_coder:
+        from aider.server import start_server
+
+        io.tool_output("Starting aider API server...")
+        analytics.event("server session")
+        start_server(argv, host=args.host, port=args.port)
+        analytics.event("exit", reason="Server session ended")
+        return
+
     if args.verbose:
         for fname in loaded_dotenvs:
             io.tool_output(f"Loaded {fname}")

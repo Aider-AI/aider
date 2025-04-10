@@ -33,6 +33,7 @@ dev = { file = "requirements/requirements-dev.txt" }
 help = { file = "requirements/requirements-help.txt" }
 browser = { file = "requirements/requirements-browser.txt" }
 playwright = { file = "requirements/requirements-playwright.txt" }
+server = { file = "requirements/requirements-server.txt" }
 
 [tool.setuptools]
 include-package-data = true

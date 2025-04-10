@@ -617,6 +617,23 @@ def get_parser(default_config_files, git_root):
         help="Enable automatic copy/paste of chat between aider and web UI (default: False)",
     )
     group.add_argument(
+        "--server",
+        action="store_true",
+        help="Start aider as a FastAPI server (default: False)",
+        default=False,
+    )
+    group.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="Specify the host to bind the server to (only used with --server, default: 127.0.0.1)",
+    )
+    group.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="Specify the port to bind the server to (only used with --server, default: 8000)",
+    )
+    group.add_argument(
         "--apply",
         metavar="FILE",
         help="Apply the changes from the given file instead of running the chat (debug)",
