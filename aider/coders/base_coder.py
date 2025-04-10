@@ -926,7 +926,7 @@ class Coder:
         url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*)')
         urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
         for url in urls:
-            url = url.rstrip(".',\"")
+            url = url.rstrip(".',\"}")  # Added } to the characters to strip
             self.io.offer_url(url)
         return urls
 
