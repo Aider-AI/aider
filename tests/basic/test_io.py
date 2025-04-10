@@ -204,7 +204,23 @@ class TestInputOutput(unittest.TestCase):
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
-        # Test case 4: Test group behavior with explicit_yes_required=True 
+        # Test case 4: When self.yes=None and user is prompted
+        # User denies with 'n'
+        io.yes = None
+        mock_input.return_value = "n"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # User approves with 'y'
+        mock_input.return_value = "y"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 5: Test group behavior with explicit_yes_required=True 
         # Group preferences should not be automatically applied, requiring explicit confirmation
         group = ConfirmGroup()
         io.yes = None
@@ -215,7 +231,7 @@ class TestInputOutput(unittest.TestCase):
         self.assertIsNone(group.preference)  # Group preference should not be set in explicit mode
         mock_input.reset_mock()
 
-        # Test case 5: Test "don't ask again" option with explicit_yes_required=True
+        # Test case 6: Test "don't ask again" option with explicit_yes_required=True
         # Should still allow user to set don't-ask-again preference
         io.yes = None
         mock_input.return_value = "d"
@@ -225,7 +241,7 @@ class TestInputOutput(unittest.TestCase):
         self.assertIn(("Are you sure?", None), io.never_prompts)
         mock_input.reset_mock()
 
-        # Test case 6: Test with subject parameter to provide context
+        # Test case 7: Test with subject parameter to provide context
         # Should display subject text before prompt
         io.yes = None
         mock_input.return_value = "y"
@@ -234,7 +250,7 @@ class TestInputOutput(unittest.TestCase):
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
-        # Test case 7: Test with multiline subject
+        # Test case 8: Test with multiline subject
         # Should properly format and display multiline subject text
         io.yes = None
         mock_input.return_value = "y"
