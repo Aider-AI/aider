@@ -288,7 +288,7 @@ src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=g
 src="https://img.shields.io/badge/📦%20Installs-{downloads_formatted}-2ecc71?style=flat-square&labelColor=555555"/></a>
   <img alt="Tokens per week" title="{TOKENS_WEEKLY_TOOLTIP}"
 src="https://img.shields.io/badge/📈%20Tokens%2Fweek-{TOKENS_PER_WEEK}-3498db?style=flat-square&labelColor=555555"/>
-  <a href="https://openrouter.ai/"><img alt="OpenRouter Ranking" title="{OPENROUTER_TOOLTIP}"
+  <a href="https://openrouter.ai/#options-menu"><img alt="OpenRouter Ranking" title="{OPENROUTER_TOOLTIP}"
 src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
   <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="{SINGULARITY_TOOLTIP}"
 src="https://img.shields.io/badge/🔄%20Singularity-{aider_percent_rounded}%25-e74c3c?style=flat-square&labelColor=555555"/></a>"""  # noqa
@@ -398,7 +398,7 @@ def get_badges_html():
     <span class="badge-label">📈 Tokens/week</span>
     <span class="badge-value">{TOKENS_PER_WEEK}</span>
 </div>
-<a href="https://openrouter.ai/" class="github-badge badge-router" title="{OPENROUTER_TOOLTIP}">
+<a href="https://openrouter.ai/#options-menu" class="github-badge badge-router" title="{OPENROUTER_TOOLTIP}">
     <span class="badge-label">🏆 OpenRouter</span>
     <span class="badge-value">Top 20</span>
 </a>
