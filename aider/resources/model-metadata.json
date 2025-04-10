@@ -177,6 +177,14 @@
         "supports_system_messages": true,
         "supports_prompt_caching": true
     },
+    "openrouter/openrouter/optimus-alpha": {
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 32000,
+        "input_cost_per_token": 0.0,
+        "output_cost_per_token": 0.0,
+        "litellm_provider": "openrouter",
+        "mode": "chat"
+    },
     "openrouter/openai/gpt-4o-mini": {
         "max_tokens": 16384,
         "max_input_tokens": 128000,
