@@ -1217,6 +1217,8 @@ cog.out("```\n")
 
 - name: xai/grok-3-mini-beta
   use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
 ```
 <!--[[[end]]]-->
 
