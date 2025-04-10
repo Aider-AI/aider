@@ -1001,7 +1001,7 @@
 
 - name: openrouter/x-ai/grok-3-mini-beta
   use_repo_map: true
-  edit_format: diff
+  edit_format: whole
   accepts_settings:
     - reasoning_effort 
 
