@@ -993,7 +993,7 @@
   use_repo_map: true
   edit_format: diff
 
-- name: xai/groq-3-beta
+- name: xai/grok-3-beta
   use_repo_map: true
   edit_format: diff
 
@@ -1001,7 +1001,7 @@
   use_repo_map: true
   edit_format: whole
 
-- name: xai/groq-3-mini-beta
+- name: xai/grok-3-mini-beta
   use_repo_map: true
   edit_format: whole
 
