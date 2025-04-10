@@ -261,8 +261,38 @@ class TestInputOutput(unittest.TestCase):
         self.assertIsNone(group.preference)  # Group preference should not be set in explicit mode
         mock_input.reset_mock()
 
-        # Test case 9: Test with subject parameter
-        # Should display subject text before prompt
+        # Test case 9: Test group behavior with explicit_yes_required=True - 'A' (All)
+        # Group preferences should not be automatically applied, 'A' should be treated as 'N'
+        group = ConfirmGroup()
+        io.yes = None
+        mock_input.return_value = "a"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group)
+        self.assertFalse(result)  # 'A' should be treated as 'N' when explicit_yes_required=True
+        mock_input.assert_called_once()
+        self.assertIsNone(group.preference)  # Group preference should not be set in explicit mode
+        mock_input.reset_mock()
+
+        # Test case 10: Test group behavior with explicit_yes_required=True - 'A' (All) with allow_never=True
+        # Group preferences should not be automatically applied, 'A' should be treated as 'N'
+        group = ConfirmGroup()
+        io.yes = None
+        mock_input.return_value = "a"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group, allow_never=True)
+        self.assertFalse(result)  # 'A' should be treated as 'N' when explicit_yes_required=True
+        mock_input.assert_called_once()
+        self.assertIsNone(group.preference)  # Group preference should not be set in explicit mode
+        mock_input.reset_mock()
+
+        # Test case 11: Test group behavior with explicit_yes_required=True - 'S' (Skip) with allow_never=True
+        # Skip should work as a form of 'No' and set group preference
+        mock_input.return_value = "s"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group, allow_never=True)
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        self.assertEqual(group.preference, "skip")  # Skip preference should be set
+        mock_input.reset_mock()
+
+        # Test case 12: Test with subject parameter
         io.yes = None
         mock_input.return_value = "y"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True, subject="Test subject")
@@ -270,7 +300,7 @@ class TestInputOutput(unittest.TestCase):
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
-        # Test case 10: Test with multiline subject
+        # Test case 13: Test with multiline subject
         # Should properly format and display multiline subject text
         mock_input.return_value = "y"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True, subject="Line 1\nLine 2")
