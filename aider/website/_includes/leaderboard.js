@@ -17,14 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
       backgroundColor: function(context) {
         const row = allData[context.dataIndex];
         if (row && row.edit_format === 'whole') {
-          return diagonalPattern;
+          return redDiagonalPattern; // Use red pattern for highlighted whole format
         }
         const label = leaderboardData.labels[context.dataIndex] || '';
-        return (label && label.includes(HIGHLIGHT_MODEL)) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
+        return (label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase())) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
       },
       borderColor: function(context) {
         const label = context.chart.data.labels[context.dataIndex] || '';
-        return (label && label.includes(HIGHLIGHT_MODEL)) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
+        return (label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase())) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
       },
       borderWidth: 1
     }, {
@@ -78,11 +78,13 @@ document.addEventListener('DOMContentLoaded', function () {
     leaderboardChart.render();
   }
 
-  // Use displayedData in the backgroundColor callback instead of allData
+  // Update backgroundColor and borderColor for the main dataset based on displayedData
   leaderboardData.datasets[0].backgroundColor = function(context) {
     const row = displayedData[context.dataIndex];
     const label = leaderboardData.labels[context.dataIndex] || '';
-    if (label && label.includes(HIGHLIGHT_MODEL)) {
+    const isHighlighted = label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase());
+
+    if (isHighlighted) {
       if (row && row.edit_format === 'whole') return redDiagonalPattern;
       else return 'rgba(255, 99, 132, 0.2)';
     } else if (row && row.edit_format === 'whole') {
