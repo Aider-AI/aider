@@ -1050,7 +1050,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if args.dry_run:
             io.tool_output("Dry run enabled, skipping commit.")
         else:
-            coder.commands.cmd_commit()
+            coder.commands.cmd_commit(from_cli=True)
 
     if args.lint or args.test or args.commit:
         analytics.event("exit", reason="Completed lint/test/commit")
