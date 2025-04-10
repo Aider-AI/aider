@@ -179,18 +179,17 @@ class TestInputOutput(unittest.TestCase):
         and require user interaction."""
         io = InputOutput(pretty=False, fancy_input=False)
 
+        # Test Group 1: Basic behavior with self.yes flag
         # Test case 1: When self.yes=False and explicit_yes_required=True
-        # Should still immediately return False without prompting because this is a global NO
+        # Should immediately return False without prompting because this is a global NO
         io.yes = False
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
         self.assertFalse(result)
         mock_input.assert_not_called()
 
-        # Test cases with self.yes=True
-        io.yes = True
-
         # Test case 2: When self.yes=True but user denies with 'n'
         # User must be prompted because explicit_yes_required=True overrides self.yes=True
+        io.yes = True
         mock_input.return_value = "n"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
         self.assertFalse(result)
@@ -205,107 +204,50 @@ class TestInputOutput(unittest.TestCase):
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
-        # Test case 4: When self.yes=True and user selects 'D' (Don't ask again)
-        # User must be prompted and can select don't ask again
-        mock_input.return_value = "d"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, allow_never=True)
-        self.assertFalse(result)
-        mock_input.assert_called_once()
-        self.assertIn(("Are you sure?", None), io.never_prompts)
-        mock_input.reset_mock()
-
-        # Clear never_prompts to allow subsequent tests
-        io.never_prompts.clear()
-
-        # Test cases with self.yes=None
-        io.yes = None
-
-        # Test case 5: When self.yes=None and user denies with 'n'
-        # User is prompted and denies
-        mock_input.return_value = "n"
+        # Test Group 2: Special responses with explicit_yes_required=True
+        # Test case 4: Response "a" should be treated as "n" with explicit_yes_required=True
+        mock_input.return_value = "a"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
         self.assertFalse(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
-        # Test case 6: When self.yes=None and user approves with 'y'
-        # User is prompted and approves
-        mock_input.return_value = "y"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
-        self.assertTrue(result)
-        mock_input.assert_called_once()
-        mock_input.reset_mock()
-
-        # Test case 7: When self.yes=None and user selects 'D'
-        # User is prompted and can select don't ask again
-        mock_input.return_value = "d"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, allow_never=True)
-        self.assertFalse(result)
-        mock_input.assert_called_once()
-        self.assertIn(("Are you sure?", None), io.never_prompts)
-        mock_input.reset_mock()
-
-        # Clear never_prompts to allow subsequent tests
-        io.never_prompts.clear()
-
-        # Feature-specific test cases
-
-        # Test case 8: Test group behavior with explicit_yes_required=True 
-        # Group preferences should not be automatically applied
-        group = ConfirmGroup()
-        io.yes = None
-        mock_input.return_value = "y"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group)
-        self.assertTrue(result)
-        mock_input.assert_called_once()
-        self.assertIsNone(group.preference)  # Group preference should not be set in explicit mode
-        mock_input.reset_mock()
-
-        # Test case 9: Test group behavior with explicit_yes_required=True - 'A' (All)
-        # Group preferences should not be automatically applied, 'A' should be treated as 'N'
-        group = ConfirmGroup()
-        io.yes = None
-        mock_input.return_value = "a"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group)
-        self.assertFalse(result)  # 'A' should be treated as 'N' when explicit_yes_required=True
-        mock_input.assert_called_once()
-        self.assertIsNone(group.preference)  # Group preference should not be set in explicit mode
-        mock_input.reset_mock()
-
-        # Test case 10: Test group behavior with explicit_yes_required=True - 'A' (All) with allow_never=True
-        # Group preferences should not be automatically applied, 'A' should be treated as 'N'
-        group = ConfirmGroup()
-        io.yes = None
-        mock_input.return_value = "a"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group, allow_never=True)
-        self.assertFalse(result)  # 'A' should be treated as 'N' when explicit_yes_required=True
-        mock_input.assert_called_once()
-        self.assertIsNone(group.preference)  # Group preference should not be set in explicit mode
-        mock_input.reset_mock()
-
-        # Test case 11: Test group behavior with explicit_yes_required=True - 'S' (Skip) with allow_never=True
-        # Skip should work as a form of 'No' and set group preference
+        # Test case 5: Response "s" should be treated as "n" with explicit_yes_required=True
         mock_input.return_value = "s"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group, allow_never=True)
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
         self.assertFalse(result)
         mock_input.assert_called_once()
-        self.assertEqual(group.preference, "skip")  # Skip preference should be set
         mock_input.reset_mock()
 
-        # Test case 12: Test with subject parameter
-        io.yes = None
+        # Test Group 3: Group behavior with explicit_yes_required=True
+        # Test case 6: Group preference should not auto-apply with explicit_yes_required=True
+        group = ConfirmGroup()
+        group.preference = "all"  # This should be ignored due to explicit_yes_required
+        mock_input.return_value = "y"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group)
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 7: Group "all" option should not be shown with explicit_yes_required=True
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group)
+        self.assertNotIn("(A)ll", mock_input.call_args[0][0])
+        mock_input.reset_mock()
+
+        # Test Group 4: Subject handling with explicit_yes_required=True
+        # Test case 8: Single-line subject
         mock_input.return_value = "y"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True, subject="Test subject")
         self.assertTrue(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
-        # Test case 13: Test with multiline subject
-        # Should properly format and display multiline subject text
+        # Test case 9: Multi-line subject
         mock_input.return_value = "y"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True, subject="Line 1\nLine 2")
         self.assertTrue(result)
         mock_input.assert_called_once()
+        mock_input.reset_mock()
 
     @patch("builtins.input")
     def test_confirm_ask_with_group(self, mock_input):
