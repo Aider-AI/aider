@@ -456,6 +456,47 @@ def load_results(dirname, stats_languages=None):
 def summarize_results(dirname, stats_languages=None):
     all_results = load_results(dirname, stats_languages)
 
+    # Print summary for each individual test
+    column_names = {
+        # key: name-for-table
+        'testdir': 'testdir',
+        'tests_outcomes': 'pass/fail',
+        'test_timeouts': 'timeouts',
+        'syntax_errors': 'syn_err',
+        'num_user_asks': 'user_asks',
+        'num_malformed_responses': 'malformed',
+        'num_exhausted_context_windows': 'exhausted',
+        'num_error_outputs': 'error',
+        'lazy_comments': 'lazy',
+        'indentation_errors': 'ind_err',
+    }
+
+    table_data = {}
+    for result in all_results:
+        for column_key, column_name in column_names.items():
+            if column_name not in table_data:
+                table_data[column_name] = []
+            
+            value = result[column_key] if column_key in result else ''
+            if column_key == 'testdir':
+                value = re.sub(r'^.+((/[^/]+){4})$', '\\1', value).strip('/')  # shorten the long path to fit into the console
+                value = value.replace('exercises/practice', '...')
+            if column_key == 'tests_outcomes':
+                value = ', '.join([('P' if v else 'f') for v in value])  # Pass or Fail
+                
+            table_data[column_name].append(value)
+
+    df = pd.DataFrame(table_data)
+    df.index = df.index + 1  # Print index starting from 1
+    print(df.to_string(
+        justify='left',  # align left for HEADER
+        formatters={     # align left for string VALUES must be handled like this
+            'testdir': lambda x: str(x).ljust( max(df['testdir'].astype(str).map(len).max(), len('testdir')) ),
+            'pass/fail': lambda x: str(x).ljust( max(df['pass/fail'].astype(str).map(len).max(), len('pass/fail')) ),
+        }
+    ))
+
+    # Print overall summary for whole benchmark
     res = SimpleNamespace()
     res.total_tests = len(list(Path(dirname).glob("*/exercises/practice/*")))
 
