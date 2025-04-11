@@ -363,7 +363,16 @@ class NavigatorCoder(Coder):
                 processed_content += content[last_index:]
                 break
 
-            # Append content before the tool call
+            # Check for escaped tool call: \[tool_call(
+            if start_pos > 0 and content[start_pos - 1] == '\\':
+                # Append the content including the escaped marker
+                # We append up to start_pos + len(start_marker) to include the marker itself.
+                processed_content += content[last_index : start_pos + len(start_marker)]
+                # Update last_index to search after this escaped marker
+                last_index = start_pos + len(start_marker)
+                continue # Continue searching for the next potential marker
+
+            # Append content before the (non-escaped) tool call
             processed_content += content[last_index:start_pos]
 
             scan_start_pos = start_pos + len(start_marker)
