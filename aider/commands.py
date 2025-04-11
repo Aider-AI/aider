@@ -1032,6 +1032,36 @@ class Commands:
         "Exit the application"
         self.cmd_exit(args)
 
+    def cmd_context_management(self, args=""):
+        "Toggle context management for large files"
+        if not hasattr(self.coder, 'context_management_enabled'):
+            self.io.tool_error("Context management is only available in navigator mode.")
+            return
+            
+        # Toggle the setting
+        self.coder.context_management_enabled = not self.coder.context_management_enabled
+        
+        # Report the new state
+        if self.coder.context_management_enabled:
+            self.io.tool_output("Context management is now ON - large files may be truncated.")
+        else:
+            self.io.tool_output("Context management is now OFF - files will not be truncated.")
+            
+    def cmd_context_blocks(self, args=""):
+        "Toggle enhanced context blocks (directory structure and git status)"
+        if not hasattr(self.coder, 'use_enhanced_context'):
+            self.io.tool_error("Enhanced context blocks are only available in navigator mode.")
+            return
+            
+        # Toggle the setting
+        self.coder.use_enhanced_context = not self.coder.use_enhanced_context
+        
+        # Report the new state
+        if self.coder.use_enhanced_context:
+            self.io.tool_output("Enhanced context blocks are now ON - directory structure and git status will be included.")
+        else:
+            self.io.tool_output("Enhanced context blocks are now OFF - directory structure and git status will not be included.")
+    
     def cmd_ls(self, args):
         "List all known files and indicate which are included in the chat session"
 
@@ -1149,6 +1179,9 @@ class Commands:
 
     def completions_context(self):
         raise CommandCompletionException()
+        
+    def completions_navigator(self):
+        raise CommandCompletionException()
 
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
@@ -1165,6 +1198,15 @@ class Commands:
     def cmd_context(self, args):
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
+        
+    def cmd_navigator(self, args):
+        """Enter navigator mode to autonomously discover and manage relevant files. If no prompt provided, switches to navigator mode."""  # noqa
+        # Enable context management when entering navigator mode
+        if hasattr(self.coder, 'context_management_enabled'):
+            self.coder.context_management_enabled = True
+            self.io.tool_output("Context management enabled for large files")
+            
+        return self._generic_chat_command(args, "navigator", placeholder=args.strip() or None)
 
     def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
