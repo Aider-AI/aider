@@ -20,6 +20,8 @@ from aider.repo import ANY_GIT_ERROR
 from aider import urls
 # Import run_cmd_subprocess directly for non-interactive execution
 from aider.run_cmd import run_cmd_subprocess
+# Import the change tracker
+from aider.change_tracker import ChangeTracker
 
 class NavigatorCoder(Coder):
     """Mode where the LLM autonomously manages which files are in context."""
@@ -43,6 +45,8 @@ class NavigatorCoder(Coder):
         # Enable context management by default only in navigator mode
         self.context_management_enabled = True   # Enabled by default for navigator mode
         
+        # Initialize change tracker for granular editing
+        self.change_tracker = ChangeTracker()
         
         # Track files added during current exploration
         self.files_added_in_exploration = set()
@@ -466,6 +470,17 @@ class NavigatorCoder(Coder):
                     # Extract value based on AST node type
                     if isinstance(value_node, ast.Constant):
                         value = value_node.value
+                        # Check if this is a multiline string and trim whitespace
+                        if isinstance(value, str) and '\n' in value:
+                            # Get the source line(s) for this node to check if it's a triple-quoted string
+                            lineno = value_node.lineno if hasattr(value_node, 'lineno') else 0
+                            end_lineno = value_node.end_lineno if hasattr(value_node, 'end_lineno') else lineno
+                            if end_lineno > lineno:  # It's a multiline string
+                                # Trim exactly one leading and one trailing newline if present
+                                if value.startswith('\n'):
+                                    value = value[1:]
+                                if value.endswith('\n'):
+                                    value = value[:-1]
                     elif isinstance(value_node, ast.Name): # Handle unquoted values like True/False/None or variables (though variables are unlikely here)
                         value = value_node.id
                     # Add more types if needed (e.g., ast.List, ast.Dict)
@@ -562,6 +577,118 @@ class NavigatorCoder(Coder):
                         result_message = self._execute_command(command_string)
                     else:
                         result_message = "Error: Missing 'command_string' parameter for Command"
+                
+                # Granular editing tools
+                elif norm_tool_name == 'replacetext':
+                    file_path = params.get('file_path')
+                    find_text = params.get('find_text')
+                    replace_text = params.get('replace_text')
+                    near_context = params.get('near_context')
+                    occurrence = params.get('occurrence', 1)
+                    change_id = params.get('change_id')
+                    
+                    if file_path is not None and find_text is not None and replace_text is not None:
+                        result_message = self._execute_replace_text(
+                            file_path, find_text, replace_text, near_context, occurrence, change_id
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for ReplaceText"
+                
+                elif norm_tool_name == 'replaceall':
+                    file_path = params.get('file_path')
+                    find_text = params.get('find_text')
+                    replace_text = params.get('replace_text')
+                    change_id = params.get('change_id')
+                    
+                    if file_path is not None and find_text is not None and replace_text is not None:
+                        result_message = self._execute_replace_all(
+                            file_path, find_text, replace_text, change_id
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for ReplaceAll"
+                
+                elif norm_tool_name == 'insertblock':
+                    file_path = params.get('file_path')
+                    content = params.get('content')
+                    after_pattern = params.get('after_pattern')
+                    before_pattern = params.get('before_pattern')
+                    change_id = params.get('change_id')
+                    
+                    if file_path is not None and content is not None and (after_pattern is not None or before_pattern is not None):
+                        result_message = self._execute_insert_block(
+                            file_path, content, after_pattern, before_pattern, change_id
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for InsertBlock"
+                
+                elif norm_tool_name == 'deleteblock':
+                    file_path = params.get('file_path')
+                    start_pattern = params.get('start_pattern')
+                    end_pattern = params.get('end_pattern')
+                    line_count = params.get('line_count')
+                    change_id = params.get('change_id')
+                    
+                    if file_path is not None and start_pattern is not None:
+                        result_message = self._execute_delete_block(
+                            file_path, start_pattern, end_pattern, line_count, change_id
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for DeleteBlock"
+                
+                elif norm_tool_name == 'replaceline':
+                    file_path = params.get('file_path')
+                    line_number = params.get('line_number')
+                    new_content = params.get('new_content')
+                    change_id = params.get('change_id')
+                    
+                    if file_path is not None and line_number is not None and new_content is not None:
+                        result_message = self._execute_replace_line(
+                            file_path, line_number, new_content, change_id
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for ReplaceLine"
+                
+                elif norm_tool_name == 'replacelines':
+                    file_path = params.get('file_path')
+                    start_line = params.get('start_line')
+                    end_line = params.get('end_line')
+                    new_content = params.get('new_content')
+                    change_id = params.get('change_id')
+                    
+                    if file_path is not None and start_line is not None and end_line is not None and new_content is not None:
+                        result_message = self._execute_replace_lines(
+                            file_path, start_line, end_line, new_content, change_id
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for ReplaceLines"
+                
+                elif norm_tool_name == 'indentlines':
+                    file_path = params.get('file_path')
+                    start_pattern = params.get('start_pattern')
+                    end_pattern = params.get('end_pattern')
+                    line_count = params.get('line_count')
+                    indent_levels = params.get('indent_levels', 1)
+                    change_id = params.get('change_id')
+                    
+                    if file_path is not None and start_pattern is not None:
+                        result_message = self._execute_indent_lines(
+                            file_path, start_pattern, end_pattern, line_count, indent_levels, change_id
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for IndentLines"
+                
+                elif norm_tool_name == 'undochange':
+                    change_id = params.get('change_id')
+                    last_file = params.get('last_file')
+                    
+                    result_message = self._execute_undo_change(change_id, last_file)
+                
+                elif norm_tool_name == 'listchanges':
+                    file_path = params.get('file_path')
+                    limit = params.get('limit', 10)
+                    
+                    result_message = self._execute_list_changes(file_path, limit)
+                    
                 else:
                     result_message = f"Error: Unknown tool name '{tool_name}'"
 
@@ -1506,3 +1633,1020 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             self.io.tool_output("Enhanced context blocks are now OFF - directory structure and git status will not be included.")
         
         return True
+        
+    # ------------------- Granular Editing Tools -------------------
+    
+    def _execute_replace_text(self, file_path, find_text, replace_text, near_context=None, occurrence=1, change_id=None):
+        """
+        Replace specific text with new text, optionally using nearby context for disambiguation.
+        
+        Parameters:
+        - file_path: Path to the file to modify
+        - find_text: Text to find and replace
+        - replace_text: Text to replace it with
+        - near_context: Optional text nearby to help locate the correct instance
+        - occurrence: Which occurrence to replace (1-based index, or -1 for last)
+        - change_id: Optional ID for tracking the change
+        
+        Returns a result message.
+        """
+        try:
+            # Get absolute file path
+            abs_path = self.abs_root_path(file_path)
+            rel_path = self.get_rel_fname(abs_path)
+            
+            # Check if file exists
+            if not os.path.isfile(abs_path):
+                self.io.tool_error(f"File '{file_path}' not found")
+                return f"Error: File not found"
+                
+            # Check if file is in editable context
+            if abs_path not in self.abs_fnames:
+                if abs_path in self.abs_read_only_fnames:
+                    self.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
+                    return f"Error: File is read-only. Use MakeEditable first."
+                else:
+                    self.io.tool_error(f"File '{file_path}' not in context")
+                    return f"Error: File not in context"
+            
+            # Read file content
+            content = self.io.read_text(abs_path)
+            if content is None:
+                return f"Error reading file: {file_path}"
+            
+            # If near_context is provided, narrow down the search
+            if near_context:
+                # Find the section containing both find_text and near_context
+                sections = []
+                for i in range(len(content)):
+                    if i + len(find_text) <= len(content) and content[i:i+len(find_text)] == find_text:
+                        # Look for near_context within a reasonable window (e.g., 200 chars)
+                        window_start = max(0, i - 200)
+                        window_end = min(len(content), i + len(find_text) + 200)
+                        window = content[window_start:window_end]
+                        if near_context in window:
+                            sections.append(i)
+                
+                if not sections:
+                    self.io.tool_error(f"Could not find '{find_text}' near '{near_context}'")
+                    return f"Error: Text not found near specified context"
+                
+                # Select the occurrence (1-based index)
+                if occurrence == -1:  # Last occurrence
+                    start_index = sections[-1]
+                else:
+                    occurrence_idx = min(occurrence - 1, len(sections) - 1)
+                    start_index = sections[occurrence_idx]
+            else:
+                # Find all occurrences of find_text
+                sections = []
+                start = 0
+                while True:
+                    start = content.find(find_text, start)
+                    if start == -1:
+                        break
+                    sections.append(start)
+                    start += 1  # Move past this occurrence
+                
+                if not sections:
+                    self.io.tool_error(f"Text '{find_text}' not found in file")
+                    return f"Error: Text not found in file"
+                
+                # Select the occurrence (1-based index)
+                if occurrence == -1:  # Last occurrence
+                    start_index = sections[-1]
+                else:
+                    occurrence_idx = min(occurrence - 1, len(sections) - 1)
+                    start_index = sections[occurrence_idx]
+            
+            # Perform the replacement
+            original_content = content
+            new_content = content[:start_index] + replace_text + content[start_index + len(find_text):]
+            
+            if original_content == new_content:
+                self.io.tool_warning(f"No changes made: replacement text is identical to original")
+                return f"Warning: No changes made (replacement identical to original)"
+            
+            # Write the modified content back to the file
+            if not self.dry_run:
+                self.io.write_text(abs_path, new_content)
+                
+                # Track the change
+                metadata = {
+                    'start_index': start_index,
+                    'find_text': find_text,
+                    'replace_text': replace_text,
+                    'near_context': near_context,
+                    'occurrence': occurrence
+                }
+                change_id = self.change_tracker.track_change(
+                    file_path=rel_path,
+                    change_type='replacetext',
+                    original_content=original_content,
+                    new_content=new_content,
+                    metadata=metadata,
+                    change_id=change_id
+                )
+                
+                self.aider_edited_files.add(rel_path)
+                
+                # Get more context around the replace (get up to 3 lines before and after)
+                lines = content.splitlines()
+                found_idx = -1
+                for i, line in enumerate(lines):
+                    if start_index < len(''.join(lines[:i+1])) + i:  # Account for newlines
+                        found_idx = i
+                        break
+                
+                if found_idx != -1:
+                    # Get lines with context
+                    start_line = max(0, found_idx - 3)
+                    end_line = min(len(lines) - 1, found_idx + 3)
+                    
+                    # Format the diff in git style
+                    diff_lines = []
+                    for i in range(start_line, end_line + 1):
+                        if i == found_idx:
+                            # This is the line containing the change
+                            line = lines[i]
+                            # Find position of match within the line
+                            line_start = start_index - len(''.join(lines[:i])) - i
+                            if line_start >= 0 and line_start + len(find_text) <= len(line):
+                                # If we can isolate the exact position in the line
+                                old_line = line
+                                new_line = line[:line_start] + replace_text + line[line_start + len(find_text):]
+                                diff_lines.append(f"- {old_line}")
+                                diff_lines.append(f"+ {new_line}")
+                            else:
+                                # If we can't isolate exact position (e.g., multi-line match)
+                                diff_lines.append(f"- {line}")
+                                # Try our best approximation for the new line
+                                if find_text in line:
+                                    diff_lines.append(f"+ {line.replace(find_text, replace_text)}")
+                                else:
+                                    diff_lines.append(f"+ [modified line]")
+                        else:
+                            # Context line, prefix with space
+                            diff_lines.append(f"  {lines[i]}")
+                    
+                    diff_example = f"@@ line {start_line+1},{end_line+1} @@\n" + "\n".join(diff_lines)
+                else:
+                    # Fallback if we can't locate the exact line
+                    diff_example = f"- {find_text}\n+ {replace_text}"
+                
+                self.io.tool_output(f"✅ Replaced text in {file_path} (change_id: {change_id})")
+                return f"Successfully replaced text (change_id: {change_id}):\n{diff_example}"
+            else:
+                self.io.tool_output(f"Did not replace text in {file_path} (--dry-run)")
+                return f"Did not replace text (--dry-run)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in ReplaceText: {str(e)}")
+            return f"Error: {str(e)}"
+    
+    def _execute_replace_all(self, file_path, find_text, replace_text, change_id=None):
+        """
+        Replace all occurrences of text in a file.
+        
+        Parameters:
+        - file_path: Path to the file to modify
+        - find_text: Text to find and replace
+        - replace_text: Text to replace it with
+        - change_id: Optional ID for tracking the change
+        
+        Returns a result message.
+        """
+        try:
+            # Get absolute file path
+            abs_path = self.abs_root_path(file_path)
+            rel_path = self.get_rel_fname(abs_path)
+            
+            # Check if file exists
+            if not os.path.isfile(abs_path):
+                self.io.tool_error(f"File '{file_path}' not found")
+                return f"Error: File not found"
+                
+            # Check if file is in editable context
+            if abs_path not in self.abs_fnames:
+                if abs_path in self.abs_read_only_fnames:
+                    self.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
+                    return f"Error: File is read-only. Use MakeEditable first."
+                else:
+                    self.io.tool_error(f"File '{file_path}' not in context")
+                    return f"Error: File not in context"
+            
+            # Read file content
+            content = self.io.read_text(abs_path)
+            if content is None:
+                return f"Error reading file: {file_path}"
+            
+            # Count occurrences
+            count = content.count(find_text)
+            if count == 0:
+                self.io.tool_warning(f"Text '{find_text}' not found in file")
+                return f"Warning: Text not found in file"
+            
+            # Perform the replacement
+            original_content = content
+            new_content = content.replace(find_text, replace_text)
+            
+            if original_content == new_content:
+                self.io.tool_warning(f"No changes made: replacement text is identical to original")
+                return f"Warning: No changes made (replacement identical to original)"
+            
+            # Write the modified content back to the file
+            if not self.dry_run:
+                self.io.write_text(abs_path, new_content)
+                
+                # Track the change
+                metadata = {
+                    'find_text': find_text,
+                    'replace_text': replace_text,
+                    'occurrences': count
+                }
+                change_id = self.change_tracker.track_change(
+                    file_path=rel_path,
+                    change_type='replaceall',
+                    original_content=original_content,
+                    new_content=new_content,
+                    metadata=metadata,
+                    change_id=change_id
+                )
+                
+                self.aider_edited_files.add(rel_path)
+                
+                # Build a mapping of line number to replacements on that line
+                line_changes = {}
+                
+                # Split content into lines
+                lines = content.splitlines()
+                
+                # Keep track of character position across all lines
+                char_pos = 0
+                for line_idx, line in enumerate(lines):
+                    line_len = len(line)
+                    
+                    # Look for occurrences within this line
+                    line_pos = 0
+                    while line_pos <= line_len - len(find_text):
+                        match_pos = line[line_pos:].find(find_text)
+                        if match_pos == -1:
+                            break
+                            
+                        # Found a match in this line
+                        true_pos = line_pos + match_pos
+                        if line_idx not in line_changes:
+                            line_changes[line_idx] = []
+                            
+                        line_changes[line_idx].append((true_pos, find_text, replace_text))
+                        
+                        # Move past this match
+                        line_pos = true_pos + len(find_text)
+                    
+                    # Move to next line (add 1 for the newline)
+                    char_pos += line_len + 1
+                
+                # Generate git-style diffs for each affected line with context
+                diff_chunks = []
+                sorted_changed_lines = sorted(line_changes.keys())
+                
+                # Group adjacent changed lines into chunks
+                chunks = []
+                current_chunk = []
+                
+                for line_idx in sorted_changed_lines:
+                    if not current_chunk or line_idx <= current_chunk[-1] + 6:  # Keep chunks within 6 lines
+                        current_chunk.append(line_idx)
+                    else:
+                        chunks.append(current_chunk)
+                        current_chunk = [line_idx]
+                
+                if current_chunk:
+                    chunks.append(current_chunk)
+                
+                # Generate diff for each chunk
+                for chunk in chunks:
+                    min_line = max(0, min(chunk) - 3)  # 3 lines of context before
+                    max_line = min(len(lines) - 1, max(chunk) + 3)  # 3 lines of context after
+                    
+                    diff_lines = []
+                    diff_lines.append(f"@@ line {min_line+1},{max_line+1} @@")
+                    
+                    for i in range(min_line, max_line + 1):
+                        if i in line_changes:
+                            # This is a line with changes
+                            original_line = lines[i]
+                            modified_line = original_line
+                            
+                            # Apply all replacements to this line
+                            # We need to apply them from right to left to maintain correct positions
+                            changes = sorted(line_changes[i], key=lambda x: x[0], reverse=True)
+                            for pos, old_text, new_text in changes:
+                                modified_line = modified_line[:pos] + new_text + modified_line[pos + len(old_text):]
+                            
+                            diff_lines.append(f"- {original_line}")
+                            diff_lines.append(f"+ {modified_line}")
+                        else:
+                            # Context line
+                            diff_lines.append(f"  {lines[i]}")
+                    
+                    diff_chunks.append("\n".join(diff_lines))
+                
+                # Join all chunks into a single diff
+                diff_examples = "\n\n".join(diff_chunks) if diff_chunks else "No changes shown (content parsing error)"
+                
+                self.io.tool_output(f"✅ Replaced {count} occurrences in {file_path} (change_id: {change_id})")
+                return f"Successfully replaced {count} occurrences (change_id: {change_id}) with examples:\n{diff_examples}"
+            else:
+                self.io.tool_output(f"Did not replace text in {file_path} (--dry-run)")
+                return f"Did not replace text (--dry-run)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in ReplaceAll: {str(e)}")
+            return f"Error: {str(e)}"
+    
+    def _execute_insert_block(self, file_path, content, after_pattern=None, before_pattern=None, change_id=None):
+        """
+        Insert a block of text after or before a specified pattern.
+        
+        Parameters:
+        - file_path: Path to the file to modify
+        - content: Text block to insert
+        - after_pattern: Pattern after which to insert the block (line containing this pattern)
+        - before_pattern: Pattern before which to insert the block (line containing this pattern)
+        - change_id: Optional ID for tracking the change
+        
+        Returns a result message.
+        """
+        try:
+            # Get absolute file path
+            abs_path = self.abs_root_path(file_path)
+            rel_path = self.get_rel_fname(abs_path)
+            
+            # Check if file exists
+            if not os.path.isfile(abs_path):
+                self.io.tool_error(f"File '{file_path}' not found")
+                return f"Error: File not found"
+                
+            # Check if file is in editable context
+            if abs_path not in self.abs_fnames:
+                if abs_path in self.abs_read_only_fnames:
+                    self.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
+                    return f"Error: File is read-only. Use MakeEditable first."
+                else:
+                    self.io.tool_error(f"File '{file_path}' not in context")
+                    return f"Error: File not in context"
+            
+            # Read file content
+            file_content = self.io.read_text(abs_path)
+            if file_content is None:
+                return f"Error reading file: {file_path}"
+            
+            # Validate we have either after_pattern or before_pattern, but not both
+            if after_pattern and before_pattern:
+                self.io.tool_error("Cannot specify both after_pattern and before_pattern")
+                return "Error: Cannot specify both after_pattern and before_pattern"
+            if not after_pattern and not before_pattern:
+                self.io.tool_error("Must specify either after_pattern or before_pattern")
+                return "Error: Must specify either after_pattern or before_pattern"
+            
+            # Split into lines for easier handling
+            lines = file_content.splitlines()
+            original_content = file_content
+            
+            # Find the insertion point
+            insertion_point = -1
+            pattern = after_pattern if after_pattern else before_pattern
+            for i, line in enumerate(lines):
+                if pattern in line:
+                    insertion_point = i
+                    # For after_pattern, insert after this line
+                    if after_pattern:
+                        insertion_point += 1
+                    break
+            
+            if insertion_point == -1:
+                self.io.tool_error(f"Pattern '{pattern}' not found in file")
+                return f"Error: Pattern not found in file"
+            
+            # Insert the content
+            content_lines = content.splitlines()
+            new_lines = lines[:insertion_point] + content_lines + lines[insertion_point:]
+            new_content = '\n'.join(new_lines)
+            
+            if original_content == new_content:
+                self.io.tool_warning(f"No changes made: insertion would not change file")
+                return f"Warning: No changes made (insertion would not change file)"
+            
+            # Write the modified content back to the file
+            if not self.dry_run:
+                self.io.write_text(abs_path, new_content)
+                
+                # Track the change
+                metadata = {
+                    'insertion_point': insertion_point,
+                    'after_pattern': after_pattern,
+                    'before_pattern': before_pattern,
+                    'content': content
+                }
+                change_id = self.change_tracker.track_change(
+                    file_path=rel_path,
+                    change_type='insertblock',
+                    original_content=original_content,
+                    new_content=new_content,
+                    metadata=metadata,
+                    change_id=change_id
+                )
+                
+                self.aider_edited_files.add(rel_path)
+                pattern_type = "after" if after_pattern else "before"
+                self.io.tool_output(f"✅ Inserted block {pattern_type} pattern in {file_path} (change_id: {change_id})")
+                return f"Successfully inserted block (change_id: {change_id})"
+            else:
+                self.io.tool_output(f"Did not insert block in {file_path} (--dry-run)")
+                return f"Did not insert block (--dry-run)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in InsertBlock: {str(e)}")
+            return f"Error: {str(e)}"
+            
+    def _execute_delete_block(self, file_path, start_pattern, end_pattern=None, line_count=None, change_id=None):
+        """
+        Delete a block of text between start_pattern and end_pattern (inclusive).
+        
+        Parameters:
+        - file_path: Path to the file to modify
+        - start_pattern: Pattern marking the start of the block to delete
+        - end_pattern: Pattern marking the end of the block to delete
+        - line_count: Number of lines to delete (alternative to end_pattern)
+        - change_id: Optional ID for tracking the change
+        
+        Returns a result message.
+        """
+        try:
+            # Get absolute file path
+            abs_path = self.abs_root_path(file_path)
+            rel_path = self.get_rel_fname(abs_path)
+            
+            # Check if file exists
+            if not os.path.isfile(abs_path):
+                self.io.tool_error(f"File '{file_path}' not found")
+                return f"Error: File not found"
+                
+            # Check if file is in editable context
+            if abs_path not in self.abs_fnames:
+                if abs_path in self.abs_read_only_fnames:
+                    self.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
+                    return f"Error: File is read-only. Use MakeEditable first."
+                else:
+                    self.io.tool_error(f"File '{file_path}' not in context")
+                    return f"Error: File not in context"
+            
+            # Read file content
+            file_content = self.io.read_text(abs_path)
+            if file_content is None:
+                return f"Error reading file: {file_path}"
+            
+            # Validate we have either end_pattern or line_count, but not both
+            if end_pattern and line_count:
+                self.io.tool_error("Cannot specify both end_pattern and line_count")
+                return "Error: Cannot specify both end_pattern and line_count"
+            
+            # Split into lines for easier handling
+            lines = file_content.splitlines()
+            original_content = file_content
+            
+            # Find the start line
+            start_line = -1
+            for i, line in enumerate(lines):
+                if start_pattern in line:
+                    start_line = i
+                    break
+            
+            if start_line == -1:
+                self.io.tool_error(f"Start pattern '{start_pattern}' not found in file")
+                return f"Error: Start pattern not found in file"
+            
+            # Find the end line
+            end_line = -1
+            if end_pattern:
+                for i in range(start_line + 1, len(lines)):
+                    if end_pattern in lines[i]:
+                        end_line = i
+                        break
+                
+                if end_line == -1:
+                    self.io.tool_error(f"End pattern '{end_pattern}' not found after start pattern")
+                    return f"Error: End pattern not found after start pattern"
+            elif line_count:
+                # Calculate end line based on start line and line count
+                end_line = min(start_line + line_count - 1, len(lines) - 1)
+            else:
+                # If neither is specified, delete just the start line
+                end_line = start_line
+            
+            # Delete the block
+            deleted_lines = lines[start_line:end_line+1]
+            new_lines = lines[:start_line] + lines[end_line+1:]
+            new_content = '\n'.join(new_lines)
+            
+            if original_content == new_content:
+                self.io.tool_warning(f"No changes made: deletion would not change file")
+                return f"Warning: No changes made (deletion would not change file)"
+            
+            # Write the modified content back to the file
+            if not self.dry_run:
+                self.io.write_text(abs_path, new_content)
+                
+                # Track the change
+                metadata = {
+                    'start_line': start_line,
+                    'end_line': end_line,
+                    'start_pattern': start_pattern,
+                    'end_pattern': end_pattern,
+                    'line_count': line_count,
+                    'deleted_content': '\n'.join(deleted_lines)
+                }
+                change_id = self.change_tracker.track_change(
+                    file_path=rel_path,
+                    change_type='deleteblock',
+                    original_content=original_content,
+                    new_content=new_content,
+                    metadata=metadata,
+                    change_id=change_id
+                )
+                
+                self.aider_edited_files.add(rel_path)
+                self.io.tool_output(f"✅ Deleted {end_line - start_line + 1} lines from {file_path} (change_id: {change_id})")
+                return f"Successfully deleted {end_line - start_line + 1} lines (change_id: {change_id})"
+            else:
+                self.io.tool_output(f"Did not delete block in {file_path} (--dry-run)")
+                return f"Did not delete block (--dry-run)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in DeleteBlock: {str(e)}")
+            return f"Error: {str(e)}"
+            
+    def _execute_undo_change(self, change_id=None, last_file=None):
+        """
+        Undo a specific change by ID, or the last change to a file.
+        
+        Parameters:
+        - change_id: ID of the change to undo
+        - last_file: Path to file where the last change should be undone
+        
+        Returns a result message.
+        """
+        try:
+            # Validate parameters
+            if change_id is None and last_file is None:
+                self.io.tool_error("Must specify either change_id or last_file")
+                return "Error: Must specify either change_id or last_file"
+            
+            # If last_file is specified, get the most recent change for that file
+            if last_file:
+                abs_path = self.abs_root_path(last_file)
+                rel_path = self.get_rel_fname(abs_path)
+                
+                change_id = self.change_tracker.get_last_change(rel_path)
+                if not change_id:
+                    self.io.tool_error(f"No changes found for file '{last_file}'")
+                    return f"Error: No changes found for file"
+            
+            # Attempt to undo the change
+            success, message, change_info = self.change_tracker.undo_change(change_id)
+            
+            if not success:
+                self.io.tool_error(message)
+                return f"Error: {message}"
+            
+            # Apply the undo by restoring the original content
+            if change_info:
+                file_path = change_info['file_path']
+                abs_path = self.abs_root_path(file_path)
+                
+                # Write the original content back to the file
+                if not self.dry_run:
+                    self.io.write_text(abs_path, change_info['original'])
+                    self.aider_edited_files.add(file_path)
+                    
+                    change_type = change_info['type']
+                    self.io.tool_output(f"✅ Undid {change_type} in {file_path} (change_id: {change_id})")
+                    return f"Successfully undid {change_type} (change_id: {change_id})"
+                else:
+                    self.io.tool_output(f"Did not undo change in {file_path} (--dry-run)")
+                    return f"Did not undo change (--dry-run)"
+            
+            return "Error: Failed to undo change (unknown reason)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in UndoChange: {str(e)}")
+            return f"Error: {str(e)}"
+            
+    def _execute_replace_line(self, file_path, line_number, new_content, change_id=None):
+        """
+        Replace a specific line identified by line number.
+        Useful for fixing errors identified by error messages or linters.
+        
+        Parameters:
+        - file_path: Path to the file to modify
+        - line_number: The line number to replace (1-based)
+        - new_content: New content for the line
+        - change_id: Optional ID for tracking the change
+        
+        Returns a result message.
+        """
+        try:
+            # Get absolute file path
+            abs_path = self.abs_root_path(file_path)
+            rel_path = self.get_rel_fname(abs_path)
+            
+            # Check if file exists
+            if not os.path.isfile(abs_path):
+                self.io.tool_error(f"File '{file_path}' not found")
+                return f"Error: File not found"
+                
+            # Check if file is in editable context
+            if abs_path not in self.abs_fnames:
+                if abs_path in self.abs_read_only_fnames:
+                    self.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
+                    return f"Error: File is read-only. Use MakeEditable first."
+                else:
+                    self.io.tool_error(f"File '{file_path}' not in context")
+                    return f"Error: File not in context"
+            
+            # Read file content
+            file_content = self.io.read_text(abs_path)
+            if file_content is None:
+                return f"Error reading file: {file_path}"
+            
+            # Split into lines
+            lines = file_content.splitlines()
+            
+            # Validate line number
+            if not isinstance(line_number, int):
+                try:
+                    line_number = int(line_number)
+                except ValueError:
+                    self.io.tool_error(f"Line number must be an integer, got '{line_number}'")
+                    return f"Error: Line number must be an integer"
+            
+            # Convert 1-based line number (what most editors and error messages use) to 0-based index
+            idx = line_number - 1
+            
+            if idx < 0 or idx >= len(lines):
+                self.io.tool_error(f"Line number {line_number} is out of range (file has {len(lines)} lines)")
+                return f"Error: Line number out of range"
+            
+            # Store original content for change tracking
+            original_content = file_content
+            original_line = lines[idx]
+            
+            # Replace the line
+            lines[idx] = new_content
+            
+            # Join lines back into a string
+            new_content_full = '\n'.join(lines)
+            
+            if original_content == new_content_full:
+                self.io.tool_warning("No changes made: new line content is identical to original")
+                return f"Warning: No changes made (new content identical to original)"
+            
+            # Write the modified content back to the file
+            if not self.dry_run:
+                self.io.write_text(abs_path, new_content_full)
+                
+                # Track the change
+                metadata = {
+                    'line_number': line_number,
+                    'original_line': original_line,
+                    'new_line': new_content
+                }
+                change_id = self.change_tracker.track_change(
+                    file_path=rel_path,
+                    change_type='replaceline',
+                    original_content=original_content,
+                    new_content=new_content_full,
+                    metadata=metadata,
+                    change_id=change_id
+                )
+                
+                self.aider_edited_files.add(rel_path)
+                
+                # Create a readable diff for the line replacement
+                diff = f"Line {line_number}:\n- {original_line}\n+ {new_content}"
+                
+                self.io.tool_output(f"✅ Replaced line {line_number} in {file_path} (change_id: {change_id})")
+                return f"Successfully replaced line {line_number} (change_id: {change_id}):\n{diff}"
+            else:
+                self.io.tool_output(f"Did not replace line in {file_path} (--dry-run)")
+                return f"Did not replace line (--dry-run)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in ReplaceLine: {str(e)}")
+            return f"Error: {str(e)}"
+    
+    def _execute_replace_lines(self, file_path, start_line, end_line, new_content, change_id=None):
+        """
+        Replace a range of lines identified by line numbers.
+        Useful for fixing errors identified by error messages or linters.
+        
+        Parameters:
+        - file_path: Path to the file to modify
+        - start_line: The first line number to replace (1-based)
+        - end_line: The last line number to replace (1-based)
+        - new_content: New content for the lines (can be multi-line)
+        - change_id: Optional ID for tracking the change
+        
+        Returns a result message.
+        """
+        try:
+            # Get absolute file path
+            abs_path = self.abs_root_path(file_path)
+            rel_path = self.get_rel_fname(abs_path)
+            
+            # Check if file exists
+            if not os.path.isfile(abs_path):
+                self.io.tool_error(f"File '{file_path}' not found")
+                return f"Error: File not found"
+                
+            # Check if file is in editable context
+            if abs_path not in self.abs_fnames:
+                if abs_path in self.abs_read_only_fnames:
+                    self.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
+                    return f"Error: File is read-only. Use MakeEditable first."
+                else:
+                    self.io.tool_error(f"File '{file_path}' not in context")
+                    return f"Error: File not in context"
+            
+            # Read file content
+            file_content = self.io.read_text(abs_path)
+            if file_content is None:
+                return f"Error reading file: {file_path}"
+            
+            # Convert line numbers to integers if needed
+            if not isinstance(start_line, int):
+                try:
+                    start_line = int(start_line)
+                except ValueError:
+                    self.io.tool_error(f"Start line must be an integer, got '{start_line}'")
+                    return f"Error: Start line must be an integer"
+            
+            if not isinstance(end_line, int):
+                try:
+                    end_line = int(end_line)
+                except ValueError:
+                    self.io.tool_error(f"End line must be an integer, got '{end_line}'")
+                    return f"Error: End line must be an integer"
+            
+            # Split into lines
+            lines = file_content.splitlines()
+            
+            # Convert 1-based line numbers to 0-based indices
+            start_idx = start_line - 1
+            end_idx = end_line - 1
+            
+            # Validate line numbers
+            if start_idx < 0 or start_idx >= len(lines):
+                self.io.tool_error(f"Start line {start_line} is out of range (file has {len(lines)} lines)")
+                return f"Error: Start line out of range"
+            
+            if end_idx < start_idx or end_idx >= len(lines):
+                self.io.tool_error(f"End line {end_line} is out of range (must be >= start line and < {len(lines)})")
+                return f"Error: End line out of range"
+            
+            # Store original content for change tracking
+            original_content = file_content
+            replaced_lines = lines[start_idx:end_idx+1]
+            
+            # Split the new content into lines
+            new_lines = new_content.splitlines()
+            
+            # Perform the replacement
+            new_full_lines = lines[:start_idx] + new_lines + lines[end_idx+1:]
+            new_content_full = '\n'.join(new_full_lines)
+            
+            if original_content == new_content_full:
+                self.io.tool_warning("No changes made: new content is identical to original")
+                return f"Warning: No changes made (new content identical to original)"
+            
+            # Write the modified content back to the file
+            if not self.dry_run:
+                self.io.write_text(abs_path, new_content_full)
+                
+                # Track the change
+                metadata = {
+                    'start_line': start_line,
+                    'end_line': end_line,
+                    'replaced_lines': replaced_lines,
+                    'new_lines': new_lines
+                }
+                change_id = self.change_tracker.track_change(
+                    file_path=rel_path,
+                    change_type='replacelines',
+                    original_content=original_content,
+                    new_content=new_content_full,
+                    metadata=metadata,
+                    change_id=change_id
+                )
+                
+                self.aider_edited_files.add(rel_path)
+                replaced_count = end_line - start_line + 1
+                new_count = len(new_lines)
+                
+                # Create a readable diff for the lines replacement
+                diff = f"Lines {start_line}-{end_line}:\n"
+                # Add removed lines with - prefix
+                for line in replaced_lines:
+                    diff += f"- {line}\n"
+                # Add separator
+                diff += "---\n"
+                # Add new lines with + prefix
+                for line in new_lines:
+                    diff += f"+ {line}\n"
+                
+                self.io.tool_output(f"✅ Replaced lines {start_line}-{end_line} ({replaced_count} lines) with {new_count} new lines in {file_path} (change_id: {change_id})")
+                return f"Successfully replaced lines {start_line}-{end_line} with {new_count} new lines (change_id: {change_id}):\n{diff}"
+            else:
+                self.io.tool_output(f"Did not replace lines in {file_path} (--dry-run)")
+                return f"Did not replace lines (--dry-run)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in ReplaceLines: {str(e)}")
+            return f"Error: {str(e)}"
+    
+    def _execute_indent_lines(self, file_path, start_pattern, end_pattern=None, line_count=None, indent_levels=1, change_id=None):
+        """
+        Indent or unindent a block of lines in a file.
+        
+        Parameters:
+        - file_path: Path to the file to modify
+        - start_pattern: Pattern marking the start of the block to indent
+        - end_pattern: Pattern marking the end of the block to indent
+        - line_count: Number of lines to indent (alternative to end_pattern)
+        - indent_levels: Number of levels to indent (positive) or unindent (negative)
+        - change_id: Optional ID for tracking the change
+        
+        Returns a result message.
+        """
+        try:
+            # Get absolute file path
+            abs_path = self.abs_root_path(file_path)
+            rel_path = self.get_rel_fname(abs_path)
+            
+            # Check if file exists
+            if not os.path.isfile(abs_path):
+                self.io.tool_error(f"File '{file_path}' not found")
+                return f"Error: File not found"
+                
+            # Check if file is in editable context
+            if abs_path not in self.abs_fnames:
+                if abs_path in self.abs_read_only_fnames:
+                    self.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
+                    return f"Error: File is read-only. Use MakeEditable first."
+                else:
+                    self.io.tool_error(f"File '{file_path}' not in context")
+                    return f"Error: File not in context"
+            
+            # Read file content
+            file_content = self.io.read_text(abs_path)
+            if file_content is None:
+                return f"Error reading file: {file_path}"
+            
+            # Validate we have either end_pattern or line_count, but not both
+            if end_pattern and line_count:
+                self.io.tool_error("Cannot specify both end_pattern and line_count")
+                return "Error: Cannot specify both end_pattern and line_count"
+            
+            # Split into lines for easier handling
+            lines = file_content.splitlines()
+            original_content = file_content
+            
+            # Find the start line
+            start_line = -1
+            for i, line in enumerate(lines):
+                if start_pattern in line:
+                    start_line = i
+                    break
+            
+            if start_line == -1:
+                self.io.tool_error(f"Start pattern '{start_pattern}' not found in file")
+                return f"Error: Start pattern not found in file"
+            
+            # Find the end line
+            end_line = -1
+            if end_pattern:
+                for i in range(start_line + 1, len(lines)):
+                    if end_pattern in lines[i]:
+                        end_line = i
+                        break
+                
+                if end_line == -1:
+                    self.io.tool_error(f"End pattern '{end_pattern}' not found after start pattern")
+                    return f"Error: End pattern not found after start pattern"
+            elif line_count:
+                # Calculate end line based on start line and line count
+                end_line = min(start_line + line_count - 1, len(lines) - 1)
+            else:
+                # If neither is specified, indent just the start line
+                end_line = start_line
+            
+            # Determine indentation amount (4 spaces per level)
+            indent_spaces = 4 * indent_levels
+            
+            # Apply indentation
+            for i in range(start_line, end_line + 1):
+                if indent_levels > 0:
+                    # Add indentation
+                    lines[i] = ' ' * indent_spaces + lines[i]
+                else:
+                    # Remove indentation, but do not remove more than exists
+                    spaces_to_remove = min(abs(indent_spaces), len(lines[i]) - len(lines[i].lstrip()))
+                    if spaces_to_remove > 0:
+                        lines[i] = lines[i][spaces_to_remove:]
+            
+            # Join lines back into a string
+            new_content = '\n'.join(lines)
+            
+            if original_content == new_content:
+                self.io.tool_warning(f"No changes made: indentation would not change file")
+                return f"Warning: No changes made (indentation would not change file)"
+            
+            # Write the modified content back to the file
+            if not self.dry_run:
+                self.io.write_text(abs_path, new_content)
+                
+                # Track the change
+                metadata = {
+                    'start_line': start_line,
+                    'end_line': end_line,
+                    'start_pattern': start_pattern,
+                    'end_pattern': end_pattern,
+                    'line_count': line_count,
+                    'indent_levels': indent_levels
+                }
+                change_id = self.change_tracker.track_change(
+                    file_path=rel_path,
+                    change_type='indentlines',
+                    original_content=original_content,
+                    new_content=new_content,
+                    metadata=metadata,
+                    change_id=change_id
+                )
+                
+                self.aider_edited_files.add(rel_path)
+                action = "Indented" if indent_levels > 0 else "Unindented"
+                levels = abs(indent_levels)
+                level_text = "level" if levels == 1 else "levels"
+                self.io.tool_output(f"✅ {action} {end_line - start_line + 1} lines by {levels} {level_text} in {file_path} (change_id: {change_id})")
+                return f"Successfully {action.lower()} {end_line - start_line + 1} lines by {levels} {level_text} (change_id: {change_id})"
+            else:
+                self.io.tool_output(f"Did not indent lines in {file_path} (--dry-run)")
+                return f"Did not indent lines (--dry-run)"
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in IndentLines: {str(e)}")
+            return f"Error: {str(e)}"
+
+    def _execute_list_changes(self, file_path=None, limit=10):
+        """
+        List recent changes made to files.
+        
+        Parameters:
+        - file_path: Optional path to filter changes by file
+        - limit: Maximum number of changes to list
+        
+        Returns a formatted list of changes.
+        """
+        try:
+            # If file_path is specified, get the absolute path
+            rel_file_path = None
+            if file_path:
+                abs_path = self.abs_root_path(file_path)
+                rel_file_path = self.get_rel_fname(abs_path)
+            
+            # Get the list of changes
+            changes = self.change_tracker.list_changes(rel_file_path, limit)
+            
+            if not changes:
+                if file_path:
+                    return f"No changes found for file '{file_path}'"
+                else:
+                    return "No changes have been made yet"
+            
+            # Format the changes into a readable list
+            result = "Recent changes:\n"
+            for i, change in enumerate(changes):
+                change_time = datetime.fromtimestamp(change['timestamp']).strftime('%H:%M:%S')
+                change_type = change['type']
+                file_path = change['file_path']
+                change_id = change['id']
+                
+                result += f"{i+1}. [{change_id}] {change_time} - {change_type.upper()} on {file_path}\n"
+            
+            self.io.tool_output(result)
+            return result
+                
+        except Exception as e:
+            self.io.tool_error(f"Error in ListChanges: {str(e)}")
+            return f"Error: {str(e)}"

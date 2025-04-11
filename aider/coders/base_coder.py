@@ -53,10 +53,6 @@ from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
 
-# Pattern to detect fenced search/replace blocks
-SEARCH_REPLACE_FENCE = re.compile(r"```search_replace\n", re.MULTILINE)
-
-
 class UnknownEditFormat(ValueError):
     def __init__(self, edit_format, valid_formats):
         self.edit_format = edit_format
