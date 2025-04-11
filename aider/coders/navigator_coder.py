@@ -5,6 +5,9 @@ import time
 import random
 import subprocess
 import traceback
+import platform
+import locale
+from datetime import datetime
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import ParseError
@@ -55,23 +58,29 @@ class NavigatorCoder(Coder):
 
     def format_chat_chunks(self):
         """
-        Override parent's format_chat_chunks to include enhanced context blocks.
+        Override parent's format_chat_chunks to include enhanced context blocks with a 
+        cleaner, more hierarchical structure for better organization.
         """
         # First get the normal chat chunks from the parent method
         chunks = super().format_chat_chunks()
         
         # If enhanced context blocks are enabled, prepend them to the current messages
         if self.use_enhanced_context:
-            # Create an enhanced context message if we have the directory structure or git status
-            context_blocks = []
+            # Create environment info context block
+            env_context = self.get_environment_info()
             
             # Get directory structure
             dir_structure = self.get_directory_structure()
-            if dir_structure:
-                context_blocks.append(dir_structure)
             
             # Get git status
             git_status = self.get_git_status()
+            
+            # Collect all context blocks that exist
+            context_blocks = []
+            if env_context:
+                context_blocks.append(env_context)
+            if dir_structure:
+                context_blocks.append(dir_structure)
             if git_status:
                 context_blocks.append(git_status)
             
@@ -88,6 +97,57 @@ class NavigatorCoder(Coder):
                     chunks.system = [dict(role="system", content=context_message)]
                     
         return chunks
+        
+    def get_environment_info(self):
+        """
+        Generate an environment information context block with key system details.
+        Returns formatted string with working directory, platform, date, and other relevant environment details.
+        """
+        if not self.use_enhanced_context:
+            return None
+            
+        try:
+            # Get current date in ISO format
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            
+            # Get platform information
+            platform_info = platform.platform()
+            
+            # Get language preference
+            language = self.chat_language or locale.getlocale()[0] or "en-US"
+            
+            result = "<context name=\"environment_info\">\n"
+            result += "## Environment Information\n\n"
+            result += f"- Working directory: {self.root}\n"
+            result += f"- Current date: {current_date}\n"
+            result += f"- Platform: {platform_info}\n"
+            result += f"- Language preference: {language}\n"
+            
+            # Add git repo information if available
+            if self.repo:
+                try:
+                    rel_repo_dir = self.repo.get_rel_repo_dir()
+                    num_files = len(self.repo.get_tracked_files())
+                    result += f"- Git repository: {rel_repo_dir} with {num_files:,} files\n"
+                except Exception:
+                    result += "- Git repository: active but details unavailable\n"
+            else:
+                result += "- Git repository: none\n"
+                
+            # Add enabled features information
+            features = []
+            if self.context_management_enabled:
+                features.append("context management")
+            if self.use_enhanced_context:
+                features.append("enhanced context blocks")
+            if features:
+                result += f"- Enabled features: {', '.join(features)}\n"
+                
+            result += "</context>"
+            return result
+        except Exception as e:
+            self.io.tool_error(f"Error generating environment info: {str(e)}")
+            return None
         
     def reply_completed(self):
         """Process the completed response from the LLM.
@@ -1021,10 +1081,24 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         """
         # Do nothing - disable implicit file adds in navigator mode.
         pass
+        
+    def preproc_user_input(self, inp):
+        """
+        Override parent's method to wrap user input in a context block.
+        This clearly delineates user input from other sections in the context window.
+        """
+        # First apply the parent's preprocessing
+        inp = super().preproc_user_input(inp)
+        
+        # If we still have input after preprocessing, wrap it in a context block
+        if inp and not inp.startswith("<context name=\"user_input\">"):
+            inp = f"<context name=\"user_input\">\n{inp}\n</context>"
+        
+        return inp
 
     def get_directory_structure(self):
         """
-        Generate a structured directory listing similar to Claude Code's directoryStructure.
+        Generate a structured directory listing of the project file structure.
         Returns a formatted string representation of the directory tree.
         """
         if not self.use_enhanced_context:
@@ -1032,7 +1106,9 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             
         try:
             # Start with the header
-            result = "<context name=\"directoryStructure\">Below is a snapshot of this project's file structure at the current time. It skips over .gitignore patterns.\n\n"
+            result = "<context name=\"directoryStructure\">\n"
+            result += "## Project File Structure\n\n"
+            result += "Below is a snapshot of this project's file structure at the current time. It skips over .gitignore patterns.\n\n"
             
             # Get the root directory
             root_path = Path(self.root)
@@ -1118,14 +1194,16 @@ Just reply with fixed versions of the {blocks} above that failed to match.
     
     def get_git_status(self):
         """
-        Generate a git status context block similar to Claude Code's gitStatus.
+        Generate a git status context block for repository information.
         Returns a formatted string with git branch, status, and recent commits.
         """
         if not self.use_enhanced_context or not self.repo:
             return None
             
         try:
-            result = "<context name=\"gitStatus\">This is a snapshot of the git status at the current time.\n"
+            result = "<context name=\"gitStatus\">\n"
+            result += "## Git Repository Status\n\n"
+            result += "This is a snapshot of the git status at the current time.\n"
             
             # Get current branch
             try:
