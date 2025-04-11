@@ -395,6 +395,12 @@ def get_parser(default_config_files, git_root):
         default=True,
         help="Enable/disable adding .aider* to .gitignore (default: True)",
     )
+    group.add_argument(
+        "--add-gitignore-files",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable the addition of files listed in .gitignore to Aider's editing scope.",
+    )
     default_aiderignore_file = (
         os.path.join(git_root, ".aiderignore") if git_root else ".aiderignore"
     )
