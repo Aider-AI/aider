@@ -2,6 +2,7 @@ import glob
 import os
 import re
 import subprocess
+import json
 import sys
 import tempfile
 from collections import OrderedDict
@@ -13,6 +14,7 @@ from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
+from aider.mcp import list_mcp_servers, list_mcp_tools, execute_mcp_tool, stop_mcp_servers
 from aider import models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
@@ -1025,6 +1027,7 @@ class Commands:
 
     def cmd_exit(self, args):
         "Exit the application"
+        stop_mcp_servers()
         self.coder.event("exit", reason="/exit")
         sys.exit()
 
@@ -1557,6 +1560,77 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+
+    def cmd_mcp_servers(self, args):
+        "List all configured MCP servers"
+        servers = list_mcp_servers()
+        if servers:
+            self.io.tool_output("Configured MCP servers:")
+            for server in servers:
+                self.io.tool_output(f"  - {server.name}")
+                if server.command:
+                    self.io.tool_output(f"    Command: {server.command}")
+                if server.env_vars:
+                    self.io.tool_output("    Environment variables:")
+                    for var, value in server.env_vars.items():
+                        masked_value = "*" * len(value) if value else "(empty)"
+                        self.io.tool_output(f"      {var}={masked_value}")
+        else:
+            self.io.tool_output("No MCP servers configured.")
+
+    def cmd_mcp_tools(self, args):
+        "List all available MCP tools, optionally filtered by server name"
+        server_name = args.strip()
+        tools_by_server = list_mcp_tools()
+
+        if not tools_by_server:
+            self.io.tool_output("No MCP tools available.")
+            return
+
+        if server_name:
+            if server_name in tools_by_server:
+                self.io.tool_output(f"Tools for MCP server '{server_name}':")
+                for tool in tools_by_server[server_name]:
+                    self.io.tool_output(f"  - {tool.name} (Permission: {tool.permission})")
+                    if tool.description:
+                        self.io.tool_output(f"    Description: {tool.description}")
+            else:
+                self.io.tool_output(f"No MCP server found with name '{server_name}'.")
+        else:
+            self.io.tool_output("Available MCP tools:")
+            for server_name, tools in tools_by_server.items():
+                self.io.tool_output(f"  Server: {server_name}")
+                for tool in tools:
+                    self.io.tool_output(f"    - {tool.name} (Permission: {tool.permission})")
+                    if tool.description:
+                        self.io.tool_output(f"      Description: {tool.description}")
+
+    def cmd_mcp_execute(self, args):
+        "Execute an MCP tool with the given arguments"
+        # Parse the arguments
+        parts = args.strip().split(maxsplit=2)
+        if len(parts) < 2:
+            self.io.tool_error("Usage: /mcp-execute <server_name> <tool_name> [arguments_json]")
+            return
+
+        server_name, tool_name = parts[0], parts[1]
+        arguments = {}
+
+        if len(parts) > 2:
+            try:
+                arguments = json.loads(parts[2])
+            except json.JSONDecodeError:
+                self.io.tool_error(f"Invalid JSON arguments: {parts[2]}")
+                return
+
+        # Execute the tool
+        self.io.tool_output(f"Executing MCP tool '{tool_name}' from server '{server_name}'...")
+        try:
+            result = execute_mcp_tool(server_name, tool_name, arguments, self.io)
+            self.io.tool_output("Result:")
+            self.io.tool_output(result)
+        except Exception as e:
+            self.io.tool_error(f"Error executing MCP tool: {str(e)}")
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
