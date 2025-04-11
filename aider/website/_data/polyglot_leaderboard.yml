@@ -939,7 +939,7 @@
 
 - dirname: 2025-04-10-18-47-24--grok3-mini-whole-exuser
   test_cases: 225
-  model: Grok 3 Mini Beta
+  model: Grok 3 Mini Beta (low)
   edit_format: whole
   commit_hash: 14ffe77-dirty
   pass_rate_1: 11.1
@@ -963,6 +963,32 @@
   seconds_per_case: 35.1
   total_cost: 0.7856
 
+- dirname: 2025-04-10-23-59-02--xai-grok3-mini-whole-high
+  test_cases: 225
+  model: Grok 3 Mini Beta (high)
+  edit_format: whole
+  commit_hash: 8ee33da-dirty
+  pass_rate_1: 17.3
+  pass_rate_2: 49.3
+  pass_num_1: 39
+  pass_num_2: 111
+  percent_cases_well_formed: 99.6
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 64
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model xai/grok-3-mini-beta
+  date: 2025-04-10
+  versions: 0.81.3.dev
+  seconds_per_case: 79.1
+  total_cost: 0.7346
+  
 - dirname: 2025-04-10-19-02-44--oalpha-diff-exsys
   test_cases: 225
   model: Optimus Alpha
