@@ -1018,7 +1018,7 @@ class Commands:
                 # Return the formatted output message for test failures
                 return msg
             elif add and exit_status != 0:
-                self.io.placeholder = "What's wrong? Fix"
+                self.io.placeholder = self.args.placeholder_fix
 
         # Return None if output wasn't added or command succeeded
         return None
