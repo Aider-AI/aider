@@ -65,9 +65,8 @@ Act as an expert software engineer with the ability to autonomously navigate and
   Execute a shell command. Requires user confirmation.
   **Do NOT use this for aider commands starting with `/` (like `/add`, `/run`, `/diff`).**
 
-- **Continue**: `[tool_call(Continue)]`
-  Continue exploration in the next round with the current files.
-  This enables multi-turn exploration.
+### Multi-Turn Exploration
+When you include any tool call, the system will automatically continue to the next round.
 </context>
 
 <context name="workflow_guidance">
@@ -78,8 +77,8 @@ Act as an expert software engineer with the ability to autonomously navigate and
 2. **Focused Investigation**: Add promising files to context with `Add`
 3. **Context Management**: Remove irrelevant files with `Remove` to maintain focus
 4. **Preparation for Editing**: Convert files to editable with `MakeEditable` when needed
-5. **Continued Exploration**: Add `[tool_call(Continue)]` to perform another exploration round
-6. **Final Response**: Omit `Continue` when you have sufficient information to answer
+5. **Continued Exploration**: Include any tool call to automatically continue to the next round
+6. **Final Response**: Omit all tool calls when you have sufficient information to provide a final answer
 
 ### Tool Usage Best Practices
 - Use the exact syntax `[tool_call(ToolName, param1=value1, param2="value2")]` for execution
@@ -139,8 +138,7 @@ Always reply to the user in {language}.
             role="assistant",
             content="""I'll help you understand the authentication system in this project. Let me explore the codebase first to find all relevant files.
 
-[tool_call(Grep, pattern="login|auth|password|session", file_pattern="*.py")]
-[tool_call(Continue)]""",
+[tool_call(Grep, pattern="login|auth|password|session", file_pattern="*.py")]""",
         ),
         dict(
             role="user",
@@ -152,8 +150,7 @@ Always reply to the user in {language}.
 
 [tool_call(Add, file_path="auth/models.py")]
 [tool_call(Add, file_path="auth/views.py")]
-[tool_call(Add, file_path="users/authentication.py")]
-[tool_call(Continue)]""",
+[tool_call(Add, file_path="users/authentication.py")]""",
         ),
         dict(
             role="user",
@@ -211,8 +208,8 @@ Here are summaries of some files present in this repo:
 ## Tool Command Reminder
 - To execute a tool, use: `[tool_call(ToolName, param1=value1)]`
 - To show tool examples without executing: `\\[tool_call(ToolName, param1=value1)]`
-- For multi-turn exploration, end with `[tool_call(Continue)]`
-- For final answers, do NOT include `[tool_call(Continue)]`
+- Including ANY tool call will automatically continue to the next round
+- For final answers, do NOT include any tool calls
 
 ## Context Features
 - Use enhanced context blocks (directory structure and git status) to orient yourself
@@ -242,6 +239,7 @@ Let me explore the codebase more strategically this time:
 - I'll use more specific search patterns
 - I'll be more selective about which files to add to context
 - I'll remove irrelevant files more proactively
+- I'll use tool calls to automatically continue exploration until I have enough information
 
 I'll start exploring again with improved search strategies to find exactly what we need.
 """

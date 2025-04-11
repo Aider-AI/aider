@@ -255,8 +255,8 @@ class NavigatorCoder(Coder):
             return True
         original_content = content # Keep the original response
 
-        # Process tool commands: returns content with tool calls removed, results, and continue flag
-        processed_content, result_messages, continue_requested = self._process_tool_commands(content)
+        # Process tool commands: returns content with tool calls removed, results, and flag if any tool calls were found
+        processed_content, result_messages, tool_calls_found = self._process_tool_commands(content)
 
         # Since we are no longer suppressing, the partial_response_content IS the final content.
         # We might want to update it to the processed_content (without tool calls) if we don't
@@ -267,8 +267,9 @@ class NavigatorCoder(Coder):
         # Process implicit file mentions using the content *after* tool calls were removed
         self._process_file_mentions(processed_content)
 
-        # If continue was requested and we haven't exceeded reflection limits, set up for another iteration
-        if continue_requested and self.num_reflections < self.max_reflections:
+        # If any tool calls were found and we haven't exceeded reflection limits, set up for another iteration
+        # This is implicit continuation when any tool calls are present, rather than requiring Continue explicitly
+        if tool_calls_found and self.num_reflections < self.max_reflections:
             # Reset tool counter for next iteration
             self.tool_call_count = 0
             # Clear exploration files for the next round
@@ -341,10 +342,11 @@ class NavigatorCoder(Coder):
     def _process_tool_commands(self, content):
         """
         Process tool commands in the `[tool_call(name, param=value)]` format within the content.
+        Returns processed content, result messages, and a flag indicating if any tool calls were found.
         """
         result_messages = []
         modified_content = content # Start with original content
-        continue_requested = False
+        tool_calls_found = False
         call_count = 0
         max_calls = self.max_tool_calls
 
@@ -380,13 +382,9 @@ class NavigatorCoder(Coder):
             args_str = match.group(2) or ""
             full_match_str = match.group(0)
 
-            # Handle Continue separately
-            if tool_name.lower() == 'continue':
-                continue_requested = True
-                # Remove this specific call from the content
-                modified_content = modified_content.replace(full_match_str, "", 1)
-                processed_indices.add((match.start(), match.end()))
-                continue # Don't process further, just note the request
+            # We no longer need to handle Continue separately, as we'll continue if any tool calls exist
+            # Just track that a tool call was found
+            tool_calls_found = True
 
             # Extract parameters
             params = {}
@@ -488,7 +486,7 @@ class NavigatorCoder(Coder):
         # Update internal counter
         self.tool_call_count += call_count
 
-        return modified_content, result_messages, continue_requested
+        return modified_content, result_messages, tool_calls_found
 
     def _apply_edits_from_response(self):
         """
