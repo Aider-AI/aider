@@ -323,7 +323,11 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        map_root='.',
     ):
+        # initialize from args.map_root
+        self.map_root = map_root
+        
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
 
@@ -475,7 +479,7 @@ class Coder:
         if use_repo_map and self.repo and has_map_prompt:
             self.repo_map = RepoMap(
                 map_tokens,
-                self.root,
+                self.map_root,
                 self.main_model,
                 io,
                 self.gpt_prompts.repo_content_prefix,
