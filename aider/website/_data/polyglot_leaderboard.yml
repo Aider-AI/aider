@@ -1014,3 +1014,31 @@
   versions: 0.81.2.dev
   seconds_per_case: 18.4
   total_cost: 0.0000
+  
+- dirname: 2025-04-11-17-56-53--gemini-2.5-arch-real-sonnet-3.7-edit-take2
+  test_cases: 225
+  model: openrouter/google/gemini-2.5-pro-preview-03-25
+  edit_format: architect
+  commit_hash: 2bfb615
+  editor_model: openrouter/anthropic/claude-3.7-sonnet
+  editor_edit_format: diff
+  pass_rate_1: 40.4
+  pass_rate_2: 75.1
+  pass_num_1: 91
+  pass_num_2: 169
+  percent_cases_well_formed: 100.0
+  error_outputs: 10
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 84
+  lazy_comments: 11
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --architect --model openrouter/google/gemini-2.5-pro-preview-03-25 --editor-model sonnet
+  date: 2025-04-11
+  versions: 0.81.2.dev
+  seconds_per_case: 82.7
+  total_cost: 10.3452
