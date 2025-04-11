@@ -983,7 +983,7 @@
   exhausted_context_windows: 0
   test_timeouts: 0
   total_tests: 225
-  command: aider --model xai/grok-3-mini-beta
+  command: aider --model xai/grok-3-mini-beta --reasoning-effort high
   date: 2025-04-10
   versions: 0.81.3.dev
   seconds_per_case: 79.1
