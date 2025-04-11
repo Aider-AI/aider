@@ -1017,7 +1017,7 @@
   
 - dirname: 2025-04-11-17-56-53--gemini-2.5-arch-real-sonnet-3.7-edit-take2
   test_cases: 225
-  model: openrouter/google/gemini-2.5-pro-preview-03-25
+  model: Gemini 2.5 Pro + Sonnet 3.7 (no thinking tokens)
   edit_format: architect
   commit_hash: 2bfb615
   editor_model: openrouter/anthropic/claude-3.7-sonnet
