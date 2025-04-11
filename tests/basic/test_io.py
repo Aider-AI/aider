@@ -174,35 +174,80 @@ class TestInputOutput(unittest.TestCase):
 
     @patch("builtins.input")
     def test_confirm_ask_explicit_yes_required(self, mock_input):
+        """Tests scenarios where confirm_ask requires an explicit yes confirmation from user.
+        This is used in situations where we want to prevent automatic confirmations 
+        and require user interaction."""
         io = InputOutput(pretty=False, fancy_input=False)
 
-        # Test case 1: explicit_yes_required=True, self.yes=True
-        io.yes = True
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
-        self.assertFalse(result)
-        mock_input.assert_not_called()
-
-        # Test case 2: explicit_yes_required=True, self.yes=False
+        # Test Group 1: Basic behavior with self.yes flag
+        # Test case 1: When self.yes=False and explicit_yes_required=True
+        # Should immediately return False without prompting because this is a global NO
         io.yes = False
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
         self.assertFalse(result)
         mock_input.assert_not_called()
 
-        # Test case 3: explicit_yes_required=True, user input required
-        io.yes = None
+        # Test case 2: When self.yes=True but user denies with 'n'
+        # User must be prompted because explicit_yes_required=True overrides self.yes=True
+        io.yes = True
+        mock_input.return_value = "n"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 3: When self.yes=True and user approves with 'y'
+        # User must still be prompted even with self.yes=True
         mock_input.return_value = "y"
         result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
         self.assertTrue(result)
         mock_input.assert_called_once()
-
-        # Reset mock_input
         mock_input.reset_mock()
 
-        # Test case 4: explicit_yes_required=False, self.yes=True
-        io.yes = True
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=False)
+        # Test Group 2: Special responses with explicit_yes_required=True
+        # Test case 4: Response "a" should be treated as "n" with explicit_yes_required=True
+        mock_input.return_value = "a"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 5: Response "s" should be treated as "n" with explicit_yes_required=True
+        mock_input.return_value = "s"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        self.assertFalse(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test Group 3: Group behavior with explicit_yes_required=True
+        # Test case 6: Group preference should not auto-apply with explicit_yes_required=True
+        group = ConfirmGroup()
+        group.preference = "all"  # This should be ignored due to explicit_yes_required
+        mock_input.return_value = "y"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group)
         self.assertTrue(result)
-        mock_input.assert_not_called()
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 7: Group "all" option should not be shown with explicit_yes_required=True
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, group=group)
+        self.assertNotIn("(A)ll", mock_input.call_args[0][0])
+        mock_input.reset_mock()
+
+        # Test Group 4: Subject handling with explicit_yes_required=True
+        # Test case 8: Single-line subject
+        mock_input.return_value = "y"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, subject="Test subject")
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 9: Multi-line subject
+        mock_input.return_value = "y"
+        result = io.confirm_ask("Are you sure?", explicit_yes_required=True, subject="Line 1\nLine 2")
+        self.assertTrue(result)
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
 
     @patch("builtins.input")
     def test_confirm_ask_with_group(self, mock_input):
