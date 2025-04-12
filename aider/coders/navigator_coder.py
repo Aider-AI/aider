@@ -234,84 +234,96 @@ class NavigatorCoder(Coder):
 
     def get_context_summary(self):
         """
-        Generate a summary of the current file context, including editable and read-only files,
-        along with token counts to encourage proactive context management.
+        Generate a summary of the current context, including file content tokens and additional context blocks,
+        with an accurate total token count.
         """
         if not self.use_enhanced_context:
             return None
-            
         try:
             result = "<context name=\"context_summary\">\n"
             result += "## Current Context Overview\n\n"
-            
-            # Get model context limits
             max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
             max_output_tokens = self.main_model.info.get("max_output_tokens") or 0
             if max_input_tokens:
                 result += f"Model context limit: {max_input_tokens:,} tokens\n\n"
-            
-            # Calculate total tokens in context
-            total_tokens = 0
+
+            total_file_tokens = 0
             editable_tokens = 0
             readonly_tokens = 0
-            
-            # Track editable files
+            editable_files = []
+            readonly_files = []
+
+            # Editable files
             if self.abs_fnames:
                 result += "### Editable Files\n\n"
-                editable_files = []
-                
                 for fname in sorted(self.abs_fnames):
                     rel_fname = self.get_rel_fname(fname)
                     content = self.io.read_text(fname)
                     if content is not None:
-                        token_count = self.main_model.token_count(content)
-                        total_tokens += token_count
-                        editable_tokens += token_count
-                        size_indicator = "🔴 Large" if token_count > 5000 else ("🟡 Medium" if token_count > 1000 else "🟢 Small")
-                        editable_files.append(f"- {rel_fname}: {token_count:,} tokens ({size_indicator})")
-                
+                        tokens = self.main_model.token_count(content)
+                        total_file_tokens += tokens
+                        editable_tokens += tokens
+                        size_indicator = "🔴 Large" if tokens > 5000 else ("🟡 Medium" if tokens > 1000 else "🟢 Small")
+                        editable_files.append(f"- {rel_fname}: {tokens:,} tokens ({size_indicator})")
                 if editable_files:
                     result += "\n".join(editable_files) + "\n\n"
                     result += f"**Total editable: {len(editable_files)} files, {editable_tokens:,} tokens**\n\n"
                 else:
                     result += "No editable files in context\n\n"
-            
-            # Track read-only files
+
+            # Read-only files
             if self.abs_read_only_fnames:
                 result += "### Read-Only Files\n\n"
-                readonly_files = []
-                
                 for fname in sorted(self.abs_read_only_fnames):
                     rel_fname = self.get_rel_fname(fname)
                     content = self.io.read_text(fname)
                     if content is not None:
-                        token_count = self.main_model.token_count(content)
-                        total_tokens += token_count
-                        readonly_tokens += token_count
-                        size_indicator = "🔴 Large" if token_count > 5000 else ("🟡 Medium" if token_count > 1000 else "🟢 Small")
-                        readonly_files.append(f"- {rel_fname}: {token_count:,} tokens ({size_indicator})")
-                
+                        tokens = self.main_model.token_count(content)
+                        total_file_tokens += tokens
+                        readonly_tokens += tokens
+                        size_indicator = "🔴 Large" if tokens > 5000 else ("🟡 Medium" if tokens > 1000 else "🟢 Small")
+                        readonly_files.append(f"- {rel_fname}: {tokens:,} tokens ({size_indicator})")
                 if readonly_files:
                     result += "\n".join(readonly_files) + "\n\n"
                     result += f"**Total read-only: {len(readonly_files)} files, {readonly_tokens:,} tokens**\n\n"
                 else:
                     result += "No read-only files in context\n\n"
-            
-            # Summary and recommendations
+
+            # Additional enhanced context blocks
+            env_info = self.get_environment_info()
+            dir_structure = self.get_directory_structure()
+            git_status = self.get_git_status()
+            symbol_outline = self.get_context_symbol_outline()
+
+            extra_context = ""
+            extra_tokens = 0
+            if env_info:
+                extra_context += env_info + "\n\n"
+                extra_tokens += self.main_model.token_count(env_info)
+            if dir_structure:
+                extra_context += dir_structure + "\n\n"
+                extra_tokens += self.main_model.token_count(dir_structure)
+            if git_status:
+                extra_context += git_status + "\n\n"
+                extra_tokens += self.main_model.token_count(git_status)
+            if symbol_outline:
+                extra_context += symbol_outline + "\n\n"
+                extra_tokens += self.main_model.token_count(symbol_outline)
+
+            total_tokens = total_file_tokens + extra_tokens
+
+            result += f"**Total files usage: {total_file_tokens:,} tokens**\n\n"
+            result += f"**Additional context usage: {extra_tokens:,} tokens**\n\n"
             result += f"**Total context usage: {total_tokens:,} tokens**"
-            
             if max_input_tokens:
                 percentage = (total_tokens / max_input_tokens) * 100
                 result += f" ({percentage:.1f}% of limit)"
-                
                 if percentage > 80:
-                    result += "\n\n⚠️ **Context is getting full!** Consider removing files with:\n"
-                    result += "- `[tool_call(Remove, file_path=\"path/to/large_file.ext\")]` for files no longer needed\n"
-                    result += "- Focus on keeping only essential files in context for best results"
-                
+                    result += "\n\n⚠️ **Context is getting full!** Remove non-essential files via:\n"
+                    result += "- `[tool_call(Remove, file_path=\"path/to/large_file.ext\")]`\n"
+                    result += "- Keep only essential files in context for best performance"
             result += "\n</context>"
             return result
-            
         except Exception as e:
             self.io.tool_error(f"Error generating context summary: {str(e)}")
             return None
