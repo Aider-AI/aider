@@ -165,13 +165,10 @@ class TestRepo(unittest.TestCase):
         args = mock_send.call_args[0]  # Get positional args
         self.assertEqual(args[0][0]["content"], custom_prompt)  # Check first message content
 
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     @patch("aider.repo.GitRepo.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
         mock_send.return_value = '"a good commit message"'
-
-        # Cleanup of the git temp dir explodes on windows
-        if platform.system() == "Windows":
-            return
 
         with GitTemporaryDirectory():
             # new repo
@@ -229,14 +226,11 @@ class TestRepo(unittest.TestCase):
             commit_result = git_repo_user_no_committer.commit(fnames=[str(fname)], aider_edits=False)
             self.assertIsNotNone(commit_result)
             commit = raw_repo.head.commit
-            self.assertEqual(commit.author.name, "Test User") # Author never modified for user commits
-            self.assertEqual(commit.committer.name, "Test User") # Explicit False prevents modification
+            self.assertEqual(commit.author.name, "Test User", msg="Author name should not be modified for user commits")
+            self.assertEqual(commit.committer.name, "Test User", msg="Committer name should not be modified when attribute_committer=False")
 
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_with_co_authored_by(self):
-        # Cleanup of the git temp dir explodes on windows
-        if platform.system() == "Windows":
-            return
-
         with GitTemporaryDirectory():
             # new repo
             raw_repo = git.Repo()
@@ -274,14 +268,12 @@ class TestRepo(unittest.TestCase):
             self.assertIn("Co-authored-by: aider (gpt-test) <noreply@aider.dev>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider edit")
             # With default (None), co-authored-by takes precedence
-            self.assertEqual(commit.author.name, "Test User") # Should NOT be modified
-            self.assertEqual(commit.committer.name, "Test User") # Should NOT be modified
+            self.assertEqual(commit.author.name, "Test User", msg="Author name should not be modified when co-authored-by takes precedence")
+            self.assertEqual(commit.committer.name, "Test User", msg="Committer name should not be modified when co-authored-by takes precedence")
 
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_co_authored_by_with_explicit_name_modification(self):
         # Test scenario where Co-authored-by is true AND author/committer modification are explicitly True
-        if platform.system() == "Windows":
-            return
-
         with GitTemporaryDirectory():
             # Setup repo...
             # new repo
@@ -319,15 +311,13 @@ class TestRepo(unittest.TestCase):
             self.assertIn("Co-authored-by: aider (gpt-test-combo) <noreply@aider.dev>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider combo edit")
             # When co-authored-by is true BUT author/committer are explicit True, modification SHOULD happen
-            self.assertEqual(commit.author.name, "Test User (aider)") # Should be modified
-            self.assertEqual(commit.committer.name, "Test User (aider)") # Should be modified
+            self.assertEqual(commit.author.name, "Test User (aider)", msg="Author name should be modified when explicitly True, even with co-author")
+            self.assertEqual(commit.committer.name, "Test User (aider)", msg="Committer name should be modified when explicitly True, even with co-author")
 
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_ai_edits_no_coauthor_explicit_false(self):
         # Test AI edits (aider_edits=True) when co-authored-by is False,
         # but author or committer attribution is explicitly disabled.
-        if platform.system() == "Windows":
-            return
-
         with GitTemporaryDirectory():
             # Setup repo
             raw_repo = git.Repo()
@@ -375,8 +365,8 @@ class TestRepo(unittest.TestCase):
             self.assertIsNotNone(commit_result)
             commit = raw_repo.head.commit
             self.assertNotIn("Co-authored-by:", commit.message)
-            self.assertEqual(commit.author.name, "Test User (aider)") # Default True
-            self.assertEqual(commit.committer.name, "Test User") # Explicit False
+            self.assertEqual(commit.author.name, "Test User (aider)", msg="Author name should be modified (default True) when co-author=False")
+            self.assertEqual(commit.committer.name, "Test User", msg="Committer name should not be modified (explicit False) when co-author=False")
 
     def test_get_tracked_files(self):
         # Create a temporary directory
@@ -574,12 +564,9 @@ class TestRepo(unittest.TestCase):
             commit_result = git_repo.commit(fnames=[str(fname)])
             self.assertIsNone(commit_result)
 
+    @unittest.skipIf(platform.system() == "Windows", "Git hook execution differs on Windows")
     def test_git_commit_verify(self):
         """Test that git_commit_verify controls whether --no-verify is passed to git commit"""
-        # Skip on Windows as hook execution works differently
-        if platform.system() == "Windows":
-            return
-
         with GitTemporaryDirectory():
             # Create a new repo
             raw_repo = git.Repo()
