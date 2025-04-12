@@ -152,12 +152,13 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
 3.  **Apply Edits (Default: Direct Edit)**:
     *   For most edits where you are confident in the parameters (file path, patterns, line numbers), apply the change directly using the tool with `dry_run=False` (or omitting the parameter).
     *   **Crucially, always review the diff snippet provided in the `[Result (ToolName): ...]` message** to confirm the change was applied correctly and in the intended location.
-4.  **(Optional) Use `dry_run=True` for Higher Risk:** Consider using `dry_run=True` *before* applying the actual edit if the situation involves higher risk, such as:
+4.  **Verify Pattern Matches Before Editing:** For pattern-based tools (`InsertBlock`, `DeleteBlock`, `IndentLines`, `ExtractLines`, `ReplaceText`), **you MUST first carefully examine the complete file content already provided in the chat context** to confirm your `start_pattern`, `end_pattern`, and `near_context` parameters uniquely identify the *exact* target location. Do *not* rely on memory or previous views; always check the current context. This verification does *not* require `ViewNumberedContext`.
+5.  **(Optional) Use `dry_run=True` for Higher Risk:** Consider using `dry_run=True` *before* applying the actual edit if the situation involves higher risk, such as:
     *   Using `ReplaceAll`, especially with potentially common search text.
-    *   Using pattern-based tools (`InsertBlock`, `DeleteBlock`, `IndentLines`, `ReplaceText`) where the pattern might occur multiple times and `near_context`/`occurrence` might not guarantee targeting the correct instance.
+    *   Using pattern-based tools (`InsertBlock`, `DeleteBlock`, `IndentLines`, `ReplaceText`) where the pattern might occur multiple times and `near_context`/`occurrence` might not guarantee targeting the correct instance, *even after performing the verification step above*.
     *   Using line-number based tools (`ReplaceLine`, `ReplaceLines`) *after* other edits have already been made to the *same file* within the *same message*, as line numbers might have shifted unexpectedly.
     *   If using `dry_run=True`, review the simulated diff in the result. If it looks correct, issue the *exact same tool call* again with `dry_run=False` (or omitted).
-5.  **Review and Recover:**
+6.  **Review and Recover:**
     *   Use `ListChanges` to see a history of applied changes.
     *   If you review a result diff (from a direct edit) and find the change was incorrect or applied in the wrong place, use `[tool_call(UndoChange, change_id="...")]` in your *next* message, using the `change_id` provided in the result message. Then, attempt the corrected edit.
 
@@ -185,10 +186,11 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
 *   **Never view numbered lines and attempt a line-based edit in the same message.**
 
 ### Context Management Strategy
-- Keep your context focused by removing files that are no longer relevant
-- For large codebases, maintain only 5-15 files in context at once for best performance
-- Files are added as read-only by default; only make files editable when you need to modify them
-- Toggle context management with `/context-management` if you need complete content of large files
+- **Remember: Files added with `View` or `MakeEditable` remain fully visible in the context for subsequent messages until you explicitly `Remove` them.**
+- Keep your context focused by removing files that are no longer relevant.
+- For large codebases, maintain only 5-15 files in context at once for best performance.
+- Files are added as read-only by default; only make files editable when you need to modify them.
+- Toggle context management with `/context-management` if you need complete content of large files.
 </context>
 
 <context name="editing_guidelines">
