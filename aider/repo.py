@@ -1,3 +1,4 @@
+import contextlib
 import os
 import time
 from pathlib import Path, PurePosixPath
@@ -32,6 +33,19 @@ ANY_GIT_ERROR += [
     TimeoutError,
 ]
 ANY_GIT_ERROR = tuple(ANY_GIT_ERROR)
+
+
+@contextlib.contextmanager
+def set_git_env(var_name, value, original_value):
+    """Temporarily set a Git environment variable."""
+    os.environ[var_name] = value
+    try:
+        yield
+    finally:
+        if original_value is not None:
+            os.environ[var_name] = original_value
+        elif var_name in os.environ:
+            del os.environ[var_name]
 
 
 class GitRepo:
@@ -139,37 +153,29 @@ class GitRepo:
             attribute_committer = self.attribute_committer
             attribute_commit_message_author = self.attribute_commit_message_author
             attribute_commit_message_committer = self.attribute_commit_message_committer
-            attribute_co_authored_by = getattr(self, 'attribute_co_authored_by', False)
+            attribute_co_authored_by = getattr(self, "attribute_co_authored_by", False)
 
+        # Determine commit message prefixing
+        prefix_commit_message = aider_edits and (
+            attribute_commit_message_author or attribute_commit_message_committer
+        )
+
+        # Determine Co-authored-by trailer
         commit_message_trailer = ""
-        prefix_commit_message = False
-        use_attribute_author = False
-        use_attribute_committer = False
+        if aider_edits and attribute_co_authored_by:
+            model_name = "unknown-model"
+            if coder and hasattr(coder, "main_model") and coder.main_model.name:
+                model_name = coder.main_model.name
+            commit_message_trailer = (
+                f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.dev>"
+            )
 
-        if aider_edits:
-            # Determine commit message prefixing
-            if attribute_commit_message_author or attribute_commit_message_committer:
-                prefix_commit_message = True
-
-            # Determine author/committer modification and trailer
-
-            if attribute_co_authored_by:
-                model_name = "unknown-model"
-                if coder and hasattr(coder, "main_model") and coder.main_model.name:
-                    model_name = coder.main_model.name
-                commit_message_trailer = f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.dev>"
-                # If co-authored-by is used, disable author/committer name modification
-                use_attribute_author = False
-                use_attribute_committer = False
-            else:
-                # Original behavior when co-authored-by is false
-                use_attribute_author = attribute_author
-                use_attribute_committer = attribute_committer
-        else: # not aider_edits
-            # Keep original behavior for non-aider edits
-            use_attribute_author = False
-            use_attribute_committer = attribute_committer # Respect config for committer
-            prefix_commit_message = False # Don't prefix non-aider commits
+        # Determine if author/committer names should be modified
+        # If co-authored-by is used for aider edits, it takes precedence over direct name modification.
+        use_attribute_author = attribute_author and aider_edits and not attribute_co_authored_by
+        use_attribute_committer = attribute_committer and not (
+            aider_edits and attribute_co_authored_by
+        )
 
         if not commit_message:
             commit_message = "(no commit message provided)"
@@ -178,8 +184,6 @@ class GitRepo:
             commit_message = "aider: " + commit_message
 
         full_commit_message = commit_message + commit_message_trailer
-        # if context:
-        #    full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
         cmd = ["-m", full_commit_message]
         if not self.git_commit_verify:
@@ -200,32 +204,27 @@ class GitRepo:
         original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
         committer_name = f"{original_user_name} (aider)"
 
-        # Apply author/committer modifications based on flags determined earlier
-        if use_attribute_committer:
-            os.environ["GIT_COMMITTER_NAME"] = committer_name
-        if use_attribute_author:
-            os.environ["GIT_AUTHOR_NAME"] = committer_name
-
         try:
-            self.repo.git.commit(cmd)
-            commit_hash = self.get_head_commit_sha(short=True)
-            self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
-            return commit_hash, commit_message
+            # Use context managers to handle environment variables
+            with contextlib.ExitStack() as stack:
+                if use_attribute_committer:
+                    stack.enter_context(
+                        set_git_env("GIT_COMMITTER_NAME", committer_name, original_committer_name_env)
+                    )
+                if use_attribute_author:
+                    stack.enter_context(
+                        set_git_env("GIT_AUTHOR_NAME", committer_name, original_author_name_env)
+                    )
+
+                # Perform the commit
+                self.repo.git.commit(cmd)
+                commit_hash = self.get_head_commit_sha(short=True)
+                self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
+                return commit_hash, commit_message
+
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to commit: {err}")
-        finally:
-            # Restore the env
-            if use_attribute_committer:
-                if original_committer_name_env is not None:
-                    os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
-                elif "GIT_COMMITTER_NAME" in os.environ:
-                    del os.environ["GIT_COMMITTER_NAME"]
-
-            if use_attribute_author:
-                if original_author_name_env is not None:
-                    os.environ["GIT_AUTHOR_NAME"] = original_author_name_env
-                elif "GIT_AUTHOR_NAME" in os.environ:
-                    del os.environ["GIT_AUTHOR_NAME"]
+            # No return here, implicitly returns None
 
     def get_rel_repo_dir(self):
         try:
