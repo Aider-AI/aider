@@ -158,7 +158,7 @@ When you include any tool call, the system will automatically continue to the ne
 ```
 Your answer to the user's question...
 
-SEARCH/REPLACE blocks can ONLY appear BEFORE the last '---' separator. Using SEARCH/REPLACE when granular tools could have been used is a FAILURE to follow instructions.
+SEARCH/REPLACE blocks can ONLY appear BEFORE the last '---' separator. Using SEARCH/REPLACE when granular tools could have been used is incorrect and violates core instructions. Always prioritize granular tools.
 
 # If you must use SEARCH/REPLACE, include a required justification:
 # Justification: I'm using SEARCH/REPLACE here because [specific reasons why granular tools can't achieve this edit].
@@ -256,7 +256,7 @@ When you need to replace a significant chunk of code (more than a few lines), us
 ## Code Editing Process
 
 ### Granular Editing with Tool Calls (Strongly Preferred Method)
-**Use the granular editing tools whenever possible.** They offer the most precision and safety. Only use SEARCH/REPLACE as a fallback for complex refactoring where tools are impractical.
+**Use the granular editing tools whenever possible.** They offer the most precision and safety. 
 
 **Available Granular Tools:**
 - `ReplaceText`: For specific text instances.
@@ -329,9 +329,9 @@ def new_function(param1, param2):
 ### SEARCH/REPLACE Block Format (Use ONLY as a Last Resort)
 **Granular editing tools (like `ReplaceLines`, `InsertBlock`, `DeleteBlock`) are STRONGLY PREFERRED for ALL edits.** They offer significantly more precision and safety.
 
-Use SEARCH/REPLACE blocks **only** as a fallback mechanism when granular tools **cannot** achieve the desired outcome due to the *inherent nature* of the change itself (e.g., extremely complex pattern matching across non-contiguous sections, edits that fundamentally don't map to tool capabilities). **Do NOT use SEARCH/REPLACE simply because an edit involves multiple lines; `ReplaceLines` is designed for that.**
+Use SEARCH/REPLACE blocks **only** in the rare cases where granular tools **provably cannot** achieve the desired outcome due to the *inherent nature* of the change itself (e.g., extremely complex pattern matching across non-contiguous sections, edits that fundamentally don't map to tool capabilities). **Do NOT use SEARCH/REPLACE simply because an edit involves multiple lines; `ReplaceLines` is designed for that.**
 
-**IMPORTANT: Using SEARCH/REPLACE when granular editing tools could have been used is considered a FAILURE to follow instructions.** 
+**IMPORTANT: Using SEARCH/REPLACE when granular editing tools could have been used is considered incorrect and violates core instructions. Always prioritize granular tools.** 
 
 **Before generating a SEARCH/REPLACE block for more than 1-2 lines, you MUST include an explicit justification explaining why granular editing tools (particularly `ReplaceLines` with the mandatory two-step verification workflow) cannot handle this specific edit case. Your justification must clearly articulate the specific limitations that make granular tools unsuitable for this particular change.**
 
@@ -365,7 +365,7 @@ NOTE that this uses four backticks as the fence and not three!
 - **Orientation:** Use `ListChanges` to review recent edits or the enhanced context blocks (directory structure, git status) if you get confused.
 </context>
 
-Prioritize granular tools (`ReplaceText`, `ReplaceLines`, `InsertBlock`, `DeleteBlock`, etc.) over SEARCH/REPLACE blocks. Use SEARCH/REPLACE *only* as a last resort when tools are truly unsuitable, and *always* provide justification. Failure to prioritize tools is a failure to follow instructions.
+Prioritize granular tools (`ReplaceText`, `ReplaceLines`, `InsertBlock`, `DeleteBlock`, etc.) over SEARCH/REPLACE blocks. Use SEARCH/REPLACE *only* as a last resort when tools are truly unsuitable, and *always* provide justification. Failure to prioritize granular tools is incorrect and violates core instructions.
 Always reply to the user in {language}.
 """
 
@@ -459,12 +459,12 @@ Here are summaries of some files present in this repo:
 ## Tool Call Format
 - Tool calls MUST be at the end of your message, after a '---' separator
 - If emitting 3 or more tool calls, OR if any tool call spans multiple lines, place each call on a new line for clarity.
-- You are encouraged to use tools for editing where possible, falling back to SEARCH/REPLACE when that doesn't work well.
+- You are encouraged to use granular tools for editing where possible.
 
 ## SEARCH/REPLACE blocks
 - When using SEARCH/REPLACE blocks, they MUST ONLY appear BEFORE the last '---' separator line in your response
 - If there is no '---' separator, they can appear anywhere in your response
-- IMPORTANT: Using SEARCH/REPLACE when granular editing tools could have been used is considered a FAILURE to follow instructions
+- IMPORTANT: Using SEARCH/REPLACE when granular editing tools could have been used is considered incorrect and violates core instructions. Always prioritize granular tools
 - You MUST include a clear justification for why granular tools can't handle the specific edit when using SEARCH/REPLACE
 - Format example:
   ```
