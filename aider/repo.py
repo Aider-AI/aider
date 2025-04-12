@@ -153,12 +153,7 @@ class GitRepo:
 
             # Determine author/committer modification and trailer
 
-            # --- Intentionally break the behavior for testing ---
-            original_attribute_co_authored_by = attribute_co_authored_by # Keep original value if needed elsewhere
-            attribute_co_authored_by = False # Force to False to ignore the setting
-            # --- End intentional break ---
-
-            if attribute_co_authored_by: # This condition will now always be false
+            if attribute_co_authored_by:
                 model_name = "unknown-model"
                 if coder and hasattr(coder, "main_model") and coder.main_model.name:
                     model_name = coder.main_model.name
