@@ -427,17 +427,20 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--attribute-author",
         action=argparse.BooleanOptionalAction,
-        default=True,
+        default=None,
         help=(
-            "Attribute aider code changes in the git author name (default: True). This is ignored"
-            " if --attribute-co-authored-by is True."
+            "Attribute aider code changes in the git author name (default: True). If explicitly set"
+            " to True, overrides --attribute-co-authored-by precedence."
         ),
     )
     group.add_argument(
         "--attribute-committer",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Attribute aider commits in the git committer name (default: True)",
+        default=None,
+        help=(
+            "Attribute aider commits in the git committer name (default: True). If explicitly set"
+            " to True, overrides --attribute-co-authored-by precedence for aider edits."
+        ),
     )
     group.add_argument(
         "--attribute-commit-message-author",

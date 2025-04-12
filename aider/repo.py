@@ -153,7 +153,16 @@ class GitRepo:
             attribute_committer = self.attribute_committer
             attribute_commit_message_author = self.attribute_commit_message_author
             attribute_commit_message_committer = self.attribute_commit_message_committer
-            attribute_co_authored_by = getattr(self, "attribute_co_authored_by", False)
+            attribute_co_authored_by = getattr(self, "attribute_co_authored_by", False) # Should be False if not set
+
+        # Determine explicit settings (None means use default behavior)
+        author_explicit = attribute_author is not None
+        committer_explicit = attribute_committer is not None
+
+        # Determine effective settings (apply default True if not explicit)
+        effective_author = True if attribute_author is None else attribute_author
+        effective_committer = True if attribute_committer is None else attribute_committer
+
 
         # Determine commit message prefixing
         prefix_commit_message = aider_edits and (
@@ -171,11 +180,20 @@ class GitRepo:
             )
 
         # Determine if author/committer names should be modified
-        # If co-authored-by is used for aider edits, it takes precedence over direct name modification.
-        use_attribute_author = attribute_author and aider_edits and not attribute_co_authored_by
-        use_attribute_committer = attribute_committer and not (
-            aider_edits and attribute_co_authored_by
+        # Author modification applies only to aider edits.
+        # It's used if effective_author is True AND (co-authored-by is False OR author was explicitly set).
+        use_attribute_author = (
+            aider_edits
+            and effective_author
+            and (not attribute_co_authored_by or author_explicit)
         )
+
+        # Committer modification applies regardless of aider_edits (based on tests).
+        # It's used if effective_committer is True AND (it's not an aider edit with co-authored-by OR committer was explicitly set).
+        use_attribute_committer = effective_committer and (
+            not (aider_edits and attribute_co_authored_by) or committer_explicit
+        )
+
 
         if not commit_message:
             commit_message = "(no commit message provided)"

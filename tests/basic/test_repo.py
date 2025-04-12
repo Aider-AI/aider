@@ -185,25 +185,34 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.commit("-m", "initial commit")
 
             io = InputOutput()
-            git_repo = GitRepo(io, None, None)
+            # Initialize GitRepo with default None values for attributes
+            git_repo = GitRepo(io, None, None, attribute_author=None, attribute_committer=None)
 
-            # commit a change
+            # commit a change with aider_edits=True (using default attributes)
             fname.write_text("new content")
             git_repo.commit(fnames=[str(fname)], aider_edits=True)
 
-            # check the committer name
+            # check the committer name (defaults interpreted as True)
             commit = raw_repo.head.commit
             self.assertEqual(commit.author.name, "Test User (aider)")
             self.assertEqual(commit.committer.name, "Test User (aider)")
 
-            # commit a change without aider_edits
+            # commit a change without aider_edits (using default attributes)
             fname.write_text("new content again!")
             git_repo.commit(fnames=[str(fname)], aider_edits=False)
 
-            # check the committer name
+            # check the committer name (author not modified, committer still modified by default)
             commit = raw_repo.head.commit
             self.assertEqual(commit.author.name, "Test User")
             self.assertEqual(commit.committer.name, "Test User (aider)")
+
+            # Now test with explicit False
+            git_repo_explicit_false = GitRepo(io, None, None, attribute_author=False, attribute_committer=False)
+            fname.write_text("explicit false content")
+            git_repo_explicit_false.commit(fnames=[str(fname)], aider_edits=True)
+            commit = raw_repo.head.commit
+            self.assertEqual(commit.author.name, "Test User") # Explicit False
+            self.assertEqual(commit.committer.name, "Test User") # Explicit False
 
             # check that the original committer name is restored
             original_committer_name = os.environ.get("GIT_COMMITTER_NAME")
@@ -228,15 +237,13 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            # Mock coder args
-            # Mock coder args: Co-authored-by enabled, author/committer modification disabled
+            # Mock coder args: Co-authored-by enabled, author/committer use default (None)
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = True
-            mock_coder.args.attribute_author = False # Explicitly disable name modification
-            mock_coder.args.attribute_committer = False # Explicitly disable name modification
+            mock_coder.args.attribute_author = None # Default
+            mock_coder.args.attribute_committer = None # Default
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
-            # Set the model name correctly on the nested mock
             # The code uses coder.main_model.name for the co-authored-by line
             mock_coder.main_model = MagicMock()
             mock_coder.main_model.name = "gpt-test"
@@ -253,16 +260,17 @@ class TestRepo(unittest.TestCase):
             commit = raw_repo.head.commit
             self.assertIn("Co-authored-by: aider (gpt-test) <noreply@aider.dev>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider edit")
+            # With default (None), co-authored-by takes precedence
             self.assertEqual(commit.author.name, "Test User") # Should NOT be modified
             self.assertEqual(commit.committer.name, "Test User") # Should NOT be modified
 
-    def test_commit_with_co_authored_by_and_name_modification(self):
-        # Test scenario where Co-authored-by is true AND author/committer modification is also true (default)
-        # Cleanup of the git temp dir explodes on windows
+    def test_commit_co_authored_by_with_explicit_name_modification(self):
+        # Test scenario where Co-authored-by is true AND author/committer modification are explicitly True
         if platform.system() == "Windows":
             return
 
         with GitTemporaryDirectory():
+            # Setup repo...
             # new repo
             raw_repo = git.Repo()
             raw_repo.config_writer().set_value("user", "name", "Test User").release()
@@ -274,14 +282,13 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            # Mock coder args: Co-authored-by enabled, author/committer modification enabled (default)
+            # Mock coder args: Co-authored-by enabled, author/committer modification explicitly enabled
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = True
-            mock_coder.args.attribute_author = True # Explicitly enable (or rely on default)
-            mock_coder.args.attribute_committer = True # Explicitly enable (or rely on default)
+            mock_coder.args.attribute_author = True # Explicitly enable
+            mock_coder.args.attribute_committer = True # Explicitly enable
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
-            # Set the model name correctly on the nested mock
             mock_coder.main_model = MagicMock()
             mock_coder.main_model.name = "gpt-test-combo"
 
@@ -297,12 +304,12 @@ class TestRepo(unittest.TestCase):
             commit = raw_repo.head.commit
             self.assertIn("Co-authored-by: aider (gpt-test-combo) <noreply@aider.dev>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider combo edit")
-            # When co-authored-by is true, name modification should be disabled
-            self.assertEqual(commit.author.name, "Test User") # Should NOT be modified
-            self.assertEqual(commit.committer.name, "Test User") # Should NOT be modified
+            # When co-authored-by is true BUT author/committer are explicit True, modification SHOULD happen
+            self.assertEqual(commit.author.name, "Test User (aider)") # Should be modified
+            self.assertEqual(commit.committer.name, "Test User (aider)") # Should be modified
 
-    def test_commit_co_authored_by_precedence(self):
-        # Test that co-authored-by takes precedence over name modification when both are enabled
+    def test_commit_co_authored_by_precedence_over_default(self):
+        # Test that co-authored-by takes precedence over default (None) name modification
         if platform.system() == "Windows":
             return
 
@@ -318,30 +325,29 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            # Mock coder args: All relevant flags enabled
+            # Mock coder args: Co-authored-by enabled, author/committer use default (None)
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = True
-            mock_coder.args.attribute_author = True # Explicitly enable (or rely on default)
-            mock_coder.args.attribute_committer = True # Explicitly enable (or rely on default)
+            mock_coder.args.attribute_author = None # Default
+            mock_coder.args.attribute_committer = None # Default
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
-            mock_coder.main_model = MagicMock()
+            mock_coder.main_model = MagicMock() # Define main_model before accessing name
             mock_coder.main_model.name = "gpt-precedence"
 
             io = InputOutput()
-            # Initialize GitRepo directly with flags, simulating config/defaults if coder wasn't passed
-            # This ensures the test covers the case where coder might not provide args
+            # Initialize GitRepo directly with flags, simulating config/defaults
+            # Use None for author/committer to test default behavior
             git_repo = GitRepo(
                 io,
                 None,
                 None,
                 attribute_co_authored_by=True,
-                attribute_author=True,
-                attribute_committer=True,
+                attribute_author=None, # Default
+                attribute_committer=None, # Default
             )
 
-
-            # commit a change with aider_edits=True and conflicting flags
+            # commit a change with aider_edits=True and default flags
             fname.write_text("new content precedence")
             # Pass the coder object here to ensure its args are used if available,
             # but the GitRepo init already set the fallback values.
@@ -351,13 +357,13 @@ class TestRepo(unittest.TestCase):
             commit = raw_repo.head.commit
             self.assertIn("Co-authored-by: aider (gpt-precedence) <noreply@aider.dev>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider precedence edit")
-            # Co-authored-by should take precedence, names should NOT be modified
+            # Co-authored-by should take precedence over default (None), names should NOT be modified
             self.assertEqual(commit.author.name, "Test User")
             self.assertEqual(commit.committer.name, "Test User")
 
 
     def test_commit_without_co_authored_by(self):
-        # Cleanup of the git temp dir explodes on windows
+        # Test standard name modification when co-authored-by is False
         if platform.system() == "Windows":
             return
 
@@ -373,14 +379,13 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            # Mock coder args (default behavior)
+            # Mock coder args (co-authored-by False, author/committer default None)
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = False
-            mock_coder.args.attribute_author = True
-            mock_coder.args.attribute_committer = True
+            mock_coder.args.attribute_author = None # Default
+            mock_coder.args.attribute_committer = None # Default
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
-            # Set the model name correctly on the nested mock (though not used in this test assertion)
             mock_coder.main_model = MagicMock()
             mock_coder.main_model.name = "gpt-test-no-coauthor"
 
@@ -392,12 +397,12 @@ class TestRepo(unittest.TestCase):
             fname.write_text("new content")
             git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit")
 
-            # check the commit message and author/committer
+            # check the commit message and author/committer (defaults interpreted as True)
             commit = raw_repo.head.commit
             self.assertNotIn("Co-authored-by:", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider edit")
-            self.assertEqual(commit.author.name, "Test User (aider)") # Should be modified
-            self.assertEqual(commit.committer.name, "Test User (aider)") # Should be modified
+            self.assertEqual(commit.author.name, "Test User (aider)") # Should be modified (default True)
+            self.assertEqual(commit.committer.name, "Test User (aider)") # Should be modified (default True)
 
 
     def test_get_tracked_files(self):
