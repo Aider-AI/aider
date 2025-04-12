@@ -147,6 +147,7 @@ When you include any tool call, the system will automatically continue to the ne
 
 ### Exploration Strategy
 - Use discovery tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `Ls`, `ViewFilesWithSymbol`) to identify relevant files initially. **These tools automatically add found files to context as read-only.**
+- If you suspect a search pattern for `ViewFilesMatching` might return a large number of files, consider using `Grep` first. `Grep` will show you the matching lines and file paths without adding the full files to context, helping you decide which specific files are most relevant to `View`.
 - Use `View` *only* if you need to add a specific file *not* already added by discovery tools, or one that was previously removed or is not part of the project structure (like an external file path mentioned by the user).
 - Remove irrelevant files with `Remove` to maintain focus.
 - Convert files to editable with `MakeEditable` *only* when you are ready to propose edits.
