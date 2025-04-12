@@ -1,5 +1,7 @@
 import os
 import traceback
+from .tool_utils import generate_unified_diff_snippet
+from .tool_utils import generate_unified_diff_snippet
 
 def _execute_replace_lines(coder, file_path, start_line, end_line, new_content, change_id=None, dry_run=False):
     """
@@ -7,7 +9,6 @@ def _execute_replace_lines(coder, file_path, start_line, end_line, new_content, 
     Useful for fixing errors identified by error messages or linters.
     
     Parameters:
-    - coder: The Coder instance
     - file_path: Path to the file to modify
     - start_line: The first line number to replace (1-based)
     - end_line: The last line number to replace (1-based)
@@ -86,6 +87,7 @@ def _execute_replace_lines(coder, file_path, start_line, end_line, new_content, 
         if original_content == new_content_full:
             coder.io.tool_warning("No changes made: new content is identical to original")
             return f"Warning: No changes made (new content identical to original)"
+        diff_snippet = generate_unified_diff_snippet(original_content, new_content_full, rel_path)
          
         # Create a readable diff for the lines replacement
         diff = f"Lines {start_line}-{end_line}:\n"
@@ -101,7 +103,7 @@ def _execute_replace_lines(coder, file_path, start_line, end_line, new_content, 
         # Handle dry run
         if dry_run:
             coder.io.tool_output(f"Dry run: Would replace lines {start_line}-{end_line} in {file_path}")
-            return f"Dry run: Would replace lines {start_line}-{end_line}. Diff:\n{diff}"
+            return f"Dry run: Would replace lines {start_line}-{end_line}. Diff snippet:\n{diff_snippet}"
 
         # --- Apply Change (Not dry run) ---
         coder.io.write_text(abs_path, new_content_full)

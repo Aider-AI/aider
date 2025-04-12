@@ -9,6 +9,7 @@ from .tool_utils import (
     apply_change,
     handle_tool_error,
     format_tool_result,
+    generate_unified_diff_snippet,
 )
 
 def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, line_count=None, indent_levels=1, near_context=None, occurrence=1, change_id=None, dry_run=False):
@@ -81,7 +82,7 @@ def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, lin
             return f"Warning: No changes made (indentation would not change file)"
 
         # 5. Generate diff for feedback
-        diff_snippet = coder._generate_diff_snippet_indent(original_content, new_content, start_line, end_line)
+        diff_snippet = generate_unified_diff_snippet(original_content, new_content, rel_path)
         num_occurrences = len(start_pattern_indices)
         occurrence_str = f"occurrence {occurrence} of " if num_occurrences > 1 else ""
         action = "indent" if indent_levels > 0 else "unindent"

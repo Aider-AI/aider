@@ -5,6 +5,7 @@ from .tool_utils import (
     apply_change,
     handle_tool_error,
     format_tool_result,
+    generate_unified_diff_snippet,
 )
 
 def _execute_replace_text(coder, file_path, find_text, replace_text, near_context=None, occurrence=1, change_id=None, dry_run=False):
@@ -57,7 +58,7 @@ def _execute_replace_text(coder, file_path, find_text, replace_text, near_contex
 
         # 5. Generate diff for feedback
         # Note: _generate_diff_snippet is currently on the Coder class
-        diff_snippet = coder._generate_diff_snippet(original_content, start_index, len(find_text), replace_text)
+        diff_snippet = generate_unified_diff_snippet(original_content, new_content, rel_path)
         occurrence_str = f"occurrence {occurrence}" if num_occurrences > 1 else "text"
 
         # 6. Handle dry run

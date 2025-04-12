@@ -1,5 +1,6 @@
 import os
 import traceback
+from .tool_utils import generate_unified_diff_snippet
 
 def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=False):
     """
@@ -62,7 +63,7 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
             return f"Warning: No changes made (deleting line {line_num_int} would not change file)"
 
         # Generate diff snippet (using the existing delete block helper for simplicity)
-        diff_snippet = coder._generate_diff_snippet_delete(original_content, line_idx, line_idx)
+        diff_snippet = generate_unified_diff_snippet(original_content, new_content, rel_path)
 
         # Handle dry run
         if dry_run:

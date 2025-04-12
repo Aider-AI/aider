@@ -8,6 +8,7 @@ from .tool_utils import (
     apply_change,
     handle_tool_error,
     format_tool_result,
+    generate_unified_diff_snippet,
 )
 
 def _execute_insert_block(coder, file_path, content, after_pattern=None, before_pattern=None, near_context=None, occurrence=1, change_id=None, dry_run=False):
@@ -51,7 +52,7 @@ def _execute_insert_block(coder, file_path, content, after_pattern=None, before_
             return f"Warning: No changes made (insertion would not change file)"
 
         # 5. Generate diff for feedback
-        diff_snippet = coder._generate_diff_snippet_insert(original_content, insertion_line_idx, content_lines)
+        diff_snippet = generate_unified_diff_snippet(original_content, new_content, rel_path)
         num_occurrences = len(pattern_line_indices)
         occurrence_str = f"occurrence {occurrence} of " if num_occurrences > 1 else ""
 

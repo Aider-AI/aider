@@ -1,3 +1,4 @@
+import difflib
 import os
 import traceback
 
@@ -170,6 +171,42 @@ def determine_line_range(
     return start_line, end_line
 
 
+def generate_unified_diff_snippet(original_content, new_content, file_path, context_lines=3):
+    """
+    Generates a unified diff snippet between original and new content.
+
+    Args:
+        original_content (str): The original file content.
+        new_content (str): The modified file content.
+        file_path (str): The relative path to the file (for display in diff header).
+        context_lines (int): Number of context lines to show around changes.
+
+    Returns:
+        str: A formatted unified diff snippet, or an empty string if no changes.
+    """
+    if original_content == new_content:
+        return ""
+
+    original_lines = original_content.splitlines(keepends=True)
+    new_lines = new_content.splitlines(keepends=True)
+
+    diff = difflib.unified_diff(
+        original_lines,
+        new_lines,
+        fromfile=f"a/{file_path}",
+        tofile=f"b/{file_path}",
+        n=context_lines, # Number of context lines
+    )
+
+    # Join the diff lines, potentially skipping the header if desired,
+    # but let's keep it for standard format.
+    diff_snippet = "".join(diff)
+
+    # Ensure snippet ends with a newline for cleaner formatting in results
+    if diff_snippet and not diff_snippet.endswith('\n'):
+        diff_snippet += '\n'
+
+    return diff_snippet
 def apply_change(coder, abs_path, rel_path, original_content, new_content, change_type, metadata, change_id=None):
     """
     Writes the new content, tracks the change, and updates coder state.

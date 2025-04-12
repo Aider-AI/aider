@@ -1,5 +1,6 @@
 import os
 import traceback
+from .tool_utils import generate_unified_diff_snippet
 
 def _execute_extract_lines(coder, source_file_path, target_file_path, start_pattern, end_pattern=None, line_count=None, near_context=None, occurrence=1, dry_run=False):
     """
@@ -145,9 +146,9 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
         new_target_content = target_content + extracted_block
 
         # --- Generate Diffs ---
-        source_diff_snippet = coder._generate_diff_snippet_delete(original_source_content, start_line, end_line)
+        source_diff_snippet = generate_unified_diff_snippet(original_source_content, new_source_content, rel_source_path)
         target_insertion_line = len(target_content.splitlines()) if target_content else 0
-        target_diff_snippet = coder._generate_diff_snippet_insert(original_target_content, target_insertion_line, extracted_lines)
+        target_diff_snippet = generate_unified_diff_snippet(original_target_content, new_target_content, rel_target_path)
 
         # --- Handle Dry Run ---
         if dry_run:
