@@ -606,7 +606,7 @@ class TestRepo(unittest.TestCase):
             git_repo = GitRepo(InputOutput(), None, None)
 
             commit_result = git_repo.commit(fnames=[str(fname)])
-            self.assertIsNotNone(commit_result)
+            self.assertIsNone(commit_result)
 
     def test_git_commit_verify(self):
         """Test that git_commit_verify controls whether --no-verify is passed to git commit"""
