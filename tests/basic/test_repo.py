@@ -229,10 +229,11 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.commit("-m", "initial commit")
 
             # Mock coder args
+            # Mock coder args: Co-authored-by enabled, author/committer modification disabled
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = True
-            mock_coder.args.attribute_author = None  # Explicitly None to test override
-            mock_coder.args.attribute_committer = None # Explicitly None to test override
+            mock_coder.args.attribute_author = False # Explicitly disable name modification
+            mock_coder.args.attribute_committer = False # Explicitly disable name modification
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
             # Set the model name correctly on the nested mock
@@ -254,6 +255,51 @@ class TestRepo(unittest.TestCase):
             self.assertEqual(commit.message.splitlines()[0], "Aider edit")
             self.assertEqual(commit.author.name, "Test User") # Should NOT be modified
             self.assertEqual(commit.committer.name, "Test User") # Should NOT be modified
+
+    def test_commit_with_co_authored_by_and_name_modification(self):
+        # Test scenario where Co-authored-by is true AND author/committer modification is also true (default)
+        # Cleanup of the git temp dir explodes on windows
+        if platform.system() == "Windows":
+            return
+
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # add a file and commit it
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            # Mock coder args: Co-authored-by enabled, author/committer modification enabled (default)
+            mock_coder = MagicMock()
+            mock_coder.args.attribute_co_authored_by = True
+            mock_coder.args.attribute_author = True # Explicitly enable (or rely on default)
+            mock_coder.args.attribute_committer = True # Explicitly enable (or rely on default)
+            mock_coder.args.attribute_commit_message_author = False
+            mock_coder.args.attribute_commit_message_committer = False
+            # Set the model name correctly on the nested mock
+            mock_coder.main_model = MagicMock()
+            mock_coder.main_model.name = "gpt-test-combo"
+
+
+            io = InputOutput()
+            git_repo = GitRepo(io, None, None)
+
+            # commit a change with aider_edits=True and combo flags
+            fname.write_text("new content combo")
+            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider combo edit")
+
+            # check the commit message and author/committer
+            commit = raw_repo.head.commit
+            self.assertIn("Co-authored-by: aider (gpt-test-combo) <noreply@aider.dev>", commit.message)
+            self.assertEqual(commit.message.splitlines()[0], "Aider combo edit")
+            self.assertEqual(commit.author.name, "Test User (aider)") # Should BE modified
+            self.assertEqual(commit.committer.name, "Test User (aider)") # Should BE modified
+
 
     def test_commit_without_co_authored_by(self):
         # Cleanup of the git temp dir explodes on windows
@@ -279,7 +325,10 @@ class TestRepo(unittest.TestCase):
             mock_coder.args.attribute_committer = True
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
-            mock_coder.model.name = "gpt-test"
+            # Set the model name correctly on the nested mock (though not used in this test assertion)
+            mock_coder.main_model = MagicMock()
+            mock_coder.main_model.name = "gpt-test-no-coauthor"
+
 
             io = InputOutput()
             git_repo = GitRepo(io, None, None)

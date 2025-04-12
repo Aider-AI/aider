@@ -125,7 +125,41 @@ class GitRepo:
             commit_message = self.get_commit_message(diffs, context)
 
         commit_message_trailer = ""
+        attribute_author = self.attribute_author
+        attribute_committer = self.attribute_committer
+        attribute_commit_message_author = self.attribute_commit_message_author
+        attribute_commit_message_committer = self.attribute_commit_message_committer
+        attribute_co_authored_by = False # Default if coder or args not available
+
+        if coder and hasattr(coder, "args"):
+            attribute_author = coder.args.attribute_author
+            attribute_committer = coder.args.attribute_committer
+            attribute_commit_message_author = coder.args.attribute_commit_message_author
+            attribute_commit_message_committer = coder.args.attribute_commit_message_committer
+            attribute_co_authored_by = coder.args.attribute_co_authored_by
+
         if aider_edits:
+            # Add Co-authored-by trailer if configured
+            if attribute_co_authored_by:
+                model_name = "unknown-model"
+                if coder and hasattr(coder, "main_model") and coder.main_model.name:
+                    model_name = coder.main_model.name
+                commit_message_trailer = (
+                    f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.dev>"
+                )
+
+            # Prefix commit message if configured
+            if attribute_commit_message_author or attribute_commit_message_committer:
+                commit_message = "aider: " + commit_message
+
+            # Prepare author/committer modification flags (used later)
+            use_attribute_author = attribute_author
+            use_attribute_committer = attribute_committer
+        else:
+            # Don't modify author/committer/message for non-aider edits
+            use_attribute_author = False
+            use_attribute_committer = self.attribute_committer # Keep committer modification for non-aider edits if configured
+
             # Use coder.args if available, otherwise default to config/defaults
             attribute_author = (
                 coder.args.attribute_author
@@ -143,29 +177,6 @@ class GitRepo:
                 else self.attribute_commit_message_author
             )
             attribute_commit_message_committer = (
-                coder.args.attribute_commit_message_committer
-                if coder and hasattr(coder, "args")
-                else self.attribute_commit_message_committer
-            )
-            attribute_co_authored_by = (
-                coder.args.attribute_co_authored_by
-                if coder and hasattr(coder, "args")
-                else False  # Default to False if not found
-            )
-
-            # Add Co-authored-by trailer if configured
-            if attribute_co_authored_by:
-                model_name = "unknown-model"
-                if coder and hasattr(coder, "main_model") and coder.main_model.name:
-                    model_name = coder.main_model.name
-                commit_message_trailer = (
-                    f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.dev>"
-                )
-
-            # Prefix commit message if configured
-            if attribute_commit_message_author or attribute_commit_message_committer:
-                commit_message = "aider: " + commit_message
-
         if not commit_message:
             commit_message = "(no commit message provided)"
 
@@ -192,22 +203,11 @@ class GitRepo:
         original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
         committer_name = f"{original_user_name} (aider)"
 
-        # Use coder.args if available, otherwise default to config/defaults
-        use_attribute_committer = (
-            coder.args.attribute_committer
-            if coder and hasattr(coder, "args")
-            else self.attribute_committer
-        )
-        use_attribute_author = (
-            coder.args.attribute_author
-            if coder and hasattr(coder, "args")
-            else self.attribute_author
-        )
-
+        # Apply author/committer modifications based on flags determined earlier
         if use_attribute_committer:
             os.environ["GIT_COMMITTER_NAME"] = committer_name
 
-        if aider_edits and use_attribute_author:
+        if use_attribute_author: # Already checks for aider_edits implicitly
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
         try:
@@ -225,7 +225,7 @@ class GitRepo:
                 elif "GIT_COMMITTER_NAME" in os.environ:
                     del os.environ["GIT_COMMITTER_NAME"]
 
-            if aider_edits and use_attribute_author:
+            if use_attribute_author: # Already checks for aider_edits implicitly
                 if original_author_name_env is not None:
                     os.environ["GIT_AUTHOR_NAME"] = original_author_name_env
                 elif "GIT_AUTHOR_NAME" in os.environ:
