@@ -522,31 +522,31 @@ class NavigatorCoder(Coder):
                 # Normalize tool name for case-insensitive matching
                 norm_tool_name = tool_name.lower()
 
-                if norm_tool_name == 'glob':
+                if norm_tool_name == 'viewfilesatglob':
                     pattern = params.get('pattern')
                     if pattern is not None:
-                        result_message = self._execute_glob(pattern)
+                        result_message = self._execute_view_files_at_glob(pattern)
                     else:
-                        result_message = "Error: Missing 'pattern' parameter for Glob"
-                elif norm_tool_name == 'grep':
+                        result_message = "Error: Missing 'pattern' parameter for ViewFilesAtGlob"
+                elif norm_tool_name == 'viewfilesmatching':
                     pattern = params.get('pattern')
                     file_pattern = params.get('file_pattern') # Optional
                     if pattern is not None:
-                        result_message = self._execute_grep(pattern, file_pattern)
+                        result_message = self._execute_view_files_matching(pattern, file_pattern)
                     else:
-                        result_message = "Error: Missing 'pattern' parameter for Grep"
+                        result_message = "Error: Missing 'pattern' parameter for ViewFilesMatching"
                 elif norm_tool_name == 'ls':
                     directory = params.get('directory')
                     if directory is not None:
                         result_message = self._execute_ls(directory)
                     else:
                         result_message = "Error: Missing 'directory' parameter for Ls"
-                elif norm_tool_name == 'add':
+                elif norm_tool_name == 'view':
                     file_path = params.get('file_path')
                     if file_path is not None:
-                        result_message = self._execute_add(file_path)
+                        result_message = self._execute_view(file_path)
                     else:
-                        result_message = "Error: Missing 'file_path' parameter for Add"
+                        result_message = "Error: Missing 'file_path' parameter for View"
                 elif norm_tool_name == 'remove':
                     file_path = params.get('file_path')
                     if file_path is not None:
@@ -565,12 +565,12 @@ class NavigatorCoder(Coder):
                         result_message = self._execute_make_readonly(file_path)
                     else:
                         result_message = "Error: Missing 'file_path' parameter for MakeReadonly"
-                elif norm_tool_name == 'find':
+                elif norm_tool_name == 'viewfileswithsymbol':
                     symbol = params.get('symbol')
                     if symbol is not None:
-                        result_message = self._execute_find(symbol)
+                        result_message = self._execute_view_files_with_symbol(symbol)
                     else:
-                        result_message = "Error: Missing 'symbol' parameter for Find"
+                        result_message = "Error: Missing 'symbol' parameter for ViewFilesWithSymbol"
                 elif norm_tool_name == 'command':
                     command_string = params.get('command_string')
                     if command_string is not None:
@@ -916,10 +916,10 @@ Just reply with fixed versions of the {blocks} above that failed to match.
 
         return edited_files
 
-    def _execute_glob(self, pattern):
+    def _execute_view_files_at_glob(self, pattern):
         """
-        Execute a glob pattern and add matching files to context.
-        
+        Execute a glob pattern and add matching files to context as read-only.
+
         This tool helps the LLM find files by pattern matching, similar to
         how a developer would use glob patterns to find files.
         """
@@ -965,13 +965,13 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 self.io.tool_output(f"⚠️ No files found matching '{pattern}'")
                 return f"No files found matching '{pattern}'"
         except Exception as e:
-            self.io.tool_error(f"Error in glob: {str(e)}")
+            self.io.tool_error(f"Error in ViewFilesAtGlob: {str(e)}")
             return f"Error: {str(e)}"
-    
-    def _execute_grep(self, search_pattern, file_pattern=None):
+
+    def _execute_view_files_matching(self, search_pattern, file_pattern=None):
         """
-        Search for pattern in files and add matching files to context.
-        
+        Search for pattern in files and add matching files to context as read-only.
+
         This tool lets the LLM search for content within files, mimicking
         how a developer would use grep to find relevant code.
         """
@@ -1034,9 +1034,9 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 self.io.tool_output(f"⚠️ Pattern '{search_pattern}' not found in any files")
                 return f"Pattern not found in any files"
         except Exception as e:
-            self.io.tool_error(f"Error in grep: {str(e)}")
+            self.io.tool_error(f"Error in ViewFilesMatching: {str(e)}")
             return f"Error: {str(e)}"
-    
+
     def _execute_ls(self, dir_path):
         """
         List files in directory and optionally add some to context.
@@ -1083,27 +1083,28 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         except Exception as e:
             self.io.tool_error(f"Error in ls: {str(e)}")
             return f"Error: {str(e)}"
-    
-    def _execute_add(self, file_path):
+
+    def _execute_view(self, file_path):
         """
         Explicitly add a file to context as read-only.
-        
-        This gives the LLM explicit control over what files to add,
+
+        This gives the LLM explicit control over what files to view,
         rather than relying on indirect mentions.
         """
         try:
-            return self._add_file_to_context(file_path, True)
+            # Use the helper, marking it as an explicit view request
+            return self._add_file_to_context(file_path, explicit=True)
         except Exception as e:
-            self.io.tool_error(f"Error adding file: {str(e)}")
+            self.io.tool_error(f"Error viewing file: {str(e)}")
             return f"Error: {str(e)}"
-    
+
     def _add_file_to_context(self, file_path, explicit=False):
         """
         Helper method to add a file to context as read-only.
-        
+
         Parameters:
         - file_path: Path to the file to add
-        - explicit: Whether this was an explicit add command (vs. implicit through glob/grep)
+        - explicit: Whether this was an explicit view command (vs. implicit through ViewFilesAtGlob/ViewFilesMatching)
         """
         # Check if file exists
         abs_path = self.abs_root_path(file_path)
@@ -1144,22 +1145,22 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 
             # Add to read-only files
             self.abs_read_only_fnames.add(abs_path)
-            
+
             # Track in exploration set
             self.files_added_in_exploration.add(rel_path)
-            
+
             # Inform user
             if explicit:
-                self.io.tool_output(f"📎 Added '{file_path}' to context as read-only")
-                return f"Added file to context as read-only"
+                self.io.tool_output(f"📎 Viewed '{file_path}' (added to context as read-only)")
+                return f"Viewed file (added to context as read-only)"
             else:
-                # For implicit adds (from glob/grep), just return success
+                # For implicit adds (from ViewFilesAtGlob/ViewFilesMatching), just return success
                 return f"Added file to context as read-only"
-                
+
         except Exception as e:
-            self.io.tool_error(f"Error adding file '{file_path}': {str(e)}")
-            return f"Error adding file: {str(e)}"
-            
+            self.io.tool_error(f"Error adding file '{file_path}' for viewing: {str(e)}")
+            return f"Error adding file for viewing: {str(e)}"
+
     def _execute_make_editable(self, file_path):
         """
         Convert a read-only file to an editable file.
@@ -1266,17 +1267,17 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             self.io.tool_error(f"Error removing file: {str(e)}")
             return f"Error: {str(e)}"
 
-    def _execute_find(self, symbol):
+    def _execute_view_files_with_symbol(self, symbol):
         """
         Find files containing a specific symbol and add them to context as read-only.
         """
         try:
             if not self.repo_map:
-                self.io.tool_output("⚠️ Repo map not available, cannot use Find tool.")
+                self.io.tool_output("⚠️ Repo map not available, cannot use ViewFilesWithSymbol tool.")
                 return "Repo map not available"
 
             if not symbol:
-                return "Error: Missing 'symbol' parameter for Find"
+                return "Error: Missing 'symbol' parameter for ViewFilesWithSymbol"
 
             self.io.tool_output(f"🔎 Searching for symbol '{symbol}'...")
             found_files = set()
@@ -1337,7 +1338,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 return f"Symbol '{symbol}' not found in searchable files."
 
         except Exception as e:
-            self.io.tool_error(f"Error in find: {str(e)}")
+            self.io.tool_error(f"Error in ViewFilesWithSymbol: {str(e)}")
             return f"Error: {str(e)}"
 
     def _execute_command(self, command_string):
@@ -1407,19 +1408,17 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         # Get new files to add (not already in context)
         new_files = mentioned_files - current_files
         
-        # In navigator mode, we *only* add files via explicit tool commands.
+        # In navigator mode, we *only* add files via explicit tool commands (`View`, `ViewFilesAtGlob`, etc.).
         # Do nothing here for implicit mentions.
         pass
-        
-    
-    
-    
+
+
     def check_for_file_mentions(self, content):
         """
         Override parent's method to use our own file processing logic.
-        
+
         Override parent's method to disable implicit file mention handling in navigator mode.
-        Files should only be added via explicit tool commands (`Add`, `Glob`, `Grep`).
+        Files should only be added via explicit tool commands (`View`, `ViewFilesAtGlob`, `ViewFilesMatching`, `ViewFilesWithSymbol`).
         """
         # Do nothing - disable implicit file adds in navigator mode.
         pass

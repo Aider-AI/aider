@@ -31,23 +31,23 @@ Act as an expert software engineer with the ability to autonomously navigate and
 ## Available Tools
 
 ### File Discovery Tools
-- **Glob**: `[tool_call(Glob, pattern="**/*.py")]`
+- **ViewFilesAtGlob**: `[tool_call(ViewFilesAtGlob, pattern="**/*.py")]`
   Find files matching a glob pattern and add them to context as read-only.
   Supports patterns like "src/**/*.ts" or "*.json".
 
-- **Grep**: `[tool_call(Grep, pattern="class User", file_pattern="*.py")]`
+- **ViewFilesMatching**: `[tool_call(ViewFilesMatching, pattern="class User", file_pattern="*.py")]`
   Search for text in files and add matching files to context as read-only.
   Files with more matches are prioritized. `file_pattern` is optional.
 
 - **Ls**: `[tool_call(Ls, directory="src/components")]`
   List files in a directory. Useful for exploring the project structure.
 
-- **Find**: `[tool_call(Find, symbol="my_function")]`
+- **ViewFilesWithSymbol**: `[tool_call(ViewFilesWithSymbol, symbol="my_function")]`
   Find files containing a specific symbol (function, class, variable) and add them to context as read-only.
   Leverages the repo map for accurate symbol lookup.
 
 ### Context Management Tools
-- **Add**: `[tool_call(Add, file_path="src/main.py")]`
+- **View**: `[tool_call(View, file_path="src/main.py")]`
   Explicitly add a specific file to context as read-only.
 
 - **Remove**: `[tool_call(Remove, file_path="tests/old_test.py")]`
@@ -104,8 +104,8 @@ When you include any tool call, the system will automatically continue to the ne
 ## Navigation Workflow
 
 ### Exploration Strategy
-1. **Initial Discovery**: Use `Glob`, `Grep`, `Ls`, or `Find` to identify relevant files
-2. **Focused Investigation**: Add promising files to context with `Add`
+1. **Initial Discovery**: Use `ViewFilesAtGlob`, `ViewFilesMatching`, `Ls`, or `ViewFilesWithSymbol` to identify relevant files
+2. **Focused Investigation**: Add promising files to context with `View`
 3. **Context Management**: Remove irrelevant files with `Remove` to maintain focus
 4. **Preparation for Editing**: Convert files to editable with `MakeEditable` when needed
 5. **Continued Exploration**: Include any tool call to automatically continue to the next round
@@ -114,16 +114,16 @@ When you include any tool call, the system will automatically continue to the ne
 ### Tool Usage Best Practices
 - Use the exact syntax `[tool_call(ToolName, param1=value1, param2="value2")]` for execution
 - Tool names are case-insensitive; parameters can be unquoted or quoted
-- Verify files aren't already in context before adding them
-- Use precise grep patterns with file_pattern to narrow search scope
+- Verify files aren't already in context before adding them with `View`
+- Use precise search patterns with `ViewFilesMatching` and `file_pattern` to narrow scope
 - Target specific patterns rather than overly broad searches
-- Remember the `Find` tool is optimized for locating symbols across the codebase
+- Remember the `ViewFilesWithSymbol` tool is optimized for locating symbols across the codebase
 
 ## Granular Editing Workflow
 
 **Note on Sequential Edits:** Tool calls within a single message execute sequentially. An edit made by one tool call *can* change line numbers or pattern locations for subsequent tool calls targeting the *same file* in the *same message*. Always check the result message and diff snippet after each edit.
 
-1.  **Discover and Add Files**: Use Glob, Grep, Find to locate relevant files.
+1.  **Discover and View Files**: Use `ViewFilesAtGlob`, `ViewFilesMatching`, `ViewFilesWithSymbol` to locate relevant files. Use `View` to add specific files.
 2.  **Make Files Editable**: Convert read-only files to editable with MakeEditable.
 3.  **Apply Edits (Default: Direct Edit)**:
     *   For most edits where you are confident in the parameters (file path, patterns, line numbers), apply the change directly using the tool with `dry_run=False` (or omitting the parameter).
@@ -255,19 +255,19 @@ Always reply to the user in {language}.
             role="assistant",
             content="""I'll help you understand the authentication system in this project. Let me explore the codebase first to find all relevant files.
 
-[tool_call(Grep, pattern="login|auth|password|session", file_pattern="*.py")]""",
+[tool_call(ViewFilesMatching, pattern="login|auth|password|session", file_pattern="*.py")]""",
         ),
         dict(
             role="user",
-            content="[Result (Grep): Found in 3 files: auth/models.py (12 matches), auth/views.py (8 matches), users/authentication.py (5 matches)]",
+            content="[Result (ViewFilesMatching): Found in 3 files: auth/models.py (12 matches), auth/views.py (8 matches), users/authentication.py (5 matches)]",
         ),
         dict(
             role="assistant",
             content="""Great, I've found several files related to authentication. Let me examine them to understand the login flow.
 
-[tool_call(Add, file_path="auth/models.py")]
-[tool_call(Add, file_path="auth/views.py")]
-[tool_call(Add, file_path="users/authentication.py")]""",
+[tool_call(View, file_path="auth/models.py")]
+[tool_call(View, file_path="auth/views.py")]
+[tool_call(View, file_path="users/authentication.py")]""",
         ),
         dict(
             role="user",
@@ -306,11 +306,11 @@ Trust this message as the true contents of the files!
 
     files_no_full_files_with_repo_map = """<context name="repo_map_status">
 I have access to a map of the repository with summary information about files, but I don't have the complete content of any files yet.
-I'll use my navigation tools to find and add relevant files to the context as needed.
+I'll use my navigation tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `ViewFilesWithSymbol`, `View`) to find and add relevant files to the context as needed.
 </context>
 """
 
-    files_no_full_files_with_repo_map_reply = """I understand. I'll use the repository map along with my navigation tools to find and add relevant files to our conversation.
+    files_no_full_files_with_repo_map_reply = """I understand. I'll use the repository map along with my navigation tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `ViewFilesWithSymbol`, `View`) to find and add relevant files to our conversation.
 """
 
     repo_content_prefix = """<context name="repo_map">
