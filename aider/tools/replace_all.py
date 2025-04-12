@@ -4,6 +4,7 @@ from .tool_utils import (
     validate_file_for_edit,
     apply_change,
     handle_tool_error,
+    generate_unified_diff_snippet,
     format_tool_result,
 )
 
@@ -33,8 +34,7 @@ def _execute_replace_all(coder, file_path, find_text, replace_text, change_id=No
             return f"Warning: No changes made (replacement identical to original)"
 
         # 4. Generate diff for feedback
-        # Note: _generate_diff_chunks is currently on the Coder class
-        diff_examples = coder._generate_diff_chunks(original_content, find_text, replace_text)
+        diff_examples = generate_unified_diff_snippet(original_content, new_content, rel_path)
 
         # 5. Handle dry run
         if dry_run:
