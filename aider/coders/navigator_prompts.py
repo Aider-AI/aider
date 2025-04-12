@@ -94,7 +94,9 @@ Act as an expert software engineer with the ability to autonomously navigate and
 
 ### Other Tools
 - **Command**: `[tool_call(Command, command_string="git diff HEAD~1")]`
-  Execute a shell command. Requires user confirmation.
+  Execute a *non-interactive* shell command. Requires user confirmation. Use for commands that don't need user input (e.g., `ls`, `git status`, `cat file`).
+- **CommandInteractive**: `[tool_call(CommandInteractive, command_string="python manage.py shell")]`
+  Execute an *interactive* shell command using a pseudo-terminal (PTY). Use for commands that might require user interaction (e.g., running a shell, a development server, `ssh`). Does *not* require separate confirmation as interaction happens directly.
 
 ### Multi-Turn Exploration
 When you include any tool call, the system will automatically continue to the next round.

@@ -18,8 +18,8 @@ from .editblock_coder import find_original_update_blocks, do_replace, find_simil
 from .navigator_prompts import NavigatorPrompts
 from aider.repo import ANY_GIT_ERROR
 from aider import urls
-# Import run_cmd_subprocess directly for non-interactive execution
-from aider.run_cmd import run_cmd_subprocess
+# Import run_cmd for potentially interactive execution and run_cmd_subprocess for guaranteed non-interactive
+from aider.run_cmd import run_cmd, run_cmd_subprocess
 # Import the change tracker
 from aider.change_tracker import ChangeTracker
 
@@ -577,7 +577,13 @@ class NavigatorCoder(Coder):
                         result_message = self._execute_command(command_string)
                     else:
                         result_message = "Error: Missing 'command_string' parameter for Command"
-                
+                elif norm_tool_name == 'commandinteractive':
+                    command_string = params.get('command_string')
+                    if command_string is not None:
+                        result_message = self._execute_command_interactive(command_string)
+                    else:
+                        result_message = "Error: Missing 'command_string' parameter for CommandInteractive"
+
                 # Granular editing tools
                 elif norm_tool_name == 'replacetext':
                     file_path = params.get('file_path')
@@ -1407,6 +1413,43 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             #     self.io.tool_error(traceback.format_exc())
             return f"Error executing command: {str(e)}"
 
+    def _execute_command_interactive(self, command_string):
+        """
+        Execute an interactive shell command using run_cmd (which uses pexpect/PTY).
+        """
+        try:
+            self.io.tool_output(f"⚙️ Starting interactive shell command: {command_string}")
+            self.io.tool_output(">>> You may need to interact with the command below <<<")
+
+            # Use run_cmd which handles PTY logic
+            exit_status, combined_output = run_cmd(
+                command_string,
+                verbose=self.verbose, # Pass verbose flag
+                error_print=self.io.tool_error, # Use io for error printing
+                cwd=self.root # Execute in the project root
+            )
+
+            self.io.tool_output(">>> Interactive command finished <<<")
+
+            # Format the output for the result message, include more content
+            output_content = combined_output or ""
+            # Use the existing token threshold constant as the character limit for truncation
+            output_limit = self.large_file_token_threshold
+            if len(output_content) > output_limit:
+                # Truncate and add a clear message using the constant value
+                output_content = output_content[:output_limit] + f"\n... (output truncated at {output_limit} characters, based on large_file_token_threshold)"
+
+            if exit_status == 0:
+                return f"Interactive command finished successfully (exit code 0). Output:\n{output_content}"
+            else:
+                return f"Interactive command finished with exit code {exit_status}. Output:\n{output_content}"
+
+        except Exception as e:
+            self.io.tool_error(f"Error executing interactive shell command '{command_string}': {str(e)}")
+            # Optionally include traceback for debugging if verbose
+            # if self.verbose:
+            #     self.io.tool_error(traceback.format_exc())
+            return f"Error executing interactive command: {str(e)}"
 
     def _process_file_mentions(self, content):
         """
