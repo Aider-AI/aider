@@ -337,6 +337,7 @@ Use SEARCH/REPLACE blocks **only** as a fallback mechanism when granular tools *
 
 If you must use SEARCH/REPLACE, adhere strictly to this format:
 
+# Justification: I'm using SEARCH/REPLACE because [specific reasons why granular tools can't achieve this edit]
 ````python
 path/to/file.ext
 <<<<<<< SEARCH
@@ -354,6 +355,7 @@ NOTE that this uses four backticks as the fence and not three!
 - For new files, use an empty SEARCH section.
 - To move code within a file, use two separate SEARCH/REPLACE blocks.
 - Respect the file paths exactly as they appear.
+
 ### Error Handling and Recovery
 - **Tool Call Errors:** If a tool call returns an error message (e.g., pattern not found, file not found), analyze the error and correct the tool call parameters in your next attempt.
 - **Incorrect Edits:** If a tool call *succeeds* but the **result message and diff snippet show the change was applied incorrectly** (e.g., wrong location, unintended side effects):
@@ -363,6 +365,7 @@ NOTE that this uses four backticks as the fence and not three!
 - **Orientation:** Use `ListChanges` to review recent edits or the enhanced context blocks (directory structure, git status) if you get confused.
 </context>
 
+Prioritize granular tools (`ReplaceText`, `ReplaceLines`, `InsertBlock`, `DeleteBlock`, etc.) over SEARCH/REPLACE blocks. Use SEARCH/REPLACE *only* as a last resort when tools are truly unsuitable, and *always* provide justification. Failure to prioritize tools is a failure to follow instructions.
 Always reply to the user in {language}.
 """
 
