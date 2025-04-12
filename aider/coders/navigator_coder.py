@@ -584,69 +584,78 @@ class NavigatorCoder(Coder):
                     find_text = params.get('find_text')
                     replace_text = params.get('replace_text')
                     near_context = params.get('near_context')
-                    occurrence = params.get('occurrence', 1)
+                    occurrence = params.get('occurrence', 1) # Default to first occurrence
                     change_id = params.get('change_id')
-                    
+                    dry_run = params.get('dry_run', False) # Default to False
+
                     if file_path is not None and find_text is not None and replace_text is not None:
                         result_message = self._execute_replace_text(
-                            file_path, find_text, replace_text, near_context, occurrence, change_id
+                            file_path, find_text, replace_text, near_context, occurrence, change_id, dry_run
                         )
                     else:
-                        result_message = "Error: Missing required parameters for ReplaceText"
+                        result_message = "Error: Missing required parameters for ReplaceText (file_path, find_text, replace_text)"
                 
                 elif norm_tool_name == 'replaceall':
                     file_path = params.get('file_path')
                     find_text = params.get('find_text')
                     replace_text = params.get('replace_text')
                     change_id = params.get('change_id')
-                    
+                    dry_run = params.get('dry_run', False) # Default to False
+
                     if file_path is not None and find_text is not None and replace_text is not None:
                         result_message = self._execute_replace_all(
-                            file_path, find_text, replace_text, change_id
+                            file_path, find_text, replace_text, change_id, dry_run
                         )
                     else:
-                        result_message = "Error: Missing required parameters for ReplaceAll"
+                        result_message = "Error: Missing required parameters for ReplaceAll (file_path, find_text, replace_text)"
                 
                 elif norm_tool_name == 'insertblock':
                     file_path = params.get('file_path')
                     content = params.get('content')
                     after_pattern = params.get('after_pattern')
                     before_pattern = params.get('before_pattern')
+                    near_context = params.get('near_context') # New
+                    occurrence = params.get('occurrence', 1) # New, default 1
                     change_id = params.get('change_id')
-                    
+                    dry_run = params.get('dry_run', False) # New, default False
+
                     if file_path is not None and content is not None and (after_pattern is not None or before_pattern is not None):
                         result_message = self._execute_insert_block(
-                            file_path, content, after_pattern, before_pattern, change_id
+                            file_path, content, after_pattern, before_pattern, near_context, occurrence, change_id, dry_run
                         )
                     else:
-                        result_message = "Error: Missing required parameters for InsertBlock"
+                        result_message = "Error: Missing required parameters for InsertBlock (file_path, content, and either after_pattern or before_pattern)"
                 
                 elif norm_tool_name == 'deleteblock':
                     file_path = params.get('file_path')
                     start_pattern = params.get('start_pattern')
                     end_pattern = params.get('end_pattern')
                     line_count = params.get('line_count')
+                    near_context = params.get('near_context') # New
+                    occurrence = params.get('occurrence', 1) # New, default 1
                     change_id = params.get('change_id')
-                    
+                    dry_run = params.get('dry_run', False) # New, default False
+
                     if file_path is not None and start_pattern is not None:
                         result_message = self._execute_delete_block(
-                            file_path, start_pattern, end_pattern, line_count, change_id
+                            file_path, start_pattern, end_pattern, line_count, near_context, occurrence, change_id, dry_run
                         )
                     else:
-                        result_message = "Error: Missing required parameters for DeleteBlock"
+                        result_message = "Error: Missing required parameters for DeleteBlock (file_path, start_pattern)"
                 
                 elif norm_tool_name == 'replaceline':
                     file_path = params.get('file_path')
                     line_number = params.get('line_number')
                     new_content = params.get('new_content')
                     change_id = params.get('change_id')
-                    
+                    dry_run = params.get('dry_run', False) # New, default False
+
                     if file_path is not None and line_number is not None and new_content is not None:
                         result_message = self._execute_replace_line(
-                            file_path, line_number, new_content, change_id
+                            file_path, line_number, new_content, change_id, dry_run
                         )
                     else:
-                        result_message = "Error: Missing required parameters for ReplaceLine"
+                        result_message = "Error: Missing required parameters for ReplaceLine (file_path, line_number, new_content)"
                 
                 elif norm_tool_name == 'replacelines':
                     file_path = params.get('file_path')
@@ -654,28 +663,32 @@ class NavigatorCoder(Coder):
                     end_line = params.get('end_line')
                     new_content = params.get('new_content')
                     change_id = params.get('change_id')
-                    
+                    dry_run = params.get('dry_run', False) # New, default False
+
                     if file_path is not None and start_line is not None and end_line is not None and new_content is not None:
                         result_message = self._execute_replace_lines(
-                            file_path, start_line, end_line, new_content, change_id
+                            file_path, start_line, end_line, new_content, change_id, dry_run
                         )
                     else:
-                        result_message = "Error: Missing required parameters for ReplaceLines"
+                        result_message = "Error: Missing required parameters for ReplaceLines (file_path, start_line, end_line, new_content)"
                 
                 elif norm_tool_name == 'indentlines':
                     file_path = params.get('file_path')
                     start_pattern = params.get('start_pattern')
                     end_pattern = params.get('end_pattern')
                     line_count = params.get('line_count')
-                    indent_levels = params.get('indent_levels', 1)
+                    indent_levels = params.get('indent_levels', 1) # Default to indent 1 level
+                    near_context = params.get('near_context') # New
+                    occurrence = params.get('occurrence', 1) # New, default 1
                     change_id = params.get('change_id')
-                    
+                    dry_run = params.get('dry_run', False) # New, default False
+
                     if file_path is not None and start_pattern is not None:
                         result_message = self._execute_indent_lines(
-                            file_path, start_pattern, end_pattern, line_count, indent_levels, change_id
+                            file_path, start_pattern, end_pattern, line_count, indent_levels, near_context, occurrence, change_id, dry_run
                         )
                     else:
-                        result_message = "Error: Missing required parameters for IndentLines"
+                        result_message = "Error: Missing required parameters for IndentLines (file_path, start_pattern)"
                 
                 elif norm_tool_name == 'undochange':
                     change_id = params.get('change_id')
@@ -1634,9 +1647,57 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         
         return True
         
+    # ------------------- Helper for finding occurrences -------------------
+
+    def _find_occurrences(self, content, pattern, near_context=None):
+        """Find all occurrences of pattern, optionally filtered by near_context."""
+        occurrences = []
+        start = 0
+        while True:
+            index = content.find(pattern, start)
+            if index == -1:
+                break
+            
+            if near_context:
+                # Check if near_context is within a window around the match
+                window_start = max(0, index - 200)
+                window_end = min(len(content), index + len(pattern) + 200)
+                window = content[window_start:window_end]
+                if near_context in window:
+                    occurrences.append(index)
+            else:
+                occurrences.append(index)
+            
+            start = index + 1 # Move past this occurrence's start
+        return occurrences
+
+    # ------------------- Helper for finding occurrences -------------------
+
+    def _find_occurrences(self, content, pattern, near_context=None):
+        """Find all occurrences of pattern, optionally filtered by near_context."""
+        occurrences = []
+        start = 0
+        while True:
+            index = content.find(pattern, start)
+            if index == -1:
+                break
+            
+            if near_context:
+                # Check if near_context is within a window around the match
+                window_start = max(0, index - 200)
+                window_end = min(len(content), index + len(pattern) + 200)
+                window = content[window_start:window_end]
+                if near_context in window:
+                    occurrences.append(index)
+            else:
+                occurrences.append(index)
+            
+            start = index + 1 # Move past this occurrence's start
+        return occurrences
+
     # ------------------- Granular Editing Tools -------------------
     
-    def _execute_replace_text(self, file_path, find_text, replace_text, near_context=None, occurrence=1, change_id=None):
+    def _execute_replace_text(self, file_path, find_text, replace_text, near_context=None, occurrence=1, change_id=None, dry_run=False):
         """
         Replace specific text with new text, optionally using nearby context for disambiguation.
         
@@ -1648,6 +1709,12 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         - occurrence: Which occurrence to replace (1-based index, or -1 for last)
         - change_id: Optional ID for tracking the change
         
+        - change_id: Optional ID for tracking the change
+        - dry_run: If True, simulate the change without modifying the file
+         
+        - change_id: Optional ID for tracking the change
+        - dry_run: If True, simulate the change without modifying the file
+         
         Returns a result message.
         """
         try:
@@ -1668,56 +1735,43 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 else:
                     self.io.tool_error(f"File '{file_path}' not in context")
                     return f"Error: File not in context"
-            
-            # Read file content
+             
+            # Reread file content immediately before modification (Fixes Point 3: Stale Reads)
             content = self.io.read_text(abs_path)
             if content is None:
-                return f"Error reading file: {file_path}"
-            
-            # If near_context is provided, narrow down the search
-            if near_context:
-                # Find the section containing both find_text and near_context
-                sections = []
-                for i in range(len(content)):
-                    if i + len(find_text) <= len(content) and content[i:i+len(find_text)] == find_text:
-                        # Look for near_context within a reasonable window (e.g., 200 chars)
-                        window_start = max(0, i - 200)
-                        window_end = min(len(content), i + len(find_text) + 200)
-                        window = content[window_start:window_end]
-                        if near_context in window:
-                            sections.append(i)
-                
-                if not sections:
-                    self.io.tool_error(f"Could not find '{find_text}' near '{near_context}'")
-                    return f"Error: Text not found near specified context"
-                
-                # Select the occurrence (1-based index)
+                # Provide more specific error (Improves Point 4)
+                self.io.tool_error(f"Could not read file '{file_path}' before ReplaceText operation.")
+                return f"Error: Could not read file '{file_path}'"
+            # Find occurrences using helper function
+            occurrences = self._find_occurrences(content, find_text, near_context)
+             
+            if not occurrences:
+                err_msg = f"Text '{find_text}' not found"
+                if near_context:
+                    err_msg += f" near context '{near_context}'"
+                err_msg += f" in file '{file_path}'."
+                self.io.tool_error(err_msg)
+                return f"Error: {err_msg}" # Improve Point 4
+
+            # Select the occurrence (handle 1-based index and -1 for last)
+            num_occurrences = len(occurrences)
+            try:
+                occurrence = int(occurrence) # Ensure occurrence is an integer
                 if occurrence == -1:  # Last occurrence
-                    start_index = sections[-1]
+                    target_idx = num_occurrences - 1
+                elif occurrence > 0 and occurrence <= num_occurrences:
+                    target_idx = occurrence - 1 # Convert 1-based to 0-based
                 else:
-                    occurrence_idx = min(occurrence - 1, len(sections) - 1)
-                    start_index = sections[occurrence_idx]
-            else:
-                # Find all occurrences of find_text
-                sections = []
-                start = 0
-                while True:
-                    start = content.find(find_text, start)
-                    if start == -1:
-                        break
-                    sections.append(start)
-                    start += 1  # Move past this occurrence
-                
-                if not sections:
-                    self.io.tool_error(f"Text '{find_text}' not found in file")
-                    return f"Error: Text not found in file"
-                
-                # Select the occurrence (1-based index)
-                if occurrence == -1:  # Last occurrence
-                    start_index = sections[-1]
-                else:
-                    occurrence_idx = min(occurrence - 1, len(sections) - 1)
-                    start_index = sections[occurrence_idx]
+                    err_msg = f"Occurrence number {occurrence} is out of range. Found {num_occurrences} occurrences of '{find_text}'"
+                    if near_context: err_msg += f" near '{near_context}'"
+                    err_msg += f" in '{file_path}'."
+                    self.io.tool_error(err_msg)
+                    return f"Error: {err_msg}" # Improve Point 4
+            except ValueError:
+                self.io.tool_error(f"Invalid occurrence value: '{occurrence}'. Must be an integer.")
+                return f"Error: Invalid occurrence value '{occurrence}'"
+
+            start_index = occurrences[target_idx]
             
             # Perform the replacement
             original_content = content
@@ -1726,12 +1780,20 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             if original_content == new_content:
                 self.io.tool_warning(f"No changes made: replacement text is identical to original")
                 return f"Warning: No changes made (replacement identical to original)"
-            
-            # Write the modified content back to the file
-            if not self.dry_run:
-                self.io.write_text(abs_path, new_content)
-                
-                # Track the change
+             
+            # Generate diff for feedback
+            diff_example = self._generate_diff_snippet(original_content, start_index, len(find_text), replace_text)
+
+            # Handle dry run (Implements Point 6)
+            if dry_run:
+                self.io.tool_output(f"Dry run: Would replace occurrence {occurrence} of '{find_text}' in {file_path}")
+                return f"Dry run: Would replace text (occurrence {occurrence}). Diff snippet:\n{diff_example}"
+
+            # --- Apply Change (Not dry run) ---
+            self.io.write_text(abs_path, new_content)
+             
+            # Track the change
+            try:
                 metadata = {
                     'start_index': start_index,
                     'find_text': find_text,
@@ -1747,64 +1809,23 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     metadata=metadata,
                     change_id=change_id
                 )
-                
-                self.aider_edited_files.add(rel_path)
-                
-                # Get more context around the replace (get up to 3 lines before and after)
-                lines = content.splitlines()
-                found_idx = -1
-                for i, line in enumerate(lines):
-                    if start_index < len(''.join(lines[:i+1])) + i:  # Account for newlines
-                        found_idx = i
-                        break
-                
-                if found_idx != -1:
-                    # Get lines with context
-                    start_line = max(0, found_idx - 3)
-                    end_line = min(len(lines) - 1, found_idx + 3)
-                    
-                    # Format the diff in git style
-                    diff_lines = []
-                    for i in range(start_line, end_line + 1):
-                        if i == found_idx:
-                            # This is the line containing the change
-                            line = lines[i]
-                            # Find position of match within the line
-                            line_start = start_index - len(''.join(lines[:i])) - i
-                            if line_start >= 0 and line_start + len(find_text) <= len(line):
-                                # If we can isolate the exact position in the line
-                                old_line = line
-                                new_line = line[:line_start] + replace_text + line[line_start + len(find_text):]
-                                diff_lines.append(f"- {old_line}")
-                                diff_lines.append(f"+ {new_line}")
-                            else:
-                                # If we can't isolate exact position (e.g., multi-line match)
-                                diff_lines.append(f"- {line}")
-                                # Try our best approximation for the new line
-                                if find_text in line:
-                                    diff_lines.append(f"+ {line.replace(find_text, replace_text)}")
-                                else:
-                                    diff_lines.append(f"+ [modified line]")
-                        else:
-                            # Context line, prefix with space
-                            diff_lines.append(f"  {lines[i]}")
-                    
-                    diff_example = f"@@ line {start_line+1},{end_line+1} @@\n" + "\n".join(diff_lines)
-                else:
-                    # Fallback if we can't locate the exact line
-                    diff_example = f"- {find_text}\n+ {replace_text}"
-                
-                self.io.tool_output(f"✅ Replaced text in {file_path} (change_id: {change_id})")
-                return f"Successfully replaced text (change_id: {change_id}):\n{diff_example}"
-            else:
-                self.io.tool_output(f"Did not replace text in {file_path} (--dry-run)")
-                return f"Did not replace text (--dry-run)"
-                
+            except Exception as track_e:
+                self.io.tool_error(f"Error tracking change for ReplaceText: {track_e}")
+                # Continue even if tracking fails, but warn
+                change_id = "TRACKING_FAILED"
+
+            self.aider_edited_files.add(rel_path)
+             
+            # Improve feedback (Point 5 & 6)
+            occurrence_str = f"occurrence {occurrence}" if num_occurrences > 1 else "text"
+            self.io.tool_output(f"✅ Replaced {occurrence_str} in {file_path} (change_id: {change_id})")
+            return f"Successfully replaced {occurrence_str} (change_id: {change_id}). Diff snippet:\n{diff_example}"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in ReplaceText: {str(e)}")
+            self.io.tool_error(f"Error in ReplaceText: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
     
-    def _execute_replace_all(self, file_path, find_text, replace_text, change_id=None):
+    def _execute_replace_all(self, file_path, find_text, replace_text, change_id=None, dry_run=False):
         """
         Replace all occurrences of text in a file.
         
@@ -1834,11 +1855,13 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 else:
                     self.io.tool_error(f"File '{file_path}' not in context")
                     return f"Error: File not in context"
-            
-            # Read file content
+             
+            # Reread file content immediately before modification (Fixes Point 3: Stale Reads)
             content = self.io.read_text(abs_path)
             if content is None:
-                return f"Error reading file: {file_path}"
+                # Provide more specific error (Improves Point 4)
+                self.io.tool_error(f"Could not read file '{file_path}' before ReplaceAll operation.")
+                return f"Error: Could not read file '{file_path}'"
             
             # Count occurrences
             count = content.count(find_text)
@@ -1853,12 +1876,20 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             if original_content == new_content:
                 self.io.tool_warning(f"No changes made: replacement text is identical to original")
                 return f"Warning: No changes made (replacement identical to original)"
-            
-            # Write the modified content back to the file
-            if not self.dry_run:
-                self.io.write_text(abs_path, new_content)
-                
-                # Track the change
+             
+            # Generate diff for feedback (more comprehensive for ReplaceAll)
+            diff_examples = self._generate_diff_chunks(original_content, find_text, replace_text)
+
+            # Handle dry run (Implements Point 6)
+            if dry_run:
+                self.io.tool_output(f"Dry run: Would replace {count} occurrences of '{find_text}' in {file_path}")
+                return f"Dry run: Would replace {count} occurrences. Diff examples:\n{diff_examples}"
+
+            # --- Apply Change (Not dry run) ---
+            self.io.write_text(abs_path, new_content)
+             
+            # Track the change
+            try:
                 metadata = {
                     'find_text': find_text,
                     'replace_text': replace_text,
@@ -1872,110 +1903,35 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     metadata=metadata,
                     change_id=change_id
                 )
-                
-                self.aider_edited_files.add(rel_path)
-                
-                # Build a mapping of line number to replacements on that line
-                line_changes = {}
-                
-                # Split content into lines
-                lines = content.splitlines()
-                
-                # Keep track of character position across all lines
-                char_pos = 0
-                for line_idx, line in enumerate(lines):
-                    line_len = len(line)
-                    
-                    # Look for occurrences within this line
-                    line_pos = 0
-                    while line_pos <= line_len - len(find_text):
-                        match_pos = line[line_pos:].find(find_text)
-                        if match_pos == -1:
-                            break
-                            
-                        # Found a match in this line
-                        true_pos = line_pos + match_pos
-                        if line_idx not in line_changes:
-                            line_changes[line_idx] = []
-                            
-                        line_changes[line_idx].append((true_pos, find_text, replace_text))
-                        
-                        # Move past this match
-                        line_pos = true_pos + len(find_text)
-                    
-                    # Move to next line (add 1 for the newline)
-                    char_pos += line_len + 1
-                
-                # Generate git-style diffs for each affected line with context
-                diff_chunks = []
-                sorted_changed_lines = sorted(line_changes.keys())
-                
-                # Group adjacent changed lines into chunks
-                chunks = []
-                current_chunk = []
-                
-                for line_idx in sorted_changed_lines:
-                    if not current_chunk or line_idx <= current_chunk[-1] + 6:  # Keep chunks within 6 lines
-                        current_chunk.append(line_idx)
-                    else:
-                        chunks.append(current_chunk)
-                        current_chunk = [line_idx]
-                
-                if current_chunk:
-                    chunks.append(current_chunk)
-                
-                # Generate diff for each chunk
-                for chunk in chunks:
-                    min_line = max(0, min(chunk) - 3)  # 3 lines of context before
-                    max_line = min(len(lines) - 1, max(chunk) + 3)  # 3 lines of context after
-                    
-                    diff_lines = []
-                    diff_lines.append(f"@@ line {min_line+1},{max_line+1} @@")
-                    
-                    for i in range(min_line, max_line + 1):
-                        if i in line_changes:
-                            # This is a line with changes
-                            original_line = lines[i]
-                            modified_line = original_line
-                            
-                            # Apply all replacements to this line
-                            # We need to apply them from right to left to maintain correct positions
-                            changes = sorted(line_changes[i], key=lambda x: x[0], reverse=True)
-                            for pos, old_text, new_text in changes:
-                                modified_line = modified_line[:pos] + new_text + modified_line[pos + len(old_text):]
-                            
-                            diff_lines.append(f"- {original_line}")
-                            diff_lines.append(f"+ {modified_line}")
-                        else:
-                            # Context line
-                            diff_lines.append(f"  {lines[i]}")
-                    
-                    diff_chunks.append("\n".join(diff_lines))
-                
-                # Join all chunks into a single diff
-                diff_examples = "\n\n".join(diff_chunks) if diff_chunks else "No changes shown (content parsing error)"
-                
-                self.io.tool_output(f"✅ Replaced {count} occurrences in {file_path} (change_id: {change_id})")
-                return f"Successfully replaced {count} occurrences (change_id: {change_id}) with examples:\n{diff_examples}"
-            else:
-                self.io.tool_output(f"Did not replace text in {file_path} (--dry-run)")
-                return f"Did not replace text (--dry-run)"
-                
+            except Exception as track_e:
+                self.io.tool_error(f"Error tracking change for ReplaceAll: {track_e}")
+                # Continue even if tracking fails, but warn
+                change_id = "TRACKING_FAILED"
+
+            self.aider_edited_files.add(rel_path)
+             
+            # Improve feedback (Point 6)
+            self.io.tool_output(f"✅ Replaced {count} occurrences in {file_path} (change_id: {change_id})")
+            return f"Successfully replaced {count} occurrences (change_id: {change_id}). Diff examples:\n{diff_examples}"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in ReplaceAll: {str(e)}")
+            self.io.tool_error(f"Error in ReplaceAll: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
-    
-    def _execute_insert_block(self, file_path, content, after_pattern=None, before_pattern=None, change_id=None):
+            
+    def _execute_insert_block(self, file_path, content, after_pattern=None, before_pattern=None, near_context=None, occurrence=1, change_id=None, dry_run=False):
         """
         Insert a block of text after or before a specified pattern.
         
         Parameters:
         - file_path: Path to the file to modify
         - content: Text block to insert
-        - after_pattern: Pattern after which to insert the block (line containing this pattern)
-        - before_pattern: Pattern before which to insert the block (line containing this pattern)
+        - after_pattern: Pattern after which to insert the block (line containing this pattern) - specify one of after/before
+        - before_pattern: Pattern before which to insert the block (line containing this pattern) - specify one of after/before
+        - near_context: Optional text nearby to help locate the correct instance of the pattern
+        - occurrence: Which occurrence of the pattern to use (1-based index, or -1 for last)
         - change_id: Optional ID for tracking the change
-        
+        - dry_run: If True, simulate the change without modifying the file
+         
         Returns a result message.
         """
         try:
@@ -1996,11 +1952,13 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 else:
                     self.io.tool_error(f"File '{file_path}' not in context")
                     return f"Error: File not in context"
-            
-            # Read file content
+             
+            # Reread file content immediately before modification (Fixes Point 3: Stale Reads)
             file_content = self.io.read_text(abs_path)
             if file_content is None:
-                return f"Error reading file: {file_path}"
+                # Provide more specific error (Improves Point 4)
+                self.io.tool_error(f"Could not read file '{file_path}' before InsertBlock operation.")
+                return f"Error: Could not read file '{file_path}'"
             
             # Validate we have either after_pattern or before_pattern, but not both
             if after_pattern and before_pattern:
@@ -2013,40 +1971,85 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             # Split into lines for easier handling
             lines = file_content.splitlines()
             original_content = file_content
-            
-            # Find the insertion point
-            insertion_point = -1
+             
+            # Find occurrences of the pattern (either after_pattern or before_pattern)
             pattern = after_pattern if after_pattern else before_pattern
+            pattern_type = "after" if after_pattern else "before"
+             
+            # Find line indices containing the pattern
+            pattern_line_indices = []
             for i, line in enumerate(lines):
                 if pattern in line:
-                    insertion_point = i
-                    # For after_pattern, insert after this line
-                    if after_pattern:
-                        insertion_point += 1
-                    break
-            
-            if insertion_point == -1:
-                self.io.tool_error(f"Pattern '{pattern}' not found in file")
-                return f"Error: Pattern not found in file"
-            
-            # Insert the content
+                    # If near_context is provided, check if it's nearby
+                    if near_context:
+                        context_window_start = max(0, i - 5) # Check 5 lines before/after
+                        context_window_end = min(len(lines), i + 6)
+                        context_block = "\n".join(lines[context_window_start:context_window_end])
+                        if near_context in context_block:
+                            pattern_line_indices.append(i)
+                    else:
+                        pattern_line_indices.append(i)
+
+            if not pattern_line_indices:
+                err_msg = f"Pattern '{pattern}' not found"
+                if near_context: err_msg += f" near context '{near_context}'"
+                err_msg += f" in file '{file_path}'."
+                self.io.tool_error(err_msg)
+                return f"Error: {err_msg}" # Improve Point 4
+
+            # Select the occurrence (Implements Point 5)
+            num_occurrences = len(pattern_line_indices)
+            try:
+                occurrence = int(occurrence) # Ensure occurrence is an integer
+                if occurrence == -1: # Last occurrence
+                    target_idx = num_occurrences - 1
+                elif occurrence > 0 and occurrence <= num_occurrences:
+                    target_idx = occurrence - 1 # Convert 1-based to 0-based
+                else:
+                    err_msg = f"Occurrence number {occurrence} is out of range for pattern '{pattern}'. Found {num_occurrences} occurrences"
+                    if near_context: err_msg += f" near '{near_context}'"
+                    err_msg += f" in '{file_path}'."
+                    self.io.tool_error(err_msg)
+                    return f"Error: {err_msg}" # Improve Point 4
+            except ValueError:
+                self.io.tool_error(f"Invalid occurrence value: '{occurrence}'. Must be an integer.")
+                return f"Error: Invalid occurrence value '{occurrence}'"
+
+            # Determine the final insertion line index
+            insertion_line_idx = pattern_line_indices[target_idx]
+            if pattern_type == "after":
+                insertion_line_idx += 1 # Insert on the line *after* the matched line
+            # Prepare the content to insert
             content_lines = content.splitlines()
-            new_lines = lines[:insertion_point] + content_lines + lines[insertion_point:]
-            new_content = '\n'.join(new_lines)
-            
+             
+            # Create the new lines array
+            new_lines = lines[:insertion_line_idx] + content_lines + lines[insertion_line_idx:]
+            new_content = '\n'.join(new_lines) # Use '\n' to match io.write_text behavior
+             
             if original_content == new_content:
                 self.io.tool_warning(f"No changes made: insertion would not change file")
                 return f"Warning: No changes made (insertion would not change file)"
-            
-            # Write the modified content back to the file
-            if not self.dry_run:
-                self.io.write_text(abs_path, new_content)
-                
-                # Track the change
+
+            # Generate diff for feedback
+            diff_snippet = self._generate_diff_snippet_insert(original_content, insertion_line_idx, content_lines)
+
+            # Handle dry run (Implements Point 6)
+            if dry_run:
+                occurrence_str = f"occurrence {occurrence} of " if num_occurrences > 1 else ""
+                self.io.tool_output(f"Dry run: Would insert block {pattern_type} {occurrence_str}pattern '{pattern}' in {file_path}")
+                return f"Dry run: Would insert block. Diff snippet:\n{diff_snippet}"
+
+            # --- Apply Change (Not dry run) ---
+            self.io.write_text(abs_path, new_content)
+             
+            # Track the change
+            try:
                 metadata = {
-                    'insertion_point': insertion_point,
+                    'insertion_line_idx': insertion_line_idx,
                     'after_pattern': after_pattern,
                     'before_pattern': before_pattern,
+                    'near_context': near_context,
+                    'occurrence': occurrence,
                     'content': content
                 }
                 change_id = self.change_tracker.track_change(
@@ -2057,30 +2060,35 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     metadata=metadata,
                     change_id=change_id
                 )
-                
-                self.aider_edited_files.add(rel_path)
-                pattern_type = "after" if after_pattern else "before"
-                self.io.tool_output(f"✅ Inserted block {pattern_type} pattern in {file_path} (change_id: {change_id})")
-                return f"Successfully inserted block (change_id: {change_id})"
-            else:
-                self.io.tool_output(f"Did not insert block in {file_path} (--dry-run)")
-                return f"Did not insert block (--dry-run)"
-                
+            except Exception as track_e:
+                self.io.tool_error(f"Error tracking change for InsertBlock: {track_e}")
+                change_id = "TRACKING_FAILED"
+
+            self.aider_edited_files.add(rel_path)
+             
+            # Improve feedback (Point 5 & 6)
+            occurrence_str = f"occurrence {occurrence} of " if num_occurrences > 1 else ""
+            self.io.tool_output(f"✅ Inserted block {pattern_type} {occurrence_str}pattern in {file_path} (change_id: {change_id})")
+            return f"Successfully inserted block (change_id: {change_id}). Diff snippet:\n{diff_snippet}"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in InsertBlock: {str(e)}")
+            self.io.tool_error(f"Error in InsertBlock: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
             
-    def _execute_delete_block(self, file_path, start_pattern, end_pattern=None, line_count=None, change_id=None):
+    def _execute_delete_block(self, file_path, start_pattern, end_pattern=None, line_count=None, near_context=None, occurrence=1, change_id=None, dry_run=False):
         """
         Delete a block of text between start_pattern and end_pattern (inclusive).
         
         Parameters:
         - file_path: Path to the file to modify
-        - start_pattern: Pattern marking the start of the block to delete
-        - end_pattern: Pattern marking the end of the block to delete
-        - line_count: Number of lines to delete (alternative to end_pattern)
+        - start_pattern: Pattern marking the start of the block to delete (line containing this pattern)
+        - end_pattern: Optional pattern marking the end of the block (line containing this pattern)
+        - line_count: Optional number of lines to delete (alternative to end_pattern)
+        - near_context: Optional text nearby to help locate the correct instance of the start_pattern
+        - occurrence: Which occurrence of the start_pattern to use (1-based index, or -1 for last)
         - change_id: Optional ID for tracking the change
-        
+        - dry_run: If True, simulate the change without modifying the file
+         
         Returns a result message.
         """
         try:
@@ -2101,11 +2109,13 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 else:
                     self.io.tool_error(f"File '{file_path}' not in context")
                     return f"Error: File not in context"
-            
-            # Read file content
+             
+            # Reread file content immediately before modification (Fixes Point 3: Stale Reads)
             file_content = self.io.read_text(abs_path)
             if file_content is None:
-                return f"Error reading file: {file_path}"
+                # Provide more specific error (Improves Point 4)
+                self.io.tool_error(f"Could not read file '{file_path}' before DeleteBlock operation.")
+                return f"Error: Could not read file '{file_path}'"
             
             # Validate we have either end_pattern or line_count, but not both
             if end_pattern and line_count:
@@ -2115,56 +2125,105 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             # Split into lines for easier handling
             lines = file_content.splitlines()
             original_content = file_content
-            
-            # Find the start line
-            start_line = -1
+             
+            # Find occurrences of the start_pattern (Implements Point 5)
+            start_pattern_line_indices = []
             for i, line in enumerate(lines):
                 if start_pattern in line:
-                    start_line = i
-                    break
-            
-            if start_line == -1:
-                self.io.tool_error(f"Start pattern '{start_pattern}' not found in file")
-                return f"Error: Start pattern not found in file"
-            
-            # Find the end line
+                    # If near_context is provided, check if it's nearby
+                    if near_context:
+                        context_window_start = max(0, i - 5) # Check 5 lines before/after
+                        context_window_end = min(len(lines), i + 6)
+                        context_block = "\n".join(lines[context_window_start:context_window_end])
+                        if near_context in context_block:
+                            start_pattern_line_indices.append(i)
+                    else:
+                        start_pattern_line_indices.append(i)
+
+            if not start_pattern_line_indices:
+                err_msg = f"Start pattern '{start_pattern}' not found"
+                if near_context: err_msg += f" near context '{near_context}'"
+                err_msg += f" in file '{file_path}'."
+                self.io.tool_error(err_msg)
+                return f"Error: {err_msg}" # Improve Point 4
+
+            # Select the occurrence for the start pattern
+            num_occurrences = len(start_pattern_line_indices)
+            try:
+                occurrence = int(occurrence) # Ensure occurrence is an integer
+                if occurrence == -1: # Last occurrence
+                    target_idx = num_occurrences - 1
+                elif occurrence > 0 and occurrence <= num_occurrences:
+                    target_idx = occurrence - 1 # Convert 1-based to 0-based
+                else:
+                    err_msg = f"Occurrence number {occurrence} is out of range for start pattern '{start_pattern}'. Found {num_occurrences} occurrences"
+                    if near_context: err_msg += f" near '{near_context}'"
+                    err_msg += f" in '{file_path}'."
+                    self.io.tool_error(err_msg)
+                    return f"Error: {err_msg}" # Improve Point 4
+            except ValueError:
+                self.io.tool_error(f"Invalid occurrence value: '{occurrence}'. Must be an integer.")
+                return f"Error: Invalid occurrence value '{occurrence}'"
+
+            start_line = start_pattern_line_indices[target_idx]
+            occurrence_str = f"occurrence {occurrence} of " if num_occurrences > 1 else "" # For messages
+            # Find the end line based on end_pattern or line_count
             end_line = -1
             if end_pattern:
-                for i in range(start_line + 1, len(lines)):
+                # Search for end_pattern *after* the selected start_line
+                for i in range(start_line, len(lines)): # Include start_line itself if start/end are same line
                     if end_pattern in lines[i]:
                         end_line = i
                         break
-                
+                 
                 if end_line == -1:
-                    self.io.tool_error(f"End pattern '{end_pattern}' not found after start pattern")
-                    return f"Error: End pattern not found after start pattern"
+                    # Improve error message (Point 4)
+                    err_msg = f"End pattern '{end_pattern}' not found after {occurrence_str}start pattern '{start_pattern}' (line {start_line + 1}) in '{file_path}'."
+                    self.io.tool_error(err_msg)
+                    return f"Error: {err_msg}"
             elif line_count:
-                # Calculate end line based on start line and line count
-                end_line = min(start_line + line_count - 1, len(lines) - 1)
+                try:
+                    line_count = int(line_count)
+                    if line_count <= 0:
+                        raise ValueError("Line count must be positive")
+                    # Calculate end line based on start line and line count
+                    end_line = min(start_line + line_count - 1, len(lines) - 1)
+                except ValueError:
+                    self.io.tool_error(f"Invalid line_count value: '{line_count}'. Must be a positive integer.")
+                    return f"Error: Invalid line_count value '{line_count}'"
             else:
-                # If neither is specified, delete just the start line
+                # If neither end_pattern nor line_count is specified, delete just the start line
                 end_line = start_line
-            
-            # Delete the block
+            # Prepare the deletion
             deleted_lines = lines[start_line:end_line+1]
             new_lines = lines[:start_line] + lines[end_line+1:]
-            new_content = '\n'.join(new_lines)
-            
+            new_content = '\n'.join(new_lines) # Use '\n' to match io.write_text behavior
+             
             if original_content == new_content:
                 self.io.tool_warning(f"No changes made: deletion would not change file")
                 return f"Warning: No changes made (deletion would not change file)"
-            
-            # Write the modified content back to the file
-            if not self.dry_run:
-                self.io.write_text(abs_path, new_content)
-                
-                # Track the change
+
+            # Generate diff for feedback
+            diff_snippet = self._generate_diff_snippet_delete(original_content, start_line, end_line)
+
+            # Handle dry run (Implements Point 6)
+            if dry_run:
+                self.io.tool_output(f"Dry run: Would delete lines {start_line+1}-{end_line+1} (based on {occurrence_str}start pattern '{start_pattern}') in {file_path}")
+                return f"Dry run: Would delete block. Diff snippet:\n{diff_snippet}"
+
+            # --- Apply Change (Not dry run) ---
+            self.io.write_text(abs_path, new_content)
+             
+            # Track the change
+            try:
                 metadata = {
-                    'start_line': start_line,
-                    'end_line': end_line,
+                    'start_line': start_line + 1, # Store 1-based for consistency
+                    'end_line': end_line + 1,   # Store 1-based
                     'start_pattern': start_pattern,
                     'end_pattern': end_pattern,
                     'line_count': line_count,
+                    'near_context': near_context,
+                    'occurrence': occurrence,
                     'deleted_content': '\n'.join(deleted_lines)
                 }
                 change_id = self.change_tracker.track_change(
@@ -2175,16 +2234,19 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     metadata=metadata,
                     change_id=change_id
                 )
-                
-                self.aider_edited_files.add(rel_path)
-                self.io.tool_output(f"✅ Deleted {end_line - start_line + 1} lines from {file_path} (change_id: {change_id})")
-                return f"Successfully deleted {end_line - start_line + 1} lines (change_id: {change_id})"
-            else:
-                self.io.tool_output(f"Did not delete block in {file_path} (--dry-run)")
-                return f"Did not delete block (--dry-run)"
-                
+            except Exception as track_e:
+                self.io.tool_error(f"Error tracking change for DeleteBlock: {track_e}")
+                change_id = "TRACKING_FAILED"
+
+            self.aider_edited_files.add(rel_path)
+             
+            # Improve feedback (Point 5 & 6)
+            num_deleted = end_line - start_line + 1
+            self.io.tool_output(f"✅ Deleted {num_deleted} lines (from {occurrence_str}start pattern) in {file_path} (change_id: {change_id})")
+            return f"Successfully deleted {num_deleted} lines (change_id: {change_id}). Diff snippet:\n{diff_snippet}"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in DeleteBlock: {str(e)}")
+            self.io.tool_error(f"Error in DeleteBlock: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
             
     def _execute_undo_change(self, change_id=None, last_file=None):
@@ -2195,55 +2257,57 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         - change_id: ID of the change to undo
         - last_file: Path to file where the last change should be undone
         
+         
         Returns a result message.
         """
+        # Note: Undo does not have a dry_run parameter as it's inherently about reverting a previous action.
         try:
             # Validate parameters
             if change_id is None and last_file is None:
-                self.io.tool_error("Must specify either change_id or last_file")
-                return "Error: Must specify either change_id or last_file"
+                self.io.tool_error("Must specify either change_id or last_file for UndoChange")
+                return "Error: Must specify either change_id or last_file" # Improve Point 4
             
             # If last_file is specified, get the most recent change for that file
             if last_file:
                 abs_path = self.abs_root_path(last_file)
                 rel_path = self.get_rel_fname(abs_path)
-                
+                 
                 change_id = self.change_tracker.get_last_change(rel_path)
                 if not change_id:
-                    self.io.tool_error(f"No changes found for file '{last_file}'")
-                    return f"Error: No changes found for file"
-            
-            # Attempt to undo the change
+                    # Improve error message (Point 4)
+                    self.io.tool_error(f"No tracked changes found for file '{last_file}' to undo.")
+                    return f"Error: No changes found for file '{last_file}'"
+            # Attempt to get undo information from the tracker
             success, message, change_info = self.change_tracker.undo_change(change_id)
-            
+             
             if not success:
-                self.io.tool_error(message)
+                # Improve error message (Point 4) - message from tracker should be specific
+                self.io.tool_error(f"Failed to undo change '{change_id}': {message}")
                 return f"Error: {message}"
             
             # Apply the undo by restoring the original content
             if change_info:
                 file_path = change_info['file_path']
                 abs_path = self.abs_root_path(file_path)
-                
                 # Write the original content back to the file
-                if not self.dry_run:
-                    self.io.write_text(abs_path, change_info['original'])
-                    self.aider_edited_files.add(file_path)
-                    
-                    change_type = change_info['type']
-                    self.io.tool_output(f"✅ Undid {change_type} in {file_path} (change_id: {change_id})")
-                    return f"Successfully undid {change_type} (change_id: {change_id})"
-                else:
-                    self.io.tool_output(f"Did not undo change in {file_path} (--dry-run)")
-                    return f"Did not undo change (--dry-run)"
-            
-            return "Error: Failed to undo change (unknown reason)"
-                
+                # No dry_run check here, as undo implies a real action
+                self.io.write_text(abs_path, change_info['original'])
+                self.aider_edited_files.add(file_path) # Track that the file was modified by the undo
+                 
+                change_type = change_info['type']
+                # Improve feedback (Point 6)
+                self.io.tool_output(f"✅ Undid {change_type} change '{change_id}' in {file_path}")
+                return f"Successfully undid {change_type} change '{change_id}'."
+            else:
+                # This case should ideally not be reached if tracker returns success
+                self.io.tool_error(f"Failed to undo change '{change_id}': Change info missing after successful tracker update.")
+                return f"Error: Failed to undo change '{change_id}' (missing change info)"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in UndoChange: {str(e)}")
+            self.io.tool_error(f"Error in UndoChange: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
             
-    def _execute_replace_line(self, file_path, line_number, new_content, change_id=None):
+    def _execute_replace_line(self, file_path, line_number, new_content, change_id=None, dry_run=False):
         """
         Replace a specific line identified by line number.
         Useful for fixing errors identified by error messages or linters.
@@ -2253,7 +2317,8 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         - line_number: The line number to replace (1-based)
         - new_content: New content for the line
         - change_id: Optional ID for tracking the change
-        
+        - dry_run: If True, simulate the change without modifying the file
+         
         Returns a result message.
         """
         try:
@@ -2274,11 +2339,13 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 else:
                     self.io.tool_error(f"File '{file_path}' not in context")
                     return f"Error: File not in context"
-            
-            # Read file content
+             
+            # Reread file content immediately before modification (Fixes Point 3: Stale Reads)
             file_content = self.io.read_text(abs_path)
             if file_content is None:
-                return f"Error reading file: {file_path}"
+                # Provide more specific error (Improves Point 4)
+                self.io.tool_error(f"Could not read file '{file_path}' before ReplaceLine operation.")
+                return f"Error: Could not read file '{file_path}'"
             
             # Split into lines
             lines = file_content.splitlines()
@@ -2289,14 +2356,17 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     line_number = int(line_number)
                 except ValueError:
                     self.io.tool_error(f"Line number must be an integer, got '{line_number}'")
-                    return f"Error: Line number must be an integer"
-            
+                    # Improve error message (Point 4)
+                    self.io.tool_error(f"Invalid line_number value: '{line_number}'. Must be an integer.")
+                    return f"Error: Invalid line_number value '{line_number}'"
+             
             # Convert 1-based line number (what most editors and error messages use) to 0-based index
             idx = line_number - 1
-            
+             
             if idx < 0 or idx >= len(lines):
-                self.io.tool_error(f"Line number {line_number} is out of range (file has {len(lines)} lines)")
-                return f"Error: Line number out of range"
+                # Improve error message (Point 4)
+                self.io.tool_error(f"Line number {line_number} is out of range for file '{file_path}' (has {len(lines)} lines).")
+                return f"Error: Line number {line_number} out of range"
             
             # Store original content for change tracking
             original_content = file_content
@@ -2311,12 +2381,20 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             if original_content == new_content_full:
                 self.io.tool_warning("No changes made: new line content is identical to original")
                 return f"Warning: No changes made (new content identical to original)"
-            
-            # Write the modified content back to the file
-            if not self.dry_run:
-                self.io.write_text(abs_path, new_content_full)
-                
-                # Track the change
+             
+            # Create a readable diff for the line replacement
+            diff = f"Line {line_number}:\n- {original_line}\n+ {new_content}"
+
+            # Handle dry run (Implements Point 6)
+            if dry_run:
+                self.io.tool_output(f"Dry run: Would replace line {line_number} in {file_path}")
+                return f"Dry run: Would replace line {line_number}. Diff:\n{diff}"
+
+            # --- Apply Change (Not dry run) ---
+            self.io.write_text(abs_path, new_content_full)
+             
+            # Track the change
+            try:
                 metadata = {
                     'line_number': line_number,
                     'original_line': original_line,
@@ -2330,23 +2408,21 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     metadata=metadata,
                     change_id=change_id
                 )
-                
-                self.aider_edited_files.add(rel_path)
-                
-                # Create a readable diff for the line replacement
-                diff = f"Line {line_number}:\n- {original_line}\n+ {new_content}"
-                
-                self.io.tool_output(f"✅ Replaced line {line_number} in {file_path} (change_id: {change_id})")
-                return f"Successfully replaced line {line_number} (change_id: {change_id}):\n{diff}"
-            else:
-                self.io.tool_output(f"Did not replace line in {file_path} (--dry-run)")
-                return f"Did not replace line (--dry-run)"
-                
+            except Exception as track_e:
+                self.io.tool_error(f"Error tracking change for ReplaceLine: {track_e}")
+                change_id = "TRACKING_FAILED"
+
+            self.aider_edited_files.add(rel_path)
+             
+            # Improve feedback (Point 6)
+            self.io.tool_output(f"✅ Replaced line {line_number} in {file_path} (change_id: {change_id})")
+            return f"Successfully replaced line {line_number} (change_id: {change_id}). Diff:\n{diff}"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in ReplaceLine: {str(e)}")
+            self.io.tool_error(f"Error in ReplaceLine: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
     
-    def _execute_replace_lines(self, file_path, start_line, end_line, new_content, change_id=None):
+    def _execute_replace_lines(self, file_path, start_line, end_line, new_content, change_id=None, dry_run=False):
         """
         Replace a range of lines identified by line numbers.
         Useful for fixing errors identified by error messages or linters.
@@ -2357,7 +2433,8 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         - end_line: The last line number to replace (1-based)
         - new_content: New content for the lines (can be multi-line)
         - change_id: Optional ID for tracking the change
-        
+        - dry_run: If True, simulate the change without modifying the file
+         
         Returns a result message.
         """
         try:
@@ -2378,26 +2455,30 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 else:
                     self.io.tool_error(f"File '{file_path}' not in context")
                     return f"Error: File not in context"
-            
-            # Read file content
+             
+            # Reread file content immediately before modification (Fixes Point 3: Stale Reads)
             file_content = self.io.read_text(abs_path)
             if file_content is None:
-                return f"Error reading file: {file_path}"
+                # Provide more specific error (Improves Point 4)
+                self.io.tool_error(f"Could not read file '{file_path}' before ReplaceLines operation.")
+                return f"Error: Could not read file '{file_path}'"
             
             # Convert line numbers to integers if needed
             if not isinstance(start_line, int):
                 try:
                     start_line = int(start_line)
                 except ValueError:
-                    self.io.tool_error(f"Start line must be an integer, got '{start_line}'")
-                    return f"Error: Start line must be an integer"
+                    # Improve error message (Point 4)
+                    self.io.tool_error(f"Invalid start_line value: '{start_line}'. Must be an integer.")
+                    return f"Error: Invalid start_line value '{start_line}'"
             
             if not isinstance(end_line, int):
                 try:
                     end_line = int(end_line)
                 except ValueError:
-                    self.io.tool_error(f"End line must be an integer, got '{end_line}'")
-                    return f"Error: End line must be an integer"
+                    # Improve error message (Point 4)
+                    self.io.tool_error(f"Invalid end_line value: '{end_line}'. Must be an integer.")
+                    return f"Error: Invalid end_line value '{end_line}'"
             
             # Split into lines
             lines = file_content.splitlines()
@@ -2405,15 +2486,16 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             # Convert 1-based line numbers to 0-based indices
             start_idx = start_line - 1
             end_idx = end_line - 1
-            
             # Validate line numbers
             if start_idx < 0 or start_idx >= len(lines):
-                self.io.tool_error(f"Start line {start_line} is out of range (file has {len(lines)} lines)")
-                return f"Error: Start line out of range"
-            
+                # Improve error message (Point 4)
+                self.io.tool_error(f"Start line {start_line} is out of range for file '{file_path}' (has {len(lines)} lines).")
+                return f"Error: Start line {start_line} out of range"
+             
             if end_idx < start_idx or end_idx >= len(lines):
-                self.io.tool_error(f"End line {end_line} is out of range (must be >= start line and < {len(lines)})")
-                return f"Error: End line out of range"
+                # Improve error message (Point 4)
+                self.io.tool_error(f"End line {end_line} is out of range for file '{file_path}' (must be >= start line {start_line} and <= {len(lines)}).")
+                return f"Error: End line {end_line} out of range"
             
             # Store original content for change tracking
             original_content = file_content
@@ -2429,12 +2511,28 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             if original_content == new_content_full:
                 self.io.tool_warning("No changes made: new content is identical to original")
                 return f"Warning: No changes made (new content identical to original)"
-            
-            # Write the modified content back to the file
-            if not self.dry_run:
-                self.io.write_text(abs_path, new_content_full)
-                
-                # Track the change
+             
+            # Create a readable diff for the lines replacement
+            diff = f"Lines {start_line}-{end_line}:\n"
+            # Add removed lines with - prefix
+            for line in replaced_lines:
+                diff += f"- {line}\n"
+            # Add separator
+            diff += "---\n"
+            # Add new lines with + prefix
+            for line in new_lines:
+                diff += f"+ {line}\n"
+
+            # Handle dry run (Implements Point 6)
+            if dry_run:
+                self.io.tool_output(f"Dry run: Would replace lines {start_line}-{end_line} in {file_path}")
+                return f"Dry run: Would replace lines {start_line}-{end_line}. Diff:\n{diff}"
+
+            # --- Apply Change (Not dry run) ---
+            self.io.write_text(abs_path, new_content_full)
+             
+            # Track the change
+            try:
                 metadata = {
                     'start_line': start_line,
                     'end_line': end_line,
@@ -2449,44 +2547,37 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     metadata=metadata,
                     change_id=change_id
                 )
-                
-                self.aider_edited_files.add(rel_path)
-                replaced_count = end_line - start_line + 1
-                new_count = len(new_lines)
-                
-                # Create a readable diff for the lines replacement
-                diff = f"Lines {start_line}-{end_line}:\n"
-                # Add removed lines with - prefix
-                for line in replaced_lines:
-                    diff += f"- {line}\n"
-                # Add separator
-                diff += "---\n"
-                # Add new lines with + prefix
-                for line in new_lines:
-                    diff += f"+ {line}\n"
-                
-                self.io.tool_output(f"✅ Replaced lines {start_line}-{end_line} ({replaced_count} lines) with {new_count} new lines in {file_path} (change_id: {change_id})")
-                return f"Successfully replaced lines {start_line}-{end_line} with {new_count} new lines (change_id: {change_id}):\n{diff}"
-            else:
-                self.io.tool_output(f"Did not replace lines in {file_path} (--dry-run)")
-                return f"Did not replace lines (--dry-run)"
-                
+            except Exception as track_e:
+                self.io.tool_error(f"Error tracking change for ReplaceLines: {track_e}")
+                change_id = "TRACKING_FAILED"
+
+            self.aider_edited_files.add(rel_path)
+            replaced_count = end_line - start_line + 1
+            new_count = len(new_lines)
+             
+            # Improve feedback (Point 6)
+            self.io.tool_output(f"✅ Replaced lines {start_line}-{end_line} ({replaced_count} lines) with {new_count} new lines in {file_path} (change_id: {change_id})")
+            return f"Successfully replaced lines {start_line}-{end_line} with {new_count} new lines (change_id: {change_id}). Diff:\n{diff}"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in ReplaceLines: {str(e)}")
+            self.io.tool_error(f"Error in ReplaceLines: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
     
-    def _execute_indent_lines(self, file_path, start_pattern, end_pattern=None, line_count=None, indent_levels=1, change_id=None):
+    def _execute_indent_lines(self, file_path, start_pattern, end_pattern=None, line_count=None, indent_levels=1, near_context=None, occurrence=1, change_id=None, dry_run=False):
         """
         Indent or unindent a block of lines in a file.
         
         Parameters:
         - file_path: Path to the file to modify
-        - start_pattern: Pattern marking the start of the block to indent
-        - end_pattern: Pattern marking the end of the block to indent
-        - line_count: Number of lines to indent (alternative to end_pattern)
+        - start_pattern: Pattern marking the start of the block to indent (line containing this pattern)
+        - end_pattern: Optional pattern marking the end of the block (line containing this pattern)
+        - line_count: Optional number of lines to indent (alternative to end_pattern)
         - indent_levels: Number of levels to indent (positive) or unindent (negative)
+        - near_context: Optional text nearby to help locate the correct instance of the start_pattern
+        - occurrence: Which occurrence of the start_pattern to use (1-based index, or -1 for last)
         - change_id: Optional ID for tracking the change
-        
+        - dry_run: If True, simulate the change without modifying the file
+         
         Returns a result message.
         """
         try:
@@ -2507,11 +2598,13 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 else:
                     self.io.tool_error(f"File '{file_path}' not in context")
                     return f"Error: File not in context"
-            
-            # Read file content
+             
+            # Reread file content immediately before modification (Fixes Point 3: Stale Reads)
             file_content = self.io.read_text(abs_path)
             if file_content is None:
-                return f"Error reading file: {file_path}"
+                # Provide more specific error (Improves Point 4)
+                self.io.tool_error(f"Could not read file '{file_path}' before IndentLines operation.")
+                return f"Error: Could not read file '{file_path}'"
             
             # Validate we have either end_pattern or line_count, but not both
             if end_pattern and line_count:
@@ -2521,69 +2614,131 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             # Split into lines for easier handling
             lines = file_content.splitlines()
             original_content = file_content
-            
-            # Find the start line
-            start_line = -1
+             
+            # Find occurrences of the start_pattern (Implements Point 5)
+            start_pattern_line_indices = []
             for i, line in enumerate(lines):
                 if start_pattern in line:
-                    start_line = i
-                    break
-            
-            if start_line == -1:
-                self.io.tool_error(f"Start pattern '{start_pattern}' not found in file")
-                return f"Error: Start pattern not found in file"
-            
-            # Find the end line
+                    # If near_context is provided, check if it's nearby
+                    if near_context:
+                        context_window_start = max(0, i - 5) # Check 5 lines before/after
+                        context_window_end = min(len(lines), i + 6)
+                        context_block = "\n".join(lines[context_window_start:context_window_end])
+                        if near_context in context_block:
+                            start_pattern_line_indices.append(i)
+                    else:
+                        start_pattern_line_indices.append(i)
+
+            if not start_pattern_line_indices:
+                err_msg = f"Start pattern '{start_pattern}' not found"
+                if near_context: err_msg += f" near context '{near_context}'"
+                err_msg += f" in file '{file_path}'."
+                self.io.tool_error(err_msg)
+                return f"Error: {err_msg}" # Improve Point 4
+
+            # Select the occurrence for the start pattern
+            num_occurrences = len(start_pattern_line_indices)
+            try:
+                occurrence = int(occurrence) # Ensure occurrence is an integer
+                if occurrence == -1: # Last occurrence
+                    target_idx = num_occurrences - 1
+                elif occurrence > 0 and occurrence <= num_occurrences:
+                    target_idx = occurrence - 1 # Convert 1-based to 0-based
+                else:
+                    err_msg = f"Occurrence number {occurrence} is out of range for start pattern '{start_pattern}'. Found {num_occurrences} occurrences"
+                    if near_context: err_msg += f" near '{near_context}'"
+                    err_msg += f" in '{file_path}'."
+                    self.io.tool_error(err_msg)
+                    return f"Error: {err_msg}" # Improve Point 4
+            except ValueError:
+                self.io.tool_error(f"Invalid occurrence value: '{occurrence}'. Must be an integer.")
+                return f"Error: Invalid occurrence value '{occurrence}'"
+
+            start_line = start_pattern_line_indices[target_idx]
+            occurrence_str = f"occurrence {occurrence} of " if num_occurrences > 1 else "" # For messages
+            # Find the end line based on end_pattern or line_count
             end_line = -1
             if end_pattern:
-                for i in range(start_line + 1, len(lines)):
+                # Search for end_pattern *after* the selected start_line
+                for i in range(start_line, len(lines)): # Include start_line itself if start/end are same line
                     if end_pattern in lines[i]:
                         end_line = i
                         break
-                
+                 
                 if end_line == -1:
-                    self.io.tool_error(f"End pattern '{end_pattern}' not found after start pattern")
-                    return f"Error: End pattern not found after start pattern"
+                    # Improve error message (Point 4)
+                    err_msg = f"End pattern '{end_pattern}' not found after {occurrence_str}start pattern '{start_pattern}' (line {start_line + 1}) in '{file_path}'."
+                    self.io.tool_error(err_msg)
+                    return f"Error: {err_msg}"
             elif line_count:
-                # Calculate end line based on start line and line count
-                end_line = min(start_line + line_count - 1, len(lines) - 1)
+                try:
+                    line_count = int(line_count)
+                    if line_count <= 0:
+                        raise ValueError("Line count must be positive")
+                    # Calculate end line based on start line and line count
+                    end_line = min(start_line + line_count - 1, len(lines) - 1)
+                except ValueError:
+                    self.io.tool_error(f"Invalid line_count value: '{line_count}'. Must be a positive integer.")
+                    return f"Error: Invalid line_count value '{line_count}'"
             else:
-                # If neither is specified, indent just the start line
+                # If neither end_pattern nor line_count is specified, indent just the start line
                 end_line = start_line
-            
-            # Determine indentation amount (4 spaces per level)
-            indent_spaces = 4 * indent_levels
-            
-            # Apply indentation
+            # Determine indentation amount (using spaces for simplicity, could adapt based on file type later)
+            try:
+                indent_levels = int(indent_levels)
+            except ValueError:
+                self.io.tool_error(f"Invalid indent_levels value: '{indent_levels}'. Must be an integer.")
+                return f"Error: Invalid indent_levels value '{indent_levels}'"
+             
+            indent_str = ' ' * 4 # Assume 4 spaces per level
+             
+            # Create a temporary copy to calculate the change
+            modified_lines = list(lines) # Copy the list
+             
+            # Apply indentation to the temporary copy
             for i in range(start_line, end_line + 1):
                 if indent_levels > 0:
                     # Add indentation
-                    lines[i] = ' ' * indent_spaces + lines[i]
-                else:
+                    modified_lines[i] = (indent_str * indent_levels) + modified_lines[i]
+                elif indent_levels < 0:
                     # Remove indentation, but do not remove more than exists
-                    spaces_to_remove = min(abs(indent_spaces), len(lines[i]) - len(lines[i].lstrip()))
-                    if spaces_to_remove > 0:
-                        lines[i] = lines[i][spaces_to_remove:]
-            
+                    spaces_to_remove = abs(indent_levels) * len(indent_str)
+                    current_leading_spaces = len(modified_lines[i]) - len(modified_lines[i].lstrip(' '))
+                    actual_remove = min(spaces_to_remove, current_leading_spaces)
+                    if actual_remove > 0:
+                        modified_lines[i] = modified_lines[i][actual_remove:]
+                # If indent_levels is 0, do nothing
+             
             # Join lines back into a string
-            new_content = '\n'.join(lines)
-            
+            new_content = '\n'.join(modified_lines) # Use '\n' to match io.write_text behavior
+             
             if original_content == new_content:
                 self.io.tool_warning(f"No changes made: indentation would not change file")
                 return f"Warning: No changes made (indentation would not change file)"
-            
-            # Write the modified content back to the file
-            if not self.dry_run:
-                self.io.write_text(abs_path, new_content)
-                
-                # Track the change
+
+            # Generate diff for feedback
+            diff_snippet = self._generate_diff_snippet_indent(original_content, new_content, start_line, end_line)
+
+            # Handle dry run (Implements Point 6)
+            if dry_run:
+                action = "indent" if indent_levels > 0 else "unindent"
+                self.io.tool_output(f"Dry run: Would {action} lines {start_line+1}-{end_line+1} (based on {occurrence_str}start pattern '{start_pattern}') in {file_path}")
+                return f"Dry run: Would {action} block. Diff snippet:\n{diff_snippet}"
+
+            # --- Apply Change (Not dry run) ---
+            self.io.write_text(abs_path, new_content)
+             
+            # Track the change
+            try:
                 metadata = {
-                    'start_line': start_line,
-                    'end_line': end_line,
+                    'start_line': start_line + 1, # Store 1-based
+                    'end_line': end_line + 1,   # Store 1-based
                     'start_pattern': start_pattern,
                     'end_pattern': end_pattern,
                     'line_count': line_count,
-                    'indent_levels': indent_levels
+                    'indent_levels': indent_levels,
+                    'near_context': near_context,
+                    'occurrence': occurrence,
                 }
                 change_id = self.change_tracker.track_change(
                     file_path=rel_path,
@@ -2593,19 +2748,22 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     metadata=metadata,
                     change_id=change_id
                 )
-                
-                self.aider_edited_files.add(rel_path)
-                action = "Indented" if indent_levels > 0 else "Unindented"
-                levels = abs(indent_levels)
-                level_text = "level" if levels == 1 else "levels"
-                self.io.tool_output(f"✅ {action} {end_line - start_line + 1} lines by {levels} {level_text} in {file_path} (change_id: {change_id})")
-                return f"Successfully {action.lower()} {end_line - start_line + 1} lines by {levels} {level_text} (change_id: {change_id})"
-            else:
-                self.io.tool_output(f"Did not indent lines in {file_path} (--dry-run)")
-                return f"Did not indent lines (--dry-run)"
-                
+            except Exception as track_e:
+                self.io.tool_error(f"Error tracking change for IndentLines: {track_e}")
+                change_id = "TRACKING_FAILED"
+
+            self.aider_edited_files.add(rel_path)
+             
+            # Improve feedback (Point 5 & 6)
+            action = "Indented" if indent_levels > 0 else "Unindented"
+            levels = abs(indent_levels)
+            level_text = "level" if levels == 1 else "levels"
+            num_lines = end_line - start_line + 1
+            self.io.tool_output(f"✅ {action} {num_lines} lines (from {occurrence_str}start pattern) by {levels} {level_text} in {file_path} (change_id: {change_id})")
+            return f"Successfully {action.lower()} {num_lines} lines by {levels} {level_text} (change_id: {change_id}). Diff snippet:\n{diff_snippet}"
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in IndentLines: {str(e)}")
+            self.io.tool_error(f"Error in IndentLines: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
 
     def _execute_list_changes(self, file_path=None, limit=10):
@@ -2643,10 +2801,191 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 change_id = change['id']
                 
                 result += f"{i+1}. [{change_id}] {change_time} - {change_type.upper()} on {file_path}\n"
-            
-            self.io.tool_output(result)
+             
+            self.io.tool_output(result) # Also print to console for user
             return result
-                
+                 
         except Exception as e:
-            self.io.tool_error(f"Error in ListChanges: {str(e)}")
+            self.io.tool_error(f"Error in ListChanges: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
+
+    # ------------------- Diff Generation Helpers -------------------
+
+    def _generate_diff_snippet(self, original_content, start_index, replaced_len, replacement_text):
+        """Generate a git-style diff snippet for a simple text replacement."""
+        try:
+            lines = original_content.splitlines()
+            char_count = 0
+            start_line_idx = -1
+            start_char_idx_in_line = -1
+
+            # Find the line and character index where the change starts
+            for i, line in enumerate(lines):
+                line_len_with_newline = len(line) + 1 # Account for newline character
+                if char_count + line_len_with_newline > start_index:
+                    start_line_idx = i
+                    start_char_idx_in_line = start_index - char_count
+                    break
+                char_count += line_len_with_newline
+
+            if start_line_idx == -1: return "[Diff generation error: start index out of bounds]"
+
+            # Determine the end line and character index
+            end_index = start_index + replaced_len
+            char_count = 0
+            end_line_idx = -1
+            end_char_idx_in_line = -1
+            for i, line in enumerate(lines):
+                 line_len_with_newline = len(line) + 1
+                 if char_count + line_len_with_newline > end_index:
+                     end_line_idx = i
+                     # End char index is relative to the start of *its* line
+                     end_char_idx_in_line = end_index - char_count
+                     break
+                 char_count += line_len_with_newline
+            # If end_index is exactly at the end of the content
+            if end_line_idx == -1 and end_index == len(original_content):
+                 end_line_idx = len(lines) - 1
+                 end_char_idx_in_line = len(lines[end_line_idx])
+
+            if end_line_idx == -1: return "[Diff generation error: end index out of bounds]"
+
+            # Get context lines
+            context = 3
+            diff_start_line = max(0, start_line_idx - context)
+            diff_end_line = min(len(lines) - 1, end_line_idx + context)
+
+            diff_lines = [f"@@ line ~{start_line_idx + 1} @@"]
+            for i in range(diff_start_line, diff_end_line + 1):
+                if i >= start_line_idx and i <= end_line_idx:
+                    # Line is part of the original replaced block
+                    diff_lines.append(f"- {lines[i]}")
+                else:
+                    # Context line
+                    diff_lines.append(f"  {lines[i]}")
+
+            # Construct the new lines based on the replacement
+            prefix = lines[start_line_idx][:start_char_idx_in_line]
+            suffix = lines[end_line_idx][end_char_idx_in_line:]
+
+            # Combine prefix, replacement, and suffix, then split into lines
+            combined_new_content = prefix + replacement_text + suffix
+            new_content_lines = combined_new_content.splitlines()
+
+            # Add new lines to diff
+            for new_line in new_content_lines:
+                 diff_lines.append(f"+ {new_line}")
+ 
+            return "\n".join(diff_lines)
+        except Exception as e:
+             return f"[Diff generation error: {e}]"
+ 
+    def _generate_diff_chunks(self, original_content, find_text, replace_text):
+        """Generate multiple git-style diff snippets for ReplaceAll."""
+        try:
+           lines = original_content.splitlines()
+           new_lines_content = original_content.replace(find_text, replace_text)
+           new_lines = new_lines_content.splitlines()
+
+           # Use difflib for a more robust diff
+           import difflib
+           diff = list(difflib.unified_diff(lines, new_lines, lineterm='', n=3)) # n=3 lines of context
+
+           if len(diff) <= 2: # Only header lines, no changes found by diff
+               return "No significant changes detected by diff."
+
+           # Process the diff output into readable chunks
+           # Skip header lines (---, +++)
+           processed_diff = "\n".join(diff[2:])
+
+           # Limit the output size if it's too large
+           max_diff_len = 2000 # Limit diff snippet size
+           if len(processed_diff) > max_diff_len:
+               processed_diff = processed_diff[:max_diff_len] + "\n... (diff truncated)"
+
+           return processed_diff if processed_diff else "No changes detected."
+        except Exception as e:
+            return f"[Diff generation error: {e}]"
+ 
+    def _generate_diff_snippet_insert(self, original_content, insertion_line_idx, content_lines_to_insert):
+        """Generate a git-style diff snippet for an insertion."""
+        try:
+            lines = original_content.splitlines()
+            context = 3
+
+            # Determine context range
+            start_context = max(0, insertion_line_idx - context)
+            end_context = min(len(lines), insertion_line_idx + context) # End index is exclusive for slicing
+
+            diff_lines = [f"@@ line ~{insertion_line_idx + 1} @@"] # Indicate insertion point
+
+            # Add lines before insertion point
+            for i in range(start_context, insertion_line_idx):
+                diff_lines.append(f"  {lines[i]}")
+
+            # Add inserted lines
+            for line in content_lines_to_insert:
+                diff_lines.append(f"+ {line}")
+
+            # Add lines after insertion point
+            for i in range(insertion_line_idx, end_context):
+                 diff_lines.append(f"  {lines[i]}")
+ 
+            return "\n".join(diff_lines)
+        except Exception as e:
+            return f"[Diff generation error: {e}]"
+ 
+    def _generate_diff_snippet_delete(self, original_content, start_line, end_line):
+        """Generate a git-style diff snippet for a deletion."""
+        try:
+            lines = original_content.splitlines()
+            context = 3
+
+            # Determine context range
+            diff_start_line = max(0, start_line - context)
+            diff_end_line = min(len(lines) - 1, end_line + context)
+
+            diff_lines = [f"@@ line {start_line + 1},{end_line + 1} @@"] # Indicate deletion range
+
+            for i in range(diff_start_line, diff_end_line + 1):
+                if i >= start_line and i <= end_line:
+                    # Line was deleted
+                    diff_lines.append(f"- {lines[i]}")
+                else:
+                    # Context line
+                    diff_lines.append(f"  {lines[i]}")
+ 
+            return "\n".join(diff_lines)
+        except Exception as e:
+            return f"[Diff generation error: {e}]"
+ 
+    def _generate_diff_snippet_indent(self, original_content, new_content, start_line, end_line):
+        """Generate a git-style diff snippet for indentation changes."""
+        try:
+            original_lines = original_content.splitlines()
+            new_lines = new_content.splitlines()
+            context = 3
+
+            # Determine context range
+            diff_start_line = max(0, start_line - context)
+            diff_end_line = min(len(original_lines) - 1, end_line + context)
+
+            diff_lines_output = [f"@@ lines ~{start_line + 1}-{end_line + 1} @@"] # Indicate affected range
+
+            for i in range(diff_start_line, diff_end_line + 1):
+                 # Ensure index is valid for both lists (should be, as only indentation changes)
+                 if i < len(original_lines) and i < len(new_lines):
+                     if i >= start_line and i <= end_line:
+                         # Line is within the indented/unindented block
+                         if original_lines[i] != new_lines[i]: # Show only if changed
+                             diff_lines_output.append(f"- {original_lines[i]}")
+                             diff_lines_output.append(f"+ {new_lines[i]}")
+                         else: # If somehow unchanged, show as context
+                              diff_lines_output.append(f"  {original_lines[i]}")
+                     else:
+                         # Context line
+                         diff_lines_output.append(f"  {original_lines[i]}")
+
+            return "\n".join(diff_lines_output)
+        except Exception as e:
+            return f"[Diff generation error: {e}]"
