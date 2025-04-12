@@ -223,6 +223,15 @@ class TestRepo(unittest.TestCase):
             original_author_name = os.environ.get("GIT_AUTHOR_NAME")
             self.assertIsNone(original_author_name)
 
+            # Test user commit with explicit no-committer attribution
+            git_repo_user_no_committer = GitRepo(io, None, None, attribute_committer=False)
+            fname.write_text("user no committer content")
+            commit_result = git_repo_user_no_committer.commit(fnames=[str(fname)], aider_edits=False)
+            self.assertIsNotNone(commit_result)
+            commit = raw_repo.head.commit
+            self.assertEqual(commit.author.name, "Test User") # Author never modified for user commits
+            self.assertEqual(commit.committer.name, "Test User") # Explicit False prevents modification
+
     def test_commit_with_co_authored_by(self):
         # Cleanup of the git temp dir explodes on windows
         if platform.system() == "Windows":
