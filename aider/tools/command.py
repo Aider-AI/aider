@@ -6,25 +6,23 @@ def _execute_command(coder, command_string):
     Execute a non-interactive shell command after user confirmation.
     """
     try:
-        # Ask for confirmation before executing, allowing 'Always'
-        # Use the command string itself as the group key to remember preference per command
-        if not coder.io.confirm_ask(
+        # Ask for confirmation before executing.
+        # allow_never=True enables the 'Always' option.
+        # confirm_ask handles remembering the 'Always' choice based on the subject.
+        confirmed = coder.io.confirm_ask(
             "Allow execution of this command?",
             subject=command_string,
             explicit_yes_required=True, # Require explicit 'yes' or 'always'
-            allow_never=True           # Enable the 'Don't ask again' option
-        ):
-            # Check if the reason for returning False was *not* because it's remembered
-            # (confirm_ask returns False if 'n' or 'no' is chosen, even if remembered)
-            # We only want to skip if the user actively said no *this time* or if it's
-            # remembered as 'never' (which shouldn't happen with allow_never=True,
-            # but checking io.never_ask_group is robust).
-            # If the command is in never_ask_group with a True value (meaning Always),
-            # confirm_ask would have returned True directly.
-            # So, if confirm_ask returns False here, it means the user chose No this time.
+            allow_never=True           # Enable the 'Always' option
+        )
+
+        if not confirmed:
+            # This happens if the user explicitly says 'no' this time.
+            # If 'Always' was chosen previously, confirm_ask returns True directly.
             coder.io.tool_output(f"Skipped execution of shell command: {command_string}")
             return "Shell command execution skipped by user."
 
+        # Proceed with execution if confirmed is True
         coder.io.tool_output(f"⚙️ Executing non-interactive shell command: {command_string}")
 
         # Use run_cmd_subprocess for non-interactive execution
