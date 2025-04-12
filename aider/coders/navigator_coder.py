@@ -1173,23 +1173,36 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             abs_path = self.abs_root_path(file_path)
             rel_path = self.get_rel_fname(abs_path)
             
-            # Check if file is in read-only context
-            if abs_path not in self.abs_read_only_fnames:
-                if abs_path in self.abs_fnames:
-                    self.io.tool_output(f"📝 File '{file_path}' is already editable")
-                    return f"File is already editable"
-                else:
-                    self.io.tool_output(f"⚠️ File '{file_path}' not in context")
-                    return f"File not in context"
-            
-            # Move from read-only to editable
-            self.abs_read_only_fnames.remove(abs_path)
+            # Check if file is already editable
+            if abs_path in self.abs_fnames:
+                self.io.tool_output(f"📝 File '{file_path}' is already editable")
+                return f"File is already editable"
+
+            # Check if file exists on disk
+            if not os.path.isfile(abs_path):
+                self.io.tool_output(f"⚠️ File '{file_path}' not found")
+                return f"Error: File not found"
+
+            # File exists, is not editable, might be read-only or not in context yet
+            was_read_only = False
+            if abs_path in self.abs_read_only_fnames:
+                self.abs_read_only_fnames.remove(abs_path)
+                was_read_only = True
+
+            # Add to editable files
             self.abs_fnames.add(abs_path)
-            
-            self.io.tool_output(f"📝 Made '{file_path}' editable")
-            return f"File is now editable"
+
+            if was_read_only:
+                self.io.tool_output(f"📝 Moved '{file_path}' from read-only to editable")
+                return f"File is now editable (moved from read-only)"
+            else:
+                # File was not previously in context at all
+                self.io.tool_output(f"📝 Added '{file_path}' directly to editable context")
+                # Track if added during exploration? Maybe not needed for direct MakeEditable.
+                # self.files_added_in_exploration.add(rel_path) # Consider if needed
+                return f"File is now editable (added directly)"
         except Exception as e:
-            self.io.tool_error(f"Error making file editable: {str(e)}")
+            self.io.tool_error(f"Error in MakeEditable for '{file_path}': {str(e)}")
             return f"Error: {str(e)}"
 
     def _execute_make_readonly(self, file_path):
