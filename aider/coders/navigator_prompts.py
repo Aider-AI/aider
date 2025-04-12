@@ -81,10 +81,10 @@ Act as an expert software engineer with the ability to autonomously navigate and
 
 - **IndentLines**: `[tool_call(IndentLines, file_path="...", start_pattern="...", end_pattern="...", indent_levels=1, near_context="...", occurrence=1, dry_run=False)]`
   Indent (`indent_levels` > 0) or unindent (`indent_levels` < 0) a block. Use `end_pattern` or `line_count` for range. Use `near_context` and `occurrence` (optional, default 1, -1 for last) for `start_pattern`. `dry_run=True` simulates.
-
-- **UndoChange**: `[tool_call(UndoChange, change_id="a1b2c3d4")]` or `[tool_call(UndoChange, last_file="...")]`
-  Undo a specific change by ID, or the last change made to `last_file`.
-
+ 
+- **UndoChange**: `[tool_call(UndoChange, change_id="a1b2c3d4")]` or `[tool_call(UndoChange, file_path="...")]`
+  Undo a specific change by ID, or the last change made to the specified `file_path`.
+ 
 - **ListChanges**: `[tool_call(ListChanges, file_path="...", limit=5)]`
   List recent changes, optionally filtered by `file_path` and limited.
 

@@ -695,13 +695,13 @@ class NavigatorCoder(Coder):
                         )
                     else:
                         result_message = "Error: Missing required parameters for IndentLines (file_path, start_pattern)"
-                
+                 
                 elif norm_tool_name == 'undochange':
                     change_id = params.get('change_id')
-                    last_file = params.get('last_file')
-                    
-                    result_message = self._execute_undo_change(change_id, last_file)
-                
+                    file_path = params.get('file_path')
+                     
+                    result_message = self._execute_undo_change(change_id, file_path)
+                 
                 elif norm_tool_name == 'listchanges':
                     file_path = params.get('file_path')
                     limit = params.get('limit', 10)
@@ -2321,38 +2321,38 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         except Exception as e:
             self.io.tool_error(f"Error in DeleteBlock: {str(e)}\n{traceback.format_exc()}") # Add traceback
             return f"Error: {str(e)}"
-            
-    def _execute_undo_change(self, change_id=None, last_file=None):
+             
+    def _execute_undo_change(self, change_id=None, file_path=None): 
         """
         Undo a specific change by ID, or the last change to a file.
-        
+         
         Parameters:
         - change_id: ID of the change to undo
-        - last_file: Path to file where the last change should be undone
-        
+        - file_path: Path to file where the last change should be undone
          
+          
         Returns a result message.
         """
         # Note: Undo does not have a dry_run parameter as it's inherently about reverting a previous action.
         try:
             # Validate parameters
-            if change_id is None and last_file is None:
-                self.io.tool_error("Must specify either change_id or last_file for UndoChange")
-                return "Error: Must specify either change_id or last_file" # Improve Point 4
-            
-            # If last_file is specified, get the most recent change for that file
-            if last_file:
-                abs_path = self.abs_root_path(last_file)
+            if change_id is None and file_path is None:
+                self.io.tool_error("Must specify either change_id or file_path for UndoChange")
+                return "Error: Must specify either change_id or file_path" # Improve Point 4
+             
+            # If file_path is specified, get the most recent change for that file
+            if file_path: 
+                abs_path = self.abs_root_path(file_path)
                 rel_path = self.get_rel_fname(abs_path)
-                 
+                  
                 change_id = self.change_tracker.get_last_change(rel_path)
                 if not change_id:
                     # Improve error message (Point 4)
-                    self.io.tool_error(f"No tracked changes found for file '{last_file}' to undo.")
-                    return f"Error: No changes found for file '{last_file}'"
+                    self.io.tool_error(f"No tracked changes found for file '{file_path}' to undo.")
+                    return f"Error: No changes found for file '{file_path}'"
             # Attempt to get undo information from the tracker
             success, message, change_info = self.change_tracker.undo_change(change_id)
-             
+              
             if not success:
                 # Improve error message (Point 4) - message from tracker should be specific
                 self.io.tool_error(f"Failed to undo change '{change_id}': {message}")
@@ -3029,7 +3029,6 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             target_insertion_line = len(target_content.splitlines()) if target_content else 0
             target_diff_snippet = self._generate_diff_snippet_insert(original_target_content, target_insertion_line, extracted_lines)
 
-            # --- Handle Dry Run ---
             # --- Handle Dry Run ---
             if dry_run:
                 num_extracted = end_line - start_line + 1
