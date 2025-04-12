@@ -809,7 +809,7 @@
 
 - dirname: 2025-04-12-04-55-50--gemini-25-pro-diff-fenced
   test_cases: 225
-  model: gemini/gemini-2.5-pro-preview-03-25
+  model: Gemini 2.5 Pro Preview 03-25
   edit_format: diff-fenced
   commit_hash: 0282574
   pass_rate_1: 40.9
