@@ -44,7 +44,14 @@ def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, lin
 
         # 3. Determine the end line
         start_line, end_line = determine_line_range(
-            lines, start_line_idx, end_pattern, line_count, pattern_desc=pattern_desc
+            coder=coder,
+            file_path=rel_path,
+            lines=lines,
+            start_pattern_line_index=start_line_idx,
+            end_pattern=end_pattern,
+            line_count=line_count,
+            target_symbol=None, # IndentLines uses patterns, not symbols
+            pattern_desc=pattern_desc
         )
 
         # 4. Validate and prepare indentation

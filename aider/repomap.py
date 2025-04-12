@@ -27,11 +27,11 @@ from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
 # Define the Tag namedtuple with a default for specific_kind to maintain compatibility
 # with cached entries that might have been created with the old definition
-class TagBase(namedtuple("TagBase", "rel_fname fname line name kind specific_kind")):
+class TagBase(namedtuple("TagBase", "rel_fname fname line name kind specific_kind start_line end_line start_byte end_byte")):
     __slots__ = ()
-    def __new__(cls, rel_fname, fname, line, name, kind, specific_kind=None):
+    def __new__(cls, rel_fname, fname, line, name, kind, specific_kind=None, start_line=None, end_line=None, start_byte=None, end_byte=None):
         # Provide a default value for specific_kind to handle old cached objects
-        return super(TagBase, cls).__new__(cls, rel_fname, fname, line, name, kind, specific_kind)
+        return super(TagBase, cls).__new__(cls, rel_fname, fname, line, name, kind, specific_kind, start_line, end_line, start_byte, end_byte)
 
 Tag = TagBase
 
@@ -41,7 +41,7 @@ SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 CACHE_VERSION = 5
 if USING_TSL_PACK:
-    CACHE_VERSION = 6
+    CACHE_VERSION = 7
 
 UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
@@ -249,6 +249,51 @@ class RepoMap:
             self.io.tool_warning(f"File not found error: {fname}")
 
     def get_tags(self, fname, rel_fname):
+        def get_symbol_definition_location(self, file_path, symbol_name):
+            """
+            Finds the unique definition location (start/end line) for a symbol in a file.
+    
+            Args:
+                file_path (str): The relative path to the file.
+                symbol_name (str): The name of the symbol to find.
+    
+            Returns:
+                tuple: (start_line, end_line) (0-based) if a unique definition is found.
+    
+            Raises:
+                ToolError: If the symbol is not found, not unique, or not a definition.
+            """
+            abs_path = self.io.root_abs_path(file_path) # Assuming io has this helper or similar
+            rel_path = self.get_rel_fname(abs_path) # Ensure we use consistent relative path
+    
+            tags = self.get_tags(abs_path, rel_path)
+            if not tags:
+                raise ToolError(f"Symbol '{symbol_name}' not found in '{file_path}' (no tags).")
+    
+            definitions = []
+            for tag in tags:
+                # Check if it's a definition and the name matches
+                if tag.kind == "def" and tag.name == symbol_name:
+                     # Ensure we have valid location info
+                    if tag.start_line is not None and tag.end_line is not None and tag.start_line >= 0:
+                        definitions.append(tag)
+    
+            if not definitions:
+                # Check if it exists as a non-definition tag
+                non_defs = [tag for tag in tags if tag.name == symbol_name and tag.kind != "def"]
+                if non_defs:
+                     raise ToolError(f"Symbol '{symbol_name}' found in '{file_path}', but not as a unique definition (found as {non_defs[0].kind}).")
+                else:
+                    raise ToolError(f"Symbol '{symbol_name}' definition not found in '{file_path}'.")
+    
+            if len(definitions) > 1:
+                # Provide more context about ambiguity if possible
+                lines = sorted([d.start_line + 1 for d in definitions]) # 1-based for user message
+                raise ToolError(f"Symbol '{symbol_name}' is ambiguous in '{file_path}'. Found definitions on lines: {', '.join(map(str, lines))}.")
+    
+            # Unique definition found
+            definition_tag = definitions[0]
+            return definition_tag.start_line, definition_tag.end_line
         # Check if the file is in the cache and if the modification time has not changed
         file_mtime = self.get_mtime(fname)
         if file_mtime is None:
@@ -347,7 +392,11 @@ class RepoMap:
                 name=node.text.decode("utf-8"),
                 kind=kind,
                 specific_kind=specific_kind,
-                line=node.start_point[0],
+                line=node.start_point[0],  # Legacy line number
+                start_line=node.start_point[0],
+                end_line=node.end_point[0],
+                start_byte=node.start_byte,
+                end_byte=node.end_byte,
             )
 
             yield result
@@ -377,7 +426,11 @@ class RepoMap:
                 name=token,
                 kind="ref",
                 specific_kind="name", # Default for pygments fallback
-                line=-1,
+                line=-1, # Pygments doesn't give precise locations easily
+                start_line=-1,
+                end_line=-1,
+                start_byte=-1,
+                end_byte=-1,
             )
 
     def get_ranked_tags(

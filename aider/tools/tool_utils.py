@@ -85,11 +85,59 @@ def select_occurrence_index(indices, occurrence, pattern_desc="Pattern"):
 
     return indices[target_idx]
 
-def determine_line_range(lines, start_pattern_line_index, end_pattern=None, line_count=None, pattern_desc="Block"):
+def determine_line_range(
+    coder, # Added: Need coder to access repo_map
+    file_path, # Added: Need file_path for repo_map lookup
+    lines,
+    start_pattern_line_index=None, # Made optional
+    end_pattern=None,
+    line_count=None,
+    target_symbol=None, # Added: New parameter for symbol targeting
+    pattern_desc="Block",
+):
     """
     Determines the end line index based on end_pattern or line_count.
     Raises ToolError if end_pattern is not found or line_count is invalid.
     """
+    # Parameter validation: Ensure only one targeting method is used
+    targeting_methods = [
+        target_symbol is not None,
+        start_pattern_line_index is not None,
+        # Note: line_count and end_pattern depend on start_pattern_line_index
+    ]
+    if sum(targeting_methods) > 1:
+        raise ToolError("Cannot specify target_symbol along with start_pattern.")
+    if sum(targeting_methods) == 0:
+         raise ToolError("Must specify either target_symbol or start_pattern.") # Or line numbers for line-based tools, handled elsewhere
+
+    if target_symbol:
+        if end_pattern or line_count:
+             raise ToolError("Cannot specify end_pattern or line_count when using target_symbol.")
+        try:
+            # Use repo_map to find the symbol's definition range
+            start_line, end_line = coder.repo_map.get_symbol_definition_location(file_path, target_symbol)
+            return start_line, end_line
+        except AttributeError: # Use specific exception
+             # Check if repo_map exists and is initialized before accessing methods
+             if not hasattr(coder, 'repo_map') or coder.repo_map is None:
+                 raise ToolError("RepoMap is not available or not initialized.")
+             # If repo_map exists, the error might be from get_symbol_definition_location itself
+             # Re-raise ToolErrors directly
+             raise
+        except ToolError as e:
+             # Propagate specific ToolErrors from repo_map (not found, ambiguous, etc.)
+             raise e
+        except Exception as e:
+             # Catch other unexpected errors during symbol lookup
+             raise ToolError(f"Unexpected error looking up symbol '{target_symbol}': {e}")
+
+    # --- Existing logic for pattern/line_count based targeting ---
+    # Ensure start_pattern_line_index is provided if not using target_symbol
+    if start_pattern_line_index is None:
+         raise ToolError("Internal error: start_pattern_line_index is required when not using target_symbol.")
+
+    # Assign start_line here for the pattern-based logic path
+    start_line = start_pattern_line_index # Start of existing logic
     start_line = start_pattern_line_index
     end_line = -1
 
