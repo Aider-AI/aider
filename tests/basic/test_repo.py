@@ -236,8 +236,9 @@ class TestRepo(unittest.TestCase):
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
             # Set the model name correctly on the nested mock
-            mock_coder.model = MagicMock()
-            mock_coder.model.configure_mock(name="gpt-test")
+            # The code uses coder.main_model.name for the co-authored-by line
+            mock_coder.main_model = MagicMock()
+            mock_coder.main_model.name = "gpt-test"
 
 
             io = InputOutput()
