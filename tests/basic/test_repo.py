@@ -4,7 +4,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import git
 
@@ -210,6 +210,87 @@ class TestRepo(unittest.TestCase):
             self.assertIsNone(original_committer_name)
             original_author_name = os.environ.get("GIT_AUTHOR_NAME")
             self.assertIsNone(original_author_name)
+
+    def test_commit_with_co_authored_by(self):
+        # Cleanup of the git temp dir explodes on windows
+        if platform.system() == "Windows":
+            return
+
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # add a file and commit it
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            # Mock coder args
+            mock_coder = MagicMock()
+            mock_coder.args.attribute_co_authored_by = True
+            mock_coder.args.attribute_author = None  # Explicitly None to test override
+            mock_coder.args.attribute_committer = None # Explicitly None to test override
+            mock_coder.args.attribute_commit_message_author = False
+            mock_coder.args.attribute_commit_message_committer = False
+            mock_coder.model.name = "gpt-test"
+
+            io = InputOutput()
+            git_repo = GitRepo(io, None, None)
+
+            # commit a change with aider_edits=True and co-authored-by flag
+            fname.write_text("new content")
+            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit")
+
+            # check the commit message and author/committer
+            commit = raw_repo.head.commit
+            self.assertIn("Co-authored-by: aider (gpt-test) <noreply@aider.dev>", commit.message)
+            self.assertEqual(commit.message.splitlines()[0], "Aider edit")
+            self.assertEqual(commit.author.name, "Test User") # Should NOT be modified
+            self.assertEqual(commit.committer.name, "Test User") # Should NOT be modified
+
+    def test_commit_without_co_authored_by(self):
+        # Cleanup of the git temp dir explodes on windows
+        if platform.system() == "Windows":
+            return
+
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # add a file and commit it
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            # Mock coder args (default behavior)
+            mock_coder = MagicMock()
+            mock_coder.args.attribute_co_authored_by = False
+            mock_coder.args.attribute_author = True
+            mock_coder.args.attribute_committer = True
+            mock_coder.args.attribute_commit_message_author = False
+            mock_coder.args.attribute_commit_message_committer = False
+            mock_coder.model.name = "gpt-test"
+
+            io = InputOutput()
+            git_repo = GitRepo(io, None, None)
+
+            # commit a change with aider_edits=True and default flags
+            fname.write_text("new content")
+            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit")
+
+            # check the commit message and author/committer
+            commit = raw_repo.head.commit
+            self.assertNotIn("Co-authored-by:", commit.message)
+            self.assertEqual(commit.message.splitlines()[0], "Aider edit")
+            self.assertEqual(commit.author.name, "Test User (aider)") # Should be modified
+            self.assertEqual(commit.committer.name, "Test User (aider)") # Should be modified
+
 
     def test_get_tracked_files(self):
         # Create a temporary directory
