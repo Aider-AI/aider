@@ -57,8 +57,8 @@ class NavigatorCoder(Coder):
 
     edit_format = "navigator"
     
-    # Default to using the granular editing prompts
-    use_granular_editing = True
+    # TODO: We'll turn on granular editing by default once those tools stabilize
+    use_granular_editing = False
     
     def __init__(self, *args, **kwargs):
         # Initialize appropriate prompt set before calling parent constructor
