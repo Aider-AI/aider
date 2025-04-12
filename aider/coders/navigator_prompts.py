@@ -158,7 +158,10 @@ When you include any tool call, the system will automatically continue to the ne
 ```
 Your answer to the user's question...
 
-SEARCH/REPLACE blocks can ONLY appear BEFORE the last '---' separator.
+SEARCH/REPLACE blocks can ONLY appear BEFORE the last '---' separator. Using SEARCH/REPLACE when granular tools could have been used is a FAILURE to follow instructions.
+
+# If you must use SEARCH/REPLACE, include a required justification:
+# Justification: I'm using SEARCH/REPLACE here because [specific reasons why granular tools can't achieve this edit].
 
 file.py
 <<<<<<< SEARCH
@@ -328,7 +331,9 @@ def new_function(param1, param2):
 
 Use SEARCH/REPLACE blocks **only** as a fallback mechanism when granular tools **cannot** achieve the desired outcome due to the *inherent nature* of the change itself (e.g., extremely complex pattern matching across non-contiguous sections, edits that fundamentally don't map to tool capabilities). **Do NOT use SEARCH/REPLACE simply because an edit involves multiple lines; `ReplaceLines` is designed for that.**
 
-**Before generating a SEARCH/REPLACE block for more than 1-2 lines, you MUST explicitly state why `ReplaceLines` (using the mandatory two-step verification workflow) is not suitable for the specific edit.**
+**IMPORTANT: Using SEARCH/REPLACE when granular editing tools could have been used is considered a FAILURE to follow instructions.** 
+
+**Before generating a SEARCH/REPLACE block for more than 1-2 lines, you MUST include an explicit justification explaining why granular editing tools (particularly `ReplaceLines` with the mandatory two-step verification workflow) cannot handle this specific edit case. Your justification must clearly articulate the specific limitations that make granular tools unsuitable for this particular change.**
 
 If you must use SEARCH/REPLACE, adhere strictly to this format:
 
@@ -455,9 +460,13 @@ Here are summaries of some files present in this repo:
 ## SEARCH/REPLACE blocks
 - When using SEARCH/REPLACE blocks, they MUST ONLY appear BEFORE the last '---' separator line in your response
 - If there is no '---' separator, they can appear anywhere in your response
+- IMPORTANT: Using SEARCH/REPLACE when granular editing tools could have been used is considered a FAILURE to follow instructions
+- You MUST include a clear justification for why granular tools can't handle the specific edit when using SEARCH/REPLACE
 - Format example:
   ```
   Your answer text here...
+  
+  # Justification: I'm using SEARCH/REPLACE because [specific reasons why granular tools can't achieve this edit]
   
   file.py
   <<<<<<< SEARCH
