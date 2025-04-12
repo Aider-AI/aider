@@ -11,6 +11,7 @@ import importlib_resources
 from aider import __version__, utils
 from aider.dump import dump  # noqa: F401
 from aider.help_pats import exclude_website_pats
+from aider.utils import get_aider_cache_dir
 
 warnings.simplefilter("ignore", category=FutureWarning)
 
@@ -90,7 +91,8 @@ def get_index():
     )
     from llama_index.core.node_parser import MarkdownNodeParser
 
-    dname = Path.home() / ".aider" / "caches" / ("help." + __version__)
+    cache_dir = get_aider_cache_dir()
+    dname = cache_dir / ("help." + __version__)
 
     index = None
     try:
@@ -124,7 +126,6 @@ def get_index():
             nodes += parser.get_nodes_from_documents([doc])
 
         index = VectorStoreIndex(nodes, show_progress=True)
-        dname.parent.mkdir(parents=True, exist_ok=True)
         index.storage_context.persist(dname)
 
     return index

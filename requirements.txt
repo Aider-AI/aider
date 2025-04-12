@@ -224,6 +224,10 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+platformdirs==4.3.7
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 posthog==3.23.0
     # via
     #   -c requirements/common-constraints.txt
