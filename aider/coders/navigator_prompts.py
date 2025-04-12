@@ -210,6 +210,30 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
         ```
 *   **Never view numbered lines and attempt a line-based edit in the same message.** This workflow *must* span two separate turns.
 
+## Refactoring with Granular Tools
+
+This section provides guidance on using granular editing tools for common refactoring tasks.
+
+### Replacing Large Code Blocks
+
+When you need to replace a significant chunk of code (more than a few lines), using `ReplaceLines` with precise line numbers is often the most reliable approach, especially if the surrounding code might be ambiguous for pattern matching.
+
+1.  **Identify Start and End:** Determine the approximate start and end points of the code block you want to replace. Use nearby unique text as patterns.
+2.  **Verify Line Numbers (Two-Step):** Use `ShowNumberedContext` **twice in the same message** to get the exact line numbers for the start and end of the block. Request a large context window (e.g., `context_lines=30`) for each call to ensure you have enough surrounding code to confirm the boundaries accurately.
+    ```
+    # Example verification message
+    ---
+    [tool_call(ShowNumberedContext, file_path="path/to/file.py", pattern="unique_text_near_start", context_lines=30)]
+    [tool_call(ShowNumberedContext, file_path="path/to/file.py", pattern="unique_text_near_end", context_lines=30)]
+    ```
+3.  **Confirm Boundaries:** Carefully examine the output from *both* `ShowNumberedContext` calls in the result message. Confirm the exact `start_line` and `end_line` based *only* on this verified output.
+4.  **Execute Replacement (Next Turn):** In the *next* message, use `ReplaceLines` with the verified `start_line` and `end_line`, providing the `new_content`.
+    ```
+    ---
+    [tool_call(ReplaceLines, file_path="path/to/file.py", start_line=VERIFIED_START, end_line=VERIFIED_END, new_content=)]
+    ```
+5.  **Review:** Check the result diff carefully to ensure the replacement occurred exactly as intended.
+
 ### Context Management Strategy
 - **Remember: Files added with `View` or `MakeEditable` remain fully visible in the context for subsequent messages until you explicitly `Remove` them.**
 - Keep your context focused by removing files that are no longer relevant.
@@ -292,8 +316,14 @@ def new_function(param1, param2):
 """)]
 ```
 
-### SEARCH/REPLACE Block Format (Use Sparingly)
-**Again, prefer granular tools.** However, as a fallback, you can use SEARCH/REPLACE blocks with this exact format:
+### SEARCH/REPLACE Block Format (Use ONLY as a Last Resort)
+**Granular editing tools (like `ReplaceLines`, `InsertBlock`, `DeleteBlock`) are STRONGLY PREFERRED for ALL edits.** They offer significantly more precision and safety.
+
+Use SEARCH/REPLACE blocks **only** as a fallback mechanism when granular tools **cannot** achieve the desired outcome due to the *inherent nature* of the change itself (e.g., extremely complex pattern matching across non-contiguous sections, edits that fundamentally don't map to tool capabilities). **Do NOT use SEARCH/REPLACE simply because an edit involves multiple lines; `ReplaceLines` is designed for that.**
+
+**Before generating a SEARCH/REPLACE block for more than 1-2 lines, you MUST explicitly state why `ReplaceLines` (using the mandatory two-step verification workflow) is not suitable for the specific edit.**
+
+If you must use SEARCH/REPLACE, adhere strictly to this format:
 
 ````python
 path/to/file.ext
@@ -305,14 +335,13 @@ Replacement code lines
 ````
 NOTE that this uses four backticks as the fence and not three!
 
-#### Guidelines for SEARCH/REPLACE
-- Every SEARCH section must EXACTLY MATCH existing content, including whitespace and indentation
-- Keep edit blocks focused and concise - include only the necessary context
-- Include enough lines for uniqueness but avoid long unchanged sections
-- For new files, use an empty SEARCH section
-- To move code within a file, use two separate SEARCH/REPLACE blocks
-- Respect the file paths exactly as they appear
-
+#### Guidelines for SEARCH/REPLACE (When Absolutely Necessary)
+- Every SEARCH section must EXACTLY MATCH existing content, including whitespace and indentation.
+- Keep edit blocks focused and concise - include only the necessary context.
+- Include enough lines for uniqueness but avoid long unchanged sections.
+- For new files, use an empty SEARCH section.
+- To move code within a file, use two separate SEARCH/REPLACE blocks.
+- Respect the file paths exactly as they appear.
 ### Error Handling and Recovery
 - **Tool Call Errors:** If a tool call returns an error message (e.g., pattern not found, file not found), analyze the error and correct the tool call parameters in your next attempt.
 - **Incorrect Edits:** If a tool call *succeeds* but the **result message and diff snippet show the change was applied incorrectly** (e.g., wrong location, unintended side effects):
