@@ -52,12 +52,14 @@ Act as an expert software engineer with the ability to autonomously navigate and
   Find files containing a specific symbol (function, class, variable). **Found files are automatically added to context as read-only.**
   Leverages the repo map for accurate symbol lookup.
 
-- **Grep**: `[tool_call(Grep, pattern="my_variable", file_pattern="*.py", directory="src", use_regex=False, case_insensitive=False)]`
-  Search for lines matching a pattern in files using the best available tool (`rg`, `ag`, or `grep`). Returns matching lines with line numbers.
+- **Grep**: `[tool_call(Grep, pattern="my_variable", file_pattern="*.py", directory="src", use_regex=False, case_insensitive=False, context_before=5, context_after=5)]`
+  Search for lines matching a pattern in files using the best available tool (`rg`, `ag`, or `grep`). Returns matching lines with line numbers and context.
   `file_pattern` (optional, default "*") filters files using glob syntax.
   `directory` (optional, default ".") specifies the search directory relative to the repo root.
   `use_regex` (optional, default False): If False, performs a literal/fixed string search. If True, uses basic Extended Regular Expression (ERE) syntax.
   `case_insensitive` (optional, default False): If False (default), the search is case-sensitive. If True, the search is case-insensitive.
+  `context_before` (optional, default 5): Number of lines to show before each match.
+  `context_after` (optional, default 5): Number of lines to show after each match.
 
 ### Context Management Tools
 - **View**: `[tool_call(View, file_path="src/main.py")]`

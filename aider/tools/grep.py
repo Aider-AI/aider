@@ -14,7 +14,7 @@ def _find_search_tool():
     else:
         return None, None
 
-def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=False, case_insensitive=False):
+def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=False, case_insensitive=False, context_before=5, context_after=5):
     """
     Search for lines matching a pattern in files within the project repository.
     Uses rg (ripgrep), ag (the silver searcher), or grep, whichever is available.
@@ -25,6 +25,9 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
         file_pattern (str, optional): Glob pattern to filter files. Defaults to "*".
         directory (str, optional): Directory to search within relative to repo root. Defaults to ".".
         use_regex (bool, optional): Whether the pattern is a regular expression. Defaults to False.
+        case_insensitive (bool, optional): Whether the search should be case-insensitive. Defaults to False.
+        context_before (int, optional): Number of context lines to show before matches. Defaults to 5.
+        context_after (int, optional): Number of context lines to show after matches. Defaults to 5.
 
     Returns:
         str: Formatted result indicating success or failure, including matching lines or error message.
@@ -52,6 +55,14 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
         if tool_name in ['rg', 'grep']:
             cmd_args.append("-n")  # Line numbers for rg and grep
         # ag includes line numbers by default
+
+        # Context lines (Before and After)
+        if context_before > 0:
+            # All tools use -B for lines before
+            cmd_args.extend(["-B", str(context_before)])
+        if context_after > 0:
+            # All tools use -A for lines after
+            cmd_args.extend(["-A", str(context_after)])
 
         # Case sensitivity
         if case_insensitive:

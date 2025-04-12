@@ -769,11 +769,14 @@ class NavigatorCoder(Coder):
                     directory = params.get('directory', '.') # Default to current directory
                     use_regex = params.get('use_regex', False) # Default to literal search
                     case_insensitive = params.get('case_insensitive', False) # Default to case-sensitive
+                    context_before = params.get('context_before', 5)
+                    context_after = params.get('context_after', 5)
+
 
                     if pattern is not None:
                         # Import the function if not already imported (it should be)
                         from aider.tools.grep import _execute_grep
-                        result_message = _execute_grep(self, pattern, file_pattern, directory, use_regex, case_insensitive)
+                        result_message = _execute_grep(self, pattern, file_pattern, directory, use_regex, case_insensitive, context_before, context_after)
                     else:
                         result_message = "Error: Missing required 'pattern' parameter for Grep"
 
