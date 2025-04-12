@@ -30,10 +30,24 @@ class ChangeTracker:
         - change_id: Unique identifier for the change
         """
         if change_id is None:
-            change_id = self._generate_change_id()
-        
+            generated_id = self._generate_change_id()
+            # Ensure the generated ID is treated as a string
+            current_change_id = str(generated_id)
+        else:
+            # If an ID is provided, ensure it's treated as a string key/value
+            current_change_id = str(change_id)
+
+        # Defensive check: Ensure the ID isn't literally the string 'False' or boolean False
+        # which might indicate an upstream issue or unexpected input.
+        if current_change_id == 'False' or current_change_id is False:
+             # Log a warning? For now, generate a new ID to prevent storing False.
+             print(f"Warning: change_id evaluated to False for {file_path}. Generating new ID.")
+             current_change_id = self._generate_change_id()
+
+
         change = {
-            'id': change_id,
+            # Use the confirmed string ID here
+            'id': current_change_id,
             'file_path': file_path,
             'type': change_type,
             'original': original_content,
@@ -41,10 +55,11 @@ class ChangeTracker:
             'metadata': metadata or {},
             'timestamp': time.time()
         }
-        
-        self.changes[change_id] = change
-        self.files_changed[file_path].append(change_id)
-        return change_id
+
+        # Use the confirmed string ID for storage and return
+        self.changes[current_change_id] = change
+        self.files_changed[file_path].append(current_change_id)
+        return current_change_id
     
     def undo_change(self, change_id):
         """
