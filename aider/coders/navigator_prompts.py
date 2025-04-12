@@ -99,6 +99,9 @@ Act as an expert software engineer with the ability to autonomously navigate and
   Extract lines from `start_pattern` to `end_pattern` (or use `line_count`) in `source_file_path` and move them to `target_file_path`. Creates `target_file_path` if it doesn't exist. Use `near_context` and `occurrence` (optional, default 1, -1 for last) for `start_pattern`. `dry_run=True` simulates.
   *Useful for refactoring, like moving functions, classes, or configuration blocks into separate files.*
 
+- **ViewNumberedContext**: `[tool_call(ViewNumberedContext, file_path="path/to/file.py", pattern="optional_text", line_number=optional_int, context_lines=3)]`
+  Displays numbered lines from `file_path` centered around a target location, without adding the file to context. Provide *either* `pattern` (to find the first occurrence) *or* `line_number` (1-based) to specify the center point. Returns the target line(s) plus `context_lines` (default 3) of surrounding context directly in the result message. Crucial for verifying exact line numbers and content before using `ReplaceLine` or `ReplaceLines`.
+
 ### Other Tools
 - **Command**: `[tool_call(Command, command_string="git diff HEAD~1")]`
   Execute a *non-interactive* shell command. Requires user confirmation. Use for commands that don't need user input (e.g., `ls`, `git status`, `cat file`).
@@ -158,6 +161,29 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
     *   Use `ListChanges` to see a history of applied changes.
     *   If you review a result diff (from a direct edit) and find the change was incorrect or applied in the wrong place, use `[tool_call(UndoChange, change_id="...")]` in your *next* message, using the `change_id` provided in the result message. Then, attempt the corrected edit.
 
+**Using Line Number Based Tools (`ReplaceLine`, `ReplaceLines`):**
+*   **High Risk:** Line numbers are fragile and can become outdated due to preceding edits, even within the same multi-tool message. Using these tools without recent verification can lead to incorrect changes.
+*   **Mandatory Verification Workflow:**
+    1.  **Identify Target Location:** Determine the approximate location using line numbers (e.g., from linter output) or nearby text.
+    2.  **View Numbered Context (Separate Turn):** In one message, use `ViewNumberedContext` specifying *either* the `line_number` or a nearby `pattern` to display numbered lines for the target area.
+        ```
+        # Example using line number
+        ---
+        [tool_call(ViewNumberedContext, file_path="path/to/file.py", line_number=APPROX_LINE, context_lines=5)]
+        ```
+        ```
+        # Example using pattern
+        ---
+        [tool_call(ViewNumberedContext, file_path="path/to/file.py", pattern="text_near_target", context_lines=5)]
+        ```
+    3.  **Verify:** Carefully examine the numbered output in the result message to confirm the *exact* line numbers and content you intend to modify.
+    4.  **Edit (Next Turn):** Only in the *next* message, issue the `ReplaceLine` or `ReplaceLines` command using the verified line numbers.
+        ```
+        ---
+        [tool_call(ReplaceLine, file_path="path/to/file.py", line_number=VERIFIED_LINE, new_content="...")]
+        ```
+*   **Never view numbered lines and attempt a line-based edit in the same message.**
+
 ### Context Management Strategy
 - Keep your context focused by removing files that are no longer relevant
 - For large codebases, maintain only 5-15 files in context at once for best performance
@@ -177,13 +203,13 @@ For precise, targeted edits to code, use the granular editing tools:
 - **ReplaceAll**: Replace all occurrences of text in a file (e.g., rename variables)
 - **InsertBlock**: Insert multi-line blocks of code at specific locations
 - **DeleteBlock**: Remove specific sections of code
-- **ReplaceLine/ReplaceLines**: Fix specific line numbers from error messages or linters
+- **ReplaceLine/ReplaceLines**: Fix specific line numbers from error messages or linters (use with caution, see workflow below)
 - **IndentLines**: Adjust indentation of code blocks
 - **UndoChange**: Reverse specific changes by ID if you make a mistake
 
 #### When to Use Line Number Based Tools
 
-When dealing with errors or warnings that include line numbers, prefer the line-based editing tools:
+When dealing with errors or warnings that include line numbers, you *can* use the line-based editing tools, but **you MUST follow the mandatory verification workflow described in the `## Granular Editing Workflow` section above.** This involves using `ViewNumberedContext` in one turn to verify the lines, and then using `ReplaceLine`/`ReplaceLines` in the *next* turn.
 
 ```
 Error in /path/to/file.py line 42: Syntax error: unexpected token

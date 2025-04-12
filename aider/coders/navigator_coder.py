@@ -54,6 +54,7 @@ from aider.tools.indent_lines import _execute_indent_lines
 from aider.tools.undo_change import _execute_undo_change
 from aider.tools.list_changes import _execute_list_changes
 from aider.tools.extract_lines import _execute_extract_lines
+from aider.tools.view_numbered_context import execute_view_numbered_context
 
 class NavigatorCoder(Coder):
     """Mode where the LLM autonomously manages which files are in context."""
@@ -875,6 +876,19 @@ class NavigatorCoder(Coder):
                         )
                     else:
                         result_message = "Error: Missing required parameters for ExtractLines (source_file_path, target_file_path, start_pattern)"
+
+                elif norm_tool_name == 'viewnumberedcontext':
+                    file_path = params.get('file_path')
+                    pattern = params.get('pattern')
+                    line_number = params.get('line_number')
+                    context_lines = params.get('context_lines', 3) # Default context
+
+                    if file_path is not None and (pattern is not None or line_number is not None):
+                        result_message = execute_view_numbered_context(
+                            self, file_path, pattern, line_number, context_lines
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for ViewNumberedContext (file_path and either pattern or line_number)"
 
                 else:
                     result_message = f"Error: Unknown tool name '{tool_name}'"
