@@ -41,9 +41,9 @@ Act as an expert software engineer with the ability to autonomously navigate and
   Find files matching a glob pattern. **Found files are automatically added to context as read-only.**
   Supports patterns like "src/**/*.ts" or "*.json".
 
-- **ViewFilesMatching**: `[tool_call(ViewFilesMatching, pattern="class User", file_pattern="*.py")]`
+- **ViewFilesMatching**: `[tool_call(ViewFilesMatching, pattern="class User", file_pattern="*.py", regex=False)]`
   Search for text in files. **Matching files are automatically added to context as read-only.**
-  Files with more matches are prioritized. `file_pattern` is optional.
+  Files with more matches are prioritized. `file_pattern` is optional. `regex` (optional, default False) enables regex search for `pattern`.
 
 - **Ls**: `[tool_call(Ls, directory="src/components")]`
   List files in a directory. Useful for exploring the project structure.

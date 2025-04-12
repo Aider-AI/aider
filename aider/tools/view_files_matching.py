@@ -1,12 +1,19 @@
+import re
 import os
 import fnmatch
 
-def execute_view_files_matching(coder, search_pattern, file_pattern=None):
+def execute_view_files_matching(coder, search_pattern, file_pattern=None, regex=False):
     """
-    Search for pattern in files and add matching files to context as read-only.
+    Search for pattern (literal string or regex) in files and add matching files to context as read-only.
+
+    Args:
+        coder: The Coder instance.
+        search_pattern (str): The pattern to search for. Treated as a literal string by default.
+        file_pattern (str, optional): Glob pattern to filter which files are searched. Defaults to None (search all files).
+        regex (bool, optional): If True, treat search_pattern as a regular expression. Defaults to False.
 
     This tool lets the LLM search for content within files, mimicking
-    how a developer would use grep to find relevant code.
+    how a developer would use grep or regex search to find relevant code.
     """
     try:
         # Get list of files to search
@@ -31,8 +38,22 @@ def execute_view_files_matching(coder, search_pattern, file_pattern=None):
             try:
                 with open(abs_path, 'r', encoding='utf-8') as f:
                     content = f.read()
-                    if search_pattern in content:
-                        matches[file] = content.count(search_pattern)
+                    match_count = 0
+                    if regex:
+                        try:
+                            matches_found = re.findall(search_pattern, content)
+                            match_count = len(matches_found)
+                        except re.error as e:
+                            # Handle invalid regex patterns gracefully
+                            coder.io.tool_error(f"Invalid regex pattern '{search_pattern}': {e}")
+                            # Skip this file for this search if regex is invalid
+                            continue 
+                    else:
+                        # Exact string matching
+                        match_count = content.count(search_pattern)
+                        
+                    if match_count > 0:
+                        matches[file] = match_count
             except Exception:
                 # Skip files that can't be read (binary, etc.)
                 pass
