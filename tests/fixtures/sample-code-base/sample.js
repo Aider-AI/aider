@@ -1,5 +1,4 @@
 // Aider test commit
-// Another test comment
 // Sample JavaScript script with 7 functions
 
 // 1. A simple greeting function
