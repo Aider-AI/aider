@@ -2,7 +2,6 @@
 
 # This is a test comment.
 # This is another test comment.
-# This is a third test comment.
 
 # COMMIT
 
