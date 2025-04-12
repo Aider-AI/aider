@@ -297,8 +297,9 @@ class TestRepo(unittest.TestCase):
             commit = raw_repo.head.commit
             self.assertIn("Co-authored-by: aider (gpt-test-combo) <noreply@aider.dev>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider combo edit")
-            self.assertEqual(commit.author.name, "Test User (aider)") # Should BE modified
-            self.assertEqual(commit.committer.name, "Test User (aider)") # Should BE modified
+            # When co-authored-by is true, name modification should be disabled
+            self.assertEqual(commit.author.name, "Test User") # Should NOT be modified
+            self.assertEqual(commit.committer.name, "Test User") # Should NOT be modified
 
 
     def test_commit_without_co_authored_by(self):

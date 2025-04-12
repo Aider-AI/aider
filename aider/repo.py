@@ -58,6 +58,7 @@ class GitRepo:
         commit_prompt=None,
         subtree_only=False,
         git_commit_verify=True,
+        attribute_co_authored_by=False, # Added parameter
     ):
         self.io = io
         self.models = models
@@ -69,8 +70,7 @@ class GitRepo:
         self.attribute_committer = attribute_committer
         self.attribute_commit_message_author = attribute_commit_message_author
         self.attribute_commit_message_committer = attribute_commit_message_committer
-        # Ensure attribute_co_authored_by is initialized, default to False if not provided
-        self.attribute_co_authored_by = getattr(self, 'attribute_co_authored_by', False)
+        self.attribute_co_authored_by = attribute_co_authored_by # Assign from parameter
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.git_commit_verify = git_commit_verify
@@ -158,9 +158,9 @@ class GitRepo:
                 if coder and hasattr(coder, "main_model") and coder.main_model.name:
                     model_name = coder.main_model.name
                 commit_message_trailer = f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.dev>"
-                # Only modify author/committer if explicitly requested alongside co-authored-by
-                use_attribute_author = attribute_author
-                use_attribute_committer = attribute_committer
+                # If co-authored-by is used, disable author/committer name modification
+                use_attribute_author = False
+                use_attribute_committer = False
             else:
                 # Original behavior when co-authored-by is false
                 use_attribute_author = attribute_author
