@@ -301,6 +301,60 @@ class TestRepo(unittest.TestCase):
             self.assertEqual(commit.author.name, "Test User") # Should NOT be modified
             self.assertEqual(commit.committer.name, "Test User") # Should NOT be modified
 
+    def test_commit_co_authored_by_precedence(self):
+        # Test that co-authored-by takes precedence over name modification when both are enabled
+        if platform.system() == "Windows":
+            return
+
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # add a file and commit it
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            # Mock coder args: All relevant flags enabled
+            mock_coder = MagicMock()
+            mock_coder.args.attribute_co_authored_by = True
+            mock_coder.args.attribute_author = True # Explicitly enable (or rely on default)
+            mock_coder.args.attribute_committer = True # Explicitly enable (or rely on default)
+            mock_coder.args.attribute_commit_message_author = False
+            mock_coder.args.attribute_commit_message_committer = False
+            mock_coder.main_model = MagicMock()
+            mock_coder.main_model.name = "gpt-precedence"
+
+            io = InputOutput()
+            # Initialize GitRepo directly with flags, simulating config/defaults if coder wasn't passed
+            # This ensures the test covers the case where coder might not provide args
+            git_repo = GitRepo(
+                io,
+                None,
+                None,
+                attribute_co_authored_by=True,
+                attribute_author=True,
+                attribute_committer=True,
+            )
+
+
+            # commit a change with aider_edits=True and conflicting flags
+            fname.write_text("new content precedence")
+            # Pass the coder object here to ensure its args are used if available,
+            # but the GitRepo init already set the fallback values.
+            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider precedence edit")
+
+            # check the commit message and author/committer
+            commit = raw_repo.head.commit
+            self.assertIn("Co-authored-by: aider (gpt-precedence) <noreply@aider.dev>", commit.message)
+            self.assertEqual(commit.message.splitlines()[0], "Aider precedence edit")
+            # Co-authored-by should take precedence, names should NOT be modified
+            self.assertEqual(commit.author.name, "Test User")
+            self.assertEqual(commit.committer.name, "Test User")
+
 
     def test_commit_without_co_authored_by(self):
         # Cleanup of the git temp dir explodes on windows
