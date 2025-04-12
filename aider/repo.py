@@ -217,7 +217,7 @@ class GitRepo:
             attribute_committer = self.attribute_committer
             attribute_commit_message_author = self.attribute_commit_message_author
             attribute_commit_message_committer = self.attribute_commit_message_committer
-            attribute_co_authored_by = getattr(self, "attribute_co_authored_by", False) # Should be False if not set
+            attribute_co_authored_by = self.attribute_co_authored_by
 
         # Determine explicit settings (None means use default behavior)
         author_explicit = attribute_author is not None
