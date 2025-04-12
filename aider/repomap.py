@@ -249,51 +249,6 @@ class RepoMap:
             self.io.tool_warning(f"File not found error: {fname}")
 
     def get_tags(self, fname, rel_fname):
-        def get_symbol_definition_location(self, file_path, symbol_name):
-            """
-            Finds the unique definition location (start/end line) for a symbol in a file.
-    
-            Args:
-                file_path (str): The relative path to the file.
-                symbol_name (str): The name of the symbol to find.
-    
-            Returns:
-                tuple: (start_line, end_line) (0-based) if a unique definition is found.
-    
-            Raises:
-                ToolError: If the symbol is not found, not unique, or not a definition.
-            """
-            abs_path = self.io.root_abs_path(file_path) # Assuming io has this helper or similar
-            rel_path = self.get_rel_fname(abs_path) # Ensure we use consistent relative path
-    
-            tags = self.get_tags(abs_path, rel_path)
-            if not tags:
-                raise ToolError(f"Symbol '{symbol_name}' not found in '{file_path}' (no tags).")
-    
-            definitions = []
-            for tag in tags:
-                # Check if it's a definition and the name matches
-                if tag.kind == "def" and tag.name == symbol_name:
-                     # Ensure we have valid location info
-                    if tag.start_line is not None and tag.end_line is not None and tag.start_line >= 0:
-                        definitions.append(tag)
-    
-            if not definitions:
-                # Check if it exists as a non-definition tag
-                non_defs = [tag for tag in tags if tag.name == symbol_name and tag.kind != "def"]
-                if non_defs:
-                     raise ToolError(f"Symbol '{symbol_name}' found in '{file_path}', but not as a unique definition (found as {non_defs[0].kind}).")
-                else:
-                    raise ToolError(f"Symbol '{symbol_name}' definition not found in '{file_path}'.")
-    
-            if len(definitions) > 1:
-                # Provide more context about ambiguity if possible
-                lines = sorted([d.start_line + 1 for d in definitions]) # 1-based for user message
-                raise ToolError(f"Symbol '{symbol_name}' is ambiguous in '{file_path}'. Found definitions on lines: {', '.join(map(str, lines))}.")
-    
-            # Unique definition found
-            definition_tag = definitions[0]
-            return definition_tag.start_line, definition_tag.end_line
         # Check if the file is in the cache and if the modification time has not changed
         file_mtime = self.get_mtime(fname)
         if file_mtime is None:
@@ -338,6 +293,52 @@ class RepoMap:
             self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
 
         return data
+    def get_symbol_definition_location(self, file_path, symbol_name):
+        """
+        Finds the unique definition location (start/end line) for a symbol in a file.
+
+        Args:
+            file_path (str): The relative path to the file.
+            symbol_name (str): The name of the symbol to find.
+
+        Returns:
+            tuple: (start_line, end_line) (0-based) if a unique definition is found.
+
+        Raises:
+            ToolError: If the symbol is not found, not unique, or not a definition.
+        """
+        abs_path = self.io.root_abs_path(file_path) # Assuming io has this helper or similar
+        rel_path = self.get_rel_fname(abs_path) # Ensure we use consistent relative path
+
+        tags = self.get_tags(abs_path, rel_path)
+        if not tags:
+            raise ToolError(f"Symbol '{symbol_name}' not found in '{file_path}' (no tags).")
+
+        definitions = []
+        for tag in tags:
+            # Check if it's a definition and the name matches
+            if tag.kind == "def" and tag.name == symbol_name:
+                 # Ensure we have valid location info
+                if tag.start_line is not None and tag.end_line is not None and tag.start_line >= 0:
+                    definitions.append(tag)
+
+        if not definitions:
+            # Check if it exists as a non-definition tag
+            non_defs = [tag for tag in tags if tag.name == symbol_name and tag.kind != "def"]
+            if non_defs:
+                 raise ToolError(f"Symbol '{symbol_name}' found in '{file_path}', but not as a unique definition (found as {non_defs[0].kind}).")
+            else:
+                raise ToolError(f"Symbol '{symbol_name}' definition not found in '{file_path}'.")
+
+        if len(definitions) > 1:
+            # Provide more context about ambiguity if possible
+            lines = sorted([d.start_line + 1 for d in definitions]) # 1-based for user message
+            raise ToolError(f"Symbol '{symbol_name}' is ambiguous in '{file_path}'. Found definitions on lines: {', '.join(map(str, lines))}.")
+
+        # Unique definition found
+        definition_tag = definitions[0]
+        return definition_tag.start_line, definition_tag.end_line
+        # Check if the file is in the cache and if the modification time has not changed
 
     def get_tags_raw(self, fname, rel_fname):
         lang = filename_to_lang(fname)
