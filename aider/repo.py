@@ -210,7 +210,7 @@ class GitRepo:
             attribute_committer = coder.args.attribute_committer
             attribute_commit_message_author = coder.args.attribute_commit_message_author
             attribute_commit_message_committer = coder.args.attribute_commit_message_committer
-            attribute_co_authored_by = coder.args.attribute_co_authored_by # <-- Restored
+            attribute_co_authored_by = coder.args.attribute_co_authored_by
         else:
             # Fallback to self attributes (initialized from config/defaults)
             attribute_author = self.attribute_author
