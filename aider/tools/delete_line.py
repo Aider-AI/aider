@@ -1,6 +1,6 @@
 import os
 import traceback
-from .tool_utils import generate_unified_diff_snippet
+from .tool_utils import ToolError, generate_unified_diff_snippet, handle_tool_error, format_tool_result, apply_change
 
 def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=False):
     """
@@ -15,6 +15,8 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
 
     Returns a result message.
     """
+
+    tool_name = "DeleteLine"
     try:
         # Get absolute file path
         abs_path = coder.abs_root_path(file_path)
@@ -22,23 +24,19 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
 
         # Check if file exists
         if not os.path.isfile(abs_path):
-            coder.io.tool_error(f"File '{file_path}' not found")
-            return f"Error: File not found"
+            raise ToolError(f"File '{file_path}' not found")
 
         # Check if file is in editable context
         if abs_path not in coder.abs_fnames:
             if abs_path in coder.abs_read_only_fnames:
-                coder.io.tool_error(f"File '{file_path}' is read-only. Use MakeEditable first.")
-                return f"Error: File is read-only. Use MakeEditable first."
+                raise ToolError(f"File '{file_path}' is read-only. Use MakeEditable first.")
             else:
-                coder.io.tool_error(f"File '{file_path}' not in context")
-                return f"Error: File not in context"
+                raise ToolError(f"File '{file_path}' not in context")
 
         # Reread file content immediately before modification
         file_content = coder.io.read_text(abs_path)
         if file_content is None:
-            coder.io.tool_error(f"Could not read file '{file_path}' before DeleteLine operation.")
-            return f"Error: Could not read file '{file_path}'"
+            raise ToolError(f"Could not read file '{file_path}'")
 
         lines = file_content.splitlines()
         original_content = file_content
@@ -47,11 +45,10 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
         try:
             line_num_int = int(line_number)
             if line_num_int < 1 or line_num_int > len(lines):
-                raise ValueError(f"Line number {line_num_int} is out of range (1-{len(lines)})")
+                raise ToolError(f"Line number {line_num_int} is out of range (1-{len(lines)})")
             line_idx = line_num_int - 1 # Convert to 0-based index
-        except ValueError as e:
-            coder.io.tool_error(f"Invalid line_number: {e}")
-            return f"Error: Invalid line_number '{line_number}'"
+        except ValueError:
+            raise ToolError(f"Invalid line_number value: '{line_number}'. Must be an integer.")
 
         # Prepare the deletion
         deleted_line = lines[line_idx]
@@ -62,40 +59,34 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
             coder.io.tool_warning(f"No changes made: deleting line {line_num_int} would not change file")
             return f"Warning: No changes made (deleting line {line_num_int} would not change file)"
 
-        # Generate diff snippet (using the existing delete block helper for simplicity)
+        # Generate diff snippet
         diff_snippet = generate_unified_diff_snippet(original_content, new_content, rel_path)
 
         # Handle dry run
         if dry_run:
-            coder.io.tool_output(f"Dry run: Would delete line {line_num_int} in {file_path}")
-            return f"Dry run: Would delete line {line_num_int}. Diff snippet:\n{diff_snippet}"
+            dry_run_message = f"Dry run: Would delete line {line_num_int} in {file_path}"
+            return format_tool_result(coder, tool_name, "", dry_run=True, dry_run_message=dry_run_message, diff_snippet=diff_snippet)
 
         # --- Apply Change (Not dry run) ---
-        coder.io.write_text(abs_path, new_content)
-
-        # Track the change
-        try:
-            metadata = {
-                'line_number': line_num_int,
-                'deleted_content': deleted_line
-            }
-            change_id = coder.change_tracker.track_change(
-                file_path=rel_path,
-                change_type='deleteline',
-                original_content=original_content,
-                new_content=new_content,
-                metadata=metadata,
-                change_id=change_id
-            )
-        except Exception as track_e:
-            coder.io.tool_error(f"Error tracking change for DeleteLine: {track_e}")
-            change_id = "TRACKING_FAILED"
+        metadata = {
+            'line_number': line_num_int,
+            'deleted_content': deleted_line
+        }
+        final_change_id = apply_change(
+            coder, abs_path, rel_path, original_content, new_content, 'deleteline', metadata, change_id
+        )
 
         coder.aider_edited_files.add(rel_path)
 
-        coder.io.tool_output(f"✅ Deleted line {line_num_int} in {file_path} (change_id: {change_id})")
-        return f"Successfully deleted line {line_num_int} (change_id: {change_id}). Diff snippet:\n{diff_snippet}"
+        # Format and return result
+        success_message = f"Deleted line {line_num_int} in {file_path}"
+        return format_tool_result(
+            coder, tool_name, success_message, change_id=final_change_id, diff_snippet=diff_snippet
+        )
 
+    except ToolError as e:
+        # Handle errors raised by utility functions (expected errors)
+        return handle_tool_error(coder, tool_name, e, add_traceback=False)
     except Exception as e:
-        coder.io.tool_error(f"Error in DeleteLine: {str(e)}\n{traceback.format_exc()}")
-        return f"Error: {str(e)}"
+        # Handle unexpected errors
+        return handle_tool_error(coder, tool_name, e)

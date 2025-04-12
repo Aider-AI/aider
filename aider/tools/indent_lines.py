@@ -116,16 +116,9 @@ def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, lin
         return format_tool_result(
             coder, tool_name, success_message, change_id=final_change_id, diff_snippet=diff_snippet
         )
-
     except ToolError as e:
         # Handle errors raised by utility functions (expected errors)
         return handle_tool_error(coder, tool_name, e, add_traceback=False)
     except Exception as e:
         # Handle unexpected errors
         return handle_tool_error(coder, tool_name, e)
-        coder.io.tool_output(f"✅ {action} {num_lines} lines (from {occurrence_str}start pattern) by {levels} {level_text} in {file_path} (change_id: {change_id})")
-        return f"Successfully {action.lower()} {num_lines} lines by {levels} {level_text} (change_id: {change_id}). Diff snippet:\n{diff_snippet}"
-             
-    except Exception as e:
-        coder.io.tool_error(f"Error in IndentLines: {str(e)}\n{traceback.format_exc()}")
-        return f"Error: {str(e)}"
