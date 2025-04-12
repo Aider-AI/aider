@@ -177,6 +177,10 @@ class GitRepo:
                 else self.attribute_commit_message_author
             )
             attribute_commit_message_committer = (
+                coder.args.attribute_commit_message_committer
+                if coder and hasattr(coder, "args")
+                else self.attribute_commit_message_committer
+            )
         if not commit_message:
             commit_message = "(no commit message provided)"
 
