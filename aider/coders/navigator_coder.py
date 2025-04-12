@@ -706,8 +706,9 @@ class NavigatorCoder(Coder):
                 elif norm_tool_name == 'viewfilesmatching':
                     pattern = params.get('pattern')
                     file_pattern = params.get('file_pattern') # Optional
+                    regex = params.get('regex', False) # Default to False if not provided
                     if pattern is not None:
-                        result_message = execute_view_files_matching(self, pattern, file_pattern)
+                        result_message = execute_view_files_matching(self, pattern, file_pattern, regex)
                     else:
                         result_message = "Error: Missing 'pattern' parameter for ViewFilesMatching"
                 elif norm_tool_name == 'ls':
