@@ -1,7 +1,6 @@
 # flake8: noqa: E501
 
 # This is a test comment.
-# This is another test comment.
 
 # COMMIT
 
