@@ -235,7 +235,9 @@ class TestRepo(unittest.TestCase):
             mock_coder.args.attribute_committer = None # Explicitly None to test override
             mock_coder.args.attribute_commit_message_author = False
             mock_coder.args.attribute_commit_message_committer = False
-            mock_coder.model.name = "gpt-test"
+            # Set the model name correctly on the nested mock
+            mock_coder.model = MagicMock(name="gpt-test")
+
 
             io = InputOutput()
             git_repo = GitRepo(io, None, None)
