@@ -87,13 +87,13 @@ def select_occurrence_index(indices, occurrence, pattern_desc="Pattern"):
     return indices[target_idx]
 
 def determine_line_range(
-    coder, # Added: Need coder to access repo_map
-    file_path, # Added: Need file_path for repo_map lookup
+    coder,
+    file_path,
     lines,
     start_pattern_line_index=None, # Made optional
     end_pattern=None,
     line_count=None,
-    target_symbol=None, # Added: New parameter for symbol targeting
+    target_symbol=None,
     pattern_desc="Block",
 ):
     """

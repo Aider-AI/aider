@@ -38,7 +38,7 @@ from aider.tools.view_files_at_glob import execute_view_files_at_glob
 from aider.tools.view_files_matching import execute_view_files_matching
 from aider.tools.ls import execute_ls
 from aider.tools.view import execute_view
-from aider.tools.remove import _execute_remove # Renamed to avoid conflict with os.remove
+from aider.tools.remove import _execute_remove
 from aider.tools.make_editable import _execute_make_editable
 from aider.tools.make_readonly import _execute_make_readonly
 from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol
@@ -51,8 +51,8 @@ from aider.tools.delete_block import _execute_delete_block
 from aider.tools.replace_line import _execute_replace_line
 from aider.tools.replace_lines import _execute_replace_lines
 from aider.tools.indent_lines import _execute_indent_lines
-from aider.tools.delete_line import _execute_delete_line # New
-from aider.tools.delete_lines import _execute_delete_lines # New
+from aider.tools.delete_line import _execute_delete_line
+from aider.tools.delete_lines import _execute_delete_lines
 from aider.tools.undo_change import _execute_undo_change
 from aider.tools.list_changes import _execute_list_changes
 from aider.tools.extract_lines import _execute_extract_lines
@@ -194,7 +194,7 @@ class NavigatorCoder(Coder):
             git_status = self.get_git_status()
 
             # Get symbol outline for current context files
-            symbol_outline = self.get_context_symbol_outline() # New call
+            symbol_outline = self.get_context_symbol_outline()
 
             # Collect all context blocks that exist
             context_blocks = []
