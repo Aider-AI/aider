@@ -51,6 +51,8 @@ from aider.tools.delete_block import _execute_delete_block
 from aider.tools.replace_line import _execute_replace_line
 from aider.tools.replace_lines import _execute_replace_lines
 from aider.tools.indent_lines import _execute_indent_lines
+from aider.tools.delete_line import _execute_delete_line # New
+from aider.tools.delete_lines import _execute_delete_lines # New
 from aider.tools.undo_change import _execute_undo_change
 from aider.tools.list_changes import _execute_list_changes
 from aider.tools.extract_lines import _execute_extract_lines
@@ -851,7 +853,34 @@ class NavigatorCoder(Coder):
                         )
                     else:
                         result_message = "Error: Missing required parameters for IndentLines (file_path, start_pattern)"
-                 
+
+                elif norm_tool_name == 'deleteline':
+                    file_path = params.get('file_path')
+                    line_number = params.get('line_number')
+                    change_id = params.get('change_id')
+                    dry_run = params.get('dry_run', False)
+
+                    if file_path is not None and line_number is not None:
+                        result_message = _execute_delete_line(
+                            self, file_path, line_number, change_id, dry_run
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for DeleteLine (file_path, line_number)"
+
+                elif norm_tool_name == 'deletelines':
+                    file_path = params.get('file_path')
+                    start_line = params.get('start_line')
+                    end_line = params.get('end_line')
+                    change_id = params.get('change_id')
+                    dry_run = params.get('dry_run', False)
+
+                    if file_path is not None and start_line is not None and end_line is not None:
+                        result_message = _execute_delete_lines(
+                            self, file_path, start_line, end_line, change_id, dry_run
+                        )
+                    else:
+                        result_message = "Error: Missing required parameters for DeleteLines (file_path, start_line, end_line)"
+
                 elif norm_tool_name == 'undochange':
                     change_id = params.get('change_id')
                     file_path = params.get('file_path')

@@ -94,10 +94,18 @@ Act as an expert software engineer with the ability to autonomously navigate and
 - **IndentLines**: `[tool_call(IndentLines, file_path="...", start_pattern="...", end_pattern="...", indent_levels=1, near_context="...", occurrence=1, dry_run=False)]`
   Indent (`indent_levels` > 0) or unindent (`indent_levels` < 0) a block. Use `end_pattern` or `line_count` for range. Use `near_context` and `occurrence` (optional, default 1, -1 for last) for `start_pattern`. `dry_run=True` simulates.
   *Useful for fixing indentation errors reported by linters or reformatting code blocks. Also helpful for adjusting indentation after moving code with `ExtractLines`.*
- 
+
+- **DeleteLine**: `[tool_call(DeleteLine, file_path="...", line_number=42, dry_run=False)]`
+  Delete a specific line number (1-based). `dry_run=True` simulates.
+  *Useful for removing single erroneous lines identified by linters or exact line number.*
+
+- **DeleteLines**: `[tool_call(DeleteLines, file_path="...", start_line=42, end_line=45, dry_run=False)]`
+  Delete a range of lines (1-based, inclusive). `dry_run=True` simulates.
+  *Useful for removing multi-line blocks when exact line numbers are known.*
+
 - **UndoChange**: `[tool_call(UndoChange, change_id="a1b2c3d4")]` or `[tool_call(UndoChange, file_path="...")]`
   Undo a specific change by ID, or the last change made to the specified `file_path`.
- 
+
 - **ListChanges**: `[tool_call(ListChanges, file_path="...", limit=5)]`
   List recent changes, optionally filtered by `file_path` and limited.
 
@@ -222,6 +230,7 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
 - `InsertBlock`: For adding code blocks.
 - `DeleteBlock`: For removing code sections.
 - `ReplaceLine`/`ReplaceLines`: For line-specific fixes (requires strict `ShowNumberedContext` verification).
+- `DeleteLine`/`DeleteLines`: For removing lines by number (requires strict `ShowNumberedContext` verification).
 - `IndentLines`: For adjusting indentation.
 - `ExtractLines`: For moving code between files.
 - `UndoChange`: For reverting specific edits.
@@ -239,6 +248,8 @@ Warning in /path/to/file.py lines 105-107: This block should be indented
 For these cases, use:
 - `ReplaceLine` for single line fixes (e.g., syntax errors)
 - `ReplaceLines` for multi-line issues
+- `DeleteLine` for removing single erroneous lines
+- `DeleteLines` for removing multi-line blocks by number
 - `IndentLines` for indentation problems
 
 #### Multiline Tool Call Content Format
