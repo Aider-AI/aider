@@ -190,7 +190,8 @@ class TestRepo(unittest.TestCase):
 
             # commit a change with aider_edits=True (using default attributes)
             fname.write_text("new content")
-            git_repo.commit(fnames=[str(fname)], aider_edits=True)
+            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True)
+            self.assertIsNotNone(commit_result)
 
             # check the committer name (defaults interpreted as True)
             commit = raw_repo.head.commit
@@ -199,7 +200,8 @@ class TestRepo(unittest.TestCase):
 
             # commit a change without aider_edits (using default attributes)
             fname.write_text("new content again!")
-            git_repo.commit(fnames=[str(fname)], aider_edits=False)
+            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=False)
+            self.assertIsNotNone(commit_result)
 
             # check the committer name (author not modified, committer still modified by default)
             commit = raw_repo.head.commit
@@ -209,7 +211,8 @@ class TestRepo(unittest.TestCase):
             # Now test with explicit False
             git_repo_explicit_false = GitRepo(io, None, None, attribute_author=False, attribute_committer=False)
             fname.write_text("explicit false content")
-            git_repo_explicit_false.commit(fnames=[str(fname)], aider_edits=True)
+            commit_result = git_repo_explicit_false.commit(fnames=[str(fname)], aider_edits=True)
+            self.assertIsNotNone(commit_result)
             commit = raw_repo.head.commit
             self.assertEqual(commit.author.name, "Test User") # Explicit False
             self.assertEqual(commit.committer.name, "Test User") # Explicit False
@@ -254,7 +257,8 @@ class TestRepo(unittest.TestCase):
 
             # commit a change with aider_edits=True and co-authored-by flag
             fname.write_text("new content")
-            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit")
+            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit")
+            self.assertIsNotNone(commit_result)
 
             # check the commit message and author/committer
             commit = raw_repo.head.commit
@@ -298,7 +302,8 @@ class TestRepo(unittest.TestCase):
 
             # commit a change with aider_edits=True and combo flags
             fname.write_text("new content combo")
-            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider combo edit")
+            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider combo edit")
+            self.assertIsNotNone(commit_result)
 
             # check the commit message and author/committer
             commit = raw_repo.head.commit
@@ -351,7 +356,8 @@ class TestRepo(unittest.TestCase):
             fname.write_text("new content precedence")
             # Pass the coder object here to ensure its args are used if available,
             # but the GitRepo init already set the fallback values.
-            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider precedence edit")
+            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider precedence edit")
+            self.assertIsNotNone(commit_result)
 
             # check the commit message and author/committer
             commit = raw_repo.head.commit
@@ -395,7 +401,8 @@ class TestRepo(unittest.TestCase):
 
             # commit a change with aider_edits=True and default flags
             fname.write_text("new content")
-            git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit")
+            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit")
+            self.assertIsNotNone(commit_result)
 
             # check the commit message and author/committer (defaults interpreted as True)
             commit = raw_repo.head.commit
@@ -598,7 +605,8 @@ class TestRepo(unittest.TestCase):
 
             git_repo = GitRepo(InputOutput(), None, None)
 
-            git_repo.commit(fnames=[str(fname)])
+            commit_result = git_repo.commit(fnames=[str(fname)])
+            self.assertIsNotNone(commit_result)
 
     def test_git_commit_verify(self):
         """Test that git_commit_verify controls whether --no-verify is passed to git commit"""
