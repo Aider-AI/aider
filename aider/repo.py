@@ -162,7 +162,7 @@ class GitRepo:
         Flags:
         - --attribute-author: Modify Author name to "User Name (aider)".
         - --attribute-committer: Modify Committer name to "User Name (aider)".
-        - --attribute-co-authored-by: Add "Co-authored-by: aider (<model>) <noreply@aider.dev>"
+        - --attribute-co-authored-by: Add "Co-authored-by: aider (<model>) <noreply@aider.chat>"
           trailer to the commit message.
 
         Behavior Summary:
@@ -240,7 +240,7 @@ class GitRepo:
             if coder and hasattr(coder, "main_model") and coder.main_model.name:
                 model_name = coder.main_model.name
             commit_message_trailer = (
-                f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.dev>"
+                f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.chat>"
             )
 
         # Determine if author/committer names should be modified

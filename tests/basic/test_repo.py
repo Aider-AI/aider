@@ -265,7 +265,7 @@ class TestRepo(unittest.TestCase):
 
             # check the commit message and author/committer
             commit = raw_repo.head.commit
-            self.assertIn("Co-authored-by: aider (gpt-test) <noreply@aider.dev>", commit.message)
+            self.assertIn("Co-authored-by: aider (gpt-test) <noreply@aider.chat>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider edit")
             # With default (None), co-authored-by takes precedence
             self.assertEqual(commit.author.name, "Test User", msg="Author name should not be modified when co-authored-by takes precedence")
@@ -308,7 +308,7 @@ class TestRepo(unittest.TestCase):
 
             # check the commit message and author/committer
             commit = raw_repo.head.commit
-            self.assertIn("Co-authored-by: aider (gpt-test-combo) <noreply@aider.dev>", commit.message)
+            self.assertIn("Co-authored-by: aider (gpt-test-combo) <noreply@aider.chat>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider combo edit")
             # When co-authored-by is true BUT author/committer are explicit True, modification SHOULD happen
             self.assertEqual(commit.author.name, "Test User (aider)", msg="Author name should be modified when explicitly True, even with co-author")
