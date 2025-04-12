@@ -114,12 +114,24 @@ When you include any tool call, the system will automatically continue to the ne
 6. **Final Response**: Omit all tool calls when you have sufficient information to provide a final answer
 
 ### Tool Usage Best Practices
+- All tool calls MUST be placed after a '---' line separator at the end of your message
 - Use the exact syntax `[tool_call(ToolName, param1=value1, param2="value2")]` for execution
 - Tool names are case-insensitive; parameters can be unquoted or quoted
 - Verify files aren't already in context before adding them with `View`
 - Use precise search patterns with `ViewFilesMatching` and `file_pattern` to narrow scope
 - Target specific patterns rather than overly broad searches
 - Remember the `ViewFilesWithSymbol` tool is optimized for locating symbols across the codebase
+
+### Format Example
+```
+Your answer to the user's question...
+
+SEARCH/REPLACE blocks can appear anywhere in your response if needed.
+
+---
+[tool_call(ViewFilesMatching, pattern="findme")]
+[tool_call(Command, command_string="ls -la")]
+```
 
 ## Granular Editing Workflow
 
@@ -257,6 +269,7 @@ Always reply to the user in {language}.
             role="assistant",
             content="""I'll help you understand the authentication system in this project. Let me explore the codebase first to find all relevant files.
 
+---
 [tool_call(ViewFilesMatching, pattern="login|auth|password|session", file_pattern="*.py")]""",
         ),
         dict(
@@ -267,6 +280,7 @@ Always reply to the user in {language}.
             role="assistant",
             content="""Great, I've found several files related to authentication. Let me examine them to understand the login flow.
 
+---
 [tool_call(View, file_path="auth/models.py")]
 [tool_call(View, file_path="auth/views.py")]
 [tool_call(View, file_path="users/authentication.py")]""",
@@ -325,10 +339,29 @@ Here are summaries of some files present in this repo:
     system_reminder = """
 <context name="critical_reminders">
 ## Tool Command Reminder
+- All tool calls MUST appear after a '---' line separator at the end of your message
 - To execute a tool, use: `[tool_call(ToolName, param1=value1)]`
-- To show tool examples without executing: `\\[tool_call(ToolName, param1=value1)]`
+- To show tool examples without executing: `\\[tool_call(ToolName, param1=value1)]` 
 - Including ANY tool call will automatically continue to the next round
 - For final answers, do NOT include any tool calls
+
+## SEARCH/REPLACE and Tool Call Format
+- SEARCH/REPLACE blocks can appear anywhere in your response
+- Tool calls MUST be at the end of your message, after a '---' separator
+- Format example:
+  ```
+  Your answer text here...
+  
+  file.py
+  <<<<<<< SEARCH
+  old code
+  =======
+  new code
+  >>>>>>> REPLACE
+  
+  ---
+  [tool_call(ToolName, param1=value1)]
+  ```
 
 ## Context Features
 - Use enhanced context blocks (directory structure and git status) to orient yourself

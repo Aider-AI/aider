@@ -247,9 +247,9 @@ class NavigatorCoder(Coder):
         """Process the completed response from the LLM.
         
         This is a key method that:
-        1. Processes any tool commands in the response
-        2. If tool commands were found, sets up for another automatic round
-        3. Otherwise, completes the response normally
+        1. Processes any tool commands in the response (only after a '---' line)
+        2. Processes any SEARCH/REPLACE blocks in the response (regardless of tool calls)
+        3. If tool commands were found, sets up for another automatic round
         
         This enables the "auto-exploration" workflow where the LLM can
         iteratively discover and analyze relevant files before providing
@@ -271,6 +271,20 @@ class NavigatorCoder(Coder):
 
         # Process implicit file mentions using the content *after* tool calls were removed
         self._process_file_mentions(processed_content)
+
+        # Check if the content contains the SEARCH/REPLACE markers (do this regardless of tool calls)
+        has_search = "<<<<<<< SEARCH" in self.partial_response_content
+        has_divider = "=======" in self.partial_response_content
+        has_replace = ">>>>>>> REPLACE" in self.partial_response_content
+        edit_match = has_search and has_divider and has_replace
+
+        if edit_match:
+            self.io.tool_output("Detected edit blocks, applying changes within Navigator...")
+            edited_files = self._apply_edits_from_response()
+            # If _apply_edits_from_response set a reflected_message (due to errors),
+            # return False to trigger a reflection loop.
+            if self.reflected_message:
+                return False
 
         # If any tool calls were found and we haven't exceeded reflection limits, set up for another iteration
         # This is implicit continuation when any tool calls are present, rather than requiring Continue explicitly
@@ -319,23 +333,6 @@ class NavigatorCoder(Coder):
                  # Append results to the cleaned content
                  self.partial_response_content += results_block
 
-            # Check if the content contains the SEARCH/REPLACE markers
-            has_search = "<<<<<<< SEARCH" in self.partial_response_content
-            has_divider = "=======" in self.partial_response_content
-            has_replace = ">>>>>>> REPLACE" in self.partial_response_content
-            edit_match = has_search and has_divider and has_replace
-
-            if edit_match:
-                self.io.tool_output("Detected edit blocks, applying changes within Navigator...")
-                edited_files = self._apply_edits_from_response()
-                # If _apply_edits_from_response set a reflected_message (due to errors),
-                # return False to trigger a reflection loop.
-                if self.reflected_message:
-                    return False
-            else:
-                # No edits detected.
-                pass
-
         # After applying edits OR determining no edits were needed (and no reflection needed),
         # the turn is complete. Reset counters and finalize history.
         self.tool_call_count = 0
@@ -347,6 +344,11 @@ class NavigatorCoder(Coder):
     def _process_tool_commands(self, content):
         """
         Process tool commands in the `[tool_call(name, param=value)]` format within the content.
+        
+        Rules:
+        1. Tool calls must appear after the LAST '---' line separator in the content
+        2. Any tool calls before this last separator are treated as text (not executed)
+        
         Returns processed content, result messages, and a flag indicating if any tool calls were found.
         """
         result_messages = []
@@ -355,29 +357,43 @@ class NavigatorCoder(Coder):
         call_count = 0
         max_calls = self.max_tool_calls
 
-        # Find tool calls using a more robust method
-        processed_content = ""
+        # Check if there's a '---' separator and only process tool calls after the LAST one
+        separator_marker = "\n---\n"
+        content_parts = content.split(separator_marker)
+        
+        # If there's no separator, treat the entire content as before the separator
+        if len(content_parts) == 1:
+            # Return the original content with no tool calls processed
+            return content, result_messages, False
+            
+        # Take everything before the last separator (including intermediate separators)
+        content_before_separator = separator_marker.join(content_parts[:-1]) + separator_marker
+        # Take only what comes after the last separator
+        content_after_separator = content_parts[-1]
+        
+        # Find tool calls using a more robust method, but only in the content after separator
+        processed_content = content_before_separator
         last_index = 0
         start_marker = "[tool_call("
         end_marker = "]" # The parenthesis balancing finds the ')', we just need the final ']'
 
         while True:
-            start_pos = content.find(start_marker, last_index)
+            start_pos = content_after_separator.find(start_marker, last_index)
             if start_pos == -1:
-                processed_content += content[last_index:]
+                processed_content += content_after_separator[last_index:]
                 break
 
             # Check for escaped tool call: \[tool_call(
-            if start_pos > 0 and content[start_pos - 1] == '\\':
+            if start_pos > 0 and content_after_separator[start_pos - 1] == '\\':
                 # Append the content including the escaped marker
                 # We append up to start_pos + len(start_marker) to include the marker itself.
-                processed_content += content[last_index : start_pos + len(start_marker)]
+                processed_content += content_after_separator[last_index : start_pos + len(start_marker)]
                 # Update last_index to search after this escaped marker
                 last_index = start_pos + len(start_marker)
                 continue # Continue searching for the next potential marker
 
             # Append content before the (non-escaped) tool call
-            processed_content += content[last_index:start_pos]
+            processed_content += content_after_separator[last_index:start_pos]
 
             scan_start_pos = start_pos + len(start_marker)
             paren_level = 1
@@ -387,8 +403,8 @@ class NavigatorCoder(Coder):
             end_paren_pos = -1
 
             # Scan to find the matching closing parenthesis, respecting quotes
-            for i in range(scan_start_pos, len(content)):
-                char = content[i]
+            for i in range(scan_start_pos, len(content_after_separator)):
+                char = content_after_separator[i]
 
                 if escaped:
                     escaped = False
@@ -411,17 +427,36 @@ class NavigatorCoder(Coder):
             actual_end_marker_start = -1
             end_marker_found = False
             if end_paren_pos != -1: # Only search if we found a closing parenthesis
-                for j in range(expected_end_marker_start, len(content)):
-                    if not content[j].isspace():
+                for j in range(expected_end_marker_start, len(content_after_separator)):
+                    if not content_after_separator[j].isspace():
                         actual_end_marker_start = j
                         # Check if the found character is the end marker ']'
-                        if content[actual_end_marker_start] == end_marker:
+                        if content_after_separator[actual_end_marker_start] == end_marker:
                             end_marker_found = True
                         break # Stop searching after first non-whitespace char
 
             if not end_marker_found:
+                # Try to extract the tool name for better error message
+                tool_name = "unknown"
+                try:
+                    # Look for the first comma after the tool call start
+                    partial_content = content_after_separator[scan_start_pos:scan_start_pos+100]  # Limit to avoid huge strings
+                    comma_pos = partial_content.find(',')
+                    if comma_pos > 0:
+                        tool_name = partial_content[:comma_pos].strip()
+                    else:
+                        # If no comma, look for opening parenthesis or first whitespace
+                        space_pos = partial_content.find(' ')
+                        paren_pos = partial_content.find('(')
+                        if space_pos > 0 and (paren_pos < 0 or space_pos < paren_pos):
+                            tool_name = partial_content[:space_pos].strip()
+                        elif paren_pos > 0:
+                            tool_name = partial_content[:paren_pos].strip()
+                except:
+                    pass  # Silently fail if we can't extract the name
+                
                 # Malformed call: couldn't find matching ')' or the subsequent ']'
-                self.io.tool_warning(f"Malformed tool call starting at index {start_pos}. Skipping (end_paren_pos={end_paren_pos}, end_marker_found={end_marker_found}).")
+                self.io.tool_warning(f"Malformed tool call for '{tool_name}'. Missing closing parenthesis or bracket. Skipping.")
                 # Append the start marker itself to processed content so it's not lost
                 processed_content += start_marker
                 last_index = scan_start_pos # Continue searching after the marker
@@ -429,8 +464,8 @@ class NavigatorCoder(Coder):
 
             # Found a potential tool call
             # Adjust full_match_str and last_index based on the actual end marker ']' position
-            full_match_str = content[start_pos : actual_end_marker_start + 1] # End marker ']' is 1 char
-            inner_content = content[scan_start_pos:end_paren_pos].strip()
+            full_match_str = content_after_separator[start_pos : actual_end_marker_start + 1] # End marker ']' is 1 char
+            inner_content = content_after_separator[scan_start_pos:end_paren_pos].strip()
             last_index = actual_end_marker_start + 1 # Move past the processed call (including ']')
 
 
@@ -444,6 +479,9 @@ class NavigatorCoder(Coder):
             tool_name = None
             params = {}
             result_message = None
+
+            # Mark that we found at least one tool call (assuming it passes validation)
+            tool_calls_found = True
 
             try:
                 # Wrap the inner content to make it parseable as a function call
