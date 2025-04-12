@@ -458,7 +458,11 @@ def get_parser(default_config_files, git_root):
         "--attribute-co-authored-by",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Attribute aider edits using the Co-authored-by trailer in the commit message (default: False).",
+        help=(
+            "Attribute aider edits using the Co-authored-by trailer in the commit message"
+            " (default: False). If True, this takes precedence over default --attribute-author and"
+            " --attribute-committer behavior unless they are explicitly set to True."
+        ),
     )
     group.add_argument(
         "--git-commit-verify",
