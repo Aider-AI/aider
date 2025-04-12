@@ -106,7 +106,7 @@ h11==0.14.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-httpcore==1.0.7
+httpcore==1.0.8
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
@@ -115,7 +115,7 @@ httpx==0.28.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-huggingface-hub==0.30.1
+huggingface-hub==0.30.2
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -156,7 +156,7 @@ jsonschema-specifications==2024.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.65.3
+litellm==1.65.7
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -184,7 +184,7 @@ monotonic==1.6
     # via
     #   -c requirements/common-constraints.txt
     #   posthog
-multidict==6.3.2
+multidict==6.4.3
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -198,7 +198,7 @@ numpy==1.26.4
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.70.0
+openai==1.73.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -224,7 +224,7 @@ pip==25.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==3.23.0
+posthog==3.24.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -253,7 +253,7 @@ pycparser==2.22
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
-pydantic==2.11.2
+pydantic==2.11.3
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -379,7 +379,7 @@ tree-sitter-embedded-template==0.23.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-tree-sitter-language-pack==0.6.1
+tree-sitter-language-pack==0.7.1
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
@@ -387,7 +387,7 @@ tree-sitter-yaml==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-typing-extensions==4.13.1
+typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
     #   anyio
@@ -402,12 +402,12 @@ typing-inspection==0.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
-urllib3==2.3.0
+urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   mixpanel
     #   requests
-watchfiles==1.0.4
+watchfiles==1.0.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -415,7 +415,7 @@ wcwidth==0.2.13
     # via
     #   -c requirements/common-constraints.txt
     #   prompt-toolkit
-yarl==1.18.3
+yarl==1.19.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
