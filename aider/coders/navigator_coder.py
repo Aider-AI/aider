@@ -7,15 +7,6 @@ import random
 import subprocess
 import traceback
 import platform
-import ast
-import re
-import fnmatch
-import os
-import time
-import random
-import subprocess
-import traceback
-import platform
 import locale
 from datetime import datetime
 from pathlib import Path
@@ -27,6 +18,7 @@ from collections import defaultdict
 from .base_coder import Coder
 from .editblock_coder import find_original_update_blocks, do_replace, find_similar_lines
 from .navigator_prompts import NavigatorPrompts
+from .navigator_legacy_prompts import NavigatorLegacyPrompts
 from aider.repo import ANY_GIT_ERROR
 from aider import urls
 # Import run_cmd for potentially interactive execution and run_cmd_subprocess for guaranteed non-interactive
@@ -64,39 +56,55 @@ class NavigatorCoder(Coder):
     """Mode where the LLM autonomously manages which files are in context."""
 
     edit_format = "navigator"
-    gpt_prompts = NavigatorPrompts()
-
+    
+    # Default to using the granular editing prompts
+    use_granular_editing = True
+    
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        # Initialize appropriate prompt set before calling parent constructor
+        # This needs to happen before super().__init__ so the parent class has access to gpt_prompts
+        self.gpt_prompts = NavigatorPrompts() if self.use_granular_editing else NavigatorLegacyPrompts()
 
         # Dictionary to track recently removed files
         self.recently_removed = {}
-        
+
         # Configuration parameters
         self.max_tool_calls = 100          # Maximum number of tool calls per response
-        
+
         # Context management parameters
         self.large_file_token_threshold = 25000  # Files larger than this in tokens are considered large
         self.max_files_per_glob = 50             # Maximum number of files to add at once via glob/grep
-        
+
         # Enable context management by default only in navigator mode
         self.context_management_enabled = True   # Enabled by default for navigator mode
-        
+
         # Initialize change tracker for granular editing
         self.change_tracker = ChangeTracker()
-        
+
         # Track files added during current exploration
         self.files_added_in_exploration = set()
-        
+
         # Counter for tool calls
         self.tool_call_count = 0
-        
+
         # Set high max reflections to allow many exploration rounds
         # This controls how many automatic iterations the LLM can do
         self.max_reflections = 15
-        
+
         # Enable enhanced context blocks by default
         self.use_enhanced_context = True
+        
+        super().__init__(*args, **kwargs)
+        
+    def set_granular_editing(self, enabled):
+        """
+        Switch between granular editing tools and legacy search/replace.
+        
+        Args:
+            enabled (bool): True to use granular editing tools, False to use legacy search/replace
+        """
+        self.use_granular_editing = enabled
+        self.gpt_prompts = NavigatorPrompts() if enabled else NavigatorLegacyPrompts()
 
     def get_context_symbol_outline(self):
         """
