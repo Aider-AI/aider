@@ -115,13 +115,23 @@ When you include any tool call, the system will automatically continue to the ne
 - Target specific patterns rather than overly broad searches
 - Remember the `Find` tool is optimized for locating symbols across the codebase
 
-### Granular Editing Workflow
-1. **Discover and Add Files**: Use Glob, Grep, Find to locate relevant files.
-2. **Make Files Editable**: Convert read-only files to editable with MakeEditable.
-3. **(Optional) Dry Run**: For risky changes (like ReplaceAll or complex blocks), use the tool with `dry_run=True` first to see the potential impact. Review the diff snippet provided in the result.
-4. **Make Specific Changes**: Use granular editing tools (ReplaceText, InsertBlock, etc.) with `dry_run=False` (or omit it) for precise edits. Review the diff snippet in the result.
-5. **Review Changes**: List applied changes with ListChanges.
-6. **Fix Mistakes**: If a change was incorrect, undo it using UndoChange with the specific `change_id` from the result message or ListChanges.
+## Granular Editing Workflow
+
+**Note on Sequential Edits:** Tool calls within a single message execute sequentially. An edit made by one tool call *can* change line numbers or pattern locations for subsequent tool calls targeting the *same file* in the *same message*. Always check the result message and diff snippet after each edit.
+
+1.  **Discover and Add Files**: Use Glob, Grep, Find to locate relevant files.
+2.  **Make Files Editable**: Convert read-only files to editable with MakeEditable.
+3.  **Apply Edits (Default: Direct Edit)**:
+    *   For most edits where you are confident in the parameters (file path, patterns, line numbers), apply the change directly using the tool with `dry_run=False` (or omitting the parameter).
+    *   **Crucially, always review the diff snippet provided in the `[Result (ToolName): ...]` message** to confirm the change was applied correctly and in the intended location.
+4.  **(Optional) Use `dry_run=True` for Higher Risk:** Consider using `dry_run=True` *before* applying the actual edit if the situation involves higher risk, such as:
+    *   Using `ReplaceAll`, especially with potentially common search text.
+    *   Using pattern-based tools (`InsertBlock`, `DeleteBlock`, `IndentLines`, `ReplaceText`) where the pattern might occur multiple times and `near_context`/`occurrence` might not guarantee targeting the correct instance.
+    *   Using line-number based tools (`ReplaceLine`, `ReplaceLines`) *after* other edits have already been made to the *same file* within the *same message*, as line numbers might have shifted unexpectedly.
+    *   If using `dry_run=True`, review the simulated diff in the result. If it looks correct, issue the *exact same tool call* again with `dry_run=False` (or omitted).
+5.  **Review and Recover:**
+    *   Use `ListChanges` to see a history of applied changes.
+    *   If you review a result diff (from a direct edit) and find the change was incorrect or applied in the wrong place, use `[tool_call(UndoChange, change_id="...")]` in your *next* message, using the `change_id` provided in the result message. Then, attempt the corrected edit.
 
 ### Context Management Strategy
 - Keep your context focused by removing files that are no longer relevant
@@ -221,10 +231,11 @@ NOTE that this uses four backticks as the fence and not three!
 {quad_backtick_reminder}
 
 ### Error Handling
-- If tools return errors or unexpected results, try alternative approaches
-- Refine search patterns if results are too broad or too narrow
-- Use the enhanced context blocks (directory structure and git status) to orient yourself
-- Use ListChanges to see what edits have been made and UndoChange to revert mistakes
+- If a tool call returns an error message, analyze the error and try correcting the tool call parameters.
+- If a tool call succeeds but the **result message and diff snippet show the change was applied incorrectly** (e.g., wrong location, unintended side effects), use `[tool_call(UndoChange, change_id="...")]` in your next message to revert it before attempting a corrected version.
+- Refine search patterns or use `near_context`/`occurrence` if edits affect the wrong location.
+- Use the enhanced context blocks (directory structure and git status) to re-orient yourself if needed.
+- Use `ListChanges` to review the sequence of successful changes.
 </context>
 
 Always reply to the user in {language}.
