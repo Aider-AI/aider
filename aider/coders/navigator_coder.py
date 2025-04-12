@@ -762,6 +762,21 @@ class NavigatorCoder(Coder):
                     else:
                         result_message = "Error: Missing 'command_string' parameter for CommandInteractive"
 
+                # Grep tool
+                elif norm_tool_name == 'grep':
+                    pattern = params.get('pattern')
+                    file_pattern = params.get('file_pattern', '*') # Default to all files
+                    directory = params.get('directory', '.') # Default to current directory
+                    use_regex = params.get('use_regex', False) # Default to literal search
+                    case_insensitive = params.get('case_insensitive', False) # Default to case-sensitive
+
+                    if pattern is not None:
+                        # Import the function if not already imported (it should be)
+                        from aider.tools.grep import _execute_grep
+                        result_message = _execute_grep(self, pattern, file_pattern, directory, use_regex, case_insensitive)
+                    else:
+                        result_message = "Error: Missing required 'pattern' parameter for Grep"
+
                 # Granular editing tools
                 elif norm_tool_name == 'replacetext':
                     file_path = params.get('file_path')
