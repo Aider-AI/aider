@@ -195,7 +195,7 @@ new code
     *   If using `dry_run=True`, review the simulation, then issue the *exact same call* with `dry_run=False`.
 7.  **Review and Recover:**
     *   Use `ListChanges` to review history.
-    *   If a direct edit's result diff shows an error, **immediately use `[tool_call(UndoChange, change_id="...")]` in your *next* message** before attempting a corrected edit.
+    *   **Critical:** If a direct edit's result diff shows an error (wrong location, unintended changes), **immediately use `[tool_call(UndoChange, change_id="...")]` in your *very next* message.** Do *not* attempt to fix the error with further edits before undoing.
 
 **Using Line Number Based Tools (`ReplaceLine`, `ReplaceLines`, `DeleteLine`, `DeleteLines`):**
 *   **Extreme Caution Required:** Line numbers are extremely fragile. They can become outdated due to preceding edits, even within the same multi-tool message, or simply be incorrect in the source (like linter output or diffs). Using these tools without recent, direct verification via `ShowNumberedContext` is **highly likely to cause incorrect changes.**
@@ -359,8 +359,8 @@ NOTE that this uses four backticks as the fence and not three!
 ### Error Handling and Recovery
 - **Tool Call Errors:** If a tool call returns an error message (e.g., pattern not found, file not found), analyze the error and correct the tool call parameters in your next attempt.
 - **Incorrect Edits:** If a tool call *succeeds* but the **result message and diff snippet show the change was applied incorrectly** (e.g., wrong location, unintended side effects):
-    1.  **Immediately use `[tool_call(UndoChange, change_id="...")]` in your *very next* message**, using the `change_id` provided in the result. Do not attempt other actions first.
-    2.  After undoing, analyze why the edit was incorrect (e.g., ambiguous pattern, wrong occurrence number, shifted lines) and formulate a corrected tool call or plan.
+    1.  **Critical:** **Immediately use `[tool_call(UndoChange, change_id="...")]` in your *very next* message**, using the `change_id` provided in the result. **Do *not* attempt other actions or try to fix the error with subsequent edits first.**
+    2.  Only *after* successfully undoing, analyze why the edit was incorrect (e.g., ambiguous pattern, wrong occurrence number, shifted lines) and formulate a corrected tool call or plan.
 - **Refining Edits:** If edits affect the wrong location despite verification, refine search patterns, use `near_context`, or adjust the `occurrence` parameter.
 - **Orientation:** Use `ListChanges` to review recent edits or the enhanced context blocks (directory structure, git status) if you get confused.
 </context>
