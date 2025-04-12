@@ -501,7 +501,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
-    print(f"DEBUG: After final parse, args.attribute_co_authored_by = {args.attribute_co_authored_by}") # DEBUG
 
     if git is None:
         args.git = False
@@ -892,7 +891,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     repo = None
     if args.git:
         try:
-            print(f"DEBUG: Before GitRepo init, args.attribute_co_authored_by = {args.attribute_co_authored_by}") # DEBUG
             repo = GitRepo(
                 io,
                 fnames,
