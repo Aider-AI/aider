@@ -187,28 +187,28 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
     *   Use `ListChanges` to review history.
     *   If a direct edit's result diff shows an error, **immediately use `[tool_call(UndoChange, change_id="...")]` in your *next* message** before attempting a corrected edit.
 
-**Using Line Number Based Tools (`ReplaceLine`, `ReplaceLines`):**
-*   **High Risk:** Line numbers are fragile and can become outdated due to preceding edits, even within the same multi-tool message. Using these tools without recent verification can lead to incorrect changes.
-*   **Mandatory Verification Workflow:**
-    1.  **Identify Target Location:** Determine the approximate location using line numbers (e.g., from linter output) or nearby text.
-    2.  **View Numbered Context (Separate Turn):** In one message, use `ShowNumberedContext` specifying *either* the `line_number` or a nearby `pattern` to display numbered lines for the target area.
+**Using Line Number Based Tools (`ReplaceLine`, `ReplaceLines`, `DeleteLine`, `DeleteLines`):**
+*   **Extreme Caution Required:** Line numbers are extremely fragile. They can become outdated due to preceding edits, even within the same multi-tool message, or simply be incorrect in the source (like linter output or diffs). Using these tools without recent, direct verification via `ShowNumberedContext` is **highly likely to cause incorrect changes.**
+*   **Mandatory Verification Workflow (No Exceptions):**
+    1.  **Identify Target Location:** Determine the *approximate* location. **Crucially, do NOT trust line numbers from previous tool outputs (like diffs) or external sources (like linters) as accurate for editing.** They are only starting points for verification.
+    2.  **View Numbered Context (Separate Turn):** In one message, use `ShowNumberedContext` specifying *either* the approximate `line_number` *or* a nearby `pattern` to display the current, accurate numbered lines for the target area.
         ```
-        # Example using line number
+        # Example using potentially outdated line number for verification target
         ---
-        [tool_call(ShowNumberedContext, file_path="path/to/file.py", line_number=APPROX_LINE, context_lines=5)]
+        [tool_call(ShowNumberedContext, file_path="path/to/file.py", line_number=APPROX_LINE_FROM_LINTER, context_lines=5)]
         ```
         ```
-        # Example using pattern
+        # Example using pattern near the target
         ---
         [tool_call(ShowNumberedContext, file_path="path/to/file.py", pattern="text_near_target", context_lines=5)]
         ```
-    3.  **Verify:** Carefully examine the numbered output in the result message to confirm the *exact* line numbers and content you intend to modify.
-    4.  **Edit (Next Turn):** Only in the *next* message, issue the `ReplaceLine` or `ReplaceLines` command using the verified line numbers.
+    3.  **Verify:** Carefully examine the numbered output in the result message. This is the **only** reliable source for the line numbers you will use. Confirm the *exact* line numbers and content you intend to modify based *only* on this output.
+    4.  **Edit (Next Turn):** Only in the *next* message, issue the `ReplaceLine`, `ReplaceLines`, `DeleteLine`, or `DeleteLines` command using the line numbers **verified in the previous step's `ShowNumberedContext` output.**
         ```
         ---
-        [tool_call(ReplaceLine, file_path="path/to/file.py", line_number=VERIFIED_LINE, new_content="...")]
+        [tool_call(ReplaceLine, file_path="path/to/file.py", line_number=VERIFIED_LINE_FROM_SHOW_NUMBERED_CONTEXT, new_content="...")]
         ```
-*   **Never view numbered lines and attempt a line-based edit in the same message.**
+*   **Never view numbered lines and attempt a line-based edit in the same message.** This workflow *must* span two separate turns.
 
 ### Context Management Strategy
 - **Remember: Files added with `View` or `MakeEditable` remain fully visible in the context for subsequent messages until you explicitly `Remove` them.**
