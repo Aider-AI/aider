@@ -49,7 +49,6 @@ from aider.tools.undo_change import _execute_undo_change
 from aider.tools.list_changes import _execute_list_changes
 from aider.tools.extract_lines import _execute_extract_lines
 from aider.tools.show_numbered_context import execute_show_numbered_context
-from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol # Import the function
 
 
 class NavigatorCoder(Coder):
@@ -1513,7 +1512,6 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         
         return True
         
-    # ------------------- Helper for finding occurrences -------------------
 
     def _find_occurrences(self, content, pattern, near_context=None):
         """Find all occurrences of pattern, optionally filtered by near_context."""
@@ -1540,7 +1538,6 @@ Just reply with fixed versions of the {blocks} above that failed to match.
     # ------------------- Helper for finding occurrences -------------------
 
 
-    # ------------------- Granular Editing Tools -------------------
     
     
             
