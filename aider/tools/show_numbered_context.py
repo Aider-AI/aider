@@ -1,6 +1,6 @@
 import os
 
-def execute_view_numbered_context(coder, file_path, pattern=None, line_number=None, context_lines=3):
+def execute_show_numbered_context(coder, file_path, pattern=None, line_number=None, context_lines=3):
     """
     Displays numbered lines from file_path centered around a target location
     (pattern or line_number), without adding the file to context.

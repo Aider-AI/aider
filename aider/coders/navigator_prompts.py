@@ -105,7 +105,7 @@ Act as an expert software engineer with the ability to autonomously navigate and
   Extract lines from `start_pattern` to `end_pattern` (or use `line_count`) in `source_file_path` and move them to `target_file_path`. Creates `target_file_path` if it doesn't exist. Use `near_context` and `occurrence` (optional, default 1, -1 for last) for `start_pattern`. `dry_run=True` simulates.
   *Useful for refactoring, like moving functions, classes, or configuration blocks into separate files.*
 
-- **ViewNumberedContext**: `[tool_call(ViewNumberedContext, file_path="path/to/file.py", pattern="optional_text", line_number=optional_int, context_lines=3)]`
+- **ShowNumberedContext**: `[tool_call(ShowNumberedContext, file_path="path/to/file.py", pattern="optional_text", line_number=optional_int, context_lines=3)]`
   Displays numbered lines from `file_path` centered around a target location, without adding the file to context. Provide *either* `pattern` (to find the first occurrence) *or* `line_number` (1-based) to specify the center point. Returns the target line(s) plus `context_lines` (default 3) of surrounding context directly in the result message. Crucial for verifying exact line numbers and content before using `ReplaceLine` or `ReplaceLines`.
 
 ### Other Tools
@@ -165,8 +165,8 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
 2.  **Make Files Editable**: Use `MakeEditable` for files you intend to change. Can be combined in the same message as subsequent edits to that file.
 3.  **Plan & Confirm Edits (If Needed)**: Determine necessary edits. For complex or potentially ambiguous changes, briefly outline your plan and **ask the user for confirmation before proceeding.** For simple, direct changes, proceed to verification.
 4.  **Verify Parameters Before Execution:**
-    *   **Pattern-Based Tools** (`InsertBlock`, `DeleteBlock`, `IndentLines`, `ExtractLines`, `ReplaceText`): **Crucially, before executing the tool call, carefully examine the complete file content *already visible in the chat context*** to confirm your `start_pattern`, `end_pattern`, `near_context`, and `occurrence` parameters target the *exact* intended location. Do *not* rely on memory. This verification uses the existing context, *not* `ViewNumberedContext`. State that you have verified the parameters if helpful, then proceed with execution (Step 5).
-    *   **Line-Number Based Tools** (`ReplaceLine`, `ReplaceLines`): **Mandatory Verification Workflow:** Follow the strict two-turn process using `ViewNumberedContext` as detailed below. Never view and edit lines in the same turn.
+    *   **Pattern-Based Tools** (`InsertBlock`, `DeleteBlock`, `IndentLines`, `ExtractLines`, `ReplaceText`): **Crucially, before executing the tool call, carefully examine the complete file content *already visible in the chat context*** to confirm your `start_pattern`, `end_pattern`, `near_context`, and `occurrence` parameters target the *exact* intended location. Do *not* rely on memory. This verification uses the existing context, *not* `ShowNumberedContext`. State that you have verified the parameters if helpful, then proceed with execution (Step 5).
+    *   **Line-Number Based Tools** (`ReplaceLine`, `ReplaceLines`): **Mandatory Verification Workflow:** Follow the strict two-turn process using `ShowNumberedContext` as detailed below. Never view and edit lines in the same turn.
 5.  **Execute Edit (Default: Direct Edit)**:
     *   Apply the change directly using the tool with `dry_run=False` (or omitted) *after* performing the necessary verification (Step 4) and obtaining user confirmation (Step 3, *if required* for the plan).
     *   **Immediately review the diff snippet in the `[Result (ToolName): ...]` message** to confirm the change was correct.
@@ -183,16 +183,16 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
 *   **High Risk:** Line numbers are fragile and can become outdated due to preceding edits, even within the same multi-tool message. Using these tools without recent verification can lead to incorrect changes.
 *   **Mandatory Verification Workflow:**
     1.  **Identify Target Location:** Determine the approximate location using line numbers (e.g., from linter output) or nearby text.
-    2.  **View Numbered Context (Separate Turn):** In one message, use `ViewNumberedContext` specifying *either* the `line_number` or a nearby `pattern` to display numbered lines for the target area.
+    2.  **View Numbered Context (Separate Turn):** In one message, use `ShowNumberedContext` specifying *either* the `line_number` or a nearby `pattern` to display numbered lines for the target area.
         ```
         # Example using line number
         ---
-        [tool_call(ViewNumberedContext, file_path="path/to/file.py", line_number=APPROX_LINE, context_lines=5)]
+        [tool_call(ShowNumberedContext, file_path="path/to/file.py", line_number=APPROX_LINE, context_lines=5)]
         ```
         ```
         # Example using pattern
         ---
-        [tool_call(ViewNumberedContext, file_path="path/to/file.py", pattern="text_near_target", context_lines=5)]
+        [tool_call(ShowNumberedContext, file_path="path/to/file.py", pattern="text_near_target", context_lines=5)]
         ```
     3.  **Verify:** Carefully examine the numbered output in the result message to confirm the *exact* line numbers and content you intend to modify.
     4.  **Edit (Next Turn):** Only in the *next* message, issue the `ReplaceLine` or `ReplaceLines` command using the verified line numbers.
@@ -221,7 +221,7 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
 - `ReplaceAll`: **Use with extreme caution!** Best suited for targeted renaming across a file. Consider `dry_run=True` first. Can easily cause unintended changes if `find_text` is common.
 - `InsertBlock`: For adding code blocks.
 - `DeleteBlock`: For removing code sections.
-- `ReplaceLine`/`ReplaceLines`: For line-specific fixes (requires strict `ViewNumberedContext` verification).
+- `ReplaceLine`/`ReplaceLines`: For line-specific fixes (requires strict `ShowNumberedContext` verification).
 - `IndentLines`: For adjusting indentation.
 - `ExtractLines`: For moving code between files.
 - `UndoChange`: For reverting specific edits.
@@ -229,7 +229,7 @@ SEARCH/REPLACE blocks can appear anywhere in your response if needed.
 
 #### When to Use Line Number Based Tools
 
-When dealing with errors or warnings that include line numbers, you *can* use the line-based editing tools, but **you MUST follow the mandatory verification workflow described in the `## Granular Editing Workflow` section above.** This involves using `ViewNumberedContext` in one turn to verify the lines, and then using `ReplaceLine`/`ReplaceLines` in the *next* turn.
+When dealing with errors or warnings that include line numbers, you *can* use the line-based editing tools, but **you MUST follow the mandatory verification workflow described in the `## Granular Editing Workflow` section above.** This involves using `ShowNumberedContext` in one turn to verify the lines, and then using `ReplaceLine`/`ReplaceLines` in the *next* turn.
 
 ```
 Error in /path/to/file.py line 42: Syntax error: unexpected token
