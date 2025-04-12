@@ -1,102 +1,3 @@
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 14510, "completion_tokens": 335, "total_tokens": 14845, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756197}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756210}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756297}
-{"event": "repo", "properties": {"num_files": 587}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756297}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756297}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756297}
-{"event": "command_context", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756307}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756309}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 8884, "completion_tokens": 158, "total_tokens": 9042, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756319}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756319}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 10358, "completion_tokens": 395, "total_tokens": 10753, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756331}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756331}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 18953, "completion_tokens": 241, "total_tokens": 19194, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756340}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756343}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 16618, "completion_tokens": 300, "total_tokens": 16918, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756353}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756373}
-{"event": "command_context", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756379}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756379}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 19558, "completion_tokens": 206, "total_tokens": 19764, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756403}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756404}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 27048, "completion_tokens": 234, "total_tokens": 27282, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756414}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756438}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 25111, "completion_tokens": 411, "total_tokens": 25522, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756453}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756465}
-{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756471}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756485}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 25580, "completion_tokens": 408, "total_tokens": 25988, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756495}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756521}
-{"event": "repo", "properties": {"num_files": 587}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756521}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756521}
-{"event": "cli session", "properties": {"main_model": "openrouter/openrouter/quasar-alpha", "weak_model": "openrouter/openrouter/quasar-alpha", "editor_model": "openrouter/openrouter/quasar-alpha", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756521}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756523}
-{"event": "message_send", "properties": {"main_model": "openrouter/openrouter/quasar-alpha", "weak_model": "openrouter/openrouter/quasar-alpha", "editor_model": "openrouter/openrouter/quasar-alpha", "edit_format": "diff", "prompt_tokens": 11257, "completion_tokens": 31, "total_tokens": 11288, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756528}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756532}
-{"event": "message_send", "properties": {"main_model": "openrouter/openrouter/quasar-alpha", "weak_model": "openrouter/openrouter/quasar-alpha", "editor_model": "openrouter/openrouter/quasar-alpha", "edit_format": "diff", "prompt_tokens": 11297, "completion_tokens": 31, "total_tokens": 11328, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756535}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756535}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756600}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756615}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756615}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756615}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756615}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756661}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756661}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756661}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756661}
-{"event": "message_send", "properties": {"main_model": "openrouter/openrouter/quasar-alpha", "weak_model": "openrouter/openrouter/quasar-alpha", "editor_model": "openrouter/openrouter/quasar-alpha", "edit_format": "diff", "prompt_tokens": 2740, "completion_tokens": 179, "total_tokens": 2919, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756666}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756666}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756708}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756708}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756708}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756708}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756709}
-{"event": "repo", "properties": {"num_files": 587}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756709}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756709}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756709}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 5645, "completion_tokens": 236, "total_tokens": 5881, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756721}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756721}
-{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756723}
-{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756725}
-{"event": "command_context", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756739}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756739}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 41993, "completion_tokens": 179, "total_tokens": 42172, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756767}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756767}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 38088, "completion_tokens": 93, "total_tokens": 38181, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756779}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756779}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 17389, "completion_tokens": 93, "total_tokens": 17482, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756783}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756785}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 14693, "completion_tokens": 188, "total_tokens": 14881, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756790}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756802}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756808}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756808}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756808}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756808}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 6066, "completion_tokens": 216, "total_tokens": 6282, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756821}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743756821}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757154}
-{"event": "repo", "properties": {"num_files": 587}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757154}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757154}
-{"event": "cli session", "properties": {"main_model": "openrouter/openrouter/quasar-alpha", "weak_model": "openrouter/openrouter/quasar-alpha", "editor_model": "openrouter/openrouter/quasar-alpha", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757154}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757155}
-{"event": "message_send", "properties": {"main_model": "openrouter/openrouter/quasar-alpha", "weak_model": "openrouter/openrouter/quasar-alpha", "editor_model": "openrouter/openrouter/quasar-alpha", "edit_format": "diff", "prompt_tokens": 11281, "completion_tokens": 31, "total_tokens": 11312, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757162}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757164}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757216}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757216}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757216}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757216}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757216}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757216}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
 {"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
 {"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
 {"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1743757217}
@@ -998,3 +899,102 @@
 {"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744317493}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744317493}
 {"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 14989, "completion_tokens": 614, "total_tokens": 15603, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744317501}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328312}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328388}
+{"event": "repo", "properties": {"num_files": 588}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328405}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328405}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328405}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328483}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328557}
+{"event": "repo", "properties": {"num_files": 588}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328565}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328565}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328565}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328991}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328993}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328993}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744328993}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329010}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329012}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329012}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329012}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329076}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329078}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329078}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329078}
+{"event": "message_send", "properties": {"main_model": "openrouter/REDACTED", "weak_model": "openrouter/REDACTED", "editor_model": "openrouter/REDACTED", "edit_format": "whole", "prompt_tokens": 593, "completion_tokens": 535, "total_tokens": 1128, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329082}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329082}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329107}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329110}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329110}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329110}
+{"event": "message_send", "properties": {"main_model": "openrouter/REDACTED", "weak_model": "openrouter/REDACTED", "editor_model": "openrouter/REDACTED", "edit_format": "whole", "prompt_tokens": 593, "completion_tokens": 535, "total_tokens": 1128, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329114}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329114}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329146}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329148}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329148}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329148}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329148}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329389}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329395}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329395}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329395}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329401}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329455}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329456}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329456}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329456}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329481}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329483}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329483}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329483}
+{"event": "message_send", "properties": {"main_model": "xai/grok-3-mini-beta", "weak_model": "xai/grok-3-mini-beta", "editor_model": "xai/grok-3-mini-beta", "edit_format": "whole", "prompt_tokens": 593, "completion_tokens": 631, "total_tokens": 1224, "cost": 0.0004934, "total_cost": 0.0004934}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329486}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744329486}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744335667}
+{"event": "repo", "properties": {"num_files": 588}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744335667}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744335667}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744335671}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433849}
+{"event": "repo", "properties": {"num_files": 588}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433850}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433850}
+{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433851}
+{"event": "command_context", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433926}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433926}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 7601, "completion_tokens": 86, "total_tokens": 7687, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433947}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433947}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 9053, "completion_tokens": 174, "total_tokens": 9227, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433958}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433958}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "context", "prompt_tokens": 13608, "completion_tokens": 239, "total_tokens": 13847, "cost": 0.0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744433970}
+{"event": "command_reset", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434013}
+{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434018}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434019}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 8286, "completion_tokens": 167, "total_tokens": 8453, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434024}
+{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434083}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434086}
+{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434101}
+{"event": "command_reasoning-effort", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434107}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434109}
+{"event": "message_send", "properties": {"main_model": "o3-mini", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff", "prompt_tokens": 8207, "completion_tokens": 222, "total_tokens": 8429, "cost": 0.0100045, "total_cost": 0.0100045}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434133}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434133}
+{"event": "message_send", "properties": {"main_model": "o3-mini", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff", "prompt_tokens": 8744, "completion_tokens": 123, "total_tokens": 8867, "cost": 0.010159600000000001, "total_cost": 0.0201641}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434165}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434194}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434225}
+{"event": "repo", "properties": {"num_files": 588}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434226}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434226}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-3-7-sonnet-20250219", "weak_model": "anthropic/claude-3-5-haiku-20241022", "editor_model": "anthropic/claude-3-7-sonnet-20250219", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434226}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434228}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434250}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434273}
+{"event": "repo", "properties": {"num_files": 588}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434273}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434273}
+{"event": "cli session", "properties": {"main_model": "openrouter/anthropic/claude-3.7-sonnet", "weak_model": "openrouter/anthropic/claude-3-5-haiku", "editor_model": "openrouter/anthropic/claude-3.7-sonnet", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434273}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434275}
+{"event": "message_send", "properties": {"main_model": "openrouter/anthropic/claude-3.7-sonnet", "weak_model": "openrouter/anthropic/claude-3-5-haiku", "editor_model": "openrouter/anthropic/claude-3.7-sonnet", "edit_format": "diff", "prompt_tokens": 8382, "completion_tokens": 529, "total_tokens": 8911, "cost": 0.033081, "total_cost": 0.033081}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434287}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434352}
+{"event": "message_send", "properties": {"main_model": "openrouter/anthropic/claude-3.7-sonnet", "weak_model": "openrouter/anthropic/claude-3-5-haiku", "editor_model": "openrouter/anthropic/claude-3.7-sonnet", "edit_format": "diff", "prompt_tokens": 8970, "completion_tokens": 259, "total_tokens": 9229, "cost": 0.030795, "total_cost": 0.063876}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434360}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744434380}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744473394}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744473394}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744473394}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744473394}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.0-flash", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff-fenced", "prompt_tokens": 4045, "completion_tokens": 241, "total_tokens": 4286, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744473409}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1744473409}

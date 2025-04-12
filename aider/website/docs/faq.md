@@ -264,11 +264,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>1,370,308</td><td class='right'>80.8%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>269,898</td><td class='right'>15.9%</td></tr>
-<tr><td>openrouter/openrouter/quasar-alpha</td><td class='right'>36,847</td><td class='right'>2.2%</td></tr>
-<tr><td>openrouter/x-ai/grok-3-mini-beta</td><td class='right'>16,987</td><td class='right'>1.0%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>1,843</td><td class='right'>0.1%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>1,119,621</td><td class='right'>77.4%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>269,898</td><td class='right'>18.6%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>18,140</td><td class='right'>1.3%</td></tr>
+<tr><td>o3-mini</td><td class='right'>17,296</td><td class='right'>1.2%</td></tr>
+<tr><td>openrouter/x-ai/grok-3-mini-beta</td><td class='right'>16,987</td><td class='right'>1.2%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>4,099</td><td class='right'>0.3%</td></tr>
+<tr><td>xai/grok-3-mini-beta</td><td class='right'>1,224</td><td class='right'>0.1%</td></tr>
 </table>
 
 {: .note :}
