@@ -186,10 +186,11 @@ class TestMain(TestCase):
             git_dir = Path(git_dir)
             git_env = git_dir / ".env"
 
-            fake_home = git_dir / "fake_home"
-            fake_home.mkdir()
-            os.environ["HOME"] = str(fake_home)
-            home_env = fake_home / ".env"
+            # Create fake platform directory
+            fake_platform_dir = git_dir / "fake_config"
+            fake_platform_dir.mkdir()
+            os.environ["XDG_CONFIG_HOME"] = str(fake_platform_dir)
+            platform_env = fake_platform_dir / ".env"
 
             cwd = git_dir / "subdir"
             cwd.mkdir()
@@ -199,18 +200,18 @@ class TestMain(TestCase):
             named_env = git_dir / "named.env"
 
             os.environ["E"] = "existing"
-            home_env.write_text("A=home\nB=home\nC=home\nD=home")
+            platform_env.write_text("A=platform\nB=platform\nC=platform\nD=platform")
             git_env.write_text("A=git\nB=git\nC=git")
             cwd_env.write_text("A=cwd\nB=cwd")
             named_env.write_text("A=named")
 
-            with patch("pathlib.Path.home", return_value=fake_home):
+            with patch("aider.main.get_aider_config_dir", return_value=fake_platform_dir):
                 main(["--yes", "--exit", "--env-file", str(named_env)])
 
             self.assertEqual(os.environ["A"], "named")
             self.assertEqual(os.environ["B"], "cwd")
             self.assertEqual(os.environ["C"], "git")
-            self.assertEqual(os.environ["D"], "home")
+            self.assertEqual(os.environ["D"], "platform")
             self.assertEqual(os.environ["E"], "existing")
 
     def test_message_file_flag(self):
@@ -409,10 +410,10 @@ class TestMain(TestCase):
         with GitTemporaryDirectory() as git_dir:
             git_dir = Path(git_dir)
 
-            # Create fake home directory
-            fake_home = git_dir / "fake_home"
-            fake_home.mkdir()
-            os.environ["HOME"] = str(fake_home)
+            # Create fake platform directory
+            fake_platform_dir = git_dir / "fake_config"
+            fake_platform_dir.mkdir()
+            os.environ["XDG_CONFIG_HOME"] = str(fake_platform_dir)
 
             # Create subdirectory as current working directory
             cwd = git_dir / "subdir"
@@ -420,18 +421,18 @@ class TestMain(TestCase):
             os.chdir(cwd)
 
             # Create .aider.conf.yml files in different locations
-            home_config = fake_home / ".aider.conf.yml"
+            platform_config = fake_platform_dir / ".aider.conf.yml"
             git_config = git_dir / ".aider.conf.yml"
             cwd_config = cwd / ".aider.conf.yml"
             named_config = git_dir / "named.aider.conf.yml"
 
             cwd_config.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
             git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
-            home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+            platform_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
             named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
 
             with (
-                patch("pathlib.Path.home", return_value=fake_home),
+                patch("aider.main.get_aider_config_dir", return_value=fake_platform_dir),
                 patch("aider.coders.Coder.create") as MockCoder,
             ):
                 # Test loading from specified config file
@@ -459,7 +460,7 @@ class TestMain(TestCase):
                 self.assertEqual(kwargs["main_model"].name, "gpt-4")
                 self.assertEqual(kwargs["map_tokens"], 2048)
 
-                # Test loading from home directory
+                # Test loading from platform config directory
                 git_config.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
@@ -1297,14 +1298,12 @@ class TestMain(TestCase):
         with GitTemporaryDirectory() as git_dir:
             git_dir = Path(git_dir)
 
-            # Create fake home and .aider directory
-            fake_home = git_dir / "fake_home"
-            fake_home.mkdir()
-            aider_dir = fake_home / ".aider"
-            aider_dir.mkdir()
+            # Create fake platform config directories
+            fake_platform_dir = git_dir / "fake_config"
+            fake_platform_dir.mkdir(parents=True)
 
-            # Create oauth keys file
-            oauth_keys_file = aider_dir / "oauth-keys.env"
+            # Create oauth keys file in platform config dir
+            oauth_keys_file = fake_platform_dir / "oauth-keys.env"
             oauth_keys_file.write_text("OAUTH_VAR=oauth_val\nSHARED_VAR=oauth_shared\n")
 
             # Create git root .env file
@@ -1326,7 +1325,7 @@ class TestMain(TestCase):
                 if var in os.environ:
                     del os.environ[var]
 
-            with patch("pathlib.Path.home", return_value=fake_home):
+            with patch("aider.main.get_aider_config_dir", return_value=fake_platform_dir):
                 loaded_files = load_dotenv_files(str(git_dir), None)
 
                 # Assert files were loaded in expected order (oauth first)

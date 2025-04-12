@@ -8,7 +8,7 @@ import webbrowser
 
 from aider import __version__
 from aider.urls import github_issues
-from aider.versioncheck import VERSION_CHECK_FNAME
+from aider.utils import get_aider_cache_dir
 
 FENCE = "`" * 3
 
@@ -100,9 +100,11 @@ def exception_handler(exc_type, exc_value, exc_traceback):
     sys.excepthook = None
 
     # Check if VERSION_CHECK_FNAME exists and delete it if so
+    cache_dir = get_aider_cache_dir()
     try:
-        if VERSION_CHECK_FNAME.exists():
-            VERSION_CHECK_FNAME.unlink()
+        version_check_fname = cache_dir / "versioncheck"
+        if version_check_fname.exists():
+            version_check_fname.unlink()
     except Exception:
         pass  # Swallow any errors
 

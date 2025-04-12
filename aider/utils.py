@@ -3,9 +3,11 @@ import platform
 import subprocess
 import sys
 import tempfile
+from functools import cache
 from pathlib import Path
 
 import oslex
+import platformdirs
 
 from aider.dump import dump  # noqa: F401
 from aider.waiting import Spinner
@@ -97,6 +99,97 @@ def safe_abs_path(res):
     "Gives an abs path, which safely returns a full (not 8.3) windows path"
     res = Path(res).resolve()
     return str(res)
+
+
+@cache
+def _get_aider_path(dir_type):
+    """
+    Internal helper to determine the appropriate directory for aider's persistent files,
+    respecting backward compatibility with ~/.aider. Creates the directory if needed.
+
+    Args:
+        dir_type (str): 'config', 'data', or 'cache'.
+
+    Returns:
+        Path or None: The determined path, or None on error.
+    """
+    legacy_path = Path.home() / ".aider"
+    target_path = None
+
+    if legacy_path.is_dir():
+        # Legacy path exists, use it as the base
+        if dir_type == "cache":
+            target_path = legacy_path / "caches"
+        else:  # config and data share the root legacy path
+            target_path = legacy_path
+    else:
+        # Legacy path doesn't exist, use platform paths
+        try:
+            if dir_type == "config":
+                target_path = Path(platformdirs.user_config_dir("aider", "Aider"))
+            elif dir_type == "data":
+                target_path = Path(platformdirs.user_data_dir("aider", "Aider"))
+            elif dir_type == "cache":
+                target_path = Path(platformdirs.user_cache_dir("aider", "Aider"))
+            else:
+                print(
+                    f"Warning: Invalid directory type '{dir_type}' requested.",
+                    file=sys.stderr,
+                )
+                return None
+        except Exception as e:
+            print(
+                f"Warning: Could not determine platform user {dir_type} directory: {e}",
+                file=sys.stderr,
+            )
+            return None
+
+    # Ensure the target directory exists
+    try:
+        target_path.mkdir(parents=True, exist_ok=True)
+        return target_path
+    except OSError as e:
+        print(
+            f"Warning: Could not create {dir_type} directory {target_path}: {e}",
+            file=sys.stderr,
+        )
+        return None
+    except Exception as e:
+        print(
+            (
+                f"Warning: An unexpected error occurred creating {dir_type} directory"
+                f" {target_path}: {e}"
+            ),
+            file=sys.stderr,
+        )
+        return None
+
+
+@cache
+def get_aider_config_dir():
+    """
+    Returns the path to the configuration directory (Platform or legacy ~/.aider).
+    Returns None on error.
+    """
+    return _get_aider_path("config")
+
+
+@cache
+def get_aider_data_dir():
+    """
+    Returns the path to the data directory (Platform or legacy ~/.aider).
+    Returns None on error.
+    """
+    return _get_aider_path("data")
+
+
+@cache
+def get_aider_cache_dir():
+    """
+    Returns the path to the cache directory (Platform or legacy ~/.aider/caches).
+    Returns None on error.
+    """
+    return _get_aider_path("cache")
 
 
 def format_content(role, content):

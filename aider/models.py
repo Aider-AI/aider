@@ -20,7 +20,7 @@ from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
-from aider.utils import check_pip_install_extra
+from aider.utils import check_pip_install_extra, get_aider_cache_dir
 
 RETRY_TIMEOUT = 60
 
@@ -145,7 +145,7 @@ class ModelInfoManager:
     CACHE_TTL = 60 * 60 * 24  # 24 hours
 
     def __init__(self):
-        self.cache_dir = Path.home() / ".aider" / "caches"
+        self.cache_dir = get_aider_cache_dir()
         self.cache_file = self.cache_dir / "model_prices_and_context_window.json"
         self.content = None
         self.local_model_metadata = {}
@@ -164,8 +164,14 @@ class ModelInfoManager:
         if self._cache_loaded:
             return
 
+        if not self.cache_dir or not self.cache_file:
+            # If cache dir couldn't be determined, don't attempt to load/use cache
+            self._cache_loaded = True
+            return
+
         try:
-            self.cache_dir.mkdir(parents=True, exist_ok=True)
+            # cache_dir is already created by get_aider_cache_dir if possible
+            # self.cache_dir.mkdir(parents=True, exist_ok=True) # No longer needed here
             if self.cache_file.exists():
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
@@ -211,6 +217,11 @@ class ModelInfoManager:
             self._update_cache()
 
         if not self.content:
+            return dict()
+
+        # Check if self.content is actually a dict before proceeding
+        if not isinstance(self.content, dict):
+            # Cache might be corrupted or invalid format
             return dict()
 
         info = self.content.get(model, dict())
@@ -878,20 +889,24 @@ class Model(ModelSettings):
     def github_copilot_token_to_open_ai_key(self):
         # check to see if there's an openai api key
         # If so, check to see if it's expire
-        openai_api_key = 'OPENAI_API_KEY'
+        openai_api_key = "OPENAI_API_KEY"
 
         if openai_api_key not in os.environ or (
-            int(dict(x.split("=") for x in os.environ[openai_api_key].split(";"))['exp']) < int(datetime.now().timestamp())
+            int(dict(x.split("=") for x in os.environ[openai_api_key].split(";"))["exp"])
+            < int(datetime.now().timestamp())
         ):
             import requests
+
             headers = {
-                'Authorization': f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
-                'Editor-Version': self.extra_params['extra_headers']['Editor-Version'],
-                'Copilot-Integration-Id': self.extra_params['extra_headers']['Copilot-Integration-Id'],
-                'Content-Type': 'application/json',
+                "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
+                "Editor-Version": self.extra_params["extra_headers"]["Editor-Version"],
+                "Copilot-Integration-Id": self.extra_params["extra_headers"][
+                    "Copilot-Integration-Id"
+                ],
+                "Content-Type": "application/json",
             }
             res = requests.get("https://api.github.com/copilot_internal/v2/token", headers=headers)
-            os.environ[openai_api_key] = res.json()['token']
+            os.environ[openai_api_key] = res.json()["token"]
 
     def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
@@ -935,7 +950,7 @@ class Model(ModelSettings):
         kwargs["messages"] = messages
 
         # Are we using github copilot?
-        if 'GITHUB_COPILOT_TOKEN' in os.environ:
+        if "GITHUB_COPILOT_TOKEN" in os.environ:
             self.github_copilot_token_to_open_ai_key()
 
         res = litellm.completion(**kwargs)

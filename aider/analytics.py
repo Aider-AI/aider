@@ -3,7 +3,6 @@ import platform
 import sys
 import time
 import uuid
-from pathlib import Path
 
 from mixpanel import MixpanelException
 from posthog import Posthog
@@ -11,6 +10,7 @@ from posthog import Posthog
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.models import model_info_manager
+from aider.utils import get_aider_config_dir
 
 PERCENT = 10
 
@@ -106,7 +106,7 @@ class Analytics:
         if permanently:
             self.asked_opt_in = True
             self.permanently_disable = True
-            self.save_data()
+            self.save_config()
 
     def need_to_ask(self, args_analytics):
         if args_analytics is False:
@@ -126,51 +126,50 @@ class Analytics:
 
         return is_uuid_in_percentage(self.user_id, PERCENT)
 
-    def get_data_file_path(self):
-        try:
-            data_file = Path.home() / ".aider" / "analytics.json"
-            data_file.parent.mkdir(parents=True, exist_ok=True)
-            return data_file
-        except OSError:
-            # If we can't create/access the directory, just disable analytics
+    def get_config_file_path(self):
+        """Returns the path to the analytics config file."""
+        config_dir = get_aider_config_dir()
+        if not config_dir:
+            # If we couldn't determine/create the config dir, disable analytics
             self.disable(permanently=False)
             return None
+        return config_dir / "analytics.json"
 
     def get_or_create_uuid(self):
-        self.load_data()
+        self.load_config()
         if self.user_id:
             return
 
         self.user_id = str(uuid.uuid4())
-        self.save_data()
+        self.save_config()
 
-    def load_data(self):
-        data_file = self.get_data_file_path()
-        if not data_file:
+    def load_config(self):
+        config_file = self.get_config_file_path()
+        if not config_file:
             return
 
-        if data_file.exists():
+        if config_file.exists():
             try:
-                data = json.loads(data_file.read_text())
-                self.permanently_disable = data.get("permanently_disable")
-                self.user_id = data.get("uuid")
-                self.asked_opt_in = data.get("asked_opt_in", False)
+                config = json.loads(config_file.read_text())
+                self.permanently_disable = config.get("permanently_disable")
+                self.user_id = config.get("uuid")
+                self.asked_opt_in = config.get("asked_opt_in", False)
             except (json.decoder.JSONDecodeError, OSError):
                 self.disable(permanently=False)
 
-    def save_data(self):
-        data_file = self.get_data_file_path()
-        if not data_file:
+    def save_config(self):
+        config_file = self.get_config_file_path()
+        if not config_file:
             return
 
-        data = dict(
+        config = dict(
             uuid=self.user_id,
             permanently_disable=self.permanently_disable,
             asked_opt_in=self.asked_opt_in,
         )
 
         try:
-            data_file.write_text(json.dumps(data, indent=4))
+            config_file.write_text(json.dumps(config, indent=4))
         except OSError:
             # If we can't write the file, just disable analytics
             self.disable(permanently=False)
