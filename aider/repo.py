@@ -132,7 +132,7 @@ class GitRepo:
             attribute_committer = coder.args.attribute_committer
             attribute_commit_message_author = coder.args.attribute_commit_message_author
             attribute_commit_message_committer = coder.args.attribute_commit_message_committer
-            # attribute_co_authored_by = coder.args.attribute_co_authored_by # <-- Intentionally commented out for testing
+            attribute_co_authored_by = coder.args.attribute_co_authored_by # <-- Restored
         else:
             # Fallback to self attributes (initialized from config/defaults)
             attribute_author = self.attribute_author
@@ -152,7 +152,13 @@ class GitRepo:
                 prefix_commit_message = True
 
             # Determine author/committer modification and trailer
-            if attribute_co_authored_by:
+
+            # --- Intentionally break the behavior for testing ---
+            original_attribute_co_authored_by = attribute_co_authored_by # Keep original value if needed elsewhere
+            attribute_co_authored_by = False # Force to False to ignore the setting
+            # --- End intentional break ---
+
+            if attribute_co_authored_by: # This condition will now always be false
                 model_name = "unknown-model"
                 if coder and hasattr(coder, "main_model") and coder.main_model.name:
                     model_name = coder.main_model.name
