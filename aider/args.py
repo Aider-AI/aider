@@ -449,6 +449,12 @@ def get_parser(default_config_files, git_root):
         help="Prefix all commit messages with 'aider: ' (default: False)",
     )
     group.add_argument(
+        "--attribute-co-authored-by",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Attribute aider edits using the Co-authored-by trailer in the commit message (default: False).",
+    )
+    group.add_argument(
         "--git-commit-verify",
         action=argparse.BooleanOptionalAction,
         default=False,

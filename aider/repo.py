@@ -111,7 +111,7 @@ class GitRepo:
         if aider_ignore_file:
             self.aider_ignore_file = Path(aider_ignore_file)
 
-    def commit(self, fnames=None, context=None, message=None, aider_edits=False):
+    def commit(self, fnames=None, context=None, message=None, aider_edits=False, coder=None):
         if not fnames and not self.repo.is_dirty():
             return
 
@@ -124,15 +124,52 @@ class GitRepo:
         else:
             commit_message = self.get_commit_message(diffs, context)
 
-        if aider_edits and self.attribute_commit_message_author:
-            commit_message = "aider: " + commit_message
-        elif self.attribute_commit_message_committer:
-            commit_message = "aider: " + commit_message
+        commit_message_trailer = ""
+        if aider_edits:
+            # Use coder.args if available, otherwise default to config/defaults
+            attribute_author = (
+                coder.args.attribute_author
+                if coder and hasattr(coder, "args")
+                else self.attribute_author
+            )
+            attribute_committer = (
+                coder.args.attribute_committer
+                if coder and hasattr(coder, "args")
+                else self.attribute_committer
+            )
+            attribute_commit_message_author = (
+                coder.args.attribute_commit_message_author
+                if coder and hasattr(coder, "args")
+                else self.attribute_commit_message_author
+            )
+            attribute_commit_message_committer = (
+                coder.args.attribute_commit_message_committer
+                if coder and hasattr(coder, "args")
+                else self.attribute_commit_message_committer
+            )
+            attribute_co_authored_by = (
+                coder.args.attribute_co_authored_by
+                if coder and hasattr(coder, "args")
+                else False  # Default to False if not found
+            )
+
+            # Add Co-authored-by trailer if configured
+            if attribute_co_authored_by:
+                model_name = "unknown-model"
+                if coder and hasattr(coder, "main_model") and coder.main_model.name:
+                    model_name = coder.main_model.name
+                commit_message_trailer = (
+                    f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.dev>"
+                )
+
+            # Prefix commit message if configured
+            if attribute_commit_message_author or attribute_commit_message_committer:
+                commit_message = "aider: " + commit_message
 
         if not commit_message:
             commit_message = "(no commit message provided)"
 
-        full_commit_message = commit_message
+        full_commit_message = commit_message + commit_message_trailer
         # if context:
         #    full_commit_message += "\n\n# Aider chat conversation:\n\n" + context
 
@@ -152,13 +189,25 @@ class GitRepo:
 
         original_user_name = self.repo.git.config("--get", "user.name")
         original_committer_name_env = os.environ.get("GIT_COMMITTER_NAME")
+        original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
         committer_name = f"{original_user_name} (aider)"
 
-        if self.attribute_committer:
+        # Use coder.args if available, otherwise default to config/defaults
+        use_attribute_committer = (
+            coder.args.attribute_committer
+            if coder and hasattr(coder, "args")
+            else self.attribute_committer
+        )
+        use_attribute_author = (
+            coder.args.attribute_author
+            if coder and hasattr(coder, "args")
+            else self.attribute_author
+        )
+
+        if use_attribute_committer:
             os.environ["GIT_COMMITTER_NAME"] = committer_name
 
-        if aider_edits and self.attribute_author:
-            original_author_name_env = os.environ.get("GIT_AUTHOR_NAME")
+        if aider_edits and use_attribute_author:
             os.environ["GIT_AUTHOR_NAME"] = committer_name
 
         try:
@@ -170,17 +219,16 @@ class GitRepo:
             self.io.tool_error(f"Unable to commit: {err}")
         finally:
             # Restore the env
-
-            if self.attribute_committer:
+            if use_attribute_committer:
                 if original_committer_name_env is not None:
                     os.environ["GIT_COMMITTER_NAME"] = original_committer_name_env
-                else:
+                elif "GIT_COMMITTER_NAME" in os.environ:
                     del os.environ["GIT_COMMITTER_NAME"]
 
-            if aider_edits and self.attribute_author:
+            if aider_edits and use_attribute_author:
                 if original_author_name_env is not None:
                     os.environ["GIT_AUTHOR_NAME"] = original_author_name_env
-                else:
+                elif "GIT_AUTHOR_NAME" in os.environ:
                     del os.environ["GIT_AUTHOR_NAME"]
 
     def get_rel_repo_dir(self):

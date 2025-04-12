@@ -2248,7 +2248,7 @@ class Coder:
             context = self.get_context_from_history(self.cur_messages)
 
         try:
-            res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
+            res = self.repo.commit(fnames=edited, context=context, aider_edits=True, coder=self)
             if res:
                 self.show_auto_commit_outcome(res)
                 commit_hash, commit_message = res
@@ -2284,7 +2284,7 @@ class Coder:
         if not self.repo:
             return
 
-        self.repo.commit(fnames=self.need_commit_before_edits)
+        self.repo.commit(fnames=self.need_commit_before_edits, coder=self)
 
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
