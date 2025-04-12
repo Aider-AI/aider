@@ -25,15 +25,23 @@ from aider.waiting import Spinner
 warnings.simplefilter("ignore", category=FutureWarning)
 from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
-Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
+# Define the Tag namedtuple with a default for specific_kind to maintain compatibility
+# with cached entries that might have been created with the old definition
+class TagBase(namedtuple("TagBase", "rel_fname fname line name kind specific_kind")):
+    __slots__ = ()
+    def __new__(cls, rel_fname, fname, line, name, kind, specific_kind=None):
+        # Provide a default value for specific_kind to handle old cached objects
+        return super(TagBase, cls).__new__(cls, rel_fname, fname, line, name, kind, specific_kind)
+
+Tag = TagBase
 
 
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
-CACHE_VERSION = 3
+CACHE_VERSION = 5
 if USING_TSL_PACK:
-    CACHE_VERSION = 4
+    CACHE_VERSION = 6
 
 UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
@@ -42,6 +50,17 @@ class RepoMap:
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     warned_files = set()
+
+    # Define kinds that typically represent definitions across languages
+    # Used by NavigatorCoder to filter tags for the symbol outline
+    definition_kinds = {
+        "class", "struct", "enum", "interface", "trait", # Structure definitions
+        "function", "method", "constructor",             # Function/method definitions
+        "module", "namespace",                           # Module/namespace definitions
+        "constant", "variable",                          # Top-level/class variable definitions (consider refining)
+        "type",                                          # Type definitions
+        # Add more based on tree-sitter queries if needed
+    }
 
     def __init__(
         self,
@@ -244,10 +263,23 @@ class RepoMap:
 
         if val is not None and val.get("mtime") == file_mtime:
             try:
-                return self.TAGS_CACHE[cache_key]["data"]
+                # Get the cached data
+                data = self.TAGS_CACHE[cache_key]["data"]
+                
+                # Let our Tag class handle compatibility with old cache formats
+                # No need for special handling as TagBase.__new__ will supply default specific_kind
+                
+                return data
             except SQLITE_ERRORS as e:
                 self.tags_cache_error(e)
                 return self.TAGS_CACHE[cache_key]["data"]
+            except (TypeError, AttributeError) as e:
+                # If we hit an error related to missing fields in old cached Tag objects,
+                # force a cache refresh for this file
+                if self.verbose:
+                    self.io.tool_warning(f"Cache format error for {fname}, refreshing: {e}")
+                # Return empty list to trigger cache refresh
+                return []
 
         # miss!
         data = list(self.get_tags_raw(fname, rel_fname))
@@ -306,11 +338,15 @@ class RepoMap:
 
             saw.add(kind)
 
+            # Extract specific kind from the tag, e.g., 'function' from 'name.definition.function'
+            specific_kind = tag.split('.')[-1] if '.' in tag else None
+
             result = Tag(
                 rel_fname=rel_fname,
                 fname=fname,
                 name=node.text.decode("utf-8"),
                 kind=kind,
+                specific_kind=specific_kind,
                 line=node.start_point[0],
             )
 
@@ -340,6 +376,7 @@ class RepoMap:
                 fname=fname,
                 name=token,
                 kind="ref",
+                specific_kind="name", # Default for pygments fallback
                 line=-1,
             )
 
