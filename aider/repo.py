@@ -60,6 +60,7 @@ class GitRepo:
         git_commit_verify=True,
         attribute_co_authored_by=False, # Added parameter
     ):
+        print(f"DEBUG: GitRepo.__init__ received attribute_co_authored_by = {attribute_co_authored_by}") # DEBUG
         self.io = io
         self.models = models
 
@@ -71,6 +72,7 @@ class GitRepo:
         self.attribute_commit_message_author = attribute_commit_message_author
         self.attribute_commit_message_committer = attribute_commit_message_committer
         self.attribute_co_authored_by = attribute_co_authored_by # Assign from parameter
+        print(f"DEBUG: GitRepo.__init__ set self.attribute_co_authored_by = {self.attribute_co_authored_by}") # DEBUG
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.git_commit_verify = git_commit_verify
@@ -117,6 +119,8 @@ class GitRepo:
         if not fnames and not self.repo.is_dirty():
             return
 
+        print(f"DEBUG: GitRepo.commit start, self.attribute_co_authored_by = {self.attribute_co_authored_by}") # DEBUG
+
         diffs = self.get_diffs(fnames)
         if not diffs:
             return
@@ -141,6 +145,8 @@ class GitRepo:
             attribute_commit_message_committer = self.attribute_commit_message_committer
             attribute_co_authored_by = getattr(self, 'attribute_co_authored_by', False)
 
+        print(f"DEBUG: GitRepo.commit after retrieval, attribute_co_authored_by = {attribute_co_authored_by}") # DEBUG
+
         commit_message_trailer = ""
         prefix_commit_message = False
         use_attribute_author = False
@@ -153,6 +159,7 @@ class GitRepo:
 
             # Determine author/committer modification and trailer
 
+            print(f"DEBUG: GitRepo.commit before logic check, attribute_co_authored_by = {attribute_co_authored_by}") # DEBUG
             if attribute_co_authored_by:
                 model_name = "unknown-model"
                 if coder and hasattr(coder, "main_model") and coder.main_model.name:
@@ -201,6 +208,7 @@ class GitRepo:
         committer_name = f"{original_user_name} (aider)"
 
         # Apply author/committer modifications based on flags determined earlier
+        print(f"DEBUG: GitRepo.commit before setting env, use_attribute_author={use_attribute_author}, use_attribute_committer={use_attribute_committer}") # DEBUG
         if use_attribute_committer:
             os.environ["GIT_COMMITTER_NAME"] = committer_name
         if use_attribute_author:
