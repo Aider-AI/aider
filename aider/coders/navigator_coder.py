@@ -55,10 +55,12 @@ from aider.tools.undo_change import _execute_undo_change
 from aider.tools.list_changes import _execute_list_changes
 from aider.tools.extract_lines import _execute_extract_lines
 from aider.tools.view_numbered_context import execute_view_numbered_context
+from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol # Import the function
+
 
 class NavigatorCoder(Coder):
     """Mode where the LLM autonomously manages which files are in context."""
-    
+
     edit_format = "navigator"
     gpt_prompts = NavigatorPrompts()
 
@@ -719,9 +721,12 @@ class NavigatorCoder(Coder):
                 elif norm_tool_name == 'viewfileswithsymbol':
                     symbol = params.get('symbol')
                     if symbol is not None:
+                        # Call the imported function from the tools directory
                         result_message = _execute_view_files_with_symbol(self, symbol)
                     else:
                         result_message = "Error: Missing 'symbol' parameter for ViewFilesWithSymbol"
+
+                # Command tools
                 elif norm_tool_name == 'command':
                     command_string = params.get('command_string')
                     if command_string is not None:
