@@ -428,7 +428,7 @@ def get_parser(default_config_files, git_root):
         "--attribute-author",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="Attribute aider code changes in the git author name (default: True)",
+        help="Attribute aider code changes in the git author name (default: True, ignored if attribute-co-authored-by is True unless explicitly set)",
     )
     group.add_argument(
         "--attribute-committer",
