@@ -158,7 +158,14 @@ When you include any tool call, the system will automatically continue to the ne
 ```
 Your answer to the user's question...
 
-SEARCH/REPLACE blocks can appear anywhere in your response if needed.
+SEARCH/REPLACE blocks can ONLY appear BEFORE the last '---' separator.
+
+file.py
+<<<<<<< SEARCH
+old code
+=======
+new code
+>>>>>>> REPLACE
 
 ---
 [tool_call(ViewFilesMatching, pattern="findme")]
@@ -446,7 +453,8 @@ Here are summaries of some files present in this repo:
 - You are encouraged to use tools for editing where possible, falling back to SEARCH/REPLACE when that doesn't work well.
 
 ## SEARCH/REPLACE blocks
-- When you use them, SEARCH/REPLACE blocks can appear anywhere in your response
+- When using SEARCH/REPLACE blocks, they MUST ONLY appear BEFORE the last '---' separator line in your response
+- If there is no '---' separator, they can appear anywhere in your response
 - Format example:
   ```
   Your answer text here...
@@ -461,6 +469,7 @@ Here are summaries of some files present in this repo:
   ---
   [tool_call(ToolName, param1=value1)]
   ```
+- IMPORTANT: Any SEARCH/REPLACE blocks that appear after the last '---' separator will be IGNORED
 
 ## Context Features
 - Use enhanced context blocks (directory structure and git status) to orient yourself

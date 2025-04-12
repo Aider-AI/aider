@@ -364,7 +364,7 @@ class NavigatorCoder(Coder):
         
         This is a key method that:
         1. Processes any tool commands in the response (only after a '---' line)
-        2. Processes any SEARCH/REPLACE blocks in the response (regardless of tool calls)
+        2. Processes any SEARCH/REPLACE blocks in the response (only before the '---' line if one exists)
         3. If tool commands were found, sets up for another automatic round
         
         This enables the "auto-exploration" workflow where the LLM can
@@ -376,8 +376,9 @@ class NavigatorCoder(Coder):
             return True
         original_content = content # Keep the original response
 
-        # Process tool commands: returns content with tool calls removed, results, and flag if any tool calls were found
-        processed_content, result_messages, tool_calls_found = self._process_tool_commands(content)
+        # Process tool commands: returns content with tool calls removed, results, flag if any tool calls were found,
+        # and the content before the last '---' line
+        processed_content, result_messages, tool_calls_found, content_before_last_separator = self._process_tool_commands(content)
 
         # Since we are no longer suppressing, the partial_response_content IS the final content.
         # We might want to update it to the processed_content (without tool calls) if we don't
@@ -388,11 +389,20 @@ class NavigatorCoder(Coder):
         # Process implicit file mentions using the content *after* tool calls were removed
         self._process_file_mentions(processed_content)
 
-        # Check if the content contains the SEARCH/REPLACE markers (do this regardless of tool calls)
+        # Check if the content contains the SEARCH/REPLACE markers
         has_search = "<<<<<<< SEARCH" in self.partial_response_content
         has_divider = "=======" in self.partial_response_content
         has_replace = ">>>>>>> REPLACE" in self.partial_response_content
         edit_match = has_search and has_divider and has_replace
+
+        # Check if there's a '---' line - if yes, SEARCH/REPLACE blocks can only appear before it
+        separator_marker = "\n---\n"
+        if separator_marker in original_content and edit_match:
+            # Check if the edit blocks are only in the part before the last '---' line
+            has_search_before = "<<<<<<< SEARCH" in content_before_last_separator
+            has_divider_before = "=======" in content_before_last_separator
+            has_replace_before = ">>>>>>> REPLACE" in content_before_last_separator
+            edit_match = has_search_before and has_divider_before and has_replace_before
 
         if edit_match:
             self.io.tool_output("Detected edit blocks, applying changes within Navigator...")
@@ -464,8 +474,10 @@ class NavigatorCoder(Coder):
         Rules:
         1. Tool calls must appear after the LAST '---' line separator in the content
         2. Any tool calls before this last separator are treated as text (not executed)
+        3. SEARCH/REPLACE blocks can only appear before this last separator
         
         Returns processed content, result messages, and a flag indicating if any tool calls were found.
+        Also returns the content before the last separator for SEARCH/REPLACE block validation.
         """
         result_messages = []
         modified_content = content # Start with original content
@@ -479,16 +491,16 @@ class NavigatorCoder(Coder):
         
         # If there's no separator, treat the entire content as before the separator
         if len(content_parts) == 1:
-            # Return the original content with no tool calls processed
-            return content, result_messages, False
+            # Return the original content with no tool calls processed, and the content itself as before_separator
+            return content, result_messages, False, content
             
         # Take everything before the last separator (including intermediate separators)
-        content_before_separator = separator_marker.join(content_parts[:-1]) + separator_marker
+        content_before_separator = separator_marker.join(content_parts[:-1])
         # Take only what comes after the last separator
         content_after_separator = content_parts[-1]
         
         # Find tool calls using a more robust method, but only in the content after separator
-        processed_content = content_before_separator
+        processed_content = content_before_separator + separator_marker
         last_index = 0
         start_marker = "[tool_call("
         end_marker = "]" # The parenthesis balancing finds the ')', we just need the final ']'
@@ -945,7 +957,7 @@ class NavigatorCoder(Coder):
         # Update internal counter
         self.tool_call_count += call_count
 
-        return modified_content, result_messages, tool_calls_found
+        return modified_content, result_messages, tool_calls_found, content_before_separator
 
     def _apply_edits_from_response(self):
         """
