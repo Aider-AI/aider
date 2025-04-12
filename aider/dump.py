@@ -12,6 +12,7 @@ def cvt(s):
 
 
 def dump(*vals):
+    # This is a test comment
     # http://docs.python.org/library/traceback.html
     stack = traceback.extract_stack()
     vars = stack[-2][3]
