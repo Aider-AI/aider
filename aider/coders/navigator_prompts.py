@@ -458,7 +458,7 @@ Here are summaries of some files present in this repo:
 
 ## Tool Call Format
 - Tool calls MUST be at the end of your message, after a '---' separator
-- If emitting multiple tool calls (e.g., 3 or more), place each call on a new line for clarity.
+- If emitting 3 or more tool calls, OR if any tool call spans multiple lines, place each call on a new line for clarity.
 - You are encouraged to use tools for editing where possible, falling back to SEARCH/REPLACE when that doesn't work well.
 
 ## SEARCH/REPLACE blocks
