@@ -88,6 +88,10 @@ Act as an expert software engineer with the ability to autonomously navigate and
 - **ListChanges**: `[tool_call(ListChanges, file_path="...", limit=5)]`
   List recent changes, optionally filtered by `file_path` and limited.
 
+- **ExtractLines**: `[tool_call(ExtractLines, source_file_path="...", target_file_path="...", start_pattern="...", end_pattern="...", near_context="...", occurrence=1, dry_run=False)]`
+  Extract lines from `start_pattern` to `end_pattern` (or use `line_count`) in `source_file_path` and move them to `target_file_path`. Creates `target_file_path` if it doesn't exist. Use `near_context` and `occurrence` (optional, default 1, -1 for last) for `start_pattern`. `dry_run=True` simulates.
+  *Useful for refactoring by moving functions, classes, or blocks of code into separate files.*
+
 ### Other Tools
 - **Command**: `[tool_call(Command, command_string="git diff HEAD~1")]`
   Execute a shell command. Requires user confirmation.
