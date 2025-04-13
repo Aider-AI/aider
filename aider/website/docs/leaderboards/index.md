@@ -197,11 +197,6 @@ Aider works best with high-scoring models, though it [can connect to almost any 
   .mode-button {
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   }
-  .mode-button.active {
-    background-color: #0d6efd; /* Bootstrap primary blue */
-    color: white;
-    cursor: default; /* Indicate it's the active state */
-  }
   .mode-button:not(.active) {
     background-color: #f8f9fa; /* Light grey background */
     color: #495057; /* Dark grey text */
@@ -280,6 +275,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function updateTableView(mode) {
     currentMode = mode; // Update global state ('view' or 'select')
+
+    // Update button styles first
+    modeButtons.forEach(btn => {
+        btn.classList.remove('active');
+        // Reset specific styles potentially added by .active
+        btn.style.backgroundColor = '';
+        btn.style.color = '';
+    });
+    const activeButton = mode === 'view' ? modeViewButton : modeSelectButton;
+    activeButton.classList.add('active');
+    activeButton.style.backgroundColor = '#e7f3ff'; // Use selected row highlight blue
+    activeButton.style.color = '#495057'; // Use dark text for contrast on light blue
+
 
     // Show/hide header checkbox based on mode
     selectAllCheckbox.style.display = mode === 'select' ? 'inline-block' : 'none';
