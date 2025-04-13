@@ -16,12 +16,12 @@ human intervention.
 
 ## Aider polyglot coding leaderboard
 
-<div id="controls-container" style="display: flex; align-items: center; max-width: 800px; margin: 10px auto; gap: 10px;">
+<div id="controls-container" style="display: flex; align-items: center; width: 100%; max-width: 800px; margin: 10px auto; gap: 10px; box-sizing: border-box; padding: 0 5px;">
   <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
   <div id="view-mode-toggle" style="display: inline-flex; border: 1px solid #ccc; border-radius: 4px;">
-    <button id="mode-view-btn" class="mode-button active" data-mode="view" style="padding: 8px 12px; border: none; border-radius: 3px 0 0 3px; cursor: pointer; font-size: 14px; line-height: 1.5;">View</button>
-    <button id="mode-detail-btn" class="mode-button" data-mode="detail" style="padding: 8px 12px; border: none; background-color: #f8f9fa; border-radius: 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5;">Detail</button>
-    <button id="mode-select-btn" class="mode-button" data-mode="select" style="padding: 8px 12px; border: none; background-color: #f8f9fa; border-radius: 0 3px 3px 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5;">Select</button>
+    <button id="mode-view-btn" class="mode-button active" data-mode="view" style="padding: 8px 8px; border: none; border-radius: 3px 0 0 3px; cursor: pointer; font-size: 14px; line-height: 1.5; min-width: 50px;">View</button>
+    <button id="mode-detail-btn" class="mode-button" data-mode="detail" style="padding: 8px 8px; border: none; background-color: #f8f9fa; border-radius: 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5; min-width: 50px;">Detail</button>
+    <button id="mode-select-btn" class="mode-button" data-mode="select" style="padding: 8px 8px; border: none; background-color: #f8f9fa; border-radius: 0 3px 3px 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5; min-width: 50px;">Select</button>
   </div>
 </div>
 
@@ -192,9 +192,11 @@ human intervention.
   #view-mode-toggle {
     height: 38px; /* Match input height */
     box-sizing: border-box;
+    flex-shrink: 0; /* Prevent toggle from shrinking on small screens */
   }
   .mode-button {
     transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    white-space: nowrap; /* Prevent text wrapping */
   }
   .mode-button:not(.active) {
     background-color: #f8f9fa; /* Light grey background */
