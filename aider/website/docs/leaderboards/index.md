@@ -41,7 +41,7 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     {% assign edit_sorted = site.data.polyglot_leaderboard | sort: 'pass_rate_2' | reverse %}
     {% for row in edit_sorted %} {% comment %} Add loop index for unique IDs {% endcomment %}
       {% assign row_index = forloop.index0 %}
-      <tr style="border-bottom: 1px solid #ddd;" id="main-row-{{ row_index }}">
+      <tr id="main-row-{{ row_index }}">
         <td style="padding: 8px; text-align: center;">
           <button class="toggle-details" data-target="details-{{ row_index }}" style="background: none; border: none; cursor: pointer; font-size: 16px; padding: 0;">▶</button>
         </td>
@@ -61,7 +61,7 @@ Aider works best with high-scoring models, though it [can connect to almost any 
       </tr>
       <tr class="details-row" id="details-{{ row_index }}" style="display: none; background-color: #f9f9f9;">
         <td colspan="5" style="padding: 15px; border-bottom: 1px solid #ddd;">
-          <ul style="margin: 0; padding-left: 20px; list-style: none;">
+          <ul style="margin: 0; padding-left: 20px; list-style: none; border-bottom: 1px solid #ddd;">
             {% for pair in row %}
               {% if pair[1] != "" and pair[1] != nil %}
                 <li><strong>{{ pair[0] | replace: '_', ' ' | capitalize }}:</strong>
