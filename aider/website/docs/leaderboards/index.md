@@ -23,6 +23,7 @@ Aider works best with high-scoring models, though it [can connect to almost any 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
+      <th style="padding: 8px; width: 30px;"></th> <!-- Toggle column -->
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Cost (log scale)</th>
@@ -38,8 +39,12 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     {% endfor %}
     {% if max_cost == 0 %}{% assign max_cost = 1 %}{% endif %}
     {% assign edit_sorted = site.data.polyglot_leaderboard | sort: 'pass_rate_2' | reverse %}
-    {% for row in edit_sorted %}
-      <tr style="border-bottom: 1px solid #ddd;">
+    {% for row in edit_sorted %} {% comment %} Add loop index for unique IDs {% endcomment %}
+      {% assign row_index = forloop.index0 %}
+      <tr style="border-bottom: 1px solid #ddd;" id="main-row-{{ row_index }}">
+        <td style="padding: 8px; text-align: center;">
+          <button class="toggle-details" data-target="details-{{ row_index }}" style="background: none; border: none; cursor: pointer; font-size: 16px; padding: 0;">+</button>
+        </td>
         <td style="padding: 8px;"><span>{{ row.model }}</span></td>
         <td class="bar-cell">
           <div class="bar-viz" style="width: {{ row.pass_rate_2 }}%; background-color: rgba(40, 167, 69, 0.3); border-right: 1px solid rgba(40, 167, 69, 0.5);"></div>
@@ -53,6 +58,19 @@ Aider works best with high-scoring models, though it [can connect to almost any 
           <span>{% if row.total_cost == 0 or rounded_cost == 0.00 %}?{% else %}${{ rounded_cost }}{% endif %}</span>
         </td>
         <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
+      </tr>
+      <tr class="details-row" id="details-{{ row_index }}" style="display: none; background-color: #f9f9f9;">
+        <td colspan="5" style="padding: 15px; border-bottom: 1px solid #ddd;">
+          <ul style="margin: 0; padding-left: 20px; list-style: none;">
+            {% for pair in row %}
+              {% if pair[1] != "" and pair[1] != nil %}
+                <li><strong>{{ pair[0] | replace: '_', ' ' | capitalize }}:</strong>
+                  {% if pair[0] == 'command' %}<code>{{ pair[1] }}</code>{% else %}{{ pair[1] }}{% endif %}
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </td>
       </tr>
     {% endfor %}
   </tbody>
@@ -224,6 +242,21 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   }
+
+  // Add toggle functionality for details
+  const toggleButtons = document.querySelectorAll('.toggle-details');
+  toggleButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const targetRow = document.getElementById(targetId);
+      if (targetRow) {
+        const isVisible = targetRow.style.display !== 'none';
+        targetRow.style.display = isVisible ? 'none' : 'table-row';
+        this.textContent = isVisible ? '+' : '-';
+      }
+    });
+  });
+
 });
 </script>
  

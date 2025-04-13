@@ -86,20 +86,25 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   };
 
+  // Remove row ID assignment and click handler from here,
+  // as it's now handled in the main markdown file's script
+  // to accommodate the new details rows.
+
+  // Add click handler for chart selection (if needed separately from toggle)
   var tableBody = document.querySelector('table tbody');
-  allData.forEach(function(row, index) {
-    var tr = tableBody.children[index];
-    if (!tr) {
-      // If the row doesn't exist, create it
-      tr = document.createElement('tr');
-      tableBody.appendChild(tr);
-    }
-    tr.id = 'edit-row-' + index;
-    tr.style.cursor = 'pointer';
-    tr.onclick = function() {
-      this.classList.toggle('selected');
-      updateChart();
-    };
+  var mainRows = tableBody.querySelectorAll('tr[id^="main-row-"]');
+  mainRows.forEach(function(tr) {
+    // Find the cells to make clickable, excluding the toggle button cell (first child)
+    var clickableCells = tr.querySelectorAll('td:not(:first-child)');
+    clickableCells.forEach(function(cell) {
+      cell.style.cursor = 'pointer';
+      cell.onclick = function() {
+        // Prevent selection when clicking on links or code inside cells if needed
+        // if (event.target.tagName === 'A' || event.target.tagName === 'CODE') return;
+        tr.classList.toggle('selected');
+        updateChart();
+      };
+    });
   });
 
   var leaderboardChart = new Chart(ctx, {
@@ -207,26 +212,38 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('editSearchInput').addEventListener('keyup', function() {
     var searchWords = this.value.toLowerCase().split(' ').filter(word => word.length > 0);
     var tableBody = document.querySelector('table:first-of-type tbody');
-    var rows = tableBody.getElementsByTagName('tr');
-    
+    // Select only main data rows for filtering logic
+    var mainRows = tableBody.querySelectorAll('tr[id^="main-row-"]');
+
     displayedData = [];
     leaderboardData.labels = [];
     leaderboardData.datasets[0].data = [];
     leaderboardData.datasets[1].data = [];
-    
-    for (var i = 0; i < rows.length; i++) {
-      var rowText = rows[i].textContent;
+
+    // Iterate through main rows using their index relative to the allData array
+    mainRows.forEach(function(row, i) {
+      // The index `i` corresponds to the index in `allData` because `mainRows` only contains the primary data rows.
+      var detailsRow = document.getElementById('details-' + i); // Find corresponding details row
+      var rowText = row.textContent; // Search only within the main row's text content
+
       if (searchWords.every(word => rowText.toLowerCase().includes(word))) {
-        rows[i].style.display = '';
-        displayedData.push(allData[i]);
+        row.style.display = ''; // Show main row
+        displayedData.push(allData[i]); // Add data to chart source
         leaderboardData.labels.push(allData[i].model);
         leaderboardData.datasets[0].data.push(allData[i].pass_rate);
         // Only include cost if it's not zero (placeholder for unknown)
         leaderboardData.datasets[1].data.push(allData[i].total_cost > 0 ? allData[i].total_cost : null);
+
+        // Ensure details row is hidden and toggle is reset when filtering
+        if (detailsRow) detailsRow.style.display = 'none';
+        const toggleButton = row.querySelector('.toggle-details');
+        if (toggleButton) toggleButton.textContent = '+';
+
       } else {
-        rows[i].style.display = 'none';
+        row.style.display = 'none'; // Hide main row
+        if (detailsRow) detailsRow.style.display = 'none'; // Hide details row too
       }
-    }
+    });
     leaderboardChart.update();
   });
 });
