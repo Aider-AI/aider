@@ -539,6 +539,29 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
+  // Listener for clicking anywhere on a row in select mode
+  tableBody.addEventListener('click', function(event) {
+    if (currentMode !== 'select') return; // Only active in select mode
+
+    const clickedRow = event.target.closest('tr');
+
+    // Ensure it's a main row and not a details row or header/footer
+    if (!clickedRow || !clickedRow.id.startsWith('main-row-')) return;
+
+    // Find the checkbox within this row
+    const checkbox = clickedRow.querySelector('.row-selector');
+    if (!checkbox) return; // No checkbox found in this row
+
+    // If the click was directly on the checkbox or its label (if any),
+    // let the default behavior and the 'change' event listener handle it.
+    // Otherwise, toggle the checkbox state programmatically.
+    if (event.target !== checkbox && event.target.tagName !== 'LABEL' /* Add if you use labels */) {
+        checkbox.checked = !checkbox.checked;
+        // Manually trigger the change event to update state and UI
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+
 
   // --- Initial Setup ---
   updateTableView('view'); // Initialize view to 'view' mode
