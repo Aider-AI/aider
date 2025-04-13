@@ -117,11 +117,19 @@ document.addEventListener('DOMContentLoaded', function() {
           row.classList.remove('row-selected'); // Ensure no selection highlight
           // view-highlighted is handled by row click listener
 
-          // Always show main row (if not filtered by search)
-          row.classList.remove('hidden-by-mode');
+          // In 'view' mode, hide row if selections exist AND this row is NOT selected
+          if (selectedRows.size > 0 && !isSelected) {
+              row.classList.add('hidden-by-mode');
+              if (detailsRow) detailsRow.classList.add('hidden-by-mode');
+          } else {
+              // Ensure row is not hidden by mode if it's selected or no selections exist
+              // This is handled by the reset at the start of the loop:
+              // row.classList.remove('hidden-by-mode');
+              // if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
+          }
+          // Always hide details row content in view mode regardless of visibility class
           if (detailsRow) {
-              detailsRow.classList.remove('hidden-by-mode');
-              detailsRow.style.display = 'none'; // Always hide details in view mode
+              detailsRow.style.display = 'none';
           }
 
       } else if (mode === 'select') { // --- SELECT MODE ---
