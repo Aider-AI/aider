@@ -83,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
     activeButton.style.backgroundColor = '#e7f3ff'; // Use selected row highlight blue
     activeButton.style.color = '#495057'; // Use dark text for contrast on light blue
 
+    // Get the first header cell (for the toggle/checkbox column)
+    const firstHeaderCell = document.querySelector('table thead th:first-child');
+
 
     // Show/hide header checkbox based on mode
     selectAllCheckbox.style.display = mode === 'select' ? 'inline-block' : 'none';
@@ -91,6 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const rowIndex = row.querySelector('.row-selector')?.dataset.rowIndex;
       const toggleButton = row.querySelector('.toggle-details');
       const selectorCheckbox = row.querySelector('.row-selector');
+      const firstCell = row.querySelector('td:first-child'); // Get the first cell of the main row
       const detailsRow = document.getElementById(`details-${rowIndex}`);
       const isSelected = selectedRows.has(rowIndex);
 
@@ -98,11 +102,19 @@ document.addEventListener('DOMContentLoaded', function() {
       row.classList.remove('hidden-by-mode');
       if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
 
+      // Show/hide the first column (header and data cells) based on mode
+      if (firstHeaderCell) {
+          firstHeaderCell.style.display = mode === 'view' ? 'none' : '';
+      }
+      if (firstCell) {
+          firstCell.style.display = mode === 'view' ? 'none' : '';
+      }
+
       // Apply mode-specific logic
       if (mode === 'view') { // --- VIEW MODE ---
           toggleButton.style.display = 'none'; // Hide toggle in view mode
           selectorCheckbox.style.display = 'none';
-          row.classList.remove('row-selected'); // Ensure no selection highlight in view mode
+          row.classList.remove('row-selected'); // Ensure no selection highlight
           // view-highlighted is handled by row click listener
 
           // Always show main row (if not filtered by search)
@@ -117,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
           selectorCheckbox.style.display = 'inline-block';
           selectorCheckbox.checked = isSelected;
           row.classList.toggle('row-selected', isSelected);
-          row.classList.remove('view-highlighted'); // Clear view highlight
+          row.classList.remove('view-highlighted'); // Clear view highlight when switching to select
           // Always hide details row in select mode
           if (detailsRow) detailsRow.style.display = 'none';
 
@@ -129,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
           toggleButton.style.display = 'inline-block'; // Show toggle
           selectorCheckbox.style.display = 'none';
           row.classList.remove('row-selected'); // Clear selection highlight
-          row.classList.remove('view-highlighted'); // Clear view highlight
+          row.classList.remove('view-highlighted'); // Clear view highlight when switching to detail
           // Details row visibility is controlled by the toggle button state, don't force hide/show here
           // Ensure main row is visible if not hidden by search
           row.classList.remove('hidden-by-mode');
