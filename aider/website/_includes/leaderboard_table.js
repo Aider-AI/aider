@@ -215,7 +215,12 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Mark bars that exceed the limit
       if (cost > MAX_DISPLAY_COST) {
-        bar.classList.add('cost-exceeded');
+        // Add a tear marker at around $45 (90% of the way)
+        const tearMarker = document.createElement('div');
+        tearMarker.className = 'cost-tear-marker';
+        tearMarker.style.left = '90%'; // Position at 90% (around $45)
+        bar.parentNode.appendChild(tearMarker);
+        
         // Add a marker at the end of the bar
         const marker = document.createElement('div');
         marker.className = 'cost-exceeded-marker';

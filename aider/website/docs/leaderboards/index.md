@@ -181,9 +181,20 @@ human intervention.
     text-align: center;
     margin-left: -10px;
   }
-  .cost-exceeded {
-    background-color: rgba(220, 53, 69, 0.3) !important; /* Red background for exceeded cost */
-    border-right: 1px solid rgba(220, 53, 69, 0.5) !important;
+  .cost-tear-marker {
+    position: absolute;
+    left: 90%; /* Position at 90% (around $45) */
+    top: 0;
+    height: 100%;
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 3px,
+      #888 3px,
+      #888 6px
+    );
+    z-index: 3;
   }
   .cost-exceeded-marker {
     position: absolute;
@@ -194,7 +205,7 @@ human intervention.
     height: 0;
     border-top: 6px solid transparent;
     border-bottom: 6px solid transparent;
-    border-left: 6px solid rgba(220, 53, 69, 0.8);
+    border-left: 6px solid rgba(0, 0, 0, 0.5);
     z-index: 3;
   }
   .bar-viz {
