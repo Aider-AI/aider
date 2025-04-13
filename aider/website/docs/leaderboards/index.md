@@ -60,12 +60,12 @@ The model also has to successfully apply all its changes to the source file with
     {% for row in edit_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;"><span>{{ row.model }}</span></td>
-        <td class="bar-cell" style="padding: 8px; text-align: center; --percent: {{ row.pass_rate_2 }}%;"><span>{{ row.pass_rate_2 }}%</span></td>
-        <td class="bar-cell" style="padding: 8px; text-align: center; --percent: {{ row.percent_cases_well_formed }}%;"><span>{{ row.percent_cases_well_formed }}%</span></td>
+        <td class="bar-cell" style="text-align: center; --percent: {{ row.pass_rate_2 }}%;"><span>{{ row.pass_rate_2 }}%</span></td>
+        <td class="bar-cell" style="text-align: center; --percent: {{ row.percent_cases_well_formed }}%;"><span>{{ row.percent_cases_well_formed }}%</span></td>
         <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
         <td style="padding: 8px; text-align: center;"><span>{{ row.edit_format }}</span></td>
         {% assign cost_percent = row.total_cost | times: 100.0 | divided_by: max_cost %}
-        <td class="bar-cell" style="padding: 8px; text-align: center; --percent: {{ cost_percent }}%;"><span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span></td>
+        <td class="bar-cell" style="text-align: center; --percent: {{ cost_percent }}%;"><span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span></td>
       </tr>
     {% endfor %}
   </tbody>
@@ -106,9 +106,11 @@ The model also has to successfully apply all its changes to the source file with
   }
   .bar-cell {
     position: relative; /* Needed for z-index stacking */
+    padding: 8px; /* Add padding */
     background-image: linear-gradient(to right, rgba(54, 162, 235, 0.2) var(--percent), transparent var(--percent));
     background-repeat: no-repeat;
-    background-position: left center;
+    background-position: left center; /* Center vertically */
+    background-size: var(--percent) 60%; /* Control bar height (e.g., 60% of cell height) */
   }
   .bar-cell span {
      position: relative;
