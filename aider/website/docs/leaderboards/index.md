@@ -129,8 +129,9 @@ The model also has to successfully apply all its changes to the source file with
   }
   .cost-tick {
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 36px; /* Match the height of the bar */
     width: 1px;
     background-color: rgba(221, 221, 221, 0.5);
     z-index: 0; /* Behind the bar and text */
