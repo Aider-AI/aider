@@ -67,7 +67,8 @@ The model also has to successfully apply all its changes to the source file with
           {% if row.total_cost > 0 %}
           <div class="bar-viz cost-bar" data-cost="{{ row.total_cost }}" data-max-cost="{{ max_cost }}" style="width: 0%; background-color: rgba(111, 66, 193, 0.3); border-right: 1px solid rgba(111, 66, 193, 0.5);"></div>
           {% endif %}
-          <span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span>
+          {% assign rounded_cost = row.total_cost | times: 1.0 | round: 2 %}
+          <span>{% if row.total_cost == 0 or rounded_cost == 0.00 %}?{% else %}${{ rounded_cost }}{% endif %}</span>
         </td>
         <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
         <td style="padding: 8px; text-align: center;"><span>{{ row.edit_format }}</span></td>
