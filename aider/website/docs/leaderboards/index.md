@@ -451,8 +451,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         this.classList.add('active');
         // Apply active styles directly as inline styles might interfere
-        this.style.backgroundColor = '#0d6efd'; // Ensure active color is applied
-        this.style.color = 'white';
+        this.style.backgroundColor = '#e7f3ff'; // Use selected row highlight blue
+        this.style.color = '#495057'; // Use dark text for contrast on light blue
 
         // Update table view and apply filters
         updateTableView(newMode);
