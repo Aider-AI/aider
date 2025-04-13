@@ -184,8 +184,8 @@ human intervention.
   .cost-tear-marker {
     position: absolute;
     left: 90%; /* Position at 90% (around $45) */
-    top: 0;
-    height: 100%;
+    top: 10%;
+    height: 80%;
     width: 2px;
     background: repeating-linear-gradient(
       to bottom,
