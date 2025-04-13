@@ -61,16 +61,16 @@ The model also has to successfully apply all its changes to the source file with
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;"><span>{{ row.model }}</span></td>
         <td class="bar-cell">
-          <div class="bar-viz" style="width: {{ row.pass_rate_2 }}%; background-color: {% if row.percent_cases_well_formed >= 80 %}rgba(40, 167, 69, 0.3){% elsif row.percent_cases_well_formed >= 50 %}rgba(54, 162, 235, 0.3){% else %}rgba(220, 53, 69, 0.3){% endif %}; border-right: 1px solid {% if row.percent_cases_well_formed >= 80 %}rgba(40, 167, 69, 0.5){% elsif row.percent_cases_well_formed >= 50 %}rgba(54, 162, 235, 0.5){% else %}rgba(220, 53, 69, 0.5){% endif %};"></div>
+          <div class="bar-viz" style="width: {{ row.pass_rate_2 }}%; background-color: rgba(40, 167, 69, 0.3); border-right: 1px solid rgba(40, 167, 69, 0.5);"></div>
           <span>{{ row.pass_rate_2 }}%</span>
         </td>
         <td class="bar-cell">
-          <div class="bar-viz" style="width: {{ row.percent_cases_well_formed }}%; background-color: {% if row.pass_rate_2 >= 80 %}rgba(40, 167, 69, 0.3){% elsif row.pass_rate_2 >= 50 %}rgba(54, 162, 235, 0.3){% else %}rgba(220, 53, 69, 0.3){% endif %}; border-right: 1px solid {% if row.pass_rate_2 >= 80 %}rgba(40, 167, 69, 0.5){% elsif row.pass_rate_2 >= 50 %}rgba(54, 162, 235, 0.5){% else %}rgba(220, 53, 69, 0.5){% endif %};"></div>
+          <div class="bar-viz" style="width: {{ row.percent_cases_well_formed }}%; background-color: rgba(54, 162, 235, 0.3); border-right: 1px solid rgba(54, 162, 235, 0.5);"></div>
           <span>{{ row.percent_cases_well_formed }}%</span>
         </td>
         {% assign cost_percent = row.total_cost | times: 100.0 | divided_by: max_cost %}
         <td class="bar-cell">
-          <div class="bar-viz" style="width: {{ cost_percent }}%; background-color: {% if cost_percent >= 80 %}rgba(111, 66, 193, 0.3){% elsif cost_percent >= 50 %}rgba(111, 66, 193, 0.2){% else %}rgba(111, 66, 193, 0.1){% endif %}; border-right: 1px solid {% if cost_percent >= 80 %}rgba(111, 66, 193, 0.5){% elsif cost_percent >= 50 %}rgba(111, 66, 193, 0.4){% else %}rgba(111, 66, 193, 0.3){% endif %};"></div>
+          <div class="bar-viz" style="width: {{ cost_percent }}%; background-color: rgba(111, 66, 193, 0.3); border-right: 1px solid rgba(111, 66, 193, 0.5);"></div>
           <span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span>
         </td>
         <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
