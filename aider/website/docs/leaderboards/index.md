@@ -148,6 +148,10 @@ Aider works best with high-scoring models, though it [can connect to almost any 
      border-radius: 3px; /* Rounded corners for the text background */
      font-size: 16px; /* Increase font size for the numbers */
   }
+  .toggle-details {
+    color: #888; /* Make toggle symbol more subtle */
+    transition: color 0.2s; /* Smooth transition on hover */
+  }
 </style>
  
 <script>
