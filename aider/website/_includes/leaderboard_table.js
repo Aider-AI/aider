@@ -218,8 +218,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a darker section at the end with diagonal stripes
         const darkSection = document.createElement('div');
         darkSection.className = 'bar-viz';
-        darkSection.style.width = '10%'; // From 90% to 100%
-        darkSection.style.left = '90%';
+        darkSection.style.width = '15%'; // From 85% to 100%
+        darkSection.style.left = '85%';
         darkSection.style.backgroundColor = 'rgba(13, 110, 253, 0.6)'; // Darker blue
         darkSection.style.borderRight = '1px solid rgba(13, 110, 253, 0.8)';
         darkSection.style.zIndex = '1';
