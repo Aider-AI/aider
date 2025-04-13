@@ -34,7 +34,7 @@ human intervention.
       </th> <!-- Header checkbox added here -->
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center; width: 25%">Percent correct</th>
-      <th style="padding: 8px; text-align: center; width: 25%">Cost (max $50)</th>
+      <th style="padding: 8px; text-align: center; width: 25%">Cost</th>
       <th style="padding: 8px; text-align: left;" class="col-command">Command</th>
       <th style="padding: 8px; text-align: center; width: 10%" class="col-conform">Correct edit format</th>
       <th style="padding: 8px; text-align: left; width: 10%" class="col-edit-format">Edit Format</th>
