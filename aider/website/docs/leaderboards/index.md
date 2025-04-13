@@ -147,6 +147,7 @@ The model also has to successfully apply all its changes to the source file with
      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
      padding: 0 4px; /* Add padding around the text */
      border-radius: 3px; /* Rounded corners for the text background */
+     font-size: 16px; /* Increase font size for the numbers */
   }
 </style>
  
