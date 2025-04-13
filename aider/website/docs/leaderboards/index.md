@@ -211,7 +211,9 @@ Aider works best with high-scoring models, though it [can connect to almost any 
   }
 </style>
 
+<script>
 {% include leaderboard_table.js %}
+</script>
 
 <p class="post-date" style="margin-top: 20px;">
 By Paul Gauthier,
