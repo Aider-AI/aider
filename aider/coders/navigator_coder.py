@@ -182,11 +182,16 @@ class NavigatorCoder(Coder):
         """
         Override parent's format_chat_chunks to include enhanced context blocks with a
         cleaner, more hierarchical structure for better organization.
+        
+        Optimized for prompt caching: enhanced context blocks are inserted after static
+        chat elements (system, examples, repo, readonly_files, done) but before variable
+        elements (chat_files, cur, reminder) to preserve prefix caching while providing
+        fresh context information.
         """
         # First get the normal chat chunks from the parent method
         chunks = super().format_chat_chunks() # Calls BaseCoder's format_chat_chunks
 
-        # If enhanced context blocks are enabled, prepend them to the current messages
+        # If enhanced context blocks are enabled, insert them in a strategic position
         if self.use_enhanced_context:
             # Create environment info context block
             env_context = self.get_environment_info()
@@ -216,18 +221,25 @@ class NavigatorCoder(Coder):
             if symbol_outline: # Add the new block if it was generated
                 context_blocks.append(symbol_outline)
 
-            # If we have any context blocks, prepend them to the system message
-            if context_blocks:
+            # Insert a fresh context update as a separate message before current messages
+            # This preserves cacheable prefix portions (system, examples, repo, etc.)
+            # while still providing fresh context information
+            if context_blocks and chunks.cur:
                 context_message = "\n\n".join(context_blocks)
-                # Prepend to system context but don't overwrite existing system content
-                if chunks.system:
-                    # If we already have system messages, append our context to the first one
-                    original_content = chunks.system[0]["content"]
-                    # Ensure there's separation between our blocks and the original prompt
-                    chunks.system[0]["content"] = context_message + "\n\n" + original_content
+                # Insert fresh context as a system message right before the first user message in cur
+                for i, msg in enumerate(chunks.cur):
+                    if msg["role"] == "user":
+                        # Insert context message right before the first user message
+                        chunks.cur.insert(i, dict(role="system", content=context_message))
+                        break
                 else:
-                    # Otherwise, create a new system message
-                    chunks.system = [dict(role="system", content=context_message)]
+                    # If no user message found, append to the end of chat_files 
+                    # (just before any existing cur messages)
+                    chunks.chat_files.append(dict(role="system", content=context_message))
+            elif context_blocks:
+                # If there are context blocks but no cur messages, append to chat_files
+                context_message = "\n\n".join(context_blocks)
+                chunks.chat_files.append(dict(role="system", content=context_message))
 
         return chunks
 
