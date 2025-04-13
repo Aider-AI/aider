@@ -119,8 +119,10 @@ The model also has to successfully apply all its changes to the source file with
     text-align: center; /* Keep text centered */
     overflow: hidden; /* Prevent bar from overflowing cell boundaries if needed */
     /* Default tick marks every 10% for percentage cells */
-    background-image: repeating-linear-gradient(to right, transparent, transparent 9px, rgba(221, 221, 221, 0.5) 9px, rgba(221, 221, 221, 0.5) 10px);
-    background-size: 10% 100%;
+    background-image: repeating-linear-gradient(to right, 
+      rgba(221, 221, 221, 0.5) 0px, rgba(221, 221, 221, 0.5) 1px, 
+      transparent 1px, transparent 10%);
+    background-size: 100% 100%;
   }
   .cost-bar-cell {
     background-image: none; /* Remove default gradient for cost cells */
