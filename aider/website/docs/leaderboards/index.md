@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (mode === 'view') {
           toggleButton.style.display = 'inline-block';
           selectorCheckbox.style.display = 'none';
-          row.classList.toggle('row-selected', isSelected); // Keep visual selection indication if selected
+          row.classList.remove('row-selected'); // Ensure no selection highlight in view mode
 
           // In 'view' mode, hide row if selections exist AND this row is NOT selected
           if (selectedRows.size > 0 && !isSelected) {
