@@ -9,14 +9,14 @@ has_children: true
 # Aider LLM Leaderboards
 
 Aider excels with LLMs skilled at *editing* code, not just writing it.
-These benchmarks evaluate an LLM's ability to follow instructions and edit code successfully.
-The leaderboards show results for popular LLMs. Aider works best with high-scoring models, though it [can connect to almost any LLM](/docs/llms.html).
+These benchmarks evaluate an LLM's ability to follow instructions and edit code successfully without
+human intervention.
+Aider works best with high-scoring models, though it [can connect to almost any LLM](/docs/llms.html).
 
 
 ## Polyglot leaderboard
 
 [Aider's polyglot benchmark](https://aider.chat/2024/12/21/polyglot.html#the-polyglot-benchmark) tests LLMs on 225 challenging Exercism coding exercises across C++, Go, Java, JavaScript, Python, and Rust.
-It measures coding ability in multiple languages, integration with existing code, and successful application of changes without human intervention.
 
 <input type="text" id="editSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
@@ -25,7 +25,7 @@ It measures coding ability in multiple languages, integration with existing code
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
-      <th style="padding: 8px; text-align: center;">Cost<br>(log scale)</th>
+      <th style="padding: 8px; text-align: center;">Cost (log scale)</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
