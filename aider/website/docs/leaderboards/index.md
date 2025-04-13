@@ -210,10 +210,11 @@ human intervention.
   /* Style for highlighted rows in view mode */
   tr.view-highlighted > td {
     background-color: #fffef5; /* Very light yellow/cream */
-    border-left: 4px solid #ffc107; /* Warning yellow border */
+    /* Border moved to specific cell below */
   }
-  /* Adjust padding for the first *visible* cell (Model name) in view mode */
+  /* Apply border and adjust padding ONLY for the first *visible* cell (Model name) in view mode */
   tr.view-highlighted > td:nth-child(2) {
+     border-left: 4px solid #ffc107; /* Warning yellow border */
      /* Original padding is 8px. Subtract border width. */
      padding-left: 4px;
   }
