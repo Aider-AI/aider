@@ -189,6 +189,27 @@ Aider works best with high-scoring models, though it [can connect to almost any 
       display: none !important;
   }
 
+  /* --- Mode Toggle Button Styles --- */
+  #view-mode-toggle {
+    height: 38px; /* Match input height */
+    box-sizing: border-box;
+  }
+  .mode-button {
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+  .mode-button.active {
+    background-color: #0d6efd; /* Bootstrap primary blue */
+    color: white;
+    cursor: default; /* Indicate it's the active state */
+  }
+  .mode-button:not(.active) {
+    background-color: #f8f9fa; /* Light grey background */
+    color: #495057; /* Dark grey text */
+  }
+  .mode-button:not(.active):hover {
+    background-color: #e2e6ea; /* Slightly darker grey on hover */
+  }
+
 </style>
 
 <script>
@@ -416,13 +437,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // --- New Event Listeners ---
 
-  // Listener for mode dropdown change
-  viewModeSelect.addEventListener('change', function(event) {
-    const newMode = event.target.value;
-    if (newMode !== currentMode) {
-      updateTableView(newMode);
-      applySearchFilter(); // Re-apply search filter when mode changes
-    }
+  // Listener for mode toggle buttons
+  modeButtons.forEach(button => {
+    button.addEventListener('click', function(event) {
+      const newMode = this.dataset.mode;
+      if (newMode !== currentMode) {
+        // Update active button style
+        modeButtons.forEach(btn => {
+            btn.classList.remove('active');
+            // Reset specific styles potentially added by .active
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+        });
+        this.classList.add('active');
+        // Apply active styles directly as inline styles might interfere
+        this.style.backgroundColor = '#0d6efd'; // Ensure active color is applied
+        this.style.color = 'white';
+
+        // Update table view and apply filters
+        updateTableView(newMode);
+        applySearchFilter(); // Re-apply search filter when mode changes
+      }
+    });
   });
 
   // Listener for row selector checkboxes (using event delegation on table body)
