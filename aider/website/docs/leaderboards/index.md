@@ -120,6 +120,11 @@ human intervention.
     th.col-edit-format, td.col-edit-format {
       display: none;
     }
+    /* Increase width of Percent correct and Cost columns when others are hidden */
+    th:nth-child(3), td:nth-child(3), /* Percent correct */
+    th:nth-child(4), td:nth-child(4) { /* Cost */
+      width: 30% !important; /* Override inline style */
+    }
   }
 
   /* Hide command column on even smaller screens */
