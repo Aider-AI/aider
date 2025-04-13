@@ -209,10 +209,9 @@ Aider works best with high-scoring models, though it [can connect to almost any 
   tr.view-highlighted > td {
     background-color: #f0f0f0; /* Example light grey highlight */
   }
-
 </style>
 
-<script src="/assets/js/leaderboard_table.js"></script>
+{% include leaderboard_table.js %}
 
 <p class="post-date" style="margin-top: 20px;">
 By Paul Gauthier,

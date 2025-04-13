@@ -1,3 +1,4 @@
+<script>
 document.addEventListener('DOMContentLoaded', function() {
   let currentMode = 'view'; // 'view', 'select'
   let selectedRows = new Set(); // Store indices of selected rows
@@ -386,3 +387,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 });
+</script>
