@@ -18,8 +18,14 @@ setx   XAI_API_KEY <key> # Windows, restart shell after setx
 # Grok 3
 aider --model xai/grok-3-beta
 
-# Grok 3 fast is faster and more expensive
+# Grok 3 fast (faster, more expensive)
 aider --model xai/grok-3-fast-beta
+
+# Grok 3 Mini
+aider --model xai/grok-3-mini-beta
+
+# Grok 3 Mini fast (faster, more expensive)
+aider --model xai/grok-3-mini-fast-beta
 
 # List models available from xAI
 aider --list-models xai/
