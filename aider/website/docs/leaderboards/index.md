@@ -118,16 +118,11 @@ The model also has to successfully apply all its changes to the source file with
     padding: 8px;
     text-align: center; /* Keep text centered */
     overflow: hidden; /* Prevent bar from overflowing cell boundaries if needed */
-    /* Default tick marks every 10% for percentage cells */
-    background-image: repeating-linear-gradient(to right, 
-      rgba(221, 221, 221, 0.5) 0px, rgba(221, 221, 221, 0.5) 1px, 
-      transparent 1px, transparent 10%);
-    background-size: 100% 100%;
   }
   .cost-bar-cell {
     background-image: none; /* Remove default gradient for cost cells */
   }
-  .cost-tick {
+  .percent-tick, .cost-tick {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -157,6 +152,19 @@ The model also has to successfully apply all its changes to the source file with
  
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Add percentage ticks to each bar cell (non-cost cells)
+  const percentCells = document.querySelectorAll('.bar-cell:not(.cost-bar-cell)');
+  percentCells.forEach(cell => {
+    // Add ticks at 0%, 10%, 20%, ..., 100%
+    for (let i = 0; i <= 100; i += 10) {
+      const tick = document.createElement('div');
+      tick.className = 'percent-tick';
+      tick.style.left = `${i}%`;
+      cell.appendChild(tick);
+    }
+  });
+
+  // Process cost bars
   const costBars = document.querySelectorAll('.cost-bar');
   costBars.forEach(bar => {
     const cost = parseFloat(bar.dataset.cost);
