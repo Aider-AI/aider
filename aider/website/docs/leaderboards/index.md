@@ -94,7 +94,11 @@ The model also has to successfully apply all its changes to the source file with
   table {
     table-layout: fixed;
   }
+  thead {
+    border-top: 1px solid #ddd; /* Add top border to header */
+  }
   td, th {
+    border: none; /* Remove internal cell borders */
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
