@@ -442,6 +442,31 @@ class NavigatorCoder(Coder):
             # return False to trigger a reflection loop.
             if self.reflected_message:
                 return False
+            
+            # If edits were successfully applied and we haven't exceeded reflection limits,
+            # set up for another iteration (similar to tool calls)
+            if edited_files and self.num_reflections < self.max_reflections:
+                # Get the original user question from the most recent user message
+                if self.cur_messages and len(self.cur_messages) >= 1:
+                    for msg in reversed(self.cur_messages):
+                        if msg["role"] == "user":
+                            original_question = msg["content"]
+                            break
+                    else:
+                        # Default if no user message found
+                        original_question = "Please continue your exploration and provide a final answer."
+                    
+                    # Construct the message for the next turn
+                    next_prompt = (
+                        "I have applied the edits you suggested. "
+                        f"The following files were modified: {', '.join(edited_files)}. "
+                        "Let me continue working on your request.\n\n"
+                        f"Your original question was: {original_question}"
+                    )
+                    
+                    self.reflected_message = next_prompt
+                    self.io.tool_output("Continuing after applying edits...")
+                    return False  # Indicate that we need another iteration
 
         # If any tool calls were found and we haven't exceeded reflection limits, set up for another iteration
         # This is implicit continuation when any tool calls are present, rather than requiring Continue explicitly
