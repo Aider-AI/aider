@@ -35,7 +35,9 @@ human intervention.
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Cost (log scale)</th>
-      <th style="padding: 8px; text-align: left;">Command</th>
+      <th style="padding: 8px; text-align: left;" class="col-command">Command</th>
+      <th style="padding: 8px; text-align: center;" class="col-conform">% Conform</th>
+      <th style="padding: 8px; text-align: left;" class="col-edit-format">Edit Format</th>
     </tr>
   </thead>
   <tbody>
@@ -66,10 +68,12 @@ human intervention.
           {% assign rounded_cost = row.total_cost | times: 1.0 | round: 2 %}
           <span>{% if row.total_cost == 0 or rounded_cost == 0.00 %}?{% else %}${{ rounded_cost }}{% endif %}</span>
         </td>
-        <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
+        <td style="padding: 8px;" class="col-command"><span><code>{{ row.command }}</code></span></td>
+        <td style="padding: 8px; text-align: center;" class="col-conform"><span>{{ row.conform_rate_2 }}%</span></td>
+        <td style="padding: 8px;" class="col-edit-format"><span>{{ row.edit_format }}</span></td>
       </tr>
       <tr class="details-row" id="details-{{ row_index }}" style="display: none; background-color: #f9f9f9;">
-        <td colspan="5" style="padding: 15px; border-bottom: 1px solid #ddd;">
+        <td colspan="7" style="padding: 15px; border-bottom: 1px solid #ddd;">
           <ul style="margin: 0; padding-left: 20px; list-style: none; border-bottom: 1px solid #ddd;">
             {% for pair in row %}
               {% if pair[1] != "" and pair[1] != nil %}
@@ -100,13 +104,21 @@ human intervention.
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
-  td:nth-child(5) { /* Command column */
+  td.col-command { /* Command column */
     font-size: 12px; /* Keep font size adjustment for command column if desired, or remove */
   }
 
-  /* Hide command column on mobile */
+  /* Hide new columns first on smaller screens */
+  @media screen and (max-width: 991px) {
+    th.col-conform, td.col-conform,
+    th.col-edit-format, td.col-edit-format {
+      display: none;
+    }
+  }
+
+  /* Hide command column on even smaller screens */
   @media screen and (max-width: 767px) {
-    th:nth-child(5), td:nth-child(5) { /* Command column */
+    th.col-command, td.col-command { /* Command column */
       display: none;
     }
   }
