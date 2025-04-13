@@ -102,13 +102,13 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
-  td:nth-child(4) { /* Command column */
-    font-size: 12px;
+  td:nth-child(5) { /* Command column */
+    font-size: 12px; /* Keep font size adjustment for command column if desired, or remove */
   }
 
   /* Hide command column on mobile */
   @media screen and (max-width: 767px) {
-    th:nth-child(4), td:nth-child(4) { /* Command column */
+    th:nth-child(5), td:nth-child(5) { /* Command column */
       display: none;
     }
   }
