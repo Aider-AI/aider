@@ -288,6 +288,16 @@ by doing something like `git blame` on the repo,
 and counting up who wrote all the new lines of code in each release.
 Only lines in source code files are counted, not documentation or prompt files.
 
+## Why did aider ignore/discard its proposed edits after it asked to add a new file to the chat?
+
+If aider prompts you to add a new file to the chat and you say yes,
+it will re-submit the original request. 
+The fact that the LLM's reply indicated that it needed to see another file (and you said yes)
+is often a sign that the LLM should have been able to see/edit that file in the first place. 
+Without access to it, there is increased chance that it's done a bad implementation of the requested change.
+Often LLMs will hallucinate content for the files they needed but didn't have.
+So aider re-submits the original request in this situation.
+
 ## Why does aider sometimes stop highlighting code in its replies?
 
 Aider displays the markdown responses that are coming back from the LLM.
