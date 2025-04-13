@@ -63,7 +63,7 @@ The model also has to successfully apply all its changes to the source file with
           <div class="bar-viz" style="width: {{ row.pass_rate_2 }}%; background-color: rgba(40, 167, 69, 0.3); border-right: 1px solid rgba(40, 167, 69, 0.5);"></div>
           <span>{{ row.pass_rate_2 }}%</span>
         </td>
-        <td class="bar-cell">
+        <td class="bar-cell cost-bar-cell">
           {% if row.total_cost > 0 %}
           <div class="bar-viz cost-bar" data-cost="{{ row.total_cost }}" data-max-cost="{{ max_cost }}" style="width: 0%; background-color: rgba(111, 66, 193, 0.3); border-right: 1px solid rgba(111, 66, 193, 0.5);"></div>
           {% endif %}
@@ -118,8 +118,20 @@ The model also has to successfully apply all its changes to the source file with
     padding: 8px;
     text-align: center; /* Keep text centered */
     overflow: hidden; /* Prevent bar from overflowing cell boundaries if needed */
-    background-image: repeating-linear-gradient(to right, transparent, transparent 19px, rgba(221, 221, 221, 0.5) 19px, rgba(221, 221, 221, 0.5) 20px); /* Tick marks every 20% */
-    background-size: 20% 100%; /* Set the size of the repeating gradient */
+    /* Default tick marks every 10% for percentage cells */
+    background-image: repeating-linear-gradient(to right, transparent, transparent 9px, rgba(221, 221, 221, 0.5) 9px, rgba(221, 221, 221, 0.5) 10px);
+    background-size: 10% 100%;
+  }
+  .cost-bar-cell {
+    background-image: none; /* Remove default gradient for cost cells */
+  }
+  .cost-tick {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(221, 221, 221, 0.5);
+    z-index: 0; /* Behind the bar and text */
   }
   .bar-viz {
     position: absolute;
