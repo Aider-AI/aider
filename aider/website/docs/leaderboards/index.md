@@ -196,7 +196,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
       if (logMaxCost > 0) { // Ensure logMaxCost is positive to avoid division by zero or negative results
         const tickValues = [];
-        // Generate ticks for $10, $20, $30... up to maxCost
+        // Generate ticks starting at $0, then $10, $20, $30... up to maxCost
+        tickValues.push(0); // Add tick at base (0 position)
         for (let tickCost = 10; tickCost <= maxCost; tickCost += 10) {
           tickValues.push(tickCost);
         }
