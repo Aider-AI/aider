@@ -267,14 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tick.className = 'cost-tick';
             tick.style.left = `${percent}%`;
             
-            // Add dollar amount labels to the ticks
-            if (index % 2 === 0) { // Only label every other tick to avoid crowding
-              const label = document.createElement('div');
-              label.className = 'cost-tick-label';
-              label.textContent = '$' + tickValues[index];
-              label.style.left = `${percent}%`;
-              cell.appendChild(label);
-            }
+            // No dollar amount labels
             
             cell.appendChild(tick);
           }

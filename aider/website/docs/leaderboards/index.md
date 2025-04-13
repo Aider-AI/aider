@@ -171,16 +171,6 @@ human intervention.
     background-color: rgba(170, 170, 170, 0.5); 
     z-index: 2; /* Above the bar but below the text */
   }
-  .cost-tick-label {
-    position: absolute;
-    top: 50%;
-    transform: translateY(20px);
-    font-size: 10px;
-    color: #666;
-    z-index: 2;
-    text-align: center;
-    margin-left: -10px;
-  }
   .cost-tear-marker {
     position: absolute;
     left: 90%; /* Position at 90% (around $45) */
