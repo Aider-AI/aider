@@ -205,6 +205,11 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     background-color: #e2e6ea; /* Slightly darker grey on hover */
   }
 
+  /* Style for highlighted rows in view mode */
+  tr.view-highlighted > td {
+    background-color: #f0f0f0; /* Example light grey highlight */
+  }
+
 </style>
 
 <script>
@@ -308,12 +313,18 @@ document.addEventListener('DOMContentLoaded', function() {
           toggleButton.style.display = 'inline-block';
           selectorCheckbox.style.display = 'none';
           row.classList.remove('row-selected'); // Ensure no selection highlight in view mode
+          // DO NOT remove 'view-highlighted' here, let it persist
 
           // In 'view' mode, hide row if selections exist AND this row is NOT selected
           if (selectedRows.size > 0 && !isSelected) {
               row.classList.add('hidden-by-mode');
               if (detailsRow) detailsRow.classList.add('hidden-by-mode');
+          } else {
+              // Ensure row is not hidden by mode if it's selected or no selections exist
+              row.classList.remove('hidden-by-mode');
+              if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
           }
+
 
           // Hide details row unless it was explicitly opened (handled by toggle listener)
           if (detailsRow && toggleButton.textContent === '▶') {
@@ -324,8 +335,13 @@ document.addEventListener('DOMContentLoaded', function() {
           selectorCheckbox.style.display = 'inline-block';
           selectorCheckbox.checked = isSelected;
           row.classList.toggle('row-selected', isSelected);
+          row.classList.remove('view-highlighted'); // <<< ADD THIS LINE to clear view highlight
           // Always hide details row in select mode
           if (detailsRow) detailsRow.style.display = 'none';
+
+          // In 'select' mode, no rows should be hidden based on selection status
+          row.classList.remove('hidden-by-mode');
+          if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
       }
 
 
@@ -539,27 +555,43 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Listener for clicking anywhere on a row in select mode
+  // Listener for clicking anywhere on a row
   tableBody.addEventListener('click', function(event) {
-    if (currentMode !== 'select') return; // Only active in select mode
+    // REMOVE this line: if (currentMode !== 'select') return; // Only active in select mode
 
     const clickedRow = event.target.closest('tr');
 
     // Ensure it's a main row and not a details row or header/footer
     if (!clickedRow || !clickedRow.id.startsWith('main-row-')) return;
 
-    // Find the checkbox within this row
-    const checkbox = clickedRow.querySelector('.row-selector');
-    if (!checkbox) return; // No checkbox found in this row
+    // --- START conditional logic ---
+    if (currentMode === 'select') {
+        // --- SELECT MODE LOGIC (Existing) ---
+        // Find the checkbox within this row
+        const checkbox = clickedRow.querySelector('.row-selector');
+        if (!checkbox) return; // No checkbox found in this row
 
-    // If the click was directly on the checkbox or its label (if any),
-    // let the default behavior and the 'change' event listener handle it.
-    // Otherwise, toggle the checkbox state programmatically.
-    if (event.target !== checkbox && event.target.tagName !== 'LABEL' /* Add if you use labels */) {
-        checkbox.checked = !checkbox.checked;
-        // Manually trigger the change event to update state and UI
-        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        // If the click was directly on the checkbox or its label (if any),
+        // let the default behavior and the 'change' event listener handle it.
+        // Otherwise, toggle the checkbox state programmatically.
+        if (event.target !== checkbox && event.target.tagName !== 'LABEL' /* Add if you use labels */) {
+            checkbox.checked = !checkbox.checked;
+            // Manually trigger the change event to update state and UI
+            checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        // --- END SELECT MODE LOGIC ---
+
+    } else if (currentMode === 'view') {
+        // --- VIEW MODE LOGIC (New) ---
+        // Don't highlight if the click was on the details toggle button
+        if (event.target.classList.contains('toggle-details')) {
+            return;
+        }
+        // Toggle the highlight class on the clicked row
+        clickedRow.classList.toggle('view-highlighted');
+        // --- END VIEW MODE LOGIC ---
     }
+    // --- END conditional logic ---
   });
 
 
