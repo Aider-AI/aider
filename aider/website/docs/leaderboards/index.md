@@ -209,7 +209,7 @@ human intervention.
 
   /* Style for highlighted rows in view mode */
   tr.view-highlighted > td {
-    background-color: #e9f5ea; /* Light green highlight */
+    background-color: #fff9e6; /* Light yellow highlight */
   }
 </style>
 
