@@ -128,22 +128,22 @@ The model also has to successfully apply all its changes to the source file with
     transform: translateY(-50%);
     height: 36px; /* Match the height of the bar */
     width: 1px;
-    background-color: rgba(221, 221, 221, 0.5);
-    z-index: 0; /* Behind the bar and text */
+    background-color: rgba(100, 100, 100, 0.5); /* Darker color for better visibility */
+    z-index: 2; /* Above the bar but below the text */
   }
   .bar-viz {
     position: absolute;
     left: 0;
     top: 50%; /* Position at the middle of the cell */
     transform: translateY(-50%); /* Center the bar vertically */
-    z-index: 0; /* Behind the text */
+    z-index: 1; /* Above background, below ticks and text */
     height: 36px;
     border-radius: 0 2px 2px 0; /* Slightly rounded end corners */
     /* Width and colors are set inline via style attribute */
   }
   .bar-cell span {
      position: relative; /* Needed to stack above the absolute positioned bar */
-     z-index: 1; /* Ensure text is above the bar */
+     z-index: 3; /* Ensure text is above everything else */
      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
      padding: 0 4px; /* Add padding around the text */
      border-radius: 3px; /* Rounded corners for the text background */
