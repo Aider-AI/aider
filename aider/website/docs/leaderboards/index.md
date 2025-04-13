@@ -134,10 +134,10 @@ The model also has to successfully apply all its changes to the source file with
   .bar-cell span {
      position: relative; /* Needed to stack above the absolute positioned bar */
      z-index: 1; /* Ensure text is above the bar */
-     /* Optional: Add padding or background for better readability */
-     /* background-color: rgba(255, 255, 255, 0.7); */
-     /* padding: 0 2px; */
-     /* border-radius: 2px; */
+     background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
+     padding: 0 4px; /* Add padding around the text */
+     border-radius: 3px; /* Rounded corners for the text background */
+     box-shadow: 0 0 2px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
   }
 </style>
 
