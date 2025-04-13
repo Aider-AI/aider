@@ -231,10 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
         darkSection.style.zIndex = '1';
         bar.parentNode.appendChild(darkSection);
         
-        // Add a marker at the end of the bar
-        const marker = document.createElement('div');
-        marker.className = 'cost-exceeded-marker';
-        bar.parentNode.appendChild(marker);
+        // No marker at the end of the bar
       }
     } else {
       // Set width to 0 if cost is 0 or negative

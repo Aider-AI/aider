@@ -196,18 +196,6 @@ human intervention.
     );
     z-index: 3;
   }
-  .cost-exceeded-marker {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-top: 6px solid transparent;
-    border-bottom: 6px solid transparent;
-    border-left: 6px solid rgba(0, 0, 0, 0.5);
-    z-index: 3;
-  }
   .bar-viz {
     position: absolute;
     left: 0;
