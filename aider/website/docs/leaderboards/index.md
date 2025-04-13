@@ -42,7 +42,7 @@ The model also has to successfully apply all its changes to the source file with
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
-      <th style="padding: 8px; text-align: center;">Cost<br>(log scale bar)</th>
+      <th style="padding: 8px; text-align: center;">Cost<br>(log scale)</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
@@ -126,9 +126,9 @@ The model also has to successfully apply all its changes to the source file with
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    height: 36px; /* Match the height of the bar */
+    height: 10px; /* Match the height of the bar */
     width: 1px;
-    background-color: rgba(170, 170, 170, 0.4); /* Lighter color for ticks */
+    background-color: rgba(170, 170, 170, 0.2); 
     z-index: 2; /* Above the bar but below the text */
   }
   .bar-viz {
