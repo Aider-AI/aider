@@ -76,17 +76,6 @@ Aider works best with high-scoring models, though it [can connect to almost any 
   </tbody>
 </table>
 
-### Aider polyglot benchmark results
-
-<canvas id="editChart" width="800" height="450" style="margin-top: 20px"></canvas>
-<script src="https://unpkg.com/patternomaly/dist/patternomaly.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-{% assign data_source = edit_sorted %}
-{% assign pass_rate_field = "pass_rate_2" %}
-{% assign highlight_model = "xxxxxx" %}
-{% include leaderboard.js %}
-</script>
 <style>
   tr.selected {
     color: #0056b3;
@@ -264,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
  
-<p class="post-date">
+<p class="post-date" style="margin-top: 20px;">
 By Paul Gauthier,
 last updated
 <!--[[[cog
