@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-  let currentMode = 'view'; // 'view', 'select'
+  let currentMode = 'view'; // 'view', 'select', 'detail'
   let selectedRows = new Set(); // Store indices of selected rows
 
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
   const searchInput = document.getElementById('editSearchInput');
   const modeViewButton = document.getElementById('mode-view-btn');
+  const modeDetailButton = document.getElementById('mode-detail-btn');
   const modeSelectButton = document.getElementById('mode-select-btn');
-  const modeButtons = [modeViewButton, modeSelectButton];
+  const modeButtons = [modeViewButton, modeDetailButton, modeSelectButton];
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
 
   function applySearchFilter() {
@@ -64,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   function updateTableView(mode) {
-    currentMode = mode; // Update global state ('view' or 'select')
+    currentMode = mode; // Update global state ('view', 'select', 'detail')
 
     // Update button styles first
     modeButtons.forEach(btn => {
@@ -73,7 +74,11 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.style.backgroundColor = '';
         btn.style.color = '';
     });
-    const activeButton = mode === 'view' ? modeViewButton : modeSelectButton;
+    let activeButton;
+    if (mode === 'view') activeButton = modeViewButton;
+    else if (mode === 'select') activeButton = modeSelectButton;
+    else if (mode === 'detail') activeButton = modeDetailButton;
+
     activeButton.classList.add('active');
     activeButton.style.backgroundColor = '#e7f3ff'; // Use selected row highlight blue
     activeButton.style.color = '#495057'; // Use dark text for contrast on light blue
@@ -94,39 +99,47 @@ document.addEventListener('DOMContentLoaded', function() {
       if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
 
       // Apply mode-specific logic
-      if (mode === 'view') {
-          toggleButton.style.display = 'inline-block';
+      if (mode === 'view') { // --- VIEW MODE ---
+          toggleButton.style.display = 'none'; // Hide toggle in view mode
           selectorCheckbox.style.display = 'none';
           row.classList.remove('row-selected'); // Ensure no selection highlight in view mode
-          // DO NOT remove 'view-highlighted' here, let it persist
+          // view-highlighted is handled by row click listener
 
-          // In 'view' mode, hide row if selections exist AND this row is NOT selected
-          if (selectedRows.size > 0 && !isSelected) {
-              row.classList.add('hidden-by-mode');
-              if (detailsRow) detailsRow.classList.add('hidden-by-mode');
-          } else {
-              // Ensure row is not hidden by mode if it's selected or no selections exist
-              row.classList.remove('hidden-by-mode');
-              if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
+          // Always show main row (if not filtered by search)
+          row.classList.remove('hidden-by-mode');
+          if (detailsRow) {
+              detailsRow.classList.remove('hidden-by-mode');
+              detailsRow.style.display = 'none'; // Always hide details in view mode
           }
 
-
-          // Hide details row unless it was explicitly opened (handled by toggle listener)
-          if (detailsRow && toggleButton.textContent === '▶') {
-              detailsRow.style.display = 'none';
-          }
-      } else { // mode === 'select'
+      } else if (mode === 'select') { // --- SELECT MODE ---
           toggleButton.style.display = 'none';
           selectorCheckbox.style.display = 'inline-block';
           selectorCheckbox.checked = isSelected;
           row.classList.toggle('row-selected', isSelected);
-          row.classList.remove('view-highlighted'); // <<< ADD THIS LINE to clear view highlight
+          row.classList.remove('view-highlighted'); // Clear view highlight
           // Always hide details row in select mode
           if (detailsRow) detailsRow.style.display = 'none';
 
           // In 'select' mode, no rows should be hidden based on selection status
           row.classList.remove('hidden-by-mode');
           if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
+
+      } else { // --- DETAIL MODE --- (mode === 'detail')
+          toggleButton.style.display = 'inline-block'; // Show toggle
+          selectorCheckbox.style.display = 'none';
+          row.classList.remove('row-selected'); // Clear selection highlight
+          row.classList.remove('view-highlighted'); // Clear view highlight
+          // Details row visibility is controlled by the toggle button state, don't force hide/show here
+          // Ensure main row is visible if not hidden by search
+          row.classList.remove('hidden-by-mode');
+          if (detailsRow) {
+              detailsRow.classList.remove('hidden-by-mode');
+              // Preserve existing display state (controlled by toggle) unless hidden by search
+              if (detailsRow.classList.contains('hidden-by-search')) {
+                  detailsRow.style.display = 'none';
+              }
+          }
       }
 
 
@@ -325,8 +338,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const toggleButtons = document.querySelectorAll('.toggle-details');
   toggleButtons.forEach(button => {
     button.addEventListener('click', function() {
-      // Only allow toggling in 'all' or 'selected' modes
-      if (currentMode === 'select') return;
+      // Only allow toggling in 'detail' mode
+      if (currentMode !== 'detail') return;
 
       const targetId = this.getAttribute('data-target');
       const targetRow = document.getElementById(targetId);
@@ -342,8 +355,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Listener for clicking anywhere on a row
   tableBody.addEventListener('click', function(event) {
-    // REMOVE this line: if (currentMode !== 'select') return; // Only active in select mode
-
     const clickedRow = event.target.closest('tr');
 
     // Ensure it's a main row and not a details row or header/footer
