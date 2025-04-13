@@ -24,13 +24,14 @@ Aider works best with high-scoring models, though it [can connect to almost any 
   <button data-mode="all" class="mode-button active">All</button>
   <button data-mode="select" class="mode-button">Select</button>
   <button data-mode="selected" class="mode-button">Selected</button>
-  <button id="clear-selection-button" style="display: none; margin-left: 10px;">Clear Selection</button>
 </div>
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
-      <th style="padding: 8px; width: 40px;"></th> <!-- Toggle/Select column -->
+      <th style="padding: 8px; width: 40px; text-align: center; vertical-align: middle;">
+        <input type="checkbox" id="select-all-checkbox" style="display: none; cursor: pointer; vertical-align: middle;">
+      </th> <!-- Header checkbox added here -->
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Cost (log scale)</th>
@@ -177,13 +178,6 @@ Aider works best with high-scoring models, though it [can connect to almost any 
   #view-mode-toggle .mode-button:not(:first-child):not(.active) {
       border-left: none; /* Avoid double borders */
   }
-  #clear-selection-button {
-      padding: 5px 10px;
-      border: 1px solid #ccc;
-      background-color: #f8f9fa;
-      cursor: pointer;
-      border-radius: 4px;
-  }
 
 
   /* Style for selected rows */
@@ -213,10 +207,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const modeToggleButtonContainer = document.getElementById('view-mode-toggle');
   const modeButtons = modeToggleButtonContainer.querySelectorAll('.mode-button');
-  const clearSelectionButton = document.getElementById('clear-selection-button');
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
   const searchInput = document.getElementById('editSearchInput');
+  const selectAllCheckbox = document.getElementById('select-all-checkbox');
 
   function applySearchFilter() {
     const searchTerm = searchInput.value.toLowerCase();
@@ -233,8 +227,41 @@ document.addEventListener('DOMContentLoaded', function() {
         if (detailsRow) detailsRow.classList.add('hidden-by-search');
       }
     });
-    // After applying search filter, re-apply view mode filter
+    // After applying search filter, re-apply view mode filter and update select-all state
     updateTableView(currentMode);
+    if (currentMode === 'select') {
+        updateSelectAllCheckboxState();
+    }
+  }
+
+  function getVisibleMainRows() {
+      // Helper to get rows currently visible (not hidden by search or mode)
+      return Array.from(allMainRows).filter(row =>
+          !row.classList.contains('hidden-by-search') && !row.classList.contains('hidden-by-mode')
+      );
+  }
+
+  function updateSelectAllCheckboxState() {
+      // Update the header checkbox based on the selection state of *visible* rows
+      if (currentMode !== 'select') return; // Only relevant in select mode
+
+      const visibleRows = getVisibleMainRows();
+      const visibleRowCount = visibleRows.length;
+      const selectedVisibleRowCount = visibleRows.filter(row => selectedRows.has(row.querySelector('.row-selector')?.dataset.rowIndex)).length;
+
+      if (visibleRowCount === 0) {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+      } else if (selectedVisibleRowCount === visibleRowCount) {
+          selectAllCheckbox.checked = true;
+          selectAllCheckbox.indeterminate = false;
+      } else if (selectedVisibleRowCount > 0) {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = true;
+      } else {
+          selectAllCheckbox.checked = false;
+          selectAllCheckbox.indeterminate = false;
+      }
   }
 
 
@@ -250,8 +277,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    // Show/hide clear selection button
-    clearSelectionButton.style.display = (mode === 'select' || mode === 'selected') && selectedRows.size > 0 ? 'inline-block' : 'none';
+    // Show/hide header checkbox based on mode
+    selectAllCheckbox.style.display = mode === 'select' ? 'inline-block' : 'none';
 
     allMainRows.forEach(row => {
       const rowIndex = row.querySelector('.row-selector')?.dataset.rowIndex;
@@ -269,6 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'all':
           toggleButton.style.display = 'inline-block';
           selectorCheckbox.style.display = 'none';
+          // selectAllCheckbox.style.display = 'none'; // Already handled above loop
           row.classList.toggle('row-selected', isSelected); // Keep visual selection indication
           // Hide details row unless it was explicitly opened (handled by toggle listener)
           if (detailsRow && toggleButton.textContent === '▶') {
@@ -278,6 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'select':
           toggleButton.style.display = 'none';
           selectorCheckbox.style.display = 'inline-block';
+          // selectAllCheckbox.style.display = 'inline-block'; // Already handled above loop
           selectorCheckbox.checked = isSelected;
           row.classList.toggle('row-selected', isSelected);
           // Always hide details row in select mode
@@ -286,6 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         case 'selected':
           toggleButton.style.display = 'inline-block';
           selectorCheckbox.style.display = 'none';
+          // selectAllCheckbox.style.display = 'none'; // Already handled above loop
           if (isSelected) {
             row.classList.add('row-selected'); // Ensure selected class is present
             // Hide details row unless it was explicitly opened
@@ -315,6 +345,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     });
+
+    // Update the select-all checkbox state after updating the view
+    updateSelectAllCheckboxState();
   }
 
 
@@ -440,29 +473,41 @@ document.addEventListener('DOMContentLoaded', function() {
         selectedRows.delete(rowIndex);
         mainRow.classList.remove('row-selected');
       }
-      // Update clear button visibility
-      clearSelectionButton.style.display = selectedRows.size > 0 ? 'inline-block' : 'none';
+      // Update select-all checkbox state
+      updateSelectAllCheckboxState();
     }
-  });
+  }); // End of tableBody listener
 
-  // Listener for Clear Selection button
-  clearSelectionButton.addEventListener('click', function() {
-    selectedRows.clear();
-    allMainRows.forEach(row => {
-      row.classList.remove('row-selected');
-      const checkbox = row.querySelector('.row-selector');
-      if (checkbox) checkbox.checked = false;
-    });
-    clearSelectionButton.style.display = 'none';
-    // If in 'selected' mode after clearing, switch back to 'all' or 'select'? Let's stay in 'selected' but show nothing.
-    // Re-apply view to potentially hide all rows if in 'selected' mode or update visual state otherwise.
-    updateTableView(currentMode);
-    // Also re-apply search filter in case it affects visibility logic
-    applySearchFilter();
+  // Listener for Select All checkbox
+  selectAllCheckbox.addEventListener('change', function() {
+      if (currentMode !== 'select') return;
+
+      const isChecked = selectAllCheckbox.checked;
+      // Select/deselect only the rows that are currently visible
+      const visibleRows = getVisibleMainRows();
+
+      visibleRows.forEach(row => {
+          const checkbox = row.querySelector('.row-selector');
+          const rowIndex = checkbox?.dataset.rowIndex;
+          if (!checkbox || !rowIndex) return; // Skip if no checkbox/index found
+
+          // Only change state if it differs from target state
+          if (checkbox.checked !== isChecked) {
+              checkbox.checked = isChecked;
+              row.classList.toggle('row-selected', isChecked);
+              if (isChecked) {
+                  selectedRows.add(rowIndex);
+              } else {
+                  selectedRows.delete(rowIndex);
+              }
+          }
+      });
+      // After bulk change, ensure the selectAll checkbox state is correct (not indeterminate)
+      updateSelectAllCheckboxState();
   });
 
   // Listener for search input
-   searchInput.addEventListener('input', applySearchFilter);
+  searchInput.addEventListener('input', applySearchFilter);
 
   // Add toggle functionality for details (Modified to respect modes)
   const toggleButtons = document.querySelectorAll('.toggle-details');
