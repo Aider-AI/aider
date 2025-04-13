@@ -204,22 +204,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxCost = parseFloat(bar.dataset.maxCost);
  
     if (cost > 0 && maxCost > 0) {
-      // Use log10(1 + x) for scaling. Adding 1 handles potential cost=0 and gives non-zero logs for cost > 0.
-      const logCost = Math.log10(1 + cost);
-      const logMaxCost = Math.log10(1 + maxCost);
- 
-      if (logMaxCost > 0) {
-        // Calculate percentage relative to the log of max cost
-        const percent = (logCost / logMaxCost) * 100;
-        // Clamp percentage between 0 and 100
-        bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
-      } else {
-        // Handle edge case where maxCost is 0 (so logMaxCost is 0)
-        // If maxCost is 0, cost must also be 0, handled below.
-        // If maxCost > 0 but logMaxCost <= 0 (e.g., maxCost is very small), set width relative to cost?
-        // For simplicity, setting to 0 if logMaxCost isn't positive.
-        bar.style.width = '0%';
-      }
+      // Calculate percentage directly (linear scale)
+      const percent = (cost / maxCost) * 100;
+      // Clamp percentage between 0 and 100
+      bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
     } else {
       // Set width to 0 if cost is 0 or negative
       bar.style.width = '0%';
@@ -234,45 +222,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const maxCost = parseFloat(firstCostBar?.dataset.maxCost || '1'); // Use 1 as fallback
 
     if (maxCost > 0) {
-      const logMaxCost = Math.log10(1 + maxCost);
-
-      if (logMaxCost > 0) { // Ensure logMaxCost is positive to avoid division by zero or negative results
-        const tickValues = [];
-        // Generate ticks starting at $0, then $10, $20, $30... up to maxCost
-        tickValues.push(0); // Add tick at base (0 position)
-        for (let tickCost = 10; tickCost <= maxCost; tickCost += 10) {
-          tickValues.push(tickCost);
-        }
-
-        // Calculate percentage positions for each tick on the log scale
-        const tickPercentages = tickValues.map(tickCost => {
-          const logTickCost = Math.log10(1 + tickCost);
-          return (logTickCost / logMaxCost) * 100;
-        });
-
-        // Add tick divs to each cost cell
-        costCells.forEach(cell => {
-          const costBar = cell.querySelector('.cost-bar');
-          // Use optional chaining and provide '0' as fallback if costBar or dataset.cost is missing
-          const cost = parseFloat(costBar?.dataset?.cost || '0');
-
-          // Only add ticks if the cost is actually greater than 0
-          if (cost > 0) {
-            // Clear existing ticks if any (e.g., during updates, though not strictly needed here)
-            // cell.querySelectorAll('.cost-tick').forEach(t => t.remove());
-
-            tickPercentages.forEach(percent => {
-              // Ensure percentage is within valid range
-              if (percent >= 0 && percent <= 100) {
-                const tick = document.createElement('div');
-                tick.className = 'cost-tick';
-                tick.style.left = `${percent}%`;
-                cell.appendChild(tick);
-              }
-            });
-          }
-        });
+      const tickValues = [];
+      // Generate ticks at regular intervals (every 20% of max cost)
+      tickValues.push(0); // Add tick at base (0 position)
+      for (let i = 1; i <= 5; i++) {
+        tickValues.push((maxCost * i) / 5);
       }
+
+      // Calculate percentage positions for each tick on the linear scale
+      const tickPercentages = tickValues.map(tickCost => {
+        return (tickCost / maxCost) * 100;
+      });
+
+      // Add tick divs to each cost cell
+      costCells.forEach(cell => {
+        const costBar = cell.querySelector('.cost-bar');
+        // Use optional chaining and provide '0' as fallback if costBar or dataset.cost is missing
+        const cost = parseFloat(costBar?.dataset?.cost || '0');
+
+        // Only add ticks if the cost is actually greater than 0
+        if (cost > 0) {
+          tickPercentages.forEach(percent => {
+            // Ensure percentage is within valid range
+            if (percent >= 0 && percent <= 100) {
+              const tick = document.createElement('div');
+              tick.className = 'cost-tick';
+              tick.style.left = `${percent}%`;
+              cell.appendChild(tick);
+            }
+          });
+        }
+      });
     }
   }
 
