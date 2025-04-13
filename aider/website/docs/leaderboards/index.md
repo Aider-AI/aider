@@ -128,7 +128,7 @@ The model also has to successfully apply all its changes to the source file with
     transform: translateY(-50%);
     height: 36px; /* Match the height of the bar */
     width: 1px;
-    background-color: rgba(100, 100, 100, 0.5); /* Darker color for better visibility */
+    background-color: rgba(170, 170, 170, 0.4); /* Lighter color for ticks */
     z-index: 2; /* Above the bar but below the text */
   }
   .bar-viz {
