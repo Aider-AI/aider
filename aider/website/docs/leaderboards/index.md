@@ -138,7 +138,7 @@ Aider works best with high-scoring models, though it [can connect to almost any 
      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
      padding: 0 4px; /* Add padding around the text */
      border-radius: 3px; /* Rounded corners for the text background */
-     font-size: 16px; /* Increase font size for the numbers */
+     font-size: 14px; /* Adjust font size for the numbers */
   }
   .toggle-details {
     color: #888; /* Make toggle symbol more subtle */
