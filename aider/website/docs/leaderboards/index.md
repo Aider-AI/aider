@@ -18,12 +18,13 @@ Aider works best with high-scoring models, though it [can connect to almost any 
 
 [Aider's polyglot benchmark](https://aider.chat/2024/12/21/polyglot.html#the-polyglot-benchmark) tests LLMs on 225 challenging Exercism coding exercises across C++, Go, Java, JavaScript, Python, and Rust.
 
-<input type="text" id="editSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
-
-<div id="view-mode-toggle" style="margin-bottom: 10px; text-align: center;">
-  <button data-mode="all" class="mode-button active">All</button>
-  <button data-mode="select" class="mode-button">Select</button>
-  <button data-mode="selected" class="mode-button">Selected</button>
+<div id="controls-container" style="display: flex; align-items: center; max-width: 800px; margin: 10px auto; gap: 10px;">
+  <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+  <select id="view-mode-select" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; cursor: pointer;">
+    <option value="all" selected>View: All</option>
+    <option value="select">View: Select</option>
+    <option value="selected">View: Selected</option>
+  </select>
 </div>
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
@@ -154,31 +155,6 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     transition: color 0.2s; /* Smooth transition on hover */
   }
 
-  /* Style for the toggle buttons */
-  #view-mode-toggle .mode-button {
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    background-color: #f8f9fa;
-    cursor: pointer;
-  }
-  #view-mode-toggle .mode-button:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-  }
-  /* Adjust last-of-type selector to account for the clear button potentially being the last */
-  #view-mode-toggle .mode-button:nth-last-child(2) { /* Targets the 'Selected' button */
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-left: none; /* If buttons are adjacent */
-  }
-  #view-mode-toggle .mode-button.active {
-    background-color: #e9ecef;
-    font-weight: bold;
-  }
-  #view-mode-toggle .mode-button:not(:first-child):not(.active) {
-      border-left: none; /* Avoid double borders */
-  }
-
 
   /* Style for selected rows */
   tr.row-selected > td {
@@ -205,11 +181,10 @@ document.addEventListener('DOMContentLoaded', function() {
   let currentMode = 'all'; // 'all', 'select', 'selected'
   let selectedRows = new Set(); // Store indices of selected rows
 
-  const modeToggleButtonContainer = document.getElementById('view-mode-toggle');
-  const modeButtons = modeToggleButtonContainer.querySelectorAll('.mode-button');
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
   const searchInput = document.getElementById('editSearchInput');
+  const viewModeSelect = document.getElementById('view-mode-select'); // Get the dropdown
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
 
   function applySearchFilter() {
@@ -267,15 +242,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function updateTableView(mode) {
     currentMode = mode; // Update global state
-
-    // Update button active states
-    modeButtons.forEach(btn => {
-      if (btn.dataset.mode === mode) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
-    });
 
     // Show/hide header checkbox based on mode
     selectAllCheckbox.style.display = mode === 'select' ? 'inline-block' : 'none';
@@ -446,15 +412,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // --- New Event Listeners ---
 
-  // Listener for mode toggle buttons
-  modeToggleButtonContainer.addEventListener('click', function(event) {
-    if (event.target.classList.contains('mode-button')) {
-      const newMode = event.target.dataset.mode;
-      if (newMode !== currentMode) {
-        updateTableView(newMode);
-        // Re-apply search filter when mode changes
-        applySearchFilter();
-      }
+  // Listener for mode dropdown change
+  viewModeSelect.addEventListener('change', function(event) {
+    const newMode = event.target.value;
+    if (newMode !== currentMode) {
+      updateTableView(newMode);
+      applySearchFilter(); // Re-apply search filter when mode changes
     }
   });
 
