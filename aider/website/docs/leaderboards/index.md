@@ -77,7 +77,13 @@ human intervention.
           <ul style="margin: 0; padding-left: 20px; list-style: none; border-bottom: 1px solid #ddd;">
             {% for pair in row %}
               {% if pair[1] != "" and pair[1] != nil %}
-                <li><strong>{{ pair[0] | replace: '_', ' ' | capitalize }}:</strong>
+                <li><strong>
+                  {% if pair[0] == 'conform_rate_2' %}
+                    Percent cases well formed
+                  {% else %}
+                    {{ pair[0] | replace: '_', ' ' | capitalize }}
+                  {% endif %}
+                  :</strong>
                   {% if pair[0] == 'command' %}<code>{{ pair[1] }}</code>{% else %}{{ pair[1] }}{% endif %}
                 </li>
               {% endif %}
