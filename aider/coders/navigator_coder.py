@@ -15,7 +15,7 @@ from xml.etree.ElementTree import ParseError
 # Add necessary imports if not already present
 from collections import defaultdict
 
-from .base_coder import Coder
+from .base_coder import Coder, ChatChunks
 from .editblock_coder import find_original_update_blocks, do_replace, find_similar_lines
 from .navigator_prompts import NavigatorPrompts
 from .navigator_legacy_prompts import NavigatorLegacyPrompts
@@ -183,63 +183,164 @@ class NavigatorCoder(Coder):
         Override parent's format_chat_chunks to include enhanced context blocks with a
         cleaner, more hierarchical structure for better organization.
         
-        Optimized for prompt caching: enhanced context blocks are inserted after static
-        chat elements (system, examples, repo, readonly_files, done) but before variable
-        elements (chat_files, cur, reminder) to preserve prefix caching while providing
-        fresh context information.
+        Optimized for prompt caching by placing context blocks strategically:
+        1. Relatively static blocks (directory structure, environment info) before done_messages
+        2. Dynamic blocks (context summary, symbol outline, git status) after chat_files
+        
+        This approach preserves prefix caching while providing fresh context information.
         """
-        # First get the normal chat chunks from the parent method
-        chunks = super().format_chat_chunks() # Calls BaseCoder's format_chat_chunks
+        # First get the normal chat chunks from the parent method without calling super
+        # We'll manually build the chunks to control placement of context blocks
+        chunks = self.format_chat_chunks_base()
+        
+        # If enhanced context blocks are not enabled, just return the base chunks
+        if not self.use_enhanced_context:
+            return chunks
+            
+        # Generate all context blocks
+        env_context = self.get_environment_info()
+        context_summary = self.get_context_summary()
+        dir_structure = self.get_directory_structure()
+        git_status = self.get_git_status()
+        symbol_outline = self.get_context_symbol_outline()
+        
+        # 1. Add relatively static blocks BEFORE done_messages
+        # These blocks change less frequently and can be part of the cacheable prefix
+        static_blocks = []
+        if dir_structure:
+            static_blocks.append(dir_structure)
+        if env_context:
+            static_blocks.append(env_context)
+            
+        if static_blocks:
+            static_message = "\n\n".join(static_blocks)
+            # Insert as a system message right before done_messages
+            chunks.done.insert(0, dict(role="system", content=static_message))
+            
+        # 2. Add dynamic blocks AFTER chat_files
+        # These blocks change with the current files in context
+        dynamic_blocks = []
+        if context_summary:
+            dynamic_blocks.append(context_summary)
+        if symbol_outline:
+            dynamic_blocks.append(symbol_outline)
+        if git_status:
+            dynamic_blocks.append(git_status)
+            
+        if dynamic_blocks:
+            dynamic_message = "\n\n".join(dynamic_blocks)
+            # Append as a system message after chat_files
+            chunks.chat_files.append(dict(role="system", content=dynamic_message))
+            
+        return chunks
+        
+    def format_chat_chunks_base(self):
+        """
+        Create base chat chunks without enhanced context blocks.
+        This is a copy of the parent's format_chat_chunks method to avoid
+        calling super() which would create a recursive loop.
+        """
+        self.choose_fence()
+        main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
 
-        # If enhanced context blocks are enabled, insert them in a strategic position
-        if self.use_enhanced_context:
-            # Create environment info context block
-            env_context = self.get_environment_info()
+        example_messages = []
+        if self.main_model.examples_as_sys_msg:
+            if self.gpt_prompts.example_messages:
+                main_sys += "\n# Example conversations:\n\n"
+            for msg in self.gpt_prompts.example_messages:
+                role = msg["role"]
+                content = self.fmt_system_prompt(msg["content"])
+                main_sys += f"## {role.upper()}: {content}\n\n"
+            main_sys = main_sys.strip()
+        else:
+            for msg in self.gpt_prompts.example_messages:
+                example_messages.append(
+                    dict(
+                        role=msg["role"],
+                        content=self.fmt_system_prompt(msg["content"]),
+                    )
+                )
+            if self.gpt_prompts.example_messages:
+                example_messages += [
+                    dict(
+                        role="user",
+                        content=(
+                            "I switched to a new code base. Please don't consider the above files"
+                            " or try to edit them any longer."
+                        ),
+                    ),
+                    dict(role="assistant", content="Ok."),
+                ]
 
-            # Get current context summary
-            context_summary = self.get_context_summary()
+        if self.gpt_prompts.system_reminder:
+            main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
-            # Get directory structure
-            dir_structure = self.get_directory_structure()
+        chunks = ChatChunks()
 
-            # Get git status
-            git_status = self.get_git_status()
+        if self.main_model.use_system_prompt:
+            chunks.system = [
+                dict(role="system", content=main_sys),
+            ]
+        else:
+            chunks.system = [
+                dict(role="user", content=main_sys),
+                dict(role="assistant", content="Ok."),
+            ]
 
-            # Get symbol outline for current context files
-            symbol_outline = self.get_context_symbol_outline()
+        chunks.examples = example_messages
 
-            # Collect all context blocks that exist
-            context_blocks = []
-            if env_context:
-                context_blocks.append(env_context)
-            if context_summary:
-                context_blocks.append(context_summary)
-            if dir_structure:
-                context_blocks.append(dir_structure)
-            if git_status:
-                context_blocks.append(git_status)
-            if symbol_outline: # Add the new block if it was generated
-                context_blocks.append(symbol_outline)
+        self.summarize_end()
+        chunks.done = self.done_messages
 
-            # Insert a fresh context update as a separate message before current messages
-            # This preserves cacheable prefix portions (system, examples, repo, etc.)
-            # while still providing fresh context information
-            if context_blocks and chunks.cur:
-                context_message = "\n\n".join(context_blocks)
-                # Insert fresh context as a system message right before the first user message in cur
-                for i, msg in enumerate(chunks.cur):
-                    if msg["role"] == "user":
-                        # Insert context message right before the first user message
-                        chunks.cur.insert(i, dict(role="system", content=context_message))
-                        break
-                else:
-                    # If no user message found, append to the end of chat_files 
-                    # (just before any existing cur messages)
-                    chunks.chat_files.append(dict(role="system", content=context_message))
-            elif context_blocks:
-                # If there are context blocks but no cur messages, append to chat_files
-                context_message = "\n\n".join(context_blocks)
-                chunks.chat_files.append(dict(role="system", content=context_message))
+        chunks.repo = self.get_repo_messages()
+        chunks.readonly_files = self.get_readonly_files_messages()
+        chunks.chat_files = self.get_chat_files_messages()
+
+        if self.gpt_prompts.system_reminder:
+            reminder_message = [
+                dict(
+                    role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                ),
+            ]
+        else:
+            reminder_message = []
+
+        chunks.cur = list(self.cur_messages)
+        chunks.reminder = []
+
+        # TODO review impact of token count on image messages
+        messages_tokens = self.main_model.token_count(chunks.all_messages())
+        reminder_tokens = self.main_model.token_count(reminder_message)
+        cur_tokens = self.main_model.token_count(chunks.cur)
+
+        if None not in (messages_tokens, reminder_tokens, cur_tokens):
+            total_tokens = messages_tokens + reminder_tokens + cur_tokens
+        else:
+            # add the reminder anyway
+            total_tokens = 0
+
+        if chunks.cur:
+            final = chunks.cur[-1]
+        else:
+            final = None
+
+        max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
+        # Add the reminder prompt if we still have room to include it.
+        if (
+            not max_input_tokens
+            or total_tokens < max_input_tokens
+            and self.gpt_prompts.system_reminder
+        ):
+            if self.main_model.reminder == "sys":
+                chunks.reminder = reminder_message
+            elif self.main_model.reminder == "user" and final and final["role"] == "user":
+                # stuff it into the user message
+                new_content = (
+                    final["content"]
+                    + "\n\n"
+                    + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                )
+                chunks.cur[-1] = dict(role=final["role"], content=new_content)
 
         return chunks
 
@@ -865,14 +966,16 @@ class NavigatorCoder(Coder):
                     content = params.get('content')
                     after_pattern = params.get('after_pattern')
                     before_pattern = params.get('before_pattern')
-                    near_context = params.get('near_context') # New
-                    occurrence = params.get('occurrence', 1) # New, default 1
+                    occurrence = params.get('occurrence', 1) # Default 1
                     change_id = params.get('change_id')
-                    dry_run = params.get('dry_run', False) # New, default False
+                    dry_run = params.get('dry_run', False) # Default False
+                    position = params.get('position')
+                    auto_indent = params.get('auto_indent', True) # Default True
+                    use_regex = params.get('use_regex', False) # Default False
 
-                    if file_path is not None and content is not None and (after_pattern is not None or before_pattern is not None):
+                    if file_path is not None and content is not None and (after_pattern is not None or before_pattern is not None or position is not None):
                         result_message = _execute_insert_block(
-                            self, file_path, content, after_pattern, before_pattern, near_context, occurrence, change_id, dry_run
+                            self, file_path, content, after_pattern, before_pattern, occurrence, change_id, dry_run, position, auto_indent, use_regex
                         )
                     else:
                         result_message = "Error: Missing required parameters for InsertBlock (file_path, content, and either after_pattern or before_pattern)"
