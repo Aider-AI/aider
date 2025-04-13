@@ -34,7 +34,7 @@ human intervention.
       </th> <!-- Header checkbox added here -->
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center; width: 25%">Percent correct</th>
-      <th style="padding: 8px; text-align: center; width: 25%">Cost</th>
+      <th style="padding: 8px; text-align: center; width: 25%">Cost (max $50)</th>
       <th style="padding: 8px; text-align: left;" class="col-command">Command</th>
       <th style="padding: 8px; text-align: center; width: 10%" class="col-conform">Correct edit format</th>
       <th style="padding: 8px; text-align: left; width: 10%" class="col-edit-format">Edit Format</th>
@@ -170,6 +170,32 @@ human intervention.
     width: 1px;
     background-color: rgba(170, 170, 170, 0.5); 
     z-index: 2; /* Above the bar but below the text */
+  }
+  .cost-tick-label {
+    position: absolute;
+    top: 50%;
+    transform: translateY(20px);
+    font-size: 10px;
+    color: #666;
+    z-index: 2;
+    text-align: center;
+    margin-left: -10px;
+  }
+  .cost-exceeded {
+    background-color: rgba(220, 53, 69, 0.3) !important; /* Red background for exceeded cost */
+    border-right: 1px solid rgba(220, 53, 69, 0.5) !important;
+  }
+  .cost-exceeded-marker {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 6px solid rgba(220, 53, 69, 0.8);
+    z-index: 3;
   }
   .bar-viz {
     position: absolute;
