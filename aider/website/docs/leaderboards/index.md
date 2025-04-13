@@ -42,7 +42,6 @@ The model also has to successfully apply all its changes to the source file with
     <tr>
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
-      <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
       <th style="padding: 8px; text-align: center;">Cost<br>(log scale bar)</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
@@ -63,10 +62,6 @@ The model also has to successfully apply all its changes to the source file with
         <td class="bar-cell">
           <div class="bar-viz" style="width: {{ row.pass_rate_2 }}%; background-color: rgba(40, 167, 69, 0.3); border-right: 1px solid rgba(40, 167, 69, 0.5);"></div>
           <span>{{ row.pass_rate_2 }}%</span>
-        </td>
-        <td class="bar-cell">
-          <div class="bar-viz" style="width: {{ row.percent_cases_well_formed }}%; background-color: rgba(54, 162, 235, 0.3); border-right: 1px solid rgba(54, 162, 235, 0.5);"></div>
-          <span>{{ row.percent_cases_well_formed }}%</span>
         </td>
         <td class="bar-cell">
           {% if row.total_cost > 0 %}
@@ -103,14 +98,14 @@ The model also has to successfully apply all its changes to the source file with
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
-  td:nth-child(5), td:nth-child(6) { /* Command and Edit Format columns */
+  td:nth-child(4), td:nth-child(5) { /* Command and Edit Format columns */
     font-size: 12px;
   }
   
   /* Hide command and edit format columns on mobile */
   @media screen and (max-width: 767px) {
-    th:nth-child(5), td:nth-child(5), /* Command column */
-    th:nth-child(6), td:nth-child(6) { /* Edit format column */
+    th:nth-child(4), td:nth-child(4), /* Command column */
+    th:nth-child(5), td:nth-child(5) { /* Edit format column */
       display: none;
     }
   }
