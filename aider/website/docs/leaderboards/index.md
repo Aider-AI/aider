@@ -181,6 +181,48 @@ document.addEventListener('DOMContentLoaded', function() {
       bar.style.width = '0%';
     }
   });
+
+  // Calculate and add cost ticks dynamically
+  const costCells = document.querySelectorAll('.cost-bar-cell');
+  if (costCells.length > 0) {
+    // Find the max cost from the first available cost bar's data attribute
+    const firstCostBar = document.querySelector('.cost-bar');
+    const maxCost = parseFloat(firstCostBar?.dataset.maxCost || '1'); // Use 1 as fallback
+
+    if (maxCost > 0) {
+      const logMaxCost = Math.log10(1 + maxCost);
+
+      if (logMaxCost > 0) { // Ensure logMaxCost is positive to avoid division by zero or negative results
+        const tickValues = [];
+        // Generate ticks for $10, $20, $30... up to maxCost
+        for (let tickCost = 10; tickCost <= maxCost; tickCost += 10) {
+          tickValues.push(tickCost);
+        }
+
+        // Calculate percentage positions for each tick on the log scale
+        const tickPercentages = tickValues.map(tickCost => {
+          const logTickCost = Math.log10(1 + tickCost);
+          return (logTickCost / logMaxCost) * 100;
+        });
+
+        // Add tick divs to each cost cell
+        costCells.forEach(cell => {
+          // Clear existing ticks if any (e.g., during updates, though not strictly needed here)
+          // cell.querySelectorAll('.cost-tick').forEach(t => t.remove());
+
+          tickPercentages.forEach(percent => {
+            // Ensure percentage is within valid range
+            if (percent >= 0 && percent <= 100) {
+              const tick = document.createElement('div');
+              tick.className = 'cost-tick';
+              tick.style.left = `${percent}%`;
+              cell.appendChild(tick);
+            }
+          });
+        });
+      }
+    }
+  }
 });
 </script>
  
