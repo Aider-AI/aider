@@ -181,6 +181,14 @@ human intervention.
     border-radius: 0 2px 2px 0; /* Slightly rounded end corners */
     /* Width and colors are set inline via style attribute */
   }
+  /* Add a tooltip class for showing cost information on hover */
+  .cost-bar-cell:hover .bar-viz[style*="background-image"] {
+    animation: stripe-animation 2s linear infinite;
+  }
+  @keyframes stripe-animation {
+    0% { background-position: 0 0; }
+    100% { background-position: 20px 0; }
+  }
   .bar-cell span {
      position: absolute; /* Position relative to the cell */
      left: 5px; /* Position slightly inside the left edge */

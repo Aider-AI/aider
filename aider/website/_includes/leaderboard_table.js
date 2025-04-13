@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // Mark bars that exceed the limit
       if (cost > MAX_DISPLAY_COST) {
-        // Create a darker section at the end
+        // Create a darker section at the end with diagonal stripes
         const darkSection = document.createElement('div');
         darkSection.className = 'bar-viz';
         darkSection.style.width = '10%'; // From 90% to 100%
@@ -223,9 +223,9 @@ document.addEventListener('DOMContentLoaded', function() {
         darkSection.style.backgroundColor = 'rgba(13, 110, 253, 0.6)'; // Darker blue
         darkSection.style.borderRight = '1px solid rgba(13, 110, 253, 0.8)';
         darkSection.style.zIndex = '1';
+        // Add diagonal stripes with CSS background
+        darkSection.style.backgroundImage = 'repeating-linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 5px, transparent 5px, transparent 10px)';
         bar.parentNode.appendChild(darkSection);
-        
-        // No marker at the end of the bar
       }
     } else {
       // Set width to 0 if cost is 0 or negative
