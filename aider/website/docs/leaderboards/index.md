@@ -49,15 +49,23 @@ The model also has to successfully apply all its changes to the source file with
     </tr>
   </thead>
   <tbody>
+    {% assign max_cost = 0 %}
+    {% for row in site.data.polyglot_leaderboard %}
+      {% if row.total_cost > max_cost %}
+        {% assign max_cost = row.total_cost %}
+      {% endif %}
+    {% endfor %}
+    {% if max_cost == 0 %}{% assign max_cost = 1 %}{% endif %} {# Avoid division by zero #}
     {% assign edit_sorted = site.data.polyglot_leaderboard | sort: 'pass_rate_2' | reverse %}
     {% for row in edit_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
-        <td style="padding: 8px;">{{ row.model }}</td>
-        <td style="padding: 8px; text-align: center;">{{ row.pass_rate_2 }}%</td>
-        <td style="padding: 8px; text-align: center;">{{ row.percent_cases_well_formed }}%</td>
-        <td style="padding: 8px;"><code>{{ row.command }}</code></td>
-        <td style="padding: 8px; text-align: center;">{{ row.edit_format }}</td>
-        <td style="padding: 8px; text-align: center;">{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</td>
+        <td style="padding: 8px;"><span>{{ row.model }}</span></td>
+        <td class="bar-cell" style="padding: 8px; text-align: center; --percent: {{ row.pass_rate_2 }}%;"><span>{{ row.pass_rate_2 }}%</span></td>
+        <td class="bar-cell" style="padding: 8px; text-align: center; --percent: {{ row.percent_cases_well_formed }}%;"><span>{{ row.percent_cases_well_formed }}%</span></td>
+        <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
+        <td style="padding: 8px; text-align: center;"><span>{{ row.edit_format }}</span></td>
+        {% assign cost_percent = row.total_cost | times: 100.0 | divided_by: max_cost %}
+        <td class="bar-cell" style="padding: 8px; text-align: center; --percent: {{ cost_percent }}%;"><span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span></td>
       </tr>
     {% endfor %}
   </tbody>
@@ -95,6 +103,16 @@ The model also has to successfully apply all its changes to the source file with
     th:nth-child(5), td:nth-child(5) { /* Edit format column */
       display: none;
     }
+  }
+  .bar-cell {
+    position: relative; /* Needed for z-index stacking */
+    background-image: linear-gradient(to right, rgba(54, 162, 235, 0.2) var(--percent), transparent var(--percent));
+    background-repeat: no-repeat;
+    background-position: left center;
+  }
+  .bar-cell span {
+     position: relative;
+     z-index: 1; /* Ensure text is above the gradient */
   }
 </style>
 
