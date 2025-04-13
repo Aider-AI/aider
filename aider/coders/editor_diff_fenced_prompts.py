@@ -1,9 +1,11 @@
 # flake8: noqa: E501
 
-from .editor_editblock_prompts import EditorEditBlockPrompts
+from .editblock_fenced_prompts import EditBlockFencedPrompts
 
 
-class EditorDiffFencedPrompts(EditorEditBlockPrompts):
-    # Inherits the prompts from EditorEditBlockPrompts
-    # Specific overrides can be added here if needed
-    pass
+class EditorDiffFencedPrompts(EditBlockFencedPrompts):
+    shell_cmd_prompt = ""
+    no_shell_cmd_prompt = ""
+    shell_cmd_reminder = ""
+    go_ahead_tip = ""
+    rename_with_shell = ""
