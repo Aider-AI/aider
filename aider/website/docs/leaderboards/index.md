@@ -220,18 +220,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add tick divs to each cost cell
         costCells.forEach(cell => {
-          // Clear existing ticks if any (e.g., during updates, though not strictly needed here)
-          // cell.querySelectorAll('.cost-tick').forEach(t => t.remove());
+          const costBar = cell.querySelector('.cost-bar');
+          // Use optional chaining and provide '0' as fallback if costBar or dataset.cost is missing
+          const cost = parseFloat(costBar?.dataset?.cost || '0');
 
-          tickPercentages.forEach(percent => {
-            // Ensure percentage is within valid range
-            if (percent >= 0 && percent <= 100) {
-              const tick = document.createElement('div');
-              tick.className = 'cost-tick';
-              tick.style.left = `${percent}%`;
-              cell.appendChild(tick);
-            }
-          });
+          // Only add ticks if the cost is actually greater than 0
+          if (cost > 0) {
+            // Clear existing ticks if any (e.g., during updates, though not strictly needed here)
+            // cell.querySelectorAll('.cost-tick').forEach(t => t.remove());
+
+            tickPercentages.forEach(percent => {
+              // Ensure percentage is within valid range
+              if (percent >= 0 && percent <= 100) {
+                const tick = document.createElement('div');
+                tick.className = 'cost-tick';
+                tick.style.left = `${percent}%`;
+                cell.appendChild(tick);
+              }
+            });
+          }
         });
       }
     }
