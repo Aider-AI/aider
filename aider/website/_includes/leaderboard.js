@@ -15,11 +15,15 @@ document.addEventListener('DOMContentLoaded', function () {
       label: 'Percent completed correctly',
       data: [],
       backgroundColor: function(context) {
+        const row = allData[context.dataIndex];
+        if (row && row.edit_format === 'whole') {
+          return redDiagonalPattern; // Use red pattern for highlighted whole format
+        }
         const label = leaderboardData.labels[context.dataIndex] || '';
         return (label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase())) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
       },
       borderColor: function(context) {
-        const label = leaderboardData.labels[context.dataIndex] || '';
+        const label = context.chart.data.labels[context.dataIndex] || '';
         return (label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase())) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
       },
       borderWidth: 1
@@ -42,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
       model: '{{ row.model }}',
       pass_rate: {{ row[pass_rate_field] }},
       percent_cases_well_formed: {{ row.percent_cases_well_formed }},
+      edit_format: '{{ row.edit_format | default: "diff" }}',
       total_cost: {{ row.total_cost | default: 0 }}
     });
   {% endfor %}
@@ -80,31 +85,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const isHighlighted = label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase());
 
     if (isHighlighted) {
-      return 'rgba(255, 99, 132, 0.2)';
+      if (row && row.edit_format === 'whole') return redDiagonalPattern;
+      else return 'rgba(255, 99, 132, 0.2)';
+    } else if (row && row.edit_format === 'whole') {
+      return blueDiagonalPattern;
     } else {
       return 'rgba(54, 162, 235, 0.2)';
     }
   };
 
-  // Remove row ID assignment and click handler from here,
-  // as it's now handled in the main markdown file's script
-  // to accommodate the new details rows.
-
-  // Add click handler for chart selection (if needed separately from toggle)
   var tableBody = document.querySelector('table tbody');
-  var mainRows = tableBody.querySelectorAll('tr[id^="main-row-"]');
-  mainRows.forEach(function(tr) {
-    // Find the cells to make clickable, excluding the toggle button cell (first child)
-    var clickableCells = tr.querySelectorAll('td:not(:first-child)');
-    clickableCells.forEach(function(cell) {
-      cell.style.cursor = 'pointer';
-      cell.onclick = function() {
-        // Prevent selection when clicking on links or code inside cells if needed
-        // if (event.target.tagName === 'A' || event.target.tagName === 'CODE') return;
-        tr.classList.toggle('selected');
-        updateChart();
-      };
-    });
+  allData.forEach(function(row, index) {
+    var tr = tableBody.children[index];
+    if (!tr) {
+      // If the row doesn't exist, create it
+      tr = document.createElement('tr');
+      tableBody.appendChild(tr);
+    }
+    tr.id = 'edit-row-' + index;
+    tr.style.cursor = 'pointer';
+    tr.onclick = function() {
+      this.classList.toggle('selected');
+      updateChart();
+    };
   });
 
   var leaderboardChart = new Chart(ctx, {
@@ -120,6 +123,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                   text: 'Diff-like format',
                   fillStyle: 'rgba(54, 162, 235, 0.2)',
+                  strokeStyle: 'rgba(54, 162, 235, 1)',
+                  lineWidth: 1
+                },
+                {
+                  text: 'Whole format',
+                  fillStyle: blueDiagonalPattern,
                   strokeStyle: 'rgba(54, 162, 235, 1)',
                   lineWidth: 1
                 },
@@ -212,38 +221,26 @@ document.addEventListener('DOMContentLoaded', function () {
   document.getElementById('editSearchInput').addEventListener('keyup', function() {
     var searchWords = this.value.toLowerCase().split(' ').filter(word => word.length > 0);
     var tableBody = document.querySelector('table:first-of-type tbody');
-    // Select only main data rows for filtering logic
-    var mainRows = tableBody.querySelectorAll('tr[id^="main-row-"]');
-
+    var rows = tableBody.getElementsByTagName('tr');
+    
     displayedData = [];
     leaderboardData.labels = [];
     leaderboardData.datasets[0].data = [];
     leaderboardData.datasets[1].data = [];
-
-    // Iterate through main rows using their index relative to the allData array
-    mainRows.forEach(function(row, i) {
-      // The index `i` corresponds to the index in `allData` because `mainRows` only contains the primary data rows.
-      var detailsRow = document.getElementById('details-' + i); // Find corresponding details row
-      var rowText = row.textContent; // Search only within the main row's text content
-
+    
+    for (var i = 0; i < rows.length; i++) {
+      var rowText = rows[i].textContent;
       if (searchWords.every(word => rowText.toLowerCase().includes(word))) {
-        row.style.display = ''; // Show main row
-        displayedData.push(allData[i]); // Add data to chart source
+        rows[i].style.display = '';
+        displayedData.push(allData[i]);
         leaderboardData.labels.push(allData[i].model);
         leaderboardData.datasets[0].data.push(allData[i].pass_rate);
         // Only include cost if it's not zero (placeholder for unknown)
         leaderboardData.datasets[1].data.push(allData[i].total_cost > 0 ? allData[i].total_cost : null);
-
-        // Ensure details row is hidden and toggle is reset when filtering
-        if (detailsRow) detailsRow.style.display = 'none';
-        const toggleButton = row.querySelector('.toggle-details');
-        if (toggleButton) toggleButton.textContent = '+';
-
       } else {
-        row.style.display = 'none'; // Hide main row
-        if (detailsRow) detailsRow.style.display = 'none'; // Hide details row too
+        rows[i].style.display = 'none';
       }
-    });
+    }
     leaderboardChart.update();
   });
 });
