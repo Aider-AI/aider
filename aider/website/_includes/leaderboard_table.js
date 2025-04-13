@@ -231,8 +231,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const tearLine = document.createElement('div');
         tearLine.style.position = 'absolute';
         tearLine.style.left = '85%';
-        tearLine.style.top = '0';
-        tearLine.style.height = '100%';
+        // Center the tear line vertically and make it 1.5x as tall as the bar
+        tearLine.style.top = '50%';
+        tearLine.style.transform = 'translateY(-50%)';
+        tearLine.style.height = '54px'; // 1.5x the bar height (36px)
         tearLine.style.width = '2px';
         tearLine.style.backgroundColor = 'white';
         tearLine.style.borderLeft = '2px dashed rgba(0, 0, 0, 0.3)';
