@@ -21,9 +21,9 @@ Aider works best with high-scoring models, though it [can connect to almost any 
 <div id="controls-container" style="display: flex; align-items: center; max-width: 800px; margin: 10px auto; gap: 10px;">
   <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
   <select id="view-mode-select" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; cursor: pointer;">
-    <option value="all" selected>View: All</option>
-    <option value="select">View: Select</option>
-    <option value="selected">View: Selected</option>
+    <option value="all" selected>View All</option>
+    <option value="select">Select</option>
+    <option value="selected">View Selected</option>
   </select>
 </div>
 
