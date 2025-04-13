@@ -988,3 +988,35 @@
   use_repo_map: true
   edit_format: diff
   examples_as_sys_msg: true
+
+- name: openrouter/x-ai/grok-3-beta
+  use_repo_map: true
+  edit_format: diff
+
+- name: xai/grok-3-beta
+  use_repo_map: true
+  edit_format: diff
+
+- name: openrouter/x-ai/grok-3-mini-beta
+  use_repo_map: true
+  edit_format: whole
+  accepts_settings:
+    - reasoning_effort 
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
+- name: xai/grok-3-mini-beta
+  use_repo_map: true
+  edit_format: whole
+  accepts_settings:
+    - reasoning_effort 
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: low
+
+- name: openrouter/openrouter/optimus-alpha
+  use_repo_map: true
+  edit_format: diff
+  examples_as_sys_msg: true
+  

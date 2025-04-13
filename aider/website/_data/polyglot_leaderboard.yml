@@ -807,31 +807,31 @@
   seconds_per_case: 290.0
   total_cost: 1.1164
 
-- dirname: 2025-03-25-19-46-45--gemini-25-pro-exp-diff-fenced
+- dirname: 2025-04-12-04-55-50--gemini-25-pro-diff-fenced
   test_cases: 225
-  model: Gemini 2.5 Pro exp-03-25
+  model: Gemini 2.5 Pro Preview 03-25
   edit_format: diff-fenced
-  commit_hash: 33413ec
-  pass_rate_1: 39.1
+  commit_hash: 0282574
+  pass_rate_1: 40.9
   pass_rate_2: 72.9
-  pass_num_1: 88
+  pass_num_1: 92
   pass_num_2: 164
-  percent_cases_well_formed: 89.8
-  error_outputs: 30
-  num_malformed_responses: 30
-  num_with_malformed_responses: 23
-  user_asks: 57
+  percent_cases_well_formed: 92.4
+  error_outputs: 21
+  num_malformed_responses: 21
+  num_with_malformed_responses: 17
+  user_asks: 69
   lazy_comments: 0
   syntax_errors: 0
   indentation_errors: 0
   exhausted_context_windows: 0
-  test_timeouts: 3
+  test_timeouts: 2
   total_tests: 225
-  command: aider --model gemini/gemini-2.5-pro-exp-03-25
-  date: 2025-03-25
-  versions: 0.78.1.dev
-  seconds_per_case: 47.1
-  total_cost: 0.0000
+  command: aider --model gemini/gemini-2.5-pro-preview-03-25
+  date: 2025-04-12
+  versions: 0.81.3.dev
+  seconds_per_case: 45.3
+  total_cost: 6.3174
 
 - dirname: 2025-03-29-05-24-55--chatgpt4o-mar28-diff
   test_cases: 225
@@ -909,4 +909,108 @@
   date: 2025-04-06
   versions: 0.81.2.dev
   seconds_per_case: 20.5
+  total_cost: 0.0000
+
+- dirname: 2025-04-10-04-21-31--grok3-diff-exuser
+  test_cases: 225
+  model: Grok 3 Beta
+  edit_format: diff
+  commit_hash: 2dd40fc-dirty
+  pass_rate_1: 22.2
+  pass_rate_2: 53.3
+  pass_num_1: 50
+  pass_num_2: 120
+  percent_cases_well_formed: 99.6
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 68
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openrouter/x-ai/grok-3-beta
+  date: 2025-04-10
+  versions: 0.81.2.dev
+  seconds_per_case: 15.3
+  total_cost: 11.0338
+
+- dirname: 2025-04-10-18-47-24--grok3-mini-whole-exuser
+  test_cases: 225
+  model: Grok 3 Mini Beta (low)
+  edit_format: whole
+  commit_hash: 14ffe77-dirty
+  pass_rate_1: 11.1
+  pass_rate_2: 34.7
+  pass_num_1: 25
+  pass_num_2: 78
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 73
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openrouter/x-ai/grok-3-mini-beta
+  date: 2025-04-10
+  versions: 0.81.2.dev
+  seconds_per_case: 35.1
+  total_cost: 0.7856
+
+- dirname: 2025-04-10-23-59-02--xai-grok3-mini-whole-high
+  test_cases: 225
+  model: Grok 3 Mini Beta (high)
+  edit_format: whole
+  commit_hash: 8ee33da-dirty
+  pass_rate_1: 17.3
+  pass_rate_2: 49.3
+  pass_num_1: 39
+  pass_num_2: 111
+  percent_cases_well_formed: 99.6
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 64
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model xai/grok-3-mini-beta --reasoning-effort high
+  date: 2025-04-10
+  versions: 0.81.3.dev
+  seconds_per_case: 79.1
+  total_cost: 0.7346
+  
+- dirname: 2025-04-10-19-02-44--oalpha-diff-exsys
+  test_cases: 225
+  model: Optimus Alpha
+  edit_format: diff
+  commit_hash: 532bc45-dirty
+  pass_rate_1: 21.3
+  pass_rate_2: 52.9
+  pass_num_1: 48
+  pass_num_2: 119
+  percent_cases_well_formed: 97.3
+  error_outputs: 7
+  num_malformed_responses: 6
+  num_with_malformed_responses: 6
+  user_asks: 182
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model openrouter/openrouter/optimus-alpha
+  date: 2025-04-10
+  versions: 0.81.2.dev
+  seconds_per_case: 18.4
   total_cost: 0.0000

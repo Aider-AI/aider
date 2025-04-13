@@ -94,6 +94,8 @@ MODEL_ALIASES = {
     "gemini-2.5-pro": "gemini/gemini-2.5-pro-exp-03-25",
     "gemini": "gemini/gemini-2.5-pro-preview-03-25",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
+    "grok3": "xai/grok-3-beta",
+    "optimus": "openrouter/openrouter/optimus-alpha",
 }
 # Model metadata loaded from resources and user's files.
 

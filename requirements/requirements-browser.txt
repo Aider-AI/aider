@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.33.0
+narwhals==1.34.1
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -139,7 +139,7 @@ tornado==6.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-typing-extensions==4.13.1
+typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -149,7 +149,7 @@ tzdata==2025.2
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-urllib3==2.3.0
+urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
