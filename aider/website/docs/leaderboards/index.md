@@ -43,9 +43,9 @@ The model also has to successfully apply all its changes to the source file with
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
+      <th style="padding: 8px; text-align: center;">Cost</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
-      <th style="padding: 8px; text-align: center;">Cost</th>
     </tr>
   </thead>
   <tbody>
@@ -62,10 +62,10 @@ The model also has to successfully apply all its changes to the source file with
         <td style="padding: 8px;"><span>{{ row.model }}</span></td>
         <td class="bar-cell" style="text-align: center; --percent: {{ row.pass_rate_2 }}%;"><span>{{ row.pass_rate_2 }}%</span></td>
         <td class="bar-cell" style="text-align: center; --percent: {{ row.percent_cases_well_formed }}%;"><span>{{ row.percent_cases_well_formed }}%</span></td>
-        <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
-        <td style="padding: 8px; text-align: center;"><span>{{ row.edit_format }}</span></td>
         {% assign cost_percent = row.total_cost | times: 100.0 | divided_by: max_cost %}
         <td class="bar-cell" style="text-align: center; --percent: {{ cost_percent }}%;"><span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span></td>
+        <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
+        <td style="padding: 8px; text-align: center;"><span>{{ row.edit_format }}</span></td>
       </tr>
     {% endfor %}
   </tbody>
@@ -93,14 +93,14 @@ The model also has to successfully apply all its changes to the source file with
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
-  td:nth-child(3), td:nth-child(4) {
+  td:nth-child(5), td:nth-child(6) { /* Command and Edit Format columns */
     font-size: 12px;
   }
   
   /* Hide command and edit format columns on mobile */
   @media screen and (max-width: 767px) {
-    th:nth-child(4), td:nth-child(4), /* Command column */
-    th:nth-child(5), td:nth-child(5) { /* Edit format column */
+    th:nth-child(5), td:nth-child(5), /* Command column */
+    th:nth-child(6), td:nth-child(6) { /* Edit format column */
       display: none;
     }
   }
