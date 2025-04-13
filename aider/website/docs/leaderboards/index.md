@@ -36,7 +36,7 @@ human intervention.
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Cost (log scale)</th>
       <th style="padding: 8px; text-align: left;" class="col-command">Command</th>
-      <th style="padding: 8px; text-align: center;" class="col-conform">% Conform</th>
+      <th style="padding: 8px; text-align: center;" class="col-conform">Correct edit format</th>
       <th style="padding: 8px; text-align: left;" class="col-edit-format">Edit Format</th>
     </tr>
   </thead>
