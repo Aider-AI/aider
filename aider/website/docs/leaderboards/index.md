@@ -68,10 +68,10 @@ The model also has to successfully apply all its changes to the source file with
           <div class="bar-viz" style="width: {{ row.percent_cases_well_formed }}%; background-color: rgba(54, 162, 235, 0.3); border-right: 1px solid rgba(54, 162, 235, 0.5);"></div>
           <span>{{ row.percent_cases_well_formed }}%</span>
         </td>
-        {% assign cost_percent = row.total_cost | times: 100.0 | divided_by: max_cost %}
         <td class="bar-cell">
           {% if row.total_cost > 0 %}
-          <div class="bar-viz" style="width: {{ cost_percent }}%; background-color: rgba(111, 66, 193, 0.3); border-right: 1px solid rgba(111, 66, 193, 0.5);"></div>
+          {# Initial width set to 0, JS will calculate log scale width #}
+          <div class="bar-viz cost-bar" data-cost="{{ row.total_cost }}" data-max-cost="{{ max_cost }}" style="width: 0%; background-color: rgba(111, 66, 193, 0.3); border-right: 1px solid rgba(111, 66, 193, 0.5);"></div>
           {% endif %}
           <span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span>
         </td>
@@ -139,10 +139,39 @@ The model also has to successfully apply all its changes to the source file with
      border-radius: 3px; /* Rounded corners for the text background */
   }
 </style>
-
-
-
-
+ 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const costBars = document.querySelectorAll('.cost-bar');
+  costBars.forEach(bar => {
+    const cost = parseFloat(bar.dataset.cost);
+    const maxCost = parseFloat(bar.dataset.maxCost);
+ 
+    if (cost > 0 && maxCost > 0) {
+      // Use log10(1 + x) for scaling. Adding 1 handles potential cost=0 and gives non-zero logs for cost > 0.
+      const logCost = Math.log10(1 + cost);
+      const logMaxCost = Math.log10(1 + maxCost);
+ 
+      if (logMaxCost > 0) {
+        // Calculate percentage relative to the log of max cost
+        const percent = (logCost / logMaxCost) * 100;
+        // Clamp percentage between 0 and 100
+        bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
+      } else {
+        // Handle edge case where maxCost is 0 (so logMaxCost is 0)
+        // If maxCost is 0, cost must also be 0, handled below.
+        // If maxCost > 0 but logMaxCost <= 0 (e.g., maxCost is very small), set width relative to cost?
+        // For simplicity, setting to 0 if logMaxCost isn't positive.
+        bar.style.width = '0%';
+      }
+    } else {
+      // Set width to 0 if cost is 0 or negative
+      bar.style.width = '0%';
+    }
+  });
+});
+</script>
+ 
 <p class="post-date">
 By Paul Gauthier,
 last updated
