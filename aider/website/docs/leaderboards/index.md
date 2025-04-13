@@ -14,7 +14,7 @@ human intervention.
 Aider works best with high-scoring models, though it [can connect to almost any LLM](/docs/llms.html).
 
 
-## Polyglot leaderboard
+## Aider polyglot coding leaderboard
 
 [Aider's polyglot benchmark](https://aider.chat/2024/12/21/polyglot.html#the-polyglot-benchmark) tests LLMs on 225 challenging Exercism coding exercises across C++, Go, Java, JavaScript, Python, and Rust.
 
