@@ -21,9 +21,8 @@ Aider works best with high-scoring models, though it [can connect to almost any 
 <div id="controls-container" style="display: flex; align-items: center; max-width: 800px; margin: 10px auto; gap: 10px;">
   <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
   <select id="view-mode-select" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; cursor: pointer;">
-    <option value="all" selected>View All</option>
+    <option value="view" selected>View</option>
     <option value="select">Select</option>
-    <option value="selected">View Selected</option>
   </select>
 </div>
 
@@ -194,7 +193,7 @@ Aider works best with high-scoring models, though it [can connect to almost any 
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  let currentMode = 'all'; // 'all', 'select', 'selected'
+  let currentMode = 'view'; // 'view', 'select'
   let selectedRows = new Set(); // Store indices of selected rows
 
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
@@ -257,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   function updateTableView(mode) {
-    currentMode = mode; // Update global state
+    currentMode = mode; // Update global state ('view' or 'select')
 
     // Show/hide header checkbox based on mode
     selectAllCheckbox.style.display = mode === 'select' ? 'inline-block' : 'none';
@@ -274,43 +273,30 @@ document.addEventListener('DOMContentLoaded', function() {
       if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
 
       // Apply mode-specific logic
-      switch (mode) {
-        case 'all':
+      if (mode === 'view') {
           toggleButton.style.display = 'inline-block';
           selectorCheckbox.style.display = 'none';
-          // selectAllCheckbox.style.display = 'none'; // Already handled above loop
-          row.classList.toggle('row-selected', isSelected); // Keep visual selection indication
+          row.classList.toggle('row-selected', isSelected); // Keep visual selection indication if selected
+
+          // In 'view' mode, hide row if selections exist AND this row is NOT selected
+          if (selectedRows.size > 0 && !isSelected) {
+              row.classList.add('hidden-by-mode');
+              if (detailsRow) detailsRow.classList.add('hidden-by-mode');
+          }
+
           // Hide details row unless it was explicitly opened (handled by toggle listener)
           if (detailsRow && toggleButton.textContent === '▶') {
               detailsRow.style.display = 'none';
           }
-          break;
-        case 'select':
+      } else { // mode === 'select'
           toggleButton.style.display = 'none';
           selectorCheckbox.style.display = 'inline-block';
-          // selectAllCheckbox.style.display = 'inline-block'; // Already handled above loop
           selectorCheckbox.checked = isSelected;
           row.classList.toggle('row-selected', isSelected);
           // Always hide details row in select mode
           if (detailsRow) detailsRow.style.display = 'none';
-          break;
-        case 'selected':
-          toggleButton.style.display = 'inline-block';
-          selectorCheckbox.style.display = 'none';
-          // selectAllCheckbox.style.display = 'none'; // Already handled above loop
-          if (isSelected) {
-            row.classList.add('row-selected'); // Ensure selected class is present
-            // Hide details row unless it was explicitly opened
-             if (detailsRow && toggleButton.textContent === '▶') {
-                detailsRow.style.display = 'none';
-            }
-          } else {
-            row.classList.add('hidden-by-mode');
-            row.classList.remove('row-selected'); // Remove selection class if not selected
-            if (detailsRow) detailsRow.classList.add('hidden-by-mode'); // Hide details too
-          }
-          break;
       }
+
 
       // Ensure rows hidden by search remain hidden regardless of mode
       if (row.classList.contains('hidden-by-search')) {
@@ -509,7 +495,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   // --- Initial Setup ---
-  updateTableView('all'); // Initialize view to 'all' mode
+  updateTableView('view'); // Initialize view to 'view' mode
   applySearchFilter(); // Apply initial search filter (if any text is pre-filled or just to set initial state)
 
 
