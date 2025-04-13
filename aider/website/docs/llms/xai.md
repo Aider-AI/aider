@@ -27,6 +27,11 @@ aider --model xai/grok-3-mini-beta
 # Grok 3 Mini fast (faster, more expensive)
 aider --model xai/grok-3-mini-fast-beta
 
+# The Grok 3 Mini models support the --reasoning-effort flag.
+# See the [reasoning settings documentation](../settings/reasoning.md) for details.
+# Example:
+aider --model xai/grok-3-mini-beta --reasoning-effort high
+
 # List models available from xAI
 aider --list-models xai/
 ```
