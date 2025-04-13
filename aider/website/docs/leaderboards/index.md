@@ -111,6 +111,22 @@ Aider works best with high-scoring models, though it [can connect to almost any 
       display: none;
     }
   }
+
+  /* --- Control Styles --- */
+  #controls-container {
+    margin-bottom: 20px; /* Add some space below controls */
+  }
+
+  #editSearchInput, #view-mode-select {
+    padding: 8px 12px; /* Consistent padding */
+    border: 1px solid #ccc; /* Slightly softer border */
+    border-radius: 4px;
+    font-size: 14px; /* Match table font size */
+    height: 38px; /* Match height */
+    box-sizing: border-box; /* Include padding/border in height */
+  }
+
+
   .bar-cell {
     position: relative; /* Positioning context for the bar */
     padding: 8px;
