@@ -60,10 +60,19 @@ The model also has to successfully apply all its changes to the source file with
     {% for row in edit_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
         <td style="padding: 8px;"><span>{{ row.model }}</span></td>
-        <td class="bar-cell" style="text-align: center; --percent: {{ row.pass_rate_2 }}%;"><span>{{ row.pass_rate_2 }}%</span></td>
-        <td class="bar-cell" style="text-align: center; --percent: {{ row.percent_cases_well_formed }}%;"><span>{{ row.percent_cases_well_formed }}%</span></td>
+        <td class="bar-cell">
+          <div class="bar-viz" style="width: {{ row.pass_rate_2 }}%;"></div>
+          <span>{{ row.pass_rate_2 }}%</span>
+        </td>
+        <td class="bar-cell">
+          <div class="bar-viz" style="width: {{ row.percent_cases_well_formed }}%;"></div>
+          <span>{{ row.percent_cases_well_formed }}%</span>
+        </td>
         {% assign cost_percent = row.total_cost | times: 100.0 | divided_by: max_cost %}
-        <td class="bar-cell" style="text-align: center; --percent: {{ cost_percent }}%;"><span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span></td>
+        <td class="bar-cell">
+          <div class="bar-viz" style="width: {{ cost_percent }}%;"></div>
+          <span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span>
+        </td>
         <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
         <td style="padding: 8px; text-align: center;"><span>{{ row.edit_format }}</span></td>
       </tr>
@@ -105,16 +114,31 @@ The model also has to successfully apply all its changes to the source file with
     }
   }
   .bar-cell {
-    position: relative; /* Needed for z-index stacking */
-    padding: 8px; /* Add padding */
-    background-image: linear-gradient(to right, rgba(54, 162, 235, 0.2) var(--percent), transparent var(--percent));
-    background-repeat: no-repeat;
-    background-position: left center; /* Center vertically */
-    background-size: var(--percent) 60%; /* Control bar height (e.g., 60% of cell height) */
+    position: relative; /* Positioning context for the bar */
+    padding: 8px;
+    text-align: center; /* Keep text centered */
+    overflow: hidden; /* Prevent bar from overflowing cell boundaries if needed */
+  }
+  .bar-viz {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(54, 162, 235, 0.3); /* Bar color */
+    border-right: 1px solid rgba(54, 162, 235, 0.5); /* Optional: define end */
+    z-index: 0; /* Behind the text */
+    height: 60%; /* Bar height */
+    margin: auto 0; /* Vertical centering */
+    border-radius: 0 2px 2px 0; /* Slightly rounded end corners */
+    /* Width is set inline via style attribute */
   }
   .bar-cell span {
-     position: relative;
-     z-index: 1; /* Ensure text is above the gradient */
+     position: relative; /* Needed to stack above the absolute positioned bar */
+     z-index: 1; /* Ensure text is above the bar */
+     /* Optional: Add padding or background for better readability */
+     /* background-color: rgba(255, 255, 255, 0.7); */
+     /* padding: 0 2px; */
+     /* border-radius: 2px; */
   }
 </style>
 
