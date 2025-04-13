@@ -27,7 +27,6 @@ Aider works best with high-scoring models, though it [can connect to almost any 
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Cost (log scale)</th>
       <th style="padding: 8px; text-align: left;">Command</th>
-      <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
   </thead>
   <tbody>
@@ -54,7 +53,6 @@ Aider works best with high-scoring models, though it [can connect to almost any 
           <span>{% if row.total_cost == 0 or rounded_cost == 0.00 %}?{% else %}${{ rounded_cost }}{% endif %}</span>
         </td>
         <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
-        <td style="padding: 8px; text-align: center;"><span>{{ row.edit_format }}</span></td>
       </tr>
     {% endfor %}
   </tbody>
@@ -86,14 +84,13 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
-  td:nth-child(4), td:nth-child(5) { /* Command and Edit Format columns */
+  td:nth-child(4) { /* Command column */
     font-size: 12px;
   }
-  
-  /* Hide command and edit format columns on mobile */
+
+  /* Hide command column on mobile */
   @media screen and (max-width: 767px) {
-    th:nth-child(4), td:nth-child(4), /* Command column */
-    th:nth-child(5), td:nth-child(5) { /* Edit format column */
+    th:nth-child(4), td:nth-child(4) { /* Command column */
       display: none;
     }
   }

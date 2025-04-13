@@ -15,15 +15,11 @@ document.addEventListener('DOMContentLoaded', function () {
       label: 'Percent completed correctly',
       data: [],
       backgroundColor: function(context) {
-        const row = allData[context.dataIndex];
-        if (row && row.edit_format === 'whole') {
-          return redDiagonalPattern; // Use red pattern for highlighted whole format
-        }
         const label = leaderboardData.labels[context.dataIndex] || '';
         return (label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase())) ? 'rgba(255, 99, 132, 0.2)' : 'rgba(54, 162, 235, 0.2)';
       },
       borderColor: function(context) {
-        const label = context.chart.data.labels[context.dataIndex] || '';
+        const label = leaderboardData.labels[context.dataIndex] || '';
         return (label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase())) ? 'rgba(255, 99, 132, 1)' : 'rgba(54, 162, 235, 1)';
       },
       borderWidth: 1
@@ -46,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
       model: '{{ row.model }}',
       pass_rate: {{ row[pass_rate_field] }},
       percent_cases_well_formed: {{ row.percent_cases_well_formed }},
-      edit_format: '{{ row.edit_format | default: "diff" }}',
       total_cost: {{ row.total_cost | default: 0 }}
     });
   {% endfor %}
@@ -85,10 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const isHighlighted = label && HIGHLIGHT_MODEL && label.toLowerCase().includes(HIGHLIGHT_MODEL.toLowerCase());
 
     if (isHighlighted) {
-      if (row && row.edit_format === 'whole') return redDiagonalPattern;
-      else return 'rgba(255, 99, 132, 0.2)';
-    } else if (row && row.edit_format === 'whole') {
-      return blueDiagonalPattern;
+      return 'rgba(255, 99, 132, 0.2)';
     } else {
       return 'rgba(54, 162, 235, 0.2)';
     }
@@ -123,12 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                   text: 'Diff-like format',
                   fillStyle: 'rgba(54, 162, 235, 0.2)',
-                  strokeStyle: 'rgba(54, 162, 235, 1)',
-                  lineWidth: 1
-                },
-                {
-                  text: 'Whole format',
-                  fillStyle: blueDiagonalPattern,
                   strokeStyle: 'rgba(54, 162, 235, 1)',
                   lineWidth: 1
                 },
