@@ -16,13 +16,14 @@ human intervention.
 
 ## Aider polyglot coding leaderboard
 
-<div id="controls-container" style="display: flex; align-items: center; width: 100%; max-width: 800px; margin: 10px auto; gap: 10px; box-sizing: border-box; padding: 0 5px;">
+<div id="controls-container" style="display: flex; align-items: center; width: 100%; max-width: 800px; margin: 10px auto; gap: 10px; box-sizing: border-box; padding: 0 5px; position: relative;">
   <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
   <div id="view-mode-toggle" style="display: inline-flex; border: 1px solid #ccc; border-radius: 4px;">
     <button id="mode-view-btn" class="mode-button active" data-mode="view" style="padding: 8px 8px; border: none; border-radius: 3px 0 0 3px; cursor: pointer; font-size: 14px; line-height: 1.5; min-width: 50px;">View</button>
     <button id="mode-detail-btn" class="mode-button" data-mode="detail" style="padding: 8px 8px; border: none; background-color: #f8f9fa; border-radius: 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5; min-width: 50px;">Detail</button>
     <button id="mode-select-btn" class="mode-button" data-mode="select" style="padding: 8px 8px; border: none; background-color: #f8f9fa; border-radius: 0 3px 3px 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5; min-width: 50px;">Select</button>
   </div>
+<button id="close-controls-btn" style="width: 26px; height: 26px; padding: 0; border: 1px solid #ccc; border-radius: 50%; background-color: #f8f9fa; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; margin-left: 8px; color: #666;">×</button>
 </div>
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">

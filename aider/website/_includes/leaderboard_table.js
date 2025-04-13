@@ -415,5 +415,15 @@ document.addEventListener('DOMContentLoaded', function() {
   updateTableView('view'); // Initialize view to 'view' mode
   applySearchFilter(); // Apply initial search filter (if any text is pre-filled or just to set initial state)
 
+// Close button functionality
+const closeControlsBtn = document.getElementById('close-controls-btn');
+if (closeControlsBtn) {
+  closeControlsBtn.addEventListener('click', function() {
+    const controlsContainer = document.getElementById('controls-container');
+    if (controlsContainer) {
+      controlsContainer.style.display = 'none';
+    }
+  });
+}
 
 });
