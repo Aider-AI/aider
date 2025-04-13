@@ -857,7 +857,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 )
 
     if args.copy_paste and args.edit_format is None:
-        if main_model.edit_format in ("diff", "whole"):
+        if main_model.edit_format in ("diff", "whole", "diff-fenced"):
             main_model.edit_format = "editor-" + main_model.edit_format
 
     if args.verbose:
