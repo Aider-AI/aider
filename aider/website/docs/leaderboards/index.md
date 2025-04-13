@@ -70,7 +70,9 @@ The model also has to successfully apply all its changes to the source file with
         </td>
         {% assign cost_percent = row.total_cost | times: 100.0 | divided_by: max_cost %}
         <td class="bar-cell">
+          {% if row.total_cost > 0 %}
           <div class="bar-viz" style="width: {{ cost_percent }}%; background-color: rgba(111, 66, 193, 0.3); border-right: 1px solid rgba(111, 66, 193, 0.5);"></div>
+          {% endif %}
           <span>{% if row.total_cost == 0 %}?{% else %}${{ row.total_cost | times: 1.0 | round: 2 }}{% endif %}</span>
         </td>
         <td style="padding: 8px;"><span><code>{{ row.command }}</code></span></td>
