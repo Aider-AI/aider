@@ -125,10 +125,10 @@ The model also has to successfully apply all its changes to the source file with
   .percent-tick, .cost-tick {
     position: absolute;
     top: 50%;
-    transform: translateY(13px); /* Position at bottom of bar (36px/2 + 10px/2) */
-    height: 10px; /* Short tick */
+    transform: translateY(10px);
+    height: 8px; /* Short tick */
     width: 1px;
-    background-color: rgba(170, 170, 170, 0.2); 
+    background-color: rgba(170, 170, 170, 0.5); 
     z-index: 2; /* Above the bar but below the text */
   }
   .bar-viz {
