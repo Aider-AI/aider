@@ -410,19 +410,84 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Add toggle functionality for details
+
+  // --- New Event Listeners ---
+
+  // Listener for mode toggle buttons
+  modeToggleButtonContainer.addEventListener('click', function(event) {
+    if (event.target.classList.contains('mode-button')) {
+      const newMode = event.target.dataset.mode;
+      if (newMode !== currentMode) {
+        updateTableView(newMode);
+        // Re-apply search filter when mode changes
+        applySearchFilter();
+      }
+    }
+  });
+
+  // Listener for row selector checkboxes (using event delegation on table body)
+  const tableBody = document.querySelector('table tbody');
+  tableBody.addEventListener('change', function(event) {
+    if (event.target.classList.contains('row-selector') && currentMode === 'select') {
+      const checkbox = event.target;
+      const rowIndex = checkbox.dataset.rowIndex;
+      const mainRow = checkbox.closest('tr');
+
+      if (checkbox.checked) {
+        selectedRows.add(rowIndex);
+        mainRow.classList.add('row-selected');
+      } else {
+        selectedRows.delete(rowIndex);
+        mainRow.classList.remove('row-selected');
+      }
+      // Update clear button visibility
+      clearSelectionButton.style.display = selectedRows.size > 0 ? 'inline-block' : 'none';
+    }
+  });
+
+  // Listener for Clear Selection button
+  clearSelectionButton.addEventListener('click', function() {
+    selectedRows.clear();
+    allMainRows.forEach(row => {
+      row.classList.remove('row-selected');
+      const checkbox = row.querySelector('.row-selector');
+      if (checkbox) checkbox.checked = false;
+    });
+    clearSelectionButton.style.display = 'none';
+    // If in 'selected' mode after clearing, switch back to 'all' or 'select'? Let's stay in 'selected' but show nothing.
+    // Re-apply view to potentially hide all rows if in 'selected' mode or update visual state otherwise.
+    updateTableView(currentMode);
+    // Also re-apply search filter in case it affects visibility logic
+    applySearchFilter();
+  });
+
+  // Listener for search input
+   searchInput.addEventListener('input', applySearchFilter);
+
+  // Add toggle functionality for details (Modified to respect modes)
   const toggleButtons = document.querySelectorAll('.toggle-details');
   toggleButtons.forEach(button => {
     button.addEventListener('click', function() {
+      // Only allow toggling in 'all' or 'selected' modes
+      if (currentMode === 'select') return;
+
       const targetId = this.getAttribute('data-target');
       const targetRow = document.getElementById(targetId);
-      if (targetRow) {
+      const mainRow = this.closest('tr'); // Get the main row associated with this button
+
+      if (targetRow && !mainRow.classList.contains('hidden-by-mode') && !mainRow.classList.contains('hidden-by-search')) {
         const isVisible = targetRow.style.display !== 'none';
         targetRow.style.display = isVisible ? 'none' : 'table-row';
-        this.textContent = isVisible ? '▶' : '▼'; // Use Unicode triangles
+        this.textContent = isVisible ? '▶' : '▼';
       }
     });
   });
+
+
+  // --- Initial Setup ---
+  updateTableView('all'); // Initialize view to 'all' mode
+  applySearchFilter(); // Apply initial search filter (if any text is pre-filled or just to set initial state)
+
 
 });
 </script>
