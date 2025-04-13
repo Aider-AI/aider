@@ -69,7 +69,7 @@ human intervention.
           <span>{% if row.total_cost == 0 or rounded_cost == 0.00 %}?{% else %}${{ rounded_cost }}{% endif %}</span>
         </td>
         <td style="padding: 8px;" class="col-command"><span><code>{{ row.command }}</code></span></td>
-        <td style="padding: 8px; text-align: center;" class="col-conform"><span>{{ row.conform_rate_2 }}%</span></td>
+        <td style="padding: 8px; text-align: center;" class="col-conform"><span>{{ row.percent_cases_well_formed }}%</span></td>
         <td style="padding: 8px;" class="col-edit-format"><span>{{ row.edit_format }}</span></td>
       </tr>
       <tr class="details-row" id="details-{{ row_index }}" style="display: none; background-color: #f9f9f9;">
@@ -78,7 +78,7 @@ human intervention.
             {% for pair in row %}
               {% if pair[1] != "" and pair[1] != nil %}
                 <li><strong>
-                  {% if pair[0] == 'conform_rate_2' %}
+                  {% if pair[0] == 'percent_cases_well_formed' %}
                     Percent cases well formed
                   {% else %}
                     {{ pair[0] | replace: '_', ' ' | capitalize }}
