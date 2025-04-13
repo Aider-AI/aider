@@ -109,6 +109,10 @@ human intervention.
     border: none; /* Remove internal cell borders */
     word-wrap: break-word;
     overflow-wrap: break-word;
+    vertical-align: middle; /* Ensure consistent vertical alignment */
+  }
+  tbody tr td {
+    height: 50px; /* Set a fixed height for all data cells */
   }
   td.col-command { /* Command column */
     font-size: 12px; /* Keep font size adjustment for command column if desired, or remove */
