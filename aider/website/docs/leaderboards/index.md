@@ -111,8 +111,8 @@ human intervention.
     overflow-wrap: break-word;
     vertical-align: middle; /* Ensure consistent vertical alignment */
   }
-  tbody tr td {
-    min-height: 50px; /* Set a minimum height for all data cells */
+  tbody tr {
+    height: 50px; /* Set a minimum height for all data rows */
   }
   td.col-command { /* Command column */
     font-size: 12px; /* Keep font size adjustment for command column if desired, or remove */
