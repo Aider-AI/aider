@@ -20,10 +20,10 @@ Aider works best with high-scoring models, though it [can connect to almost any 
 
 <div id="controls-container" style="display: flex; align-items: center; max-width: 800px; margin: 10px auto; gap: 10px;">
   <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-  <select id="view-mode-select" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f8f9fa; cursor: pointer;">
-    <option value="view" selected>View</option>
-    <option value="select">Select</option>
-  </select>
+  <div id="view-mode-toggle" style="display: inline-flex; border: 1px solid #ccc; border-radius: 4px;">
+    <button id="mode-view-btn" class="mode-button active" data-mode="view" style="padding: 8px 12px; border: none; background-color: #e9ecef; border-radius: 3px 0 0 3px; cursor: pointer; font-size: 14px; line-height: 1.5;">View</button>
+    <button id="mode-select-btn" class="mode-button" data-mode="select" style="padding: 8px 12px; border: none; background-color: #f8f9fa; border-radius: 0 3px 3px 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5;">Select</button>
+  </div>
 </div>
 
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
@@ -199,7 +199,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
   const searchInput = document.getElementById('editSearchInput');
-  const viewModeSelect = document.getElementById('view-mode-select'); // Get the dropdown
+  const modeViewButton = document.getElementById('mode-view-btn');
+  const modeSelectButton = document.getElementById('mode-select-btn');
+  const modeButtons = [modeViewButton, modeSelectButton];
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
 
   function applySearchFilter() {
