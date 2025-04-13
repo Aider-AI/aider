@@ -84,8 +84,16 @@ Act as an expert software engineer with the ability to autonomously navigate and
   Replace ALL occurrences of text. Use with caution. `dry_run=True` simulates the change.
   *Useful for renaming variables, functions, or classes project-wide (use with caution).*
 
-- **InsertBlock**: `[tool_call(InsertBlock, file_path="...", content="...", after_pattern="...", near_context="...", occurrence=1, dry_run=False)]`
-  Insert a block after (`after_pattern`) or before (`before_pattern`) a pattern line. Use `near_context` and `occurrence` (optional, default 1, -1 for last) to specify which pattern match. `dry_run=True` simulates.
+- **InsertBlock**: `[tool_call(InsertBlock, file_path="...", content="...", after_pattern="...", before_pattern="...", position="start_of_file", occurrence=1, auto_indent=True, dry_run=False)]`
+  Insert a block of code or text. Specify *exactly one* location:
+  - `after_pattern`: Insert after lines matching this pattern (use multi-line patterns for uniqueness)
+  - `before_pattern`: Insert before lines matching this pattern (use multi-line patterns for uniqueness)
+  - `position`: Use "start_of_file" or "end_of_file"
+  
+  Optional parameters:
+  - `occurrence`: Which match to use (1-based indexing: 1 for first match, 2 for second, -1 for last match)
+  - `auto_indent`: Automatically adjust indentation to match surrounding code (default True)
+  - `dry_run`: Simulate the change without applying it (default False)
   *Useful for adding new functions, methods, or blocks of configuration.*
 
 - **DeleteBlock**: `[tool_call(DeleteBlock, file_path="...", start_pattern="...", end_pattern="...", near_context="...", occurrence=1, dry_run=False)]`

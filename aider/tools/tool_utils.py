@@ -1,5 +1,6 @@
 import difflib
 import os
+import re
 import traceback
 
 class ToolError(Exception):
@@ -46,20 +47,12 @@ def validate_file_for_edit(coder, file_path):
 
     return abs_path, rel_path, content
 
-def find_pattern_indices(lines, pattern, near_context=None):
-    """Finds all line indices matching a pattern, optionally filtered by context."""
+def find_pattern_indices(lines, pattern, use_regex=False):
+    """Finds all line indices matching a pattern."""
     indices = []
     for i, line in enumerate(lines):
-        if pattern in line:
-            if near_context:
-                # Check if near_context is within a window around the match
-                context_window_start = max(0, i - 5) # Check 5 lines before/after
-                context_window_end = min(len(lines), i + 6)
-                context_block = "\n".join(lines[context_window_start:context_window_end])
-                if near_context in context_block:
-                    indices.append(i)
-            else:
-                indices.append(i)
+        if (use_regex and re.search(pattern, line)) or (not use_regex and pattern in line):
+            indices.append(i)
     return indices
 
 def select_occurrence_index(indices, occurrence, pattern_desc="Pattern"):
