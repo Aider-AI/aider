@@ -28,7 +28,7 @@ aider --model xai/grok-3-mini-beta
 aider --model xai/grok-3-mini-fast-beta
 
 # The Grok 3 Mini models support the --reasoning-effort flag.
-# See the [reasoning settings documentation](../settings/reasoning.md) for details.
+# See the [reasoning settings documentation](../config/reasoning.md) for details.
 # Example:
 aider --model xai/grok-3-mini-beta --reasoning-effort high
 
