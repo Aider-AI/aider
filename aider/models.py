@@ -488,7 +488,7 @@ class Model(ModelSettings):
 
         if not self.editor_edit_format:
             self.editor_edit_format = self.editor_model.edit_format
-            if self.editor_edit_format in ("diff", "whole"):
+            if self.editor_edit_format in ("diff", "whole", "diff-fenced"):
                 self.editor_edit_format = "editor-" + self.editor_edit_format
 
         return self.editor_model
