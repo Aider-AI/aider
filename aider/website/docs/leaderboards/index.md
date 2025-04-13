@@ -209,7 +209,13 @@ human intervention.
 
   /* Style for highlighted rows in view mode */
   tr.view-highlighted > td {
-    background-color: #fffacd;
+    background-color: #fffef5; /* Very light yellow/cream */
+    border-left: 4px solid #ffc107; /* Warning yellow border */
+  }
+  /* Adjust padding for the first *visible* cell (Model name) in view mode */
+  tr.view-highlighted > td:nth-child(2) {
+     /* Original padding is 8px. Subtract border width. */
+     padding-left: 4px;
   }
 </style>
 
