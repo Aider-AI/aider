@@ -104,7 +104,7 @@ Aider works best with high-scoring models, though it [can connect to almost any 
   .bar-cell {
     position: relative; /* Positioning context for the bar */
     padding: 8px;
-    text-align: center; /* Keep text centered */
+    /* text-align: center; Removed */
     overflow: hidden; /* Prevent bar from overflowing cell boundaries if needed */
   }
   .cost-bar-cell {
@@ -130,7 +130,10 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     /* Width and colors are set inline via style attribute */
   }
   .bar-cell span {
-     position: relative; /* Needed to stack above the absolute positioned bar */
+     position: absolute; /* Position relative to the cell */
+     left: 5px; /* Position slightly inside the left edge */
+     top: 50%; /* Center vertically */
+     transform: translateY(-50%); /* Adjust vertical centering */
      z-index: 3; /* Ensure text is above everything else */
      background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent white background */
      padding: 0 4px; /* Add padding around the text */
