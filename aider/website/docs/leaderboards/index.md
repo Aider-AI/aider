@@ -171,21 +171,6 @@ human intervention.
     background-color: rgba(170, 170, 170, 0.5); 
     z-index: 2; /* Above the bar but below the text */
   }
-  .cost-tear-marker {
-    position: absolute;
-    left: 90%; /* Position at 90% (around $45) */
-    top: 10%;
-    height: 80%;
-    width: 2px;
-    background: repeating-linear-gradient(
-      to bottom,
-      transparent,
-      transparent 3px,
-      #888 3px,
-      #888 6px
-    );
-    z-index: 3;
-  }
   .bar-viz {
     position: absolute;
     left: 0;
