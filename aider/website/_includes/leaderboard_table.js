@@ -226,6 +226,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add diagonal stripes with CSS background
         darkSection.style.backgroundImage = 'repeating-linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 5px, transparent 5px, transparent 10px)';
         bar.parentNode.appendChild(darkSection);
+        
+        // Add a dashed "tear line" at the transition point
+        const tearLine = document.createElement('div');
+        tearLine.style.position = 'absolute';
+        tearLine.style.left = '85%';
+        tearLine.style.top = '0';
+        tearLine.style.height = '100%';
+        tearLine.style.width = '2px';
+        tearLine.style.backgroundColor = 'white';
+        tearLine.style.borderLeft = '2px dashed rgba(0, 0, 0, 0.3)';
+        tearLine.style.zIndex = '2'; // Above the bar
+        bar.parentNode.appendChild(tearLine);
       }
     } else {
       // Set width to 0 if cost is 0 or negative
