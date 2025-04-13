@@ -10,7 +10,8 @@ You'll need a [xAI API key](https://console.x.ai.).
 To use xAI:
 
 ```bash
-python -m pip install -U aider-chat
+python -m pip install aider-install
+aider-install
 
 export XAI_API_KEY=<key> # Mac/Linux
 setx   XAI_API_KEY <key> # Windows, restart shell after setx
