@@ -43,7 +43,7 @@ The model also has to successfully apply all its changes to the source file with
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Percent using correct edit format</th>
-      <th style="padding: 8px; text-align: center;">Cost</th>
+      <th style="padding: 8px; text-align: center;">Cost<br>(log scale bar)</th>
       <th style="padding: 8px; text-align: left;">Command</th>
       <th style="padding: 8px; text-align: center;">Edit format</th>
     </tr>
