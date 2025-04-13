@@ -8,32 +8,15 @@ has_children: true
 
 # Aider LLM Leaderboards
 
-Aider works best with LLMs which are good at *editing* code, not just good at writing
-code.
-To evaluate an LLM's editing skill, aider uses benchmarks that
-assess a model's ability to consistently follow the system prompt
-to successfully edit code.
-
-The leaderboards report the results from a number of popular LLMs.
-While [aider can connect to almost any LLM](/docs/llms.html),
-it works best with models that score well on the benchmarks.
+Aider excels with LLMs skilled at *editing* code, not just writing it.
+These benchmarks evaluate an LLM's ability to follow instructions and edit code successfully.
+The leaderboards show results for popular LLMs. Aider works best with high-scoring models, though it [can connect to almost any LLM](/docs/llms.html).
 
 
 ## Polyglot leaderboard
 
-[Aider's polyglot benchmark](https://aider.chat/2024/12/21/polyglot.html#the-polyglot-benchmark) 
-asks the LLM to edit source files to complete 225 coding exercises
-from Exercism. 
-It contains exercises in many popular programming languages:
-C++, Go, Java, JavaScript, Python and Rust.
-The 225 exercises were purposely selected to be the *hardest*
-that Exercism offered in those languages, to provide
-a strong coding challenge to LLMs.
-
-This benchmark measures the LLM's coding ability in popular languages, 
-and whether it can
-write new code that integrates into existing code.
-The model also has to successfully apply all its changes to the source file without human intervention.
+[Aider's polyglot benchmark](https://aider.chat/2024/12/21/polyglot.html#the-polyglot-benchmark) tests LLMs on 225 challenging Exercism coding exercises across C++, Go, Java, JavaScript, Python, and Rust.
+It measures coding ability in multiple languages, integration with existing code, and successful application of changes without human intervention.
 
 <input type="text" id="editSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
