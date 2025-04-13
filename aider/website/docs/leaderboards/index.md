@@ -55,7 +55,7 @@ The model also has to successfully apply all its changes to the source file with
         {% assign max_cost = row.total_cost %}
       {% endif %}
     {% endfor %}
-    {% if max_cost == 0 %}{% assign max_cost = 1 %}{% endif %} {# Avoid division by zero #}
+    {% if max_cost == 0 %}{% assign max_cost = 1 %}{% endif %}
     {% assign edit_sorted = site.data.polyglot_leaderboard | sort: 'pass_rate_2' | reverse %}
     {% for row in edit_sorted %}
       <tr style="border-bottom: 1px solid #ddd;">
