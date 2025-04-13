@@ -125,7 +125,7 @@ The model also has to successfully apply all its changes to the source file with
     top: 50%; /* Position at the middle of the cell */
     transform: translateY(-50%); /* Center the bar vertically */
     z-index: 0; /* Behind the text */
-    height: 48px; /* Fixed bar height - 2x taller than before */
+    height: 36px; /* Fixed bar height - 2x taller than before */
     border-radius: 0 2px 2px 0; /* Slightly rounded end corners */
     /* Width and colors are set inline via style attribute */
   }
