@@ -118,6 +118,8 @@ The model also has to successfully apply all its changes to the source file with
     padding: 8px;
     text-align: center; /* Keep text centered */
     overflow: hidden; /* Prevent bar from overflowing cell boundaries if needed */
+    background-image: repeating-linear-gradient(to right, transparent, transparent 19px, rgba(221, 221, 221, 0.5) 19px, rgba(221, 221, 221, 0.5) 20px); /* Tick marks every 20% */
+    background-size: 20% 100%; /* Set the size of the repeating gradient */
   }
   .bar-viz {
     position: absolute;
