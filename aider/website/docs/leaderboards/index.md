@@ -122,11 +122,10 @@ The model also has to successfully apply all its changes to the source file with
   .bar-viz {
     position: absolute;
     left: 0;
-    top: 0;
-    bottom: 0;
+    top: 50%; /* Position at the middle of the cell */
+    transform: translateY(-50%); /* Center the bar vertically */
     z-index: 0; /* Behind the text */
-    height: 60%; /* Bar height */
-    margin: auto 0; /* Vertical centering */
+    height: 24px; /* Fixed bar height */
     border-radius: 0 2px 2px 0; /* Slightly rounded end corners */
     /* Width and colors are set inline via style attribute */
   }
