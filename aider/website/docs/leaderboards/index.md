@@ -43,7 +43,7 @@ Aider works best with high-scoring models, though it [can connect to almost any 
       {% assign row_index = forloop.index0 %}
       <tr style="border-bottom: 1px solid #ddd;" id="main-row-{{ row_index }}">
         <td style="padding: 8px; text-align: center;">
-          <button class="toggle-details" data-target="details-{{ row_index }}" style="background: none; border: none; cursor: pointer; font-size: 16px; padding: 0;">+</button>
+          <button class="toggle-details" data-target="details-{{ row_index }}" style="background: none; border: none; cursor: pointer; font-size: 16px; padding: 0;">&gt;</button>
         </td>
         <td style="padding: 8px;"><span>{{ row.model }}</span></td>
         <td class="bar-cell">
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (targetRow) {
         const isVisible = targetRow.style.display !== 'none';
         targetRow.style.display = isVisible ? 'none' : 'table-row';
-        this.textContent = isVisible ? '+' : '-';
+        this.textContent = isVisible ? '>' : 'v'; // Use chevrons
       }
     });
   });
