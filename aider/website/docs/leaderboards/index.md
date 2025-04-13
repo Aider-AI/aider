@@ -20,10 +20,17 @@ Aider works best with high-scoring models, though it [can connect to almost any 
 
 <input type="text" id="editSearchInput" placeholder="Search..." style="width: 100%; max-width: 800px; margin: 10px auto; padding: 8px; display: block; border: 1px solid #ddd; border-radius: 4px;">
 
+<div id="view-mode-toggle" style="margin-bottom: 10px; text-align: center;">
+  <button data-mode="all" class="mode-button active">All</button>
+  <button data-mode="select" class="mode-button">Select</button>
+  <button data-mode="selected" class="mode-button">Selected</button>
+  <button id="clear-selection-button" style="display: none; margin-left: 10px;">Clear Selection</button>
+</div>
+
 <table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
-      <th style="padding: 8px; width: 30px;"></th> <!-- Toggle column -->
+      <th style="padding: 8px; width: 40px;"></th> <!-- Toggle/Select column -->
       <th style="padding: 8px; text-align: left;">Model</th>
       <th style="padding: 8px; text-align: center;">Percent correct</th>
       <th style="padding: 8px; text-align: center;">Cost (log scale)</th>
@@ -42,8 +49,9 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     {% for row in edit_sorted %} {% comment %} Add loop index for unique IDs {% endcomment %}
       {% assign row_index = forloop.index0 %}
       <tr id="main-row-{{ row_index }}">
-        <td style="padding: 8px; text-align: center;">
-          <button class="toggle-details" data-target="details-{{ row_index }}" style="background: none; border: none; cursor: pointer; font-size: 16px; padding: 0;">▶</button>
+        <td style="padding: 8px; text-align: center; vertical-align: middle;">
+          <button class="toggle-details" data-target="details-{{ row_index }}" style="background: none; border: none; cursor: pointer; font-size: 16px; padding: 0; vertical-align: middle;">▶</button>
+          <input type="checkbox" class="row-selector" data-row-index="{{ row_index }}" style="display: none; cursor: pointer; vertical-align: middle;">
         </td>
         <td style="padding: 8px;"><span>{{ row.model }}</span></td>
         <td class="bar-cell">
@@ -144,11 +152,174 @@ Aider works best with high-scoring models, though it [can connect to almost any 
     color: #888; /* Make toggle symbol more subtle */
     transition: color 0.2s; /* Smooth transition on hover */
   }
+
+  /* Style for the toggle buttons */
+  #view-mode-toggle .mode-button {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    cursor: pointer;
+  }
+  #view-mode-toggle .mode-button:first-child {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+  /* Adjust last-of-type selector to account for the clear button potentially being the last */
+  #view-mode-toggle .mode-button:nth-last-child(2) { /* Targets the 'Selected' button */
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-left: none; /* If buttons are adjacent */
+  }
+  #view-mode-toggle .mode-button.active {
+    background-color: #e9ecef;
+    font-weight: bold;
+  }
+  #view-mode-toggle .mode-button:not(:first-child):not(.active) {
+      border-left: none; /* Avoid double borders */
+  }
+  #clear-selection-button {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      background-color: #f8f9fa;
+      cursor: pointer;
+      border-radius: 4px;
+  }
+
+
+  /* Style for selected rows */
+  tr.row-selected > td {
+    background-color: #e7f3ff; /* Example light blue highlight */
+  }
+
+  /* Ensure checkbox is vertically aligned if needed */
+  .row-selector {
+    vertical-align: middle;
+  }
+
+  /* Hide rows not matching the filter */
+  tr.hidden-by-mode {
+      display: none !important; /* Use important to override other display styles if necessary */
+  }
+  tr.hidden-by-search {
+      display: none !important;
+  }
+
 </style>
- 
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Add percentage ticks to each bar cell (non-cost cells)
+  let currentMode = 'all'; // 'all', 'select', 'selected'
+  let selectedRows = new Set(); // Store indices of selected rows
+
+  const modeToggleButtonContainer = document.getElementById('view-mode-toggle');
+  const modeButtons = modeToggleButtonContainer.querySelectorAll('.mode-button');
+  const clearSelectionButton = document.getElementById('clear-selection-button');
+  const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
+  const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
+  const searchInput = document.getElementById('editSearchInput');
+
+  function applySearchFilter() {
+    const searchTerm = searchInput.value.toLowerCase();
+    allMainRows.forEach(row => {
+      const textContent = row.textContent.toLowerCase();
+      const detailsRow = document.getElementById(row.id.replace('main-row-', 'details-'));
+      const matchesSearch = textContent.includes(searchTerm);
+
+      if (matchesSearch) {
+        row.classList.remove('hidden-by-search');
+        if (detailsRow) detailsRow.classList.remove('hidden-by-search');
+      } else {
+        row.classList.add('hidden-by-search');
+        if (detailsRow) detailsRow.classList.add('hidden-by-search');
+      }
+    });
+    // After applying search filter, re-apply view mode filter
+    updateTableView(currentMode);
+  }
+
+
+  function updateTableView(mode) {
+    currentMode = mode; // Update global state
+
+    // Update button active states
+    modeButtons.forEach(btn => {
+      if (btn.dataset.mode === mode) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Show/hide clear selection button
+    clearSelectionButton.style.display = (mode === 'select' || mode === 'selected') && selectedRows.size > 0 ? 'inline-block' : 'none';
+
+    allMainRows.forEach(row => {
+      const rowIndex = row.querySelector('.row-selector')?.dataset.rowIndex;
+      const toggleButton = row.querySelector('.toggle-details');
+      const selectorCheckbox = row.querySelector('.row-selector');
+      const detailsRow = document.getElementById(`details-${rowIndex}`);
+      const isSelected = selectedRows.has(rowIndex);
+
+      // Reset visibility classes before applying mode logic
+      row.classList.remove('hidden-by-mode');
+      if (detailsRow) detailsRow.classList.remove('hidden-by-mode');
+
+      // Apply mode-specific logic
+      switch (mode) {
+        case 'all':
+          toggleButton.style.display = 'inline-block';
+          selectorCheckbox.style.display = 'none';
+          row.classList.toggle('row-selected', isSelected); // Keep visual selection indication
+          // Hide details row unless it was explicitly opened (handled by toggle listener)
+          if (detailsRow && toggleButton.textContent === '▶') {
+              detailsRow.style.display = 'none';
+          }
+          break;
+        case 'select':
+          toggleButton.style.display = 'none';
+          selectorCheckbox.style.display = 'inline-block';
+          selectorCheckbox.checked = isSelected;
+          row.classList.toggle('row-selected', isSelected);
+          // Always hide details row in select mode
+          if (detailsRow) detailsRow.style.display = 'none';
+          break;
+        case 'selected':
+          toggleButton.style.display = 'inline-block';
+          selectorCheckbox.style.display = 'none';
+          if (isSelected) {
+            row.classList.add('row-selected'); // Ensure selected class is present
+            // Hide details row unless it was explicitly opened
+             if (detailsRow && toggleButton.textContent === '▶') {
+                detailsRow.style.display = 'none';
+            }
+          } else {
+            row.classList.add('hidden-by-mode');
+            row.classList.remove('row-selected'); // Remove selection class if not selected
+            if (detailsRow) detailsRow.classList.add('hidden-by-mode'); // Hide details too
+          }
+          break;
+      }
+
+      // Ensure rows hidden by search remain hidden regardless of mode
+      if (row.classList.contains('hidden-by-search')) {
+          row.style.display = 'none';
+          if (detailsRow) detailsRow.style.display = 'none';
+      } else if (!row.classList.contains('hidden-by-mode')) {
+          // Make row visible if not hidden by search or mode
+          row.style.display = ''; // Or 'table-row' if needed, but '' usually works
+      } else {
+          // Row is hidden by mode, ensure it's hidden
+          row.style.display = 'none';
+          if (detailsRow) detailsRow.style.display = 'none';
+      }
+
+
+    });
+  }
+
+
+  // --- Existing Initializations ---
+  // Add percentage ticks
   const percentCells = document.querySelectorAll('.bar-cell:not(.cost-bar-cell)');
   percentCells.forEach(cell => {
     // Add ticks at 0%, 10%, 20%, ..., 100%
