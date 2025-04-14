@@ -276,7 +276,8 @@ class PatchFlexCoder(Coder):  # Rename class
                 index += 1
                 if not path:
                     raise DiffError(f"Update File action missing path (line {line_num}).")
-                # Don't check for duplicates; multiple UPDATEs for the same file are processed sequentially.
+                # Don't check for duplicates; multiple UPDATEs for the same file
+                # are processed sequentially.
                 # if path not in known_files:
                 #     self.io.tool_warning(f"Update target '{path}' not in chat context.")
 
