@@ -235,20 +235,6 @@ Left
 Left
 """
 
-"""
-ri = RelativeIndenter([example])
-dump(example)
-
-rel_example = ri.make_relative(example)
-dump(repr(rel_example))
-
-abs_example = ri.make_absolute(rel_example)
-dump(abs_example)
-
-
-sys.exit()
-"""
-
 
 def relative_indent(texts):
     ri = RelativeIndenter(texts)

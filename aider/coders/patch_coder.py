@@ -3,7 +3,6 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
 
-from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .patch_prompts import PatchPrompts
 
