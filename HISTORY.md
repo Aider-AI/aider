@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.82.0
 
 - Support for GPT 4.1, mini and nano.
 - Added new `patch` edit format for OpenAI's GPT-4.1 model.
