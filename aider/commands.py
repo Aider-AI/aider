@@ -471,6 +471,20 @@ class Commands:
                 tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
+        # Enhanced context blocks (only for navigator mode)
+        if hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
+            # Force token calculation if it hasn't been done yet
+            if hasattr(self.coder, '_calculate_context_block_tokens'):
+                if not hasattr(self.coder, 'tokens_calculated') or not self.coder.tokens_calculated:
+                    self.coder._calculate_context_block_tokens()
+                    
+            # Add enhanced context blocks to the display
+            if hasattr(self.coder, 'context_block_tokens') and self.coder.context_block_tokens:
+                for block_name, tokens in self.coder.context_block_tokens.items():
+                    # Format the block name more nicely
+                    display_name = block_name.replace('_', ' ').title()
+                    res.append((tokens, f"{display_name} context block", "/context-blocks to toggle"))
+
         fence = "`" * 3
 
         file_res = []
@@ -883,6 +897,11 @@ class Commands:
                     fname = self.coder.get_rel_fname(abs_file_path)
                     self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
+                    
+                    # Recalculate context block tokens if using navigator mode
+                    if hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
+                        if hasattr(self.coder, '_calculate_context_block_tokens'):
+                            self.coder._calculate_context_block_tokens()
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
@@ -902,9 +921,16 @@ class Commands:
             else:
                 self.io.tool_output("Dropping all files from the chat session.")
             self._drop_all_files()
+            
+            # Recalculate context block tokens after dropping all files
+            if hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
+                if hasattr(self.coder, '_calculate_context_block_tokens'):
+                    self.coder._calculate_context_block_tokens()
             return
 
         filenames = parse_quoted_filenames(args)
+        files_changed = False
+        
         for word in filenames:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
@@ -927,6 +953,7 @@ class Commands:
             for matched_file in read_only_matched:
                 self.coder.abs_read_only_fnames.remove(matched_file)
                 self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
+                files_changed = True
 
             # For editable files, use glob if word contains glob chars, otherwise use substring
             if any(c in expanded_word for c in "*?[]"):
@@ -945,6 +972,12 @@ class Commands:
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
+                    files_changed = True
+                    
+        # Recalculate context block tokens if any files were changed and using navigator mode
+        if files_changed and hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
+            if hasattr(self.coder, '_calculate_context_block_tokens'):
+                self.coder._calculate_context_block_tokens()
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"

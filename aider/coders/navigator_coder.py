@@ -93,8 +93,100 @@ class NavigatorCoder(Coder):
         # Enable enhanced context blocks by default
         self.use_enhanced_context = True
         
+        # Initialize empty token tracking dictionary and cache structures 
+        # but don't populate yet to avoid startup delay
+        self.context_block_tokens = {}
+        self.context_blocks_cache = {}
+        self.tokens_calculated = False
+        
         super().__init__(*args, **kwargs)
         
+    def _calculate_context_block_tokens(self, force=False):
+        """
+        Calculate token counts for all enhanced context blocks.
+        This is the central method for calculating token counts,
+        ensuring they're consistent across all parts of the code.
+        
+        This method populates the cache for context blocks and calculates tokens.
+        
+        Args:
+            force: If True, recalculate tokens even if already calculated
+        """
+        # Skip if already calculated and not forced
+        if hasattr(self, 'tokens_calculated') and self.tokens_calculated and not force:
+            return
+        
+        # Clear existing token counts
+        self.context_block_tokens = {}
+        
+        # Initialize the cache for context blocks if needed
+        if not hasattr(self, 'context_blocks_cache'):
+            self.context_blocks_cache = {}
+        
+        if not self.use_enhanced_context:
+            return
+            
+        try:
+            # First, clear the cache to force regeneration of all blocks
+            self.context_blocks_cache = {}
+            
+            # Generate all context blocks and calculate token counts
+            block_types = ["environment_info", "directory_structure", "git_status", "symbol_outline"]
+            
+            for block_type in block_types:
+                block_content = self._generate_context_block(block_type)
+                if block_content:
+                    self.context_block_tokens[block_type] = self.main_model.token_count(block_content)
+                    
+            # Mark as calculated
+            self.tokens_calculated = True
+        except Exception as e:
+            # Silently handle errors during calculation
+            # This prevents errors in token counting from breaking the main functionality
+            pass
+            
+    def _generate_context_block(self, block_name):
+        """
+        Generate a specific context block and cache it.
+        This is a helper method for get_cached_context_block.
+        """
+        content = None
+        
+        if block_name == "environment_info":
+            content = self.get_environment_info()
+        elif block_name == "directory_structure":
+            content = self.get_directory_structure()
+        elif block_name == "git_status":
+            content = self.get_git_status()
+        elif block_name == "symbol_outline":
+            content = self.get_context_symbol_outline()
+        elif block_name == "context_summary":
+            content = self.get_context_summary()
+            
+        # Cache the result if it's not None
+        if content is not None:
+            self.context_blocks_cache[block_name] = content
+            
+        return content
+            
+    def get_cached_context_block(self, block_name):
+        """
+        Get a context block from the cache, or generate it if not available.
+        This should be used by format_chat_chunks to avoid regenerating blocks.
+        
+        This will ensure tokens are calculated if they haven't been yet.
+        """
+        # Make sure tokens have been calculated at least once
+        if not hasattr(self, 'tokens_calculated') or not self.tokens_calculated:
+            self._calculate_context_block_tokens()
+            
+        # Return from cache if available
+        if hasattr(self, 'context_blocks_cache') and block_name in self.context_blocks_cache:
+            return self.context_blocks_cache[block_name]
+            
+        # Otherwise generate and cache the block
+        return self._generate_context_block(block_name)
+            
     def set_granular_editing(self, enabled):
         """
         Switch between granular editing tools and legacy search/replace.
@@ -196,13 +288,19 @@ class NavigatorCoder(Coder):
         # If enhanced context blocks are not enabled, just return the base chunks
         if not self.use_enhanced_context:
             return chunks
+        
+        # Make sure token counts are updated - using centralized method
+        # This also populates the context block cache
+        self._calculate_context_block_tokens()
             
-        # Generate all context blocks
-        env_context = self.get_environment_info()
+        # Get blocks from cache to avoid regenerating them
+        env_context = self.get_cached_context_block("environment_info")
+        dir_structure = self.get_cached_context_block("directory_structure")
+        git_status = self.get_cached_context_block("git_status")
+        symbol_outline = self.get_cached_context_block("symbol_outline")
+        
+        # Context summary needs special handling because it depends on other blocks
         context_summary = self.get_context_summary()
-        dir_structure = self.get_directory_structure()
-        git_status = self.get_git_status()
-        symbol_outline = self.get_context_symbol_outline()
         
         # 1. Add relatively static blocks BEFORE done_messages
         # These blocks change less frequently and can be part of the cacheable prefix
@@ -308,13 +406,20 @@ class NavigatorCoder(Coder):
         chunks.cur = list(self.cur_messages)
         chunks.reminder = []
 
-        # TODO review impact of token count on image messages
-        messages_tokens = self.main_model.token_count(chunks.all_messages())
+        # Use accurate token counting method that considers enhanced context blocks
+        base_messages = chunks.all_messages()
+        messages_tokens = self.main_model.token_count(base_messages)
         reminder_tokens = self.main_model.token_count(reminder_message)
         cur_tokens = self.main_model.token_count(chunks.cur)
 
         if None not in (messages_tokens, reminder_tokens, cur_tokens):
-            total_tokens = messages_tokens + reminder_tokens + cur_tokens
+            total_tokens = messages_tokens
+            # Only add tokens for reminder and cur if they're not already included
+            # in the messages_tokens calculation
+            if not chunks.reminder:
+                total_tokens += reminder_tokens
+            if not chunks.cur:
+                total_tokens += cur_tokens
         else:
             # add the reminder anyway
             total_tokens = 0
@@ -351,7 +456,16 @@ class NavigatorCoder(Coder):
         """
         if not self.use_enhanced_context:
             return None
+            
+        # If context_summary is already in the cache, return it
+        if hasattr(self, 'context_blocks_cache') and "context_summary" in self.context_blocks_cache:
+            return self.context_blocks_cache["context_summary"]
+            
         try:
+            # Make sure token counts are updated before generating the summary
+            if not hasattr(self, 'context_block_tokens') or not self.context_block_tokens:
+                self._calculate_context_block_tokens()
+            
             result = "<context name=\"context_summary\">\n"
             result += "## Current Context Overview\n\n"
             max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
@@ -401,27 +515,8 @@ class NavigatorCoder(Coder):
                 else:
                     result += "No read-only files in context\n\n"
 
-            # Additional enhanced context blocks
-            env_info = self.get_environment_info()
-            dir_structure = self.get_directory_structure()
-            git_status = self.get_git_status()
-            symbol_outline = self.get_context_symbol_outline()
-
-            extra_context = ""
-            extra_tokens = 0
-            if env_info:
-                extra_context += env_info + "\n\n"
-                extra_tokens += self.main_model.token_count(env_info)
-            if dir_structure:
-                extra_context += dir_structure + "\n\n"
-                extra_tokens += self.main_model.token_count(dir_structure)
-            if git_status:
-                extra_context += git_status + "\n\n"
-                extra_tokens += self.main_model.token_count(git_status)
-            if symbol_outline:
-                extra_context += symbol_outline + "\n\n"
-                extra_tokens += self.main_model.token_count(symbol_outline)
-
+            # Use the pre-calculated context block tokens
+            extra_tokens = sum(self.context_block_tokens.values())
             total_tokens = total_file_tokens + extra_tokens
 
             result += f"**Total files usage: {total_file_tokens:,} tokens**\n\n"
@@ -435,6 +530,12 @@ class NavigatorCoder(Coder):
                     result += "- `[tool_call(Remove, file_path=\"path/to/large_file.ext\")]`\n"
                     result += "- Keep only essential files in context for best performance"
             result += "\n</context>"
+            
+            # Cache the result
+            if not hasattr(self, 'context_blocks_cache'):
+                self.context_blocks_cache = {}
+            self.context_blocks_cache["context_summary"] = result
+                
             return result
         except Exception as e:
             self.io.tool_error(f"Error generating context summary: {str(e)}")
@@ -1647,8 +1748,15 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         
         if self.use_enhanced_context:
             self.io.tool_output("Enhanced context blocks are now ON - directory structure and git status will be included.")
+            # Mark tokens as needing calculation, but don't calculate yet (lazy calculation)
+            self.tokens_calculated = False
+            self.context_blocks_cache = {}
         else:
             self.io.tool_output("Enhanced context blocks are now OFF - directory structure and git status will not be included.")
+            # Clear token counts and cache when disabled
+            self.context_block_tokens = {}
+            self.context_blocks_cache = {}
+            self.tokens_calculated = False
         
         return True
         
