@@ -7,8 +7,6 @@ from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .patch_prompts import PatchPrompts
 
-EditResult = Tuple[str, PatchAction]
-
 
 # --------------------------------------------------------------------------- #
 #  Domain objects & Exceptions (Adapted from apply_patch.py)
@@ -39,6 +37,10 @@ class PatchAction:
     # For UPDATE:
     chunks: List[Chunk] = field(default_factory=list)
     move_path: Optional[str] = None
+
+
+# Type alias for the return type of get_edits
+EditResult = Tuple[str, PatchAction]
 
 
 @dataclass
