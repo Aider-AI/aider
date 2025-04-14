@@ -1066,3 +1066,29 @@
   versions: 0.81.4.dev
   seconds_per_case: 19.5
   total_cost: 1.9918
+
+- dirname: 2025-04-14-22-46-01--gpt41nano-diff
+  test_cases: 225
+  model: gpt-4.1-nano
+  edit_format: whole
+  commit_hash: 71d1591-dirty
+  pass_rate_1: 3.1
+  pass_rate_2: 8.9
+  pass_num_1: 7
+  pass_num_2: 20
+  percent_cases_well_formed: 94.2
+  error_outputs: 20
+  num_malformed_responses: 20
+  num_with_malformed_responses: 13
+  user_asks: 316
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 8
+  total_tests: 225
+  command: aider --model gpt-4.1-nano
+  date: 2025-04-14
+  versions: 0.81.4.dev
+  seconds_per_case: 12.0
+  total_cost: 0.4281
