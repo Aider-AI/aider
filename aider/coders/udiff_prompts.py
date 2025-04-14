@@ -5,16 +5,19 @@ from .base_prompts import CoderPrompts
 
 class UnifiedDiffPrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
+Think step-by-step. Plan your changes carefully. Explain your plan first.
 {lazy_prompt}
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.
+Consider potential edge cases.
+Think about how to verify your changes are correct.
 
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
 Always reply to the user in {language}.
 
-For each file that needs to be changed, write out the changes similar to a unified diff like `diff -U0` would produce.
+Once you have a plan, for each file that needs to be changed, write out the changes similar to a unified diff like `diff -U0` would produce.
 """
 
     example_messages = [
