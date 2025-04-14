@@ -118,7 +118,7 @@ When you include any tool call, the system will automatically continue to the ne
 ```
 Your answer to the user's question...
 
-SEARCH/REPLACE blocks appear BEFORE the last '---' separator.
+SEARCH/REPLACE blocks can ONLY appear BEFORE the last '---' separator. Any SEARCH/REPLACE blocks after the separator will be IGNORED.
 
 file.py
 <<<<<<< SEARCH
@@ -135,14 +135,17 @@ new code
 ## SEARCH/REPLACE Block Format
 When you need to make changes to code, use the SEARCH/REPLACE block format. You can include multiple edits in one message.
 
-```
+````python
 path/to/file.ext
 <<<<<<< SEARCH
 Original code lines to match exactly
 =======
 Replacement code lines
 >>>>>>> REPLACE
-```
+````
+NOTE that this uses four backticks as the fence and not three!
+
+IMPORTANT: Any SEARCH/REPLACE blocks that appear after the last '---' separator will be IGNORED.
 
 #### Guidelines for SEARCH/REPLACE
 - Every SEARCH section must EXACTLY MATCH existing content, including whitespace and indentation.
@@ -287,8 +290,9 @@ Here are summaries of some files present in this repo:
 - If emitting 3 or more tool calls, OR if any tool call spans multiple lines, place each call on a new line for clarity.
 
 ## SEARCH/REPLACE blocks
-- SEARCH/REPLACE blocks MUST appear BEFORE the last '---' separator line in your response
+- When using SEARCH/REPLACE blocks, they MUST ONLY appear BEFORE the last '---' separator line in your response
 - If there is no '---' separator, they can appear anywhere in your response
+- IMPORTANT: Using SEARCH/REPLACE blocks is the standard editing method in this mode
 - Format example:
   ```
   Your answer text here...
@@ -303,6 +307,8 @@ Here are summaries of some files present in this repo:
   ---
   [tool_call(ToolName, param1=value1)]
   ```
+  Note that SEARCH/REPLACE blocks should use four backticks (````) as the fence, not three
+- IMPORTANT: Any SEARCH/REPLACE blocks that appear after the last '---' separator will be IGNORED
 
 ## Context Features
 - Use enhanced context blocks (directory structure and git status) to orient yourself
