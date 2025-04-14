@@ -1,5 +1,4 @@
 import pathlib
-import re
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List, Optional, Tuple
@@ -348,9 +347,10 @@ class PatchCoder(Coder):
                     raise DiffError("Add File action missing path.")
                 if path in patch.actions:
                     raise DiffError(f"Duplicate action for file: {path}")
-                # Check if file exists in the context provided (should not for Add)
-                # Note: We don't have *all* files, just needed ones. A full check requires FS access.
-                # if path in current_files: raise DiffError(f"Add File Error - file already exists: {path}")
+                # Check if file exists in the context provided (should not for Add).
+                # Note: We only have needed files, a full check requires FS access.
+                # if path in current_files:
+                #     raise DiffError(f"Add File Error - file already exists: {path}")
 
                 action, index = self._parse_add_file_content(lines, index)
                 action.path = path  # Ensure path is set
@@ -517,8 +517,7 @@ class PatchCoder(Coder):
         if not edits:
             return
 
-        # Group edits by original path for easier processing, especially moves
-        # We don't strictly need this grouping if we process sequentially and handle moves correctly.
+        # Group edits by original path? Not strictly needed if processed sequentially.
 
         for action in edits:
             full_path = self.abs_root_path(action.path)
@@ -619,7 +618,7 @@ class PatchCoder(Coder):
 
         for chunk in sorted_chunks:
             # chunk.orig_index is the absolute line number where the change starts
-            # (specifically, where the first deleted line was, or where inserted lines go if no deletes)
+            # (where the first deleted line was, or where inserted lines go if no deletes)
             chunk_start_index = chunk.orig_index
 
             if chunk_start_index < current_orig_line_idx:
