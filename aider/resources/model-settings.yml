@@ -1064,4 +1064,10 @@
   examples_as_sys_msg: false
   editor_model_name: openrouter/openai/gpt-4.1-mini
 
+- name: gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false # false: 32.x%/92.4% (60+ malformed responses); true: 31.7/90.2/60+
+
   
