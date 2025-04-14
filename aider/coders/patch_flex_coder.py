@@ -163,8 +163,8 @@ def _peek_change_hunk(
                 context_after.append(line_content)
                 mode = "context_after"
             elif line_type == "delete":
-                # This implies interleaved +/- lines which this simplified parser doesn't handle well.
-                # Treat as end of hunk? Or raise error? Let's treat as end for now.
+                # Interleaved +/- lines are not handled well by this simplified parser.
+                # Treat as end of hunk for now.
                 index = current_line_index  # Put the delete line back for the next hunk
                 break
             else:
