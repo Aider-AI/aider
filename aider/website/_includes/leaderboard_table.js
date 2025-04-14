@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const modeSelectButton = document.getElementById('mode-select-btn');
   const modeButtons = [modeViewButton, modeDetailButton, modeSelectButton];
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
+  const leaderboardTitle = document.getElementById('leaderboard-title'); // Get title element
+  const defaultTitle = "Aider polyglot coding leaderboard";
+  const filteredTitle = "Aider polyglot coding benchmark results";
 
   function applySearchFilter() {
     const searchTerm = searchInput.value.toLowerCase();
@@ -178,6 +181,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
     });
+
+    // Update the leaderboard title based on mode and selection
+    if (leaderboardTitle) {
+      if (currentMode === 'view' && selectedRows.size > 0) {
+        leaderboardTitle.textContent = filteredTitle;
+      } else {
+        leaderboardTitle.textContent = defaultTitle;
+      }
+    }
 
     // Update the select-all checkbox state after updating the view
     updateSelectAllCheckboxState();
