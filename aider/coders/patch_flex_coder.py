@@ -1,9 +1,9 @@
 # At the top of the file, add necessary imports
 import itertools
 import pathlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 # Keep existing imports like dump, Coder, PatchPrompts, DiffError, ActionType
 from ..dump import dump  # noqa: F401
@@ -13,8 +13,7 @@ from .patch_prompts import PatchPrompts
 # Import search_replace utilities
 from .search_replace import editblock_strategies, flexible_search_and_replace
 
-# Remove original Chunk, PatchAction, EditResult, Patch dataclasses if they exist at the top
-# Remove helper functions: _norm, find_context_core, find_context, peek_next_section, identify_files_needed
+# Remove original PatchCoder domain objects and helpers if they exist at the top.
 # We will redefine or replace these as needed.
 
 
@@ -277,9 +276,9 @@ class PatchFlexCoder(Coder):  # Rename class
                 index += 1
                 if not path:
                     raise DiffError(f"Update File action missing path (line {line_num}).")
-                # We don't check for duplicates here, multiple UPDATEs for the same file are handled sequentially.
-                # if path not in known_files: # Check if file is known (in chat or mentioned)
-                #     self.io.tool_warning(f"Update File target '{path}' not found in chat context.")
+                # We don't check for duplicates; multiple UPDATEs for the same file are handled sequentially.
+                # if path not in known_files:
+                #     self.io.tool_warning(f"Update target '{path}' not in chat context.")
 
                 current_file_path = path
                 current_move_path = None  # Reset move path for new file
@@ -420,7 +419,7 @@ class PatchFlexCoder(Coder):  # Rename class
                 if norm_line.strip() == "":
                     added_lines.append("")  # Treat blank line as adding a blank line
                 else:
-                    raise DiffError(f"Invalid Add File line (missing '+') (line {index+1}): {line}")
+                    raise DiffError(f"Invalid Add File line (missing '+') (line {index + 1}): {line}")
             else:
                 added_lines.append(line[1:])
 
@@ -510,7 +509,7 @@ class PatchFlexCoder(Coder):  # Rename class
                     final_move_path = edit.move_path  # Last move path specified wins
 
                     self.io.tool_output(
-                        f"  Applying hunk {i+1} (from patch line {edit.patch_line_num})..."
+                        f"  Applying hunk {i + 1} (from patch line {edit.patch_line_num})..."
                     )
 
                     texts = (edit.search_text, edit.replace_text, current_content)
@@ -520,7 +519,7 @@ class PatchFlexCoder(Coder):  # Rename class
                         edit_failed = True
                         # Provide more context on failure
                         err_msg = (
-                            f"Failed to apply update hunk {i+1} (from patch line"
+                            f"Failed to apply update hunk {i + 1} (from patch line"
                             f" {edit.patch_line_num}) for file {path}. The search block may not"
                             " have been found or the change conflicted.\nSearch"
                             f" block:\n```\n{edit.search_text}```\nReplace"
