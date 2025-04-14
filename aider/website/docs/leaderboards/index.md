@@ -96,6 +96,9 @@ human intervention.
 </table>
 
 <style>
+  #leaderboard-title {
+    margin-bottom: 20px; /* Add space below the title */
+  }
   tr.selected {
     color: #0056b3;
   }
