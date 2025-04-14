@@ -264,11 +264,9 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>3,807,989</td><td class='right'>81.1%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>842,905</td><td class='right'>17.9%</td></tr>
-<tr><td>gpt-4.1-mini</td><td class='right'>11,775</td><td class='right'>0.3%</td></tr>
-<tr><td>fireworks_ai/accounts/fireworks/models/deepseek-v3</td><td class='right'>11,254</td><td class='right'>0.2%</td></tr>
-<tr><td>xai/grok-3-beta</td><td class='right'>11,054</td><td class='right'>0.2%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>4,412,299</td><td class='right'>86.2%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>681,089</td><td class='right'>13.3%</td></tr>
+<tr><td>gpt-4.1-mini</td><td class='right'>11,775</td><td class='right'>0.2%</td></tr>
 <tr><td>gpt-4.1</td><td class='right'>10,687</td><td class='right'>0.2%</td></tr>
 <tr><td>openrouter/REDACTED</td><td class='right'>2,058</td><td class='right'>0.0%</td></tr>
 </table>

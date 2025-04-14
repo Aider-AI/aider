@@ -26,11 +26,13 @@ cog.out(text)
 
 ### main branch
 
+- Support for GPT 4.1, mini and nano.
 - Added new `patch` edit format for OpenAI's GPT-4.1 model.
-- Added new `editor-diff`, `editor-whole`, and `editor-diff-fenced` edit formats for use with `--copy-paste`.
-- Added support for `gpt-4.1` and `gpt-4.1-mini` models, including provider-specific names (`openai/`, `openrouter/openai/`).
-- Added support for `grok-3-fast-beta` and `grok-3-mini-fast-beta` models, including provider-specific names (`xai/`, `openrouter/x-ai/`).
-- Aider wrote 91% of the code in this release.
+- Improved support for using architect mode with Gemini 2.5 Pro.
+- Added new `editor-diff`, `editor-whole`, and `editor-diff-fenced` edit formats.
+- Bugfix for automatically selecting the best edit format to use in architect mode.
+- Added support for `grok-3-fast-beta` and `grok-3-mini-fast-beta` models.
+- Aider wrote 92% of the code in this release.
 
 ### Aider v0.81.3
 
