@@ -10,7 +10,6 @@ from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .patch_prompts import PatchPrompts
 
-
 # Import search_replace utilities
 from .search_replace import editblock_strategies, flexible_search_and_replace
 
@@ -167,7 +166,7 @@ def _peek_change_hunk(
             elif line_type == "delete":
                 # This implies interleaved +/- lines which this simplified parser doesn't handle well.
                 # Treat as end of hunk? Or raise error? Let's treat as end for now.
-                index = current_line_index # Put the delete line back for the next hunk
+                index = current_line_index  # Put the delete line back for the next hunk
                 break
             else:
                 raise DiffError(f"Unexpected line type '{line_type}' in mode '{mode}': {line}")
@@ -200,17 +199,17 @@ def _peek_change_hunk(
 # --------------------------------------------------------------------------- #
 #  PatchFlexCoder Class Implementation
 # --------------------------------------------------------------------------- #
-class PatchFlexCoder(Coder): # Rename class
+class PatchFlexCoder(Coder):  # Rename class
     """
     A coder that uses the patch format for LLM output, but applies changes
     using flexible search-and-replace logic for UPDATE actions, ignoring @@ hints
     and precise line numbers during application.
     """
 
-    edit_format = "patch-flex" # Give it a distinct name
-    gpt_prompts = PatchPrompts() # Use the same prompts as PatchCoder
+    edit_format = "patch-flex"  # Give it a distinct name
+    gpt_prompts = PatchPrompts()  # Use the same prompts as PatchCoder
 
-    def get_edits(self) -> List[ParsedEdit]: # Return type changed
+    def get_edits(self) -> List[ParsedEdit]:  # Return type changed
         """
         Parses the LLM response content (containing the patch) into a list of
         ParsedEdit objects, extracting search/replace blocks for UPDATEs.
@@ -221,13 +220,10 @@ class PatchFlexCoder(Coder): # Rename class
 
         lines = content.splitlines()
         start_index = 0
-        if (
-            len(lines) >= 2
-            and _norm(lines[0]).startswith("*** Begin Patch")
-        ):
+        if len(lines) >= 2 and _norm(lines[0]).startswith("*** Begin Patch"):
             start_index = 1
         else:
-             # Tolerate missing sentinels if content looks like a patch action
+            # Tolerate missing sentinels if content looks like a patch action
             is_patch_like = any(
                 _norm(line).startswith(
                     ("@@", "*** Update File:", "*** Add File:", "*** Delete File:")
@@ -237,9 +233,7 @@ class PatchFlexCoder(Coder): # Rename class
             if not is_patch_like:
                 self.io.tool_warning("Response does not appear to be in patch format.")
                 return []
-            self.io.tool_warning(
-                "Patch format warning: Missing '*** Begin Patch' sentinel."
-            )
+            self.io.tool_warning("Patch format warning: Missing '*** Begin Patch' sentinel.")
 
         # Identify files needed for context lookups (only for DELETE check)
         needed_paths = identify_files_needed(content)
@@ -247,7 +241,6 @@ class PatchFlexCoder(Coder): # Rename class
         # but it's useful to check if DELETE targets exist.
         # We read content dynamically in apply_edits.
         known_files = set(self.get_inchat_relative_files()) | set(needed_paths)
-
 
         try:
             # Parse the patch text into ParsedEdit objects
@@ -272,7 +265,7 @@ class PatchFlexCoder(Coder): # Rename class
         while index < len(lines):
             line = lines[index]
             norm_line = _norm(line)
-            line_num = index + 1 # 1-based for reporting
+            line_num = index + 1  # 1-based for reporting
 
             if norm_line == "*** End Patch":
                 index += 1
@@ -289,7 +282,7 @@ class PatchFlexCoder(Coder): # Rename class
                 #     self.io.tool_warning(f"Update File target '{path}' not found in chat context.")
 
                 current_file_path = path
-                current_move_path = None # Reset move path for new file
+                current_move_path = None  # Reset move path for new file
 
                 # Check for optional Move to immediately after
                 if index < len(lines) and _norm(lines[index]).startswith("*** Move to: "):
@@ -298,7 +291,7 @@ class PatchFlexCoder(Coder): # Rename class
                     if not move_to:
                         raise DiffError(f"Move to action missing path (line {index}).")
                     current_move_path = move_to
-                continue # Continue to parse hunks for this file
+                continue  # Continue to parse hunks for this file
 
             # ---------- DELETE ---------- #
             elif norm_line.startswith("*** Delete File: "):
@@ -307,11 +300,13 @@ class PatchFlexCoder(Coder): # Rename class
                 if not path:
                     raise DiffError(f"Delete File action missing path (line {line_num}).")
                 if path not in known_files:
-                     # Check against known files before adding delete action
+                    # Check against known files before adding delete action
                     self.io.tool_warning(f"Delete File target '{path}' not found in chat context.")
 
-                parsed_edits.append(ParsedEdit(path=path, type=ActionType.DELETE, patch_line_num=line_num))
-                current_file_path = None # Reset current file context
+                parsed_edits.append(
+                    ParsedEdit(path=path, type=ActionType.DELETE, patch_line_num=line_num)
+                )
+                current_file_path = None  # Reset current file context
                 current_move_path = None
                 continue
 
@@ -328,13 +323,13 @@ class PatchFlexCoder(Coder): # Rename class
                 action.path = path
                 action.patch_line_num = line_num
                 parsed_edits.append(action)
-                current_file_path = None # Reset current file context
+                current_file_path = None  # Reset current file context
                 current_move_path = None
                 continue
 
             # ---------- Hunks within UPDATE ---------- #
             elif current_file_path:
-                 # Skip @@ lines, they are ignored by this coder's application logic
+                # Skip @@ lines, they are ignored by this coder's application logic
                 if norm_line.startswith("@@"):
                     index += 1
                     continue
@@ -348,11 +343,10 @@ class PatchFlexCoder(Coder): # Rename class
                         ins_lines,
                         context_after,
                         next_index,
-                        _is_eof, # EOF marker not strictly needed for search/replace logic
+                        _is_eof,  # EOF marker not strictly needed for search/replace logic
                     ) = _peek_change_hunk(lines, index)
                 except DiffError as e:
                     raise DiffError(f"{e} (near line {line_num} in patch)")
-
 
                 if not del_lines and not ins_lines:
                     # Skip hunks that contain only context - they don't represent a change
@@ -371,15 +365,14 @@ class PatchFlexCoder(Coder): # Rename class
                 # the original block likely ended with the last deleted line.
                 # Or if context_before/del/ins are all empty, it's just context.
                 if not context_after and (del_lines or ins_lines):
-                     search_text += "\n"
-                     # Replace text already includes context_after, so only add if that was empty too
-                     if not ins_lines:
-                         replace_text += "\n"
+                    search_text += "\n"
+                    # Replace text already includes context_after, so only add if that was empty too
+                    if not ins_lines:
+                        replace_text += "\n"
                 elif context_after or context_before or del_lines or ins_lines:
                     # If there's any content, ensure trailing newline for consistency
-                     search_text += "\n"
-                     replace_text += "\n"
-
+                    search_text += "\n"
+                    replace_text += "\n"
 
                 parsed_edits.append(
                     ParsedEdit(
@@ -387,7 +380,7 @@ class PatchFlexCoder(Coder): # Rename class
                         type=ActionType.UPDATE,
                         search_text=search_text,
                         replace_text=replace_text,
-                        move_path=current_move_path, # Carry over move path for this hunk
+                        move_path=current_move_path,  # Carry over move path for this hunk
                         patch_line_num=hunk_start_index + 1,
                     )
                 )
@@ -395,11 +388,13 @@ class PatchFlexCoder(Coder): # Rename class
                 continue
 
             # If we are here, the line is unexpected or misplaced
-            if not norm_line.strip(): # Allow blank lines between actions/files
+            if not norm_line.strip():  # Allow blank lines between actions/files
                 index += 1
                 continue
 
-            raise DiffError(f"Unknown or misplaced line while parsing patch (line {line_num}): {line}")
+            raise DiffError(
+                f"Unknown or misplaced line while parsing patch (line {line_num}): {line}"
+            )
 
         return parsed_edits
 
@@ -423,7 +418,7 @@ class PatchFlexCoder(Coder): # Rename class
 
             if not line.startswith("+"):
                 if norm_line.strip() == "":
-                    added_lines.append("") # Treat blank line as adding a blank line
+                    added_lines.append("")  # Treat blank line as adding a blank line
                 else:
                     raise DiffError(f"Invalid Add File line (missing '+') (line {index+1}): {line}")
             else:
@@ -432,14 +427,14 @@ class PatchFlexCoder(Coder): # Rename class
             index += 1
 
         action = ParsedEdit(
-            path="", # Path set by caller
+            path="",  # Path set by caller
             type=ActionType.ADD,
             new_content="\n".join(added_lines),
-            patch_line_num=start_line_num
-            )
+            patch_line_num=start_line_num,
+        )
         return action, index
 
-    def apply_edits(self, edits: List[ParsedEdit]): # Argument type changed
+    def apply_edits(self, edits: List[ParsedEdit]):  # Argument type changed
         """
         Applies the parsed edits. Uses flexible search-and-replace for UPDATEs.
         """
@@ -456,7 +451,7 @@ class PatchFlexCoder(Coder): # Rename class
             path_obj = pathlib.Path(full_path)
             current_content = None
             edit_failed = False
-            final_move_path = None # Track the last move destination for this file
+            final_move_path = None  # Track the last move destination for this file
 
             # Check for simple ADD/DELETE first (should ideally be only one per file)
             if len(path_edits) == 1 and path_edits[0].type in [ActionType.ADD, ActionType.DELETE]:
@@ -464,8 +459,10 @@ class PatchFlexCoder(Coder): # Rename class
                 try:
                     if edit.type == ActionType.ADD:
                         if path_obj.exists():
-                             # Allow overwrite on ADD? Or error? Let's warn and overwrite.
-                            self.io.tool_warning(f"ADD Warning: File '{path}' already exists, overwriting.")
+                            # Allow overwrite on ADD? Or error? Let's warn and overwrite.
+                            self.io.tool_warning(
+                                f"ADD Warning: File '{path}' already exists, overwriting."
+                            )
                             # raise DiffError(f"ADD Error: File already exists: {path}")
                         if edit.new_content is None:
                             raise DiffError(f"ADD change for {path} has no content")
@@ -480,14 +477,18 @@ class PatchFlexCoder(Coder): # Rename class
                     elif edit.type == ActionType.DELETE:
                         self.io.tool_output(f"Deleting {path}")
                         if not path_obj.exists():
-                            self.io.tool_warning(f"DELETE Warning: File not found, skipping: {path}")
+                            self.io.tool_warning(
+                                f"DELETE Warning: File not found, skipping: {path}"
+                            )
                         else:
                             path_obj.unlink()
                 except (DiffError, FileNotFoundError, IOError, OSError) as e:
-                     raise ValueError(f"Error applying action '{edit.type}' to {path}: {e}")
+                    raise ValueError(f"Error applying action '{edit.type}' to {path}: {e}")
                 except Exception as e:
-                     raise ValueError(f"Unexpected error applying action '{edit.type}' to {path}: {e}")
-                continue # Move to the next file path
+                    raise ValueError(
+                        f"Unexpected error applying action '{edit.type}' to {path}: {e}"
+                    )
+                continue  # Move to the next file path
 
             # --- Handle UPDATE actions sequentially ---
             self.io.tool_output(f"Updating {path}...")
@@ -500,13 +501,17 @@ class PatchFlexCoder(Coder): # Rename class
 
                 for i, edit in enumerate(path_edits):
                     if edit.type != ActionType.UPDATE:
-                         raise DiffError(f"Unexpected action type '{edit.type}' mixed with UPDATE for {path}")
+                        raise DiffError(
+                            f"Unexpected action type '{edit.type}' mixed with UPDATE for {path}"
+                        )
                     if edit.search_text is None or edit.replace_text is None:
-                         raise DiffError(f"UPDATE action for {path} is missing search/replace text")
+                        raise DiffError(f"UPDATE action for {path} is missing search/replace text")
 
-                    final_move_path = edit.move_path # Last move path specified wins
+                    final_move_path = edit.move_path  # Last move path specified wins
 
-                    self.io.tool_output(f"  Applying hunk {i+1} (from patch line {edit.patch_line_num})...")
+                    self.io.tool_output(
+                        f"  Applying hunk {i+1} (from patch line {edit.patch_line_num})..."
+                    )
 
                     texts = (edit.search_text, edit.replace_text, current_content)
                     new_content = flexible_search_and_replace(texts, editblock_strategies)
@@ -515,11 +520,11 @@ class PatchFlexCoder(Coder): # Rename class
                         edit_failed = True
                         # Provide more context on failure
                         err_msg = (
-                            f"Failed to apply update hunk {i+1} (from patch line {edit.patch_line_num})"
-                            f" for file {path}. The search block may not have been found"
-                            " or the change conflicted.\n"
-                            f"Search block:\n```\n{edit.search_text}```\n"
-                            f"Replace block:\n```\n{edit.replace_text}```"
+                            f"Failed to apply update hunk {i+1} (from patch line"
+                            f" {edit.patch_line_num}) for file {path}. The search block may not"
+                            " have been found or the change conflicted.\nSearch"
+                            f" block:\n```\n{edit.search_text}```\nReplace"
+                            f" block:\n```\n{edit.replace_text}```"
                         )
                         # Raise immediately to stop processing this file
                         raise ValueError(err_msg)
@@ -546,7 +551,7 @@ class PatchFlexCoder(Coder): # Rename class
                     target_path_obj.parent.mkdir(parents=True, exist_ok=True)
                     # Ensure trailing newline
                     if not current_content.endswith("\n") and current_content != "":
-                         current_content += "\n"
+                        current_content += "\n"
                     self.io.write_text(target_full_path, current_content)
 
                     # Remove original file *after* successful write if moved
@@ -554,11 +559,11 @@ class PatchFlexCoder(Coder): # Rename class
                         path_obj.unlink()
 
             except (DiffError, FileNotFoundError, IOError, OSError) as e:
-                 # Raise a ValueError to signal failure
-                 raise ValueError(f"Error applying UPDATE to {path}: {e}")
+                # Raise a ValueError to signal failure
+                raise ValueError(f"Error applying UPDATE to {path}: {e}")
             except Exception as e:
-                 # Catch unexpected errors during application
-                 raise ValueError(f"Unexpected error applying UPDATE to {path}: {e}")
+                # Catch unexpected errors during application
+                raise ValueError(f"Unexpected error applying UPDATE to {path}: {e}")
 
     # Remove the _apply_update method as it's replaced by flexible_search_and_replace logic
     # def _apply_update(self, text: str, action: PatchAction, path: str) -> str:
