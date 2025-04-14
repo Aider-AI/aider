@@ -419,7 +419,9 @@ class PatchFlexCoder(Coder):  # Rename class
                 if norm_line.strip() == "":
                     added_lines.append("")  # Treat blank line as adding a blank line
                 else:
-                    raise DiffError(f"Invalid Add File line (missing '+') (line {index + 1}): {line}")
+                    raise DiffError(
+                        f"Invalid Add File line (missing '+') (line {index + 1}): {line}"
+                    )
             else:
                 added_lines.append(line[1:])
 
