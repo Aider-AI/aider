@@ -212,7 +212,7 @@ class PatchCoder(Coder):
     """
 
     edit_format = "patch"
-    gpt_prompts = None  # Prompts to be added later
+    gpt_prompts = PatchPrompts()
 
     def get_edits(self) -> List[PatchAction]:
         """
