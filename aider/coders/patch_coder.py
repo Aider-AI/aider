@@ -2,7 +2,7 @@ import pathlib
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional
 
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
@@ -194,7 +194,7 @@ class PatchCoder(Coder):
 
                 elif action.type == ActionType.UPDATE:
                     if not path_obj.exists():
-                        # Update should fail if file doesn't exist (checked in apply_patch.py parser)
+                        # Update should fail if file doesn't exist (checked in apply_patch.py parser).
                         raise ValueError(f"UPDATE Error: File does not exist: {action.path}")
 
                     current_content = self.io.read_text(full_path)
@@ -235,10 +235,11 @@ class PatchCoder(Coder):
 
         orig_lines = text.splitlines()  # Use splitlines() to match apply_patch.py behavior
         dest_lines = []
-        last_orig_line_idx = -1  # Track the end of the last applied chunk in original lines
+        # last_orig_line_idx = -1 # Track the end of the last applied chunk in original lines
 
         # apply_patch.py finds context during parsing. Here we assume indices are pre-validated.
-        # A robust implementation would re-validate context here or rely entirely on parser validation.
+        # A robust implementation would re-validate context here or rely entirely on parser
+        # validation.
 
         # Sort chunks? apply_patch.py implies they are processed in order found in patch.
         # Chunks need accurate `orig_index` relative to the start of their *context* block.
@@ -271,7 +272,9 @@ class PatchCoder(Coder):
             # num_del = len(chunk.del_lines)
             # actual_deleted = orig_lines[chunk_start_index : chunk_start_index + num_del]
             # # if normalized(actual_deleted) != normalized(chunk.del_lines):
-            # #    raise ValueError(f"{path}: Mismatch in deleted lines for chunk at index {chunk_start_index}")
+            # #    raise ValueError(
+            # #        f"{path}: Mismatch in deleted lines for chunk at index {chunk_start_index}"
+            # #    )
             #
             # # Add inserted lines
             # dest_lines.extend(chunk.ins_lines)
