@@ -10,8 +10,8 @@ from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .patch_prompts import PatchPrompts
 
-# Import search_replace utilities
-from .search_replace import editblock_strategies, flexible_search_and_replace
+# Import do_replace from editblock_coder
+from .editblock_coder import do_replace
 
 # Remove original PatchCoder domain objects and helpers if they exist at the top.
 # We will redefine or replace these as needed.
@@ -514,8 +514,14 @@ class PatchFlexCoder(Coder):  # Rename class
                         f"  Applying hunk {i + 1} (from patch line {edit.patch_line_num})..."
                     )
 
-                    texts = (edit.search_text, edit.replace_text, current_content)
-                    new_content = flexible_search_and_replace(texts, editblock_strategies)
+                    # Replace the call to flexible_search_and_replace with do_replace
+                    new_content = do_replace(
+                        full_path,  # Pass the full path as fname
+                        current_content,
+                        edit.search_text,
+                        edit.replace_text,
+                        self.fence,  # Use the coder's fence attribute
+                    )
 
                     if new_content is None:
                         edit_failed = True
