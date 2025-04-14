@@ -7,6 +7,8 @@ from ..dump import dump  # noqa: F401
 from .base_coder import Coder
 from .patch_prompts import PatchPrompts
 
+EditResult = Tuple[str, PatchAction]
+
 
 # --------------------------------------------------------------------------- #
 #  Domain objects & Exceptions (Adapted from apply_patch.py)
@@ -214,9 +216,10 @@ class PatchCoder(Coder):
     edit_format = "patch"
     gpt_prompts = PatchPrompts()
 
-    def get_edits(self) -> List[PatchAction]:
+    def get_edits(self) -> List[EditResult]:
         """
-        Parses the LLM response content (containing the patch) into a list of PatchAction objects.
+        Parses the LLM response content (containing the patch) into a list of
+        tuples, where each tuple contains the file path and the PatchAction object.
         """
         content = self.partial_response_content
         if not content or not content.strip():
@@ -270,8 +273,12 @@ class PatchCoder(Coder):
         try:
             # Parse the patch text using adapted logic
             patch_obj = self._parse_patch_text(lines, start_index, current_files)
-            # Convert Patch object actions dict to a list
-            return list(patch_obj.actions.values())
+            # Convert Patch object actions dict to a list of tuples (path, action)
+            # for compatibility with the base Coder's prepare_to_edit method.
+            results = []
+            for path, action in patch_obj.actions.items():
+                results.append((path, action))
+            return results
         except DiffError as e:
             # Raise as ValueError for consistency with other coders' error handling
             raise ValueError(f"Error parsing patch content: {e}")
@@ -520,7 +527,10 @@ class PatchCoder(Coder):
 
         # Group edits by original path? Not strictly needed if processed sequentially.
 
-        for action in edits:
+        # Edits are now List[Tuple[str, PatchAction]]
+        for _path_tuple_element, action in edits:
+            # action is the PatchAction object
+            # action.path is the canonical path within the action logic
             full_path = self.abs_root_path(action.path)
             path_obj = pathlib.Path(full_path)
 
