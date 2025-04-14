@@ -208,7 +208,7 @@ class PatchFlexCoder(Coder):  # Rename class
     edit_format = "patch-flex"  # Give it a distinct name
     gpt_prompts = PatchPrompts()  # Use the same prompts as PatchCoder
 
-    def get_edits(self) -> List[ParsedEdit]:  # Return type changed
+    def get_edits(self) -> List[Tuple[Optional[str], ParsedEdit]]:  # Return type changed
         """
         Parses the LLM response content (containing the patch) into a list of
         ParsedEdit objects, extracting search/replace blocks for UPDATEs.
@@ -252,11 +252,11 @@ class PatchFlexCoder(Coder):  # Rename class
 
     def _parse_patch_text(
         self, lines: List[str], start_index: int, known_files: set[str]
-    ) -> List[ParsedEdit]:
+    ) -> List[Tuple[Optional[str], ParsedEdit]]: # Return type changed
         """
         Parses patch content lines into a list of ParsedEdit objects.
         """
-        parsed_edits: List[ParsedEdit] = []
+        parsed_edits: List[Tuple[Optional[str], ParsedEdit]] = [] # List type changed
         index = start_index
         current_file_path = None
         current_move_path = None
@@ -304,7 +304,7 @@ class PatchFlexCoder(Coder):  # Rename class
                     self.io.tool_warning(f"Delete File target '{path}' not found in chat context.")
 
                 parsed_edits.append(
-                    ParsedEdit(path=path, type=ActionType.DELETE, patch_line_num=line_num)
+                    (path, ParsedEdit(path=path, type=ActionType.DELETE, patch_line_num=line_num)) # Wrap in tuple
                 )
                 current_file_path = None  # Reset current file context
                 current_move_path = None
@@ -322,7 +322,7 @@ class PatchFlexCoder(Coder):  # Rename class
                 action, index = self._parse_add_file_content(lines, index)
                 action.path = path
                 action.patch_line_num = line_num
-                parsed_edits.append(action)
+                parsed_edits.append((path, action)) # Wrap in tuple
                 current_file_path = None  # Reset current file context
                 current_move_path = None
                 continue
@@ -375,14 +375,15 @@ class PatchFlexCoder(Coder):  # Rename class
                     replace_text += "\n"
 
                 parsed_edits.append(
-                    ParsedEdit(
+                    (current_file_path, # Add path to tuple
+                     ParsedEdit(
                         path=current_file_path,
                         type=ActionType.UPDATE,
                         search_text=search_text,
                         replace_text=replace_text,
                         move_path=current_move_path,  # Carry over move path for this hunk
                         patch_line_num=hunk_start_index + 1,
-                    )
+                    ))
                 )
                 index = next_index
                 continue
@@ -436,7 +437,7 @@ class PatchFlexCoder(Coder):  # Rename class
         )
         return action, index
 
-    def apply_edits(self, edits: List[ParsedEdit]):  # Argument type changed
+    def apply_edits(self, edits: List[Tuple[Optional[str], ParsedEdit]]): # Argument type changed
         """
         Applies the parsed edits. Uses flexible search-and-replace for UPDATEs.
         """
@@ -445,10 +446,10 @@ class PatchFlexCoder(Coder):  # Rename class
             return
 
         # Group edits by file path to process them sequentially
-        edits_by_path = itertools.groupby(edits, key=lambda edit: edit.path)
+        edits_by_path = itertools.groupby(edits, key=lambda edit: edit[0]) # Group by path in tuple
 
         for path, path_edits_iter in edits_by_path:
-            path_edits = list(path_edits_iter)
+            path_edits = list(path_edits_iter) # path_edits is now a list of tuples
             full_path = self.abs_root_path(path)
             path_obj = pathlib.Path(full_path)
             current_content = None
@@ -456,8 +457,8 @@ class PatchFlexCoder(Coder):  # Rename class
             final_move_path = None  # Track the last move destination for this file
 
             # Check for simple ADD/DELETE first (should ideally be only one per file)
-            if len(path_edits) == 1 and path_edits[0].type in [ActionType.ADD, ActionType.DELETE]:
-                edit = path_edits[0]
+            if len(path_edits) == 1 and path_edits[0][1].type in [ActionType.ADD, ActionType.DELETE]:
+                _path, edit = path_edits[0] # Unpack tuple
                 try:
                     if edit.type == ActionType.ADD:
                         if path_obj.exists():
@@ -501,7 +502,8 @@ class PatchFlexCoder(Coder):  # Rename class
                 if current_content is None:
                     raise DiffError(f"Could not read file for UPDATE: {path}")
 
-                for i, edit in enumerate(path_edits):
+                for i, item in enumerate(path_edits): # Iterate through items (tuples)
+                    _path, edit = item # Unpack tuple
                     if edit.type != ActionType.UPDATE:
                         raise DiffError(
                             f"Unexpected action type '{edit.type}' mixed with UPDATE for {path}"
