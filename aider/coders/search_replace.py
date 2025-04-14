@@ -335,7 +335,7 @@ def lines_to_chars(lines, mapping):
     return new_text
 
 
-def dmp_lines_apply(texts, remap=True):
+def dmp_lines_apply(texts):
     debug = False
     # debug = True
 
@@ -640,8 +640,6 @@ def proc(dname):
         # (dmp_apply, all_preprocs),
         (dmp_lines_apply, all_preprocs),
     ]
-
-    _strategies = editblock_strategies  # noqa: F841
 
     short_names = dict(
         search_and_replace="sr",
