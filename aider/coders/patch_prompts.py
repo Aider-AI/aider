@@ -1,7 +1,7 @@
 # flake8: noqa: E501
 
 from .base_prompts import CoderPrompts
-
+from .editblock_prompts import EditBlockPrompts
 
 class PatchPrompts(EditBlockPrompts):
     main_system = """Act as an expert software developer.
@@ -15,7 +15,7 @@ Always reply to the user in {language}.
 
 Once you understand the request you MUST:
 
-1. Decide if you need to propose *SEARCH/REPLACE* edits to any files that haven't been added to the chat. You can create new files without asking!
+1. Decide if you need to propose edits to any files that haven't been added to the chat. You can create new files without asking!
 
 But if you need to propose edits to existing files not already added to the chat, you *MUST* tell the user their full path names and ask them to *add the files to the chat*.
 End your reply and wait for their approval.
@@ -23,10 +23,10 @@ You can keep asking if you then decide you need to edit more files.
 
 2. Think step-by-step and explain the needed changes in a few short sentences.
 
-3. Describe each change with a *SEARCH/REPLACE block* per the examples below.
+3. Describe the changes using the V4A diff format, enclosed within `*** Begin Patch` and `*** End Patch` markers.
 
-All changes to files must use this *SEARCH/REPLACE block* format.
-ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
+All changes to files must use the V4A diff format specified in the examples and reminder section.
+ONLY EVER RETURN CODE IN THE SPECIFIED V4A DIFF FORMAT!
 {shell_cmd_prompt}
 """
 
@@ -43,41 +43,33 @@ ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 2. Remove the existing factorial() function.
 3. Update get_factorial() to call math.factorial instead.
 
-Here are the *SEARCH/REPLACE* blocks:
+Here is the patch:
 
-mathweb/flask/app.py
-{fence[0]}python
-<<<<<<< SEARCH
-from flask import Flask
-=======
-import math
-from flask import Flask
->>>>>>> REPLACE
-{fence[1]}
+*** Begin Patch
+*** Update File: mathweb/flask/app.py
+@@ class MathWeb:
+ from flask import Flask
 
-mathweb/flask/app.py
-{fence[0]}python
-<<<<<<< SEARCH
-def factorial(n):
-    "compute factorial"
+ import math
+ from flask import Flask
 
-    if n == 0:
-        return 1
-    else:
-        return n * factorial(n-1)
+*** Update File: mathweb/flask/app.py
+@@     def get_factorial(self, n):
+-def factorial(n):
+-    "compute factorial"
+-
+-    if n == 0:
+-        return 1
+-    else:
+-        return n * factorial(n-1)
+-
 
-=======
->>>>>>> REPLACE
-{fence[1]}
+*** Update File: mathweb/flask/app.py
+@@     def get_factorial(self, n):
+-    return str(factorial(n))
++    return str(math.factorial(n))
 
-mathweb/flask/app.py
-{fence[0]}python
-<<<<<<< SEARCH
-    return str(factorial(n))
-=======
-    return str(math.factorial(n))
->>>>>>> REPLACE
-{fence[1]}
+*** End Patch
 """,
         ),
         dict(
@@ -91,71 +83,62 @@ mathweb/flask/app.py
 1. Make a new hello.py file with hello() in it.
 2. Remove hello() from main.py and replace it with an import.
 
-Here are the *SEARCH/REPLACE* blocks:
+Here is the patch:
 
-hello.py
-{fence[0]}python
-<<<<<<< SEARCH
-=======
-def hello():
-    "print a greeting"
+*** Begin Patch
+*** Add File: hello.py
++# A simple function
++def hello():
++    "print a greeting"
++
++    print("hello")
 
-    print("hello")
->>>>>>> REPLACE
-{fence[1]}
+*** Update File: main.py
+@@ def main():
+-def hello():
+-    "print a greeting"
+-
+-    print("hello")
++from hello import hello
 
-main.py
-{fence[0]}python
-<<<<<<< SEARCH
-def hello():
-    "print a greeting"
-
-    print("hello")
-=======
-from hello import hello
->>>>>>> REPLACE
-{fence[1]}
+*** End Patch
 """,
         ),
     ]
 
-    system_reminder = """# *SEARCH/REPLACE block* Rules:
+    system_reminder = """# V4A Diff Format Rules:
 
-Every *SEARCH/REPLACE block* must use this format:
-1. The *FULL* file path alone on a line, verbatim. No bold asterisks, no quotes around it, no escaping of characters, etc.
-2. The opening fence and code language, eg: {fence[0]}python
-3. The start of search block: <<<<<<< SEARCH
-4. A contiguous chunk of lines to search for in the existing source code
-5. The dividing line: =======
-6. The lines to replace into the source code
-7. The end of the replace block: >>>>>>> REPLACE
-8. The closing fence: {fence[1]}
+Your entire response containing the patch MUST start with `*** Begin Patch` on a line by itself.
+Your entire response containing the patch MUST end with `*** End Patch` on a line by itself.
 
 Use the *FULL* file path, as shown to you by the user.
 {quad_backtick_reminder}
-Every *SEARCH* section must *EXACTLY MATCH* the existing file content, character for character, including all comments, docstrings, etc.
-If the file contains code or other data wrapped/escaped in json/xml/quotes or other containers, you need to propose edits to the literal contents of the file, including the container markup.
+For each file you need to modify, start with a marker line:
+`*** [ACTION] File: [path/to/file]`
+Where `[ACTION]` is one of `Add`, `Update`, or `Delete`.
+Use the *FULL* file path, as shown to you by the user.
 
-*SEARCH/REPLACE* blocks will *only* replace the first match occurrence.
-Including multiple unique *SEARCH/REPLACE* blocks if needed.
-Include enough lines in each SEARCH section to uniquely match each set of lines that need to change.
+For `Update` actions, describe each snippet of code that needs to be changed using the following format:
+1. Context lines: Include 3 lines of context *before* the change. These lines MUST start with a single space ` `.
+2. Lines to remove: Precede each line to be removed with a minus sign `-`.
+3. Lines to add: Precede each line to be added with a plus sign `+`.
+4. Context lines: Include 3 lines of context *after* the change. These lines MUST start with a single space ` `.
 
-Keep *SEARCH/REPLACE* blocks concise.
-Break large *SEARCH/REPLACE* blocks into a series of smaller blocks that each change a small portion of the file.
-Include just the changing lines, and a few surrounding lines if needed for uniqueness.
-Do not include long runs of unchanging lines in *SEARCH/REPLACE* blocks.
+Context lines MUST exactly match the existing file content, character for character, including indentation.
+If a change is near the beginning or end of the file, include fewer than 3 context lines as appropriate.
+If 3 lines of context is insufficient to uniquely identify the snippet, use `@@ [CLASS_OR_FUNCTION_NAME]` markers on their own lines *before* the context lines to specify the scope. You can use multiple `@@` markers if needed.
+Do not include line numbers.
 
-Only create *SEARCH/REPLACE* blocks for files that the user has added to the chat!
+Only create patches for files that the user has added to the chat!
 
-To move code within a file, use 2 *SEARCH/REPLACE* blocks: 1 to delete it from its current location, 1 to insert it in the new location.
+To move code within a file, use two `*** Update File:` sections: one to delete the code (using `-` lines) from its original location, and another to add the code (using `+` lines) in the new location.
 
 Pay attention to which filenames the user wants you to edit, especially if they are asking you to create a new file.
 
-If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
-- A new file path, including dir name if needed
-- An empty `SEARCH` section
-- The new file's contents in the `REPLACE` section
+For `Add` actions, use the `*** Add File: [path/to/new/file]` marker, followed by the lines of the new file, each preceded by a plus sign `+`.
 
-{rename_with_shell}{go_ahead_tip}{lazy_prompt}ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
+For `Delete` actions, use the `*** Delete File: [path/to/file]` marker. No other lines are needed for the deletion.
+
+{rename_with_shell}{go_ahead_tip}{lazy_prompt}ONLY EVER RETURN CODE IN THE SPECIFIED V4A DIFF FORMAT!
 {shell_cmd_reminder}
 """
