@@ -195,7 +195,8 @@ class PatchCoder(Coder):
 
                 elif action.type == ActionType.UPDATE:
                     if not path_obj.exists():
-                        # Update should fail if file doesn't exist (checked in apply_patch.py parser).
+                        # Update should fail if file doesn't exist
+                        # (checked in apply_patch.py parser).
                         raise ValueError(f"UPDATE Error: File does not exist: {action.path}")
 
                     current_content = self.io.read_text(full_path)
