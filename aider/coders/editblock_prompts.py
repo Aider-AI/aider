@@ -181,14 +181,17 @@ If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 - An empty `SEARCH` section
 - The new file's contents in the `REPLACE` section
 
-To rename files which have been added to the chat, use shell commands at the end of your response.
+{rename_with_shell}{go_ahead_tip}{lazy_prompt}ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
+{shell_cmd_reminder}
+"""
 
-If the user just says something like "ok" or "go ahead" or "do that" they probably want you to make SEARCH/REPLACE blocks for the code changes you just proposed.
+    rename_with_shell = """To rename files which have been added to the chat, use shell commands at the end of your response.
+
+"""
+
+    go_ahead_tip = """If the user just says something like "ok" or "go ahead" or "do that" they probably want you to make SEARCH/REPLACE blocks for the code changes you just proposed.
 The user will say when they've applied your edits. If they haven't explicitly confirmed the edits have been applied, they probably want proper SEARCH/REPLACE blocks.
 
-{lazy_prompt}
-ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
-{shell_cmd_reminder}
 """
 
     shell_cmd_reminder = """
@@ -200,4 +203,5 @@ Examples of when to suggest shell commands:
 - Suggest OS-appropriate commands to delete or rename files/directories, or other file system operations.
 - If your code changes add new dependencies, suggest the command to install them.
 - Etc.
+
 """

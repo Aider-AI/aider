@@ -550,6 +550,42 @@
         "litellm_provider": "xai",
         "mode": "chat"
     },
+    "openrouter/x-ai/grok-3-fast-beta": {
+        "max_tokens": 131072,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.000025,
+        "litellm_provider": "openrouter",
+        "mode": "chat"
+    },
+    "xai/grok-3-fast-beta": {
+        "max_tokens": 131072,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.000025,
+        "litellm_provider": "xai",
+        "mode": "chat"
+    },
+    "openrouter/x-ai/grok-3-mini-fast-beta": {
+        "max_tokens": 131072,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 0.0000006,
+        "output_cost_per_token": 0.000004,
+        "litellm_provider": "openrouter",
+        "mode": "chat"
+    },
+    "xai/grok-3-mini-fast-beta": {
+        "max_tokens": 131072,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 0.0000006,
+        "output_cost_per_token": 0.000004,
+        "litellm_provider": "xai",
+        "mode": "chat"
+    },
     "openrouter/google/gemini-2.0-flash-exp:free": {
         "max_tokens": 8192,
         "max_input_tokens": 1048576,

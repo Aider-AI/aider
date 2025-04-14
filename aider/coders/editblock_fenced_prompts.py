@@ -94,7 +94,8 @@ from hello import hello
         ),
     ]
 
-    system_reminder = """# *SEARCH/REPLACE block* Rules:
+    system_reminder = """
+# *SEARCH/REPLACE block* Rules:
 
 Every *SEARCH/REPLACE block* must use this format:
 1. The opening fence and code language, eg: {fence[0]}python

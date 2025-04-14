@@ -285,7 +285,7 @@ typer==0.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-typing-extensions==4.13.1
+typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
     #   typer
@@ -293,11 +293,11 @@ tzdata==2025.2
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-urllib3==2.3.0
+urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.6.12
+uv==0.6.14
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
