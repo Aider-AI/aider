@@ -8,10 +8,10 @@ from typing import List, Optional, Tuple
 # Keep existing imports like dump, Coder, PatchPrompts, DiffError, ActionType
 from ..dump import dump  # noqa: F401
 from .base_coder import Coder
-from .patch_prompts import PatchPrompts
 
 # Import do_replace from editblock_coder
 from .editblock_coder import do_replace
+from .patch_prompts import PatchPrompts
 
 # Remove original PatchCoder domain objects and helpers if they exist at the top.
 # We will redefine or replace these as needed.
