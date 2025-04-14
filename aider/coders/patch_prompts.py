@@ -3,6 +3,7 @@
 from .base_prompts import CoderPrompts
 from .editblock_prompts import EditBlockPrompts
 
+
 class PatchPrompts(EditBlockPrompts):
     main_system = """Act as an expert software developer.
 Always use best practices when coding.
