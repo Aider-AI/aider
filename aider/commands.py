@@ -909,6 +909,28 @@ class Commands:
         all_files = files + read_only_files
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
+        
+    def completions_context_blocks(self):
+        """Return available context block names for auto-completion."""
+        if not hasattr(self.coder, 'use_enhanced_context') or not self.coder.use_enhanced_context:
+            return []
+            
+        # If the coder has context blocks available
+        if hasattr(self.coder, 'context_block_tokens') and self.coder.context_block_tokens:
+            # Get all block names from the tokens dictionary
+            block_names = list(self.coder.context_block_tokens.keys())
+            # Format them for display (convert snake_case to Title Case)
+            formatted_blocks = [name.replace('_', ' ').title() for name in block_names]
+            return formatted_blocks
+            
+        # Standard blocks that are typically available
+        return [
+            "Context Summary", 
+            "Directory Structure", 
+            "Environment Info", 
+            "Git Status", 
+            "Symbol Outline"
+        ]
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
@@ -1092,17 +1114,54 @@ class Commands:
             self.io.tool_output("Context management is now OFF - files will not be truncated.")
             
     def cmd_context_blocks(self, args=""):
-        "Toggle enhanced context blocks (directory structure and git status)"
+        "Toggle enhanced context blocks or print a specific block"
         if not hasattr(self.coder, 'use_enhanced_context'):
             self.io.tool_error("Enhanced context blocks are only available in navigator mode.")
             return
+        
+        # If an argument is provided, try to print that specific context block
+        if args.strip():
+            # Format block name to match internal naming conventions
+            block_name = args.strip().lower().replace(" ", "_")
             
-        # Toggle the setting
+            # Check if the coder has the necessary method to get context blocks
+            if hasattr(self.coder, '_generate_context_block'):
+                # Force token recalculation to ensure blocks are fresh
+                if hasattr(self.coder, '_calculate_context_block_tokens'):
+                    self.coder._calculate_context_block_tokens(force=True)
+                
+                # Try to get the requested block
+                block_content = self.coder._generate_context_block(block_name)
+                
+                if block_content:
+                    # Calculate token count
+                    tokens = self.coder.main_model.token_count(block_content)
+                    self.io.tool_output(f"Context block '{args.strip()}' ({tokens} tokens):")
+                    self.io.tool_output(block_content)
+                    return
+                else:
+                    # List available blocks if the requested one wasn't found
+                    self.io.tool_error(f"Context block '{args.strip()}' not found or empty.")
+                    if hasattr(self.coder, 'context_block_tokens'):
+                        available_blocks = list(self.coder.context_block_tokens.keys())
+                        formatted_blocks = [name.replace('_', ' ').title() for name in available_blocks]
+                        self.io.tool_output(f"Available blocks: {', '.join(formatted_blocks)}")
+                    return
+            else:
+                self.io.tool_error("This coder doesn't support generating context blocks.")
+                return
+                
+        # If no argument, toggle the enhanced context setting
         self.coder.use_enhanced_context = not self.coder.use_enhanced_context
         
         # Report the new state
         if self.coder.use_enhanced_context:
             self.io.tool_output("Enhanced context blocks are now ON - directory structure and git status will be included.")
+            if hasattr(self.coder, 'context_block_tokens'):
+                available_blocks = list(self.coder.context_block_tokens.keys())
+                formatted_blocks = [name.replace('_', ' ').title() for name in available_blocks]
+                self.io.tool_output(f"Available blocks: {', '.join(formatted_blocks)}")
+                self.io.tool_output("Use '/context-blocks [block name]' to view a specific block.")
         else:
             self.io.tool_output("Enhanced context blocks are now OFF - directory structure and git status will not be included.")
             
