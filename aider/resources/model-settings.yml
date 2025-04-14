@@ -1040,3 +1040,12 @@
   edit_format: diff
   examples_as_sys_msg: true
   
+- name: gpt-4.1
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys # user: 52.x%/96.9%
+  examples_as_sys_msg: false # true: 51.6% correct, 95.6% well formed; false: 52.4%/98.2%
+  editor_model_name: gpt-4.1-mini
+
+  
