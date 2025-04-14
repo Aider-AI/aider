@@ -126,7 +126,8 @@ class PatchCoder(Coder):
             if current_action.type == ActionType.UPDATE:
                 # This simplified parser doesn't handle @@ context or chunk boundaries well.
                 # It assumes a simple sequence of context, '-', '+' lines per chunk.
-                # A real implementation needs the state machine from apply_patch.py's peek_next_section.
+                # A real implementation needs the state machine from apply_patch.py's
+                # peek_next_section.
                 # Placeholder: treat consecutive -,+ blocks as single chunk for simplicity.
                 if not current_action.chunks:
                     current_action.chunks.append(Chunk())  # Start first chunk
