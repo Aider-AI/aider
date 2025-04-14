@@ -20,16 +20,18 @@ class Chunk:
     orig_index: int = -1
     del_lines: List[str] = field(default_factory=list)
     ins_lines: List[str] = field(default_factory=list)
-    context_before: List[str] = field(default_factory=list) # Store context for validation/application
+    context_before: List[str] = field(
+        default_factory=list
+    )  # Store context for validation/application
 
 
 @dataclass
 class PatchAction:
     type: ActionType
     path: str
-    new_content: Optional[str] = None # For Add
-    chunks: List[Chunk] = field(default_factory=list) # For Update
-    move_path: Optional[str] = None # For Update
+    new_content: Optional[str] = None  # For Add
+    chunks: List[Chunk] = field(default_factory=list)  # For Update
+    move_path: Optional[str] = None  # For Update
 
 
 class PatchCoder(Coder):
@@ -81,13 +83,13 @@ class PatchCoder(Coder):
                 if current_action:
                     edits.append(current_action)
                 in_patch = False
-                break # End of patch found
+                break  # End of patch found
 
             # Match Action lines (Update, Add, Delete)
             match = re.match(r"\*\*\* (Update|Add|Delete) File: (.*)", line)
             if match:
                 if current_action:
-                    edits.append(current_action) # Save previous action
+                    edits.append(current_action)  # Save previous action
 
                 action_type_str, path = match.groups()
                 action_type = ActionType(action_type_str)
@@ -99,7 +101,7 @@ class PatchCoder(Coder):
                     move_match = re.match(r"\*\*\* Move to: (.*)", lines[i])
                     if move_match:
                         current_action.move_path = move_match.group(1).strip()
-                        i += 1 # Consume the move line
+                        i += 1  # Consume the move line
                 continue
 
             if not current_action:
@@ -117,7 +119,7 @@ class PatchCoder(Coder):
                     # Or maybe ADD content is just raw lines until next ***?
                     # This part needs clarification based on exact format spec.
                     # Assuming '+' prefix for now. If not, adjust logic.
-                    pass # Ignore lines not starting with '+' in ADD? Or raise error?
+                    pass  # Ignore lines not starting with '+' in ADD? Or raise error?
                 continue
 
             # Handle chunks for Update action
@@ -127,7 +129,7 @@ class PatchCoder(Coder):
                 # A real implementation needs the state machine from apply_patch.py's peek_next_section.
                 # Placeholder: treat consecutive -,+ blocks as single chunk for simplicity.
                 if not current_action.chunks:
-                     current_action.chunks.append(Chunk()) # Start first chunk
+                    current_action.chunks.append(Chunk())  # Start first chunk
 
                 chunk = current_action.chunks[-1]
 
@@ -148,16 +150,15 @@ class PatchCoder(Coder):
                 continue
 
         if in_patch and not current_action:
-             # Started patch but no actions found before end?
-             pass # Or raise error?
+            # Started patch but no actions found before end?
+            pass  # Or raise error?
 
         if in_patch and current_action:
-             # Reached end of content without *** End Patch
-             edits.append(current_action) # Append the last action
-             # Consider raising a warning or error about missing End Patch sentinel
+            # Reached end of content without *** End Patch
+            edits.append(current_action)  # Append the last action
+            # Consider raising a warning or error about missing End Patch sentinel
 
         return edits
-
 
     def apply_edits(self, edits: List[PatchAction]):
         """
@@ -180,12 +181,14 @@ class PatchCoder(Coder):
                         raise ValueError(f"ADD change for {action.path} has no content")
                     # Ensure parent directory exists
                     path_obj.parent.mkdir(parents=True, exist_ok=True)
-                    self.io.write_text(full_path, action.new_content.rstrip('\n') + '\n') # Ensure single trailing newline
+                    self.io.write_text(
+                        full_path, action.new_content.rstrip("\n") + "\n"
+                    )  # Ensure single trailing newline
 
                 elif action.type == ActionType.DELETE:
                     if not path_obj.exists():
-                         # Allow deleting non-existent files (idempotent)
-                         pass
+                        # Allow deleting non-existent files (idempotent)
+                        pass
                     else:
                         path_obj.unlink()
 
@@ -201,7 +204,9 @@ class PatchCoder(Coder):
                     # Apply the update logic using the parsed chunks
                     new_content = self._apply_update(current_content, action.chunks, action.path)
 
-                    target_full_path = self.abs_root_path(action.move_path) if action.move_path else full_path
+                    target_full_path = (
+                        self.abs_root_path(action.move_path) if action.move_path else full_path
+                    )
                     target_path_obj = pathlib.Path(target_full_path)
 
                     # Ensure parent directory exists for target
@@ -219,7 +224,6 @@ class PatchCoder(Coder):
                 # Raise a ValueError to signal failure, consistent with other coders.
                 raise ValueError(f"Error applying action '{action.type}' to {action.path}: {e}")
 
-
     def _apply_update(self, text: str, chunks: List[Chunk], path: str) -> str:
         """
         Applies UPDATE chunks to the given text content.
@@ -227,11 +231,11 @@ class PatchCoder(Coder):
         This simplified version assumes chunks are sequential and indices are correct.
         """
         if not chunks:
-            return text # No changes specified
+            return text  # No changes specified
 
-        orig_lines = text.splitlines() # Use splitlines() to match apply_patch.py behavior
+        orig_lines = text.splitlines()  # Use splitlines() to match apply_patch.py behavior
         dest_lines = []
-        last_orig_line_idx = -1 # Track the end of the last applied chunk in original lines
+        last_orig_line_idx = -1  # Track the end of the last applied chunk in original lines
 
         # apply_patch.py finds context during parsing. Here we assume indices are pre-validated.
         # A robust implementation would re-validate context here or rely entirely on parser validation.
@@ -251,7 +255,8 @@ class PatchCoder(Coder):
             # The current simplified parser doesn't provide enough info (like validated indices).
             # Raising NotImplementedError until a proper parser/applier is integrated.
             raise NotImplementedError(
-                "_apply_update requires a robust parser and context handling, similar to apply_patch.py"
+                "_apply_update requires a robust parser and context handling, similar to"
+                " apply_patch.py"
             )
 
             # --- Hypothetical logic assuming correct indices ---
@@ -275,8 +280,7 @@ class PatchCoder(Coder):
             # current_orig_line_num = chunk_start_index + num_del
             # --- End Hypothetical ---
 
-
         # Add remaining lines after the last chunk
         dest_lines.extend(orig_lines[current_orig_line_num:])
 
-        return "\n".join(dest_lines) + "\n" # Ensure trailing newline
+        return "\n".join(dest_lines) + "\n"  # Ensure trailing newline
