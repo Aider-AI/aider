@@ -1042,3 +1042,81 @@
   versions: 0.81.4.dev
   seconds_per_case: 96.7
   total_cost: 30.1766
+
+- dirname: 2025-04-14-21-05-54--gpt41-diff-exuser
+  test_cases: 225
+  model: gpt-4.1
+  edit_format: diff
+  commit_hash: 7a87db5-dirty
+  pass_rate_1: 20.0
+  pass_rate_2: 52.4
+  pass_num_1: 45
+  pass_num_2: 118
+  percent_cases_well_formed: 98.2
+  error_outputs: 6
+  num_malformed_responses: 5
+  num_with_malformed_responses: 4
+  user_asks: 171
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model gpt-4.1
+  date: 2025-04-14
+  versions: 0.81.4.dev
+  seconds_per_case: 20.5
+  total_cost: 9.8556
+
+- dirname: 2025-04-14-21-27-53--gpt41mini-diff
+  test_cases: 225
+  model: gpt-4.1-mini
+  edit_format: diff
+  commit_hash: ffb743e-dirty
+  pass_rate_1: 11.1
+  pass_rate_2: 32.4
+  pass_num_1: 25
+  pass_num_2: 73
+  percent_cases_well_formed: 92.4
+  error_outputs: 64
+  num_malformed_responses: 62
+  num_with_malformed_responses: 17
+  user_asks: 159
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model gpt-4.1-mini
+  date: 2025-04-14
+  versions: 0.81.4.dev
+  seconds_per_case: 19.5
+  total_cost: 1.9918
+
+- dirname: 2025-04-14-22-46-01--gpt41nano-diff
+  test_cases: 225
+  model: gpt-4.1-nano
+  edit_format: whole
+  commit_hash: 71d1591-dirty
+  pass_rate_1: 3.1
+  pass_rate_2: 8.9
+  pass_num_1: 7
+  pass_num_2: 20
+  percent_cases_well_formed: 94.2
+  error_outputs: 20
+  num_malformed_responses: 20
+  num_with_malformed_responses: 13
+  user_asks: 316
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 8
+  total_tests: 225
+  command: aider --model gpt-4.1-nano
+  date: 2025-04-14
+  versions: 0.81.4.dev
+  seconds_per_case: 12.0
+  total_cost: 0.4281

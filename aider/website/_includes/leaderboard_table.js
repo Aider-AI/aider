@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const modeSelectButton = document.getElementById('mode-select-btn');
   const modeButtons = [modeViewButton, modeDetailButton, modeSelectButton];
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
+  const leaderboardTitle = document.getElementById('leaderboard-title'); // Get title element
+  const defaultTitle = "Aider polyglot coding leaderboard";
+  const filteredTitle = "Aider polyglot coding benchmark results";
 
   function applySearchFilter() {
     const searchTerm = searchInput.value.toLowerCase();
@@ -31,6 +34,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (currentMode === 'select') {
         updateSelectAllCheckboxState();
     }
+    
+    // Update cost bars and ticks since visible rows may have changed
+    updateCostBars();
+    updateCostTicks();
   }
 
   function getVisibleMainRows() {
@@ -85,7 +92,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Get the first header cell (for the toggle/checkbox column)
     const firstHeaderCell = document.querySelector('table thead th:first-child');
-
 
     // Show/hide header checkbox based on mode
     selectAllCheckbox.style.display = mode === 'select' ? 'inline-block' : 'none';
@@ -179,8 +185,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     });
 
+    // Update the leaderboard title based on mode and selection
+    if (leaderboardTitle) {
+      if (currentMode === 'view' && selectedRows.size > 0) {
+        leaderboardTitle.textContent = filteredTitle;
+      } else {
+        leaderboardTitle.textContent = defaultTitle;
+      }
+    }
+
     // Update the select-all checkbox state after updating the view
     updateSelectAllCheckboxState();
+    
+    // Update cost bars and ticks since visible/selected rows may have changed
+    updateCostBars();
+    updateCostTicks();
   }
 
 
@@ -197,75 +216,127 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Process cost bars
-  const costBars = document.querySelectorAll('.cost-bar');
-  const MAX_DISPLAY_COST = 50; // $50 limit for visual display
-  
-  costBars.forEach(bar => {
-    const cost = parseFloat(bar.dataset.cost);
-    const maxCost = parseFloat(bar.dataset.maxCost);
- 
-    if (cost > 0 && maxCost > 0) {
-      // Use $50 as the max for display purposes
-      const displayMaxCost = Math.min(MAX_DISPLAY_COST, maxCost);
-      // Calculate percentage based on the display max
-      const percent = Math.min(cost, displayMaxCost) / displayMaxCost * 100;
-      // Clamp percentage between 0 and 100
-      bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
-      
-      // Mark bars that exceed the limit
-      if (cost > MAX_DISPLAY_COST) {
-        // Create a darker section at the end with diagonal stripes
-        const darkSection = document.createElement('div');
-        darkSection.className = 'bar-viz';
-        darkSection.style.width = '15%'; // From 85% to 100%
-        darkSection.style.left = '85%';
-        darkSection.style.backgroundColor = 'rgba(13, 110, 253, 0.6)'; // Darker blue
-        darkSection.style.borderRight = '1px solid rgba(13, 110, 253, 0.8)';
-        darkSection.style.zIndex = '1';
-        // Add diagonal stripes with CSS background
-        darkSection.style.backgroundImage = 'repeating-linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 5px, transparent 5px, transparent 10px)';
-        bar.parentNode.appendChild(darkSection);
-        
-        // Add a dashed "tear line" at the transition point
-        const tearLine = document.createElement('div');
-        tearLine.style.position = 'absolute';
-        tearLine.style.left = '85%';
-        // Center the tear line vertically and make it 1.5x as tall as the bar
-        tearLine.style.top = '50%';
-        tearLine.style.transform = 'translateY(-50%)';
-        tearLine.style.height = '54px'; // 1.5x the bar height (36px)
-        tearLine.style.width = '2px';
-        tearLine.style.backgroundColor = 'white';
-        tearLine.style.borderLeft = '2px dashed rgba(0, 0, 0, 0.3)';
-        tearLine.style.zIndex = '2'; // Above the bar
-        bar.parentNode.appendChild(tearLine);
-      }
+  // Function to calculate the appropriate max display cost based on visible/selected entries
+  function calculateDisplayMaxCost() {
+    // Get the appropriate set of rows based on the current mode and selection state
+    let rowsToConsider;
+    
+    if (currentMode === 'view' && selectedRows.size > 0) {
+      // In view mode with selections, only consider selected rows
+      rowsToConsider = Array.from(allMainRows).filter(row => {
+        const rowIndex = row.querySelector('.row-selector')?.dataset.rowIndex;
+        return rowIndex && selectedRows.has(rowIndex) && !row.classList.contains('hidden-by-search');
+      });
     } else {
-      // Set width to 0 if cost is 0 or negative
-      bar.style.width = '0%';
+      // In other modes or without selections, consider all visible rows
+      rowsToConsider = getVisibleMainRows();
     }
-  });
-
-  // Calculate and add cost ticks dynamically
-  const costCells = document.querySelectorAll('.cost-bar-cell');
-  if (costCells.length > 0) {
-    const MAX_DISPLAY_COST = 50; // $50 limit for visual display
     
-    // Generate fixed tick values at $0, $10, $20, $30, $40, $50
-    const tickValues = [0, 10, 20, 30, 40, 50];
-    
-    // Calculate percentage positions for each tick on the linear scale
-    const tickPercentages = tickValues.map(tickCost => {
-      return (tickCost / MAX_DISPLAY_COST) * 100;
+    // Find the maximum cost among the rows to consider
+    let maxCost = 0;
+    rowsToConsider.forEach(row => {
+      const costBar = row.querySelector('.cost-bar');
+      if (costBar) {
+        const cost = parseFloat(costBar.dataset.cost || '0');
+        if (cost > maxCost) maxCost = cost;
+      }
     });
+    
+    // Cap at 50 if any entries exceed that amount, otherwise use actual max
+    return maxCost > 50 ? 50 : Math.max(1, maxCost); // Ensure at least 1 to avoid division by zero
+  }
+  
+  // Process cost bars with dynamic scale
+  function updateCostBars() {
+    const costBars = document.querySelectorAll('.cost-bar');
+    const currentMaxDisplayCost = calculateDisplayMaxCost();
+    
+    // Remove existing special indicators first
+    document.querySelectorAll('.dark-section, .tear-line').forEach(el => el.remove());
+    
+    costBars.forEach(bar => {
+      const cost = parseFloat(bar.dataset.cost);
+      
+      if (cost > 0) {
+        // Calculate percentage based on the dynamic display max
+        const percent = Math.min(cost, currentMaxDisplayCost) / currentMaxDisplayCost * 100;
+        // Clamp percentage between 0 and 100
+        bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
+        
+        // Mark bars that exceed the limit (only if our display max is capped at 50)
+        if (currentMaxDisplayCost === 50 && cost > 50) {
+          // Create a darker section at the end with diagonal stripes
+          const darkSection = document.createElement('div');
+          darkSection.className = 'bar-viz dark-section';
+          darkSection.style.width = '15%'; // From 85% to 100%
+          darkSection.style.left = '85%';
+          darkSection.style.backgroundColor = 'rgba(13, 110, 253, 0.6)'; // Darker blue
+          darkSection.style.borderRight = '1px solid rgba(13, 110, 253, 0.8)';
+          darkSection.style.zIndex = '1';
+          // Add diagonal stripes with CSS background
+          darkSection.style.backgroundImage = 'repeating-linear-gradient(45deg, rgba(255,255,255,0.3), rgba(255,255,255,0.3) 5px, transparent 5px, transparent 10px)';
+          bar.parentNode.appendChild(darkSection);
+          
+          // Add a dashed "tear line" at the transition point
+          const tearLine = document.createElement('div');
+          tearLine.className = 'tear-line';
+          tearLine.style.position = 'absolute';
+          tearLine.style.left = '85%';
+          // Center the tear line vertically and make it 1.5x as tall as the bar
+          tearLine.style.top = '50%';
+          tearLine.style.transform = 'translateY(-50%)';
+          tearLine.style.height = '54px'; // 1.5x the bar height (36px)
+          tearLine.style.width = '2px';
+          tearLine.style.backgroundColor = 'white';
+          tearLine.style.borderLeft = '2px dashed rgba(0, 0, 0, 0.3)';
+          tearLine.style.zIndex = '2'; // Above the bar
+          bar.parentNode.appendChild(tearLine);
+        }
+      } else {
+        // Set width to 0 if cost is 0 or negative
+        bar.style.width = '0%';
+      }
+    });
+  }
+  
+  // Call this initially to set up the bars
+  updateCostBars();
 
+  // Update cost ticks dynamically based on current max display cost
+  function updateCostTicks() {
+    const costCells = document.querySelectorAll('.cost-bar-cell');
+    if (costCells.length === 0) return;
+    
+    const currentMaxDisplayCost = calculateDisplayMaxCost();
+    
+    // Remove existing ticks first
+    document.querySelectorAll('.cost-tick').forEach(tick => tick.remove());
+    
+    // Generate appropriate tick values based on current max
+    let tickValues = [];
+    
+    if (currentMaxDisplayCost === 50) {
+      // Fixed ticks at $0, $10, $20, $30, $40, $50 when we're at the cap
+      tickValues = [0, 10, 20, 30, 40, 50];
+    } else {
+      // Dynamic ticks based on actual max
+      const tickCount = 5; // Create 5 segments (6 ticks including 0)
+      for (let i = 0; i <= tickCount; i++) {
+        tickValues.push(Math.round((i / tickCount) * currentMaxDisplayCost * 100) / 100);
+      }
+    }
+    
+    // Calculate percentage positions for each tick
+    const tickPercentages = tickValues.map(tickCost => {
+      return (tickCost / currentMaxDisplayCost) * 100;
+    });
+    
     // Add tick divs to each cost cell
     costCells.forEach(cell => {
       const costBar = cell.querySelector('.cost-bar');
       // Use optional chaining and provide '0' as fallback if costBar or dataset.cost is missing
       const cost = parseFloat(costBar?.dataset?.cost || '0');
-
+      
       // Only add ticks if the cost is actually greater than 0
       if (cost > 0) {
         tickPercentages.forEach((percent, index) => {
@@ -274,15 +345,15 @@ document.addEventListener('DOMContentLoaded', function() {
             const tick = document.createElement('div');
             tick.className = 'cost-tick';
             tick.style.left = `${percent}%`;
-            
-            // No dollar amount labels
-            
             cell.appendChild(tick);
           }
         });
       }
     });
   }
+  
+  // Call this initially to set up the ticks
+  updateCostTicks();
 
 
   // --- New Event Listeners ---
@@ -328,6 +399,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       // Update select-all checkbox state
       updateSelectAllCheckboxState();
+      
+      // Update cost bars and ticks if in view mode, as selection affects what's shown
+      if (currentMode === 'view') {
+        updateCostBars();
+        updateCostTicks();
+      }
     }
   }); // End of tableBody listener
 
@@ -357,6 +434,10 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       // After bulk change, ensure the selectAll checkbox state is correct (not indeterminate)
       updateSelectAllCheckboxState();
+      
+      // Update cost bars and ticks after selection changes
+      updateCostBars();
+      updateCostTicks();
   });
 
   // Listener for search input

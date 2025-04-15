@@ -14,7 +14,7 @@ evaluate an LLM's ability to follow instructions and edit code successfully with
 human intervention.
 [Aider's polyglot benchmark](https://aider.chat/2024/12/21/polyglot.html#the-polyglot-benchmark) tests LLMs on 225 challenging Exercism coding exercises across C++, Go, Java, JavaScript, Python, and Rust.
 
-## Aider polyglot coding leaderboard
+<h2 id="leaderboard-title">Aider polyglot coding leaderboard</h2>
 
 <div id="controls-container" style="display: flex; align-items: center; width: 100%; max-width: 800px; margin: 10px auto; gap: 10px; box-sizing: border-box; padding: 0 5px; position: relative;">
   <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
@@ -96,6 +96,9 @@ human intervention.
 </table>
 
 <style>
+  #leaderboard-title {
+    margin-bottom: 20px; /* Add space below the title */
+  }
   tr.selected {
     color: #0056b3;
   }
@@ -282,6 +285,6 @@ mod_dates = [get_last_modified_date(file) for file in files]
 latest_mod_date = max(mod_dates)
 cog.out(f"{latest_mod_date.strftime('%B %d, %Y.')}")
 ]]]-->
-April 12, 2025.
+April 14, 2025.
 <!--[[[end]]]-->
 </p>
