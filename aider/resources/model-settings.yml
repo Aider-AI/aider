@@ -1010,13 +1010,75 @@
   use_repo_map: true
   edit_format: whole
   accepts_settings:
-    - reasoning_effort 
+    - reasoning_effort
   #extra_params:
   #  extra_body:
   #    reasoning_effort: low
+
+- name: openrouter/x-ai/grok-3-fast-beta
+  use_repo_map: true
+  edit_format: diff
+
+- name: xai/grok-3-fast-beta
+  use_repo_map: true
+  edit_format: diff
+
+- name: openrouter/x-ai/grok-3-mini-fast-beta
+  use_repo_map: true
+  edit_format: whole
+  accepts_settings:
+    - reasoning_effort
+
+- name: xai/grok-3-mini-fast-beta
+  use_repo_map: true
+  edit_format: whole
+  accepts_settings:
+    - reasoning_effort
 
 - name: openrouter/openrouter/optimus-alpha
   use_repo_map: true
   edit_format: diff
   examples_as_sys_msg: true
+  
+- name: gpt-4.1
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys # user: 52.x%/96.9%
+  examples_as_sys_msg: false # true: 51.6% correct, 95.6% well formed; false: 52.4%/98.2%
+  editor_model_name: gpt-4.1-mini
+
+- name: openai/gpt-4.1
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+  editor_model_name: openai/gpt-4.1-mini
+
+- name: openrouter/openai/gpt-4.1
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+  editor_model_name: openrouter/openai/gpt-4.1-mini
+
+- name: gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false # false: 32.x%/92.4% (60+ malformed responses); true: 31.7/90.2/60+
+
+- name: openai/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+
+- name: openrouter/openai/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
   

@@ -27,13 +27,13 @@ cog.out(text)
   <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" title="Total number of GitHub stars the Aider project has received"
 src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
   <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" title="Total number of installations via pip from PyPI"
-src="https://img.shields.io/badge/📦%20Installs-1.9M-2ecc71?style=flat-square&labelColor=555555"/></a>
+src="https://img.shields.io/badge/📦%20Installs-2.0M-2ecc71?style=flat-square&labelColor=555555"/></a>
   <img alt="Tokens per week" title="Number of tokens processed weekly by Aider users"
 src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-3498db?style=flat-square&labelColor=555555"/>
   <a href="https://openrouter.ai/#options-menu"><img alt="OpenRouter Ranking" title="Aider's ranking among applications on the OpenRouter platform"
 src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
   <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="Percentage of the new code in Aider's last release written by Aider itself"
-src="https://img.shields.io/badge/🔄%20Singularity-86%25-e74c3c?style=flat-square&labelColor=555555"/></a>
+src="https://img.shields.io/badge/🔄%20Singularity-92%25-e74c3c?style=flat-square&labelColor=555555"/></a>
 <!--[[[end]]]-->  
 </p>
 
@@ -140,6 +140,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 
 ## Kind Words From Users
 
+- *"My life has changed this week. There's finally an AI coding tool that's good enough to keep up with me... Aider... It's going to rock your world."* — [Eric S. Raymond](https://x.com/esrtweet/status/1910809356381413593)
 - *"The best free open source AI coding assistant."* — [IndyDevDan](https://youtu.be/YALpX8oOn78)
 - *"The best AI coding assistant so far."* — [Matthew Berman](https://www.youtube.com/watch?v=df8afeb1FY8)
 - *"Aider ... has easily quadrupled my coding productivity."* — [SOLAR_FIELDS](https://news.ycombinator.com/item?id=36212100)
@@ -169,4 +170,8 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"I like aider :)"* — [Chenwei Cui](https://x.com/ccui42/status/1904965344999145698)
 - *"Aider is the precision tool of LLM code gen. It is minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control."* — [Reilly Sweetland](https://x.com/rsweetland/status/1904963807237259586)
 - *"Cannot believe aider vibe coded a 650 LOC feature across service and cli today in 1 shot."* - [autopoietist](https://discord.com/channels/1131200896827654144/1131200896827654149/1355675042259796101)
+- *"Oh no the secret is out! Yes, Aider is the best coding tool around. I highly, highly recommend it to anyone."* — [Joshua D Vander Hook](https://x.com/jodavaho/status/1911154899057795218)
+- *"thanks to aider, i have started and finished three personal projects within the last two days"* — [joseph stalzyn](https://x.com/anitaheeder/status/1908338609645904160)
+- *"Been using aider as my daily driver for over a year ... I absolutely love the tool, like beyond words."* — [koleok](https://discord.com/channels/1131200896827654144/1273248471394291754/1356727448372252783)
+- *"aider is really cool"* — [kache (@yacineMTB)](https://x.com/yacineMTB/status/1911224442430124387)
 

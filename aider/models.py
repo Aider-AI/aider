@@ -314,7 +314,11 @@ class Model(ModelSettings):
             self.apply_generic_model_settings(model)
 
         # Apply override settings last if they exist
-        if self.extra_model_settings and self.extra_model_settings.extra_params:
+        if (
+            self.extra_model_settings
+            and self.extra_model_settings.extra_params
+            and self.extra_model_settings.name == "aider/extra_params"
+        ):
             # Initialize extra_params if it doesn't exist
             if not self.extra_params:
                 self.extra_params = {}
@@ -334,8 +338,23 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.use_temperature = False
             self.system_prompt_prefix = "Formatting re-enabled. "
+            self.system_prompt_prefix = "Formatting re-enabled. "
             if "reasoning_effort" not in self.accepts_settings:
                 self.accepts_settings.append("reasoning_effort")
+            return  # <--
+
+        if "gpt-4.1-mini" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = False
+            return  # <--
+
+        if "gpt-4.1" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = False
             return  # <--
 
         if "/o1-mini" in model:
@@ -488,6 +507,8 @@ class Model(ModelSettings):
 
         if not self.editor_edit_format:
             self.editor_edit_format = self.editor_model.edit_format
+            if self.editor_edit_format in ("diff", "whole", "diff-fenced"):
+                self.editor_edit_format = "editor-" + self.editor_edit_format
 
         return self.editor_model
 

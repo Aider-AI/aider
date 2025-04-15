@@ -717,6 +717,18 @@ cog.out("```\n")
   use_repo_map: true
   reminder: sys
 
+- name: gpt-4.1
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  editor_model_name: gpt-4.1-mini
+
+- name: gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+
 - name: gpt-4.5-preview
   edit_format: diff
   weak_model_name: gpt-4o-mini
@@ -813,6 +825,18 @@ cog.out("```\n")
   system_prompt_prefix: 'Formatting re-enabled. '
   accepts_settings:
   - reasoning_effort
+
+- name: openai/gpt-4.1
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  editor_model_name: openai/gpt-4.1-mini
+
+- name: openai/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
 
 - name: openai/gpt-4.5-preview
   edit_format: diff
@@ -1048,6 +1072,18 @@ cog.out("```\n")
   weak_model_name: openrouter/meta-llama/llama-3-70b-instruct
   examples_as_sys_msg: true
 
+- name: openrouter/openai/gpt-4.1
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  editor_model_name: openrouter/openai/gpt-4.1-mini
+
+- name: openrouter/openai/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+
 - name: openrouter/openai/gpt-4o
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4o-mini
@@ -1131,7 +1167,16 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
 
+- name: openrouter/x-ai/grok-3-fast-beta
+  edit_format: diff
+  use_repo_map: true
+
 - name: openrouter/x-ai/grok-3-mini-beta
+  use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/x-ai/grok-3-mini-fast-beta
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
@@ -1213,7 +1258,16 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
 
+- name: xai/grok-3-fast-beta
+  edit_format: diff
+  use_repo_map: true
+
 - name: xai/grok-3-mini-beta
+  use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
+
+- name: xai/grok-3-mini-fast-beta
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
