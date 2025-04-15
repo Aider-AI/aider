@@ -344,11 +344,16 @@ def process_fenced_block(lines, start_line_num):
 
     if block[0].startswith("--- ") and block[1].startswith("+++ "):
         # Extract the file path, considering that it might contain spaces
-        a_fname = block[1][4:].strip()
+        a_fname = block[0][4:].strip()
         b_fname = block[1][4:].strip()
 
-        # if a_fname starts with a/ and b_fname starts with b/, strip b/ ai!
-        fname = b_fname
+        # Check if standard git diff prefixes are present and strip them
+        if a_fname.startswith("a/") and b_fname.startswith("b/"):
+            fname = b_fname[2:]
+        else:
+            # Otherwise, assume the path is as intended
+            fname = b_fname
+
         block = block[2:]
     else:
         fname = None
