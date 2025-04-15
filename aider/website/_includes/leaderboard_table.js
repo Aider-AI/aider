@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const modeViewButton = document.getElementById('mode-view-btn');
   const modeDetailButton = document.getElementById('mode-detail-btn');
   const modeSelectButton = document.getElementById('mode-select-btn');
-  const modeButtons = [modeViewButton, modeDetailButton, modeSelectButton];
+  const modeButtons = [modeViewButton, modeSelectButton, modeDetailButton];
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
   const leaderboardTitle = document.getElementById('leaderboard-title'); // Get title element
   const defaultTitle = "Aider polyglot coding leaderboard";
