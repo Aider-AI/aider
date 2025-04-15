@@ -315,15 +315,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Generate appropriate tick values based on current max
     let tickValues = [];
     
-    if (currentMaxDisplayCost === 50) {
-      // Fixed ticks at $0, $10, $20, $30, $40, $50 when we're at the cap
-      tickValues = [0, 10, 20, 30, 40, 50];
-    } else {
-      // Dynamic ticks based on actual max
-      const tickCount = 5; // Create 5 segments (6 ticks including 0)
-      for (let i = 0; i <= tickCount; i++) {
-        tickValues.push(Math.round((i / tickCount) * currentMaxDisplayCost * 100) / 100);
-      }
+    // Always use $10 increments, regardless of the max
+    const maxTickValue = Math.ceil(currentMaxDisplayCost / 10) * 10; // Round up to nearest $10
+    
+    for (let i = 0; i <= maxTickValue; i += 10) {
+      tickValues.push(i);
     }
     
     // Calculate percentage positions for each tick
