@@ -45,6 +45,7 @@ other_hunks_applied = (
 
 class UnifiedDiffCoder(Coder):
     """A coder that uses unified diff format for code modifications."""
+
     edit_format = "udiff"
     gpt_prompts = UnifiedDiffPrompts()
 
