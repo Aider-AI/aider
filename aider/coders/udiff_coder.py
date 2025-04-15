@@ -344,7 +344,11 @@ def process_fenced_block(lines, start_line_num):
 
     if block[0].startswith("--- ") and block[1].startswith("+++ "):
         # Extract the file path, considering that it might contain spaces
-        fname = block[1][4:].strip()
+        a_fname = block[1][4:].strip()
+        b_fname = block[1][4:].strip()
+
+        # if a_fname starts with a/ and b_fname starts with b/, strip b/ ai!
+        fname = b_fname
         block = block[2:]
     else:
         fname = None
