@@ -1056,6 +1056,14 @@
   examples_as_sys_msg: false
   editor_model_name: openai/gpt-4.1-mini
 
+- name: azure/gpt-4.1
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+  editor_model_name: azure/gpt-4.1-mini
+
 - name: openrouter/openai/gpt-4.1
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4.1-mini
@@ -1071,6 +1079,12 @@
   examples_as_sys_msg: false # false: 32.x%/92.4% (60+ malformed responses); true: 31.7/90.2/60+
 
 - name: openai/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+
+- name: azure/gpt-4.1-mini
   edit_format: diff
   use_repo_map: true
   reminder: sys
