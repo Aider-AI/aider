@@ -967,6 +967,11 @@
   use_repo_map: true
   weak_model_name: gemini/gemini-2.0-flash
 
+- name: openrouter/google/gemini-2.5-pro-preview-03-25
+  edit_format: diff-fenced
+  use_repo_map: true
+  weak_model_name: openrouter/google/gemini-2.0-flash-001
+
 - name: openrouter/google/gemini-2.5-pro-exp-03-25:free
   edit_format: diff-fenced
   use_repo_map: true
