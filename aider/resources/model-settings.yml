@@ -1130,9 +1130,8 @@
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
-  #reminder: sys
-  #examples_as_sys_msg: false
+  examples_as_sys_msg: true
   extra_params:
     extra_body:
-      reasoning_effort: low
+      reasoning_effort: high
       
