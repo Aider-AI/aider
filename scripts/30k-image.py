@@ -7,7 +7,6 @@ This creates a shareable social media graphic with confetti animation.
 import argparse
 import base64
 import math
-import os
 import random
 from pathlib import Path
 
