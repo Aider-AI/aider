@@ -1194,6 +1194,7 @@
   #   reasoning_effort: high
 
 - name: openai/o3
+  streaming: false
   edit_format: diff
   weak_model_name: openai/gpt-4.1-mini
   use_repo_map: true
@@ -1249,6 +1250,7 @@
   #   reasoning_effort: high
 
 - name: openrouter/openai/o3
+  streaming: false
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4.1-mini
   use_repo_map: true
@@ -1304,6 +1306,7 @@
   #   reasoning_effort: high
 
 - name: azure/o3
+  streaming: false
   edit_format: diff
   weak_model_name: azure/gpt-4.1-mini
   use_repo_map: true
