@@ -904,9 +904,6 @@ cog.out("```\n")
   weak_model_name: gpt-4.1-mini
   use_repo_map: true
   examples_as_sys_msg: true
-  extra_params:
-    extra_body:
-      reasoning_effort: high
   streaming: false
   editor_model_name: gpt-4.1
   editor_edit_format: editor-diff
