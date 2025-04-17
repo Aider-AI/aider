@@ -1144,3 +1144,31 @@
   versions: 0.82.1.dev
   seconds_per_case: 176.5
   total_cost: 19.6399
+
+- dirname: 2025-04-17-01-20-35--o3-mini-high-diff-arch
+  test_cases: 225
+  model: o3 (high) + gpt-4.1
+  edit_format: architect
+  commit_hash: 80909e1-dirty
+  editor_model: gpt-4.1
+  editor_edit_format: editor-diff
+  pass_rate_1: 36.0
+  pass_rate_2: 82.7
+  pass_num_1: 81
+  pass_num_2: 186
+  percent_cases_well_formed: 100.0
+  error_outputs: 9
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 166
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model o3 --architect
+  date: 2025-04-17
+  versions: 0.82.2.dev
+  seconds_per_case: 110.0
+  total_cost: 69.2921
