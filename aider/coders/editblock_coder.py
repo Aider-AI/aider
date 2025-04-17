@@ -454,7 +454,10 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None)
             "```csh",
             "```tcsh",
         ]
-        next_is_editblock = i + 1 < len(lines) and head_pattern.match(lines[i + 1].strip())
+
+        # Check if the next line or the one after that is an editblock
+        next_is_editblock = (i + 1 < len(lines) and head_pattern.match(lines[i + 1].strip())
+                             or i + 2 < len(lines) and head_pattern.match(lines[i + 2].strip()))
 
         if any(line.strip().startswith(start) for start in shell_starts) and not next_is_editblock:
             shell_content = []
