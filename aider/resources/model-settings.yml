@@ -1139,6 +1139,7 @@
   examples_as_sys_msg: false
 
 - name: o3
+  streaming: false
   edit_format: diff
   weak_model_name: gpt-4.1-mini
   use_repo_map: true
