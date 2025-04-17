@@ -1158,7 +1158,7 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  extra_params:
-    extra_body:
-      reasoning_effort: high
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
       
