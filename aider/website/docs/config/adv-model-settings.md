@@ -280,6 +280,18 @@ cog.out("```\n")
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   cache_control: true
 
+- name: azure/gpt-4.1
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  editor_model_name: azure/gpt-4.1-mini
+
+- name: azure/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+
 - name: azure/o1
   edit_format: diff
   weak_model_name: azure/gpt-4o-mini
@@ -308,12 +320,83 @@ cog.out("```\n")
   editor_model_name: azure/gpt-4o
   editor_edit_format: editor-diff
 
+- name: azure/o3
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
 - name: azure/o3-mini
   edit_format: diff
   weak_model_name: azure/gpt-4o-mini
   use_repo_map: true
   use_temperature: false
   editor_model_name: azure/gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
   accepts_settings:
@@ -815,12 +898,35 @@ cog.out("```\n")
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
 
+- name: o3
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  editor_model_name: gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
 - name: o3-mini
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
   use_temperature: false
   editor_model_name: gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: o4-mini
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: gpt-4.1
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
   accepts_settings:
@@ -907,12 +1013,83 @@ cog.out("```\n")
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
 
+- name: openai/o3
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
 - name: openai/o3-mini
   edit_format: diff
   weak_model_name: gpt-4o-mini
   use_repo_map: true
   use_temperature: false
   editor_model_name: gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
   accepts_settings:
@@ -1124,6 +1301,17 @@ cog.out("```\n")
   editor_model_name: openrouter/openai/gpt-4o
   editor_edit_format: editor-diff
 
+- name: openrouter/openai/o3
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
 - name: openrouter/openai/o3-mini
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4o-mini
@@ -1141,6 +1329,66 @@ cog.out("```\n")
   use_repo_map: true
   use_temperature: false
   editor_model_name: openrouter/openai/gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
   accepts_settings:
