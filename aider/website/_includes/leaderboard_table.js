@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
   const leaderboardTitle = document.getElementById('leaderboard-title'); // Get title element
   const defaultTitle = "Aider polyglot coding leaderboard";
-  const filteredTitle = "Aider polyglot coding benchmark results";
+  const filteredTitle = "Aider polyglot coding benchmark results (selected)";
 
   function applySearchFilter() {
     const searchTerm = searchInput.value.toLowerCase();
