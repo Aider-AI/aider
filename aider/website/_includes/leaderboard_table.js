@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   let currentMode = 'view'; // 'view', 'select', 'detail'
   let selectedRows = new Set(); // Store indices of selected rows
+  const MAX_DISPLAY_COST_CAP = 50; // Define the constant here
 
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
@@ -8,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const modeViewButton = document.getElementById('mode-view-btn');
   const modeDetailButton = document.getElementById('mode-detail-btn');
   const modeSelectButton = document.getElementById('mode-select-btn');
-  const modeButtons = [modeViewButton, modeDetailButton, modeSelectButton];
+  const modeButtons = [modeViewButton, modeSelectButton, modeDetailButton];
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
   const leaderboardTitle = document.getElementById('leaderboard-title'); // Get title element
   const defaultTitle = "Aider polyglot coding leaderboard";
@@ -219,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to calculate the appropriate max display cost based on visible/selected entries
   function calculateDisplayMaxCost() {
     // Get the appropriate set of rows based on the current mode and selection state
-    let rowsToConsider;
+    let rowsToConsider;    
     
     if (currentMode === 'view' && selectedRows.size > 0) {
       // In view mode with selections, only consider selected rows
@@ -242,8 +243,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Cap at 50 if any entries exceed that amount, otherwise use actual max
-    return maxCost > 50 ? 50 : Math.max(1, maxCost); // Ensure at least 1 to avoid division by zero
+    // Cap at MAX_DISPLAY_COST_CAP if any entries exceed that amount, otherwise use actual max
+    return maxCost > MAX_DISPLAY_COST_CAP ? MAX_DISPLAY_COST_CAP : Math.max(1, maxCost); // Ensure at least 1 to avoid division by zero
   }
   
   // Process cost bars with dynamic scale
@@ -264,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
         
         // Mark bars that exceed the limit (only if our display max is capped at 50)
-        if (currentMaxDisplayCost === 50 && cost > 50) {
+        if (currentMaxDisplayCost === MAX_DISPLAY_COST_CAP && cost > MAX_DISPLAY_COST_CAP) {
           // Create a darker section at the end with diagonal stripes
           const darkSection = document.createElement('div');
           darkSection.className = 'bar-viz dark-section';
@@ -315,15 +316,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Generate appropriate tick values based on current max
     let tickValues = [];
     
-    if (currentMaxDisplayCost === 50) {
-      // Fixed ticks at $0, $10, $20, $30, $40, $50 when we're at the cap
-      tickValues = [0, 10, 20, 30, 40, 50];
-    } else {
-      // Dynamic ticks based on actual max
-      const tickCount = 5; // Create 5 segments (6 ticks including 0)
-      for (let i = 0; i <= tickCount; i++) {
-        tickValues.push(Math.round((i / tickCount) * currentMaxDisplayCost * 100) / 100);
-      }
+    // Always use $10 increments, regardless of the max
+    const maxTickValue = Math.ceil(currentMaxDisplayCost / 10) * 10; // Round up to nearest $10
+    
+    for (let i = 0; i <= maxTickValue; i += 10) {
+      tickValues.push(i);
     }
     
     // Calculate percentage positions for each tick

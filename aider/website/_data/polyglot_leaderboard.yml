@@ -1120,3 +1120,55 @@
   versions: 0.81.4.dev
   seconds_per_case: 12.0
   total_cost: 0.4281
+
+- dirname: 2025-04-16-21-20-55--o3-high-diff-temp0-exsys
+  test_cases: 225
+  model: o3 (high)
+  edit_format: diff
+  commit_hash: 24805ff-dirty
+  pass_rate_1: 36.9
+  pass_rate_2: 79.6
+  pass_num_1: 83
+  pass_num_2: 179
+  percent_cases_well_formed: 95.1
+  error_outputs: 11
+  num_malformed_responses: 11
+  num_with_malformed_responses: 11
+  user_asks: 110
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model o3
+  date: 2025-04-16
+  versions: 0.82.1.dev
+  seconds_per_case: 113.8
+  total_cost: 111.0325
+
+- dirname: 2025-04-16-22-01-58--o4-mini-high-diff-exsys
+  test_cases: 225
+  model: o4-mini (high)
+  edit_format: diff
+  commit_hash: b66901f-dirty
+  pass_rate_1: 19.6
+  pass_rate_2: 72.0
+  pass_num_1: 44
+  pass_num_2: 162
+  percent_cases_well_formed: 90.7
+  error_outputs: 26
+  num_malformed_responses: 24
+  num_with_malformed_responses: 21
+  user_asks: 66
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model o4-mini
+  date: 2025-04-16
+  versions: 0.82.1.dev
+  seconds_per_case: 176.5
+  total_cost: 19.6399
