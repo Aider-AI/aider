@@ -309,7 +309,3 @@ wheel==0.45.1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
-
-# The following packages are considered to be unsafe in a requirements file:
-# pip
-# setuptools
