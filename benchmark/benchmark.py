@@ -518,7 +518,6 @@ def summarize_results(dirname, stats_languages=None):
         res.reasoning_effort = results.get("reasoning_effort")
 
         for key in "model edit_format commit_hash editor_model editor_edit_format".split():
-
             val = results.get(key)
             if val:
                 variants[key].add(val)
