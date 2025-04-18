@@ -388,6 +388,8 @@ def main(
                 replay,
                 editor_model,
                 editor_edit_format,
+                num_ctx,
+                sleep,
                 reasoning_effort,
             )
         all_results = run_test_threaded.gather(tqdm=True)
