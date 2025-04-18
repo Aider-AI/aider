@@ -50,6 +50,10 @@ distlib==0.3.9
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
+exceptiongroup==1.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   pytest
 filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
@@ -281,6 +285,13 @@ six==1.17.0
     # via
     #   -c requirements/common-constraints.txt
     #   python-dateutil
+tomli==2.2.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   build
+    #   pip-tools
+    #   pytest
+    #   pytest-env
 typer==0.15.3
     # via
     #   -c requirements/common-constraints.txt
@@ -288,6 +299,7 @@ typer==0.15.3
 typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
+    #   rich
     #   typer
 tzdata==2025.2
     # via

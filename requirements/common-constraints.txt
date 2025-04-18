@@ -18,6 +18,8 @@ anyio==4.9.0
     #   httpx
     #   openai
     #   watchfiles
+async-timeout==5.0.1
+    # via aiohttp
 attrs==25.3.0
     # via
     #   aiohttp
@@ -93,6 +95,10 @@ distro==1.9.0
     # via
     #   openai
     #   posthog
+exceptiongroup==1.2.2
+    # via
+    #   anyio
+    #   pytest
 filelock==3.18.0
     # via
     #   huggingface-hub
@@ -529,6 +535,12 @@ tokenizers==0.21.1
     #   transformers
 toml==0.10.2
     # via streamlit
+tomli==2.2.1
+    # via
+    #   build
+    #   pip-tools
+    #   pytest
+    #   pytest-env
 torch==2.6.0
     # via
     #   -r requirements/requirements-help.in
@@ -561,14 +573,18 @@ typer==0.15.3
 typing-extensions==4.13.2
     # via
     #   altair
+    #   anyio
     #   beautifulsoup4
     #   google-generativeai
     #   huggingface-hub
     #   llama-index-core
+    #   multidict
     #   openai
     #   pydantic
     #   pydantic-core
     #   pyee
+    #   referencing
+    #   rich
     #   sentence-transformers
     #   sqlalchemy
     #   streamlit

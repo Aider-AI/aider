@@ -22,6 +22,10 @@ anyio==4.9.0
     #   httpx
     #   openai
     #   watchfiles
+async-timeout==5.0.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   aiohttp
 attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
@@ -77,6 +81,10 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
+exceptiongroup==1.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   anyio
 filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
@@ -485,12 +493,16 @@ tree-sitter-yaml==0.7.0
 typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
+    #   anyio
     #   beautifulsoup4
     #   google-generativeai
     #   huggingface-hub
+    #   multidict
     #   openai
     #   pydantic
     #   pydantic-core
+    #   referencing
+    #   rich
     #   typing-inspection
 typing-inspection==0.4.0
     # via

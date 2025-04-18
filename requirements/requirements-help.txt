@@ -21,6 +21,10 @@ anyio==4.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
+async-timeout==5.0.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   aiohttp
 attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
@@ -60,6 +64,10 @@ dirtyjson==1.0.8
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
+exceptiongroup==1.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   anyio
 filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
@@ -245,10 +253,6 @@ sentence-transformers==4.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
-setuptools==78.1.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   torch
 sniffio==1.3.1
     # via
     #   -c requirements/common-constraints.txt
@@ -297,8 +301,10 @@ transformers==4.51.3
 typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
+    #   anyio
     #   huggingface-hub
     #   llama-index-core
+    #   multidict
     #   pydantic
     #   pydantic-core
     #   sentence-transformers
