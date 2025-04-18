@@ -235,7 +235,7 @@ kiwisolver==1.4.8
     # via matplotlib
 litellm==1.68.1
     # via -r requirements/requirements.in
-llama-index-core==0.12.26
+llama-index-core==0.12.31
     # via
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
@@ -608,7 +608,3 @@ yarl==1.20.0
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
-
-# The following packages are considered to be unsafe in a requirements file:
-# pip
-# setuptools
