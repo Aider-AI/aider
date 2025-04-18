@@ -206,7 +206,7 @@ def main(
     read_model_settings: str = typer.Option(
         None, "--read-model-settings", help="Load aider model settings from YAML file"
     ),
-    reasoning_effort: Optional[float] = typer.Option(
+    reasoning_effort: Optional[str] = typer.Option(
         None, "--reasoning-effort", help="Set reasoning effort for models that support it"
     ),
     exercises_dir: str = typer.Option(
@@ -674,7 +674,7 @@ def run_test_real(
     editor_edit_format,
     num_ctx=None,
     sleep=0,
-    reasoning_effort=None,
+    reasoning_effort: Optional[str] = None,
     read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
