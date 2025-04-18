@@ -779,6 +779,7 @@ def run_test_real(
         weak_model=weak_model_name,
         editor_model=editor_model,
         editor_edit_format=editor_edit_format,
+        verbose=verbose,
     )
 
     if reasoning_effort is not None:
