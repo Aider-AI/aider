@@ -143,6 +143,7 @@ typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
     #   altair
+    #   referencing
     #   streamlit
 tzdata==2025.2
     # via
