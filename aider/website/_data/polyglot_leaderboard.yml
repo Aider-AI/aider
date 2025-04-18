@@ -1172,3 +1172,29 @@
   versions: 0.82.2.dev
   seconds_per_case: 110.0
   total_cost: 69.2921
+
+- dirname: 2025-04-17-10-51-10-doubao-1.5-thinking-pro-250415
+  test_cases: 225
+  model: doubao-1.5-thinking-pro-250415
+  edit_format: whole
+  commit_hash: 3e0af2c
+  pass_rate_1: 17.8
+  pass_rate_2: 52.9
+  pass_num_1: 40
+  pass_num_2: 119
+  percent_cases_well_formed: 100.0
+  error_outputs: 103
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 177
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openai/doubao-1.5-thinking-pro-250415
+  date: 2025-04-17
+  versions: 0.82.2.dev
+  seconds_per_case: 416.6
+  total_cost: $8.71
