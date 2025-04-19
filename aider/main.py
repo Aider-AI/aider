@@ -1023,7 +1023,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("copy-paste mode")
         ClipboardWatcher(coder.io, verbose=args.verbose)
 
-#    coder.show_announcements()
+    if not args.quiet:
+        coder.show_announcements()
 
     if args.show_prompts:
         coder.cur_messages += [
@@ -1139,7 +1140,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
             coder = Coder.create(**kwargs)
 
-            if switch.kwargs.get("show_announcements") is not False:
+            if switch.kwargs.get("show_announcements") is not False and not args.quiet:
                 coder.show_announcements()
 
 
