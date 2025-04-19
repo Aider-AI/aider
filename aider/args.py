@@ -790,6 +790,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable detection and offering to add URLs to chat (default: True)",
     )
     group.add_argument(
+        "--no-welcome",
+        action="store_true",
+        help="Skip the welcome message on startup",
+        default=False,
+    )
+    group.add_argument(
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
