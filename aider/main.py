@@ -17,7 +17,7 @@ import importlib_resources
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
-from aider import models, urls, utils
+from aider import __version__, models, urls, utils
 from aider.analytics import Analytics
 from aider.args import get_parser
 from aider.coders import Coder
@@ -1148,9 +1148,8 @@ def is_first_run_of_new_version(io, verbose=False):
     installs_file = Path.home() / ".aider" / "installs.json"
     key = (__version__, sys.executable)
 
-    # Never show notes for .dev versions
-    if ".dev" in __version__:
-        return False
+    # Always return False for our placeholder version
+    return False
 
     if verbose:
         io.tool_output(
