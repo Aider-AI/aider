@@ -131,7 +131,6 @@ def select_default_model(args, io, analytics):
 
     model = try_to_select_default_model()
     if model:
-        io.tool_warning(f"Using {model} model with API key from environment.")
         analytics.event("auto_model_selection", model=model)
         return model
 
