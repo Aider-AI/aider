@@ -13,8 +13,10 @@ import yaml
 from tqdm import tqdm
 
 website_files = [
+    "aider/website/index.html",
     "aider/website/share/index.md",
     "aider/website/_includes/head_custom.html",
+    "aider/website/_includes/home.css",
     "aider/website/docs/leaderboards/index.md",
 ]
 
@@ -38,6 +40,7 @@ def blame(start_tag, end_tag=None):
         for f in files
         if f.endswith((".js", ".py", ".scm", ".sh", "Dockerfile", "Gemfile"))
         or (f.startswith(".github/workflows/") and f.endswith(".yml"))
+        or (f.startswith("aider/resources/") and f.endswith(".yml"))
         or f in website_files
         or f in test_files
     ]
@@ -221,9 +224,10 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
                 [
                     "git",
                     "blame",
-                    "-M",
-                    "-C",
-                    "-C",
+                    "-M100",  # Detect moved lines within a file with 100% similarity
+                    "-C100",  # Detect moves across files with 100% similarity
+                    "-C",  # Increase detection effort
+                    "-C",  # Increase detection effort even more
                     "--abbrev=9",
                     f"{start_tag}..{end_tag}",
                     "--",
@@ -232,7 +236,18 @@ def get_counts_for_file(start_tag, end_tag, authors, fname):
             )
         else:
             text = run(
-                ["git", "blame", "-M", "-C", "-C", "--abbrev=9", f"{start_tag}..HEAD", "--", fname]
+                [
+                    "git",
+                    "blame",
+                    "-M100",  # Detect moved lines within a file with 100% similarity
+                    "-C100",  # Detect moves across files with 100% similarity
+                    "-C",  # Increase detection effort
+                    "-C",  # Increase detection effort even more
+                    "--abbrev=9",
+                    f"{start_tag}..HEAD",
+                    "--",
+                    fname,
+                ]
             )
         if not text:
             return None

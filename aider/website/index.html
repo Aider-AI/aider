@@ -1,0 +1,688 @@
+---
+layout: none
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aider - AI Pair Programming in Your Terminal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap&text=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,/()%25&display=fallback">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap&display=fallback">
+    <link rel="stylesheet" href="/assets/home.css">
+    <!-- Add Prism.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <!-- Material Design Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo" id="logo-container">aider</a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#getting-started">Getting Started</a>
+                    <a href="/docs/">Documentation</a>
+                    <a href="https://discord.gg/Tv2uQnR88V">Discord</a>
+                    <a href="https://github.com/Aider-AI/aider">GitHub</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <h1>AI pair programming in your terminal</h1>
+                    <p>
+                        Aider lets you pair program with LLMs to start
+                        a new project or build on your existing
+                        codebase.
+                    </p>
+                    
+                    <div class="buttons">
+                        <a href="#getting-started" class="btn btn-primary">Get Started</a>
+                        <a href="/docs/" class="btn btn-secondary">Documentation</a>
+                    </div>
+                </div>
+                
+                <div class="hero-video">
+                    <div class="video-container">
+                        <video autoplay loop muted playsinline preload="metadata">
+                            <source src="/assets/shell-cmds-small.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-container">
+<!--[[[cog
+from scripts.homepage import get_badges_html
+text = get_badges_html()
+cog.out(text)
+]]]-->
+<a href="https://github.com/Aider-AI/aider" class="github-badge badge-stars" title="Total number of GitHub stars the Aider project has received">
+    <span class="badge-label">⭐ GitHub Stars</span>
+    <span class="badge-value">31K</span>
+</a>
+<a href="https://pypi.org/project/aider-chat/" class="github-badge badge-installs" title="Total number of installations via pip from PyPI">
+    <span class="badge-label">📦 Installs</span>
+    <span class="badge-value">2.0M</span>
+</a>
+<div class="github-badge badge-tokens" title="Number of tokens processed weekly by Aider users">
+    <span class="badge-label">📈 Tokens/week</span>
+    <span class="badge-value">15B</span>
+</div>
+<a href="https://openrouter.ai/#options-menu" class="github-badge badge-router" title="Aider's ranking among applications on the OpenRouter platform">
+    <span class="badge-label">🏆 OpenRouter</span>
+    <span class="badge-value">Top 20</span>
+</a>
+<a href="/HISTORY.html" class="github-badge badge-coded" title="Percentage of the new code in Aider's last release written by Aider itself">
+    <span class="badge-label">🔄 Singularity</span>
+    <span class="badge-value">92%</span>
+</a>
+<!--[[[end]]]-->  
+            </div>
+        </div>
+    </section>
+    
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Features</h2>
+            <div class="feature-grid">
+                <a href="/docs/llms.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-brain feature-icon"></i>
+                        <h3 class="feature-title">
+                            Cloud and local LLMs
+                        </h3>
+                    </div>
+                    <p>Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.</p>
+                </a>
+                <a href="/docs/repomap.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-map-outline feature-icon"></i>
+                        <h3 class="feature-title">Maps your codebase</h3>
+                    </div>
+                    <p>
+                        Aider makes a map of your entire codebase,
+                        which helps it work well in larger projects.
+                    </p>
+                </a>
+                <a href="/docs/languages.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-code-tags feature-icon"></i>
+                        <h3 class="feature-title">100+ code languages</h3>
+                    </div>
+                    <p>
+                        Aider works with most popular programming
+                        languages: python, javascript, rust, ruby, go, cpp,
+                        php, html, css, and dozens more.
+                    </p>
+                </a>
+                <a href="/docs/git.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-source-branch feature-icon"></i>
+                        <h3 class="feature-title">Git integration</h3>
+                    </div>
+                    <p>
+                        Aider automatically commits changes with
+                        sensible commit messages.
+                        Use familiar git tools to easily
+                        diff, manage and undo AI changes.
+                    </p>
+                </a>
+                <a href="/docs/usage/watch.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-monitor feature-icon"></i>
+                        <h3 class="feature-title">In your IDE</h3>
+                    </div>
+                    <p>
+                        Use aider from within your favorite IDE or editor.
+                        Ask for changes by adding comments to
+                        your code and aider will get to work.
+                    </p>
+                </a>
+                <a href="/docs/usage/images-urls.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-image-multiple feature-icon"></i>
+                        <h3 class="feature-title">Images & web pages</h3>
+                    </div>
+                    <p>
+                        Add images and web pages to the chat to
+                        provide visual context, screenshots, reference docs,
+                        etc.
+                    </p>
+                </a>
+                <a href="/docs/usage/voice.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-microphone feature-icon"></i>
+                        <h3 class="feature-title">Voice-to-code</h3>
+                    </div>
+                    <p>
+                        Speak with aider about your code! Request new features, 
+                        test cases or bug fixes using your voice and let aider
+                        implement the changes.
+                    </p>
+                </a>
+                <a href="/docs/usage/lint-test.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-check-all feature-icon"></i>
+                        <h3 class="feature-title">Linting & testing</h3>
+                    </div>
+                    <p>
+                        Automatically lint and test your code every time aider makes changes.
+                        Aider can fix problems detected by your linters and test suites.
+                    </p>
+                </a>
+                <a href="/docs/usage/copypaste.html" class="feature-card">
+                    <div class="feature-card-header">
+                        <i class="mdi mdi-content-copy feature-icon"></i>
+                        <h3 class="feature-title">Copy/paste to web chat</h3>
+                    </div>
+                    <p>
+                        Aider works best with LLM APIs,
+                        but it can also work an LLM via its web chat interface.
+                        Aider streamlines copy/pasting code
+                        back and forth with a browser.
+                    </p>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <section class="models" id="getting-started">
+        <div class="container">
+            <h2 class="section-title">Getting Started</h2>
+            <div class="info-content">
+                <div class="code-block">
+                    <pre><code class="language-bash">python -m pip install aider-install
+aider-install
+
+# Change directory into your codebase
+cd /to/your/project
+
+# DeepSeek
+aider --model deepseek --api-key deepseek=&lt;key&gt;
+
+# Claude 3.7 Sonnet
+aider --model sonnet --api-key anthropic=&lt;key&gt;
+
+# o3-mini
+aider --model o3-mini --api-key openai=&lt;key&gt;</code></pre>
+                </div>
+                <div class="cta-container">
+                  <p class="cta-text">Want more details?</p>
+                  <div class="cta-buttons">
+                    <a href="/docs/install.html" class="btn btn-secondary">Installation Guide</a>
+                    <a href="/docs/usage.html" class="btn btn-secondary">Usage Guide</a>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Kind Words From Users</h2>
+            <div class="testimonial-grid" id="testimonial-container">
+                <!-- Testimonials will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .testimonial-card {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.4s ease, transform 0.4s ease, height 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow: hidden;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .testimonial-text {
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .testimonial-author {
+            margin-top: auto;
+            padding-top: 10px;
+        }
+    </style>
+
+<!--[[[cog
+from scripts.homepage import get_testimonials_js
+text = get_testimonials_js()
+cog.out(text)
+]]]-->
+<script>
+const testimonials = [
+    {
+        text: "My life has changed this week. There's finally an AI coding tool that's good enough to keep up with me... Aider... It's going to rock your world.",
+        author: "Eric S. Raymond",
+        link: "https://x.com/esrtweet/status/1910809356381413593"
+    },
+    {
+        text: "The best free open source AI coding assistant.",
+        author: "IndyDevDan",
+        link: "https://youtu.be/YALpX8oOn78"
+    },
+    {
+        text: "The best AI coding assistant so far.",
+        author: "Matthew Berman",
+        link: "https://www.youtube.com/watch?v=df8afeb1FY8"
+    },
+    {
+        text: "Aider ... has easily quadrupled my coding productivity.",
+        author: "SOLAR_FIELDS",
+        link: "https://news.ycombinator.com/item?id=36212100"
+    },
+    {
+        text: "It's a cool workflow... Aider's ergonomics are perfect for me.",
+        author: "qup",
+        link: "https://news.ycombinator.com/item?id=38185326"
+    },
+    {
+        text: "It's really like having your senior developer live right in your Git repo - truly amazing!",
+        author: "rappster",
+        link: "https://github.com/Aider-AI/aider/issues/124"
+    },
+    {
+        text: "What an amazing tool. It's incredible.",
+        author: "valyagolev",
+        link: "https://github.com/Aider-AI/aider/issues/6#issue-1722897858"
+    },
+    {
+        text: "Aider is such an astounding thing!",
+        author: "cgrothaus",
+        link: "https://github.com/Aider-AI/aider/issues/82#issuecomment-1631876700"
+    },
+    {
+        text: "It was WAY faster than I would be getting off the ground and making the first few working versions.",
+        author: "Daniel Feldman",
+        link: "https://twitter.com/d_feldman/status/1662295077387923456"
+    },
+    {
+        text: "THANK YOU for Aider! It really feels like a glimpse into the future of coding.",
+        author: "derwiki",
+        link: "https://news.ycombinator.com/item?id=38205643"
+    },
+    {
+        text: "It's just amazing. It is freeing me to do things I felt were out my comfort zone before.",
+        author: "Dougie",
+        link: "https://discord.com/channels/1131200896827654144/1174002618058678323/1174084556257775656"
+    },
+    {
+        text: "This project is stellar.",
+        author: "funkytaco",
+        link: "https://github.com/Aider-AI/aider/issues/112#issuecomment-1637429008"
+    },
+    {
+        text: "Amazing project, definitely the best AI coding assistant I've used.",
+        author: "joshuavial",
+        link: "https://github.com/Aider-AI/aider/issues/84"
+    },
+    {
+        text: "I absolutely love using Aider ... It makes software development feel so much lighter as an experience.",
+        author: "principalideal0",
+        link: "https://discord.com/channels/1131200896827654144/1133421607499595858/1229689636012691468"
+    },
+    {
+        text: "I have been recovering from multiple shoulder surgeries ... and have used aider extensively. It has allowed me to continue productivity.",
+        author: "codeninja",
+        link: "https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG"
+    },
+    {
+        text: "I am an aider addict. I'm getting so much more work done, but in less time.",
+        author: "dandandan",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470"
+    },
+    {
+        text: "After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever.",
+        author: "SystemSculpt",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548"
+    },
+    {
+        text: "Aider is amazing, coupled with Sonnet 3.5 it's quite mind blowing.",
+        author: "Josh Dingus",
+        link: "https://discord.com/channels/1131200896827654144/1133060684540813372/1262374225298198548"
+    },
+    {
+        text: "Hands down, this is the best AI coding assistant tool so far.",
+        author: "IndyDevDan",
+        link: "https://www.youtube.com/watch?v=MPYFPvxfGZs"
+    },
+    {
+        text: "[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life.",
+        author: "maledorak",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264"
+    },
+    {
+        text: "Best agent for actual dev work in existing codebases.",
+        author: "Nick Dobos",
+        link: "https://twitter.com/NickADobos/status/1690408967963652097?s=20"
+    },
+    {
+        text: "One of my favorite pieces of software. Blazing trails on new paradigms!",
+        author: "Chris Wall",
+        link: "https://x.com/chris65536/status/1905053299251798432"
+    },
+    {
+        text: "Aider has been revolutionary for me and my work.",
+        author: "Starry Hope",
+        link: "https://x.com/starryhopeblog/status/1904985812137132056"
+    },
+    {
+        text: "Try aider! One of the best ways to vibe code.",
+        author: "Chris Wall",
+        link: "https://x.com/Chris65536/status/1905053418961391929"
+    },
+    {
+        text: "Aider is hands down the best. And it's free and opensource.",
+        author: "AriyaSavakaLurker",
+        link: "https://www.reddit.com/r/ChatGPTCoding/comments/1ik16y6/whats_your_take_on_aider/mbip39n/"
+    },
+    {
+        text: "Aider is also my best friend.",
+        author: "jzn21",
+        link: "https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27dcnb/"
+    },
+    {
+        text: "Try Aider, it's worth it.",
+        author: "jorgejhms",
+        link: "https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27cp99/"
+    },
+    {
+        text: "I like aider :)",
+        author: "Chenwei Cui",
+        link: "https://x.com/ccui42/status/1904965344999145698"
+    },
+    {
+        text: "Aider is the precision tool of LLM code gen. It is minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control.",
+        author: "Reilly Sweetland",
+        link: "https://x.com/rsweetland/status/1904963807237259586"
+    },
+    {
+        text: "Cannot believe aider vibe coded a 650 LOC feature across service and cli today in 1 shot.",
+        author: "autopoietist",
+        link: "https://discord.com/channels/1131200896827654144/1131200896827654149/1355675042259796101"
+    },
+    {
+        text: "Oh no the secret is out! Yes, Aider is the best coding tool around. I highly, highly recommend it to anyone.",
+        author: "Joshua D Vander Hook",
+        link: "https://x.com/jodavaho/status/1911154899057795218"
+    },
+    {
+        text: "thanks to aider, i have started and finished three personal projects within the last two days",
+        author: "joseph stalzyn",
+        link: "https://x.com/anitaheeder/status/1908338609645904160"
+    },
+    {
+        text: "Been using aider as my daily driver for over a year ... I absolutely love the tool, like beyond words.",
+        author: "koleok",
+        link: "https://discord.com/channels/1131200896827654144/1273248471394291754/1356727448372252783"
+    },
+    {
+        text: "aider is really cool",
+        author: "kache (@yacineMTB)",
+        link: "https://x.com/yacineMTB/status/1911224442430124387"
+    }
+];
+</script>
+<!--[[[end]]]-->
+<script>
+
+        // Function to shuffle array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Shuffle the testimonials for initial display
+        const shuffledTestimonials = shuffleArray([...testimonials]);
+        
+        // Select the first 6 for display
+        const displayCount = Math.min(6, shuffledTestimonials.length);
+        const initialTestimonials = shuffledTestimonials.slice(0, displayCount);
+        
+        // Function to create a testimonial card
+        function createTestimonialCard(testimonial, index) {
+            return `
+                <div class="testimonial-card" id="testimonial-${index}">
+                    <p class="testimonial-text">${testimonial.text}</p>
+                    <p class="testimonial-author">— <a href="${testimonial.link}" target="_blank">${testimonial.author}</a></p>
+                </div>
+            `;
+        }
+
+        // Function to initialize the display
+        function initializeTestimonials() {
+            const container = document.getElementById('testimonial-container');
+            let html = '';
+            
+            for (let i = 0; i < displayCount; i++) {
+                html += createTestimonialCard(initialTestimonials[i], i);
+            }
+            
+            container.innerHTML = html;
+            
+            // Set a fixed height for all testimonial cards after they've been created
+            setTimeout(setMaxTestimonialHeight, 50);
+        }
+        
+        // Calculate and set the maximum height for all testimonial cards
+        function setMaxTestimonialHeight() {
+            const cards = document.querySelectorAll('.testimonial-card');
+            if (!cards.length) return;
+            
+            // Find the maximum height among all cards
+            let maxHeight = 0;
+            cards.forEach(card => {
+                // Temporarily remove any set height to get the natural height
+                card.style.height = 'auto';
+                const height = card.offsetHeight;
+                maxHeight = Math.max(maxHeight, height);
+            });
+            
+            // Add a bit of extra padding to ensure enough space
+            maxHeight += 20;
+            
+            // Set the max height on all cards
+            cards.forEach(card => {
+                card.style.height = `${maxHeight}px`;
+            });
+        }
+
+        // Function to update a single testimonial
+        function updateSingleTestimonial(index, recentlyRemoved = []) {
+            // Get a new testimonial not currently displayed and not recently removed
+            const remainingTestimonials = testimonials.filter(t => {
+                // Not currently displayed in any card
+                const notCurrentlyDisplayed = !initialTestimonials.some(
+                    it => it.author === t.author && it.text === t.text
+                );
+                
+                // Not in the recently removed list
+                const notRecentlyRemoved = !recentlyRemoved.some(
+                    rt => rt.author === t.author && rt.text === t.text
+                );
+                
+                return notCurrentlyDisplayed && notRecentlyRemoved;
+            });
+            
+            let newTestimonial;
+            if (remainingTestimonials.length > 0) {
+                const randomIndex = Math.floor(Math.random() * remainingTestimonials.length);
+                newTestimonial = remainingTestimonials[randomIndex];
+            } else {
+                // If we've used all available testimonials, pick a random one that's at least not currently displayed
+                const notDisplayed = testimonials.filter(
+                    t => !initialTestimonials.some(it => it.author === t.author && it.text === t.text)
+                );
+                
+                if (notDisplayed.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * notDisplayed.length);
+                    newTestimonial = notDisplayed[randomIndex];
+                } else {
+                    // Absolute fallback - just pick any random testimonial
+                    const randomIndex = Math.floor(Math.random() * testimonials.length);
+                    newTestimonial = testimonials[randomIndex];
+                }
+            }
+            
+            // Replace the testimonial at the given index
+            initialTestimonials[index] = newTestimonial;
+            
+            // Update the displayed testimonial
+            const testimonialElement = document.getElementById(`testimonial-${index}`);
+            if (testimonialElement) {
+                // Start fade out with slight upward movement
+                testimonialElement.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+                testimonialElement.style.opacity = "0";
+                testimonialElement.style.transform = "translateY(10px)";
+                
+                // Update content when fully faded out
+                setTimeout(() => {
+                    // Keep the current height during the content swap
+                    const currentHeight = testimonialElement.style.height;
+                    
+                    testimonialElement.innerHTML = `
+                        <p class="testimonial-text">${newTestimonial.text}</p>
+                        <p class="testimonial-author">— <a href="${newTestimonial.link}" target="_blank">${newTestimonial.author}</a></p>
+                    `;
+                    
+                    // Ensure the height remains consistent
+                    testimonialElement.style.height = currentHeight;
+                    
+                    // Start fade in
+                    setTimeout(() => {
+                        testimonialElement.style.opacity = "1";
+                        testimonialElement.style.transform = "translateY(0)";
+                    }, 50);
+                }, 400);
+            }
+        }
+
+        // Initialize testimonials
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTestimonials();
+            
+            // Track the last flipped card index to avoid repeats
+            let lastFlippedIndex = -1;
+            
+            // Track recently removed testimonials to prevent immediate reuse
+            let recentlyRemovedTestimonials = [];
+            
+            // Rotate one testimonial at a time, randomly selecting which one to change
+            setInterval(function() {
+                // Select a random index that's different from the last flipped one
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * displayCount);
+                } while (randomIndex === lastFlippedIndex && displayCount > 1);
+                
+                // Store the testimonial being removed to prevent immediate reuse
+                const removedTestimonial = initialTestimonials[randomIndex];
+                recentlyRemovedTestimonials.push(removedTestimonial);
+                
+                // Limit the recently removed list to avoid depleting the pool too much
+                if (recentlyRemovedTestimonials.length > 3) {
+                    recentlyRemovedTestimonials.shift(); // Remove oldest entry
+                }
+                
+                // Update the selected testimonial, passing the list of testimonials to avoid
+                updateSingleTestimonial(randomIndex, recentlyRemovedTestimonials);
+                
+                // Store this index as the last flipped
+                lastFlippedIndex = randomIndex;
+            }, 1500);
+        });
+    </script>
+    
+    <section class="info-section" id="more-info">
+        <div class="container">
+            <h2 class="section-title">More Information</h2>
+            <div class="info-columns">
+                <div class="info-column">
+                    <h3 class="info-column-title">Documentation</h3>
+                    <p class="info-column-desc">Everything you need to get started and make the most of Aider</p>
+                    <ul class="info-list">
+                        <li><a href="/docs/install.html">Installation Guide</a></li>
+                        <li><a href="/docs/install.html">Usage Guide</a></li>
+                        <li><a href="/docs/usage/tutorials.html">Tutorial Videos</a></li>
+                        <li><a href="/docs/llms.html">Connecting to LLMs</a></li>
+                        <li><a href="/docs/config.html">Configuration Options</a></li>
+                        <li><a href="/docs/troubleshooting.html">Troubleshooting</a></li>
+                        <li><a href="/docs/faq.html">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="info-column">
+                    <h3 class="info-column-title">Community & Resources</h3>
+                    <p class="info-column-desc">Connect with other users and find additional resources</p>
+                    <ul class="info-list">
+                        <li><a href="/docs/leaderboards/">LLM Leaderboards</a></li>
+                        <li><a href="https://github.com/Aider-AI/aider">GitHub Repository</a></li>
+                        <li><a href="https://discord.gg/Tv2uQnR88V">Discord Community</a></li>
+                        <li><a href="/blog/">Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="/docs/install.html">Documentation</a>
+                <a href="https://github.com/Aider-AI/aider">GitHub</a>
+                <a href="https://discord.gg/Tv2uQnR88V">Discord</a>
+                <a href="/blog/">Blog</a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Add Prism.js for syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    
+    <!-- Logo Progressive Enhancement -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoContainer = document.getElementById('logo-container');
+            const textContent = logoContainer.textContent; // Save the text for fallback
+            
+            // Create new image element
+            const logoImg = new Image();
+            logoImg.src = '/assets/logo.svg';
+            logoImg.alt = 'Aider Logo';
+            logoImg.style.height = '1.8rem';
+            logoImg.style.verticalAlign = 'middle';
+            
+            // Only replace if image loads successfully
+            logoImg.onload = function() {
+                logoContainer.textContent = ''; // Clear text
+                logoContainer.appendChild(logoImg);
+            };
+            
+            // If image fails to load, do nothing (keep the text)
+            logoImg.onerror = function() {
+                console.log('SVG logo failed to load, keeping text fallback');
+            };
+        });
+    </script>
+</body>
+</html>

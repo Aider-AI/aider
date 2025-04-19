@@ -10,11 +10,12 @@ This module provides functionality to:
 
 import os
 import platform
-import shlex
 import subprocess
 import tempfile
 
 from rich.console import Console
+
+from aider.dump import dump  # noqa
 
 DEFAULT_EDITOR_NIX = "vi"
 DEFAULT_EDITOR_OS_X = "vim"
@@ -87,13 +88,13 @@ def get_environment_editor(default=None):
 
 def discover_editor(editor_override=None):
     """
-    Discovers and returns the appropriate editor command as a list of arguments.
+    Discovers and returns the appropriate editor command.
 
     Handles cases where the editor command includes arguments, including quoted arguments
     with spaces (e.g. 'vim -c "set noswapfile"').
 
-    :return: A list of command parts ready for subprocess execution
-    :rtype: list[str]
+    :return: The editor command as a string
+    :rtype: str
     """
     system = platform.system()
     if system == "Windows":
@@ -102,14 +103,13 @@ def discover_editor(editor_override=None):
         default_editor = DEFAULT_EDITOR_OS_X
     else:
         default_editor = DEFAULT_EDITOR_NIX
+
     if editor_override:
         editor = editor_override
     else:
         editor = get_environment_editor(default_editor)
-    try:
-        return shlex.split(editor)
-    except ValueError as e:
-        raise RuntimeError(f"Invalid editor command format '{editor}': {e}")
+
+    return editor
 
 
 def pipe_editor(input_data="", suffix=None, editor=None):
@@ -128,9 +128,10 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     :rtype: str
     """
     filepath = write_temp_file(input_data, suffix)
-    command_parts = discover_editor(editor)
-    command_parts.append(filepath)
-    subprocess.call(command_parts)
+    command_str = discover_editor(editor)
+    command_str += " " + filepath
+
+    subprocess.call(command_str, shell=True)
     with open(filepath, "r") as f:
         output_data = f.read()
     try:

@@ -83,4 +83,25 @@ class LiteLLMExceptions:
                 )
             if "boto3" in str(ex):
                 return ExInfo("APIConnectionError", False, "You need to: pip install boto3")
+            if "OpenrouterException" in str(ex) and "'choices'" in str(ex):
+                return ExInfo(
+                    "APIConnectionError",
+                    True,
+                    (
+                        "OpenRouter or the upstream API provider is down, overloaded or rate"
+                        " limiting your requests."
+                    ),
+                )
+
+        # Check for specific non-retryable APIError cases like insufficient credits
+        if ex.__class__ is litellm.APIError:
+            err_str = str(ex).lower()
+            if "insufficient credits" in err_str and '"code":402' in err_str:
+                return ExInfo(
+                    "APIError",
+                    False,
+                    "Insufficient credits with the API provider. Please add credits.",
+                )
+            # Fall through to default APIError handling if not the specific credits error
+
         return self.exceptions.get(ex.__class__, ExInfo(None, None, None))

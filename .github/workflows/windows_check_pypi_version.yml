@@ -1,0 +1,90 @@
+name: Windows Check PyPI Version
+
+# Check to be sure `pip install aider-chat` installs the most recently published version on Windows.
+# If dependencies get yanked, it may render the latest version uninstallable.
+# See https://github.com/Aider-AI/aider/issues/3699 for example.
+
+on:
+  schedule:
+    # Run once a day at 1 AM UTC (offset from Ubuntu check)
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  check_version:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+    defaults:
+      run:
+        shell: pwsh # Use PowerShell for all run steps
+
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install aider-chat
+        run: pip install aider-chat
+
+      - name: Get installed aider version
+        id: installed_version
+        run: |
+          Write-Host "Running 'aider --version'..."
+          $aider_version_output = aider --version
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Error: 'aider --version' command failed."
+            exit 1
+          }
+          Write-Host "Raw aider --version output: $aider_version_output"
+
+          # Extract version number (format X.Y.Z) using PowerShell regex
+          $match = [regex]::Match($aider_version_output, '\d+\.\d+\.\d+')
+
+          if (-not $match.Success) {
+            Write-Error "Error: Could not extract version number using regex '\d+\.\d+\.\d+' from output: $aider_version_output"
+            exit 1
+          }
+          $version_num = $match.Value
+
+          Write-Host "Extracted version number: $version_num"
+          echo "version=$version_num" >> $env:GITHUB_OUTPUT
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all tags
+
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          Write-Host "Fetching tags..."
+          # Fetch all tags from remote just in case
+          git fetch --tags origin main
+          Write-Host "Getting latest non-dev tag..."
+          # Get the latest tag that strictly matches vX.Y.Z (no suffixes like .dev)
+          # List all tags, sort by version descending, filter for exact pattern, take the first one
+          $latest_tag = (git tag --sort=-v:refname | Select-String -Pattern '^v\d+\.\d+\.\d+$' | Select-Object -First 1).Line
+
+          if (-not $latest_tag) {
+            Write-Error "Error: Could not find any tags matching the pattern '^v\d+\.\d+\.\d+$'"
+            exit 1
+          }
+
+          Write-Host "Latest non-dev tag: $latest_tag"
+          # Remove 'v' prefix for comparison
+          $tag_num = $latest_tag.Substring(1)
+          Write-Host "Extracted tag number: $tag_num"
+          echo "tag=$tag_num" >> $env:GITHUB_OUTPUT
+
+      - name: Compare versions
+        run: |
+          Write-Host "Installed version: ${{ steps.installed_version.outputs.version }}"
+          Write-Host "Latest tag version: ${{ steps.latest_tag.outputs.tag }}"
+          if ("${{ steps.installed_version.outputs.version }}" -ne "${{ steps.latest_tag.outputs.tag }}") {
+            Write-Error "Error: Installed aider version (${{ steps.installed_version.outputs.version }}) does not match the latest tag (${{ steps.latest_tag.outputs.tag }})."
+            exit 1
+          }
+          Write-Host "Versions match."

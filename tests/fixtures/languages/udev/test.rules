@@ -1,0 +1,22 @@
+# Define a label for a specific device
+LABEL="my_usb_device", ATTRS{idVendor}=="1234", ATTRS{idProduct}=="5678"
+
+# Reference a label in a GOTO
+SUBSYSTEM=="usb", GOTO="my_peripheral"
+
+# Define environment variables
+ENV{DEVTYPE}="usb_device"
+ENV{USB_DRIVER}="usb-storage"
+
+# Reference environment variables
+ENV{DEVTYPE}=="usb_device", SYMLINK+="usb_storage_%k"
+
+# Variable substitution
+SYMLINK+="disk/by-label/$env{ID_FS_LABEL}"
+
+# Label for a section of rules
+LABEL="my_peripheral"
+SUBSYSTEM=="usb", MODE="0666"
+
+# End label
+LABEL="end_my_rules"

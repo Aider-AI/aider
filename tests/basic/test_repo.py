@@ -405,3 +405,51 @@ class TestRepo(unittest.TestCase):
             git_repo = GitRepo(InputOutput(), None, None)
 
             git_repo.commit(fnames=[str(fname)])
+
+    def test_git_commit_verify(self):
+        """Test that git_commit_verify controls whether --no-verify is passed to git commit"""
+        # Skip on Windows as hook execution works differently
+        if platform.system() == "Windows":
+            return
+
+        with GitTemporaryDirectory():
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Create a file to commit
+            fname = Path("test_file.txt")
+            fname.write_text("initial content")
+            raw_repo.git.add(str(fname))
+
+            # Do the initial commit
+            raw_repo.git.commit("-m", "Initial commit")
+
+            # Now create a pre-commit hook that always fails
+            hooks_dir = Path(raw_repo.git_dir) / "hooks"
+            hooks_dir.mkdir(exist_ok=True)
+
+            pre_commit_hook = hooks_dir / "pre-commit"
+            pre_commit_hook.write_text("#!/bin/sh\nexit 1\n")  # Always fail
+            pre_commit_hook.chmod(0o755)  # Make executable
+
+            # Modify the file
+            fname.write_text("modified content")
+
+            # Create GitRepo with verify=True (default)
+            io = InputOutput()
+            git_repo_verify = GitRepo(io, None, None, git_commit_verify=True)
+
+            # Attempt to commit - should fail due to pre-commit hook
+            commit_result = git_repo_verify.commit(fnames=[str(fname)], message="Should fail")
+            self.assertIsNone(commit_result)
+
+            # Create GitRepo with verify=False
+            git_repo_no_verify = GitRepo(io, None, None, git_commit_verify=False)
+
+            # Attempt to commit - should succeed by bypassing the hook
+            commit_result = git_repo_no_verify.commit(fnames=[str(fname)], message="Should succeed")
+            self.assertIsNotNone(commit_result)
+
+            # Verify the commit was actually made
+            latest_commit_msg = raw_repo.head.commit.message
+            self.assertEqual(latest_commit_msg.strip(), "Should succeed")

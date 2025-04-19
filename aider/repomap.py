@@ -23,7 +23,7 @@ from aider.utils import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
-from tree_sitter_languages import get_language, get_parser  # noqa: E402
+from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
@@ -31,8 +31,12 @@ Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
+CACHE_VERSION = 3
+if USING_TSL_PACK:
+    CACHE_VERSION = 4
+
+
 class RepoMap:
-    CACHE_VERSION = 3
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     warned_files = set()
@@ -282,10 +286,15 @@ class RepoMap:
         query = language.query(query_scm)
         captures = query.captures(tree.root_node)
 
-        captures = list(captures)
-
         saw = set()
-        for node, tag in captures:
+        if USING_TSL_PACK:
+            all_nodes = []
+            for tag, nodes in captures.items():
+                all_nodes += [(node, tag) for node in nodes]
+        else:
+            all_nodes = list(captures)
+
+        for node, tag in all_nodes:
             if tag.startswith("name.definition."):
                 kind = "def"
             elif tag.startswith("name.reference."):
@@ -389,13 +398,30 @@ class RepoMap:
 
             # dump(fname)
             rel_fname = self.get_rel_fname(fname)
+            current_pers = 0.0  # Start with 0 personalization score
 
             if fname in chat_fnames:
-                personalization[rel_fname] = personalize
+                current_pers += personalize
                 chat_rel_fnames.add(rel_fname)
 
             if rel_fname in mentioned_fnames:
-                personalization[rel_fname] = personalize
+                # Use max to avoid double counting if in chat_fnames and mentioned_fnames
+                current_pers = max(current_pers, personalize)
+
+            # Check path components against mentioned_idents
+            path_obj = Path(rel_fname)
+            path_components = set(path_obj.parts)
+            basename_with_ext = path_obj.name
+            basename_without_ext, _ = os.path.splitext(basename_with_ext)
+            components_to_check = path_components.union({basename_with_ext, basename_without_ext})
+
+            matched_idents = components_to_check.intersection(mentioned_idents)
+            if matched_idents:
+                # Add personalization *once* if any path component matches a mentioned ident
+                current_pers += personalize
+
+            if current_pers > 0:
+                personalization[rel_fname] = current_pers  # Assign the final calculated value
 
             tags = list(self.get_tags(fname, rel_fname))
             if tags is None:
@@ -422,17 +448,33 @@ class RepoMap:
 
         G = nx.MultiDiGraph()
 
+        # Add a small self-edge for every definition that has no references
+        # Helps with tree-sitter 0.23.2 with ruby, where "def greet(name)"
+        # isn't counted as a def AND a ref. tree-sitter 0.24.0 does.
+        for ident in defines.keys():
+            if ident in references:
+                continue
+            for definer in defines[ident]:
+                G.add_edge(definer, definer, weight=0.1, ident=ident)
+
         for ident in idents:
             if progress:
                 progress()
 
             definers = defines[ident]
+
+            mul = 1.0
+
+            is_snake = ("_" in ident) and any(c.isalpha() for c in ident)
+            is_camel = any(c.isupper() for c in ident) and any(c.islower() for c in ident)
             if ident in mentioned_idents:
-                mul = 10
-            elif ident.startswith("_"):
-                mul = 0.1
-            else:
-                mul = 1
+                mul *= 10
+            if (is_snake or is_camel) and len(ident) >= 8:
+                mul *= 10
+            if ident.startswith("_"):
+                mul *= 0.1
+            if len(defines[ident]) > 5:
+                mul *= 0.1
 
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
@@ -440,10 +482,14 @@ class RepoMap:
                     # if referencer == definer:
                     #    continue
 
+                    use_mul = mul
+                    if referencer in chat_rel_fnames:
+                        use_mul *= 50
+
                     # scale down so high freq (low value) mentions don't dominate
                     num_refs = math.sqrt(num_refs)
 
-                    G.add_edge(referencer, definer, weight=mul * num_refs, ident=ident)
+                    G.add_edge(referencer, definer, weight=use_mul * num_refs, ident=ident)
 
         if not references:
             pass
@@ -732,8 +778,27 @@ def get_random_color():
 
 def get_scm_fname(lang):
     # Load the tags queries
+    if USING_TSL_PACK:
+        subdir = "tree-sitter-language-pack"
+        try:
+            path = resources.files(__package__).joinpath(
+                "queries",
+                subdir,
+                f"{lang}-tags.scm",
+            )
+            if path.exists():
+                return path
+        except KeyError:
+            pass
+
+    # Fall back to tree-sitter-languages
+    subdir = "tree-sitter-languages"
     try:
-        return resources.files(__package__).joinpath("queries", f"tree-sitter-{lang}-tags.scm")
+        return resources.files(__package__).joinpath(
+            "queries",
+            subdir,
+            f"{lang}-tags.scm",
+        )
     except KeyError:
         return
 

@@ -1,4 +1,1 @@
--c ../requirements.txt
-
 streamlit
-watchdog<5 # docker build fails: streamlit 1.38.0 depends on watchdog<5 

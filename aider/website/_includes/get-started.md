@@ -5,21 +5,15 @@ If you already have python 3.8-3.13 installed, you can get started quickly like 
 python -m pip install aider-install
 aider-install
 
-# Change directory into your code base
+# Change directory into your codebase
 cd /to/your/project
 
-# Work with DeepSeek via DeepSeek's API
-aider --model deepseek --api-key deepseek=your-key-goes-here
+# DeepSeek
+aider --model deepseek --api-key deepseek=<key>
 
-# Work with Claude 3.5 Sonnet via Anthropic's API
-aider --model sonnet --api-key anthropic=your-key-goes-here
+# Claude 3.7 Sonnet
+aider --model sonnet --api-key anthropic=<key>
 
-# Work with GPT-4o via OpenAI's API
-aider --model gpt-4o --api-key openai=your-key-goes-here
-
-# Work with Sonnet via OpenRouter's API
-aider --model openrouter/anthropic/claude-3.5-sonnet --api-key openrouter=your-key-goes-here
-
-# Work with DeepSeek via OpenRouter's API
-aider --model openrouter/deepseek/deepseek-chat --api-key openrouter=your-key-goes-here
+# o3-mini
+aider --model o3-mini --api-key openai=<key>
 ```

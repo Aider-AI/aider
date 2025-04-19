@@ -40,6 +40,7 @@ While it is not recommended, you can disable aider's use of git in a few ways:
   - `--no-auto-commits` will stop aider from git committing each of its changes.
   - `--no-dirty-commits` will stop aider from committing dirty files before applying its edits.
   - `--no-git` will completely stop aider from using git on your files. You should ensure you are keeping sensible backups of the files you are working with.
+  - `--git-commit-verify` will run pre-commit hooks when making git commits. By default, aider skips pre-commit hooks by using the `--no-verify` flag (`--git-commit-verify=False`).
 
 ## Commit messages
 

@@ -11,7 +11,7 @@ You can add images and URLs to the aider chat.
 ## Images
 
 Aider supports working with image files for many vision-capable models
-like GPT-4o and Claude 3.5 Sonnet.
+like GPT-4o and Claude 3.7 Sonnet.
 Adding images to a chat can be helpful in many situations:
 
 - Add screenshots of web pages or UIs that you want aider to build or modify.

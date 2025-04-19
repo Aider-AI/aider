@@ -43,7 +43,7 @@ These steps only need to be done once.
 
 ```
 # Clone the aider repo
-git clone git@github.com:Aider-AI/aider.git
+git clone https://github.com/Aider-AI/aider.git
 
 # Create the scratch dir to hold benchmarking results inside the main aider dir:
 cd aider
@@ -82,6 +82,7 @@ You can run `./benchmark/benchmark.py --help` for a list of all the arguments, b
 - `--threads` specifies how many exercises to benchmark in parallel. Start with a single thread if you are working out the kinks on your benchmarking setup or working with a new model, etc. Once you are getting reliable results, you can speed up the process by running with more threads. 10 works well against the OpenAI APIs.
 - `--num-tests` specifies how many of the tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
+- `--read-model-settings=<filename.yml>` specify model settings, see here: https://aider.chat/docs/config/adv-model-settings.html#model-settings
 
 ### Benchmark report
 

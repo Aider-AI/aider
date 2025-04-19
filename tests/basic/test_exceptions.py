@@ -63,3 +63,22 @@ def test_context_window_error():
     )
     ex_info = ex.get_ex_info(ctx_error)
     assert ex_info.retry is False
+
+
+def test_openrouter_error():
+    """Test specific handling of OpenRouter API errors"""
+    ex = LiteLLMExceptions()
+    from litellm import APIConnectionError
+
+    # Create an APIConnectionError with OpenrouterException message
+    openrouter_error = APIConnectionError(
+        message="APIConnectionError: OpenrouterException - 'choices'",
+        model="openrouter/model",
+        llm_provider="openrouter",
+    )
+
+    ex_info = ex.get_ex_info(openrouter_error)
+    assert ex_info.retry is True
+    assert "OpenRouter" in ex_info.description
+    assert "overloaded" in ex_info.description
+    assert "rate" in ex_info.description

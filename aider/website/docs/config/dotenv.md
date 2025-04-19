@@ -64,39 +64,6 @@ cog.outl("```")
 ## Specify the model to use for the main chat
 #AIDER_MODEL=
 
-## Use claude-3-opus-20240229 model for the main chat
-#AIDER_OPUS=
-
-## Use claude-3-5-sonnet-20241022 model for the main chat
-#AIDER_SONNET=
-
-## Use claude-3-5-haiku-20241022 model for the main chat
-#AIDER_HAIKU=
-
-## Use gpt-4-0613 model for the main chat
-#AIDER_4=
-
-## Use gpt-4o model for the main chat
-#AIDER_4O=
-
-## Use gpt-4o-mini model for the main chat
-#AIDER_MINI=
-
-## Use gpt-4-1106-preview model for the main chat
-#AIDER_4_TURBO=
-
-## Use gpt-3.5-turbo model for the main chat
-#AIDER_35TURBO=
-
-## Use deepseek/deepseek-chat model for the main chat
-#AIDER_DEEPSEEK=
-
-## Use o1-mini model for the main chat
-#AIDER_O1_MINI=
-
-## Use o1-preview model for the main chat
-#AIDER_O1_PREVIEW=
-
 ########################
 # API Keys and settings:
 
@@ -145,6 +112,9 @@ cog.outl("```")
 ## Set the reasoning_effort API parameter (default: not set)
 #AIDER_REASONING_EFFORT=
 
+## Set the thinking token budget for models that support it (default: not set)
+#AIDER_THINKING_TOKENS=
+
 ## Verify the SSL cert when connecting to models (default: True)
 #AIDER_VERIFY_SSL=true
 
@@ -157,6 +127,9 @@ cog.outl("```")
 ## Use architect edit format for the main chat
 #AIDER_ARCHITECT=
 
+## Enable/disable automatic acceptance of architect changes (default: True)
+#AIDER_AUTO_ACCEPT_ARCHITECT=true
+
 ## Specify the model to use for commit messages and chat history summarization (default depends on --model)
 #AIDER_WEAK_MODEL=
 
@@ -168,6 +141,9 @@ cog.outl("```")
 
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true
+
+## Check if model accepts settings like reasoning_effort/thinking_tokens (default: True)
+#AIDER_CHECK_MODEL_ACCEPTS_SETTINGS=true
 
 ## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #AIDER_MAX_CHAT_HISTORY_TOKENS=
@@ -288,6 +264,9 @@ cog.outl("```")
 
 ## Prefix all commit messages with 'aider: ' (default: False)
 #AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER=false
+
+## Enable/disable git pre-commit hooks with --no-verify (default: False)
+#AIDER_GIT_COMMIT_VERIFY=false
 
 ## Commit all pending changes with a suitable commit message, then exit
 #AIDER_COMMIT=false
@@ -439,10 +418,52 @@ cog.outl("```")
 ## Enable/disable multi-line input mode with Meta-Enter to submit (default: False)
 #AIDER_MULTILINE=false
 
+## Enable/disable terminal bell notifications when LLM responses are ready (default: False)
+#AIDER_NOTIFICATIONS=false
+
+## Specify a command to run for notifications instead of the terminal bell. If not specified, a default command for your OS may be used.
+#AIDER_NOTIFICATIONS_COMMAND=
+
 ## Enable/disable detection and offering to add URLs to chat (default: True)
 #AIDER_DETECT_URLS=true
 
 ## Specify which editor to use for the /editor command
 #AIDER_EDITOR=
+
+############################
+# Deprecated model settings:
+
+## Use claude-3-opus-20240229 model for the main chat (deprecated, use --model)
+#AIDER_OPUS=false
+
+## Use anthropic/claude-3-7-sonnet-20250219 model for the main chat (deprecated, use --model)
+#AIDER_SONNET=false
+
+## Use claude-3-5-haiku-20241022 model for the main chat (deprecated, use --model)
+#AIDER_HAIKU=false
+
+## Use gpt-4-0613 model for the main chat (deprecated, use --model)
+#AIDER_4=false
+
+## Use gpt-4o model for the main chat (deprecated, use --model)
+#AIDER_4O=false
+
+## Use gpt-4o-mini model for the main chat (deprecated, use --model)
+#AIDER_MINI=false
+
+## Use gpt-4-1106-preview model for the main chat (deprecated, use --model)
+#AIDER_4_TURBO=false
+
+## Use gpt-3.5-turbo model for the main chat (deprecated, use --model)
+#AIDER_35TURBO=false
+
+## Use deepseek/deepseek-chat model for the main chat (deprecated, use --model)
+#AIDER_DEEPSEEK=false
+
+## Use o1-mini model for the main chat (deprecated, use --model)
+#AIDER_O1_MINI=false
+
+## Use o1-preview model for the main chat (deprecated, use --model)
+#AIDER_O1_PREVIEW=false
 ```
 <!--[[[end]]]-->

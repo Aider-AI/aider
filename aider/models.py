@@ -5,7 +5,6 @@ import json
 import math
 import os
 import platform
-import re
 import sys
 import time
 from dataclasses import dataclass, fields
@@ -19,6 +18,7 @@ from PIL import Image
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
+from aider.utils import check_pip_install_extra
 
 RETRY_TIMEOUT = 60
 
@@ -76,7 +76,7 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
     # Claude models
-    "sonnet": "claude-3-5-sonnet-20241022",
+    "sonnet": "anthropic/claude-3-7-sonnet-20250219",
     "haiku": "claude-3-5-haiku-20241022",
     "opus": "claude-3-opus-20240229",
     # GPT models
@@ -88,8 +88,14 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
-    "r1": "deepseek/deepseek-reasoner",
     "flash": "gemini/gemini-2.0-flash-exp",
+    "quasar": "openrouter/openrouter/quasar-alpha",
+    "r1": "deepseek/deepseek-reasoner",
+    "gemini-2.5-pro": "gemini/gemini-2.5-pro-exp-03-25",
+    "gemini": "gemini/gemini-2.5-pro-preview-03-25",
+    "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
+    "grok3": "xai/grok-3-beta",
+    "optimus": "openrouter/openrouter/optimus-alpha",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -103,6 +109,7 @@ class ModelSettings:
     use_repo_map: bool = False
     send_undo_reply: bool = False
     lazy: bool = False
+    overeager: bool = False
     reminder: str = "user"
     examples_as_sys_msg: bool = False
     extra_params: Optional[dict] = None
@@ -113,8 +120,10 @@ class ModelSettings:
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
-    remove_reasoning: Optional[str] = None
+    reasoning_tag: Optional[str] = None
+    remove_reasoning: Optional[str] = None  # Deprecated alias for reasoning_tag
     system_prompt_prefix: Optional[str] = None
+    accepts_settings: Optional[list] = None
 
 
 # Load model settings from package resource
@@ -137,23 +146,37 @@ class ModelInfoManager:
         self.cache_file = self.cache_dir / "model_prices_and_context_window.json"
         self.content = None
         self.local_model_metadata = {}
-        self._load_cache()
+        self.verify_ssl = True
+        self._cache_loaded = False
+
+    def set_verify_ssl(self, verify_ssl):
+        self.verify_ssl = verify_ssl
 
     def _load_cache(self):
+        if self._cache_loaded:
+            return
+
         try:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
             if self.cache_file.exists():
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
-                    self.content = json.loads(self.cache_file.read_text())
+                    try:
+                        self.content = json.loads(self.cache_file.read_text())
+                    except json.JSONDecodeError:
+                        # If the cache file is corrupted, treat it as missing
+                        self.content = None
         except OSError:
             pass
+
+        self._cache_loaded = True
 
     def _update_cache(self):
         try:
             import requests
 
-            response = requests.get(self.MODEL_INFO_URL, timeout=5)
+            # Respect the --no-verify-ssl switch
+            response = requests.get(self.MODEL_INFO_URL, timeout=5, verify=self.verify_ssl)
             if response.status_code == 200:
                 self.content = response.json()
                 try:
@@ -172,6 +195,9 @@ class ModelInfoManager:
         data = self.local_model_metadata.get(model)
         if data:
             return data
+
+        # Ensure cache is loaded before checking content
+        self._load_cache()
 
         if not self.content:
             self._update_cache()
@@ -212,11 +238,14 @@ model_info_manager = ModelInfoManager()
 
 
 class Model(ModelSettings):
-    def __init__(self, model, weak_model=None, editor_model=None, editor_edit_format=None):
+    def __init__(
+        self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False
+    ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
         self.name = model
+        self.verbose = verbose
 
         self.max_chat_history_tokens = 1024
         self.weak_model = None
@@ -259,6 +288,11 @@ class Model(ModelSettings):
             val = getattr(source, field.name)
             setattr(self, field.name, val)
 
+        # Handle backward compatibility: if remove_reasoning is set but reasoning_tag isn't,
+        # use remove_reasoning's value for reasoning_tag
+        if self.reasoning_tag is None and self.remove_reasoning is not None:
+            self.reasoning_tag = self.remove_reasoning
+
     def configure_model_settings(self, model):
         # Look for exact model match
         exact_match = False
@@ -269,6 +303,10 @@ class Model(ModelSettings):
                 exact_match = True
                 break  # Continue to apply overrides
 
+        # Initialize accepts_settings if it's None
+        if self.accepts_settings is None:
+            self.accepts_settings = []
+
         model = model.lower()
 
         # If no exact match, try generic settings
@@ -276,7 +314,11 @@ class Model(ModelSettings):
             self.apply_generic_model_settings(model)
 
         # Apply override settings last if they exist
-        if self.extra_model_settings and self.extra_model_settings.extra_params:
+        if (
+            self.extra_model_settings
+            and self.extra_model_settings.extra_params
+            and self.extra_model_settings.name == "aider/extra_params"
+        ):
             # Initialize extra_params if it doesn't exist
             if not self.extra_params:
                 self.extra_params = {}
@@ -296,6 +338,23 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.use_temperature = False
             self.system_prompt_prefix = "Formatting re-enabled. "
+            self.system_prompt_prefix = "Formatting re-enabled. "
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
+            return  # <--
+
+        if "gpt-4.1-mini" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = False
+            return  # <--
+
+        if "gpt-4.1" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = False
             return  # <--
 
         if "/o1-mini" in model:
@@ -317,6 +376,8 @@ class Model(ModelSettings):
             self.use_temperature = False
             self.streaming = False
             self.system_prompt_prefix = "Formatting re-enabled. "
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
             return  # <--
 
         if "deepseek" in model and "v3" in model:
@@ -331,7 +392,7 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.examples_as_sys_msg = True
             self.use_temperature = False
-            self.remove_reasoning = "think"
+            self.reasoning_tag = "think"
             return  # <--
 
         if ("llama3" in model or "llama-3" in model) and "70b" in model:
@@ -357,6 +418,15 @@ class Model(ModelSettings):
             self.reminder = "sys"
             return  # <--
 
+        if "3-7-sonnet" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.examples_as_sys_msg = True
+            self.reminder = "user"
+            if "thinking_tokens" not in self.accepts_settings:
+                self.accepts_settings.append("thinking_tokens")
+            return  # <--
+
         if "3.5-sonnet" in model or "3-5-sonnet" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
@@ -378,6 +448,16 @@ class Model(ModelSettings):
             self.edit_format = "diff"
             self.editor_edit_format = "editor-diff"
             self.use_repo_map = True
+            return  # <--
+
+        if "qwq" in model and "32b" in model and "preview" not in model:
+            self.edit_format = "diff"
+            self.editor_edit_format = "editor-diff"
+            self.use_repo_map = True
+            self.reasoning_tag = "think"
+            self.examples_as_sys_msg = True
+            self.use_temperature = 0.6
+            self.extra_params = dict(top_p=0.95)
             return  # <--
 
         # use the defaults
@@ -427,6 +507,8 @@ class Model(ModelSettings):
 
         if not self.editor_edit_format:
             self.editor_edit_format = self.editor_model.edit_format
+            if self.editor_edit_format in ("diff", "whole", "diff-fenced"):
+                self.editor_edit_format = "editor-" + self.editor_edit_format
 
         return self.editor_model
 
@@ -535,6 +617,21 @@ class Model(ModelSettings):
 
         model = self.name
         res = litellm.validate_environment(model)
+
+        # If missing AWS credential keys but AWS_PROFILE is set, consider AWS credentials valid
+        if res["missing_keys"] and any(
+            key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"] for key in res["missing_keys"]
+        ):
+            if model.startswith("bedrock/") or model.startswith("us.anthropic."):
+                if os.environ.get("AWS_PROFILE"):
+                    res["missing_keys"] = [
+                        k
+                        for k in res["missing_keys"]
+                        if k not in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY"]
+                    ]
+                    if not res["missing_keys"]:
+                        res["keys_in_environment"] = True
+
         if res["keys_in_environment"]:
             return res
         if res["missing_keys"]:
@@ -559,6 +656,108 @@ class Model(ModelSettings):
             map_tokens = max(map_tokens, 1024)
         return map_tokens
 
+    def set_reasoning_effort(self, effort):
+        """Set the reasoning effort parameter for models that support it"""
+        if effort is not None:
+            if not self.extra_params:
+                self.extra_params = {}
+            if "extra_body" not in self.extra_params:
+                self.extra_params["extra_body"] = {}
+            self.extra_params["extra_body"]["reasoning_effort"] = effort
+
+    def parse_token_value(self, value):
+        """
+        Parse a token value string into an integer.
+        Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
+
+        Args:
+            value: String or int token value
+
+        Returns:
+            Integer token value
+        """
+        if isinstance(value, int):
+            return value
+
+        if not isinstance(value, str):
+            return int(value)  # Try to convert to int
+
+        value = value.strip().upper()
+
+        if value.endswith("K"):
+            multiplier = 1024
+            value = value[:-1]
+        elif value.endswith("M"):
+            multiplier = 1024 * 1024
+            value = value[:-1]
+        else:
+            multiplier = 1
+
+        # Convert to float first to handle decimal values like "10.5k"
+        return int(float(value) * multiplier)
+
+    def set_thinking_tokens(self, value):
+        """
+        Set the thinking token budget for models that support it.
+        Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
+        """
+        if value is not None:
+            num_tokens = self.parse_token_value(value)
+            self.use_temperature = False
+            if not self.extra_params:
+                self.extra_params = {}
+
+            # OpenRouter models use 'reasoning' instead of 'thinking'
+            if self.name.startswith("openrouter/"):
+                self.extra_params["reasoning"] = {"max_tokens": num_tokens}
+            else:
+                self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+
+    def get_raw_thinking_tokens(self):
+        """Get formatted thinking token budget if available"""
+        budget = None
+
+        if self.extra_params:
+            # Check for OpenRouter reasoning format
+            if "reasoning" in self.extra_params and "max_tokens" in self.extra_params["reasoning"]:
+                budget = self.extra_params["reasoning"]["max_tokens"]
+            # Check for standard thinking format
+            elif (
+                "thinking" in self.extra_params and "budget_tokens" in self.extra_params["thinking"]
+            ):
+                budget = self.extra_params["thinking"]["budget_tokens"]
+
+        return budget
+
+    def get_thinking_tokens(self):
+        budget = self.get_raw_thinking_tokens()
+
+        if budget is not None:
+            # Format as xx.yK for thousands, xx.yM for millions
+            if budget >= 1024 * 1024:
+                value = budget / (1024 * 1024)
+                if value == int(value):
+                    return f"{int(value)}M"
+                else:
+                    return f"{value:.1f}M"
+            else:
+                value = budget / 1024
+                if value == int(value):
+                    return f"{int(value)}k"
+                else:
+                    return f"{value:.1f}k"
+        return None
+
+    def get_reasoning_effort(self):
+        """Get reasoning effort value if available"""
+        if (
+            self.extra_params
+            and "extra_body" in self.extra_params
+            and "reasoning_effort" in self.extra_params["extra_body"]
+        ):
+            return self.extra_params["extra_body"]["reasoning_effort"]
+        return None
+
     def is_deepseek_r1(self):
         name = self.name.lower()
         if "deepseek" not in name:
@@ -577,7 +776,6 @@ class Model(ModelSettings):
 
         kwargs = dict(
             model=self.name,
-            messages=messages,
             stream=stream,
         )
 
@@ -606,16 +804,12 @@ class Model(ModelSettings):
         hash_object = hashlib.sha1(key)
         if "timeout" not in kwargs:
             kwargs["timeout"] = request_timeout
+        if self.verbose:
+            dump(kwargs)
+        kwargs["messages"] = messages
+
         res = litellm.completion(**kwargs)
         return hash_object, res
-
-    def remove_reasoning_content(self, res):
-        if not self.remove_reasoning:
-            return res
-
-        pattern = f"<{self.remove_reasoning}>.*?</{self.remove_reasoning}>"
-        res = re.sub(pattern, "", res, flags=re.DOTALL).strip()
-        return res
 
     def simple_send_with_retries(self, messages):
         from aider.exceptions import LiteLLMExceptions
@@ -637,7 +831,9 @@ class Model(ModelSettings):
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
                 res = response.choices[0].message.content
-                return self.remove_reasoning_content(res)
+                from aider.reasoning_tags import remove_reasoning_content
+
+                return remove_reasoning_content(res, self.reasoning_tag)
 
             except litellm_ex.exceptions_tuple() as err:
                 ex_info = litellm_ex.get_ex_info(err)
@@ -760,6 +956,9 @@ def sanity_check_model(io, model):
         show = True
         io.tool_warning(f"Warning for {model}: Unknown which environment variables are required.")
 
+    # Check for model-specific dependencies
+    check_for_dependencies(io, model.name)
+
     if not model.info:
         show = True
         io.tool_warning(
@@ -775,11 +974,38 @@ def sanity_check_model(io, model):
     return show
 
 
+def check_for_dependencies(io, model_name):
+    """
+    Check for model-specific dependencies and install them if needed.
+
+    Args:
+        io: The IO object for user interaction
+        model_name: The name of the model to check dependencies for
+    """
+    # Check if this is a Bedrock model and ensure boto3 is installed
+    if model_name.startswith("bedrock/"):
+        check_pip_install_extra(
+            io, "boto3", "AWS Bedrock models require the boto3 package.", ["boto3"]
+        )
+
+    # Check if this is a Vertex AI model and ensure google-cloud-aiplatform is installed
+    elif model_name.startswith("vertex_ai/"):
+        check_pip_install_extra(
+            io,
+            "google.cloud.aiplatform",
+            "Google Vertex AI models require the google-cloud-aiplatform package.",
+            ["google-cloud-aiplatform"],
+        )
+
+
 def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
-    for orig_model, attrs in litellm.model_cost.items():
+    model_metadata = list(litellm.model_cost.items())
+    model_metadata += list(model_info_manager.local_model_metadata.items())
+
+    for orig_model, attrs in model_metadata:
         model = orig_model.lower()
         if attrs.get("mode") != "chat":
             continue

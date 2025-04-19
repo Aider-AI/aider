@@ -4,11 +4,12 @@ import subprocess
 import sys
 import traceback
 import warnings
+import shlex
 from dataclasses import dataclass
 from pathlib import Path
 
 from grep_ast import TreeContext, filename_to_lang
-from tree_sitter_languages import get_parser  # noqa: E402
+from grep_ast.tsl import get_parser  # noqa: E402
 
 from aider.dump import dump  # noqa: F401
 from aider.run_cmd import run_cmd_subprocess  # noqa: F401
@@ -44,7 +45,7 @@ class Linter:
             return fname
 
     def run_cmd(self, cmd, rel_fname, code):
-        cmd += " " + rel_fname
+        cmd += " " + shlex.quote(rel_fname)
 
         returncode = 0
         stdout = ""
