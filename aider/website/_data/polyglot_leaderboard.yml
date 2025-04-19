@@ -1172,3 +1172,29 @@
   versions: 0.82.2.dev
   seconds_per_case: 110.0
   total_cost: 69.2921
+
+- dirname: 2025-04-19-14-43-04--o4-mini-patch
+  test_cases: 225
+  model: openhands-lm-32b-v0.1
+  edit_format: whole
+  commit_hash: c08336f
+  pass_rate_1: 4.0
+  pass_rate_2: 10.2
+  pass_num_1: 9
+  pass_num_2: 23
+  percent_cases_well_formed: 95.1
+  error_outputs: 55
+  num_malformed_responses: 41
+  num_with_malformed_responses: 11
+  user_asks: 166
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 11
+  total_tests: 225
+  command: aider --model openrouter/all-hands/openhands-lm-32b-v0.1
+  date: 2025-04-19
+  versions: 0.82.2.dev
+  seconds_per_case: 195.6
+  total_cost: 0.0000
