@@ -1081,7 +1081,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.message = "/paste"
 
     # Suppress all startup messages
-    io.tool_output("Welcome to WebPal AI.")
+    io.tool_output("Welcome to WebPal AI.", bold=True)
 
     if args.load:
         commands.cmd_load(args.load)
