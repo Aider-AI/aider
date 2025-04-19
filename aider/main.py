@@ -1080,11 +1080,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.edit_format = main_model.editor_edit_format
         args.message = "/paste"
 
-    # Suppress release notes messages
-
-    # Suppress git working directory messages
-
-    # Display simple welcome message instead of detailed model info
+    # Suppress all startup messages
     io.tool_output("Welcome to WebPal AI.")
 
     if args.load:
