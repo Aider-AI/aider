@@ -81,19 +81,6 @@ $env:AWS_SECRET_ACCESS_KEY = 'your_secret_key'
 $env:AWS_REGION = 'us-west-2'   # Put whichever AWS region that you'd like, that the Bedrock service supports.
 ```
 
-## Install boto3
-You may need to install the `boto3` package.
-
-```bash
-# If you installed with aider-install or `uv tool`
-uv tool run --from aider-chat pip install boto3
-
-# Or with pipx...
-pipx inject aider-chat boto3
-
-# Or with pip
-pip install -U boto3
-```
 
 ## Get Started
 
@@ -122,6 +109,20 @@ aider --list-models bedrock/
 ```
 
 Make sure you have access to these models in your AWS account before attempting to use them with Aider.
+
+## Install boto3
+You may need to install the `boto3` package.
+
+```bash
+# If you installed with aider-install or `uv tool`
+uv tool run --from aider-chat pip install boto3
+
+# Or with pipx...
+pipx inject aider-chat boto3
+
+# Or with pip
+pip install -U boto3
+```
 
 # More info
 
