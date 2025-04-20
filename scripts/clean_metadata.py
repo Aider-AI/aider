@@ -23,10 +23,8 @@ def find_block_lines(lines, key_to_remove):
     if start_line_idx == -1:
         # Key might not start with '{' on the same line, check if it starts immediately after
         key_pattern_no_brace = re.compile(r'^\s*"' + re.escape(key_to_remove) + r'"\s*:\s*$')
-        potential_start = -1
         for i, line in enumerate(lines):
             if key_pattern_no_brace.match(line.strip()):
-                potential_start = i
                 # Look for the opening brace on the next non-empty/comment line
                 j = i + 1
                 while j < len(lines):
@@ -51,7 +49,6 @@ def find_block_lines(lines, key_to_remove):
 
     brace_level = 0
     in_string = False
-    escape_next = False
     block_started = False
     end_line_idx = -1
 
@@ -87,7 +84,7 @@ def find_block_lines(lines, key_to_remove):
     if end_line_idx == -1:
         print(
             f"Warning: Could not find end of block for '{key_to_remove}' starting at line"
-            f" {start_line_idx+1}. Skipping removal."
+            f" {start_line_idx + 1}. Skipping removal."
         )
         return None, None  # Block end not found
 
