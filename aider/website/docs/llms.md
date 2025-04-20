@@ -16,7 +16,7 @@ description: Aider can connect to most LLMs for AI pair programming.
 
 Aider works best with these models, which are skilled at editing code:
 
-- [Gemini 2.5 Pro](/docs/gemini.html)
+- [Gemini 2.5 Pro](/docs/llms/gemini.html)
 - [DeepSeek R1 and V3](/docs/llms/deepseek.html)
 - [Claude 3.7 Sonnet](/docs/llms/anthropic.html)
 - [OpenAI o3, o4-mini and GPT-4.1](/docs/llms/openai.html)
