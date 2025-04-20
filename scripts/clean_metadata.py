@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import json
+import json5
 from pathlib import Path
 
 
@@ -28,8 +29,9 @@ def main():
         return
 
     try:
+        # Use json5 for the aider metadata file as it might contain comments
         with open(aider_path, "r") as f:
-            aider_data = json.load(f)
+            aider_data = json5.load(f)
     except json.JSONDecodeError as e:
         print(f"Error decoding JSON from {aider_path}: {e}")
         return
