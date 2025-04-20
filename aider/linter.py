@@ -45,13 +45,15 @@ class Linter:
             return fname
 
     def run_cmd(self, cmd, rel_fname, code):
-        cmd += " " + shlex.quote(rel_fname)
+        # Split the command into parts and add the quoted filename
+        cmd_parts = shlex.split(cmd)
+        cmd_parts.append(rel_fname)  # No need to quote since we're using a list
 
         returncode = 0
         stdout = ""
         try:
             returncode, stdout = run_cmd_subprocess(
-                cmd,
+                cmd_parts,  # Pass as list instead of string
                 cwd=self.root,
                 encoding=self.encoding,
             )
@@ -62,7 +64,7 @@ class Linter:
         if returncode == 0:
             return  # zero exit status
 
-        res = f"## Running: {cmd}\n\n"
+        res = f"## Running: {' '.join(cmd_parts)}\n\n"
         res += errors
 
         return self.errors_to_lint_result(rel_fname, res)
