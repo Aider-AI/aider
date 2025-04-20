@@ -1371,3 +1371,13 @@
   edit_format: diff
   use_repo_map: true
   accepts_settings: ["thinking_tokens"]
+
+- name: gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
+
+- name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
