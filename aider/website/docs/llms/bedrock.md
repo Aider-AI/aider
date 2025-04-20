@@ -6,7 +6,8 @@ nav_order: 560
 # Amazon Bedrock
 
 Aider can connect to models provided by Amazon Bedrock.
-You will need to have an AWS account with access to the Bedrock service and the specific models you wish to use.
+To configure Aider to use the Amazon Bedrock API, you need to set up your AWS credentials.
+This can be done using the AWS CLI or by setting environment variables.
 
 ## Select a Model from Amazon Bedrock
 
@@ -68,7 +69,7 @@ export AWS_PROFILE=your-profile
 ```
 
 You can add these to your 
-`.env` file.
+[.env file](/docs/config/dotenv.html).
 
 ### Set Environment Variables with PowerShell
 
