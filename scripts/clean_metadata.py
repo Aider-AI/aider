@@ -36,7 +36,7 @@ def find_block_lines(lines, key_to_remove):
                         start_line_idx = i  # Start from the key definition line
                         break
                     else:
-                        potential_start = -1  # False alarm
+                        # False alarm, the line after the key wasn't '{'
                         break
                 if start_line_idx != -1:
                     break
