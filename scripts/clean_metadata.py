@@ -9,7 +9,8 @@ import json5
 
 def main():
     script_dir = Path(__file__).parent.resolve()
-    litellm_path = script_dir / "../../litellm/model_prices_and_context_window.json"
+    # Adjust path relative to the script's location in the aider repo
+    litellm_path = script_dir.parent / "../litellm/model_prices_and_context_window.json"
     aider_path = script_dir / "../aider/resources/model-metadata.json"
 
     if not litellm_path.exists():
@@ -44,6 +45,7 @@ def main():
     litellm_keys = set(litellm_data.keys())
     aider_keys = set(aider_data.keys())
 
+    keys_to_remove = set()
     common_keys = sorted(list(litellm_keys.intersection(aider_keys)))
 
     if common_keys:
@@ -79,10 +81,49 @@ def main():
                     # like 'termcolor' or manual ANSI codes)
                     # Simple +/- indication is standard for diffs
                     print(line)
-            print("\n" + "=" * 40 + "\n")
+            print("\n" + "=" * 40)
+
+            # Ask user if they want to remove the entry from aider's metadata
+            response = input(
+                f"Remove '{key}' from aider/resources/model-metadata.json? (y/N): "
+            ).strip().lower()
+            if response == 'y':
+                keys_to_remove.add(key)
+                print(f"Marked '{key}' for removal.")
+            else:
+                print(f"Keeping '{key}'.")
+            print("-" * 40 + "\n")  # Separator for the next model
 
     else:
         print("No common models found between the two files.")
+        return # Exit if no common keys
+
+    # Remove marked keys after iterating through all common models
+    if keys_to_remove:
+        print("\nRemoving marked entries from aider data...")
+        removed_count = 0
+        for key in keys_to_remove:
+            if key in aider_data:
+                del aider_data[key]
+                print(f" - Removed {key}")
+                removed_count += 1
+
+        if removed_count > 0:
+            # Write the modified data back to the aider metadata file
+            try:
+                with open(aider_path, "w") as f:
+                    # Use json.dump for standard, clean JSON output
+                    # Using sort_keys=True for consistent ordering
+                    json.dump(aider_data, f, indent=4, sort_keys=True)
+                    # Add a trailing newline for POSIX compatibility
+                    f.write("\n")
+                print(f"\nSuccessfully updated {aider_path} with {removed_count} removal(s).")
+            except Exception as e:
+                print(f"\nError writing updated data to {aider_path}: {e}")
+        else:
+             print("\nNo entries were actually removed (perhaps they were already gone?).")
+    else:
+        print("\nNo entries marked for removal.")
 
 
 if __name__ == "__main__":
