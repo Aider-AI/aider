@@ -7,14 +7,22 @@ nav_order: 400
 
 You'll need a [xAI API key](https://console.x.ai.).
 
-To use xAI:
+First, install aider:
+
+{% include install.md %}
+
+Then configure your API keys:
 
 ```bash
-python -m pip install aider-install
-aider-install
-
 export XAI_API_KEY=<key> # Mac/Linux
 setx   XAI_API_KEY <key> # Windows, restart shell after setx
+```
+
+Start working with aider and xAI on your codebase:
+
+```bash
+# Change directory into your codebase
+cd /to/your/project
 
 # Grok 3
 aider --model xai/grok-3-beta

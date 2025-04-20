@@ -6,10 +6,7 @@ nav_order: 560
 # Amazon Bedrock
 
 Aider can connect to models provided by Amazon Bedrock.
-You will need to have an AWS account with access to the Bedrock service.
-
-To configure Aider to use the Amazon Bedrock API, you need to set up your AWS credentials.
-This can be done using the AWS CLI or by setting environment variables.
+You will need to have an AWS account with access to the Bedrock service and the specific models you wish to use.
 
 ## Select a Model from Amazon Bedrock
 
@@ -37,6 +34,14 @@ feature, you will receive an error message like the following:
 anthropic.claude-3-7-sonnet-20250219-v1:0 with on-demand throughput isn\xe2\x80\x99t supported. Retry your
 request with the ID or ARN of an inference profile that contains this model."}'
 
+## Installation and Configuration
+
+First, install aider:
+
+{% include install.md %}
+
+Next, configure your AWS credentials. This can be done using the AWS CLI or by setting environment variables.
+
 ## AWS CLI Configuration
 
 If you haven't already, install the [AWS CLI](https://aws.amazon.com/cli/) and configure it with your credentials:
@@ -49,7 +54,7 @@ This will prompt you to enter your AWS Access Key ID, Secret Access Key, and def
 
 ## Environment Variables
 
-Alternatively, you can set the following environment variables:
+You can set the following environment variables:
 
 ```bash
 export AWS_REGION=your_preferred_region
@@ -63,7 +68,7 @@ export AWS_PROFILE=your-profile
 ```
 
 You can add these to your 
-[.env file](/docs/config/dotenv.html).
+`.env` file.
 
 ### Set Environment Variables with PowerShell
 
@@ -76,6 +81,8 @@ $env:AWS_REGION = 'us-west-2'   # Put whichever AWS region that you'd like, that
 ```
 
 ## Install boto3
+
+Aider needs the `boto3` library to connect to Bedrock.
 
 The AWS Bedrock provider requires the `boto3` package in order to function correctly:
 
@@ -95,12 +102,14 @@ You must install `boto3` dependency to aider's virtual environment installed via
 uv tool run --from aider-chat pip install boto3
 ```
 
-
-## Running Aider with Bedrock
+## Get Started
 
 Once your AWS credentials are set up, you can run Aider with the `--model` command line switch, specifying the Bedrock model you want to use:
 
 ```bash
+# Change directory into your codebase
+cd /to/your/project
+
 aider --model bedrock/anthropic.claude-3-5-sonnet-20240620-v1:0
 ```
 
