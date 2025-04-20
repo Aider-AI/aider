@@ -206,6 +206,9 @@ def main(
     read_model_settings: str = typer.Option(
         None, "--read-model-settings", help="Load aider model settings from YAML file"
     ),
+    reasoning_effort: Optional[str] = typer.Option(
+        None, "--reasoning-effort", help="Set reasoning effort for models that support it"
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -362,6 +365,7 @@ def main(
                 editor_edit_format,
                 num_ctx,
                 sleep,
+                reasoning_effort,
             )
 
             all_results.append(results)
@@ -384,6 +388,9 @@ def main(
                 replay,
                 editor_model,
                 editor_edit_format,
+                num_ctx,
+                sleep,
+                reasoning_effort,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -481,6 +488,7 @@ def summarize_results(dirname, stats_languages=None):
     res.indentation_errors = 0
     res.lazy_comments = 0
 
+    res.reasoning_effort = None
     variants = defaultdict(set)
 
     for results in all_results:
@@ -508,6 +516,8 @@ def summarize_results(dirname, stats_languages=None):
 
         res.syntax_errors += results.get("syntax_errors", 0)
         res.indentation_errors += results.get("indentation_errors", 0)
+
+        res.reasoning_effort = results.get("reasoning_effort")
 
         for key in "model edit_format commit_hash editor_model editor_edit_format".split():
             val = results.get(key)
@@ -551,6 +561,9 @@ def summarize_results(dirname, stats_languages=None):
         val = ", ".join(map(str, val))
         setattr(res, key, val)
         console.print(f"  {key}: {val}", style=style)
+
+    if res.reasoning_effort is not None:
+        print(f"  reasoning_effort: {res.reasoning_effort}")
 
     for i in range(tries):
         print(f"  pass_rate_{i + 1}: {percents[i]:.1f}")
@@ -663,6 +676,7 @@ def run_test_real(
     editor_edit_format,
     num_ctx=None,
     sleep=0,
+    reasoning_effort: Optional[str] = None,
     read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
@@ -767,7 +781,11 @@ def run_test_real(
         weak_model=weak_model_name,
         editor_model=editor_model,
         editor_edit_format=editor_edit_format,
+        verbose=verbose,
     )
+
+    if reasoning_effort is not None:
+        main_model.set_reasoning_effort(reasoning_effort)
 
     dump(main_model.max_chat_history_tokens)
 
@@ -919,6 +937,7 @@ def run_test_real(
         syntax_errors=syntax_errors,
         indentation_errors=indentation_errors,
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
+        reasoning_effort=reasoning_effort,
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,

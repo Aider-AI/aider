@@ -312,11 +312,8 @@ class PatchCoder(Coder):
                 index += 1
                 if not path:
                     raise DiffError("Update File action missing path.")
-                if path in patch.actions:
-                    raise DiffError(f"Duplicate action for file: {path}")
-                if path not in current_files:
-                    raise DiffError(f"Update File Error - missing file content for: {path}")
 
+                # Optional move target
                 move_to = None
                 if index < len(lines) and _norm(lines[index]).startswith("*** Move to: "):
                     move_to = _norm(lines[index])[len("*** Move to: ") :].strip()
@@ -324,12 +321,36 @@ class PatchCoder(Coder):
                     if not move_to:
                         raise DiffError("Move to action missing path.")
 
+                if path not in current_files:
+                    raise DiffError(f"Update File Error - missing file content for: {path}")
+
                 file_content = current_files[path]
-                action, index, fuzz = self._parse_update_file_sections(lines, index, file_content)
-                action.path = path  # Ensure path is set
-                action.move_path = move_to
-                patch.actions[path] = action
-                fuzz_accumulator += fuzz
+
+                existing_action = patch.actions.get(path)
+                if existing_action is not None:
+                    # Merge additional UPDATE block into the existing one
+                    if existing_action.type != ActionType.UPDATE:
+                        raise DiffError(f"Conflicting actions for file: {path}")
+
+                    new_action, index, fuzz = self._parse_update_file_sections(
+                        lines, index, file_content
+                    )
+                    existing_action.chunks.extend(new_action.chunks)
+
+                    if move_to:
+                        if existing_action.move_path and existing_action.move_path != move_to:
+                            raise DiffError(f"Conflicting move targets for file: {path}")
+                        existing_action.move_path = move_to
+                    fuzz_accumulator += fuzz
+                else:
+                    # First UPDATE block for this file
+                    action, index, fuzz = self._parse_update_file_sections(
+                        lines, index, file_content
+                    )
+                    action.path = path
+                    action.move_path = move_to
+                    patch.actions[path] = action
+                    fuzz_accumulator += fuzz
                 continue
 
             # ---------- DELETE ---------- #
@@ -338,8 +359,14 @@ class PatchCoder(Coder):
                 index += 1
                 if not path:
                     raise DiffError("Delete File action missing path.")
-                if path in patch.actions:
-                    raise DiffError(f"Duplicate action for file: {path}")
+                existing_action = patch.actions.get(path)
+                if existing_action:
+                    if existing_action.type == ActionType.DELETE:
+                        # Duplicate delete – ignore the extra block
+                        self.io.tool_warning(f"Duplicate delete action for file: {path} ignored.")
+                        continue
+                    else:
+                        raise DiffError(f"Conflicting actions for file: {path}")
                 if path not in current_files:
                     raise DiffError(
                         f"Delete File Error - file not found: {path}"
