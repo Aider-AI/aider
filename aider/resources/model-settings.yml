@@ -1367,3 +1367,7 @@
   #  extra_body:
   #   reasoning_effort: high
       
+- name: gemini/gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
