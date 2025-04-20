@@ -414,11 +414,15 @@ def strip_filename(filename, fence):
     start_fence = fence[0]
     if filename.startswith(start_fence):
         candidate = filename[len(start_fence) :]
-        if candidate and "." in candidate:
+        if candidate and ("." in candidate or "/" in candidate):
             return candidate
+        return
 
     if filename.startswith(triple_backticks):
-        filename = filename[len(triple_backticks) :]
+        candidate = filename[len(triple_backticks) :]
+        if candidate and ("." in candidate or "/" in candidate):
+            return candidate
+        return
 
     filename = filename.rstrip(":")
     filename = filename.lstrip("#")
