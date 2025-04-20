@@ -6,7 +6,7 @@ from pathlib import Path
 
 def main():
     script_dir = Path(__file__).parent.resolve()
-    litellm_path = script_dir / "../litellm/model_prices_and_context_window.json"
+    litellm_path = script_dir / "../../litellm/model_prices_and_context_window.json"
     aider_path = script_dir / "../aider/resources/model-metadata.json"
 
     if not litellm_path.exists():
