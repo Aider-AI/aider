@@ -2,11 +2,10 @@
 
 import difflib
 import json
-from pathlib import Path
 import re
+from pathlib import Path
 
 import json5
-
 
 
 def find_block_lines(lines, key_to_remove):
@@ -36,16 +35,18 @@ def find_block_lines(lines, key_to_remove):
                         j += 1
                         continue
                     if stripped_next_line.startswith("{"):
-                        start_line_idx = i # Start from the key definition line
+                        start_line_idx = i  # Start from the key definition line
                         break
                     else:
-                        potential_start = -1 # False alarm
+                        potential_start = -1  # False alarm
                         break
                 if start_line_idx != -1:
                     break
 
     if start_line_idx == -1:
-        print(f"Warning: Could not reliably find start line for '{key_to_remove}'. Skipping removal.")
+        print(
+            f"Warning: Could not reliably find start line for '{key_to_remove}'. Skipping removal."
+        )
         return None, None  # Key block start not found clearly
 
     brace_level = 0
@@ -62,20 +63,20 @@ def find_block_lines(lines, key_to_remove):
         for char_idx, char in enumerate(line):
             # Rudimentary string detection
             if char == '"':
-                 # Check if preceded by an odd number of backslashes (escaped quote)
-                 backslashes = 0
-                 temp_idx = char_idx - 1
-                 while temp_idx >= 0 and line[temp_idx] == '\\':
-                     backslashes += 1
-                     temp_idx -= 1
-                 if backslashes % 2 == 0:
-                     in_string = not in_string
+                # Check if preceded by an odd number of backslashes (escaped quote)
+                backslashes = 0
+                temp_idx = char_idx - 1
+                while temp_idx >= 0 and line[temp_idx] == "\\":
+                    backslashes += 1
+                    temp_idx -= 1
+                if backslashes % 2 == 0:
+                    in_string = not in_string
 
             if not in_string:
-                if char == '{':
+                if char == "{":
                     brace_level += 1
-                    block_started = True # Mark that we've entered the block
-                elif char == '}':
+                    block_started = True  # Mark that we've entered the block
+                elif char == "}":
                     brace_level -= 1
 
         # Check if the block ends *after* processing the entire line
@@ -84,8 +85,11 @@ def find_block_lines(lines, key_to_remove):
             break
 
     if end_line_idx == -1:
-        print(f"Warning: Could not find end of block for '{key_to_remove}' starting at line {start_line_idx+1}. Skipping removal.")
-        return None, None # Block end not found
+        print(
+            f"Warning: Could not find end of block for '{key_to_remove}' starting at line"
+            f" {start_line_idx+1}. Skipping removal."
+        )
+        return None, None  # Block end not found
 
     return start_line_idx, end_line_idx
 
@@ -96,7 +100,7 @@ def remove_block_surgically(file_path, key_to_remove):
         # Read with universal newlines, but keep track for writing
         with open(file_path, "r") as f:
             content = f.read()
-            lines = content.splitlines(keepends=True) # Keep original line endings
+            lines = content.splitlines(keepends=True)  # Keep original line endings
     except Exception as e:
         print(f"Error reading {file_path} for removal: {e}")
         return False
@@ -104,7 +108,7 @@ def remove_block_surgically(file_path, key_to_remove):
     start_idx, end_idx = find_block_lines(lines, key_to_remove)
 
     if start_idx is None or end_idx is None:
-        return False # Error message already printed by find_block_lines
+        return False  # Error message already printed by find_block_lines
 
     # Prepare the lines to be written, excluding the identified block
     output_lines = lines[:start_idx] + lines[end_idx + 1 :]
