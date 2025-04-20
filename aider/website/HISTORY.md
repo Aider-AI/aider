@@ -24,6 +24,14 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Add support for `gemini-2.5-flash-preview-04-17` models.
+- Improved "diff" format for Gemini 2.5 Flash by accepting filenames provided on the same line as the opening fence.
+- Add new `udiff-simple` edit format, for Gemini 2.5 Pro.
+- Update default weak/editor models for Gemini 2.5 Pro models to use `gemini-2.5-flash-preview-04-17`.
+- Aider wrote 69% of the code in this release.
+
 ### Aider v0.82.2
 
 - Fix editing shell files with diff-fenced, by zjy1412.

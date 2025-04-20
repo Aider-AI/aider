@@ -674,6 +674,12 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   reasoning_tag: think
 
+- name: gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings:
+  - thinking_tokens
+
 - name: gemini/gemini-1.5-flash-002
 
 - name: gemini/gemini-1.5-flash-exp-0827
@@ -702,9 +708,15 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
 
+- name: gemini/gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings:
+  - thinking_tokens
+
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
-  weak_model_name: gemini/gemini-2.0-flash
+  weak_model_name: gemini/gemini-2.5-flash-preview-04-17
   use_repo_map: true
 
 - name: gemini/gemini-2.5-pro-preview-03-25
@@ -1446,6 +1458,12 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings:
+  - thinking_tokens
+
 - name: vertex_ai/claude-3-5-haiku@20241022
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
@@ -1496,11 +1514,15 @@ cog.out("```\n")
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
+  weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
   use_repo_map: true
+  editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
+  weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
   use_repo_map: true
+  editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-pro-experimental
   edit_format: diff-fenced
