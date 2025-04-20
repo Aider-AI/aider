@@ -49,8 +49,8 @@ def main():
     if common_keys:
         print("Comparing common models found in both files:\n")
         for key in common_keys:
-            print(f"--- {key} (litellm) ---")
-            print(f"+++ {key} (aider) +++")
+            print(f"--- {key} (aider) ---")
+            print(f"+++ {key} (litellm) +++")
 
             litellm_entry = litellm_data.get(key, {})
             aider_entry = aider_data.get(key, {})
@@ -61,10 +61,10 @@ def main():
 
             # Generate unified diff
             diff = difflib.unified_diff(
-                litellm_json,
                 aider_json,
-                fromfile=f"{key} (litellm)",
-                tofile=f"{key} (aider)",
+                litellm_json,
+                fromfile=f"{key} (aider)",
+                tofile=f"{key} (litellm)",
                 lineterm="",
                 n=max(len(litellm_json), len(aider_json)),  # Show all lines
             )
