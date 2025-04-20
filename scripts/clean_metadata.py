@@ -75,7 +75,8 @@ def main():
                 print("(No differences found)")
             else:
                 for line in diff_lines:
-                    # Add color for better readability (optional, requires a library like 'termcolor' or manual ANSI codes)
+                    # Add color for better readability (optional, requires a library
+                    # like 'termcolor' or manual ANSI codes)
                     # Simple +/- indication is standard for diffs
                     print(line)
             print("\n" + "=" * 40 + "\n")
