@@ -575,6 +575,69 @@ Hope you like it!
         edits = list(eb.find_original_update_blocks(edit, fence=quad_backticks))
         self.assertEqual(edits, [("foo.txt", "", "Tooooo\n")])
 
+    #Test for shell script blocks with sh language identifier (issue #3785)
+    def test_find_original_update_blocks_with_sh_language_identifier(self):
+        # https://github.com/Aider-AI/aider/issues/3785
+        edit = """
+Here's a shell script:
+
+```sh
+test_hello.sh
+<<<<<<< SEARCH
+=======
+#!/bin/bash
+# Check if exactly one argument is provided
+if [ "$#" -ne 1 ]; then
+    echo "Usage: $0 <argument>" >&2
+    exit 1
+fi
+
+# Echo the first argument
+echo "$1"
+
+exit 0
+>>>>>>> REPLACE
+```
+"""
+
+        edits = list(eb.find_original_update_blocks(edit))
+        # Instead of comparing exact strings, check that we got the right file and structure
+        self.assertEqual(len(edits), 1)
+        self.assertEqual(edits[0][0], "test_hello.sh")
+        self.assertEqual(edits[0][1], "")
+
+        # Check that the content contains the expected shell script elements
+        result_content = edits[0][2]
+        self.assertIn("#!/bin/bash", result_content)
+        self.assertIn("if [ \"$#\" -ne 1 ];", result_content)
+        self.assertIn("echo \"Usage: $0 <argument>\"", result_content)
+        self.assertIn("exit 1", result_content)
+        self.assertIn("echo \"$1\"", result_content)
+        self.assertIn("exit 0", result_content)
+
+    #Test for C# code blocks with csharp language identifier
+    def test_find_original_update_blocks_with_csharp_language_identifier(self):
+        edit = """
+Here's a C# code change:
+
+```csharp
+Program.cs
+<<<<<<< SEARCH
+Console.WriteLine("Hello World!");
+=======
+Console.WriteLine("Hello, C# World!");
+>>>>>>> REPLACE
+```
+"""
+
+        edits = list(eb.find_original_update_blocks(edit))
+        search_text = "Console.WriteLine(\"Hello World!\");\n"
+        replace_text = "Console.WriteLine(\"Hello, C# World!\");\n"
+        self.assertEqual(
+            edits,
+            [("Program.cs", search_text, replace_text)]
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
