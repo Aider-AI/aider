@@ -412,7 +412,13 @@ def strip_filename(filename, fence):
         return
 
     start_fence = fence[0]
-    if filename.startswith(start_fence) or filename.startswith(triple_backticks):
+    if filename.startswith(start_fence):
+        candidate = filename[len(start_fence):]
+        if candidate and "." in candidate:
+            return candidate
+
+    if filename.startswith(triple_backticks):
+        candidate = # ai!
         return
 
     filename = filename.rstrip(":")
