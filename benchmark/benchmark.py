@@ -209,6 +209,9 @@ def main(
     reasoning_effort: Optional[str] = typer.Option(
         None, "--reasoning-effort", help="Set reasoning effort for models that support it"
     ),
+    thinking_tokens: Optional[int] = typer.Option(
+        None, "--thinking-tokens", help="Set thinking tokens for models that support it"
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -366,6 +369,7 @@ def main(
                 num_ctx,
                 sleep,
                 reasoning_effort,
+                thinking_tokens,
             )
 
             all_results.append(results)
@@ -391,6 +395,7 @@ def main(
                 num_ctx,
                 sleep,
                 reasoning_effort,
+                thinking_tokens,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -489,6 +494,7 @@ def summarize_results(dirname, stats_languages=None):
     res.lazy_comments = 0
 
     res.reasoning_effort = None
+    res.thinking_tokens = None
     variants = defaultdict(set)
 
     for results in all_results:
@@ -518,6 +524,7 @@ def summarize_results(dirname, stats_languages=None):
         res.indentation_errors += results.get("indentation_errors", 0)
 
         res.reasoning_effort = results.get("reasoning_effort")
+        res.thinking_tokens = results.get("thinking_tokens")
 
         for key in "model edit_format commit_hash editor_model editor_edit_format".split():
             val = results.get(key)
@@ -564,6 +571,8 @@ def summarize_results(dirname, stats_languages=None):
 
     if res.reasoning_effort is not None:
         print(f"  reasoning_effort: {res.reasoning_effort}")
+    if res.thinking_tokens is not None:
+        print(f"  thinking_tokens: {res.thinking_tokens}")
 
     for i in range(tries):
         print(f"  pass_rate_{i + 1}: {percents[i]:.1f}")
@@ -650,15 +659,14 @@ def get_replayed_content(replay_dname, test_dname):
 def run_test(original_dname, testdir, *args, **kwargs):
     try:
         return run_test_real(original_dname, testdir, *args, **kwargs)
-    except Exception as err:
+    except Exception:
         print("=" * 40)
         print("Test failed")
-        print(err)
         traceback.print_exc()
 
         testdir = Path(testdir)
         results_fname = testdir / ".aider.results.json"
-        results_fname.write_text(json.dumps(dict(exception=str(err))))
+        results_fname.write_text(json.dumps(dict(exception=traceback.format_exc())))
 
 
 def run_test_real(
@@ -677,6 +685,7 @@ def run_test_real(
     num_ctx=None,
     sleep=0,
     reasoning_effort: Optional[str] = None,
+    thinking_tokens: Optional[int] = None,
     read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
@@ -786,6 +795,9 @@ def run_test_real(
 
     if reasoning_effort is not None:
         main_model.set_reasoning_effort(reasoning_effort)
+
+    if thinking_tokens is not None:
+        main_model.set_thinking_tokens(thinking_tokens)
 
     dump(main_model.max_chat_history_tokens)
 
@@ -938,6 +950,7 @@ def run_test_real(
         indentation_errors=indentation_errors,
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
         reasoning_effort=reasoning_effort,
+        thinking_tokens=thinking_tokens,
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,
