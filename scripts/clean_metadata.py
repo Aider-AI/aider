@@ -177,8 +177,8 @@ def main():
             if litellm_entry == aider_entry:
                 print(f"'{key}': Entries are semantically identical.")
                 print("\n" + "=" * 40)
-                print("-" * 40 + "\n") # Separator for the next model
-                continue # Skip diff and removal prompt for identical entries
+                print("-" * 40 + "\n")  # Separator for the next model
+                continue  # Skip diff and removal prompt for identical entries
 
             # Generate unified diff
             # If dictionaries differ, generate JSON strings to show the diff
@@ -198,7 +198,9 @@ def main():
             if not diff_lines:
                 # This case should ideally not be reached if dict comparison was done first,
                 # but kept as a fallback.
-                print("(No textual differences found, though dictionaries might differ in type/order)")
+                print(
+                    "(No textual differences found, though dictionaries might differ in type/order)"
+                )
             else:
                 for line in diff_lines:
                     # Add color for better readability (optional, requires a library
