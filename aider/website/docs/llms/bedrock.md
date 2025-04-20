@@ -82,25 +82,17 @@ $env:AWS_REGION = 'us-west-2'   # Put whichever AWS region that you'd like, that
 ```
 
 ## Install boto3
-
-Aider needs the `boto3` library to connect to Bedrock.
-
-The AWS Bedrock provider requires the `boto3` package in order to function correctly:
+You may need to install the `boto3` package.
 
 ```bash
-pip install boto3
-```
-
-To use aider installed via `pipx` with AWS Bedrock, you must add the `boto3` dependency to aider's virtual environment by running
-
-```bash
-pipx inject aider-chat boto3
-```
-
-You must install `boto3` dependency to aider's virtual environment installed via one-liner or uv by running
-
-```bash
+# If you installed with aider-install or `uv tool`
 uv tool run --from aider-chat pip install boto3
+
+# Or with pipx...
+pipx inject aider-chat boto3
+
+# Or with pip
+pip install -U boto3
 ```
 
 ## Get Started
