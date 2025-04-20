@@ -84,10 +84,12 @@ def main():
             print("\n" + "=" * 40)
 
             # Ask user if they want to remove the entry from aider's metadata
-            response = input(
-                f"Remove '{key}' from aider/resources/model-metadata.json? (y/N): "
-            ).strip().lower()
-            if response == 'y':
+            response = (
+                input(f"Remove '{key}' from aider/resources/model-metadata.json? (y/N): ")
+                .strip()
+                .lower()
+            )
+            if response == "y":
                 keys_to_remove.add(key)
                 print(f"Marked '{key}' for removal.")
             else:
@@ -96,7 +98,7 @@ def main():
 
     else:
         print("No common models found between the two files.")
-        return # Exit if no common keys
+        return  # Exit if no common keys
 
     # Remove marked keys after iterating through all common models
     if keys_to_remove:
@@ -121,7 +123,7 @@ def main():
             except Exception as e:
                 print(f"\nError writing updated data to {aider_path}: {e}")
         else:
-             print("\nNo entries were actually removed (perhaps they were already gone?).")
+            print("\nNo entries were actually removed (perhaps they were already gone?).")
     else:
         print("\nNo entries marked for removal.")
 
