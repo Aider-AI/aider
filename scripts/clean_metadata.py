@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import json
-import json5
 from pathlib import Path
+
+import json5
 
 
 def main():
