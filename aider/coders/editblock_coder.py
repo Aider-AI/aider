@@ -418,8 +418,7 @@ def strip_filename(filename, fence):
             return candidate
 
     if filename.startswith(triple_backticks):
-        candidate = # ai!
-        return
+        filename = filename[len(triple_backticks):]
 
     filename = filename.rstrip(":")
     filename = filename.lstrip("#")
