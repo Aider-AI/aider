@@ -101,7 +101,9 @@ def main():
                             f.write("\n")
                         print(f"Successfully removed '{key}' and updated {aider_path}.")
                     except Exception as e:
-                        print(f"Error writing updated data to {aider_path} after removing {key}: {e}")
+                        print(
+                            f"Error writing updated data to {aider_path} after removing {key}: {e}"
+                        )
                         # Exit or handle error appropriately? For now, just print.
                 else:
                     print(f"'{key}' not found in aider data (already removed?).")
