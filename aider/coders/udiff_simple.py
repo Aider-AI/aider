@@ -1,4 +1,5 @@
 from .udiff_coder import UnifiedDiffCoder
+from .udiff_simple_prompts import UnifiedDiffSimplePrompts
 
 
 class UnifiedDiffSimpleCoder(UnifiedDiffCoder):
@@ -10,7 +11,4 @@ class UnifiedDiffSimpleCoder(UnifiedDiffCoder):
 
     edit_format = "udiff-simple"
 
-    # We can inherit the prompts if they are suitable or override them here
-    # For now, let's assume the base UnifiedDiffPrompts are sufficient
-    # If specific prompts are needed for the "simple" version, they would be defined here.
-    # gpt_prompts = UnifiedDiffSimplePrompts()
+    gpt_prompts = UnifiedDiffSimplePrompts()
