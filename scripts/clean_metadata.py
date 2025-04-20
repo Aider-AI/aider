@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import json
 import difflib
+import json
 from pathlib import Path
 
 import json5
