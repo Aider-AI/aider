@@ -24,7 +24,14 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.82.2
+
+- Fix editing shell files with diff-fenced, by zjy1412.
+- Improve robustness of patch application by allowing multiple update/delete actions for the same file within a single response.
+- Update prompts to instruct LLMs to consolidate all edits for a given file into a single block within the patch.
+
 ### Aider v0.82.1
+
 - Added support for `o3` and `o4-mini` including provider-specific versions for OpenAI, OpenRouter, and Azure.
 - Added support for Azure specific `gpt-4.1` and `gpt-4.1-mini` models.
 - Disabled streaming for `o3` models since you need identity verification to stream.

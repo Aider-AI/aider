@@ -264,14 +264,14 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>2,499,338</td><td class='right'>83.9%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>313,377</td><td class='right'>10.5%</td></tr>
-<tr><td>o3</td><td class='right'>100,777</td><td class='right'>3.4%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>16,524</td><td class='right'>0.6%</td></tr>
-<tr><td>o4-mini</td><td class='right'>16,499</td><td class='right'>0.6%</td></tr>
-<tr><td>gpt-4.1-mini</td><td class='right'>11,775</td><td class='right'>0.4%</td></tr>
-<tr><td>gpt-4.1</td><td class='right'>10,687</td><td class='right'>0.4%</td></tr>
-<tr><td>None</td><td class='right'>8,001</td><td class='right'>0.3%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>2,084,414</td><td class='right'>91.2%</td></tr>
+<tr><td>o3</td><td class='right'>100,777</td><td class='right'>4.4%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>35,268</td><td class='right'>1.5%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>16,524</td><td class='right'>0.7%</td></tr>
+<tr><td>o4-mini</td><td class='right'>16,499</td><td class='right'>0.7%</td></tr>
+<tr><td>gpt-4.1-mini</td><td class='right'>11,775</td><td class='right'>0.5%</td></tr>
+<tr><td>gpt-4.1</td><td class='right'>10,687</td><td class='right'>0.5%</td></tr>
+<tr><td>None</td><td class='right'>8,001</td><td class='right'>0.4%</td></tr>
 <tr><td>gemini/REDACTED</td><td class='right'>606</td><td class='right'>0.0%</td></tr>
 </table>
 
