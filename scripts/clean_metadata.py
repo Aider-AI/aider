@@ -3,8 +3,122 @@
 import difflib
 import json
 from pathlib import Path
+import re
 
 import json5
+
+
+
+def find_block_lines(lines, key_to_remove):
+    """Finds the start and end line indices for a top-level key's block."""
+    start_line_idx = -1
+    # Regex to find the line starting the key definition, allowing for whitespace
+    # and ensuring it's the key we want (e.g., avoid matching "key1_extra": ...)
+    key_pattern = re.compile(r'^\s*"' + re.escape(key_to_remove) + r'"\s*:\s*{?')
+
+    for i, line in enumerate(lines):
+        if key_pattern.match(line.strip()):
+            start_line_idx = i
+            break
+
+    if start_line_idx == -1:
+        # Key might not start with '{' on the same line, check if it starts immediately after
+        key_pattern_no_brace = re.compile(r'^\s*"' + re.escape(key_to_remove) + r'"\s*:\s*$')
+        potential_start = -1
+        for i, line in enumerate(lines):
+            if key_pattern_no_brace.match(line.strip()):
+                potential_start = i
+                # Look for the opening brace on the next non-empty/comment line
+                j = i + 1
+                while j < len(lines):
+                    stripped_next_line = lines[j].strip()
+                    if not stripped_next_line or stripped_next_line.startswith("//"):
+                        j += 1
+                        continue
+                    if stripped_next_line.startswith("{"):
+                        start_line_idx = i # Start from the key definition line
+                        break
+                    else:
+                        potential_start = -1 # False alarm
+                        break
+                if start_line_idx != -1:
+                    break
+
+    if start_line_idx == -1:
+        print(f"Warning: Could not reliably find start line for '{key_to_remove}'. Skipping removal.")
+        return None, None  # Key block start not found clearly
+
+    brace_level = 0
+    in_string = False
+    escape_next = False
+    block_started = False
+    end_line_idx = -1
+
+    # Start brace counting from the identified start line
+    for i in range(start_line_idx, len(lines)):
+        line = lines[i]
+        # Simple brace counting - might be fooled by braces in comments or strings
+        # This is a limitation of pure text processing without full parsing
+        for char_idx, char in enumerate(line):
+            # Rudimentary string detection
+            if char == '"':
+                 # Check if preceded by an odd number of backslashes (escaped quote)
+                 backslashes = 0
+                 temp_idx = char_idx - 1
+                 while temp_idx >= 0 and line[temp_idx] == '\\':
+                     backslashes += 1
+                     temp_idx -= 1
+                 if backslashes % 2 == 0:
+                     in_string = not in_string
+
+            if not in_string:
+                if char == '{':
+                    brace_level += 1
+                    block_started = True # Mark that we've entered the block
+                elif char == '}':
+                    brace_level -= 1
+
+        # Check if the block ends *after* processing the entire line
+        if block_started and brace_level == 0:
+            end_line_idx = i
+            break
+
+    if end_line_idx == -1:
+        print(f"Warning: Could not find end of block for '{key_to_remove}' starting at line {start_line_idx+1}. Skipping removal.")
+        return None, None # Block end not found
+
+    return start_line_idx, end_line_idx
+
+
+def remove_block_surgically(file_path, key_to_remove):
+    """Reads the file, removes the block for the key, writes back."""
+    try:
+        # Read with universal newlines, but keep track for writing
+        with open(file_path, "r") as f:
+            content = f.read()
+            lines = content.splitlines(keepends=True) # Keep original line endings
+    except Exception as e:
+        print(f"Error reading {file_path} for removal: {e}")
+        return False
+
+    start_idx, end_idx = find_block_lines(lines, key_to_remove)
+
+    if start_idx is None or end_idx is None:
+        return False # Error message already printed by find_block_lines
+
+    # Prepare the lines to be written, excluding the identified block
+    output_lines = lines[:start_idx] + lines[end_idx + 1 :]
+
+    # Note: Comma handling is omitted for simplicity. User may need manual fix.
+
+    try:
+        with open(file_path, "w") as f:
+            f.writelines(output_lines)
+        print(f"Successfully removed '{key_to_remove}' block and updated {file_path}.")
+        return True
+    except Exception as e:
+        print(f"Error writing updated data to {file_path} after removing {key_to_remove}: {e}")
+        return False
 
 
 def main():
@@ -90,23 +204,15 @@ def main():
                 .lower()
             )
             if response == "y":
-                if key in aider_data:
-                    print(f"Removing '{key}' from aider data...")
-                    del aider_data[key]
+                # Perform surgical removal from the text file
+                if remove_block_surgically(aider_path, key):
                     removed_count += 1
-                    # Write the modified data back immediately
-                    try:
-                        with open(aider_path, "w") as f:
-                            json.dump(aider_data, f, indent=4, sort_keys=True)
-                            f.write("\n")
-                        print(f"Successfully removed '{key}' and updated {aider_path}.")
-                    except Exception as e:
-                        print(
-                            f"Error writing updated data to {aider_path} after removing {key}: {e}"
-                        )
-                        # Exit or handle error appropriately? For now, just print.
+                    # Optional: Also remove from the in-memory dict if needed later,
+                    # but it's not strictly necessary if we reload or finish now.
+                    # if key in aider_data: del aider_data[key]
                 else:
-                    print(f"'{key}' not found in aider data (already removed?).")
+                    print(f"Failed to remove '{key}' block surgically.")
+                    # Key might still be in aider_data if removal failed
             else:
                 print(f"Keeping '{key}'.")
             print("-" * 40 + "\n")  # Separator for the next model
