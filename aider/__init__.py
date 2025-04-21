@@ -1,4 +1,5 @@
 from packaging import version
+from . import macro_runner as _macro_runner
 
 __version__ = "0.82.3.dev"
 safe_version = __version__
