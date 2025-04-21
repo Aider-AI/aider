@@ -56,13 +56,28 @@ def ask(prompt: str) -> str:
     """
     return f"/ask {prompt}"
 
-def search(query: str, *, model: str = "openrouter/google-search"):
+def search(query: str, *, max_results: int = 5, model_suffix=":online") -> str:
     """
-    Hit a search‑specialised model on OpenRouter.
-    You may adjust the default model string to your account / tastes.
+    Yield a sequence that:
+      1. remembers the current model
+      2. switches to the same model with ':online' (or custom plugin cfg)
+      3. asks the query
+      4. restores the previous model
+
+    Example inside a macro::
+
+        hits = yield from ah.search("python asyncio graceful shutdown")
+        yield ah.log(hits)
     """
-    query = query.replace('"', '\\"')
-    return f"/model {model}\n> {query}\n/model -          # restore previous"
+
+    # Prepare the model-switch commands
+    set_online   = f"/model +{model_suffix}"
+    restore_prev = "/model -"          # built‑in: reverts to previous
+
+    # Compose multi‑line action: switch → ask → restore
+    # Each line will be executed sequentially by _dispatch_action
+    ask_line = f"> {query}"
+    return "\n".join([set_online, ask_line, restore_prev])
 
 
 def run(cmd: str, *, capture: Optional[str] = None
