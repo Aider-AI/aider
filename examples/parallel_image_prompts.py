@@ -1,48 +1,33 @@
 """
-parallel_image_prompts.py
--------------------------
-
-1. Launch *n* silent chat requests in parallel, each asking the model to
-   invent a vivid AI‑image prompt.
-2. Wait for all replies.
-3. Ask the model to pick the single “best” prompt.
-4. Print that winning prompt.
-
-Run with:
-    /macro examples/parallel_image_prompts.py n=5
+Run n silent LLM calls in parallel to generate image prompts,
+then print all of them at once and ask the model to choose the best.
 """
 
 import aider.helpers as ah
 from concurrent.futures import as_completed
 
 IDEA_PROMPT = (
-    "Invent a fantastical, visually rich text prompt for an AI image. "
-    "It should be roughly 20 words long and surprising."
+    "Invent a fantastical, visually rich, 20‑word text prompt for an AI image."
 )
 
 def main(ctx, *, n: int = 5):
     n = int(n)
 
-    # 1 · spawn N silent chat calls in parallel
-    futures = [ah.spawn(f"> {IDEA_PROMPT}") for _ in range(n)]
-    yield ah.log(f"# Collecting {n} ideas …")
+    # 1 · Spawn all jobs
+    futs = [ah.spawn(f"> {IDEA_PROMPT}") for _ in range(n)]
+    yield ah.log(f"# Launched {n} prompt generators in parallel…")
 
-    # Optional progress bar while they run
-    done = 0
-    for fut in as_completed(futures):
-        done += 1
-        yield ah.log("# [" + "#" * done + "." * (n - done) + "]")
+    # 2 · Wait silently
+    # This list comprehension implicitly waits for all futures to complete
+    ideas = [f.result().strip() for f in futs]
 
-    # 2 · gather results in original order
-    ideas = [f.result().strip() for f in futures]
+    # 3 · Emit the numbered list once
+    numbered = "\n".join(f"{i+1}. {txt}" for i, txt in enumerate(ideas, 1))
+    yield ah.log("\nAll prompts:\n" + numbered)
 
-    # 3 · ask the model to choose the best
-    joined = "\n".join(f"{i+1}. {txt}" for i, txt in enumerate(ideas))
+    # 4 · Ask model to pick the best
     best = yield ah.chat(
-        "Below are several candidate AI‑image prompts.\n\n"
-        f"{joined}\n\n"
-        "Pick the **single most striking** prompt and repeat it verbatim."
+        "Choose the single most striking prompt below and repeat it verbatim:\n\n"
+        + numbered
     )
-
-    # 4 · show the winner
-    yield ah.log("\n🥇  Best prompt:\n" + best.strip())
+    yield ah.log("\n🥇 Best prompt:\n" + best.strip())
