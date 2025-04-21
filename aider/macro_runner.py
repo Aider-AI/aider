@@ -106,6 +106,39 @@ def include(register: str) -> str:
     """Include a register’s contents in the chat."""
     return f"/include {register}"
 
+# --------------------------------------------------------------------- #
+#  Spawn helper – run any action in the background, stay silent         #
+# --------------------------------------------------------------------- #
+import concurrent.futures
+_EXEC = concurrent.futures.ThreadPoolExecutor(max_workers=8)
+_SPAWN_CMDS = None  # set inside run_macro()
+
+def _run_action_silent(commands, action: str):
+    """
+    Execute one macro action but suppress all UI output.
+    We reuse _dispatch_action so *any* slash/!/> string works.
+    """
+    # Temporarily silence tool_output to avoid console noise
+    io = commands.io
+    original = io.tool_output
+    io.tool_output = lambda *a, **kw: None
+    try:
+        return _dispatch_action(commands, action)
+    finally:
+        io.tool_output = original
+
+def spawn(action: str):
+    """
+    Run `action` asynchronously with no console output.
+    Example use inside a macro::
+
+        fut = ah.spawn("/ask How many routes are defined?")
+        ... do other work ...
+        answer = fut.result()
+    """
+    return _EXEC.submit(_run_action_silent, _SPAWN_CMDS, action)
+
+
 # ----------------------------------------------------------------------------
 # Internal utilities
 # ----------------------------------------------------------------------------
@@ -215,6 +248,9 @@ def run_macro(commands, argline: str) -> None:
         "send": commands.run,
     }
 
+    global _SPAWN_CMDS
+    _SPAWN_CMDS = commands
+
     gen = main(ctx, **kwargs)  # type: ignore[arg-type]
 
     try:
@@ -239,4 +275,5 @@ _helpers.include = include
 _helpers.chat = chat
 _helpers.ask = ask
 _helpers.search = search
+_helpers.spawn = spawn
 sys.modules["aider.helpers"] = _helpers
