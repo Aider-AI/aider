@@ -105,6 +105,12 @@ class Commands:
 
         raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
+    def cmd_macro(self, args):
+        "Execute a generator‑style macro: /macro <module.py> [k=v …]"
+        from .macro_runner import run_macro
+        run_macro(self, args)        # handles parsing, security, exec
+
+    
     def cmd_editor_model(self, args):
         "Switch the Editor Model to a new LLM"
 
