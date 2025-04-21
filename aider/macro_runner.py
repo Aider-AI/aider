@@ -186,18 +186,23 @@ def run_macro(commands, argline: str) -> None:
 
     main = getattr(module, "main", None)
     if not callable(main) or not inspect.isgeneratorfunction(main):
-        io.tool_error("Macro must define *generator* main(ctx, **kwargs)")
-
-        # ─── NEW: show a preview of the file for quick debugging ───
+        # ───────── clearer debug block ─────────
+        io.tool_error(
+            "=== [Error Debug: Macro] ===\n"
+            f"- Filename: {mod_spec}\n"
+            "- Problem : macro must define a *generator* "
+            "main(ctx, **kwargs)\n"
+            "- File preview below ↓ (first 20 lines)\n"
+            "========================================"
+        )
         try:
             with open(Path(mod_spec).expanduser().resolve(), "r") as fh:
-                head = "".join([next(fh) for _ in range(20)])
-            io.tool_output("\n--- file preview ---------------------\n"
-                           + head +
-                           ("...\n" if len(head.splitlines()) == 20 else "")
-                           + "-------------------------------------")
+                preview = "".join([next(fh) for _ in range(20)])
+            sep = "…" if len(preview.splitlines()) == 20 else ""
+            io.tool_output(preview + sep +
+                           "\n=== [End Debug] ===")
         except Exception as e:
-            io.tool_output(f"(could not read file: {e})")
+            io.tool_output(f"(could not read file: {e})\n=== [End Debug] ===")
         return
 
     ctx: Dict[str, Any] = {
