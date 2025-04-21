@@ -1,15 +1,22 @@
 """
-aider.macro_runner — runtime for the /macro command
-===================================================
+aider.macro_runner
+==================
 
-  /macro my_macro.py k1=v1 k2=v2 ...
+Runtime engine for the /macro command.
 
-• Imports the target module (file path or dotted name).
-• Finds a *generator* main(ctx, **kwargs).
-• Streams each yield back into Aider.
-• Provides helpers (log/run/code/include) so macro code stays clean.
+Usage inside Aider
+------------------
+    /macro path/to/macro.py loops=3 foo=bar
 
-This file RE‑EXPORTS the helpers as `aider.helpers`.
+The file (or dotted module) must expose a generator:
+
+    def main(ctx, **kwargs):
+        ...
+        yield from aider.helpers.run("echo hi", capture="msg")
+        yield aider.helpers.log("Done")
+
+Helper wrappers (log/run/code/include) are defined below and re‑exported as
+`aider.helpers`.
 """
 
 from __future__ import annotations
@@ -18,31 +25,38 @@ import importlib
 import importlib.machinery
 import importlib.util
 import inspect
-import os
 import shlex
 import sys
 import types
 from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
-# --------------------------------------------------------------------------- #
-# Helper API used by macro authors                                            #
-# --------------------------------------------------------------------------- #
+# ----------------------------------------------------------------------------
+# Helper API – macro authors import these from `aider.helpers`
+# ----------------------------------------------------------------------------
 
 def log(text: str) -> str:
-    """Print a line to the user’s console (never sent to the LLM)."""
+    """Write a line to the console only (never sent to the LLM)."""
     return f"# {text}"
 
 def run(cmd: str, *, capture: Optional[str] = None
         ) -> Generator[str, str | None, str | None]:
-    """Yield a shell command; return its captured stdout/stderr."""
+    """
+    Shell helper::
+
+        out = yield from ah.run('pytest -q', capture='t_out')
+    """
     suffix = f" >{capture}" if capture else ""
     result = yield f"! {cmd}{suffix}"
     return result
 
 def code(file: str, prompt: str
          ) -> Generator[str, str | None, str | None]:
-    """Ask the model to edit a file; return the model’s reply."""
+    """
+    File‑edit helper::
+
+        reply = yield from ah.code('scene.json', 'Fix the bug')
+    """
     safe = prompt.replace("}", "\\}")
     result = yield f"/code {file} {{{safe}}}"
     return result
@@ -51,11 +65,12 @@ def include(register: str) -> str:
     """Include a register’s contents in the chat."""
     return f"/include {register}"
 
-# --------------------------------------------------------------------------- #
-# Argument parsing & module loading                                           #
-# --------------------------------------------------------------------------- #
+# ----------------------------------------------------------------------------
+# Internal utilities
+# ----------------------------------------------------------------------------
 
 def _maybe_num(v: str) -> int | float | str:
+    """Best‑effort cast of CLI values to int/float."""
     if v.isdigit() or (v.startswith('-') and v[1:].isdigit()):
         return int(v)
     try:
@@ -66,17 +81,20 @@ def _maybe_num(v: str) -> int | float | str:
 def _parse_argline(argline: str) -> tuple[str, Dict[str, Any]]:
     parts = shlex.split(argline)
     if not parts:
-        raise ValueError("missing module path")
+        raise ValueError("Missing module path")
     mod = parts[0]
     kwargs: Dict[str, Any] = {}
     for token in parts[1:]:
         if "=" not in token:
-            raise ValueError(f"bad arg '{token}', expected k=v")
+            raise ValueError(f"Bad arg '{token}', expected k=v")
         k, v = token.split("=", 1)
         kwargs[k] = _maybe_num(v)
     return mod, kwargs
 
 def _import_module(spec: str):
+    """
+    Import by absolute .py path or dotted module name.
+    """
     if spec.endswith(".py") or Path(spec).exists():
         path = Path(spec).expanduser().resolve()
         name = path.stem + "_macro"
@@ -87,50 +105,47 @@ def _import_module(spec: str):
         return module
     return importlib.import_module(spec)
 
-# --------------------------------------------------------------------------- #
-# Dispatch an action produced by the macro generator                          #
-# --------------------------------------------------------------------------- #
-
 def _dispatch_action(commands, action: str):
     """
-    Route the yielded `action` back into Aider and return the result
-    (if any) to the generator.
+    Route a yielded action back through Aider and return the result
+    to the generator.
     """
     if action.startswith("/") or action.startswith("!"):
-        return commands.run(action)             # regular command
+        return commands.run(action)
 
-    if action.startswith("# "):                 # console‑only log
+    if action.startswith("# "):                       # console log
         commands.io.tool_output(action[2:])
         return None
 
-    if action.startswith(">"):                  # prompt to the model
+    if action.startswith(">"):                       # prompt → LLM
         prompt = action[1:].lstrip()
         return commands.coder.run(prompt)
 
-    # fallback (unlikely)
+    # Fallback: treat as command string (lets user yield raw /add … etc.)
     return commands.run(action)
 
-# --------------------------------------------------------------------------- #
-# Public entry‑point called by cmd_macro                                      #
-# --------------------------------------------------------------------------- #
+# ----------------------------------------------------------------------------
+# Entry point invoked by Commands.cmd_macro
+# ----------------------------------------------------------------------------
 
 def run_macro(commands, argline: str) -> None:
     io = commands.io
+
     try:
         mod_spec, kwargs = _parse_argline(argline)
-    except ValueError as e:
-        io.tool_error(str(e))
+    except ValueError as err:
+        io.tool_error(str(err))
         return
 
     try:
         module = _import_module(mod_spec)
-    except Exception as e:
-        io.tool_error(f"import failed: {e}")
+    except Exception as err:
+        io.tool_error(f"Import failed: {err}")
         return
 
     main = getattr(module, "main", None)
     if not callable(main) or not inspect.isgeneratorfunction(main):
-        io.tool_error("macro needs a generator main(ctx, **kwargs)")
+        io.tool_error("Macro must define generator main(ctx, **kwargs)")
         return
 
     ctx: Dict[str, Any] = {
@@ -146,18 +161,18 @@ def run_macro(commands, argline: str) -> None:
     gen = main(ctx, **kwargs)  # type: ignore[arg-type]
 
     try:
-        action = next(gen)
+        action = next(gen)                     # prime
         while True:
             result = _dispatch_action(commands, action)
             action = gen.send(result)
     except StopIteration:
         pass
-    except Exception as e:
-        io.tool_error(f"macro runtime error: {e}")
+    except Exception as err:
+        io.tool_error(f"Macro runtime error: {err}")
 
-# --------------------------------------------------------------------------- #
-# Export helpers as virtual module aider.helpers                              #
-# --------------------------------------------------------------------------- #
+# ----------------------------------------------------------------------------
+# Re‑export helpers as `aider.helpers`
+# ----------------------------------------------------------------------------
 
 _helpers = types.ModuleType("aider.helpers")
 _helpers.log = log
