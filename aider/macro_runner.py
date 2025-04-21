@@ -39,6 +39,32 @@ def log(text: str) -> str:
     """Write a line to the console only (never sent to the LLM)."""
     return f"# {text}"
 
+# --------------------------------------------------------------------- #
+# Conversation / utility helpers                                        #
+# --------------------------------------------------------------------- #
+
+def chat(prompt: str) -> str:
+    """
+    Send a plain user message to the main model without editing files.
+    Equivalent to typing the prompt at the Aider prompt.
+    """
+    return f"> {prompt}"
+
+def ask(prompt: str) -> str:
+    """
+    Use Aider’s /ask command (questions about the code base, no edits).
+    """
+    return f"/ask {prompt}"
+
+def search(query: str, *, model: str = "openrouter/google-search"):
+    """
+    Hit a search‑specialised model on OpenRouter.
+    You may adjust the default model string to your account / tastes.
+    """
+    query = query.replace('"', '\\"')
+    return f"/model {model}\n> {query}\n/model -          # restore previous"
+
+
 def run(cmd: str, *, capture: Optional[str] = None
         ) -> Generator[str, str | None, str | None]:
     """
@@ -179,4 +205,7 @@ _helpers.log = log
 _helpers.run = run
 _helpers.code = code
 _helpers.include = include
+_helpers.chat = chat
+_helpers.ask = ask
+_helpers.search = search
 sys.modules["aider.helpers"] = _helpers
