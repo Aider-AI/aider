@@ -186,7 +186,18 @@ def run_macro(commands, argline: str) -> None:
 
     main = getattr(module, "main", None)
     if not callable(main) or not inspect.isgeneratorfunction(main):
-        io.tool_error("Macro must define generator main(ctx, **kwargs)")
+        io.tool_error("Macro must define *generator* main(ctx, **kwargs)")
+
+        # ─── NEW: show a preview of the file for quick debugging ───
+        try:
+            with open(Path(mod_spec).expanduser().resolve(), "r") as fh:
+                head = "".join([next(fh) for _ in range(20)])
+            io.tool_output("\n--- file preview ---------------------\n"
+                           + head +
+                           ("...\n" if len(head.splitlines()) == 20 else "")
+                           + "-------------------------------------")
+        except Exception as e:
+            io.tool_output(f"(could not read file: {e})")
         return
 
     ctx: Dict[str, Any] = {
