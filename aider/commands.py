@@ -279,45 +279,44 @@ class Commands:
         return commands
 
     # --------------------------------------------------------------------------- #
-    #  Command dispatcher
+    #  Command dispatcher  (drop‑in for aider/commands.py)
     # --------------------------------------------------------------------------- #
-    def do_run(self, cmd_name: str, inp: str) -> None:
+    def do_run(self, cmd_name: str, argstr: str) -> None:
         """
-        Generic command runner.
+        Dispatch a slash command.
     
         Parameters
         ----------
         cmd_name : str
-            The command name *without* the leading slash and with hyphens still
-            intact (eg. "macro", "editor-model").
-        inp : str
-            The full original user input line (eg.
-            "/macro examples/hello_loop.py loops=3").
+            Command name without the leading slash and with hyphens intact
+            (e.g. "macro", "editor-model").
+        argstr : str
+            Everything that followed the command token on the user’s input line.
+            For example, for
+                /macro examples/hello_loop.py loops=5
+            argstr is
+                "examples/hello_loop.py loops=5"
         """
         import os
     
-        # Convert hyphens to underscores to match the method naming convention.
+        # Resolve the handler method.
         method_name = f"cmd_{cmd_name.replace('-', '_')}"
         handler = getattr(self, method_name, None)
         if handler is None:
             self.io.tool_error(f"Unknown command: /{cmd_name}")
             return
     
-        # ARG STRING – everything after the first space (if any).
-        first_space = inp.find(" ")
-        argstr = "" if first_space == -1 else inp[first_space + 1 :].lstrip()
-    
-        # Optional debug print (set AIDER_DEBUG_CMD=1 in your shell).
+        # Optional debug output
         if os.getenv("AIDER_DEBUG_CMD"):
             self.io.tool_output(f"[debug] cmd='{cmd_name}'  argstr='{argstr}'")
     
         try:
             handler(argstr)
-        except ANY_GIT_ERROR as err:           # noqa: F405  (imported elsewhere)
+        except ANY_GIT_ERROR as err:          # noqa: F405  (imported elsewhere)
             self.io.tool_error(str(err))
         except Exception as err:
-            # Catch‑all so a bad handler can’t crash the REPL.
             self.io.tool_error(f"Error running /{cmd_name}: {err}")
+
 
 
     def matching_commands(self, inp):
