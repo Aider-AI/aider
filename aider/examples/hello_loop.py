@@ -26,7 +26,7 @@ def main(ctx, **kwargs):
     # Get parameters with defaults
     times = int(kwargs.get("times", 1))
     message = kwargs.get("message", "Hello!")
-    yield ah.log(f"[macro] kwargs = {kwargs!r}")
+    yield log(f"[macro] kwargs = {kwargs!r}")
     
     # Store in context for potential future use
     ctx["vars"]["times"] = times
