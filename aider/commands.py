@@ -1592,6 +1592,28 @@ class Commands:
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
 
+    def cmd_context(self, args="list"):
+        """
+        Review context documents in the current session.
+        
+        Usage:
+          /context list - List all context documents
+          /context show [index] - Show content of a specific context document
+        """
+        if not args or args == "list":
+            return self.coder.list_context_docs()
+        
+        parts = args.split(maxsplit=1)
+        if parts[0] == "show" and len(parts) > 1:
+            try:
+                index = int(parts[1])
+                return self.coder.show_context_doc(index)
+            except ValueError:
+                self.io.tool_error(f"Invalid index: {parts[1]}")
+                return
+        
+        self.io.tool_error("Unknown context command. Use '/context list' or '/context show [index]'")
+
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
 
