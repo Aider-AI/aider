@@ -117,40 +117,6 @@ For example:
 These settings will be merged with any model-specific settings, with the 
 `aider/extra_params` settings taking precedence for any direct conflicts.
 
-### Controlling o1 reasoning effort
-
-You need this chunk of yaml:
-
-```
-  extra_params:
-    extra_body:
-      reasoning_effort: high
-```
-
-This is a full entry for o1 with that setting, obtained by finding the default
-entry in the list below and adding the above `extra_params` entry:
-
-```
-- name: o1
-  edit_format: diff
-  weak_model_name: gpt-4o-mini
-  use_repo_map: true
-  send_undo_reply: false
-  lazy: false
-  reminder: user
-  examples_as_sys_msg: false
-  cache_control: false
-  caches_by_default: false
-  use_system_prompt: true
-  use_temperature: false
-  streaming: false
-  editor_model_name: gpt-4o
-  editor_edit_format: editor-diff
-  extra_params:
-    extra_body:
-      reasoning_effort: high
-```
-
 ### Default model settings
 
 Below are all the pre-configured model settings to give a sense for the settings which are supported.
