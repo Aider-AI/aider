@@ -138,13 +138,11 @@ def spawn(action: str):
     """
     return _EXEC.submit(_run_action_silent, _SPAWN_CMDS, action)
 
-
-# ----------------------------------------------------------------------------
-# Internal utilities
-# ----------------------------------------------------------------------------
-
+# --------------------------------------------------------------------------- #
+#  Argument parsing utilities  (restored)                                     #
+# --------------------------------------------------------------------------- #
 def _maybe_num(v: str) -> int | float | str:
-    """Best‑effort cast of CLI values to int/float."""
+    """Best‑effort cast of CLI values to int/float; else return unchanged."""
     if v.isdigit() or (v.startswith('-') and v[1:].isdigit()):
         return int(v)
     try:
@@ -153,6 +151,15 @@ def _maybe_num(v: str) -> int | float | str:
         return v
 
 def _parse_argline(argline: str) -> tuple[str, Dict[str, Any]]:
+    """
+    Split the arg string into (module_path, kwargs_dict).
+
+    Examples
+    --------
+    >>> _parse_argline("examples/hello.py loops=5")
+    ('examples/hello.py', {'loops': 5})
+    """
+    import shlex
     parts = shlex.split(argline)
     if not parts:
         raise ValueError("Missing module path")
@@ -165,10 +172,16 @@ def _parse_argline(argline: str) -> tuple[str, Dict[str, Any]]:
         kwargs[k] = _maybe_num(v)
     return mod, kwargs
 
+# --------------------------------------------------------------------------- #
+#  Module loader (restore intact)                                             #
+# --------------------------------------------------------------------------- #
 def _import_module(spec: str):
     """
     Import by absolute .py path or dotted module name.
     """
+    from pathlib import Path, PurePosixPath
+    import importlib, importlib.machinery, importlib.util
+
     if spec.endswith(".py") or Path(spec).exists():
         path = Path(spec).expanduser().resolve()
         name = path.stem + "_macro"
@@ -178,6 +191,11 @@ def _import_module(spec: str):
         loader.exec_module(module)  # type: ignore[arg-type]
         return module
     return importlib.import_module(spec)
+
+
+# ----------------------------------------------------------------------------
+# Internal utilities
+# ----------------------------------------------------------------------------
 
 def _dispatch_action(commands, action: str):
     """
