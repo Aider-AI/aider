@@ -107,6 +107,12 @@ class Commands:
 
         raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
+    def cmd_macro(self, args):
+        "Execute a generator‑style macro: /macro <module.py> [k=v …]"
+        from .macro_runner import run_macro
+        run_macro(self, args)        # handles parsing, security, exec
+
+    
     def cmd_editor_model(self, args):
         "Switch the Editor Model to a new LLM"
 
@@ -274,18 +280,46 @@ class Commands:
 
         return commands
 
-    def do_run(self, cmd_name, args):
-        cmd_name = cmd_name.replace("-", "_")
-        cmd_method_name = f"cmd_{cmd_name}"
-        cmd_method = getattr(self, cmd_method_name, None)
-        if not cmd_method:
-            self.io.tool_output(f"Error: Command {cmd_name} not found.")
+    # --------------------------------------------------------------------------- #
+    #  Command dispatcher  (drop‑in for aider/commands.py)
+    # --------------------------------------------------------------------------- #
+    def do_run(self, cmd_name: str, argstr: str) -> None:
+        """
+        Dispatch a slash command.
+    
+        Parameters
+        ----------
+        cmd_name : str
+            Command name without the leading slash and with hyphens intact
+            (e.g. "macro", "editor-model").
+        argstr : str
+            Everything that followed the command token on the user’s input line.
+            For example, for
+                /macro examples/hello_loop.py loops=5
+            argstr is
+                "examples/hello_loop.py loops=5"
+        """
+        import os
+    
+        # Resolve the handler method.
+        method_name = f"cmd_{cmd_name.replace('-', '_')}"
+        handler = getattr(self, method_name, None)
+        if handler is None:
+            self.io.tool_error(f"Unknown command: /{cmd_name}")
             return
-
+    
+        # Optional debug output
+        if os.getenv("AIDER_DEBUG_CMD"):
+            self.io.tool_output(f"[debug] cmd='{cmd_name}'  argstr='{argstr}'")
+    
         try:
-            return cmd_method(args)
-        except ANY_GIT_ERROR as err:
-            self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
+            handler(argstr)
+        except ANY_GIT_ERROR as err:          # noqa: F405  (imported elsewhere)
+            self.io.tool_error(str(err))
+        except Exception as err:
+            self.io.tool_error(f"Error running /{cmd_name}: {err}")
+
+
 
     def run(self, inp):
         # Check for command aliases first
@@ -1552,6 +1586,28 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+
+    def cmd_context(self, args="list"):
+        """
+        Review context documents in the current session.
+        
+        Usage:
+          /context list - List all context documents
+          /context show [index] - Show content of a specific context document
+        """
+        if not args or args == "list":
+            return self.coder.list_context_docs()
+        
+        parts = args.split(maxsplit=1)
+        if parts[0] == "show" and len(parts) > 1:
+            try:
+                index = int(parts[1])
+                return self.coder.show_context_doc(index)
+            except ValueError:
+                self.io.tool_error(f"Invalid index: {parts[1]}")
+                return
+        
+        self.io.tool_error("Unknown context command. Use '/context list' or '/context show [index]'")
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
