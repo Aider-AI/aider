@@ -7,7 +7,6 @@ import tempfile
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
-import shlex
 
 import pyperclip
 from PIL import Image, ImageGrab
@@ -26,7 +25,6 @@ from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
-from .macro_runner import MacroSecurityError, run_macro
 
 
 class SwitchCoder(Exception):
@@ -321,17 +319,22 @@ class Commands:
 
 
 
-    def run(self, inp):
-        # Check for command aliases first
-        words = inp.strip().split(maxsplit=1)
-        first_word = words[0] if words else ""
-        rest_inp = words[1] if len(words) > 1 else ""
+    def matching_commands(self, inp):
+        words = inp.strip().split()
+        if not words:
+            return
 
-        # Handle aliases
-        if first_word.startswith("/"):
-            alias = first_word[1:]
-            command_name = self.command_aliases.get(alias, alias)
-            inp = f"/{command_name} {rest_inp}".strip()
+        first_word = words[0]
+        rest_inp = inp[len(words[0]) :].strip()
+
+        all_commands = self.get_commands()
+        matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
+        return matching_commands, first_word, rest_inp
+
+    def run(self, inp):
+        if inp.startswith("!"):
+            self.coder.event("command_run")
+            return self.do_run("run", inp[1:])
 
         res = self.matching_commands(inp)
         if res is None:
@@ -349,7 +352,6 @@ class Commands:
             self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
             self.io.tool_error(f"Invalid command: {first_word}")
-
 
     # any method called cmd_xxx becomes a command automatically.
     # each one must take an args param.
@@ -635,7 +637,6 @@ class Commands:
                 self.io.tool_error(
                     "The last commit has already been pushed to the origin. Undoing is not"
                     " possible."
-
                 )
                 return
 
@@ -1191,6 +1192,10 @@ class Commands:
         """Ask for changes to your code. If no prompt provided, switches to code mode."""  # noqa
         return self._generic_chat_command(args, self.coder.main_model.edit_format)
 
+    def cmd_architect(self, args):
+        """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
+        return self._generic_chat_command(args, "architect")
+
     def cmd_context(self, args):
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
@@ -1652,57 +1657,6 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
-
-    # ------------------------------------------------------------------
-    # /macro  – first‑class macro execution
-    # ------------------------------------------------------------------
-    def cmd_macro(self, args: str) -> None:
-        "Run a Python macro file:  /macro path/to/script.py [k=v …]"
-
-        tokens = shlex.split(args)
-        if not tokens:
-            return self.io.tool_error("usage: /macro <file.py> [k=v …]")
-
-        fname, *pairs = tokens
-        kwargs: dict[str, str] = {}
-        for p in pairs:
-            if "=" not in p:
-                self.io.tool_warning(f"Ignoring argument '{p}' (expected k=v)")
-                continue
-            k, v = p.split("=", 1)
-            kwargs[k] = v
-
-        abs_path = self.coder.abs_root_path(fname)
-        if not Path(abs_path).exists():
-            return self.io.tool_error(f"macro file {fname} not found")
-
-        ctx = dict(io=self.io, coder=self.coder, commands=self)
-        try:
-            run_macro(abs_path, ctx, **kwargs)
-        except MacroSecurityError as sec:
-            self.io.tool_error(str(sec))
-        except Exception as err:  # noqa: BLE001
-            self.io.tool_error(f"Macro failed: {err.__class__.__name__}: {err}")
-
-    # ------------------------------------------------------------------
-    # /architect – deprecated shim → calls architect macro
-    # ------------------------------------------------------------------
-    def cmd_architect(self, args: str = "") -> None:
-        self.io.tool_warning(
-            "/architect is **deprecated** – use "
-            "`/macro examples/architect_macro.py [args…]` instead."
-        )
-        forward = f"examples/architect_macro.py {args}".strip()
-        self.cmd_macro(forward)
-
-    # ------------------------------------------------------------------
-    # Command alias table (add macro)
-    # ------------------------------------------------------------------
-    command_aliases = {
-        "!": "run",
-        "macro": "macro",
-        "m": "macro",
-    }
 
 
 def expand_subdir(file_path):
