@@ -1,7 +1,7 @@
 ## 🧩 What’s new in the `nbardy/aider` fork — **Macro Pipelines**
 
-This fork adds a **first‑class macro system** so you can script repeatable,
-agent‑like workflows *inside* Aider—without writing a separate shell wrapper
+This fork adds a **first-class macro system** so you can script repeatable,
+agent-like workflows *inside* Aider—without writing a separate shell wrapper
 or learning a new DSL.
 
 ### Key points
@@ -12,7 +12,7 @@ or learning a new DSL.
 | **Generator API** | `main(ctx, **kwargs)` yields strings (e.g. `/run …`, `/code …`, or plain prompts). After each yield the macro receives the captured output via `.send(result)`, making two‑way loops trivial. |
 | **Helper library** | `aider_helpers.log / run / code / include` hide slash‑command syntax so macro code stays clean. |
 | **No subprocess spin‑up** | Macros execute inside Aider’s interpreter—fast and stateful. |
-| **Opt‑in security** | Macros are disabled by default. Enable with `--enable‑macros` *or* add `macros: enabled` in `~/.aider.conf.yml`. An optional `macro.allowlist` file restricts which modules may run. |
+| **Opt‑in security** | Macros are disabled by default. Enable with `--enable-macros` *or* add `macros: enabled` in `~/.aider.conf.yml`. An optional `macro.allowlist` file restricts which modules may run. |
 | **Logs on disk** | Every macro step is still echoed to chat *and* written to `./agent-logs/`, which is `.gitignore`‑d by default. |
 
 ### Quick start
@@ -23,15 +23,15 @@ pip install git+https://github.com/nbardy/aider.git@main
 
 # 2. enable macros (one‑off flag or config file)
 aider --enable-macros scene.json
+```
 
-
-Below is a drop‑in **“Examples”** section you can append to your fork’s `README.md` (or splice into an existing examples table). It showcases the three flagship macros shipped in `examples/`:
+Below is a drop-in **“Examples”** section you can append to your fork's `README.md` (or splice into an existing examples table). It showcases the three flagship macros shipped in `examples/`:
 
 
 ## 🔍 Macro Examples
 
-These macros live in **`examples/`**.  
-Run them inside an Aider session (started with `--enable‑macros`) using  
+These macros live in **`examples/`**.
+Run them inside an Aider session (started with `--enable-macros`) using
 `/macro <file.py> [arg=value …]`.
 
 | Macro | What it does | Typical command |
@@ -106,4 +106,4 @@ def main(ctx, max_tries=10):
 > export PYTHONPATH=$PYTHONPATH:$(pwd)/examples
 > ```
 
-These scripts demonstrate how **simple generator functions + `aider_helpers`** let you build reusable, agent‑like workflows entirely in Python—no new DSL required.
+These scripts demonstrate how **simple generator functions + `aider_helpers`** let you build reusable, agent-like workflows entirely in Python—no new DSL required.
