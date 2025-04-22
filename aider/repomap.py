@@ -46,7 +46,7 @@ class RepoMap:
     def __init__(
         self,
         map_tokens=1024,
-        root=None,
+        map_cache_dir='.',
         main_model=None,
         io=None,
         repo_content_prefix=None,
@@ -59,9 +59,8 @@ class RepoMap:
         self.verbose = verbose
         self.refresh = refresh
 
-        if not root:
-            root = os.getcwd()
-        self.root = root
+        self.map_cache_dir = map_cache_dir
+        self.root = os.getcwd()
 
         self.load_tags_cache()
         self.cache_threshold = 0.95
@@ -83,6 +82,12 @@ class RepoMap:
         if self.verbose:
             self.io.tool_output(
                 f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}"
+            )
+            self.io.tool_output(
+                f"RepoMap initialized with map_cache_dir: {self.map_cache_dir}"
+            )
+            self.io.tool_output(
+                f"RepoMap assumes repo root is: {self.root}"
             )
 
     def token_count(self, text):
@@ -182,7 +187,7 @@ class RepoMap:
         if isinstance(getattr(self, "TAGS_CACHE", None), dict):
             return
 
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = Path(self.map_cache_dir) / self.TAGS_CACHE_DIR
 
         # Try to recreate the cache
         try:
@@ -214,7 +219,7 @@ class RepoMap:
         self.TAGS_CACHE = dict()
 
     def load_tags_cache(self):
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = Path(self.map_cache_dir) / self.TAGS_CACHE_DIR
         try:
             self.TAGS_CACHE = Cache(path)
         except SQLITE_ERRORS as e:
