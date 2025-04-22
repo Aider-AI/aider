@@ -3,7 +3,8 @@ A minimal re‑implementation of the legacy `/architect` command as a **macro**.
 Demonstrates generator style.
 """
 
-# import aider_helpers as ah  # shipped with the fork’s examples # Commented out as aider_helpers is not provided
+import aider_helpers as ah  # shipped with the fork’s examples
+
 
 def main(ctx, goal: str = "scaffold a new project", max_rounds: int = 6):
     io = ctx["io"]

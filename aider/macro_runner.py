@@ -100,7 +100,7 @@ def run_macro(file_path: str | Path, ctx: dict[str, Any], **kwargs: Any) -> None
                 break
 
             if isinstance(cmd, str) and cmd.strip():
-                result = ctx["commands"].run(cmd) # Changed from process_user_message to run
+                result = ctx["commands"].process_user_message(cmd)
             else:
                 result = None
 

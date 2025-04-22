@@ -31,7 +31,7 @@ def main(ctx, **kw):
     dummy_ctx = {
         "io": mocker.Mock(),
         "coder": mocker.Mock(),
-        "commands": mocker.Mock(run=lambda s: s.upper()), # Changed from process_user_message to run
+        "commands": mocker.Mock(process_user_message=lambda s: s.upper()),
     }
     run_macro(macro, dummy_ctx)
 

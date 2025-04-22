@@ -601,6 +601,7 @@ class Commands:
                 self.io.tool_error(
                     "The last commit has already been pushed to the origin. Undoing is not"
                     " possible."
+
                 )
                 return
 
