@@ -140,7 +140,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 
 ## Kind Words From Users
 
-- *"My life has changed this week. There's finally an AI coding tool that's good enough to keep up with me... Aider... It's going to rock your world."* — [Eric S. Raymond](https://x.com/esrtweet/status/1910809356381413593)
+- *"My life has changed... There's finally an AI coding tool that's good enough to keep up with me... Aider... It's going to rock your world."* — [Eric S. Raymond](https://x.com/esrtweet/status/1910809356381413593)
 - *"The best free open source AI coding assistant."* — [IndyDevDan](https://youtu.be/YALpX8oOn78)
 - *"The best AI coding assistant so far."* — [Matthew Berman](https://www.youtube.com/watch?v=df8afeb1FY8)
 - *"Aider ... has easily quadrupled my coding productivity."* — [SOLAR_FIELDS](https://news.ycombinator.com/item?id=36212100)
@@ -168,7 +168,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"Aider is also my best friend."* — [jzn21](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27dcnb/)
 - *"Try Aider, it's worth it."* — [jorgejhms](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27cp99/)
 - *"I like aider :)"* — [Chenwei Cui](https://x.com/ccui42/status/1904965344999145698)
-- *"Aider is the precision tool of LLM code gen. It is minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control."* — [Reilly Sweetland](https://x.com/rsweetland/status/1904963807237259586)
+- *"Aider is the precision tool of LLM code gen... Minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control."* — [Reilly Sweetland](https://x.com/rsweetland/status/1904963807237259586)
 - *"Cannot believe aider vibe coded a 650 LOC feature across service and cli today in 1 shot."* - [autopoietist](https://discord.com/channels/1131200896827654144/1131200896827654149/1355675042259796101)
 - *"Oh no the secret is out! Yes, Aider is the best coding tool around. I highly, highly recommend it to anyone."* — [Joshua D Vander Hook](https://x.com/jodavaho/status/1911154899057795218)
 - *"thanks to aider, i have started and finished three personal projects within the last two days"* — [joseph stalzyn](https://x.com/anitaheeder/status/1908338609645904160)

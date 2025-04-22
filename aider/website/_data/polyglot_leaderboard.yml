@@ -1172,3 +1172,55 @@
   versions: 0.82.2.dev
   seconds_per_case: 110.0
   total_cost: 69.2921
+
+- dirname: 2025-04-19-14-43-04--o4-mini-patch
+  test_cases: 225
+  model: openhands-lm-32b-v0.1
+  edit_format: whole
+  commit_hash: c08336f
+  pass_rate_1: 4.0
+  pass_rate_2: 10.2
+  pass_num_1: 9
+  pass_num_2: 23
+  percent_cases_well_formed: 95.1
+  error_outputs: 55
+  num_malformed_responses: 41
+  num_with_malformed_responses: 11
+  user_asks: 166
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 11
+  total_tests: 225
+  command: aider --model openrouter/all-hands/openhands-lm-32b-v0.1
+  date: 2025-04-19
+  versions: 0.82.2.dev
+  seconds_per_case: 195.6
+  total_cost: 0.0000
+
+- dirname: 2025-04-20-19-54-31--flash25-diff-no-think
+  test_cases: 225
+  model: gemini-2.5-flash-preview-04-17 (default)
+  edit_format: diff
+  commit_hash: 7fcce5d-dirty
+  pass_rate_1: 21.8
+  pass_rate_2: 47.1
+  pass_num_1: 49
+  pass_num_2: 106
+  percent_cases_well_formed: 85.3
+  error_outputs: 60
+  num_malformed_responses: 55
+  num_with_malformed_responses: 33
+  user_asks: 82
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 5
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-flash-preview-04-17
+  date: 2025-04-20
+  versions: 0.82.3.dev
+  seconds_per_case: 50.1
+  total_cost: 1.8451

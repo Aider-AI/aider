@@ -412,7 +412,16 @@ def strip_filename(filename, fence):
         return
 
     start_fence = fence[0]
-    if filename.startswith(start_fence) or filename.startswith(triple_backticks):
+    if filename.startswith(start_fence):
+        candidate = filename[len(start_fence) :]
+        if candidate and ("." in candidate or "/" in candidate):
+            return candidate
+        return
+
+    if filename.startswith(triple_backticks):
+        candidate = filename[len(triple_backticks) :]
+        if candidate and ("." in candidate or "/" in candidate):
+            return candidate
         return
 
     filename = filename.rstrip(":")
@@ -454,7 +463,14 @@ def find_original_update_blocks(content, fence=DEFAULT_FENCE, valid_fnames=None)
             "```csh",
             "```tcsh",
         ]
-        next_is_editblock = i + 1 < len(lines) and head_pattern.match(lines[i + 1].strip())
+
+        # Check if the next line or the one after that is an editblock
+        next_is_editblock = (
+            i + 1 < len(lines)
+            and head_pattern.match(lines[i + 1].strip())
+            or i + 2 < len(lines)
+            and head_pattern.match(lines[i + 2].strip())
+        )
 
         if any(line.strip().startswith(start) for start in shell_starts) and not next_is_editblock:
             shell_content = []
