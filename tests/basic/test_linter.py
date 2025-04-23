@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -34,6 +35,15 @@ class TestLinter(unittest.TestCase):
         mock_popen.return_value = mock_process
 
         result = self.linter.run_cmd("test_cmd", "test_file.py", "code")
+        self.assertIsNone(result)
+
+    def test_run_cmd_win(self):
+        if os.name != "nt":
+            self.skipTest("This test only runs on Windows")
+        from pathlib import Path
+        root = Path(__file__).parent.parent.parent.absolute().as_posix()
+        linter = Linter(encoding="utf-8", root=root)
+        result = linter.run_cmd("dir", "tests/basic", "code")
         self.assertIsNone(result)
 
     @patch("subprocess.Popen")
