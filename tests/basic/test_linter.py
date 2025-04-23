@@ -43,7 +43,7 @@ class TestLinter(unittest.TestCase):
         from pathlib import Path
         root = Path(__file__).parent.parent.parent.absolute().as_posix()
         linter = Linter(encoding="utf-8", root=root)
-        result = linter.run_cmd("dir", "tests/basic", "code")
+        result = linter.run_cmd("dir", "tests\\basic", "code")
         self.assertIsNone(result)
 
     @patch("subprocess.Popen")
