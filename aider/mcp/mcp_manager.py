@@ -5,7 +5,7 @@ import shlex
 import threading
 import queue
 import time
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 import asyncio
 
 from mcp import ClientSession, StdioServerParameters, stdio_client
@@ -21,9 +21,9 @@ class CallArguments:
     args: dict
 
 @dataclass
-class CallResponse:
+class CallResponse[T]:
     error: str | None
-    response: str | None
+    response: T
 
 class McpManager:
     """Manages MCP servers and tools configuration."""
@@ -42,23 +42,21 @@ class McpManager:
         except RuntimeError:
             return asyncio.new_event_loop()
 
-    def _call(self, io, server_name, function, args: dict = {}):
+    def _call(self, io, server_name, function, args: dict = {}) -> CallResponse[Any] | CallResponse[None]:
         """Sync call to the thread with queues."""
 
         self.message_queue.put_nowait(CallArguments(server_name, function, args))
 
         while True:
             try:
-                print("Waiting for result")
-                result = self.result_queue.get_nowait()
-                print("Got result", result)
+                result: CallResponse[Any] = self.result_queue.get_nowait()
 
                 if result.error:
                     if io:
                         io.tool_error(result.error)
-                    return None
+                    return CallResponse(result.error, None)
 
-                return result.response
+                return result
             except KeyboardInterrupt:
                 if io:
                     io.tool_error("Keyboard interrupt in MCP call")
@@ -101,30 +99,24 @@ class McpManager:
             while True:
                 try:
                     msg: CallArguments = self.message_queue.get_nowait()
-                    print("Got message", msg)
 
                     # Exit the loop if the exit message is received
                     if msg.function == "exit":
-                        print("Exit message received")
                         break
 
                     # Find the server and session for the given server name
                     server, session = sessions.get(msg.server_name, (None, None))
-                    if not server:
-                        print(f"Server '{msg.server_name}' not found")
+                    if not server or not session:
                         continue
 
                     try:
                         if msg.function == "call_tool":
                             response = await session.call_tool(**msg.args)
-                            print("Put response in queue 1")
                             self.result_queue.put_nowait(CallResponse(None, response))
                         elif msg.function == "list_tools":
                             response = await session.list_tools()
-                            print("Put response in queue 2")
                             self.result_queue.put_nowait(CallResponse(None, response))
                     except Exception as e:
-                        print("Put response in queue 3")
                         self.result_queue.put_nowait(CallResponse(str(e), None))
                 except queue.Empty:
                     await asyncio.sleep(0.1)
@@ -133,8 +125,9 @@ class McpManager:
 
     def _servers_loop(self, servers: list[McpServer]) -> None:
         """Wrap the async server loop for a given server."""
+        loop = self._get_event_loop()
+
         try:
-            loop = self._get_event_loop()
             loop.run_until_complete(self._async_servers_loop(servers))
         except Exception as e:
             print(f"Error in servers loop: {str(e)}")
@@ -211,9 +204,14 @@ class McpManager:
                 continue
 
             response = self._call(io, server.name, "list_tools", {})
+            if response.response is None:
+                if io:
+                    io.tool_warning(f"Cannot discover tools for server '{server.name}': {response.error}")
+                continue
 
             # Process the tools
-            for tool in response.tools:
+            for tool in response.response.tools:
+                print(tool)
                 name = tool.name
                 description = tool.description
                 input_schema = tool.inputSchema
@@ -271,11 +269,13 @@ class McpManager:
                 "name": tool_name,
                 "arguments": arguments
             })
-            print(type(response))
+            if response.response is None:
+                io.tool_error(f"Tool '{tool_name}' execution failed")
+                return "Tool execution failed"
 
             # Process the response
             result = ""
-            for content_item in response.content:
+            for content_item in response.response.content:
                 if content_item.type == "text":
                     result += content_item.text
 

@@ -7,7 +7,7 @@ from aider.mcp.mcp_tool import McpTool
 class McpServer:
     """Represents an MCP server configuration."""
     name: str
-    command: Optional[str] = None
+    command: str
     env_vars: Dict[str, str] = field(default_factory=dict)
     tools: Dict[str, McpTool] = field(default_factory=dict)
 
@@ -17,7 +17,7 @@ class McpServer:
             permission: str = "manual",
             description: Optional[str] = None,
             input_schema: Optional[Dict[str, Any]] = None,
-    ) -> bool:
+    ):
         """Update an existing tool's description and input schema."""
         if tool_name in self.tools:
             if description is not None:

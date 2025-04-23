@@ -2,7 +2,7 @@
 
 import json
 import re
-from typing import Dict, Optional, Tuple, Any
+from typing import Dict, Tuple, Any
 
 
 class McpToolParser:
@@ -41,7 +41,7 @@ class McpToolParser:
         ]
 
     @classmethod
-    def parse_arguments(cls, arguments_str: str) -> Optional[Dict[str, Any]]:
+    def parse_arguments(cls, arguments_str: str) -> Dict[str, Any]:
         """
         Parse the arguments string into a dictionary.
 
@@ -49,11 +49,7 @@ class McpToolParser:
             arguments_str: The arguments string to parse
         """
 
-        try:
-            return json.loads(arguments_str.strip())
-        except json.JSONDecodeError:
-            # If JSON parsing fails, return None
-            return None
+        return json.loads(arguments_str.strip())
 
     @classmethod
     def format_tool_result(cls, identifier: str, result: str) -> str:
