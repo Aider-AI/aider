@@ -8,6 +8,8 @@ on:
       - 'HISTORY.md'
       - '.github/workflows/*'
       - '!.github/workflows/windows-tests.yml'
+    branches:
+      - main
   pull_request:
     paths-ignore:
       - 'aider/website/**'
