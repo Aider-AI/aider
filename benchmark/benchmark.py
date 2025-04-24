@@ -480,6 +480,14 @@ def summarize_results(dirname, stats_languages=None):
 
     passed_tests = [0] * tries
 
+    # Initialize language-specific tracking
+    languages = set()
+    language_tests = defaultdict(int)
+    language_passed = defaultdict(lambda: [0] * tries)
+
+    # Initialize new metrics
+    res.total_api_calls = 0
+
     res.completed_tests = 0
     res.duration = 0
     res.cost = 0
@@ -507,6 +515,18 @@ def summarize_results(dirname, stats_languages=None):
         if passed:
             for i in range(len(tests_outcomes) - 1, tries):
                 passed_tests[i] += 1
+
+        # Track language-specific results
+        language = results.get("language")
+        if language:
+            languages.add(language)
+            language_tests[language] += 1
+            if passed:
+                for i in range(len(tests_outcomes) - 1, tries):
+                    language_passed[language][i] += 1
+
+        # Track API calls
+        res.total_api_calls += results.get("num_api_calls", 0)
 
         res.cost += results.get("cost", 0)
         res.duration += results.get("duration", 0)
@@ -581,6 +601,24 @@ def summarize_results(dirname, stats_languages=None):
 
     pct_well_formed = 1.0 - res.num_with_malformed_responses / res.completed_tests
     print(f"  percent_cases_well_formed: {pct_well_formed * 100:.1f}")
+
+    # Display API calls
+    print(f"  total_api_calls: {res.total_api_calls}")
+    if res.completed_tests > 0:
+        print(f"  avg_api_calls_per_test: {res.total_api_calls / res.completed_tests:.2f}")
+
+    # Display language-specific pass rates
+    if languages:
+        print("\n  Language-specific pass rates:")
+        for language in sorted(languages):
+            for i in range(tries):
+                if language_tests[language] > 0:
+                    lang_pass_rate = 100 * language_passed[language][i] / language_tests[language]
+                    print(f"    {language}_pass_rate_{i + 1}: {lang_pass_rate:.1f}")
+                    # Store in the result object for potential use in graphs
+                    setattr(res, f"{language}_pass_rate_{i + 1}", f"{lang_pass_rate:.1f}")
+                    setattr(res, f"{language}_pass_num_{i + 1}", language_passed[language][i])
+                    setattr(res, f"{language}_tests", language_tests[language])
 
     show("error_outputs")
     show("num_malformed_responses")
@@ -932,11 +970,19 @@ def run_test_real(
             if verbose:
                 print(f"Failed to clean up Node.js node_modules directory: {e}")
 
+    # Get language from the testdir path
+    language = None
+    for part in testdir.parts:
+        if part in ["python", "javascript", "java", "cpp", "go", "rust"]:
+            language = part
+            break
+
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
         model=main_model.name,
         edit_format=edit_format,
+        language=language,  # Add language information
         tests_outcomes=test_outcomes,
         cost=coder.total_cost,
         duration=dur,
