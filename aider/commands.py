@@ -25,6 +25,7 @@ from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
+from .macro_runner import MacroRunner
 
 
 class SwitchCoder(Exception):
@@ -109,6 +110,29 @@ class Commands:
         "Execute a generator‑style macro: /macro <module.py> [k=v …]"
         from .macro_runner import run_macro
         run_macro(self, args)        # handles parsing, security, exec
+
+    def cmd_macro(self, args: str) -> None:
+        "Run a Python macro file: /macro path/to/script.py [k=v …]"
+
+        tokens = shlex.split(args)
+        if not tokens:
+            return self.io.tool_error("usage: /macro <file.py> [k=v …]")
+
+        fname, *pairs = tokens
+        kwargs: dict[str, str] = {}
+        for p in pairs:
+            if "=" not in p:
+                self.io.tool_warning(f"Ignoring argument '{p}' (expected k=v)")
+                continue
+            k, v = p.split("=", 1)
+            kwargs[k] = v
+
+        abs_path = self.coder.abs_root_path(fname)
+        if not Path(abs_path).exists():
+            return self.io.tool_error(f"macro file {fname} not found")
+    
+        runner = MacroRunner(self.io, self.coder.run)
+        runner.run(f"{abs_path} " + " ".join(pairs), commands=self, coder=self.coder)
 
     
     def cmd_editor_model(self, args):
@@ -1657,6 +1681,55 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+
+    # ------------------------------------------------------------------
+    # /macro  – first‑class macro execution
+    # ------------------------------------------------------------------
+    def cmd_macro(self, args: str) -> None:
+        "Run a Python macro file:  /macro path/to/script.py [k=v …]"
+
+        tokens = shlex.split(args)
+        if not tokens:
+            return self.io.tool_error("usage: /macro <file.py> [k=v …]")
+
+        fname, *pairs = tokens
+        kwargs: dict[str, str] = {}
+        for p in pairs:
+            if "=" not in p:
+                self.io.tool_warning(f"Ignoring argument '{p}' (expected k=v)")
+                continue
+            k, v = p.split("=", 1)
+            kwargs[k] = v
+
+        abs_path = self.coder.abs_root_path(fname)
+        if not Path(abs_path).exists():
+            return self.io.tool_error(f"macro file {fname} not found")
+
+        ctx = dict(io=self.io, coder=self.coder, commands=self)
+        try:
+            run_macro(abs_path, ctx, **kwargs)
+        except Exception as err:  # noqa: BLE001
+            self.io.tool_error(f"Macro failed: {err.__class__.__name__}: {err}")
+
+    # ------------------------------------------------------------------
+    # /architect – deprecated shim → calls architect macro
+    # ------------------------------------------------------------------
+    def cmd_architect(self, args: str = "") -> None:
+        self.io.tool_warning(
+            "/architect is **deprecated** – use "
+            "`/macro examples/architect_macro.py [args…]` instead."
+        )
+        forward = f"examples/architect_macro.py {args}".strip()
+        self.cmd_macro(forward)
+
+    # ------------------------------------------------------------------
+    # Command alias table (add macro)
+    # ------------------------------------------------------------------
+    command_aliases = {
+        "!": "run",
+        "macro": "macro",
+        "m": "macro",
+    }
 
 
 def expand_subdir(file_path):

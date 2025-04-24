@@ -2,148 +2,99 @@
 aider.macro_runner
 ==================
 
-Runtime engine for the /macro command.
+Light-weight runtime engine for Aider’s **/macro** command.
 
-Usage inside Aider
-------------------
     /macro path/to/macro.py loops=3 foo=bar
 
-The file (or dotted module) must expose a generator:
+A *macro* is just a **generator** that can yield:
 
-    def main(ctx, **kwargs):
-        ...
-        yield from aider.helpers.run("echo hi", capture="msg")
-        yield aider.helpers.log("Done")
+* a string starting with `/ …` or `! …` &nbsp;→ executed as an Aider slash-cmd or shell cmd  
+* a string starting with `> …`                &nbsp;→ sent to the LLM as a plain prompt  
+* `ah.log("…")`                              &nbsp;→ console-only log line  
+* `yield from ah.run("pytest", capture="t")` → convenience helpers (see below)
 
-Helper wrappers (log/run/code/include) are defined below and re‑exported as
-`aider.helpers`.
+Helper wrappers (`log`, `run`, `code`, `include`, `chat`, `ask`, `search`,
+`spawn`) are re-exported as **`aider.helpers`** for easy import inside macros.
 """
 
 from __future__ import annotations
 
-import importlib
-import importlib.machinery
-import importlib.util
 import inspect
 import shlex
 import sys
 import types
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
-# ----------------------------------------------------------------------------
-# Helper API – macro authors import these from `aider.helpers`
-# ----------------------------------------------------------------------------
+# ============================================================================ #
+# Helper API – importable as `import aider.helpers as ah`                      #
+# ============================================================================ #
 
 def log(text: str) -> str:
     """Write a line to the console only (never sent to the LLM)."""
     return f"# {text}"
 
-# --------------------------------------------------------------------- #
-# Conversation / utility helpers                                        #
-# --------------------------------------------------------------------- #
-
 def chat(prompt: str) -> str:
-    """
-    Send a plain user message to the main model without editing files.
-    Equivalent to typing the prompt at the Aider prompt.
-    """
+    """Send a plain user message to the main model (equivalent to typing it)."""
     return f"> {prompt}"
 
 def ask(prompt: str) -> str:
-    """
-    Use Aider’s /ask command (questions about the code base, no edits).
-    """
+    """Shortcut for Aider’s `/ask …`."""
     return f"/ask {prompt}"
 
 def search(query: str, *, max_results: int = 5, model_suffix=":online") -> str:
     """
-    Yield a sequence that:
-      1. remembers the current model
-      2. switches to the same model with ':online' (or custom plugin cfg)
-      3. asks the query
-      4. restores the previous model
-
-    Example inside a macro::
-
-        hits = yield from ah.search("python asyncio graceful shutdown")
-        yield ah.log(hits)
+    Switch temporarily to an online-capable model, ask *query*, then restore.
+    Returns one multi-line action that /macro will execute step-by-step.
     """
-
-    # Prepare the model-switch commands
     set_online   = f"/model +{model_suffix}"
-    restore_prev = "/model -"          # built‑in: reverts to previous
-
-    # Compose multi‑line action: switch → ask → restore
-    # Each line will be executed sequentially by _dispatch_action
-    ask_line = f"> {query}"
+    restore_prev = "/model -"
+    ask_line     = f"> {query}"
     return "\n".join([set_online, ask_line, restore_prev])
-
 
 def run(cmd: str, *, capture: Optional[str] = None
         ) -> Generator[str, str | None, str | None]:
-    """
-    Shell helper::
-
-        out = yield from ah.run('pytest -q', capture='t_out')
-    """
+    """Yield a shell command; optionally capture its output into a register."""
     suffix = f" >{capture}" if capture else ""
     result = yield f"! {cmd}{suffix}"
     return result
 
-def code(file: str, prompt: str
+def code(fname: str, prompt: str
          ) -> Generator[str, str | None, str | None]:
-    """
-    File‑edit helper::
-
-        reply = yield from ah.code('scene.json', 'Fix the bug')
-    """
+    """Edit *fname* with the given prompt (wrapper for `/code …`)."""
     safe = prompt.replace("}", "\\}")
-    result = yield f"/code {file} {{{safe}}}"
+    result = yield f"/code {fname} {{{safe}}}"
     return result
 
 def include(register: str) -> str:
-    """Include a register’s contents in the chat."""
+    """Insert the contents of a register into the chat."""
     return f"/include {register}"
 
-# --------------------------------------------------------------------- #
-#  Spawn helper – run any action in the background, stay silent         #
-# --------------------------------------------------------------------- #
-import concurrent.futures
-_EXEC = concurrent.futures.ThreadPoolExecutor(max_workers=8)
-_SPAWN_CMDS = None  # set inside run_macro()
+# --- async helper ----------------------------------------------------------- #
+_EXEC       = ThreadPoolExecutor(max_workers=8)
+_SPAWN_CMDS = None  # set when MacroRunner starts
 
 def _run_action_silent(commands, action: str):
-    """
-    Execute one macro action but suppress all UI output.
-    We reuse _dispatch_action so *any* slash/!/> string works.
-    """
-    # Temporarily silence tool_output to avoid console noise
-    io = commands.io
-    original = io.tool_output
-    io.tool_output = lambda *a, **kw: None
+    """Run one macro action with console output suppressed."""
+    io, orig = commands.io, commands.io.tool_output
+    commands.io.tool_output = lambda *a, **kw: None
     try:
         return _dispatch_action(commands, action)
     finally:
-        io.tool_output = original
+        commands.io.tool_output = orig
 
 def spawn(action: str):
-    """
-    Run `action` asynchronously with no console output.
-    Example use inside a macro::
-
-        fut = ah.spawn("/ask How many routes are defined?")
-        ... do other work ...
-        answer = fut.result()
-    """
+    """Run *action* asynchronously, keep UI silent, return a future."""
     return _EXEC.submit(_run_action_silent, _SPAWN_CMDS, action)
 
-# --------------------------------------------------------------------------- #
-#  Argument parsing utilities  (restored)                                     #
-# --------------------------------------------------------------------------- #
+# ============================================================================ #
+# Internal utilities                                                           #
+# ============================================================================ #
+
 def _maybe_num(v: str) -> int | float | str:
-    """Best‑effort cast of CLI values to int/float; else return unchanged."""
-    if v.isdigit() or (v.startswith('-') and v[1:].isdigit()):
+    """Cast CLI values to int/float when possible."""
+    if v.lstrip("-").isdigit():
         return int(v)
     try:
         return float(v)
@@ -151,147 +102,109 @@ def _maybe_num(v: str) -> int | float | str:
         return v
 
 def _parse_argline(argline: str) -> tuple[str, Dict[str, Any]]:
-    """
-    Split the arg string into (module_path, kwargs_dict).
-
-    Examples
-    --------
-    >>> _parse_argline("examples/hello.py loops=5")
-    ('examples/hello.py', {'loops': 5})
-    """
-    import shlex
-    parts = shlex.split(argline)
+    """Split ‘module_path k=v …’ into (path, {k: v, …})."""
+    parts  = shlex.split(argline)
     if not parts:
-        raise ValueError("Missing module path")
-    mod = parts[0]
+        raise ValueError("Usage: /macro <module> [key=value …]")
+    mod    = parts[0]
     kwargs: Dict[str, Any] = {}
-    for token in parts[1:]:
-        if "=" not in token:
-            raise ValueError(f"Bad arg '{token}', expected k=v")
-        k, v = token.split("=", 1)
+    for tok in parts[1:]:
+        if "=" not in tok:
+            raise ValueError(f"Bad arg '{tok}', expected key=value")
+        k, v = tok.split("=", 1)
         kwargs[k] = _maybe_num(v)
     return mod, kwargs
 
-# --------------------------------------------------------------------------- #
-#  Module loader (restore intact)                                             #
-# --------------------------------------------------------------------------- #
 def _import_module(spec: str):
-    """
-    Import by absolute .py path or dotted module name.
-    """
-    from pathlib import Path, PurePosixPath
-    import importlib, importlib.machinery, importlib.util
-
-    if spec.endswith(".py") or Path(spec).exists():
-        path = Path(spec).expanduser().resolve()
-        name = path.stem + "_macro"
-        loader = importlib.machinery.SourceFileLoader(name, str(path))
-        module = importlib.util.module_from_spec(
-            importlib.util.spec_from_loader(name, loader))  # type: ignore[arg-type]
-        loader.exec_module(module)  # type: ignore[arg-type]
-        return module
-    return importlib.import_module(spec)
-
-
-# ----------------------------------------------------------------------------
-# Internal utilities
-# ----------------------------------------------------------------------------
+    """Import by dotted name or absolute/relative *.py path."""
+    if spec.endswith(".py") or Path(spec).expanduser().exists():
+        path  = Path(spec).expanduser().resolve()
+        name  = path.stem + "_macro"
+        loader = types.ModuleType(name)
+        with path.open("r", encoding="utf-8") as fh:
+            code = fh.read()
+        exec(compile(code, str(path), "exec"), loader.__dict__)
+        sys.modules[name] = loader
+        return loader
+    return __import__(spec, fromlist=["*"])
 
 def _dispatch_action(commands, action: str):
-    """
-    Route a yielded action back through Aider and return the result
-    to the generator.
-    """
-    if action.startswith("/") or action.startswith("!"):
+    """Execute one yielded action and return the result to the generator."""
+    if action.startswith(("/", "!")):
         return commands.run(action)
-
-    if action.startswith("# "):                       # console log
+    if action.startswith("# "):                    # console log
         commands.io.tool_output(action[2:])
         return None
+    if action.startswith(">"):                    # user → LLM prompt
+        return commands.coder.run(action[1:].lstrip())
+    return commands.run(action)                   # fallback
 
-    if action.startswith(">"):                       # prompt → LLM
-        prompt = action[1:].lstrip()
-        return commands.coder.run(prompt)
+# ============================================================================ #
+# MacroRunner                                                                  #
+# ============================================================================ #
 
-    # Fallback: treat as command string (lets user yield raw /add … etc.)
-    return commands.run(action)
+class MacroRunner:
+    """
+    Thin wrapper so `Commands.cmd_macro()` only has to do::
 
-# ----------------------------------------------------------------------------
-# Entry point invoked by Commands.cmd_macro
-# ----------------------------------------------------------------------------
+        MacroRunner(io, coder.run).run(argline)
+    """
 
-def run_macro(commands, argline: str) -> None:
-    io = commands.io
+    def __init__(self, io, run_fn):
+        self.io     = io
+        self._run   = run_fn  # function to execute /!/> actions
 
-    try:
-        mod_spec, kwargs = _parse_argline(argline)
-    except ValueError as err:
-        io.tool_error(str(err))
-        return
+    def run(self, argline: str, **_ignored):
+        global _SPAWN_CMDS
+        commands = _ignored.get("commands") or self   # for spawn helper
+        _SPAWN_CMDS = commands
 
-    try:
-        module = _import_module(mod_spec)
-    except Exception as err:
-        io.tool_error(f"Import failed: {err}")
-        return
-
-    main = getattr(module, "main", None)
-    if not callable(main) or not inspect.isgeneratorfunction(main):
-        # ───────── clearer debug block ─────────
-        io.tool_error(
-            "=== [Error Debug: Macro] ===\n"
-            f"- Filename: {mod_spec}\n"
-            "- Problem : macro must define a *generator* "
-            "main(ctx, **kwargs)\n"
-            "- File preview below ↓ (first 20 lines)\n"
-            "========================================"
-        )
         try:
-            with open(Path(mod_spec).expanduser().resolve(), "r") as fh:
-                preview = "".join([next(fh) for _ in range(20)])
-            sep = "…" if len(preview.splitlines()) == 20 else ""
-            io.tool_output(preview + sep +
-                           "\n=== [End Debug] ===")
-        except Exception as e:
-            io.tool_output(f"(could not read file: {e})\n=== [End Debug] ===")
-        return
+            mod_spec, kwargs = _parse_argline(argline)
+        except ValueError as err:
+            self.io.tool_error(str(err))
+            return
 
-    ctx: Dict[str, Any] = {
-        "vars": kwargs.copy(),
-        "registers": {},
-        "counters": {},
-        "exit_code": 0,
-        "coder": commands.coder,
-        "io": io,
-        "send": commands.run,
-    }
+        try:
+            module = _import_module(mod_spec)
+        except Exception as err:
+            self.io.tool_error(f"Import failed: {err}")
+            return
 
-    global _SPAWN_CMDS
-    _SPAWN_CMDS = commands
+        main = getattr(module, "main", None)
+        if not (callable(main) and inspect.isgeneratorfunction(main)):
+            self.io.tool_error("Macro must define a *generator* main(ctx, **kwargs)")
+            return
 
-    gen = main(ctx, **kwargs)  # type: ignore[arg-type]
+        ctx = {
+            "vars":       kwargs.copy(),
+            "registers":  {},
+            "counters":   {},
+            "exit_code":  0,
+            "coder":      _ignored.get("coder"),
+            "io":         self.io,
+            "send":       self._run,
+        }
 
-    try:
-        action = next(gen)                     # prime
-        while True:
-            result = _dispatch_action(commands, action)
-            action = gen.send(result)
-    except StopIteration:
-        pass
-    except Exception as err:
-        io.tool_error(f"Macro runtime error: {err}")
+        gen = main(ctx, **kwargs)  # type: ignore[arg-type]
 
-# ----------------------------------------------------------------------------
-# Re‑export helpers as `aider.helpers`
-# ----------------------------------------------------------------------------
+        try:
+            action = next(gen)  # prime
+            while True:
+                result  = _dispatch_action(commands, action)
+                action  = gen.send(result)
+        except StopIteration:
+            pass
+        except Exception as err:
+            self.io.tool_error(f"Macro runtime error: {err}")
+
+# ============================================================================ #
+# Re-export helpers as `aider.helpers`                                         #
+# ============================================================================ #
 
 _helpers = types.ModuleType("aider.helpers")
-_helpers.log = log
-_helpers.run = run
-_helpers.code = code
-_helpers.include = include
-_helpers.chat = chat
-_helpers.ask = ask
-_helpers.search = search
-_helpers.spawn = spawn
+for _name in ("log", "run", "code", "include", "chat", "ask",
+              "search", "spawn"):
+    setattr(_helpers, _name, globals()[_name])
 sys.modules["aider.helpers"] = _helpers
+
