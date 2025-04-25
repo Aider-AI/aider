@@ -34,6 +34,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
         "__pycache__/",  # Python cache dir
         ".DS_Store",  # macOS metadata
         "Thumbs.db",  # Windows thumbnail cache
+        "*.svg",
         # IDE files
         ".idea/",  # JetBrains IDEs
         ".vscode/",  # VS Code
