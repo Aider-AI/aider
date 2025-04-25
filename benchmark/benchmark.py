@@ -5,6 +5,7 @@ import os
 import random
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import time
@@ -13,7 +14,7 @@ from collections import defaultdict
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from types import SimpleNamespace
-from typing import List, Optional
+from typing import Dict, List, Optional, Set
 
 import git
 import importlib_resources
@@ -38,6 +39,61 @@ app = typer.Typer(add_completion=False, pretty_exceptions_enable=False)
 
 
 load_dotenv(override=True)
+
+
+# Global variable to track if we should pause the benchmark
+PAUSE_REQUESTED = False
+
+
+def save_checkpoint(dirname: Path, completed_tests: Set[str], pending_tests: List[str]) -> None:
+    """Save the current benchmark progress to a checkpoint file."""
+    checkpoint_file = dirname / ".benchmark_checkpoint.json"
+    checkpoint_data = {
+        "timestamp": datetime.datetime.now().isoformat(),
+        "completed_tests": list(completed_tests),
+        "pending_tests": pending_tests,
+    }
+
+    with open(checkpoint_file, "w") as f:
+        json.dump(checkpoint_data, indent=4, sort_keys=True, default=str, fp=f)
+
+    print(f"\nCheckpoint saved to {checkpoint_file}")
+    print(f"Completed: {len(completed_tests)} tests")
+    print(f"Pending: {len(pending_tests)} tests")
+
+
+def load_checkpoint(dirname: Path) -> Dict:
+    """Load the benchmark progress from a checkpoint file."""
+    checkpoint_file = dirname / ".benchmark_checkpoint.json"
+
+    if not checkpoint_file.exists():
+        return {"completed_tests": [], "pending_tests": []}
+
+    try:
+        with open(checkpoint_file) as f:
+            checkpoint_data = json.load(f)
+
+        print(f"\nLoaded checkpoint from {checkpoint_file}")
+        print(f"Checkpoint timestamp: {checkpoint_data.get('timestamp', 'unknown')}")
+        print(f"Completed: {len(checkpoint_data.get('completed_tests', []))} tests")
+        print(f"Pending: {len(checkpoint_data.get('pending_tests', []))} tests")
+
+        return checkpoint_data
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"Error loading checkpoint file: {e}")
+        return {"completed_tests": [], "pending_tests": []}
+
+
+def signal_handler(sig, frame):
+    """Handle Ctrl+C by setting the pause flag instead of terminating immediately."""
+    global PAUSE_REQUESTED
+    if PAUSE_REQUESTED:
+        print("\nForce quitting...")
+        sys.exit(1)
+    else:
+        print("\nPause requested. Will stop after current test completes...")
+        print("(Press Ctrl+C again to force quit)")
+        PAUSE_REQUESTED = True
 
 
 def find_latest_benchmark_dir():
@@ -184,6 +240,7 @@ def main(
         False, "--clean", "-c", help="Discard the existing testdir and make a clean copy"
     ),
     cont: bool = typer.Option(False, "--cont", help="Continue the (single) matching testdir"),
+    resume: bool = typer.Option(False, "--resume", help="Resume from checkpoint in the matching testdir"),
     make_new: bool = typer.Option(False, "--new", "-n", help="Make a new dated testdir"),
     no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
     no_aider: bool = typer.Option(False, "--no-aider", help="Do not run aider"),
@@ -225,6 +282,9 @@ def main(
         latest_dir = find_latest_benchmark_dir()
         dirnames = [str(latest_dir)]
 
+    # Register signal handler for graceful pausing
+    signal.signal(signal.SIGINT, signal_handler)
+
     if dirnames is None:
         dirnames = []
 
@@ -235,7 +295,7 @@ def main(
     updated_dirnames = []
     for dirname in dirnames:
         dirname = Path(dirname)
-        dirname = resolve_dirname(dirname, stats_only or cont, make_new)
+        dirname = resolve_dirname(dirname, stats_only or cont or resume, make_new)
         if not dirname:
             return 1
         updated_dirnames.append(dirname)
@@ -340,8 +400,28 @@ def main(
         keywords = keywords.split(",")
         test_dnames = [dn for dn in test_dnames for keyword in keywords if keyword in dn]
 
-    random.shuffle(test_dnames)
-    if num_tests > 0:
+    # Load checkpoint if resuming
+    checkpoint_data = {}
+    completed_tests = set()
+
+    if resume:
+        checkpoint_data = load_checkpoint(dirname)
+        completed_tests = set(checkpoint_data.get("completed_tests", []))
+
+        # If we have pending tests from a previous run, use those instead of shuffling
+        pending_tests = checkpoint_data.get("pending_tests", [])
+        if pending_tests:
+            print(f"Resuming with {len(pending_tests)} pending tests from checkpoint")
+            test_dnames = pending_tests
+        else:
+            # Filter out already completed tests
+            test_dnames = [dn for dn in test_dnames if dn not in completed_tests]
+            random.shuffle(test_dnames)
+    else:
+        # Normal operation - shuffle and limit tests
+        random.shuffle(test_dnames)
+
+    if num_tests > 0 and not resume:
         test_dnames = test_dnames[:num_tests]
 
     # Don't give up when benchmarking
@@ -352,7 +432,15 @@ def main(
 
     if threads == 1:
         all_results = []
+        remaining_tests = test_dnames.copy()
+
         for test_path in test_dnames:
+            # Check if we should pause
+            if PAUSE_REQUESTED:
+                print("\nPausing benchmark as requested...")
+                save_checkpoint(dirname, completed_tests, remaining_tests)
+                return 0
+
             results = run_test(
                 original_dname,
                 dirname / test_path,
@@ -373,10 +461,21 @@ def main(
             )
 
             all_results.append(results)
+
+            # Update completed and remaining tests
+            if results:
+                completed_tests.add(test_path)
+                remaining_tests.remove(test_path)
+
+                # Save checkpoint after each test
+                save_checkpoint(dirname, completed_tests, remaining_tests)
+
             summarize_results(dirname)
             if sleep:
                 time.sleep(sleep)
     else:
+        # For threaded execution, we can't easily pause in the middle
+        # So we'll just run all tests and save a checkpoint at the end
         run_test_threaded = lox.thread(threads)(run_test)
         for test_path in test_dnames:
             run_test_threaded.scatter(
@@ -399,10 +498,28 @@ def main(
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
+        # Update completed tests based on results
+        for test_path, result in zip(test_dnames, all_results):
+            if result:
+                completed_tests.add(test_path)
+
     print()
     print()
     print()
     summarize_results(dirname)
+
+    # Save final checkpoint
+    remaining_tests = [t for t in test_dnames if t not in completed_tests]
+    save_checkpoint(dirname, completed_tests, remaining_tests)
+
+    if PAUSE_REQUESTED:
+        print("\nBenchmark paused. To resume, run:")
+        print(f"./benchmark/benchmark.py {dirname.name} --resume --model {model} --edit-format {edit_format} --threads {threads}")
+    elif not remaining_tests:
+        print("\nAll tests completed successfully!")
+    else:
+        print(f"\n{len(remaining_tests)} tests were not completed. To resume, run:")
+        print(f"./benchmark/benchmark.py {dirname.name} --resume --model {model} --edit-format {edit_format} --threads {threads}")
 
     return 0
 
@@ -691,9 +808,10 @@ def get_replayed_content(replay_dname, test_dname):
     res = replay_fname.read_text()
     return res
 
-    res = res.splitlines(keepends=True)
-    res = [line for line in res if not line.startswith("> ") and not line.startswith("#### ")]
-    return "".join(res)
+    # Note: The code below is unreachable but kept for reference
+    # res = res.splitlines(keepends=True)
+    # res = [line for line in res if not line.startswith("> ") and not line.startswith("#### ")]
+    # return "".join(res)
 
 
 def run_test(original_dname, testdir, *args, **kwargs):

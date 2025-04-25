@@ -83,6 +83,18 @@ You can run `./benchmark/benchmark.py --help` for a list of all the arguments, b
 - `--num-tests` specifies how many of the tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
 - `--read-model-settings=<filename.yml>` specify model settings, see here: https://aider.chat/docs/config/adv-model-settings.html#model-settings
+- `--resume` resume a previously paused benchmark run from its checkpoint
+
+### Pausing and Resuming Benchmarks
+
+Benchmarks can take a long time to run. You can pause a running benchmark by pressing `Ctrl+C` once. The benchmark will complete the current test and then save a checkpoint before exiting. To resume the benchmark later, use the `--resume` flag:
+
+```
+# Resume a previously paused benchmark
+./benchmark/benchmark.py YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run --resume --model gpt-3.5-turbo --edit-format whole --threads 10
+```
+
+When you resume a benchmark, it will pick up where it left off, using the list of pending tests from the checkpoint file. This allows you to run benchmarks over multiple sessions.
 
 ### Benchmark report
 
