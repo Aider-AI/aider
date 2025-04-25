@@ -104,6 +104,10 @@ class FileWatcher:
         if self.verbose:
             dump("ok", rel_path)
 
+        # Check file size before reading content
+        if path_abs.is_file() and path_abs.stat().st_size > 1 * 1024 * 1024:  # 1MB limit
+            return False
+
         # Check if file contains AI markers
         try:
             comments, _, _ = self.get_ai_comments(str(path_abs))
