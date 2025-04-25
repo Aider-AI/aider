@@ -609,15 +609,17 @@ def summarize_results(dirname, stats_languages=None):
 
     # Display language-specific pass rates
     if languages:
-        print("\n  Language-specific pass rates:")
+        # Process language-specific pass rates without breaking YAML format
         for language in sorted(languages):
-            for i in range(tries):
-                if language_tests[language] > 0:
+            if language_tests[language] > 0:
+                # Only print pass rate 2 for each language
+                if tries >= 2:  # Make sure we have at least 2 tries
+                    i = 1  # Index for pass_rate_2 (0-based index)
                     lang_pass_rate = 100 * language_passed[language][i] / language_tests[language]
-                    print(f"    {language}_pass_rate_{i + 1}: {lang_pass_rate:.1f}")
-                    # Store in the result object for potential use in graphs
-                    setattr(res, f"{language}_pass_rate_{i + 1}", f"{lang_pass_rate:.1f}")
-                    setattr(res, f"{language}_pass_num_{i + 1}", language_passed[language][i])
+                    print(f"  {language}_pass_rate_2: {lang_pass_rate:.1f}")
+                    # Still store all the data in the result object for potential use in graphs
+                    setattr(res, f"{language}_pass_rate_2", f"{lang_pass_rate:.1f}")
+                    setattr(res, f"{language}_pass_num_2", language_passed[language][i])
                     setattr(res, f"{language}_tests", language_tests[language])
 
     show("error_outputs")
@@ -977,6 +979,9 @@ def run_test_real(
             language = part
             break
 
+    # Calculate the number of API calls from the chat hashes
+    num_api_calls = len(coder.chat_completion_call_hashes)
+
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
@@ -997,6 +1002,7 @@ def run_test_real(
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
         reasoning_effort=reasoning_effort,
         thinking_tokens=thinking_tokens,
+        num_api_calls=num_api_calls,  # Add the number of API calls
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,
