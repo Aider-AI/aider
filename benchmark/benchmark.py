@@ -602,9 +602,6 @@ def summarize_results(dirname, stats_languages=None):
     language_tests = defaultdict(int)
     language_passed = defaultdict(lambda: [0] * tries)
 
-    # Initialize new metrics
-    res.total_api_calls = 0
-
     res.completed_tests = 0
     res.duration = 0
     res.cost = 0
@@ -641,9 +638,6 @@ def summarize_results(dirname, stats_languages=None):
             if passed:
                 for i in range(len(tests_outcomes) - 1, tries):
                     language_passed[language][i] += 1
-
-        # Track API calls
-        res.total_api_calls += results.get("num_api_calls", 0)
 
         res.cost += results.get("cost", 0)
         res.duration += results.get("duration", 0)
@@ -718,11 +712,6 @@ def summarize_results(dirname, stats_languages=None):
 
     pct_well_formed = 1.0 - res.num_with_malformed_responses / res.completed_tests
     print(f"  percent_cases_well_formed: {pct_well_formed * 100:.1f}")
-
-    # Display API calls
-    print(f"  total_api_calls: {res.total_api_calls}")
-    if res.completed_tests > 0:
-        print(f"  avg_api_calls_per_test: {res.total_api_calls / res.completed_tests:.2f}")
 
     # Display language-specific pass rates
     if languages:
@@ -1097,9 +1086,6 @@ def run_test_real(
             language = part
             break
 
-    # Calculate the number of API calls from the chat hashes
-    num_api_calls = len(coder.chat_completion_call_hashes)
-
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
@@ -1120,7 +1106,6 @@ def run_test_real(
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
         reasoning_effort=reasoning_effort,
         thinking_tokens=thinking_tokens,
-        num_api_calls=num_api_calls,  # Add the number of API calls
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,
