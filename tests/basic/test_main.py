@@ -199,7 +199,7 @@ class TestMain(TestCase):
             named_env = git_dir / "named.env"
 
             os.environ["E"] = "existing"
-            home_env.write_text("A=home\nB=home\nC=home\nD=home")
+            home_env.write_text("A=home\nB=home\nC=home\nD=home\nE=home")
             git_env.write_text("A=git\nB=git\nC=git")
             cwd_env.write_text("A=cwd\nB=cwd")
             named_env.write_text("A=named")
