@@ -4,10 +4,10 @@ import copy
 from aider.coders.base_coder import Coder
 from aider.coders.base_prompts import CoderPrompts
 """Perform a coding task on multiple files in batches that fit the context and outpot token limits, without sending them all at once."""
-class IterateCoder(Coder):
+class BatchCoder(Coder):
     coder : Coder = None
     original_kwargs: dict = None
-    edit_format = "iterate"
+    edit_format = "batch"
                         
     def __init__(self, main_model, io, **kwargs):
         super().__init__(main_model, io,**kwargs)

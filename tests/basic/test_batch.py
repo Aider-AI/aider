@@ -9,7 +9,7 @@ from aider.repo import GitRepo
 from aider.utils import GitTemporaryDirectory
 
 
-class TestIterateCoder(unittest.TestCase):
+class TestBatchCoder(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
         self.io = InputOutput(yes=True)
@@ -25,15 +25,15 @@ class TestIterateCoder(unittest.TestCase):
             main_model=self.GPT35,
             io=self.io,
             fnames=self.files,
-            edit_format='iterate'
+            edit_format='batch'
         )
 
     def tearDown(self):
         # self.webbrowser_patcher.stop()
         return
     """Tests that: 
-    - Every request retains the chat history until the /iterate command but not the history of other iterations.
-    - Added files and history until the /iterate is unmodified.
+    - Every request retains the chat history until the /batch command but not the history of other iterations.
+    - Added files and history until the /batch is unmodified.
     - Every file is processed(even if a single file that'll be sent with the request exceeds the limits.) and no duplicate processing
     """
     def test_iterate_resets_history_and_processes_all_files(self):
