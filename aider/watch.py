@@ -96,19 +96,19 @@ class FileWatcher:
 
         rel_path = path_abs.relative_to(self.root)
         if self.verbose:
-            dump(rel_path)
+            print("Changed", rel_path)
 
         if self.gitignore_spec and self.gitignore_spec.match_file(
             rel_path.as_posix() + ("/" if path_abs.is_dir() else "")
         ):
             return False
 
-        if self.verbose:
-            dump("ok", rel_path)
-
         # Check file size before reading content
         if path_abs.is_file() and path_abs.stat().st_size > 1 * 1024 * 1024:  # 1MB limit
             return False
+
+        if self.verbose:
+            print("Checking", rel_path)
 
         # Check if file contains AI markers
         try:
