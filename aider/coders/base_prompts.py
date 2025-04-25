@@ -14,6 +14,9 @@ You NEVER leave comments describing code without implementing it!
 You always COMPLETELY IMPLEMENT the needed code!
 """
 
+    overeager_prompt = """Pay careful attention to the scope of the user's request.
+Do what they ask, but no more."""
+
     example_messages = []
 
     files_content_prefix = """I have *added these files to the chat* so you can go ahead and edit them.
@@ -50,3 +53,6 @@ Do not edit these files!
     shell_cmd_reminder = ""
     no_shell_cmd_prompt = ""
     no_shell_cmd_reminder = ""
+
+    rename_with_shell = ""
+    go_ahead_tip = ""

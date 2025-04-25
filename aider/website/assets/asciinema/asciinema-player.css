@@ -1,0 +1,2366 @@
+div.ap-wrapper {
+  outline: none;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+div.ap-wrapper .title-bar {
+  display: none;
+  top: -78px;
+  transition: top 0.15s linear;
+  position: absolute;
+  left: 0;
+  right: 0;
+  box-sizing: content-box;
+  font-size: 20px;
+  line-height: 1em;
+  padding: 15px;
+  font-family: sans-serif;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+div.ap-wrapper .title-bar img {
+  vertical-align: middle;
+  height: 48px;
+  margin-right: 16px;
+}
+div.ap-wrapper .title-bar a {
+  color: white;
+  text-decoration: underline;
+}
+div.ap-wrapper .title-bar a:hover {
+  text-decoration: none;
+}
+div.ap-wrapper:fullscreen {
+  background-color: #000;
+  width: 100%;
+  align-items: center;
+}
+div.ap-wrapper:fullscreen .title-bar {
+  display: initial;
+}
+div.ap-wrapper:fullscreen.hud .title-bar {
+  top: 0;
+}
+div.ap-wrapper div.ap-player {
+  text-align: left;
+  display: inline-block;
+  padding: 0px;
+  position: relative;
+  box-sizing: content-box;
+  overflow: hidden;
+  max-width: 100%;
+  border-radius: 4px;
+  font-size: 15px;
+  background-color: var(--term-color-background);
+}
+.ap-player {
+  --term-color-foreground: #ffffff;
+  --term-color-background: #000000;
+  --term-color-0: var(--term-color-foreground);
+  --term-color-1: var(--term-color-foreground);
+  --term-color-2: var(--term-color-foreground);
+  --term-color-3: var(--term-color-foreground);
+  --term-color-4: var(--term-color-foreground);
+  --term-color-5: var(--term-color-foreground);
+  --term-color-6: var(--term-color-foreground);
+  --term-color-7: var(--term-color-foreground);
+  --term-color-8: var(--term-color-0);
+  --term-color-9: var(--term-color-1);
+  --term-color-10: var(--term-color-2);
+  --term-color-11: var(--term-color-3);
+  --term-color-12: var(--term-color-4);
+  --term-color-13: var(--term-color-5);
+  --term-color-14: var(--term-color-6);
+  --term-color-15: var(--term-color-7);
+}
+.ap-player .fg-0 {
+  --fg: var(--term-color-0);
+}
+.ap-player .bg-0 {
+  --bg: var(--term-color-0);
+}
+.ap-player .fg-1 {
+  --fg: var(--term-color-1);
+}
+.ap-player .bg-1 {
+  --bg: var(--term-color-1);
+}
+.ap-player .fg-2 {
+  --fg: var(--term-color-2);
+}
+.ap-player .bg-2 {
+  --bg: var(--term-color-2);
+}
+.ap-player .fg-3 {
+  --fg: var(--term-color-3);
+}
+.ap-player .bg-3 {
+  --bg: var(--term-color-3);
+}
+.ap-player .fg-4 {
+  --fg: var(--term-color-4);
+}
+.ap-player .bg-4 {
+  --bg: var(--term-color-4);
+}
+.ap-player .fg-5 {
+  --fg: var(--term-color-5);
+}
+.ap-player .bg-5 {
+  --bg: var(--term-color-5);
+}
+.ap-player .fg-6 {
+  --fg: var(--term-color-6);
+}
+.ap-player .bg-6 {
+  --bg: var(--term-color-6);
+}
+.ap-player .fg-7 {
+  --fg: var(--term-color-7);
+}
+.ap-player .bg-7 {
+  --bg: var(--term-color-7);
+}
+.ap-player .fg-8 {
+  --fg: var(--term-color-8);
+}
+.ap-player .bg-8 {
+  --bg: var(--term-color-8);
+}
+.ap-player .fg-9 {
+  --fg: var(--term-color-9);
+}
+.ap-player .bg-9 {
+  --bg: var(--term-color-9);
+}
+.ap-player .fg-10 {
+  --fg: var(--term-color-10);
+}
+.ap-player .bg-10 {
+  --bg: var(--term-color-10);
+}
+.ap-player .fg-11 {
+  --fg: var(--term-color-11);
+}
+.ap-player .bg-11 {
+  --bg: var(--term-color-11);
+}
+.ap-player .fg-12 {
+  --fg: var(--term-color-12);
+}
+.ap-player .bg-12 {
+  --bg: var(--term-color-12);
+}
+.ap-player .fg-13 {
+  --fg: var(--term-color-13);
+}
+.ap-player .bg-13 {
+  --bg: var(--term-color-13);
+}
+.ap-player .fg-14 {
+  --fg: var(--term-color-14);
+}
+.ap-player .bg-14 {
+  --bg: var(--term-color-14);
+}
+.ap-player .fg-15 {
+  --fg: var(--term-color-15);
+}
+.ap-player .bg-15 {
+  --bg: var(--term-color-15);
+}
+.ap-player .fg-8,
+.ap-player .fg-9,
+.ap-player .fg-10,
+.ap-player .fg-11,
+.ap-player .fg-12,
+.ap-player .fg-13,
+.ap-player .fg-14,
+.ap-player .fg-15 {
+  font-weight: bold;
+}
+pre.ap-terminal {
+  box-sizing: content-box;
+  overflow: hidden;
+  padding: 0;
+  margin: 0px;
+  display: block;
+  white-space: pre;
+  word-wrap: normal;
+  word-break: normal;
+  border-radius: 0;
+  border-style: solid;
+  cursor: text;
+  border-width: 0.75em;
+  color: var(--term-color-foreground);
+  background-color: var(--term-color-background);
+  border-color: var(--term-color-background);
+  outline: none;
+  line-height: var(--term-line-height);
+  font-family: Consolas, Menlo, 'Bitstream Vera Sans Mono', monospace, 'Powerline Symbols';
+  font-variant-ligatures: none;
+}
+pre.ap-terminal .ap-line {
+  letter-spacing: normal;
+  overflow: hidden;
+}
+pre.ap-terminal .ap-line span {
+  padding: 0;
+  display: inline-block;
+  height: 100%;
+}
+pre.ap-terminal .ap-line {
+  display: block;
+  width: 100%;
+  height: var(--term-line-height);
+  position: relative;
+}
+pre.ap-terminal .ap-line span {
+  position: absolute;
+  left: calc(100% * var(--offset) / var(--term-cols));
+  color: var(--fg);
+  background-color: var(--bg);
+}
+pre.ap-terminal .ap-line .ap-inverse {
+  color: var(--bg);
+  background-color: var(--fg);
+}
+pre.ap-terminal .ap-line .cp-2580 {
+  border-top: calc(0.5 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2581 {
+  border-bottom: calc(0.125 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2582 {
+  border-bottom: calc(0.25 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2583 {
+  border-bottom: calc(0.375 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2584 {
+  border-bottom: calc(0.5 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2585 {
+  border-bottom: calc(0.625 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2586 {
+  border-bottom: calc(0.75 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2587 {
+  border-bottom: calc(0.875 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2588 {
+  background-color: var(--fg);
+}
+pre.ap-terminal .ap-line .cp-2589 {
+  border-left: 0.875ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-258a {
+  border-left: 0.75ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-258b {
+  border-left: 0.625ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-258c {
+  border-left: 0.5ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-258d {
+  border-left: 0.375ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-258e {
+  border-left: 0.25ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-258f {
+  border-left: 0.125ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2590 {
+  border-right: 0.5ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2591 {
+  background-color: color-mix(in srgb, var(--fg) 25%, var(--bg));
+}
+pre.ap-terminal .ap-line .cp-2592 {
+  background-color: color-mix(in srgb, var(--fg) 50%, var(--bg));
+}
+pre.ap-terminal .ap-line .cp-2593 {
+  background-color: color-mix(in srgb, var(--fg) 75%, var(--bg));
+}
+pre.ap-terminal .ap-line .cp-2594 {
+  border-top: calc(0.125 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2595 {
+  border-right: 0.125ch solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2596 {
+  border-right: 0.5ch solid var(--bg);
+  border-top: calc(0.5 * var(--term-line-height)) solid var(--bg);
+  background-color: var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2597 {
+  border-left: 0.5ch solid var(--bg);
+  border-top: calc(0.5 * var(--term-line-height)) solid var(--bg);
+  background-color: var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2598 {
+  border-right: 0.5ch solid var(--bg);
+  border-bottom: calc(0.5 * var(--term-line-height)) solid var(--bg);
+  background-color: var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-2599 {
+  border-left: 0.5ch solid var(--fg);
+  border-bottom: calc(0.5 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-259a {
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-259a::before,
+pre.ap-terminal .ap-line .cp-259a::after {
+  content: '';
+  position: absolute;
+  width: 0.5ch;
+  height: calc(0.5 * var(--term-line-height));
+  background-color: var(--fg);
+}
+pre.ap-terminal .ap-line .cp-259a::before {
+  top: 0;
+  left: 0;
+}
+pre.ap-terminal .ap-line .cp-259a::after {
+  bottom: 0;
+  right: 0;
+}
+pre.ap-terminal .ap-line .cp-259b {
+  border-left: 0.5ch solid var(--fg);
+  border-top: calc(0.5 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-259c {
+  border-right: 0.5ch solid var(--fg);
+  border-top: calc(0.5 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-259d {
+  border-left: 0.5ch solid var(--bg);
+  border-bottom: calc(0.5 * var(--term-line-height)) solid var(--bg);
+  background-color: var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-259e {
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-259e::before,
+pre.ap-terminal .ap-line .cp-259e::after {
+  content: '';
+  position: absolute;
+  width: 0.5ch;
+  height: calc(0.5 * var(--term-line-height));
+  background-color: var(--fg);
+}
+pre.ap-terminal .ap-line .cp-259e::before {
+  top: 0;
+  right: 0;
+}
+pre.ap-terminal .ap-line .cp-259e::after {
+  bottom: 0;
+  left: 0;
+}
+pre.ap-terminal .ap-line .cp-259f {
+  border-right: 0.5ch solid var(--fg);
+  border-bottom: calc(0.5 * var(--term-line-height)) solid var(--fg);
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-e0b0 {
+  border-left: 1ch solid var(--fg);
+  border-top: calc(0.5 * var(--term-line-height)) solid transparent;
+  border-bottom: calc(0.5 * var(--term-line-height)) solid transparent;
+  box-sizing: border-box;
+}
+pre.ap-terminal .ap-line .cp-e0b2 {
+  border-right: 1ch solid var(--fg);
+  border-top: calc(0.5 * var(--term-line-height)) solid transparent;
+  border-bottom: calc(0.5 * var(--term-line-height)) solid transparent;
+  box-sizing: border-box;
+}
+pre.ap-terminal.ap-cursor-on .ap-line .ap-cursor {
+  color: var(--bg);
+  background-color: var(--fg);
+  border-radius: 0.05em;
+}
+pre.ap-terminal.ap-cursor-on .ap-line .ap-cursor.ap-inverse {
+  color: var(--fg);
+  background-color: var(--bg);
+}
+pre.ap-terminal:not(.ap-blink) .ap-line .ap-blink {
+  color: transparent;
+  border-color: transparent;
+}
+pre.ap-terminal .ap-bright {
+  font-weight: bold;
+}
+pre.ap-terminal .ap-faint {
+  opacity: 0.5;
+}
+pre.ap-terminal .ap-underline {
+  text-decoration: underline;
+}
+pre.ap-terminal .ap-italic {
+  font-style: italic;
+}
+pre.ap-terminal .ap-strikethrough {
+  text-decoration: line-through;
+}
+.ap-line span {
+  --fg: var(--term-color-foreground);
+  --bg: var(--term-color-background);
+}
+div.ap-player div.ap-control-bar {
+  width: 100%;
+  height: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  color: var(--term-color-foreground);
+  box-sizing: content-box;
+  line-height: 1;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 0.15s linear;
+  user-select: none;
+  border-top: 2px solid color-mix(in oklab, var(--term-color-background) 80%, var(--term-color-foreground));
+  z-index: 30;
+}
+div.ap-player div.ap-control-bar * {
+  box-sizing: inherit;
+}
+div.ap-control-bar svg.ap-icon path {
+  fill: var(--term-color-foreground);
+}
+div.ap-control-bar span.ap-button {
+  display: flex;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+div.ap-control-bar span.ap-playback-button {
+  width: 12px;
+  height: 12px;
+  padding: 10px;
+}
+div.ap-control-bar span.ap-playback-button svg {
+  height: 12px;
+  width: 12px;
+}
+div.ap-control-bar span.ap-timer {
+  display: flex;
+  flex: 0 0 auto;
+  min-width: 50px;
+  margin: 0 10px;
+  height: 100%;
+  text-align: center;
+  font-size: 13px;
+  line-height: 100%;
+  cursor: default;
+}
+div.ap-control-bar span.ap-timer span {
+  font-family: Consolas, Menlo, 'Bitstream Vera Sans Mono', monospace;
+  font-size: inherit;
+  font-weight: 600;
+  margin: auto;
+}
+div.ap-control-bar span.ap-timer .ap-time-remaining {
+  display: none;
+}
+div.ap-control-bar span.ap-timer:hover .ap-time-elapsed {
+  display: none;
+}
+div.ap-control-bar span.ap-timer:hover .ap-time-remaining {
+  display: flex;
+}
+div.ap-control-bar .ap-progressbar {
+  display: block;
+  flex: 1 1 auto;
+  height: 100%;
+  padding: 0 10px;
+}
+div.ap-control-bar .ap-progressbar .ap-bar {
+  display: block;
+  position: relative;
+  cursor: default;
+  height: 100%;
+  font-size: 0;
+}
+div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter {
+  display: block;
+  position: absolute;
+  top: 15px;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter-empty {
+  background-color: color-mix(in oklab, var(--term-color-foreground) 20%, var(--term-color-background));
+}
+div.ap-control-bar .ap-progressbar .ap-bar .ap-gutter-full {
+  width: 100%;
+  transform-origin: left center;
+  background-color: var(--term-color-foreground);
+  border-radius: 3px;
+}
+div.ap-control-bar.ap-seekable .ap-progressbar .ap-bar {
+  cursor: pointer;
+}
+div.ap-control-bar .ap-fullscreen-button {
+  width: 14px;
+  height: 14px;
+  padding: 9px;
+}
+div.ap-control-bar .ap-fullscreen-button svg {
+  width: 14px;
+  height: 14px;
+}
+div.ap-control-bar .ap-fullscreen-button svg.ap-icon-fullscreen-on {
+  display: inline;
+}
+div.ap-control-bar .ap-fullscreen-button svg.ap-icon-fullscreen-off {
+  display: none;
+}
+div.ap-control-bar .ap-fullscreen-button .ap-tooltip {
+  right: 5px;
+  left: initial;
+  transform: none;
+}
+div.ap-control-bar .ap-kbd-button {
+  height: 14px;
+  padding: 9px;
+  margin: 0 4px;
+}
+div.ap-control-bar .ap-kbd-button svg {
+  width: 26px;
+  height: 14px;
+}
+div.ap-control-bar .ap-kbd-button .ap-tooltip {
+  right: 5px;
+  left: initial;
+  transform: none;
+}
+div.ap-wrapper.ap-hud .ap-control-bar {
+  opacity: 1;
+}
+div.ap-wrapper:fullscreen .ap-fullscreen-button svg.ap-icon-fullscreen-on {
+  display: none;
+}
+div.ap-wrapper:fullscreen .ap-fullscreen-button svg.ap-icon-fullscreen-off {
+  display: inline;
+}
+span.ap-progressbar span.ap-marker-container {
+  display: block;
+  top: 0;
+  bottom: 0;
+  width: 21px;
+  position: absolute;
+  margin-left: -10px;
+}
+span.ap-marker-container span.ap-marker {
+  display: block;
+  top: 13px;
+  bottom: 12px;
+  left: 7px;
+  right: 7px;
+  background-color: color-mix(in oklab, var(--term-color-foreground) 33%, var(--term-color-background));
+  position: absolute;
+  transition: top 0.1s, bottom 0.1s, left 0.1s, right 0.1s, background-color 0.1s;
+  border-radius: 50%;
+}
+span.ap-marker-container span.ap-marker.ap-marker-past {
+  background-color: var(--term-color-foreground);
+}
+span.ap-marker-container span.ap-marker:hover,
+span.ap-marker-container:hover span.ap-marker {
+  background-color: var(--term-color-foreground);
+  top: 11px;
+  bottom: 10px;
+  left: 5px;
+  right: 5px;
+}
+.ap-tooltip-container span.ap-tooltip {
+  visibility: hidden;
+  background-color: var(--term-color-foreground);
+  color: var(--term-color-background);
+  font-family: Consolas, Menlo, 'Bitstream Vera Sans Mono', monospace;
+  font-weight: bold;
+  text-align: center;
+  padding: 0 0.5em;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 1;
+  white-space: nowrap;
+  /* Prevents the text from wrapping and makes sure the tooltip width adapts to the text length */
+  font-size: 13px;
+  line-height: 2em;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.ap-tooltip-container:hover span.ap-tooltip {
+  visibility: visible;
+}
+.ap-player .ap-overlay {
+  z-index: 10;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ap-player .ap-overlay-start {
+  cursor: pointer;
+}
+.ap-player .ap-overlay-start .ap-play-button {
+  font-size: 0px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  text-align: center;
+  color: white;
+  height: 80px;
+  max-height: 66%;
+  margin: auto;
+}
+.ap-player .ap-overlay-start .ap-play-button div {
+  height: 100%;
+}
+.ap-player .ap-overlay-start .ap-play-button div span {
+  height: 100%;
+  display: block;
+}
+.ap-player .ap-overlay-start .ap-play-button div span svg {
+  height: 100%;
+}
+.ap-player .ap-overlay-start .ap-play-button svg {
+  filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.4));
+}
+.ap-player .ap-overlay-loading .ap-loader {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  border: 10px solid;
+  border-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.5) rgba(255, 255, 255, 0.7) #ffffff;
+  border-color: color-mix(in srgb, var(--term-color-foreground) 30%, var(--term-color-background)) color-mix(in srgb, var(--term-color-foreground) 50%, var(--term-color-background)) color-mix(in srgb, var(--term-color-foreground) 70%, var(--term-color-background)) color-mix(in srgb, var(--term-color-foreground) 100%, var(--term-color-background));
+  box-sizing: border-box;
+  animation: ap-loader-rotation 1s linear infinite;
+}
+.ap-player .ap-overlay-info {
+  background-color: var(--term-color-background);
+}
+.ap-player .ap-overlay-info span {
+  font-family: Consolas, Menlo, 'Bitstream Vera Sans Mono', monospace, 'Powerline Symbols';
+  font-variant-ligatures: none;
+  font-size: 2em;
+  color: var(--term-color-foreground);
+}
+.ap-player .ap-overlay-info span .ap-line {
+  letter-spacing: normal;
+  overflow: hidden;
+}
+.ap-player .ap-overlay-info span .ap-line span {
+  padding: 0;
+  display: inline-block;
+  height: 100%;
+}
+.ap-player .ap-overlay-help {
+  background-color: rgba(0, 0, 0, 0.8);
+  container-type: inline-size;
+}
+.ap-player .ap-overlay-help > div {
+  font-family: Consolas, Menlo, 'Bitstream Vera Sans Mono', monospace, 'Powerline Symbols';
+  font-variant-ligatures: none;
+  max-width: 85%;
+  max-height: 85%;
+  font-size: 18px;
+  color: var(--term-color-foreground);
+  box-sizing: border-box;
+  margin-bottom: 32px;
+}
+.ap-player .ap-overlay-help > div .ap-line {
+  letter-spacing: normal;
+  overflow: hidden;
+}
+.ap-player .ap-overlay-help > div .ap-line span {
+  padding: 0;
+  display: inline-block;
+  height: 100%;
+}
+.ap-player .ap-overlay-help > div div {
+  padding: calc(min(4cqw, 40px));
+  font-size: calc(min(1.9cqw, 18px));
+  background-color: var(--term-color-background);
+  border: 1px solid color-mix(in oklab, var(--term-color-background) 90%, var(--term-color-foreground));
+  border-radius: 6px;
+}
+.ap-player .ap-overlay-help > div div p {
+  font-weight: bold;
+  margin: 0 0 2em 0;
+}
+.ap-player .ap-overlay-help > div div ul {
+  list-style: none;
+  padding: 0;
+}
+.ap-player .ap-overlay-help > div div ul li {
+  margin: 0 0 0.75em 0;
+}
+.ap-player .ap-overlay-help > div div kbd {
+  color: var(--term-color-background);
+  background-color: var(--term-color-foreground);
+  padding: 0.2em 0.5em;
+  border-radius: 0.2em;
+  font-family: inherit;
+  font-size: 0.85em;
+  border: none;
+  margin: 0;
+}
+.ap-player .ap-overlay-error span {
+  font-size: 8em;
+}
+@keyframes ap-loader-rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.ap-terminal .fg-16 {
+  --fg: #000000;
+}
+.ap-terminal .bg-16 {
+  --bg: #000000;
+}
+.ap-terminal .fg-17 {
+  --fg: #00005f;
+}
+.ap-terminal .bg-17 {
+  --bg: #00005f;
+}
+.ap-terminal .fg-18 {
+  --fg: #000087;
+}
+.ap-terminal .bg-18 {
+  --bg: #000087;
+}
+.ap-terminal .fg-19 {
+  --fg: #0000af;
+}
+.ap-terminal .bg-19 {
+  --bg: #0000af;
+}
+.ap-terminal .fg-20 {
+  --fg: #0000d7;
+}
+.ap-terminal .bg-20 {
+  --bg: #0000d7;
+}
+.ap-terminal .fg-21 {
+  --fg: #0000ff;
+}
+.ap-terminal .bg-21 {
+  --bg: #0000ff;
+}
+.ap-terminal .fg-22 {
+  --fg: #005f00;
+}
+.ap-terminal .bg-22 {
+  --bg: #005f00;
+}
+.ap-terminal .fg-23 {
+  --fg: #005f5f;
+}
+.ap-terminal .bg-23 {
+  --bg: #005f5f;
+}
+.ap-terminal .fg-24 {
+  --fg: #005f87;
+}
+.ap-terminal .bg-24 {
+  --bg: #005f87;
+}
+.ap-terminal .fg-25 {
+  --fg: #005faf;
+}
+.ap-terminal .bg-25 {
+  --bg: #005faf;
+}
+.ap-terminal .fg-26 {
+  --fg: #005fd7;
+}
+.ap-terminal .bg-26 {
+  --bg: #005fd7;
+}
+.ap-terminal .fg-27 {
+  --fg: #005fff;
+}
+.ap-terminal .bg-27 {
+  --bg: #005fff;
+}
+.ap-terminal .fg-28 {
+  --fg: #008700;
+}
+.ap-terminal .bg-28 {
+  --bg: #008700;
+}
+.ap-terminal .fg-29 {
+  --fg: #00875f;
+}
+.ap-terminal .bg-29 {
+  --bg: #00875f;
+}
+.ap-terminal .fg-30 {
+  --fg: #008787;
+}
+.ap-terminal .bg-30 {
+  --bg: #008787;
+}
+.ap-terminal .fg-31 {
+  --fg: #0087af;
+}
+.ap-terminal .bg-31 {
+  --bg: #0087af;
+}
+.ap-terminal .fg-32 {
+  --fg: #0087d7;
+}
+.ap-terminal .bg-32 {
+  --bg: #0087d7;
+}
+.ap-terminal .fg-33 {
+  --fg: #0087ff;
+}
+.ap-terminal .bg-33 {
+  --bg: #0087ff;
+}
+.ap-terminal .fg-34 {
+  --fg: #00af00;
+}
+.ap-terminal .bg-34 {
+  --bg: #00af00;
+}
+.ap-terminal .fg-35 {
+  --fg: #00af5f;
+}
+.ap-terminal .bg-35 {
+  --bg: #00af5f;
+}
+.ap-terminal .fg-36 {
+  --fg: #00af87;
+}
+.ap-terminal .bg-36 {
+  --bg: #00af87;
+}
+.ap-terminal .fg-37 {
+  --fg: #00afaf;
+}
+.ap-terminal .bg-37 {
+  --bg: #00afaf;
+}
+.ap-terminal .fg-38 {
+  --fg: #00afd7;
+}
+.ap-terminal .bg-38 {
+  --bg: #00afd7;
+}
+.ap-terminal .fg-39 {
+  --fg: #00afff;
+}
+.ap-terminal .bg-39 {
+  --bg: #00afff;
+}
+.ap-terminal .fg-40 {
+  --fg: #00d700;
+}
+.ap-terminal .bg-40 {
+  --bg: #00d700;
+}
+.ap-terminal .fg-41 {
+  --fg: #00d75f;
+}
+.ap-terminal .bg-41 {
+  --bg: #00d75f;
+}
+.ap-terminal .fg-42 {
+  --fg: #00d787;
+}
+.ap-terminal .bg-42 {
+  --bg: #00d787;
+}
+.ap-terminal .fg-43 {
+  --fg: #00d7af;
+}
+.ap-terminal .bg-43 {
+  --bg: #00d7af;
+}
+.ap-terminal .fg-44 {
+  --fg: #00d7d7;
+}
+.ap-terminal .bg-44 {
+  --bg: #00d7d7;
+}
+.ap-terminal .fg-45 {
+  --fg: #00d7ff;
+}
+.ap-terminal .bg-45 {
+  --bg: #00d7ff;
+}
+.ap-terminal .fg-46 {
+  --fg: #00ff00;
+}
+.ap-terminal .bg-46 {
+  --bg: #00ff00;
+}
+.ap-terminal .fg-47 {
+  --fg: #00ff5f;
+}
+.ap-terminal .bg-47 {
+  --bg: #00ff5f;
+}
+.ap-terminal .fg-48 {
+  --fg: #00ff87;
+}
+.ap-terminal .bg-48 {
+  --bg: #00ff87;
+}
+.ap-terminal .fg-49 {
+  --fg: #00ffaf;
+}
+.ap-terminal .bg-49 {
+  --bg: #00ffaf;
+}
+.ap-terminal .fg-50 {
+  --fg: #00ffd7;
+}
+.ap-terminal .bg-50 {
+  --bg: #00ffd7;
+}
+.ap-terminal .fg-51 {
+  --fg: #00ffff;
+}
+.ap-terminal .bg-51 {
+  --bg: #00ffff;
+}
+.ap-terminal .fg-52 {
+  --fg: #5f0000;
+}
+.ap-terminal .bg-52 {
+  --bg: #5f0000;
+}
+.ap-terminal .fg-53 {
+  --fg: #5f005f;
+}
+.ap-terminal .bg-53 {
+  --bg: #5f005f;
+}
+.ap-terminal .fg-54 {
+  --fg: #5f0087;
+}
+.ap-terminal .bg-54 {
+  --bg: #5f0087;
+}
+.ap-terminal .fg-55 {
+  --fg: #5f00af;
+}
+.ap-terminal .bg-55 {
+  --bg: #5f00af;
+}
+.ap-terminal .fg-56 {
+  --fg: #5f00d7;
+}
+.ap-terminal .bg-56 {
+  --bg: #5f00d7;
+}
+.ap-terminal .fg-57 {
+  --fg: #5f00ff;
+}
+.ap-terminal .bg-57 {
+  --bg: #5f00ff;
+}
+.ap-terminal .fg-58 {
+  --fg: #5f5f00;
+}
+.ap-terminal .bg-58 {
+  --bg: #5f5f00;
+}
+.ap-terminal .fg-59 {
+  --fg: #5f5f5f;
+}
+.ap-terminal .bg-59 {
+  --bg: #5f5f5f;
+}
+.ap-terminal .fg-60 {
+  --fg: #5f5f87;
+}
+.ap-terminal .bg-60 {
+  --bg: #5f5f87;
+}
+.ap-terminal .fg-61 {
+  --fg: #5f5faf;
+}
+.ap-terminal .bg-61 {
+  --bg: #5f5faf;
+}
+.ap-terminal .fg-62 {
+  --fg: #5f5fd7;
+}
+.ap-terminal .bg-62 {
+  --bg: #5f5fd7;
+}
+.ap-terminal .fg-63 {
+  --fg: #5f5fff;
+}
+.ap-terminal .bg-63 {
+  --bg: #5f5fff;
+}
+.ap-terminal .fg-64 {
+  --fg: #5f8700;
+}
+.ap-terminal .bg-64 {
+  --bg: #5f8700;
+}
+.ap-terminal .fg-65 {
+  --fg: #5f875f;
+}
+.ap-terminal .bg-65 {
+  --bg: #5f875f;
+}
+.ap-terminal .fg-66 {
+  --fg: #5f8787;
+}
+.ap-terminal .bg-66 {
+  --bg: #5f8787;
+}
+.ap-terminal .fg-67 {
+  --fg: #5f87af;
+}
+.ap-terminal .bg-67 {
+  --bg: #5f87af;
+}
+.ap-terminal .fg-68 {
+  --fg: #5f87d7;
+}
+.ap-terminal .bg-68 {
+  --bg: #5f87d7;
+}
+.ap-terminal .fg-69 {
+  --fg: #5f87ff;
+}
+.ap-terminal .bg-69 {
+  --bg: #5f87ff;
+}
+.ap-terminal .fg-70 {
+  --fg: #5faf00;
+}
+.ap-terminal .bg-70 {
+  --bg: #5faf00;
+}
+.ap-terminal .fg-71 {
+  --fg: #5faf5f;
+}
+.ap-terminal .bg-71 {
+  --bg: #5faf5f;
+}
+.ap-terminal .fg-72 {
+  --fg: #5faf87;
+}
+.ap-terminal .bg-72 {
+  --bg: #5faf87;
+}
+.ap-terminal .fg-73 {
+  --fg: #5fafaf;
+}
+.ap-terminal .bg-73 {
+  --bg: #5fafaf;
+}
+.ap-terminal .fg-74 {
+  --fg: #5fafd7;
+}
+.ap-terminal .bg-74 {
+  --bg: #5fafd7;
+}
+.ap-terminal .fg-75 {
+  --fg: #5fafff;
+}
+.ap-terminal .bg-75 {
+  --bg: #5fafff;
+}
+.ap-terminal .fg-76 {
+  --fg: #5fd700;
+}
+.ap-terminal .bg-76 {
+  --bg: #5fd700;
+}
+.ap-terminal .fg-77 {
+  --fg: #5fd75f;
+}
+.ap-terminal .bg-77 {
+  --bg: #5fd75f;
+}
+.ap-terminal .fg-78 {
+  --fg: #5fd787;
+}
+.ap-terminal .bg-78 {
+  --bg: #5fd787;
+}
+.ap-terminal .fg-79 {
+  --fg: #5fd7af;
+}
+.ap-terminal .bg-79 {
+  --bg: #5fd7af;
+}
+.ap-terminal .fg-80 {
+  --fg: #5fd7d7;
+}
+.ap-terminal .bg-80 {
+  --bg: #5fd7d7;
+}
+.ap-terminal .fg-81 {
+  --fg: #5fd7ff;
+}
+.ap-terminal .bg-81 {
+  --bg: #5fd7ff;
+}
+.ap-terminal .fg-82 {
+  --fg: #5fff00;
+}
+.ap-terminal .bg-82 {
+  --bg: #5fff00;
+}
+.ap-terminal .fg-83 {
+  --fg: #5fff5f;
+}
+.ap-terminal .bg-83 {
+  --bg: #5fff5f;
+}
+.ap-terminal .fg-84 {
+  --fg: #5fff87;
+}
+.ap-terminal .bg-84 {
+  --bg: #5fff87;
+}
+.ap-terminal .fg-85 {
+  --fg: #5fffaf;
+}
+.ap-terminal .bg-85 {
+  --bg: #5fffaf;
+}
+.ap-terminal .fg-86 {
+  --fg: #5fffd7;
+}
+.ap-terminal .bg-86 {
+  --bg: #5fffd7;
+}
+.ap-terminal .fg-87 {
+  --fg: #5fffff;
+}
+.ap-terminal .bg-87 {
+  --bg: #5fffff;
+}
+.ap-terminal .fg-88 {
+  --fg: #870000;
+}
+.ap-terminal .bg-88 {
+  --bg: #870000;
+}
+.ap-terminal .fg-89 {
+  --fg: #87005f;
+}
+.ap-terminal .bg-89 {
+  --bg: #87005f;
+}
+.ap-terminal .fg-90 {
+  --fg: #870087;
+}
+.ap-terminal .bg-90 {
+  --bg: #870087;
+}
+.ap-terminal .fg-91 {
+  --fg: #8700af;
+}
+.ap-terminal .bg-91 {
+  --bg: #8700af;
+}
+.ap-terminal .fg-92 {
+  --fg: #8700d7;
+}
+.ap-terminal .bg-92 {
+  --bg: #8700d7;
+}
+.ap-terminal .fg-93 {
+  --fg: #8700ff;
+}
+.ap-terminal .bg-93 {
+  --bg: #8700ff;
+}
+.ap-terminal .fg-94 {
+  --fg: #875f00;
+}
+.ap-terminal .bg-94 {
+  --bg: #875f00;
+}
+.ap-terminal .fg-95 {
+  --fg: #875f5f;
+}
+.ap-terminal .bg-95 {
+  --bg: #875f5f;
+}
+.ap-terminal .fg-96 {
+  --fg: #875f87;
+}
+.ap-terminal .bg-96 {
+  --bg: #875f87;
+}
+.ap-terminal .fg-97 {
+  --fg: #875faf;
+}
+.ap-terminal .bg-97 {
+  --bg: #875faf;
+}
+.ap-terminal .fg-98 {
+  --fg: #875fd7;
+}
+.ap-terminal .bg-98 {
+  --bg: #875fd7;
+}
+.ap-terminal .fg-99 {
+  --fg: #875fff;
+}
+.ap-terminal .bg-99 {
+  --bg: #875fff;
+}
+.ap-terminal .fg-100 {
+  --fg: #878700;
+}
+.ap-terminal .bg-100 {
+  --bg: #878700;
+}
+.ap-terminal .fg-101 {
+  --fg: #87875f;
+}
+.ap-terminal .bg-101 {
+  --bg: #87875f;
+}
+.ap-terminal .fg-102 {
+  --fg: #878787;
+}
+.ap-terminal .bg-102 {
+  --bg: #878787;
+}
+.ap-terminal .fg-103 {
+  --fg: #8787af;
+}
+.ap-terminal .bg-103 {
+  --bg: #8787af;
+}
+.ap-terminal .fg-104 {
+  --fg: #8787d7;
+}
+.ap-terminal .bg-104 {
+  --bg: #8787d7;
+}
+.ap-terminal .fg-105 {
+  --fg: #8787ff;
+}
+.ap-terminal .bg-105 {
+  --bg: #8787ff;
+}
+.ap-terminal .fg-106 {
+  --fg: #87af00;
+}
+.ap-terminal .bg-106 {
+  --bg: #87af00;
+}
+.ap-terminal .fg-107 {
+  --fg: #87af5f;
+}
+.ap-terminal .bg-107 {
+  --bg: #87af5f;
+}
+.ap-terminal .fg-108 {
+  --fg: #87af87;
+}
+.ap-terminal .bg-108 {
+  --bg: #87af87;
+}
+.ap-terminal .fg-109 {
+  --fg: #87afaf;
+}
+.ap-terminal .bg-109 {
+  --bg: #87afaf;
+}
+.ap-terminal .fg-110 {
+  --fg: #87afd7;
+}
+.ap-terminal .bg-110 {
+  --bg: #87afd7;
+}
+.ap-terminal .fg-111 {
+  --fg: #87afff;
+}
+.ap-terminal .bg-111 {
+  --bg: #87afff;
+}
+.ap-terminal .fg-112 {
+  --fg: #87d700;
+}
+.ap-terminal .bg-112 {
+  --bg: #87d700;
+}
+.ap-terminal .fg-113 {
+  --fg: #87d75f;
+}
+.ap-terminal .bg-113 {
+  --bg: #87d75f;
+}
+.ap-terminal .fg-114 {
+  --fg: #87d787;
+}
+.ap-terminal .bg-114 {
+  --bg: #87d787;
+}
+.ap-terminal .fg-115 {
+  --fg: #87d7af;
+}
+.ap-terminal .bg-115 {
+  --bg: #87d7af;
+}
+.ap-terminal .fg-116 {
+  --fg: #87d7d7;
+}
+.ap-terminal .bg-116 {
+  --bg: #87d7d7;
+}
+.ap-terminal .fg-117 {
+  --fg: #87d7ff;
+}
+.ap-terminal .bg-117 {
+  --bg: #87d7ff;
+}
+.ap-terminal .fg-118 {
+  --fg: #87ff00;
+}
+.ap-terminal .bg-118 {
+  --bg: #87ff00;
+}
+.ap-terminal .fg-119 {
+  --fg: #87ff5f;
+}
+.ap-terminal .bg-119 {
+  --bg: #87ff5f;
+}
+.ap-terminal .fg-120 {
+  --fg: #87ff87;
+}
+.ap-terminal .bg-120 {
+  --bg: #87ff87;
+}
+.ap-terminal .fg-121 {
+  --fg: #87ffaf;
+}
+.ap-terminal .bg-121 {
+  --bg: #87ffaf;
+}
+.ap-terminal .fg-122 {
+  --fg: #87ffd7;
+}
+.ap-terminal .bg-122 {
+  --bg: #87ffd7;
+}
+.ap-terminal .fg-123 {
+  --fg: #87ffff;
+}
+.ap-terminal .bg-123 {
+  --bg: #87ffff;
+}
+.ap-terminal .fg-124 {
+  --fg: #af0000;
+}
+.ap-terminal .bg-124 {
+  --bg: #af0000;
+}
+.ap-terminal .fg-125 {
+  --fg: #af005f;
+}
+.ap-terminal .bg-125 {
+  --bg: #af005f;
+}
+.ap-terminal .fg-126 {
+  --fg: #af0087;
+}
+.ap-terminal .bg-126 {
+  --bg: #af0087;
+}
+.ap-terminal .fg-127 {
+  --fg: #af00af;
+}
+.ap-terminal .bg-127 {
+  --bg: #af00af;
+}
+.ap-terminal .fg-128 {
+  --fg: #af00d7;
+}
+.ap-terminal .bg-128 {
+  --bg: #af00d7;
+}
+.ap-terminal .fg-129 {
+  --fg: #af00ff;
+}
+.ap-terminal .bg-129 {
+  --bg: #af00ff;
+}
+.ap-terminal .fg-130 {
+  --fg: #af5f00;
+}
+.ap-terminal .bg-130 {
+  --bg: #af5f00;
+}
+.ap-terminal .fg-131 {
+  --fg: #af5f5f;
+}
+.ap-terminal .bg-131 {
+  --bg: #af5f5f;
+}
+.ap-terminal .fg-132 {
+  --fg: #af5f87;
+}
+.ap-terminal .bg-132 {
+  --bg: #af5f87;
+}
+.ap-terminal .fg-133 {
+  --fg: #af5faf;
+}
+.ap-terminal .bg-133 {
+  --bg: #af5faf;
+}
+.ap-terminal .fg-134 {
+  --fg: #af5fd7;
+}
+.ap-terminal .bg-134 {
+  --bg: #af5fd7;
+}
+.ap-terminal .fg-135 {
+  --fg: #af5fff;
+}
+.ap-terminal .bg-135 {
+  --bg: #af5fff;
+}
+.ap-terminal .fg-136 {
+  --fg: #af8700;
+}
+.ap-terminal .bg-136 {
+  --bg: #af8700;
+}
+.ap-terminal .fg-137 {
+  --fg: #af875f;
+}
+.ap-terminal .bg-137 {
+  --bg: #af875f;
+}
+.ap-terminal .fg-138 {
+  --fg: #af8787;
+}
+.ap-terminal .bg-138 {
+  --bg: #af8787;
+}
+.ap-terminal .fg-139 {
+  --fg: #af87af;
+}
+.ap-terminal .bg-139 {
+  --bg: #af87af;
+}
+.ap-terminal .fg-140 {
+  --fg: #af87d7;
+}
+.ap-terminal .bg-140 {
+  --bg: #af87d7;
+}
+.ap-terminal .fg-141 {
+  --fg: #af87ff;
+}
+.ap-terminal .bg-141 {
+  --bg: #af87ff;
+}
+.ap-terminal .fg-142 {
+  --fg: #afaf00;
+}
+.ap-terminal .bg-142 {
+  --bg: #afaf00;
+}
+.ap-terminal .fg-143 {
+  --fg: #afaf5f;
+}
+.ap-terminal .bg-143 {
+  --bg: #afaf5f;
+}
+.ap-terminal .fg-144 {
+  --fg: #afaf87;
+}
+.ap-terminal .bg-144 {
+  --bg: #afaf87;
+}
+.ap-terminal .fg-145 {
+  --fg: #afafaf;
+}
+.ap-terminal .bg-145 {
+  --bg: #afafaf;
+}
+.ap-terminal .fg-146 {
+  --fg: #afafd7;
+}
+.ap-terminal .bg-146 {
+  --bg: #afafd7;
+}
+.ap-terminal .fg-147 {
+  --fg: #afafff;
+}
+.ap-terminal .bg-147 {
+  --bg: #afafff;
+}
+.ap-terminal .fg-148 {
+  --fg: #afd700;
+}
+.ap-terminal .bg-148 {
+  --bg: #afd700;
+}
+.ap-terminal .fg-149 {
+  --fg: #afd75f;
+}
+.ap-terminal .bg-149 {
+  --bg: #afd75f;
+}
+.ap-terminal .fg-150 {
+  --fg: #afd787;
+}
+.ap-terminal .bg-150 {
+  --bg: #afd787;
+}
+.ap-terminal .fg-151 {
+  --fg: #afd7af;
+}
+.ap-terminal .bg-151 {
+  --bg: #afd7af;
+}
+.ap-terminal .fg-152 {
+  --fg: #afd7d7;
+}
+.ap-terminal .bg-152 {
+  --bg: #afd7d7;
+}
+.ap-terminal .fg-153 {
+  --fg: #afd7ff;
+}
+.ap-terminal .bg-153 {
+  --bg: #afd7ff;
+}
+.ap-terminal .fg-154 {
+  --fg: #afff00;
+}
+.ap-terminal .bg-154 {
+  --bg: #afff00;
+}
+.ap-terminal .fg-155 {
+  --fg: #afff5f;
+}
+.ap-terminal .bg-155 {
+  --bg: #afff5f;
+}
+.ap-terminal .fg-156 {
+  --fg: #afff87;
+}
+.ap-terminal .bg-156 {
+  --bg: #afff87;
+}
+.ap-terminal .fg-157 {
+  --fg: #afffaf;
+}
+.ap-terminal .bg-157 {
+  --bg: #afffaf;
+}
+.ap-terminal .fg-158 {
+  --fg: #afffd7;
+}
+.ap-terminal .bg-158 {
+  --bg: #afffd7;
+}
+.ap-terminal .fg-159 {
+  --fg: #afffff;
+}
+.ap-terminal .bg-159 {
+  --bg: #afffff;
+}
+.ap-terminal .fg-160 {
+  --fg: #d70000;
+}
+.ap-terminal .bg-160 {
+  --bg: #d70000;
+}
+.ap-terminal .fg-161 {
+  --fg: #d7005f;
+}
+.ap-terminal .bg-161 {
+  --bg: #d7005f;
+}
+.ap-terminal .fg-162 {
+  --fg: #d70087;
+}
+.ap-terminal .bg-162 {
+  --bg: #d70087;
+}
+.ap-terminal .fg-163 {
+  --fg: #d700af;
+}
+.ap-terminal .bg-163 {
+  --bg: #d700af;
+}
+.ap-terminal .fg-164 {
+  --fg: #d700d7;
+}
+.ap-terminal .bg-164 {
+  --bg: #d700d7;
+}
+.ap-terminal .fg-165 {
+  --fg: #d700ff;
+}
+.ap-terminal .bg-165 {
+  --bg: #d700ff;
+}
+.ap-terminal .fg-166 {
+  --fg: #d75f00;
+}
+.ap-terminal .bg-166 {
+  --bg: #d75f00;
+}
+.ap-terminal .fg-167 {
+  --fg: #d75f5f;
+}
+.ap-terminal .bg-167 {
+  --bg: #d75f5f;
+}
+.ap-terminal .fg-168 {
+  --fg: #d75f87;
+}
+.ap-terminal .bg-168 {
+  --bg: #d75f87;
+}
+.ap-terminal .fg-169 {
+  --fg: #d75faf;
+}
+.ap-terminal .bg-169 {
+  --bg: #d75faf;
+}
+.ap-terminal .fg-170 {
+  --fg: #d75fd7;
+}
+.ap-terminal .bg-170 {
+  --bg: #d75fd7;
+}
+.ap-terminal .fg-171 {
+  --fg: #d75fff;
+}
+.ap-terminal .bg-171 {
+  --bg: #d75fff;
+}
+.ap-terminal .fg-172 {
+  --fg: #d78700;
+}
+.ap-terminal .bg-172 {
+  --bg: #d78700;
+}
+.ap-terminal .fg-173 {
+  --fg: #d7875f;
+}
+.ap-terminal .bg-173 {
+  --bg: #d7875f;
+}
+.ap-terminal .fg-174 {
+  --fg: #d78787;
+}
+.ap-terminal .bg-174 {
+  --bg: #d78787;
+}
+.ap-terminal .fg-175 {
+  --fg: #d787af;
+}
+.ap-terminal .bg-175 {
+  --bg: #d787af;
+}
+.ap-terminal .fg-176 {
+  --fg: #d787d7;
+}
+.ap-terminal .bg-176 {
+  --bg: #d787d7;
+}
+.ap-terminal .fg-177 {
+  --fg: #d787ff;
+}
+.ap-terminal .bg-177 {
+  --bg: #d787ff;
+}
+.ap-terminal .fg-178 {
+  --fg: #d7af00;
+}
+.ap-terminal .bg-178 {
+  --bg: #d7af00;
+}
+.ap-terminal .fg-179 {
+  --fg: #d7af5f;
+}
+.ap-terminal .bg-179 {
+  --bg: #d7af5f;
+}
+.ap-terminal .fg-180 {
+  --fg: #d7af87;
+}
+.ap-terminal .bg-180 {
+  --bg: #d7af87;
+}
+.ap-terminal .fg-181 {
+  --fg: #d7afaf;
+}
+.ap-terminal .bg-181 {
+  --bg: #d7afaf;
+}
+.ap-terminal .fg-182 {
+  --fg: #d7afd7;
+}
+.ap-terminal .bg-182 {
+  --bg: #d7afd7;
+}
+.ap-terminal .fg-183 {
+  --fg: #d7afff;
+}
+.ap-terminal .bg-183 {
+  --bg: #d7afff;
+}
+.ap-terminal .fg-184 {
+  --fg: #d7d700;
+}
+.ap-terminal .bg-184 {
+  --bg: #d7d700;
+}
+.ap-terminal .fg-185 {
+  --fg: #d7d75f;
+}
+.ap-terminal .bg-185 {
+  --bg: #d7d75f;
+}
+.ap-terminal .fg-186 {
+  --fg: #d7d787;
+}
+.ap-terminal .bg-186 {
+  --bg: #d7d787;
+}
+.ap-terminal .fg-187 {
+  --fg: #d7d7af;
+}
+.ap-terminal .bg-187 {
+  --bg: #d7d7af;
+}
+.ap-terminal .fg-188 {
+  --fg: #d7d7d7;
+}
+.ap-terminal .bg-188 {
+  --bg: #d7d7d7;
+}
+.ap-terminal .fg-189 {
+  --fg: #d7d7ff;
+}
+.ap-terminal .bg-189 {
+  --bg: #d7d7ff;
+}
+.ap-terminal .fg-190 {
+  --fg: #d7ff00;
+}
+.ap-terminal .bg-190 {
+  --bg: #d7ff00;
+}
+.ap-terminal .fg-191 {
+  --fg: #d7ff5f;
+}
+.ap-terminal .bg-191 {
+  --bg: #d7ff5f;
+}
+.ap-terminal .fg-192 {
+  --fg: #d7ff87;
+}
+.ap-terminal .bg-192 {
+  --bg: #d7ff87;
+}
+.ap-terminal .fg-193 {
+  --fg: #d7ffaf;
+}
+.ap-terminal .bg-193 {
+  --bg: #d7ffaf;
+}
+.ap-terminal .fg-194 {
+  --fg: #d7ffd7;
+}
+.ap-terminal .bg-194 {
+  --bg: #d7ffd7;
+}
+.ap-terminal .fg-195 {
+  --fg: #d7ffff;
+}
+.ap-terminal .bg-195 {
+  --bg: #d7ffff;
+}
+.ap-terminal .fg-196 {
+  --fg: #ff0000;
+}
+.ap-terminal .bg-196 {
+  --bg: #ff0000;
+}
+.ap-terminal .fg-197 {
+  --fg: #ff005f;
+}
+.ap-terminal .bg-197 {
+  --bg: #ff005f;
+}
+.ap-terminal .fg-198 {
+  --fg: #ff0087;
+}
+.ap-terminal .bg-198 {
+  --bg: #ff0087;
+}
+.ap-terminal .fg-199 {
+  --fg: #ff00af;
+}
+.ap-terminal .bg-199 {
+  --bg: #ff00af;
+}
+.ap-terminal .fg-200 {
+  --fg: #ff00d7;
+}
+.ap-terminal .bg-200 {
+  --bg: #ff00d7;
+}
+.ap-terminal .fg-201 {
+  --fg: #ff00ff;
+}
+.ap-terminal .bg-201 {
+  --bg: #ff00ff;
+}
+.ap-terminal .fg-202 {
+  --fg: #ff5f00;
+}
+.ap-terminal .bg-202 {
+  --bg: #ff5f00;
+}
+.ap-terminal .fg-203 {
+  --fg: #ff5f5f;
+}
+.ap-terminal .bg-203 {
+  --bg: #ff5f5f;
+}
+.ap-terminal .fg-204 {
+  --fg: #ff5f87;
+}
+.ap-terminal .bg-204 {
+  --bg: #ff5f87;
+}
+.ap-terminal .fg-205 {
+  --fg: #ff5faf;
+}
+.ap-terminal .bg-205 {
+  --bg: #ff5faf;
+}
+.ap-terminal .fg-206 {
+  --fg: #ff5fd7;
+}
+.ap-terminal .bg-206 {
+  --bg: #ff5fd7;
+}
+.ap-terminal .fg-207 {
+  --fg: #ff5fff;
+}
+.ap-terminal .bg-207 {
+  --bg: #ff5fff;
+}
+.ap-terminal .fg-208 {
+  --fg: #ff8700;
+}
+.ap-terminal .bg-208 {
+  --bg: #ff8700;
+}
+.ap-terminal .fg-209 {
+  --fg: #ff875f;
+}
+.ap-terminal .bg-209 {
+  --bg: #ff875f;
+}
+.ap-terminal .fg-210 {
+  --fg: #ff8787;
+}
+.ap-terminal .bg-210 {
+  --bg: #ff8787;
+}
+.ap-terminal .fg-211 {
+  --fg: #ff87af;
+}
+.ap-terminal .bg-211 {
+  --bg: #ff87af;
+}
+.ap-terminal .fg-212 {
+  --fg: #ff87d7;
+}
+.ap-terminal .bg-212 {
+  --bg: #ff87d7;
+}
+.ap-terminal .fg-213 {
+  --fg: #ff87ff;
+}
+.ap-terminal .bg-213 {
+  --bg: #ff87ff;
+}
+.ap-terminal .fg-214 {
+  --fg: #ffaf00;
+}
+.ap-terminal .bg-214 {
+  --bg: #ffaf00;
+}
+.ap-terminal .fg-215 {
+  --fg: #ffaf5f;
+}
+.ap-terminal .bg-215 {
+  --bg: #ffaf5f;
+}
+.ap-terminal .fg-216 {
+  --fg: #ffaf87;
+}
+.ap-terminal .bg-216 {
+  --bg: #ffaf87;
+}
+.ap-terminal .fg-217 {
+  --fg: #ffafaf;
+}
+.ap-terminal .bg-217 {
+  --bg: #ffafaf;
+}
+.ap-terminal .fg-218 {
+  --fg: #ffafd7;
+}
+.ap-terminal .bg-218 {
+  --bg: #ffafd7;
+}
+.ap-terminal .fg-219 {
+  --fg: #ffafff;
+}
+.ap-terminal .bg-219 {
+  --bg: #ffafff;
+}
+.ap-terminal .fg-220 {
+  --fg: #ffd700;
+}
+.ap-terminal .bg-220 {
+  --bg: #ffd700;
+}
+.ap-terminal .fg-221 {
+  --fg: #ffd75f;
+}
+.ap-terminal .bg-221 {
+  --bg: #ffd75f;
+}
+.ap-terminal .fg-222 {
+  --fg: #ffd787;
+}
+.ap-terminal .bg-222 {
+  --bg: #ffd787;
+}
+.ap-terminal .fg-223 {
+  --fg: #ffd7af;
+}
+.ap-terminal .bg-223 {
+  --bg: #ffd7af;
+}
+.ap-terminal .fg-224 {
+  --fg: #ffd7d7;
+}
+.ap-terminal .bg-224 {
+  --bg: #ffd7d7;
+}
+.ap-terminal .fg-225 {
+  --fg: #ffd7ff;
+}
+.ap-terminal .bg-225 {
+  --bg: #ffd7ff;
+}
+.ap-terminal .fg-226 {
+  --fg: #ffff00;
+}
+.ap-terminal .bg-226 {
+  --bg: #ffff00;
+}
+.ap-terminal .fg-227 {
+  --fg: #ffff5f;
+}
+.ap-terminal .bg-227 {
+  --bg: #ffff5f;
+}
+.ap-terminal .fg-228 {
+  --fg: #ffff87;
+}
+.ap-terminal .bg-228 {
+  --bg: #ffff87;
+}
+.ap-terminal .fg-229 {
+  --fg: #ffffaf;
+}
+.ap-terminal .bg-229 {
+  --bg: #ffffaf;
+}
+.ap-terminal .fg-230 {
+  --fg: #ffffd7;
+}
+.ap-terminal .bg-230 {
+  --bg: #ffffd7;
+}
+.ap-terminal .fg-231 {
+  --fg: #ffffff;
+}
+.ap-terminal .bg-231 {
+  --bg: #ffffff;
+}
+.ap-terminal .fg-232 {
+  --fg: #080808;
+}
+.ap-terminal .bg-232 {
+  --bg: #080808;
+}
+.ap-terminal .fg-233 {
+  --fg: #121212;
+}
+.ap-terminal .bg-233 {
+  --bg: #121212;
+}
+.ap-terminal .fg-234 {
+  --fg: #1c1c1c;
+}
+.ap-terminal .bg-234 {
+  --bg: #1c1c1c;
+}
+.ap-terminal .fg-235 {
+  --fg: #262626;
+}
+.ap-terminal .bg-235 {
+  --bg: #262626;
+}
+.ap-terminal .fg-236 {
+  --fg: #303030;
+}
+.ap-terminal .bg-236 {
+  --bg: #303030;
+}
+.ap-terminal .fg-237 {
+  --fg: #3a3a3a;
+}
+.ap-terminal .bg-237 {
+  --bg: #3a3a3a;
+}
+.ap-terminal .fg-238 {
+  --fg: #444444;
+}
+.ap-terminal .bg-238 {
+  --bg: #444444;
+}
+.ap-terminal .fg-239 {
+  --fg: #4e4e4e;
+}
+.ap-terminal .bg-239 {
+  --bg: #4e4e4e;
+}
+.ap-terminal .fg-240 {
+  --fg: #585858;
+}
+.ap-terminal .bg-240 {
+  --bg: #585858;
+}
+.ap-terminal .fg-241 {
+  --fg: #626262;
+}
+.ap-terminal .bg-241 {
+  --bg: #626262;
+}
+.ap-terminal .fg-242 {
+  --fg: #6c6c6c;
+}
+.ap-terminal .bg-242 {
+  --bg: #6c6c6c;
+}
+.ap-terminal .fg-243 {
+  --fg: #767676;
+}
+.ap-terminal .bg-243 {
+  --bg: #767676;
+}
+.ap-terminal .fg-244 {
+  --fg: #808080;
+}
+.ap-terminal .bg-244 {
+  --bg: #808080;
+}
+.ap-terminal .fg-245 {
+  --fg: #8a8a8a;
+}
+.ap-terminal .bg-245 {
+  --bg: #8a8a8a;
+}
+.ap-terminal .fg-246 {
+  --fg: #949494;
+}
+.ap-terminal .bg-246 {
+  --bg: #949494;
+}
+.ap-terminal .fg-247 {
+  --fg: #9e9e9e;
+}
+.ap-terminal .bg-247 {
+  --bg: #9e9e9e;
+}
+.ap-terminal .fg-248 {
+  --fg: #a8a8a8;
+}
+.ap-terminal .bg-248 {
+  --bg: #a8a8a8;
+}
+.ap-terminal .fg-249 {
+  --fg: #b2b2b2;
+}
+.ap-terminal .bg-249 {
+  --bg: #b2b2b2;
+}
+.ap-terminal .fg-250 {
+  --fg: #bcbcbc;
+}
+.ap-terminal .bg-250 {
+  --bg: #bcbcbc;
+}
+.ap-terminal .fg-251 {
+  --fg: #c6c6c6;
+}
+.ap-terminal .bg-251 {
+  --bg: #c6c6c6;
+}
+.ap-terminal .fg-252 {
+  --fg: #d0d0d0;
+}
+.ap-terminal .bg-252 {
+  --bg: #d0d0d0;
+}
+.ap-terminal .fg-253 {
+  --fg: #dadada;
+}
+.ap-terminal .bg-253 {
+  --bg: #dadada;
+}
+.ap-terminal .fg-254 {
+  --fg: #e4e4e4;
+}
+.ap-terminal .bg-254 {
+  --bg: #e4e4e4;
+}
+.ap-terminal .fg-255 {
+  --fg: #eeeeee;
+}
+.ap-terminal .bg-255 {
+  --bg: #eeeeee;
+}
+.asciinema-player-theme-asciinema {
+  --term-color-foreground: #cccccc;
+  --term-color-background: #121314;
+  --term-color-0: hsl(0, 0%, 0%);
+  --term-color-1: hsl(343, 70%, 55%);
+  --term-color-2: hsl(103, 70%, 44%);
+  --term-color-3: hsl(43, 70%, 55%);
+  --term-color-4: hsl(193, 70%, 49.5%);
+  --term-color-5: hsl(283, 70%, 60.5%);
+  --term-color-6: hsl(163, 70%, 60.5%);
+  --term-color-7: hsl(0, 0%, 85%);
+  --term-color-8: hsl(0, 0%, 30%);
+  --term-color-9: hsl(343, 70%, 55%);
+  --term-color-10: hsl(103, 70%, 44%);
+  --term-color-11: hsl(43, 70%, 55%);
+  --term-color-12: hsl(193, 70%, 49.5%);
+  --term-color-13: hsl(283, 70%, 60.5%);
+  --term-color-14: hsl(163, 70%, 60.5%);
+  --term-color-15: hsl(0, 0%, 100%);
+}
+/*
+  Based on Dracula: https://draculatheme.com
+ */
+.asciinema-player-theme-dracula {
+  --term-color-foreground: #f8f8f2;
+  --term-color-background: #282a36;
+  --term-color-0: #21222c;
+  --term-color-1: #ff5555;
+  --term-color-2: #50fa7b;
+  --term-color-3: #f1fa8c;
+  --term-color-4: #bd93f9;
+  --term-color-5: #ff79c6;
+  --term-color-6: #8be9fd;
+  --term-color-7: #f8f8f2;
+  --term-color-8: #6272a4;
+  --term-color-9: #ff6e6e;
+  --term-color-10: #69ff94;
+  --term-color-11: #ffffa5;
+  --term-color-12: #d6acff;
+  --term-color-13: #ff92df;
+  --term-color-14: #a4ffff;
+  --term-color-15: #ffffff;
+}
+/* Based on Monokai from base16 collection - https://github.com/chriskempson/base16 */
+.asciinema-player-theme-monokai {
+  --term-color-foreground: #f8f8f2;
+  --term-color-background: #272822;
+  --term-color-0: #272822;
+  --term-color-1: #f92672;
+  --term-color-2: #a6e22e;
+  --term-color-3: #f4bf75;
+  --term-color-4: #66d9ef;
+  --term-color-5: #ae81ff;
+  --term-color-6: #a1efe4;
+  --term-color-7: #f8f8f2;
+  --term-color-8: #75715e;
+  --term-color-15: #f9f8f5;
+}
+/*
+  Based on Nord: https://github.com/arcticicestudio/nord
+  Via: https://github.com/neilotoole/asciinema-theme-nord
+ */
+.asciinema-player-theme-nord {
+  --term-color-foreground: #eceff4;
+  --term-color-background: #2e3440;
+  --term-color-0: #3b4252;
+  --term-color-1: #bf616a;
+  --term-color-2: #a3be8c;
+  --term-color-3: #ebcb8b;
+  --term-color-4: #81a1c1;
+  --term-color-5: #b48ead;
+  --term-color-6: #88c0d0;
+  --term-color-7: #eceff4;
+}
+.asciinema-player-theme-seti {
+  --term-color-foreground: #cacecd;
+  --term-color-background: #111213;
+  --term-color-0: #323232;
+  --term-color-1: #c22832;
+  --term-color-2: #8ec43d;
+  --term-color-3: #e0c64f;
+  --term-color-4: #43a5d5;
+  --term-color-5: #8b57b5;
+  --term-color-6: #8ec43d;
+  --term-color-7: #eeeeee;
+  --term-color-15: #ffffff;
+}
+/*
+  Based on Solarized Dark: https://ethanschoonover.com/solarized/
+ */
+.asciinema-player-theme-solarized-dark {
+  --term-color-foreground: #839496;
+  --term-color-background: #002b36;
+  --term-color-0: #073642;
+  --term-color-1: #dc322f;
+  --term-color-2: #859900;
+  --term-color-3: #b58900;
+  --term-color-4: #268bd2;
+  --term-color-5: #d33682;
+  --term-color-6: #2aa198;
+  --term-color-7: #eee8d5;
+  --term-color-8: #002b36;
+  --term-color-9: #cb4b16;
+  --term-color-10: #586e75;
+  --term-color-11: #657b83;
+  --term-color-12: #839496;
+  --term-color-13: #6c71c4;
+  --term-color-14: #93a1a1;
+  --term-color-15: #fdf6e3;
+}
+/*
+  Based on Solarized Light: https://ethanschoonover.com/solarized/
+ */
+.asciinema-player-theme-solarized-light {
+  --term-color-foreground: #657b83;
+  --term-color-background: #fdf6e3;
+  --term-color-0: #073642;
+  --term-color-1: #dc322f;
+  --term-color-2: #859900;
+  --term-color-3: #b58900;
+  --term-color-4: #268bd2;
+  --term-color-5: #d33682;
+  --term-color-6: #2aa198;
+  --term-color-7: #eee8d5;
+  --term-color-8: #002b36;
+  --term-color-9: #cb4b16;
+  --term-color-10: #586e75;
+  --term-color-11: #657c83;
+  --term-color-12: #839496;
+  --term-color-13: #6c71c4;
+  --term-color-14: #93a1a1;
+  --term-color-15: #fdf6e3;
+}
+.asciinema-player-theme-solarized-light .ap-overlay-start .ap-play-button svg .ap-play-btn-fill {
+  fill: var(--term-color-1);
+}
+.asciinema-player-theme-solarized-light .ap-overlay-start .ap-play-button svg .ap-play-btn-stroke {
+  stroke: var(--term-color-1);
+}
+/*
+  Based on Tango: https://en.wikipedia.org/wiki/Tango_Desktop_Project
+ */
+.asciinema-player-theme-tango {
+  --term-color-foreground: #cccccc;
+  --term-color-background: #121314;
+  --term-color-0: #000000;
+  --term-color-1: #cc0000;
+  --term-color-2: #4e9a06;
+  --term-color-3: #c4a000;
+  --term-color-4: #3465a4;
+  --term-color-5: #75507b;
+  --term-color-6: #06989a;
+  --term-color-7: #d3d7cf;
+  --term-color-8: #555753;
+  --term-color-9: #ef2929;
+  --term-color-10: #8ae234;
+  --term-color-11: #fce94f;
+  --term-color-12: #729fcf;
+  --term-color-13: #ad7fa8;
+  --term-color-14: #34e2e2;
+  --term-color-15: #eeeeec;
+}

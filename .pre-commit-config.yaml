@@ -18,5 +18,6 @@ repos:
     rev: v2.2.6
     hooks:
       - id: codespell
+        args: ["--skip", "aider/website/docs/languages.md"]
         additional_dependencies:
           - tomli

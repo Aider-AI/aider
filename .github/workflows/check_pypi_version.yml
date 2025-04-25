@@ -1,0 +1,86 @@
+name: Check PyPI Version
+
+# Check to be sure `pip install aider-chat` installs the most recently published version.
+# If dependencies get yanked, it may render the latest version uninstallable.
+# See https://github.com/Aider-AI/aider/issues/3699 for example.
+
+on:
+  schedule:
+    # Run once a day at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  check_version:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install aider-chat
+        run: pip install aider-chat
+
+      - name: Get installed aider version
+        id: installed_version
+        run: |
+          set -x # Enable debugging output
+          aider_version_output=$(aider --version)
+          if [ $? -ne 0 ]; then
+            echo "Error: 'aider --version' command failed."
+            exit 1
+          fi
+          echo "Raw aider --version output: $aider_version_output"
+
+          # Extract version number (format X.Y.Z)
+          version_num=$(echo "$aider_version_output" | grep -oP '\d+\.\d+\.\d+')
+
+          # Check if grep found anything
+          if [ -z "$version_num" ]; then
+            echo "Error: Could not extract version number using grep -oP '\d+\.\d+\.\d+' from output: $aider_version_output"
+            exit 1
+          fi
+
+          echo "Extracted version number: $version_num"
+          echo "version=$version_num" >> $GITHUB_OUTPUT
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all tags
+
+      - name: Get latest tag
+        id: latest_tag
+        run: |
+          set -x # Enable debugging output
+          # Fetch all tags from remote just in case
+          git fetch --tags origin main
+          # Get the latest tag that strictly matches vX.Y.Z (no suffixes like .dev)
+          # List all tags, sort by version descending, filter for exact pattern, take the first one
+          latest_tag=$(git tag --sort=-v:refname | grep -P '^v\d+\.\d+\.\d+$' | head -n 1)
+
+          if [ -z "$latest_tag" ]; then
+            echo "Error: Could not find any tags matching the pattern '^v\d+\.\d+\.\d+$'"
+            exit 1
+          fi
+
+          echo "Latest non-dev tag: $latest_tag"
+          # Remove 'v' prefix for comparison
+          tag_num=${latest_tag#v}
+          echo "Extracted tag number: $tag_num"
+          echo "tag=$tag_num" >> $GITHUB_OUTPUT
+
+      - name: Compare versions
+        run: |
+          echo "Installed version: ${{ steps.installed_version.outputs.version }}"
+          echo "Latest tag version: ${{ steps.latest_tag.outputs.tag }}"
+          if [ "${{ steps.installed_version.outputs.version }}" != "${{ steps.latest_tag.outputs.tag }}" ]; then
+            echo "Error: Installed aider version (${{ steps.installed_version.outputs.version }}) does not match the latest tag (${{ steps.latest_tag.outputs.tag }})."
+            exit 1
+          fi
+          echo "Versions match."

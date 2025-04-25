@@ -5,10 +5,66 @@
 <meta property="og:image" content="{{ site.url }}/assets/aider.jpg">
 <meta property="twitter:image" content="{{ site.url }}/assets/aider-square.jpg">
 {% endif %}
+
+<!-- Custom site title styling -->
+<style>
+  @font-face {
+    font-family: GlassTTYVT220;
+    src: local("Glass TTY VT220"), local("Glass TTY VT220 Medium"), url(/assets/Glass_TTY_VT220.ttf) format("truetype");
+  }
+  
+  .site-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: 'GlassTTYVT220', monospace;
+    color: #14b014; /* terminal green color */
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+  
+  /* For SVG logo inside site-title */
+  .site-title img {
+    height: 1.8rem;
+    vertical-align: middle;
+  }
+ 
+  /* Sidebar gradient styling to match hero section */
+  .side-bar { 
+    background: linear-gradient(135deg, #ffffff 0%, rgba(20, 176, 20, 0.01) 25%, rgba(20, 176, 20, 0.04) 40%, rgba(220, 230, 255, 0.4) 60%, rgba(205, 218, 255, 0.4) 80%, #F5F6FA 100%);
+  }
+</style>
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{ site.url }}/feed.xml">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Logo Progressive Enhancement for Jekyll pages -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const siteTitle = document.querySelector('.site-title');
+    if (siteTitle) {
+      const textContent = siteTitle.textContent; // Save the text for fallback
+      
+      // Create new image element
+      const logoImg = new Image();
+      logoImg.src = '/assets/logo.svg';
+      logoImg.alt = 'Aider Logo';
+      logoImg.style.height = '1.8rem';
+      logoImg.style.verticalAlign = 'middle';
+      
+      // Only replace if image loads successfully
+      logoImg.onload = function() {
+        siteTitle.textContent = ''; // Clear text
+        siteTitle.appendChild(logoImg);
+      };
+      
+      // If image fails to load, do nothing (keep the text)
+      logoImg.onerror = function() {
+        console.log('SVG logo failed to load, keeping text fallback');
+      };
+    }
+  });
+</script>
 <meta name="theme-color" content="#157878">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/icons/favicon-32x32.png' | relative_url }}">

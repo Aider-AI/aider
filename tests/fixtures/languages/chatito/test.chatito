@@ -1,0 +1,20 @@
+%[intent]('training': '60', 'testing': '40')
+    ~[greet]
+    ~[greet] @[name?] ~[endPolite?]
+
+%[name]('training': '50', 'testing': '50')
+    John
+    Anna
+    Bob
+    Sarah
+    
+~[greet]
+    hi
+    hello
+    hey
+    greetings
+
+~[endPolite]
+    please
+    thanks
+    thank you

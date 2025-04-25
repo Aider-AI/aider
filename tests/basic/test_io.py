@@ -34,6 +34,35 @@ class TestInputOutput(unittest.TestCase):
             io = InputOutput(fancy_input=False)
             self.assertFalse(io.pretty)
 
+    def test_color_initialization(self):
+        """Test that color values are properly initialized with # prefix"""
+        # Test with hex colors without #
+        io = InputOutput(
+            user_input_color="00cc00",
+            tool_error_color="FF2222",
+            tool_warning_color="FFA500",
+            assistant_output_color="0088ff",
+            pretty=True,
+        )
+
+        # Check that # was added to hex colors
+        self.assertEqual(io.user_input_color, "#00cc00")
+        self.assertEqual(io.tool_error_color, "#FF2222")
+        self.assertEqual(io.tool_warning_color, "#FFA500")  # Already had #
+        self.assertEqual(io.assistant_output_color, "#0088ff")
+
+        # Test with named colors (should be unchanged)
+        io = InputOutput(user_input_color="blue", tool_error_color="red", pretty=True)
+
+        self.assertEqual(io.user_input_color, "blue")
+        self.assertEqual(io.tool_error_color, "red")
+
+        # Test with pretty=False (should not modify colors)
+        io = InputOutput(user_input_color="00cc00", tool_error_color="FF2222", pretty=False)
+
+        self.assertIsNone(io.user_input_color)
+        self.assertIsNone(io.tool_error_color)
+
     def test_dumb_terminal(self):
         with patch.dict(os.environ, {"TERM": "dumb"}):
             io = InputOutput(fancy_input=True)
@@ -392,6 +421,59 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         # Test prompt_ask()
         io.prompt_ask("Test prompt?")
         self.assertTrue(io.multiline_mode)  # Should be restored
+
+    def test_ensure_hash_prefix(self):
+        """Test that ensure_hash_prefix correctly adds # to valid hex colors"""
+        from aider.io import ensure_hash_prefix
+
+        # Test valid hex colors without #
+        self.assertEqual(ensure_hash_prefix("000"), "#000")
+        self.assertEqual(ensure_hash_prefix("fff"), "#fff")
+        self.assertEqual(ensure_hash_prefix("F00"), "#F00")
+        self.assertEqual(ensure_hash_prefix("123456"), "#123456")
+        self.assertEqual(ensure_hash_prefix("abcdef"), "#abcdef")
+        self.assertEqual(ensure_hash_prefix("ABCDEF"), "#ABCDEF")
+
+        # Test hex colors that already have #
+        self.assertEqual(ensure_hash_prefix("#000"), "#000")
+        self.assertEqual(ensure_hash_prefix("#123456"), "#123456")
+
+        # Test invalid inputs (should return unchanged)
+        self.assertEqual(ensure_hash_prefix(""), "")
+        self.assertEqual(ensure_hash_prefix(None), None)
+        self.assertEqual(ensure_hash_prefix("red"), "red")  # Named color
+        self.assertEqual(ensure_hash_prefix("12345"), "12345")  # Wrong length
+        self.assertEqual(ensure_hash_prefix("1234567"), "1234567")  # Wrong length
+        self.assertEqual(ensure_hash_prefix("xyz"), "xyz")  # Invalid hex chars
+        self.assertEqual(ensure_hash_prefix("12345g"), "12345g")  # Invalid hex chars
+
+    def test_tool_output_color_handling(self):
+        """Test that tool_output correctly handles hex colors without # prefix"""
+        from unittest.mock import patch
+
+        from rich.text import Text
+
+        # Create IO with hex color without # for tool_output_color
+        io = InputOutput(tool_output_color="FFA500", pretty=True)
+
+        # Patch console.print to avoid actual printing
+        with patch.object(io.console, "print") as mock_print:
+            # This would raise ColorParseError without the fix
+            io.tool_output("Test message")
+
+            # Verify the call was made without error
+            mock_print.assert_called_once()
+
+            # Verify the style was correctly created with # prefix
+            # The first argument is the message, second would be the style
+            kwargs = mock_print.call_args.kwargs
+            self.assertIn("style", kwargs)
+
+        # Test with other hex color
+        io = InputOutput(tool_output_color="00FF00", pretty=True)
+        with patch.object(io.console, "print") as mock_print:
+            io.tool_output("Test message")
+            mock_print.assert_called_once()
 
 
 if __name__ == "__main__":

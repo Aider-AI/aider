@@ -20,7 +20,8 @@ Multiple aliases can be defined by using the `--alias` option multiple times. Ea
 
 ## Configuration File
 
-You can also define aliases in your [`.aider.conf.yml` file](https://aider.chat/docs/config/aider_conf.html):
+Of course,
+you can also define aliases in your [`.aider.conf.yml` file](https://aider.chat/docs/config/aider_conf.html):
 
 ```yaml
 alias:
@@ -31,11 +32,33 @@ alias:
 
 ## Using Aliases
 
-Once defined, you can use the alias instead of the full model name:
+Once defined, you can use the alias instead of the full model name from the command line:
 
 ```bash
 aider --model fast  # Uses gpt-4o-mini
 aider --model smart  # Uses o3-mini
+```
+
+Or with the `/model` command in-chat:
+
+```
+Aider v0.75.3
+Main model: anthropic/claude-3-7-sonnet-20250219 with diff edit format, prompt cache, infinite output
+Weak model: claude-3-5-sonnet-20241022
+Git repo: .git with 406 files
+Repo-map: using 4096 tokens, files refresh
+─────────────────────────────────────────────────────────────────────────────────────────────────────
+> /model fast
+
+Aider v0.75.3
+Main model: gpt-4o-mini with diff edit format
+─────────────────────────────────────────────────────────────────────────────────────────────────────
+diff> /model smart
+
+Aider v0.75.3
+Main model: o3-mini with diff edit format
+─────────────────────────────────────────────────────────────────────────────────────────────────────
+>
 ```
 
 ## Built-in Aliases
@@ -56,9 +79,15 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `4-turbo`: gpt-4-1106-preview
 - `4o`: gpt-4o
 - `deepseek`: deepseek/deepseek-chat
-- `flash`: gemini/gemini-2.0-flash-exp
+- `flash`: gemini/gemini-2.5-flash-preview-04-17
+- `gemini`: gemini/gemini-2.5-pro-preview-03-25
+- `gemini-2.5-pro`: gemini/gemini-2.5-pro-exp-03-25
+- `gemini-exp`: gemini/gemini-2.5-pro-exp-03-25
+- `grok3`: xai/grok-3-beta
 - `haiku`: claude-3-5-haiku-20241022
+- `optimus`: openrouter/openrouter/optimus-alpha
 - `opus`: claude-3-opus-20240229
+- `quasar`: openrouter/openrouter/quasar-alpha
 - `r1`: deepseek/deepseek-reasoner
 - `sonnet`: anthropic/claude-3-7-sonnet-20250219
 <!--[[[end]]]-->
