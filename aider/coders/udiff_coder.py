@@ -45,6 +45,7 @@ other_hunks_applied = (
 
 class UnifiedDiffCoder(Coder):
     """A coder that uses unified diff format for code modifications."""
+
     edit_format = "udiff"
     gpt_prompts = UnifiedDiffPrompts()
 
@@ -344,7 +345,16 @@ def process_fenced_block(lines, start_line_num):
 
     if block[0].startswith("--- ") and block[1].startswith("+++ "):
         # Extract the file path, considering that it might contain spaces
-        fname = block[1][4:].strip()
+        a_fname = block[0][4:].strip()
+        b_fname = block[1][4:].strip()
+
+        # Check if standard git diff prefixes are present (or /dev/null) and strip them
+        if (a_fname.startswith("a/") or a_fname == "/dev/null") and b_fname.startswith("b/"):
+            fname = b_fname[2:]
+        else:
+            # Otherwise, assume the path is as intended
+            fname = b_fname
+
         block = block[2:]
     else:
         fname = None

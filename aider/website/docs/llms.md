@@ -16,9 +16,10 @@ description: Aider can connect to most LLMs for AI pair programming.
 
 Aider works best with these models, which are skilled at editing code:
 
+- [Gemini 2.5 Pro](/docs/llms/gemini.html)
 - [DeepSeek R1 and V3](/docs/llms/deepseek.html)
 - [Claude 3.7 Sonnet](/docs/llms/anthropic.html)
-- [OpenAI o1, o3-mini and GPT-4o](/docs/llms/openai.html)
+- [OpenAI o3, o4-mini and GPT-4.1](/docs/llms/openai.html)
 
 
 ## Free models
@@ -26,10 +27,8 @@ Aider works best with these models, which are skilled at editing code:
 
 Aider works with a number of **free** API providers:
 
-- Google's [Gemini 1.5 Pro](/docs/llms/gemini.html) works with aider, with
-code editing capabilities similar to GPT-3.5.
-- You can use [Llama 3 70B on Groq](/docs/llms/groq.html) which is comparable to GPT-3.5 in code editing performance.
-- Cohere also offers free API access to their [Command-R+ model](/docs/llms/cohere.html), which works with aider as a *very basic* coding assistant.
+- [OpenRouter offers free access to many models](https://openrouter.ai/models/?q=free), with limitations on daily usage.
+- Google's [Gemini 2.5 Pro Exp](/docs/llms/gemini.html) works very well with aider.
 
 ## Local models
 {: .no_toc }

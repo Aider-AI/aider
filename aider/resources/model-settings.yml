@@ -958,6 +958,7 @@
   use_system_prompt: false
 
 - name: gemini/gemini-2.5-pro-preview-03-25
+  overeager: true
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: gemini/gemini-2.0-flash
@@ -965,24 +966,28 @@
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
-  weak_model_name: gemini/gemini-2.0-flash
+  overeager: true
+  weak_model_name: gemini/gemini-2.5-flash-preview-04-17
 
 - name: openrouter/google/gemini-2.5-pro-exp-03-25:free
   edit_format: diff-fenced
+  overeager: true
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-exp:free
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
-  # Need metadata for this one...
-  #weak_model_name: vertex_ai/gemini-2.0-flash
+  weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  overeager: true
+  editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
   use_repo_map: true
-  # Need metadata for this one...
-  #weak_model_name: vertex_ai/gemini-2.0-flash
+  weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  overeager: true
+  editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
 
 - name: openrouter/openrouter/quasar-alpha
   use_repo_map: true
@@ -1006,17 +1011,378 @@
   #  extra_body:
   #    reasoning_effort: high
 
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
 - name: xai/grok-3-mini-beta
   use_repo_map: true
   edit_format: whole
   accepts_settings:
-    - reasoning_effort 
+    - reasoning_effort
   #extra_params:
   #  extra_body:
   #    reasoning_effort: low
+
+- name: openrouter/x-ai/grok-3-fast-beta
+  use_repo_map: true
+  edit_format: diff
+
+- name: xai/grok-3-fast-beta
+  use_repo_map: true
+  edit_format: diff
+
+- name: openrouter/x-ai/grok-3-mini-fast-beta
+  use_repo_map: true
+  edit_format: whole
+  accepts_settings:
+    - reasoning_effort
+
+- name: xai/grok-3-mini-fast-beta
+  use_repo_map: true
+  edit_format: whole
+  accepts_settings:
+    - reasoning_effort
 
 - name: openrouter/openrouter/optimus-alpha
   use_repo_map: true
   edit_format: diff
   examples_as_sys_msg: true
   
+- name: gpt-4.1
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys # user: 52.x%/96.9%
+  examples_as_sys_msg: false # true: 51.6% correct, 95.6% well formed; false: 52.4%/98.2%
+  editor_model_name: gpt-4.1-mini
+
+- name: openai/gpt-4.1
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+  editor_model_name: openai/gpt-4.1-mini
+
+- name: azure/gpt-4.1
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+  editor_model_name: azure/gpt-4.1-mini
+
+- name: openrouter/openai/gpt-4.1
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+  editor_model_name: openrouter/openai/gpt-4.1-mini
+
+- name: gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false # false: 32.x%/92.4% (60+ malformed responses); true: 31.7/90.2/60+
+
+- name: openai/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+
+- name: azure/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+
+- name: openrouter/openai/gpt-4.1-mini
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+
+- name: o3
+  streaming: false
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: openai/o3
+  streaming: false
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: openrouter/openai/o3
+  streaming: false
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+
+- name: azure/o3
+  streaming: false
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
+- name: openai/o4-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+
+- name: openrouter/openai/o4-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+
+- name: azure/o4-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+
+- name: o4-mini
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  use_temperature: false
+  editor_model_name: gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #   reasoning_effort: high
+      
+- name: gemini/gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
+
+- name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]

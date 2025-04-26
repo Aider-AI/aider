@@ -1091,11 +1091,13 @@ class Coder:
         if self.suggest_shell_commands:
             shell_cmd_prompt = self.gpt_prompts.shell_cmd_prompt.format(platform=platform_text)
             shell_cmd_reminder = self.gpt_prompts.shell_cmd_reminder.format(platform=platform_text)
+            rename_with_shell = self.gpt_prompts.rename_with_shell
         else:
             shell_cmd_prompt = self.gpt_prompts.no_shell_cmd_prompt.format(platform=platform_text)
             shell_cmd_reminder = self.gpt_prompts.no_shell_cmd_reminder.format(
                 platform=platform_text
             )
+            rename_with_shell = ""
 
         if self.chat_language:
             language = self.chat_language
@@ -1115,7 +1117,9 @@ class Coder:
             lazy_prompt=lazy_prompt,
             platform=platform_text,
             shell_cmd_prompt=shell_cmd_prompt,
+            rename_with_shell=rename_with_shell,
             shell_cmd_reminder=shell_cmd_reminder,
+            go_ahead_tip=self.gpt_prompts.go_ahead_tip,
             language=language,
         )
 
