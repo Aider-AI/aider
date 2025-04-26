@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import fnmatch
 import os
 import random
 import sys
@@ -143,6 +144,26 @@ class GUI:
     web_content_empty = None
     folder_content_empty = None
 
+    def filter_files(self, files, allow_patterns_str, deny_patterns_str):
+        allow_patterns = [p.strip() for p in allow_patterns_str.splitlines() if p.strip()]
+        deny_patterns = [p.strip() for p in deny_patterns_str.splitlines() if p.strip()]
+
+        filtered_files = files
+
+        if allow_patterns:
+            allowed_set = set()
+            for pattern in allow_patterns:
+                allowed_set.update(fnmatch.filter(files, pattern))
+            filtered_files = list(allowed_set)
+
+        if deny_patterns:
+            denied_set = set()
+            for pattern in deny_patterns:
+                denied_set.update(fnmatch.filter(filtered_files, pattern))
+            filtered_files = [f for f in filtered_files if f not in denied_set]
+
+        return sorted(filtered_files)
+
     def announce(self):
         lines = self.coder.get_announcements()
         lines = "  \n".join(lines)
@@ -228,48 +249,104 @@ class GUI:
 
     def do_add_to_chat(self):
         # with st.expander("Add to the chat", expanded=True):
-        self.do_add_files()
+        self.do_add_files_multiselect()
         self.do_add_folder()
+        self.do_add_files_filter_ui()
+        st.divider()
         self.do_add_web_page()
 
-    def do_add_files(self):
+    def do_add_files_multiselect(self):
+        # Initialize state if needed (might be set by filter UI first)
+        if 'allow_patterns' not in st.session_state:
+            st.session_state.allow_patterns = ""
+        if 'deny_patterns' not in st.session_state:
+            st.session_state.deny_patterns = ""
+
+        # --- Apply Filtering (reads state set by filter UI) ---
+        all_files = self.coder.get_all_relative_files()
+        filtered_options = self.filter_files(
+            all_files,
+            st.session_state.allow_patterns,
+            st.session_state.deny_patterns
+        )
+
         current_inchat_files = self.coder.get_inchat_relative_files()
         current_inchat_files_set = set(current_inchat_files)
         widget_key = "multiselect_add_files"
 
+        options_for_widget = sorted(list(set(filtered_options) | current_inchat_files_set))
+
+        # --- Render Multiselect ---
         fnames_selected_in_widget = st.multiselect(
             "Add files to the chat",
-            options=self.coder.get_all_relative_files(),
-            default=current_inchat_files, # Reflect current coder state
+            options=options_for_widget,
+            default=current_inchat_files,
             key=widget_key,
-            placeholder="Files to edit",
+            placeholder="Type to search or select files...",
             disabled=self.prompt_pending(),
             format_func=lambda path: format_path_for_display(path, max_len=60),
             help=(
-                "Only add the files that need to be *edited* for the task you are working"
-                " on. Aider will pull in other relevant code to provide context to the LLM."
+                "Select files to edit. Use filter controls below to narrow down this list. "
+                "Aider automatically includes relevant context from other files."
             ),
         )
         fnames_selected_in_widget_set = set(fnames_selected_in_widget)
 
-        # Compare widget state to coder state *before* this render
+        # --- Handle adding/removing files ---
         files_to_add = fnames_selected_in_widget_set - current_inchat_files_set
         files_to_remove = current_inchat_files_set - fnames_selected_in_widget_set
 
         for fname in files_to_add:
-            self.coder.add_rel_fname(fname)
-            self.info(f"Added {fname} to the chat")
+            full_path = os.path.join(self.coder.root, fname)
+            if os.path.exists(full_path):
+                self.coder.add_rel_fname(fname)
+                self.info(f"Added `{fname}` to the chat")
+            else:
+                 st.warning(f"Could not add `{fname}` as it seems to no longer exist.")
 
         for fname in files_to_remove:
             self.coder.drop_rel_fname(fname)
-            self.info(f"Removed {fname} from the chat")
+            self.info(f"Removed `{fname}` from the chat")
+
+    # --- New method to render just the filter UI ---
+    def do_add_files_filter_ui(self):
+        # Initialize state if needed (might be set by multiselect first)
+        if 'allow_patterns' not in st.session_state:
+            st.session_state.allow_patterns = ""
+        if 'deny_patterns' not in st.session_state:
+            st.session_state.deny_patterns = ""
+
+        # --- Render Filter Expander ---
+        with st.expander("Add file filters"):
+            allow_patterns_input = st.text_area(
+                "Allow patterns (globs)",
+                value=st.session_state.allow_patterns,
+                key="allow_patterns_input",
+                help="Show only files matching these glob patterns (e.g., `*.py`, `src/**`), one per line. Applied first.",
+                height=68,
+                disabled=self.prompt_pending(),
+                placeholder="*.py\nsrc/**"
+            )
+            deny_patterns_input = st.text_area(
+                "Deny patterns (globs)",
+                value=st.session_state.deny_patterns,
+                key="deny_patterns_input",
+                help="Hide files matching these glob patterns (e.g., `.venv/*`, `*.log`), one per line. Applied after allow patterns.",
+                height=68,
+                disabled=self.prompt_pending(),
+                placeholder=".venv/*\n*.log"
+            )
+            # Update session state when inputs change (triggers rerun)
+            st.session_state.allow_patterns = allow_patterns_input
+            st.session_state.deny_patterns = deny_patterns_input
+
 
     def do_add_folder(self):
+        # --- This function remains unchanged ---
         with st.popover("Add a folder to the chat"):
-            st.markdown("Add all files from a folder to the chat")
+            st.markdown("Add all *tracked* files from a folder to the chat (ignores filters)")
 
             folder_input_key = f"folder_content_{self.state.folder_content_num}"
-            # Correctly assign the text input result
             self.folder_content = st.text_input(
                 "Folder path",
                 placeholder="path/to/folder",
@@ -304,25 +381,38 @@ class GUI:
 
                 if files_to_consider:
                     button_key = f"add_folder_button_{self.state.folder_content_num}"
-                    if st.button("Add all files from folder", key=button_key, disabled=self.prompt_pending()):
+                    if st.button("Add all tracked files from folder", key=button_key, disabled=self.prompt_pending()):
                         added_count = 0
+                        files_actually_added = []
                         for file_path in files_to_consider:
-                            # Check if the file is tracked by git
                             if file_path in tracked_files_set:
                                 self.coder.add_rel_fname(file_path)
+                                files_actually_added.append(file_path)
                                 added_count += 1
 
                         if added_count > 0:
-                            self.info(f"Added {added_count} tracked files from '{clean_folder_path}' to the chat")
+                            added_files_str = ", ".join(f"`{f}`" for f in files_actually_added)
+                            self.info(f"Added {added_count} tracked files from `{clean_folder_path}` to the chat: {added_files_str}")
                             self.state.folder_content_num += 1
+                            self.folder_content = ""
                             st.rerun()
                         else:
-                            st.warning(f"No *new*, tracked files found in folder '{clean_folder_path}' to add.")
+                            st.warning(f"No *new*, *tracked* files found in folder `{clean_folder_path}` to add.")
 
                 elif self.folder_content:
-                    is_single_tracked_file = clean_folder_path in tracked_files_set and clean_folder_path not in inchat_files
-                    if not is_single_tracked_file:
-                        st.warning(f"No files found in the repository matching the path '{clean_folder_path}'.")
+                     is_single_tracked_file_not_in_chat = clean_folder_path in tracked_files_set and clean_folder_path not in inchat_files
+                     if is_single_tracked_file_not_in_chat:
+                          button_key = f"add_folder_button_{self.state.folder_content_num}"
+                          if st.button(f"Add file `{clean_folder_path}`", key=button_key, disabled=self.prompt_pending()):
+                               self.coder.add_rel_fname(clean_folder_path)
+                               self.info(f"Added `{clean_folder_path}` to the chat")
+                               self.state.folder_content_num += 1
+                               self.folder_content = ""
+                               st.rerun()
+                     elif not os.path.isdir(os.path.join(self.coder.root, clean_folder_path)) and not is_single_tracked_file_not_in_chat:
+                         st.warning(f"Path `{clean_folder_path}` is not a valid folder or tracked file in the repository.")
+                     else:
+                         st.warning(f"No *new*, *tracked* files found in folder `{clean_folder_path}`.")
 
     def do_add_web_page(self):
         with st.popover("Add a web page to the chat"):
