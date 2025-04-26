@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   let currentMode = 'view'; // 'view', 'select', 'detail'
   let selectedRows = new Set(); // Store indices of selected rows
+  const MAX_DISPLAY_COST_CAP = 75; // Define the constant here
 
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const selectAllCheckbox = document.getElementById('select-all-checkbox');
   const leaderboardTitle = document.getElementById('leaderboard-title'); // Get title element
   const defaultTitle = "Aider polyglot coding leaderboard";
-  const filteredTitle = "Aider polyglot coding benchmark results";
+  const filteredTitle = "Aider polyglot coding benchmark results (selected)";
 
   function applySearchFilter() {
     const searchTerm = searchInput.value.toLowerCase();
@@ -219,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Function to calculate the appropriate max display cost based on visible/selected entries
   function calculateDisplayMaxCost() {
     // Get the appropriate set of rows based on the current mode and selection state
-    let rowsToConsider;
+    let rowsToConsider;    
     
     if (currentMode === 'view' && selectedRows.size > 0) {
       // In view mode with selections, only consider selected rows
@@ -242,8 +243,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // Cap at 50 if any entries exceed that amount, otherwise use actual max
-    return maxCost > 50 ? 50 : Math.max(1, maxCost); // Ensure at least 1 to avoid division by zero
+    // Cap at MAX_DISPLAY_COST_CAP if any entries exceed that amount, otherwise use actual max
+    return maxCost > MAX_DISPLAY_COST_CAP ? MAX_DISPLAY_COST_CAP : Math.max(1, maxCost); // Ensure at least 1 to avoid division by zero
   }
   
   // Process cost bars with dynamic scale
@@ -264,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
         bar.style.width = Math.max(0, Math.min(100, percent)) + '%';
         
         // Mark bars that exceed the limit (only if our display max is capped at 50)
-        if (currentMaxDisplayCost === 50 && cost > 50) {
+        if (currentMaxDisplayCost === MAX_DISPLAY_COST_CAP && cost > MAX_DISPLAY_COST_CAP) {
           // Create a darker section at the end with diagonal stripes
           const darkSection = document.createElement('div');
           darkSection.className = 'bar-viz dark-section';
