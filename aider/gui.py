@@ -48,6 +48,52 @@ def search(text=None):
     return results
 
 
+def format_path_for_display(path, max_len=00, separators=("/","\\")):
+    """
+    Formats a path for display, prioritizing filename and parent directory.
+    Tries to show:
+    1. Full path if it fits.
+    2. .../parent/filename if it fits.
+    3. .../filename if it fits.
+    4. Simple left truncation as a fallback.
+    """
+    if len(path) <= max_len:
+        return path
+
+    sep = os.sep  # Use the OS-specific separator
+
+    try:
+        filename = os.path.basename(path)
+        dirname = os.path.dirname(path)
+        parent_dir = os.path.basename(dirname)
+
+        # Try .../parent/filename
+        if parent_dir:
+             short_path = os.path.join("...", parent_dir, filename)
+        else:
+             short_path = os.path.join("...", filename)
+
+
+        if len(short_path) <= max_len:
+             simple_truncated = "..." + path[-(max_len - 3):]
+             if len(short_path) <= len(simple_truncated):
+                 return short_path
+             else:
+                 return simple_truncated
+
+        # Try .../filename if .../parent/filename was too long or parent didn't exist
+        short_path_fname_only = os.path.join("...", filename)
+        if len(short_path_fname_only) <= max_len:
+             return short_path_fname_only
+
+        # Fallback: Simple left truncation if nothing else fits
+        return "..." + path[-(max_len - 3):]
+
+    except Exception:
+        # Safety fallback in case of weird paths
+        return "..." + path[-(max_len - 3):]
+
+
 # Keep state as a resource, which survives browser reloads (since Coder does too)
 class State:
     keys = set()
@@ -187,10 +233,11 @@ class GUI:
     def do_add_files(self):
         fnames = st.multiselect(
             "Add files to the chat",
-            self.coder.get_all_relative_files(),
+            options=self.coder.get_all_relative_files(),
             default=self.state.initial_inchat_files,
             placeholder="Files to edit",
             disabled=self.prompt_pending(),
+            format_func=lambda path: format_path_for_display(path, max_len=60),
             help=(
                 "Only add the files that need to be *edited* for the task you are working"
                 " on. Aider will pull in other relevant code to provide context to the LLM."
@@ -532,6 +579,38 @@ def gui_main():
             "About": "# Aider\nAI pair programming in your browser.",
         },
     )
+
+    # --- Inject CSS for wider multiselect tags ---
+    # NOTE: These selectors target internal Streamlit/BaseWeb structures and might
+    # break in future Streamlit versions. Inspect element if styles don't apply.
+    st.markdown("""
+           <style>
+               .stMultiSelect [data-baseweb="tag"] {
+                   max-width: 500px;
+               }
+               /* Optional: Ensure text inside tag respects the width, though format_func handles ellipsis now */
+               .stMultiSelect [data-baseweb="tag"] span {
+                    display: inline-block;
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+               }
+
+               /* --- CSS for Dropdown Items (Optional Tweaks) --- */
+               /* Target list items within the multiselect popover */
+               /* NOTE: Selector might change in future Streamlit versions */
+               div[data-baseweb="popover"] ul li {
+                   /* Example: Slightly smaller font for dropdown to fit more */
+                   /* font-size: 0.95rem; */
+
+                   /* Example: Adjust padding if needed */
+                   /* padding-top: 0.2rem; */
+                   /* padding-bottom: 0.2rem; */
+               }
+
+           </style>
+           """, unsafe_allow_html=True)
 
     # config_options = st.config._config_options
     # for key, value in config_options.items():
