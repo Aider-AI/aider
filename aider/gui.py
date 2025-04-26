@@ -141,6 +141,7 @@ class GUI:
     last_undo_empty = None
     recent_msgs_empty = None
     web_content_empty = None
+    folder_content_empty = None
 
     def announce(self):
         lines = self.coder.get_announcements()
@@ -228,13 +229,19 @@ class GUI:
     def do_add_to_chat(self):
         # with st.expander("Add to the chat", expanded=True):
         self.do_add_files()
+        self.do_add_folder()
         self.do_add_web_page()
 
     def do_add_files(self):
-        fnames = st.multiselect(
+        current_inchat_files = self.coder.get_inchat_relative_files()
+        current_inchat_files_set = set(current_inchat_files)
+        widget_key = "multiselect_add_files"
+
+        fnames_selected_in_widget = st.multiselect(
             "Add files to the chat",
             options=self.coder.get_all_relative_files(),
-            default=self.state.initial_inchat_files,
+            default=current_inchat_files, # Reflect current coder state
+            key=widget_key,
             placeholder="Files to edit",
             disabled=self.prompt_pending(),
             format_func=lambda path: format_path_for_display(path, max_len=60),
@@ -243,16 +250,79 @@ class GUI:
                 " on. Aider will pull in other relevant code to provide context to the LLM."
             ),
         )
+        fnames_selected_in_widget_set = set(fnames_selected_in_widget)
 
-        for fname in fnames:
-            if fname not in self.coder.get_inchat_relative_files():
-                self.coder.add_rel_fname(fname)
-                self.info(f"Added {fname} to the chat")
+        # Compare widget state to coder state *before* this render
+        files_to_add = fnames_selected_in_widget_set - current_inchat_files_set
+        files_to_remove = current_inchat_files_set - fnames_selected_in_widget_set
 
-        for fname in self.coder.get_inchat_relative_files():
-            if fname not in fnames:
-                self.coder.drop_rel_fname(fname)
-                self.info(f"Removed {fname} from the chat")
+        for fname in files_to_add:
+            self.coder.add_rel_fname(fname)
+            self.info(f"Added {fname} to the chat")
+
+        for fname in files_to_remove:
+            self.coder.drop_rel_fname(fname)
+            self.info(f"Removed {fname} from the chat")
+
+    def do_add_folder(self):
+        with st.popover("Add a folder to the chat"):
+            st.markdown("Add all files from a folder to the chat")
+
+            folder_input_key = f"folder_content_{self.state.folder_content_num}"
+            # Correctly assign the text input result
+            self.folder_content = st.text_input(
+                "Folder path",
+                placeholder="path/to/folder",
+                key=folder_input_key,
+                disabled=self.prompt_pending(),
+            )
+
+            if self.folder_content:
+                clean_folder_path = os.path.normpath(self.folder_content)
+                if not clean_folder_path or clean_folder_path == '.':
+                    st.warning("Please enter a valid folder path.")
+                    return
+
+                if not self.coder or not self.coder.repo:
+                    st.error("Error: Coder or Git repository not initialized correctly.")
+                    return
+
+                try:
+                    tracked_files_set = self.coder.repo.get_tracked_files()
+                except Exception as e:
+                    st.error(f"Error getting tracked files from git: {e}")
+                    return
+
+                all_files = self.coder.get_all_relative_files()
+                inchat_files = set(self.coder.get_inchat_relative_files())
+
+                prefix = clean_folder_path + os.sep
+                files_to_consider = [
+                    f for f in all_files
+                    if f not in inchat_files and (f.startswith(prefix) or f == clean_folder_path)
+                ]
+
+                if files_to_consider:
+                    button_key = f"add_folder_button_{self.state.folder_content_num}"
+                    if st.button("Add all files from folder", key=button_key, disabled=self.prompt_pending()):
+                        added_count = 0
+                        for file_path in files_to_consider:
+                            # Check if the file is tracked by git
+                            if file_path in tracked_files_set:
+                                self.coder.add_rel_fname(file_path)
+                                added_count += 1
+
+                        if added_count > 0:
+                            self.info(f"Added {added_count} tracked files from '{clean_folder_path}' to the chat")
+                            self.state.folder_content_num += 1
+                            st.rerun()
+                        else:
+                            st.warning(f"No *new*, tracked files found in folder '{clean_folder_path}' to add.")
+
+                elif self.folder_content:
+                    is_single_tracked_file = clean_folder_path in tracked_files_set and clean_folder_path not in inchat_files
+                    if not is_single_tracked_file:
+                        st.warning(f"No files found in the repository matching the path '{clean_folder_path}'.")
 
     def do_add_web_page(self):
         with st.popover("Add a web page to the chat"):
@@ -383,6 +453,7 @@ class GUI:
         self.state.init("last_undone_commit_hash")
         self.state.init("recent_msgs_num", 0)
         self.state.init("web_content_num", 0)
+        self.state.init("folder_content_num", 0)
         self.state.init("prompt")
         self.state.init("scraper")
 
