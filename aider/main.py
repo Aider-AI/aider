@@ -712,8 +712,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="Just checking update")
         return 0 if not update_available else 1
 
+    # Handle --install-main-branch [url]
     if args.install_main_branch:
-        success = install_from_main_branch(io)
+        if isinstance(args.install_main_branch, str):
+            success = install_from_main_branch(io, remote_url=args.install_main_branch)
+        else:  # True, meaning the flag was used without a URL
+            success = install_from_main_branch(io)
         analytics.event("exit", reason="Installed main branch")
         return 0 if success else 1
 
