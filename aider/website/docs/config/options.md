@@ -65,7 +65,7 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--analytics | --no-analytics] [--analytics-log]
              [--analytics-disable] [--just-check-update]
              [--check-update | --no-check-update]
-             [--show-release-notes | --no-show-release-notes]
+             [--show-release-notes | --no-show-release-notes] [--install-branch]
              [--install-main-branch] [--upgrade] [--version]
              [--message] [--message-file]
              [--gui | --no-gui | --browser | --no-browser]
@@ -559,10 +559,10 @@ Aliases:
   - `--show-release-notes`
   - `--no-show-release-notes`
 
-### `--install-main-branch`
-Install the latest version from the main branch  
+### `--install-branch [GIT_URL]`
+Install the latest version from a git branch. If GIT_URL is provided, installs from that URL (e.g., git+https://github.com/user/aider.git@my-branch). If no URL is provided, installs from the Aider-AI main branch.  
 Default: False  
-Environment variable: `AIDER_INSTALL_MAIN_BRANCH`  
+Environment variable: `AIDER_INSTALL_BRANCH`  
 
 ### `--upgrade`
 Upgrade aider to the latest version from PyPI  

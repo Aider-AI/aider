@@ -358,8 +358,8 @@ cog.outl("```")
 ## Show release notes on first run of new version (default: None, ask user)
 #show-release-notes: xxx
 
-## Install the latest version from the main branch
-#install-main-branch: false
+## Install the latest version from a git branch. If GIT_URL is provided, installs from that URL (e.g., git+https://github.com/user/aider.git@my-branch). If no URL is provided, installs from the Aider-AI main branch.
+#install-branch: false
 
 ## Upgrade aider to the latest version from PyPI
 #upgrade: false
