@@ -33,7 +33,7 @@ from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
-from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
+from aider.versioncheck import check_version, install_from_git_branch, install_upgrade
 from aider.watch import FileWatcher
 
 from .dump import dump  # noqa: F401
@@ -712,13 +712,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="Just checking update")
         return 0 if not update_available else 1
 
-    # Handle --install-main-branch [url]
-    if args.install_main_branch:
-        if isinstance(args.install_main_branch, str):
-            success = install_from_main_branch(io, remote_url=args.install_main_branch)
+    # Handle --install-branch [url]
+    if args.install_branch:
+        if isinstance(args.install_branch, str):
+            success = install_from_git_branch(io, remote_url=args.install_branch)
         else:  # True, meaning the flag was used without a URL
-            success = install_from_main_branch(io)
-        analytics.event("exit", reason="Installed main branch")
+            success = install_from_git_branch(io)
+        analytics.event("exit", reason="Installed git branch")
         return 0 if success else 1
 
     if args.upgrade:

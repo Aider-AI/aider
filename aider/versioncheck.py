@@ -12,14 +12,15 @@ from aider.dump import dump  # noqa: F401
 VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
 
 
-def install_from_main_branch(io, remote_url=None):
+def install_from_git_branch(io, remote_url=None):
     """
-    Install the latest version of aider from the main branch of the GitHub repository.
+    Install the latest version of aider from the main branch of the GitHub repository
+    or a specified git remote URL.
     """
 
     if remote_url is None:
-        remote_url = "git+https://github.com/Aider-AI/aider.git"
-        source_description = "the main branch"
+        remote_url = "git+https://github.com/Aider-AI/aider.git@main"
+        source_description = "the Aider-AI main branch"
     else:
         source_description = remote_url
 
