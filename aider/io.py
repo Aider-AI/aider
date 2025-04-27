@@ -595,7 +595,7 @@ class InputOutput:
             current_text = buffer.text
 
             # Open the editor with the current text
-            edited_text = pipe_editor(input_data=current_text)
+            edited_text = pipe_editor(input_data=current_text, suffix="md")
 
             # Replace the buffer with the edited text, strip any trailing newlines
             buffer.text = edited_text.rstrip("\n")
