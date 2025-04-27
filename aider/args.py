@@ -564,9 +564,15 @@ def get_parser(default_config_files, git_root):
         default=None,
     )
     group.add_argument(
-        "--install-main-branch",
-        action="store_true",
-        help="Install the latest version from the main branch",
+        "--install-branch",
+        nargs="?",
+        const=True,
+        metavar="GIT_URL",
+        help=(
+            "Install the latest version from a git branch. If GIT_URL is provided, installs from"
+            " that URL (e.g., git+https://github.com/user/aider.git@my-branch). If no URL is"
+            " provided, installs from the Aider-AI main branch."
+        ),
         default=False,
     )
     group.add_argument(
