@@ -1,15 +1,13 @@
 import os
 import sys
 import time
-from pathlib import Path
 
 import packaging.version
 
 import aider
 from aider import utils
 from aider.dump import dump  # noqa: F401
-
-VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
+from aider.utils import get_aider_cache_dir
 
 
 def install_from_main_branch(io):
@@ -62,9 +60,11 @@ def install_upgrade(io, latest_version=None):
 
 
 def check_version(io, just_check=False, verbose=False):
-    if not just_check and VERSION_CHECK_FNAME.exists():
+    cache_dir = get_aider_cache_dir()
+    version_check_fname = cache_dir / "versioncheck"
+    if not just_check and version_check_fname.exists():
         day = 60 * 60 * 24
-        since = time.time() - os.path.getmtime(VERSION_CHECK_FNAME)
+        since = time.time() - os.path.getmtime(version_check_fname)
         if 0 < since < day:
             if verbose:
                 hours = since / 60 / 60
@@ -91,8 +91,7 @@ def check_version(io, just_check=False, verbose=False):
         io.tool_error(f"Error checking pypi for new version: {err}")
         return False
     finally:
-        VERSION_CHECK_FNAME.parent.mkdir(parents=True, exist_ok=True)
-        VERSION_CHECK_FNAME.touch()
+        version_check_fname.touch()
 
     ###
     # is_update_available = True
