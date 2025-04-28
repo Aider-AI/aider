@@ -1702,7 +1702,8 @@ class Coder:
             print(f"DEBUG: Checking TTY for non-stream: {is_interactive_terminal}", flush=True) # Keep DEBUG
             if not self.stream and is_interactive_terminal: # Use the confirmed check
                 print("DEBUG: Printing status for non-stream", flush=True) # Keep DEBUG
-                self.io.tool_output(status_message, end="", flush=True)
+                # Use console.print for status message
+                self.io.console.print(status_message, style=self.io.tool_output_color, end="", flush=True)
                 status_active = True
 
             hash_object, completion = model.send_completion(
@@ -1718,7 +1719,8 @@ class Coder:
                 print(f"DEBUG: Checking TTY for stream: {is_interactive_terminal}", flush=True) # Keep DEBUG
                 if is_interactive_terminal: # Use the confirmed check
                     print("DEBUG: Printing status for stream", flush=True) # Keep DEBUG
-                    self.io.tool_output(status_message, end="", flush=True)
+                    # Use console.print for status message
+                    self.io.console.print(status_message, style=self.io.tool_output_color, end="", flush=True)
                     status_active = True
                 # Pass the status message for clearing
                 yield from self.show_send_output_stream(completion, status_message if status_active else None)
@@ -1726,8 +1728,8 @@ class Coder:
             else:
                 # Clear status after non-streaming call returns
                 if status_active:
-                    # Overwrite the status message with spaces using io object
-                    self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                    # Use console.print for clearing
+                    self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
                     status_active = False
                 self.show_send_output(completion) # Process the result
 
@@ -1737,7 +1739,8 @@ class Coder:
         except LiteLLMExceptions().exceptions_tuple() as err:
             # Clear status on error
             if status_active:
-                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                # Use console.print for clearing
+                self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
                 status_active = False
             # Still calculate costs for context window errors if possible
             ex_info = LiteLLMExceptions().get_ex_info(err)
@@ -1748,7 +1751,8 @@ class Coder:
         except KeyboardInterrupt as kbi:
             # Clear status on interrupt
             if status_active:
-                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                # Use console.print for clearing
+                self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
                 status_active = False
             self.keyboard_interrupt()
             raise kbi # Re-raise the interrupt
@@ -1756,7 +1760,8 @@ class Coder:
         except Exception as err: # Catch other potential exceptions
              # Clear status on generic error
             if status_active:
-                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                # Use console.print for clearing
+                self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
                 status_active = False
             # Log and handle the error
             if self.mdstream:
@@ -1772,7 +1777,8 @@ class Coder:
         finally:
             # Final check to clear status if something unexpected happened
             if status_active:
-                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                # Use console.print for clearing
+                self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
 
             # Log the final accumulated content (moved from original position for clarity)
             if self.partial_response_content:
@@ -1868,7 +1874,8 @@ class Coder:
                  )
                  if has_content:
                      print("DEBUG: Clearing status message now", flush=True) # Keep DEBUG
-                     self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                     # Use console.print for clearing
+                     self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
                      status_cleared = True
                  else:
                      print("DEBUG: Chunk received, but no content found yet", flush=True) # Keep DEBUG
@@ -1882,7 +1889,8 @@ class Coder:
                 and chunk.choices[0].finish_reason == "length"
             ):
                 if status_message and not status_cleared:
-                    self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                    # Use console.print for clearing
+                    self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
                     status_cleared = True
                 raise FinishReasonLength()
 
@@ -1964,7 +1972,8 @@ class Coder:
 
         # Ensure status is cleared if the loop finishes without receiving content
         if status_message and not status_cleared:
-             self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+             # Use console.print for clearing
+             self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
 
         if not received_content:
             if not self.partial_response_function_call:
