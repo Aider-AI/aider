@@ -327,8 +327,9 @@ class Spinner:
              if not self.spinner_chars: # If test_charset failed somehow
                  return
 
-        # Use direct print with flush=True
-        print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
+        # Print carriage return, text, space, spinner char, space (to overwrite previous char)
+        # Ensure flush=True
+        print(f"\r{self.text} {next(self.spinner_chars)} ", end="", flush=True)
 
 
     def _run(self):
@@ -364,11 +365,14 @@ class Spinner:
 
     def end(self):
         # Clears the spinner line if it was visible
+        # Clears the spinner line if it was visible
         # This is now separate from stopping the thread
         self._update_is_tty() # Ensure TTY status is current before clearing
         if self.visible and self.is_tty:
-            # Use direct print with flush=True
-            print("\r" + " " * (len(self.text) + 3) + "\r", end="", flush=True)
+            # Calculate length needed: text + space + spinner_char + trailing_space
+            clear_len = len(self.text) + 3
+            # Print carriage return, spaces, then carriage return again to be sure cursor is at start
+            print("\r" + " " * clear_len + "\r", end="", flush=True)
             self.visible = False # Mark as not visible after clearing
 
 
