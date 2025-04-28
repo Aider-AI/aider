@@ -4,6 +4,12 @@ import platform
 import shlex
 import subprocess
 import sys
+import itertools
+import os
+import platform
+import shlex
+import subprocess
+import sys # Ensure sys is imported
 import tempfile
 import time
 from pathlib import Path
@@ -254,13 +260,25 @@ class Spinner:
     unicode_spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
     ascii_spinner = ["|", "/", "-", "\\"]
 
-    def __init__(self, text):
+    def __init__(self, text, console=None): # Add console parameter
         self.text = text
+        self.console = console # Store console
         self.start_time = time.time()
         self.last_update = 0
         self.visible = False
-        self.is_tty = sys.stdout.isatty()
         self.tested = False
+        self._update_is_tty() # Initial check
+
+    def _update_is_tty(self):
+        """Check if output is to a TTY using console if available."""
+        if self.console:
+            self.is_tty = self.console.is_terminal
+        else:
+            # Fallback for when console is not provided
+            try:
+                self.is_tty = sys.stdout.isatty()
+            except Exception: # Catch potential errors like detached stdout
+                self.is_tty = False
 
     def test_charset(self):
         if self.tested:
@@ -276,10 +294,12 @@ class Spinner:
             self.spinner_chars = itertools.cycle(self.ascii_spinner)
 
     def step(self):
+        self._update_is_tty() # Re-check TTY status in case it changes (less likely but safe)
         if not self.is_tty:
             return
 
         current_time = time.time()
+        # Show spinner immediately or after a short delay? Let's keep the delay for now.
         if not self.visible and current_time - self.start_time >= 0.5:
             self.visible = True
             self._step()
@@ -292,11 +312,15 @@ class Spinner:
             return
 
         self.test_charset()
+        # Use direct print with flush=True to try and bypass buffering
         print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
 
     def end(self):
+        self._update_is_tty() # Ensure TTY status is current before clearing
         if self.visible and self.is_tty:
-            print("\r" + " " * (len(self.text) + 3))
+            # Use direct print with flush=True
+            print("\r" + " " * (len(self.text) + 3) + "\r", end="", flush=True)
+            self.visible = False # Mark as not visible after clearing
 
 
 def find_common_root(abs_fnames):

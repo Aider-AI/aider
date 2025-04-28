@@ -37,7 +37,13 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
-from aider.utils import format_content, format_messages, format_tokens, is_image_file
+from aider.utils import (
+    Spinner, # Import Spinner
+    format_content,
+    format_messages,
+    format_tokens,
+    is_image_file,
+)
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -1689,22 +1695,16 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
-        # Add status message variables
-        status_message = "Waiting for LLM response..."
-        status_active = False
+        spinner = None # Initialize spinner
 
         # Determine if we are in an interactive terminal using the io object's console
-        # Ensure self.io.console exists before checking is_terminal
         is_interactive_terminal = hasattr(self.io, 'console') and self.io.console.is_terminal
 
         try:
-            # Display status before non-streaming call
-            print(f"DEBUG: Checking TTY for non-stream: {is_interactive_terminal}", flush=True) # Keep DEBUG
-            if not self.stream and is_interactive_terminal: # Use the confirmed check
-                print("DEBUG: Printing status for non-stream", flush=True) # Keep DEBUG
-                # Use console.print for status message
-                self.io.console.print(status_message, style=self.io.tool_output_color, end="")
-                status_active = True
+            # Start spinner if interactive
+            if is_interactive_terminal:
+                spinner = Spinner("Waiting for LLM response...", console=self.io.console)
+                # Spinner starts itself based on its internal timer/logic
 
             hash_object, completion = model.send_completion(
                 messages,
@@ -1715,54 +1715,43 @@ class Coder:
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
-                # Display status just before iterating stream
-                print(f"DEBUG: Checking TTY for stream: {is_interactive_terminal}", flush=True) # Keep DEBUG
-                if is_interactive_terminal: # Use the confirmed check
-                    print("DEBUG: Printing status for stream", flush=True) # Keep DEBUG
-                    # Use console.print for status message
-                    self.io.console.print(status_message, style=self.io.tool_output_color, end="")
-                    status_active = True
-                # Pass the status message for clearing
-                yield from self.show_send_output_stream(completion, status_message if status_active else None)
-                status_active = False # Stream handler should have cleared it
+                # Pass the spinner to the stream handler
+                yield from self.show_send_output_stream(completion, spinner)
+                spinner = None # Stream handler should have ended it
             else:
-                # Clear status after non-streaming call returns
-                if status_active:
-                    # Use console.print for clearing
-                    self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
-                    status_active = False
+                # End spinner after non-streaming call returns
+                if spinner:
+                    spinner.end()
+                    spinner = None
                 self.show_send_output(completion) # Process the result
 
             # Calculate costs for successful responses
             self.calculate_and_show_tokens_and_cost(messages, completion)
 
         except LiteLLMExceptions().exceptions_tuple() as err:
-            # Clear status on error
-            if status_active:
-                # Use console.print for clearing
-                self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
-                status_active = False
+            # End spinner on error
+            if spinner:
+                spinner.end()
+                spinner = None
             # Still calculate costs for context window errors if possible
             ex_info = LiteLLMExceptions().get_ex_info(err)
             if ex_info.name == "ContextWindowExceededError":
                 self.calculate_and_show_tokens_and_cost(messages, completion)
-            raise # Re-raise the original error after clearing status
+            raise # Re-raise the original error after ending spinner
 
         except KeyboardInterrupt as kbi:
-            # Clear status on interrupt
-            if status_active:
-                # Use console.print for clearing
-                self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
-                status_active = False
+            # End spinner on interrupt
+            if spinner:
+                spinner.end()
+                spinner = None
             self.keyboard_interrupt()
             raise kbi # Re-raise the interrupt
 
         except Exception as err: # Catch other potential exceptions
-             # Clear status on generic error
-            if status_active:
-                # Use console.print for clearing
-                self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
-                status_active = False
+             # End spinner on generic error
+            if spinner:
+                spinner.end()
+                spinner = None
             # Log and handle the error
             if self.mdstream:
                 self.live_incremental_response(True) # Finalize stream if possible
@@ -1775,12 +1764,11 @@ class Coder:
             return # Or raise err depending on desired behavior
 
         finally:
-            # Final check to clear status if something unexpected happened
-            if status_active:
-                # Use console.print for clearing
-                self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
+            # Final check to end spinner if something unexpected happened
+            if spinner:
+                spinner.end()
 
-            # Log the final accumulated content (moved from original position for clarity)
+            # Log the final accumulated content
             if self.partial_response_content:
                 self.io.log_llm_history(
                     "LLM RESPONSE",
@@ -1854,16 +1842,13 @@ class Coder:
         ):
             raise FinishReasonLength()
 
-    # Modify show_send_output_stream to accept and clear the status message
-    def show_send_output_stream(self, completion, status_message): # Add status_message parameter
+    def show_send_output_stream(self, completion, spinner): # Accept spinner object
         received_content = False
-        status_cleared = False
-        print(f"DEBUG: Entering show_send_output_stream, status_message='{status_message}'", flush=True) # Keep DEBUG
+        spinner_active = spinner is not None # Track if spinner was initially active
 
         for chunk in completion:
-            # Clear the status message on the *first* sign of content
-            if status_message and not status_cleared and chunk.choices:
-                 print("DEBUG: Stream chunk received, checking for content to clear status", flush=True) # Keep DEBUG
+            # End the spinner on the *first* sign of content
+            if spinner_active and chunk.choices:
                  delta = chunk.choices[0].delta
                  has_content = (
                      (hasattr(delta, 'content') and delta.content) or
@@ -1873,14 +1858,10 @@ class Coder:
                      (hasattr(delta, 'reasoning') and delta.reasoning)
                  )
                  if has_content:
-                     print("DEBUG: Clearing status message now", flush=True) # Keep DEBUG
-                     # Use console.print for clearing
-                     self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
-                     status_cleared = True
-                 else:
-                     print("DEBUG: Chunk received, but no content found yet", flush=True) # Keep DEBUG
+                     spinner.end()
+                     spinner_active = False # Mark spinner as ended
 
-            # --- The rest of the existing stream processing logic ---
+            # --- Stream processing logic ---
             if len(chunk.choices) == 0:
                 continue
 
@@ -1888,13 +1869,12 @@ class Coder:
                 hasattr(chunk.choices[0], "finish_reason")
                 and chunk.choices[0].finish_reason == "length"
             ):
-                if status_message and not status_cleared:
-                    # Use console.print for clearing
-                    self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
-                    status_cleared = True
+                if spinner_active:
+                    spinner.end()
+                    spinner_active = False
                 raise FinishReasonLength()
 
-            # ... (rest of stream processing logic as before) ...
+            # ... (rest of stream processing logic) ...
             try:
                 func = chunk.choices[0].delta.function_call
                 if func:
@@ -1967,13 +1947,12 @@ class Coder:
                         sys.stdout.write(safe_text)
                         sys.stdout.flush()
                 yield text
-            # --- End of existing stream processing logic ---
+            # --- End of stream processing logic ---
 
 
-        # Ensure status is cleared if the loop finishes without receiving content
-        if status_message and not status_cleared:
-             # Use console.print for clearing
-             self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
+        # Ensure spinner is ended if the loop finishes without receiving content
+        if spinner_active:
+             spinner.end()
 
         if not received_content:
             if not self.partial_response_function_call:
