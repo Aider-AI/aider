@@ -1699,17 +1699,17 @@ class Coder:
 
         # Determine if we are in an interactive terminal using the io object's console
         is_interactive_terminal = hasattr(self.io, 'console') and self.io.console.is_terminal
+        spinner = None # Initialize spinner to None
 
         try:
-            # Start spinner if interactive *before* the blocking call/stream start
+            # Create and start spinner if interactive *before* the blocking call/stream start
             if is_interactive_terminal:
-                # Create the spinner instance with a short initial delay
                 spinner = Spinner(
                     "Waiting for LLM response...",
                     console=self.io.console,
                     initial_delay=0.01 # 10ms delay
                 )
-                # Spinner becomes visible based on its internal timer, but won't animate without step calls
+                spinner.start() # Start the background animation thread
 
             hash_object, completion = model.send_completion(
                 messages,
@@ -1742,22 +1742,15 @@ class Coder:
             ex_info = LiteLLMExceptions().get_ex_info(err)
             if ex_info.name == "ContextWindowExceededError":
                 self.calculate_and_show_tokens_and_cost(messages, completion)
-            raise # Re-raise the original error after ending spinner
+            raise # Re-raise the original error
 
         except KeyboardInterrupt as kbi:
-            # End spinner on interrupt
-            if spinner:
-                spinner.end()
-                spinner = None
+            # Spinner stopped in finally block
             self.keyboard_interrupt()
             raise kbi # Re-raise the interrupt
 
         except Exception as err: # Catch other potential exceptions
-             # End spinner on generic error
-            if spinner:
-                spinner.end()
-                spinner = None
-            # Log and handle the error
+             # Spinner stopped in finally block
             if self.mdstream:
                 self.live_incremental_response(True) # Finalize stream if possible
                 self.mdstream = None
@@ -1769,9 +1762,9 @@ class Coder:
             return # Or raise err depending on desired behavior
 
         finally:
-            # Final safety check: ensure spinner is ended if it still exists
+            # Ensure spinner is stopped and cleaned up *after* all processing/errors
             if spinner:
-                spinner.end()
+                spinner.stop()
 
             # Log the final accumulated content
             if self.partial_response_content:
@@ -1848,11 +1841,10 @@ class Coder:
             raise FinishReasonLength()
 
     def show_send_output_stream(self, completion, spinner): # Accept spinner object
+        # Spinner is managed (started/stopped) by the calling `send` method's finally block.
+        # This method no longer needs to interact with spinner.stop() or spinner.end().
         received_content = False
-        # Track if spinner was initially active and needs ending.
-        # spinner_active is True if spinner is not None initially.
-        spinner_active = spinner is not None
-        chunk_counter = 0 # Add chunk counter for debugging
+        chunk_counter = 0
 
         for chunk in completion:
             chunk_counter += 1 # Increment counter
@@ -1864,29 +1856,8 @@ class Coder:
                 print(f"\nDEBUG: Chunk {chunk_counter}: Received delta: {delta_info}", flush=True)
             # --- End Debugging ---
 
-            # End the spinner on the *first* sign of content
-            if spinner_active and chunk.choices:
-                 delta = chunk.choices[0].delta
-                 # Refined check: Ensure content is not just None or empty string
-                 has_meaningful_content = (
-                     (hasattr(delta, 'content') and delta.content is not None and delta.content.strip()) or
-                     (hasattr(delta, 'function_call') and delta.function_call) or
-                     (hasattr(delta, 'tool_calls') and delta.tool_calls) or
-                     (hasattr(delta, 'reasoning_content') and delta.reasoning_content) or
-                     (hasattr(delta, 'reasoning') and delta.reasoning)
-                 )
-
-                 if has_meaningful_content:
-                     # --- Debugging: Print why spinner is ending ---
-                     print(f"\nDEBUG: Chunk {chunk_counter}: Ending spinner because has_meaningful_content is True. Delta was: {delta}", flush=True)
-                     # --- End Debugging ---
-                     spinner.end()
-                     spinner_active = False # Mark spinner as ended
-                 # --- Debugging: Print if spinner NOT ending ---
-                 elif chunk_counter <= 5: # Only log this for the first few chunks to avoid spam
-                     print(f"\nDEBUG: Chunk {chunk_counter}: Spinner active, but has_meaningful_content is False. Delta was: {delta}", flush=True)
-                 # --- End Debugging ---
-
+            # --- No longer need to end spinner here ---
+            # The spinner runs until the `send` method's finally block calls spinner.stop()
 
             # --- Stream processing logic ---
             if len(chunk.choices) == 0:
@@ -1896,13 +1867,10 @@ class Coder:
                 hasattr(chunk.choices[0], "finish_reason")
                 and chunk.choices[0].finish_reason == "length"
             ):
-                # Ensure spinner is ended before raising
-                if spinner_active:
-                    spinner.end()
-                    spinner_active = False
+                # Don't need to stop spinner here, finally block in send() handles it
                 raise FinishReasonLength()
 
-            # ... (rest of stream processing logic as before) ...
+            # Accumulate content/function calls/tool calls/reasoning
             try:
                 func = chunk.choices[0].delta.function_call
                 if func:
@@ -1945,28 +1913,29 @@ class Coder:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
                         text += f"\n\n</{self.reasoning_tag_name}>\n\n" # Use self.reasoning_tag_name
                         self.ended_reasoning_content = True
-
                     text += content
                     received_content = True
             except AttributeError:
                 pass
 
+            # Update the overall partial response
             self.partial_response_content += text
 
+            # Render the incremental output
             if self.show_pretty():
-                self.live_incremental_response(False)
-            elif text:
-                # Apply reasoning tag formatting
-                text = replace_reasoning_tags(text, self.reasoning_tag_name)
+                self.live_incremental_response(False) # Render using MarkdownStream
+            elif text: # Only process/yield if the current chunk produced text
+                # Apply reasoning tag formatting to the chunk's text
+                display_text = replace_reasoning_tags(text, self.reasoning_tag_name)
                 try:
                     # Use io object for output if possible, fallback to sys.stdout
                     if hasattr(self.io, 'console'):
-                        self.io.console.print(text, end="")
+                        self.io.console.print(display_text, end="")
                     else:
-                        sys.stdout.write(text)
+                        sys.stdout.write(display_text)
                         sys.stdout.flush()
                 except UnicodeEncodeError:
-                    safe_text = text.encode(sys.stdout.encoding, errors="backslashreplace").decode(
+                    safe_text = display_text.encode(sys.stdout.encoding, errors="backslashreplace").decode(
                         sys.stdout.encoding
                     )
                     if hasattr(self.io, 'console'):
@@ -1974,15 +1943,11 @@ class Coder:
                     else:
                         sys.stdout.write(safe_text)
                         sys.stdout.flush()
-                yield text
+                yield display_text # Yield the processed text chunk
             # --- End of stream processing logic ---
 
+        # --- No longer need to end spinner here at the end of the loop ---
 
-        # Ensure spinner is ended if the loop finishes (e.g., no content received at all)
-        if spinner_active:
-             spinner.end()
-
-        # ... (rest of method) ...
         if not received_content:
             if not self.partial_response_function_call:
                 self.io.tool_warning("Empty response received from LLM. Check your provider account?")

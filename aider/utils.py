@@ -11,7 +11,8 @@ import shlex
 import subprocess
 import sys # Ensure sys is imported
 import tempfile
-import time
+import threading # Add threading import
+import time # Ensure time is imported
 from pathlib import Path
 
 from aider.dump import dump  # noqa: F401
@@ -264,11 +265,16 @@ class Spinner:
         self.text = text
         self.console = console # Store console
         self.initial_delay = initial_delay # Store initial_delay
-        self.start_time = time.time()
+        self.start_time = 0 # Will be set in start()
         self.last_update = 0
         self.visible = False
         self.tested = False
+        self.spinner_chars = None # Initialize here
         self._update_is_tty() # Initial check
+
+        # Threading attributes
+        self.running = False
+        self.thread = None
 
     def _update_is_tty(self):
         """Check if output is to a TTY using console if available."""
@@ -305,23 +311,112 @@ class Spinner:
             self.visible = True
             self._step()
         elif self.visible and current_time - self.last_update >= 0.1:
-            self._step()
-        self.last_update = current_time
+            # Call _print_frame directly the first time it becomes visible
+            self._print_frame()
+            self.last_update = current_time # Set last_update after first print
 
-    def _step(self):
-        if not self.visible:
+        elif self.visible and current_time - self.last_update >= 0.1:
+             # Subsequent updates based on interval
+            self._print_frame()
+            self.last_update = current_time
+
+    def _print_frame(self):
+        # Actual printing logic, separated for clarity
+        if not self.visible: # Should not happen if called from step correctly, but safe check
             return
 
-        self.test_charset()
-        # Use direct print with flush=True to try and bypass buffering
+        if not self.spinner_chars: # Ensure charset is tested before first print
+             self.test_charset()
+             if not self.spinner_chars: # If test_charset failed somehow
+                 return
+
+        # Use direct print with flush=True
         print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
 
+
+    def _run(self):
+        # The target function for the background thread
+        while self.running:
+            self.step()
+            # Sleep for a short duration to control animation speed and reduce CPU usage
+            time.sleep(0.1)
+
+    def start(self):
+        # Start the spinner animation in a background thread
+        self._update_is_tty()
+        if not self.is_tty:
+            return # Don't start if not a TTY
+
+        self.start_time = time.time() # Set start time here
+        self.running = True
+        # Ensure the thread is a daemon so it doesn't block program exit
+        self.thread = threading.Thread(target=self._run, daemon=True)
+        self.thread.start()
+
+    def stop(self):
+        # Stop the spinner animation thread and clear the line
+        if not self.thread or not self.running:
+            return
+
+        self.running = False
+        # Wait briefly for the thread to notice the flag and exit
+        if self.thread and self.thread.is_alive():
+             self.thread.join(timeout=0.2) # Increased timeout slightly
+
+        self.end() # Call end to clear the line after stopping
+
     def end(self):
+        # Clears the spinner line if it was visible
+        # This is now separate from stopping the thread
         self._update_is_tty() # Ensure TTY status is current before clearing
         if self.visible and self.is_tty:
             # Use direct print with flush=True
             print("\r" + " " * (len(self.text) + 3) + "\r", end="", flush=True)
             self.visible = False # Mark as not visible after clearing
+
+
+# Keep run_install using manual steps for now, as it's tied to subprocess output
+def run_install(cmd):
+    print()
+    print("Installing:", printable_shell_command(cmd))
+
+    try:
+        output = []
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            universal_newlines=True,
+            encoding=sys.stdout.encoding,
+            errors="replace",
+        )
+        spinner = Spinner("Installing...") # Uses default delay
+
+        while True:
+            char = process.stdout.read(1)
+            if not char:
+                break
+
+            output.append(char)
+            spinner.step() # Manual step call
+
+        spinner.end() # Manual end call
+        return_code = process.wait()
+        output = "".join(output)
+
+        if return_code == 0:
+            print("Installation complete.")
+            print()
+            return True, output
+
+    except subprocess.CalledProcessError as e:
+        print(f"\nError running pip install: {e}")
+
+    print("\nInstallation failed.\n")
+
+    return False, output
 
 
 def find_common_root(abs_fnames):
