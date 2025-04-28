@@ -1693,11 +1693,15 @@ class Coder:
         status_message = "Waiting for LLM response..."
         status_active = False
 
+        # Determine if we are in an interactive terminal using the io object's console
+        # Ensure self.io.console exists before checking is_terminal
+        is_interactive_terminal = hasattr(self.io, 'console') and self.io.console.is_terminal
+
         try:
             # Display status before non-streaming call
-            print(f"DEBUG: Checking TTY for non-stream: {sys.stdout.isatty()}", flush=True) # ADD THIS
-            if not self.stream and sys.stdout.isatty(): # Only show if not streaming and in a TTY
-                print("DEBUG: Printing status for non-stream", flush=True) # ADD THIS
+            print(f"DEBUG: Checking TTY for non-stream: {is_interactive_terminal}", flush=True) # Keep DEBUG
+            if not self.stream and is_interactive_terminal: # Use the confirmed check
+                print("DEBUG: Printing status for non-stream", flush=True) # Keep DEBUG
                 self.io.tool_output(status_message, end="", flush=True)
                 status_active = True
 
@@ -1711,9 +1715,9 @@ class Coder:
 
             if self.stream:
                 # Display status just before iterating stream
-                print(f"DEBUG: Checking TTY for stream: {sys.stdout.isatty()}", flush=True) # ADD THIS
-                if sys.stdout.isatty(): # Only show if in a TTY
-                    print("DEBUG: Printing status for stream", flush=True) # ADD THIS
+                print(f"DEBUG: Checking TTY for stream: {is_interactive_terminal}", flush=True) # Keep DEBUG
+                if is_interactive_terminal: # Use the confirmed check
+                    print("DEBUG: Printing status for stream", flush=True) # Keep DEBUG
                     self.io.tool_output(status_message, end="", flush=True)
                     status_active = True
                 # Pass the status message for clearing
@@ -1722,7 +1726,7 @@ class Coder:
             else:
                 # Clear status after non-streaming call returns
                 if status_active:
-                    # Overwrite the status message with spaces
+                    # Overwrite the status message with spaces using io object
                     self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
                     status_active = False
                 self.show_send_output(completion) # Process the result
@@ -1735,39 +1739,52 @@ class Coder:
             if status_active:
                 self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
                 status_active = False
-
+            # Still calculate costs for context window errors if possible
             ex_info = LiteLLMExceptions().get_ex_info(err)
             if ex_info.name == "ContextWindowExceededError":
-                # Still calculate costs for context window errors
                 self.calculate_and_show_tokens_and_cost(messages, completion)
-            raise
+            raise # Re-raise the original error after clearing status
+
         except KeyboardInterrupt as kbi:
             # Clear status on interrupt
             if status_active:
                 self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
                 status_active = False
             self.keyboard_interrupt()
-            raise kbi
+            raise kbi # Re-raise the interrupt
+
+        except Exception as err: # Catch other potential exceptions
+             # Clear status on generic error
+            if status_active:
+                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                status_active = False
+            # Log and handle the error
+            if self.mdstream:
+                self.live_incremental_response(True) # Finalize stream if possible
+                self.mdstream = None
+            lines = traceback.format_exception(type(err), err, err.__traceback__)
+            self.io.tool_warning("".join(lines))
+            self.io.tool_error(str(err))
+            self.event("message_send_exception", exception=str(err))
+            # Decide if you need to raise err here or just return
+            return # Or raise err depending on desired behavior
+
         finally:
             # Final check to clear status if something unexpected happened
             if status_active:
-                # This case might occur if an error happens after the stream starts
-                # but before the first chunk is processed, or in other edge cases.
                 self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
-                # No need to set status_active = False here, it's the end
 
-            # Log the final accumulated content
+            # Log the final accumulated content (moved from original position for clarity)
             if self.partial_response_content:
                 self.io.log_llm_history(
                     "LLM RESPONSE",
                     format_content("ASSISTANT", self.partial_response_content),
                 )
             elif self.partial_response_function_call:
-                # Log function call if needed
                 try:
                     log_fc = json.dumps(self.partial_response_function_call)
                     self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", f"Function Call: {log_fc}"))
-                except Exception: # Handle potential JSON errors if needed
+                except Exception:
                      self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", f"Function Call: {self.partial_response_function_call}"))
 
     def show_send_output(self, completion):
@@ -1834,16 +1851,14 @@ class Coder:
     # Modify show_send_output_stream to accept and clear the status message
     def show_send_output_stream(self, completion, status_message): # Add status_message parameter
         received_content = False
-        status_cleared = False # Track if we already cleared it
-        print(f"DEBUG: Entering show_send_output_stream, status_message='{status_message}'", flush=True) # ADD THIS
+        status_cleared = False
+        print(f"DEBUG: Entering show_send_output_stream, status_message='{status_message}'", flush=True) # Keep DEBUG
 
         for chunk in completion:
             # Clear the status message on the *first* sign of content
             if status_message and not status_cleared and chunk.choices:
-                 print("DEBUG: Stream chunk received, checking for content to clear status", flush=True) # ADD THIS
-                 # Check if the delta contains any form of content
+                 print("DEBUG: Stream chunk received, checking for content to clear status", flush=True) # Keep DEBUG
                  delta = chunk.choices[0].delta
-                 # Check for any attribute that indicates content/action
                  has_content = (
                      (hasattr(delta, 'content') and delta.content) or
                      (hasattr(delta, 'function_call') and delta.function_call) or
@@ -1852,11 +1867,11 @@ class Coder:
                      (hasattr(delta, 'reasoning') and delta.reasoning)
                  )
                  if has_content:
-                     print("DEBUG: Clearing status message now", flush=True) # ADD THIS
+                     print("DEBUG: Clearing status message now", flush=True) # Keep DEBUG
                      self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
                      status_cleared = True
                  else:
-                     print("DEBUG: Chunk received, but no content found yet", flush=True) # ADD THIS
+                     print("DEBUG: Chunk received, but no content found yet", flush=True) # Keep DEBUG
 
             # --- The rest of the existing stream processing logic ---
             if len(chunk.choices) == 0:
@@ -1866,18 +1881,17 @@ class Coder:
                 hasattr(chunk.choices[0], "finish_reason")
                 and chunk.choices[0].finish_reason == "length"
             ):
-                # Ensure status is cleared before raising
                 if status_message and not status_cleared:
                     self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
                     status_cleared = True
                 raise FinishReasonLength()
 
+            # ... (rest of stream processing logic as before) ...
             try:
                 func = chunk.choices[0].delta.function_call
-                # dump(func)
-                if func: # Check if func is not None
+                if func:
                     for k, v in func.items():
-                        if v is not None: # Only process non-None values
+                        if v is not None:
                             if k in self.partial_response_function_call:
                                 self.partial_response_function_call[k] += v
                             else:
@@ -1885,17 +1899,10 @@ class Coder:
                     received_content = True
             except AttributeError:
                 pass
-            # Add handling for tool_calls if necessary, similar to function_call
             try:
                 tool_calls = chunk.choices[0].delta.tool_calls
                 if tool_calls:
-                    # This part might need more complex logic if multiple tool calls
-                    # are streamed incrementally. For now, just mark content received.
-                    # A simple approach might be to just store the raw tool_calls delta.
-                    # For this status indicator, just knowing content arrived is enough.
                      received_content = True
-                     # Placeholder for actual tool_call accumulation if needed later
-                     # self.accumulate_tool_calls(tool_calls)
             except AttributeError:
                 pass
 
@@ -1936,26 +1943,31 @@ class Coder:
                 # Apply reasoning tag formatting
                 text = replace_reasoning_tags(text, self.reasoning_tag_name)
                 try:
-                    sys.stdout.write(text)
+                    # Use io object for output if possible, fallback to sys.stdout
+                    if hasattr(self.io, 'console'):
+                        self.io.console.print(text, end="")
+                    else:
+                        sys.stdout.write(text)
+                        sys.stdout.flush()
                 except UnicodeEncodeError:
-                    # Safely encode and decode the text
                     safe_text = text.encode(sys.stdout.encoding, errors="backslashreplace").decode(
                         sys.stdout.encoding
                     )
-                    sys.stdout.write(safe_text)
-                sys.stdout.flush()
+                    if hasattr(self.io, 'console'):
+                         self.io.console.print(safe_text, end="")
+                    else:
+                        sys.stdout.write(safe_text)
+                        sys.stdout.flush()
                 yield text
             # --- End of existing stream processing logic ---
 
 
         # Ensure status is cleared if the loop finishes without receiving content
-        # (This case is unlikely if the API call succeeded but good practice)
         if status_message and not status_cleared:
              self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
 
         if not received_content:
-            # Don't warn if a function/tool call was received, even if content is empty
-            if not self.partial_response_function_call: # Add check for tool_calls if implemented
+            if not self.partial_response_function_call:
                 self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def live_incremental_response(self, final):
