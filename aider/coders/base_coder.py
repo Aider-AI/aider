@@ -1849,7 +1849,7 @@ class Coder:
     def show_send_output_stream(self, completion):
         # Live display is managed by the calling `send` method's finally block.
         received_content = False
-        chunk_counter = 0
+        # chunk_counter removed
 
         for chunk in completion:
             # chunk_counter increment removed
