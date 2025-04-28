@@ -1246,7 +1246,7 @@
   test_timeouts: 0
   total_tests: 225
   command: aider --model openai/Qwen3-235B-A22B
-  date: whole
+  date: 2025-04-26
   versions: 0.81.4.dev
   seconds_per_case: 157.3
   total_cost: 0.0000
@@ -1272,7 +1272,7 @@
   test_timeouts: 6
   total_tests: 225
   command: aider --model openai/Qwen3-235B-A22B
-  date: diff
+  date: 2025-04-26
   versions: 0.81.4.dev
   seconds_per_case: 141.7
   total_cost: 0.0000
@@ -1298,7 +1298,7 @@
   test_timeouts: 5
   total_tests: 225
   command: aider --model openai/Qwen3-32B
-  date: whole
+  date: 2025-04-27
   versions: 0.81.4.dev
   seconds_per_case: 49.2
   total_cost: 0.0000
