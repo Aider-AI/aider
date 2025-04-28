@@ -1388,10 +1388,13 @@ class Coder:
                     interrupted = True
                     break
                 except FinishReasonLength:
+                     # Clear status on FinishReasonLength
+                    if status_active:
+                        self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                        status_active = False
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
-                        exhausted = True
-                        break
+                        raise # Re-raise if model doesn't support continuing
 
                     self.multi_response_content = self.get_multi_response_content_in_progress()
 
@@ -1401,7 +1404,13 @@ class Coder:
                         messages.append(
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
-                except Exception as err:
+                    # Need to re-raise to signal the caller loop to continue
+                    raise
+                except Exception as err: # Catch generic exceptions too
+                    # Clear status on any other exception during the call/processing
+                    if status_active:
+                        self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                        status_active = False
                     self.mdstream = None
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
@@ -1688,7 +1697,16 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
+        # Add status message variables
+        status_message = "Waiting for LLM response..."
+        status_active = False
+
         try:
+            # Display status before non-streaming call
+            if not self.stream and self.io.isatty(): # Only show if not streaming and in a TTY
+                self.io.tool_output(status_message, end="", flush=True)
+                status_active = True
+
             hash_object, completion = model.send_completion(
                 messages,
                 functions,
@@ -1698,35 +1716,63 @@ class Coder:
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
-                yield from self.show_send_output_stream(completion)
+                # Display status just before iterating stream
+                if self.io.isatty(): # Only show if in a TTY
+                    self.io.tool_output(status_message, end="", flush=True)
+                    status_active = True
+                # Pass the status message for clearing
+                yield from self.show_send_output_stream(completion, status_message if status_active else None)
+                status_active = False # Stream handler should have cleared it
             else:
-                self.show_send_output(completion)
+                # Clear status after non-streaming call returns
+                if status_active:
+                    # Overwrite the status message with spaces
+                    self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                    status_active = False
+                self.show_send_output(completion) # Process the result
 
             # Calculate costs for successful responses
             self.calculate_and_show_tokens_and_cost(messages, completion)
 
         except LiteLLMExceptions().exceptions_tuple() as err:
+            # Clear status on error
+            if status_active:
+                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                status_active = False
+
             ex_info = LiteLLMExceptions().get_ex_info(err)
             if ex_info.name == "ContextWindowExceededError":
                 # Still calculate costs for context window errors
                 self.calculate_and_show_tokens_and_cost(messages, completion)
             raise
         except KeyboardInterrupt as kbi:
+            # Clear status on interrupt
+            if status_active:
+                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                status_active = False
             self.keyboard_interrupt()
             raise kbi
         finally:
-            self.io.log_llm_history(
-                "LLM RESPONSE",
-                format_content("ASSISTANT", self.partial_response_content),
-            )
+            # Final check to clear status if something unexpected happened
+            if status_active:
+                # This case might occur if an error happens after the stream starts
+                # but before the first chunk is processed, or in other edge cases.
+                self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                # No need to set status_active = False here, it's the end
 
+            # Log the final accumulated content
             if self.partial_response_content:
-                self.io.ai_output(self.partial_response_content)
+                self.io.log_llm_history(
+                    "LLM RESPONSE",
+                    format_content("ASSISTANT", self.partial_response_content),
+                )
             elif self.partial_response_function_call:
-                # TODO: push this into subclasses
-                args = self.parse_partial_args()
-                if args:
-                    self.io.ai_output(json.dumps(args, indent=4))
+                # Log function call if needed
+                try:
+                    log_fc = json.dumps(self.partial_response_function_call)
+                    self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", f"Function Call: {log_fc}"))
+                except Exception: # Handle potential JSON errors if needed
+                     self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", f"Function Call: {self.partial_response_function_call}"))
 
     def show_send_output(self, completion):
         if self.verbose:
@@ -1800,17 +1846,36 @@ class Coder:
                 hasattr(chunk.choices[0], "finish_reason")
                 and chunk.choices[0].finish_reason == "length"
             ):
+                # Ensure status is cleared before raising
+                if status_message and not status_cleared:
+                    self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                    status_cleared = True
                 raise FinishReasonLength()
 
             try:
                 func = chunk.choices[0].delta.function_call
                 # dump(func)
-                for k, v in func.items():
-                    if k in self.partial_response_function_call:
-                        self.partial_response_function_call[k] += v
-                    else:
-                        self.partial_response_function_call[k] = v
-                received_content = True
+                if func: # Check if func is not None
+                    for k, v in func.items():
+                        if v is not None: # Only process non-None values
+                            if k in self.partial_response_function_call:
+                                self.partial_response_function_call[k] += v
+                            else:
+                                self.partial_response_function_call[k] = v
+                    received_content = True
+            except AttributeError:
+                pass
+            # Add handling for tool_calls if necessary, similar to function_call
+            try:
+                tool_calls = chunk.choices[0].delta.tool_calls
+                if tool_calls:
+                    # This part might need more complex logic if multiple tool calls
+                    # are streamed incrementally. For now, just mark content received.
+                    # A simple approach might be to just store the raw tool_calls delta.
+                    # For this status indicator, just knowing content arrived is enough.
+                     received_content = True
+                     # Placeholder for actual tool_call accumulation if needed later
+                     # self.accumulate_tool_calls(tool_calls)
             except AttributeError:
                 pass
 
@@ -1826,7 +1891,7 @@ class Coder:
 
             if reasoning_content:
                 if not self.got_reasoning_content:
-                    text += f"<{REASONING_TAG}>\n\n"
+                    text += f"<{self.reasoning_tag_name}>\n\n" # Use self.reasoning_tag_name
                 text += reasoning_content
                 self.got_reasoning_content = True
                 received_content = True
@@ -1860,9 +1925,18 @@ class Coder:
                     sys.stdout.write(safe_text)
                 sys.stdout.flush()
                 yield text
+            # --- End of existing stream processing logic ---
+
+
+        # Ensure status is cleared if the loop finishes without receiving content
+        # (This case is unlikely if the API call succeeded but good practice)
+        if status_message and not status_cleared:
+             self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
 
         if not received_content:
-            self.io.tool_warning("Empty response received from LLM. Check your provider account?")
+            # Don't warn if a function/tool call was received, even if content is empty
+            if not self.partial_response_function_call: # Add check for tool_calls if implemented
+                self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
