@@ -1843,9 +1843,9 @@ class Coder:
         ):
             raise FinishReasonLength()
 
-    def show_send_output_stream(self, completion, spinner): # Accept spinner object
-        # Spinner is managed (started/stopped) by the calling `send` method's finally block.
-        # This method no longer needs to interact with spinner.stop() or spinner.end().
+    # Removed spinner parameter
+    def show_send_output_stream(self, completion):
+        # Live display is managed by the calling `send` method's finally block.
         received_content = False
         chunk_counter = 0
 
