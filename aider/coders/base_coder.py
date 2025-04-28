@@ -10,7 +10,6 @@ import os
 import platform
 import re
 import sys
-import threading
 import time
 import traceback
 from collections import defaultdict
@@ -36,9 +35,12 @@ from aider.reasoning_tags import (
 )
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
+from rich.live import Live
+from rich.text import Text
+
 from aider.run_cmd import run_cmd
 from aider.utils import (
-    Spinner, # Import Spinner
+    # Spinner import removed
     format_content,
     format_messages,
     format_tokens,
@@ -1695,21 +1697,27 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
-        spinner = None # Initialize spinner to None
+        live_status = None # Initialize Live object tracker
 
         # Determine if we are in an interactive terminal using the io object's console
         is_interactive_terminal = hasattr(self.io, 'console') and self.io.console.is_terminal
-        spinner = None # Initialize spinner to None
 
         try:
-            # Create and start spinner if interactive *before* the blocking call/stream start
+            # Setup Live status display if interactive
             if is_interactive_terminal:
-                spinner = Spinner(
-                    "Waiting for LLM response...",
+                status_text = Text("Waiting for LLM response...", style=self.io.tool_output_color)
+                # Use Live with transient=True so it disappears automatically on stop
+                live_status = Live(
+                    status_text,
                     console=self.io.console,
-                    initial_delay=0.01 # 10ms delay
+                    transient=True,
+                    refresh_per_second=4 # Optional: Adjust refresh rate
                 )
-                spinner.start() # Start the background animation thread
+                live_status.start(refresh=True) # Start the live display
+
+            # --- LLM Call and Processing ---
+            # This block is now conceptually inside the 'live_status' context
+            # (though we manage start/stop manually because `yield from` can't be in `with`)
 
             hash_object, completion = model.send_completion(
                 messages,
@@ -1720,21 +1728,19 @@ class Coder:
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
-                # Pass the spinner to the stream handler. It will call spinner.end().
-                yield from self.show_send_output_stream(completion, spinner)
-                spinner = None # Stream handler should have ended it, mark as None
+                # Yield from the stream handler
+                # The Live display remains active until the finally block stops it
+                yield from self.show_send_output_stream(completion)
             else:
-                # End spinner *after* non-streaming call returns
-                if spinner:
-                    spinner.end()
-                    spinner = None # Mark as None after ending
-                self.show_send_output(completion) # Process the result
+                # Process non-streaming output
+                # The Live display remains active until the finally block stops it
+                self.show_send_output(completion)
 
             # Calculate costs *after* processing is complete but *before* finally block
             self.calculate_and_show_tokens_and_cost(messages, completion)
 
         except LiteLLMExceptions().exceptions_tuple() as err:
-            # Spinner stopped in finally block
+            # Live display stopped in finally block
             # Still calculate costs for context window errors if possible
             ex_info = LiteLLMExceptions().get_ex_info(err)
             if ex_info.name == "ContextWindowExceededError":
@@ -1742,12 +1748,12 @@ class Coder:
             raise # Re-raise the original error
 
         except KeyboardInterrupt as kbi:
-            # Spinner stopped in finally block
+            # Live display stopped in finally block
             self.keyboard_interrupt()
             raise kbi # Re-raise the interrupt
 
         except Exception as err: # Catch other potential exceptions
-             # Spinner stopped in finally block
+             # Live display stopped in finally block
             if self.mdstream:
                 self.live_incremental_response(True) # Finalize stream if possible
                 self.mdstream = None
@@ -1759,9 +1765,9 @@ class Coder:
             return # Or raise err depending on desired behavior
 
         finally:
-            # Ensure spinner is stopped and cleaned up *after* all processing/errors
-            if spinner:
-                spinner.stop()
+            # Ensure the Live status display is stopped and removed from the screen
+            if live_status:
+                live_status.stop()
 
             # Log the final accumulated content
             if self.partial_response_content:
@@ -1853,8 +1859,8 @@ class Coder:
                 print(f"\nDEBUG: Chunk {chunk_counter}: Received delta: {delta_info}", flush=True)
             # --- End Debugging ---
 
-            # --- No longer need to end spinner here ---
-            # The spinner runs until the `send` method's finally block calls spinner.stop()
+            # --- No longer need to interact with the Live display here ---
+            # The Live display runs until the `send` method's finally block stops it.
 
             # --- Stream processing logic ---
             if len(chunk.choices) == 0:
@@ -1864,7 +1870,7 @@ class Coder:
                 hasattr(chunk.choices[0], "finish_reason")
                 and chunk.choices[0].finish_reason == "length"
             ):
-                # Don't need to stop spinner here, finally block in send() handles it
+                # Don't need to stop Live display here, finally block in send() handles it
                 raise FinishReasonLength()
 
             # Accumulate content/function calls/tool calls/reasoning
