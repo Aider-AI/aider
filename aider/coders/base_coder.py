@@ -1708,16 +1708,16 @@ class Coder:
             if is_interactive_terminal:
                 status_text = Text("Waiting for LLM response...", style=self.io.tool_output_color)
                 # Use Live with transient=True so it disappears automatically on stop
-                live_status = Live(
+                self.live_status = Live( # Assign to self.live_status
                     status_text,
                     console=self.io.console,
                     transient=True,
                     refresh_per_second=4 # Optional: Adjust refresh rate
                 )
-                live_status.start(refresh=True) # Start the live display
+                self.live_status.start(refresh=True) # Start the live display
 
             # --- LLM Call and Processing ---
-            # This block is now conceptually inside the 'live_status' context
+            # This block is now conceptually inside the 'self.live_status' context
             # (though we manage start/stop manually because `yield from` can't be in `with`)
 
             hash_object, completion = model.send_completion(
@@ -1766,9 +1766,10 @@ class Coder:
             return # Or raise err depending on desired behavior
 
         finally:
-            # Ensure the Live status display is stopped and removed from the screen
-            if live_status:
-                live_status.stop()
+            # Ensure the Live status display is stopped if it hasn't been already
+            if self.live_status:
+                self.live_status.stop()
+                self.live_status = None # Clear after stopping
 
             # Log the final accumulated content
             if self.partial_response_content:
@@ -1851,10 +1852,9 @@ class Coder:
         chunk_counter = 0
 
         for chunk in completion:
-            chunk_counter += 1 # Increment counter
+            # chunk_counter increment removed
 
-            # --- No longer need to interact with the Live display here ---
-            # The Live display runs until the `send` method's finally block stops it.
+            # Obsolete comments removed
 
             # --- Stream processing logic ---
             if len(chunk.choices) == 0:
