@@ -260,9 +260,10 @@ class Spinner:
     unicode_spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
     ascii_spinner = ["|", "/", "-", "\\"]
 
-    def __init__(self, text, console=None): # Add console parameter
+    def __init__(self, text, console=None, initial_delay=0.5): # Add initial_delay parameter
         self.text = text
         self.console = console # Store console
+        self.initial_delay = initial_delay # Store initial_delay
         self.start_time = time.time()
         self.last_update = 0
         self.visible = False
@@ -299,8 +300,8 @@ class Spinner:
             return
 
         current_time = time.time()
-        # Show spinner immediately or after a short delay? Let's keep the delay for now.
-        if not self.visible and current_time - self.start_time >= 0.5:
+        # Use self.initial_delay for the visibility check
+        if not self.visible and current_time - self.start_time >= self.initial_delay:
             self.visible = True
             self._step()
         elif self.visible and current_time - self.last_update >= 0.1:

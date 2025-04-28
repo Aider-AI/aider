@@ -1703,8 +1703,12 @@ class Coder:
         try:
             # Start spinner if interactive *before* the blocking call/stream start
             if is_interactive_terminal:
-                # Create the spinner instance
-                spinner = Spinner("Waiting for LLM response...", console=self.io.console)
+                # Create the spinner instance with a short initial delay
+                spinner = Spinner(
+                    "Waiting for LLM response...",
+                    console=self.io.console,
+                    initial_delay=0.01 # 10ms delay
+                )
                 # Spinner becomes visible based on its internal timer, but won't animate without step calls
 
             hash_object, completion = model.send_completion(
