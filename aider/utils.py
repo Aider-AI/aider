@@ -309,12 +309,9 @@ class Spinner:
         # Use self.initial_delay for the visibility check
         if not self.visible and current_time - self.start_time >= self.initial_delay:
             self.visible = True
-            self._step()
-        elif self.visible and current_time - self.last_update >= 0.1:
             # Call _print_frame directly the first time it becomes visible
-            self._print_frame()
+            self._print_frame() # Corrected call
             self.last_update = current_time # Set last_update after first print
-
         elif self.visible and current_time - self.last_update >= 0.1:
              # Subsequent updates based on interval
             self._print_frame()
