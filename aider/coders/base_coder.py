@@ -1388,10 +1388,6 @@ class Coder:
                     interrupted = True
                     break
                 except FinishReasonLength:
-                     # Clear status on FinishReasonLength
-                    if status_active:
-                        self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
-                        status_active = False
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
                         raise # Re-raise if model doesn't support continuing
@@ -1407,10 +1403,6 @@ class Coder:
                     # Need to re-raise to signal the caller loop to continue
                     raise
                 except Exception as err: # Catch generic exceptions too
-                    # Clear status on any other exception during the call/processing
-                    if status_active:
-                        self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
-                        status_active = False
                     self.mdstream = None
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
