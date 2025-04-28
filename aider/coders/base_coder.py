@@ -1835,10 +1835,29 @@ class Coder:
         ):
             raise FinishReasonLength()
 
-    def show_send_output_stream(self, completion):
+    # Modify show_send_output_stream to accept and clear the status message
+    def show_send_output_stream(self, completion, status_message): # Add status_message parameter
         received_content = False
+        status_cleared = False # Track if we already cleared it
 
         for chunk in completion:
+            # Clear the status message on the *first* sign of content
+            if status_message and not status_cleared and chunk.choices:
+                 # Check if the delta contains any form of content
+                 delta = chunk.choices[0].delta
+                 # Check for any attribute that indicates content/action
+                 has_content = (
+                     (hasattr(delta, 'content') and delta.content) or
+                     (hasattr(delta, 'function_call') and delta.function_call) or
+                     (hasattr(delta, 'tool_calls') and delta.tool_calls) or
+                     (hasattr(delta, 'reasoning_content') and delta.reasoning_content) or
+                     (hasattr(delta, 'reasoning') and delta.reasoning)
+                 )
+                 if has_content:
+                     self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                     status_cleared = True
+
+            # --- The rest of the existing stream processing logic ---
             if len(chunk.choices) == 0:
                 continue
 
@@ -1900,7 +1919,7 @@ class Coder:
                 content = chunk.choices[0].delta.content
                 if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"\n\n</{self.reasoning_tag_name}>\n\n"
+                        text += f"\n\n</{self.reasoning_tag_name}>\n\n" # Use self.reasoning_tag_name
                         self.ended_reasoning_content = True
 
                     text += content
