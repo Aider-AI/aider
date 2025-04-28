@@ -275,6 +275,7 @@ class Spinner:
         # Threading attributes
         self.running = False
         self.thread = None
+        self.lock = threading.Lock() # Add a lock for thread-safe printing
 
     def _update_is_tty(self):
         """Check if output is to a TTY using console if available."""
@@ -327,9 +328,13 @@ class Spinner:
              if not self.spinner_chars: # If test_charset failed somehow
                  return
 
-        # Print carriage return, text, space, spinner char, space (to overwrite previous char)
-        # Ensure flush=True
-        print(f"\r{self.text} {next(self.spinner_chars)} ", end="", flush=True)
+        # Use a lock to prevent race conditions with other prints
+        with self.lock:
+            # \x1b[2K clears the entire line, \r moves cursor to beginning
+            clear_line = "\x1b[2K\r"
+            # Print clear sequence, text, space, spinner char, space
+            # Ensure flush=True
+            print(f"{clear_line}{self.text} {next(self.spinner_chars)} ", end="", flush=True)
 
 
     def _run(self):
@@ -345,6 +350,9 @@ class Spinner:
         if not self.is_tty:
             return # Don't start if not a TTY
 
+        # Test charset before starting the thread to avoid race conditions on first print
+        self.test_charset()
+
         self.start_time = time.time() # Set start time here
         self.running = True
         # Ensure the thread is a daemon so it doesn't block program exit
@@ -357,11 +365,15 @@ class Spinner:
             return
 
         self.running = False
-        # Wait briefly for the thread to notice the flag and exit
+        thread_was_alive = False
         if self.thread and self.thread.is_alive():
-             self.thread.join(timeout=0.2) # Increased timeout slightly
+            thread_was_alive = True
+            # Wait longer (e.g., 1 second) for the thread to finish its cycle and stop
+            self.thread.join(timeout=1.0)
 
-        self.end() # Call end to clear the line after stopping
+        # Only call end if the spinner was actually running/visible to clear the line
+        if thread_was_alive or self.visible:
+             self.end()
 
     def end(self):
         # Clears the spinner line if it was visible
@@ -369,11 +381,11 @@ class Spinner:
         # This is now separate from stopping the thread
         self._update_is_tty() # Ensure TTY status is current before clearing
         if self.visible and self.is_tty:
-            # Calculate length needed: text + space + spinner_char + trailing_space
-            clear_len = len(self.text) + 3
-            # Print carriage return, spaces, then carriage return again to be sure cursor is at start
-            print("\r" + " " * clear_len + "\r", end="", flush=True)
-            self.visible = False # Mark as not visible after clearing
+            with self.lock: # Use lock for final clear
+                # \x1b[2K clears the entire line, \r moves cursor to beginning
+                clear_line = "\x1b[2K\r"
+                print(clear_line, end="", flush=True)
+                self.visible = False # Mark as not visible after clearing
 
 
 # Keep run_install using manual steps for now, as it's tied to subprocess output
