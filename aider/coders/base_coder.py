@@ -1853,13 +1853,6 @@ class Coder:
         for chunk in completion:
             chunk_counter += 1 # Increment counter
 
-            # --- Debugging: Print first few chunks ---
-            if chunk_counter <= 5: # Log details for the first 5 chunks
-                # Check if choices exist before accessing delta
-                delta_info = chunk.choices[0].delta if chunk.choices else "No choices in chunk"
-                print(f"\nDEBUG: Chunk {chunk_counter}: Received delta: {delta_info}", flush=True)
-            # --- End Debugging ---
-
             # --- No longer need to interact with the Live display here ---
             # The Live display runs until the `send` method's finally block stops it.
 
