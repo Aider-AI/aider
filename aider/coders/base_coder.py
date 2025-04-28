@@ -1695,16 +1695,17 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
-        spinner = None # Initialize spinner
+        spinner = None # Initialize spinner to None
 
         # Determine if we are in an interactive terminal using the io object's console
         is_interactive_terminal = hasattr(self.io, 'console') and self.io.console.is_terminal
 
         try:
-            # Start spinner if interactive
+            # Start spinner if interactive *before* the blocking call/stream start
             if is_interactive_terminal:
+                # Create the spinner instance
                 spinner = Spinner("Waiting for LLM response...", console=self.io.console)
-                # Spinner starts itself based on its internal timer/logic
+                # Spinner becomes visible based on its internal timer, but won't animate without step calls
 
             hash_object, completion = model.send_completion(
                 messages,
@@ -1715,14 +1716,14 @@ class Coder:
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
-                # Pass the spinner to the stream handler
+                # Pass the spinner to the stream handler. It will call spinner.end().
                 yield from self.show_send_output_stream(completion, spinner)
-                spinner = None # Stream handler should have ended it
+                spinner = None # Stream handler should have ended it, mark as None
             else:
-                # End spinner after non-streaming call returns
+                # End spinner *after* non-streaming call returns
                 if spinner:
                     spinner.end()
-                    spinner = None
+                    spinner = None # Mark as None after ending
                 self.show_send_output(completion) # Process the result
 
             # Calculate costs for successful responses
@@ -1764,7 +1765,7 @@ class Coder:
             return # Or raise err depending on desired behavior
 
         finally:
-            # Final check to end spinner if something unexpected happened
+            # Final safety check: ensure spinner is ended if it still exists
             if spinner:
                 spinner.end()
 
@@ -1844,22 +1845,44 @@ class Coder:
 
     def show_send_output_stream(self, completion, spinner): # Accept spinner object
         received_content = False
-        spinner_active = spinner is not None # Track if spinner was initially active
+        # Track if spinner was initially active and needs ending.
+        # spinner_active is True if spinner is not None initially.
+        spinner_active = spinner is not None
+        chunk_counter = 0 # Add chunk counter for debugging
 
         for chunk in completion:
+            chunk_counter += 1 # Increment counter
+
+            # --- Debugging: Print first few chunks ---
+            if chunk_counter <= 5: # Log details for the first 5 chunks
+                # Check if choices exist before accessing delta
+                delta_info = chunk.choices[0].delta if chunk.choices else "No choices in chunk"
+                print(f"\nDEBUG: Chunk {chunk_counter}: Received delta: {delta_info}", flush=True)
+            # --- End Debugging ---
+
             # End the spinner on the *first* sign of content
             if spinner_active and chunk.choices:
                  delta = chunk.choices[0].delta
-                 has_content = (
-                     (hasattr(delta, 'content') and delta.content) or
+                 # Refined check: Ensure content is not just None or empty string
+                 has_meaningful_content = (
+                     (hasattr(delta, 'content') and delta.content is not None and delta.content.strip()) or
                      (hasattr(delta, 'function_call') and delta.function_call) or
                      (hasattr(delta, 'tool_calls') and delta.tool_calls) or
                      (hasattr(delta, 'reasoning_content') and delta.reasoning_content) or
                      (hasattr(delta, 'reasoning') and delta.reasoning)
                  )
-                 if has_content:
+
+                 if has_meaningful_content:
+                     # --- Debugging: Print why spinner is ending ---
+                     print(f"\nDEBUG: Chunk {chunk_counter}: Ending spinner because has_meaningful_content is True. Delta was: {delta}", flush=True)
+                     # --- End Debugging ---
                      spinner.end()
                      spinner_active = False # Mark spinner as ended
+                 # --- Debugging: Print if spinner NOT ending ---
+                 elif chunk_counter <= 5: # Only log this for the first few chunks to avoid spam
+                     print(f"\nDEBUG: Chunk {chunk_counter}: Spinner active, but has_meaningful_content is False. Delta was: {delta}", flush=True)
+                 # --- End Debugging ---
+
 
             # --- Stream processing logic ---
             if len(chunk.choices) == 0:
@@ -1869,12 +1892,13 @@ class Coder:
                 hasattr(chunk.choices[0], "finish_reason")
                 and chunk.choices[0].finish_reason == "length"
             ):
+                # Ensure spinner is ended before raising
                 if spinner_active:
                     spinner.end()
                     spinner_active = False
                 raise FinishReasonLength()
 
-            # ... (rest of stream processing logic) ...
+            # ... (rest of stream processing logic as before) ...
             try:
                 func = chunk.choices[0].delta.function_call
                 if func:
@@ -1950,10 +1974,11 @@ class Coder:
             # --- End of stream processing logic ---
 
 
-        # Ensure spinner is ended if the loop finishes without receiving content
+        # Ensure spinner is ended if the loop finishes (e.g., no content received at all)
         if spinner_active:
              spinner.end()
 
+        # ... (rest of method) ...
         if not received_content:
             if not self.partial_response_function_call:
                 self.io.tool_warning("Empty response received from LLM. Check your provider account?")
