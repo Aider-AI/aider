@@ -1224,3 +1224,81 @@
   versions: 0.82.3.dev
   seconds_per_case: 50.1
   total_cost: 1.8451
+
+- dirname: 2025-04-26-17-52-05--Qwen3-235B-A22B-whole
+  test_cases: 225
+  model: Qwen3-235B-A22B
+  edit_format: whole
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 28.9
+  pass_rate_2: 61.8
+  pass_num_1: 65
+  pass_num_2: 139
+  percent_cases_well_formed: 100.0
+  error_outputs: 9
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 161
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 9
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B
+  date: whole
+  versions: 0.81.4.dev
+  seconds_per_case: 157.3
+  total_cost: 0.0000
+
+- dirname: 2025-04-26-17-52-05--Qwen3-235B-A22B-diff
+  test_cases: 225
+  model: Qwen3-235B-A22B
+  edit_format: diff
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 29.3
+  pass_rate_2: 56.9
+  pass_num_1: 66
+  pass_num_2: 128
+  percent_cases_well_formed: 95.1
+  error_outputs: 21
+  num_malformed_responses: 17
+  num_with_malformed_responses: 11
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  test_timeouts: 6
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B
+  date: diff
+  versions: 0.81.4.dev
+  seconds_per_case: 141.7
+  total_cost: 0.0000
+
+- dirname: 2025-04-27-03-48-41-Qwen3-32B-whole
+  test_cases: 225
+  model: Qwen3-32B
+  edit_format: whole
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 23.1
+  pass_rate_2: 50.2
+  pass_num_1: 52
+  pass_num_2: 113
+  percent_cases_well_formed: 100.0
+  error_outputs: 2
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 88
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openai/Qwen3-32B
+  date: whole
+  versions: 0.81.4.dev
+  seconds_per_case: 49.2
+  total_cost: 0.0000
