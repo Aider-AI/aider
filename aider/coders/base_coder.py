@@ -1695,7 +1695,9 @@ class Coder:
 
         try:
             # Display status before non-streaming call
+            print(f"DEBUG: Checking TTY for non-stream: {sys.stdout.isatty()}", flush=True) # ADD THIS
             if not self.stream and sys.stdout.isatty(): # Only show if not streaming and in a TTY
+                print("DEBUG: Printing status for non-stream", flush=True) # ADD THIS
                 self.io.tool_output(status_message, end="", flush=True)
                 status_active = True
 
@@ -1709,7 +1711,9 @@ class Coder:
 
             if self.stream:
                 # Display status just before iterating stream
+                print(f"DEBUG: Checking TTY for stream: {sys.stdout.isatty()}", flush=True) # ADD THIS
                 if sys.stdout.isatty(): # Only show if in a TTY
+                    print("DEBUG: Printing status for stream", flush=True) # ADD THIS
                     self.io.tool_output(status_message, end="", flush=True)
                     status_active = True
                 # Pass the status message for clearing
@@ -1831,10 +1835,12 @@ class Coder:
     def show_send_output_stream(self, completion, status_message): # Add status_message parameter
         received_content = False
         status_cleared = False # Track if we already cleared it
+        print(f"DEBUG: Entering show_send_output_stream, status_message='{status_message}'", flush=True) # ADD THIS
 
         for chunk in completion:
             # Clear the status message on the *first* sign of content
             if status_message and not status_cleared and chunk.choices:
+                 print("DEBUG: Stream chunk received, checking for content to clear status", flush=True) # ADD THIS
                  # Check if the delta contains any form of content
                  delta = chunk.choices[0].delta
                  # Check for any attribute that indicates content/action
@@ -1846,8 +1852,11 @@ class Coder:
                      (hasattr(delta, 'reasoning') and delta.reasoning)
                  )
                  if has_content:
+                     print("DEBUG: Clearing status message now", flush=True) # ADD THIS
                      self.io.tool_output("\r" + " " * len(status_message) + "\r", end="", flush=True)
                      status_cleared = True
+                 else:
+                     print("DEBUG: Chunk received, but no content found yet", flush=True) # ADD THIS
 
             # --- The rest of the existing stream processing logic ---
             if len(chunk.choices) == 0:
