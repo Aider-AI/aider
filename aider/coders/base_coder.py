@@ -1695,7 +1695,7 @@ class Coder:
 
         try:
             # Display status before non-streaming call
-            if not self.stream and self.io.isatty(): # Only show if not streaming and in a TTY
+            if not self.stream and sys.stdout.isatty(): # Only show if not streaming and in a TTY
                 self.io.tool_output(status_message, end="", flush=True)
                 status_active = True
 
@@ -1709,7 +1709,7 @@ class Coder:
 
             if self.stream:
                 # Display status just before iterating stream
-                if self.io.isatty(): # Only show if in a TTY
+                if sys.stdout.isatty(): # Only show if in a TTY
                     self.io.tool_output(status_message, end="", flush=True)
                     status_active = True
                 # Pass the status message for clearing
