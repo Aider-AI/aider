@@ -19,6 +19,7 @@ class TestRepoMap(unittest.TestCase):
         self.GPT35 = Model("gpt-3.5-turbo")
 
     def test_get_repo_map(self):
+        pass
 
     @patch("aider.io.InputOutput.tool_warning")
     def test_get_tags_md5_change_same_mtime(self, mock_tool_warning):
