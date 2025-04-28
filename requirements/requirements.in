@@ -28,6 +28,7 @@ watchfiles
 socksio
 pip
 pillow
+google-generativeai
 
 # The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps

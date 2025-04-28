@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.11.16
+aiohttp==3.11.18
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -33,11 +33,15 @@ backoff==2.2.1
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   posthog
-beautifulsoup4==4.13.3
+beautifulsoup4==4.13.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-certifi==2025.1.31
+cachetools==5.5.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-auth
+certifi==2025.4.26
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
@@ -81,7 +85,7 @@ flake8==7.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-frozenlist==1.5.0
+frozenlist==1.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -98,18 +102,67 @@ gitpython==3.1.44
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+google-ai-generativelanguage==0.6.15
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-generativeai
+google-api-core[grpc]==2.24.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-ai-generativelanguage
+    #   google-api-python-client
+    #   google-generativeai
+google-api-python-client==2.168.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-generativeai
+google-auth==2.39.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-ai-generativelanguage
+    #   google-api-core
+    #   google-api-python-client
+    #   google-auth-httplib2
+    #   google-generativeai
+google-auth-httplib2==0.2.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-python-client
+google-generativeai==0.8.5
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
+googleapis-common-protos==1.70.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+    #   grpcio-status
 grep-ast==0.8.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-h11==0.14.0
+grpcio==1.71.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+    #   grpcio-status
+grpcio-status==1.71.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-core
+h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-httpcore==1.0.8
+httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
+httplib2==0.22.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-python-client
+    #   google-auth-httplib2
 httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
@@ -152,11 +205,11 @@ jsonschema==4.23.0
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   litellm
-jsonschema-specifications==2024.10.1
+jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.65.7
+litellm==1.67.4.post1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -198,7 +251,7 @@ numpy==1.26.4
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.73.0
+openai==1.76.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -216,19 +269,19 @@ pexpect==4.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pillow==11.1.0
+pillow==11.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pip==25.0.1
+pip==25.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==3.24.1
+posthog==4.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-prompt-toolkit==3.0.50
+prompt-toolkit==3.0.51
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -237,6 +290,20 @@ propcache==0.3.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
+proto-plus==1.26.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-ai-generativelanguage
+    #   google-api-core
+protobuf==5.29.4
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-ai-generativelanguage
+    #   google-api-core
+    #   google-generativeai
+    #   googleapis-common-protos
+    #   grpcio-status
+    #   proto-plus
 psutil==7.0.0
     # via
     #   -c requirements/common-constraints.txt
@@ -245,6 +312,15 @@ ptyprocess==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   pexpect
+pyasn1==0.6.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   pyasn1-modules
+    #   rsa
+pyasn1-modules==0.4.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-auth
 pycodestyle==2.13.0
     # via
     #   -c requirements/common-constraints.txt
@@ -256,6 +332,7 @@ pycparser==2.22
 pydantic==2.11.3
     # via
     #   -c requirements/common-constraints.txt
+    #   google-generativeai
     #   litellm
     #   openai
 pydantic-core==2.33.1
@@ -278,6 +355,10 @@ pypandoc==1.15
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+pyparsing==3.2.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   httplib2
 pyperclip==1.9.0
     # via
     #   -c requirements/common-constraints.txt
@@ -307,6 +388,7 @@ regex==2024.11.6
 requests==2.32.3
     # via
     #   -c requirements/common-constraints.txt
+    #   google-api-core
     #   huggingface-hub
     #   mixpanel
     #   posthog
@@ -320,6 +402,10 @@ rpds-py==0.24.0
     #   -c requirements/common-constraints.txt
     #   jsonschema
     #   referencing
+rsa==4.9.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-auth
 scipy==1.13.1
     # via
     #   -c requirements/common-constraints.txt
@@ -351,7 +437,7 @@ soundfile==0.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-soupsieve==2.6
+soupsieve==2.7
     # via
     #   -c requirements/common-constraints.txt
     #   beautifulsoup4
@@ -366,6 +452,7 @@ tokenizers==0.21.1
 tqdm==4.67.1
     # via
     #   -c requirements/common-constraints.txt
+    #   google-generativeai
     #   huggingface-hub
     #   openai
     # via
@@ -379,7 +466,7 @@ tree-sitter-embedded-template==0.23.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-tree-sitter-language-pack==0.7.1
+tree-sitter-language-pack==0.7.2
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
@@ -392,6 +479,7 @@ typing-extensions==4.13.2
     #   -c requirements/common-constraints.txt
     #   anyio
     #   beautifulsoup4
+    #   google-generativeai
     #   huggingface-hub
     #   openai
     #   pydantic
@@ -402,6 +490,10 @@ typing-inspection==0.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
+uritemplate==4.1.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   google-api-python-client
 urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
@@ -415,7 +507,7 @@ wcwidth==0.2.13
     # via
     #   -c requirements/common-constraints.txt
     #   prompt-toolkit
-yarl==1.19.0
+yarl==1.20.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
