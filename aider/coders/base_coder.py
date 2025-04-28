@@ -1761,7 +1761,7 @@ class Coder:
              # Clear status on generic error
             if status_active:
                 # Use console.print for clearing
-                self.io.console.print("\r" + " " * len(status_message) + "\r", end="", flush=True)
+                self.io.console.print("\r" + " " * len(status_message) + "\r", end="")
                 status_active = False
             # Log and handle the error
             if self.mdstream:
