@@ -41,7 +41,6 @@ from rich.text import Text
 
 from aider.run_cmd import run_cmd
 from aider.utils import (
-    # Spinner import removed
     format_content,
     format_messages,
     format_tokens,
@@ -1698,7 +1697,7 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
-        live_status = None # Initialize Live object tracker
+        live_status = None # Initialize Live object tracker for "Thinking..." messages
 
         # Determine if we are in an interactive terminal using the io object's console
         is_interactive_terminal = hasattr(self.io, 'console') and self.io.console.is_terminal
@@ -1718,7 +1717,6 @@ class Coder:
 
             # --- LLM Call and Processing ---
             # This block is now conceptually inside the 'self.live_status' context
-            # (though we manage start/stop manually because `yield from` can't be in `with`)
 
             hash_object, completion = model.send_completion(
                 messages,
@@ -1741,7 +1739,6 @@ class Coder:
             self.calculate_and_show_tokens_and_cost(messages, completion)
 
         except LiteLLMExceptions().exceptions_tuple() as err:
-            # Live display stopped in finally block
             # Still calculate costs for context window errors if possible
             ex_info = LiteLLMExceptions().get_ex_info(err)
             if ex_info.name == "ContextWindowExceededError":
@@ -1749,12 +1746,10 @@ class Coder:
             raise # Re-raise the original error
 
         except KeyboardInterrupt as kbi:
-            # Live display stopped in finally block
             self.keyboard_interrupt()
             raise kbi # Re-raise the interrupt
 
         except Exception as err: # Catch other potential exceptions
-             # Live display stopped in finally block
             if self.mdstream:
                 self.live_incremental_response(True) # Finalize stream if possible
                 self.mdstream = None
@@ -1845,18 +1840,11 @@ class Coder:
         ):
             raise FinishReasonLength()
 
-    # Removed spinner parameter
     def show_send_output_stream(self, completion):
         # Live display is managed by the calling `send` method's finally block.
         received_content = False
-        # chunk_counter removed
 
         for chunk in completion:
-            # chunk_counter increment removed
-
-            # Obsolete comments removed
-
-            # --- Stream processing logic ---
             if len(chunk.choices) == 0:
                 continue
 
@@ -1864,7 +1852,6 @@ class Coder:
                 hasattr(chunk.choices[0], "finish_reason")
                 and chunk.choices[0].finish_reason == "length"
             ):
-                # Don't need to stop Live display here, finally block in send() handles it
                 raise FinishReasonLength()
 
             # Accumulate content/function calls/tool calls/reasoning
@@ -1942,8 +1929,6 @@ class Coder:
                         sys.stdout.flush()
                 yield display_text # Yield the processed text chunk
             # --- End of stream processing logic ---
-
-        # --- No longer need to end spinner here at the end of the loop ---
 
         if not received_content:
             if not self.partial_response_function_call:
