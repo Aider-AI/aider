@@ -19,6 +19,18 @@ class TestRepoMap(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
 
+    # Helper function to calculate MD5 hash of a file
+    def _calculate_md5_for_file(self, file_path):
+        import hashlib
+        hasher = hashlib.md5()
+        with open(file_path, 'rb') as f:
+            while True:
+                chunk = f.read(8192)
+                if not chunk:
+                    break
+                hasher.update(chunk)
+        return hasher.hexdigest()
+
     def test_get_repo_map(self):
         pass
 
