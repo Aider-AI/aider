@@ -1730,14 +1730,11 @@ class Coder:
                     spinner = None # Mark as None after ending
                 self.show_send_output(completion) # Process the result
 
-            # Calculate costs for successful responses
+            # Calculate costs *after* processing is complete but *before* finally block
             self.calculate_and_show_tokens_and_cost(messages, completion)
 
         except LiteLLMExceptions().exceptions_tuple() as err:
-            # End spinner on error
-            if spinner:
-                spinner.end()
-                spinner = None
+            # Spinner stopped in finally block
             # Still calculate costs for context window errors if possible
             ex_info = LiteLLMExceptions().get_ex_info(err)
             if ex_info.name == "ContextWindowExceededError":
