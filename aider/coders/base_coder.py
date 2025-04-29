@@ -1360,6 +1360,7 @@ class Coder:
         self.usage_report = None
         exhausted = False
         interrupted = False
+        self.live_status = None # Initialize here
         try:
             while True:
                 try:
@@ -1816,6 +1817,11 @@ class Coder:
             self.io.tool_error(show_content_err)
             raise Exception("No data found in LLM response!")
 
+        # Stop the spinner *before* showing the final output
+        if self.live_status:
+            self.live_status.stop()
+            self.live_status = None
+
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
@@ -1837,6 +1843,7 @@ class Coder:
     def show_send_output_stream(self, completion):
         # Live display is managed by the calling `send` method's finally block.
         received_content = False
+        stopped_spinner = False # Track if we stopped the spinner
 
         for chunk in completion:
             if len(chunk.choices) == 0:
@@ -1891,6 +1898,12 @@ class Coder:
 
             # Update the overall partial response
             self.partial_response_content += text
+
+            # Stop the spinner on first meaningful content
+            if received_content and self.live_status and not stopped_spinner:
+                self.live_status.stop()
+                self.live_status = None # Prevent finally block from stopping again
+                stopped_spinner = True
 
             # Render the incremental output
             if self.show_pretty():
