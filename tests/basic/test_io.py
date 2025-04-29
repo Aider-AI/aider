@@ -513,5 +513,22 @@ class TestFormatFilesForInputNextJS(unittest.TestCase):
         self.assertIn("app/project/[id]/page.tsx", result)
         self.assertNotIn("app/project//page.tsx", result)
 
+    def test_rich_console_print_does_not_alter_path(self):
+        """
+        This test checks if Console.print alone (without Columns) is responsible for altering
+        NextJS-style file paths containing dynamic segments like '[id]'.
+        """
+        from rich.console import Console
+        from io import StringIO
+
+        paths = ["app/project/[id]/page.tsx"]
+        output = StringIO()
+        console = Console(file=output, force_terminal=False)
+        console.print(paths[0])
+        result = output.getvalue()
+        # The output should contain the correct path and not a double slash
+        self.assertIn("app/project/[id]/page.tsx", result)
+        self.assertNotIn("app/project//page.tsx", result)
+
 if __name__ == "__main__":
     unittest.main()
