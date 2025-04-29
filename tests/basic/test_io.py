@@ -477,7 +477,7 @@ class TestInputOutputMultilineMode(unittest.TestCase):
 
 
 class TestFormatFilesForInputNextJS(unittest.TestCase):
-    def test_nextjs_path_double_slash_bug(self):
+    def test_nextjs_path_segment_preserved(self):
         """
         This test checks that format_files_for_input does not incorrectly remove
         dynamic path segments (like '[id]') from NextJS-style file paths such as
