@@ -1136,15 +1136,19 @@ class InputOutput:
         output = StringIO()
         console = Console(file=output, force_terminal=False)
 
+        def escape_rich_brackets(s):
+            return s.replace("[", "\\[")
+
         read_only_files = sorted(rel_read_only_fnames or [])
         editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
 
         if read_only_files:
             # Use shorter of abs/rel paths for readonly files
-            ro_paths = []
-            for rel_path in read_only_files:
-                abs_path = os.path.abspath(os.path.join(self.root, rel_path))
-                ro_paths.append(abs_path if len(abs_path) < len(rel_path) else rel_path)
+            ro_paths = [
+                escape_rich_brackets(abs_path if len(abs_path) < len(rel_path) else rel_path)
+                for rel_path in read_only_files
+                for abs_path in [os.path.abspath(os.path.join(self.root, rel_path))]
+            ]
 
             files_with_label = ["Readonly:"] + ro_paths
             read_only_output = StringIO()
@@ -1153,9 +1157,10 @@ class InputOutput:
             console.print(Columns(files_with_label))
 
         if editable_files:
-            files_with_label = editable_files
+            editable_files_escaped = [escape_rich_brackets(f) for f in editable_files]
+            files_with_label = editable_files_escaped
             if read_only_files:
-                files_with_label = ["Editable:"] + editable_files
+                files_with_label = ["Editable:"] + editable_files_escaped
                 editable_output = StringIO()
                 Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
                 editable_lines = editable_output.getvalue().splitlines()
