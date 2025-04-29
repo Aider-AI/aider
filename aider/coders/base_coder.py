@@ -1706,9 +1706,9 @@ class Coder:
         try:
             # Setup Live status display if interactive
             if is_interactive_terminal:
-                # Create a Status object with a spinner and the short message "Waiting"
+                # Create a Status object with a spinner and a short message
                 status = Status(
-                    "Waiting",  # <-- Use the short message
+                    "Thinking",  # <-- Use the short message
                     spinner="dots",
                     spinner_style=self.io.tool_output_color,
                     speed=1.5,
