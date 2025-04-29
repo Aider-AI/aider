@@ -1398,7 +1398,8 @@ class Coder:
                 except FinishReasonLength:
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
-                        raise # Re-raise if model doesn't support continuing
+                        exhausted = True
+                        break
 
                     self.multi_response_content = self.get_multi_response_content_in_progress()
 
@@ -1408,9 +1409,7 @@ class Coder:
                         messages.append(
                             dict(role="assistant", content=self.multi_response_content, prefix=True)
                         )
-                    # Need to re-raise to signal the caller loop to continue
-                    raise
-                except Exception as err: # Catch generic exceptions too
+                except Exception as err:
                     self.mdstream = None
                     lines = traceback.format_exception(type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
@@ -1747,18 +1746,7 @@ class Coder:
 
         except KeyboardInterrupt as kbi:
             self.keyboard_interrupt()
-            raise kbi # Re-raise the interrupt
-
-        except Exception as err: # Catch other potential exceptions
-            if self.mdstream:
-                self.live_incremental_response(True) # Finalize stream if possible
-                self.mdstream = None
-            lines = traceback.format_exception(type(err), err, err.__traceback__)
-            self.io.tool_warning("".join(lines))
-            self.io.tool_error(str(err))
-            self.event("message_send_exception", exception=str(err))
-            # Decide if you need to raise err here or just return
-            return # Or raise err depending on desired behavior
+            raise kbi
 
         finally:
             # Ensure the Live status display is stopped if it hasn't been already
@@ -1766,18 +1754,17 @@ class Coder:
                 self.live_status.stop()
                 self.live_status = None # Clear after stopping
 
-            # Log the final accumulated content
+            self.io.log_llm_history(
+                "LLM RESPONSE",
+                format_content("ASSISTANT", self.partial_response_content),
+            )
             if self.partial_response_content:
-                self.io.log_llm_history(
-                    "LLM RESPONSE",
-                    format_content("ASSISTANT", self.partial_response_content),
-                )
+                self.io.ai_output(self.partial_response_content)
             elif self.partial_response_function_call:
-                try:
-                    log_fc = json.dumps(self.partial_response_function_call)
-                    self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", f"Function Call: {log_fc}"))
-                except Exception:
-                     self.io.log_llm_history("LLM RESPONSE", format_content("ASSISTANT", f"Function Call: {self.partial_response_function_call}"))
+                # TODO: push this into subclasses
+                args = self.parse_partial_args()
+                if args:
+                    self.io.ai_output(json.dumps(args, indent=4))
 
     def show_send_output(self, completion):
         if self.verbose:
@@ -1854,23 +1841,15 @@ class Coder:
             ):
                 raise FinishReasonLength()
 
-            # Accumulate content/function calls/tool calls/reasoning
             try:
                 func = chunk.choices[0].delta.function_call
-                if func:
-                    for k, v in func.items():
-                        if v is not None:
-                            if k in self.partial_response_function_call:
-                                self.partial_response_function_call[k] += v
-                            else:
-                                self.partial_response_function_call[k] = v
-                    received_content = True
-            except AttributeError:
-                pass
-            try:
-                tool_calls = chunk.choices[0].delta.tool_calls
-                if tool_calls:
-                     received_content = True
+                # dump(func)
+                for k, v in func.items():
+                    if k in self.partial_response_function_call:
+                        self.partial_response_function_call[k] += v
+                    else:
+                        self.partial_response_function_call[k] = v
+                received_content = True
             except AttributeError:
                 pass
 
@@ -1886,7 +1865,7 @@ class Coder:
 
             if reasoning_content:
                 if not self.got_reasoning_content:
-                    text += f"<{self.reasoning_tag_name}>\n\n" # Use self.reasoning_tag_name
+                    text += f"<{REASONING_TAG}>\n\n"
                 text += reasoning_content
                 self.got_reasoning_content = True
                 received_content = True
@@ -1895,8 +1874,9 @@ class Coder:
                 content = chunk.choices[0].delta.content
                 if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"\n\n</{self.reasoning_tag_name}>\n\n" # Use self.reasoning_tag_name
+                        text += f"\n\n</{REASONING_TAG}>\n\n"
                         self.ended_reasoning_content = True
+
                     text += content
                     received_content = True
             except AttributeError:
@@ -1907,32 +1887,23 @@ class Coder:
 
             # Render the incremental output
             if self.show_pretty():
-                self.live_incremental_response(False) # Render using MarkdownStream
-            elif text: # Only process/yield if the current chunk produced text
-                # Apply reasoning tag formatting to the chunk's text
-                display_text = replace_reasoning_tags(text, self.reasoning_tag_name)
+                self.live_incremental_response(False)
+            elif text:
+                # Apply reasoning tag formatting
+                text = replace_reasoning_tags(text, REASONING_TAG)
                 try:
-                    # Use io object for output if possible, fallback to sys.stdout
-                    if hasattr(self.io, 'console'):
-                        self.io.console.print(display_text, end="")
-                    else:
-                        sys.stdout.write(display_text)
-                        sys.stdout.flush()
+                    sys.stdout.write(text)
                 except UnicodeEncodeError:
-                    safe_text = display_text.encode(sys.stdout.encoding, errors="backslashreplace").decode(
+                    # Safely encode and decode the text
+                    safe_text = text.encode(sys.stdout.encoding, errors="backslashreplace").decode(
                         sys.stdout.encoding
                     )
-                    if hasattr(self.io, 'console'):
-                         self.io.console.print(safe_text, end="")
-                    else:
-                        sys.stdout.write(safe_text)
-                        sys.stdout.flush()
-                yield display_text # Yield the processed text chunk
-            # --- End of stream processing logic ---
+                    sys.stdout.write(safe_text)
+                sys.stdout.flush()
+                yield text
 
         if not received_content:
-            if not self.partial_response_function_call:
-                self.io.tool_warning("Empty response received from LLM. Check your provider account?")
+            self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
