@@ -1144,11 +1144,11 @@ class InputOutput:
 
         if read_only_files:
             # Use shorter of abs/rel paths for readonly files
-            ro_paths = [
-                escape_rich_brackets(abs_path if len(abs_path) < len(rel_path) else rel_path)
-                for rel_path in read_only_files
-                for abs_path in [os.path.abspath(os.path.join(self.root, rel_path))]
-            ]
+            ro_paths = []
+            for rel_path in read_only_files:
+                abs_path = os.path.abspath(os.path.join(self.root, rel_path))
+                short_path = abs_path if len(abs_path) < len(rel_path) else rel_path
+                ro_paths.append(escape_rich_brackets(short_path))
 
             files_with_label = ["Readonly:"] + ro_paths
             read_only_output = StringIO()
