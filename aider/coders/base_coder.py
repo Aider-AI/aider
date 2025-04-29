@@ -1718,7 +1718,7 @@ class Coder:
                     status,
                     console=self.io.console,
                     transient=True,
-                    refresh_per_second=10 # Keep higher refresh rate for spinner
+                    refresh_per_second=20 # Keep higher refresh rate for spinner
                 )
                 self.live_status.start(refresh=True) # Start the live display
 
