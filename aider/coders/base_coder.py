@@ -1704,7 +1704,7 @@ class Coder:
         try:
             # Setup Live status display if interactive
             if is_interactive_terminal:
-                status_text = Text("Waiting for LLM response...", style=self.io.tool_output_color)
+                status_text = Text("Waiting ...", style=self.io.tool_output_color)
                 # Use Live with transient=True so it disappears automatically on stop
                 self.live_status = Live( # Assign to self.live_status
                     status_text,
