@@ -1874,7 +1874,7 @@ class Coder:
                 content = chunk.choices[0].delta.content
                 if content:
                     if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"\n\n</{REASONING_TAG}>\n\n"
+                        text += f"\n\n</{self.reasoning_tag_name}>\n\n"
                         self.ended_reasoning_content = True
 
                     text += content
@@ -1890,7 +1890,7 @@ class Coder:
                 self.live_incremental_response(False)
             elif text:
                 # Apply reasoning tag formatting
-                text = replace_reasoning_tags(text, REASONING_TAG)
+                text = replace_reasoning_tags(text, self.reasoning_tag_name)
                 try:
                     sys.stdout.write(text)
                 except UnicodeEncodeError:
