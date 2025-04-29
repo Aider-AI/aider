@@ -479,8 +479,10 @@ class TestInputOutputMultilineMode(unittest.TestCase):
 class TestFormatFilesForInputNextJS(unittest.TestCase):
     def test_nextjs_path_double_slash_bug(self):
         """
-        This test checks that format_files_for_input does not introduce double slashes
-        in NextJS-style file paths like 'app/project/[id]/page.tsx' when pretty=True.
+        This test checks that format_files_for_input does not incorrectly remove
+        dynamic path segments (like '[id]') from NextJS-style file paths such as
+        'app/project/[id]/page.tsx' when pretty=True. The bug: the '[id]' part
+        was being omitted, resulting in a path like 'app/project//page.tsx'.
         """
         from aider.io import InputOutput
 
