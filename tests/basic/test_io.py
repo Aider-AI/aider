@@ -480,11 +480,11 @@ class TestFormatFilesForInputNextJS(unittest.TestCase):
     def test_nextjs_path_double_slash_bug(self):
         """
         This test checks that format_files_for_input does not introduce double slashes
-        in NextJS-style file paths like 'app/project/[id]/page.tsx'.
+        in NextJS-style file paths like 'app/project/[id]/page.tsx' when pretty=True.
         """
         from aider.io import InputOutput
 
-        io = InputOutput(pretty=False)
+        io = InputOutput(pretty=True)
         rel_fnames = ["app/project/[id]/page.tsx"]
         rel_read_only_fnames = []
         result = io.format_files_for_input(rel_fnames, rel_read_only_fnames)
