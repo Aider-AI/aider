@@ -37,6 +37,7 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from rich.live import Live
+from rich.status import Status
 from rich.text import Text
 
 from aider.run_cmd import run_cmd
@@ -1704,13 +1705,19 @@ class Coder:
         try:
             # Setup Live status display if interactive
             if is_interactive_terminal:
-                status_text = Text("Waiting ...", style=self.io.tool_output_color)
+                # Create a Status object with a spinner and the short message "Waiting"
+                status = Status(
+                    "Waiting",  # <-- Use the short message
+                    spinner="dots",
+                    spinner_style=self.io.tool_output_color,
+                    speed=1.5,
+                )
                 # Use Live with transient=True so it disappears automatically on stop
                 self.live_status = Live( # Assign to self.live_status
-                    status_text,
+                    status,
                     console=self.io.console,
                     transient=True,
-                    refresh_per_second=4 # Optional: Adjust refresh rate
+                    refresh_per_second=10 # Keep higher refresh rate for spinner
                 )
                 self.live_status.start(refresh=True) # Start the live display
 
