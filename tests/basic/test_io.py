@@ -476,5 +476,22 @@ class TestInputOutputMultilineMode(unittest.TestCase):
             mock_print.assert_called_once()
 
 
+class TestFormatFilesForInputNextJS(unittest.TestCase):
+    def test_nextjs_path_double_slash_bug(self):
+        """
+        This test checks that format_files_for_input does not introduce double slashes
+        in NextJS-style file paths like 'app/project/[id]/page.tsx'.
+        """
+        from aider.io import InputOutput
+
+        io = InputOutput(pretty=False)
+        rel_fnames = ["app/project/[id]/page.tsx"]
+        rel_read_only_fnames = []
+        result = io.format_files_for_input(rel_fnames, rel_read_only_fnames)
+        # The bug: result should not contain a double slash
+        self.assertNotIn("app/project//page.tsx", result)
+        # It should contain the correct path
+        self.assertIn("app/project/[id]/page.tsx", result)
+
 if __name__ == "__main__":
     unittest.main()
