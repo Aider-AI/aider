@@ -649,22 +649,21 @@ class RepoMap:
                 tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
                 num_tokens = self.token_count(tree)
 
-            pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
-            ok_err = 0.15
-            if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < ok_err:
-                best_tree = tree
-                best_tree_tokens = num_tokens
+                pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
+                ok_err = 0.15
+                if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < ok_err:
+                    best_tree = tree
+                    best_tree_tokens = num_tokens
 
-                if pct_err < ok_err:
-                    break
+                    if pct_err < ok_err:
+                        break
 
-            if num_tokens < max_map_tokens:
-                lower_bound = middle + 1
-            else:
-                upper_bound = middle - 1
+                if num_tokens < max_map_tokens:
+                    lower_bound = middle + 1
+                else:
+                    upper_bound = middle - 1
 
-            middle = int((lower_bound + upper_bound) // 2)
-
+                middle = int((lower_bound + upper_bound) // 2)
         # Status context manager handles stopping the spinner automatically
         return best_tree
 
