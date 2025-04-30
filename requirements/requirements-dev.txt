@@ -147,7 +147,7 @@ nodeenv==1.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
-numpy==2.2.4
+numpy==2.2.5
     # via
     #   -c requirements/common-constraints.txt
     #   contourpy
@@ -273,7 +273,7 @@ semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-setuptools==80.0.0
+setuptools==80.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
@@ -292,7 +292,7 @@ tomli==2.2.1
     #   pip-tools
     #   pytest
     #   pytest-env
-typer==0.15.2
+typer==0.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -309,7 +309,7 @@ urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.6.17
+uv==0.7.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
