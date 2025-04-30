@@ -1224,3 +1224,107 @@
   versions: 0.82.3.dev
   seconds_per_case: 50.1
   total_cost: 1.8451
+
+- dirname: 2025-04-30-04-49-37--Qwen3-235B-A22B-whole-nothink
+  test_cases: 225
+  model: Qwen3-235B-A22B
+  edit_format: whole
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 28.0
+  pass_rate_2: 65.3
+  pass_num_1: 63
+  pass_num_2: 147
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 166
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 166.0
+  total_cost: 0.0000
+
+- dirname: 2025-04-30-04-49-50--Qwen3-235B-A22B-diff-nothink
+  test_cases: 225
+  model: Qwen3-235B-A22B
+  edit_format: diff
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 29.8
+  pass_rate_2: 61.3
+  pass_num_1: 67
+  pass_num_2: 138
+  percent_cases_well_formed: 94.7
+  error_outputs: 25
+  num_malformed_responses: 25
+  num_with_malformed_responses: 12
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 158.2
+  total_cost: 0.0000
+
+- dirname: 2025-04-30-04-08-41--Qwen3-32B-whole-nothink
+  test_cases: 225
+  model: Qwen3-32B
+  edit_format: whole
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 20.4
+  pass_rate_2: 45.8
+  pass_num_1: 46
+  pass_num_2: 103
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 94
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openai/Qwen3-32B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 48.1
+  total_cost: 0.0000
+
+- dirname: 2025-04-30-04-08-51--Qwen3-32B-diff-nothink
+  test_cases: 225
+  model: Qwen3-32B
+  edit_format: diff
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 20.4
+  pass_rate_2: 41.3
+  pass_num_1: 46
+  pass_num_2: 93
+  percent_cases_well_formed: 94.2
+  error_outputs: 17
+  num_malformed_responses: 14
+  num_with_malformed_responses: 13
+  user_asks: 83
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model openai/Qwen3-32B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 59.4
+  total_cost: 0.0000
