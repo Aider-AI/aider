@@ -665,7 +665,7 @@ class RepoMap:
 
             middle = int((lower_bound + upper_bound) // 2)
 
-        spin.end()
+        # Status context manager handles stopping the spinner automatically
         return best_tree
 
     tree_cache = dict()
