@@ -137,7 +137,7 @@ joblib==1.5.0
     #   -c requirements/common-constraints.txt
     #   nltk
     #   scikit-learn
-llama-index-core==0.12.31
+llama-index-core==0.12.33.post1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -180,7 +180,7 @@ nltk==3.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-numpy==2.2.4
+numpy==2.2.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -281,7 +281,7 @@ tokenizers==0.21.1
     # via
     #   -c requirements/common-constraints.txt
     #   transformers
-torch==2.6.0
+torch==2.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in

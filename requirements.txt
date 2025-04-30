@@ -258,12 +258,12 @@ networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-numpy==2.2.4
+numpy==2.2.5
     # via
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.75.0
+openai==1.76.2
     # via
     #   -c requirements/common-constraints.txt
     #   litellm

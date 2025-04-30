@@ -48,10 +48,3 @@ for SUFFIX in "${SUFFIXES[@]}"; do
         requirements/requirements-${SUFFIX}.in \
         $1
 done
-
-# There were too many different versions required in torch
-# https://github.com/pytorch/pytorch/issues/145225
-# https://github.com/pytorch/pytorch/pull/147197
-# https://github.com/pytorch/pytorch/issues/151312
-sed -i '' 's/^sympy==1.13.1$/sympy==1.13.3/g' requirements/common-constraints.txt requirements/requirements-help.txt
-
