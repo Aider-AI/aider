@@ -774,10 +774,7 @@ class Model(ModelSettings):
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
-        kwargs = dict(
-            model=self.name,
-            stream=stream,
-        )
+        kwargs = dict(model=self.name, stream=stream, tools=[])
 
         if self.use_temperature is not False:
             if temperature is None:

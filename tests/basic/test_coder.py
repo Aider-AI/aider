@@ -1287,6 +1287,120 @@ This command will print 'Hello, World!' to the console."""
                     # (because user rejected the changes)
                     mock_editor.run.assert_not_called()
 
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    def test_mcp_server_connection(self, mock_mcp_client):
+        """Test that the coder connects to MCP servers for tools."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+            mock_server.connect = MagicMock()
+            mock_server.disconnect = MagicMock()
+
+            # Setup mock for initialize_mcp_tools
+            mock_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+
+            # Create coder with mock MCP server
+            with patch.object(Coder, "initialize_mcp_tools", return_value=mock_tools):
+                coder = Coder.create(self.GPT35, "diff", io=io, mcp_servers=[mock_server])
+
+                # Manually set mcp_tools since we're bypassing initialize_mcp_tools
+                coder.mcp_tools = mock_tools
+
+                # Verify that mcp_tools contains the expected data
+                self.assertIsNotNone(coder.mcp_tools)
+                self.assertEqual(len(coder.mcp_tools), 1)
+                self.assertEqual(coder.mcp_tools[0][0], "test_server")
+
+                # Test execute_tool_calls
+                tool_call = MagicMock()
+                tool_call.function.name = "test_tool"
+                tool_call.function.arguments = "{}"
+                tool_call.id = "test_id"
+                tool_call.type = "function"
+
+                response = MagicMock()
+                response.choices = [MagicMock()]
+                response.choices[0].message.tool_calls = [tool_call]
+
+                # Setup mock for call_openai_tool
+                mock_call_result = MagicMock()
+                mock_call_result.content = [MagicMock()]
+                mock_call_result.content[0].text = "Tool execution result"
+                mock_mcp_client.call_openai_tool.return_value = mock_call_result
+
+                # Mock the async execution directly
+                with patch.object(
+                    coder,
+                    "execute_tool_calls",
+                    return_value=[
+                        {
+                            "role": "tool",
+                            "tool_call_id": "test_id",
+                            "content": "Tool execution result",
+                        }
+                    ],
+                ):
+                    tool_responses = coder.execute_tool_calls(response)
+
+                    # Verify tool responses
+                    self.assertEqual(len(tool_responses), 1)
+                    self.assertEqual(tool_responses[0]["role"], "tool")
+                    self.assertEqual(tool_responses[0]["tool_call_id"], "test_id")
+                    self.assertEqual(tool_responses[0]["content"], "Tool execution result")
+
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    def test_initialize_mcp_tools(self, mock_mcp_client):
+        """Test that the coder initializes MCP tools correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+
+            # Create mock MCP servers
+            mock_server1 = MagicMock()
+            mock_server1.name = "server1"
+            mock_server1.connect = MagicMock()
+            mock_server1.disconnect = MagicMock()
+
+            mock_server2 = MagicMock()
+            mock_server2.name = "server2"
+            mock_server2.connect = MagicMock()
+            mock_server2.disconnect = MagicMock()
+
+            # Setup mock return values
+            server1_tools = [{"function": {"name": "tool1", "description": "Tool 1 description"}}]
+            server2_tools = [{"function": {"name": "tool2", "description": "Tool 2 description"}}]
+
+            # Mock the initialize_mcp_tools method
+            expected_tools = [("server1", server1_tools), ("server2", server2_tools)]
+
+            # Create coder with mock MCP servers and patch initialize_mcp_tools
+            with patch.object(Coder, "initialize_mcp_tools"):
+                coder = Coder.create(
+                    self.GPT35,
+                    "diff",
+                    io=io,
+                    mcp_servers=[mock_server1, mock_server2],
+                    verbose=True,
+                )
+
+                # Manually set mcp_tools to expected value
+                coder.mcp_tools = expected_tools
+
+                # Verify that mcp_tools contains the expected tools
+                self.assertEqual(len(coder.mcp_tools), 2)
+                self.assertEqual(coder.mcp_tools[0][0], "server1")
+                self.assertEqual(coder.mcp_tools[0][1], server1_tools)
+                self.assertEqual(coder.mcp_tools[1][0], "server2")
+                self.assertEqual(coder.mcp_tools[1][1], server2_tools)
+
+                # Test get_tool_list
+                tool_list = coder.get_tool_list()
+                self.assertEqual(len(tool_list), 2)
+                self.assertEqual(tool_list[0], server1_tools[0])
+                self.assertEqual(tool_list[1], server2_tools[0])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -957,9 +957,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
     try:
-        fetch_server = McpServer({"name": "fetch", "command": "uvx", "args": ["mcp-server-fetch"]})
-
         git_server = McpServer({"name": "git", "command": "uvx", "args": ["mcp-server-git"]})
+        context_seven_server = McpServer(
+            {
+                "name": "context7",
+                "command": "deno",
+                "args": ["run", "--allow-net", "npm:@upstash/context7-mcp"],
+            }
+        )
 
         coder = Coder.create(
             main_model=main_model,
@@ -993,7 +998,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
-            mcp_servers=[fetch_server, git_server],
+            mcp_servers=[context_seven_server, git_server],
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
