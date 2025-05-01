@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import asyncio
 import base64
 import hashlib
 import json
@@ -111,6 +112,8 @@ class Coder:
     ignore_mentions = None
     chat_language = None
     file_watcher = None
+    mcp_servers = None
+    mcp_tools = None
 
     @classmethod
     def create(
@@ -323,6 +326,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        mcp_servers=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -349,6 +353,7 @@ class Coder:
         self.detect_urls = detect_urls
 
         self.num_cache_warming_pings = num_cache_warming_pings
+        self.mcp_servers = mcp_servers
 
         if not fnames:
             fnames = []
@@ -508,6 +513,30 @@ class Coder:
         self.auto_test = auto_test
         self.test_cmd = test_cmd
 
+        # Instantiate MCP tools
+        if self.mcp_servers:
+            from litellm import experimental_mcp_client
+
+            tools = []
+            print("GETTING SERVER TOOLS")
+            for server in self.mcp_servers:
+                print(f"Getting server tools: {server.name}")
+
+                async def get_server_tools(all_tools):
+                    try:
+                        session = await server.connect()  # Use connect() directly
+                        server_tools = await experimental_mcp_client.load_mcp_tools(
+                            session=session, format="openai"
+                        )
+                        return all_tools + server_tools
+                    finally:
+                        await server.disconnect()
+
+                tools = asyncio.run(get_server_tools(tools))
+
+            self.mcp_tools = tools
+            print("All TOOLS")
+            print(tools)
         # validate the functions jsonschema
         if self.functions:
             from jsonschema import Draft7Validator
@@ -1461,6 +1490,8 @@ class Coder:
                     self.reflected_message = add_rel_files_message
                 return
 
+            print(content)
+
             try:
                 if self.reply_completed():
                     return
@@ -1688,12 +1719,15 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
+
         try:
             hash_object, completion = model.send_completion(
                 messages,
                 functions,
                 self.stream,
                 self.temperature,
+                # This could include any tools, but for now it is just MCP tools
+                tools=self.mcp_tools,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 

@@ -29,6 +29,7 @@ from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
+from aider.mcp.server import McpServer
 from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
@@ -956,6 +957,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
     try:
+        fetch_server = McpServer({"name": "fetch", "command": "uvx", "args": ["mcp-server-fetch"]})
+
+        git_server = McpServer({"name": "git", "command": "uvx", "args": ["mcp-server-git"]})
+
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
@@ -988,6 +993,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
+            mcp_servers=[fetch_server, git_server],
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
