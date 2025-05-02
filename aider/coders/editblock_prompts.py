@@ -1,5 +1,6 @@
 # flake8: noqa: E501
 
+from . import shell
 from .base_prompts import CoderPrompts
 
 
@@ -7,7 +8,7 @@ class EditBlockPrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.
-{lazy_prompt}
+{final_reminders}
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
@@ -28,32 +29,6 @@ You can keep asking if you then decide you need to edit more files.
 All changes to files must use this *SEARCH/REPLACE block* format.
 ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 {shell_cmd_prompt}
-"""
-
-    shell_cmd_prompt = """
-4. *Concisely* suggest any shell commands the user might want to run in ```bash blocks.
-
-Just suggest shell commands this way, not example code.
-Only suggest complete shell commands that are ready to execute, without placeholders.
-Only suggest at most a few shell commands at a time, not more than 1-3, one per line.
-Do not suggest multi-line shell commands.
-All shell commands will run from the root directory of the user's project.
-
-Use the appropriate shell based on the user's system info:
-{platform}
-Examples of when to suggest shell commands:
-
-- If you changed a self-contained html file, suggest an OS-appropriate command to open a browser to view it to see the updated content.
-- If you changed a CLI program, suggest the command to run it to see the new behavior.
-- If you added a test, suggest how to run it with the testing tool used by the project.
-- Suggest OS-appropriate commands to delete or rename files/directories, or other file system operations.
-- If your code changes add new dependencies, suggest the command to install them.
-- Etc.
-"""
-
-    no_shell_cmd_prompt = """
-Keep in mind these details about the user's platform and environment:
-{platform}
 """
     example_messages = [
         dict(
@@ -181,7 +156,7 @@ If you want to put code in a new file, use a *SEARCH/REPLACE block* with:
 - An empty `SEARCH` section
 - The new file's contents in the `REPLACE` section
 
-{rename_with_shell}{go_ahead_tip}{lazy_prompt}ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
+{rename_with_shell}{go_ahead_tip}{final_reminders}ONLY EVER RETURN CODE IN A *SEARCH/REPLACE BLOCK*!
 {shell_cmd_reminder}
 """
 
@@ -194,14 +169,6 @@ The user will say when they've applied your edits. If they haven't explicitly co
 
 """
 
-    shell_cmd_reminder = """
-Examples of when to suggest shell commands:
-
-- If you changed a self-contained html file, suggest an OS-appropriate command to open a browser to view it to see the updated content.
-- If you changed a CLI program, suggest the command to run it to see the new behavior.
-- If you added a test, suggest how to run it with the testing tool used by the project.
-- Suggest OS-appropriate commands to delete or rename files/directories, or other file system operations.
-- If your code changes add new dependencies, suggest the command to install them.
-- Etc.
-
-"""
+    shell_cmd_prompt = shell.shell_cmd_prompt
+    no_shell_cmd_prompt = shell.no_shell_cmd_prompt
+    shell_cmd_reminder = shell.shell_cmd_reminder
