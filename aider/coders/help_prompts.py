@@ -30,6 +30,23 @@ Keep this info about the user's system in mind:
 {platform}
 """
 
+    command_help = {
+        "/context": {
+            "summary": "Review context documents in the current session",
+            "description": """
+The `/context` command allows you to review the context documents that are currently being used in your session.
+
+Usage:
+  `/context list` - List all context documents with their indices
+  `/context show [index]` - Show the content of a specific context document
+
+Examples:
+  `/context list` - Shows all files in the chat, read-only files, and repo-map files
+  `/context show 3` - Displays the content of the document with index 3
+""",
+        },
+    }
+
     example_messages = []
     system_reminder = ""
 

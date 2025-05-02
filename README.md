@@ -1,177 +1,109 @@
-<p align="center">
-    <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
-</p>
+## 🧩 What’s new in the `nbardy/aider` fork — **Macro Pipelines**
 
-<h1 align="center">
-AI Pair Programming in Your Terminal
-</h1>
+This fork adds a **first-class macro system** so you can script repeatable,
+agent-like workflows *inside* Aider—without writing a separate shell wrapper
+or learning a new DSL.
 
+### Key points
 
-<p align="center">
-Aider lets you pair program with LLMs to start a new project or build on your existing codebase. 
-</p>
+| Feature | How it works |
+|---------|--------------|
+| **`/macro` command** | ` /macro my_macro.py [arg=value …] ` loads a Python module and runs its `main()` generator in‑process. |
+| **Generator API** | `main(ctx, **kwargs)` yields strings (e.g. `/run …`, `/code …`, or plain prompts). After each yield the macro receives the captured output via `.send(result)`, making two‑way loops trivial. |
+| **Helper library** | `aider_helpers.log / run / code / include` hide slash‑command syntax so macro code stays clean. |
+| **No subprocess spin‑up** | Macros execute inside Aider’s interpreter—fast and stateful. |
+| **Opt‑in security** | Macros are disabled by default. Enable with `--enable-macros` *or* add `macros: enabled` in `~/.aider.conf.yml`. An optional `macro.allowlist` file restricts which modules may run. |
+| **Logs on disk** | Every macro step is still echoed to chat *and* written to `./agent-logs/`, which is `.gitignore`‑d by default. |
 
-<p align="center">
-  <img
-    src="https://aider.chat/assets/screencast.svg"
-    alt="aider screencast"
-  >
-</p>
-
-<p align="center">
-<!--[[[cog
-from scripts.homepage import get_badges_md
-text = get_badges_md()
-cog.out(text)
-]]]-->
-  <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" title="Total number of GitHub stars the Aider project has received"
-src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
-  <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" title="Total number of installations via pip from PyPI"
-src="https://img.shields.io/badge/📦%20Installs-2.0M-2ecc71?style=flat-square&labelColor=555555"/></a>
-  <img alt="Tokens per week" title="Number of tokens processed weekly by Aider users"
-src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-3498db?style=flat-square&labelColor=555555"/>
-  <a href="https://openrouter.ai/#options-menu"><img alt="OpenRouter Ranking" title="Aider's ranking among applications on the OpenRouter platform"
-src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
-  <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="Percentage of the new code in Aider's last release written by Aider itself"
-src="https://img.shields.io/badge/🔄%20Singularity-92%25-e74c3c?style=flat-square&labelColor=555555"/></a>
-<!--[[[end]]]-->  
-</p>
-
-## Features
-
-### [Cloud and local LLMs](https://aider.chat/docs/llms.html)
-
-<a href="https://aider.chat/docs/llms.html"><img src="https://aider.chat/assets/icons/brain.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
-
-<br>
-
-### [Maps your codebase](https://aider.chat/docs/repomap.html)
-
-<a href="https://aider.chat/docs/repomap.html"><img src="https://aider.chat/assets/icons/map-outline.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Aider makes a map of your entire codebase, which helps it work well in larger projects.
-
-<br>
-
-### [100+ code languages](https://aider.chat/docs/languages.html)
-
-<a href="https://aider.chat/docs/languages.html"><img src="https://aider.chat/assets/icons/code-tags.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Aider works with most popular programming languages: python, javascript, rust, ruby, go, cpp, php, html, css, and dozens more.
-
-<br>
-
-### [Git integration](https://aider.chat/docs/git.html)
-
-<a href="https://aider.chat/docs/git.html"><img src="https://aider.chat/assets/icons/source-branch.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Aider automatically commits changes with sensible commit messages. Use familiar git tools to easily diff, manage and undo AI changes.
-
-<br>
-
-### [Use in your IDE](https://aider.chat/docs/usage/watch.html)
-
-<a href="https://aider.chat/docs/usage/watch.html"><img src="https://aider.chat/assets/icons/monitor.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Use aider from within your favorite IDE or editor. Ask for changes by adding comments to your code and aider will get to work.
-
-<br>
-
-### [Images & web pages](https://aider.chat/docs/usage/images-urls.html)
-
-<a href="https://aider.chat/docs/usage/images-urls.html"><img src="https://aider.chat/assets/icons/image-multiple.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Add images and web pages to the chat to provide visual context, screenshots, reference docs, etc.
-
-<br>
-
-### [Voice-to-code](https://aider.chat/docs/usage/voice.html)
-
-<a href="https://aider.chat/docs/usage/voice.html"><img src="https://aider.chat/assets/icons/microphone.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Speak with aider about your code! Request new features, test cases or bug fixes using your voice and let aider implement the changes.
-
-<br>
-
-### [Linting & testing](https://aider.chat/docs/usage/lint-test.html)
-
-<a href="https://aider.chat/docs/usage/lint-test.html"><img src="https://aider.chat/assets/icons/check-all.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Automatically lint and test your code every time aider makes changes. Aider can fix problems detected by your linters and test suites.
-
-<br>
-
-### [Copy/paste to web chat](https://aider.chat/docs/usage/copypaste.html)
-
-<a href="https://aider.chat/docs/usage/copypaste.html"><img src="https://aider.chat/assets/icons/content-copy.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Work with any LLM via its web chat interface. Aider streamlines copy/pasting code context and edits back and forth with a browser.
-
-## Getting Started
+### Quick start
 
 ```bash
-python -m pip install aider-install
-aider-install
+# 1. install this fork
+pip install git+https://github.com/nbardy/aider.git@main
 
-# Change directory into your codebase
-cd /to/your/project
-
-# DeepSeek
-aider --model deepseek --api-key deepseek=<key>
-
-# Claude 3.7 Sonnet
-aider --model sonnet --api-key anthropic=<key>
-
-# o3-mini
-aider --model o3-mini --api-key openai=<key>
+# 2. enable macros (one‑off flag or config file)
+aider --enable-macros scene.json
 ```
 
-See the [installation instructions](https://aider.chat/docs/install.html) and [usage documentation](https://aider.chat/docs/usage.html) for more details.
+Below is a drop-in **“Examples”** section you can append to your fork's `README.md` (or splice into an existing examples table). It showcases the three flagship macros shipped in `examples/`:
 
-## More Information
 
-### Documentation
-- [Installation Guide](https://aider.chat/docs/install.html)
-- [Usage Guide](https://aider.chat/docs/usage.html)
-- [Tutorial Videos](https://aider.chat/docs/usage/tutorials.html)
-- [Connecting to LLMs](https://aider.chat/docs/llms.html)
-- [Configuration Options](https://aider.chat/docs/config.html)
-- [Troubleshooting](https://aider.chat/docs/troubleshooting.html)
-- [FAQ](https://aider.chat/docs/faq.html)
+## 🔍 Macro Examples
 
-### Community & Resources
-- [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
-- [GitHub Repository](https://github.com/Aider-AI/aider)
-- [Discord Community](https://discord.gg/Tv2uQnR88V)
-- [Blog](https://aider.chat/blog/)
+These macros live in **`examples/`**.
+Run them inside an Aider session (started with `--enable-macros`) using
+`/macro <file.py> [arg=value …]`.
 
-## Kind Words From Users
+| Macro | What it does | Typical command |
+|-------|--------------|-----------------|
+| **`render_loop_program.py`** | Renders → *Judge YES/NO* → Critique + Patch → repeat ≤ 10× until the judge outputs **YES**. | `/macro examples/render_loop_program.py req="Render a knight on a bridge at sunset"` |
+| **`ideate_explore_solve.py`** | Generates an idea pool, clusters & critiques, synthesises a plan, drafts code/answer, then asks Aider to polish it. | `/macro examples/ideate_explore_solve.py goal="Design a minimal REST API for todo items"` |
+| **`pytest_fix_until_green.py`** | Runs `pytest`, captures failures, asks Aider to auto‑patch code, and loops until tests pass or max attempts reached. | `/macro examples/pytest_fix_until_green.py max_tries=8` |
 
-- *"My life has changed... There's finally an AI coding tool that's good enough to keep up with me... Aider... It's going to rock your world."* — [Eric S. Raymond](https://x.com/esrtweet/status/1910809356381413593)
-- *"The best free open source AI coding assistant."* — [IndyDevDan](https://youtu.be/YALpX8oOn78)
-- *"The best AI coding assistant so far."* — [Matthew Berman](https://www.youtube.com/watch?v=df8afeb1FY8)
-- *"Aider ... has easily quadrupled my coding productivity."* — [SOLAR_FIELDS](https://news.ycombinator.com/item?id=36212100)
-- *"It's a cool workflow... Aider's ergonomics are perfect for me."* — [qup](https://news.ycombinator.com/item?id=38185326)
-- *"It's really like having your senior developer live right in your Git repo - truly amazing!"* — [rappster](https://github.com/Aider-AI/aider/issues/124)
-- *"What an amazing tool. It's incredible."* — [valyagolev](https://github.com/Aider-AI/aider/issues/6#issue-1722897858)
-- *"Aider is such an astounding thing!"* — [cgrothaus](https://github.com/Aider-AI/aider/issues/82#issuecomment-1631876700)
-- *"It was WAY faster than I would be getting off the ground and making the first few working versions."* — [Daniel Feldman](https://twitter.com/d_feldman/status/1662295077387923456)
-- *"THANK YOU for Aider! It really feels like a glimpse into the future of coding."* — [derwiki](https://news.ycombinator.com/item?id=38205643)
-- *"It's just amazing. It is freeing me to do things I felt were out my comfort zone before."* — [Dougie](https://discord.com/channels/1131200896827654144/1174002618058678323/1174084556257775656)
-- *"This project is stellar."* — [funkytaco](https://github.com/Aider-AI/aider/issues/112#issuecomment-1637429008)
-- *"Amazing project, definitely the best AI coding assistant I've used."* — [joshuavial](https://github.com/Aider-AI/aider/issues/84)
-- *"I absolutely love using Aider ... It makes software development feel so much lighter as an experience."* — [principalideal0](https://discord.com/channels/1131200896827654144/1133421607499595858/1229689636012691468)
-- *"I have been recovering from multiple shoulder surgeries ... and have used aider extensively. It has allowed me to continue productivity."* — [codeninja](https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG)
-- *"I am an aider addict. I'm getting so much more work done, but in less time."* — [dandandan](https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470)
-- *"After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever."* — [SystemSculpt](https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548)
-- *"Aider is amazing, coupled with Sonnet 3.5 it's quite mind blowing."* — [Josh Dingus](https://discord.com/channels/1131200896827654144/1133060684540813372/1262374225298198548)
-- *"Hands down, this is the best AI coding assistant tool so far."* — [IndyDevDan](https://www.youtube.com/watch?v=MPYFPvxfGZs)
-- *"[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life."* — [maledorak](https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264)
-- *"Best agent for actual dev work in existing codebases."* — [Nick Dobos](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
-- *"One of my favorite pieces of software. Blazing trails on new paradigms!"* — [Chris Wall](https://x.com/chris65536/status/1905053299251798432)
-- *"Aider has been revolutionary for me and my work."* — [Starry Hope](https://x.com/starryhopeblog/status/1904985812137132056)
-- *"Try aider! One of the best ways to vibe code."* — [Chris Wall](https://x.com/Chris65536/status/1905053418961391929)
-- *"Aider is hands down the best. And it's free and opensource."* — [AriyaSavakaLurker](https://www.reddit.com/r/ChatGPTCoding/comments/1ik16y6/whats_your_take_on_aider/mbip39n/)
-- *"Aider is also my best friend."* — [jzn21](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27dcnb/)
-- *"Try Aider, it's worth it."* — [jorgejhms](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27cp99/)
-- *"I like aider :)"* — [Chenwei Cui](https://x.com/ccui42/status/1904965344999145698)
-- *"Aider is the precision tool of LLM code gen... Minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control."* — [Reilly Sweetland](https://x.com/rsweetland/status/1904963807237259586)
-- *"Cannot believe aider vibe coded a 650 LOC feature across service and cli today in 1 shot."* - [autopoietist](https://discord.com/channels/1131200896827654144/1131200896827654149/1355675042259796101)
-- *"Oh no the secret is out! Yes, Aider is the best coding tool around. I highly, highly recommend it to anyone."* — [Joshua D Vander Hook](https://x.com/jodavaho/status/1911154899057795218)
-- *"thanks to aider, i have started and finished three personal projects within the last two days"* — [joseph stalzyn](https://x.com/anitaheeder/status/1908338609645904160)
-- *"Been using aider as my daily driver for over a year ... I absolutely love the tool, like beyond words."* — [koleok](https://discord.com/channels/1131200896827654144/1273248471394291754/1356727448372252783)
-- *"aider is really cool"* — [kache (@yacineMTB)](https://x.com/yacineMTB/status/1911224442430124387)
+---
 
+### 1 · `render_loop_program.py` — visual QA loop
+
+```python
+import aider_helpers as ah
+
+def main(ctx, req, scene_file="scene.json", max_tries=10):
+    crit = req if "\n" in req else open(req).read() if os.path.exists(req) else req
+    for i in range(1, max_tries + 1):
+        ver = yield from ah.code(scene_file,
+            f"Judge against CRITERIA below.\n**CRITERIA:**\n{crit}\n\nYES or NO?")
+        if ver.strip().upper().startswith("YES"):
+            yield ah.log(f"✅ YES at attempt {i}!"); return
+        critique = yield from ah.code(scene_file,
+            "You said NO. List mismatches and give a patch.")
+        yield from ah.code(scene_file, f"Apply this patch:\n{critique}")
+    yield ah.log("🚫 Max attempts reached without success.")
+```
+
+---
+
+### 2 · `ideate_explore_solve.py` — brainstorm → plan → solution
+
+```python
+import aider_helpers as ah
+
+def main(ctx, goal, idea_target=10):
+    ideas = []
+    while len(ideas) < idea_target:
+        idea = yield "> 💡 Emit an idea for: " + goal
+        ideas.append(idea.strip())
+    yield ah.log("🧮 Clustering ideas …")
+    clusters = yield from ah.code("scratch.md", "Cluster the ideas:\n" + "\n".join(ideas))
+    plan = yield from ah.code("PLAN.md", "Write a step‑by‑step plan based on clusters above.")
+    solution = yield from ah.code("SOLUTION.md", f"Implement the plan:\n{plan}")
+    polished = yield from ah.code("SOLUTION.md", "Critique & polish the solution for production readiness.")
+    yield ah.log("🎉 Ideate‑explore‑solve loop completed.")
+```
+
+---
+
+### 3 · `pytest_fix_until_green.py` — red‑>green test loop
+
+```python
+import aider_helpers as ah
+
+def main(ctx, max_tries=10):
+    for i in range(1, max_tries + 1):
+        out = yield from ah.run("pytest -q", capture="t_out")
+        if ctx["exit_code"] == 0:
+            yield ah.log(f"✅ Tests passed on try {i}")
+            return
+        yield "/include t_out"
+        yield from ah.code("{Fix failing tests using t_out above}")
+    yield ah.log("🚫 Could not fix tests after max tries.")
+```
+
+---
+
+> **Tip:** keep `examples/` on your Python path so macros can import shared helpers:
+>
+> ```bash
+> export PYTHONPATH=$PYTHONPATH:$(pwd)/examples
+> ```
+
+These scripts demonstrate how **simple generator functions + `aider_helpers`** let you build reusable, agent-like workflows entirely in Python—no new DSL required.

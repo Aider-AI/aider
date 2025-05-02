@@ -38,6 +38,8 @@ from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
+from datetime import datetime
+import os
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -2273,6 +2275,130 @@ class Coder:
         self.last_aider_commit_message = commit_message
         if self.show_diffs:
             self.commands.cmd_diff()
+
+    def format_file_size(self, size_bytes):
+        """Format file size in a human-readable format."""
+        if size_bytes < 1024:
+            return f"{size_bytes} bytes"
+        elif size_bytes < 1024 * 1024:
+            return f"{size_bytes / 1024:.1f} KB"
+        elif size_bytes < 1024 * 1024 * 1024:
+            return f"{size_bytes / (1024 * 1024):.1f} MB"
+        else:
+            return f"{size_bytes / (1024 * 1024 * 1024):.1f} GB"
+            
+    def list_context_docs(self):
+        """List all context documents in the current session."""
+        context_docs = []
+        
+        # Add files in chat
+        for i, fname in enumerate(sorted(self.abs_fnames)):
+            rel_fname = self.get_rel_fname(fname)
+            context_docs.append((i, "chat", rel_fname))
+        
+        # Add read-only files
+        offset = len(self.abs_fnames)
+        for i, fname in enumerate(sorted(self.abs_read_only_fnames)):
+            rel_fname = self.get_rel_fname(fname)
+            context_docs.append((i + offset, "readonly", rel_fname))
+        
+        # Add repo map files if available
+        if self.repo_map and hasattr(self.repo_map, 'get_files_in_map'):
+            repo_map_files = self.repo_map.get_files_in_map()
+            if repo_map_files:
+                offset = len(self.abs_fnames) + len(self.abs_read_only_fnames)
+                for i, fname in enumerate(sorted(repo_map_files)):
+                    rel_fname = self.get_rel_fname(fname)
+                    if rel_fname not in [doc[2] for doc in context_docs]:
+                        context_docs.append((i + offset, "repo-map", rel_fname))
+        
+        if not context_docs:
+            self.io.tool_output("No context documents found in the current session.")
+            return
+        
+        self.io.tool_output("Context documents in the current session:")
+        
+        # Group by type for better readability
+        for doc_type in ["chat", "readonly", "repo-map"]:
+            type_docs = [doc for doc in context_docs if doc[1] == doc_type]
+            if type_docs:
+                self.io.tool_output(f"\n{doc_type.upper()} FILES:")
+                for doc in type_docs:
+                    self.io.tool_output(f"  [{doc[0]}] {doc[2]}")
+        
+        self.io.tool_output("\nUse '/context show [index]' to view the content of a specific document.")
+        
+        # Store for later reference
+        self._context_docs = context_docs
+        return
+    
+    def show_context_doc(self, index):
+        """Show the content of a specific context document."""
+        if not hasattr(self, '_context_docs'):
+            self.list_context_docs()
+        
+        if not hasattr(self, '_context_docs') or not self._context_docs:
+            return
+        
+        for doc in self._context_docs:
+            if doc[0] == index:
+                doc_type = doc[1]
+                rel_fname = doc[2]
+                abs_fname = self.abs_root_path(rel_fname)
+                
+                content = self.io.read_text(abs_fname)
+                if content is None:
+                    self.io.tool_error(f"Could not read file: {rel_fname}")
+                    return
+                
+                if is_image_file(abs_fname):
+                    self.io.tool_output(f"File {rel_fname} is an image and cannot be displayed as text.")
+                    return
+                
+                # Get file info
+                try:
+                    file_size = os.path.getsize(abs_fname)
+                    file_modified = datetime.fromtimestamp(os.path.getmtime(abs_fname))
+                    file_info = f"File: {rel_fname} ({self.format_file_size(file_size)})"
+                    file_info += f"\nLast modified: {file_modified.strftime('%Y-%m-%d %H:%M:%S')}"
+                    file_info += f"\nType: {doc_type} context"
+                    
+                    # Count tokens if possible
+                    if hasattr(self, 'main_model'):
+                        tokens = self.main_model.token_count(content)
+                        if tokens:
+                            file_info += f"\nTokens: {format_tokens(tokens)}"
+                except Exception as e:
+                    file_info = f"File: {rel_fname}\nError getting file info: {str(e)}"
+                
+                self.io.tool_output(file_info)
+                self.io.tool_output("\n" + "=" * 40 + " FILE CONTENT " + "=" * 40)
+                
+                # Use the markdown stream for pretty display if available
+                if self.show_pretty() and hasattr(self.io, 'get_assistant_mdstream'):
+                    mdstream = self.io.get_assistant_mdstream()
+                    
+                    # Determine language for syntax highlighting
+                    language = ""
+                    try:
+                        ext = os.path.splitext(rel_fname)[1].lstrip('.')
+                        if ext:
+                            language = ext
+                    except:
+                        pass
+                    
+                    # Format with code fence for syntax highlighting
+                    formatted_content = f"```{language}\n{content}\n```"
+                    mdstream.update(formatted_content, final=True)
+                else:
+                    # Fall back to plain text display
+                    self.io.tool_output(content)
+                
+                self.io.tool_output("=" * 90)
+                return
+        
+        self.io.tool_error(f"No context document found with index {index}")
+        self.io.tool_output("Use '/context list' to see available documents.")
 
     def show_undo_hint(self):
         if not self.commit_before_message:

@@ -96,6 +96,23 @@ class RepoMap:
         sample_tokens = self.main_model.token_count(sample_text)
         est_tokens = sample_tokens / len(sample_text) * len_text
         return est_tokens
+        
+    def get_files_in_map(self):
+        """Return a list of files currently in the repo map."""
+        # Extract file names from the ranked tags
+        if not hasattr(self, 'last_map') or not self.last_map:
+            return []
+            
+        # Parse the map content to extract filenames
+        files = set()
+        for line in self.last_map.splitlines():
+            if line.endswith(':'):
+                # Lines ending with colon are typically filenames
+                filename = line.rstrip(':').strip()
+                if filename and not filename.endswith('FILES'):
+                    files.add(filename)
+        
+        return list(files)
 
     def get_repo_map(
         self,
