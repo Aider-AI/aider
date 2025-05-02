@@ -1079,12 +1079,15 @@ class Coder:
         return platform_text
 
     def fmt_system_prompt(self, prompt):
+        final_reminders = []
         if self.main_model.lazy:
-            lazy_prompt = self.gpt_prompts.lazy_prompt
-        elif self.main_model.overeager:
-            lazy_prompt = self.gpt_prompts.overeager_prompt
-        else:
-            lazy_prompt = ""
+            final_reminders.append(self.gpt_prompts.lazy_prompt)
+        if self.main_model.overeager:
+            final_reminders.append(self.gpt_prompts.overeager_prompt)
+
+        user_lang = self.get_user_language()
+        if user_lang:
+            final_reminders.append(f"Reply in {user_lang}.")
 
         platform_text = self.get_platform_info()
 
@@ -1111,10 +1114,13 @@ class Coder:
         else:
             quad_backtick_reminder = ""
 
+        final_reminders = "\n\n".join(final_reminders)
+
+        dump(prompt)
         prompt = prompt.format(
             fence=self.fence,
             quad_backtick_reminder=quad_backtick_reminder,
-            lazy_prompt=lazy_prompt,
+            final_reminders=final_reminders,
             platform=platform_text,
             shell_cmd_prompt=shell_cmd_prompt,
             rename_with_shell=rename_with_shell,
