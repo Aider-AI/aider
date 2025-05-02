@@ -15,6 +15,13 @@ import time
 import traceback
 from collections import defaultdict
 from datetime import datetime
+
+# Optional dependency: used to convert locale codes (eg ``en_US``)
+# into human-readable language names (eg ``English``).
+try:
+    from babel import Locale  # type: ignore
+except ImportError:  # Babel not installed – we will fall back to a small mapping
+    Locale = None
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
