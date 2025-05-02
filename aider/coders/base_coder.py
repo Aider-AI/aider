@@ -1116,7 +1116,6 @@ class Coder:
 
         final_reminders = "\n\n".join(final_reminders)
 
-        dump(prompt)
         prompt = prompt.format(
             fence=self.fence,
             quad_backtick_reminder=quad_backtick_reminder,
