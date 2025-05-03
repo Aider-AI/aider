@@ -50,6 +50,10 @@ distlib==0.3.9
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
+exceptiongroup==1.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   pytest
 filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
@@ -143,7 +147,7 @@ nodeenv==1.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
-numpy==1.26.4
+numpy==2.2.5
     # via
     #   -c requirements/common-constraints.txt
     #   contourpy
@@ -269,7 +273,7 @@ semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-setuptools==80.0.0
+setuptools==80.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
@@ -281,13 +285,21 @@ six==1.17.0
     # via
     #   -c requirements/common-constraints.txt
     #   python-dateutil
-typer==0.15.2
+tomli==2.2.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   build
+    #   pip-tools
+    #   pytest
+    #   pytest-env
+typer==0.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
 typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
+    #   rich
     #   typer
 tzdata==2025.2
     # via
@@ -297,7 +309,7 @@ urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.6.17
+uv==0.7.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in

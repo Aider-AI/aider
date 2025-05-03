@@ -22,6 +22,10 @@ anyio==4.9.0
     #   httpx
     #   openai
     #   watchfiles
+async-timeout==5.0.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   aiohttp
 attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
@@ -77,6 +81,10 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
+exceptiongroup==1.2.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   anyio
 filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
@@ -112,7 +120,7 @@ google-api-core[grpc]==2.24.2
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-generativeai
-google-api-python-client==2.168.0
+google-api-python-client==2.169.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
@@ -209,7 +217,7 @@ jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.67.4.post1
+litellm==1.67.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -233,25 +241,21 @@ mixpanel==4.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-monotonic==1.6
-    # via
-    #   -c requirements/common-constraints.txt
-    #   posthog
 multidict==6.4.3
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-numpy==1.26.4
+numpy==2.2.5
     # via
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.76.0
+openai==1.76.2
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -273,11 +277,7 @@ pillow==11.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pip==25.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
-posthog==4.0.0
+posthog==4.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -329,13 +329,13 @@ pycparser==2.22
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
-pydantic==2.11.3
+pydantic==2.11.4
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
     #   litellm
     #   openai
-pydantic-core==2.33.1
+pydantic-core==2.33.2
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
@@ -406,7 +406,7 @@ rsa==4.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
-scipy==1.13.1
+scipy==1.15.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -481,10 +481,12 @@ typing-extensions==4.13.2
     #   beautifulsoup4
     #   google-generativeai
     #   huggingface-hub
+    #   multidict
     #   openai
     #   pydantic
     #   pydantic-core
     #   referencing
+    #   rich
     #   typing-inspection
 typing-inspection==0.4.0
     # via
@@ -515,6 +517,8 @@ zipp==3.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   importlib-metadata
-    
-tree-sitter==0.23.2; python_version < "3.10"
-tree-sitter==0.24.0; python_version >= "3.10"
+
+tree-sitter>=0.24.0
+
+# Remove if Python 3.13 support https://github.com/jiaaro/pydub/pull/816 gets released
+audioop-lts>=0.2.1; python_version >= "3.13"

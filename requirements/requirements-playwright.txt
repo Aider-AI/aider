@@ -4,11 +4,11 @@ greenlet==3.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   playwright
-playwright==1.51.0
+playwright==1.52.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-playwright.in
-pyee==12.1.1
+pyee==13.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   playwright
