@@ -1,6 +1,7 @@
 import glob
 import os
 import re
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -63,6 +64,7 @@ class Commands:
         verbose=False,
         editor=None,
         original_read_only_fnames=None,
+        runner=None,
     ):
         self.io = io
         self.coder = coder
@@ -80,6 +82,7 @@ class Commands:
 
         self.help = None
         self.editor = editor
+        self.runner = runner
 
         # Store the original read-only filenames provided via args.read
         self.original_read_only_fnames = set(original_read_only_fnames or [])
@@ -990,6 +993,9 @@ class Commands:
 
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
+        if self.runner:
+            args = f"{self.runner} {shlex.quote(args)}"
+
         exit_status, combined_output = run_cmd(
             args, verbose=self.verbose, error_print=self.io.tool_error, cwd=self.coder.root
         )
