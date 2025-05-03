@@ -323,6 +323,8 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        deep_context_search=True,
+        min_identifier_length=3,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -336,6 +338,10 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+
+        # Auto mode settings
+        self.deep_context_search = deep_context_search
+        self.min_identifier_length = min_identifier_length
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -1605,6 +1611,11 @@ class Coder:
                     function_call=self.partial_response_function_call,
                 )
             ]
+
+    def get_enhanced_file_mentions(self, content):
+        """Base implementation of enhanced file mentions - just returns standard file mentions.
+        This method is overridden in AutoCoder to provide more sophisticated context finding."""
+        return self.get_file_mentions(content, ignore_current=True)
 
     def get_file_mentions(self, content, ignore_current=False):
         words = set(word for word in content.split())
