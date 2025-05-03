@@ -572,23 +572,34 @@ class Coder:
 
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
-            content = self.io.read_text(fname)
+            try:
+                content = self.io.read_text(fname)
 
-            if content is None:
+                if content is None:
+                    relative_fname = self.get_rel_fname(fname)
+                    self.io.tool_warning(f"Dropping {relative_fname} from the chat.")
+                    self.abs_fnames.remove(fname)
+                else:
+                    yield fname, content
+            except UnicodeDecodeError:
+                # Skip binary files that can't be decoded as text
                 relative_fname = self.get_rel_fname(fname)
-                self.io.tool_warning(f"Dropping {relative_fname} from the chat.")
+                self.io.tool_warning(f"Dropping binary file {relative_fname} from the chat.")
                 self.abs_fnames.remove(fname)
-            else:
-                yield fname, content
 
     def choose_fence(self):
         all_content = ""
         for _fname, content in self.get_abs_fnames_content():
             all_content += content + "\n"
         for _fname in self.abs_read_only_fnames:
-            content = self.io.read_text(_fname)
-            if content is not None:
-                all_content += content + "\n"
+            try:
+                content = self.io.read_text(_fname)
+                if content is not None:
+                    all_content += content + "\n"
+            except UnicodeDecodeError:
+                # Skip binary files that can't be decoded as text
+                relative_fname = self.get_rel_fname(_fname)
+                self.io.tool_warning(f"Skipping binary file {relative_fname} when choosing fence.")
 
         lines = all_content.splitlines()
         good = False
@@ -634,14 +645,19 @@ class Coder:
     def get_read_only_files_content(self):
         prompt = ""
         for fname in self.abs_read_only_fnames:
-            content = self.io.read_text(fname)
-            if content is not None and not is_image_file(fname):
+            try:
+                content = self.io.read_text(fname)
+                if content is not None and not is_image_file(fname):
+                    relative_fname = self.get_rel_fname(fname)
+                    prompt += "\n"
+                    prompt += relative_fname
+                    prompt += f"\n{self.fence[0]}\n"
+                    prompt += content
+                    prompt += f"{self.fence[1]}\n"
+            except UnicodeDecodeError:
+                # Skip binary files that can't be decoded as text
                 relative_fname = self.get_rel_fname(fname)
-                prompt += "\n"
-                prompt += relative_fname
-                prompt += f"\n{self.fence[0]}\n"
-                prompt += content
-                prompt += f"{self.fence[1]}\n"
+                self.io.tool_warning(f"Skipping binary file {relative_fname} from read-only files.")
         return prompt
 
     def get_cur_message_text(self):
