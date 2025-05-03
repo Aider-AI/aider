@@ -1479,7 +1479,8 @@ class Coder:
                 tool_responses = self.execute_tool_calls(tool_call_response)
 
                 # Add the assistant message with tool calls
-                self.cur_messages.append(tool_call_response.choices[0].message)
+                # Converting to a dict so it can be safely dumped to json
+                self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
 
                 # Add all tool responses
                 for tool_response in tool_responses:
@@ -1571,13 +1572,16 @@ class Coder:
                     for tool in server_tools:
                         if tool.get("function", {}).get("name") == tool_call.function.name:
                             self.io.tool_output(
-                                f"Found MCP tool: {tool_call.function.name} from server"
+                                f"Running MCP tool: {tool_call.function.name} from server"
                                 f" {server_name}"
                             )
                             self.io.tool_output(f"Tool arguments: {tool_call.function.arguments}")
-                            self.io.tool_output(f"Tool ID: {tool_call.id}")
-                            self.io.tool_output(f"Tool type: {tool_call.type}")
 
+                            if self.verbose:
+                                self.io.tool_output(f"Tool ID: {tool_call.id}")
+                                self.io.tool_output(f"Tool type: {tool_call.type}")
+
+                            self.io.tool_output("\n")
                             # Find the corresponding server
                             for server in self.mcp_servers:
                                 if server.name == server_name:
