@@ -58,16 +58,36 @@ class LiteLLMExceptions:
         self._load()
 
     def _load(self, strict=False):
+        # Patch litellm's JSON loading to use UTF-8 encoding
+        import json
         import litellm
+        from pathlib import Path
 
-        for var in dir(litellm):
-            if var.endswith("Error"):
-                if var not in self.exception_info:
-                    raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
+        # Monkey patch json.load in litellm.utils to handle UTF-8 encoding
+        original_json_load = json.load
 
-        for var in self.exception_info:
-            ex = getattr(litellm, var)
-            self.exceptions[ex] = self.exception_info[var]
+        def patched_json_load(fp, *args, **kwargs):
+            # Read the file content with UTF-8 encoding
+            content = Path(fp.name).read_text(encoding='utf-8')
+            # Parse the content as JSON
+            return json.loads(content, *args, **kwargs)
+
+        # Apply the monkey patch
+        json.load = patched_json_load
+
+        try:
+            # Now load litellm exceptions
+            for var in dir(litellm):
+                if var.endswith("Error"):
+                    if var not in self.exception_info:
+                        raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
+
+            for var in self.exception_info:
+                ex = getattr(litellm, var)
+                self.exceptions[ex] = self.exception_info[var]
+        finally:
+            # Restore the original json.load function
+            json.load = original_json_load
 
     def exceptions_tuple(self):
         return tuple(self.exceptions)
