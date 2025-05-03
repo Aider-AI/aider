@@ -994,10 +994,12 @@ class Commands:
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
         if self.runner:
-            args = f"{self.runner} {shlex.quote(args)}"
+            command = f"{self.runner} {shlex.quote(args)}"
+        else:
+            command = args
 
         exit_status, combined_output = run_cmd(
-            args, verbose=self.verbose, error_print=self.io.tool_error, cwd=self.coder.root
+            command, verbose=self.verbose, error_print=self.io.tool_error, cwd=self.coder.root
         )
 
         if combined_output is None:
