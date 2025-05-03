@@ -249,6 +249,21 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Auto mode settings")
+    group.add_argument(
+        "--deep-context-search",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Enable/disable enhanced context finding in auto mode (default: True)",
+    )
+    group.add_argument(
+        "--min-identifier-length",
+        type=int,
+        default=3,
+        help="Minimum length of identifiers to consider for context finding (default: 3)",
+    )
+
+    ##########
     group = parser.add_argument_group("History Files")
     default_input_history_file = (
         os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
