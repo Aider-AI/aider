@@ -16,36 +16,10 @@ for more information.
 
 You have two ways of sharing your MCP server configuration with Aider.
 
-### 1. Using a JSON string
+{: .note }
+Today, Aider only supports connecting to MCP servers using the stdio transport
 
-You can specify MCP servers directly on the command line using the `--mcp-servers` option with a JSON string:
-
-```bash
-aider --mcp-servers '{"mcpServers":{"git":{"command":"uvx","args":["mcp-server-git"]}}}'
-```
-
-### 2. Using a configuration file
-
-Alternatively, you can store your MCP server configurations in a JSON file and reference it with the `--mcp-servers-file` option:
-
-```bash
-aider --mcp-servers-file mcp.json
-```
-
-Example `mcp.json` file:
-
-```json
-{
-  "mcpServers": {
-    "git": {
-      "command": "uvx",
-      "args": ["mcp-server-git"]
-    }
-  }
-}
-```
-
-## YAML Configuration
+### Config Files
 
 You can also configure MCP servers in your `.aider.conf.yml` file:
 
@@ -69,7 +43,25 @@ mcp-servers-file: /path/to/mcp.json
 
 These options are configurable in any of Aider's config file formats.
 
-## Environment Variables
+### Flags
+
+You can specify MCP servers directly on the command line using the `--mcp-servers` option with a JSON string:
+
+#### Using a JSON String
+
+```bash
+aider --mcp-servers '{"mcpServers":{"git":{"command":"uvx","args":["mcp-server-git"]}}}'
+```
+
+#### Using a configuration file
+
+Alternatively, you can store your MCP server configurations in a JSON file and reference it with the `--mcp-servers-file` option:
+
+```bash
+aider --mcp-servers-file mcp.json
+```
+
+### Environment Variables
 
 You can also configure MCP servers using environment variables in your `.env` file:
 

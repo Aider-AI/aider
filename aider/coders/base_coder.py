@@ -92,6 +92,8 @@ class Coder:
     last_keyboard_interrupt = None
     num_reflections = 0
     max_reflections = 3
+    num_tool_calls = 0
+    max_tool_calls = 25
     edit_format = None
     yield_stream = False
     temperature = None
@@ -1475,7 +1477,8 @@ class Coder:
 
             tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
 
-            if tool_call_response:
+            if tool_call_response and self.num_tool_calls < self.max_tool_calls:
+                self.num_tool_calls += 1
                 tool_responses = self.execute_tool_calls(tool_call_response)
 
                 # Add the assistant message with tool calls
@@ -1487,7 +1490,10 @@ class Coder:
                     self.cur_messages.append(tool_response)
 
                 return self.run(with_message="Continue", preproc=False)
+            elif self.num_tool_calls >= self.max_tool_calls:
+                self.io.tool_warning(f"Only {self.max_tool_calls} tool calls allowed, stopping.")
 
+            self.tool_call_limit = 0
             try:
                 if self.reply_completed():
                     return
