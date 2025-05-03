@@ -1550,18 +1550,6 @@ class Coder:
                     self.reflected_message = test_errors
                     return
 
-    async def _exec_server_tool(self, server, tool_call):
-        """Execute a tool call on an MCP server."""
-        try:
-            session = await server.connect()  # Use connect() directly
-            call_result = await experimental_mcp_client.call_openai_tool(
-                session=session,
-                openai_tool=tool_call,
-            )
-            return (str(call_result.content[0].text),)
-        finally:
-            await server.disconnect()
-
     def execute_tool_calls(self, tool_call_response):
         """Process tool calls from the response and execute them if they match MCP tools.
         Returns a list of tool response messages."""
