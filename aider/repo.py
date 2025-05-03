@@ -111,7 +111,7 @@ class GitRepo:
         if aider_ignore_file:
             self.aider_ignore_file = Path(aider_ignore_file)
 
-    def commit(self, fnames=None, context=None, message=None, aider_edits=False):
+    def commit(self, fnames=None, context=None, message=None, aider_edits=False, add_unstaged=True):
         if not fnames and not self.repo.is_dirty():
             return
 
@@ -147,7 +147,7 @@ class GitRepo:
                 except ANY_GIT_ERROR as err:
                     self.io.tool_error(f"Unable to add {fname}: {err}")
             cmd += ["--"] + fnames
-        else:
+        elif add_unstaged:
             cmd += ["-a"]
 
         original_user_name = self.repo.git.config("--get", "user.name")
