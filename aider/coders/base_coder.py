@@ -654,7 +654,10 @@ class Coder:
     def get_cur_message_text(self):
         text = ""
         for msg in self.cur_messages:
-            text += msg["content"] + "\n"
+            # For some models the content is None if the message
+            # contains tool calls.
+            content = msg["content"] or ""
+            text += content + "\n"
         return text
 
     def get_ident_mentions(self, text):
