@@ -1,3 +1,4 @@
+import asyncio
 import difflib
 import hashlib
 import importlib.resources
@@ -15,6 +16,7 @@ import json5
 import yaml
 from PIL import Image
 
+from aider import ollama
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
@@ -885,6 +887,16 @@ def register_models(model_settings_fnames):
 
 def register_litellm_models(model_fnames):
     files_loaded = []
+
+    # Add available ollama models
+    if os.getenv("OLLAMA_API_BASE"):
+        try:
+            model_def = asyncio.run(ollama.query_available_models())
+            model_info_manager.local_model_metadata.update(model_def)
+        except Exception as e:
+            raise Exception(f"Error querying ollama models: {e}")
+
+    # Load from static model database
     for model_fname in model_fnames:
         if not os.path.exists(model_fname):
             continue
