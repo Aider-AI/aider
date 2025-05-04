@@ -2,7 +2,7 @@
 #    uv pip compile --no-strip-extras --output-file=requirements/common-constraints.txt requirements/requirements.in requirements/requirements-browser.in requirements/requirements-dev.in requirements/requirements-help.in requirements/requirements-playwright.in
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.11.16
+aiohttp==3.11.18
     # via
     #   huggingface-hub
     #   litellm
@@ -27,9 +27,9 @@ backoff==2.2.1
     # via
     #   -r requirements/requirements.in
     #   posthog
-banks==2.1.1
+banks==2.1.2
     # via llama-index-core
-beautifulsoup4==4.13.3
+beautifulsoup4==4.13.4
     # via -r requirements/requirements.in
 blinker==1.9.0
     # via streamlit
@@ -39,7 +39,7 @@ cachetools==5.5.2
     # via
     #   google-auth
     #   streamlit
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   httpcore
     #   httpx
@@ -67,7 +67,7 @@ colorama==0.4.6
     # via griffe
 configargparse==1.7
     # via -r requirements/requirements.in
-contourpy==1.3.1
+contourpy==1.3.2
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
@@ -79,7 +79,7 @@ deprecated==1.2.18
     #   llama-index-core
 diff-match-patch==20241021
     # via -r requirements/requirements.in
-dill==0.3.9
+dill==0.4.0
     # via
     #   multiprocess
     #   pathos
@@ -105,7 +105,7 @@ flake8==7.2.0
     # via -r requirements/requirements.in
 fonttools==4.57.0
     # via matplotlib
-frozenlist==1.5.0
+frozenlist==1.6.0
     # via
     #   aiohttp
     #   aiosignal
@@ -120,34 +120,49 @@ gitpython==3.1.44
     # via
     #   -r requirements/requirements.in
     #   streamlit
+google-ai-generativelanguage==0.6.15
+    # via google-generativeai
 google-api-core[grpc]==2.24.2
     # via
+    #   google-ai-generativelanguage
+    #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-core
-google-auth==2.38.0
+    #   google-generativeai
+google-api-python-client==2.168.0
+    # via google-generativeai
+google-auth==2.39.0
     # via
+    #   google-ai-generativelanguage
     #   google-api-core
+    #   google-api-python-client
+    #   google-auth-httplib2
     #   google-cloud-bigquery
     #   google-cloud-core
+    #   google-generativeai
+google-auth-httplib2==0.2.0
+    # via google-api-python-client
 google-cloud-bigquery==3.31.0
     # via -r requirements/requirements-dev.in
 google-cloud-core==2.4.3
     # via google-cloud-bigquery
 google-crc32c==1.7.1
     # via google-resumable-media
+google-generativeai==0.8.5
+    # via -r requirements/requirements.in
 google-resumable-media==2.7.2
     # via google-cloud-bigquery
-googleapis-common-protos==1.69.2
+googleapis-common-protos==1.70.0
     # via
     #   google-api-core
     #   grpcio-status
-greenlet==3.1.1
+greenlet==3.2.1
     # via
     #   playwright
     #   sqlalchemy
 grep-ast==0.8.1
     # via -r requirements/requirements.in
-griffe==1.7.2
+griffe==1.7.3
     # via banks
 grpcio==1.71.0
     # via
@@ -155,10 +170,14 @@ grpcio==1.71.0
     #   grpcio-status
 grpcio-status==1.71.0
     # via google-api-core
-h11==0.14.0
+h11==0.16.0
     # via httpcore
-httpcore==1.0.8
+httpcore==1.0.9
     # via httpx
+httplib2==0.22.0
+    # via
+    #   google-api-python-client
+    #   google-auth-httplib2
 httpx==0.28.1
     # via
     #   litellm
@@ -170,7 +189,7 @@ huggingface-hub[inference]==0.30.2
     #   sentence-transformers
     #   tokenizers
     #   transformers
-identify==2.6.9
+identify==2.6.10
     # via pre-commit
 idna==3.10
     # via
@@ -208,11 +227,11 @@ jsonschema==4.23.0
     #   -r requirements/requirements.in
     #   altair
     #   litellm
-jsonschema-specifications==2024.10.1
+jsonschema-specifications==2025.4.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.65.7
+litellm==1.67.4.post1
     # via -r requirements/requirements.in
 llama-index-core==0.12.26
     # via
@@ -244,11 +263,11 @@ multidict==6.4.3
     # via
     #   aiohttp
     #   yarl
-multiprocess==0.70.17
+multiprocess==0.70.18
     # via pathos
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via typing-inspect
-narwhals==1.34.1
+narwhals==1.37.0
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -274,7 +293,7 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
-openai==1.73.0
+openai==1.76.0
     # via litellm
 packaging==24.2
     # via
@@ -292,7 +311,7 @@ pandas==2.2.3
     # via
     #   -r requirements/requirements-dev.in
     #   streamlit
-pathos==0.3.3
+pathos==0.3.4
     # via lox
 pathspec==0.12.1
     # via
@@ -300,14 +319,14 @@ pathspec==0.12.1
     #   grep-ast
 pexpect==4.9.0
     # via -r requirements/requirements.in
-pillow==11.1.0
+pillow==11.2.1
     # via
     #   -r requirements/requirements.in
     #   llama-index-core
     #   matplotlib
     #   sentence-transformers
     #   streamlit
-pip==25.0.1
+pip==25.1
     # via
     #   -r requirements/requirements.in
     #   pip-tools
@@ -321,25 +340,29 @@ playwright==1.51.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.5.0
     # via pytest
-posthog==3.24.1
+posthog==4.0.0
     # via -r requirements/requirements.in
-pox==0.3.5
+pox==0.3.6
     # via pathos
-ppft==1.7.6.9
+ppft==1.7.7
     # via pathos
 pre-commit==4.2.0
     # via -r requirements/requirements-dev.in
-prompt-toolkit==3.0.50
+prompt-toolkit==3.0.51
     # via -r requirements/requirements.in
 propcache==0.3.1
     # via
     #   aiohttp
     #   yarl
 proto-plus==1.26.1
-    # via google-api-core
+    # via
+    #   google-ai-generativelanguage
+    #   google-api-core
 protobuf==5.29.4
     # via
+    #   google-ai-generativelanguage
     #   google-api-core
+    #   google-generativeai
     #   googleapis-common-protos
     #   grpcio-status
     #   proto-plus
@@ -348,7 +371,7 @@ psutil==7.0.0
     # via -r requirements/requirements.in
 ptyprocess==0.7.0
     # via pexpect
-pyarrow==19.0.1
+pyarrow==20.0.0
     # via streamlit
 pyasn1==0.6.1
     # via
@@ -363,6 +386,7 @@ pycparser==2.22
 pydantic==2.11.3
     # via
     #   banks
+    #   google-generativeai
     #   litellm
     #   llama-index-core
     #   openai
@@ -381,7 +405,9 @@ pygments==2.19.1
 pypandoc==1.15
     # via -r requirements/requirements.in
 pyparsing==3.2.3
-    # via matplotlib
+    # via
+    #   httplib2
+    #   matplotlib
 pyperclip==1.9.0
     # via -r requirements/requirements.in
 pyproject-hooks==1.2.0
@@ -439,7 +465,7 @@ rpds-py==0.24.0
     # via
     #   jsonschema
     #   referencing
-rsa==4.9
+rsa==4.9.1
     # via google-auth
 safetensors==0.5.3
     # via transformers
@@ -452,9 +478,9 @@ scipy==1.13.1
     #   sentence-transformers
 semver==3.0.4
     # via -r requirements/requirements-dev.in
-sentence-transformers==4.0.2
+sentence-transformers==4.1.0
     # via llama-index-embeddings-huggingface
-setuptools==78.1.0
+setuptools==80.0.0
     # via pip-tools
 shellingham==1.5.4
     # via typer
@@ -475,13 +501,13 @@ sounddevice==0.5.1
     # via -r requirements/requirements.in
 soundfile==0.13.1
     # via -r requirements/requirements.in
-soupsieve==2.6
+soupsieve==2.7
     # via beautifulsoup4
 sqlalchemy[asyncio]==2.0.40
     # via llama-index-core
 streamlit==1.44.1
     # via -r requirements/requirements-browser.in
-sympy==1.13.3
+sympy==1.14.0
     # via torch
 tenacity==9.1.2
     # via
@@ -507,13 +533,14 @@ tornado==6.4.2
     # via streamlit
 tqdm==4.67.1
     # via
+    #   google-generativeai
     #   huggingface-hub
     #   llama-index-core
     #   nltk
     #   openai
     #   sentence-transformers
     #   transformers
-transformers==4.51.2
+transformers==4.51.3
     # via sentence-transformers
 tree-sitter==0.24.0
     # via tree-sitter-language-pack
@@ -521,7 +548,7 @@ tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
 tree-sitter-embedded-template==0.23.2
     # via tree-sitter-language-pack
-tree-sitter-language-pack==0.7.1
+tree-sitter-language-pack==0.7.2
     # via grep-ast
 tree-sitter-yaml==0.7.0
     # via tree-sitter-language-pack
@@ -532,6 +559,7 @@ typing-extensions==4.13.2
     #   altair
     #   anyio
     #   beautifulsoup4
+    #   google-generativeai
     #   huggingface-hub
     #   llama-index-core
     #   openai
@@ -554,11 +582,13 @@ typing-inspection==0.4.0
     # via pydantic
 tzdata==2025.2
     # via pandas
+uritemplate==4.1.1
+    # via google-api-python-client
 urllib3==2.4.0
     # via
     #   mixpanel
     #   requests
-uv==0.6.14
+uv==0.6.17
     # via -r requirements/requirements-dev.in
 virtualenv==20.30.0
     # via pre-commit
@@ -572,7 +602,7 @@ wrapt==1.17.2
     # via
     #   deprecated
     #   llama-index-core
-yarl==1.19.0
+yarl==1.20.0
     # via aiohttp
 zipp==3.21.0
     # via importlib-metadata
