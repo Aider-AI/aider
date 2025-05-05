@@ -1626,7 +1626,10 @@ class Coder:
         return tool_responses
 
     def initialize_mcp_tools(self):
-        """Initialize tools from all configured MCP servers."""
+        """
+        Initialize tools from all configured MCP servers. MCP Servers that fail to be
+        initialized will not be available to the Coder instance.
+        """
         tools = []
 
         async def get_server_tools(server):
@@ -1636,26 +1639,30 @@ class Coder:
                     session=session, format="openai"
                 )
                 return (server.name, server_tools)
+            except Exception as e:
+                self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
+                return None
             finally:
                 await server.disconnect()
 
         async def get_all_server_tools():
             tasks = [get_server_tools(server) for server in self.mcp_servers]
             results = await asyncio.gather(*tasks)
-            return results
+            return [result for result in results if result is not None]
 
         if self.mcp_servers:
             tools = asyncio.run(get_all_server_tools())
 
-        self.io.tool_output("MCP server configured:")
-        for server_name, server_tools in tools:
-            self.io.tool_output(f"  - {server_name}")
+        if len(tools) > 0:
+            self.io.tool_output("MCP servers configured:")
+            for server_name, server_tools in tools:
+                self.io.tool_output(f"  - {server_name}")
 
-            if self.verbose:
-                for tool in server_tools:
-                    tool_name = tool.get("function", {}).get("name", "unknown")
-                    tool_desc = tool.get("function", {}).get("description", "").split("\n")[0]
-                    self.io.tool_output(f"    - {tool_name}: {tool_desc}")
+                if self.verbose:
+                    for tool in server_tools:
+                        tool_name = tool.get("function", {}).get("name", "unknown")
+                        tool_desc = tool.get("function", {}).get("description", "").split("\n")[0]
+                        self.io.tool_output(f"    - {tool_name}: {tool_desc}")
 
         self.mcp_tools = tools
 

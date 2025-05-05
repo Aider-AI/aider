@@ -49,7 +49,7 @@ class McpServer:
         command = self.config["command"]
         server_params = StdioServerParameters(
             command=command,
-            args=self.config["args"],
+            args=self.config.get("args"),
             env={**os.environ, **self.config["env"]} if self.config.get("env") else None,
         )
 

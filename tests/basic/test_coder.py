@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import git
 
@@ -575,6 +575,7 @@ Once I have these, I can show you precisely how to do the thing.
             fname = Path("file.txt")
 
             io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
             coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             self.assertTrue(fname.exists())
@@ -1350,6 +1351,103 @@ This command will print 'Hello, World!' to the console."""
                     self.assertEqual(tool_responses[0]["role"], "tool")
                     self.assertEqual(tool_responses[0]["tool_call_id"], "test_id")
                     self.assertEqual(tool_responses[0]["content"], "Tool execution result")
+
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    def test_coder_creation_with_partial_failed_mcp_server(self, mock_mcp_client):
+        """Test that a coder can still be created even if an MCP server fails to initialize."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
+
+            # Create mock MCP servers - one working, one failing
+            working_server = AsyncMock()
+            working_server.name = "working_server"
+            working_server.connect = AsyncMock()
+            working_server.disconnect = AsyncMock()
+
+            failing_server = AsyncMock()
+            failing_server.name = "failing_server"
+            failing_server.connect = AsyncMock()
+            failing_server.disconnect = AsyncMock()
+
+            # Mock load_mcp_tools to succeed for working_server and fail for failing_server
+            async def mock_load_mcp_tools(session, format):
+                if session == await working_server.connect():
+                    return [{"function": {"name": "working_tool"}}]
+                else:
+                    raise Exception("Failed to load tools")
+
+            mock_mcp_client.load_mcp_tools = AsyncMock(side_effect=mock_load_mcp_tools)
+
+            # Create coder with both servers
+            coder = Coder.create(
+                self.GPT35,
+                "diff",
+                io=io,
+                mcp_servers=[working_server, failing_server],
+                verbose=True,
+            )
+
+            # Verify that coder was created successfully
+            self.assertIsInstance(coder, Coder)
+
+            # Verify that only the working server's tools were added
+            self.assertIsNotNone(coder.mcp_tools)
+            self.assertEqual(len(coder.mcp_tools), 1)
+            self.assertEqual(coder.mcp_tools[0][0], "working_server")
+
+            # Verify that the tool list contains only working tools
+            tool_list = coder.get_tool_list()
+            self.assertEqual(len(tool_list), 1)
+            self.assertEqual(tool_list[0]["function"]["name"], "working_tool")
+
+            # Verify that the warning was logged for the failing server
+            io.tool_warning.assert_called_with(
+                "Error initializing MCP server failing_server:\nFailed to load tools"
+            )
+
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    def test_coder_creation_with_all_failed_mcp_server(self, mock_mcp_client):
+        """Test that a coder can still be created even if an MCP server fails to initialize."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
+
+            failing_server = AsyncMock()
+            failing_server.name = "failing_server"
+            failing_server.connect = AsyncMock()
+            failing_server.disconnect = AsyncMock()
+
+            # Mock load_mcp_tools to succeed for working_server and fail for failing_server
+            async def mock_load_mcp_tools(session, format):
+                raise Exception("Failed to load tools")
+
+            mock_mcp_client.load_mcp_tools = AsyncMock(side_effect=mock_load_mcp_tools)
+
+            # Create coder with both servers
+            coder = Coder.create(
+                self.GPT35,
+                "diff",
+                io=io,
+                mcp_servers=[failing_server],
+                verbose=True,
+            )
+
+            # Verify that coder was created successfully
+            self.assertIsInstance(coder, Coder)
+
+            # Verify that only the working server's tools were added
+            self.assertIsNotNone(coder.mcp_tools)
+            self.assertEqual(len(coder.mcp_tools), 0)
+
+            # Verify that the tool list contains only working tools
+            tool_list = coder.get_tool_list()
+            self.assertEqual(len(tool_list), 0)
+
+            # Verify that the warning was logged for the failing server
+            io.tool_warning.assert_called_with(
+                "Error initializing MCP server failing_server:\nFailed to load tools"
+            )
 
     @patch("aider.coders.base_coder.experimental_mcp_client")
     def test_initialize_mcp_tools(self, mock_mcp_client):
