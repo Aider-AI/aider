@@ -14,7 +14,7 @@ except ImportError:
     git = None
 
 import importlib_resources
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
@@ -326,7 +326,6 @@ def generate_search_path_list(default_file, git_root, command_line_file):
     uniq.reverse()
     files = uniq
     files = list(map(str, files))
-    files = list(dict.fromkeys(files))
 
     return files
 
@@ -374,15 +373,18 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
         dotenv_files = list(dict.fromkeys(dotenv_files))
 
     loaded = []
+    config = {}
     for fname in dotenv_files:
         try:
             if Path(fname).exists():
-                load_dotenv(fname, override=True, encoding=encoding)
+                config.update(dotenv_values(fname, encoding=encoding))
                 loaded.append(fname)
         except OSError as e:
             print(f"OSError loading {fname}: {e}")
         except Exception as e:
             print(f"Error loading {fname}: {e}")
+    config.update(os.environ)
+    os.environ |= config
     return loaded
 
 
