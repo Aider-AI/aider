@@ -32,4 +32,4 @@ Here are summaries of some files present in my git repo.
 If you need to see the full contents of any files to answer my questions, ask me to *add them to the chat*.
 """
 
-    system_reminder = ""
+    system_reminder = "{final_reminders}"
