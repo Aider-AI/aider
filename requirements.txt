@@ -52,7 +52,7 @@ cffi==1.17.1
     #   -c requirements/common-constraints.txt
     #   sounddevice
     #   soundfile
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -112,11 +112,11 @@ google-api-core[grpc]==2.24.2
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-generativeai
-google-api-python-client==2.168.0
+google-api-python-client==2.169.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
-google-auth==2.39.0
+google-auth==2.40.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-ai-generativelanguage
@@ -209,7 +209,7 @@ jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.67.4.post1
+litellm==1.68.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -233,10 +233,6 @@ mixpanel==4.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-monotonic==1.6
-    # via
-    #   -c requirements/common-constraints.txt
-    #   posthog
 multidict==6.4.3
     # via
     #   -c requirements/common-constraints.txt
@@ -251,7 +247,7 @@ numpy==1.26.4
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.76.0
+openai==1.75.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -273,11 +269,11 @@ pillow==11.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pip==25.1
+pip==25.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==4.0.0
+posthog==4.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -329,13 +325,13 @@ pycparser==2.22
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
-pydantic==2.11.3
+pydantic==2.11.4
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
     #   litellm
     #   openai
-pydantic-core==2.33.1
+pydantic-core==2.33.2
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
