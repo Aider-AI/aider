@@ -1146,7 +1146,7 @@ class Coder:
 
         user_lang = self.get_user_language()
         if user_lang:
-            final_reminders.append(f"Reply in {user_lang}.")
+            final_reminders.append(f"Reply in {user_lang}.\n")
 
         platform_text = self.get_platform_info()
 
