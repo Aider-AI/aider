@@ -1549,7 +1549,7 @@ class Coder:
             tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
             if self.process_tool_calls(tool_call_response):
                 self.num_tool_calls += 1
-                return self.run(with_message="Continue", preproc=False)
+                return self.run(with_message="Continue with tool call response", preproc=False)
 
             self.num_tool_calls = 0
 
