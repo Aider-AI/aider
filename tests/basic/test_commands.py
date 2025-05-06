@@ -145,6 +145,36 @@ class TestCommands(TestCase):
             # Assert that tool_error was called with the clipboard error message
             mock_tool_error.assert_called_once_with("Failed to copy to clipboard: Clipboard error")
 
+    def test_cmd_md(self):
+        # Initialize InputOutput and Coder instances
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Add some assistant messages to the chat history
+        coder.done_messages = [
+            {"role": "assistant", "content": "First assistant message"},
+            {"role": "user", "content": "User message"},
+            {"role": "assistant", "content": "Second assistant message"},
+        ]
+
+        # Create a temporary directory for the notes
+        notes_dir = Path(self.tempdir) / "notes"
+        notes_dir.mkdir()
+
+        # Define the filename to save the message
+        filename = "test_note.md"
+        filepath = notes_dir / filename
+
+        # Invoke the /md command
+        commands.cmd_md(filename)
+
+        # Check if the file was created and contains the last assistant message
+        self.assertTrue(filepath.exists())
+        with open(filepath, "r", encoding=io.encoding) as f:
+            content = f.read()
+            self.assertEqual(content, "Second assistant message")
+
     def test_cmd_add_bad_glob(self):
         # https://github.com/Aider-AI/aider/issues/293
 
@@ -460,6 +490,77 @@ class TestCommands(TestCase):
             commit_message = "Test commit message"
             commands.cmd_commit(commit_message)
             self.assertFalse(repo.is_dirty())
+
+    def test_cmd_scommit(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo()
+
+            fname1 = "ignoreme1.txt"
+            fname2 = "ignoreme2.txt"
+            fname3 = "file3.txt"
+
+            file_path = Path(repo_dir) / fname3
+            file_path.write_text("Initial content\n")
+
+            Path(fname2).touch()
+            repo.git.add(str(fname2))
+            repo.git.commit("-m", "initial")
+
+            repo.git.add(fname3)
+
+            aignore = Path(".aiderignore")
+            aignore.write_text(f"{fname1}\n{fname2}\ndir\n")
+
+            io = InputOutput(yes=True)
+
+            fnames = [fname1, fname2]
+            repo = GitRepo(
+                io,
+                fnames,
+                None,
+                aider_ignore_file=str(aignore),
+            )
+
+            coder = Coder.create(
+                self.GPT35,
+                None,
+                io,
+                fnames=fnames,
+                repo=repo,
+            )
+            commands = Commands(io, coder)
+            commands.cmd_scommit("")
+
+            self.assertFalse(coder.repo.is_dirty(path=fname3))
+
+    def test_cmd_scommit_mock(self):
+        with GitTemporaryDirectory() as repo_dir:
+         io = InputOutput(pretty=False, fancy_input=False, yes=True)
+         coder = Coder.create(self.GPT35, None, io)
+         commands = Commands(io, coder)
+
+         # Create and stage file
+         (Path(repo_dir) / "test1.txt").write_text("Initial content 1")
+
+         # Add and commit files using the git command
+         coder.repo.repo.git.add("test1.txt")
+         coder.repo.repo.git.commit("-m", "Initial commit")
+
+         # Modify files to make the repository dirty
+         (Path(repo_dir) / "test1.txt").write_text("Modified content 1")
+
+         # Stage one of the modified files
+         coder.repo.repo.git.add("test1.txt")
+         self.assertTrue(coder.repo.repo.is_dirty(path="test1.txt"))
+
+         # Mock the commit method on the Repo object
+         with mock.patch.object(coder.repo.repo, 'git', create=True) as mock_git:
+             mock_git.commit.return_value = None
+             # Run cmd_scommit
+             commands.cmd_scommit("")
+
+             # Check if the commit method was called with the correct message
+             mock_git.commit.assert_called_once_with("-m", "Staged changes commit")
 
     def test_cmd_add_from_outside_root(self):
         with ChdirTemporaryDirectory() as tmp_dname:
