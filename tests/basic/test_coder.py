@@ -1315,43 +1315,6 @@ This command will print 'Hello, World!' to the console."""
                 self.assertEqual(len(coder.mcp_tools), 1)
                 self.assertEqual(coder.mcp_tools[0][0], "test_server")
 
-                # Test execute_tool_calls
-                tool_call = MagicMock()
-                tool_call.function.name = "test_tool"
-                tool_call.function.arguments = "{}"
-                tool_call.id = "test_id"
-                tool_call.type = "function"
-
-                response = MagicMock()
-                response.choices = [MagicMock()]
-                response.choices[0].message.tool_calls = [tool_call]
-
-                # Setup mock for call_openai_tool
-                mock_call_result = MagicMock()
-                mock_call_result.content = [MagicMock()]
-                mock_call_result.content[0].text = "Tool execution result"
-                mock_mcp_client.call_openai_tool.return_value = mock_call_result
-
-                # Mock the async execution directly
-                with patch.object(
-                    coder,
-                    "execute_tool_calls",
-                    return_value=[
-                        {
-                            "role": "tool",
-                            "tool_call_id": "test_id",
-                            "content": "Tool execution result",
-                        }
-                    ],
-                ):
-                    tool_responses = coder.execute_tool_calls(response)
-
-                    # Verify tool responses
-                    self.assertEqual(len(tool_responses), 1)
-                    self.assertEqual(tool_responses[0]["role"], "tool")
-                    self.assertEqual(tool_responses[0]["tool_call_id"], "test_id")
-                    self.assertEqual(tool_responses[0]["content"], "Tool execution result")
-
     @patch("aider.coders.base_coder.experimental_mcp_client")
     def test_coder_creation_with_partial_failed_mcp_server(self, mock_mcp_client):
         """Test that a coder can still be created even if an MCP server fails to initialize."""
@@ -1449,55 +1412,199 @@ This command will print 'Hello, World!' to the console."""
                 "Error initializing MCP server failing_server:\nFailed to load tools"
             )
 
-    @patch("aider.coders.base_coder.experimental_mcp_client")
-    def test_initialize_mcp_tools(self, mock_mcp_client):
-        """Test that the coder initializes MCP tools correctly."""
+    def test_process_tool_calls_none_response(self):
+        """Test that process_tool_calls handles None response correctly."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
 
-            # Create mock MCP servers
-            mock_server1 = MagicMock()
-            mock_server1.name = "server1"
-            mock_server1.connect = MagicMock()
-            mock_server1.disconnect = MagicMock()
+            # Test with None response
+            result = coder.process_tool_calls(None)
+            self.assertFalse(result)
 
-            mock_server2 = MagicMock()
-            mock_server2.name = "server2"
-            mock_server2.connect = MagicMock()
-            mock_server2.disconnect = MagicMock()
+    def test_process_tool_calls_no_tool_calls(self):
+        """Test that process_tool_calls handles response with no tool calls."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
 
-            # Setup mock return values
-            server1_tools = [{"function": {"name": "tool1", "description": "Tool 1 description"}}]
-            server2_tools = [{"function": {"name": "tool2", "description": "Tool 2 description"}}]
+            # Create a response with no tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = []
 
-            # Mock the initialize_mcp_tools method
-            expected_tools = [("server1", server1_tools), ("server2", server2_tools)]
+            result = coder.process_tool_calls(response)
+            self.assertFalse(result)
 
-            # Create coder with mock MCP servers and patch initialize_mcp_tools
-            with patch.object(Coder, "initialize_mcp_tools"):
-                coder = Coder.create(
-                    self.GPT35,
-                    "diff",
-                    io=io,
-                    mcp_servers=[mock_server1, mock_server2],
-                    verbose=True,
-                )
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    @patch("asyncio.run")
+    def test_process_tool_calls_with_tools(self, mock_asyncio_run, mock_mcp_client):
+        """Test that process_tool_calls processes tool calls correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=True)
 
-                # Manually set mcp_tools to expected value
-                coder.mcp_tools = expected_tools
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
 
-                # Verify that mcp_tools contains the expected tools
-                self.assertEqual(len(coder.mcp_tools), 2)
-                self.assertEqual(coder.mcp_tools[0][0], "server1")
-                self.assertEqual(coder.mcp_tools[0][1], server1_tools)
-                self.assertEqual(coder.mcp_tools[1][0], "server2")
-                self.assertEqual(coder.mcp_tools[1][1], server2_tools)
+            # Create a tool call
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+            tool_call.function.arguments = '{"param": "value"}'
 
-                # Test get_tool_list
-                tool_list = coder.get_tool_list()
-                self.assertEqual(len(tool_list), 2)
-                self.assertEqual(tool_list[0], server1_tools[0])
-                self.assertEqual(tool_list[1], server2_tools[0])
+            # Create a response with tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = [tool_call]
+            response.choices[0].message.to_dict = MagicMock(
+                return_value={"role": "assistant", "tool_calls": [{"id": "test_id"}]}
+            )
+
+            # Create coder with mock MCP tools and servers
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+            coder.mcp_servers = [mock_server]
+
+            # Mock asyncio.run to return tool responses
+            tool_responses = [
+                [{"role": "tool", "tool_call_id": "test_id", "content": "Tool execution result"}]
+            ]
+            mock_asyncio_run.return_value = tool_responses
+
+            # Test process_tool_calls
+            result = coder.process_tool_calls(response)
+            self.assertTrue(result)
+
+            # Verify that asyncio.run was called
+            mock_asyncio_run.assert_called_once()
+
+            # Verify that the messages were added
+            self.assertEqual(len(coder.cur_messages), 2)
+            self.assertEqual(coder.cur_messages[0]["role"], "assistant")
+            self.assertEqual(coder.cur_messages[1]["role"], "tool")
+            self.assertEqual(coder.cur_messages[1]["tool_call_id"], "test_id")
+            self.assertEqual(coder.cur_messages[1]["content"], "Tool execution result")
+
+    def test_process_tool_calls_max_calls_exceeded(self):
+        """Test that process_tool_calls handles max tool calls exceeded."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
+
+            # Create a tool call
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+
+            # Create a response with tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = [tool_call]
+
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+
+            # Create coder with max tool calls exceeded
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.num_tool_calls = coder.max_tool_calls
+            coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+            coder.mcp_servers = [mock_server]
+
+            # Test process_tool_calls
+            result = coder.process_tool_calls(response)
+            self.assertFalse(result)
+
+            # Verify that warning was shown
+            io.tool_warning.assert_called_once_with(
+                f"Only {coder.max_tool_calls} tool calls allowed, stopping."
+            )
+
+    def test_process_tool_calls_user_rejects(self):
+        """Test that process_tool_calls handles user rejection."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=False)
+
+            # Create a tool call
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+
+            # Create a response with tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = [tool_call]
+
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+
+            # Create coder with mock MCP tools
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+            coder.mcp_servers = [mock_server]
+
+            # Test process_tool_calls
+            result = coder.process_tool_calls(response)
+            self.assertFalse(result)
+
+            # Verify that confirm_ask was called
+            io.confirm_ask.assert_called_once_with("Run tools?")
+
+            # Verify that no messages were added
+            self.assertEqual(len(coder.cur_messages), 0)
+
+    @patch("asyncio.run")
+    def test_execute_tool_calls(self, mock_asyncio_run):
+        """Test that _execute_tool_calls executes tool calls correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Create mock server and tool call
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+            tool_call.function.arguments = '{"param": "value"}'
+
+            # Create server_tool_calls
+            server_tool_calls = {mock_server: [tool_call]}
+
+            # Mock asyncio.run to return tool responses
+            tool_responses = [
+                [{"role": "tool", "tool_call_id": "test_id", "content": "Tool execution result"}]
+            ]
+            mock_asyncio_run.return_value = tool_responses
+
+            # Test _execute_tool_calls directly
+            result = coder._execute_tool_calls(server_tool_calls)
+
+            # Verify that asyncio.run was called
+            mock_asyncio_run.assert_called_once()
+
+            # Verify that the correct tool responses were returned
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]["role"], "tool")
+            self.assertEqual(result[0]["tool_call_id"], "test_id")
+            self.assertEqual(result[0]["content"], "Tool execution result")
 
 
 if __name__ == "__main__":

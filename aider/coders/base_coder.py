@@ -1571,13 +1571,13 @@ class Coder:
 
     def _print_tool_call_info(self, server_tool_calls):
         """Print information about an MCP tool call."""
+        self.io.tool_output("Preparing to run MCP tools", bold=True)
 
         for server, tool_calls in server_tool_calls.items():
             for tool_call in tool_calls:
-                self.io.tool_output(
-                    f"Running MCP tool: {tool_call.function.name} from server {server.name}"
-                )
-                self.io.tool_output(f"Tool arguments: {tool_call.function.arguments}")
+                self.io.tool_output(f"Tool Call: {tool_call.function.name}")
+                self.io.tool_output(f"Arguments: {tool_call.function.arguments}")
+                self.io.tool_output(f"MCP Server: {server.name}")
 
                 if self.verbose:
                     self.io.tool_output(f"Tool ID: {tool_call.id}")
@@ -2058,7 +2058,7 @@ class Coder:
                 sys.stdout.flush()
                 yield text
 
-        if not received_content:
+        if not received_content and len(self.partial_response_tool_call) == 0:
             self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def live_incremental_response(self, final):
