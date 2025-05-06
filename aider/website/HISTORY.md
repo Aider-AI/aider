@@ -27,10 +27,16 @@ cog.out(text)
 ### main branch
 
 - Add support for `gemini-2.5-flash-preview-04-17` models.
-- Improved "diff" format for Gemini 2.5 Flash by accepting filenames provided on the same line as the opening fence.
+- Improved robustness of edit block parsing when filenames start with backticks or fences.
 - Add new `udiff-simple` edit format, for Gemini 2.5 Pro.
 - Update default weak/editor models for Gemini 2.5 Pro models to use `gemini-2.5-flash-preview-04-17`.
-- Aider wrote 69% of the code in this release.
+- Instruct models to reply in the user's detected system language.
+- Fix parsing of diffs for newly created files (`--- /dev/null`).
+- Add markdown syntax highlighting support when editing multi-line commit messages via `/commit`, by Kay Gosho.
+- Set Gemini 2.5 Pro models to use the `overeager` prompt setting by default.
+- Add common file types (`.svg`, `.pdf`) and IDE directories (`.idea/`, `.vscode/`, etc.) to the default list of ignored files for AI comment scanning (`--watch`).
+- Skip scanning files larger than 1MB for AI comments (`--watch`).
+- Aider wrote 67% of the code in this release.
 
 ### Aider v0.82.2
 
