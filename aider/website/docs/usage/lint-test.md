@@ -52,8 +52,8 @@ the script as your linter.
 # Second attempt will not do anything and exit 0 unless there's a real problem beyond
 # the code formatting that was completed.
 
-pre-commit run --files $* >/dev/null \
-    || pre-commit run --files $*
+pre-commit run --files "$@" >/dev/null \
+    || pre-commit run --files "$@"
 ```
 
 ## Testing
