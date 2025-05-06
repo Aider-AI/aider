@@ -1155,6 +1155,9 @@ class Coder:
 
     def fmt_system_prompt(self, prompt):
         final_reminders = []
+        if self.mcp_tools and len(self.mcp_tools) > 0:
+            final_reminders.append(self.gpt_prompts.tool_prompt)
+
         if self.main_model.lazy:
             final_reminders.append(self.gpt_prompts.lazy_prompt)
         if self.main_model.overeager:
