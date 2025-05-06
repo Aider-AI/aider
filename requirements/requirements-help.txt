@@ -35,7 +35,7 @@ certifi==2025.4.26
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -120,7 +120,7 @@ jinja2==3.1.6
     #   -c requirements/common-constraints.txt
     #   banks
     #   torch
-joblib==1.4.2
+joblib==1.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   nltk
@@ -196,12 +196,12 @@ propcache==0.3.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-pydantic==2.11.3
+pydantic==2.11.4
     # via
     #   -c requirements/common-constraints.txt
     #   banks
     #   llama-index-core
-pydantic-core==2.33.1
+pydantic-core==2.33.2
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic

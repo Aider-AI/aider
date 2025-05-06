@@ -16,7 +16,7 @@ cfgv==3.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -63,7 +63,7 @@ google-api-core[grpc]==2.24.2
     #   -c requirements/common-constraints.txt
     #   google-cloud-bigquery
     #   google-cloud-core
-google-auth==2.39.0
+google-auth==2.40.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -168,7 +168,7 @@ pillow==11.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
-pip==25.1
+pip==25.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
@@ -269,7 +269,7 @@ semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-setuptools==80.0.0
+setuptools==80.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
@@ -281,7 +281,7 @@ six==1.17.0
     # via
     #   -c requirements/common-constraints.txt
     #   python-dateutil
-typer==0.15.2
+typer==0.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -297,11 +297,11 @@ urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.6.17
+uv==0.7.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-virtualenv==20.30.0
+virtualenv==20.31.1
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
