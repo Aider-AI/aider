@@ -264,9 +264,9 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>1,637,700</td><td class='right'>83.1%</td></tr>
-<tr><td>o3</td><td class='right'>186,953</td><td class='right'>9.5%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>76,285</td><td class='right'>3.9%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>1,826,168</td><td class='right'>83.3%</td></tr>
+<tr><td>o3</td><td class='right'>239,619</td><td class='right'>10.9%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>56,318</td><td class='right'>2.6%</td></tr>
 <tr><td>gemini/gemini-2.5-flash-preview-04-17</td><td class='right'>18,645</td><td class='right'>0.9%</td></tr>
 <tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>16,524</td><td class='right'>0.8%</td></tr>
 <tr><td>o4-mini</td><td class='right'>16,499</td><td class='right'>0.8%</td></tr>

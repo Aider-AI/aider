@@ -11,7 +11,7 @@ class PatchPrompts(EditBlockPrompts):
     main_system = """Act as an expert software developer.
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.
-{lazy_prompt}
+{final_reminders}
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
@@ -156,6 +156,6 @@ For `Add` actions, use the `*** Add File: [path/to/new/file]` marker, followed b
 
 For `Delete` actions, use the `*** Delete File: [path/to/file]` marker. No other lines are needed for the deletion.
 
-{rename_with_shell}{go_ahead_tip}{lazy_prompt}ONLY EVER RETURN CODE IN THE SPECIFIED V4A DIFF FORMAT!
+{rename_with_shell}{go_ahead_tip}{final_reminders}ONLY EVER RETURN CODE IN THE SPECIFIED V4A DIFF FORMAT!
 {shell_cmd_reminder}
 """

@@ -10,7 +10,7 @@ If the request is ambiguous, ask questions.
 
 Always reply to the user in {language}.
 
-{lazy_prompt}
+{final_reminders}
 Once you understand the request you MUST:
 1. Determine if any code changes are needed.
 2. Explain any needed changes.
@@ -61,7 +61,7 @@ To suggest changes to a file you MUST return a *file listing* that contains the 
 *NEVER* skip, omit or elide content from a *file listing* using "..." or by adding comments like "... rest of code..."!
 Create a new file you MUST return a *file listing* which includes an appropriate filename, including any appropriate path.
 
-{lazy_prompt}
+{final_reminders}
 """
 
     redacted_edit_message = "No changes are needed."
