@@ -10,32 +10,24 @@ nav_exclude: true
 
 # Gemini 2.5 Pro Preview 03-25 benchmark cost
 
+## Summary
 The $6.32 cost reported to run the aider polyglot benchmark on
 Gemini 2.5 Pro Preview 03-25 was incorrect.
 The true cost was higher, possibly significantly so.
-This note shares the results of an audit and root cause analysis
-relating to this error.
+The incorrect cost has been removed from the leaderboard.
 
-Two possible causes were identified, both related to the litellm package that
-aider uses to connect to LLM APIs:
+An investigation determined the primary cause was that the litellm
+package (used by aider for LLM API connections) was not properly including reasoning tokens in 
+the token counts it
+reported to aider. 
 
-- The litellm model database had an incorrect price-per-token for Gemini 2.5 Pro Preview 03-25 in their costs database. 
-This does not appear to be a contributing factor to the incorrect benchmark cost.
-- The litellm package was excluding reasoning tokens from the token counts it reported to aider. This appears to be the cause of the incorrect benchmark cost.
+While an incorrect price-per-token entry for the model also existed in litellm's cost
+database at that time, this was found not to be a contributing factor.
+Aider's own internal, correct pricing data was utilized during the benchmark.
 
-The incorrect litellm database entry does not appear to have affected the aider benchmark costs.
-Aider maintains and uses its own database of costs for some models, and it contained
-the correct pricing at the time of the benchmark.
-Aider appears to have
-loaded the correct cost data from its database and made use of it during the benchmark.
+## Resolution
 
-The version of litellm available at that time appears to have been
-excluding reasoning tokens from the token counts it reported.
-So even though aider had correct per-token pricing, it did not have the correct token counts
-used during the benchmark.
-This resulted in an underestimate of the benchmark costs.
-
-Litellm began including reasoning tokens in the reported counts
+Litellm began correctly including reasoning tokens in the reported counts
 on April 21, 2025 in 
 commit [a7db0df](https://github.com/BerriAI/litellm/commit/a7db0df0434bfbac2b68ebe1c343b77955becb4b).
 This change was released in litellm v1.67.1.
@@ -51,7 +43,19 @@ so it is not possible to re-run the benchmark to obtain an accurate cost.
 As a possibly relevant comparison, the newer 05-06 version of Gemini 2.5 Pro Preview
 completed the benchmark at a cost of about $38.
 
-# Investigation
+## Investigation detail
+
+The version of litellm available at that time appears to have been
+excluding reasoning tokens from the token counts it reported.
+So even though aider had correct per-token pricing, it did not have the correct token counts
+used during the benchmark.
+This resulted in an underestimate of the benchmark costs.
+
+The incorrect litellm database entry does not appear to have affected the aider benchmark costs.
+Aider maintains and uses its own database of costs for some models, and it contained
+the correct pricing at the time of the benchmark.
+Aider appears to have
+loaded the correct cost data from its database and made use of it during the benchmark.
 
 Every aider benchmark report contains the git commit hash of the aider repository state used to
 run the benchmark.
@@ -68,11 +72,11 @@ model cost database appears not to have been a factor:
 - Updating aider's local model database with an absurdly high token cost resulted in an appropriately high benchmark cost report, demonstrating that the local database costs were in effect.
 
 This specific build of aider was then updated with various versions of litellm using `git biset`
-to identify the first litellm commit where reasoning tokens counts were reported.
+to identify the first litellm commit where reasoning tokens counts were correctly reported.
 
 
 
-# Timeline
+## Timeline
 
 Below is the full timeline of git commits related to this issue in the aider and litellm repositories.
 Each entry has a UTC timestamp, followed by the original literal timestamp obtained from the
