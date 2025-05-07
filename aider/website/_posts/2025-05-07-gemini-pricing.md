@@ -27,7 +27,7 @@ nav_exclude: true
 - 2025-04-12 04:55:50 UTC (2025-04-12-04-55-50 UTC)
   - Benchmark performed 
   - Repo hash 0282574 recorded in benchmark results, without "dirty" indicating it was run on a clean checkout of the repo at commit 0282574.
-  - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at commmit 0282574
+  - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at commit 0282574
   - Confirmed that aider built and run from commit 0282574 honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
 
 - 2025-04-12 15:06:39 UTC (Apr 12 08:06:39 2025 -0700)
