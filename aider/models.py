@@ -680,6 +680,7 @@ class Model(ModelSettings):
                 if "extra_body" not in self.extra_params:
                     self.extra_params["extra_body"] = {}
                 self.extra_params["extra_body"]["reasoning_effort"] = effort
+
     def parse_token_value(self, value):
         """
         Parse a token value string into an integer.
