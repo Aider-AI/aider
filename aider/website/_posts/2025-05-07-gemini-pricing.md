@@ -88,12 +88,12 @@ Below is the full timeline with git commits for the aider and litellm repositori
   - Commit [93037ea](https://github.com/BerriAI/litellm/commit/93037ea) in litellm.
 
 
-- ?? (Mon Apr 21 22:48:00 2025 -0700)
+- 2025-04-22 05:48:00 UTC (Mon Apr 21 22:48:00 2025 -0700)
   - Litellm started including reasoning tokens in token count reporting.
   - Commit [a7db0df](https://github.com/BerriAI/litellm/commit/a7db0df0434bfbac2b68ebe1c343b77955becb4b) in litellm.
   - This fix was released in litellm v1.67.1.
 
-- ?? (Mon Apr 28 07:53:20 2025 -0700)
+- 2025-04-28 14:53:20 UTC (Mon Apr 28 07:53:20 2025 -0700)
   - Aider upgraded its litellm dependency from v1.65.7 to v1.67.4.post1, which included the reasoning token count fix.
   - Commit [9351f37](https://github.com/Aider-AI/aider/commit/9351f37) in aider.
   - This change shipped on May 5, 2025 in aider v0.82.3.
