@@ -332,6 +332,15 @@ class Model(ModelSettings):
                     # For non-dict values, simply update
                     self.extra_params[key] = value
 
+        # Ensure OpenRouter models accept thinking_tokens and reasoning_effort
+        if self.name.startswith("openrouter/"):
+            if self.accepts_settings is None:
+                self.accepts_settings = []
+            if "thinking_tokens" not in self.accepts_settings:
+                self.accepts_settings.append("thinking_tokens")
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
+
     def apply_generic_model_settings(self, model):
         if "/o3-mini" in model:
             self.edit_format = "diff"
@@ -659,11 +668,16 @@ class Model(ModelSettings):
     def set_reasoning_effort(self, effort):
         """Set the reasoning effort parameter for models that support it"""
         if effort is not None:
-            if not self.extra_params:
-                self.extra_params = {}
-            if "extra_body" not in self.extra_params:
-                self.extra_params["extra_body"] = {}
-            self.extra_params["extra_body"]["reasoning_effort"] = effort
+            if self.name.startswith("openrouter/"):
+                if not self.extra_params:
+                    self.extra_params = {}
+                self.extra_params["reasoning"] = {"effort": effort}
+            else:
+                if not self.extra_params:
+                    self.extra_params = {}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning_effort"] = effort
 
     def parse_token_value(self, value):
         """
@@ -750,12 +764,17 @@ class Model(ModelSettings):
 
     def get_reasoning_effort(self):
         """Get reasoning effort value if available"""
-        if (
-            self.extra_params
-            and "extra_body" in self.extra_params
-            and "reasoning_effort" in self.extra_params["extra_body"]
-        ):
-            return self.extra_params["extra_body"]["reasoning_effort"]
+        if self.extra_params:
+            # Check for OpenRouter reasoning format
+            if self.name.startswith("openrouter/"):
+                if "reasoning" in self.extra_params and "effort" in self.extra_params["reasoning"]:
+                    return self.extra_params["reasoning"]["effort"]
+            # Check for standard reasoning_effort format (e.g. in extra_body)
+            elif (
+                "extra_body" in self.extra_params
+                and "reasoning_effort" in self.extra_params["extra_body"]
+            ):
+                return self.extra_params["extra_body"]["reasoning_effort"]
         return None
 
     def is_deepseek_r1(self):
