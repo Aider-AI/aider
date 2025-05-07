@@ -11,8 +11,9 @@ nav_exclude: true
 # Gemini 2.5 Pro Preview 0325 benchmark pricing
 
 
-The low $6 cost reported in the leaderboard to run the aider polyglot benchmark on
+The $6 cost reported in the leaderboard to run the aider polyglot benchmark on
 Gemini 2.5 Pro Preview 0325 was incorrect.
+The true cost was higher, possibly significantly so.
 
 This note reviews and audits the original 0325 benchmark results to investigate the reported cost.
 Two possible causes were identified, both related to the litellm package that
@@ -29,20 +30,36 @@ loaded the correct cost data from its database and made use of it during the ben
 Since litellm appears to have been excluding reasoning tokens from the token counts it reported,
 aider underestimated the API costs.
 
+Litellm fixed this issue on April 21, 2025 in 
+commit [a7db0df](https://github.com/BerriAI/litellm/commit/a7db0df0434bfbac2b68ebe1c343b77955becb4b).
+This fix was released in litellm v1.67.1.
+Aider picked up this fix April 28, 2025 when it upgraded its litellm dependency 
+from v1.65.7 to v1.67.4.post1
+in commit [9351f37](https://github.com/Aider-AI/aider/commit/9351f37)
+That change shipped on May 5, 2025 in aider v0.82.3.
 
-# 
-Re-running the benchmark with the same aider built from commit hash [0282574](https://github.com/Aider-AI/aider/commit/0282574) 
-loads the correct pricing from aider's local db
-and produces similar costs as the original run.
+# Investigation
 
-It appears that litellm changed the way it reports token usage
-between the benchmark of Gemini 2.5 Pro 0325 and today's 0506 benchmark.
-At that commit 0282574, aider was using litellm v1.65.3.
-Using the same aider built from 0282574, but with the latest litellm v1.68.1
-produces benchmark results with higher costs.
+Every aider benchmark report contains the git commit hash of the aider repo state used to
+run the benchmark.
+The benchmark run in question was built from 
+commit [0282574](https://github.com/Aider-AI/aider/commit/0282574).
+
+Additional runs of the benchmark from that build verified that the error in litellm's
+model cost database appears not to have been a factor:
+
+- The local model database correctly overrides the litellm database, which contained an incorrect token cost at the time.
+- The correct pricing is loaded from aider's local model database and produces similar costs as the original run.
+- Updating aider's local model database with an absurdly high token cost resulted in an appropriately high benchmark cost report.
+
+That build of aider was updated with various versions of litellm using `git biset`
+to identify the litellm commit where the reasoning tokens were added to litellm's
+token count reporting.
 
 
 # Timeline
+
+Below is the full timeline with git commits for the aider and litellm repositories.
 
 - 2025-04-04 19:54:45 UTC (Sat Apr 5 08:54:45 2025 +1300)
   - Correct value `"output_cost_per_token": 0.000010` added to `aider/resources/model-metadata.json`
@@ -69,3 +86,14 @@ produces benchmark results with higher costs.
 - 2025-04-12 15:20:04 UTC (Sat Apr 12 19:20:04 2025 +0400)
   - litellm commit fixes `gemini/gemini-2.5-pro-preview-03-25` price metadata to `"output_cost_per_token": 0.00001`
   - Commit [93037ea](https://github.com/BerriAI/litellm/commit/93037ea) in litellm.
+
+
+- ?? (Mon Apr 21 22:48:00 2025 -0700)
+  - Litellm started including reasoning tokens in token count reporting.
+  - Commit [a7db0df](https://github.com/BerriAI/litellm/commit/a7db0df0434bfbac2b68ebe1c343b77955becb4b) in litellm.
+  - This fix was released in litellm v1.67.1.
+
+- ?? (Mon Apr 28 07:53:20 2025 -0700)
+  - Aider upgraded its litellm dependency from v1.65.7 to v1.67.4.post1, which included the reasoning token count fix.
+  - Commit [9351f37](https://github.com/Aider-AI/aider/commit/9351f37) in aider.
+  - This change shipped on May 5, 2025 in aider v0.82.3.
