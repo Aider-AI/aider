@@ -1222,6 +1222,11 @@ cog.out("```\n")
   use_repo_map: true
   overeager: true
 
+- name: openrouter/google/gemini-2.5-pro-preview-03-25
+  edit_format: diff-fenced
+  weak_model_name: openrouter/google/gemini-2.0-flash-001
+  use_repo_map: true
+
 - name: openrouter/google/gemma-3-27b-it
   use_system_prompt: false
 
