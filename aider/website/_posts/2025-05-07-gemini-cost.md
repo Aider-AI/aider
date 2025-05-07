@@ -35,10 +35,11 @@ So even though aider had correct per-token pricing, it did not have the correct 
 used during the benchmark.
 This resulted in an underestimate of the benchmark costs.
 
-Litellm fixed the token counting issue on April 21, 2025 in 
+Litellm began including reasoning tokens in the reported counts
+on April 21, 2025 in 
 commit [a7db0df](https://github.com/BerriAI/litellm/commit/a7db0df0434bfbac2b68ebe1c343b77955becb4b).
-This fix was released in litellm v1.67.1.
-Aider picked up this fix April 28, 2025 when it upgraded its litellm dependency 
+This change was released in litellm v1.67.1.
+Aider picked up this change April 28, 2025 when it upgraded its litellm dependency 
 from v1.65.7 to v1.67.4.post1
 in commit [9351f37](https://github.com/Aider-AI/aider/commit/9351f37).
 That dependency change shipped on May 5, 2025 in aider v0.82.3.
