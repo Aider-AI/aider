@@ -10,14 +10,13 @@ nav_exclude: true
 
 # Gemini 2.5 Pro Preview 0325 benchmark pricing
 
-
-The $6 cost reported in the leaderboard to run the aider polyglot benchmark on
+The $6.32 cost reported in the leaderboard to run the aider polyglot benchmark on
 Gemini 2.5 Pro Preview 0325 was incorrect.
 The true cost was higher, possibly significantly so.
 
 This note reviews and audits the original 0325 benchmark results to investigate the reported cost.
 Two possible causes were identified, both related to the litellm package that
-aider users to connect to LLM APIs.
+aider uses to connect to LLM APIs.
 
 - The litellm model database had an incorrect price-per-token for output tokens in their database at the time of the benchmark. This does not appear to be a contributing factor to the incorrect benchmark cost.
 - The litellm package was incorrectly excluding reasoning tokens from the token counts it reported back to aider. This appears to be the cause of the incorrect benchmark cost.
@@ -37,6 +36,8 @@ Aider picked up this fix April 28, 2025 when it upgraded its litellm dependency
 from v1.65.7 to v1.67.4.post1
 in commit [9351f37](https://github.com/Aider-AI/aider/commit/9351f37)
 That change shipped on May 5, 2025 in aider v0.82.3.
+
+Unfortunately,
 
 # Investigation
 
@@ -59,10 +60,10 @@ token count reporting.
 
 # Timeline
 
-Below is the full timeline with git commits for the aider and litellm repositories.
+Below is the full timeline of git commits related to this issue in the aider and litellm repositories.
 
 - 2025-04-04 19:54:45 UTC (Sat Apr 5 08:54:45 2025 +1300)
-  - Correct value `"output_cost_per_token": 0.000010` added to `aider/resources/model-metadata.json`
+  - Correct value `"output_cost_per_token": 0.000010` for  `gemini/gemini-2.5-pro-preview-03-25` added to `aider/resources/model-metadata.json`
   - Commit [eda796d](https://github.com/Aider-AI/aider/commit/eda796d) in aider.
 
 - 2025-04-05 16:20:01 UTC (Sun Apr 6 00:20:01 2025 +0800)
@@ -75,18 +76,16 @@ Below is the full timeline with git commits for the aider and litellm repositori
 
 - 2025-04-12 04:55:50 UTC (2025-04-12-04-55-50 UTC)
   - Benchmark performed 
-  - Aider repo hash [0282574 recorded in benchmark results](https://github.com/Aider-AI/aider/blob/7fbeafa1cfd4ad83f7499417837cdfa6b16fe7a1/aider/website/_data/polyglot_leaderboard.yml#L814), without "dirty", indicating that the benchmark was run on a clean checkout of the aider repo at commit [0282574](https://github.com/Aider-AI/aider/commit/0282574).
+  - Aider repo hash [0282574 recorded in benchmark results](https://github.com/Aider-AI/aider/blob/7fbeafa1cfd4ad83f7499417837cdfa6b16fe7a1/aider/website/_data/polyglot_leaderboard.yml#L814), without a "dirty" annotation, indicating that the benchmark was run on a clean checkout of the aider repo at commit [0282574](https://github.com/Aider-AI/aider/commit/0282574).
   - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at this commit [0282574](https://github.com/Aider-AI/aider/blob/0282574/aider/resources/model-metadata.json#L357)
-  - Confirmed that aider built and run from commit [0282574](https://github.com/Aider-AI/aider/commit/0282574) honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
 
 - 2025-04-12 15:06:39 UTC (Apr 12 08:06:39 2025 -0700)
-  - Benchmark results added to repo
+  - Benchmark results added to aider repo.
   - Commit [7fbeafa](https://github.com/Aider-AI/aider/commit/7fbeafa) in aider.
 
 - 2025-04-12 15:20:04 UTC (Sat Apr 12 19:20:04 2025 +0400)
   - litellm commit fixes `gemini/gemini-2.5-pro-preview-03-25` price metadata to `"output_cost_per_token": 0.00001`
   - Commit [93037ea](https://github.com/BerriAI/litellm/commit/93037ea) in litellm.
-
 
 - 2025-04-22 05:48:00 UTC (Mon Apr 21 22:48:00 2025 -0700)
   - Litellm started including reasoning tokens in token count reporting.
