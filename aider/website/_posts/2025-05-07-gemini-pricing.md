@@ -1,5 +1,5 @@
 ---
-title: A note on Gemini 2.5 Pro Preview 0325 pricing
+title: A note on Gemini 2.5 Pro Preview 0325 benchmark pricing
 excerpt: The low price reported for Gemini 2.5 Pro Preview 0325 appears to be correct.
 draft: false
 nav_exclude: true
@@ -8,7 +8,9 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# A note on Gemini 2.5 Pro Preview 0325 pricing
+# A note on Gemini 2.5 Pro Preview 0325 benchmark pricing
+
+  - Confirmed that aider built and run from commit 0282574 honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
 
 # Timeline
 
@@ -28,12 +30,10 @@ nav_exclude: true
   - Benchmark performed 
   - Repo hash 0282574 recorded in benchmark results, without "dirty" indicating it was run on a clean checkout of the repo at commit 0282574.
   - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at commit 0282574
-  - Confirmed that aider built and run from commit 0282574 honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
 
 - 2025-04-12 15:06:39 UTC (Apr 12 08:06:39 2025 -0700)
   - Benchmark results added to repo
 
 - 2025-04-12 15:20:04 UTC (Sat Apr 12 19:20:04 2025 +0400)
-  - 2025-04-12 15:20:04 UTC (Sat Apr 12 15:20:04 2025 UTC)
   - litellm commit fixes `gemini/gemini-2.5-pro-preview-03-25` price metadata to `"output_cost_per_token": 0.00001`
   - commit 93037ea
