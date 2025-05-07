@@ -546,7 +546,7 @@ tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
 tree-sitter-embedded-template==0.23.2
     # via tree-sitter-language-pack
-tree-sitter-language-pack==0.7.2
+tree-sitter-language-pack==0.7.3
     # via grep-ast
 tree-sitter-yaml==0.7.0
     # via tree-sitter-language-pack
