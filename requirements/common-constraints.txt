@@ -131,7 +131,7 @@ google-api-core[grpc]==2.24.2
     #   google-generativeai
 google-api-python-client==2.169.0
     # via google-generativeai
-google-auth==2.40.0
+google-auth==2.40.1
     # via
     #   google-ai-generativelanguage
     #   google-api-core
@@ -172,6 +172,8 @@ grpcio-status==1.71.0
     # via google-api-core
 h11==0.16.0
     # via httpcore
+hf-xet==1.1.0
+    # via huggingface-hub
 httpcore==1.0.9
     # via httpx
 httplib2==0.22.0
@@ -183,7 +185,7 @@ httpx==0.28.1
     #   litellm
     #   llama-index-core
     #   openai
-huggingface-hub[inference]==0.30.2
+huggingface-hub[inference]==0.31.1
     # via
     #   llama-index-embeddings-huggingface
     #   sentence-transformers
@@ -231,7 +233,7 @@ jsonschema-specifications==2025.4.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.68.0
+litellm==1.68.1
     # via -r requirements/requirements.in
 llama-index-core==0.12.26
     # via
@@ -330,7 +332,7 @@ pip==25.1.1
     #   pip-tools
 pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via
     #   banks
     #   virtualenv
@@ -546,7 +548,7 @@ tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
 tree-sitter-embedded-template==0.23.2
     # via tree-sitter-language-pack
-tree-sitter-language-pack==0.7.2
+tree-sitter-language-pack==0.7.3
     # via grep-ast
 tree-sitter-yaml==0.7.0
     # via tree-sitter-language-pack
@@ -586,7 +588,7 @@ urllib3==2.4.0
     # via
     #   mixpanel
     #   requests
-uv==0.7.2
+uv==0.7.3
     # via -r requirements/requirements-dev.in
 virtualenv==20.31.1
     # via pre-commit

@@ -116,7 +116,7 @@ google-api-python-client==2.169.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
-google-auth==2.40.0
+google-auth==2.40.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-ai-generativelanguage
@@ -154,6 +154,10 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
+hf-xet==1.1.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
@@ -168,7 +172,7 @@ httpx==0.28.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-huggingface-hub==0.30.2
+huggingface-hub==0.31.1
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -209,7 +213,7 @@ jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.68.0
+litellm==1.68.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -462,7 +466,7 @@ tree-sitter-embedded-template==0.23.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-tree-sitter-language-pack==0.7.2
+tree-sitter-language-pack==0.7.3
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
