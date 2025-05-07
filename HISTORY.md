@@ -13,6 +13,16 @@
 - Add common file types (`.svg`, `.pdf`) to the default list of ignored files for AI comment scanning (`--watch`).
 - Skip scanning files larger than 1MB for AI comments (`--watch`).
 - Aider wrote 67% of the code in this release.
+### main branch
+
+- Set development version to 0.82.4.dev.
+- Improved cost calculation using `litellm.completion_cost` where available.
+- Fixed linter command execution on Windows by adopting `oslex` for argument quoting, by Titusz Pan.
+- Enabled support for `thinking_tokens` and `reasoning_effort` parameters for OpenRouter models.
+- Added support for `gemini-2.5-pro-preview-05-06` models.
+- Added model settings for `openrouter/google/gemini-2.5-pro-preview-03-25`.
+- Aider wrote 67% of the code in this release.
+
 
 ### Aider v0.82.2
 
