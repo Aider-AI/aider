@@ -17,16 +17,22 @@ aider leaderboard.
 There are a couple of reasons for concern:
 
 - Aider uses litellm, which had an incorrect price for output tokens in their database at the time of the benchmark.
-- The new 0506 version of Gemini 2.5 Pro Preview reports much higher costs to benchmark.
+- The recent benchmark of the 0506 version of Gemini 2.5 Pro Preview reports much higher costs.
 
 This note reviews and audits the original 0325 benchmark results to investigate the reported price.
 
-The incorrect litellm database entry does not appear to have affected the aider benchmark.
+The incorrect litellm database entry does **not** appear to have affected the aider benchmark.
 Aider maintains and uses its own database of costs for some models, and it contained
 the correct pricing at the time of the benchmark and correctly loaded it.
-This was possible to confirm because
-aider records the git commit hash of the aider repository that was used
-to run each benchmark.
+Re-running the benchmark with the same aider built from commit hash [0282574](https://github.com/Aider-AI/aider/commit/0282574) 
+loads the correct pricing from aider's local db
+and produces similar costs as the original run.
+
+It appears that litellm changed the way it reports token usage
+between the benchmark of Gemini 2.5 Pro 0325 and today's 0506 benchmark.
+At that commit 0282574, aider was using litellm v1.65.3.
+Using the same aider built from 0282574, but with the latest litellm v1.68.1
+produces benchmark results with higher costs.
 
 
 # Timeline
