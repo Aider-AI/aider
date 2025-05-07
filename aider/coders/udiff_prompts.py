@@ -1,11 +1,12 @@
 # flake8: noqa: E501
 
+from . import shell
 from .base_prompts import CoderPrompts
 
 
 class UnifiedDiffPrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
-{lazy_prompt}
+{final_reminders}
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.
 
@@ -106,5 +107,9 @@ To move code within a file, use 2 hunks: 1 to delete it from its current locatio
 
 To make a new file, show a diff from `--- /dev/null` to `+++ path/to/new/file.ext`.
 
-{lazy_prompt}
+{final_reminders}
 """
+
+    shell_cmd_prompt = shell.shell_cmd_prompt
+    no_shell_cmd_prompt = shell.no_shell_cmd_prompt
+    shell_cmd_reminder = shell.shell_cmd_reminder

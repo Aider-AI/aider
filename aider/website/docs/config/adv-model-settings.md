@@ -684,11 +684,13 @@ cog.out("```\n")
   edit_format: diff-fenced
   weak_model_name: gemini/gemini-2.5-flash-preview-04-17
   use_repo_map: true
+  overeager: true
 
 - name: gemini/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
   weak_model_name: gemini/gemini-2.0-flash
   use_repo_map: true
+  overeager: true
 
 - name: gemini/gemini-exp-1114
   edit_format: diff
@@ -1218,6 +1220,7 @@ cog.out("```\n")
   edit_format: diff-fenced
   weak_model_name: openrouter/google/gemini-2.0-flash-exp:free
   use_repo_map: true
+  overeager: true
 
 - name: openrouter/google/gemma-3-27b-it
   use_system_prompt: false
@@ -1482,12 +1485,14 @@ cog.out("```\n")
   edit_format: diff-fenced
   weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
   use_repo_map: true
+  overeager: true
   editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
   weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
   use_repo_map: true
+  overeager: true
   editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-pro-experimental

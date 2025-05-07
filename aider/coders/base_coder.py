@@ -15,6 +15,13 @@ import time
 import traceback
 from collections import defaultdict
 from datetime import datetime
+
+# Optional dependency: used to convert locale codes (eg ``en_US``)
+# into human-readable language names (eg ``English``).
+try:
+    from babel import Locale  # type: ignore
+except ImportError:  # Babel not installed – we will fall back to a small mapping
+    Locale = None
 from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
@@ -1011,23 +1018,75 @@ class Coder:
             ]
         self.cur_messages = []
 
-    def get_user_language(self):
-        if self.chat_language:
-            return self.chat_language
+    def normalize_language(self, lang_code):
+        """
+        Convert a locale code such as ``en_US`` or ``fr`` into a readable
+        language name (e.g. ``English`` or ``French``).  If Babel is
+        available it is used for reliable conversion; otherwise a small
+        built-in fallback map handles common languages.
+        """
+        if not lang_code:
+            return None
 
+        # Probably already a language name
+        if (
+            len(lang_code) > 3
+            and "_" not in lang_code
+            and "-" not in lang_code
+            and lang_code[0].isupper()
+        ):
+            return lang_code
+
+        # Preferred: Babel
+        if Locale is not None:
+            try:
+                loc = Locale.parse(lang_code.replace("-", "_"))
+                return loc.get_display_name("en").capitalize()
+            except Exception:
+                pass  # Fall back to manual mapping
+
+        # Simple fallback for common languages
+        fallback = {
+            "en": "English",
+            "fr": "French",
+            "es": "Spanish",
+            "de": "German",
+            "it": "Italian",
+            "pt": "Portuguese",
+            "zh": "Chinese",
+            "ja": "Japanese",
+            "ko": "Korean",
+            "ru": "Russian",
+        }
+        return fallback.get(lang_code.split("_")[0].lower(), lang_code)
+
+    def get_user_language(self):
+        """
+        Detect the user's language preference and return a human-readable
+        language name such as ``English``. Detection order:
+
+        1. ``self.chat_language`` if explicitly set
+        2. ``locale.getlocale()``
+        3. ``LANG`` / ``LANGUAGE`` / ``LC_ALL`` / ``LC_MESSAGES`` environment variables
+        """
+        # Explicit override
+        if self.chat_language:
+            return self.normalize_language(self.chat_language)
+
+        # System locale
         try:
             lang = locale.getlocale()[0]
             if lang:
-                return lang  # Return the full language code, including country
+                return self.normalize_language(lang)
         except Exception:
-            pass
+            pass  # pragma: no cover
 
-        for env_var in ["LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"]:
+        # Environment variables
+        for env_var in ("LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"):
             lang = os.environ.get(env_var)
             if lang:
-                return lang.split(".")[
-                    0
-                ]  # Return language and country, but remove encoding if present
+                lang = lang.split(".")[0]  # Strip encoding if present
+                return self.normalize_language(lang)
 
         return None
 
@@ -1079,12 +1138,15 @@ class Coder:
         return platform_text
 
     def fmt_system_prompt(self, prompt):
+        final_reminders = []
         if self.main_model.lazy:
-            lazy_prompt = self.gpt_prompts.lazy_prompt
-        elif self.main_model.overeager:
-            lazy_prompt = self.gpt_prompts.overeager_prompt
-        else:
-            lazy_prompt = ""
+            final_reminders.append(self.gpt_prompts.lazy_prompt)
+        if self.main_model.overeager:
+            final_reminders.append(self.gpt_prompts.overeager_prompt)
+
+        user_lang = self.get_user_language()
+        if user_lang:
+            final_reminders.append(f"Reply in {user_lang}.\n")
 
         platform_text = self.get_platform_info()
 
@@ -1111,10 +1173,12 @@ class Coder:
         else:
             quad_backtick_reminder = ""
 
+        final_reminders = "\n\n".join(final_reminders)
+
         prompt = prompt.format(
             fence=self.fence,
             quad_backtick_reminder=quad_backtick_reminder,
-            lazy_prompt=lazy_prompt,
+            final_reminders=final_reminders,
             platform=platform_text,
             shell_cmd_prompt=shell_cmd_prompt,
             rename_with_shell=rename_with_shell,
