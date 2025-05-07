@@ -24,7 +24,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.82.3
 
 - Add support for `gemini-2.5-flash-preview-04-17` models.
 - Improved robustness of edit block parsing when filenames start with backticks or fences.
@@ -34,7 +34,7 @@ cog.out(text)
 - Fix parsing of diffs for newly created files (`--- /dev/null`).
 - Add markdown syntax highlighting support when editing multi-line commit messages via `/commit`, by Kay Gosho.
 - Set Gemini 2.5 Pro models to use the `overeager` prompt setting by default.
-- Add common file types (`.svg`, `.pdf`) and IDE directories (`.idea/`, `.vscode/`, etc.) to the default list of ignored files for AI comment scanning (`--watch`).
+- Add common file types (`.svg`, `.pdf`) to the default list of ignored files for AI comment scanning (`--watch`).
 - Skip scanning files larger than 1MB for AI comments (`--watch`).
 - Aider wrote 67% of the code in this release.
 

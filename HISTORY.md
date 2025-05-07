@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.82.3
 
 - Add support for `gemini-2.5-flash-preview-04-17` models.
 - Improved robustness of edit block parsing when filenames start with backticks or fences.
