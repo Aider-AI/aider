@@ -63,9 +63,9 @@ commit [0282574](https://github.com/Aider-AI/aider/commit/0282574).
 Additional runs of the benchmark from that build verified that the error in litellm's
 model cost database appears not to have been a factor:
 
-- Aider's local model database correctly overrides the litellm database, which contained an incorrect token cost at the time.
-- The correct pricing is loaded from aider's local model database and produces similar (incorrect) costs as the original run.
-- Updating aider's local model database with an absurdly high token cost resulted in an appropriately high benchmark cost report, demonstrating that the local database costs were in effect.
+- Aider's internal model database correctly overrides the litellm database, which contained an incorrect token cost at the time.
+- The correct pricing is loaded from aider's internal model database and produces similar (incorrect) costs as the original run.
+- Updating aider's internal model database with an absurdly high token cost resulted in an appropriately high benchmark cost report, demonstrating that the internal database costs were in effect.
 
 This specific build of aider was then updated with various versions of litellm using `git biset`
 to identify the first litellm commit where reasoning tokens counts were correctly reported.
