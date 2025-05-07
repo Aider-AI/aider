@@ -671,14 +671,15 @@ class Model(ModelSettings):
             if self.name.startswith("openrouter/"):
                 if not self.extra_params:
                     self.extra_params = {}
-                self.extra_params["reasoning"] = {"effort": effort}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning"] = {"effort": effort}
             else:
                 if not self.extra_params:
                     self.extra_params = {}
                 if "extra_body" not in self.extra_params:
                     self.extra_params["extra_body"] = {}
                 self.extra_params["extra_body"]["reasoning_effort"] = effort
-
     def parse_token_value(self, value):
         """
         Parse a token value string into an integer.
@@ -723,7 +724,9 @@ class Model(ModelSettings):
 
             # OpenRouter models use 'reasoning' instead of 'thinking'
             if self.name.startswith("openrouter/"):
-                self.extra_params["reasoning"] = {"max_tokens": num_tokens}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning"] = {"max_tokens": num_tokens}
             else:
                 self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
@@ -733,8 +736,13 @@ class Model(ModelSettings):
 
         if self.extra_params:
             # Check for OpenRouter reasoning format
-            if "reasoning" in self.extra_params and "max_tokens" in self.extra_params["reasoning"]:
-                budget = self.extra_params["reasoning"]["max_tokens"]
+            if self.name.startswith("openrouter/"):
+                if (
+                    "extra_body" in self.extra_params
+                    and "reasoning" in self.extra_params["extra_body"]
+                    and "max_tokens" in self.extra_params["extra_body"]["reasoning"]
+                ):
+                    budget = self.extra_params["extra_body"]["reasoning"]["max_tokens"]
             # Check for standard thinking format
             elif (
                 "thinking" in self.extra_params and "budget_tokens" in self.extra_params["thinking"]
@@ -767,8 +775,12 @@ class Model(ModelSettings):
         if self.extra_params:
             # Check for OpenRouter reasoning format
             if self.name.startswith("openrouter/"):
-                if "reasoning" in self.extra_params and "effort" in self.extra_params["reasoning"]:
-                    return self.extra_params["reasoning"]["effort"]
+                if (
+                    "extra_body" in self.extra_params
+                    and "reasoning" in self.extra_params["extra_body"]
+                    and "effort" in self.extra_params["extra_body"]["reasoning"]
+                ):
+                    return self.extra_params["extra_body"]["reasoning"]["effort"]
             # Check for standard reasoning_effort format (e.g. in extra_body)
             elif (
                 "extra_body" in self.extra_params
