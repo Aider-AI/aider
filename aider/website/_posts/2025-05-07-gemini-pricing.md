@@ -10,20 +10,27 @@ nav_exclude: true
 
 # Gemini 2.5 Pro Preview 0325 benchmark pricing
 
-There has been some concern about the low $6 price reported to run
-Gemini 2.5 Pro Preview 0325
-in the
-aider leaderboard.
-There are a couple of reasons for concern:
 
-- Aider uses litellm, which had an incorrect price for output tokens in their database at the time of the benchmark.
-- The recent benchmark of the 0506 version of Gemini 2.5 Pro Preview reports much higher costs.
+The low $6 cost reported in the leaderboard to run the aider polyglot benchmark on
+Gemini 2.5 Pro Preview 0325 was incorrect.
 
-This note reviews and audits the original 0325 benchmark results to investigate the reported price.
+This note reviews and audits the original 0325 benchmark results to investigate the reported cost.
+Two possible causes were identified, both related to the litellm package that
+aider users to connect to LLM APIs.
 
-The incorrect litellm database entry does **not** appear to have affected the aider benchmark.
+- The litellm model database had an incorrect price-per-token for output tokens in their database at the time of the benchmark. This does not appear to be a contributing factor to the incorrect benchmark cost.
+- The litellm package was incorrectly excluding reasoning tokens from the token counts it reported back to aider. This appears to be the cause of the incorrect benchmark cost.
+
+The incorrect litellm database entry does not appear to have affected the aider benchmark costs.
 Aider maintains and uses its own database of costs for some models, and it contained
-the correct pricing at the time of the benchmark and correctly loaded it.
+the correct pricing at the time of the benchmark.
+Aider appears to have
+loaded the correct cost data from its database and made use of it during the benchmark.
+Since litellm appears to have been excluding reasoning tokens from the token counts it reported,
+aider underestimated the API costs.
+
+
+# 
 Re-running the benchmark with the same aider built from commit hash [0282574](https://github.com/Aider-AI/aider/commit/0282574) 
 loads the correct pricing from aider's local db
 and produces similar costs as the original run.
