@@ -1,5 +1,5 @@
 ---
-title: A note on Gemini 2.5 Pro Preview 0325 benchmark pricing
+title: Gemini 2.5 Pro Preview 0325 benchmark pricing
 excerpt: The low price reported for Gemini 2.5 Pro Preview 0325 appears to be correct.
 draft: false
 nav_exclude: true
@@ -8,9 +8,21 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# A note on Gemini 2.5 Pro Preview 0325 benchmark pricing
+# Gemini 2.5 Pro Preview 0325 benchmark pricing
 
-  - Confirmed that aider built and run from commit 0282574 honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
+There has been some concern about the low $6 price reported to run
+Gemini 2.5 Pro Preview 0325
+in the
+aider leaderboard.
+There are a couple of reasons for concern:
+
+- Aider uses litellm, which had an incorrect price for output tokens in their database at the time of the benchmark.
+- The new 0506 version of Gemini 2.5 Pro Preview reports much higher costs to benchmark.
+
+This note reviews and audits the original 0325 benchmark results to investigate the reported price.
+
+
+Confirmed that aider built and run from commit 0282574 honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
 
 # Timeline
 
