@@ -48,7 +48,7 @@ Unfortunately the 03-25 version of Gemini 2.5 Pro Preview is no longer available
 so it is not possible to re-run the benchmark to obtain an accurate cost.
 
 As a possibly relevant comparison, the newer 05-06 version of Gemini 2.5 Pro Preview
-completed the benchmark at a cost of $41.17.
+completed the benchmark at a cost of about $38.
 
 # Investigation
 
