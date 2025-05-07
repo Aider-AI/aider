@@ -18,9 +18,7 @@ The incorrect cost has been removed from the leaderboard.
 
 An investigation determined the primary cause was that the litellm
 package (used by aider for LLM API connections) was not properly including reasoning tokens in 
-the token counts it
-reported to aider. 
-
+the token counts it reported.
 While an incorrect price-per-token entry for the model also existed in litellm's cost
 database at that time, this was found not to be a contributing factor.
 Aider's own internal, correct pricing data was utilized during the benchmark.
@@ -36,12 +34,10 @@ from v1.65.7 to v1.67.4.post1
 in commit [9351f37](https://github.com/Aider-AI/aider/commit/9351f37).
 That dependency change shipped on May 5, 2025 in aider v0.82.3.
 
-The incorrect cost has been removed from the leaderboard.
 Unfortunately the 03-25 version of Gemini 2.5 Pro Preview is no longer available,
 so it is not possible to re-run the benchmark to obtain an accurate cost.
-
 As a possibly relevant comparison, the newer 05-06 version of Gemini 2.5 Pro Preview
-completed the benchmark at a cost of about $38.
+completed the benchmark at a cost of about $37.
 
 ## Investigation detail
 
