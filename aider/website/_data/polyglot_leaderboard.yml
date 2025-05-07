@@ -1224,3 +1224,30 @@
   versions: 0.82.3.dev
   seconds_per_case: 50.1
   total_cost: 1.8451
+
+- dirname: 2025-05-06-21-34-36--gemini0506-diff-fenced
+  test_cases: 225
+  model: gemini/gemini-2.5-pro-preview-05-06
+  edit_format: diff-fenced
+  commit_hash: 8159cbf-dirty
+  pass_rate_1: 37.8
+  pass_rate_2: 75.6
+  pass_num_1: 85
+  pass_num_2: 170
+  percent_cases_well_formed: 95.1
+  error_outputs: 11
+  num_malformed_responses: 11
+  num_with_malformed_responses: 11
+  user_asks: 139
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-05-06
+  date: 2025-05-06
+  versions: 0.82.4.dev
+  seconds_per_case: 158.8
+  total_cost: 41.1744
+
