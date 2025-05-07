@@ -26,7 +26,6 @@ json5
 psutil
 watchfiles
 socksio
-pip
 pillow
 oslex
 google-generativeai
