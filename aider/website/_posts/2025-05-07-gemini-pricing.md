@@ -33,26 +33,26 @@ to run each benchmark.
 
 - 2025-04-04 19:54:45 UTC (Sat Apr 5 08:54:45 2025 +1300)
   - Correct value `"output_cost_per_token": 0.000010` added to `aider/resources/model-metadata.json`
-  - Commit eda796d in aider.
+  - Commit [eda796d](https://github.com/Aider-AI/aider/commit/eda796d) in aider.
 
 - 2025-04-05 16:20:01 UTC (Sun Apr 6 00:20:01 2025 +0800)
   - First litellm commit of `gemini/gemini-2.5-pro-preview-03-25` metadata, with incorrect price `"output_cost_per_token": 0.0000010`
-  - Commit cd0a1e6 in litellm.
+  - Commit [cd0a1e6](https://github.com/BerriAI/litellm/commit/cd0a1e6) in litellm.
 
 - 2025-04-10 01:48:43 UTC (Wed Apr 9 18:48:43 2025 -0700)
   - litellm commit updates `gemini/gemini-2.5-pro-preview-03-25` metadata, but not price
-  - Commit ac4f32f in litellm.
+  - Commit [ac4f32f](https://github.com/BerriAI/litellm/commit/ac4f32f) in litellm.
 
 - 2025-04-12 04:55:50 UTC (2025-04-12-04-55-50 UTC)
   - Benchmark performed 
-  - Aider repo hash 0282574 recorded in benchmark results, without "dirty" indicating it was run on a clean checkout of the repo at commit 0282574.
-  - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at commit 0282574
-  - Confirmed that aider built and run from commit 0282574 honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
+  - Aider repo hash [0282574](https://github.com/Aider-AI/aider/commit/0282574) recorded in benchmark results, without "dirty" indicating it was run on a clean checkout of the repo at commit [0282574](https://github.com/Aider-AI/aider/commit/0282574).
+  - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at commit [0282574](https://github.com/Aider-AI/aider/commit/0282574)
+  - Confirmed that aider built and run from commit [0282574](https://github.com/Aider-AI/aider/commit/0282574) honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
 
 - 2025-04-12 15:06:39 UTC (Apr 12 08:06:39 2025 -0700)
   - Benchmark results added to repo
-  - Commit 7fbeafa in aider.
+  - Commit [7fbeafa](https://github.com/Aider-AI/aider/commit/7fbeafa) in aider.
 
 - 2025-04-12 15:20:04 UTC (Sat Apr 12 19:20:04 2025 +0400)
   - litellm commit fixes `gemini/gemini-2.5-pro-preview-03-25` price metadata to `"output_cost_per_token": 0.00001`
-  - Commit 93037ea in litellm.
+  - Commit [93037ea](https://github.com/BerriAI/litellm/commit/93037ea) in litellm.
