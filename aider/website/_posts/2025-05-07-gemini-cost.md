@@ -8,7 +8,7 @@ nav_exclude: true
 <p class="post-date">{{ page.date | date: "%B %d, %Y" }}</p>
 {% endif %}
 
-# Gemini 2.5 Pro Preview 03-25 benchmark pricing
+# Gemini 2.5 Pro Preview 03-25 benchmark cost
 
 The $6.32 cost reported to run the aider polyglot benchmark on
 Gemini 2.5 Pro Preview 03-25 was incorrect.
@@ -21,7 +21,7 @@ aider uses to connect to LLM APIs:
 
 - The litellm model database had an incorrect price-per-token for Gemini 2.5 Pro Preview 03-25 in their costs database. 
 This does not appear to be a contributing factor to the incorrect benchmark cost.
-- The litellm package was incorrectly excluding reasoning tokens from the token counts it reported to aider. This appears to be the cause of the incorrect benchmark cost.
+- The litellm package was excluding reasoning tokens from the token counts it reported to aider. This appears to be the cause of the incorrect benchmark cost.
 
 The incorrect litellm database entry does not appear to have affected the aider benchmark costs.
 Aider maintains and uses its own database of costs for some models, and it contained
@@ -44,7 +44,7 @@ in commit [9351f37](https://github.com/Aider-AI/aider/commit/9351f37).
 That dependency change shipped on May 5, 2025 in aider v0.82.3.
 
 The incorrect cost has been removed from the leaderboard.
-Unfortunately, the 03-25 version of Gemini 2.5 Pro Preview is no longer available,
+Unfortunately the 03-25 version of Gemini 2.5 Pro Preview is no longer available,
 so it is not possible to re-run the benchmark to obtain an accurate cost.
 
 As a possibly relevant comparison, the newer 05-06 version of Gemini 2.5 Pro Preview
@@ -67,7 +67,7 @@ model cost database appears not to have been a factor:
 - Updating aider's local model database with an absurdly high token cost resulted in an appropriately high benchmark cost report, demonstrating that the local database costs were in effect.
 
 This specific build of aider was then updated with various versions of litellm using `git biset`
-to identify the first litellm commit where correct tokens counts were returned.
+to identify the first litellm commit where reasoning tokens counts were reported.
 
 
 
