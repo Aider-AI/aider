@@ -831,7 +831,7 @@
   date: 2025-04-12
   versions: 0.81.3.dev
   seconds_per_case: 45.3
-  total_cost: 6.3174
+  total_cost: 0 # incorrect: 6.3174
 
 - dirname: 2025-03-29-05-24-55--chatgpt4o-mar28-diff
   test_cases: 225
