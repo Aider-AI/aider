@@ -23,7 +23,7 @@ This note reviews and audits the original 0325 benchmark results to investigate 
 
 The incorrect litellm database entry does not appear to have affected the aider benchmark.
 Aider maintains and uses its own database of costs for some models, and it contained
-the correct pricing at the time of the benchmark.
+the correct pricing at the time of the benchmark and correctly loaded it.
 This was possible to confirm because
 aider records the git commit hash of the aider repository that was used
 to run each benchmark.
@@ -45,8 +45,8 @@ to run each benchmark.
 
 - 2025-04-12 04:55:50 UTC (2025-04-12-04-55-50 UTC)
   - Benchmark performed 
-  - Aider repo hash [0282574](https://github.com/Aider-AI/aider/commit/0282574) recorded in benchmark results, without "dirty" indicating it was run on a clean checkout of the repo at commit [0282574](https://github.com/Aider-AI/aider/commit/0282574).
-  - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at commit [0282574](https://github.com/Aider-AI/aider/commit/0282574)
+  - Aider repo hash [0282574 recorded in benchmark results](https://github.com/Aider-AI/aider/blob/7fbeafa1cfd4ad83f7499417837cdfa6b16fe7a1/aider/website/_data/polyglot_leaderboard.yml#L814), without "dirty", indicating that the benchmark was run on a clean checkout of the aider repo at commit [0282574](https://github.com/Aider-AI/aider/commit/0282574).
+  - Correct value `"output_cost_per_token": 0.000010` is in `aider/resources/model-metadata.json` at this commit [0282574](https://github.com/Aider-AI/aider/blob/0282574/aider/resources/model-metadata.json#L357)
   - Confirmed that aider built and run from commit [0282574](https://github.com/Aider-AI/aider/commit/0282574) honors `output_cost_per_token` from `aider/resources/model-metadata.json` by putting in an absurdly high value and benchmarking `gemini/gemini-2.5-pro-preview-03-25`
 
 - 2025-04-12 15:06:39 UTC (Apr 12 08:06:39 2025 -0700)
