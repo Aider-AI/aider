@@ -278,17 +278,20 @@ cog.outl("```")
 ## Enable/disable commits when repo is found dirty (default: True)
 #dirty-commits: true
 
-## Attribute aider code changes in the git author name (default: True)
-#attribute-author: true
+## Attribute aider code changes in the git author name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence.
+#attribute-author: xxx
 
-## Attribute aider commits in the git committer name (default: True)
-#attribute-committer: true
+## Attribute aider commits in the git committer name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence for aider edits.
+#attribute-committer: xxx
 
 ## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
 #attribute-commit-message-author: false
 
 ## Prefix all commit messages with 'aider: ' (default: False)
 #attribute-commit-message-committer: false
+
+## Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.
+#attribute-co-authored-by: false
 
 ## Enable/disable git pre-commit hooks with --no-verify (default: False)
 #git-commit-verify: false
@@ -411,6 +414,9 @@ cog.outl("```")
 
 #################
 # Other settings:
+
+## Never prompt for or attempt to install Playwright for web scraping (default: False).
+#disable-playwright: false
 
 ## specify a file to edit (can be used multiple times)
 #file: xxx

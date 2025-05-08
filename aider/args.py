@@ -427,14 +427,20 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--attribute-author",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Attribute aider code changes in the git author name (default: True)",
+        default=None,
+        help=(
+            "Attribute aider code changes in the git author name (default: True). If explicitly set"
+            " to True, overrides --attribute-co-authored-by precedence."
+        ),
     )
     group.add_argument(
         "--attribute-committer",
         action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Attribute aider commits in the git committer name (default: True)",
+        default=None,
+        help=(
+            "Attribute aider commits in the git committer name (default: True). If explicitly set"
+            " to True, overrides --attribute-co-authored-by precedence for aider edits."
+        ),
     )
     group.add_argument(
         "--attribute-commit-message-author",
@@ -447,6 +453,16 @@ def get_parser(default_config_files, git_root):
         action=argparse.BooleanOptionalAction,
         default=False,
         help="Prefix all commit messages with 'aider: ' (default: False)",
+    )
+    group.add_argument(
+        "--attribute-co-authored-by",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help=(
+            "Attribute aider edits using the Co-authored-by trailer in the commit message"
+            " (default: False). If True, this takes precedence over default --attribute-author and"
+            " --attribute-committer behavior unless they are explicitly set to True."
+        ),
     )
     group.add_argument(
         "--git-commit-verify",
@@ -670,6 +686,12 @@ def get_parser(default_config_files, git_root):
 
     ######
     group = parser.add_argument_group("Other settings")
+    group.add_argument(
+        "--disable-playwright",
+        action="store_true",
+        help="Never prompt for or attempt to install Playwright for web scraping (default: False).",
+        default=False,
+    )
     group.add_argument(
         "--file",
         action="append",
