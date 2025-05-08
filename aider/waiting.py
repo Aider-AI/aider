@@ -44,6 +44,7 @@ class WaitingSpinner:
         self._stop_event.set()
         if self._thread.is_alive():
             self._thread.join(timeout=0.1)
+        self.spinner.end()
 
     # Allow use as a context-manager
     def __enter__(self):
