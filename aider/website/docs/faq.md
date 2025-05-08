@@ -264,15 +264,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>1,826,168</td><td class='right'>83.3%</td></tr>
-<tr><td>o3</td><td class='right'>239,619</td><td class='right'>10.9%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>56,318</td><td class='right'>2.6%</td></tr>
-<tr><td>gemini/gemini-2.5-flash-preview-04-17</td><td class='right'>18,645</td><td class='right'>0.9%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>16,524</td><td class='right'>0.8%</td></tr>
-<tr><td>o4-mini</td><td class='right'>16,499</td><td class='right'>0.8%</td></tr>
-<tr><td>xai/grok-3-fast-beta</td><td class='right'>10,288</td><td class='right'>0.5%</td></tr>
-<tr><td>None</td><td class='right'>8,001</td><td class='right'>0.4%</td></tr>
-<tr><td>gemini/REDACTED</td><td class='right'>606</td><td class='right'>0.0%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>1,269,239</td><td class='right'>66.2%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>442,019</td><td class='right'>23.1%</td></tr>
+<tr><td>o3</td><td class='right'>138,842</td><td class='right'>7.2%</td></tr>
+<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>41,017</td><td class='right'>2.1%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>15,587</td><td class='right'>0.8%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-05-06</td><td class='right'>8,576</td><td class='right'>0.4%</td></tr>
+<tr><td>gemini/REDACTED</td><td class='right'>1,989</td><td class='right'>0.1%</td></tr>
 </table>
 
 {: .note :}

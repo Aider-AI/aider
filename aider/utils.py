@@ -1,7 +1,7 @@
 import itertools
 import os
 import platform
-import shlex
+import oslex
 import subprocess
 import sys
 import tempfile
@@ -345,10 +345,7 @@ def printable_shell_command(cmd_list):
     Returns:
         str: Shell-escaped command string.
     """
-    if platform.system() == "Windows":
-        return subprocess.list2cmdline(cmd_list)
-    else:
-        return shlex.join(cmd_list)
+    return oslex.join(cmd_list)
 
 
 def main():

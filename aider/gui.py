@@ -11,7 +11,7 @@ from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.main import main as cli_main
-from aider.scrape import Scraper
+from aider.scrape import Scraper, has_playwright
 
 
 class CaptureIO(InputOutput):
@@ -484,7 +484,7 @@ class GUI:
         url = self.web_content
 
         if not self.state.scraper:
-            self.scraper = Scraper(print_error=self.info)
+            self.scraper = Scraper(print_error=self.info, playwright_available=has_playwright())
 
         content = self.scraper.scrape(url) or ""
         if content.strip():

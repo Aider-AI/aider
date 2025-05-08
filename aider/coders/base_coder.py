@@ -2047,6 +2047,44 @@ class Coder:
             self.usage_report = tokens_report
             return
 
+        try:
+            # Try and use litellm's built in cost calculator. Seems to work for non-streaming only?
+            cost = litellm.completion_cost(completion_response=completion)
+        except Exception:
+            cost = 0
+
+        if not cost:
+            cost = self.compute_costs_from_tokens(
+                prompt_tokens, completion_tokens, cache_write_tokens, cache_hit_tokens
+            )
+
+        self.total_cost += cost
+        self.message_cost += cost
+
+        def format_cost(value):
+            if value == 0:
+                return "0.00"
+            magnitude = abs(value)
+            if magnitude >= 0.01:
+                return f"{value:.2f}"
+            else:
+                return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
+
+        cost_report = (
+            f"Cost: ${format_cost(self.message_cost)} message,"
+            f" ${format_cost(self.total_cost)} session."
+        )
+
+        if cache_hit_tokens and cache_write_tokens:
+            sep = "\n"
+        else:
+            sep = " "
+
+        self.usage_report = tokens_report + sep + cost_report
+
+    def compute_costs_from_tokens(
+        self, prompt_tokens, completion_tokens, cache_write_tokens, cache_hit_tokens
+    ):
         cost = 0
 
         input_cost_per_token = self.main_model.info.get("input_cost_per_token") or 0
@@ -2074,30 +2112,7 @@ class Coder:
             cost += prompt_tokens * input_cost_per_token
 
         cost += completion_tokens * output_cost_per_token
-
-        self.total_cost += cost
-        self.message_cost += cost
-
-        def format_cost(value):
-            if value == 0:
-                return "0.00"
-            magnitude = abs(value)
-            if magnitude >= 0.01:
-                return f"{value:.2f}"
-            else:
-                return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
-
-        cost_report = (
-            f"Cost: ${format_cost(self.message_cost)} message,"
-            f" ${format_cost(self.total_cost)} session."
-        )
-
-        if cache_hit_tokens and cache_write_tokens:
-            sep = "\n"
-        else:
-            sep = " "
-
-        self.usage_report = tokens_report + sep + cost_report
+        return cost
 
     def show_usage_report(self):
         if not self.usage_report:
@@ -2377,7 +2392,7 @@ class Coder:
             context = self.get_context_from_history(self.cur_messages)
 
         try:
-            res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
+            res = self.repo.commit(fnames=edited, context=context, aider_edits=True, coder=self)
             if res:
                 self.show_auto_commit_outcome(res)
                 commit_hash, commit_message = res
@@ -2413,7 +2428,7 @@ class Coder:
         if not self.repo:
             return
 
-        self.repo.commit(fnames=self.need_commit_before_edits)
+        self.repo.commit(fnames=self.need_commit_before_edits, coder=self)
 
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)
