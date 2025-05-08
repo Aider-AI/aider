@@ -231,8 +231,57 @@ class ModelInfoManager:
         if litellm_info:
             return litellm_info
 
+        if not cached_info and model.startswith("openrouter/"):
+            openrouter_info = self.fetch_openrouter_model_info(model)
+            if openrouter_info:
+                return openrouter_info
+
         return cached_info
 
+
+    def fetch_openrouter_model_info(self, model):
+        """
+        Fetch model info by scraping the openrouter model page.
+        Expected URL: https://openrouter.ai/<model_route>
+        Example: openrouter/qwen/qwen-2.5-72b-instruct:free
+        Returns a dict with keys: max_tokens, max_input_tokens, max_output_tokens, input_cost_per_token, output_cost_per_token.
+        """
+        url_part = model[len("openrouter/"):]
+        url = "https://openrouter.ai/" + url_part
+        try:
+            import requests
+            response = requests.get(url, timeout=5, verify=self.verify_ssl)
+            if response.status_code != 200:
+                return {}
+            html = response.text
+            import re
+            if re.search(rf'The model\s*.*{re.escape(url_part)}.* is not available', html, re.IGNORECASE):
+                print(f"\033[91mError: Model '{url_part}' is not available\033[0m")
+                return {}
+            text = re.sub(r'<[^>]+>', ' ', html)
+            context_match = re.search(r"([\d,]+)\s*context", text)
+            if context_match:
+                context_str = context_match.group(1).replace(",", "")
+                context_size = int(context_str)
+            else:
+                context_size = None
+            input_cost_match = re.search(r"\$\s*([\d.]+)\s*/M input tokens", text, re.IGNORECASE)
+            output_cost_match = re.search(r"\$\s*([\d.]+)\s*/M output tokens", text, re.IGNORECASE)
+            input_cost = float(input_cost_match.group(1)) / 1000000 if input_cost_match else None
+            output_cost = float(output_cost_match.group(1)) / 1000000 if output_cost_match else None
+            if context_size is None or input_cost is None or output_cost is None:
+                return {}
+            params = {
+                "max_input_tokens": context_size,
+                "max_tokens": context_size,
+                "max_output_tokens": context_size,
+                "input_cost_per_token": input_cost,
+                "output_cost_per_token": output_cost,
+            }
+            return params
+        except Exception as e:
+            print("Error fetching openrouter info:", str(e))
+            return {}
 
 model_info_manager = ModelInfoManager()
 
@@ -331,6 +380,15 @@ class Model(ModelSettings):
                 else:
                     # For non-dict values, simply update
                     self.extra_params[key] = value
+
+        # Ensure OpenRouter models accept thinking_tokens and reasoning_effort
+        if self.name.startswith("openrouter/"):
+            if self.accepts_settings is None:
+                self.accepts_settings = []
+            if "thinking_tokens" not in self.accepts_settings:
+                self.accepts_settings.append("thinking_tokens")
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
 
     def apply_generic_model_settings(self, model):
         if "/o3-mini" in model:
@@ -659,11 +717,18 @@ class Model(ModelSettings):
     def set_reasoning_effort(self, effort):
         """Set the reasoning effort parameter for models that support it"""
         if effort is not None:
-            if not self.extra_params:
-                self.extra_params = {}
-            if "extra_body" not in self.extra_params:
-                self.extra_params["extra_body"] = {}
-            self.extra_params["extra_body"]["reasoning_effort"] = effort
+            if self.name.startswith("openrouter/"):
+                if not self.extra_params:
+                    self.extra_params = {}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning"] = {"effort": effort}
+            else:
+                if not self.extra_params:
+                    self.extra_params = {}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning_effort"] = effort
 
     def parse_token_value(self, value):
         """
@@ -709,7 +774,9 @@ class Model(ModelSettings):
 
             # OpenRouter models use 'reasoning' instead of 'thinking'
             if self.name.startswith("openrouter/"):
-                self.extra_params["reasoning"] = {"max_tokens": num_tokens}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning"] = {"max_tokens": num_tokens}
             else:
                 self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
 
@@ -719,8 +786,13 @@ class Model(ModelSettings):
 
         if self.extra_params:
             # Check for OpenRouter reasoning format
-            if "reasoning" in self.extra_params and "max_tokens" in self.extra_params["reasoning"]:
-                budget = self.extra_params["reasoning"]["max_tokens"]
+            if self.name.startswith("openrouter/"):
+                if (
+                    "extra_body" in self.extra_params
+                    and "reasoning" in self.extra_params["extra_body"]
+                    and "max_tokens" in self.extra_params["extra_body"]["reasoning"]
+                ):
+                    budget = self.extra_params["extra_body"]["reasoning"]["max_tokens"]
             # Check for standard thinking format
             elif (
                 "thinking" in self.extra_params and "budget_tokens" in self.extra_params["thinking"]
@@ -750,12 +822,21 @@ class Model(ModelSettings):
 
     def get_reasoning_effort(self):
         """Get reasoning effort value if available"""
-        if (
-            self.extra_params
-            and "extra_body" in self.extra_params
-            and "reasoning_effort" in self.extra_params["extra_body"]
-        ):
-            return self.extra_params["extra_body"]["reasoning_effort"]
+        if self.extra_params:
+            # Check for OpenRouter reasoning format
+            if self.name.startswith("openrouter/"):
+                if (
+                    "extra_body" in self.extra_params
+                    and "reasoning" in self.extra_params["extra_body"]
+                    and "effort" in self.extra_params["extra_body"]["reasoning"]
+                ):
+                    return self.extra_params["extra_body"]["reasoning"]["effort"]
+            # Check for standard reasoning_effort format (e.g. in extra_body)
+            elif (
+                "extra_body" in self.extra_params
+                and "reasoning_effort" in self.extra_params["extra_body"]
+            ):
+                return self.extra_params["extra_body"]["reasoning_effort"]
         return None
 
     def is_deepseek_r1(self):

@@ -314,8 +314,6 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_lua(self):
         self._test_language_repo_map("lua", "lua", "greet")
 
-    # "ocaml": ("ml", "Greeter"), # not supported in tsl-pack (yet?)
-
     def test_language_php(self):
         self._test_language_repo_map("php", "php", "greet")
 
@@ -384,6 +382,12 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_scala(self):
         self._test_language_repo_map("scala", "scala", "Greeter")
 
+    def test_language_ocaml(self):
+        self._test_language_repo_map("ocaml", "ml", "Greeter")
+
+    def test_language_ocaml_interface(self):
+        self._test_language_repo_map("ocaml_interface", "mli", "Greeter")
+
     def _test_language_repo_map(self, lang, key, symbol):
         """Helper method to test repo map generation for a specific language."""
         # Get the fixture file path and name based on language
@@ -407,6 +411,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
             dump(lang)
             dump(result)
 
+            print(result)
             self.assertGreater(len(result.strip().splitlines()), 1)
 
             # Check if the result contains all the expected files and symbols

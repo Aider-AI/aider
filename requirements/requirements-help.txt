@@ -93,6 +93,10 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
+hf-xet==1.1.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
@@ -101,7 +105,7 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-huggingface-hub[inference]==0.30.2
+huggingface-hub[inference]==0.31.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -187,7 +191,7 @@ pillow==11.2.1
     #   -c requirements/common-constraints.txt
     #   llama-index-core
     #   sentence-transformers
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via
     #   -c requirements/common-constraints.txt
     #   banks

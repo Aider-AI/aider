@@ -1,5 +1,19 @@
 # Release history
 
+### main branch
+- Automatically fetch model parameters (context window, pricing) for OpenRouter models directly from their website, by Stefan Hladnik.
+- Added support for `gemini-2.5-pro-preview-05-06` models.
+- Enabled support for `thinking_tokens` and `reasoning_effort` parameters for OpenRouter models.
+- Added model settings for `openrouter/google/gemini-2.5-pro-preview-03-25`.
+ Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
+- Added `--disable-playwright` flag to prevent Playwright installation prompts and usage, by Andrew Grigorev.
+- The `aider scrape` command-line tool will now use Playwright for web scraping if it is available, by Jon Keys.
+- Added repomap support for OCaml and OCaml interface files, by Andrey Popp.
+- Improved cost calculation using `litellm.completion_cost` where available.
+- Fixed linter command execution on Windows by adopting `oslex` for argument quoting, by Titusz Pan.
+- Improved cross-platform display of shell commands by using `oslex` for robust argument quoting, by Titusz Pan.
+- Aider wrote 45% of the code in this release.
+
 ### Aider v0.82.3
 
 - Add support for `gemini-2.5-flash-preview-04-17` models.
@@ -12,7 +26,6 @@
 - Set Gemini 2.5 Pro models to use the `overeager` prompt setting by default.
 - Add common file types (`.svg`, `.pdf`) to the default list of ignored files for AI comment scanning (`--watch`).
 - Skip scanning files larger than 1MB for AI comments (`--watch`).
-- Aider wrote 67% of the code in this release.
 
 ### Aider v0.82.2
 
