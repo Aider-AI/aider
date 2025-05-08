@@ -475,6 +475,8 @@ class TestInputOutputMultilineMode(unittest.TestCase):
             mock_print.assert_called_once()
 
 
+@patch("aider.io.is_dumb_terminal", return_value=False)
+@patch.dict(os.environ, {"NO_COLOR": ""})
 class TestInputOutputFormatFiles(unittest.TestCase):
     def test_format_files_for_input_pretty_false(self):
         io = InputOutput(pretty=False, fancy_input=False)
