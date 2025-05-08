@@ -43,6 +43,9 @@ from aider.reasoning_tags import (
 )
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
+from rich.live import Live
+from rich.status import Status
+from rich.text import Text
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 
@@ -1415,6 +1418,7 @@ class Coder:
         self.usage_report = None
         exhausted = False
         interrupted = False
+        self.live_status = None # Initialize here
         try:
             while True:
                 try:
@@ -1752,7 +1756,24 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
+        # Determine if we are in an interactive terminal using the io object's console
+        is_interactive_terminal = hasattr(self.io, 'console') and self.io.console.is_terminal
         try:
+            # Setup Live status display if interactive
+            if is_interactive_terminal:
+                # Create a Status object with a spinner and a short message
+                status = Status(
+                    "Waiting for response",
+                    spinner_style=self.io.tool_output_color
+                )
+                # Use Live with transient=True so it disappears automatically on stop
+                self.live_status = Live(
+                    status,
+                    console=self.io.console,
+                    transient=True
+                )
+                self.live_status.start(refresh=True)
+
             hash_object, completion = model.send_completion(
                 messages,
                 functions,
@@ -1779,6 +1800,11 @@ class Coder:
             self.keyboard_interrupt()
             raise kbi
         finally:
+            # Ensure the Live status display is stopped if it hasn't been already
+            if self.live_status:
+                self.live_status.stop()
+                self.live_status = None # Clear after stopping
+
             self.io.log_llm_history(
                 "LLM RESPONSE",
                 format_content("ASSISTANT", self.partial_response_content),
@@ -1835,6 +1861,11 @@ class Coder:
             self.io.tool_error(show_content_err)
             raise Exception("No data found in LLM response!")
 
+        # Stop the spinner *before* showing the final output
+        if self.live_status:
+            self.live_status.stop()
+            self.live_status = None
+
         show_resp = self.render_incremental_response(True)
 
         if reasoning_content:
@@ -1855,6 +1886,7 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         received_content = False
+        stopped_spinner = False # Track if we stopped the spinner
 
         for chunk in completion:
             if len(chunk.choices) == 0:
@@ -1908,6 +1940,12 @@ class Coder:
                 pass
 
             self.partial_response_content += text
+
+            # Stop the spinner on first meaningful content
+            if received_content and self.live_status and not stopped_spinner:
+                self.live_status.stop()
+                self.live_status = None # Prevent finally block from stopping again
+                stopped_spinner = True
 
             if self.show_pretty():
                 self.live_incremental_response(False)
