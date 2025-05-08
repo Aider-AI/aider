@@ -2,9 +2,9 @@
 
 ### main branch
 
-- Added support for `qwen3-235b` models, including `openrouter/qwen/qwen3-235b-a22b`.
+- Added support for `qwen3-235b` models.
 - Added support for `gemini-2.5-pro-preview-05-06` models.
-- Added repomap support for OCaml and OCaml interface files, by Andrey Popp.
+- Added repo-map support for OCaml and OCaml interface files, by Andrey Popp.
 - Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
 - Updated Gemini model aliases (e.g., `gemini`, `gemini-2.5-pro`) to point to the `05-06` preview versions.
 - Marked Gemini 2.5 Pro preview models as `overeager` by default.
