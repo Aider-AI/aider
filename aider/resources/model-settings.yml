@@ -1388,6 +1388,7 @@
   accepts_settings: ["thinking_tokens"]
 
 - name: openrouter/google/gemini-2.5-pro-preview-03-25
+  overeager: true
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
@@ -1406,6 +1407,7 @@
   editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
 
 - name: openrouter/google/gemini-2.5-pro-preview-05-06
+  overeager: true
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
