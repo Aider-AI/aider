@@ -1253,7 +1253,7 @@
 
 - dirname: 2025-05-08-03-20-24--qwen3-32b-default
   test_cases: 225
-  model: openrouter/qwen/qwen3-32b
+  model: Qwen3 32B
   edit_format: diff
   commit_hash: aaacee5-dirty, aeaf259
   pass_rate_1: 14.2
@@ -1281,7 +1281,7 @@
 
 - dirname: 2025-05-08-03-22-37--qwen3-235b-defaults
   test_cases: 225
-  model: openrouter/qwen/qwen3-235b-a22b
+  model: Qwen3 235B A22B
   edit_format: diff
   commit_hash: aaacee5-dirty
   pass_rate_1: 17.3
