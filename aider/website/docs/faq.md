@@ -264,12 +264,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>668,483</td><td class='right'>55.7%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>442,019</td><td class='right'>36.9%</td></tr>
-<tr><td>o3</td><td class='right'>52,666</td><td class='right'>4.4%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-05-06</td><td class='right'>18,654</td><td class='right'>1.6%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>15,587</td><td class='right'>1.3%</td></tr>
-<tr><td>gemini/REDACTED</td><td class='right'>1,989</td><td class='right'>0.2%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-05-06</td><td class='right'>575,433</td><td class='right'>40.7%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>413,815</td><td class='right'>29.3%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>263,261</td><td class='right'>18.6%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>135,109</td><td class='right'>9.6%</td></tr>
+<tr><td>o3</td><td class='right'>15,154</td><td class='right'>1.1%</td></tr>
+<tr><td>together_ai/REDACTED</td><td class='right'>7,707</td><td class='right'>0.5%</td></tr>
+<tr><td>together_ai/Qwen/Qwen3-235B-A22B-fp8-tput</td><td class='right'>1,994</td><td class='right'>0.1%</td></tr>
 </table>
 
 {: .note :}

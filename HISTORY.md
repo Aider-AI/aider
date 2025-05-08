@@ -5,6 +5,7 @@
 - Added support for `qwen3-235b` models.
 - Added support for `gemini-2.5-pro-preview-05-06` models.
 - Added repo-map support for OCaml and OCaml interface files, by Andrey Popp.
+- Added a spinner animation while waiting for the LLM to start streaming its response.
 - Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
 - Updated Gemini model aliases (e.g., `gemini`, `gemini-2.5-pro`) to point to the `05-06` preview versions.
 - Marked Gemini 2.5 Pro preview models as `overeager` by default.
@@ -20,7 +21,11 @@
 - The `aider scrape` command-line tool will now use Playwright for web scraping if it is available, by Jon Keys.
 - Fixed linter command execution on Windows by adopting `oslex` for argument quoting, by Titusz Pan.
 - Improved cross-platform display of shell commands by using `oslex` for robust argument quoting, by Titusz Pan.
-- Aider wrote 46% of the code in this release.
+- Improved `/ask` mode to instruct the LLM to elide unchanging code in its responses.
+- Ensured web scraping in the GUI also respects Playwright availability and the `--disable-playwright` flag.
+- Improved display of filenames in the prompt header using rich Text formatting.
+- Enabled `reasoning_effort` for Gemini 2.5 Flash models.
+- Aider wrote 50% of the code in this release.
 
 ### Aider v0.82.3
 
