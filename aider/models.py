@@ -14,6 +14,7 @@ from typing import Optional, Union
 import json5
 import yaml
 from PIL import Image
+from pydantic import TypeAdapter, ValidationError
 
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
@@ -755,14 +756,18 @@ class Model(ModelSettings):
                     self.extra_params["extra_body"] = {}
                 self.extra_params["extra_body"]["reasoning_effort"] = effort
 
-    def set_enable_thinking(self, setting):
+    def set_enable_thinking(self, setting, io):
         """Set the enable thinking parameter for models that support it"""
         if setting is not None:
             if not self.extra_params:
                 self.extra_params = {}
             if "extra_body" not in self.extra_params:
                 self.extra_params["extra_body"] = {}
-            self.extra_params["extra_body"]["enable_thinking"] = setting
+            try:
+                setting = TypeAdapter(bool).validate_python(setting)
+                self.extra_params["extra_body"]["enable_thinking"] = setting
+            except ValidationError:
+                io.tool_warning("Warning: the enable-thinking command expects true or false")
 
     def parse_token_value(self, value):
         """

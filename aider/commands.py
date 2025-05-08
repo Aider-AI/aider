@@ -1601,7 +1601,7 @@ class Commands:
             return
 
         value = args.strip()
-        model.set_enable_thinking(value)
+        model.set_enable_thinking(value, self.io)
         thinking_value = model.get_enable_thinking()
         self.io.tool_output(f"Set enable thinking to {thinking_value}")
         self.io.tool_output()
