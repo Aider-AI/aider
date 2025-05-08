@@ -19,6 +19,7 @@ from tqdm import tqdm
 
 from aider.dump import dump
 from aider.special import filter_important_files
+from aider.utils import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -340,7 +341,9 @@ class RepoMap:
                 line=-1,
             )
 
-    def get_ranked_tags(self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents):
+    def get_ranked_tags(
+        self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, progress=None
+    ):
         import networkx as nx
 
         defines = defaultdict(set)
@@ -376,6 +379,8 @@ class RepoMap:
         for fname in fnames:
             if self.verbose:
                 self.io.tool_output(f"Processing {fname}")
+            if progress and not showing_bar:
+                progress()
 
             try:
                 file_ok = Path(fname).is_file()
@@ -453,6 +458,9 @@ class RepoMap:
                 G.add_edge(definer, definer, weight=0.1, ident=ident)
 
         for ident in idents:
+            if progress:
+                progress()
+
             definers = defines[ident]
 
             mul = 1.0
@@ -503,6 +511,9 @@ class RepoMap:
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
+            if progress:
+                progress()
+
             src_rank = ranked[src]
             total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
             # dump(src, src_rank, total_weight)
@@ -610,24 +621,25 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        with self.io.console.status(
-            "[bold green]Updating repo map...", spinner="dots"
-        ) as status:
-            ranked_tags = self.get_ranked_tags(
-                chat_fnames,
-                other_fnames,
-                mentioned_fnames,
-                mentioned_idents,
-                # No progress callback needed for rich.status
-            )
+        spin = Spinner("Updating repo map")
 
-            other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
-            special_fnames = filter_important_files(other_rel_fnames)
+        ranked_tags = self.get_ranked_tags(
+            chat_fnames,
+            other_fnames,
+            mentioned_fnames,
+            mentioned_idents,
+            progress=spin.step,
+        )
+
+        other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
+        special_fnames = filter_important_files(other_rel_fnames)
         ranked_tags_fnames = set(tag[0] for tag in ranked_tags)
         special_fnames = [fn for fn in special_fnames if fn not in ranked_tags_fnames]
         special_fnames = [(fn,) for fn in special_fnames]
 
         ranked_tags = special_fnames + ranked_tags
+
+        spin.step()
 
         num_tags = len(ranked_tags)
         lower_bound = 0
@@ -640,31 +652,31 @@ class RepoMap:
         self.tree_cache = dict()
 
         middle = min(int(max_map_tokens // 25), num_tags)
-        with self.io.console.status(
-            "[bold green]Refining repo map...", spinner="dots"
-        ) as status:
-            while lower_bound <= upper_bound:
-                # dump(lower_bound, middle, upper_bound)
+        while lower_bound <= upper_bound:
+            # dump(lower_bound, middle, upper_bound)
 
-                tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
-                num_tokens = self.token_count(tree)
+            spin.step()
 
-                pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
-                ok_err = 0.15
-                if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < ok_err:
-                    best_tree = tree
-                    best_tree_tokens = num_tokens
+            tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
+            num_tokens = self.token_count(tree)
 
-                    if pct_err < ok_err:
-                        break
+            pct_err = abs(num_tokens - max_map_tokens) / max_map_tokens
+            ok_err = 0.15
+            if (num_tokens <= max_map_tokens and num_tokens > best_tree_tokens) or pct_err < ok_err:
+                best_tree = tree
+                best_tree_tokens = num_tokens
 
-                if num_tokens < max_map_tokens:
-                    lower_bound = middle + 1
-                else:
-                    upper_bound = middle - 1
+                if pct_err < ok_err:
+                    break
 
-                middle = int((lower_bound + upper_bound) // 2)
-        # Status context manager handles stopping the spinner automatically
+            if num_tokens < max_map_tokens:
+                lower_bound = middle + 1
+            else:
+                upper_bound = middle - 1
+
+            middle = int((lower_bound + upper_bound) // 2)
+
+        spin.end()
         return best_tree
 
     tree_cache = dict()

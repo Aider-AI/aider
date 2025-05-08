@@ -1,14 +1,12 @@
 import itertools
 import os
 import platform
-import oslex
+import shlex
 import subprocess
 import sys
 import tempfile
 import time
 from pathlib import Path
-
-import rich.console
 
 from aider.dump import dump  # noqa: F401
 
@@ -209,14 +207,12 @@ def get_pip_install(args):
     return cmd
 
 
-def run_install(io, cmd):
-    io.tool_output()
-    io.tool_output(f"Installing: {printable_shell_command(cmd)}")
-
-    output = []
-    return_code = -1
+def run_install(cmd):
+    print()
+    print("Installing:", printable_shell_command(cmd))
 
     try:
+        output = []
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -227,37 +223,80 @@ def run_install(io, cmd):
             encoding=sys.stdout.encoding,
             errors="replace",
         )
+        spinner = Spinner("Installing...")
 
-        with io.console.status("[bold green]Installing...", spinner="dots") as status:
-            while True:
-                char = process.stdout.read(1)
-                if not char:
-                    break
-                output.append(char)
-                # We don't need to manually update the status text/spinner,
-                # rich.live.Status handles the animation.
+        while True:
+            char = process.stdout.read(1)
+            if not char:
+                break
 
+            output.append(char)
+            spinner.step()
+
+        spinner.end()
         return_code = process.wait()
         output = "".join(output)
 
-    except subprocess.CalledProcessError as e:
-        io.tool_error(f"\nError running pip install: {e}")
-        output = "".join(output)  # Ensure output is captured even on error
-    except Exception as e:
-        io.tool_error(f"\nUnexpected error during pip install: {e}")
-        output = "".join(output)
+        if return_code == 0:
+            print("Installation complete.")
+            print()
+            return True, output
 
-    if return_code == 0:
-        io.tool_output("Installation complete.")
-        io.tool_output()
-        return True, output
-    else:
-        io.tool_error("\nInstallation failed.\n")
-        # Output might contain useful error details from pip
-        if output:
-            io.tool_error("Output from installation command:")
-            io.tool_error(output)
-        return False, output
+    except subprocess.CalledProcessError as e:
+        print(f"\nError running pip install: {e}")
+
+    print("\nInstallation failed.\n")
+
+    return False, output
+
+
+class Spinner:
+    unicode_spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+    ascii_spinner = ["|", "/", "-", "\\"]
+
+    def __init__(self, text):
+        self.text = text
+        self.start_time = time.time()
+        self.last_update = 0
+        self.visible = False
+        self.is_tty = sys.stdout.isatty()
+        self.tested = False
+
+    def test_charset(self):
+        if self.tested:
+            return
+        self.tested = True
+        # Try unicode first, fall back to ascii if needed
+        try:
+            # Test if we can print unicode characters
+            print(self.unicode_spinner[0], end="", flush=True)
+            print("\r", end="", flush=True)
+            self.spinner_chars = itertools.cycle(self.unicode_spinner)
+        except UnicodeEncodeError:
+            self.spinner_chars = itertools.cycle(self.ascii_spinner)
+
+    def step(self):
+        if not self.is_tty:
+            return
+
+        current_time = time.time()
+        if not self.visible and current_time - self.start_time >= 0.5:
+            self.visible = True
+            self._step()
+        elif self.visible and current_time - self.last_update >= 0.1:
+            self._step()
+        self.last_update = current_time
+
+    def _step(self):
+        if not self.visible:
+            return
+
+        self.test_charset()
+        print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
+
+    def end(self):
+        if self.visible and self.is_tty:
+            print("\r" + " " * (len(self.text) + 3))
 
 
 def find_common_root(abs_fnames):
@@ -317,7 +356,7 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=Fal
     if not io.confirm_ask("Run pip install?", default="y", subject=printable_shell_command(cmd)):
         return
 
-    success, output = run_install(io, cmd)
+    success, output = run_install(cmd)
     if success:
         if not module:
             return True
@@ -345,18 +384,18 @@ def printable_shell_command(cmd_list):
     Returns:
         str: Shell-escaped command string.
     """
-    return oslex.join(cmd_list)
+    if platform.system() == "Windows":
+        return subprocess.list2cmdline(cmd_list)
+    else:
+        return shlex.join(cmd_list)
 
 
 def main():
-    console = rich.console.Console()
-    with console.status("[bold green]Running spinner example...", spinner="earth") as status:
-        for i in range(10):  # Run for 10 seconds
-            time.sleep(1)
-            # Optionally update status text:
-            # status.update(f"[bold green]Running spinner example... {i+1}/10s")
-
-    console.print("[bold green]Spinner example finished.")
+    spinner = Spinner("Running spinner...")
+    for _ in range(40):  # 40 steps * 0.25 seconds = 10 seconds
+        time.sleep(0.25)
+        spinner.step()
+    spinner.end()
 
 
 if __name__ == "__main__":
