@@ -322,7 +322,7 @@ class Spinner:
             num_backspaces = chars_in_content_after_scanner + 1
 
             num_backspaces = max(0, num_backspaces)  # Ensure not negative
-            sys.stdout.write('\b' * num_backspaces)
+            sys.stdout.write("\b" * num_backspaces)
 
         sys.stdout.flush()  # Flush after all writes for this frame
 
@@ -335,6 +335,7 @@ class Spinner:
             elif self.scanner_pos <= 0:  # Reached or passed the beginning
                 self.scanner_pos = 0  # Pin to start
                 self.scanner_dir = 1  # Reverse direction
+
     def end(self):
         if self.visible and self.is_tty:
             clear_len = len(self.text) + 1 + self.animation_len  # text + space + animation segment
