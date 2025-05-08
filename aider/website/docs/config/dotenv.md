@@ -253,17 +253,20 @@ cog.outl("```")
 ## Enable/disable commits when repo is found dirty (default: True)
 #AIDER_DIRTY_COMMITS=true
 
-## Attribute aider code changes in the git author name (default: True)
-#AIDER_ATTRIBUTE_AUTHOR=true
+## Attribute aider code changes in the git author name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence.
+#AIDER_ATTRIBUTE_AUTHOR=
 
-## Attribute aider commits in the git committer name (default: True)
-#AIDER_ATTRIBUTE_COMMITTER=true
+## Attribute aider commits in the git committer name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence for aider edits.
+#AIDER_ATTRIBUTE_COMMITTER=
 
 ## Prefix commit messages with 'aider: ' if aider authored the changes (default: False)
 #AIDER_ATTRIBUTE_COMMIT_MESSAGE_AUTHOR=false
 
 ## Prefix all commit messages with 'aider: ' (default: False)
 #AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER=false
+
+## Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.
+#AIDER_ATTRIBUTE_CO_AUTHORED_BY=false
 
 ## Enable/disable git pre-commit hooks with --no-verify (default: False)
 #AIDER_GIT_COMMIT_VERIFY=false

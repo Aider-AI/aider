@@ -56,6 +56,7 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--attribute-committer | --no-attribute-committer]
              [--attribute-commit-message-author | --no-attribute-commit-message-author]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
+             [--attribute-co-authored-by | --no-attribute-co-authored-by]
              [--git-commit-verify | --no-git-commit-verify]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--skip-sanity-check-repo]
@@ -412,16 +413,14 @@ Aliases:
   - `--no-dirty-commits`
 
 ### `--attribute-author`
-Attribute aider code changes in the git author name (default: True)  
-Default: True  
+Attribute aider code changes in the git author name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence.  
 Environment variable: `AIDER_ATTRIBUTE_AUTHOR`  
 Aliases:
   - `--attribute-author`
   - `--no-attribute-author`
 
 ### `--attribute-committer`
-Attribute aider commits in the git committer name (default: True)  
-Default: True  
+Attribute aider commits in the git committer name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence for aider edits.  
 Environment variable: `AIDER_ATTRIBUTE_COMMITTER`  
 Aliases:
   - `--attribute-committer`
@@ -442,6 +441,14 @@ Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER`
 Aliases:
   - `--attribute-commit-message-committer`
   - `--no-attribute-commit-message-committer`
+
+### `--attribute-co-authored-by`
+Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
+Default: False  
+Environment variable: `AIDER_ATTRIBUTE_CO_AUTHORED_BY`  
+Aliases:
+  - `--attribute-co-authored-by`
+  - `--no-attribute-co-authored-by`
 
 ### `--git-commit-verify`
 Enable/disable git pre-commit hooks with --no-verify (default: False)  
