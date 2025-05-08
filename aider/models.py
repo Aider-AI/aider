@@ -243,7 +243,8 @@ class ModelInfoManager:
         Fetch model info by scraping the openrouter model page.
         Expected URL: https://openrouter.ai/<model_route>
         Example: openrouter/qwen/qwen-2.5-72b-instruct:free
-        Returns a dict with keys: max_tokens, max_input_tokens, max_output_tokens, input_cost_per_token, output_cost_per_token.
+        Returns a dict with keys: max_tokens, max_input_tokens, max_output_tokens,
+        input_cost_per_token, output_cost_per_token.
         """
         url_part = model[len("openrouter/") :]
         url = "https://openrouter.ai/" + url_part
