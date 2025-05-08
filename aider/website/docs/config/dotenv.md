@@ -436,6 +436,9 @@ cog.outl("```")
 ## Specify which editor to use for the /editor command
 #AIDER_EDITOR=
 
+## Print shell completion script for the specified SHELL and exit. Supported shells: bash, tcsh, zsh. Example: aider --shell-completions bash
+#AIDER_SHELL_COMPLETIONS=
+
 ############################
 # Deprecated model settings:
 

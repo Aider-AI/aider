@@ -2108,7 +2108,7 @@ class TestCommands(TestCase):
 
     def test_reset_after_coder_clone_preserves_original_read_only_files(self):
         with GitTemporaryDirectory() as repo_dir_path:
-            repo_dir = str(repo_dir_path)
+            repo_dir = str(".")
             io = InputOutput(pretty=False, fancy_input=False, yes=True)
 
             orig_ro_path = Path(repo_dir) / "orig_ro.txt"
@@ -2157,7 +2157,7 @@ class TestCommands(TestCase):
 
     def test_drop_bare_after_coder_clone_preserves_original_read_only_files(self):
         with GitTemporaryDirectory() as repo_dir_path:
-            repo_dir = str(repo_dir_path)
+            repo_dir = str(".")
             io = InputOutput(pretty=False, fancy_input=False, yes=True)
 
             orig_ro_path = Path(repo_dir) / "orig_ro.txt"
