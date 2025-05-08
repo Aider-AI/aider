@@ -1,4 +1,3 @@
-import itertools
 import os
 import platform
 import oslex
@@ -251,29 +250,34 @@ def run_install(cmd):
 
 
 class Spinner:
-    unicode_spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-    ascii_spinner = ["|", "/", "-", "\\"]
-
     def __init__(self, text):
         self.text = text
         self.start_time = time.time()
         self.last_update = 0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
-        self.tested = False
 
-    def test_charset(self):
-        if self.tested:
-            return
-        self.tested = True
-        # Try unicode first, fall back to ascii if needed
-        try:
-            # Test if we can print unicode characters
-            print(self.unicode_spinner[0], end="", flush=True)
-            print("\r", end="", flush=True)
-            self.spinner_chars = itertools.cycle(self.unicode_spinner)
-        except UnicodeEncodeError:
-            self.spinner_chars = itertools.cycle(self.ascii_spinner)
+        self.scanner_width = 7  # Width of the scanning area (e.g., 7 for "[---■--]")
+        self.scanner_pos = 0
+        self.scanner_dir = 1 if self.scanner_width > 1 else 0 # Direction of scanner movement
+
+        # Attempt to use Unicode characters for the scanner, fallback to ASCII
+        self.scanner_char = "#"  # ASCII fallback
+        self.trail_char = "-"  # ASCII fallback
+        if self.is_tty:
+            try:
+                # Test print Unicode chars and erase them to check encoding support
+                sys.stdout.write("■─")
+                sys.stdout.flush()
+                sys.stdout.write("\b\b  \b\b") # Backspace, write spaces, backspace
+                sys.stdout.flush()
+                self.scanner_char = "■"  # Unicode
+                self.trail_char = "─"  # Unicode
+            except UnicodeEncodeError:
+                pass  # Stick to ASCII fallbacks
+            except Exception: # Catch other potential IO errors on strange terminals
+                pass
+        self.animation_len = self.scanner_width + 2  # For brackets like "[]"
 
     def step(self):
         if not self.is_tty:
@@ -291,12 +295,30 @@ class Spinner:
         if not self.visible:
             return
 
-        self.test_charset()
-        print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
+        frame = [self.trail_char] * self.scanner_width
+        # Ensure scanner_pos is within bounds for frame assignment
+        current_pos_in_frame = max(0, min(self.scanner_pos, self.scanner_width - 1))
+        if self.scanner_width > 0: # Only place char if width is positive
+            frame[current_pos_in_frame] = self.scanner_char
+
+        animation_segment = f"[{''.join(frame)}]"
+        print(f"\r{self.text} {animation_segment}", end="", flush=True)
+
+        # Update scanner position for the next frame
+        if self.scanner_width > 1:
+            self.scanner_pos += self.scanner_dir
+            if self.scanner_pos >= self.scanner_width - 1:  # Reached or passed the end
+                self.scanner_pos = self.scanner_width - 1 # Pin to end
+                self.scanner_dir = -1  # Reverse direction
+            elif self.scanner_pos <= 0:  # Reached or passed the beginning
+                self.scanner_pos = 0  # Pin to start
+                self.scanner_dir = 1  # Reverse direction
 
     def end(self):
         if self.visible and self.is_tty:
-            print("\r" + " " * (len(self.text) + 3))
+            clear_len = len(self.text) + 1 + self.animation_len # text + space + animation segment
+            print("\r" + " " * clear_len + "\r", end="", flush=True) # Clear line and reset cursor
+        self.visible = False
 
 
 def find_common_root(abs_fnames):
