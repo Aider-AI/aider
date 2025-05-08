@@ -6,6 +6,7 @@
 - Added support for `gemini-2.5-pro-preview-05-06` models.
 - Added repo-map support for OCaml and OCaml interface files, by Andrey Popp.
 - Added a spinner animation while waiting for the LLM to start streaming its response.
+- Updated the spinner animation to a Knight Rider style.
 - Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
 - Updated Gemini model aliases (e.g., `gemini`, `gemini-2.5-pro`) to point to the `05-06` preview versions.
 - Marked Gemini 2.5 Pro preview models as `overeager` by default.
@@ -25,7 +26,7 @@
 - Ensured web scraping in the GUI also respects Playwright availability and the `--disable-playwright` flag.
 - Improved display of filenames in the prompt header using rich Text formatting.
 - Enabled `reasoning_effort` for Gemini 2.5 Flash models.
- - Aider wrote 54% of the code in this release.
+ - Aider wrote 53% of the code in this release.
 
 ### Aider v0.82.3
 
