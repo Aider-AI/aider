@@ -1412,3 +1412,28 @@
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
 
+
+- name: openrouter/qwen/qwen3-235b-a22b
+  use_temperature: 0.6
+  extra_params:
+    max_tokens: 24000
+    top_p: 0.95
+    top_k: 20
+    temperature: 0.6
+
+- name: openrouter/qwen/qwen3-30b-a3b
+  use_temperature: 0.6
+  extra_params:
+    max_tokens: 24000
+    top_p: 0.95
+    top_k: 20
+    temperature: 0.6
+
+- name: openrouter/qwen/qwen3-32b
+  use_temperature: 0.6
+  extra_params:
+    max_tokens: 24000
+    top_p: 0.95
+    top_k: 20
+    temperature: 0.6
+  

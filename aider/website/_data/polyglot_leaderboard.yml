@@ -1245,7 +1245,7 @@
   exhausted_context_windows: 0
   test_timeouts: 3
   total_tests: 225
-  command: aider --model openrouter/qwen/qwen3-235b-a22b
+  command: aider --model openrouter/qwen/qwen3-235b-a22b --reasoning-effort high
   date: 2025-05-07
   versions: 0.82.4.dev
   seconds_per_case: 477.5
@@ -1272,7 +1272,7 @@
   exhausted_context_windows: 2
   test_timeouts: 5
   total_tests: 225
-  command: aider --model openrouter/qwen/qwen3-32b
+  command: aider --model openrouter/qwen/qwen3-32b --reasoning-effort high
   date: 2025-05-07
   versions: 0.82.4.dev
   seconds_per_case: 364.7
