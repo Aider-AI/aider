@@ -119,7 +119,7 @@ class MarkdownStream:
 
         # Defer Live creation until the first update so the Spinner can be shown.
         self.live = None
-        self.spinner = Spinner("Streaming markdown...")
+        self.spinner = Spinner("Waiting for LLM")
         self._spinner_stop_event = threading.Event()
         self._spinner_thread = threading.Thread(target=self._spin, daemon=True)
         self._spinner_thread.start()
