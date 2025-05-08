@@ -957,8 +957,8 @@ def run_test_real(
         indentation_errors=indentation_errors,
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
         reasoning_effort=reasoning_effort,
-        prompt_tokens=coder.message_tokens_sent,
-        completion_tokens=coder.message_tokens_received,
+        prompt_tokens=coder.total_tokens_sent,
+        completion_tokens=coder.total_tokens_received,
         thinking_tokens=thinking_tokens,
         chat_hashes=list(
             zip(
