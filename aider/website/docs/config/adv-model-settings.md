@@ -644,6 +644,7 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
   accepts_settings:
+  - reasoning_effort
   - thinking_tokens
 
 - name: gemini/gemini-1.5-flash-002
@@ -678,6 +679,7 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
   accepts_settings:
+  - reasoning_effort
   - thinking_tokens
 
 - name: gemini/gemini-2.5-pro-exp-03-25
@@ -1449,6 +1451,7 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
   accepts_settings:
+  - reasoning_effort
   - thinking_tokens
 
 - name: vertex_ai/claude-3-5-haiku@20241022
