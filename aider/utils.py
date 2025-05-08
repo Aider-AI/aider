@@ -267,36 +267,43 @@ class Spinner:
 
         # Pre-render the animation frames using pure ASCII so they will
         # always display, even on very limited terminals.
-        ascii_forward = """
-[#------]
-[-#-----]
-[--#----]
-[---#---]
-[----#--]
-[-----#-]
-[------#]
+        ascii_frames = """
+[#=-----]
+[=#-----]
+[-=#----]
+[--=#---]
+[---=#--]
+[----=#-]
+[-----=#]
+[-----#=]
+[----#=-]
+[---#=--]
+[---#=--]
+[---#=--]
+[--#=---]
+[-#=----]
 """.strip().splitlines()
 
         # If unicode is supported, swap the ASCII chars for nicer glyphs.
         if self._supports_unicode():
-            scan_char, trail_char = "≡", "─"
-            forward = [f.replace("#", scan_char).replace("-", trail_char) for f in ascii_forward]
+            scan_char, tail_char, trail_char = "≡", "=", "─"
+            frames = [f.replace("#", scan_char).replace("-", trail_char) for f in ascii_frames]
         else:
-            scan_char, trail_char = "#", "-"
-            forward = ascii_forward
+            scan_char, tail_char, trail_char = "#", "=", "-"
+            frames = ascii_frames
 
         # Bounce the scanner back and forth.
-        self.frames = forward + forward[-2:0:-1]
+        self.frames = frames
         self.frame_idx = 0
         self.scan_char = scan_char
-        self.width = len(forward[0]) - 2  # number of chars between the brackets
-        self.animation_len = len(forward[0])
+        self.width = len(frames[0]) - 2  # number of chars between the brackets
+        self.animation_len = len(frames[0])
 
     def _supports_unicode(self) -> bool:
         if not self.is_tty:
             return False
         try:
-            sys.stdout.write("∎\b \b")
+            sys.stdout.write("≡\b─\b")
             sys.stdout.flush()
             return True
         except UnicodeEncodeError:
