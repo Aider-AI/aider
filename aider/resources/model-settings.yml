@@ -962,14 +962,12 @@
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: gemini/gemini-2.0-flash
-  accepts_settings: ["reasoning_effort", "thinking_tokens"]
 
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
   overeager: true
   weak_model_name: gemini/gemini-2.5-flash-preview-04-17
-  accepts_settings: ["reasoning_effort", "thinking_tokens"]
 
 - name: openrouter/google/gemini-2.5-pro-exp-03-25:free
   edit_format: diff-fenced
@@ -983,7 +981,6 @@
   weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
   overeager: true
   editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
-  accepts_settings: ["reasoning_effort", "thinking_tokens"]
 
 - name: vertex_ai/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
@@ -991,7 +988,6 @@
   weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
   overeager: true
   editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
-  accepts_settings: ["reasoning_effort", "thinking_tokens"]
 
 - name: openrouter/openrouter/quasar-alpha
   use_repo_map: true
@@ -1402,7 +1398,6 @@
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: gemini/gemini-2.5-flash-preview-04-17
-  accepts_settings: ["reasoning_effort", "thinking_tokens"]
 
 - name: vertex_ai/gemini-2.5-pro-preview-05-06
   edit_format: diff-fenced
@@ -1410,11 +1405,9 @@
   weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
   overeager: true
   editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
-  accepts_settings: ["reasoning_effort", "thinking_tokens"]
 
 - name: openrouter/google/gemini-2.5-pro-preview-05-06
   overeager: true
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
-  accepts_settings: ["reasoning_effort", "thinking_tokens"]
