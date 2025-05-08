@@ -251,95 +251,82 @@ def run_install(cmd):
 
 
 class Spinner:
-    def __init__(self, text):
+    """
+    Minimal spinner that scans a single marker back and forth across a line.
+
+    The animation is pre-rendered into a list of frames.  If the terminal
+    cannot display unicode the frames are converted to plain ASCII.
+    """
+
+    def __init__(self, text: str, width: int = 7):
         self.text = text
+        self.width = max(1, width)
         self.start_time = time.time()
-        self.last_update = 0
+        self.last_update = 0.0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
 
-        self.scanner_width = 7  # Width of the scanning area (e.g., 7 for "[---■--]")
-        self.scanner_pos = 0
-        self.scanner_dir = 1 if self.scanner_width > 1 else 0  # Direction of scanner movement
+        # Decide which characters to use
+        scan_char, trail_char = "≡", "─"
+        if not self._supports_unicode():
+            scan_char, trail_char = "#", "-"
 
-        # Attempt to use Unicode characters for the scanner, fallback to ASCII
-        self.scanner_char = "#"  # ASCII fallback
-        self.trail_char = "-"  # ASCII fallback
-        if self.is_tty:
-            try:
-                # Test print Unicode chars and erase them to check encoding support
-                sys.stdout.write("■─")
-                sys.stdout.flush()
-                sys.stdout.write("\b\b  \b\b")  # Backspace, write spaces, backspace
-                sys.stdout.flush()
-                self.scanner_char = "≡"  # Unicode
-                self.trail_char = "─"  # Unicode
-            except UnicodeEncodeError:
-                pass  # Stick to ASCII fallbacks
-            except Exception:  # Catch other potential IO errors on strange terminals
-                pass
-        self.animation_len = self.scanner_width + 2  # For brackets like "[]"
+        # Build the animation frames
+        forward = [
+            f"[{trail_char * pos}{scan_char}{trail_char * (self.width - 1 - pos)}]"
+            for pos in range(self.width)
+        ]
+        self.frames = forward + forward[-2:0:-1]  # bounce back
+        self.frame_idx = 0
+        self.scan_char = scan_char
+        self.animation_len = len(self.frames[0])
 
-    def step(self):
+    def _supports_unicode(self) -> bool:
+        if not self.is_tty:
+            return False
+        try:
+            sys.stdout.write("∎\b \b")
+            sys.stdout.flush()
+            return True
+        except UnicodeEncodeError:
+            return False
+        except Exception:
+            return False
+
+    def _next_frame(self) -> str:
+        frame = self.frames[self.frame_idx]
+        self.frame_idx = (self.frame_idx + 1) % len(self.frames)
+        return frame
+
+    def step(self) -> None:
         if not self.is_tty:
             return
 
-        current_time = time.time()
-        if not self.visible and current_time - self.start_time >= 0.5:
+        now = time.time()
+        if not self.visible and now - self.start_time >= 0.5:
             self.visible = True
-            self._step()
-        elif self.visible and current_time - self.last_update >= 0.1:
-            self._step()
-        self.last_update = current_time
+            self.last_update = 0.0
 
-    def _step(self):
-        if not self.visible:
+        if not self.visible or now - self.last_update < 0.1:
             return
 
-        frame_chars = [self.trail_char] * self.scanner_width
-        # Ensure scanner_pos is within bounds for frame assignment
-        current_pos_in_frame = max(0, min(self.scanner_pos, self.scanner_width - 1))
+        self.last_update = now
+        frame = self._next_frame()
 
-        if self.scanner_width > 0:  # Only place char if width is positive
-            frame_chars[current_pos_in_frame] = self.scanner_char
+        sys.stdout.write(f"\r{self.text} {frame}")
 
-        animation_content = "".join(frame_chars)  # Content inside brackets, e.g., "---■--"
-        animation_segment = f"[{animation_content}]"  # Full animation part, e.g., "[---■--]"
+        # Backspace cursor to the scanner character
+        pos_in_content = frame.find(self.scan_char) - 1  # exclude '['
+        chars_after_scanner = (self.width - 1) - pos_in_content
+        num_backspaces = max(0, chars_after_scanner + 2)  # +']' and extra
+        sys.stdout.write("\b" * num_backspaces)
+        sys.stdout.flush()
 
-        # Print the entire line to display it
-        full_line_output = f"\r{self.text} {animation_segment}"
-        sys.stdout.write(full_line_output)
-
-        # Now, calculate backspaces to position cursor on the scanner_char
-        # Only if scanner_char was actually placed (i.e., scanner_width > 0)
-        if self.scanner_width > 0:
-            # Number of characters in animation_content *after* the scanner_char
-            # (self.scanner_width - 1) is the last index of animation_content.
-            # So, (self.scanner_width - 1) - current_pos_in_frame gives count of chars after.
-            chars_in_content_after_scanner = (self.scanner_width - 1) - current_pos_in_frame
-
-            # We also need to backspace over the closing bracket ']'
-            num_backspaces = chars_in_content_after_scanner + 1
-
-            num_backspaces = max(0, num_backspaces) + 1  # Ensure not negative
-            sys.stdout.write("\b" * num_backspaces)
-
-        sys.stdout.flush()  # Flush after all writes for this frame
-
-        # Update scanner position for the next frame
-        if self.scanner_width > 1:
-            self.scanner_pos += self.scanner_dir
-            if self.scanner_pos >= self.scanner_width - 1:  # Reached or passed the end
-                self.scanner_pos = self.scanner_width - 1  # Pin to end
-                self.scanner_dir = -1  # Reverse direction
-            elif self.scanner_pos <= 0:  # Reached or passed the beginning
-                self.scanner_pos = 0  # Pin to start
-                self.scanner_dir = 1  # Reverse direction
-
-    def end(self):
+    def end(self) -> None:
         if self.visible and self.is_tty:
-            clear_len = len(self.text) + 1 + self.animation_len  # text + space + animation segment
-            print("\r" + " " * clear_len + "\r", end="", flush=True)  # Clear line and reset cursor
+            clear_len = len(self.text) + 1 + self.animation_len
+            sys.stdout.write("\r" + " " * clear_len + "\r")
+            sys.stdout.flush()
         self.visible = False
 
 
