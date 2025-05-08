@@ -126,8 +126,6 @@ class Coder:
         from_coder=None,
         summarize_from_coder=True,
         **kwargs,
-
-
     ):
         import aider.coders as coders
 
