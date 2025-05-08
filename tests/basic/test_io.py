@@ -561,7 +561,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
 
         io.format_files_for_input(rel_fnames, rel_read_only_fnames)
 
-        mock_columns.assert_called_once()
+        self.assertEqual(mock_columns.call_count, 2)
         args, _ = mock_columns.call_args
         renderables = args[0]
 
@@ -589,17 +589,17 @@ class TestInputOutputFormatFiles(unittest.TestCase):
 
         io.format_files_for_input(rel_fnames, rel_read_only_fnames)
 
-        self.assertEqual(mock_columns.call_count, 2)
+        self.assertEqual(mock_columns.call_count, 4)
 
-        # First call for read-only files
+        # Check arguments for the first rendering of read-only files (call 0)
         args_ro, _ = mock_columns.call_args_list[0]
         renderables_ro = args_ro[0]
         self.assertEqual(
             renderables_ro, [Text("Readonly:"), Text("ro1.txt"), Text("ro[markup].txt")]
         )
 
-        # Second call for editable files
-        args_ed, _ = mock_columns.call_args_list[1]
+        # Check arguments for the first rendering of editable files (call 2)
+        args_ed, _ = mock_columns.call_args_list[2]
         renderables_ed = args_ed[0]
         self.assertEqual(
             renderables_ed, [Text("Editable:"), Text("edit1.txt"), Text("edit[markup].txt")]
