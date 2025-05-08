@@ -822,7 +822,6 @@ def get_parser(default_config_files, git_root):
         ),
     )
 
-
     ##########
     group = parser.add_argument_group("Deprecated model settings")
     # Add deprecated model shortcut arguments

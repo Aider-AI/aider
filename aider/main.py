@@ -14,8 +14,8 @@ except ImportError:
     git = None
 
 import importlib_resources
-from dotenv import load_dotenv
 import shtab
+from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
@@ -509,7 +509,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         print(shtab.complete(parser, shell=args.shell_completions))
         sys.exit(0)
 
-
     if git is None:
         args.git = False
 
@@ -912,7 +911,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 commit_prompt=args.commit_prompt,
                 subtree_only=args.subtree_only,
                 git_commit_verify=args.git_commit_verify,
-                attribute_co_authored_by=args.attribute_co_authored_by, # Pass the arg
+                attribute_co_authored_by=args.attribute_co_authored_by,  # Pass the arg
             )
         except FileNotFoundError:
             pass
