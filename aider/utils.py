@@ -260,26 +260,37 @@ class Spinner:
 
     def __init__(self, text: str, width: int = 7):
         self.text = text
-        self.width = max(1, width)
         self.start_time = time.time()
         self.last_update = 0.0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
 
-        # Decide which characters to use
-        scan_char, trail_char = "≡", "─"
-        if not self._supports_unicode():
-            scan_char, trail_char = "#", "-"
+        # Pre-render the animation frames using pure ASCII so they will
+        # always display, even on very limited terminals.
+        ascii_forward = """
+[#------]
+[-#-----]
+[--#----]
+[---#---]
+[----#--]
+[-----#-]
+[------#]
+""".strip().splitlines()
 
-        # Build the animation frames
-        forward = [
-            f"[{trail_char * pos}{scan_char}{trail_char * (self.width - 1 - pos)}]"
-            for pos in range(self.width)
-        ]
-        self.frames = forward + forward[-2:0:-1]  # bounce back
+        # If unicode is supported, swap the ASCII chars for nicer glyphs.
+        if self._supports_unicode():
+            scan_char, trail_char = "≡", "─"
+            forward = [f.replace("#", scan_char).replace("-", trail_char) for f in ascii_forward]
+        else:
+            scan_char, trail_char = "#", "-"
+            forward = ascii_forward
+
+        # Bounce the scanner back and forth.
+        self.frames = forward + forward[-2:0:-1]
         self.frame_idx = 0
         self.scan_char = scan_char
-        self.animation_len = len(self.frames[0])
+        self.width = len(forward[0]) - 2  # number of chars between the brackets
+        self.animation_len = len(forward[0])
 
     def _supports_unicode(self) -> bool:
         if not self.is_tty:
