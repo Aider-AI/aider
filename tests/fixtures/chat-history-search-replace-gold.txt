@@ -2941,12 +2941,12 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 
 
-@@@ #### cache the `TreeContext` for each filename, and re-use it. @@@@@@@@@@@@@@@@@@@@
+@@@ #### cache the `TreeContext` for each filename, and reuse it. @@@@@@@@@@@@@@@@@@@@
 >  
 >  
 > ^C again to exit  
 
-To implement caching for `TreeContext` for each filename and re-use it, we need to modify the `RepoMap` class in `aider/repomap.py`. Specifically, we need to:
+To implement caching for `TreeContext` for each filename and reuse it, we need to modify the `RepoMap` class in `aider/repomap.py`. Specifically, we need to:
 
 1. Add a cache dictionary to store `TreeContext` instances.
 2. Modify the `render_tree` method to check the cache before creating a new `TreeContext` instance.
@@ -3024,7 +3024,7 @@ aider/repomap.py
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 
 
-@@@ #### cache the `TreeContext` for each filename, and re-use it. @@@@@@@@@@@@@@@@@@@@
+@@@ #### cache the `TreeContext` for each filename, and reuse it. @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: aider/repomap.py @@@@@@@@@@@@@@@@@@@@
 class RepoMap:
     CACHE_VERSION = 3
@@ -11619,7 +11619,7 @@ from aider.llm import litellm
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 
 
-@@@ #### add a --deepseek-beta bool arg. descibe as uses deepseek coder via the beta api endpoint @@@@@@@@@@@@@@@@@@@@
+@@@ #### add a --deepseek-beta bool arg. describe as uses deepseek coder via the beta api endpoint @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: aider/args.py @@@@@@@@@@@@@@@@@@@@
     deepseek_model = "deepseek/deepseek-coder"
     group.add_argument(
@@ -11657,7 +11657,7 @@ from aider.llm import litellm
 @@@ REPLACE @@@@@@@@@@@@@@@@@@@@
 
 
-@@@ #### add a --deepseek-beta bool arg. descibe as uses deepseek coder via the beta api endpoint. in main set the model name and DEEPSEEK_API_BASE=https://api.deepseek.com/beta @@@@@@@@@@@@@@@@@@@@
+@@@ #### add a --deepseek-beta bool arg. describe as uses deepseek coder via the beta api endpoint. in main set the model name and DEEPSEEK_API_BASE=https://api.deepseek.com/beta @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: aider/args.py @@@@@@@@@@@@@@@@@@@@
     group.add_argument(
         "--deepseek",
@@ -11765,7 +11765,7 @@ Aider works best with GPT-4o & Claude 3.5 Sonnet and can
 
 Aider vous permet de programmer en binôme avec des LLMs,
 pour éditer du code dans votre dépôt git local.
-Commencez un nouveau projet ou travaillez avec un dépôt git existant.
+Commencez un nouveau project ou travaillez avec un dépôt git existent.
 Aider fonctionne mieux avec GPT-4o & Claude 3.5 Sonnet et peut
 [se connecter à presque tous les LLMs](https://aider.chat/docs/llms.html).
 
@@ -15052,7 +15052,7 @@ aider/coders/base_coder.py
 ^^^ Expected `>>>>>>> REPLACE` or `=======`
 
 
-@@@ #### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result inthe request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost` @@@@@@@@@@@@@@@@@@@@
+@@@ #### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result in the request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost` @@@@@@@@@@@@@@@@@@@@
 >  
 >  
 > ^C again to exit  
@@ -15101,7 +15101,7 @@ aider/coders/base_coder.py
 ^^^ Expected `=======`
 
 
-@@@ #### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result inthe request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost` @@@@@@@@@@@@@@@@@@@@
+@@@ #### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result in the request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost` @@@@@@@@@@@@@@@@@@@@
 @@@ SEARCH: aider/coders/base_coder.py @@@@@@@@@@@@@@@@@@@@
     def send(self, messages, model=None, functions=None):
         if not model:

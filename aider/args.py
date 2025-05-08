@@ -809,6 +809,11 @@ def get_parser(default_config_files, git_root):
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
+    parser.add_argument(
+        "--generate-bash-completion",
+        action="store_true",
+        help="Generate and print the bash completion script",
+    )
 
     ##########
     group = parser.add_argument_group("Deprecated model settings")

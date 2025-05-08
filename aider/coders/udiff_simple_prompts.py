@@ -22,4 +22,4 @@ Don't leave out any lines or the diff patch won't apply correctly.
 To make a new file, show a diff from `--- /dev/null` to `+++ path/to/new/file.ext`.
 
 {final_reminders}
-""" # noqa
+"""  # noqa

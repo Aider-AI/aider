@@ -72,7 +72,7 @@ class GitRepo:
         commit_prompt=None,
         subtree_only=False,
         git_commit_verify=True,
-        attribute_co_authored_by=False, # Added parameter
+        attribute_co_authored_by=False,  # Added parameter
     ):
         self.io = io
         self.models = models
@@ -84,7 +84,7 @@ class GitRepo:
         self.attribute_committer = attribute_committer
         self.attribute_commit_message_author = attribute_commit_message_author
         self.attribute_commit_message_committer = attribute_commit_message_committer
-        self.attribute_co_authored_by = attribute_co_authored_by # Assign from parameter
+        self.attribute_co_authored_by = attribute_co_authored_by  # Assign from parameter
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.git_commit_verify = git_commit_verify
@@ -227,7 +227,6 @@ class GitRepo:
         effective_author = True if attribute_author is None else attribute_author
         effective_committer = True if attribute_committer is None else attribute_committer
 
-
         # Determine commit message prefixing
         prefix_commit_message = aider_edits and (
             attribute_commit_message_author or attribute_commit_message_committer
@@ -247,9 +246,7 @@ class GitRepo:
         # Author modification applies only to aider edits.
         # It's used if effective_author is True AND (co-authored-by is False OR author was explicitly set).
         use_attribute_author = (
-            aider_edits
-            and effective_author
-            and (not attribute_co_authored_by or author_explicit)
+            aider_edits and effective_author and (not attribute_co_authored_by or author_explicit)
         )
 
         # Committer modification applies regardless of aider_edits (based on tests).
@@ -257,7 +254,6 @@ class GitRepo:
         use_attribute_committer = effective_committer and (
             not (aider_edits and attribute_co_authored_by) or committer_explicit
         )
-
 
         if not commit_message:
             commit_message = "(no commit message provided)"
@@ -291,7 +287,9 @@ class GitRepo:
             with contextlib.ExitStack() as stack:
                 if use_attribute_committer:
                     stack.enter_context(
-                        set_git_env("GIT_COMMITTER_NAME", committer_name, original_committer_name_env)
+                        set_git_env(
+                            "GIT_COMMITTER_NAME", committer_name, original_committer_name_env
+                        )
                     )
                 if use_attribute_author:
                     stack.enter_context(

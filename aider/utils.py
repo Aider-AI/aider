@@ -1,12 +1,13 @@
 import itertools
 import os
 import platform
-import oslex
 import subprocess
 import sys
 import tempfile
 import time
 from pathlib import Path
+
+import oslex
 
 from aider.dump import dump  # noqa: F401
 

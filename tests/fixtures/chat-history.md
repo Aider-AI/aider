@@ -9263,7 +9263,7 @@ It seems like you have uploaded an image file (/private/var/folders/49/kxrdwwbx0
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,657 sent, 57 received. Cost: $0.0058 request, $0.0058 session.  
 
@@ -9278,7 +9278,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,657 sent, 57 received. Cost: $0.0058 request, $0.0058 session.  
 
@@ -9293,7 +9293,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,663 sent, 57 received. Cost: $0.0058 request, $0.0058 session.  
 
@@ -9308,7 +9308,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,657 sent, 57 received. Cost: $0.0058 request, $0.0058 session.  
 
@@ -9323,7 +9323,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,657 sent, 57 received. Cost: $0.0058 request, $0.0058 session.  
 
@@ -9522,7 +9522,7 @@ These changes import the `AIDER_SITE_URL` and `AIDER_APP_NAME` constants from `l
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,657 sent, 57 received. Cost: $0.0058 request, $0.0058 session.  
 
@@ -10323,12 +10323,12 @@ These changes should handle the case where files are in different git repositori
 > Added aider/repomap.py to the chat.  
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
-#### cache the `TreeContext` for each filename, and re-use it.  
+#### cache the `TreeContext` for each filename, and reuse it.  
 >  
 >  
 > ^C again to exit  
 
-To implement caching for `TreeContext` for each filename and re-use it, we need to modify the `RepoMap` class in `aider/repomap.py`. Specifically, we need to:
+To implement caching for `TreeContext` for each filename and reuse it, we need to modify the `RepoMap` class in `aider/repomap.py`. Specifically, we need to:
 
 1. Add a cache dictionary to store `TreeContext` instances.
 2. Modify the `render_tree` method to check the cache before creating a new `TreeContext` instance.
@@ -10446,9 +10446,9 @@ Understood. I'll wait for further instructions before attempting any changes. If
 
 #### /clear  
 
-#### cache the `TreeContext` for each filename, and re-use it.  
+#### cache the `TreeContext` for each filename, and reuse it.  
 
-To implement caching of the `TreeContext` for each filename and re-use it, we need to make changes to the `RepoMap` class in the `aider/repomap.py` file. Here are the necessary changes:
+To implement caching of the `TreeContext` for each filename and reuse it, we need to make changes to the `RepoMap` class in the `aider/repomap.py` file. Here are the necessary changes:
 
 aider/repomap.py
 ```python
@@ -10599,11 +10599,11 @@ aider/repomap.py
 >>>>>>> REPLACE
 ```
 
-These changes will cache the `TreeContext` for each filename and re-use it, which should improve performance when rendering trees for the same file multiple times with different lines of interest.
+These changes will cache the `TreeContext` for each filename and reuse it, which should improve performance when rendering trees for the same file multiple times with different lines of interest.
 
 > Tokens: 6,513 sent, 896 received. Cost: $0.03 request, $0.03 session.  
 > Applied edit to aider/repomap.py  
-> Commit bb4ee1a perf: cache TreeContext for each filename and re-use it  
+> Commit bb4ee1a perf: cache TreeContext for each filename and reuse it  
 > You can use /undo to revert and discard commit bb4ee1a.  
 
 #### /diff  
@@ -11214,7 +11214,7 @@ Hello! I'm here to assist you. Since you haven't made any specific requests for 
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -11325,7 +11325,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -11460,7 +11460,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -11672,7 +11672,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 > raise AnthropicError(status_code=response.status_code, message=response.read())  
 > litellm.llms.anthropic.AnthropicError: b'{"type":"error","error":{"type":"overloaded_error","message":"Overloaded"}}'  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -11983,7 +11983,7 @@ aider/sendchat.py
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -11998,7 +11998,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12174,7 +12174,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12636,7 +12636,7 @@ By following these steps, you should be able to identify why `backoff` is not ca
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12727,7 +12727,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 > raise AnthropicError(status_code=response.status_code, message=response.read())  
 > litellm.llms.anthropic.AnthropicError: b'{"type":"error","error":{"type":"overloaded_error","message":"Overloaded"}}'  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12812,7 +12812,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 > raise AnthropicError(status_code=response.status_code, message=response.read())  
 > litellm.llms.anthropic.AnthropicError: b'{"type":"error","error":{"type":"overloaded_error","message":"Overloaded"}}'  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12838,7 +12838,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 > litellm.llms.anthropic.AnthropicError: b'{"type":"error","error":{"type":"overloaded_error","message":"Overloaded"}}'  
 > Retrying in 0.2 seconds...  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12853,7 +12853,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12959,7 +12959,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -12974,7 +12974,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -13055,7 +13055,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 > litellm.llms.anthropic.AnthropicError: b'{"type":"error","error":{"type":"overloaded_error","message":"Overloaded"}}'  
 > Retrying in 8.0 seconds...  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -13555,7 +13555,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je p
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -13625,7 +13625,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -13640,7 +13640,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -20589,15 +20589,15 @@ These changes allow users to specify a custom filename with a valid extension wh
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
 #### hi  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.2 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.5 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 1.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 2.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 4.0 seconds...  
 >  
 >  
@@ -20613,13 +20613,13 @@ These changes allow users to specify a custom filename with a valid extension wh
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
 #### hi  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.2 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.5 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 1.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 2.0 seconds...  
 >  
 >  
@@ -20635,13 +20635,13 @@ These changes allow users to specify a custom filename with a valid extension wh
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
 #### hi  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.2 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.5 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 1.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 2.0 seconds...  
 
 # aider chat started at 2024-08-09 14:58:51
@@ -20752,13 +20752,13 @@ Option settings:
 
 #### hi  
 > Repo-map: 8.7 k-tokens  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.2 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.5 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 1.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 2.0 seconds...  
 
 # aider chat started at 2024-08-09 14:59:02
@@ -20868,19 +20868,19 @@ Option settings:
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
 #### hi  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.2 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.5 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 1.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 2.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 4.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 8.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 16.0 seconds...  
 
 # aider chat started at 2024-08-09 15:00:18
@@ -20893,13 +20893,13 @@ Option settings:
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
 #### hi  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.2 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 0.5 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 1.0 seconds...  
-> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/applicatio was not found.  
+> litellm.InternalServerError: VertexAIException InternalServerError - File ~/.config/gcloud/application was not found.  
 > Retrying in 2.0 seconds...  
 
 # aider chat started at 2024-08-09 15:00:38
@@ -24641,7 +24641,7 @@ index a37849ba..95836837 100644
  pyperclip
 +pypager
  
- # The proper depdendency is networkx[default], but this brings
+ # The proper dependency is networkx[default], but this brings
  # in matplotlib and a bunch of other deps  
 
 #### /ex  
@@ -43214,7 +43214,7 @@ Option settings:
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,497 sent, 57 received. Cost: $0.0053 request, $0.0053 session.  
 
@@ -45936,7 +45936,7 @@ This change adds the `--deepseek` option to the argument parser, which will set 
 >  
 > ^C again to exit  
 
-#### add a --deepseek-beta bool arg. descibe as uses deepseek coder via the beta api endpoint  
+#### add a --deepseek-beta bool arg. describe as uses deepseek coder via the beta api endpoint  
 
 Certainly! I'll add the `--deepseek-beta` boolean argument to the `aider/args.py` file. Here's the change:
 
@@ -46011,7 +46011,7 @@ Note that you'll need to pass the `--deepseek-beta` argument from the main scrip
 #### /add aider/main.py  
 > Added /Users/gauthier/Projects/aider/aider/main.py to the chat  
 
-#### add a --deepseek-beta bool arg. descibe as uses deepseek coder via the beta api endpoint. in main set the model name and DEEPSEEK_API_BASE=https://api.deepseek.com/beta  
+#### add a --deepseek-beta bool arg. describe as uses deepseek coder via the beta api endpoint. in main set the model name and DEEPSEEK_API_BASE=https://api.deepseek.com/beta  
 > Add https://api.deepseek.com/beta to the chat? n  
 
 Certainly! I'll add the `--deepseek-beta` boolean argument to the `aider/args.py` file and update the `main()` function in `aider/main.py` to set the model name and `DEEPSEEK_API_BASE` environment variable when the flag is used. Here are the necessary changes:
@@ -46209,7 +46209,7 @@ Aider works best with GPT-4o & Claude 3.5 Sonnet and can
 
 Aider vous permet de programmer en binôme avec des LLMs,
 pour éditer du code dans votre dépôt git local.
-Commencez un nouveau projet ou travaillez avec un dépôt git existant.
+Commencez un nouveau project ou travaillez avec un dépôt git existent.
 Aider fonctionne mieux avec GPT-4o & Claude 3.5 Sonnet et peut
 [se connecter à presque tous les LLMs](https://aider.chat/docs/llms.html).
 
@@ -46801,7 +46801,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [scripting d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la bonne commande pour mettre à jour vers la dernière version.
@@ -46811,7 +46811,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Options améliorées d'attribution des messages de validation :
-  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les changements, remplace `--attribute-commit-message`.
+  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les changements, replace `--attribute-commit-message`.
   - Nouveau `--attribute-commit-message-committer` pour préfixer tous les messages de validation avec 'aider : '.
 - Aider a rédigé 61% du code de cette version.
 
@@ -46821,7 +46821,7 @@ HISTORY.md
 - Contourné un bug de litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Améliorations de l'indication de progression pendant le traitement de la carte du dépôt.
 - Instructions corrigées pour la mise à jour du conteneur docker vers la dernière version d'aider.
-- Supprimé la limite obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
+- Supprimé la limit obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
 
 ### Aider v0.48.0
 
@@ -46856,7 +46856,7 @@ HISTORY.md
   - Nouvelle image docker `paulgauthier/aider-full`, qui inclut tous les extras.
 - Passer en mode code et demande ne résume plus l'historique de la discussion.
 - Ajouté un graphique de la contribution d'aider à chaque version.
-- Des auto-compléments génériques sont fournis pour `/commands` sans remplacement de complétion.
+- Des auto-compléments génériques sont fournis pour `/commands` sans replacement de complétion.
 - Correction d'un fichier de balises OCaml cassé.
 - Correction de bug dans la logique d'ajout à l'approbation de la discussion `/run`.
 - Aider a rédigé 58% du code de cette version.
@@ -46882,9 +46882,9 @@ HISTORY.md
 - Empêcher aider de demander d'ajouter la même URL à la discussion plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction d'une régression qui l'a cassé dans la v0.42.0.
-  - Désactive la vérification du certificat SSL lors du scraping de sites Web avec `/web`.
+  - Désactive la vérification du certificate SSL lors du scraping de sites Web avec `/web`.
 - Amélioration de la gestion des erreurs et des rapports dans la fonctionnalité de scraping `/web`
-- Correction d'une erreur de syntaxe dans le fichier scm d'Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm d'Elm (par @cjoach).
 - Gérer UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances vers les dernières versions.
 - Aider a rédigé 45% du code de cette version.
@@ -46975,12 +46975,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la conscience du contexte de la carte du dépôt.
-- Restauration du bon fonctionnement de `--help`.
+- Restoration du bon fonctionnement de `--help`.
 
 ### Aider v0.40.0
 
 - Amélioration de l'invite pour décourager Sonnet de gaspiller des tokens en émettant un code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de tokens.
+- Amélioration des information d'erreur pour les erreurs de limit de tokens.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de validateur git](https://aider.chat/docs/git.html#commit-attribution).
 - Utiliser `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de la carte du dépôt (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -51371,7 +51371,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [scripting d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la bonne commande pour mettre à jour vers la dernière version.
@@ -51381,7 +51381,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Options améliorées d'attribution des messages de validation :
-  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les changements, remplace `--attribute-commit-message`.
+  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les changements, replace `--attribute-commit-message`.
   - Nouveau `--attribute-commit-message-committer` pour préfixer tous les messages de validation avec 'aider : '.
 - Aider a rédigé 61% du code de cette version.
 
@@ -51391,7 +51391,7 @@ HISTORY.md
 - Contourné un bug de litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Correction des instructions pour la mise à jour du conteneur docker vers la dernière version d'aider.
-- Supprimé la limite obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
+- Supprimé la limit obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
 
 ### Aider v0.48.0
 
@@ -51426,7 +51426,7 @@ HISTORY.md
   - Nouvelle image docker `paulgauthier/aider-full`, qui inclut tous les extras.
 - Passer en mode code et demande ne résume plus l'historique de la discussion.
 - Ajouté un graphique de la contribution d'aider à chaque version.
-- Des auto-compléments génériques sont fournis pour `/commands` sans remplacement de complétion.
+- Des auto-compléments génériques sont fournis pour `/commands` sans replacement de complétion.
 - Fichier de balises OCaml cassé corrigé.
 - Correction de bug dans la logique d'ajout à l'approbation de la discussion `/run`.
 - Aider a rédigé 58% du code de cette version.
@@ -51452,9 +51452,9 @@ HISTORY.md
 - Empêcher aider de demander d'ajouter la même URL à la discussion plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction d'une régression qui l'a cassé dans la v0.42.0.
-  - Désactive la vérification du certificat SSL lors du greffage de sites web `/web`.
+  - Désactive la vérification du certificate SSL lors du greffage de sites web `/web`.
 - Amélioration de la gestion des erreurs et des rapports dans la fonctionnalité de greffage `/web`
-- Correction d'une erreur de syntaxe dans le fichier scm d'Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm d'Elm (par @cjoach).
 - Gérer UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances vers les dernières versions.
 - Aider a rédigé 45% du code de cette version.
@@ -51545,12 +51545,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la conscience du contexte de la carte du dépôt.
-- Restauration du bon fonctionnement de `--help`.
+- Restoration du bon fonctionnement de `--help`.
 
 ### Aider v0.40.0
 
 - Amélioration de l'invite pour décourager Sonnet de gaspiller des jetons en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de jetons.
+- Amélioration des information d'erreur pour les erreurs de limit de jetons.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de validateur git](https://aider.chat/docs/git.html#commit-attribution).
 - Utiliser `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de la carte du dépôt (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -51589,7 +51589,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de chat avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de toutes les modifications résultant de votre demande, y compris les corrections de lint et de tests.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche le markdown scrapé lorsque vous ajoutez une URL avec `/web`.
 - Lorsque [scriptant aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes in-chat `/`.
 - L'image docker d'aider suggère maintenant la commande correcte pour mettre à jour vers la dernière version.
@@ -51599,7 +51599,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Améliorations des options d'attribution des messages de commit :
-  - Nouvelle option `--attribute-commit-message-author` pour préfixer les messages de commit avec 'aider: ' si aider a rédigé les modifications, remplace `--attribute-commit-message`.
+  - Nouvelle option `--attribute-commit-message-author` pour préfixer les messages de commit avec 'aider: ' si aider a rédigé les modifications, replace `--attribute-commit-message`.
   - Nouvelle option `--attribute-commit-message-committer` pour préfixer tous les messages de commit avec 'aider: '.
 - Aider a écrit 61% du code dans cette version.
 
@@ -51609,7 +51609,7 @@ HISTORY.md
 - Contournement d'un bogue litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Instructions corrigées pour mettre à jour le conteneur docker à la dernière version d'aider.
-- Suppression de la limite de 16k tokens sur les différences de commit, utilisation des limites par modèle.
+- Suppression de la limit de 16k tokens sur les différences de commit, utilisation des limites par modèle.
 
 ### Aider v0.48.0
 
@@ -51670,9 +51670,9 @@ HISTORY.md
 - Arrêter aider de demander d'ajouter la même URL au chat plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction de régression qui l'a cassé dans v0.42.0.
-  - Désactive la vérification du certificat SSL lorsque `/web` scrap les sites web.
+  - Désactive la vérification du certificate SSL lorsque `/web` scrap les sites web.
 - Amélioration de la gestion des erreurs et du rapport dans la fonctionnalité de scraping `/web`.
-- Correction d'erreur de syntaxe dans le fichier scm tree-sitter pour Elm (par @cjoach).
+- Correction d'erreur de syntax dans le fichier scm tree-sitter pour Elm (par @cjoach).
 - Gestion de l'erreur UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances aux dernières versions.
 - Aider a écrit 45% du code dans cette version.
@@ -51720,7 +51720,7 @@ HISTORY.md
 
 ### Aider v0.43.1
 
-- Remplacement de la dépendance torch par la version CPU uniquement, car les versions GPU sont énormes.
+- Replacement de la dépendance torch par la version CPU uniquement, car les versions GPU sont énormes.
 
 ### Aider v0.43.0
 
@@ -51763,12 +51763,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la sensibilité contextuelle de repomap.
-- Restauration de la fonctionnalité `--help` appropriée.
+- Restoration de la fonctionnalité `--help` appropriée.
 
 ### Aider v0.40.0
 
 - Amélioration des invites pour décourager Sonnet de gaspiller des tokens en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de token.
+- Amélioration des information d'erreur pour les erreurs de limit de token.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de commettant git](https://aider.chat/docs/git.html#commit-attribution).
 - Utilisation de `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de repo-map (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -51785,7 +51785,7 @@ HISTORY.md
 
 - Utilisez `--vim` pour les [raccourcis clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans la discussion.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- [Messages d'erreur plus détaillés sur les erreurs de limite de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
+- [Messages d'erreur plus détaillés sur les erreurs de limit de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
 - Messages de validation sur une seule ligne, sans les récents messages de discussion.
 - S'assurer que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright jusqu'à l'inactivité du réseau pour mieux gratter les sites js.
@@ -51794,7 +51794,7 @@ HISTORY.md
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
 - Amélioration des invites lorsqu'aucun fichier n'a été ajouté à la discussion pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans la discussion et proposera de la gratter.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
@@ -51808,7 +51808,7 @@ HISTORY.md
 - [Aider peut maintenant analyser votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider analyse et corrige automatiquement après chaque modification LLM.
   - Vous pouvez manuellement analyser et corriger les fichiers avec `/lint` dans la discussion ou `--lint` en ligne de commande.
-  - Aider inclut des analyseurs de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des analyseurs de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre analyseur préféré avec `--lint-cmd`.
 - Aider a un support supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -51898,11 +51898,11 @@ HISTORY.md
 - Amélioration du support de la carte du dépôt pour typescript, par @ryanfreckleton.
 - Correction de bug : ne `/undo` que les fichiers qui faisaient partie du dernier commit, ne pas écraser les autres fichiers modifiés
 - Correction de bug : afficher un message d'erreur clair lorsque la clé API OpenAI n'est pas définie.
-- Correction de bug : capturer l'erreur pour les langages obscurs sans fichier tags.scm.
+- Correction de bug : capturer l'erreur pour les languages obscurs sans fichier tags.scm.
 
 ### Aider v0.26.1
 
-- Correction d'un bug affectant l'analyse de la configuration git dans certains environnements.
+- Correction d'un bug affectant l'analyse de la configuration git dans certains environments.
 
 ### Aider v0.26.0
 
@@ -51923,12 +51923,12 @@ HISTORY.md
 
 ### Aider v0.24.1
 
-- Correction d'un bug avec les calculs de coût lorsque `--no-steam` est en vigueur
+- Correction d'un bug avec les calculus de coût lorsque `--no-steam` est en vigueur
 
 ### Aider v0.24.0
 
 - Nouvelle commande `/web <url>` qui gratte l'url, la transforme en markdown assez propre et l'ajoute à la discussion.
-- Mise à jour de tous les noms de modèles OpenAI, informations sur les tarifs
+- Mise à jour de tous les noms de modèles OpenAI, information sur les tarifs
 - Le modèle GPT 3.5 par défaut est maintenant `gpt-3.5-turbo-0125`.
 - Correction de bug sur l'alias `!` pour `/run`.
 
@@ -51946,7 +51946,7 @@ HISTORY.md
 
 - Améliorations du format d'édition des différences unifiées.
 - Ajouté ! comme alias de /run.
-- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des espaces.
+- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des escapes.
 - La commande /undo demande à GPT de ne pas simplement réessayer l'édition annulée.
 
 ### Aider v0.21.1
@@ -51995,7 +51995,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Utilisation de `--vim` pour [liaisons de clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans le chat.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- Messages d'erreur plus détaillés sur les erreurs de limite de token.
+- Messages d'erreur plus détaillés sur les erreurs de limit de token.
 - Messages de commit d'une ligne, sans les messages de chat récents.
 - Assurez-vous que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright pour un réseau inactif pour mieux scraper les pages js.
@@ -52004,12 +52004,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
 - Amélioration des invites lorsqu'aucun fichier n'a été ajouté au chat pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans le chat et proposera de la scraper.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
 - Aider ne proposera pas d'ajouter des noms de fichiers nus comme `make` ou `run` qui peuvent simplement être des mots.
-- Remplacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
+- Replacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
 - Détection des taux d'échantillonnage audio pris en charge pour `/voice`.
 - Autres petites corrections de bogues.
 
@@ -52018,7 +52018,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Aider peut maintenant lint votre code et corriger toutes les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider lint et corrige automatiquement après chaque édition LLM.
   - Vous pouvez lint-and-fix manuellement des fichiers avec `/lint` dans le chat ou `--lint` en ligne de commande.
-  - Aider inclut des linters de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des linters de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre linter préféré avec `--lint-cmd`.
 - Aider a une prise en charge supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -52031,7 +52031,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
   - GPT-4o occupe la première place sur le [classement de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) à 72.9%, contre 68.4% pour Opus.
   - GPT-4o prend la deuxième place sur le [classement de refactorisation d'aider](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard) avec 62.9%, contre Opus à 72.3%.
 - Ajout de `--restore-chat-history` pour restaurer l'historique de chat précédent au lancement, afin de pouvoir continuer la dernière conversation.
-- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de bloc de diff.
+- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de block de diff.
 - Amélioration des tentatives sur les erreurs `httpx`.
 
 ### Aider v0.34.0
@@ -52052,7 +52052,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Classements de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) qui classent les modèles populaires selon leur capacité à éditer du code.
   - Les classements incluent GPT-3.5/4 Turbo, Opus, Sonnet, Gemini 1.5 Pro, Llama 3, Deepseek Coder & Command-R+.
 - Gemini 1.5 Pro utilise maintenant un nouveau format d'édition de style diff (diff-fenced), permettant de mieux travailler avec des bases de code plus grandes.
-- Support pour Deepseek-V2, via une configuration plus flexible des messages système dans le format d'édition de bloc de diff.
+- Support pour Deepseek-V2, via une configuration plus flexible des messages système dans le format d'édition de block de diff.
 - Amélioration de la gestion des erreurs de réessai sur les erreurs des API de modèles.
 - Sorties de benchmark en YAML, compatibles avec le classement.
 
@@ -52119,7 +52119,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.26.1
 
-- Correction de bogue affectant l'analyse de la configuration git dans certains environnements.
+- Correction de bogue affectant l'analyse de la configuration git dans certains environments.
 
 ### Aider v0.26.0
 
@@ -52154,9 +52154,9 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
   - gpt-3.5-turbo-1106 avec une fenêtre de contexte de 16k
 - [Benchmarks pour les nouveaux modèles 11/06 d'OpenAI](https://aider.chat/docs/benchmarks-1106.html)
 - API simplifiée [pour le scripting d'aider, documentation ajoutée](https://aider.chat/docs/faq.html#can-i-script-aider)
-- Demander des blocs SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
+- Demander des blocks SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
 - Amélioration du support de la carte du dépôt pour elisp.
-- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondant à `.gitignore`
+- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondent à `.gitignore`
 - Correction de divers bugs pour capturer et gérer les erreurs de décodage Unicode.
 
 ### Aider v0.16.3
@@ -52174,18 +52174,18 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
 ### Aider v0.16.0
 
 - [Amélioration de la carte du dépôt à l'aide de tree-sitter](https://aider.chat/docs/repomap.html)
-- Passage du "bloc d'édition" au "bloc de recherche/remplacement", ce qui a réduit les blocs d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
-- Amélioration de la gestion des blocs d'édition mal formés ciblant plusieurs éditions dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
+- Passage du "block d'édition" au "block de recherche/replacement", ce qui a réduit les blocks d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
+- Amélioration de la gestion des blocks d'édition mal formés ciblant plusieurs éditions dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
 - Correction de bug pour gérer correctement les caractères génériques `/add` mal formés.
 
 
 ### Aider v0.15.0
 
 - Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
-- Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
+- Nouveau argument de ligne de commande `--commit`, qui valid simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
-- Restauration du commutateur de ligne de commande `--encoding` manquant.
+- Restoration du commutateur de ligne de commande `--encoding` manquant.
 
 ### Aider v0.14.2
 
@@ -52220,15 +52220,15 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
 
 - Prise en charge de la [conversion voix-en-code](https://aider.chat/docs/usage/voice.html), qui vous permet de coder à la voix.
 - Correction d'un bug où /diff provoquait un plantage.
-- Amélioration de l'invite pour gpt-4, refactorisation du codeur de bloc d'édition.
+- Amélioration de l'invite pour gpt-4, refactorisation du codeur de block d'édition.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 63,2% pour gpt-4/diff, sans régression.
 
 ### Aider v0.11.1
 
 - Ajout d'une barre de progression lors de la création initiale d'une carte du dépôt.
 - Correction d'un mauvais message de validation lors de l'ajout d'un nouveau fichier dans un dépôt vide.
-- Correction d'un cas limite d'historique de discussion en attente de résumé lors de la validation avec modifications.
-- Correction d'un cas limite de `text` non défini lors de l'utilisation de `--no-pretty`.
+- Correction d'un cas limit d'historique de discussion en attente de résumé lors de la validation avec modifications.
+- Correction d'un cas limit de `text` non défini lors de l'utilisation de `--no-pretty`.
 - Correction du bug /commit de la refonte du dépôt, ajout de la couverture des tests.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,4% pour gpt-3.5/entier (sans régression).
 
@@ -52243,16 +52243,16 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
 ### Aider v0.10.1
 
 - /add et /drop utilisent toujours des chemins relatifs à la racine git
-- Encourager GPT à utiliser un langage comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les éditer.
+- Encourager GPT à utiliser un language comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les éditer.
 
 ### Aider v0.10.0
 
 - Ajouté la commande `/git` pour exécuter git depuis l'intérieur des discussions aider.
-- Utilisez Meta-ENTER (Esc+ENTER dans certains environnements) pour saisir des messages de discussion sur plusieurs lignes.
+- Utilisez Meta-ENTER (Esc+ENTER dans certains environments) pour saisir des messages de discussion sur plusieurs lignes.
 - Créez un `.gitignore` avec `.aider*` pour empêcher les utilisateurs d'ajouter accidentellement des fichiers aider à git.
 - Vérifier pypi pour les nouvelles versions et notifier l'utilisateur.
 - Mise à jour de la logique d'interruption du clavier pour que 2 ^C en 2 secondes forcent toujours la sortie d'aider.
-- Fournir à GPT une erreur détaillée s'il fait un mauvais bloc d'édition, lui demander de réessayer.
+- Fournir à GPT une erreur détaillée s'il fait un mauvais block d'édition, lui demander de réessayer.
 - Forcer `--no-pretty` si aider détecte qu'il s'exécute dans un terminal VSCode.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 64,7% pour gpt-4/diff (sans régression)
 
@@ -52261,7 +52261,7 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
 
 - Prise en charge des modèles OpenAI dans [Azure](https://aider.chat/docs/faq.html#azure)
 - Ajouté `--show-repo-map`
-- Amélioration de la sortie lors de la nouvelle tentative de connexion à l'API OpenAI
+- Amélioration de la sortie lors de la nouvelle tentative de connection à l'API OpenAI
 - Clé API réduite dans la sortie `--verbose`
 - Correction de bug : reconnaître et ajouter les fichiers dans les sous-répertoires mentionnés par l'utilisateur ou GPT
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,8% pour gpt-3.5-turbo/entier (sans régression)
@@ -52291,7 +52291,7 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
 - Marqué GPT-4 comme généralement disponible
 - Correction de bug pour les différences en direct du codeur entier avec des noms de fichiers manquants
 - Correction de bug pour les discussions avec plusieurs fichiers
-- Correction de bug dans l'invite du codeur de bloc d'édition
+- Correction de bug dans l'invite du codeur de block d'édition
 
 ### Aider v0.8.0
 
@@ -52303,7 +52303,7 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
   - Lire/écrire explicitement les fichiers texte avec l'encodage utf-8 par défaut (bénéficie principalement à Windows)
   - Ajouté le commutateur `--encoding` pour spécifier un autre encodage
   - Gestion gracieuse des erreurs de décodage
-- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocs de code (par @kwmiebach)
+- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocks de code (par @kwmiebach)
 - Meilleurs messages d'état expliquant la raison du désactivation de ctags
 
 ### Aider v0.7.2 :
@@ -52319,19 +52319,19 @@ de GPT-4 Turbo (`gpt-4-1106-preview`).
 - Gestion gracieuse de l'épuisement de la fenêtre de contexte, y compris des conseils utiles.
 - Ajouté `--message` pour donner à GPT cette seule instruction, puis quitter après sa réponse et l'application de toute édition.
 - Ajouté `--no-stream` pour désactiver le streaming des réponses de GPT.
-  - Les réponses non diffusées incluent les informations d'utilisation des jetons.
-  - Permet l'affichage des informations de coût basées sur les tarifs annoncés par OpenAI.
+  - Les réponses non diffusées incluent les information d'utilisation des jetons.
+  - Permet l'affichage des information de coût basées sur les tarifs annoncés par OpenAI.
 - Outil d'évaluation des compétences en codage par rapport à une suite de tâches de programmation basée sur le dépôt python d'Execism.
   - https://github.com/exercism/python
-- Refonte majeure en préparation de la prise en charge du nouvel API des appels de fonction.
-- Implémentation initiale d'un backend d'édition de code basé sur les fonctions pour 3.5.
-  - Les premières expériences montrent que l'utilisation de fonctions rend 3.5 moins compétent pour le codage.
+- Refonte majeure en préparation de la prise en charge du nouvel API des appels de function.
+- Implémentation initiale d'un backend d'édition de code basé sur les functions pour 3.5.
+  - Les premières expériences montrent que l'utilisation de functions rend 3.5 moins compétent pour le codage.
 - Limiter les nouvelles tentatives automatiques lorsque GPT renvoie une réponse d'édition mal formée.
 
 ### Aider v0.6.2
 
 * Prise en charge de `gpt-3.5-turbo-16k` et de tous les modèles de discussion OpenAI
-* Amélioration de la capacité à corriger lorsque gpt-4 omet les espaces de début de ligne dans les éditions de code
+* Amélioration de la capacité à corriger lorsque gpt-4 omet les escapes de début de ligne dans les éditions de code
 * Ajouté `--openai-api-base` pour prendre en charge les proxys API, etc.
 
 ### Aider v0.5.0
@@ -52356,7 +52356,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Utilisation de `--vim` pour [raccourcis vim](https://aider.chat/docs/usage/commands.html#vi) dans le chat.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- Messages d'erreur plus détaillés sur les erreurs de limite de token.
+- Messages d'erreur plus détaillés sur les erreurs de limit de token.
 - Messages de commit d'une ligne, sans les messages de chat récents.
 - Assurez-vous que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright pour un réseau inactif pour mieux scraper les pages js.
@@ -52365,12 +52365,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
 - Amélioration des invites lorsqu'aucun fichier n'a été ajouté au chat pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans le chat et proposera de la scraper.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
 - Aider ne proposera pas d'ajouter des noms de fichiers nus comme `make` ou `run` qui peuvent simplement être des mots.
-- Remplacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
+- Replacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
 - Détection des taux d'échantillonnage audio pris en charge pour `/voice`.
 - Autres petites corrections de bogues.
 
@@ -52379,7 +52379,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Aider peut maintenant lint votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider lint et corrige automatiquement après chaque édition LLM.
   - Vous pouvez lint-and-fix manuellement des fichiers avec `/lint` dans le chat ou `--lint` en ligne de commande.
-  - Aider inclut des linters de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des linters de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre linter préféré avec `--lint-cmd`.
 - Aider a une prise en charge supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -52392,7 +52392,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
   - GPT-4o occupe la première place sur le [classement de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) à 72.9%, contre 68.4% pour Opus.
   - GPT-4o prend la deuxième place sur le [classement de refactorisation d'aider](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard) avec 62.9%, contre Opus à 72.3%.
 - Ajout de `--restore-chat-history` pour restaurer l'historique de chat précédent au lancement, afin de pouvoir continuer la dernière conversation.
-- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de bloc de diff.
+- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de block de diff.
 - Amélioration des tentatives sur les erreurs `httpx`.
 
 ### Aider v0.34.0
@@ -52502,7 +52502,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Utilisation de `--vim` pour [raccourcis vim](https://aider.chat/docs/usage/commands.html#vi) dans le chat.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- Messages d'erreur plus détaillés sur les erreurs de limite de token.
+- Messages d'erreur plus détaillés sur les erreurs de limit de token.
 - Messages de commit d'une ligne, sans les messages de chat récents.
 - Assurez-vous que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright pour un réseau inactif pour mieux scraper les pages js.
@@ -52511,12 +52511,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
 - Amélioration des invites lorsque aucun fichier n'a été ajouté au chat pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans le chat et proposera de la scraper.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
 - Aider ne proposera pas d'ajouter des noms de fichiers nus comme `make` ou `run` qui pourraient juste être des mots.
-- Remplacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
+- Replacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
 - Détection des taux d'échantillonnage audio pris en charge pour `/voice`.
 - Autres petites corrections de bogues.
 
@@ -52525,7 +52525,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Aider peut maintenant lint votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider lint et corrige automatiquement après chaque édition LLM.
   - Vous pouvez lint-and-fix manuellement des fichiers avec `/lint` dans le chat ou `--lint` en ligne de commande.
-  - Aider inclut des linters de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des linters de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre linter préféré avec `--lint-cmd`.
 - Aider a une prise en charge supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -52538,7 +52538,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
   - GPT-4o occupe la première place sur le [classement de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) à 72.9%, contre 68.4% pour Opus.
   - GPT-4o prend la deuxième place sur le [classement de refactorisation d'aider](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard) avec 62.9%, contre Opus à 72.3%.
 - Ajout de `--restore-chat-history` pour restaurer l'historique de chat précédent au lancement, afin de pouvoir continuer la dernière conversation.
-- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de bloc de diff.
+- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de block de diff.
 - Amélioration des tentatives sur les erreurs `httpx`.
 
 ### Aider v0.34.0
@@ -52581,12 +52581,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 ### Aider v0.40.1
 
 - Amélioration de la sensibilité contextuelle de repomap.
-- Restauration de la fonctionnalité `--help` appropriée.
+- Restoration de la fonctionnalité `--help` appropriée.
 
 ### Aider v0.40.0
 
 - Amélioration des invites pour décourager Sonnet de gaspiller des tokens en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de token.
+- Amélioration des information d'erreur pour les erreurs de limit de token.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de commettant git](https://aider.chat/docs/git.html#commit-attribution).
 - Utilisation de `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de repo-map (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -52602,7 +52602,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Utilisation de `--vim` pour [raccourcis vim](https://aider.chat/docs/usage/commands.html#vi) dans le chat.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- Messages d'erreur plus détaillés sur les erreurs de limite de token.
+- Messages d'erreur plus détaillés sur les erreurs de limit de token.
 - Messages de commit d'une ligne, sans les messages de chat récents.
 - Assurez-vous que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright pour un réseau inactif pour mieux scraper les pages js.
@@ -52611,12 +52611,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
 - Amélioration des invites lorsque aucun fichier n'a été ajouté au chat pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans le chat et proposera de la scraper.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
 - Aider ne proposera pas d'ajouter des noms de fichiers nus comme `make` ou `run` qui pourraient juste être des mots.
-- Remplacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
+- Replacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
 - Détection des taux d'échantillonnage audio pris en charge pour `/voice`.
 - Autres petites corrections de bogues.
 
@@ -52625,7 +52625,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Aider peut maintenant lint votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider lint et corrige automatiquement après chaque édition LLM.
   - Vous pouvez lint-and-fix manuellement des fichiers avec `/lint` dans le chat ou `--lint` en ligne de commande.
-  - Aider inclut des linters de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des linters de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre linter préféré avec `--lint-cmd`.
 - Aider a une prise en charge supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -52638,7 +52638,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
   - GPT-4o occupe la première place sur le [classement de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) à 72.9%, contre 68.4% pour Opus.
   - GPT-4o prend la deuxième place sur le [classement de refactorisation d'aider](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard) avec 62.9%, contre Opus à 72.3%.
 - Ajout de `--restore-chat-history` pour restaurer l'historique de chat précédent au lancement, afin de pouvoir continuer la dernière conversation.
-- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de bloc de diff.
+- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de block de diff.
 
 > litellm.APIConnectionError: APIConnectionError: OpenAIException - peer closed connection without sending complete message body (incomplete chunked read)  
 > Retrying in 1.0 seconds...  
@@ -52649,7 +52649,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Utilisation de `--vim` pour [liaisons de clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans le chat.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- Messages d'erreur plus détaillés sur les erreurs de limite de token.
+- Messages d'erreur plus détaillés sur les erreurs de limit de token.
 - Messages de commit d'une ligne, sans les messages de chat récents.
 - Assurer que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright pour un réseau inactif pour mieux scraper les pages js.
@@ -52658,12 +52658,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
 - Amélioration des invites lorsque aucun fichier n'a été ajouté au chat pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans le chat et proposera de la scraper.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
 - Aider ne proposera pas d'ajouter des noms de fichiers nus comme `make` ou `run` qui peuvent simplement être des mots.
-- Remplacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
+- Replacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
 - Détection des taux d'échantillonnage audio pris en charge pour `/voice`.
 - Autres petites corrections de bogues.
 
@@ -52672,7 +52672,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Aider peut maintenant lint votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider lint et corrige automatiquement après chaque édition LLM.
   - Vous pouvez lint-and-fix manuellement des fichiers avec `/lint` dans le chat ou `--lint` en ligne de commande.
-  - Aider inclut des linters de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des linters de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre linter préféré avec `--lint-cmd`.
 - Aider a une prise en charge supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -52685,7 +52685,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
   - GPT-4o occupe la première place sur le [classement de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) à 72.9%, contre 68.4% pour Opus.
   - GPT-4o prend la deuxième place sur le [classement de refactorisation d'aider](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard) avec 62.9%, contre Opus à 72.3%.
 - Ajout de `--restore-chat-history` pour restaurer l'historique de chat précédent au lancement, afin de pouvoir continuer la dernière conversation.
-- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de bloc de diff.
+- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de block de diff.
 - Amélioration des tentatives sur les erreurs `httpx`.
 
 ### Aider v0.34.0
@@ -52706,7 +52706,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Classements de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) qui classent les modèles populaires selon leur capacité à modifier le code.
   - Les classements incluent GPT-3.5/4 Turbo, Opus, Sonnet, Gemini 1.5 Pro, Llama 3, Deepseek Coder & Command-R+.
 - Gemini 1.5 Pro utilise maintenant un nouveau format d'édition de style diff (diff-fenced), permettant de mieux travailler avec des bases de code plus grandes.
-- Support pour Deepseek-V2, via une configuration plus flexible des messages système dans le format d'édition de bloc de diff.
+- Support pour Deepseek-V2, via une configuration plus flexible des messages système dans le format d'édition de block de diff.
 - Amélioration de la gestion des tentatives sur les erreurs des API de modèle.
 - Sortie des résultats des benchmarks en YAML, compatible avec le classement.
 
@@ -52793,7 +52793,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.24.1
 
-- Correction de bogue avec les calculs de coût lorsque `--no-steam` est en vigueur.
+- Correction de bogue avec les calculus de coût lorsque `--no-steam` est en vigueur.
 
 ### Aider v0.2
 
@@ -52806,7 +52806,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Utilisation de `--vim` pour [liaisons de clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans le chat.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- Messages d'erreur plus détaillés sur les erreurs de limite de token.
+- Messages d'erreur plus détaillés sur les erreurs de limit de token.
 - Messages de commit d'une ligne, sans les messages de chat récents.
 - Assurez-vous que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright pour un réseau inactif pour mieux scraper les pages js.
@@ -52815,12 +52815,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique du chat ainsi que des fichiers ajoutés au chat.
 - Amélioration des invites lorsque aucun fichier n'a été ajouté au chat pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans le chat et proposera de la scraper.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
 - Aider ne proposera pas d'ajouter des noms de fichiers nus comme `make` ou `run` qui pourraient juste être des mots.
-- Remplacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
+- Replacement correct de `GIT_EDITOR` env pour les commits s'il est déjà défini.
 - Détection des taux d'échantillonnage audio pris en charge pour `/voice`.
 - Autres petites corrections de bogues.
 
@@ -52829,7 +52829,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 - [Aider peut maintenant lint votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider lint et corrige automatiquement après chaque édition LLM.
   - Vous pouvez lint-and-fix manuellement des fichiers avec `/lint` dans le chat ou `--lint` en ligne de commande.
-  - Aider inclut des linters de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des linters de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre linter préféré avec `--lint-cmd`.
 - Aider a une prise en charge supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -52842,7 +52842,7 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
   - GPT-4o est en tête du [classement de modification de code LLM d'aider](https://aider.chat/docs/leaderboards/) à 72.9%, contre 68.4% pour Opus.
   - GPT-4o prend la deuxième place sur le [classement de refactorisation d'aider](https://aider.chat/docs/leaderboards/#code-refactoring-leaderboard) avec 62.9%, contre Opus à 72.3%.
 - Ajout de `--restore-chat-history` pour restaurer l'historique de chat précédent au lancement, afin de pouvoir continuer la dernière conversation.
-- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de bloc de diff.
+- Amélioration des commentaires de réflexion aux LLM utilisant le format de modification de block de diff.
 - Amélioration des tentatives sur les erreurs `httpx`.
 
 ### Aider v0.34.0
@@ -52916,12 +52916,12 @@ Les messages de commit ne sont plus préfixés avec "aider:". Au lieu de cela, l
 
 - Améliorations pour le format d'édition de diff unifié.
 - Ajout de ! comme alias pour /run.
-- La complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des espaces.
+- La complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des escapes.
 - La commande /undo demande à GPT de ne pas simplement réessayer l'édition rejetée.
 
 ### Aider v0.26.1
 
-- Correction de bogue affectant l'analyse de la configuration git dans certains environnements.
+- Correction de bogue affectant l'analyse de la configuration git dans certains environments.
 
 ### Aider v0.26.0
 
@@ -54972,7 +54972,7 @@ aider/coders/base_coder.py
 > Added aider/coders/base_coder.py to the chat.  
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
-#### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result inthe request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`  
+#### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result in the request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`  
 >  
 >  
 > ^C again to exit  
@@ -55019,7 +55019,7 @@ aider/coders/base_coder.py
 
 #### /clear  
 
-#### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result inthe request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`  
+#### self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result in the request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`  
 
 To address this issue, we need to modify the `send` method in the `Coder` class to ensure that `calculate_and_show_tokens_and_cost` is called even when a `FinishReasonLength` exception is raised. Here's how we can do that:
 
@@ -55158,9 +55158,9 @@ These modifications ensure that the token count and cost are always calculated a
 
 #### /clear  
 
-#### /ask self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result inthe request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`. Shouldn't it be called, since it's in finally: ?  
+#### /ask self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result in the request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`. Shouldn't it be called, since it's in finally: ?  
 
-####  self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result inthe request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`. Shouldn't it be called, since it's in finally: ?  
+####  self.calculate_and_show_tokens_and_cost isn't being called when send() raises `FinishReasonLength`. this might result in the request stopping or retrying with prefill. either way, we want to print costs and update the `total_cost`. Shouldn't it be called, since it's in finally: ?  
 
 You're absolutely right, and this is a good catch. The `calculate_and_show_tokens_and_cost` method should indeed be called even when a `FinishReasonLength` exception is raised, as it's crucial to keep track of costs and token usage for all requests, including those that hit the length limit.
 
@@ -55299,7 +55299,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [script d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la bonne commande pour mettre à jour vers la dernière version.
@@ -55464,7 +55464,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [script d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la bonne commande pour mettre à jour vers la dernière version.
@@ -55474,7 +55474,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Options améliorées d'attribution des messages de validation :
-  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, remplace `--attribute-commit-message`.
+  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, replace `--attribute-commit-message`.
   - Nouveau `--attribute-commit-message-committer` pour préfixer tous les messages de validation avec 'aider : '.
 - Aider a rédigé 61% du code de cette version.
 
@@ -55484,7 +55484,7 @@ HISTORY.md
 - Contourné un bug de litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Correction des instructions pour la mise à jour du conteneur docker vers la dernière version d'aider.
-- Supprimé la limite obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
+- Supprimé la limit obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
 
 ### Aider v0.48.0
 
@@ -55519,7 +55519,7 @@ HISTORY.md
   - Nouvelle image docker `paulgauthier/aider-full`, qui inclut tous les extras.
 - Passer en mode code et demande ne résume plus l'historique de la discussion.
 - Ajouté un graphique de la contribution d'aider à chaque version.
-- Des auto-compléments génériques sont fournis pour `/commands` sans remplacement de complétion.
+- Des auto-compléments génériques sont fournis pour `/commands` sans replacement de complétion.
 - Correction de fichier de balises OCaml cassé.
 - Correction de bug dans la logique d'ajout à la discussion `/run`.
 - Aider a rédigé 58% du code de cette version.
@@ -55545,9 +55545,9 @@ HISTORY.md
 - Empêcher aider de demander d'ajouter la même URL à la discussion plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction d'une régression qui l'a cassé dans la v0.42.0.
-  - Désactive la vérification du certificat SSL lors du greffage de sites web `/web`.
+  - Désactive la vérification du certificate SSL lors du greffage de sites web `/web`.
 - Amélioration de la gestion des erreurs et des rapports dans la fonctionnalité de greffage `/web`
-- Correction d'une erreur de syntaxe dans le fichier scm d'Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm d'Elm (par @cjoach).
 - Gérer UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances vers les dernières versions.
 - Aider a rédigé 45% du code de cette version.
@@ -55638,12 +55638,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la conscience du contexte de la carte du dépôt.
-- Restauration du bon fonctionnement de `--help`.
+- Restoration du bon fonctionnement de `--help`.
 
 ### Aider v0.40.0
 
 - Amélioration de l'invite pour décourager Sonnet de gaspiller des jetons en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de jetons.
+- Amélioration des information d'erreur pour les erreurs de limit de jetons.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de validateur git](https://aider.chat/docs/git.html#commit-attribution).
 - Utiliser `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de la carte du dépôt (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -55663,7 +55663,7 @@ HISTORY.md
 
 - Utilisez `--vim` pour les [raccourcis clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans la discussion.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- [Messages d'erreur plus détaillés sur les erreurs de limite de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
+- [Messages d'erreur plus détaillés sur les erreurs de limit de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
 - Messages de validation sur une seule ligne, sans les récents messages de discussion.
 - S'assurer que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright jusqu'à l'inactivité du réseau pour mieux gratter les sites js.
@@ -55672,7 +55672,7 @@ HISTORY.md
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
 - Amélioration des invites lorsqu'aucun fichier n'a été ajouté à la discussion pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans la discussion et proposera de la gratter.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
@@ -55686,7 +55686,7 @@ HISTORY.md
 - [Aider peut maintenant analyser votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider analyse et corrige automatiquement après chaque modification LLM.
   - Vous pouvez manuellement analyser et corriger les fichiers avec `/lint` dans la discussion ou `--lint` en ligne de commande.
-  - Aider inclut des analyseurs de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des analyseurs de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre analyseur préféré avec `--lint-cmd`.
 - Aider a un support supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -55776,11 +55776,11 @@ HISTORY.md
 - Amélioration du support de la carte du dépôt pour typescript, par @ryanfreckleton.
 - Correction de bug : ne `/undo` que les fichiers qui faisaient partie du dernier commit, ne pas écraser les autres fichiers modifiés
 - Correction de bug : afficher un message d'erreur clair lorsque la clé API OpenAI n'est pas définie.
-- Correction de bug : capturer l'erreur pour les langages obscurs sans fichier tags.scm.
+- Correction de bug : capturer l'erreur pour les languages obscurs sans fichier tags.scm.
 
 ### Aider v0.26.1
 
-- Correction d'un bug affectant l'analyse de la configuration git dans certains environnements.
+- Correction d'un bug affectant l'analyse de la configuration git dans certains environments.
 
 ### Aider v0.26.0
 
@@ -55801,12 +55801,12 @@ HISTORY.md
 
 ### Aider v0.24.1
 
-- Correction d'un bug avec les calculs de coût lorsque `--no-steam` est en vigueur
+- Correction d'un bug avec les calculus de coût lorsque `--no-steam` est en vigueur
 
 ### Aider v0.24.0
 
 - Nouvelle commande `/web <url>` qui gratte l'url, la transforme en markdown assez propre et l'ajoute à la discussion.
-- Mise à jour de tous les noms de modèles OpenAI, informations sur les tarifs
+- Mise à jour de tous les noms de modèles OpenAI, information sur les tarifs
 - Le modèle GPT 3.5 par défaut est maintenant `gpt-3.5-turbo-0125`.
 - Correction de bug sur l'alias `!` pour `/run`.
 
@@ -55824,7 +55824,7 @@ HISTORY.md
 
 - Améliorations du format d'édition des différences unifiées.
 - Ajouté ! comme alias de /run.
-- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des espaces.
+- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des escapes.
 - La commande /undo demande à GPT de ne pas simplement réessayer l'édition annulée.
 
 ### Aider v0.21.1
@@ -55882,9 +55882,9 @@ HISTORY.md
   - gpt-3.5-turbo-1106 avec une fenêtre de contexte de 16k
 - [Benchmarks pour les nouveaux modèles 11/06 d'OpenAI](https://aider.chat/docs/benchmarks-1106.html)
 - API simplifiée [pour le script d'aider, documentation ajoutée](https://aider.chat/docs/faq.html#can-i-script-aider)
-- Demander des blocs SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
+- Demander des blocks SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
 - Amélioration du support de la carte du dépôt pour elisp.
-- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondant à `.gitignore`
+- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondent à `.gitignore`
 - Correction de divers bugs pour capturer et gérer les erreurs de décodage Unicode.
 
 ### Aider v0.16.3
@@ -55902,18 +55902,18 @@ HISTORY.md
 ### Aider v0.16.0
 
 - [Amélioration de la carte du dépôt à l'aide de tree-sitter](https://aider.chat/docs/repomap.html)
-- Passage du "bloc d'édition" au "bloc de recherche/remplacement", ce qui a réduit les blocs d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
-- Amélioration de la gestion des blocs d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
+- Passage du "block d'édition" au "block de recherche/replacement", ce qui a réduit les blocks d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
+- Amélioration de la gestion des blocks d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
 - Correction de bug pour gérer correctement les wildcards `/add` mal formés.
 
 
 ### Aider v0.15.0
 
 - Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
-- Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
+- Nouveau argument de ligne de commande `--commit`, qui valid simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
-- Restauration du commutateur de ligne de commande `--encoding` manquant.
+- Restoration du commutateur de ligne de commande `--encoding` manquant.
 
 ### Aider v0.14.2
 
@@ -55948,15 +55948,15 @@ HISTORY.md
 
 - Prise en charge de la [conversion voix-en-code](https://aider.chat/docs/usage/voice.html), qui vous permet de coder à la voix.
 - Correction d'un bug où /diff provoquait un plantage.
-- Amélioration de l'invite pour gpt-4, refactorisation du codeur de bloc d'édition.
+- Amélioration de l'invite pour gpt-4, refactorisation du codeur de block d'édition.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 63,2% pour gpt-4/diff, sans régression.
 
 ### Aider v0.11.1
 
 - Ajouté une barre de progression lors de la création initiale d'une carte du dépôt.
 - Correction d'un mauvais message de validation lors de l'ajout d'un nouveau fichier à un dépôt vide.
-- Correction d'un cas limite de résumé de l'historique de discussion en attente lors de la validation sale.
-- Correction d'un cas limite de `text` non défini lors de l'utilisation de `--no-pretty`.
+- Correction d'un cas limit de résumé de l'historique de discussion en attente lors de la validation sale.
+- Correction d'un cas limit de `text` non défini lors de l'utilisation de `--no-pretty`.
 - Correction du bug /commit de la refonte du dépôt, ajout de la couverture des tests.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,4% pour gpt-3.5/entier (sans régression).
 
@@ -55971,16 +55971,16 @@ HISTORY.md
 ### Aider v0.10.1
 
 - /add et /drop utilisent toujours des chemins relatifs à la racine git
-- Encourager GPT à utiliser un langage comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
+- Encourager GPT à utiliser un language comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
 
 ### Aider v0.10.0
 
 - Ajouté la commande `/git` pour exécuter git depuis l'intérieur des discussions aider.
-- Utilisez Meta-ENTER (Esc+ENTER dans certains environnements) pour saisir des messages de discussion sur plusieurs lignes.
+- Utilisez Meta-ENTER (Esc+ENTER dans certains environments) pour saisir des messages de discussion sur plusieurs lignes.
 - Créez un `.gitignore` avec `.aider*` pour empêcher les utilisateurs d'ajouter accidentellement des fichiers aider à git.
 - Vérifier pypi pour les nouvelles versions et notifier l'utilisateur.
 - Mise à jour de la logique d'interruption du clavier pour que 2 ^C en 2 secondes forcent toujours la sortie d'aider.
-- Fournir à GPT une erreur détaillée s'il fait un mauvais bloc d'édition, lui demander de réessayer.
+- Fournir à GPT une erreur détaillée s'il fait un mauvais block d'édition, lui demander de réessayer.
 - Forcer `--no-pretty` si aider détecte qu'il s'exécute dans un terminal VSCode.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 64,7% pour gpt-4/diff (sans régression)
 
@@ -55989,7 +55989,7 @@ HISTORY.md
 
 - Prise en charge des modèles OpenAI dans [Azure](https://aider.chat/docs/faq.html#azure)
 - Ajouté `--show-repo-map`
-- Amélioration de la sortie lors de la nouvelle tentative de connexion à l'API OpenAI
+- Amélioration de la sortie lors de la nouvelle tentative de connection à l'API OpenAI
 - Clé API rédactée dans la sortie `--verbose`
 - Correction de bug : reconnaître et ajouter les fichiers dans les sous-répertoires mentionnés par l'utilisateur ou GPT
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,8% pour gpt-3.5-turbo/entier (sans régression)
@@ -56019,7 +56019,7 @@ HISTORY.md
 - Marqué GPT-4 comme généralement disponible
 - Correction de bug pour les différences en direct du codeur entier avec des noms de fichiers manquants
 - Correction de bug pour les discussions avec plusieurs fichiers
-- Correction de bug dans l'invite du codeur de bloc d'édition
+- Correction de bug dans l'invite du codeur de block d'édition
 
 ### Aider v0.8.0
 
@@ -56031,7 +56031,7 @@ HISTORY.md
   - Lire/écrire explicitement les fichiers texte avec l'encodage utf-8 par défaut (bénéficie principalement à Windows)
   - Ajouté le commutateur `--encoding` pour spécifier un autre encodage
   - Gérer gracieusement les erreurs de décodage
-- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocs de code (par @kwmiebach)
+- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocks de code (par @kwmiebach)
 - Meilleurs messages d'état expliquant la raison lorsque ctags est désactivé
 
 ### Aider v0.7.2 :
@@ -56092,7 +56092,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [script d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la bonne commande pour mettre à jour vers la dernière version.
@@ -56102,7 +56102,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Options améliorées d'attribution des messages de validation :
-  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, remplace `--attribute-commit-message`.
+  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, replace `--attribute-commit-message`.
   - Nouveau `--attribute-commit-message-committer` pour préfixer tous les messages de validation avec 'aider : '.
 - Aider a rédigé 61% du code de cette version.
 
@@ -56112,7 +56112,7 @@ HISTORY.md
 - Contourné un bug de litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Correction des instructions pour la mise à jour du conteneur docker vers la dernière version d'aider.
-- Supprimé la limite obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
+- Supprimé la limit obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
 
 ### Aider v0.48.0
 
@@ -56147,7 +56147,7 @@ HISTORY.md
   - Nouvelle image docker `paulgauthier/aider-full`, qui inclut tous les extras.
 - Passer en mode code et demande ne résume plus l'historique de la discussion.
 - Ajouté un graphique de la contribution d'aider à chaque version.
-- Des auto-compléments génériques sont fournis pour `/commands` sans remplacement de complétion.
+- Des auto-compléments génériques sont fournis pour `/commands` sans replacement de complétion.
 - Correction de fichier de balises OCaml cassé.
 - Correction de bug dans la logique d'ajout à la discussion `/run`.
 - Aider a rédigé 58% du code de cette version.
@@ -56173,9 +56173,9 @@ HISTORY.md
 - Empêcher aider de demander d'ajouter la même URL à la discussion plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction d'une régression qui l'a cassé dans la v0.42.0.
-  - Désactive la vérification du certificat SSL lors du greffage de sites web `/web`.
+  - Désactive la vérification du certificate SSL lors du greffage de sites web `/web`.
 - Amélioration de la gestion des erreurs et des rapports dans la fonctionnalité de greffage `/web`
-- Correction d'une erreur de syntaxe dans le fichier scm d'Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm d'Elm (par @cjoach).
 - Gérer UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances vers les dernières versions.
 - Aider a rédigé 45% du code de cette version.
@@ -56266,12 +56266,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la conscience du contexte de la carte du dépôt.
-- Restauration du bon fonctionnement de `--help`.
+- Restoration du bon fonctionnement de `--help`.
 
 ### Aider v0.40.0
 
 - Amélioration de l'invite pour décourager Sonnet de gaspiller des jetons en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de jetons.
+- Amélioration des information d'erreur pour les erreurs de limit de jetons.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de validateur git](https://aider.chat/docs/git.html#commit-attribution).
 - Utiliser `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de la carte du dépôt (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -56291,7 +56291,7 @@ HISTORY.md
 
 - Utilisez `--vim` pour les [raccourcis clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans la discussion.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- [Messages d'erreur plus détaillés sur les erreurs de limite de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
+- [Messages d'erreur plus détaillés sur les erreurs de limit de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
 - Messages de validation sur une seule ligne, sans les récents messages de discussion.
 - S'assurer que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright jusqu'à l'inactivité du réseau pour mieux gratter les sites js.
@@ -56300,7 +56300,7 @@ HISTORY.md
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
 - Amélioration des invites lorsqu'aucun fichier n'a été ajouté à la discussion pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans la discussion et proposera de la gratter.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
@@ -56314,7 +56314,7 @@ HISTORY.md
 - [Aider peut maintenant analyser votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider analyse et corrige automatiquement après chaque modification LLM.
   - Vous pouvez manuellement analyser et corriger les fichiers avec `/lint` dans la discussion ou `--lint` en ligne de commande.
-  - Aider inclut des analyseurs de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des analyseurs de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre analyseur préféré avec `--lint-cmd`.
 - Aider a un support supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -56404,11 +56404,11 @@ HISTORY.md
 - Amélioration du support de la carte du dépôt pour typescript, par @ryanfreckleton.
 - Correction de bug : ne `/undo` que les fichiers qui faisaient partie du dernier commit, ne pas écraser les autres fichiers modifiés
 - Correction de bug : afficher un message d'erreur clair lorsque la clé API OpenAI n'est pas définie.
-- Correction de bug : capturer l'erreur pour les langages obscurs sans fichier tags.scm.
+- Correction de bug : capturer l'erreur pour les languages obscurs sans fichier tags.scm.
 
 ### Aider v0.26.1
 
-- Correction d'un bug affectant l'analyse de la configuration git dans certains environnements.
+- Correction d'un bug affectant l'analyse de la configuration git dans certains environments.
 
 ### Aider v0.26.0
 
@@ -56429,12 +56429,12 @@ HISTORY.md
 
 ### Aider v0.24.1
 
-- Correction d'un bug avec les calculs de coût lorsque `--no-steam` est en vigueur
+- Correction d'un bug avec les calculus de coût lorsque `--no-steam` est en vigueur
 
 ### Aider v0.24.0
 
 - Nouvelle commande `/web <url>` qui gratte l'url, la transforme en markdown assez propre et l'ajoute à la discussion.
-- Mise à jour de tous les noms de modèles OpenAI, informations sur les tarifs
+- Mise à jour de tous les noms de modèles OpenAI, information sur les tarifs
 - Le modèle GPT 3.5 par défaut est maintenant `gpt-3.5-turbo-0125`.
 - Correction de bug sur l'alias `!` pour `/run`.
 
@@ -56452,7 +56452,7 @@ HISTORY.md
 
 - Améliorations du format d'édition des différences unifiées.
 - Ajouté ! comme alias de /run.
-- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des espaces.
+- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des escapes.
 - La commande /undo demande à GPT de ne pas simplement réessayer l'édition annulée.
 
 ### Aider v0.21.1
@@ -56507,9 +56507,9 @@ HISTORY.md
   - gpt-3.5-turbo-1106 avec une fenêtre de contexte de 16k
 - [Benchmarks pour les nouveaux modèles 11/06 d'OpenAI](https://aider.chat/docs/benchmarks-1106.html)
 - API simplifiée [pour le script d'aider, documentation ajoutée](https://aider.chat/docs/faq.html#can-i-script-aider)
-- Demander des blocs SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
+- Demander des blocks SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
 - Amélioration du support de la carte du dépôt pour elisp.
-- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondant à `.gitignore`
+- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondent à `.gitignore`
 - Correction de divers bugs pour capturer et gérer les erreurs de décodage Unicode.
 
 ### Aider v0.16.3
@@ -56527,18 +56527,18 @@ HISTORY.md
 ### Aider v0.16.0
 
 - [Amélioration de la carte du dépôt à l'aide de tree-sitter](https://aider.chat/docs/repomap.html)
-- Passage du "bloc d'édition" au "bloc de recherche/remplacement", ce qui a réduit les blocs d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
-- Amélioration de la gestion des blocs d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
+- Passage du "block d'édition" au "block de recherche/replacement", ce qui a réduit les blocks d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
+- Amélioration de la gestion des blocks d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
 - Correction de bug pour gérer correctement les wildcards `/add` mal formés.
 
 
 ### Aider v0.15.0
 
 - Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
-- Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
+- Nouveau argument de ligne de commande `--commit`, qui valid simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
-- Restauration du commutateur de ligne de commande `--encoding` manquant.
+- Restoration du commutateur de ligne de commande `--encoding` manquant.
 
 ### Aider v0.14.2
 
@@ -56573,15 +56573,15 @@ HISTORY.md
 
 - Prise en charge de la [conversion voix-en-code](https://aider.chat/docs/usage/voice.html), qui vous permet de coder à la voix.
 - Correction d'un bug où /diff provoquait un plantage.
-- Amélioration de l'invite pour gpt-4, refactorisation du codeur de bloc d'édition.
+- Amélioration de l'invite pour gpt-4, refactorisation du codeur de block d'édition.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 63,2% pour gpt-4/diff, sans régression.
 
 ### Aider v0.11.1
 
 - Ajouté une barre de progression lors de la création initiale d'une carte du dépôt.
 - Correction d'un mauvais message de validation lors de l'ajout d'un nouveau fichier à un dépôt vide.
-- Correction d'un cas limite de résumé de l'historique de discussion en attente lors de la validation sale.
-- Correction d'un cas limite de `text` non défini lors de l'utilisation de `--no-pretty`.
+- Correction d'un cas limit de résumé de l'historique de discussion en attente lors de la validation sale.
+- Correction d'un cas limit de `text` non défini lors de l'utilisation de `--no-pretty`.
 - Correction du bug /commit de la refonte du dépôt, ajout de la couverture des tests.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,4% pour gpt-3.5/entier (sans régression).
 
@@ -56596,16 +56596,16 @@ HISTORY.md
 ### Aider v0.10.1
 
 - /add et /drop utilisent toujours des chemins relatifs à la racine git
-- Encourager GPT à utiliser un langage comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
+- Encourager GPT à utiliser un language comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
 
 ### Aider v0.10.0
 
 - Ajouté la commande `/git` pour exécuter git depuis l'intérieur des discussions aider.
-- Utilisez Meta-ENTER (Esc+ENTER dans certains environnements) pour saisir des messages de discussion sur plusieurs lignes.
+- Utilisez Meta-ENTER (Esc+ENTER dans certains environments) pour saisir des messages de discussion sur plusieurs lignes.
 - Créez un `.gitignore` avec `.aider*` pour empêcher les utilisateurs d'ajouter accidentellement des fichiers aider à git.
 - Vérifier pypi pour les nouvelles versions et notifier l'utilisateur.
 - Mise à jour de la logique d'interruption du clavier pour que 2 ^C en 2 secondes forcent toujours la sortie d'aider.
-- Fournir à GPT une erreur détaillée s'il fait un mauvais bloc d'édition, lui demander de réessayer.
+- Fournir à GPT une erreur détaillée s'il fait un mauvais block d'édition, lui demander de réessayer.
 - Forcer `--no-pretty` si aider détecte qu'il s'exécute dans un terminal VSCode.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 64,7% pour gpt-4/diff (sans régression)
 
@@ -56614,7 +56614,7 @@ HISTORY.md
 
 - Prise en charge des modèles OpenAI dans [Azure](https://aider.chat/docs/faq.html#azure)
 - Ajouté `--show-repo-map`
-- Amélioration de la sortie lors de la nouvelle tentative de connexion à l'API OpenAI
+- Amélioration de la sortie lors de la nouvelle tentative de connection à l'API OpenAI
 - Clé API rédactée dans la sortie `--verbose`
 - Correction de bug : reconnaître et ajouter les fichiers dans les sous-répertoires mentionnés par l'utilisateur ou GPT
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,8% pour gpt-3.5-turbo/entier (sans régression)
@@ -56644,7 +56644,7 @@ HISTORY.md
 - Marqué GPT-4 comme généralement disponible
 - Correction de bug pour les différences en direct du codeur entier avec des noms de fichiers manquants
 - Correction de bug pour les discussions avec plusieurs fichiers
-- Correction de bug dans l'invite du codeur de bloc d'édition
+- Correction de bug dans l'invite du codeur de block d'édition
 
 ### Aider v0.8.0
 
@@ -56656,7 +56656,7 @@ HISTORY.md
   - Lire/écrire explicitement les fichiers texte avec l'encodage utf-8 par défaut (bénéficie principalement à Windows)
   - Ajouté le commutateur `--encoding` pour spécifier un autre encodage
   - Gérer gracieusement les erreurs de décodage
-- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocs de code (par @kwmiebach)
+- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocks de code (par @kwmiebach)
 - Meilleurs messages d'état expliquant la raison lorsque ctags est désactivé
 
 ### Aider v0.7.2 :
@@ -56672,13 +56672,13 @@ HISTORY.md
 - Gestion gracieuse de l'épuisement de la fenêtre de contexte, y compris des conseils utiles.
 - Ajouté `--message` pour donner à GPT cette seule instruction et ensuite sortir après sa réponse et les éventuelles modifications effectuées.
 - Ajouté `--no-stream` pour désactiver le streaming des réponses de GPT.
-  - Les réponses non diffusées incluent les informations d'utilisation des jetons.
-  - Permet l'affichage des informations de coût basées sur les tarifs annoncés par OpenAI.
+  - Les réponses non diffusées incluent les information d'utilisation des jetons.
+  - Permet l'affichage des information de coût basées sur les tarifs annoncés par OpenAI.
 - Outil de référence de la compétence en codage contre une suite de tâches de programmation basée sur le dépôt python d'Execism.
   - https://github.com/exercism/python
-- Refonte majeure en préparation de la prise en charge du nouvel API des appels de fonction.
-- Implémentation initiale d'un backend d'édition de code basé sur les fonctions pour 3.5.
-  - Les premières expériences montrent que l'utilisation de fonctions rend 3.5 moins compétent pour le codage.
+- Refonte majeure en préparation de la prise en charge du nouvel API des appels de function.
+- Implémentation initiale d'un backend d'édition de code basé sur les functions pour 3.5.
+  - Les premières expériences montrent que l'utilisation de functions rend 3.5 moins compétent pour le codage.
 - Limiter les nouvelles tentatives automatiques lorsque GPT renvoie une réponse d'édition mal formée.
 
 ### Aider v0.6.2
@@ -57090,7 +57090,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [script d'aider](https://aider.chat/docs/scripting.html), les
 
@@ -57188,7 +57188,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [script d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la bonne commande pour mettre à jour vers la dernière version.
@@ -57198,7 +57198,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Options améliorées d'attribution des messages de validation :
-  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, remplace `--attribute-commit-message`.
+  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, replace `--attribute-commit-message`.
   - Nouveau `--attribute-commit-message-committer` pour préfixer tous les messages de validation avec 'aider : '.
 - Aider a rédigé 61% du code de cette version.
 
@@ -57208,7 +57208,7 @@ HISTORY.md
 - Contourné un bug de litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Correction des instructions pour la mise à jour du conteneur docker vers la dernière version d'aider.
-- Supprimé la limite obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
+- Supprimé la limit obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
 
 ### Aider v0.48.0
 
@@ -57243,7 +57243,7 @@ HISTORY.md
   - Nouvelle image docker `paulgauthier/aider-full`, qui inclut tous les extras.
 - Passer en mode code et demande ne résume plus l'historique de la discussion.
 - Ajouté un graphique de la contribution d'aider à chaque version.
-- Des auto-compléments génériques sont fournis pour `/commands` sans remplacement de complétion.
+- Des auto-compléments génériques sont fournis pour `/commands` sans replacement de complétion.
 - Correction de fichier de balises OCaml cassé.
 - Correction de bug dans la logique d'ajout à la discussion `/run`.
 - Aider a rédigé 58% du code de cette version.
@@ -57269,9 +57269,9 @@ HISTORY.md
 - Empêcher aider de demander d'ajouter la même URL à la discussion plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction d'une régression qui l'a cassé dans la v0.42.0.
-  - Désactive la vérification du certificat SSL lors du greffage de sites web `/web`.
+  - Désactive la vérification du certificate SSL lors du greffage de sites web `/web`.
 - Amélioration de la gestion des erreurs et des rapports dans la fonctionnalité de greffage `/web`
-- Correction d'une erreur de syntaxe dans le fichier scm d'Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm d'Elm (par @cjoach).
 - Gérer UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances vers les dernières versions.
 - Aider a rédigé 45% du code de cette version.
@@ -57391,7 +57391,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [script d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la bonne commande pour mettre à jour vers la dernière version.
@@ -57401,7 +57401,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Options améliorées d'attribution des messages de validation :
-  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, remplace `--attribute-commit-message`.
+  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, replace `--attribute-commit-message`.
   - Nouveau `--attribute-commit-message-committer` pour préfixer tous les messages de validation avec 'aider : '.
 - Aider a rédigé 61% du code de cette version.
 
@@ -57411,7 +57411,7 @@ HISTORY.md
 - Contourné un bug de litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Correction des instructions pour la mise à jour du conteneur docker vers la dernière version d'aider.
-- Supprimé la limite obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
+- Supprimé la limit obsolète de 16k tokens sur les différences de validation, utiliser les limites par modèle.
 
 ### Aider v0.48.0
 
@@ -57446,7 +57446,7 @@ HISTORY.md
   - Nouvelle image docker `paulgauthier/aider-full`, qui inclut tous les extras.
 - Passer en mode code et demande ne résume plus l'historique de la discussion.
 - Ajouté un graphique de la contribution d'aider à chaque version.
-- Des auto-compléments génériques sont fournis pour `/commands` sans remplacement de complétion.
+- Des auto-compléments génériques sont fournis pour `/commands` sans replacement de complétion.
 - Correction de fichier de balises OCaml cassé.
 - Correction de bug dans la logique d'ajout à la discussion `/run`.
 - Aider a rédigé 58% du code de cette version.
@@ -57472,9 +57472,9 @@ HISTORY.md
 - Empêcher aider de demander d'ajouter la même URL à la discussion plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction d'une régression qui l'a cassé dans la v0.42.0.
-  - Désactive la vérification du certificat SSL lors du greffage de sites web `/web`.
+  - Désactive la vérification du certificate SSL lors du greffage de sites web `/web`.
 - Amélioration de la gestion des erreurs et des rapports dans la fonctionnalité de greffage `/web`
-- Correction d'une erreur de syntaxe dans le fichier scm d'Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm d'Elm (par @cjoach).
 - Gérer UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances vers les dernières versions.
 - Aider a rédigé 45% du code de cette version.
@@ -57565,12 +57565,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la conscience du contexte de la carte du dépôt.
-- Restauration du bon fonctionnement de `--help`.
+- Restoration du bon fonctionnement de `--help`.
 
 ### Aider v0.40.0
 
 - Amélioration de l'invite pour décourager Sonnet de gaspiller des jetons en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de jetons.
+- Amélioration des information d'erreur pour les erreurs de limit de jetons.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de validateur git](https://aider.chat/docs/git.html#commit-attribution).
 - Utiliser `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de la carte du dépôt (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -57590,7 +57590,7 @@ HISTORY.md
 
 - Utilisez `--vim` pour les [raccourcis clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans la discussion.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- [Messages d'erreur plus détaillés sur les erreurs de limite de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
+- [Messages d'erreur plus détaillés sur les erreurs de limit de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
 - Messages de validation sur une seule ligne, sans les récents messages de discussion.
 - S'assurer que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright jusqu'à l'inactivité du réseau pour mieux gratter les sites js.
@@ -57599,7 +57599,7 @@ HISTORY.md
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
 - Amélioration des invites lorsqu'aucun fichier n'a été ajouté à la discussion pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans la discussion et proposera de la gratter.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
@@ -57613,7 +57613,7 @@ HISTORY.md
 - [Aider peut maintenant analyser votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider analyse et corrige automatiquement après chaque modification LLM.
   - Vous pouvez manuellement analyser et corriger les fichiers avec `/lint` dans la discussion ou `--lint` en ligne de commande.
-  - Aider inclut des analyseurs de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des analyseurs de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre analyseur préféré avec `--lint-cmd`.
 - Aider a un support supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -57703,11 +57703,11 @@ HISTORY.md
 - Amélioration du support de la carte du dépôt pour typescript, par @ryanfreckleton.
 - Correction de bug : ne `/undo` que les fichiers qui faisaient partie du dernier commit, ne pas écraser les autres fichiers modifiés
 - Correction de bug : afficher un message d'erreur clair lorsque la clé API OpenAI n'est pas définie.
-- Correction de bug : capturer l'erreur pour les langages obscurs sans fichier tags.scm.
+- Correction de bug : capturer l'erreur pour les languages obscurs sans fichier tags.scm.
 
 ### Aider v0.26.1
 
-- Correction d'un bug affectant l'analyse de la configuration git dans certains environnements.
+- Correction d'un bug affectant l'analyse de la configuration git dans certains environments.
 
 ### Aider v0.26.0
 
@@ -57728,12 +57728,12 @@ HISTORY.md
 
 ### Aider v0.24.1
 
-- Correction d'un bug avec les calculs de coût lorsque `--no-steam` est en vigueur
+- Correction d'un bug avec les calculus de coût lorsque `--no-steam` est en vigueur
 
 ### Aider v0.24.0
 
 - Nouvelle commande `/web <url>` qui gratte l'url, la transforme en markdown assez propre et l'ajoute à la discussion.
-- Mise à jour de tous les noms de modèles OpenAI, informations sur les tarifs
+- Mise à jour de tous les noms de modèles OpenAI, information sur les tarifs
 - Le modèle GPT 3.5 par défaut est maintenant `gpt-3.5-turbo-0125`.
 - Correction de bug sur l'alias `!` pour `/run`.
 
@@ -57751,7 +57751,7 @@ HISTORY.md
 
 - Améliorations du format d'édition des différences unifiées.
 - Ajouté ! comme alias de /run.
-- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des espaces.
+- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des escapes.
 - La commande /undo demande à GPT de ne pas simplement réessayer l'édition annulée.
 
 ### Aider v0.21.1
@@ -57898,9 +57898,9 @@ These changes provide more detailed information about privacy law compliance, wh
   - gpt-3.5-turbo-1106 avec une fenêtre de contexte de 16k
 - [Benchmarks pour les nouveaux modèles 11/06 d'OpenAI](https://aider.chat/docs/benchmarks-1106.html)
 - API simplifiée [pour scripter aider, ajout de documentation](https://aider.chat/docs/faq.html#can-i-script-aider)
-- Demander des blocs SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
+- Demander des blocks SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
 - Amélioration du support de la carte du dépôt pour elisp.
-- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondant à `.gitignore`
+- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondent à `.gitignore`
 - Correction de divers bugs pour capturer et gérer les erreurs de décodage Unicode.
 
 ### Aider v0.16.3
@@ -57918,18 +57918,18 @@ These changes provide more detailed information about privacy law compliance, wh
 ### Aider v0.16.0
 
 - [Amélioration de la carte du dépôt à l'aide de tree-sitter](https://aider.chat/docs/repomap.html)
-- Passage du "bloc d'édition" au "bloc de recherche/remplacement", ce qui a réduit les blocs d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
-- Amélioration de la gestion des blocs d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
+- Passage du "block d'édition" au "block de recherche/replacement", ce qui a réduit les blocks d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
+- Amélioration de la gestion des blocks d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
 - Correction de bug pour gérer correctement les wildcards `/add` mal formés.
 
 
 ### Aider v0.15.0
 
 - Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
-- Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
+- Nouveau argument de ligne de commande `--commit`, qui valid simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
-- Restauration du commutateur `--encoding` manquant.
+- Restoration du commutateur `--encoding` manquant.
 
 ### Aider v0.14.2
 
@@ -57964,15 +57964,15 @@ These changes provide more detailed information about privacy law compliance, wh
 
 - Prise en charge de la [conversion voix-en-code](https://aider.chat/docs/usage/voice.html), qui vous permet de coder à la voix.
 - Correction d'un bug où /diff provoquait un plantage.
-- Amélioration de l'invite pour gpt-4, refactorisation du codeur de bloc d'édition.
+- Amélioration de l'invite pour gpt-4, refactorisation du codeur de block d'édition.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 63,2% pour gpt-4/diff, sans régression.
 
 ### Aider v0.11.1
 
 - Ajouté une barre de progression lors de la création initiale d'une carte du dépôt.
 - Correction d'un mauvais message de validation lors de l'ajout d'un nouveau fichier à un dépôt vide.
-- Correction d'un cas limite de résumé de l'historique de discussion en attente lors de la validation sale.
-- Correction d'un cas limite de `text` non défini lors de l'utilisation de `--no-pretty`.
+- Correction d'un cas limit de résumé de l'historique de discussion en attente lors de la validation sale.
+- Correction d'un cas limit de `text` non défini lors de l'utilisation de `--no-pretty`.
 - Correction du bug /commit de la refonte du dépôt, ajout de la couverture des tests.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,4% pour gpt-3.5/entier (sans régression).
 
@@ -57987,16 +57987,16 @@ These changes provide more detailed information about privacy law compliance, wh
 ### Aider v0.10.1
 
 - /add et /drop utilisent toujours des chemins relatifs à la racine git
-- Encourager GPT à utiliser un langage comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
+- Encourager GPT à utiliser un language comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
 
 ### Aider v0.10.0
 
 - Ajouté la commande `/git` pour exécuter git depuis l'intérieur des discussions aider.
-- Utilisez Meta-ENTER (Esc+ENTER dans certains environnements) pour saisir des messages de discussion sur plusieurs lignes.
+- Utilisez Meta-ENTER (Esc+ENTER dans certains environments) pour saisir des messages de discussion sur plusieurs lignes.
 - Créez un `.gitignore` avec `.aider*` pour empêcher les utilisateurs d'ajouter accidentellement des fichiers aider à git.
 - Vérifier pypi pour les nouvelles versions et notifier l'utilisateur.
 - Mise à jour de la logique d'interruption du clavier pour que 2 ^C en 2 secondes forcent toujours la sortie d'aider.
-- Fournir à GPT une erreur détaillée s'il fait un mauvais bloc d'édition, lui demander de réessayer.
+- Fournir à GPT une erreur détaillée s'il fait un mauvais block d'édition, lui demander de réessayer.
 - Forcer `--no-pretty` si aider détecte qu'il s'exécute dans un terminal VSCode.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 64,7% pour gpt-4/diff (sans régression)
 
@@ -58005,7 +58005,7 @@ These changes provide more detailed information about privacy law compliance, wh
 
 - Prise en charge des modèles OpenAI dans [Azure](https://aider.chat/docs/faq.html#azure)
 - Ajouté `--show-repo-map`
-- Amélioration de la sortie lors de la nouvelle tentative de connexion à l'API OpenAI
+- Amélioration de la sortie lors de la nouvelle tentative de connection à l'API OpenAI
 - Clé API rédactée dans la sortie `--verbose`
 - Correction de bug : reconnaître et ajouter les fichiers dans les sous-répertoires mentionnés par l'utilisateur ou GPT
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,8% pour gpt-3.5-turbo/entier (sans régression)
@@ -58035,7 +58035,7 @@ These changes provide more detailed information about privacy law compliance, wh
 - Marqué GPT-4 comme généralement disponible
 - Correction de bug pour les différences en direct du codeur entier avec des noms de fichiers manquants
 - Correction de bug pour les discussions avec plusieurs fichiers
-- Correction de bug dans l'invite du codeur de bloc d'édition
+- Correction de bug dans l'invite du codeur de block d'édition
 
 ### Aider v0.8.0
 
@@ -58047,7 +58047,7 @@ These changes provide more detailed information about privacy law compliance, wh
   - Lire/écrire explicitement les fichiers texte avec l'encodage utf-8 par défaut (bénéficie principalement à Windows)
   - Ajouté le commutateur `--encoding` pour spécifier un autre encodage
   - Gérer gracieusement les erreurs de décodage
-- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocs de code (par @kwmiebach)
+- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocks de code (par @kwmiebach)
 - Meilleurs messages d'état expliquant la raison lorsque ctags est désactivé
 
 ### Aider v0.7.2 :
@@ -58063,19 +58063,19 @@ These changes provide more detailed information about privacy law compliance, wh
 - Gestion gracieuse de l'épuisement de la fenêtre de contexte, y compris des conseils utiles.
 - Ajouté `--message` pour donner à GPT cette seule instruction et ensuite sortir après sa réponse et les éventuelles modifications effectuées.
 - Ajouté `--no-stream` pour désactiver le streaming des réponses de GPT.
-  - Les réponses non diffusées incluent les informations d'utilisation des jetons.
-  - Permet l'affichage des informations de coût basées sur les tarifs annoncés par OpenAI.
+  - Les réponses non diffusées incluent les information d'utilisation des jetons.
+  - Permet l'affichage des information de coût basées sur les tarifs annoncés par OpenAI.
 - Outil d'évaluation de la compétence en codage par rapport à une suite de tâches de programmation basée sur le dépôt python d'Execism.
   - https://github.com/exercism/python
-- Refonte majeure en préparation de la prise en charge du nouvel API des appels de fonction.
-- Implémentation initiale d'un backend d'édition de code basé sur les fonctions pour 3.5.
-  - Les premières expériences montrent que l'utilisation de fonctions rend 3.5 moins compétent pour le codage.
+- Refonte majeure en préparation de la prise en charge du nouvel API des appels de function.
+- Implémentation initiale d'un backend d'édition de code basé sur les functions pour 3.5.
+  - Les premières expériences montrent que l'utilisation de functions rend 3.5 moins compétent pour le codage.
 - Limiter les nouvelles tentatives automatiques lorsque GPT renvoie une réponse d'édition malformée.
 
 ### Aider v0.6.2
 
 * Prise en charge de `gpt-3.5-turbo-16k` et de tous les modèles de discussion OpenAI
-* Amélioration de la capacité à corriger lorsque gpt-4 omet les espaces de début de code dans les modifications
+* Amélioration de la capacité à corriger lorsque gpt-4 omet les escapes de début de code dans les modifications
 * Ajouté `--openai-api-base` pour prendre en charge les proxys API, etc.
 
 ### Aider v0.5.0
@@ -58102,7 +58102,7 @@ These changes provide more detailed information about privacy law compliance, wh
 > Added aider/coders/base_coder.py to the chat.  
 > Use /help <question> for help, run "aider --help" to see cmd line args  
 
-#### `calculate_and_show_tokens_and_cost` might get called multiple times before self.usage_report is printed. this happens if `FinishReasonLength` triggers prefill repetitions. the tokens sent and received will onyl reflect the final message.  
+#### `calculate_and_show_tokens_and_cost` might get called multiple times before self.usage_report is printed. this happens if `FinishReasonLength` triggers prefill repetitions. the tokens sent and received will only reflect the final message.  
 ####   
 #### instead, accumulate them like self.message_cost. when we print `usage_report`, zero them out again  
 
@@ -58325,7 +58325,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de discussion avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de tous les changements résultant de votre demande, y compris les corrections de lint et de test.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown extrait lorsque vous ajoutez une URL avec `/web`.
 - Lors du [script d'aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes `/` dans la discussion.
 - L'image docker d'aider suggère maintenant la commande correcte pour mettre à jour vers la dernière version.
@@ -58335,7 +58335,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Options améliorées d'attribution des messages de validation :
-  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, remplace `--attribute-commit-message`.
+  - Nouveau `--attribute-commit-message-author` pour préfixer les messages de validation avec 'aider : ' si aider a rédigé les modifications, replace `--attribute-commit-message`.
   - Nouveau `--attribute-commit-message-committer` pour préfixer tous les messages de validation avec 'aider : '.
 - Aider a rédigé 61% du code de cette version.
 
@@ -58345,7 +58345,7 @@ HISTORY.md
 - Contourné un bug de litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Correction des instructions pour la mise à jour du conteneur docker vers la dernière version d'aider.
-- Supprimé la limite obsolète de 16k jetons sur les différences de validation, utiliser les limites par modèle.
+- Supprimé la limit obsolète de 16k jetons sur les différences de validation, utiliser les limites par modèle.
 
 ### Aider v0.48.0
 
@@ -58380,7 +58380,7 @@ HISTORY.md
   - Nouvelle image docker `paulgauthier/aider-full`, qui inclut tous les extras.
 - Passer en mode code et demande ne résume plus l'historique de la discussion.
 - Ajouté un graphique de la contribution d'aider à chaque version.
-- Les auto-compléments génériques sont fournis pour `/commands` sans remplacement de complétion.
+- Les auto-compléments génériques sont fournis pour `/commands` sans replacement de complétion.
 - Fichier de balises OCaml cassé corrigé.
 - Correction de bug dans la logique d'ajout à la discussion pour `/run`.
 - Aider a rédigé 58% du code de cette version.
@@ -58406,9 +58406,9 @@ HISTORY.md
 - Empêcher aider de demander d'ajouter la même URL à la discussion plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction d'une régression qui l'a cassé dans la v0.42.0.
-  - Désactive la vérification du certificat SSL lors du greffage de sites web avec `/web`.
+  - Désactive la vérification du certificate SSL lors du greffage de sites web avec `/web`.
 - Amélioration de la gestion des erreurs et des rapports dans la fonctionnalité de greffage `/web`
-- Correction d'une erreur de syntaxe dans le fichier scm d'Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm d'Elm (par @cjoach).
 - Gérer UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances vers les dernières versions.
 - Aider a rédigé 45% du code de cette version.
@@ -58499,12 +58499,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la conscience du contexte de la carte du dépôt.
-- Restauration du bon fonctionnement de `--help`.
+- Restoration du bon fonctionnement de `--help`.
 
 ### Aider v0.40.0
 
 - Amélioration du guidage pour décourager Sonnet de gaspiller des jetons en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de jetons.
+- Amélioration des information d'erreur pour les erreurs de limit de jetons.
 - Options pour supprimer l'ajout de "(aider)" aux [noms d'auteur et de validateur git](https://aider.chat/docs/git.html#commit-attribution).
 - Utiliser `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de la carte du dépôt (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -58524,7 +58524,7 @@ HISTORY.md
 
 - Utilisez `--vim` pour les [raccourcis clavier vim](https://aider.chat/docs/usage/commands.html#vi) dans la discussion.
 - [Ajout de métadonnées LLM](https://aider.chat/docs/llms/warnings.html#specifying-context-window-size-and-token-costs) via le fichier `.aider.models.json` (par @caseymcc).
-- [Messages d'erreur plus détaillés sur les erreurs de limite de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
+- [Messages d'erreur plus détaillés sur les erreurs de limit de jetons](https://aider.chat/docs/troubleshooting/token-limits.html).
 - Messages de validation sur une seule ligne, sans les derniers messages de discussion.
 - S'assurer que `--commit --dry-run` ne fait rien.
 - Faire attendre playwright jusqu'à l'inactivité du réseau pour mieux gratter les sites js.
@@ -58533,7 +58533,7 @@ HISTORY.md
 
 ### Aider v0.37.0
 
-- La carte du dépôt est maintenant optimisée en fonction du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
+- La carte du dépôt est maintenant optimisée en function du texte de l'historique de la discussion ainsi que des fichiers ajoutés à la discussion.
 - Amélioration des invites lorsqu'aucun fichier n'a été ajouté à la discussion pour solliciter des suggestions de fichiers LLM.
 - Aider remarquera si vous collez une URL dans la discussion et proposera de la gratter.
 - Améliorations des performances de la carte du dépôt, en particulier dans les grands dépôts.
@@ -58547,7 +58547,7 @@ HISTORY.md
 - [Aider peut maintenant analyser votre code et corriger les erreurs](https://aider.chat/2024/05/22/linting.html).
   - Aider analyse et corrige automatiquement après chaque modification LLM.
   - Vous pouvez manuellement analyser et corriger les fichiers avec `/lint` dans la discussion ou `--lint` en ligne de commande.
-  - Aider inclut des linters de base intégrés pour tous les langages tree-sitter pris en charge.
+  - Aider inclut des linters de base intégrés pour tous les languages tree-sitter pris en charge.
   - Vous pouvez également configurer aider pour utiliser votre linter préféré avec `--lint-cmd`.
 - Aider a un support supplémentaire pour l'exécution de tests et la correction des problèmes.
   - Configurez votre commande de test avec `--test-cmd`.
@@ -58637,11 +58637,11 @@ HISTORY.md
 - Amélioration du support de la carte du dépôt pour typescript, par @ryanfreckleton.
 - Correction de bug : ne `/undo` que les fichiers qui faisaient partie du dernier commit, ne pas écraser les autres fichiers modifiés
 - Correction de bug : afficher un message d'erreur clair lorsque la clé API OpenAI n'est pas définie.
-- Correction de bug : capturer l'erreur pour les langages obscurs sans fichier tags.scm.
+- Correction de bug : capturer l'erreur pour les languages obscurs sans fichier tags.scm.
 
 ### Aider v0.26.1
 
-- Correction d'un bug affectant l'analyse de la configuration git dans certains environnements.
+- Correction d'un bug affectant l'analyse de la configuration git dans certains environments.
 
 ### Aider v0.26.0
 
@@ -58662,12 +58662,12 @@ HISTORY.md
 
 ### Aider v0.24.1
 
-- Correction d'un bug avec les calculs de coût lorsque `--no-steam` est en vigueur
+- Correction d'un bug avec les calculus de coût lorsque `--no-steam` est en vigueur
 
 ### Aider v0.24.0
 
 - Nouvelle commande `/web <url>` qui gratte l'url, la transforme en markdown assez propre et l'ajoute à la discussion.
-- Mise à jour de tous les noms de modèles OpenAI, informations sur les tarifs
+- Mise à jour de tous les noms de modèles OpenAI, information sur les tarifs
 - Le modèle GPT 3.5 par défaut est maintenant `gpt-3.5-turbo-0125`.
 - Correction de bug sur l'alias `!` pour `/run`.
 
@@ -58685,7 +58685,7 @@ HISTORY.md
 
 - Améliorations du format d'édition de différence unifiée.
 - Ajouté ! comme alias de /run.
-- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des espaces.
+- L'auto-complétion pour /add et /drop cite maintenant correctement les noms de fichiers avec des escapes.
 - La commande /undo demande à GPT de ne pas simplement réessayer l'édition annulée.
 
 ### Aider v0.21.1
@@ -58740,9 +58740,9 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
   - gpt-3.5-turbo-1106 avec une fenêtre de contexte de 16k
 - [Benchmarks pour les nouveaux modèles 11/06 d'OpenAI](https://aider.chat/docs/benchmarks-1106.html)
 - API simplifiée [pour le script d'aider, documentation ajoutée](https://aider.chat/docs/faq.html#can-i-script-aider)
-- Demander des blocs SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
+- Demander des blocks SEARCH/REPLACE plus concis. [Référencé](https://aider.chat/docs/benchmarks.html) à 63,9%, sans régression.
 - Amélioration du support de la carte du dépôt pour elisp.
-- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondant à `.gitignore`
+- Correction d'un bug d'écrasement lors de l'utilisation de `/add` sur un fichier correspondent à `.gitignore`
 - Correction de divers bugs pour capturer et gérer les erreurs de décodage Unicode.
 
 ### Aider v0.16.3
@@ -58760,18 +58760,18 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
 ### Aider v0.16.0
 
 - [Amélioration de la carte du dépôt à l'aide de tree-sitter](https://aider.chat/docs/repomap.html)
-- Passage du "bloc d'édition" au "bloc de recherche/remplacement", ce qui a réduit les blocs d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
-- Amélioration de la gestion des blocs d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
+- Passage du "block d'édition" au "block de recherche/replacement", ce qui a réduit les blocks d'édition mal formés. [Référencé](https://aider.chat/docs/benchmarks.html) à 66,2%, sans régression.
+- Amélioration de la gestion des blocks d'édition mal formés ciblant plusieurs modifications dans le même fichier. [Référencé](https://aider.chat/docs/benchmarks.html) à 65,4%, sans régression.
 - Correction de bug pour gérer correctement les wildcards `/add` mal formés.
 
 
 ### Aider v0.15.0
 
 - Ajout du support du fichier `.aiderignore`, qui indique à aider d'ignorer certaines parties du dépôt git.
-- Nouveau argument de ligne de commande `--commit`, qui valide simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
+- Nouveau argument de ligne de commande `--commit`, qui valid simplement tous les changements en attente avec un message de validation sensé généré par gpt-3.5.
 - Ajout de ctags universels et de plusieurs architectures à l'[image docker d'aider](https://aider.chat/docs/install/docker.html)
 - `/run` et `/git` acceptent maintenant les commandes shell complètes, comme : `/run (cd subdir; ls)`
-- Restauration du commutateur `--encoding` manquant.
+- Restoration du commutateur `--encoding` manquant.
 
 ### Aider v0.14.2
 
@@ -58806,15 +58806,15 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
 
 - Prise en charge de la [conversion voix-en-code](https://aider.chat/docs/usage/voice.html), qui vous permet de coder à la voix.
 - Correction d'un bug où /diff provoquait un plantage.
-- Amélioration du guidage pour gpt-4, refactorisation du codeur de bloc d'édition.
+- Amélioration du guidage pour gpt-4, refactorisation du codeur de block d'édition.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 63,2% pour gpt-4/diff, sans régression.
 
 ### Aider v0.11.1
 
 - Ajout d'une barre de progression lors de la création initiale d'une carte du dépôt.
 - Correction d'un mauvais message de validation lors de l'ajout d'un nouveau fichier à un dépôt vide.
-- Correction d'un cas limite de résumé de l'historique de discussion en attente lors de la validation sale.
-- Correction d'un cas limite de `text` non défini lors de l'utilisation de `--no-pretty`.
+- Correction d'un cas limit de résumé de l'historique de discussion en attente lors de la validation sale.
+- Correction d'un cas limit de `text` non défini lors de l'utilisation de `--no-pretty`.
 - Correction du bug /commit de la refonte du dépôt, ajout de la couverture des tests.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,4% pour gpt-3.5/entier (sans régression).
 
@@ -58829,16 +58829,16 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
 ### Aider v0.10.1
 
 - /add et /drop utilisent toujours des chemins relatifs à la racine git
-- Encourager GPT à utiliser un langage comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
+- Encourager GPT à utiliser un language comme "ajouter des fichiers à la discussion" pour demander aux utilisateurs la permission de les modifier.
 
 ### Aider v0.10.0
 
 - Ajouté la commande `/git` pour exécuter git depuis l'intérieur des discussions aider.
-- Utilisez Meta-ENTER (Esc+ENTER dans certains environnements) pour saisir des messages de discussion sur plusieurs lignes.
+- Utilisez Meta-ENTER (Esc+ENTER dans certains environments) pour saisir des messages de discussion sur plusieurs lignes.
 - Créer un `.gitignore` avec `.aider*` pour empêcher les utilisateurs d'ajouter accidentellement des fichiers aider à git.
 - Vérifier pypi pour les nouvelles versions et notifier l'utilisateur.
 - Mise à jour de la logique d'interruption du clavier pour que 2 ^C en 2 secondes forcent toujours la sortie d'aider.
-- Fournir à GPT une erreur détaillée s'il fait un mauvais bloc d'édition, lui demander de réessayer.
+- Fournir à GPT une erreur détaillée s'il fait un mauvais block d'édition, lui demander de réessayer.
 - Forcer `--no-pretty` si aider détecte qu'il s'exécute dans un terminal VSCode.
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 64,7% pour gpt-4/diff (sans régression)
 
@@ -58847,7 +58847,7 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
 
 - Prise en charge des modèles OpenAI dans [Azure](https://aider.chat/docs/faq.html#azure)
 - Ajouté `--show-repo-map`
-- Amélioration de la sortie lors de la nouvelle tentative de connexion à l'API OpenAI
+- Amélioration de la sortie lors de la nouvelle tentative de connection à l'API OpenAI
 - Clé API réduite dans la sortie `--verbose`
 - Correction de bug : reconnaître et ajouter les fichiers dans les sous-répertoires mentionnés par l'utilisateur ou GPT
 - [Référencé](https://aider.chat/docs/benchmarks.html) à 53,8% pour gpt-3.5-turbo/entier (sans régression)
@@ -58877,7 +58877,7 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
 - Marqué GPT-4 comme généralement disponible
 - Correction de bug pour les différences en direct du codeur entier avec des noms de fichiers manquants
 - Correction de bug pour les discussions avec plusieurs fichiers
-- Correction de bug dans l'invite du codeur de bloc d'édition
+- Correction de bug dans l'invite du codeur de block d'édition
 
 ### Aider v0.8.0
 
@@ -58889,7 +58889,7 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
   - Lire/écrire explicitement les fichiers texte avec l'encodage utf-8 par défaut (bénéficie principalement à Windows)
   - Ajouté le commutateur `--encoding` pour spécifier un autre encodage
   - Gérer gracieusement les erreurs de décodage
-- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocs de code (par @kwmiebach)
+- Ajouté le commutateur `--code-theme` pour contrôler le style pygments des blocks de code (par @kwmiebach)
 - Meilleurs messages d'état expliquant la raison lorsque ctags est désactivé
 
 ### Aider v0.7.2 :
@@ -58905,19 +58905,19 @@ Beaucoup moins d'erreurs d'édition de GPT-4 Turbo (`gpt-4-1106-preview`).
 - Gestion gracieuse de l'épuisement de la fenêtre de contexte, y compris des conseils utiles.
 - Ajouté `--message` pour donner à GPT cette seule instruction, puis quitter après sa réponse et l'application des modifications.
 - Ajouté `--no-stream` pour désactiver le streaming des réponses de GPT.
-  - Les réponses non diffusées incluent les informations d'utilisation des jetons.
-  - Permet l'affichage des informations de coût basées sur les tarifs annoncés par OpenAI.
+  - Les réponses non diffusées incluent les information d'utilisation des jetons.
+  - Permet l'affichage des information de coût basées sur les tarifs annoncés par OpenAI.
 - Outil d'évaluation de la compétence en codage par rapport à une suite de tâches de programmation basée sur le dépôt python d'Execism.
   - https://github.com/exercism/python
-- Refonte majeure en préparation de la prise en charge du nouvel API des appels de fonction.
-- Implémentation initiale d'un backend d'édition de code basé sur les fonctions pour 3.5.
-  - Les premières expériences montrent que l'utilisation de fonctions rend 3.5 moins compétent pour le codage.
+- Refonte majeure en préparation de la prise en charge du nouvel API des appels de function.
+- Implémentation initiale d'un backend d'édition de code basé sur les functions pour 3.5.
+  - Les premières expériences montrent que l'utilisation de functions rend 3.5 moins compétent pour le codage.
 - Limiter les nouvelles tentatives automatiques lorsque GPT renvoie une réponse d'édition malformée.
 
 ### Aider v0.6.2
 
 * Prise en charge de `gpt-3.5-turbo-16k` et de tous les modèles de discussion OpenAI
-* Amélioration de la capacité à corriger lorsque gpt-4 omet les espaces de début de ligne dans les modifications de code
+* Amélioration de la capacité à corriger lorsque gpt-4 omet les escapes de début de ligne dans les modifications de code
 * Ajouté `--openai-api-base` pour prendre en charge les proxys d'API, etc.
 
 ### Aider v0.5.0
@@ -67868,7 +67868,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--models",
         metavar="MODÈLE",
-        help="Lister les modèles connus correspondant au nom de (partie du) MODÈLE",
+        help="Lister les modèles connus correspondent au nom de (partie du) MODÈLE",
     )
     group.add_argument(
         "--openai-api-base",
@@ -67916,7 +67916,7 @@ def get_parser(default_config_files, git_root):
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,
-        help="Vérifier le certificat SSL lors de la connexion aux modèles (par défaut : Vrai)",
+        help="Vérifier le certificate SSL lors de la connection aux modèles (par défaut : Vrai)",
     )
     group.add_argument(
         "--edit-format",
@@ -67994,7 +67994,7 @@ def get_parser(default_config_files, git_root):
         "--llm-history-file",
         metavar="LLM_HISTORY_FILE",
         default=None,
-        help="Journaliser la conversation avec le LLM dans ce fichier (par exemple, .aider.llm.history)",
+        help="Journaliser la conversation avec le LLM dans ce fichier (par example, .aider.llm.history)",
     )
 
     ##########
@@ -68036,7 +68036,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--tool-error-color",
         default="#FF2222",
-        help="Définir la couleur pour les messages d'erreur de l'outil (par défaut : rouge)",
+        help="Définir la couleur pour les messages d'erreur de l'outil (par défaut : rogue)",
     )
     group.add_argument(
         "--assistant-output-color",
@@ -68154,7 +68154,7 @@ les messages d'engagement avec 'aider : ' si aider a rédigé les modifications 
         "--lint-cmd",
         action="append",
         help=(
-            'Spécifier les commandes d''analyse à exécuter pour différents langages, par ex. : "python: flake8'
+            'Spécifier les commandes d''analyse à exécuter pour différents languages, par ex. : "python: flake8'
             ' --select=..." (peut être utilisé plusieurs fois)'
         ),
         default=[],
@@ -77156,7 +77156,7 @@ These changes introduce a new constant `ANTHROPIC_BETA_HEADER` at the top of the
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 
@@ -77342,7 +77342,7 @@ I understand. Thank you for providing the rules for the *SEARCH/REPLACE block* f
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 >  
@@ -77363,7 +77363,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 
@@ -77390,7 +77390,7 @@ Hello! I understand you've provided the rules for *SEARCH/REPLACE* blocks, but y
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 
@@ -77405,7 +77405,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 
@@ -77457,7 +77457,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 
@@ -77472,7 +77472,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 
@@ -77503,7 +77503,7 @@ In the meantime, if you have any questions about software development, best prac
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 >  
@@ -77524,7 +77524,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,573 sent, 57 received. Cost: $0.0056 message, $0.0056 session.  
 
@@ -77539,7 +77539,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Unexpected error: 'CustomStreamWrapper' object has no attribute 'usage'  
 > Traceback (most recent call last):  
@@ -77563,7 +77563,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77578,7 +77578,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77593,7 +77593,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77608,7 +77608,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77623,7 +77623,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 1,278 cached, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77638,7 +77638,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77653,7 +77653,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 1,290 cached, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77668,7 +77668,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 1,563 sent, 57 received. Cost: $0.0055 message, $0.0055 session.  
 >  
@@ -77689,7 +77689,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 1,290 cached, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -77704,7 +77704,7 @@ Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peu
 
 #### hi  
 
-Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un projet en particulier ?
+Bonjour! Je comprends que vous n'avez pas encore partagé de fichiers que je peux éditer. Comment puis-je vous aider aujourd'hui ? Avez-vous des questions sur le développement logiciel ou souhaitez-vous discuter d'un project en particulier ?
 
 > Tokens: 492 sent, 1,290 cached, 72 received. Cost: $0.0026 message, $0.0026 session.  
 
@@ -81467,7 +81467,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de chat avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de toutes les modifications résultant de votre demande, y compris les corrections de lint et de tests.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown scrapé lorsque vous ajoutez une url avec `/web`.
 - Lorsque [scriptant aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes in-chat `/`.
 - L'image docker d'Aider suggère maintenant la commande correcte pour mettre à jour vers la dernière version.
@@ -81477,7 +81477,7 @@ HISTORY.md
 - Améliorations des performances pour le calcul de la carte du dépôt.
 - `/tokens` affiche maintenant le modèle actif.
 - Amélioration des options d'attribution des messages de commit :
-  - Nouvelle option `--attribute-commit-message-author` pour préfixer les messages de commit avec 'aider: ' si aider a rédigé les modifications, remplace `--attribute-commit-message`.
+  - Nouvelle option `--attribute-commit-message-author` pour préfixer les messages de commit avec 'aider: ' si aider a rédigé les modifications, replace `--attribute-commit-message`.
   - Nouvelle option `--attribute-commit-message-committer` pour préfixer tous les messages de commit avec 'aider: '.
 - Aider a écrit 61% du code dans cette version.
 
@@ -81487,7 +81487,7 @@ HISTORY.md
 - Contournement d'un bug litellm qui supprime les en-têtes d'application OpenRouter lors de l'utilisation de `extra_headers`.
 - Amélioration de l'indication de progression pendant le traitement de la carte du dépôt.
 - Instructions corrigées pour mettre à jour le conteneur docker à la dernière version d'Aider.
-- Suppression de la limite de 16k tokens sur les différences de commit, utilisation des limites par modèle.
+- Suppression de la limit de 16k tokens sur les différences de commit, utilisation des limites par modèle.
 
 ### Aider v0.48.0
 
@@ -81548,9 +81548,9 @@ HISTORY.md
 - Empêche Aider de demander d'ajouter la même url au chat plusieurs fois.
 - Mises à jour et corrections de `--no-verify-ssl` :
   - Correction de régression qui l'a cassée dans v0.42.0.
-  - Désactive la vérification du certificat SSL lorsque `/web` scrap les sites web.
+  - Désactive la vérification du certificate SSL lorsque `/web` scrap les sites web.
 - Amélioration de la gestion des erreurs et du rapport dans la fonctionnalité de scraping `/web`.
-- Correction d'une erreur de syntaxe dans le fichier scm de tree-sitter pour Elm (par @cjoach).
+- Correction d'une erreur de syntax dans le fichier scm de tree-sitter pour Elm (par @cjoach).
 - Gestion de l'erreur UnicodeEncodeError lors du streaming de texte vers le terminal.
 - Mise à jour des dépendances aux dernières versions.
 - Aider a écrit 45% du code dans cette version.
@@ -81598,7 +81598,7 @@ HISTORY.md
 
 ### Aider v0.43.1
 
-- Remplacement de la dépendance torch par la version CPU uniquement, car les versions GPU sont énormes.
+- Replacement de la dépendance torch par la version CPU uniquement, car les versions GPU sont énormes.
 
 ### Aider v0.43.0
 
@@ -81641,12 +81641,12 @@ HISTORY.md
 ### Aider v0.40.1
 
 - Amélioration de la sensibilité contextuelle de repomap.
-- Restauration de la fonctionnalité `--help` appropriée.
+- Restoration de la fonctionnalité `--help` appropriée.
 
 ### Aider v0.40.0
 
 - Amélioration des invites pour décourager Sonnet de gaspiller des tokens en émettant du code inchangé (#705).
-- Amélioration des informations d'erreur pour les erreurs de limite de token.
+- Amélioration des information d'erreur pour les erreurs de limit de token.
 - Options pour supprimer l'ajout de "(aider)" aux noms d'auteur et de commettant git.
 - Utilisation de `--model-settings-file` pour personnaliser les paramètres par modèle, comme l'utilisation de repo-map (par @caseymcc).
 - Amélioration de l'invocation du linter flake8 pour le code python.
@@ -81694,7 +81694,7 @@ HISTORY.md
 
 - Ajout de fichiers en lecture seule au contexte de chat avec `/read` et `--read`, y compris en dehors du dépôt git.
 - `/diff` affiche maintenant les différences de toutes les modifications résultant de votre demande, y compris les corrections de lint et de tests.
-- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, remplace `/add-clipboard-image`.
+- Nouvelle commande `/clipboard` pour coller des images ou du texte depuis le presse-papiers, replace `/add-clipboard-image`.
 - Affiche maintenant le markdown scrapé lorsque vous ajoutez une url avec `/web`.
 - Lorsque [scriptant aider](https://aider.chat/docs/scripting.html), les messages peuvent maintenant contenir des commandes in-chat `/`.
 - L'image docker d'A
