@@ -572,20 +572,21 @@ class Coder:
         if not self.pretty:
             return False
 
-        def _stop_waiting_spinner(self):
-            """Stop and clear the waiting spinner if it is running."""
-            spinner = getattr(self, "waiting_spinner", None)
-            if spinner:
-                try:
-                    spinner.stop()
-                finally:
-                    self.waiting_spinner = None
 
         # only show pretty output if fences are the normal triple-backtick
         if self.fence[0][0] != "`":
             return False
 
         return True
+
+    def _stop_waiting_spinner(self):
+        """Stop and clear the waiting spinner if it is running."""
+        spinner = getattr(self, "waiting_spinner", None)
+        if spinner:
+            try:
+                spinner.stop()
+            finally:
+                self.waiting_spinner = None
 
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
