@@ -8,6 +8,8 @@ import webbrowser
 from dataclasses import fields
 from pathlib import Path
 
+from aider import mcp
+
 try:
     import git
 except ImportError:
@@ -725,6 +727,54 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.check_update:
         check_version(io, verbose=args.verbose)
 
+    if args.list_models:
+        models.print_matching_models(io, args.list_models)
+        analytics.event("exit", reason="Listed models")
+        return 0
+
+    # Configure MCP manager
+    mcp.configure_mcp(args)
+
+    # Initialize MCP servers and discover tools
+    if mcp.is_mcp_enabled():
+        mcp.initialize_mcp_servers(io)
+
+    # Handle MCP-related commands
+    if args.list_mcp_servers:
+        servers = mcp.list_mcp_servers()
+        if servers:
+            io.tool_output("Configured MCP servers:")
+            for server in servers:
+                io.tool_output(f"  - {server.name}")
+                if server.command:
+                    io.tool_output(f"    Command: {server.command}")
+                if server.env_vars:
+                    io.tool_output("    Environment variables:")
+                    for var, value in server.env_vars.items():
+                        masked_value = "*" * len(value) if value else "(empty)"
+                        io.tool_output(f"      {var}={masked_value}")
+        else:
+            io.tool_output("No MCP servers configured.")
+        analytics.event("exit", reason="Listed MCP servers")
+        mcp.stop_mcp_servers()
+        return 0
+
+    if args.list_mcp_tools:
+        tools_by_server = mcp.list_mcp_tools()
+        if tools_by_server:
+            io.tool_output("Available MCP tools:")
+            for server_name, tools in tools_by_server.items():
+                io.tool_output(f"  Server: {server_name}")
+                for tool in tools:
+                    io.tool_output(f"    - {tool.name} (Permission: {tool.permission})")
+                    if tool.description:
+                        io.tool_output(f"      Description: {tool.description}")
+        else:
+            io.tool_output("No MCP tools available.")
+        analytics.event("exit", reason="Listed MCP tools")
+        mcp.stop_mcp_servers()
+        return 0
+
     if args.git:
         git_root = setup_git(git_root, io)
         if args.gitignore:
@@ -886,6 +936,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 io.tool_output()
             except KeyboardInterrupt:
                 analytics.event("exit", reason="Keyboard interrupt during model warnings")
+                mcp.stop_mcp_servers()
                 return 1
 
     repo = None

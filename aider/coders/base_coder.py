@@ -24,9 +24,10 @@ except ImportError:  # Babel not installed – we will fall back to a small mapp
     Locale = None
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from typing import List
+from typing import List, Optional, Tuple
 
 from aider import __version__, models, prompts, urls, utils
+from aider.mcp import is_mcp_enabled, get_available_tools_prompt, process_llm_tool_requests, stop_mcp_servers
 from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.exceptions import LiteLLMExceptions
@@ -95,6 +96,8 @@ class Coder:
     num_malformed_responses = 0
     last_keyboard_interrupt = None
     num_reflections = 0
+    num_mcp_iterations = 0
+    max_mcp_iterations = 3
     max_reflections = 3
     edit_format = None
     yield_stream = False
@@ -118,6 +121,7 @@ class Coder:
     ignore_mentions = None
     chat_language = None
     file_watcher = None
+    mcp_tool_results = None
 
     @classmethod
     def create(
@@ -840,6 +844,8 @@ class Coder:
     def init_before_message(self):
         self.aider_edited_files = set()
         self.reflected_message = None
+        self.mcp_tool_results = None
+        self.num_mcp_iterations = 0
         self.num_reflections = 0
         self.lint_outcome = None
         self.test_outcome = None
@@ -907,17 +913,25 @@ class Coder:
 
         while message:
             self.reflected_message = None
+            self.mcp_tool_results = None
             list(self.send_message(message))
 
-            if not self.reflected_message:
+            if not self.reflected_message and not self.mcp_tool_results:
                 break
 
             if self.num_reflections >= self.max_reflections:
                 self.io.tool_warning(f"Only {self.max_reflections} reflections allowed, stopping.")
                 return
+            if self.num_mcp_iterations >= self.max_mcp_iterations:
+                self.io.tool_warning(f"Only {self.max_mcp_iterations} MCP iterations allowed, stopping.")
+                return
 
-            self.num_reflections += 1
-            message = self.reflected_message
+            if self.reflected_message:
+                self.num_reflections += 1
+                message = self.reflected_message
+            if self.mcp_tool_results:
+                self.num_mcp_iterations += 1
+                message = self.mcp_tool_results
 
     def check_and_open_urls(self, exc, friendly_msg=None):
         """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
@@ -966,6 +980,7 @@ class Coder:
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
             self.io.tool_warning("\n\n^C KeyboardInterrupt")
             self.event("exit", reason="Control-C")
+            stop_mcp_servers()
             sys.exit()
 
         self.io.tool_warning("\n\n^C again to exit")
@@ -1189,6 +1204,10 @@ class Coder:
 
         if self.main_model.system_prompt_prefix:
             prompt = self.main_model.system_prompt_prefix + prompt
+
+        # Append MCP tools information to the end of the prompt
+        if is_mcp_enabled():
+            prompt += "\n\n" + self.gpt_prompts.mcp_tools_prefix + "\n\n" + get_available_tools_prompt()
 
         return prompt
 
@@ -1525,6 +1544,15 @@ class Coder:
                     self.reflected_message = add_rel_files_message
                 return
 
+            tool_results = self.check_for_tool_calls(content)
+            if len(tool_results) > 1:
+                for tool_result in tool_results:
+                    if self.mcp_tool_results:
+                        self.mcp_tool_results += "\n" + tool_result
+                    else:
+                        self.mcp_tool_results = tool_result
+                return
+
             try:
                 if self.reply_completed():
                     return
@@ -1551,6 +1579,9 @@ class Coder:
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
 
             self.move_back_cur_messages(saved_message)
+
+        if self.mcp_tool_results:
+            return
 
         if self.reflected_message:
             return
@@ -1716,6 +1747,13 @@ class Coder:
                 mentioned_rel_fnames.add(rel_fnames[0])
 
         return mentioned_rel_fnames
+
+    def check_for_tool_calls(self, content):
+        """Process the LLM's response after it's completed."""
+        if is_mcp_enabled():
+            return process_llm_tool_requests(content, self.io)
+        else:
+            return []
 
     def check_for_file_mentions(self, content):
         mentioned_rel_fnames = self.get_file_mentions(content)
