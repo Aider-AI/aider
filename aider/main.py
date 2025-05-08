@@ -15,6 +15,7 @@ except ImportError:
 
 import importlib_resources
 from dotenv import load_dotenv
+import shtab
 from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
@@ -501,6 +502,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+
+    if args.shell_completions:
+        # Ensure parser.prog is set for shtab, though it should be by default
+        parser.prog = "aider"
+        print(shtab.complete(parser, shell=args.shell_completions))
+        sys.exit(0)
+
 
     if git is None:
         args.git = False

@@ -811,6 +811,18 @@ def get_parser(default_config_files, git_root):
         help="Specify which editor to use for the /editor command",
     )
 
+    supported_shells_list = sorted(list(shtab.SUPPORTED_SHELLS))
+    group.add_argument(
+        "--shell-completions",
+        metavar="SHELL",
+        choices=supported_shells_list,
+        help=(
+            "Print shell completion script for the specified SHELL and exit. Supported shells:"
+            f" {', '.join(supported_shells_list)}. Example: aider --shell-completions bash"
+        ),
+    )
+
+
     ##########
     group = parser.add_argument_group("Deprecated model settings")
     # Add deprecated model shortcut arguments
