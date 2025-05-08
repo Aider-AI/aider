@@ -294,7 +294,8 @@ class TestRepo(unittest.TestCase):
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_co_authored_by_with_explicit_name_modification(self):
-        # Test scenario where Co-authored-by is true AND author/committer modification are explicitly True
+        # Test scenario where Co-authored-by is true AND
+        # author/committer modification are explicitly True
         with GitTemporaryDirectory():
             # Setup repo...
             # new repo
@@ -308,7 +309,8 @@ class TestRepo(unittest.TestCase):
             raw_repo.git.add(str(fname))
             raw_repo.git.commit("-m", "initial commit")
 
-            # Mock coder args: Co-authored-by enabled, author/committer modification explicitly enabled
+            # Mock coder args: Co-authored-by enabled,
+            # author/committer modification explicitly enabled
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = True
             mock_coder.args.attribute_author = True  # Explicitly enable
@@ -334,7 +336,8 @@ class TestRepo(unittest.TestCase):
                 "Co-authored-by: aider (gpt-test-combo) <noreply@aider.chat>", commit.message
             )
             self.assertEqual(commit.message.splitlines()[0], "Aider combo edit")
-            # When co-authored-by is true BUT author/committer are explicit True, modification SHOULD happen
+            # When co-authored-by is true BUT author/committer are explicit True,
+            # modification SHOULD happen
             self.assertEqual(
                 commit.author.name,
                 "Test User (aider)",

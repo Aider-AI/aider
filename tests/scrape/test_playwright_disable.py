@@ -1,8 +1,4 @@
-from unittest.mock import MagicMock
-
-import pytest
-
-from aider.scrape import Scraper, install_playwright
+from aider.scrape import Scraper
 
 
 class DummyIO:
@@ -23,7 +19,8 @@ class DummyIO:
 
 def test_scraper_disable_playwright_flag(monkeypatch):
     io = DummyIO()
-    # Simulate that playwright is not available (disable_playwright just means playwright_available=False)
+    # Simulate that playwright is not available
+    # (disable_playwright just means playwright_available=False)
     scraper = Scraper(print_error=io.tool_error, playwright_available=False)
     # Patch scrape_with_httpx to check it is called
     called = {}
