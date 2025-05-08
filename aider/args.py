@@ -146,6 +146,14 @@ def get_parser(default_config_files, git_root):
         help="Set the thinking token budget for models that support it (default: not set)",
     )
     group.add_argument(
+        "--enable-thinking",
+        type=str,
+        help=(
+            "Switches between thinking and non-thinking modes for models that support it."
+            " (default: not set)"
+        ),
+    )
+    group.add_argument(
         "--verify-ssl",
         action=argparse.BooleanOptionalAction,
         default=True,

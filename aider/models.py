@@ -755,6 +755,15 @@ class Model(ModelSettings):
                     self.extra_params["extra_body"] = {}
                 self.extra_params["extra_body"]["reasoning_effort"] = effort
 
+    def set_enable_thinking(self, setting):
+        """Set the enable thinking parameter for models that support it"""
+        if setting is not None:
+            if not self.extra_params:
+                self.extra_params = {}
+            if "extra_body" not in self.extra_params:
+                self.extra_params["extra_body"] = {}
+            self.extra_params["extra_body"]["enable_thinking"] = setting
+
     def parse_token_value(self, value):
         """
         Parse a token value string into an integer.
@@ -862,6 +871,16 @@ class Model(ModelSettings):
                 and "reasoning_effort" in self.extra_params["extra_body"]
             ):
                 return self.extra_params["extra_body"]["reasoning_effort"]
+        return None
+
+    def get_enable_thinking(self):
+        """Get enable thinking value if available"""
+        if (
+            self.extra_params
+            and "extra_body" in self.extra_params
+            and "enable_thinking" in self.extra_params["extra_body"]
+        ):
+            return self.extra_params["extra_body"]["enable_thinking"]
         return None
 
     def is_deepseek_r1(self):

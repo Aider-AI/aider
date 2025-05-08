@@ -1588,6 +1588,28 @@ class Commands:
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
 
+    def cmd_enable_thinking(self, args):
+        """Enable or disable thinking for models that support it."""
+        model = self.coder.main_model
+        if not args.strip():
+            # Display current value if no args are provided
+            thinking_value = model.get_enable_thinking()
+            if thinking_value is None:
+                self.io.tool_output("thinking effort is not currently set.")
+            else:
+                self.io.tool_output(f"Current thinking setting: {thinking_value}")
+            return
+
+        value = args.strip()
+        model.set_enable_thinking(value)
+        thinking_value = model.get_enable_thinking()
+        self.io.tool_output(f"Set enable thinking to {thinking_value}")
+        self.io.tool_output()
+
+        # Output announcements
+        announcements = "\n".join(self.coder.get_announcements())
+        self.io.tool_output(announcements)
+
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
 
