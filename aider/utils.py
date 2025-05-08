@@ -12,6 +12,61 @@ from aider.dump import dump  # noqa: F401
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
 
+# Extensions for files that are likely binary
+BINARY_EXTENSIONS = {
+    # Images
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".bmp",
+    ".ico",
+    ".icns",
+    ".webp",
+    ".tiff",
+    ".svg",
+    # Fonts
+    ".ttf",
+    ".otf",
+    ".woff",
+    ".woff2",
+    ".eot",
+    # Audio/Video
+    ".mp3",
+    ".mp4",
+    ".wav",
+    ".ogg",
+    ".flac",
+    ".avi",
+    ".mov",
+    ".mkv",
+    # Archives
+    ".zip",
+    ".tar",
+    ".gz",
+    ".rar",
+    ".7z",
+    ".iso",
+    ".jar",
+    # Compiled files
+    ".exe",
+    ".dll",
+    ".so",
+    ".dylib",
+    ".class",
+    ".pyc",
+    # Other binary formats
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+    ".ppt",
+    ".pptx",
+    ".db",
+    ".bin",
+}
+
 
 class IgnorantTemporaryDirectory:
     def __init__(self):
@@ -91,6 +146,45 @@ def is_image_file(file_name):
     """
     file_name = str(file_name)  # Convert file_name to string
     return any(file_name.endswith(ext) for ext in IMAGE_EXTENSIONS)
+
+
+def is_likely_binary(file_name):
+    """
+    Check if a file is likely binary based on extension and content.
+
+    :param file_name: The name of the file to check.
+    :return: True if the file is likely binary, False otherwise.
+    """
+    file_name = str(file_name)  # Convert file_name to string
+
+    # Check for directory
+    if os.path.isdir(file_name):
+        return True
+
+    # Check extension first (faster)
+    ext = os.path.splitext(file_name)[1].lower()
+    if ext in BINARY_EXTENSIONS:
+        return True
+
+    # For files without telling extensions, check content
+    try:
+        # Read first 1024 bytes to check for binary content
+        with open(file_name, "rb") as f:
+            chunk = f.read(1024)
+            # Check for null bytes (common in binary files)
+            if b"\x00" in chunk:
+                return True
+
+            # Heuristic: If there are many non-ASCII bytes, it's likely binary
+            # Count bytes that are not ASCII printable or common control chars
+            non_text = sum(1 for b in chunk if b < 9 or 13 < b < 32 or b > 126)
+            if len(chunk) > 0 and non_text / len(chunk) > 0.3:  # >30% non-text chars
+                return True
+    except (IOError, OSError):
+        # If we can't read the file, assume it's not binary to be safe
+        return False
+
+    return False
 
 
 def safe_abs_path(res):

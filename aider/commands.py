@@ -22,7 +22,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
+from aider.utils import is_image_file, is_likely_binary
 
 from .dump import dump  # noqa: F401
 
@@ -1563,6 +1563,387 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+
+    def cmd_find(self, args):
+        "Find files containing a specific symbol (function, class, variable) and add to chat"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a symbol to search for.")
+            return
+
+        symbol = args.strip()
+        found_files = set()
+
+        # We need a repo map to find symbols
+        if not self.coder.repo_map:
+            self.io.tool_error("Repository map is not available. Cannot search for symbols.")
+            return
+
+        # Get all tags from repo map
+        try:
+            # Create a spinner for user feedback
+            self.io.tool_output(f"Searching for symbol '{symbol}'...")
+            chat_files = set(self.coder.abs_fnames)
+            other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+            # Get tags for all files
+            all_tags = []
+            rel_fname_to_abs = {}
+
+            for fname in other_files:
+                rel_fname = self.coder.get_rel_fname(fname)
+                rel_fname_to_abs[rel_fname] = fname
+                tags = self.coder.repo_map.get_tags(fname, rel_fname)
+                all_tags.extend(tags)
+
+            # Find matching symbols
+            for tag in all_tags:
+                if tag.name == symbol:
+                    abs_fname = rel_fname_to_abs.get(tag.rel_fname) or tag.fname
+                    found_files.add(abs_fname)
+                    if tag.kind == "def":
+                        self.io.tool_output(
+                            f"Found definition of '{symbol}' in {tag.rel_fname} (line {tag.line})"
+                        )
+                    else:
+                        self.io.tool_output(f"Found reference to '{symbol}' in {tag.rel_fname}")
+        except Exception as e:
+            self.io.tool_error(f"Error searching for symbol: {e}")
+            return
+
+        if not found_files:
+            self.io.tool_error(f"No files found containing the symbol '{symbol}'.")
+            return
+
+        # Add the files to the chat
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to the chat")
+                self.coder.check_added_files()
+                
+    def cmd_find_read(self, args):
+        "Find files containing a specific symbol (function, class, variable) and add to chat as read-only"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a symbol to search for.")
+            return
+
+        symbol = args.strip()
+        found_files = set()
+
+        # We need a repo map to find symbols
+        if not self.coder.repo_map:
+            self.io.tool_error("Repository map is not available. Cannot search for symbols.")
+            return
+
+        # Get all tags from repo map
+        try:
+            # Create a spinner for user feedback
+            self.io.tool_output(f"Searching for symbol '{symbol}'...")
+            chat_files = set(self.coder.abs_fnames)
+            other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+            # Get tags for all files
+            all_tags = []
+            rel_fname_to_abs = {}
+
+            for fname in other_files:
+                rel_fname = self.coder.get_rel_fname(fname)
+                rel_fname_to_abs[rel_fname] = fname
+                tags = self.coder.repo_map.get_tags(fname, rel_fname)
+                all_tags.extend(tags)
+
+            # Find matching symbols
+            for tag in all_tags:
+                if tag.name == symbol:
+                    abs_fname = rel_fname_to_abs.get(tag.rel_fname) or tag.fname
+                    found_files.add(abs_fname)
+                    if tag.kind == "def":
+                        self.io.tool_output(
+                            f"Found definition of '{symbol}' in {tag.rel_fname} (line {tag.line})"
+                        )
+                    else:
+                        self.io.tool_output(f"Found reference to '{symbol}' in {tag.rel_fname}")
+        except Exception as e:
+            self.io.tool_error(f"Error searching for symbol: {e}")
+            return
+
+        if not found_files:
+            self.io.tool_error(f"No files found containing the symbol '{symbol}'.")
+            return
+
+        # Add the files to the chat as read-only
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat as editable"
+                )
+                continue
+            elif abs_file_path in self.coder.abs_read_only_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat as read-only"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_read_only_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to read-only files in the chat")
+
+    def completions_find(self):
+        """Return completions for the find command - symbols from repo"""
+        if not self.coder.repo_map:
+            return []
+
+        symbols = set()
+
+        # Get symbols from all files
+        try:
+            chat_files = set(self.coder.abs_fnames)
+            other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+            for fname in other_files:
+                rel_fname = self.coder.get_rel_fname(fname)
+                tags = self.coder.repo_map.get_tags(fname, rel_fname)
+                for tag in tags:
+                    if tag.kind == "def":  # Only add definition symbols
+                        symbols.add(tag.name)
+        except Exception:
+            pass
+
+        return sorted(symbols)
+
+    def cmd_search(self, args):
+        "Search for exact string matches in files and add matching files to chat"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a text string to search for.")
+            return
+
+        search_string = args.strip()
+        found_files = set()
+
+        # Create a spinner for user feedback
+        self.io.tool_output(f"Searching for '{search_string}'...")
+        chat_files = set(self.coder.abs_fnames)
+        other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+        # Search through all files
+        for fname in other_files:
+            # Skip binary files
+            if is_likely_binary(fname):
+                continue
+
+            # Read file with silent=True to suppress error messages
+            content = self.io.read_text(fname, silent=True)
+            if content and search_string in content:
+                found_files.add(fname)
+                rel_fname = self.coder.get_rel_fname(fname)
+                self.io.tool_output(f"Found '{search_string}' in {rel_fname}")
+
+        if not found_files:
+            self.io.tool_error(f"No files found containing '{search_string}'.")
+            return
+
+        # Add the files to the chat
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to the chat")
+                self.coder.check_added_files()
+                
+    def cmd_search_read(self, args):
+        "Search for exact string matches in files and add matching files to chat as read-only"
+
+        if not args.strip():
+            self.io.tool_error("Please provide a text string to search for.")
+            return
+
+        search_string = args.strip()
+        found_files = set()
+
+        # Create a spinner for user feedback
+        self.io.tool_output(f"Searching for '{search_string}'...")
+        chat_files = set(self.coder.abs_fnames)
+        other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+        # Search through all files
+        for fname in other_files:
+            # Skip binary files
+            if is_likely_binary(fname):
+                continue
+
+            # Read file with silent=True to suppress error messages
+            content = self.io.read_text(fname, silent=True)
+            if content and search_string in content:
+                found_files.add(fname)
+                rel_fname = self.coder.get_rel_fname(fname)
+                self.io.tool_output(f"Found '{search_string}' in {rel_fname}")
+
+        if not found_files:
+            self.io.tool_error(f"No files found containing '{search_string}'.")
+            return
+
+        # Add the files to the chat as read-only
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat as editable"
+                )
+                continue
+            elif abs_file_path in self.coder.abs_read_only_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat as read-only"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_read_only_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to read-only files in the chat")
+
+    def cmd_regex(self, args):
+        "Search for regex pattern matches in files and add matching files to chat"
+        import re
+
+        if not args.strip():
+            self.io.tool_error("Please provide a regex pattern to search for.")
+            return
+
+        pattern = args.strip()
+        found_files = set()
+
+        try:
+            regex = re.compile(pattern)
+        except re.error as e:
+            self.io.tool_error(f"Invalid regex pattern: {e}")
+            return
+
+        # Create a spinner for user feedback
+        self.io.tool_output(f"Searching for regex pattern '{pattern}'...")
+        chat_files = set(self.coder.abs_fnames)
+        other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+        # Search through all files
+        for fname in other_files:
+            # Skip binary files
+            if is_likely_binary(fname):
+                continue
+
+            # Read file with silent=True to suppress error messages
+            content = self.io.read_text(fname, silent=True)
+            if content and regex.search(content):
+                found_files.add(fname)
+                rel_fname = self.coder.get_rel_fname(fname)
+                self.io.tool_output(f"Found regex match for '{pattern}' in {rel_fname}")
+
+        if not found_files:
+            self.io.tool_error(f"No files found matching regex pattern '{pattern}'.")
+            return
+
+        # Add the files to the chat
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to the chat")
+                self.coder.check_added_files()
+                
+    def cmd_regex_read(self, args):
+        "Search for regex pattern matches in files and add matching files to chat as read-only"
+        import re
+
+        if not args.strip():
+            self.io.tool_error("Please provide a regex pattern to search for.")
+            return
+
+        pattern = args.strip()
+        found_files = set()
+
+        try:
+            regex = re.compile(pattern)
+        except re.error as e:
+            self.io.tool_error(f"Invalid regex pattern: {e}")
+            return
+
+        # Create a spinner for user feedback
+        self.io.tool_output(f"Searching for regex pattern '{pattern}'...")
+        chat_files = set(self.coder.abs_fnames)
+        other_files = set(self.coder.get_all_abs_files()) - chat_files
+
+        # Search through all files
+        for fname in other_files:
+            # Skip binary files
+            if is_likely_binary(fname):
+                continue
+
+            # Read file with silent=True to suppress error messages
+            content = self.io.read_text(fname, silent=True)
+            if content and regex.search(content):
+                found_files.add(fname)
+                rel_fname = self.coder.get_rel_fname(fname)
+                self.io.tool_output(f"Found regex match for '{pattern}' in {rel_fname}")
+
+        if not found_files:
+            self.io.tool_error(f"No files found matching regex pattern '{pattern}'.")
+            return
+
+        # Add the files to the chat as read-only
+        for abs_file_path in found_files:
+            if abs_file_path in self.coder.abs_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat as editable"
+                )
+                continue
+            elif abs_file_path in self.coder.abs_read_only_fnames:
+                self.io.tool_output(
+                    f"{self.coder.get_rel_fname(abs_file_path)} is already in the chat as read-only"
+                )
+                continue
+
+            content = self.io.read_text(abs_file_path)
+            if content is None:
+                self.io.tool_error(f"Unable to read {abs_file_path}")
+            else:
+                self.coder.abs_read_only_fnames.add(abs_file_path)
+                rel_fname = self.coder.get_rel_fname(abs_file_path)
+                self.io.tool_output(f"Added {rel_fname} to read-only files in the chat")
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
