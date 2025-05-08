@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import io
-import time
 import threading
-from aider.utils import Spinner
+import time
 
 from rich import box
 from rich.console import Console
@@ -14,6 +13,7 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
+from aider.utils import Spinner
 
 _text_prefix = """
 # Header
