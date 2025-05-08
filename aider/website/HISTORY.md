@@ -49,7 +49,7 @@ cog.out(text)
 - Ensured web scraping in the GUI also respects Playwright availability and the `--disable-playwright` flag.
 - Improved display of filenames in the prompt header using rich Text formatting.
 - Enabled `reasoning_effort` for Gemini 2.5 Flash models.
-- Aider wrote 50% of the code in this release.
+ - Aider wrote 54% of the code in this release.
 
 ### Aider v0.82.3
 
@@ -63,6 +63,10 @@ cog.out(text)
 - Set Gemini 2.5 Pro models to use the `overeager` prompt setting by default.
 - Add common file types (`.svg`, `.pdf`) to the default list of ignored files for AI comment scanning (`--watch`).
 - Skip scanning files larger than 1MB for AI comments (`--watch`).
+ - Added a `--shell-completions` argument to generate shell completion scripts (e.g., for bash, zsh).
+ - Explicit `--attribute-author` or `--attribute-committer` flags now override the default behavior when `--attribute-co-authored-by` is used, allowing finer control over commit attribution, by Andrew Grigorev.
+ - Fixed an issue where read-only status of files might not be preserved correctly by some commands (e.g. `/drop` after adding a read-only file).
+ - The `aider-args` utility (or `python -m aider.args`) now defaults to printing a sample YAML configuration if no arguments are provided.
 
 ### Aider v0.82.2
 
