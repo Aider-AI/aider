@@ -4,7 +4,7 @@ import subprocess
 import sys
 import traceback
 import warnings
-import shlex
+import oslex
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -45,7 +45,7 @@ class Linter:
             return fname
 
     def run_cmd(self, cmd, rel_fname, code):
-        cmd += " " + shlex.quote(rel_fname)
+        cmd += " " + oslex.quote(rel_fname)
 
         returncode = 0
         stdout = ""

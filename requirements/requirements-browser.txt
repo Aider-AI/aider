@@ -21,7 +21,7 @@ certifi==2025.4.26
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.37.0
+narwhals==1.38.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -123,7 +123,7 @@ smmap==5.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   gitdb
-streamlit==1.44.1
+streamlit==1.45.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-browser.in

@@ -35,7 +35,7 @@ certifi==2025.4.26
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.1
+charset-normalizer==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -93,6 +93,10 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
+hf-xet==1.1.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
@@ -101,7 +105,7 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-huggingface-hub[inference]==0.30.2
+huggingface-hub[inference]==0.31.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -120,7 +124,7 @@ jinja2==3.1.6
     #   -c requirements/common-constraints.txt
     #   banks
     #   torch
-joblib==1.4.2
+joblib==1.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   nltk
@@ -187,7 +191,7 @@ pillow==11.2.1
     #   -c requirements/common-constraints.txt
     #   llama-index-core
     #   sentence-transformers
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via
     #   -c requirements/common-constraints.txt
     #   banks
@@ -196,12 +200,12 @@ propcache==0.3.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-pydantic==2.11.3
+pydantic==2.11.4
     # via
     #   -c requirements/common-constraints.txt
     #   banks
     #   llama-index-core
-pydantic-core==2.33.1
+pydantic-core==2.33.2
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic

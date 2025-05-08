@@ -831,7 +831,7 @@
   date: 2025-04-12
   versions: 0.81.3.dev
   seconds_per_case: 45.3
-  total_cost: 6.3174
+  total_cost: 0 # incorrect: 6.3174
 
 - dirname: 2025-03-29-05-24-55--chatgpt4o-mar28-diff
   test_cases: 225
@@ -1224,3 +1224,29 @@
   versions: 0.82.3.dev
   seconds_per_case: 50.1
   total_cost: 1.8451
+
+- dirname: 2025-05-07-19-32-40--gemini0506-diff-fenced-completion_cost
+  test_cases: 225
+  model: Gemini 2.5 Pro Preview 05-06
+  edit_format: diff-fenced
+  commit_hash: 3b08327-dirty
+  pass_rate_1: 36.4
+  pass_rate_2: 76.9
+  pass_num_1: 82
+  pass_num_2: 173
+  percent_cases_well_formed: 97.3
+  error_outputs: 15
+  num_malformed_responses: 7
+  num_with_malformed_responses: 6
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-05-06
+  date: 2025-05-07
+  versions: 0.82.4.dev
+  seconds_per_case: 165.3
+  total_cost: 37.4104
