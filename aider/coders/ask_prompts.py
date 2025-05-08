@@ -8,9 +8,8 @@ class AskPrompts(CoderPrompts):
 Answer questions about the supplied code.
 Always reply to the user in {language}.
 
-Describe code changes however you like.
-Don't use SEARCH/REPLACE blocks!
-Don't return entire updated source files.
+Describe code changes however you like, but elide unchanging code.
+Don't use SEARCH/REPLACE blocks or return huge swaths of unchanging code.
 """
 
     example_messages = []
