@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 import configargparse
+import shtab
 
 from aider import __version__
 from aider.args_formatter import (
@@ -858,16 +859,35 @@ def get_sample_dotenv():
 
 
 def main():
-    arg = sys.argv[1] if len(sys.argv[1:]) else None
-
-    if arg == "md":
-        print(get_md_help())
-    elif arg == "dotenv":
-        print(get_sample_dotenv())
+    if len(sys.argv) > 1:
+        command = sys.argv[1]
     else:
+        command = "yaml"  # Default to yaml if no command is given
+
+    if command == "md":
+        print(get_md_help())
+    elif command == "dotenv":
+        print(get_sample_dotenv())
+    elif command == "yaml":
+        print(get_sample_yaml())
+    elif command == "completion":
+        if len(sys.argv) > 2:
+            shell = sys.argv[2]
+            if shell not in shtab.SUPPORTED_SHELLS:
+                print(f"Error: Unsupported shell '{shell}'.", file=sys.stderr)
+                print(f"Supported shells are: {', '.join(shtab.SUPPORTED_SHELLS)}", file=sys.stderr)
+                sys.exit(1)
+            parser = get_parser([], None)
+            print(shtab.complete(parser, shell=shell, prog="aider"))
+        else:
+            print("Error: Please specify a shell for completion.", file=sys.stderr)
+            print(f"Usage: python {sys.argv[0]} completion <shell_name>", file=sys.stderr)
+            print(f"Supported shells are: {', '.join(shtab.SUPPORTED_SHELLS)}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        # Default to YAML for any other unrecognized argument, or if 'yaml' was explicitly passed
         print(get_sample_yaml())
 
 
 if __name__ == "__main__":
-    status = main()
-    sys.exit(status)
+    main()
