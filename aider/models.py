@@ -528,7 +528,7 @@ class Model(ModelSettings):
             self.use_repo_map = True
             self.system_prompt_prefix = "/no_think"
             self.use_temperature = 0.7
-            self.extra_params = {"max_tokens": 24000, "top_p": 0.8, "top_k": 20, "min_p": 0.0}
+            self.extra_params = {"top_p": 0.8, "top_k": 20, "min_p": 0.0}
             return  # <--
 
         # use the defaults
