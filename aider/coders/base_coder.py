@@ -572,7 +572,6 @@ class Coder:
         if not self.pretty:
             return False
 
-
         # only show pretty output if fences are the normal triple-backtick
         if self.fence[0][0] != "`":
             return False
