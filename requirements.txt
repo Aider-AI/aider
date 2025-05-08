@@ -414,6 +414,10 @@ scipy==1.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+shtab==1.7.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 six==1.17.0
     # via
     #   -c requirements/common-constraints.txt

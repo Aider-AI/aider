@@ -249,7 +249,7 @@ markupsafe==3.0.2
     # via jinja2
 marshmallow==3.26.1
     # via dataclasses-json
-matplotlib==3.10.1
+matplotlib==3.10.3
     # via -r requirements/requirements-dev.in
 mccabe==0.7.0
     # via flake8
@@ -269,7 +269,7 @@ multiprocess==0.70.18
     # via pathos
 mypy-extensions==1.1.0
     # via typing-inspect
-narwhals==1.38.0
+narwhals==1.38.2
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -486,6 +486,8 @@ setuptools==80.3.1
     # via pip-tools
 shellingham==1.5.4
     # via typer
+shtab==1.7.2
+    # via -r requirements/requirements.in
 six==1.17.0
     # via
     #   mixpanel
@@ -592,7 +594,7 @@ urllib3==2.4.0
     #   requests
 uv==0.7.3
     # via -r requirements/requirements-dev.in
-virtualenv==20.31.1
+virtualenv==20.31.2
     # via pre-commit
 watchfiles==1.0.5
     # via -r requirements/requirements.in

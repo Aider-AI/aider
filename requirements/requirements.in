@@ -27,6 +27,7 @@ psutil
 watchfiles
 socksio
 pillow
+shtab
 oslex
 google-generativeai
 

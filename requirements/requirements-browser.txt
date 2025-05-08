@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.38.0
+narwhals==1.38.2
     # via
     #   -c requirements/common-constraints.txt
     #   altair

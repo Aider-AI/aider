@@ -127,7 +127,7 @@ markdown-it-py==3.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   rich
-matplotlib==3.10.1
+matplotlib==3.10.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -301,7 +301,7 @@ uv==0.7.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-virtualenv==20.31.1
+virtualenv==20.31.2
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
