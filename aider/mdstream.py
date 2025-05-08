@@ -13,7 +13,7 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
-from aider.utils import Spinner
+from aider.waiting import WaitingSpinner
 
 _text_prefix = """
 # Header
@@ -117,12 +117,11 @@ class MarkdownStream:
         else:
             self.mdargs = dict()
 
-        # Defer Live creation until the first update so the Spinner can be shown.
+        # Defer Live creation until the first update so the spinner can be shown.
         self.live = None
-        self.spinner = Spinner("Waiting for LLM")
-        self._spinner_stop_event = threading.Event()
-        self._spinner_thread = threading.Thread(target=self._spin, daemon=True)
-        self._spinner_thread.start()
+        self.waiting_spinner = WaitingSpinner("Waiting for LLM")
+        self.waiting_spinner.start()
+        self._spinner_running = True
         self._live_started = False
 
     def _spin(self):
@@ -159,12 +158,10 @@ class MarkdownStream:
             except Exception:
                 pass  # Ignore any errors during cleanup
 
-        # Ensure the spinner thread is properly shut down
-        if hasattr(self, "_spinner_stop_event"):
-            self._spinner_stop_event.set()
-        if hasattr(self, "_spinner_thread") and self._spinner_thread.is_alive():
+        # Ensure the spinner is properly shut down
+        if getattr(self, "_spinner_running", False):
             try:
-                self._spinner_thread.join(timeout=0.1)
+                self.waiting_spinner.stop()
             except Exception:
                 pass
 
@@ -187,10 +184,9 @@ class MarkdownStream:
         """
         # On the first call, stop the spinner and start the Live renderer
         if not getattr(self, "_live_started", False):
-            if hasattr(self, "_spinner_stop_event"):
-                self._spinner_stop_event.set()
-                if hasattr(self, "_spinner_thread"):
-                    self._spinner_thread.join()
+            if getattr(self, "_spinner_running", False):
+                self.waiting_spinner.stop()
+                self._spinner_running = False
             self.live = Live(Text(""), refresh_per_second=1.0 / self.min_delay)
             self.live.start()
             self._live_started = True
