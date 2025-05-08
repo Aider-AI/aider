@@ -296,14 +296,35 @@ class Spinner:
         if not self.visible:
             return
 
-        frame = [self.trail_char] * self.scanner_width
+        frame_chars = [self.trail_char] * self.scanner_width
         # Ensure scanner_pos is within bounds for frame assignment
         current_pos_in_frame = max(0, min(self.scanner_pos, self.scanner_width - 1))
-        if self.scanner_width > 0:  # Only place char if width is positive
-            frame[current_pos_in_frame] = self.scanner_char
 
-        animation_segment = f"[{''.join(frame)}]"
-        print(f"\r{self.text} {animation_segment}", end="", flush=True)
+        if self.scanner_width > 0:  # Only place char if width is positive
+            frame_chars[current_pos_in_frame] = self.scanner_char
+
+        animation_content = "".join(frame_chars)  # Content inside brackets, e.g., "---■--"
+        animation_segment = f"[{animation_content}]"  # Full animation part, e.g., "[---■--]"
+
+        # Print the entire line to display it
+        full_line_output = f"\r{self.text} {animation_segment}"
+        sys.stdout.write(full_line_output)
+
+        # Now, calculate backspaces to position cursor on the scanner_char
+        # Only if scanner_char was actually placed (i.e., scanner_width > 0)
+        if self.scanner_width > 0:
+            # Number of characters in animation_content *after* the scanner_char
+            # (self.scanner_width - 1) is the last index of animation_content.
+            # So, (self.scanner_width - 1) - current_pos_in_frame gives count of chars after.
+            chars_in_content_after_scanner = (self.scanner_width - 1) - current_pos_in_frame
+
+            # We also need to backspace over the closing bracket ']'
+            num_backspaces = chars_in_content_after_scanner + 1
+
+            num_backspaces = max(0, num_backspaces)  # Ensure not negative
+            sys.stdout.write('\b' * num_backspaces)
+
+        sys.stdout.flush()  # Flush after all writes for this frame
 
         # Update scanner position for the next frame
         if self.scanner_width > 1:
@@ -314,7 +335,6 @@ class Spinner:
             elif self.scanner_pos <= 0:  # Reached or passed the beginning
                 self.scanner_pos = 0  # Pin to start
                 self.scanner_dir = 1  # Reverse direction
-
     def end(self):
         if self.visible and self.is_tty:
             clear_len = len(self.text) + 1 + self.animation_len  # text + space + animation segment
