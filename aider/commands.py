@@ -435,20 +435,11 @@ class Commands:
             to_keep = set()
             for abs_fname in self.coder.abs_read_only_fnames:
                 rel_fname = self.coder.get_rel_fname(abs_fname)
-
-                # Prefer to keep the *original* spelling that the user supplied
-                # (eg the /var/… symlink) rather than the canonicalised path we
-                # may have stored internally.  This preserves exactly what the
-                # user (and the tests) expect to see.
-                kept_name = None
-                for orig in self.original_read_only_fnames:
-                    if _paths_match(abs_fname, orig) or rel_fname == orig:
-                        kept_name = str(orig)
-                        break
-
-                if kept_name:
-                    to_keep.add(kept_name)
-                else:
+                keep = any(
+                    _paths_match(abs_fname, orig) or rel_fname == orig
+                    for orig in self.original_read_only_fnames
+                )
+                if keep:
                     to_keep.add(abs_fname)
             self.coder.abs_read_only_fnames = to_keep
         else:
