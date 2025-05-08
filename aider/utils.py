@@ -278,18 +278,16 @@ class Spinner:
 [-----#=]
 [----#=-]
 [---#=--]
-[---#=--]
-[---#=--]
 [--#=---]
 [-#=----]
 """.strip().splitlines()
 
         # If unicode is supported, swap the ASCII chars for nicer glyphs.
         if self._supports_unicode():
-            scan_char, _, trail_char = "≡", "=", "─"
+            scan_char, trail_char = "≡", "─"
             frames = [f.replace("#", scan_char).replace("-", trail_char) for f in ascii_frames]
         else:
-            scan_char, _, _ = "#", "=", "-"
+            scan_char, _ = "#", "-"
             frames = ascii_frames
 
         # Bounce the scanner back and forth.
