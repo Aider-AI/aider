@@ -1418,12 +1418,13 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        if self.show_pretty() and self.stream:
-            self.mdstream = self.io.get_assistant_mdstream()
-        elif self.show_pretty():  # pretty output but NOT streaming
+        if self.show_pretty():
             self.waiting_spinner = WaitingSpinner("Waiting for LLM")
             self.waiting_spinner.start()
-            self.mdstream = None
+            if self.stream:
+                self.mdstream = self.io.get_assistant_mdstream()
+            else:
+                self.mdstream = None
         else:
             self.mdstream = None
 
@@ -1932,6 +1933,8 @@ class Coder:
             except AttributeError:
                 pass
 
+            if received_content:
+                self._stop_waiting_spinner()
             self.partial_response_content += text
 
             if self.show_pretty():

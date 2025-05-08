@@ -12,7 +12,6 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
-from aider.waiting import WaitingSpinner
 
 _text_prefix = """
 # Header
@@ -116,19 +115,10 @@ class MarkdownStream:
         else:
             self.mdargs = dict()
 
-        # Defer Live creation until the first update so the spinner can be shown.
+        # Defer Live creation until the first update.
         self.live = None
-        self.waiting_spinner = WaitingSpinner("Waiting for LLM")
-        self.waiting_spinner.start()
-        self._spinner_running = True
         self._live_started = False
 
-    def _spin(self):
-        """Background thread that keeps the spinner moving until stopped."""
-        while not self._spinner_stop_event.is_set():
-            time.sleep(0.15)
-            self.spinner.step()
-        self.spinner.end()
 
     def _render_markdown_to_lines(self, text):
         """Render markdown text to a list of lines.
@@ -157,12 +147,6 @@ class MarkdownStream:
             except Exception:
                 pass  # Ignore any errors during cleanup
 
-        # Ensure the spinner is properly shut down
-        if getattr(self, "_spinner_running", False):
-            try:
-                self.waiting_spinner.stop()
-            except Exception:
-                pass
 
     def update(self, text, final=False):
         """Update the displayed markdown content.
@@ -183,9 +167,6 @@ class MarkdownStream:
         """
         # On the first call, stop the spinner and start the Live renderer
         if not getattr(self, "_live_started", False):
-            if getattr(self, "_spinner_running", False):
-                self.waiting_spinner.stop()
-                self._spinner_running = False
             self.live = Live(Text(""), refresh_per_second=1.0 / self.min_delay)
             self.live.start()
             self._live_started = True
