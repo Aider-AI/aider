@@ -1193,14 +1193,13 @@ class Coder:
             language=language,
         )
 
-        if self.main_model.system_prompt_prefix:
-            prompt = self.main_model.system_prompt_prefix + prompt
-
         return prompt
 
     def format_chat_chunks(self):
         self.choose_fence()
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
+        if self.main_model.system_prompt_prefix:
+            main_sys = self.main_model.system_prompt_prefix + "\n" + main_sys
 
         example_messages = []
         if self.main_model.examples_as_sys_msg:
