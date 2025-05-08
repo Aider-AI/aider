@@ -1,11 +1,12 @@
 import os
 import platform
-import oslex
 import subprocess
 import sys
 import tempfile
 import time
 from pathlib import Path
+
+import oslex
 
 from aider.dump import dump  # noqa: F401
 
@@ -259,7 +260,7 @@ class Spinner:
 
         self.scanner_width = 7  # Width of the scanning area (e.g., 7 for "[---■--]")
         self.scanner_pos = 0
-        self.scanner_dir = 1 if self.scanner_width > 1 else 0 # Direction of scanner movement
+        self.scanner_dir = 1 if self.scanner_width > 1 else 0  # Direction of scanner movement
 
         # Attempt to use Unicode characters for the scanner, fallback to ASCII
         self.scanner_char = "#"  # ASCII fallback
@@ -269,13 +270,13 @@ class Spinner:
                 # Test print Unicode chars and erase them to check encoding support
                 sys.stdout.write("■─")
                 sys.stdout.flush()
-                sys.stdout.write("\b\b  \b\b") # Backspace, write spaces, backspace
+                sys.stdout.write("\b\b  \b\b")  # Backspace, write spaces, backspace
                 sys.stdout.flush()
                 self.scanner_char = "■"  # Unicode
                 self.trail_char = "─"  # Unicode
             except UnicodeEncodeError:
                 pass  # Stick to ASCII fallbacks
-            except Exception: # Catch other potential IO errors on strange terminals
+            except Exception:  # Catch other potential IO errors on strange terminals
                 pass
         self.animation_len = self.scanner_width + 2  # For brackets like "[]"
 
@@ -298,7 +299,7 @@ class Spinner:
         frame = [self.trail_char] * self.scanner_width
         # Ensure scanner_pos is within bounds for frame assignment
         current_pos_in_frame = max(0, min(self.scanner_pos, self.scanner_width - 1))
-        if self.scanner_width > 0: # Only place char if width is positive
+        if self.scanner_width > 0:  # Only place char if width is positive
             frame[current_pos_in_frame] = self.scanner_char
 
         animation_segment = f"[{''.join(frame)}]"
@@ -308,7 +309,7 @@ class Spinner:
         if self.scanner_width > 1:
             self.scanner_pos += self.scanner_dir
             if self.scanner_pos >= self.scanner_width - 1:  # Reached or passed the end
-                self.scanner_pos = self.scanner_width - 1 # Pin to end
+                self.scanner_pos = self.scanner_width - 1  # Pin to end
                 self.scanner_dir = -1  # Reverse direction
             elif self.scanner_pos <= 0:  # Reached or passed the beginning
                 self.scanner_pos = 0  # Pin to start
@@ -316,8 +317,8 @@ class Spinner:
 
     def end(self):
         if self.visible and self.is_tty:
-            clear_len = len(self.text) + 1 + self.animation_len # text + space + animation segment
-            print("\r" + " " * clear_len + "\r", end="", flush=True) # Clear line and reset cursor
+            clear_len = len(self.text) + 1 + self.animation_len  # text + space + animation segment
+            print("\r" + " " * clear_len + "\r", end="", flush=True)  # Clear line and reset cursor
         self.visible = False
 
 
