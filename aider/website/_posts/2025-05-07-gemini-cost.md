@@ -41,7 +41,7 @@ completed the benchmark at a cost of about $37.
 
 ## Investigation detail
 
-The version of litellm available at that time appears to have been
+The version of litellm available at that time of the benchmark appears to have been
 excluding reasoning tokens from the token counts it reported.
 So even though aider had correct per-token pricing, it did not have the correct token counts
 used during the benchmark.
