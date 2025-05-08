@@ -1989,7 +1989,7 @@ class Coder:
         try:
             # Try and use litellm's built in cost calculator. Seems to work for non-streaming only?
             cost = litellm.completion_cost(completion_response=completion)
-        except ValueError:
+        except Exception:
             cost = 0
 
         if not cost:
