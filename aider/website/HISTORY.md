@@ -26,6 +26,28 @@ cog.out(text)
 
 ### main branch
 
+- Added support for `qwen3-235b` models, including `openrouter/qwen/qwen3-235b-a22b`.
+- Added support for `gemini-2.5-pro-preview-05-06` models.
+- Added repomap support for OCaml and OCaml interface files, by Andrey Popp.
+- Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
+- Updated Gemini model aliases (e.g., `gemini`, `gemini-2.5-pro`) to point to the `05-06` preview versions.
+- Marked Gemini 2.5 Pro preview models as `overeager` by default.
+- Updated the default weak model for Gemini 2.5 Pro models to `gemini/gemini-2.5-flash-preview-04-17`.
+- Corrected `gemini-2.5-pro-exp-03-25` model settings to reflect its lack of support for `thinking_budget`.
+- Ensured model-specific system prompt prefixes are placed on a new line before the main system prompt.
+- Added tracking of total tokens sent and received, now included in benchmark statistics.
+- Automatically fetch model parameters (context window, pricing) for OpenRouter models directly from their website, by Stefan Hladnik.
+- Enabled support for `thinking_tokens` and `reasoning_effort` parameters for OpenRouter models.
+- Improved cost calculation using `litellm.completion_cost` where available.
+- Added model settings for `openrouter/google/gemini-2.5-pro-preview-03-25`.
+- Added `--disable-playwright` flag to prevent Playwright installation prompts and usage, by Andrew Grigorev.
+- The `aider scrape` command-line tool will now use Playwright for web scraping if it is available, by Jon Keys.
+- Fixed linter command execution on Windows by adopting `oslex` for argument quoting, by Titusz Pan.
+- Improved cross-platform display of shell commands by using `oslex` for robust argument quoting, by Titusz Pan.
+- Aider wrote 46% of the code in this release.
+
+### Aider v0.82.3
+
 - Add support for `gemini-2.5-flash-preview-04-17` models.
 - Improved robustness of edit block parsing when filenames start with backticks or fences.
 - Add new `udiff-simple` edit format, for Gemini 2.5 Pro.
@@ -34,9 +56,8 @@ cog.out(text)
 - Fix parsing of diffs for newly created files (`--- /dev/null`).
 - Add markdown syntax highlighting support when editing multi-line commit messages via `/commit`, by Kay Gosho.
 - Set Gemini 2.5 Pro models to use the `overeager` prompt setting by default.
-- Add common file types (`.svg`, `.pdf`) and IDE directories (`.idea/`, `.vscode/`, etc.) to the default list of ignored files for AI comment scanning (`--watch`).
+- Add common file types (`.svg`, `.pdf`) to the default list of ignored files for AI comment scanning (`--watch`).
 - Skip scanning files larger than 1MB for AI comments (`--watch`).
-- Aider wrote 67% of the code in this release.
 
 ### Aider v0.82.2
 

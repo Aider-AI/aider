@@ -831,7 +831,7 @@
   date: 2025-04-12
   versions: 0.81.3.dev
   seconds_per_case: 45.3
-  total_cost: 6.3174
+  total_cost: 0 # incorrect: 6.3174
 
 - dirname: 2025-03-29-05-24-55--chatgpt4o-mar28-diff
   test_cases: 225
@@ -1224,3 +1224,85 @@
   versions: 0.82.3.dev
   seconds_per_case: 50.1
   total_cost: 1.8451
+
+- dirname: 2025-05-07-19-32-40--gemini0506-diff-fenced-completion_cost
+  test_cases: 225
+  model: Gemini 2.5 Pro Preview 05-06
+  edit_format: diff-fenced
+  commit_hash: 3b08327-dirty
+  pass_rate_1: 36.4
+  pass_rate_2: 76.9
+  pass_num_1: 82
+  pass_num_2: 173
+  percent_cases_well_formed: 97.3
+  error_outputs: 15
+  num_malformed_responses: 7
+  num_with_malformed_responses: 6
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-05-06
+  date: 2025-05-07
+  versions: 0.82.4.dev
+  seconds_per_case: 165.3
+  total_cost: 37.4104
+
+- dirname: 2025-05-08-03-20-24--qwen3-32b-default
+  test_cases: 225
+  model: Qwen3 32B
+  edit_format: diff
+  commit_hash: aaacee5-dirty, aeaf259
+  pass_rate_1: 14.2
+  pass_rate_2: 40.0
+  pass_num_1: 32
+  pass_num_2: 90
+  percent_cases_well_formed: 83.6
+  error_outputs: 119
+  num_malformed_responses: 50
+  num_with_malformed_responses: 37
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 12
+  prompt_tokens: 317591
+  completion_tokens: 120418
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openrouter/qwen/qwen3-32b
+  date: 2025-05-08
+  versions: 0.82.4.dev
+  seconds_per_case: 372.2
+  total_cost: 0.7603
+
+- dirname: 2025-05-08-03-22-37--qwen3-235b-defaults
+  test_cases: 225
+  model: Qwen3 235B A22B
+  edit_format: diff
+  commit_hash: aaacee5-dirty
+  pass_rate_1: 17.3
+  pass_rate_2: 49.8
+  pass_num_1: 39
+  pass_num_2: 112
+  percent_cases_well_formed: 91.6
+  error_outputs: 58
+  num_malformed_responses: 29
+  num_with_malformed_responses: 19
+  user_asks: 102
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 0
+  completion_tokens: 0
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openrouter/qwen/qwen3-235b-a22b
+  date: 2025-05-08
+  versions: 0.82.4.dev
+  seconds_per_case: 428.1
+  total_cost: 1.8037

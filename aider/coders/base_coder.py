@@ -114,8 +114,6 @@ class Coder:
     partial_response_tool_call = []
     commit_before_message = []
     message_cost = 0.0
-    message_tokens_sent = 0
-    message_tokens_received = 0
     add_cache_headers = False
     cache_warming_thread = None
     num_cache_warming_pings = 0
@@ -183,6 +181,8 @@ class Coder:
                 commands=from_coder.commands.clone(),
                 total_cost=from_coder.total_cost,
                 ignore_mentions=from_coder.ignore_mentions,
+                total_tokens_sent=from_coder.total_tokens_sent,
+                total_tokens_received=from_coder.total_tokens_received,
                 file_watcher=from_coder.file_watcher,
             )
             use_kwargs.update(update)  # override to complete the switch
@@ -335,6 +335,8 @@ class Coder:
         chat_language=None,
         detect_urls=True,
         ignore_mentions=None,
+        total_tokens_sent=0,
+        total_tokens_received=0,
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
@@ -383,6 +385,10 @@ class Coder:
         self.need_commit_before_edits = set()
 
         self.total_cost = total_cost
+        self.total_tokens_sent = total_tokens_sent
+        self.total_tokens_received = total_tokens_received
+        self.message_tokens_sent = 0
+        self.message_tokens_received = 0
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -1206,14 +1212,13 @@ class Coder:
             language=language,
         )
 
-        if self.main_model.system_prompt_prefix:
-            prompt = self.main_model.system_prompt_prefix + prompt
-
         return prompt
 
     def format_chat_chunks(self):
         self.choose_fence()
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
+        if self.main_model.system_prompt_prefix:
+            main_sys = self.main_model.system_prompt_prefix + "\n" + main_sys
 
         example_messages = []
         if self.main_model.examples_as_sys_msg:
@@ -2186,6 +2191,44 @@ class Coder:
             self.usage_report = tokens_report
             return
 
+        try:
+            # Try and use litellm's built in cost calculator. Seems to work for non-streaming only?
+            cost = litellm.completion_cost(completion_response=completion)
+        except Exception:
+            cost = 0
+
+        if not cost:
+            cost = self.compute_costs_from_tokens(
+                prompt_tokens, completion_tokens, cache_write_tokens, cache_hit_tokens
+            )
+
+        self.total_cost += cost
+        self.message_cost += cost
+
+        def format_cost(value):
+            if value == 0:
+                return "0.00"
+            magnitude = abs(value)
+            if magnitude >= 0.01:
+                return f"{value:.2f}"
+            else:
+                return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
+
+        cost_report = (
+            f"Cost: ${format_cost(self.message_cost)} message,"
+            f" ${format_cost(self.total_cost)} session."
+        )
+
+        if cache_hit_tokens and cache_write_tokens:
+            sep = "\n"
+        else:
+            sep = " "
+
+        self.usage_report = tokens_report + sep + cost_report
+
+    def compute_costs_from_tokens(
+        self, prompt_tokens, completion_tokens, cache_write_tokens, cache_hit_tokens
+    ):
         cost = 0
 
         input_cost_per_token = self.main_model.info.get("input_cost_per_token") or 0
@@ -2213,34 +2256,14 @@ class Coder:
             cost += prompt_tokens * input_cost_per_token
 
         cost += completion_tokens * output_cost_per_token
-
-        self.total_cost += cost
-        self.message_cost += cost
-
-        def format_cost(value):
-            if value == 0:
-                return "0.00"
-            magnitude = abs(value)
-            if magnitude >= 0.01:
-                return f"{value:.2f}"
-            else:
-                return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
-
-        cost_report = (
-            f"Cost: ${format_cost(self.message_cost)} message,"
-            f" ${format_cost(self.total_cost)} session."
-        )
-
-        if cache_hit_tokens and cache_write_tokens:
-            sep = "\n"
-        else:
-            sep = " "
-
-        self.usage_report = tokens_report + sep + cost_report
+        return cost
 
     def show_usage_report(self):
         if not self.usage_report:
             return
+
+        self.total_tokens_sent += self.message_tokens_sent
+        self.total_tokens_received += self.message_tokens_received
 
         self.io.tool_output(self.usage_report)
 
@@ -2516,7 +2539,7 @@ class Coder:
             context = self.get_context_from_history(self.cur_messages)
 
         try:
-            res = self.repo.commit(fnames=edited, context=context, aider_edits=True)
+            res = self.repo.commit(fnames=edited, context=context, aider_edits=True, coder=self)
             if res:
                 self.show_auto_commit_outcome(res)
                 commit_hash, commit_message = res
@@ -2552,7 +2575,7 @@ class Coder:
         if not self.repo:
             return
 
-        self.repo.commit(fnames=self.need_commit_before_edits)
+        self.repo.commit(fnames=self.need_commit_before_edits, coder=self)
 
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)

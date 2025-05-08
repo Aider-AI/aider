@@ -63,7 +63,7 @@ google-api-core[grpc]==2.24.2
     #   -c requirements/common-constraints.txt
     #   google-cloud-bigquery
     #   google-cloud-core
-google-auth==2.40.0
+google-auth==2.40.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -176,7 +176,7 @@ pip-tools==7.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-platformdirs==4.3.7
+platformdirs==4.3.8
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
@@ -297,7 +297,7 @@ urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.7.2
+uv==0.7.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in

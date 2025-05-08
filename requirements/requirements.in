@@ -26,8 +26,8 @@ json5
 psutil
 watchfiles
 socksio
-pip
 pillow
+oslex
 google-generativeai
 mcp>=1.0.0
 

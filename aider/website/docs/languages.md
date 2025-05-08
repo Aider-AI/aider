@@ -180,6 +180,8 @@ cog.out(get_supported_languages_md())
 | nix                  | .nix                 |          |   ✓    |
 | nqc                  | .nqc                 |          |   ✓    |
 | objc                 | .mm                  |          |   ✓    |
+| ocaml                | .ml                  |    ✓     |   ✓    |
+| ocaml_interface      | .mli                 |    ✓     |   ✓    |
 | odin                 | .odin                |          |   ✓    |
 | org                  | .org                 |          |   ✓    |
 | pascal               | .pas                 |          |   ✓    |
