@@ -512,7 +512,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
 
         self.assertEqual(normalized_actual_output, expected_output)
 
-    @patch("rich.columns.Columns")
+    @patch("aider.io.Columns")
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_no_files(
@@ -522,7 +522,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         io.format_files_for_input([], [])
         mock_columns.assert_not_called()
 
-    @patch("rich.columns.Columns")
+    @patch("aider.io.Columns")
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_editable_only(
@@ -543,7 +543,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         self.assertIsInstance(renderables[1], Text)
         self.assertEqual(renderables[1].plain, "edit[markup].txt")
 
-    @patch("rich.columns.Columns")
+    @patch("aider.io.Columns")
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_readonly_only(
@@ -573,7 +573,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         self.assertIsInstance(renderables[2], Text)
         self.assertEqual(renderables[2].plain, "ro[markup].txt")
 
-    @patch("rich.columns.Columns")
+    @patch("aider.io.Columns")
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_mixed_files(
