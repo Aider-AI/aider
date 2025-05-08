@@ -478,7 +478,7 @@ class TestInputOutputMultilineMode(unittest.TestCase):
 @patch("aider.io.is_dumb_terminal", return_value=False)
 @patch.dict(os.environ, {"NO_COLOR": ""})
 class TestInputOutputFormatFiles(unittest.TestCase):
-    def test_format_files_for_input_pretty_false(self):
+    def test_format_files_for_input_pretty_false(self, mock_is_dumb_terminal):
         io = InputOutput(pretty=False, fancy_input=False)
         rel_fnames = ["file1.txt", "file[markup].txt", "ro_file.txt"]
         rel_read_only_fnames = ["ro_file.txt"]
@@ -516,7 +516,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_no_files(
-        self, mock_join, mock_abspath, mock_columns
+        self, mock_join, mock_abspath, mock_columns, mock_is_dumb_terminal
     ):
         io = InputOutput(pretty=True, root="test_root")
         io.format_files_for_input([], [])
@@ -526,7 +526,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_editable_only(
-        self, mock_join, mock_abspath, mock_columns
+        self, mock_join, mock_abspath, mock_columns, mock_is_dumb_terminal
     ):
         io = InputOutput(pretty=True, root="test_root")
         rel_fnames = ["edit1.txt", "edit[markup].txt"]
@@ -547,7 +547,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_readonly_only(
-        self, mock_join, mock_abspath, mock_columns
+        self, mock_join, mock_abspath, mock_columns, mock_is_dumb_terminal
     ):
         io = InputOutput(pretty=True, root="test_root")
 
@@ -577,7 +577,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
     @patch("os.path.abspath")
     @patch("os.path.join")
     def test_format_files_for_input_pretty_true_mixed_files(
-        self, mock_join, mock_abspath, mock_columns
+        self, mock_join, mock_abspath, mock_columns, mock_is_dumb_terminal
     ):
         io = InputOutput(pretty=True, root="test_root")
 
