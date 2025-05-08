@@ -258,27 +258,40 @@ class Spinner:
         self.visible = False
         self.is_tty = sys.stdout.isatty()
 
-        self.scanner_width = 7  # Width of the scanning area (e.g., 7 for "[---■--]")
+        # --------------------------------------------------------------
+        # Spinner configuration
+        # --------------------------------------------------------------
+        # Logical width of the animation area inside the brackets
+        self.scanner_width = 7
         self.scanner_pos = 0
-        self.scanner_dir = 1 if self.scanner_width > 1 else 0  # Direction of scanner movement
+        self.scanner_dir = 1 if self.scanner_width > 1 else 0  # 1 → right, -1 → left
 
-        # Attempt to use Unicode characters for the scanner, fallback to ASCII
-        self.scanner_char = "#"  # ASCII fallback
-        self.trail_char = "-"  # ASCII fallback
+        # Character palette – will be upgraded to Unicode if possible
+        self.scanner_head_char = "#"   # One char per head position
+        self.trail_active_char = "="   # Recently-visited positions
+        self.trail_empty_char = "-"    # Background
+
+        # Visual lengths (number of logical positions)
+        self.scanner_head_length = 2   # "≡≡"
+        self.trail_active_length = 2   # "══"
+
+        # Upgrade to Unicode glyphs when the terminal supports them
         if self.is_tty:
             try:
-                # Test print Unicode chars and erase them to check encoding support
-                sys.stdout.write("■─")
+                sys.stdout.write("≡═─")
                 sys.stdout.flush()
-                sys.stdout.write("\b\b  \b\b")  # Backspace, write spaces, backspace
+                sys.stdout.write("\b\b\b   \b\b\b")
                 sys.stdout.flush()
-                self.scanner_char = "≡"  # Unicode
-                self.trail_char = "─"  # Unicode
+                self.scanner_head_char = "≡"
+                self.trail_active_char = "═"
+                self.trail_empty_char = "─"
             except UnicodeEncodeError:
-                pass  # Stick to ASCII fallbacks
-            except Exception:  # Catch other potential IO errors on strange terminals
                 pass
-        self.animation_len = self.scanner_width + 2  # For brackets like "[]"
+            except Exception:
+                pass
+
+        # Cached length of the animation segment (inside the [])
+        self.animation_len = self.scanner_width + 2
 
     def step(self):
         if not self.is_tty:
@@ -296,45 +309,42 @@ class Spinner:
         if not self.visible:
             return
 
-        frame_chars = [self.trail_char] * self.scanner_width
-        # Ensure scanner_pos is within bounds for frame assignment
-        current_pos_in_frame = max(0, min(self.scanner_pos, self.scanner_width - 1))
+        # Start with an empty frame
+        frame_chars = [self.trail_empty_char] * self.scanner_width
 
-        if self.scanner_width > 0:  # Only place char if width is positive
-            frame_chars[current_pos_in_frame] = self.scanner_char
+        # Place the 2-character head
+        head_start = max(0, min(self.scanner_pos, self.scanner_width - self.scanner_head_length))
+        head_end = head_start + self.scanner_head_length - 1
+        for i in range(self.scanner_head_length):
+            pos = head_start + i
+            if 0 <= pos < self.scanner_width:
+                frame_chars[pos] = self.scanner_head_char
 
-        animation_content = "".join(frame_chars)  # Content inside brackets, e.g., "---■--"
-        animation_segment = f"[{animation_content}]"  # Full animation part, e.g., "[---■--]"
+        # Add the active trail directly behind the head
+        for i in range(1, self.trail_active_length + 1):
+            if self.scanner_dir > 0:          # moving right → trail to the left
+                pos = head_start - i
+            else:                             # moving left  → trail to the right
+                pos = head_end + i
+            if 0 <= pos < self.scanner_width and frame_chars[pos] == self.trail_empty_char:
+                frame_chars[pos] = self.trail_active_char
 
-        # Print the entire line to display it
+        animation_content = "".join(frame_chars)
+        animation_segment = f"[{animation_content}]"
+
         full_line_output = f"\r{self.text} {animation_segment}"
         sys.stdout.write(full_line_output)
+        sys.stdout.flush()
 
-        # Now, calculate backspaces to position cursor on the scanner_char
-        # Only if scanner_char was actually placed (i.e., scanner_width > 0)
-        if self.scanner_width > 0:
-            # Number of characters in animation_content *after* the scanner_char
-            # (self.scanner_width - 1) is the last index of animation_content.
-            # So, (self.scanner_width - 1) - current_pos_in_frame gives count of chars after.
-            chars_in_content_after_scanner = (self.scanner_width - 1) - current_pos_in_frame
-
-            # We also need to backspace over the closing bracket ']'
-            num_backspaces = chars_in_content_after_scanner + 1
-
-            num_backspaces = max(0, num_backspaces) + 1  # Ensure not negative
-            sys.stdout.write("\b" * num_backspaces)
-
-        sys.stdout.flush()  # Flush after all writes for this frame
-
-        # Update scanner position for the next frame
-        if self.scanner_width > 1:
+        # Advance for next frame
+        if self.scanner_width > self.scanner_head_length:
             self.scanner_pos += self.scanner_dir
-            if self.scanner_pos >= self.scanner_width - 1:  # Reached or passed the end
-                self.scanner_pos = self.scanner_width - 1  # Pin to end
-                self.scanner_dir = -1  # Reverse direction
-            elif self.scanner_pos <= 0:  # Reached or passed the beginning
-                self.scanner_pos = 0  # Pin to start
-                self.scanner_dir = 1  # Reverse direction
+            if self.scanner_dir > 0 and self.scanner_pos >= self.scanner_width - self.scanner_head_length:
+                self.scanner_pos = self.scanner_width - self.scanner_head_length
+                self.scanner_dir = -1
+            elif self.scanner_dir < 0 and self.scanner_pos <= 0:
+                self.scanner_pos = 0
+                self.scanner_dir = 1
 
     def end(self):
         if self.visible and self.is_tty:
