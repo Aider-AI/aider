@@ -1,10 +1,11 @@
 import os
+import oslex
 import re
+import shlex
 import subprocess
 import sys
 import traceback
 import warnings
-import oslex
 from dataclasses import dataclass
 from pathlib import Path
 
