@@ -2107,7 +2107,7 @@ class TestCommands(TestCase):
                     )
 
     def test_reset_after_coder_clone_preserves_original_read_only_files(self):
-        with GitTemporaryDirectory() as repo_dir_path:
+        with GitTemporaryDirectory() as _:
             repo_dir = str(".")
             io = InputOutput(pretty=False, fancy_input=False, yes=True)
 
@@ -2156,7 +2156,7 @@ class TestCommands(TestCase):
             self.assertEqual(len(new_coder.cur_messages), 0)
 
     def test_drop_bare_after_coder_clone_preserves_original_read_only_files(self):
-        with GitTemporaryDirectory() as repo_dir_path:
+        with GitTemporaryDirectory() as _:
             repo_dir = str(".")
             io = InputOutput(pretty=False, fancy_input=False, yes=True)
 
