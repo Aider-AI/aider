@@ -56,13 +56,17 @@ Do not edit these files!
     no_shell_cmd_prompt = ""
     no_shell_cmd_reminder = ""
 
-    tool_prompt = """ALWAYS Answer the user's request using the relevant tool(s), if they are
-available.
-Do your best to infer required parameters from your context. If the user provides a
-specific value for a parameter (for example provided in quotes), make sure to use that
-value EXACTLY.
-Carefully analyze descriptive terms in the request as they may indicate required parameter values
-that should be included even if not explicitly quoted.
+    tool_prompt = """
+<tool_calling>
+When solving problems, you have special tools available. Please follow these rules:
+
+1. Always use the exact format required for each tool and include all needed information.
+2. Only use tools that are currently available in this conversation.
+3. Don't mention tool names when talking to people. Say "I'll check your code" instead
+   of "I'll use the code_analyzer tool."
+4. Only use tools when necessary. If you know the answer, just respond directly.
+5. Before using any tool, briefly explain why you need to use it.
+</tool_calling>
 """
 
     rename_with_shell = ""
