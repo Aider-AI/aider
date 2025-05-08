@@ -518,6 +518,12 @@ class Model(ModelSettings):
             self.extra_params = dict(top_p=0.95)
             return  # <--
 
+        if "qwen3" in model and "235b" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            return  # <--
+
+
         # use the defaults
         if self.edit_format == "diff":
             self.use_repo_map = True
