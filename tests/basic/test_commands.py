@@ -2147,7 +2147,11 @@ class TestCommands(TestCase):
             # Assertions for /reset
             self.assertEqual(len(new_coder.abs_fnames), 0)
             self.assertEqual(len(new_coder.abs_read_only_fnames), 1)
-            self.assertIn(str(orig_ro_path), new_coder.abs_read_only_fnames)
+            # self.assertIn(str(orig_ro_path), new_coder.abs_read_only_fnames)
+            self.assertTrue(
+                any(os.path.samefile(p, str(orig_ro_path)) for p in new_coder.abs_read_only_fnames),
+                f"File {str(orig_ro_path)} not found in {new_coder.abs_read_only_fnames}",
+            )
             self.assertEqual(len(new_coder.done_messages), 0)
             self.assertEqual(len(new_coder.cur_messages), 0)
 
@@ -2186,6 +2190,10 @@ class TestCommands(TestCase):
 
             self.assertEqual(len(new_coder.abs_fnames), 0)
             self.assertEqual(len(new_coder.abs_read_only_fnames), 1)
-            self.assertIn(str(orig_ro_path), new_coder.abs_read_only_fnames)
+            # self.assertIn(str(orig_ro_path), new_coder.abs_read_only_fnames)
+            self.assertTrue(
+                any(os.path.samefile(p, str(orig_ro_path)) for p in new_coder.abs_read_only_fnames),
+                f"File {str(orig_ro_path)} not found in {new_coder.abs_read_only_fnames}",
+            )
             self.assertEqual(new_coder.done_messages, [{"role": "user", "content": "d1"}])
             self.assertEqual(new_coder.cur_messages, [{"role": "user", "content": "c1"}])
