@@ -267,13 +267,13 @@ class Spinner:
         self.scanner_dir = 1 if self.scanner_width > 1 else 0  # 1 → right, -1 → left
 
         # Character palette – will be upgraded to Unicode if possible
-        self.scanner_head_char = "#"  # One char per head position
-        self.trail_active_char = "="  # Recently-visited positions
-        self.trail_empty_char = "-"  # Background
+        self.scanner_head_char = "#"   # One char per head position
+        self.trail_active_char = "="   # Recently-visited positions
+        self.trail_empty_char = "-"    # Background
 
         # Visual lengths (number of logical positions)
-        self.scanner_head_length = 2  # "≡≡"
-        self.trail_active_length = 2  # "══"
+        self.scanner_head_length = 2   # "≡≡"
+        self.trail_active_length = 2   # "══"
 
         # Upgrade to Unicode glyphs when the terminal supports them
         if self.is_tty:
@@ -322,9 +322,9 @@ class Spinner:
 
         # Add the active trail directly behind the head
         for i in range(1, self.trail_active_length + 1):
-            if self.scanner_dir > 0:  # moving right → trail to the left
+            if self.scanner_dir > 0:          # moving right → trail to the left
                 pos = head_start - i
-            else:  # moving left  → trail to the right
+            else:                             # moving left  → trail to the right
                 pos = head_end + i
             if 0 <= pos < self.scanner_width and frame_chars[pos] == self.trail_empty_char:
                 frame_chars[pos] = self.trail_active_char
@@ -339,10 +339,7 @@ class Spinner:
         # Advance for next frame
         if self.scanner_width > self.scanner_head_length:
             self.scanner_pos += self.scanner_dir
-            if (
-                self.scanner_dir > 0
-                and self.scanner_pos >= self.scanner_width - self.scanner_head_length
-            ):
+            if self.scanner_dir > 0 and self.scanner_pos >= self.scanner_width - self.scanner_head_length:
                 self.scanner_pos = self.scanner_width - self.scanner_head_length
                 self.scanner_dir = -1
             elif self.scanner_dir < 0 and self.scanner_pos <= 0:
