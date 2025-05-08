@@ -452,8 +452,6 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         """Test that tool_output correctly handles hex colors without # prefix"""
         from unittest.mock import patch
 
-        from rich.text import Text
-
         # Create IO with hex color without # for tool_output_color
         io = InputOutput(tool_output_color="FFA500", pretty=True)
 
