@@ -1591,7 +1591,7 @@ class Commands:
     def cmd_enable_thinking(self, args):
         """Enable or disable thinking for models that support it."""
         model = self.coder.main_model
-        if not args.strip():
+        if isinstance(args, str) and not args.strip():
             # Display current value if no args are provided
             thinking_value = model.get_enable_thinking()
             if thinking_value is None:
@@ -1600,8 +1600,7 @@ class Commands:
                 self.io.tool_output(f"Current thinking setting: {thinking_value}")
             return
 
-        value = args.strip()
-        model.set_enable_thinking(value, self.io)
+        model.set_enable_thinking(args, self.io)
         thinking_value = model.get_enable_thinking()
         self.io.tool_output(f"Set enable thinking to {thinking_value}")
         self.io.tool_output()
