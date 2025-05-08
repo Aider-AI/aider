@@ -1,7 +1,7 @@
 ---
 title: Gemini 2.5 Pro Preview 03-25 benchmark cost
 excerpt: The $6.32 benchmark cost reported for Gemini 2.5 Pro Preview 03-25 was incorrect.
-draft: true
+draft: false
 nav_exclude: true
 ---
 {% if page.date %}
