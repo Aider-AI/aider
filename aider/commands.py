@@ -81,20 +81,8 @@ class Commands:
         self.help = None
         self.editor = editor
 
-        # Store the original read-only filenames provided via args.read.
-        # Keep both the raw path as given and the canonical realpath so we
-        # can match them later even when symlinks (eg /var ↔ /private/var)
-        # are involved.
-        self.original_read_only_fnames = set()
-        for fname in original_read_only_fnames or []:
-            # As provided
-            self.original_read_only_fnames.add(str(fname))
-            # Canonical path (best-effort)
-            try:
-                self.original_read_only_fnames.add(os.path.realpath(fname))
-            except Exception:
-                # Ignore paths that cannot be resolved
-                pass
+        # Store the original read-only filenames provided via args.read
+        self.original_read_only_fnames = set(original_read_only_fnames or [])
 
     def cmd_model(self, args):
         "Switch the Main Model to a new LLM"
@@ -423,23 +411,16 @@ class Commands:
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
 
-        # Helper to compare two paths while ignoring symlinks/resolution.
-        def _paths_match(p1, p2):
-            try:
-                return os.path.samefile(p1, p2)
-            except (FileNotFoundError, OSError):
-                return os.path.normpath(p1) == os.path.normpath(p2)
-
         # When dropping all files, keep those that were originally provided via args.read
         if self.original_read_only_fnames:
+            # Keep only the original read-only files
             to_keep = set()
             for abs_fname in self.coder.abs_read_only_fnames:
                 rel_fname = self.coder.get_rel_fname(abs_fname)
-                keep = any(
-                    _paths_match(abs_fname, orig) or rel_fname == orig
-                    for orig in self.original_read_only_fnames
-                )
-                if keep:
+                if (
+                    abs_fname in self.original_read_only_fnames
+                    or rel_fname in self.original_read_only_fnames
+                ):
                     to_keep.add(abs_fname)
             self.coder.abs_read_only_fnames = to_keep
         else:
