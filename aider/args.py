@@ -39,6 +39,12 @@ def get_parser(default_config_files, git_root):
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
+
+    # Prevent UnicodeDecodeError when reading UTF-8 config files
+    # on Windows CJK locales (e.g., Japanese),
+    # where default encoding is not UTF-8
+    parser._config_file_open_func = lambda fname: open(fname, mode="r", encoding="utf-8")
+
     group = parser.add_argument_group("Main model")
     group.add_argument(
         "files", metavar="FILE", nargs="*", help="files to edit with an LLM (optional)"
