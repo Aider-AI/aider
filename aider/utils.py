@@ -272,7 +272,7 @@ class Spinner:
                 sys.stdout.flush()
                 sys.stdout.write("\b\b  \b\b")  # Backspace, write spaces, backspace
                 sys.stdout.flush()
-                self.scanner_char = "■"  # Unicode
+                self.scanner_char = "≡"  # Unicode
                 self.trail_char = "─"  # Unicode
             except UnicodeEncodeError:
                 pass  # Stick to ASCII fallbacks
@@ -321,7 +321,7 @@ class Spinner:
             # We also need to backspace over the closing bracket ']'
             num_backspaces = chars_in_content_after_scanner + 1
 
-            num_backspaces = max(0, num_backspaces)  # Ensure not negative
+            num_backspaces = max(0, num_backspaces) + 1  # Ensure not negative
             sys.stdout.write("\b" * num_backspaces)
 
         sys.stdout.flush()  # Flush after all writes for this frame
@@ -433,8 +433,8 @@ def printable_shell_command(cmd_list):
 
 def main():
     spinner = Spinner("Running spinner...")
-    for _ in range(40):  # 40 steps * 0.25 seconds = 10 seconds
-        time.sleep(0.25)
+    for _ in range(300):
+        time.sleep(0.15)
         spinner.step()
     spinner.end()
 

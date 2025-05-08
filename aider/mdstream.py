@@ -128,7 +128,7 @@ class MarkdownStream:
     def _spin(self):
         """Background thread that keeps the spinner moving until stopped."""
         while not self._spinner_stop_event.is_set():
-            time.sleep(0.1)
+            time.sleep(0.15)
             self.spinner.step()
         self.spinner.end()
 
