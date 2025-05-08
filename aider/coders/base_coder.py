@@ -44,7 +44,13 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
-from aider.utils import format_content, format_messages, format_tokens, is_image_file
+from aider.utils import (
+    format_content,
+    format_messages,
+    format_tokens,
+    is_image_file,
+)
+from aider.waiting import WaitingSpinner
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -570,6 +576,15 @@ class Coder:
     def show_pretty(self):
         if not self.pretty:
             return False
+
+        def _stop_waiting_spinner(self):
+            """Stop and clear the waiting spinner if it is running."""
+            spinner = getattr(self, "waiting_spinner", None)
+            if spinner:
+                try:
+                    spinner.stop()
+                finally:
+                    self.waiting_spinner = None
 
         # only show pretty output if fences are the normal triple-backtick
         if self.fence[0][0] != "`":
@@ -1410,6 +1425,10 @@ class Coder:
         self.multi_response_content = ""
         if self.show_pretty() and self.stream:
             self.mdstream = self.io.get_assistant_mdstream()
+        elif self.show_pretty():  # pretty output but NOT streaming
+            self.waiting_spinner = WaitingSpinner("Waiting for LLM")
+            self.waiting_spinner.start()
+            self.mdstream = None
         else:
             self.mdstream = None
 
@@ -1481,6 +1500,9 @@ class Coder:
             if self.mdstream:
                 self.live_incremental_response(True)
                 self.mdstream = None
+
+            # Ensure any waiting spinner is stopped
+            self._stop_waiting_spinner()
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
             self.remove_reasoning_content()
@@ -1798,6 +1820,9 @@ class Coder:
                     self.io.ai_output(json.dumps(args, indent=4))
 
     def show_send_output(self, completion):
+        # Stop spinner once we have a response
+        self._stop_waiting_spinner()
+
         if self.verbose:
             print(completion)
 
