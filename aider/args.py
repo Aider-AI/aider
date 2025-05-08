@@ -878,7 +878,8 @@ def main():
                 print(f"Supported shells are: {', '.join(shtab.SUPPORTED_SHELLS)}", file=sys.stderr)
                 sys.exit(1)
             parser = get_parser([], None)
-            print(shtab.complete(parser, shell=shell, prog="aider"))
+            parser.prog = "aider"  # Set the program name on the parser
+            print(shtab.complete(parser, shell=shell))
         else:
             print("Error: Please specify a shell for completion.", file=sys.stderr)
             print(f"Usage: python {sys.argv[0]} completion <shell_name>", file=sys.stderr)
