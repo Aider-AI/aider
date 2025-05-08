@@ -415,6 +415,9 @@ cog.outl("```")
 #################
 # Other settings:
 
+## Never prompt for or attempt to install Playwright for web scraping (default: False).
+#disable-playwright: false
+
 ## specify a file to edit (can be used multiple times)
 #file: xxx
 ## Specify multiple values like this:

@@ -9,7 +9,10 @@
 - Added support for `gemini-2.5-pro-preview-05-06` models.
 - Added model settings for `openrouter/google/gemini-2.5-pro-preview-03-25`.
  Introduced `--attribute-co-authored-by` option to add a `Co-authored-by: aider (<model_name>) <noreply@aider.chat>` trailer to AI-generated commits. This setting takes precedence over default author/committer name modifications unless `--attribute-author` or `--attribute-committer` are explicitly set to true, by Andrew Grigorev.
- Aider wrote 55% of the code in this release.
+ Added `--disable-playwright` flag to prevent Playwright installation prompts and usage, by Andrew Grigorev.
+ Added repomap support for OCaml and OCaml interface files, by Andrey Popp.
+ Improved cross-platform display of shell commands by using `oslex` for robust argument quoting, by Titusz Pan.
+ Aider wrote 44% of the code in this release.
 
 ### Aider v0.82.3
 

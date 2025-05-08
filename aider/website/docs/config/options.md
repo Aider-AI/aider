@@ -73,9 +73,10 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--copy-paste | --no-copy-paste] [--apply]
              [--apply-clipboard-edits] [--exit] [--show-repo-map]
              [--show-prompts] [--voice-format] [--voice-language]
-             [--voice-input-device] [--file] [--read] [--vim]
-             [--chat-language] [--yes-always] [-v] [--load]
-             [--encoding] [--line-endings] [-c] [--env-file]
+             [--voice-input-device] [--disable-playwright] [--file]
+             [--read] [--vim] [--chat-language] [--yes-always] [-v]
+             [--load] [--encoding] [--line-endings] [-c]
+             [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
@@ -658,6 +659,11 @@ Specify the input device name for voice recording
 Environment variable: `AIDER_VOICE_INPUT_DEVICE`  
 
 ## Other settings:
+
+### `--disable-playwright`
+Never prompt for or attempt to install Playwright for web scraping (default: False).  
+Default: False  
+Environment variable: `AIDER_DISABLE_PLAYWRIGHT`  
 
 ### `--file FILE`
 specify a file to edit (can be used multiple times)  

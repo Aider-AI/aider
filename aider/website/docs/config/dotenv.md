@@ -382,6 +382,9 @@ cog.outl("```")
 #################
 # Other settings:
 
+## Never prompt for or attempt to install Playwright for web scraping (default: False).
+#AIDER_DISABLE_PLAYWRIGHT=false
+
 ## specify a file to edit (can be used multiple times)
 #AIDER_FILE=
 
