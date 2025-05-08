@@ -108,8 +108,6 @@ class Coder:
     partial_response_content = ""
     commit_before_message = []
     message_cost = 0.0
-    message_tokens_sent = 0
-    message_tokens_received = 0
     add_cache_headers = False
     cache_warming_thread = None
     num_cache_warming_pings = 0
@@ -175,6 +173,8 @@ class Coder:
                 commands=from_coder.commands.clone(),
                 total_cost=from_coder.total_cost,
                 ignore_mentions=from_coder.ignore_mentions,
+                total_tokens_sent=from_coder.total_tokens_sent,
+                total_tokens_received=from_coder.total_tokens_received,
                 file_watcher=from_coder.file_watcher,
             )
             use_kwargs.update(update)  # override to complete the switch
@@ -327,6 +327,8 @@ class Coder:
         chat_language=None,
         detect_urls=True,
         ignore_mentions=None,
+        total_tokens_sent=0,
+        total_tokens_received=0,
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
@@ -373,6 +375,10 @@ class Coder:
         self.need_commit_before_edits = set()
 
         self.total_cost = total_cost
+        self.total_tokens_sent = total_tokens_sent
+        self.total_tokens_received = total_tokens_received
+        self.message_tokens_sent = 0
+        self.message_tokens_received = 0
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -1989,7 +1995,7 @@ class Coder:
         try:
             # Try and use litellm's built in cost calculator. Seems to work for non-streaming only?
             cost = litellm.completion_cost(completion_response=completion)
-        except ValueError:
+        except Exception:
             cost = 0
 
         if not cost:
@@ -2056,6 +2062,9 @@ class Coder:
     def show_usage_report(self):
         if not self.usage_report:
             return
+
+        self.total_tokens_sent += self.message_tokens_sent
+        self.total_tokens_received += self.message_tokens_received
 
         self.io.tool_output(self.usage_report)
 
