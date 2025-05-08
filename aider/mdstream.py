@@ -119,7 +119,6 @@ class MarkdownStream:
         self.live = None
         self._live_started = False
 
-
     def _render_markdown_to_lines(self, text):
         """Render markdown text to a list of lines.
 
@@ -146,7 +145,6 @@ class MarkdownStream:
                 self.live.stop()
             except Exception:
                 pass  # Ignore any errors during cleanup
-
 
     def update(self, text, final=False):
         """Update the displayed markdown content.
