@@ -160,7 +160,7 @@ greenlet==3.2.1
     # via
     #   playwright
     #   sqlalchemy
-grep-ast==0.8.1
+grep-ast==0.9.0
     # via -r requirements/requirements.in
 griffe==1.7.3
     # via banks
