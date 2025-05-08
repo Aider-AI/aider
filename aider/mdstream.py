@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import io
-import threading
 import time
 
 from rich import box
