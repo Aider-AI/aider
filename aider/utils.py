@@ -238,7 +238,7 @@ def run_install(cmd):
             encoding=sys.stdout.encoding,
             errors="replace",
         )
-        spinner = Spinner("Installing...")
+        spinner = Spinner("Installing...", config=SpinnerConfig())
 
         while True:
             char = process.stdout.read(1)
@@ -586,7 +586,7 @@ def printable_shell_command(cmd_list):
 
 
 def main():
-    spinner = Spinner("Running spinner...")
+    spinner = Spinner("Running spinner...", config=SpinnerConfig())
     for _ in range(100):
         time.sleep(0.15)
         spinner.step()
