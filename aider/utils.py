@@ -332,7 +332,10 @@ class Spinner:
         Spinner.last_frame_idx = self.frame_idx  # Update class variable
         return frame
 
-    def step(self) -> None:
+    def step(self, text: str = None) -> None:
+        if text is not None:
+            self.text = text
+
         if not self.is_tty:
             return
 
