@@ -270,18 +270,18 @@ class Spinner:
         # Pre-render the animation frames using pure ASCII so they will
         # always display, even on very limited terminals.
         ascii_frames = [
-            " #=      | ",
-            " =#      | ",
-            "  =#     | ",
-            "   =#    | ",
-            "    =#   | ",
-            "     =#  | ",
-            "      =# | ",
-            "      #= | ",
-            "     #=  | ",
-            "    #=   | ",
-            "   #=    | ",
-            "  #=     | ",
+            "#=     ",
+            "=#     ",
+            " =#    ",
+            "  =#   ",
+            "   =#  ",
+            "    =# ",
+            "     =#",
+            "     #=",
+            "    #= ",
+            "   #=  ",
+            "  #=   ",
+            " #=    ",
         ]
 
         self.unicode_palette = "≋≣"
@@ -446,10 +446,11 @@ def printable_shell_command(cmd_list):
 
 def main():
     spinner = Spinner("Running spinner...")
-    for _ in range(300):
+    for _ in range(100):
         time.sleep(0.15)
         spinner.step()
     spinner.end()
+    print("Success!")
 
 
 if __name__ == "__main__":
