@@ -123,6 +123,12 @@ def main():
     blame_result = subprocess.run(["python3", "scripts/blame.py"], capture_output=True, text=True)
     aider_line = blame_result.stdout.strip().split("\n")[-1]  # Get last line with percentage
 
+    # Display line counts
+    print(f"Lines in {hist_path}: {len(relevant_history.splitlines())}")
+    print(f"Lines in {log_path}: {len(log_content.splitlines())}")
+    print(f"Lines in {plain_log_path}: {len(plain_log_content.splitlines())}")
+    print(f"Lines in {diff_path}: {len(diff_content.splitlines())}")
+
     # Construct and run the aider command
     message = history_prompt.format(aider_line=aider_line)
 
