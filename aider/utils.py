@@ -292,7 +292,7 @@ class Spinner:
             " #=       ",  # space(1) C1 C2 space(7)
         ]
 
-        self.unicode_palette = "≋≣"
+        self.unicode_palette = "░█"
         xlate_from, xlate_to = ("=#", self.unicode_palette)
 
         # If unicode is supported, swap the ASCII chars for nicer glyphs.
