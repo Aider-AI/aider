@@ -284,7 +284,7 @@ class Spinner:
 [ #=-   ]
 """.strip().splitlines()
 
-        xlate_from, xlate_to = ("-=#", "≈≋≣")
+        xlate_from, xlate_to = ("-=#", "─=≡")
 
         # If unicode is supported, swap the ASCII chars for nicer glyphs.
         if self._supports_unicode():
