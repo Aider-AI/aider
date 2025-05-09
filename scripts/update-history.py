@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
 import re
 import subprocess
+import sys
 import tempfile
 
 from history_prompts import history_prompt
@@ -70,11 +70,10 @@ def run_plain_git_log():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Update HISTORY.md using aider.")
-    parser.add_argument(
-        "model", nargs="?", default="o3", help="The model to use with aider (default: o3)"
-    )
-    args = parser.parse_args()
+    model_name = "o3"
+    if len(sys.argv) > 1:
+        model_name = sys.argv[1]
+
     # Get the git log and diff output
     log_content = run_git_log()
     plain_log_content = run_plain_git_log()
@@ -143,7 +142,7 @@ def main():
         "--no-git",
         "--no-auto-lint",
         "--model",
-        args.model,
+        model_name,
     ]
     subprocess.run(cmd)
 
