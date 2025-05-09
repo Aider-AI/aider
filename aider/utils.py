@@ -301,7 +301,7 @@ class Spinner:
         if not self.is_tty:
             return False
         try:
-            sys.stdout.write("≡\b─\b")
+            sys.stdout.write("≡\b─\b \b")
             sys.stdout.flush()
             return True
         except UnicodeEncodeError:
@@ -329,7 +329,7 @@ class Spinner:
         self.last_update = now
         frame = self._next_frame()
 
-        sys.stdout.write(f"\r{self.text} {frame}")
+        sys.stdout.write(f"\r{frame} {self.text}")
 
         # Backspace cursor to the scanner character
         pos_in_content = frame.find(self.scan_char) - 1  # exclude '['
