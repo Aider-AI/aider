@@ -270,18 +270,18 @@ class Spinner:
         # Pre-render the animation frames using pure ASCII so they will
         # always display, even on very limited terminals.
         ascii_frames = [
-          ' #=      | ',
-          ' =#      | ',
-          '  =#     | ',
-          '   =#    | ',
-          '    =#   | ',
-          '     =#  | ',
-          '      =# | ',
-          '      #= | ',
-          '     #=  | ',
-          '    #=   | ',
-          '   #=    | ',
-          '  #=     | ',
+            " #=      | ",
+            " =#      | ",
+            "  =#     | ",
+            "   =#    | ",
+            "    =#   | ",
+            "     =#  | ",
+            "      =# | ",
+            "      #= | ",
+            "     #=  | ",
+            "    #=   | ",
+            "   #=    | ",
+            "  #=     | ",
         ]
 
         self.unicode_palette = "≋≣"
