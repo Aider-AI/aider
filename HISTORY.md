@@ -31,7 +31,9 @@
 - Explicit `--attribute-author` or `--attribute-committer` flags now override the default behavior when `--attribute-co-authored-by` is used, allowing finer control over commit attribution, by Andrew Grigorev.
 - Fixed an issue where read-only status of files might not be preserved correctly by some commands (e.g. `/drop` after adding a read-only file).
 - The `aider-args` utility (or `python -m aider.args`) now defaults to printing a sample YAML configuration if no arguments are provided.
-- Aider wrote 53% of the code in this release.
+- Displayed token count progress and the name of the file or identifier being processed during repo map updates.
+- Extended the waiting spinner to also show for non-streaming responses and further enhanced its animation with console width clipping, cursor hiding, and a more continuous appearance.
+- Aider wrote 55% of the code in this release.
 
 ### Aider v0.82.3
 

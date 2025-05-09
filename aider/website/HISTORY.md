@@ -34,6 +34,7 @@ cog.out(text)
 - Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
 - Updated Gemini model aliases (e.g., `gemini`, `gemini-2.5-pro`) to point to the `05-06` preview versions.
 - Marked Gemini 2.5 Pro preview models as `overeager` by default.
+- Commit message prompt specifies the user's language.
 - Updated the default weak model for Gemini 2.5 Pro models to `gemini/gemini-2.5-flash-preview-04-17`.
 - Corrected `gemini-2.5-pro-exp-03-25` model settings to reflect its lack of support for `thinking_budget`.
 - Ensured model-specific system prompt prefixes are placed on a new line before the main system prompt.
@@ -54,7 +55,9 @@ cog.out(text)
 - Explicit `--attribute-author` or `--attribute-committer` flags now override the default behavior when `--attribute-co-authored-by` is used, allowing finer control over commit attribution, by Andrew Grigorev.
 - Fixed an issue where read-only status of files might not be preserved correctly by some commands (e.g. `/drop` after adding a read-only file).
 - The `aider-args` utility (or `python -m aider.args`) now defaults to printing a sample YAML configuration if no arguments are provided.
-- Aider wrote 53% of the code in this release.
+- Displayed token count progress and the name of the file or identifier being processed during repo map updates.
+- Extended the waiting spinner to also show for non-streaming responses and further enhanced its animation with console width clipping, cursor hiding, and a more continuous appearance.
+- Aider wrote 55% of the code in this release.
 
 ### Aider v0.82.3
 
