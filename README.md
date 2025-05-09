@@ -135,7 +135,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 ### Community & Resources
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
 - [GitHub Repository](https://github.com/Aider-AI/aider)
-- [Discord Community](https://discord.gg/Tv2uQnR88V)
+- [Discord Community](https://discord.gg/Y7X7bhMQFV)
 - [Blog](https://aider.chat/blog/)
 
 ## Kind Words From Users
