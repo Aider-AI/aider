@@ -21,6 +21,7 @@ IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", "
 class SpinnerStyle(Enum):
     DEFAULT = "default"
     KITT = "kitt"
+    ILOVECANDY = "ilovecandy"
 
 
 @dataclass
@@ -311,6 +312,7 @@ class Spinner:
         self.last_display_len = 0
 
         self.use_kitt_animation = False
+        self.use_ilovecandy_animation = False # New style
         self.default_spinner_frames = None
         self.default_spinner_scan_char = None
         self.default_spinner_content_width = 0
@@ -325,9 +327,27 @@ class Spinner:
             # Its actual character changes, so logic in step() will be different.
             # We use KITT_CHARS[3] as a representative for finding its position.
             self.scan_char_for_cursor_logic = self.KITT_CHARS[3]
+        elif self.config.style == SpinnerStyle.ILOVECANDY and self.is_tty:
+            self.use_ilovecandy_animation = True
+            self.ilc_width = max(self.config.width, 5) # Min width for Pac-Man
+            self.ilc_pac_pos = 0
+            self.ilc_pac_char_idx = 0  # For C/Э animation
+            self.ilc_ghost_char = '@'
+            self.ilc_pac_is_chasing_normal_ghost = True # True: Pac-Man (C/Э) chases @ right
+                                                       # False: Pac-Man (>/Е) chases Я left
+            self.ilc_dots = ['.'] * self.ilc_width
+            self.animation_len = self.ilc_width
+            # For ILOVECANDY, cursor logic will use ilc_pac_pos directly in step()
         else:
             if self.config.style == SpinnerStyle.KITT: # and KITT unicode failed
                 # This warning ideally should use self.io, but Spinner doesn't have it.
+            elif self.config.style == SpinnerStyle.ILOVECANDY and not self.is_tty:
+                if self.is_tty: # This condition is effectively false due to outer if
+                    print("\rWarning: ILOVECANDY spinner requires a TTY, falling back to default spinner.", file=sys.stderr)
+
+
+            # Setup for DEFAULT style (original spinner logic) or KITT/ILOVECANDY fallback
+            self.default_spinner_frames = list(self.ASCII_FRAMES) # Start with ASCII
                 # A simple print is a fallback.
                 # Consider passing io or a logger if this needs to be more robust.
                 if self.is_tty:
@@ -428,6 +448,53 @@ class Spinner:
             if not (0 <= self.scanner_position < self.SCANNER_WIDTH) and self.SCANNER_WIDTH > 0:
                  self.scanner_position = self.scanner_position % self.SCANNER_WIDTH
             return "".join(current_display_chars)
+        elif self.use_ilovecandy_animation:
+            frame_chars = list(self.ilc_dots) # Start with current dots
+
+            # Determine Pac-Man character and animation
+            if self.ilc_pac_is_chasing_normal_ghost: # Moving right
+                pac_anim_chars = ['C', 'Э']
+            else: # Moving left (chasing vulnerable ghost)
+                pac_anim_chars = ['>', 'Е']
+            current_pac_char = pac_anim_chars[self.ilc_pac_char_idx]
+            self.ilc_pac_char_idx = 1 - self.ilc_pac_char_idx # Toggle mouth
+
+            # Place Pac-Man
+            if 0 <= self.ilc_pac_pos < self.ilc_width:
+                 frame_chars[self.ilc_pac_pos] = current_pac_char
+
+            # Determine Ghost position and character
+            if self.ilc_pac_is_chasing_normal_ghost:
+                ghost_actual_pos = self.ilc_width - 1
+            else: # Pac-Man chasing vulnerable ghost to the left
+                ghost_actual_pos = 0
+            
+            if 0 <= ghost_actual_pos < self.ilc_width: # Ensure ghost is within bounds
+                frame_chars[ghost_actual_pos] = self.ilc_ghost_char
+
+            # Update state for next frame
+            if 0 <= self.ilc_pac_pos < self.ilc_width: # Pac-Man eats dot at current position
+                self.ilc_dots[self.ilc_pac_pos] = ' '
+
+            # Move Pac-Man
+            if self.ilc_pac_is_chasing_normal_ghost:
+                self.ilc_pac_pos += 1
+            else:
+                self.ilc_pac_pos -= 1
+
+            # Check for state flip (Pac-Man reaches end of current chase)
+            if self.ilc_pac_is_chasing_normal_ghost and self.ilc_pac_pos >= self.ilc_width -1 :
+                self.ilc_pac_is_chasing_normal_ghost = False # Pac-Man turns left, chases vulnerable ghost
+                self.ilc_ghost_char = 'Я'
+                self.ilc_pac_pos = self.ilc_width - 1 # Position Pac-Man at the rightmost for next frame
+                if '.' not in self.ilc_dots: self.ilc_dots = ['.'] * self.ilc_width # Reset dots if all eaten
+            elif not self.ilc_pac_is_chasing_normal_ghost and self.ilc_pac_pos <= 0:
+                self.ilc_pac_is_chasing_normal_ghost = True # Pac-Man turns right, chases normal ghost
+                self.ilc_ghost_char = '@'
+                self.ilc_pac_pos = 0 # Position Pac-Man at the leftmost for next frame
+                if '.' not in self.ilc_dots: self.ilc_dots = ['.'] * self.ilc_width # Reset dots
+
+            return "".join(frame_chars)
         else:
             # DEFAULT (ASCII/original unicode_palette) animation logic
             frame = self.default_spinner_frames[self.frame_idx]
@@ -506,11 +573,14 @@ class Spinner:
             # For KITT, cursor should ideally be at the scanner head's position.
             # self.scanner_position is the index within the KITT frame.
             scan_char_abs_pos = self.scanner_position
+        elif self.use_ilovecandy_animation:
+            # For ILOVECANDY, cursor at Pac-Man's position
+            scan_char_abs_pos = self.ilc_pac_pos
         else:
             # For default spinner, find the scan char.
             scan_char_abs_pos = frame_str.find(self.default_spinner_scan_char)
 
-        if scan_char_abs_pos != -1:
+        if scan_char_abs_pos != -1 and 0 <= scan_char_abs_pos < len(frame_str): # Ensure pos is valid
             num_backspaces = total_chars_written_on_line - scan_char_abs_pos
             if num_backspaces > 0 : # only backspace if cursor needs to move left
                  sys.stdout.write("\b" * num_backspaces)
