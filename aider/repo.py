@@ -212,8 +212,6 @@ class GitRepo:
                 user_language = coder.get_user_language()
             commit_message = self.get_commit_message(diffs, context, user_language)
 
-
-
         # Retrieve attribute settings, prioritizing coder.args if available
         if coder and hasattr(coder, "args"):
             attribute_author = coder.args.attribute_author
