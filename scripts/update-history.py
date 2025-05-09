@@ -136,6 +136,8 @@ def main():
         message,
         "--no-git",
         "--no-auto-lint",
+        "--model",
+        "o3",
     ]
     subprocess.run(cmd)
 
