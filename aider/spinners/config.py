@@ -6,7 +6,7 @@ class SpinnerStyle(Enum):
     DEFAULT = "default"
     KITT = "kitt"
     SNAKE = "snake"
-    WAVE = "wave"
+    PUMP = "pump"
 
 
 @dataclass

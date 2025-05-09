@@ -94,12 +94,12 @@ def generate_snake_frame(current_frame_idx):
     return frame, next_frame_idx
 
 
-WAVE_CHARS = ["▂", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃"]
-wave_spinner_last_frame_idx = 0
+PUMP_CHARS = ["▂", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃"] # Characters for pump
+pump_spinner_last_frame_idx = 0
 
-def generate_wave_frame(current_frame_idx):
-    global wave_spinner_last_frame_idx
-    frame = WAVE_CHARS[current_frame_idx]
-    next_frame_idx = (current_frame_idx + 1) % len(WAVE_CHARS)
-    wave_spinner_last_frame_idx = next_frame_idx
+def generate_pump_frame(current_frame_idx):
+    global pump_spinner_last_frame_idx
+    frame = PUMP_CHARS[current_frame_idx]
+    next_frame_idx = (current_frame_idx + 1) % len(PUMP_CHARS)
+    pump_spinner_last_frame_idx = next_frame_idx
     return frame, next_frame_idx

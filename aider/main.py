@@ -969,8 +969,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         spinner_style_enum = SpinnerStyle.KITT
     elif spinner_style_arg == "snake": 
         spinner_style_enum = SpinnerStyle.SNAKE 
-    elif spinner_style_arg == "wave":
-        spinner_style_enum = SpinnerStyle.WAVE
+    elif spinner_style_arg == "pump": # Renamed from wave
+        spinner_style_enum = SpinnerStyle.PUMP # Renamed from WAVE
     else:
         spinner_style_enum = SpinnerStyle.DEFAULT
 

@@ -11,10 +11,10 @@ from .frames import (
     generate_default_frame,
     generate_kitt_frame,
     generate_snake_frame, 
-    generate_wave_frame, # Add wave frame generator
+    generate_pump_frame, # Renamed from generate_wave_frame
     default_spinner_last_frame_idx,
     snake_spinner_last_frame_idx,
-    wave_spinner_last_frame_idx, # Add wave frame index
+    pump_spinner_last_frame_idx, # Renamed from wave_spinner_last_frame_idx
 )
 
 
@@ -51,7 +51,7 @@ class Spinner:
         self.kitt_scanner_direction = 1
 
         self.snake_frame_idx = snake_spinner_last_frame_idx
-        self.wave_frame_idx = wave_spinner_last_frame_idx
+        self.pump_frame_idx = pump_spinner_last_frame_idx # Renamed from wave_frame_idx
         
 
         # Determine active style and initialize
@@ -62,9 +62,9 @@ class Spinner:
         elif self.config.style == SpinnerStyle.SNAKE and self._supports_unicode_for_snake():
             self.active_style = SpinnerStyle.SNAKE
             self.animation_len = 1 # Snake spinner is a single character
-        elif self.config.style == SpinnerStyle.WAVE and self._supports_unicode_for_wave():
-            self.active_style = SpinnerStyle.WAVE
-            self.animation_len = 1 # Wave spinner is a single character
+        elif self.config.style == SpinnerStyle.PUMP and self._supports_unicode_for_pump(): # Renamed from WAVE
+            self.active_style = SpinnerStyle.PUMP
+            self.animation_len = 1 # Pump spinner is a single character
         else: # Default or fallback
             self.active_style = SpinnerStyle.DEFAULT
             if self.config.style != SpinnerStyle.DEFAULT and self.is_tty:
@@ -112,12 +112,12 @@ class Spinner:
         except Exception:
             return False
 
-    def _supports_unicode_for_wave(self) -> bool:
+    def _supports_unicode_for_pump(self) -> bool: # Renamed from _supports_unicode_for_wave
         if not self.is_tty:
             return False
         try:
-            from .frames import WAVE_CHARS
-            out = WAVE_CHARS[0]
+            from .frames import PUMP_CHARS # Renamed from WAVE_CHARS
+            out = PUMP_CHARS[0]
             out += "\b" * len(out)
             out += " " * len(out)
             out += "\b" * len(out)
@@ -154,8 +154,8 @@ class Spinner:
         elif self.active_style == SpinnerStyle.SNAKE: 
             frame_str, self.snake_frame_idx = generate_snake_frame(self.snake_frame_idx) 
             self.default_scan_char = frame_str # For cursor logic, treat as default
-        elif self.active_style == SpinnerStyle.WAVE:
-            frame_str, self.wave_frame_idx = generate_wave_frame(self.wave_frame_idx)
+        elif self.active_style == SpinnerStyle.PUMP: # Renamed from WAVE
+            frame_str, self.pump_frame_idx = generate_pump_frame(self.pump_frame_idx) # Renamed
             self.default_scan_char = frame_str # For cursor logic, treat as default
         else: # DEFAULT
             frame_str, self.default_frame_idx, self.default_scan_char = generate_default_frame(
