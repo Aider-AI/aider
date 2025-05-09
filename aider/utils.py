@@ -270,21 +270,22 @@ class Spinner:
         # Pre-render the animation frames using pure ASCII so they will
         # always display, even on very limited terminals.
         ascii_frames = """
-[#=-    ]
+[#=     ]
 [=#     ]
-[-=#    ]
-[ -=#   ]
-[  -=#  ]
-[   -=# ]
-[    -=#]
+[ =#    ]
+[  =#   ]
+[   =#  ]
+[    =# ]
+[     =#]
 [     #=]
-[    #=-]
-[   #=- ]
-[  #=-  ]
-[ #=-   ]
+[    #= ]
+[   #=  ]
+[  #=   ]
+[ #=    ]
 """.strip().splitlines()
 
-        xlate_from, xlate_to = ("-=#", "─=≡")
+        self.unicode_palette = "≋≣"
+        xlate_from, xlate_to = ("=#", self.unicode_palette)
 
         # If unicode is supported, swap the ASCII chars for nicer glyphs.
         if self._supports_unicode():
@@ -305,7 +306,11 @@ class Spinner:
         if not self.is_tty:
             return False
         try:
-            sys.stdout.write("≡\b─\b \b")
+            out = self.unicode_palette
+            out += "\b" * len(self.unicode_palette)
+            out += " " * len(self.unicode_palette)
+            out += "\b" * len(self.unicode_palette)
+            sys.stdout.write(out)
             sys.stdout.flush()
             return True
         except UnicodeEncodeError:

@@ -1419,7 +1419,7 @@ class Coder:
 
         self.multi_response_content = ""
         if self.show_pretty():
-            self.waiting_spinner = WaitingSpinner("Waiting for LLM")
+            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
             self.waiting_spinner.start()
             if self.stream:
                 self.mdstream = self.io.get_assistant_mdstream()
