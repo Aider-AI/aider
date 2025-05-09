@@ -380,7 +380,7 @@ class RepoMap:
             if self.verbose:
                 self.io.tool_output(f"Processing {fname}")
             if progress and not showing_bar:
-                progress()
+                progress("Updating repo map: " + fname)
 
             try:
                 file_ok = Path(fname).is_file()
@@ -459,7 +459,7 @@ class RepoMap:
 
         for ident in idents:
             if progress:
-                progress()
+                progress("Updating repo map: " + ident)
 
             definers = defines[ident]
 
@@ -512,7 +512,7 @@ class RepoMap:
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
             if progress:
-                progress()
+                progress("Updating repo map: " + src)
 
             src_rank = ranked[src]
             total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
