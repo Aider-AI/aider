@@ -284,20 +284,20 @@ class Spinner:
 [ #=-   ]
 """.strip().splitlines()
 
-        xlate = ("-=#", "≈≋≣")
+        xlate_from, xlate_to = ("-=#", "≈≋≣")
 
         # If unicode is supported, swap the ASCII chars for nicer glyphs.
         if self._supports_unicode():
-            scan_char, trail_char = "≣", ""
-            frames = [f.replace("#", scan_char).replace("-", trail_char) for f in ascii_frames]
+            translation_table = str.maketrans(xlate_from, xlate_to)
+            frames = [f.translate(translation_table) for f in ascii_frames]
+            self.scan_char = xlate_to[xlate_from.find("#")]
         else:
-            scan_char, _ = "#", "-"
             frames = ascii_frames
+            self.scan_char = "#"
 
         # Bounce the scanner back and forth.
         self.frames = frames
-        self.frame_idx = Spinner.last_frame_idx  # Initialize from class variable
-        self.scan_char = scan_char
+        self.frame_idx = Spinner.last_frame_idx # Initialize from class variable
         self.width = len(frames[0]) - 2  # number of chars between the brackets
         self.animation_len = len(frames[0])
 
