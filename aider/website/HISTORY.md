@@ -24,7 +24,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.83.0
 
 - Added support for `gemini-2.5-pro-preview-05-06` models.
 - Added support for `qwen3-235b` models.
