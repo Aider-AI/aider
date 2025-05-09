@@ -340,20 +340,16 @@ class Spinner:
             # For ILOVECANDY, cursor logic will use ilc_pac_pos directly in step()
         else:
             if self.config.style == SpinnerStyle.KITT: # and KITT unicode failed
-                # This warning ideally should use self.io, but Spinner doesn't have it.
+                # A simple print is a fallback.
+                # Consider passing io or a logger if this needs to be more robust.
+                if self.is_tty:
+                    print("\rWarning: KITT spinner requires better unicode support, falling back to default spinner.", file=sys.stderr)
             elif self.config.style == SpinnerStyle.ILOVECANDY and not self.is_tty:
                 if self.is_tty: # This condition is effectively false due to outer if
                     print("\rWarning: ILOVECANDY spinner requires a TTY, falling back to default spinner.", file=sys.stderr)
 
 
             # Setup for DEFAULT style (original spinner logic) or KITT/ILOVECANDY fallback
-            self.default_spinner_frames = list(self.ASCII_FRAMES) # Start with ASCII
-                # A simple print is a fallback.
-                # Consider passing io or a logger if this needs to be more robust.
-                if self.is_tty:
-                    print("\rWarning: KITT spinner requires better unicode support, falling back to default spinner.", file=sys.stderr)
-
-            # Setup for DEFAULT style (original spinner logic) or KITT fallback
             self.default_spinner_frames = list(self.ASCII_FRAMES) # Start with ASCII
             self.default_spinner_scan_char = "#"
             self.original_unicode_palette = "░█"
