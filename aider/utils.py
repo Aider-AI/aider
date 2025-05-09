@@ -471,9 +471,8 @@ class Spinner:
         # Text payload uses default terminal color
         payload_text_obj = Text(current_text_payload_str)
         
-        # Combine frame and payload
-        text_line_obj = frame_text_obj
-        text_line_obj.append(payload_text_obj)
+        # Combine frame and payload using assemble for clearer style separation
+        text_line_obj = Text.assemble(frame_text_obj, payload_text_obj)
 
         # Truncate based on visual width
         text_line_obj.truncate(max_spinner_width, overflow="crop")
