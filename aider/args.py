@@ -381,6 +381,23 @@ def get_parser(default_config_files, git_root):
         help="Show diffs when committing changes (default: False)",
         default=False,
     )
+    group.add_argument(
+        "--spinner-style",
+        default="default",
+        choices=["default", "kitt", "snake", "pump", "ball"],
+        help="Style for the LLM waiting spinner (default: default, kitt, snake, pump, ball).",
+    )
+    group.add_argument(
+        "--spinner-width",
+        type=int,
+        default=7,
+        help="Width for the KITT spinner animation (default: 7).",
+    )
+    group.add_argument(
+        "--spinner-color",
+        default="default",
+        help="Color for the spinner text (default: 'default'). Usage depends on spinner style and terminal.",
+    )
 
     ##########
     group = parser.add_argument_group("Git settings")

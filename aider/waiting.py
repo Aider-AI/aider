@@ -6,8 +6,10 @@ Thread-based, killable spinner utility.
 Use it like:
 
     from aider.waiting import WaitingSpinner
+    from aider.utils import SpinnerConfig # Assuming SpinnerConfig is in utils
 
-    spinner = WaitingSpinner("Waiting for LLM")
+    config = SpinnerConfig() # Or customize it
+    spinner = WaitingSpinner("Waiting for LLM", config=config)
     spinner.start()
     ...  # long task
     spinner.stop()
@@ -16,14 +18,15 @@ Use it like:
 import threading
 import time
 
-from aider.utils import Spinner
+from aider.spinners import Spinner, SpinnerConfig
 
 
 class WaitingSpinner:
     """Background spinner that can be started/stopped safely."""
 
-    def __init__(self, text: str = "Waiting for LLM", delay: float = 0.15):
-        self.spinner = Spinner(text)
+    def __init__(self, text: str = "Waiting for LLM", delay: float = 0.15, config: SpinnerConfig = None):
+        actual_config = config or SpinnerConfig()
+        self.spinner = Spinner(text, config=actual_config)
         self.delay = delay
         self._stop_event = threading.Event()
         self._thread = threading.Thread(target=self._spin, daemon=True)

@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 from aider.dump import dump
 from aider.special import filter_important_files
-from aider.utils import Spinner
+from aider.utils import Spinner, SpinnerConfig
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -54,10 +54,12 @@ class RepoMap:
         max_context_window=None,
         map_mul_no_files=8,
         refresh="auto",
+        spinner_config=None,
     ):
         self.io = io
         self.verbose = verbose
         self.refresh = refresh
+        self.spinner_config = spinner_config or SpinnerConfig()
 
         if not root:
             root = os.getcwd()
@@ -623,7 +625,7 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        spin = Spinner(UPDATING_REPO_MAP_MESSAGE)
+        spin = Spinner(UPDATING_REPO_MAP_MESSAGE, config=self.spinner_config)
 
         ranked_tags = self.get_ranked_tags(
             chat_fnames,

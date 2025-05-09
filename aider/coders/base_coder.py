@@ -333,9 +333,12 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        spinner_config=None, # Added spinner_config
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
+        from aider.spinners import SpinnerConfig # Ensure SpinnerConfig is available
+        self.spinner_config = spinner_config or SpinnerConfig()
 
         self.event = self.analytics.event
         self.chat_language = chat_language
@@ -497,6 +500,7 @@ class Coder:
                 max_inp_tokens,
                 map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
+                spinner_config=self.spinner_config,  # Pass spinner_config
             )
 
         self.summarizer = summarizer or ChatSummary(
@@ -1419,7 +1423,10 @@ class Coder:
 
         self.multi_response_content = ""
         if self.show_pretty():
-            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
+            self.waiting_spinner = WaitingSpinner(
+                "Waiting for " + self.main_model.name,
+                config=self.spinner_config  # Pass spinner_config
+            )
             self.waiting_spinner.start()
             if self.stream:
                 self.mdstream = self.io.get_assistant_mdstream()
