@@ -35,6 +35,8 @@ CACHE_VERSION = 3
 if USING_TSL_PACK:
     CACHE_VERSION = 4
 
+UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
+
 
 class RepoMap:
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
@@ -380,7 +382,7 @@ class RepoMap:
             if self.verbose:
                 self.io.tool_output(f"Processing {fname}")
             if progress and not showing_bar:
-                progress("Updating repo map: " + fname)
+                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {fname}")
 
             try:
                 file_ok = Path(fname).is_file()
@@ -459,7 +461,7 @@ class RepoMap:
 
         for ident in idents:
             if progress:
-                progress("Updating repo map: " + ident)
+                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {ident}")
 
             definers = defines[ident]
 
@@ -512,7 +514,7 @@ class RepoMap:
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
             if progress:
-                progress("Updating repo map: " + src)
+                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {src}")
 
             src_rank = ranked[src]
             total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
@@ -621,7 +623,7 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        spin = Spinner("Updating repo map")
+        spin = Spinner(UPDATING_REPO_MAP_MESSAGE)
 
         ranked_tags = self.get_ranked_tags(
             chat_fnames,
