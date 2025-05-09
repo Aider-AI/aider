@@ -309,6 +309,7 @@ class Spinner:
         self.frame_idx = Spinner.last_frame_idx  # Initialize from class variable
         self.width = len(frames[0]) - 2  # number of chars between the brackets
         self.animation_len = len(frames[0])
+        self.last_display_len = 0  # Length of the last spinner line (frame + text)
 
     def _supports_unicode(self) -> bool:
         if not self.is_tty:
@@ -350,20 +351,35 @@ class Spinner:
             return
 
         self.last_update = now
-        frame = self._next_frame()
+        frame_str = self._next_frame()
 
-        sys.stdout.write(f"\r{frame} {self.text}")
+        current_text_payload = f" {self.text}"
+        line_to_display = f"{frame_str}{current_text_payload}"
+        len_line_to_display = len(line_to_display)
 
-        # Backspace cursor to the scanner character
-        pos_in_content = frame.find(self.scan_char) - 1  # exclude '['
-        chars_after_scanner = (self.width - 1) - pos_in_content
-        num_backspaces = max(0, chars_after_scanner + 2) + len(self.text) + 1
+        # Calculate padding to clear any remnants from a longer previous line
+        padding_to_clear = " " * max(0, self.last_display_len - len_line_to_display)
+
+        # Write the spinner frame, text, and any necessary clearing spaces
+        sys.stdout.write(f"\r{line_to_display}{padding_to_clear}")
+
+        # Store the length of the actual content part for the next step's clearing calculation
+        self.last_display_len = len_line_to_display
+
+        # Calculate number of backspaces to position cursor at the scanner character
+        scan_char_abs_pos = frame_str.find(self.scan_char)
+
+        # Total characters written to the line (frame + text + padding)
+        total_chars_written_on_line = len_line_to_display + len(padding_to_clear)
+
+        num_backspaces = total_chars_written_on_line - scan_char_abs_pos
+
         sys.stdout.write("\b" * num_backspaces)
         sys.stdout.flush()
 
     def end(self) -> None:
         if self.visible and self.is_tty:
-            clear_len = len(self.text) + 1 + self.animation_len
+            clear_len = self.last_display_len  # Use the length of the last displayed content
             sys.stdout.write("\r" + " " * clear_len + "\r")
             sys.stdout.flush()
             self.console.show_cursor(True)
