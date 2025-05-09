@@ -337,7 +337,7 @@ class Spinner:
         # Backspace cursor to the scanner character
         pos_in_content = frame.find(self.scan_char) - 1  # exclude '['
         chars_after_scanner = (self.width - 1) - pos_in_content
-        num_backspaces = max(0, chars_after_scanner + 2)  # +']' and extra
+        num_backspaces = max(0, chars_after_scanner + 2) + len(self.text) + 1
         sys.stdout.write("\b" * num_backspaces)
         sys.stdout.flush()
 
