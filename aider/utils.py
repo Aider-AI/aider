@@ -297,7 +297,7 @@ class Spinner:
 
         # Bounce the scanner back and forth.
         self.frames = frames
-        self.frame_idx = Spinner.last_frame_idx # Initialize from class variable
+        self.frame_idx = Spinner.last_frame_idx  # Initialize from class variable
         self.width = len(frames[0]) - 2  # number of chars between the brackets
         self.animation_len = len(frames[0])
 
