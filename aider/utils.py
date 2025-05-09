@@ -356,7 +356,7 @@ class Spinner:
         # Determine the maximum width for the spinner line
         # Subtract 2 as requested, to leave a margin or prevent cursor wrapping issues
         max_spinner_width = self.console.width - 2
-        if max_spinner_width < 0: # Handle extremely narrow terminals
+        if max_spinner_width < 0:  # Handle extremely narrow terminals
             max_spinner_width = 0
 
         current_text_payload = f" {self.text}"
