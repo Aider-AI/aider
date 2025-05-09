@@ -4500,3 +4500,162 @@
     Paul Gauthier (aider): 1567
   start_tag: v0.81.0
   total_lines: 1706
+- aider_percentage: 54.32
+  aider_total: 1409
+  end_date: '2025-05-09'
+  end_tag: v0.83.0
+  file_counts:
+    .github/workflows/check_pypi_version.yml:
+      Paul Gauthier (aider): 1
+    .github/workflows/pre-commit.yml:
+      MDW: 48
+    .github/workflows/ubuntu-tests.yml:
+      Paul Gauthier (aider): 1
+    .github/workflows/windows-tests.yml:
+      Paul Gauthier (aider): 1
+    .github/workflows/windows_check_pypi_version.yml:
+      Paul Gauthier (aider): 1
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Andrew Grigorev: 21
+      Andrew Grigorev (aider): 5
+      Paul Gauthier (aider): 38
+    aider/coders/__init__.py:
+      Paul Gauthier (aider): 2
+    aider/coders/base_coder.py:
+      Andrew Grigorev (aider): 2
+      Paul Gauthier: 60
+      Paul Gauthier (aider): 104
+    aider/coders/editblock_coder.py:
+      Paul Gauthier: 10
+      Paul Gauthier (aider): 7
+      zjy1412: 2
+    aider/coders/editblock_fenced_coder.py:
+      MDW: 1
+    aider/coders/help_coder.py:
+      MDW: 1
+    aider/coders/patch_coder.py:
+      Paul Gauthier (aider): 38
+    aider/coders/shell.py:
+      Paul Gauthier: 37
+    aider/coders/udiff_coder.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 9
+    aider/coders/udiff_simple.py:
+      Paul Gauthier (aider): 14
+    aider/commands.py:
+      Andrew Grigorev: 10
+      Paul Gauthier: 7
+      Paul Gauthier (aider): 1
+    aider/gui.py:
+      Jon Keys: 2
+    aider/io.py:
+      Kay Gosho: 1
+      Paul Gauthier (aider): 5
+    aider/linter.py:
+      Paul Gauthier: 1
+      Titusz Pan: 1
+    aider/main.py:
+      Paul Gauthier (aider): 9
+    aider/mdstream.py:
+      Paul Gauthier (aider): 11
+    aider/models.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 66
+      Stefan Hladnik: 4
+      Stefan Hladnik (aider): 41
+    aider/queries/tree-sitter-language-pack/ocaml_interface-tags.scm:
+      Andrey Popp: 98
+    aider/queries/tree-sitter-languages/ocaml_interface-tags.scm:
+      Andrey Popp: 98
+    aider/repo.py:
+      Andrew Grigorev: 115
+      Andrew Grigorev (aider): 21
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 33
+    aider/repomap.py:
+      Paul Gauthier: 5
+      Paul Gauthier (aider): 6
+    aider/resources/model-settings.yml:
+      Paul Gauthier: 183
+      Paul Gauthier (aider): 175
+      cantalupo555: 1
+    aider/scrape.py:
+      Jon Keys: 12
+    aider/utils.py:
+      Paul Gauthier: 13
+      Paul Gauthier (aider): 131
+      Titusz Pan: 1
+    aider/waiting.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 54
+    aider/watch.py:
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 7
+    aider/website/_includes/leaderboard_table.js:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 18
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 2
+    aider/website/index.html:
+      Paul Gauthier: 13
+    benchmark/benchmark.py:
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 42
+    benchmark/docker.sh:
+      Paul Gauthier: 2
+    benchmark/refactor_tools.py:
+      MDW: 1
+    scripts/30k-image.py:
+      MDW: 1
+    scripts/clean_metadata.py:
+      Paul Gauthier (aider): 258
+    scripts/update-history.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 7
+    tests/basic/test_coder.py:
+      Paul Gauthier (aider): 3
+    tests/basic/test_commands.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 90
+    tests/basic/test_editblock.py:
+      Paul Gauthier: 10
+      zjy1412: 52
+    tests/basic/test_io.py:
+      Paul Gauthier (aider): 132
+    tests/basic/test_linter.py:
+      Paul Gauthier: 22
+      Titusz Pan: 10
+    tests/basic/test_repo.py:
+      Andrew Grigorev: 75
+      Andrew Grigorev (aider): 65
+      Paul Gauthier: 79
+      Paul Gauthier (aider): 6
+    tests/basic/test_repomap.py:
+      Andrey Popp: 7
+    tests/basic/test_watch.py:
+      MDW: 1
+    tests/fixtures/languages/ocaml_interface/test.mli:
+      Andrey Popp: 14
+    tests/scrape/test_playwright_disable.py:
+      Andrew Grigorev: 111
+      Paul Gauthier: 25
+      Paul Gauthier (aider): 3
+  grand_total:
+    Andrew Grigorev: 332
+    Andrew Grigorev (aider): 93
+    Andrey Popp: 217
+    Jon Keys: 14
+    Kay Gosho: 1
+    MDW: 53
+    Paul Gauthier: 497
+    Paul Gauthier (aider): 1275
+    Stefan Hladnik: 4
+    Stefan Hladnik (aider): 41
+    Titusz Pan: 12
+    cantalupo555: 1
+    zjy1412: 54
+  start_tag: v0.82.0
+  total_lines: 2594
