@@ -381,9 +381,11 @@ class Spinner:
         # Total characters written to the line (frame + text + padding)
         total_chars_written_on_line = len_line_to_display + len(padding_to_clear)
 
-        # num_backspaces will be non-positive if scan_char_abs_pos is beyond total_chars_written_on_line
+        # num_backspaces will be non-positive if scan_char_abs_pos is beyond
+        # total_chars_written_on_line (e.g., if the scan char itself was truncated).
         # (e.g., if the scan char itself was truncated).
-        # In such cases, (effectively) 0 backspaces are written, and the cursor stays at the end of the line.
+        # In such cases, (effectively) 0 backspaces are written,
+        # and the cursor stays at the end of the line.
         num_backspaces = total_chars_written_on_line - scan_char_abs_pos
         sys.stdout.write("\b" * num_backspaces)
         sys.stdout.flush()
