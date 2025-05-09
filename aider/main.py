@@ -963,9 +963,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Track auto-commits configuration
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
+    from aider.utils import SpinnerConfig, SpinnerStyle
+    spinner_style_arg = args.llm_spinner_style.lower()
+    spinner_style_enum = SpinnerStyle.KITT if spinner_style_arg == "kitt" else SpinnerStyle.DEFAULT
+
+    spinner_config = SpinnerConfig(
+        style=spinner_style_enum,
+        width=args.llm_spinner_width,
+        color=args.llm_spinner_color,
+    )
+
     try:
         coder = Coder.create(
             main_model=main_model,
+            spinner_config=spinner_config,
             edit_format=args.edit_format,
             io=io,
             repo=repo,

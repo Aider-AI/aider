@@ -4,6 +4,8 @@ import subprocess
 import sys
 import tempfile
 import time
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 
 import oslex
@@ -12,6 +14,18 @@ from rich.console import Console
 from aider.dump import dump  # noqa: F401
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
+
+
+class SpinnerStyle(Enum):
+    DEFAULT = "default"
+    KITT = "kitt"
+
+
+@dataclass
+class SpinnerConfig:
+    style: SpinnerStyle = SpinnerStyle.DEFAULT
+    color: str = "default"  # Color for spinner text, actual application may vary
+    width: int = 7  # Width for KITT spinner, default spinner has fixed frame width
 
 
 class IgnorantTemporaryDirectory:
@@ -253,72 +267,124 @@ def run_install(cmd):
 
 class Spinner:
     """
-    Minimal spinner that scans a single marker back and forth across a line.
-
-    The animation is pre-rendered into a list of frames.  If the terminal
-    cannot display unicode the frames are converted to plain ASCII.
+    Minimal spinner.
+    Supports a KITT-like scanner animation if Unicode is supported and style is KITT.
+    Otherwise, falls back to a simpler ASCII/default Unicode animation.
     """
 
-    last_frame_idx = 0  # Class variable to store the last frame index
+    KITT_CHARS = ["\u2591", "\u2592", "\u2593", "\u2588"]  # ░, ▒, ▓, █
+    ASCII_FRAMES = [
+        "#=        ",  # C1 C2 space(8)
+        "=#        ",  # C2 C1 space(8)
+        " =#       ",  # space(1) C2 C1 space(7)
+        "  =#      ",  # space(2) C2 C1 space(6)
+        "   =#     ",  # space(3) C2 C1 space(5)
+        "    =#    ",  # space(4) C2 C1 space(4)
+        "     =#   ",  # space(5) C2 C1 space(3)
+        "      =#  ",  # space(6) C2 C1 space(2)
+        "       =# ",  # space(7) C2 C1 space(1)
+        "        =#",  # space(8) C2 C1
+        "        #=",  # space(8) C1 C2
+        "       #= ",  # space(7) C1 C2 space(1)
+        "      #=  ",  # space(6) C1 C2 space(2)
+        "     #=   ",  # space(5) C1 C2 space(3)
+        "    #=    ",  # space(4) C1 C2 space(4)
+        "   #=     ",  # space(3) C1 C2 space(5)
+        "  #=      ",  # space(2) C1 C2 space(6)
+        " #=       ",  # space(1) C1 C2 space(7)
+    ]
+    # For testing unicode support robustly, includes a KITT char and an old palette char
+    UNICODE_TEST_CHARS = KITT_CHARS[3] + "≋"
 
-    def __init__(self, text: str, width: int = 7):
+    last_frame_idx = 0  # Class variable for ASCII spinner starting frame
+
+    def __init__(self, text: str, config: SpinnerConfig):
         self.text = text
+        self.config = config
         self.start_time = time.time()
         self.last_update = 0.0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
         self.console = Console()
+        self.last_display_len = 0
 
-        # Pre-render the animation frames using pure ASCII so they will
-        # always display, even on very limited terminals.
-        ascii_frames = [
-            "#=        ",  # C1 C2 space(8)
-            "=#        ",  # C2 C1 space(8)
-            " =#       ",  # space(1) C2 C1 space(7)
-            "  =#      ",  # space(2) C2 C1 space(6)
-            "   =#     ",  # space(3) C2 C1 space(5)
-            "    =#    ",  # space(4) C2 C1 space(4)
-            "     =#   ",  # space(5) C2 C1 space(3)
-            "      =#  ",  # space(6) C2 C1 space(2)
-            "       =# ",  # space(7) C2 C1 space(1)
-            "        =#",  # space(8) C2 C1
-            "        #=",  # space(8) C1 C2
-            "       #= ",  # space(7) C1 C2 space(1)
-            "      #=  ",  # space(6) C1 C2 space(2)
-            "     #=   ",  # space(5) C1 C2 space(3)
-            "    #=    ",  # space(4) C1 C2 space(4)
-            "   #=     ",  # space(3) C1 C2 space(5)
-            "  #=      ",  # space(2) C1 C2 space(6)
-            " #=       ",  # space(1) C1 C2 space(7)
-        ]
+        self.use_kitt_animation = False
+        self.default_spinner_frames = None
+        self.default_spinner_scan_char = None
+        self.default_spinner_content_width = 0
 
-        self.unicode_palette = "░█"
-        xlate_from, xlate_to = ("=#", self.unicode_palette)
-
-        # If unicode is supported, swap the ASCII chars for nicer glyphs.
-        if self._supports_unicode():
-            translation_table = str.maketrans(xlate_from, xlate_to)
-            frames = [f.translate(translation_table) for f in ascii_frames]
-            self.scan_char = xlate_to[xlate_from.find("#")]
+        if self.config.style == SpinnerStyle.KITT and self._supports_unicode_for_kitt():
+            self.use_kitt_animation = True
+            self.SCANNER_WIDTH = max(self.config.width, 4)
+            self.scanner_position = 0
+            self.scanner_direction = 1
+            self.animation_len = self.SCANNER_WIDTH
+            # For KITT, the "scan char" for cursor positioning is the head of the scanner.
+            # Its actual character changes, so logic in step() will be different.
+            # We use KITT_CHARS[3] as a representative for finding its position.
+            self.scan_char_for_cursor_logic = self.KITT_CHARS[3]
         else:
-            frames = ascii_frames
-            self.scan_char = "#"
+            if self.config.style == SpinnerStyle.KITT: # and KITT unicode failed
+                # This warning ideally should use self.io, but Spinner doesn't have it.
+                # A simple print is a fallback.
+                # Consider passing io or a logger if this needs to be more robust.
+                if self.is_tty:
+                    print("\rWarning: KITT spinner requires better unicode support, falling back to default spinner.", file=sys.stderr)
 
-        # Bounce the scanner back and forth.
-        self.frames = frames
-        self.frame_idx = Spinner.last_frame_idx  # Initialize from class variable
-        self.width = len(frames[0]) - 2  # number of chars between the brackets
-        self.animation_len = len(frames[0])
-        self.last_display_len = 0  # Length of the last spinner line (frame + text)
+            # Setup for DEFAULT style (original spinner logic) or KITT fallback
+            self.default_spinner_frames = list(self.ASCII_FRAMES) # Start with ASCII
+            self.default_spinner_scan_char = "#"
+            self.original_unicode_palette = "░█"
 
-    def _supports_unicode(self) -> bool:
+            if self._supports_unicode_for_default_style():
+                translation_table = str.maketrans("=#", self.original_unicode_palette)
+                self.default_spinner_frames = [f.translate(translation_table) for f in self.ASCII_FRAMES]
+                try:
+                    # '#' is the first char of '=#', find its translated counterpart
+                    # The original logic was: xlate_to[xlate_from.find("#")]
+                    # xlate_from = "=#", xlate_to = self.original_unicode_palette
+                    # So, if '#' is at index 0 of "=#", use index 0 of palette.
+                    # If '=' is at index 0 of "=#", use index 0 of palette.
+                    # This seems to imply self.scan_char should be based on what '#' translates to.
+                    # Assuming '#' is the primary moving part of the ASCII spinner.
+                    self.default_spinner_scan_char = self.original_unicode_palette[self.ASCII_FRAMES[0].find("#")]
+                except IndexError:
+                    self.default_spinner_scan_char = self.original_unicode_palette[0] if self.original_unicode_palette else "#"
+
+
+            self.frame_idx = Spinner.last_frame_idx
+            self.default_spinner_content_width = len(self.default_spinner_frames[0]) - 2
+            self.animation_len = len(self.default_spinner_frames[0])
+
+
+    def _supports_unicode_for_kitt(self) -> bool:
         if not self.is_tty:
             return False
         try:
-            out = self.unicode_palette
-            out += "\b" * len(self.unicode_palette)
-            out += " " * len(self.unicode_palette)
-            out += "\b" * len(self.unicode_palette)
+            # Test with a KITT character and one from the old palette for broader check
+            chars_to_test = self.UNICODE_TEST_CHARS
+            num_chars_printed = len(chars_to_test)
+
+            out = chars_to_test
+            out += "\b" * num_chars_printed
+            out += " " * num_chars_printed
+            out += "\b" * num_chars_printed
+            sys.stdout.write(out)
+            sys.stdout.flush()
+            return True
+        except UnicodeEncodeError:
+            return False
+        except Exception: # Broad exception to catch any other terminal issues
+            return False
+
+    def _supports_unicode_for_default_style(self) -> bool:
+        if not self.is_tty:
+            return False
+        try:
+            out = self.original_unicode_palette
+            out += "\b" * len(self.original_unicode_palette)
+            out += " " * len(self.original_unicode_palette)
+            out += "\b" * len(self.original_unicode_palette)
             sys.stdout.write(out)
             sys.stdout.flush()
             return True
@@ -328,10 +394,44 @@ class Spinner:
             return False
 
     def _next_frame(self) -> str:
-        frame = self.frames[self.frame_idx]
-        self.frame_idx = (self.frame_idx + 1) % len(self.frames)
-        Spinner.last_frame_idx = self.frame_idx  # Update class variable
-        return frame
+        if self.use_kitt_animation:
+            # KITT scanner animation logic (from patch)
+            current_display_chars = [" "] * self.SCANNER_WIDTH
+
+            if 0 <= self.scanner_position < self.SCANNER_WIDTH:
+                current_display_chars[self.scanner_position] = self.KITT_CHARS[3]
+
+            tail_symbols = [self.KITT_CHARS[2], self.KITT_CHARS[1], self.KITT_CHARS[0]]
+            for i, tail_symbol in enumerate(tail_symbols):
+                distance_from_head = i + 1
+                tail_pos = self.scanner_position - distance_from_head if self.scanner_direction == 1 else self.scanner_position + distance_from_head
+                if 0 <= tail_pos < self.SCANNER_WIDTH:
+                    current_display_chars[tail_pos] = tail_symbol
+            
+            if self.SCANNER_WIDTH <= 0: return "".join(current_display_chars)
+
+            if self.scanner_direction == 1:
+                if self.scanner_position >= self.SCANNER_WIDTH - 1:
+                    self.scanner_direction = -1
+                    self.scanner_position = max(0, self.SCANNER_WIDTH - 1)
+                else:
+                    self.scanner_position += 1
+            else:  # scanner_direction == -1
+                if self.scanner_position <= 0:
+                    self.scanner_direction = 1
+                    self.scanner_position = 0
+                else:
+                    self.scanner_position -= 1
+            
+            if not (0 <= self.scanner_position < self.SCANNER_WIDTH) and self.SCANNER_WIDTH > 0:
+                 self.scanner_position = self.scanner_position % self.SCANNER_WIDTH
+            return "".join(current_display_chars)
+        else:
+            # DEFAULT (ASCII/original unicode_palette) animation logic
+            frame = self.default_spinner_frames[self.frame_idx]
+            self.frame_idx = (self.frame_idx + 1) % len(self.default_spinner_frames)
+            Spinner.last_frame_idx = self.frame_idx
+            return frame
 
     def step(self, text: str = None) -> None:
         if text is not None:
@@ -347,52 +447,50 @@ class Spinner:
             if self.is_tty:
                 self.console.show_cursor(False)
 
-        if not self.visible or now - self.last_update < 0.1:
+        if not self.visible or now - self.last_update < 0.1: # Animation speed
             return
 
         self.last_update = now
         frame_str = self._next_frame()
-
-        # Determine the maximum width for the spinner line
-        # Subtract 2 as requested, to leave a margin or prevent cursor wrapping issues
+        
         max_spinner_width = self.console.width - 2
-        if max_spinner_width < 0:  # Handle extremely narrow terminals
-            max_spinner_width = 0
+        if max_spinner_width < 0: max_spinner_width = 0
 
         current_text_payload = f" {self.text}"
         line_to_display = f"{frame_str}{current_text_payload}"
 
-        # Truncate the line if it's too long for the console width
         if len(line_to_display) > max_spinner_width:
             line_to_display = line_to_display[:max_spinner_width]
-
+        
         len_line_to_display = len(line_to_display)
-
-        # Calculate padding to clear any remnants from a longer previous line
         padding_to_clear = " " * max(0, self.last_display_len - len_line_to_display)
-
-        # Write the spinner frame, text, and any necessary clearing spaces
         sys.stdout.write(f"\r{line_to_display}{padding_to_clear}")
         self.last_display_len = len_line_to_display
-
-        # Calculate number of backspaces to position cursor at the scanner character
-        scan_char_abs_pos = frame_str.find(self.scan_char)
-
-        # Total characters written to the line (frame + text + padding)
+        
         total_chars_written_on_line = len_line_to_display + len(padding_to_clear)
+        scan_char_abs_pos = -1
 
-        # num_backspaces will be non-positive if scan_char_abs_pos is beyond
-        # total_chars_written_on_line (e.g., if the scan char itself was truncated).
-        # (e.g., if the scan char itself was truncated).
-        # In such cases, (effectively) 0 backspaces are written,
-        # and the cursor stays at the end of the line.
-        num_backspaces = total_chars_written_on_line - scan_char_abs_pos
-        sys.stdout.write("\b" * num_backspaces)
+        if self.use_kitt_animation:
+            # For KITT, cursor should ideally be at the scanner head's position.
+            # self.scanner_position is the index within the KITT frame.
+            scan_char_abs_pos = self.scanner_position
+        else:
+            # For default spinner, find the scan char.
+            scan_char_abs_pos = frame_str.find(self.default_spinner_scan_char)
+
+        if scan_char_abs_pos != -1:
+            num_backspaces = total_chars_written_on_line - scan_char_abs_pos
+            if num_backspaces > 0 : # only backspace if cursor needs to move left
+                 sys.stdout.write("\b" * num_backspaces)
+        # If scan_char_abs_pos is -1 (e.g. scan char not found or KITT logic places cursor at end),
+        # or if num_backspaces is <=0, cursor remains at the end of the written line.
+
         sys.stdout.flush()
 
     def end(self) -> None:
         if self.visible and self.is_tty:
-            clear_len = self.last_display_len  # Use the length of the last displayed content
+            # Use self.animation_len which is set in __init__ based on style
+            clear_len = self.last_display_len 
             sys.stdout.write("\r" + " " * clear_len + "\r")
             sys.stdout.flush()
             self.console.show_cursor(True)
