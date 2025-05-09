@@ -649,7 +649,7 @@ TWO
                 coder.partial_response_function_call = dict()
                 return []
 
-            def mock_get_commit_message(diffs, context):
+            def mock_get_commit_message(diffs, context, user_language=None):
                 self.assertNotIn("one", diffs)
                 self.assertNotIn("ONE", diffs)
                 return "commit message"
@@ -704,7 +704,7 @@ three
 
             saved_diffs = []
 
-            def mock_get_commit_message(diffs, context):
+            def mock_get_commit_message(diffs, context, user_language=None):
                 saved_diffs.append(diffs)
                 return "commit message"
 
@@ -782,7 +782,7 @@ two
 
             saved_diffs = []
 
-            def mock_get_commit_message(diffs, context):
+            def mock_get_commit_message(diffs, context, user_language=None):
                 saved_diffs.append(diffs)
                 return "commit message"
 
