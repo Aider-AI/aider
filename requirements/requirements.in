@@ -35,14 +35,12 @@ google-generativeai
 # in matplotlib and a bunch of other deps
 # https://github.com/networkx/networkx/blob/d7132daa8588f653eacac7a5bae1ee85a183fa43/pyproject.toml#L57
 # We really only need networkx itself and scipy for the repomap.
-# Pin below v3.3 to retain python 3.9 compatibility.
-networkx<3.3
+networkx
 
 # This is the one networkx dependency that we need.
 # Including it here explicitly because we
 # didn't specify networkx[default] above.
-# Pin below 1.14 to retain python 3.9 compatibility.
-scipy<1.14
+scipy
 
 # GitHub Release action failing on "KeyError: 'home-page'"
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
