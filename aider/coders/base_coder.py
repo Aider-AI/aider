@@ -337,7 +337,7 @@ class Coder:
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
-        from aider.utils import SpinnerConfig # Ensure SpinnerConfig is available
+        from aider.spinners import SpinnerConfig # Ensure SpinnerConfig is available
         self.spinner_config = spinner_config or SpinnerConfig()
 
         self.event = self.analytics.event

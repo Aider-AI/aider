@@ -18,7 +18,7 @@ Use it like:
 import threading
 import time
 
-from aider.utils import Spinner, SpinnerConfig
+from aider.spinners import Spinner, SpinnerConfig
 
 
 class WaitingSpinner:

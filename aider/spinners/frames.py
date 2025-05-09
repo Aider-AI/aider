@@ -1,0 +1,152 @@
+KITT_CHARS = ["\u2591", "\u2592", "\u2593", "\u2588"]  # ░, ▒, ▓, █
+
+ASCII_FRAMES = [
+    "#=        ",  # C1 C2 space(8)
+    "=#        ",  # C2 C1 space(8)
+    " =#       ",  # space(1) C2 C1 space(7)
+    "  =#      ",  # space(2) C2 C1 space(6)
+    "   =#     ",  # space(3) C2 C1 space(5)
+    "    =#    ",  # space(4) C2 C1 space(4)
+    "     =#   ",  # space(5) C2 C1 space(3)
+    "      =#  ",  # space(6) C2 C1 space(2)
+    "       =# ",  # space(7) C2 C1 space(1)
+    "        =#",  # space(8) C2 C1
+    "        #=",  # space(8) C1 C2
+    "       #= ",  # space(7) C1 C2 space(1)
+    "      #=  ",  # space(6) C1 C2 space(2)
+    "     #=   ",  # space(5) C1 C2 space(3)
+    "    #=    ",  # space(4) C1 C2 space(4)
+    "   #=     ",  # space(3) C1 C2 space(5)
+    "  #=      ",  # space(2) C1 C2 space(6)
+    " #=       ",  # space(1) C1 C2 space(7)
+]
+
+# Class variable to store the last frame index for ASCII spinner
+default_spinner_last_frame_idx = 0
+
+
+def generate_default_frame(current_frame_idx, use_unicode_palette, original_unicode_palette_str):
+    global default_spinner_last_frame_idx
+
+    frames_to_use = list(ASCII_FRAMES) # Make a copy to modify if unicode is used
+    scan_char = "#"
+
+    if use_unicode_palette:
+        translation_table = str.maketrans("=#", original_unicode_palette_str)
+        frames_to_use = [f.translate(translation_table) for f in ASCII_FRAMES]
+        try:
+            scan_char = original_unicode_palette_str[ASCII_FRAMES[0].find("#")]
+        except IndexError:
+            scan_char = original_unicode_palette_str[0] if original_unicode_palette_str else "#"
+
+    frame = frames_to_use[current_frame_idx]
+    next_frame_idx = (current_frame_idx + 1) % len(frames_to_use)
+    default_spinner_last_frame_idx = next_frame_idx  # Update shared last frame index
+    return frame, next_frame_idx, scan_char
+
+
+def generate_kitt_frame(scanner_width, current_scanner_position, current_scanner_direction):
+    current_display_chars = [" "] * scanner_width
+
+    if 0 <= current_scanner_position < scanner_width:
+        current_display_chars[current_scanner_position] = KITT_CHARS[3]
+
+    tail_symbols = [KITT_CHARS[2], KITT_CHARS[1], KITT_CHARS[0]]
+    for i, tail_symbol in enumerate(tail_symbols):
+        distance_from_head = i + 1
+        tail_pos = current_scanner_position - distance_from_head if current_scanner_direction == 1 else current_scanner_position + distance_from_head
+        if 0 <= tail_pos < scanner_width:
+            current_display_chars[tail_pos] = tail_symbol
+    
+    if scanner_width <= 0:
+        return "".join(current_display_chars), current_scanner_position, current_scanner_direction
+
+    next_scanner_position = current_scanner_position
+    next_scanner_direction = current_scanner_direction
+
+    if current_scanner_direction == 1:
+        if current_scanner_position >= scanner_width - 1:
+            next_scanner_direction = -1
+            next_scanner_position = max(0, scanner_width - 1)
+        else:
+            next_scanner_position += 1
+    else:  # scanner_direction == -1
+        if current_scanner_position <= 0:
+            next_scanner_direction = 1
+            next_scanner_position = 0
+        else:
+            next_scanner_position -= 1
+    
+    if not (0 <= next_scanner_position < scanner_width) and scanner_width > 0:
+            next_scanner_position = next_scanner_position % scanner_width
+            
+    return "".join(current_display_chars), next_scanner_position, next_scanner_direction
+
+
+def generate_ilovecandy_frame(
+    ilc_width,
+    current_ilc_pac_pos,
+    current_ilc_pac_char_idx,
+    current_ilc_ghost_char,
+    current_ilc_pac_is_chasing_normal_ghost,
+    current_ilc_dots
+):
+    frame_chars = list(current_ilc_dots) # Start with current dots
+    next_ilc_dots = list(current_ilc_dots)
+
+    # Determine Pac-Man character and animation
+    if current_ilc_pac_is_chasing_normal_ghost: # Moving right
+        pac_anim_chars = ['C', 'Э']
+    else: # Moving left (chasing vulnerable ghost)
+        pac_anim_chars = ['>', 'Е']
+    
+    current_pac_char = pac_anim_chars[current_ilc_pac_char_idx]
+    next_ilc_pac_char_idx = 1 - current_ilc_pac_char_idx # Toggle mouth
+
+    # Place Pac-Man
+    if 0 <= current_ilc_pac_pos < ilc_width:
+            frame_chars[current_ilc_pac_pos] = current_pac_char
+
+    # Determine Ghost position and character
+    if current_ilc_pac_is_chasing_normal_ghost:
+        ghost_actual_pos = ilc_width - 1
+    else: # Pac-Man chasing vulnerable ghost to the left
+        ghost_actual_pos = 0
+    
+    if 0 <= ghost_actual_pos < ilc_width: # Ensure ghost is within bounds
+        frame_chars[ghost_actual_pos] = current_ilc_ghost_char
+
+    # Update state for next frame
+    if 0 <= current_ilc_pac_pos < ilc_width: # Pac-Man eats dot at current position
+        next_ilc_dots[current_ilc_pac_pos] = ' '
+
+    # Move Pac-Man
+    next_ilc_pac_pos = current_ilc_pac_pos
+    if current_ilc_pac_is_chasing_normal_ghost:
+        next_ilc_pac_pos += 1
+    else:
+        next_ilc_pac_pos -= 1
+
+    next_ilc_pac_is_chasing_normal_ghost = current_ilc_pac_is_chasing_normal_ghost
+    next_ilc_ghost_char = current_ilc_ghost_char
+
+    # Check for state flip (Pac-Man reaches end of current chase)
+    if current_ilc_pac_is_chasing_normal_ghost and next_ilc_pac_pos >= ilc_width -1 :
+        next_ilc_pac_is_chasing_normal_ghost = False # Pac-Man turns left, chases vulnerable ghost
+        next_ilc_ghost_char = 'Я'
+        next_ilc_pac_pos = ilc_width - 1 # Position Pac-Man at the rightmost for next frame
+        if '.' not in next_ilc_dots: next_ilc_dots = ['.'] * ilc_width # Reset dots if all eaten
+    elif not current_ilc_pac_is_chasing_normal_ghost and next_ilc_pac_pos <= 0:
+        next_ilc_pac_is_chasing_normal_ghost = True # Pac-Man turns right, chases normal ghost
+        next_ilc_ghost_char = '@'
+        next_ilc_pac_pos = 0 # Position Pac-Man at the leftmost for next frame
+        if '.' not in next_ilc_dots: next_ilc_dots = ['.'] * ilc_width # Reset dots
+
+    return (
+        "".join(frame_chars),
+        next_ilc_pac_pos,
+        next_ilc_pac_char_idx,
+        next_ilc_ghost_char,
+        next_ilc_pac_is_chasing_normal_ghost,
+        next_ilc_dots
+    )
