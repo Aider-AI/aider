@@ -57,6 +57,7 @@ cog.out(text)
 - The `aider-args` utility (or `python -m aider.args`) now defaults to printing a sample YAML configuration if no arguments are provided.
 - Displayed token count progress and the name of the file or identifier being processed during repo map updates.
 - Extended the waiting spinner to also show for non-streaming responses and further enhanced its animation with console width clipping, cursor hiding, and a more continuous appearance.
+- Dropped support for Python 3.9.
 - Aider wrote 55% of the code in this release.
 
 ### Aider v0.82.3
