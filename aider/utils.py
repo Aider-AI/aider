@@ -461,12 +461,19 @@ class Spinner:
         current_text_payload_str = f" {self.text}"
 
         # Construct Rich Text object for the line
-        text_line_obj = Text(frame_str)
         if self.config.color != "default" and self.config.color:
-            payload_part = Text(current_text_payload_str, style=self.config.color)
+            # Apply color to the spinner frame itself
+            frame_text_obj = Text(frame_str, style=self.config.color)
         else:
-            payload_part = Text(current_text_payload_str)
-        text_line_obj.append(payload_part)
+            # Spinner frame uses default terminal color
+            frame_text_obj = Text(frame_str)
+        
+        # Text payload uses default terminal color
+        payload_text_obj = Text(current_text_payload_str)
+        
+        # Combine frame and payload
+        text_line_obj = frame_text_obj
+        text_line_obj.append(payload_text_obj)
 
         # Truncate based on visual width
         text_line_obj.truncate(max_spinner_width, overflow="crop")
