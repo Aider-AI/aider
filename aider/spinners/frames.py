@@ -103,3 +103,35 @@ def generate_pump_frame(current_frame_idx):
     next_frame_idx = (current_frame_idx + 1) % len(PUMP_CHARS)
     pump_spinner_last_frame_idx = next_frame_idx
     return frame, next_frame_idx
+
+
+BALL_CHARS = ["◐", "◓", "◑", "◒"]
+# No global last_frame_idx needed for ball as its state is more complex (pos, char_idx, direction)
+
+def generate_ball_frame(current_pos, current_char_idx, current_direction, width):
+    frame_chars = [" "] * width
+    
+    # Place current ball character
+    if 0 <= current_pos < width:
+        frame_chars[current_pos] = BALL_CHARS[current_char_idx]
+
+    # Determine next state
+    next_char_idx = (current_char_idx + 1) % len(BALL_CHARS)
+    next_pos = current_pos
+    next_direction = current_direction
+
+    if width <= 0: # Should not happen if width is validated in Spinner
+        return "".join(frame_chars), current_pos, next_char_idx, current_direction
+
+    if current_direction == 1: # Moving right
+        next_pos = current_pos + 1
+        if next_pos >= width -1: # Hit right edge
+            next_pos = width - 1
+            next_direction = -1 # Change direction to left
+    else: # Moving left (current_direction == -1)
+        next_pos = current_pos - 1
+        if next_pos <= 0: # Hit left edge
+            next_pos = 0
+            next_direction = 1 # Change direction to right
+            
+    return "".join(frame_chars), next_pos, next_char_idx, next_direction
