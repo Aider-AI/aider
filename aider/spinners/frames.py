@@ -96,9 +96,9 @@ def generate_ilovecandy_frame(
 
     # Determine Pac-Man character and animation
     if current_ilc_pac_is_chasing_normal_ghost: # Moving right
-        pac_anim_chars = ['C', 'Э']
-    else: # Moving left (chasing vulnerable ghost)
-        pac_anim_chars = ['>', 'Е']
+        pac_anim_chars = ['>', '.']  # Pacman open right, Pacman closed
+    else: # Moving left
+        pac_anim_chars = ['<', '.']  # Pacman open left, Pacman closed
     
     current_pac_char = pac_anim_chars[current_ilc_pac_char_idx]
     next_ilc_pac_char_idx = 1 - current_ilc_pac_char_idx # Toggle mouth
@@ -132,13 +132,13 @@ def generate_ilovecandy_frame(
 
     # Check for state flip (Pac-Man reaches end of current chase)
     if current_ilc_pac_is_chasing_normal_ghost and next_ilc_pac_pos >= ilc_width -1 :
-        next_ilc_pac_is_chasing_normal_ghost = False # Pac-Man turns left, chases vulnerable ghost
-        next_ilc_ghost_char = 'Я'
+        next_ilc_pac_is_chasing_normal_ghost = False # Pac-Man turns left
+        # Ghost character remains '^', so next_ilc_ghost_char is not changed here.
         next_ilc_pac_pos = ilc_width - 1 # Position Pac-Man at the rightmost for next frame
         if '.' not in next_ilc_dots: next_ilc_dots = ['.'] * ilc_width # Reset dots if all eaten
     elif not current_ilc_pac_is_chasing_normal_ghost and next_ilc_pac_pos <= 0:
-        next_ilc_pac_is_chasing_normal_ghost = True # Pac-Man turns right, chases normal ghost
-        next_ilc_ghost_char = '@'
+        next_ilc_pac_is_chasing_normal_ghost = True # Pac-Man turns right
+        # Ghost character remains '^', so next_ilc_ghost_char is not changed here.
         next_ilc_pac_pos = 0 # Position Pac-Man at the leftmost for next frame
         if '.' not in next_ilc_dots: next_ilc_dots = ['.'] * ilc_width # Reset dots
 
@@ -146,7 +146,7 @@ def generate_ilovecandy_frame(
         "".join(frame_chars),
         next_ilc_pac_pos,
         next_ilc_pac_char_idx,
-        next_ilc_ghost_char,
+        current_ilc_ghost_char,  # Ghost character is now static ('^' passed from Spinner)
         next_ilc_pac_is_chasing_normal_ghost,
         next_ilc_dots
     )
