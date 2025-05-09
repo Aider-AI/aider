@@ -479,7 +479,7 @@ class Spinner:
             width=self.console.width, # Use main console's width for consistent truncation behavior
             color_system=self.console.color_system,
             force_terminal=self.is_tty, # Important for color output
-            theme=self.console.theme
+            # theme=self.console.theme # Avoid AttributeError if self.console has no theme
         )
         temp_console.print(text_line_obj, end="")
         rendered_text_line_str = temp_buffer.getvalue()
