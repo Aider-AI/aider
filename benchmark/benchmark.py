@@ -784,7 +784,7 @@ def run_test_real(
     instructions += prompts.instructions_addendum.format(file_list=file_list)
 
     io = InputOutput(
-        pretty=True,
+        pretty=False,
         yes=True,
         chat_history_file=history_fname,
     )
