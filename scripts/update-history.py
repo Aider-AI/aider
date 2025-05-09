@@ -70,9 +70,7 @@ def run_plain_git_log():
 
 
 def main():
-    model_name = "o3"
-    if len(sys.argv) > 1:
-        model_name = sys.argv[1]
+    aider_args = sys.argv[1:]
 
     # Get the git log and diff output
     log_content = run_git_log()
@@ -141,9 +139,7 @@ def main():
         message,
         "--no-git",
         "--no-auto-lint",
-        "--model",
-        model_name,
-    ]
+    ] + aider_args
     subprocess.run(cmd)
 
     # Read back the updated history
