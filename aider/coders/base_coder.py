@@ -23,9 +23,10 @@ try:
 except ImportError:  # Babel not installed – we will fall back to a small mapping
     Locale = None
 from json.decoder import JSONDecodeError
-from rich.console import Console
 from pathlib import Path
 from typing import List
+
+from rich.console import Console
 
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
