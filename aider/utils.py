@@ -6,10 +6,12 @@ import tempfile
 import time
 from dataclasses import dataclass
 from enum import Enum
+from io import StringIO
 from pathlib import Path
 
 import oslex
 from rich.console import Console
+from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
 
@@ -456,17 +458,41 @@ class Spinner:
         max_spinner_width = self.console.width - 2
         if max_spinner_width < 0: max_spinner_width = 0
 
-        current_text_payload = f" {self.text}"
-        line_to_display = f"{frame_str}{current_text_payload}"
+        current_text_payload_str = f" {self.text}"
 
-        if len(line_to_display) > max_spinner_width:
-            line_to_display = line_to_display[:max_spinner_width]
+        # Construct Rich Text object for the line
+        text_line_obj = Text(frame_str)
+        if self.config.color != "default" and self.config.color:
+            payload_part = Text(current_text_payload_str, style=self.config.color)
+        else:
+            payload_part = Text(current_text_payload_str)
+        text_line_obj.append(payload_part)
+
+        # Truncate based on visual width
+        text_line_obj.truncate(max_spinner_width, overflow="crop")
         
-        len_line_to_display = len(line_to_display)
+        # Render the Rich Text object to a string with ANSI codes using a temporary console
+        temp_buffer = StringIO()
+        # Ensure the temporary console inherits properties for consistent rendering
+        temp_console = Console(
+            file=temp_buffer,
+            width=self.console.width, # Use main console's width for consistent truncation behavior
+            color_system=self.console.color_system,
+            force_terminal=self.is_tty, # Important for color output
+            theme=self.console.theme
+        )
+        temp_console.print(text_line_obj, end="")
+        rendered_text_line_str = temp_buffer.getvalue()
+        
+        # Use visual length for padding and cursor logic
+        len_line_to_display = text_line_obj.cell_len 
+
         padding_to_clear = " " * max(0, self.last_display_len - len_line_to_display)
-        sys.stdout.write(f"\r{line_to_display}{padding_to_clear}")
-        self.last_display_len = len_line_to_display
         
+        sys.stdout.write(f"\r{rendered_text_line_str}{padding_to_clear}")
+        self.last_display_len = len_line_to_display # Store visual length
+        
+        # total_chars_written_on_line should be based on visual length for cursor math
         total_chars_written_on_line = len_line_to_display + len(padding_to_clear)
         scan_char_abs_pos = -1
 
