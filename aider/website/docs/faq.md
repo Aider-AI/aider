@@ -264,9 +264,9 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>944,547</td><td class='right'>65.9%</td></tr>
-<tr><td>o3</td><td class='right'>478,955</td><td class='right'>33.4%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>8,745</td><td class='right'>0.6%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>890,057</td><td class='right'>69.9%</td></tr>
+<tr><td>o3</td><td class='right'>373,753</td><td class='right'>29.4%</td></tr>
+<tr><td>openrouter/REDACTED</td><td class='right'>8,745</td><td class='right'>0.7%</td></tr>
 </table>
 
 {: .note :}
