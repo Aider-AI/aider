@@ -92,3 +92,14 @@ def generate_snake_frame(current_frame_idx):
     next_frame_idx = (current_frame_idx + 1) % len(SNAKE_CHARS)
     snake_spinner_last_frame_idx = next_frame_idx
     return frame, next_frame_idx
+
+
+WAVE_CHARS = ["▂", "▃", "▄", "▅", "▆", "▇", "█", "▇", "▆", "▅", "▄", "▃"]
+wave_spinner_last_frame_idx = 0
+
+def generate_wave_frame(current_frame_idx):
+    global wave_spinner_last_frame_idx
+    frame = WAVE_CHARS[current_frame_idx]
+    next_frame_idx = (current_frame_idx + 1) % len(WAVE_CHARS)
+    wave_spinner_last_frame_idx = next_frame_idx
+    return frame, next_frame_idx
