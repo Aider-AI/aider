@@ -1142,6 +1142,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="Completed --message-file")
         return
 
+    if args.stats:
+        commands.cmd_stats(args.stats)
+        analytics.event("exit", reason="Completed --stats")
+        return
+
     if args.exit:
         analytics.event("exit", reason="Exit flag set")
         return
