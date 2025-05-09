@@ -9,7 +9,6 @@ from .config import SpinnerConfig, SpinnerStyle
 from .frames import (
     KITT_CHARS,
     generate_default_frame,
-    generate_ilovecandy_frame,
     generate_kitt_frame,
     default_spinner_last_frame_idx,
 )
@@ -47,25 +46,12 @@ class Spinner:
         self.kitt_scanner_position = 0
         self.kitt_scanner_direction = 1
         
-        self.ilc_width = 0
-        self.ilc_pac_pos = 0
-        self.ilc_pac_char_idx = 0
-        self.ilc_ghost_char = '@'
-        self.ilc_pac_is_chasing_normal_ghost = True
-        self.ilc_dots = []
-
 
         # Determine active style and initialize
         if self.config.style == SpinnerStyle.KITT and self._supports_unicode_for_kitt():
             self.active_style = SpinnerStyle.KITT
             self.kitt_scanner_width = max(self.config.width, 4)
             self.animation_len = self.kitt_scanner_width
-        elif self.config.style == SpinnerStyle.ILOVECANDY and self.is_tty: # ILOVECANDY implies unicode for its chars
-            self.active_style = SpinnerStyle.ILOVECANDY
-            self.ilc_width = max(self.config.width, 5)
-            self.ilc_dots = ['o'] * self.ilc_width # Use 'o' for dots
-            self.ilc_ghost_char = '^' # Ghost character for pacman style
-            self.animation_len = self.ilc_width
         else: # Default or fallback
             self.active_style = SpinnerStyle.DEFAULT
             if self.config.style != SpinnerStyle.DEFAULT and self.is_tty:
@@ -117,12 +103,6 @@ class Spinner:
         if self.active_style == SpinnerStyle.KITT:
             frame_str, self.kitt_scanner_position, self.kitt_scanner_direction = generate_kitt_frame(
                 self.kitt_scanner_width, self.kitt_scanner_position, self.kitt_scanner_direction
-            )
-        elif self.active_style == SpinnerStyle.ILOVECANDY:
-            frame_str, self.ilc_pac_pos, self.ilc_pac_char_idx, self.ilc_ghost_char, \
-            self.ilc_pac_is_chasing_normal_ghost, self.ilc_dots = generate_ilovecandy_frame(
-                self.ilc_width, self.ilc_pac_pos, self.ilc_pac_char_idx,
-                self.ilc_ghost_char, self.ilc_pac_is_chasing_normal_ghost, self.ilc_dots
             )
         else: # DEFAULT
             frame_str, self.default_frame_idx, self.default_scan_char = generate_default_frame(
@@ -184,8 +164,6 @@ class Spinner:
 
         if self.active_style == SpinnerStyle.KITT:
             scan_char_abs_pos = self.kitt_scanner_position
-        elif self.active_style == SpinnerStyle.ILOVECANDY:
-            scan_char_abs_pos = self.ilc_pac_pos
         else: # DEFAULT
             scan_char_abs_pos = frame_str.find(self.default_scan_char)
 

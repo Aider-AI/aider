@@ -384,8 +384,8 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--spinner-style",
         default="default",
-        choices=["default", "kitt", "ilovecandy"],
-        help="Style for the LLM waiting spinner (default: default, kitt, ilovecandy).",
+        choices=["default", "kitt"],
+        help="Style for the LLM waiting spinner (default: default, kitt).",
     )
     group.add_argument(
         "--spinner-width",

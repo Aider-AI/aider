@@ -967,8 +967,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     spinner_style_arg = args.spinner_style.lower()
     if spinner_style_arg == "kitt":
         spinner_style_enum = SpinnerStyle.KITT
-    elif spinner_style_arg == "ilovecandy":
-        spinner_style_enum = SpinnerStyle.ILOVECANDY
     else:
         spinner_style_enum = SpinnerStyle.DEFAULT
 
