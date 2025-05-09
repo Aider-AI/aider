@@ -913,6 +913,9 @@ class Model(ModelSettings):
             messages = ensure_alternating_roles(messages)
         retry_delay = 0.125
 
+        if self.verbose:
+            dump(messages)
+
         while True:
             try:
                 kwargs = {
