@@ -10,7 +10,9 @@ from .frames import (
     KITT_CHARS,
     generate_default_frame,
     generate_kitt_frame,
+    generate_braille_frame, # Add braille frame generator
     default_spinner_last_frame_idx,
+    braille_spinner_last_frame_idx, # Add braille frame index
 )
 
 
@@ -45,6 +47,8 @@ class Spinner:
         self.kitt_scanner_width = 0
         self.kitt_scanner_position = 0
         self.kitt_scanner_direction = 1
+
+        self.braille_frame_idx = braille_spinner_last_frame_idx
         
 
         # Determine active style and initialize
@@ -52,6 +56,9 @@ class Spinner:
             self.active_style = SpinnerStyle.KITT
             self.kitt_scanner_width = max(self.config.width, 4)
             self.animation_len = self.kitt_scanner_width
+        elif self.config.style == SpinnerStyle.BRAILLE and self._supports_unicode_for_braille(): # Check unicode for braille
+            self.active_style = SpinnerStyle.BRAILLE
+            self.animation_len = 1 # Braille spinner is a single character
         else: # Default or fallback
             self.active_style = SpinnerStyle.DEFAULT
             if self.config.style != SpinnerStyle.DEFAULT and self.is_tty:
@@ -82,6 +89,23 @@ class Spinner:
         except Exception:
             return False
 
+    def _supports_unicode_for_braille(self) -> bool:
+        if not self.is_tty:
+            return False
+        try:
+            from .frames import BRAILLE_CHARS # circular import guard
+            out = BRAILLE_CHARS[0]
+            out += "\b" * len(out)
+            out += " " * len(out)
+            out += "\b" * len(out)
+            sys.stdout.write(out)
+            sys.stdout.flush()
+            return True
+        except UnicodeEncodeError:
+            return False
+        except Exception:
+            return False
+
     def _supports_unicode_for_default_style(self) -> bool:
         if not self.is_tty:
             return False
@@ -104,6 +128,9 @@ class Spinner:
             frame_str, self.kitt_scanner_position, self.kitt_scanner_direction = generate_kitt_frame(
                 self.kitt_scanner_width, self.kitt_scanner_position, self.kitt_scanner_direction
             )
+        elif self.active_style == SpinnerStyle.BRAILLE:
+            frame_str, self.braille_frame_idx = generate_braille_frame(self.braille_frame_idx)
+            self.default_scan_char = frame_str # For cursor logic, treat as default
         else: # DEFAULT
             frame_str, self.default_frame_idx, self.default_scan_char = generate_default_frame(
                 self.default_frame_idx, self.supports_default_unicode, self.original_unicode_palette
