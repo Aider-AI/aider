@@ -83,12 +83,12 @@ def generate_kitt_frame(scanner_width, current_scanner_position, current_scanner
     return "".join(current_display_chars), next_scanner_position, next_scanner_direction
 
 
-BRAILLE_CHARS = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-braille_spinner_last_frame_idx = 0
+SNAKE_CHARS = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"] # Braille characters for snake
+snake_spinner_last_frame_idx = 0
 
-def generate_braille_frame(current_frame_idx):
-    global braille_spinner_last_frame_idx
-    frame = BRAILLE_CHARS[current_frame_idx]
-    next_frame_idx = (current_frame_idx + 1) % len(BRAILLE_CHARS)
-    braille_spinner_last_frame_idx = next_frame_idx
+def generate_snake_frame(current_frame_idx):
+    global snake_spinner_last_frame_idx
+    frame = SNAKE_CHARS[current_frame_idx]
+    next_frame_idx = (current_frame_idx + 1) % len(SNAKE_CHARS)
+    snake_spinner_last_frame_idx = next_frame_idx
     return frame, next_frame_idx

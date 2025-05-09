@@ -5,7 +5,7 @@ from enum import Enum
 class SpinnerStyle(Enum):
     DEFAULT = "default"
     KITT = "kitt"
-    BRAILLE = "braille"
+    SNAKE = "snake"
 
 
 @dataclass

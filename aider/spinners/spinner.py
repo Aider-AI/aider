@@ -10,9 +10,9 @@ from .frames import (
     KITT_CHARS,
     generate_default_frame,
     generate_kitt_frame,
-    generate_braille_frame, # Add braille frame generator
+    generate_snake_frame, # Renamed from generate_braille_frame
     default_spinner_last_frame_idx,
-    braille_spinner_last_frame_idx, # Add braille frame index
+    snake_spinner_last_frame_idx, # Renamed from braille_spinner_last_frame_idx
 )
 
 
@@ -48,7 +48,7 @@ class Spinner:
         self.kitt_scanner_position = 0
         self.kitt_scanner_direction = 1
 
-        self.braille_frame_idx = braille_spinner_last_frame_idx
+        self.snake_frame_idx = snake_spinner_last_frame_idx # Renamed from braille_frame_idx
         
 
         # Determine active style and initialize
@@ -56,9 +56,9 @@ class Spinner:
             self.active_style = SpinnerStyle.KITT
             self.kitt_scanner_width = max(self.config.width, 4)
             self.animation_len = self.kitt_scanner_width
-        elif self.config.style == SpinnerStyle.BRAILLE and self._supports_unicode_for_braille(): # Check unicode for braille
-            self.active_style = SpinnerStyle.BRAILLE
-            self.animation_len = 1 # Braille spinner is a single character
+        elif self.config.style == SpinnerStyle.SNAKE and self._supports_unicode_for_snake(): # Renamed from BRAILLE
+            self.active_style = SpinnerStyle.SNAKE
+            self.animation_len = 1 # Snake spinner is a single character
         else: # Default or fallback
             self.active_style = SpinnerStyle.DEFAULT
             if self.config.style != SpinnerStyle.DEFAULT and self.is_tty:
@@ -89,12 +89,12 @@ class Spinner:
         except Exception:
             return False
 
-    def _supports_unicode_for_braille(self) -> bool:
+    def _supports_unicode_for_snake(self) -> bool: # Renamed from _supports_unicode_for_braille
         if not self.is_tty:
             return False
         try:
-            from .frames import BRAILLE_CHARS # circular import guard
-            out = BRAILLE_CHARS[0]
+            from .frames import SNAKE_CHARS # Renamed from BRAILLE_CHARS
+            out = SNAKE_CHARS[0]
             out += "\b" * len(out)
             out += " " * len(out)
             out += "\b" * len(out)
@@ -128,8 +128,8 @@ class Spinner:
             frame_str, self.kitt_scanner_position, self.kitt_scanner_direction = generate_kitt_frame(
                 self.kitt_scanner_width, self.kitt_scanner_position, self.kitt_scanner_direction
             )
-        elif self.active_style == SpinnerStyle.BRAILLE:
-            frame_str, self.braille_frame_idx = generate_braille_frame(self.braille_frame_idx)
+        elif self.active_style == SpinnerStyle.SNAKE: # Renamed from BRAILLE
+            frame_str, self.snake_frame_idx = generate_snake_frame(self.snake_frame_idx) # Renamed
             self.default_scan_char = frame_str # For cursor logic, treat as default
         else: # DEFAULT
             frame_str, self.default_frame_idx, self.default_scan_char = generate_default_frame(
