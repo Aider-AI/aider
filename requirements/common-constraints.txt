@@ -156,7 +156,7 @@ googleapis-common-protos==1.70.0
     # via
     #   google-api-core
     #   grpcio-status
-greenlet==3.2.1
+greenlet==3.2.2
     # via
     #   playwright
     #   sqlalchemy
@@ -273,7 +273,7 @@ narwhals==1.38.2
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -r requirements/requirements.in
     #   llama-index-core
@@ -473,7 +473,7 @@ safetensors==0.5.3
     # via transformers
 scikit-learn==1.6.1
     # via sentence-transformers
-scipy==1.13.1
+scipy==1.15.3
     # via
     #   -r requirements/requirements.in
     #   scikit-learn

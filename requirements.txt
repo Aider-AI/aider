@@ -246,7 +246,7 @@ multidict==6.4.3
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -410,7 +410,7 @@ rsa==4.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
-scipy==1.13.1
+scipy==1.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
