@@ -270,23 +270,25 @@ class Spinner:
         # Pre-render the animation frames using pure ASCII so they will
         # always display, even on very limited terminals.
         ascii_frames = """
-[#=-----]
-[=#-----]
-[-=#----]
-[--=#---]
-[---=#--]
-[----=#-]
-[-----=#]
-[-----#=]
-[----#=-]
-[---#=--]
-[--#=---]
-[-#=----]
+[#=-    ]
+[=#     ]
+[-=#    ]
+[ -=#   ]
+[  -=#  ]
+[   -=# ]
+[    -=#]
+[     #=]
+[    #=-]
+[   #=- ]
+[  #=-  ]
+[ #=-   ]
 """.strip().splitlines()
+
+        xlate = ("-=#", "≈≋≣")
 
         # If unicode is supported, swap the ASCII chars for nicer glyphs.
         if self._supports_unicode():
-            scan_char, trail_char = "≡", "─"
+            scan_char, trail_char = "≣", ""
             frames = [f.replace("#", scan_char).replace("-", trail_char) for f in ascii_frames]
         else:
             scan_char, _ = "#", "-"
