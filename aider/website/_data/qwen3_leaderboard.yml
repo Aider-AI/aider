@@ -187,3 +187,29 @@
   versions: 0.81.4.dev
   seconds_per_case: 59.4
   total_cost: 0.0000
+
+- dirname: 2025-05-07-03-15-59--Qwen3-235B-A22B-Q5_K_M-whole-nothink
+  test_cases: 225
+  model: Qwen3-235B-A22B whole with llama.cpp, Q5_K_M (unsloth), recommended /no_think settings
+  edit_format: whole
+  commit_hash: 8159cbf
+  pass_rate_1: 27.1
+  pass_rate_2: 59.1
+  pass_num_1: 61
+  pass_num_2: 133
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 169
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B-Q5_K_M
+  date: 2025-05-07
+  versions: 0.82.4.dev
+  seconds_per_case: 635.2
+  total_cost: 0.0000
