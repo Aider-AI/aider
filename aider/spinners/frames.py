@@ -95,12 +95,10 @@ def generate_ilovecandy_frame(
     next_ilc_dots = list(current_ilc_dots)
 
     # Determine Pac-Man character and animation
-    if current_ilc_pac_is_chasing_normal_ghost: # Moving right
-        pac_anim_chars = ['>', '.']  # Pacman open right, Pacman closed
-    else: # Moving left
-        pac_anim_chars = ['<', '.']  # Pacman open left, Pacman closed
-    
-    current_pac_char = pac_anim_chars[current_ilc_pac_char_idx]
+    # Pac-Man is always 'C', mouth animation is simplified for this style.
+    # current_ilc_pac_char_idx will still toggle to drive the animation timing.
+    current_pac_char = 'C'
+    next_ilc_pac_char_idx = 1 - current_ilc_pac_char_idx # Toggle for animation step
     next_ilc_pac_char_idx = 1 - current_ilc_pac_char_idx # Toggle mouth
 
     # Place Pac-Man
@@ -135,12 +133,12 @@ def generate_ilovecandy_frame(
         next_ilc_pac_is_chasing_normal_ghost = False # Pac-Man turns left
         # Ghost character remains '^', so next_ilc_ghost_char is not changed here.
         next_ilc_pac_pos = ilc_width - 1 # Position Pac-Man at the rightmost for next frame
-        if '.' not in next_ilc_dots: next_ilc_dots = ['.'] * ilc_width # Reset dots if all eaten
+        if 'o' not in next_ilc_dots: next_ilc_dots = ['o'] * ilc_width # Reset dots if all eaten
     elif not current_ilc_pac_is_chasing_normal_ghost and next_ilc_pac_pos <= 0:
         next_ilc_pac_is_chasing_normal_ghost = True # Pac-Man turns right
         # Ghost character remains '^', so next_ilc_ghost_char is not changed here.
         next_ilc_pac_pos = 0 # Position Pac-Man at the leftmost for next frame
-        if '.' not in next_ilc_dots: next_ilc_dots = ['.'] * ilc_width # Reset dots
+        if 'o' not in next_ilc_dots: next_ilc_dots = ['o'] * ilc_width # Reset dots
 
     return (
         "".join(frame_chars),

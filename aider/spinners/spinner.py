@@ -63,7 +63,8 @@ class Spinner:
         elif self.config.style == SpinnerStyle.ILOVECANDY and self.is_tty: # ILOVECANDY implies unicode for its chars
             self.active_style = SpinnerStyle.ILOVECANDY
             self.ilc_width = max(self.config.width, 5)
-            self.ilc_dots = ['.'] * self.ilc_width
+            self.ilc_dots = ['o'] * self.ilc_width # Use 'o' for dots
+            self.ilc_ghost_char = '^' # Ghost character for pacman style
             self.animation_len = self.ilc_width
         else: # Default or fallback
             self.active_style = SpinnerStyle.DEFAULT
