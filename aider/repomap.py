@@ -657,7 +657,11 @@ class RepoMap:
         while lower_bound <= upper_bound:
             # dump(lower_bound, middle, upper_bound)
 
-            spin.step()
+            if middle > 1500:
+                show_tokens = f"{middle / 1000.0:.1f}K"
+            else:
+                show_tokens = str(middle)
+            spin.step(f"{UPDATING_REPO_MAP_MESSAGE}: {show_tokens} tokens")
 
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
