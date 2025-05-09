@@ -500,6 +500,7 @@ class Coder:
                 max_inp_tokens,
                 map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
+                spinner_config=self.spinner_config,  # Pass spinner_config
             )
 
         self.summarizer = summarizer or ChatSummary(
