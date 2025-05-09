@@ -489,11 +489,15 @@ def printable_shell_command(cmd_list):
 
 def main():
     spinner = Spinner("Running spinner...")
-    for _ in range(100):
-        time.sleep(0.15)
-        spinner.step()
-    spinner.end()
-    print("Success!")
+    try:
+        for _ in range(100):
+            time.sleep(0.15)
+            spinner.step()
+        print("Success!")
+    except KeyboardInterrupt:
+        print("\nInterrupted by user.")
+    finally:
+        spinner.end()
 
 
 if __name__ == "__main__":
