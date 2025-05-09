@@ -23,6 +23,7 @@ try:
 except ImportError:  # Babel not installed – we will fall back to a small mapping
     Locale = None
 from json.decoder import JSONDecodeError
+from rich.console import Console
 from pathlib import Path
 from typing import List
 
@@ -981,6 +982,8 @@ class Coder:
         thresh = 2  # seconds
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
             self.io.tool_warning("\n\n^C KeyboardInterrupt")
+            # Ensure cursor is visible on exit
+            Console().show_cursor(True)
             self.event("exit", reason="Control-C")
             sys.exit()
 
