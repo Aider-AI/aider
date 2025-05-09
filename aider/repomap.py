@@ -625,7 +625,7 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        spin = Spinner(UPDATING_REPO_MAP_MESSAGE)
+        spin = Spinner(UPDATING_REPO_MAP_MESSAGE, config=self.spinner_config)
 
         ranked_tags = self.get_ranked_tags(
             chat_fnames,
