@@ -353,8 +353,19 @@ class Spinner:
         self.last_update = now
         frame_str = self._next_frame()
 
+        # Determine the maximum width for the spinner line
+        # Subtract 2 as requested, to leave a margin or prevent cursor wrapping issues
+        max_spinner_width = self.console.width - 2
+        if max_spinner_width < 0: # Handle extremely narrow terminals
+            max_spinner_width = 0
+
         current_text_payload = f" {self.text}"
         line_to_display = f"{frame_str}{current_text_payload}"
+
+        # Truncate the line if it's too long for the console width
+        if len(line_to_display) > max_spinner_width:
+            line_to_display = line_to_display[:max_spinner_width]
+
         len_line_to_display = len(line_to_display)
 
         # Calculate padding to clear any remnants from a longer previous line
@@ -362,8 +373,6 @@ class Spinner:
 
         # Write the spinner frame, text, and any necessary clearing spaces
         sys.stdout.write(f"\r{line_to_display}{padding_to_clear}")
-
-        # Store the length of the actual content part for the next step's clearing calculation
         self.last_display_len = len_line_to_display
 
         # Calculate number of backspaces to position cursor at the scanner character
@@ -372,8 +381,10 @@ class Spinner:
         # Total characters written to the line (frame + text + padding)
         total_chars_written_on_line = len_line_to_display + len(padding_to_clear)
 
+        # num_backspaces will be non-positive if scan_char_abs_pos is beyond total_chars_written_on_line
+        # (e.g., if the scan char itself was truncated).
+        # In such cases, (effectively) 0 backspaces are written, and the cursor stays at the end of the line.
         num_backspaces = total_chars_written_on_line - scan_char_abs_pos
-
         sys.stdout.write("\b" * num_backspaces)
         sys.stdout.flush()
 
