@@ -258,6 +258,8 @@ class Spinner:
     cannot display unicode the frames are converted to plain ASCII.
     """
 
+    last_frame_idx = 0  # Class variable to store the last frame index
+
     def __init__(self, text: str, width: int = 7):
         self.text = text
         self.start_time = time.time()
@@ -292,7 +294,7 @@ class Spinner:
 
         # Bounce the scanner back and forth.
         self.frames = frames
-        self.frame_idx = 0
+        self.frame_idx = Spinner.last_frame_idx  # Initialize from class variable
         self.scan_char = scan_char
         self.width = len(frames[0]) - 2  # number of chars between the brackets
         self.animation_len = len(frames[0])
@@ -312,6 +314,7 @@ class Spinner:
     def _next_frame(self) -> str:
         frame = self.frames[self.frame_idx]
         self.frame_idx = (self.frame_idx + 1) % len(self.frames)
+        Spinner.last_frame_idx = self.frame_idx  # Update class variable
         return frame
 
     def step(self) -> None:
