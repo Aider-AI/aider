@@ -7,6 +7,7 @@ import time
 from pathlib import Path
 
 import oslex
+from rich.console import Console
 
 from aider.dump import dump  # noqa: F401
 
@@ -266,6 +267,7 @@ class Spinner:
         self.last_update = 0.0
         self.visible = False
         self.is_tty = sys.stdout.isatty()
+        self.console = Console()
 
         # Pre-render the animation frames using pure ASCII so they will
         # always display, even on very limited terminals.
@@ -338,6 +340,8 @@ class Spinner:
         if not self.visible and now - self.start_time >= 0.5:
             self.visible = True
             self.last_update = 0.0
+            if self.is_tty:
+                self.console.show_cursor(False)
 
         if not self.visible or now - self.last_update < 0.1:
             return
@@ -359,6 +363,7 @@ class Spinner:
             clear_len = len(self.text) + 1 + self.animation_len
             sys.stdout.write("\r" + " " * clear_len + "\r")
             sys.stdout.flush()
+            self.console.show_cursor(True)
         self.visible = False
 
 
