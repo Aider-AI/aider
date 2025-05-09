@@ -382,19 +382,19 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
-        "--llm-spinner-style",
+        "--spinner-style",
         default="default",
         choices=["default", "kitt"],
         help="Style for the LLM waiting spinner (default: default, kitt).",
     )
     group.add_argument(
-        "--llm-spinner-width",
+        "--spinner-width",
         type=int,
         default=7,
         help="Width for the KITT spinner animation (default: 7).",
     )
     group.add_argument(
-        "--llm-spinner-color",
+        "--spinner-color",
         default="default",
         help="Color for the spinner text (default: 'default'). Usage depends on spinner style and terminal.",
     )

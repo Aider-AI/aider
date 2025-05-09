@@ -964,13 +964,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
     from aider.utils import SpinnerConfig, SpinnerStyle
-    spinner_style_arg = args.llm_spinner_style.lower()
+    spinner_style_arg = args.spinner_style.lower()
     spinner_style_enum = SpinnerStyle.KITT if spinner_style_arg == "kitt" else SpinnerStyle.DEFAULT
 
     spinner_config = SpinnerConfig(
         style=spinner_style_enum,
-        width=args.llm_spinner_width,
-        color=args.llm_spinner_color,
+        width=args.spinner_width,
+        color=args.spinner_color,
     )
 
     try:
