@@ -978,13 +978,14 @@ class Coder:
         return inp
 
     def keyboard_interrupt(self):
+        # Ensure cursor is visible on exit
+        Console().show_cursor(True)
+
         now = time.time()
 
         thresh = 2  # seconds
         if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
             self.io.tool_warning("\n\n^C KeyboardInterrupt")
-            # Ensure cursor is visible on exit
-            Console().show_cursor(True)
             self.event("exit", reason="Control-C")
             sys.exit()
 
