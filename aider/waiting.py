@@ -179,8 +179,8 @@ class WaitingSpinner:
 
     def _spin(self):
         while not self._stop_event.is_set():
-            time.sleep(self.delay)
             self.spinner.step()
+            time.sleep(self.delay)
         self.spinner.end()
 
     def start(self):
@@ -192,7 +192,7 @@ class WaitingSpinner:
         """Request the spinner to stop and wait briefly for the thread to exit."""
         self._stop_event.set()
         if self._thread.is_alive():
-            self._thread.join(timeout=0.1)
+            self._thread.join(timeout=self.delay)
         self.spinner.end()
 
     # Allow use as a context-manager

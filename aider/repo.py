@@ -344,7 +344,7 @@ class GitRepo:
 
         commit_message = None
         for model in self.models:
-            spinner_text = f"Waiting for {model.name} to generate commit message"
+            spinner_text = f"Generating commit message with {model.name}"
             with WaitingSpinner(spinner_text):
                 num_tokens = model.token_count(messages)
                 max_tokens = model.info.get("max_input_tokens") or 0
