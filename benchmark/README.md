@@ -83,6 +83,21 @@ You can run `./benchmark/benchmark.py --help` for a list of all the arguments, b
 - `--num-tests` specifies how many of the tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
 - `--read-model-settings=<filename.yml>` specify model settings, see here: https://aider.chat/docs/config/adv-model-settings.html#model-settings
+- `--resume` resume a previously paused benchmark run from its checkpoint
+- `--edit-format architect` run in architect mode, which uses two models: one to propose changes and another to implement them
+- `--editor-model` specify the model to use for implementing changes in architect mode
+- `--reasoning-effort` set reasoning effort for models that support it (e.g., "high", "medium", "low")
+
+### Pausing and Resuming Benchmarks
+
+Benchmarks can take a long time to run. You can pause a running benchmark by pressing `Ctrl+C` once. The benchmark will complete the current test and then save a checkpoint before exiting. To resume the benchmark later, use the `--resume` flag:
+
+```
+# Resume a previously paused benchmark
+./benchmark/benchmark.py YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run --resume --model gpt-3.5-turbo --edit-format whole --threads 10
+```
+
+When you resume a benchmark, it will pick up where it left off, using the list of pending tests from the checkpoint file. This allows you to run benchmarks over multiple sessions.
 
 ### Benchmark report
 
@@ -137,6 +152,24 @@ should be enough to reliably reproduce any benchmark run.
 You can see examples of the benchmark report yaml in the
 [aider leaderboard data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 
+### Running benchmarks in architect mode
+
+Architect mode uses two models: a main model that proposes changes and an editor model that implements them. This can be particularly useful for models that are good at reasoning but struggle with precise code edits.
+
+Here's an example of running a benchmark in architect mode:
+
+```
+./benchmark/benchmark.py grook-mini-architect-deepseek-editor --model openrouter/x-ai/grok-3-mini-beta --editor-model openrouter/deepseek/deepseek-chat-v3-0324 --edit-format architect --threads 15 --exercises-dir polyglot-benchmark --reasoning-effort high
+```
+
+In this example:
+- The main model is Grok-3-mini-beta (via OpenRouter)
+- The editor model is DeepSeek Chat v3 (via OpenRouter)
+- The edit format is set to "architect"
+- Reasoning effort is set to "high"
+- 15 threads are used for parallel processing
+
+When running in architect mode, the benchmark report will include additional information about the editor model used.
 
 ## Limitations, notes
 
