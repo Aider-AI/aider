@@ -13,8 +13,8 @@ Use it like:
     spinner.stop()
 """
 
-import threading
 import sys
+import threading
 import time
 
 from rich.console import Console
@@ -167,6 +167,7 @@ class Spinner:
             self.console.show_cursor(True)
         self.visible = False
 
+
 class WaitingSpinner:
     """Background spinner that can be started/stopped safely."""
 
@@ -201,6 +202,7 @@ class WaitingSpinner:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.stop()
+
 
 def main():
     spinner = Spinner("Running spinner...")
