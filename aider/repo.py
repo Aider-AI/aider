@@ -352,7 +352,7 @@ class GitRepo:
                     continue
                 commit_message = model.simple_send_with_retries(messages)
                 if commit_message:
-                    break # Found a model that could generate the message
+                    break  # Found a model that could generate the message
 
         if not commit_message:
             self.io.tool_error("Failed to generate commit message!")
