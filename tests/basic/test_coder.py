@@ -1213,16 +1213,18 @@ This command will print 'Hello, World!' to the console."""
         # Test with babel.Locale mocked (available)
         mock_babel_locale = MagicMock()
         mock_locale_instance = MagicMock()
-        mock_locale_instance.get_display_name.return_value = "english"  # babel returns lowercase
         mock_babel_locale.parse.return_value = mock_locale_instance
 
         with patch("aider.coders.base_coder.Locale", mock_babel_locale):
+            mock_locale_instance.get_display_name.return_value = "english"  # For en_US
             self.assertEqual(coder.normalize_language("en_US"), "English")
             mock_babel_locale.parse.assert_called_with("en_US")
             mock_locale_instance.get_display_name.assert_called_with("en")
 
+            mock_locale_instance.get_display_name.return_value = "french"  # For fr-FR
             self.assertEqual(coder.normalize_language("fr-FR"), "French")  # Test with hyphen
             mock_babel_locale.parse.assert_called_with("fr_FR")  # Hyphen replaced
+            mock_locale_instance.get_display_name.assert_called_with("en")
 
         # Test with babel.Locale raising an exception (simulating parse failure)
         mock_babel_locale_error = MagicMock()
