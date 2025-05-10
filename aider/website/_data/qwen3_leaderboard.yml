@@ -217,7 +217,7 @@
 
 - dirname: 2025-05-09-17-02-02--qwen3-235b-a22b.unthink_16k_diff
   test_cases: 225
-  model: Qwen3 235B A22B no think, via official Alibaba API
+  model: Qwen3 235B A22B diff, no think, via official Alibaba API
   edit_format: diff
   commit_hash: 91d7fbd-dirty
   pass_rate_1: 28.9
@@ -241,4 +241,32 @@
   date: 2025-05-09
   versions: 0.82.4.dev
   seconds_per_case: 45.4
+  total_cost: 0.0000
+
+- dirname: 2025-05-09-23-01-22--qwen3-235b-a22b.unthink_16k_whole
+  test_cases: 225
+  model: Qwen3 235B A22B whole, no think, via official Alibaba API
+  edit_format: whole
+  commit_hash: 425fb6d
+  pass_rate_1: 26.7
+  pass_rate_2: 61.8
+  pass_num_1: 60
+  pass_num_2: 139
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 175
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2768173
+  completion_tokens: 384000
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/qwen3-235b-a22b
+  date: 2025-05-09
+  versions: 0.82.4.dev
+  seconds_per_case: 50.8
   total_cost: 0.0000
