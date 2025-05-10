@@ -14,10 +14,10 @@ from typing import Optional, Union
 import json5
 import yaml
 from PIL import Image
-from aider.openrouter import OpenRouterModelManager
 
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
 
