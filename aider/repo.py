@@ -20,8 +20,8 @@ import pathspec
 
 from aider import prompts, utils
 
-from .waiting import WaitingSpinner
 from .dump import dump  # noqa: F401
+from .waiting import WaitingSpinner
 
 ANY_GIT_ERROR += [
     OSError,
