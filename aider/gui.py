@@ -9,6 +9,7 @@ import streamlit as st
 from aider import urls
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
+from aider.gui_speech_to_text import SpeechToText
 from aider.io import InputOutput
 from aider.main import main as cli_main
 from aider.scrape import Scraper, has_playwright
@@ -153,6 +154,7 @@ class GUI:
 
             # self.do_recommended_actions()
             self.do_add_to_chat()
+            self.do_speech_to_text()
             self.do_recent_msgs()
             self.do_clear_chat_history()
             # st.container(height=150, border=False)
@@ -210,6 +212,14 @@ class GUI:
     def do_add_web_page(self):
         with st.popover("Add a web page to the chat"):
             self.do_web()
+
+    def do_speech_to_text(self):
+        # Initialize the speech-to-text component if not already done
+        if not hasattr(self, "speech_to_text"):
+            self.speech_to_text = SpeechToText()
+
+        # Render the speech-to-text component
+        self.speech_to_text.render()
 
     def do_add_image(self):
         with st.popover("Add image"):
