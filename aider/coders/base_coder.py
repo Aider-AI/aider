@@ -1094,6 +1094,7 @@ class Coder:
         2. ``locale.getlocale()``
         3. ``LANG`` / ``LANGUAGE`` / ``LC_ALL`` / ``LC_MESSAGES`` environment variables
         """
+
         # Explicit override
         if self.chat_language:
             return self.normalize_language(self.chat_language)
@@ -1102,7 +1103,9 @@ class Coder:
         try:
             lang = locale.getlocale()[0]
             if lang:
-                return self.normalize_language(lang)
+                lang = self.normalize_language(lang)
+            if lang:
+                return lang
         except Exception:
             pass
 
