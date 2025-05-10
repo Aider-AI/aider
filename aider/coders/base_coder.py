@@ -1103,7 +1103,7 @@ class Coder:
             if lang:
                 return self.normalize_language(lang)
         except Exception:
-            pass  # pragma: no cover
+            pass
 
         # Environment variables
         for env_var in ("LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"):
