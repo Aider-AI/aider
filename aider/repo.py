@@ -343,15 +343,16 @@ class GitRepo:
         ]
 
         commit_message = None
-        with WaitingSpinner("Generating commit message"):
-            for model in self.models:
+        for model in self.models:
+            spinner_text = f"Waiting for {model.name} to generate commit message"
+            with WaitingSpinner(spinner_text):
                 num_tokens = model.token_count(messages)
                 max_tokens = model.info.get("max_input_tokens") or 0
                 if max_tokens and num_tokens > max_tokens:
                     continue
                 commit_message = model.simple_send_with_retries(messages)
                 if commit_message:
-                    break
+                    break # Found a model that could generate the message
 
         if not commit_message:
             self.io.tool_error("Failed to generate commit message!")
