@@ -1,6 +1,6 @@
+import locale
 import os
 import tempfile
-import locale
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -1204,12 +1204,14 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(coder.normalize_language("es"), "Spanish")
             self.assertEqual(coder.normalize_language("de_DE.UTF-8"), "German")
             self.assertEqual(coder.normalize_language("ja"), "Japanese")
-            self.assertEqual(coder.normalize_language("unknown_code"), "unknown_code") # Fallback to original
+            self.assertEqual(
+                coder.normalize_language("unknown_code"), "unknown_code"
+            )  # Fallback to original
 
         # Test with babel.Locale mocked (available)
         mock_babel_locale = MagicMock()
         mock_locale_instance = MagicMock()
-        mock_locale_instance.get_display_name.return_value = "english" # babel returns lowercase
+        mock_locale_instance.get_display_name.return_value = "english"  # babel returns lowercase
         mock_babel_locale.parse.return_value = mock_locale_instance
 
         with patch("aider.coders.base_coder.Locale", mock_babel_locale):
@@ -1217,14 +1219,14 @@ This command will print 'Hello, World!' to the console."""
             mock_babel_locale.parse.assert_called_with("en_US")
             mock_locale_instance.get_display_name.assert_called_with("en")
 
-            self.assertEqual(coder.normalize_language("fr-FR"), "French") # Test with hyphen
-            mock_babel_locale.parse.assert_called_with("fr_FR") # Hyphen replaced
+            self.assertEqual(coder.normalize_language("fr-FR"), "French")  # Test with hyphen
+            mock_babel_locale.parse.assert_called_with("fr_FR")  # Hyphen replaced
 
         # Test with babel.Locale raising an exception (simulating parse failure)
         mock_babel_locale_error = MagicMock()
         mock_babel_locale_error.parse.side_effect = Exception("Babel parse error")
         with patch("aider.coders.base_coder.Locale", mock_babel_locale_error):
-            self.assertEqual(coder.normalize_language("en_US"), "English") # Falls back to map
+            self.assertEqual(coder.normalize_language("en_US"), "English")  # Falls back to map
 
     def test_get_user_language(self):
         io = InputOutput()
@@ -1235,26 +1237,30 @@ This command will print 'Hello, World!' to the console."""
         with patch.object(coder, "normalize_language", return_value="French Canadian") as mock_norm:
             self.assertEqual(coder.get_user_language(), "French Canadian")
             mock_norm.assert_called_once_with("fr_CA")
-        coder.chat_language = None # Reset
+        coder.chat_language = None  # Reset
 
         # 2. Test with locale.getlocale()
         with patch("locale.getlocale", return_value=("en_GB", "UTF-8")) as mock_getlocale:
-            with patch.object(coder, "normalize_language", return_value="British English") as mock_norm:
+            with patch.object(
+                coder, "normalize_language", return_value="British English"
+            ) as mock_norm:
                 self.assertEqual(coder.get_user_language(), "British English")
                 mock_getlocale.assert_called_once()
                 mock_norm.assert_called_once_with("en_GB")
 
         # Test with locale.getlocale() returning None or empty
         with patch("locale.getlocale", return_value=(None, None)) as mock_getlocale:
-            with patch("os.environ.get") as mock_env_get: # Ensure env vars are not used yet
+            with patch("os.environ.get") as mock_env_get:  # Ensure env vars are not used yet
                 mock_env_get.return_value = None
-                self.assertIsNone(coder.get_user_language()) # Should be None if nothing found
+                self.assertIsNone(coder.get_user_language())  # Should be None if nothing found
 
         # 3. Test with environment variables
         env_vars_to_test = ["LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"]
 
         # Test LANG
-        with patch("locale.getlocale", side_effect=Exception("locale error")): # Mock locale to fail
+        with patch(
+            "locale.getlocale", side_effect=Exception("locale error")
+        ):  # Mock locale to fail
             with patch("os.environ.get") as mock_env_get:
                 mock_env_get.side_effect = lambda key: "de_DE.UTF-8" if key == "LANG" else None
                 with patch.object(coder, "normalize_language", return_value="German") as mock_norm:
@@ -1269,15 +1275,17 @@ This command will print 'Hello, World!' to the console."""
                 mock_env_get.side_effect = lambda key: "es_ES" if key == "LANGUAGE" else None
                 with patch.object(coder, "normalize_language", return_value="Spanish") as mock_norm:
                     self.assertEqual(coder.get_user_language(), "Spanish")
-                    mock_env_get.assert_any_call("LANGUAGE") # LANG would be called first
+                    mock_env_get.assert_any_call("LANGUAGE")  # LANG would be called first
                     mock_norm.assert_called_once_with("es_ES")
 
         # 4. Test priority: chat_language > locale > env
         coder.chat_language = "it_IT"
         with patch("locale.getlocale", return_value=("en_US", "UTF-8")) as mock_getlocale:
             with patch("os.environ.get", return_value="de_DE") as mock_env_get:
-                with patch.object(coder, "normalize_language", side_effect=lambda x: x.upper()) as mock_norm:
-                    self.assertEqual(coder.get_user_language(), "IT_IT") # From chat_language
+                with patch.object(
+                    coder, "normalize_language", side_effect=lambda x: x.upper()
+                ) as mock_norm:
+                    self.assertEqual(coder.get_user_language(), "IT_IT")  # From chat_language
                     mock_norm.assert_called_once_with("it_IT")
                     mock_getlocale.assert_not_called()
                     mock_env_get.assert_not_called()
