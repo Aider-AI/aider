@@ -20,6 +20,7 @@ import pathspec
 
 from aider import prompts, utils
 
+from .waiting import WaitingSpinner
 from .dump import dump  # noqa: F401
 
 ANY_GIT_ERROR += [
@@ -342,14 +343,15 @@ class GitRepo:
         ]
 
         commit_message = None
-        for model in self.models:
-            num_tokens = model.token_count(messages)
-            max_tokens = model.info.get("max_input_tokens") or 0
-            if max_tokens and num_tokens > max_tokens:
-                continue
-            commit_message = model.simple_send_with_retries(messages)
-            if commit_message:
-                break
+        with WaitingSpinner("Generating commit message"):
+            for model in self.models:
+                num_tokens = model.token_count(messages)
+                max_tokens = model.info.get("max_input_tokens") or 0
+                if max_tokens and num_tokens > max_tokens:
+                    continue
+                commit_message = model.simple_send_with_retries(messages)
+                if commit_message:
+                    break
 
         if not commit_message:
             self.io.tool_error("Failed to generate commit message!")
