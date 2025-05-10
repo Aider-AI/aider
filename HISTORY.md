@@ -1,5 +1,12 @@
 # Release history
 
+### Aider v0.83.1
+
+- Improved user language detection by correctly normalizing hyphenated language codes (e.g., `en-US` to `en`) and enhancing the validation of locale results.
+- Prevented Aider from instructing the LLM to reply in 'C' or 'POSIX' when these are detected as the system locale.
+- Displayed a spinner with the model name when generating commit messages.
+- Aider wrote 74% of the code in this release.
+
 ### Aider v0.83.0
 
 - Added support for `gemini-2.5-pro-preview-05-06` models.
