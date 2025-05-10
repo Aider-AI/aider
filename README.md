@@ -140,7 +140,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 
 ## Kind Words From Users
 
-- *"My life has changed... There's finally an AI coding tool that's good enough to keep up with me... Aider... It's going to rock your world."* — [Eric S. Raymond on X](https://x.com/esrtweet/status/1910809356381413593)
+- *"My life has changed... Aider... It's going to rock your world."* — [Eric S. Raymond on X](https://x.com/esrtweet/status/1910809356381413593)
 - *"The best free open source AI coding assistant."* — [IndyDevDan on YouTube](https://youtu.be/YALpX8oOn78)
 - *"The best AI coding assistant so far."* — [Matthew Berman on YouTube](https://www.youtube.com/watch?v=df8afeb1FY8)
 - *"Aider ... has easily quadrupled my coding productivity."* — [SOLAR_FIELDS on Hacker News](https://news.ycombinator.com/item?id=36212100)
@@ -154,12 +154,12 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"This project is stellar."* — [funkytaco on GitHub](https://github.com/Aider-AI/aider/issues/112#issuecomment-1637429008)
 - *"Amazing project, definitely the best AI coding assistant I've used."* — [joshuavial on GitHub](https://github.com/Aider-AI/aider/issues/84)
 - *"I absolutely love using Aider ... It makes software development feel so much lighter as an experience."* — [principalideal0 on Discord](https://discord.com/channels/1131200896827654144/1133421607499595858/1229689636012691468)
-- *"I have been recovering from multiple shoulder surgeries ... and have used aider extensively. It has allowed me to continue productivity."* — [codeninja on Reddit](https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG)
+- *"I have been recovering from ... surgeries ... aider ... has allowed me to continue productivity."* — [codeninja on Reddit](https://www.reddit.com/r/OpenAI/s/nmNwkHy1zG)
 - *"I am an aider addict. I'm getting so much more work done, but in less time."* — [dandandan on Discord](https://discord.com/channels/1131200896827654144/1131200896827654149/1135913253483069470)
-- *"After wasting $100 on tokens trying to find something better, I'm back to Aider. It blows everything else out of the water hands down, there's no competition whatsoever."* — [SystemSculpt on Discord](https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548)
+- *"Aider... blows everything else out of the water hands down, there's no competition whatsoever."* — [SystemSculpt on Discord](https://discord.com/channels/1131200896827654144/1131200896827654149/1178736602797846548)
 - *"Aider is amazing, coupled with Sonnet 3.5 it's quite mind blowing."* — [Josh Dingus on Discord](https://discord.com/channels/1131200896827654144/1133060684540813372/1262374225298198548)
 - *"Hands down, this is the best AI coding assistant tool so far."* — [IndyDevDan on YouTube](https://www.youtube.com/watch?v=MPYFPvxfGZs)
-- *"[Aider] changed my daily coding workflows. It's mind-blowing how a single Python application can change your life."* — [maledorak on Discord](https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264)
+- *"[Aider] changed my daily coding workflows. It's mind-blowing how ...(it)... can change your life."* — [maledorak on Discord](https://discord.com/channels/1131200896827654144/1131200896827654149/1258453375620747264)
 - *"Best agent for actual dev work in existing codebases."* — [Nick Dobos on X](https://twitter.com/NickADobos/status/1690408967963652097?s=20)
 - *"One of my favorite pieces of software. Blazing trails on new paradigms!"* — [Chris Wall on X](https://x.com/chris65536/status/1905053299251798432)
 - *"Aider has been revolutionary for me and my work."* — [Starry Hope on X](https://x.com/starryhopeblog/status/1904985812137132056)
@@ -168,11 +168,11 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"Aider is also my best friend."* — [jzn21 on Reddit](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27dcnb/)
 - *"Try Aider, it's worth it."* — [jorgejhms on Reddit](https://www.reddit.com/r/ChatGPTCoding/comments/1heuvuo/aider_vs_cline_vs_windsurf_vs_cursor/m27cp99/)
 - *"I like aider :)"* — [Chenwei Cui on X](https://x.com/ccui42/status/1904965344999145698)
-- *"Aider is the precision tool of LLM code gen... Minimal, thoughtful and capable of surgical changes to your codebase all while keeping the developer in control."* — [Reilly Sweetland on X](https://x.com/rsweetland/status/1904963807237259586)
+- *"Aider is the precision tool of LLM code gen... Minimal, thoughtful and capable of surgical changes ... while keeping the developer in control."* — [Reilly Sweetland on X](https://x.com/rsweetland/status/1904963807237259586)
 - *"Cannot believe aider vibe coded a 650 LOC feature across service and cli today in 1 shot."* - [autopoietist on Discord](https://discord.com/channels/1131200896827654144/1131200896827654149/1355675042259796101)
 - *"Oh no the secret is out! Yes, Aider is the best coding tool around. I highly, highly recommend it to anyone."* — [Joshua D Vander Hook on X](https://x.com/jodavaho/status/1911154899057795218)
 - *"thanks to aider, i have started and finished three personal projects within the last two days"* — [joseph stalzyn on X](https://x.com/anitaheeder/status/1908338609645904160)
 - *"Been using aider as my daily driver for over a year ... I absolutely love the tool, like beyond words."* — [koleok on Discord](https://discord.com/channels/1131200896827654144/1273248471394291754/1356727448372252783)
 - *"Aider ... is the tool to benchmark against."* — [BeetleB on Hacker News](https://news.ycombinator.com/item?id=43930201)
-- *"aider is really cool"* — [kache (@yacineMTB) on X](https://x.com/yacineMTB/status/1911224442430124387)
+- *"aider is really cool"* — [kache on X](https://x.com/yacineMTB/status/1911224442430124387)
 
