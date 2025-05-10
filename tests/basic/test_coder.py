@@ -1202,6 +1202,7 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(coder.normalize_language("fr_FR"), "French")
             self.assertEqual(coder.normalize_language("es"), "Spanish")
             self.assertEqual(coder.normalize_language("de_DE.UTF-8"), "German")
+            self.assertEqual(coder.normalize_language("zh-CN"), "Chinese") # Test hyphen in fallback
             self.assertEqual(coder.normalize_language("ja"), "Japanese")
             self.assertEqual(
                 coder.normalize_language("unknown_code"), "unknown_code"

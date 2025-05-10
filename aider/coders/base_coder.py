@@ -1082,7 +1082,8 @@ class Coder:
             "ko": "Korean",
             "ru": "Russian",
         }
-        return fallback.get(lang_code.split("_")[0].lower(), lang_code)
+        primary_lang_code = lang_code.replace("-", "_").split("_")[0].lower()
+        return fallback.get(primary_lang_code, lang_code)
 
     def get_user_language(self):
         """
