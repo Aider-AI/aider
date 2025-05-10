@@ -1049,6 +1049,9 @@ class Coder:
         if not lang_code:
             return None
 
+        if lang_code.upper() in ("C", "POSIX"):
+            return None
+
         # Probably already a language name
         if (
             len(lang_code) > 3
@@ -1182,10 +1185,10 @@ class Coder:
             )
             rename_with_shell = ""
 
-        if self.chat_language:
-            language = self.chat_language
+        if user_lang:  # user_lang is the result of self.get_user_language()
+            language = user_lang
         else:
-            language = "the same language they are using"
+            language = "the same language they are using"  # Default if no specific lang detected
 
         if self.fence[0] == "`" * 4:
             quad_backtick_reminder = (
