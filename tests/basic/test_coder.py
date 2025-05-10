@@ -1,4 +1,3 @@
-import locale
 import os
 import tempfile
 import unittest
@@ -1254,10 +1253,7 @@ This command will print 'Hello, World!' to the console."""
                 mock_env_get.return_value = None
                 self.assertIsNone(coder.get_user_language())  # Should be None if nothing found
 
-        # 3. Test with environment variables
-        env_vars_to_test = ["LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"]
-
-        # Test LANG
+        # 3. Test with environment variables: LANG
         with patch(
             "locale.getlocale", side_effect=Exception("locale error")
         ):  # Mock locale to fail
@@ -1268,8 +1264,8 @@ This command will print 'Hello, World!' to the console."""
                     mock_env_get.assert_any_call("LANG")
                     mock_norm.assert_called_once_with("de_DE")
 
-        # Test LANGUAGE (takes precedence over LANG if both were hypothetically checked by os.environ.get)
-        # but our code checks in order, so we only need to mock the first one it finds.
+        # Test LANGUAGE (takes precedence over LANG if both were hypothetically checked
+        # by os.environ.get, but our code checks in order, so we mock the first one it finds)
         with patch("locale.getlocale", side_effect=Exception("locale error")):
             with patch("os.environ.get") as mock_env_get:
                 mock_env_get.side_effect = lambda key: "es_ES" if key == "LANGUAGE" else None
