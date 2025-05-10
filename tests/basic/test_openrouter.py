@@ -3,8 +3,8 @@ from pathlib import Path
 
 import pytest
 
-from aider.openrouter import OpenRouterModelManager
 from aider.models import ModelInfoManager
+from aider.openrouter import OpenRouterModelManager
 
 
 class DummyResponse:
