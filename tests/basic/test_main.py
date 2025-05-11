@@ -960,7 +960,7 @@ class TestMain(TestCase):
                 # main() should return 1 when argparse itself fails due to an invalid choice
                 # (argparse exits with 2, which main converts to 1)
                 self.assertEqual(result, 1)
-                # offer_url is not called because argparse handles the error before aider's custom check
+                # offer_url not called: argparse handles error before aider's custom check
                 mock_offer_url.assert_not_called()
 
     def test_default_model_selection(self):
