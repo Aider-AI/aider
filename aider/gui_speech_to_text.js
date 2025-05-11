@@ -52,12 +52,9 @@
         }
         
         try {
-            // Try to access React internals
             const reactProps = Object.keys(chatInput).find(key => key.startsWith('__reactProps$'));
             
-            if (reactProps && chatInput[reactProps] && chatInput[reactProps].onChange) {
-                // If we can access React props, use the onChange handler directly
-                
+            if (reactProps && chatInput[reactProps] && chatInput[reactProps].onChange) {                
                 // Append to the existing value
                 chatInput.value = chatInput.value + ' ' + text;
                 
@@ -78,26 +75,8 @@
                 // Call React's onChange handler
                 chatInput[reactProps].onChange(syntheticEvent);
             } else {
-                // Fallback to standard DOM approach with multiple event types
-                
-                // Focus first
-                chatInput.focus();
-                
-                // Append to the existing value
-                chatInput.value = chatInput.value + text;
-                
-                // Dispatch multiple event types to ensure detection
-                ['input', 'change', 'blur', 'keydown', 'keyup'].forEach(eventType => {
-                    const event = new Event(eventType, { bubbles: true, cancelable: true });
-                    chatInput.dispatchEvent(event);
-                });
-                
-                // For Streamlit specifically, try to trigger any MutationObservers or polling
-                // that might be watching for changes
-                setTimeout(() => {
-                    chatInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    chatInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                }, 100);
+                console.error("Could not find React props on chat input");
+                return false;
             }
             
             return true;
