@@ -94,22 +94,27 @@
         recognition.start();
     });
     
-    recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
+    // Combined event handler function for speech recognition events
+    function handleSpeechEvent(eventType, event) {
+        // Set LED back to gray for all events
         led.style.backgroundColor = 'gray';
         
-        // Try to populate the chat input directly
-        const success = populateChatInput(transcript);
-        if (!success)
-            console.error('populateChatInput failed');
-    };
+        if (eventType === 'result') {
+            const transcript = event.results[0][0].transcript;
+            
+            // Try to populate the chat input directly
+            const success = populateChatInput(transcript);
+            if (!success)
+                console.error('populateChatInput failed');
+        } 
+        else if (eventType === 'error') {
+            console.error('Speech recognition error', event.error);
+        }
+        // 'end' event requires no special handling beyond resetting the LED
+    }
     
-    recognition.onerror = function(event) {
-        console.error('Speech recognition error', event.error);
-        led.style.backgroundColor = 'gray';
-    };
-    
-    recognition.onend = function() {
-        led.style.backgroundColor = 'gray';
-    };
+    // Set up event handlers using the combined function
+    recognition.onresult = function(event) { handleSpeechEvent('result', event); };
+    recognition.onerror = function(event) { handleSpeechEvent('error', event); };
+    recognition.onend = function() { handleSpeechEvent('end'); };
 })();
