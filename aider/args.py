@@ -41,9 +41,17 @@ def get_parser(default_config_files, git_root):
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
     )
-    # List of valid edit formats for argparse validation & shtab completion
+    # List of valid edit formats for argparse validation & shtab completion.
+    # Dynamically gather them from the registered coder classes so the list
+    # stays in sync if new formats are added.
+    from aider import coders as _aider_coders
+
     edit_format_choices = sorted(
-        getattr(Coder, "EDIT_FORMATS", ["architect", "diff", "patch", "unified_diff"])
+        {
+            c.edit_format
+            for c in _aider_coders.__all__
+            if hasattr(c, "edit_format") and c.edit_format is not None
+        }
     )
     group = parser.add_argument_group("Main model")
     group.add_argument(
