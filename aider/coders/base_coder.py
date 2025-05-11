@@ -1049,6 +1049,9 @@ class Coder:
         if not lang_code:
             return None
 
+        if lang_code.upper() in ("C", "POSIX"):
+            return None
+
         # Probably already a language name
         if (
             len(lang_code) > 3
@@ -1079,7 +1082,8 @@ class Coder:
             "ko": "Korean",
             "ru": "Russian",
         }
-        return fallback.get(lang_code.split("_")[0].lower(), lang_code)
+        primary_lang_code = lang_code.replace("-", "_").split("_")[0].lower()
+        return fallback.get(primary_lang_code, lang_code)
 
     def get_user_language(self):
         """
@@ -1090,6 +1094,7 @@ class Coder:
         2. ``locale.getlocale()``
         3. ``LANG`` / ``LANGUAGE`` / ``LC_ALL`` / ``LC_MESSAGES`` environment variables
         """
+
         # Explicit override
         if self.chat_language:
             return self.normalize_language(self.chat_language)
@@ -1098,9 +1103,11 @@ class Coder:
         try:
             lang = locale.getlocale()[0]
             if lang:
-                return self.normalize_language(lang)
+                lang = self.normalize_language(lang)
+            if lang:
+                return lang
         except Exception:
-            pass  # pragma: no cover
+            pass
 
         # Environment variables
         for env_var in ("LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"):
@@ -1182,10 +1189,10 @@ class Coder:
             )
             rename_with_shell = ""
 
-        if self.chat_language:
-            language = self.chat_language
+        if user_lang:  # user_lang is the result of self.get_user_language()
+            language = user_lang
         else:
-            language = "the same language they are using"
+            language = "the same language they are using"  # Default if no specific lang detected
 
         if self.fence[0] == "`" * 4:
             quad_backtick_reminder = (
