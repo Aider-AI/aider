@@ -566,7 +566,7 @@ def get_parser(default_config_files, git_root):
         "--analytics-log",
         metavar="ANALYTICS_LOG_FILE",
         help="Specify a file to log analytics events",
-    )
+    ).complete = shtab.FILE
     group.add_argument(
         "--analytics-disable",
         action="store_true",
@@ -769,7 +769,7 @@ def get_parser(default_config_files, git_root):
             "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
             " or home directory)"
         ),
-    )
+    ).complete = shtab.FILE
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
     # argument parsing, but it's here so that the help is displayed as expected.
     group.add_argument(
