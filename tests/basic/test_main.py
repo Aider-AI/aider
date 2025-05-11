@@ -949,19 +949,16 @@ class TestMain(TestCase):
 
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
-            with patch("aider.io.InputOutput.offer_url") as mock_offer_url:
-                # Suppress stderr for this test as argparse prints an error message
-                with patch("sys.stderr", new_callable=StringIO):
+            # Suppress stderr for this test as argparse prints an error message
+            with patch("sys.stderr", new_callable=StringIO):
+                with self.assertRaises(SystemExit) as cm:
                     result = main(
                         ["--edit-format", "not-a-real-format", "--exit", "--yes"],
                         input=DummyInput(),
                         output=DummyOutput(),
                     )
-                # main() should return 1 when argparse itself fails due to an invalid choice
-                # (argparse exits with 2, which main converts to 1)
-                self.assertEqual(result, 1)
-                # offer_url not called: argparse handles error before aider's custom check
-                mock_offer_url.assert_not_called()
+                # argparse.ArgumentParser.exit() is called with status 2 for invalid choice
+                self.assertEqual(cm.exception.code, 2)
 
     def test_default_model_selection(self):
         with GitTemporaryDirectory():
