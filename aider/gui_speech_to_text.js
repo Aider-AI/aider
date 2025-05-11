@@ -96,7 +96,7 @@
     
     // Setup button click handler
     button.addEventListener('click', function() {
-        led.style.backgroundColor = 'green';
+        led.style.backgroundColor = 'lime';
         recognition.start();
     });
     
@@ -106,22 +106,8 @@
         
         // Try to populate the chat input directly
         const success = populateChatInput(transcript);
-        
-        if (!success) {
+        if (!success)
             console.error('populateChatInput failed');
-            
-            // Add a debug display with the transcribed text
-            const debugContainer = document.createElement('div');
-            debugContainer.style.padding = '10px';
-            debugContainer.style.marginTop = '10px';
-            debugContainer.style.backgroundColor = '#ffeeee';
-            debugContainer.style.border = '1px solid #ffcccc';
-            debugContainer.innerHTML = `
-                <div><strong>Debug: Transcribed text</strong></div>
-                <div><textarea style="width: 100%; height: 80px;">${transcript}</textarea></div>
-            `;
-            container.appendChild(debugContainer);
-        }
     };
     
     recognition.onerror = function(event) {
