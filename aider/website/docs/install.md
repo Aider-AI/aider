@@ -28,12 +28,6 @@ These one-liners will install aider, along with python 3.12 if needed.
 They are based on the 
 [uv installers](https://docs.astral.sh/uv/getting-started/installation/).
 
-#### Windows
-
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"
-```
-
 #### Mac & Linux
 
 Use curl to download the script and execute it with sh:
@@ -48,6 +42,12 @@ If your system doesn't have curl, you can use wget:
 wget -qO- https://aider.chat/install.sh | sh
 ```
 
+#### Windows
+
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://aider.chat/install.ps1 | iex"
+```
+
 
 ## Install with uv
 
@@ -55,7 +55,7 @@ You can install aider with uv:
 
 ```bash
 python -m pip install uv  # If you need to install uv
-uv tool install --force --python python3.12 aider-chat@latest
+uv tool install --force --python python3.12 --with pip aider-chat@latest
 ```
 
 This will install uv using your existing python version 3.8-3.13,
