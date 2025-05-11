@@ -3,7 +3,7 @@ parent: Connecting to LLMs
 nav_order: 510
 ---
 
-# GitHub Copilot compatible API
+# GitHub Copilot
 
 Aider can connect to GitHub Copilot’s LLMs because Copilot exposes a standard **OpenAI-style**
 endpoint at:
