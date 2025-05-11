@@ -58,17 +58,11 @@
                 // Append to the existing value
                 chatInput.value = chatInput.value + ' ' + text;
                 
-                // Create a synthetic event that React's onChange will accept
+                // Create a simplified synthetic event with only essential properties
                 const syntheticEvent = {
                     target: chatInput,
                     currentTarget: chatInput,
                     preventDefault: () => {},
-                    stopPropagation: () => {},
-                    persist: () => {},
-                    isDefaultPrevented: () => false,
-                    isPropagationStopped: () => false,
-                    bubbles: true,
-                    cancelable: true,
                     nativeEvent: new Event('input', { bubbles: true })
                 };
                 
