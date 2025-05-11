@@ -73,11 +73,10 @@ show-model-warnings: false
 ## Notes & FAQ
 
 * Copilot billing is handled entirely by GitHub.  Calls made through aider count against your
-  Copilot subscription, not a separate OpenAI bill.
+  Copilot subscription, even though aider will still print estimated costs.
 * Tokens created by **Neovim copilot.lua** or older `hosts.json` files sometimes lack the
   required scopes. If you get `access to this endpoint is forbidden`, regenerate the token via a
   JetBrains IDE or VS Code Copilot extension.
 * The Copilot terms of service allow third-party “agents” that access the LLM endpoint.  Aider
   merely follows the documented API and **does not scrape the web UI**.
 
-Happy hacking!
