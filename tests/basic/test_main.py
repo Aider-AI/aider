@@ -952,7 +952,7 @@ class TestMain(TestCase):
             # Suppress stderr for this test as argparse prints an error message
             with patch("sys.stderr", new_callable=StringIO):
                 with self.assertRaises(SystemExit) as cm:
-                    result = main(
+                    _ = main(
                         ["--edit-format", "not-a-real-format", "--exit", "--yes"],
                         input=DummyInput(),
                         output=DummyOutput(),
