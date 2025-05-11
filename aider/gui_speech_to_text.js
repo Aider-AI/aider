@@ -45,39 +45,23 @@
     function populateChatInput(text) {
         const parentDoc = window.parent.document;
         let chatInput = parentDoc.querySelector('textarea[data-testid="stChatInputTextArea"]');
+        const reactProps = Object.keys(chatInput).find(key => key.startsWith('__reactProps$'));
+        const syntheticEvent = { target: chatInput, currentTarget: chatInput,
+            preventDefault: () => {}, nativeEvent: new Event('input', { bubbles: true })};
         
-        if (!chatInput) {
-            console.error("Could not find chat input textarea");
+        if (!chatInput || !reactProps) {
+            if (!chatInput)
+                console.error("Could not find chat input textarea");
+            if (!reactProps)
+                console.error("Error setting chat input value:", err);
             return false;
         }
         
-        try {
-            const reactProps = Object.keys(chatInput).find(key => key.startsWith('__reactProps$'));
-            
-            if (reactProps && chatInput[reactProps] && chatInput[reactProps].onChange) {                
-                // Append to the existing value
-                chatInput.value = chatInput.value + ' ' + text;
-                
-                // Create a simplified synthetic event with only essential properties
-                const syntheticEvent = {
-                    target: chatInput,
-                    currentTarget: chatInput,
-                    preventDefault: () => {},
-                    nativeEvent: new Event('input', { bubbles: true })
-                };
-                
-                // Call React's onChange handler
-                chatInput[reactProps].onChange(syntheticEvent);
-            } else {
-                console.error("Could not find React props on chat input");
-                return false;
-            }
-            
-            return true;
-        } catch (err) {
-            console.error("Error setting chat input value:", err);
-            return false;
-        }
+        // Append to the existing value
+        chatInput.value = chatInput.value + ' ' + text;
+        // Call React's onChange handler
+        chatInput[reactProps].onChange(syntheticEvent);
+        return true;
     }
 
     // Initialize speech recognition
