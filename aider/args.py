@@ -7,7 +7,6 @@ from pathlib import Path
 
 import configargparse
 import shtab
-from aider.coders.base_coder import Coder
 
 from aider import __version__
 from aider.args_formatter import (
@@ -15,6 +14,7 @@ from aider.args_formatter import (
     MarkdownHelpFormatter,
     YamlHelpFormatter,
 )
+from aider.coders.base_coder import Coder
 from aider.deprecated import add_deprecated_model_args
 
 from .dump import dump  # noqa: F401
