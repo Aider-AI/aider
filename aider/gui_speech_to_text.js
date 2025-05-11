@@ -86,7 +86,9 @@
     
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-US';
+    // Use browser's language or fall back to 'en-US'
+    recognition.lang = navigator.language || 'en-US';
+    console.log('Speech recognition language:', recognition.lang);
     
     // Setup button click handler
     button.addEventListener('click', function() {
