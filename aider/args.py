@@ -7,6 +7,7 @@ from pathlib import Path
 
 import configargparse
 import shtab
+from aider.coders.base_coder import Coder
 
 from aider import __version__
 from aider.args_formatter import (
@@ -39,6 +40,10 @@ def get_parser(default_config_files, git_root):
         default_config_files=default_config_files,
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         auto_env_var_prefix="AIDER_",
+    )
+    # List of valid edit formats for argparse validation & shtab completion
+    edit_format_choices = sorted(
+        getattr(Coder, "EDIT_FORMATS", ["architect", "diff", "patch", "unified_diff"])
     )
     group = parser.add_argument_group("Main model")
     group.add_argument(
@@ -149,6 +154,7 @@ def get_parser(default_config_files, git_root):
         "--edit-format",
         "--chat-mode",
         metavar="EDIT_FORMAT",
+        choices=edit_format_choices,
         default=None,
         help="Specify what edit format the LLM should use (default depends on model)",
     )
@@ -183,6 +189,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--editor-edit-format",
         metavar="EDITOR_EDIT_FORMAT",
+        choices=edit_format_choices,
         default=None,
         help="Specify the edit format for the editor model (default: depends on editor model)",
     )
