@@ -951,7 +951,7 @@ class TestMain(TestCase):
         with GitTemporaryDirectory():
             with patch("aider.io.InputOutput.offer_url") as mock_offer_url:
                 # Suppress stderr for this test as argparse prints an error message
-                with patch('sys.stderr', new_callable=StringIO):
+                with patch("sys.stderr", new_callable=StringIO):
                     result = main(
                         ["--edit-format", "not-a-real-format", "--exit", "--yes"],
                         input=DummyInput(),
