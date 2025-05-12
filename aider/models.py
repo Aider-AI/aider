@@ -765,7 +765,7 @@ class Model(ModelSettings):
                 self.extra_params["extra_body"] = {}
             try:
                 setting = TypeAdapter(bool).validate_python(setting)
-                self.extra_params["extra_body"]["enable_thinking"] = setting
+                self.extra_params["extra_body"].setdefault("template_vars", {}).update({"enable_thinking": setting})
             except ValidationError:
                 io.tool_warning("Warning: the enable-thinking command expects true or false")
 
@@ -883,9 +883,10 @@ class Model(ModelSettings):
         if (
             self.extra_params
             and "extra_body" in self.extra_params
-            and "enable_thinking" in self.extra_params["extra_body"]
+            and "template_vars" in self.extra_params["extra_body"]
+            and "enable_thinking" in self.extra_params["extra_body"]["template_vars"]
         ):
-            return self.extra_params["extra_body"]["enable_thinking"]
+            return self.extra_params["extra_body"]["template_vars"]["enable_thinking"]
         return None
 
     def is_deepseek_r1(self):

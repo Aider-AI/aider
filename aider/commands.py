@@ -1595,7 +1595,7 @@ class Commands:
             # Display current value if no args are provided
             thinking_value = model.get_enable_thinking()
             if thinking_value is None:
-                self.io.tool_output("thinking effort is not currently set.")
+                self.io.tool_output("Thinking is not currently set.")
             else:
                 self.io.tool_output(f"Current thinking setting: {thinking_value}")
             return
