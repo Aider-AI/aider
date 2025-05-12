@@ -9,6 +9,7 @@ import mimetypes
 import os
 import platform
 import re
+import shlex
 import sys
 import threading
 import time
@@ -129,8 +130,10 @@ class Coder:
         io=None,
         from_coder=None,
         summarize_from_coder=True,
+        runner=None,
         **kwargs,
     ):
+        self.runner = runner
         import aider.coders as coders
 
         if not main_model:
@@ -426,7 +429,7 @@ class Coder:
 
         self.show_diffs = show_diffs
 
-        self.commands = commands or Commands(self.io, self)
+        self.commands = commands or Commands(self.io, self, runner=self.runner)
         self.commands.coder = self
 
         self.repo = repo
@@ -2470,6 +2473,10 @@ class Coder:
             self.io.tool_output(f"Running {command}")
             # Add the command to input history
             self.io.add_to_input_history(f"/run {command.strip()}")
+            if self.runner:
+                command = f'{self.runner} {shlex.quote(command)}'
+            else:
+                command = command
             exit_status, output = run_cmd(command, error_print=self.io.tool_error, cwd=self.root)
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
