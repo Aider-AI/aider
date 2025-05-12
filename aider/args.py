@@ -475,7 +475,7 @@ def get_parser(default_config_files, git_root):
         "--git-commit-no-sign",
         action=argparse.BooleanOptionalAction,
         default=False,
-        help="Disable git signing with --no-gpg-sign (default: False)",
+        help="Disable git commit signing with --no-gpg-sign (default: False)",
     )
     group.add_argument(
         "--commit",
