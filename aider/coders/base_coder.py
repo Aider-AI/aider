@@ -335,6 +335,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        auto_commit_message=True,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -348,6 +349,7 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+        self.auto_commit_message = auto_commit_message
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -434,6 +436,7 @@ class Coder:
                     fnames,
                     None,
                     models=main_model.commit_message_models(),
+                    auto_commit_message=self.auto_commit_message,
                 )
             except FileNotFoundError:
                 pass
