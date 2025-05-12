@@ -1178,7 +1178,7 @@ install() {
     say "Installing aider..."
     say ""
     # Install aider-chat using the newly installed uv
-    ensure "${_install_dir}/uv" tool install --force --python python3.12 aider-chat@latest
+    ensure "${_install_dir}/uv" tool install --force --python python3.12 --with pip aider-chat@latest
     
     # Avoid modifying the users PATH if they are managing their PATH manually
     case :$PATH:

@@ -1,0 +1,272 @@
+- dirname: 2025-05-08-03-20-24--qwen3-32b-default
+  test_cases: 225
+  model: Qwen3 32B diff on OpenRouter, all providers, default settings (thinking)
+  edit_format: diff
+  commit_hash: aaacee5-dirty, aeaf259
+  pass_rate_1: 14.2
+  pass_rate_2: 40.0
+  pass_num_1: 32
+  pass_num_2: 90
+  percent_cases_well_formed: 83.6
+  error_outputs: 119
+  num_malformed_responses: 50
+  num_with_malformed_responses: 37
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 12
+  prompt_tokens: 317591
+  completion_tokens: 120418
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openrouter/qwen/qwen3-32b
+  date: 2025-05-08
+  versions: 0.82.4.dev
+  seconds_per_case: 372.2
+  total_cost: 0.7603
+
+- dirname: 2025-05-08-03-22-37--qwen3-235b-defaults
+  test_cases: 225
+  model: Qwen3 235B A22B diff on OpenRouter, all providers, default settings (thinking)
+  edit_format: diff
+  commit_hash: aaacee5-dirty
+  pass_rate_1: 17.3
+  pass_rate_2: 49.8
+  pass_num_1: 39
+  pass_num_2: 112
+  percent_cases_well_formed: 91.6
+  error_outputs: 58
+  num_malformed_responses: 29
+  num_with_malformed_responses: 19
+  user_asks: 102
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 0
+  completion_tokens: 0
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openrouter/qwen/qwen3-235b-a22b
+  date: 2025-05-08
+  versions: 0.82.4.dev
+  seconds_per_case: 428.1
+  total_cost: 1.8037
+
+
+- dirname: 2025-05-08-17-39-14--qwen3-235b-or-together-only
+  test_cases: 225
+  model: Qwen3 235B A22B diff on OpenRouter only TogetherAI, recommended /no_think settings
+  edit_format: diff
+  commit_hash: 328584e
+  pass_rate_1: 28.0
+  pass_rate_2: 54.7
+  pass_num_1: 63
+  pass_num_2: 123
+  percent_cases_well_formed: 90.7
+  error_outputs: 39
+  num_malformed_responses: 32
+  num_with_malformed_responses: 21
+  user_asks: 106
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2816606
+  completion_tokens: 362346
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openrouter/qwen/qwen3-235b-a22b
+  date: 2025-05-08
+  versions: 0.82.4.dev
+  seconds_per_case: 77.2
+  total_cost: 0.6399
+
+
+- dirname: 2025-04-30-04-49-37--Qwen3-235B-A22B-whole-nothink
+  test_cases: 225
+  model: Qwen3-235B-A22B whole with VLLM, bfloat16, recommended /no_think settings
+  edit_format: whole
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 28.0
+  pass_rate_2: 65.3
+  pass_num_1: 63
+  pass_num_2: 147
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 166
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 166.0
+  total_cost: 0.0000
+
+- dirname: 2025-04-30-04-49-50--Qwen3-235B-A22B-diff-nothink
+  test_cases: 225
+  model: Qwen3-235B-A22B diff with VLLM, bfloat16, recommended /no_think settings
+  edit_format: diff
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 29.8
+  pass_rate_2: 61.3
+  pass_num_1: 67
+  pass_num_2: 138
+  percent_cases_well_formed: 94.7
+  error_outputs: 25
+  num_malformed_responses: 25
+  num_with_malformed_responses: 12
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 158.2
+  total_cost: 0.0000
+
+- dirname: 2025-04-30-04-08-41--Qwen3-32B-whole-nothink
+  test_cases: 225
+  model: Qwen3-32B whole with VLLM, bfloat16, recommended /no_think settings
+  edit_format: whole
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 20.4
+  pass_rate_2: 45.8
+  pass_num_1: 46
+  pass_num_2: 103
+  percent_cases_well_formed: 100.0
+  error_outputs: 3
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 94
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openai/Qwen3-32B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 48.1
+  total_cost: 0.0000
+
+- dirname: 2025-04-30-04-08-51--Qwen3-32B-diff-nothink
+  test_cases: 225
+  model: Qwen3-32B diff with VLLM, bfloat16, recommended /no_think settings
+  edit_format: diff
+  commit_hash: 0c383df-dirty
+  pass_rate_1: 20.4
+  pass_rate_2: 41.3
+  pass_num_1: 46
+  pass_num_2: 93
+  percent_cases_well_formed: 94.2
+  error_outputs: 17
+  num_malformed_responses: 14
+  num_with_malformed_responses: 13
+  user_asks: 83
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 3
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model openai/Qwen3-32B
+  date: 2025-04-30
+  versions: 0.81.4.dev
+  seconds_per_case: 59.4
+  total_cost: 0.0000
+
+- dirname: 2025-05-07-03-15-59--Qwen3-235B-A22B-Q5_K_M-whole-nothink
+  test_cases: 225
+  model: Qwen3-235B-A22B whole with llama.cpp, Q5_K_M (unsloth), recommended /no_think settings
+  edit_format: whole
+  commit_hash: 8159cbf
+  pass_rate_1: 27.1
+  pass_rate_2: 59.1
+  pass_num_1: 61
+  pass_num_2: 133
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 169
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/Qwen3-235B-A22B-Q5_K_M
+  date: 2025-05-07
+  versions: 0.82.4.dev
+  seconds_per_case: 635.2
+  total_cost: 0.0000
+
+
+- dirname: 2025-05-09-17-02-02--qwen3-235b-a22b.unthink_16k_diff
+  test_cases: 225
+  model: Qwen3 235B A22B diff, no think, via official Alibaba API
+  edit_format: diff
+  commit_hash: 91d7fbd-dirty
+  pass_rate_1: 28.9
+  pass_rate_2: 59.6
+  pass_num_1: 65
+  pass_num_2: 134
+  percent_cases_well_formed: 92.9
+  error_outputs: 22
+  num_malformed_responses: 22
+  num_with_malformed_responses: 16
+  user_asks: 111
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2816192
+  completion_tokens: 342062
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/qwen3-235b-a22b
+  date: 2025-05-09
+  versions: 0.82.4.dev
+  seconds_per_case: 45.4
+  total_cost: 0.0000
+
+- dirname: 2025-05-09-23-01-22--qwen3-235b-a22b.unthink_16k_whole
+  test_cases: 225
+  model: Qwen3 235B A22B whole, no think, via official Alibaba API
+  edit_format: whole
+  commit_hash: 425fb6d
+  pass_rate_1: 26.7
+  pass_rate_2: 61.8
+  pass_num_1: 60
+  pass_num_2: 139
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 175
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2768173
+  completion_tokens: 384000
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/qwen3-235b-a22b
+  date: 2025-05-09
+  versions: 0.82.4.dev
+  seconds_per_case: 50.8
+  total_cost: 0.0000

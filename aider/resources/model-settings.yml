@@ -969,7 +969,7 @@
   overeager: true
   weak_model_name: gemini/gemini-2.5-flash-preview-04-17
 
-- name: openrouter/google/gemini-2.5-pro-exp-03-25:free
+- name: openrouter/google/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   overeager: true
   use_repo_map: true
@@ -1412,3 +1412,27 @@
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
   
+#- name: openrouter/qwen/qwen3-235b-a22b
+#  system_prompt_prefix: "/no_think"
+#  use_temperature: 0.7
+#  extra_params:
+#    max_tokens: 24000
+#    top_p: 0.8
+#    top_k: 20
+#    min_p: 0.0
+#    temperature: 0.7
+#    extra_body:
+#      provider:
+#        order: ["Together"]
+
+#- name: together_ai/Qwen/Qwen3-235B-A22B-fp8-tput
+#  system_prompt_prefix: "/no_think"
+#  use_temperature: 0.7
+#  reasoning_tag: think
+#  extra_params:
+#    max_tokens: 24000
+#    top_p: 0.8
+#    top_k: 20
+#    min_p: 0.0
+#    temperature: 0.7  
+    

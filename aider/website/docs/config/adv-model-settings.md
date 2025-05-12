@@ -1224,7 +1224,7 @@ cog.out("```\n")
     max_tokens: 8192
   caches_by_default: true
 
-- name: openrouter/google/gemini-2.5-pro-exp-03-25:free
+- name: openrouter/google/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   weak_model_name: openrouter/google/gemini-2.0-flash-exp:free
   use_repo_map: true

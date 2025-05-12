@@ -4,10 +4,10 @@ import subprocess
 import sys
 import traceback
 import warnings
-import oslex
 from dataclasses import dataclass
 from pathlib import Path
 
+import oslex
 from grep_ast import TreeContext, filename_to_lang
 from grep_ast.tsl import get_parser  # noqa: E402
 

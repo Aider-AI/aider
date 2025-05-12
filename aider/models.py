@@ -17,6 +17,7 @@ from PIL import Image
 
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
 
@@ -149,8 +150,13 @@ class ModelInfoManager:
         self.verify_ssl = True
         self._cache_loaded = False
 
+        # Manager for the cached OpenRouter model database
+        self.openrouter_manager = OpenRouterModelManager()
+
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
+        if hasattr(self, "openrouter_manager"):
+            self.openrouter_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -232,6 +238,12 @@ class ModelInfoManager:
             return litellm_info
 
         if not cached_info and model.startswith("openrouter/"):
+            # First try using the locally cached OpenRouter model database
+            openrouter_info = self.openrouter_manager.get_model_info(model)
+            if openrouter_info:
+                return openrouter_info
+
+            # Fallback to legacy web-scraping if the API cache does not contain the model
             openrouter_info = self.fetch_openrouter_model_info(model)
             if openrouter_info:
                 return openrouter_info
@@ -526,6 +538,9 @@ class Model(ModelSettings):
         if "qwen3" in model and "235b" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
+            self.system_prompt_prefix = "/no_think"
+            self.use_temperature = 0.7
+            self.extra_params = {"top_p": 0.8, "top_k": 20, "min_p": 0.0}
             return  # <--
 
         # use the defaults
@@ -909,6 +924,9 @@ class Model(ModelSettings):
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)
         retry_delay = 0.125
+
+        if self.verbose:
+            dump(messages)
 
         while True:
             try:

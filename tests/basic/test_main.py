@@ -949,16 +949,19 @@ class TestMain(TestCase):
 
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
-            with patch("aider.io.InputOutput.offer_url") as mock_offer_url:
-                result = main(
-                    ["--edit-format", "not-a-real-format", "--exit", "--yes"],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
-                self.assertEqual(result, 1)  # main() should return 1 on error
-                mock_offer_url.assert_called_once()
-                args, _ = mock_offer_url.call_args
-                self.assertEqual(args[0], "https://aider.chat/docs/more/edit-formats.html")
+            # Suppress stderr for this test as argparse prints an error message
+            with patch("sys.stderr", new_callable=StringIO) as mock_stderr:
+                with self.assertRaises(SystemExit) as cm:
+                    _ = main(
+                        ["--edit-format", "not-a-real-format", "--exit", "--yes"],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
+                # argparse.ArgumentParser.exit() is called with status 2 for invalid choice
+                self.assertEqual(cm.exception.code, 2)
+                stderr_output = mock_stderr.getvalue()
+                self.assertIn("invalid choice", stderr_output)
+                self.assertIn("not-a-real-format", stderr_output)
 
     def test_default_model_selection(self):
         with GitTemporaryDirectory():
