@@ -835,7 +835,7 @@ two
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
     def test_skip_gitignored_files_on_init(self):
-        with GitTemporaryDirectory() as tmpdir:
+        with GitTemporaryDirectory() as _:
             repo_path = Path(".")
             repo = git.Repo.init(repo_path)
 
