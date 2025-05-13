@@ -860,7 +860,9 @@ two
 
             self.assertNotIn(str(ignored_file.resolve()), coder.abs_fnames)
             self.assertIn(str(regular_file.resolve()), coder.abs_fnames)
-            mock_io.tool_warning.assert_any_call(f"Skipping {ignored_file.name} that matches gitignore spec.")
+            mock_io.tool_warning.assert_any_call(
+                f"Skipping {ignored_file.name} that matches gitignore spec."
+            )
 
     def test_check_for_urls(self):
         io = InputOutput(yes=True)
