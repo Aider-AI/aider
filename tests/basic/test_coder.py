@@ -1433,6 +1433,34 @@ This command will print 'Hello, World!' to the console."""
                     # (because user rejected the changes)
                     mock_editor.run.assert_not_called()
 
+    def test_auto_commit_message_flag(self):
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+            fname = Path("test.txt")
+            fname.touch()
+            
+            # Test with auto_commit_message=True (default)
+            io = InputOutput(yes=True)
+            coder = Coder.create(
+                self.GPT35,
+                "diff",
+                io=io,
+                fnames=[str(fname)],
+                auto_commit_message=True,
+            )
+            assert coder.repo.auto_commit_message is True
+
+            # Test with auto_commit_message=False
+            io = InputOutput(yes=True)
+            coder = Coder.create(
+                self.GPT35,
+                "diff",
+                io=io,
+                fnames=[str(fname)],
+                auto_commit_message=False,
+            )
+            assert coder.repo.auto_commit_message is False
+
 
 if __name__ == "__main__":
     unittest.main()

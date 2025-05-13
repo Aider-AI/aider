@@ -398,6 +398,12 @@ def get_parser(default_config_files, git_root):
 
     ##########
     group = parser.add_argument_group("Git settings")
+        group.add_argument(
+            "--auto-commit-message",
+            action=argparse.BooleanOptionalAction,
+            default=True,
+            help="Enable/disable automatic LLM commit message generation for auto-commits and '/commit' without message.",
+        )
     group.add_argument(
         "--git",
         action=argparse.BooleanOptionalAction,
