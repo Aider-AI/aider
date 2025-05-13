@@ -836,7 +836,7 @@ two
 
     def test_skip_gitignored_files_on_init(self):
         with GitTemporaryDirectory() as tmpdir:
-            repo_path = Path(tmpdir)
+            repo_path = Path(".")
             repo = git.Repo.init(repo_path)
 
             ignored_file = repo_path / "ignored_by_git.txt"
@@ -856,7 +856,7 @@ two
 
             fnames_to_add = [str(ignored_file), str(regular_file)]
 
-            coder = Coder.create(self.GPT35, None, mock_io, fnames=fnames_to_add, repo=repo)
+            coder = Coder.create(self.GPT35, None, mock_io, fnames=fnames_to_add)
 
             self.assertNotIn(str(ignored_file.resolve()), coder.abs_fnames)
             self.assertIn(str(regular_file.resolve()), coder.abs_fnames)
