@@ -1,5 +1,6 @@
 from .architect_coder import ArchitectCoder
 from .ask_coder import AskCoder
+from .auto_coder import AutoCoder
 from .base_coder import Coder
 from .context_coder import ContextCoder
 from .editblock_coder import EditBlockCoder
@@ -31,4 +32,5 @@ __all__ = [
     EditorWholeFileCoder,
     EditorDiffFencedCoder,
     ContextCoder,
+    AutoCoder,
 ]
