@@ -36,6 +36,7 @@ from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
+from local_analytics.local_analytics_collector import LocalAnalyticsCollector
 
 from .dump import dump  # noqa: F401
 
@@ -658,6 +659,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     analytics.event("launched")
 
+    # Initialize LocalAnalyticsCollector
+    # It will register an atexit handler to save data and update the dashboard.
+    local_analytics_collector = None
+    if hasattr(args, 'dry_run'): # Check if dry_run attribute exists
+        local_analytics_collector = LocalAnalyticsCollector(io=io, git_root=git_root, enabled=not args.dry_run)
+    else:
+        local_analytics_collector = LocalAnalyticsCollector(io=io, git_root=git_root, enabled=True)
+
     if args.gui and not return_coder:
         if not check_streamlit_install(io):
             analytics.event("exit", reason="Streamlit not installed")
@@ -996,6 +1005,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
+            analytics_store=local_analytics_collector, # Pass the collector instance
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
@@ -1165,6 +1175,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             kwargs.update(switch.kwargs)
             if "show_announcements" in kwargs:
                 del kwargs["show_announcements"]
+
+            # Ensure the new Coder uses the same LocalAnalyticsCollector instance
+            kwargs['analytics_store'] = local_analytics_collector
 
             coder = Coder.create(**kwargs)
 

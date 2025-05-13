@@ -24,7 +24,7 @@ except ImportError:  # Babel not installed – we will fall back to a small mapp
     Locale = None
 from json.decoder import JSONDecodeError
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from rich.console import Console
 
@@ -36,6 +36,8 @@ from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
+from local_analytics.local_analytics_collector import LocalAnalyticsCollector
+from local_analytics.local_analytics_collector import LocalAnalyticsCollector
 from aider.models import RETRY_TIMEOUT
 from aider.reasoning_tags import (
     REASONING_TAG,
@@ -119,6 +121,7 @@ class Coder:
     ignore_mentions = None
     chat_language = None
     file_watcher = None
+    # analytics_store is defined in __init__
 
     @classmethod
     def create(
@@ -179,6 +182,7 @@ class Coder:
                 total_tokens_sent=from_coder.total_tokens_sent,
                 total_tokens_received=from_coder.total_tokens_received,
                 file_watcher=from_coder.file_watcher,
+                analytics_store=from_coder.analytics_store, # Pass along analytics_store
             )
             use_kwargs.update(update)  # override to complete the switch
             use_kwargs.update(kwargs)  # override passed kwargs
@@ -335,9 +339,11 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        analytics_store=None, # Added for completeness, though set post-init
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
+        self.analytics_store = analytics_store
 
         self.event = self.analytics.event
         self.chat_language = chat_language
@@ -924,19 +930,31 @@ class Coder:
         else:
             message = user_message
 
-        while message:
-            self.reflected_message = None
-            list(self.send_message(message))
+        interaction_started_for_analytics = False
+        if self.analytics_store and self.analytics_store.enabled and message:
+            files_in_chat_for_interaction = self.get_inchat_relative_files()
+            # Start tracking a new user interaction for local analytics.
+            self.analytics_store.start_interaction(query=message, modified_files_in_chat=files_in_chat_for_interaction)
+            interaction_started_for_analytics = True
 
-            if not self.reflected_message:
-                break
+        try:
+            while message:
+                self.reflected_message = None
+                list(self.send_message(message)) # This is where LLM calls happen
 
-            if self.num_reflections >= self.max_reflections:
-                self.io.tool_warning(f"Only {self.max_reflections} reflections allowed, stopping.")
-                return
+                if not self.reflected_message:
+                    break
 
-            self.num_reflections += 1
-            message = self.reflected_message
+                if self.num_reflections >= self.max_reflections:
+                    self.io.tool_warning(f"Only {self.max_reflections} reflections allowed, stopping.")
+                    return
+
+                self.num_reflections += 1
+                message = self.reflected_message
+        finally:
+            if interaction_started_for_analytics and self.analytics_store and self.analytics_store.enabled:
+                self.analytics_store.end_interaction()
+
 
     def check_and_open_urls(self, exc, friendly_msg=None):
         """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
@@ -2379,6 +2397,8 @@ class Coder:
             if res:
                 self.show_auto_commit_outcome(res)
                 commit_hash, commit_message = res
+                if self.analytics_store and self.analytics_store.enabled:
+                    self.analytics_store.log_commit(commit_hash, commit_message)
                 return self.gpt_prompts.files_content_gpt_edits.format(
                     hash=commit_hash,
                     message=commit_message,

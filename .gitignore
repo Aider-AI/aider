@@ -16,4 +16,3 @@ aider/_version.py
 .#*
 .gitattributes
 tmp.benchmarks/
-local_analytics/

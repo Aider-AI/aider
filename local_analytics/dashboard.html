@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>development_aider - Aider Analytics Dashboard</title>
+  <style>
+      :root {
+          --bg-page: #f8f0e0; --bg-widget: #ede9dd; --text-main: #5c5951;
+          --text-stat-number: #3c3a35; --bar-green: #7fb069; --bar-red: #d26a5d;
+          --bar-yellow: #e7b468; --bar-teal: #77a099; --tag-bg: #fdfbf5;
+          --tag-border: #dcd8cf; --font-family-main: 'Consolas', 'Courier New', monospace;
+      }
+      body {
+          font-family: var(--font-family-main); background-color: var(--bg-page);
+          color: var(--text-main); margin: 0; padding: 25px; font-size: 14px;
+      }
+      .dashboard-container { max-width: 1000px; margin: 0 auto; }
+      header h1 { font-size: 1.4em; font-weight: bold; margin-bottom: 25px; }
+      .sticky-header-content {
+          position: sticky;
+          top: 0; /* Stick to the top of the viewport */
+          z-index: 10; /* Ensure it stays above scrolling content */
+          background-color: var(--bg-page); /* Match body background */
+          padding-bottom: 20px; /* Add some space below the sticky content */
+      }
+      .stats-overview { display: flex; gap: 20px; margin-bottom: 0; align-items: flex-start; } /* Remove bottom margin */
+      .main-stat-item { flex: 1; min-width: 200px; padding: 20px; }
+      /* Decreased font size for main stat number */
+      .main-stat-item .stat-number-main { font-size: 4em; font-weight: bold; color: var(--text-stat-number); line-height: 1; margin-bottom: 8px; }
+      .main-stat-item .stat-label { font-size: 0.85em; text-transform: uppercase; margin-bottom: 15px; }
+      .main-stat-item .last-entry { font-size: 0.9em; }
+      .main-stat-item .last-entry strong { color: var(--text-stat-number); }
+
+      /* New style for the model cost summary box */
+      .model-cost-summary-box {
+          flex: 1; /* Take up remaining space */
+          min-width: 250px; /* Ensure minimum width */
+          background-color: var(--bg-widget);
+          padding: 20px;
+          display: flex;
+          flex-direction: column;
+      }
+      .model-cost-summary-box h3 {
+          font-size: 1.1em;
+          font-weight: bold;
+          margin: 0 0 10px 0;
+          color: var(--text-stat-number);
+      }
+      .model-cost-summary-box ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          font-size: 0.9em;
+          overflow-y: auto; /* Add scroll if list is long */
+          max-height: 150px; /* Limit height */
+      }
+      .model-cost-summary-box li {
+          margin-bottom: 5px;
+          padding-bottom: 3px;
+          border-bottom: 1px dashed #e7e3da;
+      }
+      .model-cost-summary-box li:last-child {
+          border-bottom: none;
+          margin-bottom: 0;
+      }
+      .model-cost-summary-box .model-name {
+          font-weight: bold;
+      }
+      .model-cost-summary-box .model-cost {
+          float: right; /* Align cost to the right */
+      }
+
+
+      /* Secondary stats section below the main overview */
+      .secondary-stats-section { margin-top: 20px; }
+      .secondary-stats-section h2 { font-size: 1.15em; font-weight: bold; margin-bottom: 15px; }
+
+      /* Modified right-stats-group to be full width and smaller */
+      .right-stats-group {
+          width: 100%; /* Full width */
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+          gap: 15px; /* Smaller gap */
+      }
+      .right-stats-group .stat-box { background-color: var(--bg-widget); padding: 15px; font-size: 0.9em; } /* Smaller padding and font */
+      .right-stats-group .stat-box .stat-number-medium { font-size: 1.8em; font-weight: bold; color: var(--text-stat-number); line-height: 1; margin-bottom: 5px; } /* Smaller number font */
+      .right-stats-group .stat-box .stat-label { font-size: 0.7em; text-transform: uppercase; } /* Smaller label font */
+
+      .text-entry-history-section { margin-top: 35px; }
+      .text-entry-history-section h2 { font-size: 1.15em; font-weight: bold; margin-bottom: 15px; }
+      .history-list-container { background-color: var(--bg-widget); padding: 5px; }
+      .session-group { margin-bottom: 10px; border: 1px solid #dcd8cf; border-radius: 4px; background-color: #fff; /* White background for the group content */}
+      .session-group details[open] .session-summary { border-bottom: 1px solid #dcd8cf; }
+      .session-summary { padding: 10px 15px; background-color: #f5f2eb; cursor: pointer; font-weight: bold; list-style: none; /* Remove default marker */ }
+      .session-summary::-webkit-details-marker { display: none; /* Chrome/Safari */ }
+      .session-summary::marker { display: none; /* Firefox */ }
+      .session-summary:hover { background-color: #e9e5dc; }
+      .history-item { display: flex; padding: 15px 20px 15px 15px; border-bottom: 1px solid #e7e3da; background-color: #fdfbf5; /* Slightly off-white for items */ }
+      .history-item:last-child { border-bottom: none; }
+      /* .session-group > .history-item:first-of-type { border-top: 1px solid #dcd8cf; } */ /* Removed as details summary acts as separator */
+      .color-bar { width: 4px; margin-right: 15px; flex-shrink: 0; }
+      .color-bar.green { background-color: var(--bar-green); } .color-bar.red { background-color: var(--bar-red); }
+      .color-bar.yellow { background-color: var(--bar-yellow); } .color-bar.teal { background-color: var(--bar-teal); }
+      .color-bar.blue { background-color: #5D9CEC; } /* Added blue color for latest interaction */
+      .item-content { flex-grow: 1; }
+      .item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+      .item-header h3 { font-size: 1.05em; font-weight: bold; margin: 0; color: var(--text-stat-number); }
+      .item-header .timestamp { font-size: 0.8em; white-space: nowrap; margin-left: 10px; padding-top: 2px; }
+      .entry-text { font-size: 0.9em; line-height: 1.6; margin-bottom: 12px; word-break: break-word; }
+      .details dl { margin: 0; padding: 0; }
+      .details dt { font-weight: bold; margin-top: 8px; font-size: 0.9em; color: #4c4a44; }
+      .details dd { margin-left: 0; margin-bottom: 8px; font-size: 0.85em; }
+      .details p { font-size: 0.9em; margin: 5px 0; }
+      .details h4 { font-size: 0.95em; margin: 10px 0 5px 0; }
+      .details ul { list-style-type: disc; margin: 0 0 5px 20px; padding: 0; }
+      .details ul li { font-size: 0.85em; margin-bottom: 3px; }
+      .token-stats, .litellm-call { font-size: 0.85em; }
+      .litellm-call { padding: 5px; border: 1px dashed #ccc; margin-top: 5px; background-color: #f9f9f9; }
+      /* Raw Data Section Styles */
+      .raw-data-details { margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; }
+      .raw-data-details summary { font-weight: bold; cursor: pointer; font-size: 0.9em; color: #4c4a44; }
+      .raw-data-details summary:hover { text-decoration: underline; }
+      .raw-data-json {
+          background-color: #f0f0f0; padding: 10px; border-radius: 4px;
+          overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;
+          font-size: 0.8em; line-height: 1.4; color: #333;
+      }
+      footer { text-align: center; margin-top: 40px; padding-top: 20px; font-size: 0.8em; }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="sticky-header-content">
+      <header>
+        <h1><!-- AIDER_ANALYTICS_PROJECT_NAME --> - AIDER ANALYTICS</h1>
+      </header>
+
+      <section class="stats-overview">
+         <!-- AIDER_ANALYTICS_STATS_OVERVIEW_CONTENT -->
+      </section>
+
+      <section class="secondary-stats-section">
+        <h2>SECONDARY STATS</h2>
+        <!-- AIDER_ANALYTICS_SECONDARY_STATS_CONTENT -->
+      </section>
+
+      <section class="latest-interaction-display">
+        <h2>LATEST INTERACTION</h2>
+        <!-- AIDER_ANALYTICS_LATEST_INTERACTION_CONTENT -->
+        <!-- This will be populated with a single history-item styled block -->
+      </section>
+    </div>
+
+<section class="text-entry-history-section">
+  <h2>TEXT ENTRY HISTORY</h2>
+  <div class="history-list-container">
+    <!-- AIDER_ANALYTICS_HISTORY_ENTRIES_CONTENT -->
+  </div>
+</section>
+
+
+    <footer>
+      <p>AIDER ANALYTICS SYSTEM v0.1.0</p>
+    </footer>
+  </div>
+</body>
+</html>
