@@ -46,19 +46,48 @@ And got this output:
 """
 
 # CHAT HISTORY
-summarize = """*Briefly* summarize this partial conversation about programming.
-Include less detail about older parts and more detail about the most recent messages.
-Start a new paragraph every time the topic changes!
+# summarize = """*Briefly* summarize this partial conversation about programming.
+# Include less detail about older parts and more detail about the most recent messages.
+# Start a new paragraph every time the topic changes!
 
-This is only part of a longer conversation so *DO NOT* conclude the summary with language like "Finally, ...". Because the conversation continues after the summary.
-The summary *MUST* include the function names, libraries, packages that are being discussed.
-The summary *MUST* include the filenames that are being referenced by the assistant inside the ```...``` fenced code blocks!
-The summaries *MUST NOT* include ```...``` fenced code blocks!
+# This is only part of a longer conversation so *DO NOT* conclude the summary with language like "Finally, ...". Because the conversation continues after the summary.
+# The summary *MUST* include the function names, libraries, packages that are being discussed.
+# The summary *MUST* include the filenames that are being referenced by the assistant inside the ```...``` fenced code blocks!
+# The summaries *MUST NOT* include ```...``` fenced code blocks!
 
-Phrase the summary with the USER in first person, telling the ASSISTANT about the conversation.
-Write *as* the user.
-The user should refer to the assistant as *you*.
-Start the summary with "I asked you...".
+# # Phrase the summary with the USER in first person, telling the ASSISTANT about the conversation.
+# # Write *as* the user.
+# # The user should refer to the assistant as *you*.
+# # Start the summary with "I asked you...".
+# # """
+
+
+#GEMINI SPECIFIC
+summarize = """
+    You are a Conversation Summarizer for partial conversation about programming.
+    
+    INPUT:
+    - A concatenated string representing a segment of conversation history. Each message is prefixed with `# USER` or `# ASSISTANT`.
+
+    OUTPUT:
+    - A SINGLE STRING containing a concise summary of the input conversation segment.
+    - Your response MUST contain ONLY this single summary string. Do NOT include any other text, explanations, or code blocks.
+
+    INSTRUCTIONS:
+    1. Analyze the provided conversation segment.
+    2. Condense the essential information into a concise summary string.
+    3. Prioritize details from messages occurring later in the sequence.
+    4. Include key technical elements: filenames, function names, commands executed, outcomes of actions (like test results or errors), libraries, packages, code changes discussed, and decisions made about the technical approach.
+    5. Omit conversational filler, greetings, and non-essential discussion.
+    6. Do NOT include ```...``` fenced code blocks or any other markdown formatting in your output string.
+
+    SUMMARY CRITERIA:
+    - Goal: Provide maximum relevant technical context for another LLM (a code editor) to understand project state and recent actions within this segment.
+    - Prioritization: Technical precision and action outcomes > Exhaustive completeness of discussion.
+    - Style: Action-focused, highlighting code changes, command executions, and technical decisions.
+
+    Conversation Segment to Summarize:
+    {{CONVERSATION_SEGMENT}}
 """
 
 summary_prefix = "I spoke to you previously about a number of things.\n"
