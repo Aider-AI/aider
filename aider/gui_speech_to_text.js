@@ -30,9 +30,42 @@
     button.textContent = 'Voice Input';
     button.style.padding = '4px 8px';
     
+    // Create stop button (initially hidden)
+    const stopButton = document.createElement('button');
+    stopButton.id = 'stop-button-' + compId;
+    stopButton.textContent = 'Stop';
+    stopButton.style.padding = '4px 8px';
+    stopButton.style.marginLeft = '5px';
+    stopButton.style.display = 'none';
+    
+    // Create checkbox and label container
+    const checkContainer = document.createElement('div');
+    checkContainer.style.display = 'flex';
+    checkContainer.style.alignItems = 'center';
+    checkContainer.style.marginLeft = '10px';
+    
+    // Create auto-transcribe checkbox
+    const autoTranscribe = document.createElement('input');
+    autoTranscribe.id = 'auto-transcribe-' + compId;
+    autoTranscribe.type = 'checkbox';
+    autoTranscribe.style.marginRight = '5px';
+    
+    // Create label for checkbox
+    const label = document.createElement('label');
+    label.htmlFor = autoTranscribe.id;
+    label.textContent = 'Auto Transcribe';
+    label.style.fontSize = '14px';
+    label.style.color = 'white';
+    
+    // Assemble components
+    checkContainer.appendChild(autoTranscribe);
+    checkContainer.appendChild(label);
+    
     // Add elements to container
     container.appendChild(led);
     container.appendChild(button);
+    container.appendChild(stopButton);
+    container.appendChild(checkContainer);
     
     // Check if browser supports the Web Speech API
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -67,6 +100,7 @@
     // Initialize speech recognition
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
+    let isListening = false;
     
     recognition.continuous = false;
     recognition.interimResults = false;
@@ -76,15 +110,38 @@
     
     // Setup button click handler
     button.addEventListener('click', function() {
+        if (isListening) return;
+        
+        isListening = true;
         led.style.backgroundColor = 'lime';
         recognition.start();
+        
+        // Show stop button if auto transcribe is enabled
+        if (autoTranscribe.checked) {
+            stopButton.style.display = 'inline-block';
+            recognition.continuous = true;
+        }
     });
+    
+    // Setup stop button click handler
+    stopButton.addEventListener('click', function() {
+        if (isListening) {
+            recognition.stop();
+            stopButton.style.display = 'none';
+            isListening = false;
+        }
+    });
+    
+    // Handle speech detection
+    recognition.onspeechstart = function() {
+        console.log('Speech detected');
+        if (autoTranscribe.checked) {
+            led.style.backgroundColor = 'red';
+        }
+    };
     
     // Combined event handler function for speech recognition events
     function handleSpeechEvent(eventType, event) {
-        // Set LED back to gray for all events
-        led.style.backgroundColor = 'gray';
-        
         if (eventType === 'result') {
             const transcript = event.results[0][0].transcript;
             
@@ -92,11 +149,29 @@
             const success = populateChatInput(transcript);
             if (!success)
                 console.error('populateChatInput failed');
+            
+            // If not in auto-transcribe mode, reset the LED
+            if (!autoTranscribe.checked) {
+                led.style.backgroundColor = 'gray';
+            }
         } 
         else if (eventType === 'error') {
             console.error('Speech recognition error', event.error);
+            isListening = false;
+            stopButton.style.display = 'none';
+            led.style.backgroundColor = 'gray';
         }
-        // 'end' event requires no special handling beyond resetting the LED
+        else if (eventType === 'end') {
+            // If auto transcribe is enabled and we're still supposed to be listening,
+            // restart recognition
+            if (autoTranscribe.checked && isListening) {
+                setTimeout(() => recognition.start(), 100);
+            } else {
+                isListening = false;
+                stopButton.style.display = 'none';
+                led.style.backgroundColor = 'gray';
+            }
+        }
     }
     
     // Set up event handlers using the combined function
