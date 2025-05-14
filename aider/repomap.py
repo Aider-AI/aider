@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 from aider.dump import dump
 from aider.special import filter_important_files
-from aider.utils import Spinner
+from aider.waiting import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)

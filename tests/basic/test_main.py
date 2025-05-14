@@ -949,16 +949,19 @@ class TestMain(TestCase):
 
     def test_invalid_edit_format(self):
         with GitTemporaryDirectory():
-            with patch("aider.io.InputOutput.offer_url") as mock_offer_url:
-                result = main(
-                    ["--edit-format", "not-a-real-format", "--exit", "--yes"],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
-                self.assertEqual(result, 1)  # main() should return 1 on error
-                mock_offer_url.assert_called_once()
-                args, _ = mock_offer_url.call_args
-                self.assertEqual(args[0], "https://aider.chat/docs/more/edit-formats.html")
+            # Suppress stderr for this test as argparse prints an error message
+            with patch("sys.stderr", new_callable=StringIO) as mock_stderr:
+                with self.assertRaises(SystemExit) as cm:
+                    _ = main(
+                        ["--edit-format", "not-a-real-format", "--exit", "--yes"],
+                        input=DummyInput(),
+                        output=DummyOutput(),
+                    )
+                # argparse.ArgumentParser.exit() is called with status 2 for invalid choice
+                self.assertEqual(cm.exception.code, 2)
+                stderr_output = mock_stderr.getvalue()
+                self.assertIn("invalid choice", stderr_output)
+                self.assertIn("not-a-real-format", stderr_output)
 
     def test_default_model_selection(self):
         with GitTemporaryDirectory():
@@ -1274,6 +1277,21 @@ class TestMain(TestCase):
             )
         for call in mock_io_instance.tool_warning.call_args_list:
             self.assertNotIn("Cost estimates may be inaccurate", call[0][0])
+
+    def test_argv_file_respects_git(self):
+        with GitTemporaryDirectory():
+            fname = Path("not_in_git.txt")
+            fname.touch()
+            with open(".gitignore", "w+") as f:
+                f.write("not_in_git.txt")
+            coder = main(
+                argv=["--file", "not_in_git.txt"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertNotIn("not_in_git.txt", str(coder.abs_fnames))
+            self.assertFalse(coder.allowed_to_edit("not_in_git.txt"))
 
     def test_load_dotenv_files_override(self):
         with GitTemporaryDirectory() as git_dir:
