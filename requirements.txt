@@ -22,10 +22,6 @@ anyio==4.9.0
     #   httpx
     #   openai
     #   watchfiles
-async-timeout==5.0.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   aiohttp
 attrs==25.3.0
     # via
     #   -c requirements/common-constraints.txt
@@ -81,10 +77,6 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
-exceptiongroup==1.2.2
-    # via
-    #   -c requirements/common-constraints.txt
-    #   anyio
 filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
@@ -162,10 +154,6 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.1.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
@@ -180,7 +168,7 @@ httpx==0.28.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-huggingface-hub==0.31.1
+huggingface-hub==0.31.2
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -221,7 +209,7 @@ jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.68.1
+litellm==1.69.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -263,7 +251,7 @@ numpy==2.2.5
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.76.2
+openai==1.75.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -493,16 +481,12 @@ tree-sitter-yaml==0.7.0
 typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
-    #   anyio
     #   beautifulsoup4
     #   google-generativeai
     #   huggingface-hub
-    #   multidict
     #   openai
     #   pydantic
     #   pydantic-core
-    #   referencing
-    #   rich
     #   typing-inspection
 typing-inspection==0.4.0
     # via
