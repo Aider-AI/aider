@@ -139,7 +139,7 @@
     recognition.onspeechstart = function() {
         console.log('Speech detected');
         if (autoTranscribe.checked) {
-            led.style.backgroundColor = 'green'; // Green when voice is detected
+            led.style.backgroundColor = 'lime'; // Lime green when voice is detected
         }
     };
     
@@ -166,9 +166,9 @@
             // If not in auto-transcribe mode, reset the LED
             if (!autoTranscribe.checked) {
                 led.style.backgroundColor = 'gray';
-            } else {
-                led.style.backgroundColor = 'red'; // Back to red after processing result
             }
+            // In auto-transcribe mode, we'll keep the LED color as is (lime while speaking)
+            // The LED will be set back to red in the speechend event
         } 
         else if (eventType === 'error') {
             console.error('Speech recognition error', event.error);
