@@ -113,14 +113,17 @@
         if (isListening) return;
         
         isListening = true;
-        led.style.backgroundColor = 'lime';
-        recognition.start();
         
-        // Show stop button if auto transcribe is enabled
+        // Set initial LED color based on auto-transcribe mode
         if (autoTranscribe.checked) {
+            led.style.backgroundColor = 'red'; // Red when waiting for voice
             stopButton.style.display = 'inline-block';
             recognition.continuous = true;
+        } else {
+            led.style.backgroundColor = 'lime';
         }
+        
+        recognition.start();
     });
     
     // Setup stop button click handler
@@ -136,14 +139,24 @@
     recognition.onspeechstart = function() {
         console.log('Speech detected');
         if (autoTranscribe.checked) {
-            led.style.backgroundColor = 'red';
+            led.style.backgroundColor = 'green'; // Green when voice is detected
+        }
+    };
+    
+    // Handle speech end
+    recognition.onspeechend = function() {
+        console.log('Speech ended');
+        if (autoTranscribe.checked && isListening) {
+            led.style.backgroundColor = 'red'; // Red when waiting for voice
         }
     };
     
     // Combined event handler function for speech recognition events
     function handleSpeechEvent(eventType, event) {
         if (eventType === 'result') {
-            const transcript = event.results[0][0].transcript;
+            // Get the latest transcript
+            const resultIndex = event.resultIndex;
+            const transcript = event.results[resultIndex][0].transcript;
             
             // Try to populate the chat input directly
             const success = populateChatInput(transcript);
@@ -153,6 +166,8 @@
             // If not in auto-transcribe mode, reset the LED
             if (!autoTranscribe.checked) {
                 led.style.backgroundColor = 'gray';
+            } else {
+                led.style.backgroundColor = 'red'; // Back to red after processing result
             }
         } 
         else if (eventType === 'error') {
