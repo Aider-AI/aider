@@ -154,10 +154,6 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.1.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
@@ -172,7 +168,7 @@ httpx==0.28.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-huggingface-hub==0.31.1
+huggingface-hub==0.31.2
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -213,7 +209,7 @@ jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.68.1
+litellm==1.69.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -250,7 +246,7 @@ networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-numpy==1.26.4
+numpy==2.2.5
     # via
     #   -c requirements/common-constraints.txt
     #   scipy
@@ -485,14 +481,12 @@ tree-sitter-yaml==0.7.0
 typing-extensions==4.13.2
     # via
     #   -c requirements/common-constraints.txt
-    #   anyio
     #   beautifulsoup4
     #   google-generativeai
     #   huggingface-hub
     #   openai
     #   pydantic
     #   pydantic-core
-    #   referencing
     #   typing-inspection
 typing-inspection==0.4.0
     # via
@@ -523,6 +517,8 @@ zipp==3.21.0
     # via
     #   -c requirements/common-constraints.txt
     #   importlib-metadata
-    
-tree-sitter==0.23.2; python_version < "3.10"
-tree-sitter==0.24.0; python_version >= "3.10"
+
+tree-sitter>=0.24.0
+
+# Remove if Python 3.13 support https://github.com/jiaaro/pydub/pull/816 gets released
+audioop-lts>=0.2.1; python_version >= "3.13"
