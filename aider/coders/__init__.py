@@ -12,12 +12,14 @@ from .patch_coder import PatchCoder
 from .udiff_coder import UnifiedDiffCoder
 from .udiff_simple import UnifiedDiffSimpleCoder
 from .wholefile_coder import WholeFileCoder
+from .agent_coder import AgentCoder # Add import for AgentCoder
 
 # from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
 
 __all__ = [
     HelpCoder,
     AskCoder,
+    AgentCoder, # Add AgentCoder to __all__
     Coder,
     EditBlockCoder,
     EditBlockFencedCoder,

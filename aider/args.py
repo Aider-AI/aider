@@ -810,6 +810,12 @@ def get_parser(default_config_files, git_root):
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
+    group.add_argument(
+        "--search-mode",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable web search augmentation for prompts (default: False)",
+    )
 
     supported_shells_list = sorted(list(shtab.SUPPORTED_SHELLS))
     group.add_argument(

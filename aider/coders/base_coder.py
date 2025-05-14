@@ -48,6 +48,8 @@ from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 from aider.waiting import WaitingSpinner
+from aider.chroma_manager import ChromaManager # ADDED FOR CODEBASE AWARENESS
+from aider.search_enhancer import SearchEnhancer
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -188,6 +190,7 @@ class Coder:
 
         for coder in coders.__all__:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
+                # args will be passed via **kwargs if present in kwargs
                 res = coder(main_model, io, **kwargs)
                 res.original_kwargs = dict(kwargs)
                 return res
@@ -299,6 +302,7 @@ class Coder:
         self,
         main_model,
         io,
+        args=None,
         repo=None,
         fnames=None,
         read_only_fnames=None,
@@ -336,6 +340,7 @@ class Coder:
         auto_copy_context=False,
         auto_accept_architect=True,
     ):
+        self.args = args
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
 
@@ -345,6 +350,8 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
+        self.chroma_manager = None # ADDED FOR CODEBASE AWARENESS
+        self.search_enhancer = None
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
@@ -531,9 +538,31 @@ class Coder:
             for function in self.functions:
                 Draft7Validator.check_schema(function)
 
-            if self.verbose:
-                self.io.tool_output("JSON Schema:")
-                self.io.tool_output(json.dumps(self.functions, indent=4))
+        if self.verbose:
+            self.io.tool_output("JSON Schema:")
+            self.io.tool_output(json.dumps(self.functions, indent=4))
+
+        # Initialize ChromaManager for codebase awareness
+        if Path(self.root).is_dir(): # Ensure root is a valid directory
+            try:
+                self.io.tool_output("Initializing codebase vector index...")
+                self.chroma_manager = ChromaManager(Path(self.root), self.io, verbose=self.verbose)
+                self.chroma_manager.index_codebase(self.repo) # Pass repo for .aiderignore/.gitignore handling
+                self.io.tool_output("Codebase vector index ready.")
+            except Exception as e:
+                self.io.tool_error(f"Failed to initialize ChromaManager: {e}")
+                self.chroma_manager = None # Ensure it's None if init fails
+        else:
+            self.io.tool_warning(f"Root path '{self.root}' is not a directory. ChromaManager not initialized.")
+            self.chroma_manager = None
+
+        if self.args.search_mode: # Changed self.io.args to self.args
+            try:
+                self.search_enhancer = SearchEnhancer(self.main_model, self.io)
+                self.io.tool_output("Search mode is enabled.")
+            except Exception as e:
+                self.io.tool_error(f"Failed to initialize SearchEnhancer: {e}")
+                self.search_enhancer = None
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
@@ -648,6 +677,36 @@ class Coder:
 
                 prompt += f"{self.fence[1]}\n"
 
+        return prompt
+
+    def get_context_files_content(self, relative_paths: list[str]) -> str:
+        """
+        Gets and formats the content of specified relative file paths.
+        Used for ChromaDB suggested files.
+        """
+        prompt = ""
+        if not relative_paths:
+            return prompt
+
+        for rel_path_str in relative_paths:
+            abs_path = self.abs_root_path(rel_path_str)
+            if not os.path.exists(abs_path) or not os.path.isfile(abs_path):
+                if self.verbose:
+                    self.io.tool_warning(f"Chroma-suggested file not found or not a file: {rel_path_str}")
+                continue
+
+            content = self.io.read_text(abs_path)
+            if content is None:
+                if self.verbose:
+                    self.io.tool_warning(f"Could not read Chroma-suggested file: {rel_path_str}")
+                continue
+            
+            if not is_image_file(abs_path): # TODO: Handle images from Chroma if model supports
+                prompt += "\n"
+                prompt += rel_path_str # Already relative
+                prompt += f"\n{self.fence[0]}\n"
+                prompt += content
+                prompt += f"{self.fence[1]}\n"
         return prompt
 
     def get_read_only_files_content(self):
@@ -782,9 +841,42 @@ class Coder:
 
     def get_chat_files_messages(self):
         chat_files_messages = []
-        if self.abs_fnames:
-            files_content = self.gpt_prompts.files_content_prefix
-            files_content += self.get_files_content()
+        
+        # Get Chroma-suggested files
+        chroma_suggested_relative_paths = []
+        user_prompt_text = ""
+        if self.cur_messages and self.cur_messages[-1]["role"] == "user":
+            user_prompt_text = self.cur_messages[-1]["content"]
+        
+        if user_prompt_text and self.chroma_manager:
+            chroma_suggested_relative_paths = self.chroma_manager.get_relevant_files_for_prompt(user_prompt_text)
+            if self.verbose and chroma_suggested_relative_paths:
+                self.io.tool_output(f"Auto-context: ChromaDB suggested {len(chroma_suggested_relative_paths)} files: {', '.join(chroma_suggested_relative_paths)}", log_only=True)
+
+        # Get content for Chroma-suggested files
+        chroma_files_content_str = self.get_context_files_content(chroma_suggested_relative_paths)
+        
+        # Get content for manually added files (self.abs_fnames)
+        manual_files_content_str = self.get_files_content() # This uses self.abs_fnames
+
+        # Combine content, prioritizing Chroma if both exist, or using whichever is available
+        # For now, let's just concatenate, ensuring Chroma files come first if they exist.
+        # A more sophisticated merge could avoid duplicate file content if a file is in both lists.
+        # However, get_context_files_content and get_files_content operate on different path lists.
+        # Let's assume for now that self.abs_fnames (manual) and chroma_suggested_relative_paths are distinct enough
+        # or that the LLM can handle slight redundancy if a file appears twice (unlikely with current logic).
+
+        combined_files_content_str = ""
+        if chroma_files_content_str:
+            combined_files_content_str += chroma_files_content_str
+        if manual_files_content_str:
+            if combined_files_content_str: # Add a newline if Chroma content was already added
+                combined_files_content_str += "\n" 
+            combined_files_content_str += manual_files_content_str
+            
+        # Determine the overall files_content and reply based on what was included
+        if combined_files_content_str:
+            files_content = self.gpt_prompts.files_content_prefix + combined_files_content_str
             files_reply = self.gpt_prompts.files_content_assistant_reply
         elif self.get_repo_map() and self.gpt_prompts.files_no_full_files_with_repo_map:
             files_content = self.gpt_prompts.files_no_full_files_with_repo_map
@@ -793,22 +885,30 @@ class Coder:
             files_content = self.gpt_prompts.files_no_full_files
             files_reply = "Ok."
 
-        if files_content:
+        if files_content: # This condition means either Chroma or manual files (or both) were added
             chat_files_messages += [
                 dict(role="user", content=files_content),
                 dict(role="assistant", content=files_reply),
             ]
 
-        images_message = self.get_images_message(self.abs_fnames)
-        if images_message is not None:
+        # Handle images from manually added files (self.abs_fnames)
+        # TODO: Consider if ChromaDB should also suggest images and how to handle them here.
+        # For now, image handling remains tied to self.abs_fnames.
+        images_message_manual = self.get_images_message(self.abs_fnames)
+        if images_message_manual is not None:
             chat_files_messages += [
-                images_message,
+                images_message_manual,
                 dict(role="assistant", content="Ok."),
             ]
+        
+        # If Chroma suggested files that are images and the model supports them,
+        # they would be handled by get_context_files_content if it's adapted for images,
+        # or a similar get_images_message could be called with chroma_suggested_relative_paths.
+        # For now, keeping image handling simple and tied to manual adds.
 
         return chat_files_messages
 
-    def get_images_message(self, fnames):
+    def get_images_message(self, fnames): # fnames here are expected to be absolute paths
         supports_images = self.main_model.info.get("supports_vision")
         supports_pdfs = self.main_model.info.get("supports_pdf_input") or self.main_model.info.get(
             "max_pdf_size_mb"
@@ -923,9 +1023,50 @@ class Coder:
         else:
             message = user_message
 
-        while message:
+        original_message_for_search = message # Keep a copy for search enhancer
+
+        # Web search augmentation
+        supplementary_context = ""
+        if self.args.search_mode and self.search_enhancer and original_message_for_search and not self.commands.is_command(original_message_for_search):
+            self.io.tool_output("Search mode: Checking relevance...", log_only=True)
+            if self.search_enhancer.check_search_relevance(original_message_for_search):
+                self.io.tool_output("Search mode: Relevant. Generating queries...", log_only=True)
+                queries = self.search_enhancer.generate_search_queries(original_message_for_search)
+                if queries:
+                    self.io.tool_output(f"Search mode: Generated queries: {queries}", log_only=True)
+                    urls = self.search_enhancer.perform_web_search_and_get_urls(queries)
+                    if urls:
+                        self.io.tool_output(f"Search mode: Found {len(urls)} URLs. Fetching content...", log_only=True)
+                        fetched_content = self.search_enhancer.fetch_content_for_urls(urls)
+                        if fetched_content:
+                            self.io.tool_output(f"Search mode: Fetched {len(fetched_content)} pages. Assessing utility...", log_only=True)
+                            assessed_results = self.search_enhancer.assess_results_utility(original_message_for_search, fetched_content)
+                            self.io.tool_output("Search mode: Compiling useful extracts...", log_only=True)
+                            supplementary_context = self.search_enhancer.compile_useful_context_extracts(assessed_results, original_message_for_search)
+                            if supplementary_context:
+                                self.io.tool_output("Search mode: Added supplementary context from web search.", log_only=True)
+                                message = (
+                                    f"[Supplementary information from web search (for current query only):\n"
+                                    f"--- BEGIN SEARCH CONTEXT ---\n"
+                                    f"{supplementary_context}\n"
+                                    f"--- END SEARCH CONTEXT ---]\n\n"
+                                    f"Original User Query: {original_message_for_search}"
+                                )
+                            else:
+                                self.io.tool_output("Search mode: No useful extracts found or compiled.", log_only=True)
+                        else:
+                            self.io.tool_output("Search mode: No content fetched from URLs.", log_only=True)
+                    else:
+                        self.io.tool_output("Search mode: No URLs found for generated queries.", log_only=True)
+                else:
+                    self.io.tool_output("Search mode: Could not generate search queries.", log_only=True)
+            else:
+                self.io.tool_output("Search mode: Not relevant for this prompt.", log_only=True)
+
+
+        while message: # This loop handles reflections
             self.reflected_message = None
-            list(self.send_message(message))
+            list(self.send_message(message)) # Main LLM call
 
             if not self.reflected_message:
                 break
@@ -1757,22 +1898,24 @@ class Coder:
 
         new_mentions = mentioned_rel_fnames - self.ignore_mentions
 
+        # This method is being modified to no longer interactively ask the user to add files.
+        # ChromaDB integration handles automatic context.
+        # We can still log mentions if verbose, or use them as hints for ChromaDB if desired later.
+        # For now, it will not add files to self.abs_fnames based on mentions.
+        
+        mentioned_rel_fnames = self.get_file_mentions(content, ignore_current=True) # Check all files
+        new_mentions = mentioned_rel_fnames - self.ignore_mentions
+
         if not new_mentions:
             return
 
-        added_fnames = []
-        group = ConfirmGroup(new_mentions)
-        for rel_fname in sorted(new_mentions):
-            if self.io.confirm_ask(
-                "Add file to the chat?", subject=rel_fname, group=group, allow_never=True
-            ):
-                self.add_rel_fname(rel_fname)
-                added_fnames.append(rel_fname)
-            else:
-                self.ignore_mentions.add(rel_fname)
+        if self.verbose:
+            self.io.tool_output(f"File mentions detected (no longer adding to chat automatically via this method): {', '.join(sorted(new_mentions))}", log_only=True)
+            for rel_fname in sorted(new_mentions):
+                 self.ignore_mentions.add(rel_fname) # Add to ignore so we don't log repeatedly for same mention
 
-        if added_fnames:
-            return prompts.added_files.format(fnames=", ".join(added_fnames))
+        # Return None as we are not generating a message like "I added these files..."
+        return None
 
     def send(self, messages, model=None, functions=None):
         self.got_reasoning_content = False

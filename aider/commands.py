@@ -23,6 +23,7 @@ from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
+# from aider.coders.agent_coder import AgentCoder # Import AgentCoder - Moved inside cmd_agent
 
 from .dump import dump  # noqa: F401
 
@@ -1587,6 +1588,32 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+
+    def cmd_agent(self, args_str):
+        """
+        Initiate agent mode for autonomous task completion.
+        Usage: /agent <initial task description>
+        """
+        from aider.coders.agent_coder import AgentCoder # Import AgentCoder here
+
+        if not args_str.strip():
+            self.io.tool_error("Usage: /agent <initial task description>")
+            return
+
+        task_description = args_str.strip()
+        self.io.tool_output(f"Switching to Agent Mode for task: \"{task_description}\"")
+        
+        # Prepare kwargs for AgentCoder, ensuring to pass along necessary context
+        # from the current coder (self.coder).
+        kwargs_for_agent = {
+            "initial_task": task_description,
+            # Pass along fnames and read_only_fnames from the current coder
+            # so the agent starts with the same file context if any.
+            "fnames": list(self.coder.abs_fnames), # Ensure it's a list copy
+            "read_only_fnames": list(self.coder.abs_read_only_fnames), # Ensure it's a list copy
+        }
+        # The `from_coder` argument in SwitchCoder will handle passing the current coder instance.
+        raise SwitchCoder(AgentCoder, **kwargs_for_agent)
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""

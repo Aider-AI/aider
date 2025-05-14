@@ -974,9 +974,18 @@ class InputOutput:
             message = str(message).encode("ascii", errors="replace").decode("ascii")
             self.console.print(message, **style)
 
-    def tool_error(self, message="", strip=True):
+    def tool_error(self, message="", strip=True, log_only=False):
         self.num_error_outputs += 1
-        self._tool_message(message, strip, self.tool_error_color)
+        if log_only:
+            if message.strip():
+                if "\n" in message:
+                    for line in message.splitlines():
+                        self.append_chat_history(line, linebreak=True, blockquote=True, strip=strip)
+                else:
+                    hist = message.strip() if strip else message
+                    self.append_chat_history(hist, linebreak=True, blockquote=True)
+        else:
+            self._tool_message(message, strip, self.tool_error_color)
 
     def tool_warning(self, message="", strip=True):
         self._tool_message(message, strip, self.tool_warning_color)

@@ -36,7 +36,6 @@ from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
-
 from .dump import dump  # noqa: F401
 
 
@@ -653,8 +652,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.save_data()
             io.tool_output()
 
-        # This is a no-op if the user has opted out
-        analytics.enable()
+    # This is a no-op if the user has opted out
+    analytics.enable()
 
     analytics.event("launched")
 
@@ -965,6 +964,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     try:
         coder = Coder.create(
+            args=args,
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
