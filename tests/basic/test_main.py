@@ -49,7 +49,11 @@ class TestMain(TestCase):
         main(["--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput())
 
     def test_main_with_emptqy_dir_new_file(self):
-        main(["foo.txt", "--yes", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
+        main(
+            ["foo.txt", "--yes", "--no-git", "--exit"],
+            input=DummyInput(),
+            output=DummyOutput(),
+        )
         self.assertTrue(os.path.exists("foo.txt"))
 
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
@@ -61,7 +65,11 @@ class TestMain(TestCase):
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_files(self, _):
         make_repo()
-        main(["--yes", "foo.txt", "bar.txt", "--exit"], input=DummyInput(), output=DummyOutput())
+        main(
+            ["--yes", "foo.txt", "bar.txt", "--exit"],
+            input=DummyInput(),
+            output=DummyOutput(),
+        )
         self.assertTrue(os.path.exists("foo.txt"))
         self.assertTrue(os.path.exists("bar.txt"))
 
@@ -251,7 +259,11 @@ class TestMain(TestCase):
                 patch("aider.main.check_version") as mock_check_version,
                 patch("aider.main.InputOutput") as mock_input_output,
             ):
-                main(["--exit", "--check-update"], input=DummyInput(), output=DummyOutput())
+                main(
+                    ["--exit", "--check-update"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
                 mock_check_version.assert_called_once()
                 mock_input_output.assert_called_once()
 
@@ -287,7 +299,11 @@ class TestMain(TestCase):
         # Mock InputOutput to capture the configuration
         with patch("aider.main.InputOutput") as MockInputOutput:
             MockInputOutput.return_value.get_input.return_value = None
-            main(["--dark-mode", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
+            main(
+                ["--dark-mode", "--no-git", "--exit"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
             # Ensure InputOutput was called
             MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for dark mode
@@ -298,7 +314,11 @@ class TestMain(TestCase):
         # Mock InputOutput to capture the configuration
         with patch("aider.main.InputOutput") as MockInputOutput:
             MockInputOutput.return_value.get_input.return_value = None
-            main(["--light-mode", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
+            main(
+                ["--light-mode", "--no-git", "--exit"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
             # Ensure InputOutput was called
             MockInputOutput.assert_called_once()
             # Check if the code_theme setting is for light mode
@@ -430,6 +450,15 @@ class TestMain(TestCase):
             home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
             named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
 
+            # Also create .aider.conf.yaml files for each location, with different values
+            home_config_yaml = fake_home / ".aider.conf.yaml"
+            git_config_yaml = git_dir / ".aider.conf.yaml"
+            cwd_config_yaml = cwd / ".aider.conf.yaml"
+
+            cwd_config_yaml.write_text("model: gpt-4-yaml-cwd\nmap-tokens: 1111\n")
+            git_config_yaml.write_text("model: gpt-4-yaml-git\nmap-tokens: 2222\n")
+            home_config_yaml.write_text("model: gpt-4-yaml-home\nmap-tokens: 3333\n")
+
             with (
                 patch("pathlib.Path.home", return_value=fake_home),
                 patch("aider.coders.Coder.create") as MockCoder,
@@ -444,27 +473,46 @@ class TestMain(TestCase):
                 self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
                 self.assertEqual(kwargs["map_tokens"], 8192)
 
-                # Test loading from current working directory
+                # Test loading from current working directory (.yml should take precedence)
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
-                print("kwargs:", kwargs)  # Add this line for debugging
-                self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
                 self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
                 self.assertEqual(kwargs["map_tokens"], 4096)
 
-                # Test loading from git root
+                # Remove .yml, should fall back to .yaml in cwd
                 cwd_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-yaml-cwd")
+                self.assertEqual(kwargs["map_tokens"], 1111)
+
+                # Remove .yaml in cwd, should load from git root .yml
+                cwd_config_yaml.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-4")
                 self.assertEqual(kwargs["map_tokens"], 2048)
 
-                # Test loading from home directory
+                # Remove .yml in git root, should fall back to .yaml in git root
                 git_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-yaml-git")
+                self.assertEqual(kwargs["map_tokens"], 2222)
+
+                # Remove .yaml in git root, should load from home .yml
+                git_config_yaml.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
                 self.assertEqual(kwargs["map_tokens"], 1024)
+
+                # Remove .yml in home, should fall back to .yaml in home
+                home_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-yaml-home")
+                self.assertEqual(kwargs["map_tokens"], 3333)
 
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
@@ -759,7 +807,14 @@ class TestMain(TestCase):
                 patch("aider.models.Model.set_reasoning_effort") as mock_set_reasoning,
             ):
                 main(
-                    ["--model", "gpt-3.5-turbo", "--reasoning-effort", "3", "--yes", "--exit"],
+                    [
+                        "--model",
+                        "gpt-3.5-turbo",
+                        "--reasoning-effort",
+                        "3",
+                        "--yes",
+                        "--exit",
+                    ],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
@@ -841,7 +896,16 @@ class TestMain(TestCase):
     def test_api_key_multiple(self):
         # Test setting multiple API keys
         with GitTemporaryDirectory():
-            main(["--api-key", "anthropic=key1", "--api-key", "openai=key2", "--exit", "--yes"])
+            main(
+                [
+                    "--api-key",
+                    "anthropic=key1",
+                    "--api-key",
+                    "openai=key2",
+                    "--exit",
+                    "--yes",
+                ]
+            )
             self.assertEqual(os.environ.get("ANTHROPIC_API_KEY"), "key1")
             self.assertEqual(os.environ.get("OPENAI_API_KEY"), "key2")
 
@@ -968,7 +1032,10 @@ class TestMain(TestCase):
             # Test Anthropic API key
             os.environ["ANTHROPIC_API_KEY"] = "test-key"
             coder = main(
-                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
             )
             self.assertIn("sonnet", coder.main_model.name.lower())
             del os.environ["ANTHROPIC_API_KEY"]
@@ -976,7 +1043,10 @@ class TestMain(TestCase):
             # Test DeepSeek API key
             os.environ["DEEPSEEK_API_KEY"] = "test-key"
             coder = main(
-                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
             )
             self.assertIn("deepseek", coder.main_model.name.lower())
             del os.environ["DEEPSEEK_API_KEY"]
@@ -984,7 +1054,10 @@ class TestMain(TestCase):
             # Test OpenRouter API key
             os.environ["OPENROUTER_API_KEY"] = "test-key"
             coder = main(
-                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
             )
             self.assertIn("openrouter/", coder.main_model.name.lower())
             del os.environ["OPENROUTER_API_KEY"]
@@ -992,7 +1065,10 @@ class TestMain(TestCase):
             # Test OpenAI API key
             os.environ["OPENAI_API_KEY"] = "test-key"
             coder = main(
-                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
             )
             self.assertIn("gpt-4", coder.main_model.name.lower())
             del os.environ["OPENAI_API_KEY"]
@@ -1000,7 +1076,10 @@ class TestMain(TestCase):
             # Test Gemini API key
             os.environ["GEMINI_API_KEY"] = "test-key"
             coder = main(
-                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
             )
             self.assertIn("gemini", coder.main_model.name.lower())
             del os.environ["GEMINI_API_KEY"]
@@ -1018,7 +1097,10 @@ class TestMain(TestCase):
             os.environ["ANTHROPIC_API_KEY"] = "test-key"
             os.environ["OPENAI_API_KEY"] = "test-key"
             coder = main(
-                ["--exit", "--yes"], input=DummyInput(), output=DummyOutput(), return_coder=True
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
             )
             self.assertIn("sonnet", coder.main_model.name.lower())
             del os.environ["ANTHROPIC_API_KEY"]
@@ -1048,13 +1130,20 @@ class TestMain(TestCase):
 
     def test_reasoning_effort_option(self):
         coder = main(
-            ["--reasoning-effort", "3", "--no-check-model-accepts-settings", "--yes", "--exit"],
+            [
+                "--reasoning-effort",
+                "3",
+                "--no-check-model-accepts-settings",
+                "--yes",
+                "--exit",
+            ],
             input=DummyInput(),
             output=DummyOutput(),
             return_coder=True,
         )
         self.assertEqual(
-            coder.main_model.extra_params.get("extra_body", {}).get("reasoning_effort"), "3"
+            coder.main_model.extra_params.get("extra_body", {}).get("reasoning_effort"),
+            "3",
         )
 
     def test_thinking_tokens_option(self):
