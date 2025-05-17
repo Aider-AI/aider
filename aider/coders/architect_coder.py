@@ -7,6 +7,13 @@ class ArchitectCoder(AskCoder):
     edit_format = "architect"
     gpt_prompts = ArchitectPrompts()
     auto_accept_architect = False
+    use_batch_editing = False
+    
+    def __init__(self, main_model, io, use_batch_editing=False, auto_accept_architect=None, **kwargs):
+        super().__init__(main_model, io, **kwargs)
+        if auto_accept_architect is not None:
+            self.auto_accept_architect = auto_accept_architect
+        self.use_batch_editing = use_batch_editing
 
     def reply_completed(self):
         content = self.partial_response_content
@@ -34,9 +41,9 @@ class ArchitectCoder(AskCoder):
         new_kwargs = dict(io=self.io, from_coder=self)
         new_kwargs.update(kwargs)
 
-        use_batch_editing = False  # TODO: add this option to aider cli and to the configuration yaml, andread this setting from there
+        # Use the instance attribute for use_batch_editing
 
-        if use_batch_editing:
+        if self.use_batch_editing:
             # split the architect model response into chunks using natural delimiters (code blocka, newlines, separators, etc.)
             chunks = []
             chunks = self.split_response_by_natural_delimiters(content)
