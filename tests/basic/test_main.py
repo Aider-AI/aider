@@ -6,7 +6,6 @@ from io import StringIO
 from pathlib import Path
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
-import pytest
 
 import git
 from prompt_toolkit.input import DummyInput
@@ -406,106 +405,106 @@ class TestMain(TestCase):
             self.assertRegex(relevant_output, r"AIDER_DARK_MODE:\s+on")
             self.assertRegex(relevant_output, r"dark_mode:\s+True")
 
-    @pytest.mark.parametrize(
-        "scenario",
-        [
-            "yml_only",     # Test with only .yml files
-            "yaml_only",    # Test with only .yaml files
-            "both_formats", # Test with both .yml and .yaml files
-        ],
-    )
-    def test_yaml_config_file_loading(self, scenario):
-        with GitTemporaryDirectory() as git_dir:
-            git_dir = Path(git_dir)
+    def test_yaml_config_file_loading(self):
+        scenarios = [
+            "yml_only",  # Test with only .yml files
+            "yaml_only",  # Test with only .yaml files
+            "both_formats",  # Test with both .yml and .yaml files
+        ]
 
-            # Create fake home directory
-            fake_home = git_dir / "fake_home"
-            fake_home.mkdir()
-            os.environ["HOME"] = str(fake_home)
+        for scenario in scenarios:
+            with self.subTest(scenario=scenario):
+                with GitTemporaryDirectory() as git_dir:
+                    git_dir = Path(git_dir)
 
-            # Create subdirectory as current working directory
-            cwd = git_dir / "subdir"
-            cwd.mkdir()
-            os.chdir(cwd)
+                    # Create fake home directory
+                    fake_home = git_dir / "fake_home"
+                    fake_home.mkdir()
+                    os.environ["HOME"] = str(fake_home)
 
-            # Create config files in different locations based on scenario
-            home_config_yml = fake_home / ".aider.conf.yml"
-            home_config_yaml = fake_home / ".aider.conf.yaml"
-            git_config_yml = git_dir / ".aider.conf.yml"
-            git_config_yaml = git_dir / ".aider.conf.yaml"
-            cwd_config_yml = cwd / ".aider.conf.yml"
-            cwd_config_yaml = cwd / ".aider.conf.yaml"
-            named_config = git_dir / "named.aider.conf.yml"
+                    # Create subdirectory as current working directory
+                    cwd = git_dir / "subdir"
+                    cwd.mkdir()
+                    os.chdir(cwd)
 
-            # Create files based on the scenario
-            if scenario == "yml_only":
-                cwd_config_yml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
-                git_config_yml.write_text("model: gpt-4\nmap-tokens: 2048\n")
-                home_config_yml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
-                named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
-            elif scenario == "yaml_only":
-                cwd_config_yaml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
-                git_config_yaml.write_text("model: gpt-4\nmap-tokens: 2048\n")
-                home_config_yaml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
-                named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
-            else:  # both_formats
-                # Create both formats, with .yaml taking precedence in each directory
-                cwd_config_yml.write_text("model: gpt-4-32k-yml\nmap-tokens: 4096\n")
-                cwd_config_yaml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
-                git_config_yml.write_text("model: gpt-4-yml\nmap-tokens: 2048\n")
-                git_config_yaml.write_text("model: gpt-4\nmap-tokens: 2048\n")
-                home_config_yml.write_text("model: gpt-3.5-turbo-yml\nmap-tokens: 1024\n")
-                home_config_yaml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
-                named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
+                    # Create config files in different locations based on scenario
+                    home_config_yml = fake_home / ".aider.conf.yml"
+                    home_config_yaml = fake_home / ".aider.conf.yaml"
+                    git_config_yml = git_dir / ".aider.conf.yml"
+                    git_config_yaml = git_dir / ".aider.conf.yaml"
+                    cwd_config_yml = cwd / ".aider.conf.yml"
+                    cwd_config_yaml = cwd / ".aider.conf.yaml"
+                    named_config = git_dir / "named.aider.conf.yml"
 
-            with (
-                patch("pathlib.Path.home", return_value=fake_home),
-                patch("aider.coders.Coder.create") as MockCoder,
-            ):
-                # Test loading from specified config file
-                main(
-                    ["--yes", "--exit", "--config", str(named_config)],
-                    input=DummyInput(),
-                    output=DummyOutput(),
-                )
-                _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
-                self.assertEqual(kwargs["map_tokens"], 8192)
+                    # Create files based on the scenario
+                    if scenario == "yml_only":
+                        cwd_config_yml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+                        git_config_yml.write_text("model: gpt-4\nmap-tokens: 2048\n")
+                        home_config_yml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+                        named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
+                    elif scenario == "yaml_only":
+                        cwd_config_yaml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+                        git_config_yaml.write_text("model: gpt-4\nmap-tokens: 2048\n")
+                        home_config_yaml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+                        named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
+                    else:  # both_formats
+                        # Create both formats, with .yaml taking precedence in each directory
+                        cwd_config_yml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+                        cwd_config_yaml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+                        git_config_yml.write_text("model: gpt-4\nmap-tokens: 2048\n")
+                        git_config_yaml.write_text("model: gpt-4\nmap-tokens: 2048\n")
+                        home_config_yml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+                        home_config_yaml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+                        named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
 
-                # Test loading from current working directory
-                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
-                _, kwargs = MockCoder.call_args
-                self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
-                self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
-                self.assertEqual(kwargs["map_tokens"], 4096)
+                    with (
+                        patch("pathlib.Path.home", return_value=fake_home),
+                        patch("aider.coders.Coder.create") as MockCoder,
+                    ):
+                        # Test loading from specified config file
+                        main(
+                            ["--yes", "--exit", "--config", str(named_config)],
+                            input=DummyInput(),
+                            output=DummyOutput(),
+                        )
+                        _, kwargs = MockCoder.call_args
+                        self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
+                        self.assertEqual(kwargs["map_tokens"], 8192)
 
-                # Test loading from git root by removing cwd config files
-                if scenario == "yml_only":
-                    cwd_config_yml.unlink()
-                elif scenario == "yaml_only":
-                    cwd_config_yaml.unlink()
-                else:  # both_formats
-                    cwd_config_yml.unlink()
-                    cwd_config_yaml.unlink()
-                
-                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
-                _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["main_model"].name, "gpt-4")
-                self.assertEqual(kwargs["map_tokens"], 2048)
+                        # Test loading from current working directory
+                        main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                        _, kwargs = MockCoder.call_args
+                        self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
+                        self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
+                        self.assertEqual(kwargs["map_tokens"], 4096)
 
-                # Test loading from home directory by removing git root config files
-                if scenario == "yml_only":
-                    git_config_yml.unlink()
-                elif scenario == "yaml_only":
-                    git_config_yaml.unlink()
-                else:  # both_formats
-                    git_config_yml.unlink()
-                    git_config_yaml.unlink()
-                
-                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
-                _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
-                self.assertEqual(kwargs["map_tokens"], 1024)
+                        # Test loading from git root by removing cwd config files
+                        if scenario == "yml_only":
+                            cwd_config_yml.unlink()
+                        elif scenario == "yaml_only":
+                            cwd_config_yaml.unlink()
+                        else:  # both_formats
+                            cwd_config_yml.unlink()
+                            cwd_config_yaml.unlink()
+
+                        main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                        _, kwargs = MockCoder.call_args
+                        self.assertEqual(kwargs["main_model"].name, "gpt-4")
+                        self.assertEqual(kwargs["map_tokens"], 2048)
+
+                        # Test loading from home directory by removing git root config files
+                        if scenario == "yml_only":
+                            git_config_yml.unlink()
+                        elif scenario == "yaml_only":
+                            git_config_yaml.unlink()
+                        else:  # both_formats
+                            git_config_yml.unlink()
+                            git_config_yaml.unlink()
+
+                        main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                        _, kwargs = MockCoder.call_args
+                        self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
+                        self.assertEqual(kwargs["map_tokens"], 1024)
 
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
