@@ -457,7 +457,7 @@ def get_config_file(prefix=None):
     if len(conf_files) > 1:
         print(
             f"Warning: Both .aider.conf.yml and .aider.conf.yaml are present at {prefix}."
-            " Defaulting to .aider.conf.yml."
+            f" Defaulting to {prefix}/.aider.conf.yml."
         )
     return conf_files[0] if conf_files else None
 
