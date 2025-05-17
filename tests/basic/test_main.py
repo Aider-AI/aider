@@ -419,16 +419,22 @@ class TestMain(TestCase):
             cwd.mkdir()
             os.chdir(cwd)
 
-            # Create .aider.conf.yml files in different locations
-            home_config = fake_home / ".aider.conf.yml"
-            git_config = git_dir / ".aider.conf.yml"
-            cwd_config = cwd / ".aider.conf.yml"
+            # Create .aider.conf.yml and .aider.conf.yaml files in different locations
+            home_config_yml = fake_home / ".aider.conf.yml"
+            home_config_yaml = fake_home / ".aider.conf.yaml"
+            git_config_yml = git_dir / ".aider.conf.yml"
+            git_config_yaml = git_dir / ".aider.conf.yaml"
+            cwd_config_yml = cwd / ".aider.conf.yml"
+            cwd_config_yaml = cwd / ".aider.conf.yaml"
             named_config = git_dir / "named.aider.conf.yml"
 
-            cwd_config.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
-            git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
-            home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+            cwd_config_yml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+            git_config_yml.write_text("model: gpt-4\nmap-tokens: 2048\n")
+            home_config_yml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
             named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
+            cwd_config_yaml.write_text("model: gpt-4-32k-yaml\nmap-tokens: 9999\n")
+            git_config_yaml.write_text("model: gpt-4-yaml\nmap-tokens: 8888\n")
+            home_config_yaml.write_text("model: gpt-3.5-turbo-yaml\nmap-tokens: 7777\n")
 
             with (
                 patch("pathlib.Path.home", return_value=fake_home),
@@ -444,27 +450,57 @@ class TestMain(TestCase):
                 self.assertEqual(kwargs["main_model"].name, "gpt-4-1106-preview")
                 self.assertEqual(kwargs["map_tokens"], 8192)
 
-                # Test loading from current working directory
+                # Test loading from current working directory (.yml)
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
-                print("kwargs:", kwargs)  # Add this line for debugging
                 self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
                 self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
                 self.assertEqual(kwargs["map_tokens"], 4096)
 
-                # Test loading from git root
-                cwd_config.unlink()
+                # Test loading from git root (.yml)
+                cwd_config_yml.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-4")
                 self.assertEqual(kwargs["map_tokens"], 2048)
 
-                # Test loading from home directory
-                git_config.unlink()
+                # Test loading from home directory (.yml)
+                git_config_yml.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
                 self.assertEqual(kwargs["map_tokens"], 1024)
+
+                # Test loading from .yaml in cwd
+                home_config_yml.unlink(missing_ok=True)
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-32k-yaml")
+                self.assertEqual(kwargs["map_tokens"], 9999)
+
+                # Test loading from .yaml in git root
+                cwd_config_yaml.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-yaml")
+                self.assertEqual(kwargs["map_tokens"], 8888)
+
+                # Test loading from .yaml in home
+                git_config_yaml.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo-yaml")
+                self.assertEqual(kwargs["map_tokens"], 7777)
+
+                # Test both .yml and .yaml present, .yml preferred and warning printed
+                home_config_yml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
+                home_config_yaml.write_text("model: gpt-3.5-turbo-yaml\nmap-tokens: 7777\n")
+                with patch("builtins.print") as mock_print:
+                    main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                    _, kwargs = MockCoder.call_args
+                    self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
+                    self.assertEqual(kwargs["map_tokens"], 1024)
+                    mock_print.assert_any_call("Warning: Both .aider.conf.yml and .aider.conf.yaml found. Using .aider.conf.yml.")
 
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
