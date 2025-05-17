@@ -57,7 +57,9 @@ class ArchitectCoder(AskCoder):
 
                 self.move_back_cur_messages("I made those changes to the files.")
                 self.total_cost += editor_coder.total_cost
-                self.aider_commit_hashes += editor_coder.aider_commit_hashes
+                if self.aider_commit_hashes is None:
+                    self.aider_commit_hashes = set()
+                self.aider_commit_hashes.update(editor_coder.aider_commit_hashes or set())
         else:
             # Create only one chat session with the editor coder llm model, not splitting the architect answer in chunks.
             editor_coder = Coder.create(**new_kwargs)
@@ -71,8 +73,8 @@ class ArchitectCoder(AskCoder):
             editor_coder.run(with_message=content, preproc=False)
 
             self.move_back_cur_messages("I made those changes to the files.")
-            self.total_cost += editor_coder.total_cost
-            self.aider_commit_hashes += editor_coder.aider_commit_hashes
+            self.total_cost = editor_coder.total_cost
+            self.aider_commit_hashes = editor_coder.aider_commit_hashes
 
 
     def split_response_by_natural_delimiters(self, content):
