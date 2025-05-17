@@ -432,9 +432,9 @@ class TestMain(TestCase):
             git_config_yml.write_text("model: gpt-4\nmap-tokens: 2048\n")
             home_config_yml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
             named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
-            cwd_config_yaml.write_text("model: gpt-4-32k-yaml\nmap-tokens: 9999\n")
-            git_config_yaml.write_text("model: gpt-4-yaml\nmap-tokens: 8888\n")
-            home_config_yaml.write_text("model: gpt-3.5-turbo-yaml\nmap-tokens: 7777\n")
+            cwd_config_yaml.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
+            git_config_yaml.write_text("model: gpt-4\nmap-tokens: 2048\n")
+            home_config_yaml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
 
             with (
                 patch("pathlib.Path.home", return_value=fake_home),
@@ -475,26 +475,26 @@ class TestMain(TestCase):
                 home_config_yml.unlink(missing_ok=True)
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
-                self.assertEqual(kwargs["main_model"].name, "gpt-4-32k-yaml")
-                self.assertEqual(kwargs["map_tokens"], 9999)
+                self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
+                self.assertEqual(kwargs["map_tokens"], 4096)
 
                 # Test loading from .yaml in git root
                 cwd_config_yaml.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-4-yaml")
-                self.assertEqual(kwargs["map_tokens"], 8888)
+                self.assertEqual(kwargs["map_tokens"], 2048)
 
                 # Test loading from .yaml in home
                 git_config_yaml.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo-yaml")
-                self.assertEqual(kwargs["map_tokens"], 7777)
+                self.assertEqual(kwargs["map_tokens"], 1024)
 
                 # Test both .yml and .yaml present, .yml preferred and warning printed
                 home_config_yml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
-                home_config_yaml.write_text("model: gpt-3.5-turbo-yaml\nmap-tokens: 7777\n")
+                home_config_yaml.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
                 with patch("builtins.print") as mock_print:
                     main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                     _, kwargs = MockCoder.call_args
