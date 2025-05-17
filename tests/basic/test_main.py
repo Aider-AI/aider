@@ -500,7 +500,7 @@ class TestMain(TestCase):
                     _, kwargs = MockCoder.call_args
                     self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")
                     self.assertEqual(kwargs["map_tokens"], 1024)
-                    mock_print.assert_any_call("Warning: Both .aider.conf.yml and .aider.conf.yaml found. Using .aider.conf.yml.")
+                    mock_print.assert_any_call("Warning: Both .aider.conf.yml and .aider.conf.yaml found in the same directory. Using .aider.conf.yml.")
 
     def test_map_tokens_option(self):
         with GitTemporaryDirectory():
