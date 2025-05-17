@@ -49,12 +49,8 @@ def check_config_files_for_yes(config_files):
                     for line in f:
                         if line.strip().startswith("yes:"):
                             print("Configuration error detected.")
-                            print(
-                                f"The file {config_file} contains a line starting with 'yes:'"
-                            )
-                            print(
-                                "Please replace 'yes:' with 'yes-always:' in this file."
-                            )
+                            print(f"The file {config_file} contains a line starting with 'yes:'")
+                            print("Please replace 'yes:' with 'yes-always:' in this file.")
                             found = True
             except Exception:
                 pass
@@ -151,9 +147,7 @@ def setup_git(git_root, io):
             io.tool_warning('Update git name with: git config user.name "Your Name"')
         if not user_email:
             git_config.set_value("user", "email", "you@example.com")
-            io.tool_warning(
-                'Update git email with: git config user.email "you@example.com"'
-            )
+            io.tool_warning('Update git email with: git config user.email "you@example.com"')
 
     return repo.working_tree_dir
 
@@ -194,9 +188,7 @@ def check_gitignore(git_root, io, ask=True):
 
     if ask:
         io.tool_output("You can skip this check with --no-gitignore")
-        if not io.confirm_ask(
-            f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"
-        ):
+        if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
             return
 
     content += "\n".join(patterns_to_add) + "\n"
@@ -399,9 +391,7 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
     model_metadata_files = []
 
     # Add the resource file path
-    resource_metadata = importlib_resources.files("aider.resources").joinpath(
-        "model-metadata.json"
-    )
+    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
     model_metadata_files.append(str(resource_metadata))
 
     model_metadata_files += generate_search_path_list(
@@ -409,9 +399,7 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
     )
 
     try:
-        model_metadata_files_loaded = models.register_litellm_models(
-            model_metadata_files
-        )
+        model_metadata_files_loaded = models.register_litellm_models(model_metadata_files)
         if len(model_metadata_files_loaded) > 0 and verbose:
             io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
@@ -450,9 +438,7 @@ def sanity_check_repo(repo, io):
 
     if bad_ver:
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
-        io.tool_output(
-            "You may be able to convert your repo: git update-index --index-version=2"
-        )
+        io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
         io.offer_url(urls.git_index_version, "Open documentation url for more info?")
         return False
@@ -462,7 +448,7 @@ def sanity_check_repo(repo, io):
     return False
 
 
-def get_config_file(prefix: Path | None = None):
+def get_config_file(prefix=None):
     conf_files = [
         prefix / name if prefix else Path(name)
         for name in [".aider.conf.yml", ".aider.conf.yaml"]
@@ -470,7 +456,8 @@ def get_config_file(prefix: Path | None = None):
     ]
     if len(conf_files) > 1:
         print(
-            f"Warning: Both .aider.conf.yml and .aider.conf.yaml are present at {prefix}. Defaulting to .aider.conf.yml."
+            f"Warning: Both .aider.conf.yml and .aider.conf.yaml are present at {prefix}."
+            " Defaulting to .aider.conf.yml."
         )
     return conf_files[0] if conf_files else None
 
@@ -510,10 +497,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     try:
         args, unknown = parser.parse_known_args(argv)
     except AttributeError as e:
-        if all(
-            word in str(e)
-            for word in ["bool", "object", "has", "no", "attribute", "strip"]
-        ):
+        if all(word in str(e) for word in ["bool", "object", "has", "no", "attribute", "strip"]):
             if check_config_files_for_yes(default_config_files):
                 return 1
         raise e
@@ -658,9 +642,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         )
         os.environ["OPENAI_API_VERSION"] = args.openai_api_version
     if args.openai_api_type:
-        io.tool_warning(
-            "--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>"
-        )
+        io.tool_warning("--openai-api-type is deprecated, use --set-env OPENAI_API_TYPE=<value>")
         os.environ["OPENAI_API_TYPE"] = args.openai_api_type
     if args.openai_organization_id:
         io.tool_warning(
@@ -668,9 +650,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         )
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    analytics = Analytics(
-        logfile=args.analytics_log, permanently_disable=args.analytics_disable
-    )
+    analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
     if args.analytics is not False:
         if analytics.need_to_ask(args.analytics):
             io.tool_output(
@@ -786,9 +766,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
-    register_litellm_models(
-        git_root, args.model_metadata_file, io, verbose=args.verbose
-    )
+    register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
 
     if args.list_models:
         models.print_matching_models(io, args.list_models)
@@ -817,9 +795,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     args.model = selected_model_name  # Update args with the selected model
 
     # Check if an OpenRouter model was selected/specified but the key is missing
-    if args.model.startswith("openrouter/") and not os.environ.get(
-        "OPENROUTER_API_KEY"
-    ):
+    if args.model.startswith("openrouter/") and not os.environ.get("OPENROUTER_API_KEY"):
         io.tool_warning(
             f"The specified model '{args.model}' requires an OpenRouter API key, which was not"
             " found."
@@ -873,16 +849,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.reasoning_effort is not None:
         # Apply if check is disabled or model explicitly supports it
         if not args.check_model_accepts_settings or (
-            main_model.accepts_settings
-            and "reasoning_effort" in main_model.accepts_settings
+            main_model.accepts_settings and "reasoning_effort" in main_model.accepts_settings
         ):
             main_model.set_reasoning_effort(args.reasoning_effort)
 
     if args.thinking_tokens is not None:
         # Apply if check is disabled or model explicitly supports it
         if not args.check_model_accepts_settings or (
-            main_model.accepts_settings
-            and "thinking_tokens" in main_model.accepts_settings
+            main_model.accepts_settings and "thinking_tokens" in main_model.accepts_settings
         ):
             main_model.set_thinking_tokens(args.thinking_tokens)
 
@@ -932,14 +906,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             io.tool_output("You can skip this check with --no-show-model-warnings")
 
             try:
-                io.offer_url(
-                    urls.model_warnings, "Open documentation url for more info?"
-                )
+                io.offer_url(urls.model_warnings, "Open documentation url for more info?")
                 io.tool_output()
             except KeyboardInterrupt:
-                analytics.event(
-                    "exit", reason="Keyboard interrupt during model warnings"
-                )
+                analytics.event("exit", reason="Keyboard interrupt during model warnings")
                 return 1
 
     repo = None
@@ -1157,9 +1127,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_output(f"Git working dir: {git_root}")
 
     if args.stream and args.cache_prompts:
-        io.tool_warning(
-            "Cost estimates may be inaccurate when using streaming and caching."
-        )
+        io.tool_warning("Cost estimates may be inaccurate when using streaming and caching.")
 
     if args.load:
         commands.cmd_load(args.load)
@@ -1195,9 +1163,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="Exit flag set")
         return
 
-    analytics.event(
-        "cli session", main_model=main_model, edit_format=main_model.edit_format
-    )
+    analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
 
     while True:
         try:
@@ -1277,12 +1243,8 @@ def check_and_load_imports(io, is_first_run, verbose=False):
                 load_slow_imports(swallow=False)
             except Exception as err:
                 io.tool_error(str(err))
-                io.tool_output(
-                    "Error loading required imports. Did you install aider properly?"
-                )
-                io.offer_url(
-                    urls.install_properly, "Open documentation url for more info?"
-                )
+                io.tool_output("Error loading required imports. Did you install aider properly?")
+                io.offer_url(urls.install_properly, "Open documentation url for more info?")
                 sys.exit(1)
 
             if verbose:
