@@ -243,7 +243,7 @@ class InputOutput:
         input=None,
         output=None,
         user_input_color="blue",
-        user_submitted_input_color=None,
+        user_input_submitted_color=None,
         tool_output_color=None,
         tool_error_color="red",
         tool_warning_color="#FFA500",
@@ -282,8 +282,8 @@ class InputOutput:
             pretty = False
 
         self.user_input_color = ensure_hash_prefix(user_input_color) if pretty else None
-        self.user_submitted_input_color = (
-            ensure_hash_prefix(user_submitted_input_color) if pretty else None
+        self.user_input_submitted_color = (
+            ensure_hash_prefix(user_input_submitted_color) if pretty else None
         )
         self.tool_output_color = ensure_hash_prefix(tool_output_color) if pretty else None
         self.tool_error_color = ensure_hash_prefix(tool_error_color) if pretty else None
@@ -380,7 +380,7 @@ class InputOutput:
         """Validate configured color strings and reset invalid ones."""
         color_attributes = [
             "user_input_color",
-            "user_submitted_input_color",
+            "user_input_submitted_color",
             "tool_output_color",
             "tool_error_color",
             "tool_warning_color",
@@ -770,8 +770,8 @@ class InputOutput:
             self.llm_history_file = None
 
     def display_user_input(self, inp):
-        if self.pretty and self.user_submitted_input_color:
-            style = dict(style=self.user_submitted_input_color)
+        if self.pretty and self.user_input_submitted_color:
+            style = dict(style=self.user_input_submitted_color)
         else:
             style = dict()
 
