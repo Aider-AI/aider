@@ -31,6 +31,7 @@ from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.style import Style as RichStyle
+from rich.theme import Theme
 from rich.text import Text
 
 from aider.mdstream import MarkdownStream
@@ -356,7 +357,8 @@ class InputOutput:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
             try:
                 self.prompt_session = PromptSession(**session_kwargs)
-                self.console = Console()  # pretty console
+                theme = Theme({'markdown.code': f'bold {self.assistant_output_color}'})
+                self.console = Console(theme=theme)  # pretty console
             except Exception as err:
                 self.console = Console(force_terminal=False, no_color=True)
                 self.tool_error(f"Can't initialize prompt toolkit: {err}")  # non-pretty
