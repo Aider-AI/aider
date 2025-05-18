@@ -6,7 +6,7 @@ from aider.main import main
 
 
 class TestBrowser(unittest.TestCase):
-    @patch("aider.main.launch_gui")
+    @patch("aider.main.launch_gui", autospec=True)
     def test_browser_flag_imports_streamlit(self, mock_launch_gui):
         os.environ["AIDER_ANALYTICS"] = "false"
 

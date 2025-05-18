@@ -230,7 +230,7 @@ def write_streamlit_credentials():
         print("Streamlit credentials already exist.")
 
 
-def launch_gui(args):
+def launch_gui(args, server_port=None, server_address=None):
     from streamlit.web import cli
 
     from aider import gui
@@ -250,6 +250,12 @@ def launch_gui(args):
         "--runner.magicEnabled=false",
         "--server.runOnSave=false",
     ]
+
+    if server_port is not None:
+        st_args.append(f"--server.port={server_port}")
+
+    if server_address is not None:
+        st_args.append(f"--server.address={server_address}")
 
     # https://github.com/Aider-AI/aider/issues/2193
     is_dev = "-dev" in str(__version__)
@@ -663,7 +669,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Streamlit not installed")
             return
         analytics.event("gui session")
-        launch_gui(argv)
+        launch_gui(argv, server_port=args.server_port, server_address=args.server_address)
         analytics.event("exit", reason="GUI session ended")
         return
 

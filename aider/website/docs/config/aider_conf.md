@@ -382,6 +382,12 @@ cog.outl("```")
 ## Run aider in your browser (default: False)
 #gui: false
 
+## The address on which aider should listen when running in browser mode (default: localhost)
+#server-address: "0.0.0.0"
+
+## The port on which aider should listen when running in browser mode (default: None)
+#server-port: 12345
+
 ## Enable automatic copy/paste of chat between aider and web UI (default: False)
 #copy-paste: false
 

@@ -628,6 +628,24 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--server-address",
+        type=str,
+        default=None,
+        help=(
+            "The address on which aider should listen when running in browser mode. By default"
+            " it listens on localhost."
+        ),
+    )
+    group.add_argument(
+        "--server-port",
+        type=int,
+        default=None,
+        help=(
+            "The port on which aider should listen when running in browser mode. By default"
+            " a random port is chosen."
+        ),
+    )
+    group.add_argument(
         "--copy-paste",
         action=argparse.BooleanOptionalAction,
         default=False,
