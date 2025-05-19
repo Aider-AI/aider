@@ -31,8 +31,8 @@ from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
 from rich.style import Style as RichStyle
-from rich.theme import Theme
 from rich.text import Text
+from rich.theme import Theme
 
 from aider.mdstream import MarkdownStream
 
@@ -357,7 +357,7 @@ class InputOutput:
                 session_kwargs["history"] = FileHistory(self.input_history_file)
             try:
                 self.prompt_session = PromptSession(**session_kwargs)
-                theme = Theme({'markdown.code': f'bold {self.assistant_output_color}'})
+                theme = Theme({"markdown.code": f"bold {self.assistant_output_color}"})
                 self.console = Console(theme=theme)  # pretty console
             except Exception as err:
                 self.console = Console(force_terminal=False, no_color=True)
@@ -1014,12 +1014,9 @@ class InputOutput:
         self.console.print(*messages, style=style)
 
     def get_assistant_mdstream(self):
-        mdargs = dict(
-            style=self.assistant_output_color,
-            code_theme=self.code_theme,
-            inline_code_lexer="text",
-        )
-        mdStream = MarkdownStream(mdargs=mdargs)
+        mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+        console_theme = Theme({"markdown.code": f"bold {self.assistant_output_color}"})
+        mdStream = MarkdownStream(mdargs=mdargs, console_theme=console_theme)
         return mdStream
 
     def assistant_output(self, message, pretty=None):
