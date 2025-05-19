@@ -330,7 +330,7 @@ Default: #00cc00
 Environment variable: `AIDER_USER_INPUT_COLOR`  
 
 ### `--user-input-submitted-color VALUE`
-Set the color for user submitted input (default: #00cc00)  
+Set the color for user submitted input (default: None)  
 Environment variable: `AIDER_USER_INPUT_SUBMITTED_COLOR`  
 
 ### `--tool-output-color VALUE`
