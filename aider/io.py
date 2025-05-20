@@ -654,9 +654,6 @@ class InputOutput:
                         if self.clipboard_watcher:
                             self.clipboard_watcher.start()
 
-                    def get_continuation(width, line_number, is_soft_wrap):
-                        return self.prompt_prefix
-
                     line = self.prompt_session.prompt(
                         show,
                         default=default,
@@ -666,7 +663,6 @@ class InputOutput:
                         style=style,
                         key_bindings=kb,
                         complete_while_typing=True,
-                        prompt_continuation=get_continuation,
                     )
                     self.display_user_input(show + line)
                 else:
