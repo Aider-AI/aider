@@ -1,7 +1,7 @@
 ---
 parent: Configuration
 nav_order: 15
-description: How to configure aider with a yaml config file.
+description: How to configure aider with a YAML config file.
 ---
 
 # YAML config file
@@ -58,7 +58,7 @@ cog.outl("```")
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
 
-# Note: You can only put OpenAI and Anthropic API keys in the yaml
+# Note: You can only put OpenAI and Anthropic API keys in the YAML
 # config file. Keys for all APIs can be stored in a .env file
 # https://aider.chat/docs/config/dotenv.html
 

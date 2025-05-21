@@ -81,7 +81,7 @@ You can override or add settings for any model by creating a `.aider.model.setti
 If the files above exist, they will be loaded in that order. 
 Files loaded last will take priority.
 
-The yaml file should be a list of dictionary objects for each model.
+The YAML file should be a list of dictionary objects for each model.
 
 
 ### Passing extra params to litellm.completion
