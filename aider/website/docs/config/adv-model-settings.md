@@ -1447,7 +1447,7 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
-- name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+- name: vertex_ai/gemini-2.5-flash-preview-04-17
   edit_format: diff
   use_repo_map: true
   accepts_settings:
@@ -1504,24 +1504,24 @@ cog.out("```\n")
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
-  weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  weak_model_name: vertex_ai/gemini-2.5-flash-preview-04-17
   use_repo_map: true
   overeager: true
-  editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  editor_model_name: vertex_ai/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-2.5-pro-preview-03-25
   edit_format: diff-fenced
-  weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  weak_model_name: vertex_ai/gemini-2.5-flash-preview-04-17
   use_repo_map: true
   overeager: true
-  editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  editor_model_name: vertex_ai/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-2.5-pro-preview-05-06
   edit_format: diff-fenced
-  weak_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  weak_model_name: vertex_ai/gemini-2.5-flash-preview-04-17
   use_repo_map: true
   overeager: true
-  editor_model_name: vertex_ai-language-models/gemini-2.5-flash-preview-04-17
+  editor_model_name: vertex_ai/gemini-2.5-flash-preview-04-17
 
 - name: vertex_ai/gemini-pro-experimental
   edit_format: diff-fenced
