@@ -1,14 +1,3 @@
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806582}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806583}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806583}
 {"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806583}
 {"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806583}
 {"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746806583}
@@ -998,3 +987,14 @@
 {"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1747169085}
 {"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "udiff-simple", "prompt_tokens": 15792, "completion_tokens": 134, "total_tokens": 15926, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1747169097}
 {"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1747169103}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035541}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035543}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035543}
+{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "udiff-simple"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035543}
+{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035552}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035604}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035605}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035605}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035605}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "udiff-simple", "prompt_tokens": 5842, "completion_tokens": 408, "total_tokens": 6250, "cost": 0, "total_cost": 0.0}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035674}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1748035674}

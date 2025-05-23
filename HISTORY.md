@@ -1,11 +1,19 @@
 # Release history
 
+### main branch
+
+- Added shell tab completion for file path arguments (by saviour) and for `--edit-format`/`--editor-edit-format` options.
+- Improved OpenRouter model metadata handling by introducing a local cache, increasing reliability and performance.
+- The `/settings` command now displays detailed metadata for active main, editor, and weak models.
+- Fixed an issue where files explicitly added via the command line were not correctly ignored if listed in `.gitignore`.
+- Improved automatic commit messages by providing more context during their generation, by wangboxue.
+- Aider wrote 89% of the code in this release.
+
 ### Aider v0.83.1
 
 - Improved user language detection by correctly normalizing hyphenated language codes (e.g., `en-US` to `en`) and enhancing the validation of locale results.
 - Prevented Aider from instructing the LLM to reply in 'C' or 'POSIX' when these are detected as the system locale.
 - Displayed a spinner with the model name when generating commit messages.
-- Aider wrote 74% of the code in this release.
 
 ### Aider v0.83.0
 
