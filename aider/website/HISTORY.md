@@ -26,6 +26,7 @@ cog.out(text)
 
 ### main branch
 
+- Bumped configargparse to 1.7.1 as 1.7 was pulled.
 - Added shell tab completion for file path arguments (by saviour) and for `--edit-format`/`--editor-edit-format` options.
 - Improved OpenRouter model metadata handling by introducing a local cache, increasing reliability and performance.
 - The `/settings` command now displays detailed metadata for active main, editor, and weak models.
