@@ -60,7 +60,7 @@ click==8.1.8
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-configargparse==1.7
+configargparse==1.7.1 # 1.7 was yanked https://github.com/Aider-AI/aider/issues/4072
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
