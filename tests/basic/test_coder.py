@@ -1336,7 +1336,7 @@ This command will print 'Hello, World!' to the console."""
             with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
                 from aider.coders.architect_coder import ArchitectCoder
 
-                coder = ArchitectCoder()
+                coder = ArchitectCoder(main_model=self.GPT35, io=io)
                 coder.io = io
                 coder.main_model = self.GPT35
                 coder.auto_accept_architect = True
@@ -1344,6 +1344,8 @@ This command will print 'Hello, World!' to the console."""
                 coder.total_cost = 0
                 coder.cur_messages = []
                 coder.done_messages = []
+                coder.aider_commit_hashes = None
+                coder.move_back_cur_messages = MagicMock()
                 coder.summarizer = MagicMock()
                 coder.summarizer.too_big.return_value = False
 
@@ -1371,7 +1373,7 @@ This command will print 'Hello, World!' to the console."""
             with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
                 from aider.coders.architect_coder import ArchitectCoder
 
-                coder = ArchitectCoder()
+                coder = ArchitectCoder(main_model=self.GPT35, io=io)
                 coder.io = io
                 coder.main_model = self.GPT35
                 coder.auto_accept_architect = False
@@ -1379,10 +1381,8 @@ This command will print 'Hello, World!' to the console."""
                 coder.total_cost = 0
                 coder.cur_messages = []
                 coder.done_messages = []
-                coder.summarizer = MagicMock()
-                coder.summarizer.too_big.return_value = False
-                coder.cur_messages = []
-                coder.done_messages = []
+                coder.aider_commit_hashes = None
+                coder.move_back_cur_messages = MagicMock()
                 coder.summarizer = MagicMock()
                 coder.summarizer.too_big.return_value = False
 
@@ -1410,12 +1410,16 @@ This command will print 'Hello, World!' to the console."""
             with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
                 from aider.coders.architect_coder import ArchitectCoder
 
-                coder = ArchitectCoder()
+                coder = ArchitectCoder(main_model=self.GPT35, io=io)
                 coder.io = io
                 coder.main_model = self.GPT35
                 coder.auto_accept_architect = False
                 coder.verbose = False
                 coder.total_cost = 0
+                coder.cur_messages = []
+                coder.done_messages = []
+                coder.aider_commit_hashes = None
+                coder.move_back_cur_messages = MagicMock()
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
