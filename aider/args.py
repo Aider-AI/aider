@@ -152,6 +152,10 @@ def get_parser(default_config_files, git_root):
         help="Verify the SSL cert when connecting to models (default: True)",
     )
     group.add_argument(
+        "--custom-ca-file",
+        help="Specify a custom CA bundle file for HTTPS connections to the models",
+    ).complete = shtab.FILE
+    group.add_argument(
         "--timeout",
         type=float,
         default=None,
