@@ -172,10 +172,9 @@ nltk==3.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-numpy==1.26.4
+numpy==2.2.6
     # via
     #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements-help.in
     #   llama-index-core
     #   scikit-learn
     #   scipy
@@ -276,7 +275,6 @@ tokenizers==0.21.1
 torch==2.2.2
     # via
     #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements-help.in
     #   sentence-transformers
 tqdm==4.67.1
     # via

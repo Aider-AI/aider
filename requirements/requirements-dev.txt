@@ -143,7 +143,7 @@ nodeenv==1.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
-numpy==1.26.4
+numpy==2.2.6
     # via
     #   -c requirements/common-constraints.txt
     #   contourpy

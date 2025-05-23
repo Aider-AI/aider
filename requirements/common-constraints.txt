@@ -282,9 +282,8 @@ nltk==3.9.1
     # via llama-index-core
 nodeenv==1.9.1
     # via pre-commit
-numpy==1.26.4
+numpy==2.2.6
     # via
-    #   -r requirements/requirements-help.in
     #   contourpy
     #   llama-index-core
     #   matplotlib
@@ -530,9 +529,7 @@ tokenizers==0.21.1
 toml==0.10.2
     # via streamlit
 torch==2.2.2
-    # via
-    #   -r requirements/requirements-help.in
-    #   sentence-transformers
+    # via sentence-transformers
 tornado==6.5.1
     # via streamlit
 tqdm==4.67.1
