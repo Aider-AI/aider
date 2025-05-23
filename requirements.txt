@@ -250,7 +250,7 @@ networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-numpy==2.2.6
+numpy==1.26.4
     # via
     #   -c requirements/common-constraints.txt
     #   scipy
