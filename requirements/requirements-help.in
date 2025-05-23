@@ -8,4 +8,4 @@ llama-index-embeddings-huggingface
 #torch==2.2.2
 
 # Later versions break test_help in GitHub Actions on Windows and Ubuntu
-#llama-index-core==0.12.26
+llama-index-core==0.12.26
