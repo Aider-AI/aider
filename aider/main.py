@@ -525,6 +525,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
         # Set verify_ssl on the model_info_manager
         models.model_info_manager.set_verify_ssl(False)
+    elif args.custom_ca_file:
+        import httpx
+        import ssl
+
+        litellm._load_litellm()
+
+        ssl_ctx = ssl.create_default_context()
+        ssl_ctx.load_verify_locations(cafile=args.custom_ca_file)
+        litellm._lazy_module.client_session = httpx.Client(verify=ssl_ctx)
+        litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=ssl_ctx)
+
+        models.model_info_manager.set_verify_ssl(ssl_ctx)
 
     if args.timeout:
         models.request_timeout = args.timeout
