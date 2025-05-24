@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 import re
@@ -502,6 +503,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+
+    if args.chat_history_archive:
+        archive_dir = Path(args.chat_history_archive).resolve()
+        datetime_str = datetime.datetime.now().strftime("%Y-%m-%d %H-%M")
+        dated_filename = f"{datetime_str}.aider.md"
+        final_chat_history_path = archive_dir / dated_filename
+
+        os.makedirs(archive_dir, exist_ok=True)
+        args.chat_history_file = str(final_chat_history_path)
 
     if args.shell_completions:
         # Ensure parser.prog is set for shtab, though it should be by default
