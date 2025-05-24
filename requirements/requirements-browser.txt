@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.38.2
+narwhals==1.40.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -110,7 +110,7 @@ requests==2.32.3
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-rpds-py==0.24.0
+rpds-py==0.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
@@ -123,7 +123,7 @@ smmap==5.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   gitdb
-streamlit==1.45.0
+streamlit==1.45.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-browser.in
@@ -135,7 +135,7 @@ toml==0.10.2
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-tornado==6.4.2
+tornado==6.5.1
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
