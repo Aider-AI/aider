@@ -40,9 +40,9 @@ OPENAI_API_KEY=<key>
 ANTHROPIC_API_KEY=<key>
 ```
 
-#### Yaml config file
+#### YAML config file
 You can also set those API keys via special entries in the
-[yaml config file](/docs/config/aider_conf.html), like this:
+[YAML config file](/docs/config/aider_conf.html), like this:
 
 ```yaml
 openai-api-key: <key>
@@ -74,7 +74,7 @@ OPENROUTER_API_KEY=bar
 DEEPSEEK_API_KEY=baz
 ```
 
-#### Yaml config file
+#### YAML config file
 
 
 You can also set API keys in the 

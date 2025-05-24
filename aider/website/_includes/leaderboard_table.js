@@ -188,10 +188,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update the leaderboard title based on mode and selection
     if (leaderboardTitle) {
-      if (currentMode === 'view' && selectedRows.size > 0) {
-        leaderboardTitle.textContent = filteredTitle;
+      // Check if a custom title is provided globally
+      if (typeof LEADERBOARD_CUSTOM_TITLE !== 'undefined' && LEADERBOARD_CUSTOM_TITLE) {
+        leaderboardTitle.textContent = LEADERBOARD_CUSTOM_TITLE;
       } else {
-        leaderboardTitle.textContent = defaultTitle;
+        if (currentMode === 'view' && selectedRows.size > 0) {
+          leaderboardTitle.textContent = filteredTitle;
+        } else {
+          leaderboardTitle.textContent = defaultTitle;
+        }
       }
     }
 

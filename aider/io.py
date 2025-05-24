@@ -1144,18 +1144,19 @@ class InputOutput:
             ro_paths = []
             for rel_path in read_only_files:
                 abs_path = os.path.abspath(os.path.join(self.root, rel_path))
-                ro_paths.append(abs_path if len(abs_path) < len(rel_path) else rel_path)
+                ro_paths.append(Text(abs_path if len(abs_path) < len(rel_path) else rel_path))
 
-            files_with_label = ["Readonly:"] + ro_paths
+            files_with_label = [Text("Readonly:")] + ro_paths
             read_only_output = StringIO()
             Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
             read_only_lines = read_only_output.getvalue().splitlines()
             console.print(Columns(files_with_label))
 
         if editable_files:
-            files_with_label = editable_files
+            text_editable_files = [Text(f) for f in editable_files]
+            files_with_label = text_editable_files
             if read_only_files:
-                files_with_label = ["Editable:"] + editable_files
+                files_with_label = [Text("Editable:")] + text_editable_files
                 editable_output = StringIO()
                 Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
                 editable_lines = editable_output.getvalue().splitlines()

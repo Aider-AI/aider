@@ -1,14 +1,14 @@
-import itertools
 import os
 import platform
-import oslex
 import subprocess
 import sys
 import tempfile
-import time
 from pathlib import Path
 
+import oslex
+
 from aider.dump import dump  # noqa: F401
+from aider.waiting import Spinner
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
 
@@ -250,55 +250,6 @@ def run_install(cmd):
     return False, output
 
 
-class Spinner:
-    unicode_spinner = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
-    ascii_spinner = ["|", "/", "-", "\\"]
-
-    def __init__(self, text):
-        self.text = text
-        self.start_time = time.time()
-        self.last_update = 0
-        self.visible = False
-        self.is_tty = sys.stdout.isatty()
-        self.tested = False
-
-    def test_charset(self):
-        if self.tested:
-            return
-        self.tested = True
-        # Try unicode first, fall back to ascii if needed
-        try:
-            # Test if we can print unicode characters
-            print(self.unicode_spinner[0], end="", flush=True)
-            print("\r", end="", flush=True)
-            self.spinner_chars = itertools.cycle(self.unicode_spinner)
-        except UnicodeEncodeError:
-            self.spinner_chars = itertools.cycle(self.ascii_spinner)
-
-    def step(self):
-        if not self.is_tty:
-            return
-
-        current_time = time.time()
-        if not self.visible and current_time - self.start_time >= 0.5:
-            self.visible = True
-            self._step()
-        elif self.visible and current_time - self.last_update >= 0.1:
-            self._step()
-        self.last_update = current_time
-
-    def _step(self):
-        if not self.visible:
-            return
-
-        self.test_charset()
-        print(f"\r{self.text} {next(self.spinner_chars)}\r{self.text} ", end="", flush=True)
-
-    def end(self):
-        if self.visible and self.is_tty:
-            print("\r" + " " * (len(self.text) + 3))
-
-
 def find_common_root(abs_fnames):
     try:
         if len(abs_fnames) == 1:
@@ -385,15 +336,3 @@ def printable_shell_command(cmd_list):
         str: Shell-escaped command string.
     """
     return oslex.join(cmd_list)
-
-
-def main():
-    spinner = Spinner("Running spinner...")
-    for _ in range(40):  # 40 steps * 0.25 seconds = 10 seconds
-        time.sleep(0.25)
-        spinner.step()
-    spinner.end()
-
-
-if __name__ == "__main__":
-    main()

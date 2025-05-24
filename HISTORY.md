@@ -1,18 +1,56 @@
 # Release history
 
 ### main branch
-- Automatically fetch model parameters (context window, pricing) for OpenRouter models directly from their website, by Stefan Hladnik.
+
+- Bumped configargparse to 1.7.1 as 1.7 was pulled.
+- Added shell tab completion for file path arguments (by saviour) and for `--edit-format`/`--editor-edit-format` options.
+- Improved OpenRouter model metadata handling by introducing a local cache, increasing reliability and performance.
+- The `/settings` command now displays detailed metadata for active main, editor, and weak models.
+- Fixed an issue where files explicitly added via the command line were not correctly ignored if listed in `.gitignore`.
+- Improved automatic commit messages by providing more context during their generation, by wangboxue.
+- Aider wrote 89% of the code in this release.
+
+### Aider v0.83.1
+
+- Improved user language detection by correctly normalizing hyphenated language codes (e.g., `en-US` to `en`) and enhancing the validation of locale results.
+- Prevented Aider from instructing the LLM to reply in 'C' or 'POSIX' when these are detected as the system locale.
+- Displayed a spinner with the model name when generating commit messages.
+
+### Aider v0.83.0
+
 - Added support for `gemini-2.5-pro-preview-05-06` models.
+- Added support for `qwen3-235b` models.
+- Added repo-map support for OCaml and OCaml interface files, by Andrey Popp.
+- Added a spinner animation while waiting for the LLM to start streaming its response.
+- Updated the spinner animation to a Knight Rider style.
+- Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
+- Updated Gemini model aliases (e.g., `gemini`, `gemini-2.5-pro`) to point to the `05-06` preview versions.
+- Marked Gemini 2.5 Pro preview models as `overeager` by default.
+- Commit message prompt specifies the user's language.
+- Updated the default weak model for Gemini 2.5 Pro models to `gemini/gemini-2.5-flash-preview-04-17`.
+- Corrected `gemini-2.5-pro-exp-03-25` model settings to reflect its lack of support for `thinking_budget`.
+- Ensured model-specific system prompt prefixes are placed on a new line before the main system prompt.
+- Added tracking of total tokens sent and received, now included in benchmark statistics.
+- Automatically fetch model parameters (context window, pricing) for OpenRouter models directly from their website, by Stefan Hladnik.
 - Enabled support for `thinking_tokens` and `reasoning_effort` parameters for OpenRouter models.
+- Improved cost calculation using `litellm.completion_cost` where available.
 - Added model settings for `openrouter/google/gemini-2.5-pro-preview-03-25`.
- Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
 - Added `--disable-playwright` flag to prevent Playwright installation prompts and usage, by Andrew Grigorev.
 - The `aider scrape` command-line tool will now use Playwright for web scraping if it is available, by Jon Keys.
-- Added repomap support for OCaml and OCaml interface files, by Andrey Popp.
-- Improved cost calculation using `litellm.completion_cost` where available.
 - Fixed linter command execution on Windows by adopting `oslex` for argument quoting, by Titusz Pan.
 - Improved cross-platform display of shell commands by using `oslex` for robust argument quoting, by Titusz Pan.
-- Aider wrote 45% of the code in this release.
+- Improved `/ask` mode to instruct the LLM to elide unchanging code in its responses.
+- Ensured web scraping in the GUI also respects Playwright availability and the `--disable-playwright` flag.
+- Improved display of filenames in the prompt header using rich Text formatting.
+- Enabled `reasoning_effort` for Gemini 2.5 Flash models.
+- Added a `--shell-completions` argument to generate shell completion scripts (e.g., for bash, zsh).
+- Explicit `--attribute-author` or `--attribute-committer` flags now override the default behavior when `--attribute-co-authored-by` is used, allowing finer control over commit attribution, by Andrew Grigorev.
+- Fixed an issue where read-only status of files might not be preserved correctly by some commands (e.g. `/drop` after adding a read-only file).
+- The `aider-args` utility (or `python -m aider.args`) now defaults to printing a sample YAML configuration if no arguments are provided.
+- Displayed token count progress and the name of the file or identifier being processed during repo map updates.
+- Extended the waiting spinner to also show for non-streaming responses and further enhanced its animation with console width clipping, cursor hiding, and a more continuous appearance.
+- Dropped support for Python 3.9.
+- Aider wrote 55% of the code in this release.
 
 ### Aider v0.82.3
 
@@ -382,7 +420,7 @@
 - [Aider works with LLM web chat UIs](https://aider.chat/docs/usage/copypaste.html).
   - New `--copy-paste` mode.
   - New `/copy-context` command.
-- [Set API keys and other environment variables for all providers from command line or yaml conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
+- [Set API keys and other environment variables for all providers from command line or YAML conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
   - New `--api-key provider=key` setting.
   - New `--set-env VAR=value` setting.
 - Added bash and zsh support to `--watch-files`.
@@ -550,7 +588,7 @@
 
 ### Aider v0.59.1
 
-- Check for obsolete `yes: true` in yaml config, show helpful error.
+- Check for obsolete `yes: true` in YAML config, show helpful error.
 - Model settings for openrouter/anthropic/claude-3.5-sonnet:beta
 
 ### Aider v0.59.0
@@ -560,7 +598,7 @@
   - Still auto-completes the full paths of the repo files like `/add`.
   - Now supports globs like `src/**/*.py`
 - Renamed `--yes` to `--yes-always`.
-  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` yaml key.
+  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` YAML key.
   - Existing YAML and .env files will need to be updated.
   - Can still abbreviate to `--yes` on the command line.
 - Config file now uses standard YAML list syntax with `  - list entries`, one per line.  
@@ -767,7 +805,7 @@
   - Use `--map-refresh <always|files|manual|auto>` to configure.
 - Improved cost estimate logic for caching.
 - Improved editing performance on Jupyter Notebook `.ipynb` files.
-- Show which config yaml file is loaded with `--verbose`.
+- Show which config YAML file is loaded with `--verbose`.
 - Bumped dependency versions.
 - Bugfix: properly load `.aider.models.metadata.json` data.
 - Bugfix: Using `--msg /ask ...` caused an exception.

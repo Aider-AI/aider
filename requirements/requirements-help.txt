@@ -81,7 +81,7 @@ fsspec==2025.3.2
     #   huggingface-hub
     #   llama-index-core
     #   torch
-greenlet==3.2.1
+greenlet==3.2.2
     # via
     #   -c requirements/common-constraints.txt
     #   sqlalchemy
@@ -163,7 +163,7 @@ nest-asyncio==1.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-networkx==3.2.1
+networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -236,7 +236,7 @@ scikit-learn==1.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
-scipy==1.13.1
+scipy==1.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   scikit-learn

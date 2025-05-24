@@ -19,7 +19,7 @@ from tqdm import tqdm
 
 from aider.dump import dump
 from aider.special import filter_important_files
-from aider.utils import Spinner
+from aider.waiting import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -34,6 +34,8 @@ SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 CACHE_VERSION = 3
 if USING_TSL_PACK:
     CACHE_VERSION = 4
+
+UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
 
 class RepoMap:
@@ -380,7 +382,7 @@ class RepoMap:
             if self.verbose:
                 self.io.tool_output(f"Processing {fname}")
             if progress and not showing_bar:
-                progress()
+                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {fname}")
 
             try:
                 file_ok = Path(fname).is_file()
@@ -459,7 +461,7 @@ class RepoMap:
 
         for ident in idents:
             if progress:
-                progress()
+                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {ident}")
 
             definers = defines[ident]
 
@@ -512,7 +514,7 @@ class RepoMap:
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
             if progress:
-                progress()
+                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {src}")
 
             src_rank = ranked[src]
             total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
@@ -621,7 +623,7 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        spin = Spinner("Updating repo map")
+        spin = Spinner(UPDATING_REPO_MAP_MESSAGE)
 
         ranked_tags = self.get_ranked_tags(
             chat_fnames,
@@ -655,7 +657,11 @@ class RepoMap:
         while lower_bound <= upper_bound:
             # dump(lower_bound, middle, upper_bound)
 
-            spin.step()
+            if middle > 1500:
+                show_tokens = f"{middle / 1000.0:.1f}K"
+            else:
+                show_tokens = str(middle)
+            spin.step(f"{UPDATING_REPO_MAP_MESSAGE}: {show_tokens} tokens")
 
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)

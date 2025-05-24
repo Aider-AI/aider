@@ -47,6 +47,7 @@ class Commands:
             parser=self.parser,
             verbose=self.verbose,
             editor=self.editor,
+            original_read_only_fnames=self.original_read_only_fnames,
         )
 
     def __init__(
@@ -345,7 +346,7 @@ class Commands:
             return
 
         commit_message = args.strip() if args else None
-        self.coder.repo.commit(message=commit_message)
+        self.coder.repo.commit(message=commit_message, coder=self.coder)
 
     def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"
@@ -1391,7 +1392,30 @@ class Commands:
         "Print out the current settings"
         settings = format_settings(self.parser, self.args)
         announcements = "\n".join(self.coder.get_announcements())
+
+        # Build metadata for the active models (main, editor, weak)
+        model_sections = []
+        active_models = [
+            ("Main model", self.coder.main_model),
+            ("Editor model", getattr(self.coder.main_model, "editor_model", None)),
+            ("Weak model", getattr(self.coder.main_model, "weak_model", None)),
+        ]
+        for label, model in active_models:
+            if not model:
+                continue
+            info = getattr(model, "info", {}) or {}
+            if not info:
+                continue
+            model_sections.append(f"{label} ({model.name}):")
+            for k, v in sorted(info.items()):
+                model_sections.append(f"  {k}: {v}")
+            model_sections.append("")  # blank line between models
+
+        model_metadata = "\n".join(model_sections)
+
         output = f"{announcements}\n{settings}"
+        if model_metadata:
+            output += "\n" + model_metadata
         self.io.tool_output(output)
 
     def completions_raw_load(self, document, complete_event):
