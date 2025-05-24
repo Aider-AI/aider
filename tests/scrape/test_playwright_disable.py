@@ -1,7 +1,5 @@
-import pytest
-from unittest.mock import MagicMock
+from aider.scrape import Scraper
 
-from aider.scrape import install_playwright, Scraper
 
 class DummyIO:
     def __init__(self):
@@ -21,17 +19,21 @@ class DummyIO:
 
 def test_scraper_disable_playwright_flag(monkeypatch):
     io = DummyIO()
-    # Simulate that playwright is not available (disable_playwright just means playwright_available=False)
+    # Simulate that playwright is not available
+    # (disable_playwright just means playwright_available=False)
     scraper = Scraper(print_error=io.tool_error, playwright_available=False)
     # Patch scrape_with_httpx to check it is called
     called = {}
+
     def fake_httpx(url):
-        called['called'] = True
+        called["called"] = True
         return "plain text", "text/plain"
+
     scraper.scrape_with_httpx = fake_httpx
     content = scraper.scrape("http://example.com")
     assert content == "plain text"
-    assert called['called']
+    assert called["called"]
+
 
 def test_scraper_enable_playwright(monkeypatch):
     io = DummyIO()
@@ -39,13 +41,16 @@ def test_scraper_enable_playwright(monkeypatch):
     scraper = Scraper(print_error=io.tool_error, playwright_available=True)
     # Patch scrape_with_playwright to check it is called
     called = {}
+
     def fake_playwright(url):
-        called['called'] = True
+        called["called"] = True
         return "<html>hi</html>", "text/html"
+
     scraper.scrape_with_playwright = fake_playwright
     content = scraper.scrape("http://example.com")
     assert content.startswith("hi") or "<html>" in content
-    assert called['called']
+    assert called["called"]
+
 
 def test_commands_web_disable_playwright(monkeypatch):
     """
@@ -59,16 +64,22 @@ def test_commands_web_disable_playwright(monkeypatch):
             self.outputs = []
             self.warnings = []
             self.errors = []
+
         def tool_output(self, msg, *a, **k):
             self.outputs.append(msg)
+
         def tool_warning(self, msg, *a, **k):
             self.warnings.append(msg)
+
         def tool_error(self, msg, *a, **k):
             self.errors.append(msg)
+
         def read_text(self, filename, silent=False):
             return ""
+
         def confirm_ask(self, *a, **k):
             return True
+
         def print(self, *a, **k):
             pass
 
@@ -77,18 +88,25 @@ def test_commands_web_disable_playwright(monkeypatch):
         def __init__(self):
             self.cur_messages = []
             self.main_model = type("M", (), {"edit_format": "code", "name": "dummy", "info": {}})
+
         def get_rel_fname(self, fname):
             return fname
+
         def get_inchat_relative_files(self):
             return []
+
         def abs_root_path(self, fname):
             return fname
+
         def get_all_abs_files(self):
             return []
+
         def get_announcements(self):
             return []
+
         def format_chat_chunks(self):
             return type("Chunks", (), {"repo": [], "readonly_files": [], "chat_files": []})()
+
         def event(self, *a, **k):
             pass
 
@@ -99,6 +117,7 @@ def test_commands_web_disable_playwright(monkeypatch):
     class DummyScraper:
         def __init__(self, **kwargs):
             self.called = False
+
         def scrape(self, url):
             self.called = True
             return "dummy content"

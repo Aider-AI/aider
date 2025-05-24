@@ -492,6 +492,8 @@ def summarize_results(dirname, stats_languages=None):
     res.syntax_errors = 0
     res.indentation_errors = 0
     res.lazy_comments = 0
+    res.prompt_tokens = 0
+    res.completion_tokens = 0
 
     res.reasoning_effort = None
     res.thinking_tokens = None
@@ -522,6 +524,9 @@ def summarize_results(dirname, stats_languages=None):
 
         res.syntax_errors += results.get("syntax_errors", 0)
         res.indentation_errors += results.get("indentation_errors", 0)
+
+        res.prompt_tokens += results.get("prompt_tokens", 0)
+        res.completion_tokens += results.get("completion_tokens", 0)
 
         res.reasoning_effort = results.get("reasoning_effort")
         res.thinking_tokens = results.get("thinking_tokens")
@@ -590,6 +595,8 @@ def summarize_results(dirname, stats_languages=None):
     show("syntax_errors")
     show("indentation_errors")
     show("exhausted_context_windows")
+    show("prompt_tokens", red=None)
+    show("completion_tokens", red=None)
     show("test_timeouts")
     print(f"  total_tests: {res.total_tests}")
 
@@ -777,7 +784,7 @@ def run_test_real(
     instructions += prompts.instructions_addendum.format(file_list=file_list)
 
     io = InputOutput(
-        pretty=True,
+        pretty=False,
         yes=True,
         chat_history_file=history_fname,
     )
@@ -950,6 +957,8 @@ def run_test_real(
         indentation_errors=indentation_errors,
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
         reasoning_effort=reasoning_effort,
+        prompt_tokens=coder.total_tokens_sent,
+        completion_tokens=coder.total_tokens_received,
         thinking_tokens=thinking_tokens,
         chat_hashes=list(
             zip(

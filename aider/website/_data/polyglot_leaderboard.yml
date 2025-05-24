@@ -1250,3 +1250,60 @@
   versions: 0.82.4.dev
   seconds_per_case: 165.3
   total_cost: 37.4104
+
+- dirname: 2025-05-08-03-20-24--qwen3-32b-default
+  test_cases: 225
+  model: Qwen3 32B
+  edit_format: diff
+  commit_hash: aaacee5-dirty, aeaf259
+  pass_rate_1: 14.2
+  pass_rate_2: 40.0
+  pass_num_1: 32
+  pass_num_2: 90
+  percent_cases_well_formed: 83.6
+  error_outputs: 119
+  num_malformed_responses: 50
+  num_with_malformed_responses: 37
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 12
+  prompt_tokens: 317591
+  completion_tokens: 120418
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openrouter/qwen/qwen3-32b
+  date: 2025-05-08
+  versions: 0.82.4.dev
+  seconds_per_case: 372.2
+  total_cost: 0.7603
+
+- dirname: 2025-05-09-17-02-02--qwen3-235b-a22b.unthink_16k_diff
+  test_cases: 225
+  model: Qwen3 235B A22B diff, no think, Alibaba API
+  edit_format: diff
+  commit_hash: 91d7fbd-dirty
+  pass_rate_1: 28.9
+  pass_rate_2: 59.6
+  pass_num_1: 65
+  pass_num_2: 134
+  percent_cases_well_formed: 92.9
+  error_outputs: 22
+  num_malformed_responses: 22
+  num_with_malformed_responses: 16
+  user_asks: 111
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2816192
+  completion_tokens: 342062
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/qwen3-235b-a22b
+  date: 2025-05-09
+  versions: 0.82.4.dev
+  seconds_per_case: 45.4
+  total_cost: 0.0000
+  

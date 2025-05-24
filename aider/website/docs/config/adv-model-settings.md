@@ -81,7 +81,7 @@ You can override or add settings for any model by creating a `.aider.model.setti
 If the files above exist, they will be loaded in that order. 
 Files loaded last will take priority.
 
-The yaml file should be a list of dictionary objects for each model.
+The YAML file should be a list of dictionary objects for each model.
 
 
 ### Passing extra params to litellm.completion
@@ -644,6 +644,7 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
   accepts_settings:
+  - reasoning_effort
   - thinking_tokens
 
 - name: gemini/gemini-1.5-flash-002
@@ -678,6 +679,7 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
   accepts_settings:
+  - reasoning_effort
   - thinking_tokens
 
 - name: gemini/gemini-2.5-pro-exp-03-25
@@ -1222,7 +1224,7 @@ cog.out("```\n")
     max_tokens: 8192
   caches_by_default: true
 
-- name: openrouter/google/gemini-2.5-pro-exp-03-25:free
+- name: openrouter/google/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   weak_model_name: openrouter/google/gemini-2.0-flash-exp:free
   use_repo_map: true
@@ -1449,6 +1451,7 @@ cog.out("```\n")
   edit_format: diff
   use_repo_map: true
   accepts_settings:
+  - reasoning_effort
   - thinking_tokens
 
 - name: vertex_ai/claude-3-5-haiku@20241022

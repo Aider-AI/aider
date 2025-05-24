@@ -26,6 +26,8 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
 
+from rich.console import Console
+
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands
@@ -45,6 +47,7 @@ from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
+from aider.waiting import WaitingSpinner
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -108,8 +111,6 @@ class Coder:
     partial_response_content = ""
     commit_before_message = []
     message_cost = 0.0
-    message_tokens_sent = 0
-    message_tokens_received = 0
     add_cache_headers = False
     cache_warming_thread = None
     num_cache_warming_pings = 0
@@ -175,6 +176,8 @@ class Coder:
                 commands=from_coder.commands.clone(),
                 total_cost=from_coder.total_cost,
                 ignore_mentions=from_coder.ignore_mentions,
+                total_tokens_sent=from_coder.total_tokens_sent,
+                total_tokens_received=from_coder.total_tokens_received,
                 file_watcher=from_coder.file_watcher,
             )
             use_kwargs.update(update)  # override to complete the switch
@@ -327,6 +330,8 @@ class Coder:
         chat_language=None,
         detect_urls=True,
         ignore_mentions=None,
+        total_tokens_sent=0,
+        total_tokens_received=0,
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
@@ -373,6 +378,10 @@ class Coder:
         self.need_commit_before_edits = set()
 
         self.total_cost = total_cost
+        self.total_tokens_sent = total_tokens_sent
+        self.total_tokens_received = total_tokens_received
+        self.message_tokens_sent = 0
+        self.message_tokens_received = 0
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -436,6 +445,7 @@ class Coder:
             fname = Path(fname)
             if self.repo and self.repo.git_ignored_file(fname):
                 self.io.tool_warning(f"Skipping {fname} that matches gitignore spec.")
+                continue
 
             if self.repo and self.repo.ignored_file(fname):
                 self.io.tool_warning(f"Skipping {fname} that matches aiderignore spec.")
@@ -570,6 +580,15 @@ class Coder:
             return False
 
         return True
+
+    def _stop_waiting_spinner(self):
+        """Stop and clear the waiting spinner if it is running."""
+        spinner = getattr(self, "waiting_spinner", None)
+        if spinner:
+            try:
+                spinner.stop()
+            finally:
+                self.waiting_spinner = None
 
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
@@ -960,6 +979,9 @@ class Coder:
         return inp
 
     def keyboard_interrupt(self):
+        # Ensure cursor is visible on exit
+        Console().show_cursor(True)
+
         now = time.time()
 
         thresh = 2  # seconds
@@ -1028,6 +1050,9 @@ class Coder:
         if not lang_code:
             return None
 
+        if lang_code.upper() in ("C", "POSIX"):
+            return None
+
         # Probably already a language name
         if (
             len(lang_code) > 3
@@ -1058,7 +1083,8 @@ class Coder:
             "ko": "Korean",
             "ru": "Russian",
         }
-        return fallback.get(lang_code.split("_")[0].lower(), lang_code)
+        primary_lang_code = lang_code.replace("-", "_").split("_")[0].lower()
+        return fallback.get(primary_lang_code, lang_code)
 
     def get_user_language(self):
         """
@@ -1069,6 +1095,7 @@ class Coder:
         2. ``locale.getlocale()``
         3. ``LANG`` / ``LANGUAGE`` / ``LC_ALL`` / ``LC_MESSAGES`` environment variables
         """
+
         # Explicit override
         if self.chat_language:
             return self.normalize_language(self.chat_language)
@@ -1077,9 +1104,11 @@ class Coder:
         try:
             lang = locale.getlocale()[0]
             if lang:
-                return self.normalize_language(lang)
+                lang = self.normalize_language(lang)
+            if lang:
+                return lang
         except Exception:
-            pass  # pragma: no cover
+            pass
 
         # Environment variables
         for env_var in ("LANG", "LANGUAGE", "LC_ALL", "LC_MESSAGES"):
@@ -1161,10 +1190,10 @@ class Coder:
             )
             rename_with_shell = ""
 
-        if self.chat_language:
-            language = self.chat_language
+        if user_lang:  # user_lang is the result of self.get_user_language()
+            language = user_lang
         else:
-            language = "the same language they are using"
+            language = "the same language they are using"  # Default if no specific lang detected
 
         if self.fence[0] == "`" * 4:
             quad_backtick_reminder = (
@@ -1187,14 +1216,13 @@ class Coder:
             language=language,
         )
 
-        if self.main_model.system_prompt_prefix:
-            prompt = self.main_model.system_prompt_prefix + prompt
-
         return prompt
 
     def format_chat_chunks(self):
         self.choose_fence()
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
+        if self.main_model.system_prompt_prefix:
+            main_sys = self.main_model.system_prompt_prefix + "\n" + main_sys
 
         example_messages = []
         if self.main_model.examples_as_sys_msg:
@@ -1403,8 +1431,13 @@ class Coder:
             utils.show_messages(messages, functions=self.functions)
 
         self.multi_response_content = ""
-        if self.show_pretty() and self.stream:
-            self.mdstream = self.io.get_assistant_mdstream()
+        if self.show_pretty():
+            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
+            self.waiting_spinner.start()
+            if self.stream:
+                self.mdstream = self.io.get_assistant_mdstream()
+            else:
+                self.mdstream = None
         else:
             self.mdstream = None
 
@@ -1476,6 +1509,9 @@ class Coder:
             if self.mdstream:
                 self.live_incremental_response(True)
                 self.mdstream = None
+
+            # Ensure any waiting spinner is stopped
+            self._stop_waiting_spinner()
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
             self.remove_reasoning_content()
@@ -1793,6 +1829,9 @@ class Coder:
                     self.io.ai_output(json.dumps(args, indent=4))
 
     def show_send_output(self, completion):
+        # Stop spinner once we have a response
+        self._stop_waiting_spinner()
+
         if self.verbose:
             print(completion)
 
@@ -1907,6 +1946,8 @@ class Coder:
             except AttributeError:
                 pass
 
+            if received_content:
+                self._stop_waiting_spinner()
             self.partial_response_content += text
 
             if self.show_pretty():
@@ -2056,6 +2097,9 @@ class Coder:
     def show_usage_report(self):
         if not self.usage_report:
             return
+
+        self.total_tokens_sent += self.message_tokens_sent
+        self.total_tokens_received += self.message_tokens_received
 
         self.io.tool_output(self.usage_report)
 

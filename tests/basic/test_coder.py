@@ -649,7 +649,7 @@ TWO
                 coder.partial_response_function_call = dict()
                 return []
 
-            def mock_get_commit_message(diffs, context):
+            def mock_get_commit_message(diffs, context, user_language=None):
                 self.assertNotIn("one", diffs)
                 self.assertNotIn("ONE", diffs)
                 return "commit message"
@@ -704,7 +704,7 @@ three
 
             saved_diffs = []
 
-            def mock_get_commit_message(diffs, context):
+            def mock_get_commit_message(diffs, context, user_language=None):
                 saved_diffs.append(diffs)
                 return "commit message"
 
@@ -782,7 +782,7 @@ two
 
             saved_diffs = []
 
-            def mock_get_commit_message(diffs, context):
+            def mock_get_commit_message(diffs, context, user_language=None):
                 saved_diffs.append(diffs)
                 return "commit message"
 
@@ -833,6 +833,36 @@ two
             self.assertNotIn(fname1, str(coder.abs_fnames))
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
+
+    def test_skip_gitignored_files_on_init(self):
+        with GitTemporaryDirectory() as _:
+            repo_path = Path(".")
+            repo = git.Repo.init(repo_path)
+
+            ignored_file = repo_path / "ignored_by_git.txt"
+            ignored_file.write_text("This file should be ignored by git.")
+
+            regular_file = repo_path / "regular_file.txt"
+            regular_file.write_text("This is a regular file.")
+
+            gitignore_content = "ignored_by_git.txt\n"
+            (repo_path / ".gitignore").write_text(gitignore_content)
+
+            repo.index.add([str(regular_file), ".gitignore"])
+            repo.index.commit("Initial commit with gitignore and regular file")
+
+            mock_io = MagicMock()
+            mock_io.tool_warning = MagicMock()
+
+            fnames_to_add = [str(ignored_file), str(regular_file)]
+
+            coder = Coder.create(self.GPT35, None, mock_io, fnames=fnames_to_add)
+
+            self.assertNotIn(str(ignored_file.resolve()), coder.abs_fnames)
+            self.assertIn(str(regular_file.resolve()), coder.abs_fnames)
+            mock_io.tool_warning.assert_any_call(
+                f"Skipping {ignored_file.name} that matches gitignore spec."
+            )
 
     def test_check_for_urls(self):
         io = InputOutput(yes=True)
@@ -1180,6 +1210,122 @@ This command will print 'Hello, World!' to the console."""
             # Verify message structure remains valid
             sanity_check_messages(coder.cur_messages)
             self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
+
+    def test_normalize_language(self):
+        coder = Coder.create(self.GPT35, None, io=InputOutput())
+
+        # Test None and empty
+        self.assertIsNone(coder.normalize_language(None))
+        self.assertIsNone(coder.normalize_language(""))
+
+        # Test "C" and "POSIX"
+        self.assertIsNone(coder.normalize_language("C"))
+        self.assertIsNone(coder.normalize_language("POSIX"))
+
+        # Test already formatted names
+        self.assertEqual(coder.normalize_language("English"), "English")
+        self.assertEqual(coder.normalize_language("French"), "French")
+
+        # Test common locale codes (fallback map, assuming babel is not installed or fails)
+        with patch("aider.coders.base_coder.Locale", None):
+            self.assertEqual(coder.normalize_language("en_US"), "English")
+            self.assertEqual(coder.normalize_language("fr_FR"), "French")
+            self.assertEqual(coder.normalize_language("es"), "Spanish")
+            self.assertEqual(coder.normalize_language("de_DE.UTF-8"), "German")
+            self.assertEqual(
+                coder.normalize_language("zh-CN"), "Chinese"
+            )  # Test hyphen in fallback
+            self.assertEqual(coder.normalize_language("ja"), "Japanese")
+            self.assertEqual(
+                coder.normalize_language("unknown_code"), "unknown_code"
+            )  # Fallback to original
+
+        # Test with babel.Locale mocked (available)
+        mock_babel_locale = MagicMock()
+        mock_locale_instance = MagicMock()
+        mock_babel_locale.parse.return_value = mock_locale_instance
+
+        with patch("aider.coders.base_coder.Locale", mock_babel_locale):
+            mock_locale_instance.get_display_name.return_value = "english"  # For en_US
+            self.assertEqual(coder.normalize_language("en_US"), "English")
+            mock_babel_locale.parse.assert_called_with("en_US")
+            mock_locale_instance.get_display_name.assert_called_with("en")
+
+            mock_locale_instance.get_display_name.return_value = "french"  # For fr-FR
+            self.assertEqual(coder.normalize_language("fr-FR"), "French")  # Test with hyphen
+            mock_babel_locale.parse.assert_called_with("fr_FR")  # Hyphen replaced
+            mock_locale_instance.get_display_name.assert_called_with("en")
+
+        # Test with babel.Locale raising an exception (simulating parse failure)
+        mock_babel_locale_error = MagicMock()
+        mock_babel_locale_error.parse.side_effect = Exception("Babel parse error")
+        with patch("aider.coders.base_coder.Locale", mock_babel_locale_error):
+            self.assertEqual(coder.normalize_language("en_US"), "English")  # Falls back to map
+
+    def test_get_user_language(self):
+        io = InputOutput()
+        coder = Coder.create(self.GPT35, None, io=io)
+
+        # 1. Test with self.chat_language set
+        coder.chat_language = "fr_CA"
+        with patch.object(coder, "normalize_language", return_value="French Canadian") as mock_norm:
+            self.assertEqual(coder.get_user_language(), "French Canadian")
+            mock_norm.assert_called_once_with("fr_CA")
+        coder.chat_language = None  # Reset
+
+        # 2. Test with locale.getlocale()
+        with patch("locale.getlocale", return_value=("en_GB", "UTF-8")) as mock_getlocale:
+            with patch.object(
+                coder, "normalize_language", return_value="British English"
+            ) as mock_norm:
+                self.assertEqual(coder.get_user_language(), "British English")
+                mock_getlocale.assert_called_once()
+                mock_norm.assert_called_once_with("en_GB")
+
+        # Test with locale.getlocale() returning None or empty
+        with patch("locale.getlocale", return_value=(None, None)) as mock_getlocale:
+            with patch("os.environ.get") as mock_env_get:  # Ensure env vars are not used yet
+                mock_env_get.return_value = None
+                self.assertIsNone(coder.get_user_language())  # Should be None if nothing found
+
+        # 3. Test with environment variables: LANG
+        with patch(
+            "locale.getlocale", side_effect=Exception("locale error")
+        ):  # Mock locale to fail
+            with patch("os.environ.get") as mock_env_get:
+                mock_env_get.side_effect = lambda key: "de_DE.UTF-8" if key == "LANG" else None
+                with patch.object(coder, "normalize_language", return_value="German") as mock_norm:
+                    self.assertEqual(coder.get_user_language(), "German")
+                    mock_env_get.assert_any_call("LANG")
+                    mock_norm.assert_called_once_with("de_DE")
+
+        # Test LANGUAGE (takes precedence over LANG if both were hypothetically checked
+        # by os.environ.get, but our code checks in order, so we mock the first one it finds)
+        with patch("locale.getlocale", side_effect=Exception("locale error")):
+            with patch("os.environ.get") as mock_env_get:
+                mock_env_get.side_effect = lambda key: "es_ES" if key == "LANGUAGE" else None
+                with patch.object(coder, "normalize_language", return_value="Spanish") as mock_norm:
+                    self.assertEqual(coder.get_user_language(), "Spanish")
+                    mock_env_get.assert_any_call("LANGUAGE")  # LANG would be called first
+                    mock_norm.assert_called_once_with("es_ES")
+
+        # 4. Test priority: chat_language > locale > env
+        coder.chat_language = "it_IT"
+        with patch("locale.getlocale", return_value=("en_US", "UTF-8")) as mock_getlocale:
+            with patch("os.environ.get", return_value="de_DE") as mock_env_get:
+                with patch.object(
+                    coder, "normalize_language", side_effect=lambda x: x.upper()
+                ) as mock_norm:
+                    self.assertEqual(coder.get_user_language(), "IT_IT")  # From chat_language
+                    mock_norm.assert_called_once_with("it_IT")
+                    mock_getlocale.assert_not_called()
+                    mock_env_get.assert_not_called()
+        coder.chat_language = None
+
+        # 5. Test when no language is found
+        with patch("locale.getlocale", side_effect=Exception("locale error")):
+            with patch("os.environ.get", return_value=None) as mock_env_get:
+                self.assertIsNone(coder.get_user_language())
 
     def test_architect_coder_auto_accept_true(self):
         with GitTemporaryDirectory():

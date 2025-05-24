@@ -82,9 +82,10 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--multiline | --no-multiline]
              [--notifications | --no-notifications]
              [--notifications-command]
-             [--detect-urls | --no-detect-urls] [--editor] [--opus]
-             [--sonnet] [--haiku] [--4] [--4o] [--mini] [--4-turbo]
-             [--35turbo] [--deepseek] [--o1-mini] [--o1-preview]
+             [--detect-urls | --no-detect-urls] [--editor]
+             [--shell-completions] [--opus] [--sonnet] [--haiku]
+             [--4] [--4o] [--mini] [--4-turbo] [--35turbo]
+             [--deepseek] [--o1-mini] [--o1-preview]
 
 ```
 
@@ -766,6 +767,10 @@ Aliases:
 ### `--editor VALUE`
 Specify which editor to use for the /editor command  
 Environment variable: `AIDER_EDITOR`  
+
+### `--shell-completions SHELL`
+Print shell completion script for the specified SHELL and exit. Supported shells: bash, tcsh, zsh. Example: aider --shell-completions bash  
+Environment variable: `AIDER_SHELL_COMPLETIONS`  
 
 ## Deprecated model settings:
 

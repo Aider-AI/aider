@@ -3,6 +3,7 @@
 import os
 import re
 import subprocess
+import sys
 import tempfile
 
 from history_prompts import history_prompt
@@ -52,26 +53,11 @@ def run_git_diff():
     return result.stdout
 
 
-def run_plain_git_log():
-    latest_ver = get_latest_version_from_history()
-    cmd = [
-        "git",
-        "log",
-        f"v{latest_ver}..HEAD",
-        "--",
-        "aider/",
-        ":!aider/website/",
-        ":!scripts/",
-        ":!HISTORY.md",
-    ]
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    return result.stdout
-
-
 def main():
+    aider_args = sys.argv[1:]
+
     # Get the git log and diff output
     log_content = run_git_log()
-    plain_log_content = run_plain_git_log()
     diff_content = run_git_diff()
 
     # Extract relevant portion of HISTORY.md
@@ -108,13 +94,14 @@ def main():
         tmp_diff.write(diff_content)
         diff_path = tmp_diff.name
 
-    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".plain_log") as tmp_plain_log:
-        tmp_plain_log.write(plain_log_content)
-        plain_log_path = tmp_plain_log.name
-
     with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".md") as tmp_hist:
         tmp_hist.write(relevant_history)
         hist_path = tmp_hist.name
+
+    # Display line counts
+    print(f"Lines in {hist_path}: {len(relevant_history.splitlines())}")
+    print(f"Lines in {log_path}: {len(log_content.splitlines())}")
+    print(f"Lines in {diff_path}: {len(diff_content.splitlines())}")
 
     # Run blame to get aider percentage
     blame_result = subprocess.run(["python3", "scripts/blame.py"], capture_output=True, text=True)
@@ -129,14 +116,12 @@ def main():
         "--read",
         log_path,
         "--read",
-        plain_log_path,
-        "--read",
         diff_path,
         "--msg",
         message,
         "--no-git",
         "--no-auto-lint",
-    ]
+    ] + aider_args
     subprocess.run(cmd)
 
     # Read back the updated history
@@ -164,7 +149,6 @@ def main():
 
     # Cleanup
     os.unlink(log_path)
-    os.unlink(plain_log_path)
     os.unlink(diff_path)
     os.unlink(hist_path)
 

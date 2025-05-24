@@ -13,10 +13,12 @@ Generate a one-line commit message for those changes.
 The commit message should be structured as follows: <type>: <description>
 Use these for <type>: fix, feat, build, chore, ci, docs, style, refactor, perf, test
 
-Ensure the commit message:
+Ensure the commit message:{language_instruction}
 - Starts with the appropriate prefix.
 - Is in the imperative mood (e.g., \"add feature\" not \"added feature\" or \"adding feature\").
 - Does not exceed 72 characters.
+
+Reply only with the one-line commit message, without any additional text, explanations, or line breaks.
 
 Reply only with the one-line commit message, without any additional text, explanations, \
 or line breaks.
