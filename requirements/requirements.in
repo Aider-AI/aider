@@ -1,4 +1,5 @@
 pydub
+configargparse
 GitPython
 jsonschema
 rich
@@ -45,6 +46,3 @@ scipy
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
 # Uses importlib-metadata
 importlib-metadata<8.0.0
-
-# configargparse was 1.7 pulled
-configargparse>1.7

@@ -54,7 +54,7 @@ filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-fonttools==4.58.0
+fonttools==4.57.0
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
@@ -63,13 +63,13 @@ google-api-core[grpc]==2.24.2
     #   -c requirements/common-constraints.txt
     #   google-cloud-bigquery
     #   google-cloud-core
-google-auth==2.40.2
+google-auth==2.40.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
     #   google-cloud-bigquery
     #   google-cloud-core
-google-cloud-bigquery==3.33.0
+google-cloud-bigquery==3.31.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -99,7 +99,7 @@ grpcio-status==1.71.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
-identify==2.6.12
+identify==2.6.10
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
@@ -180,7 +180,7 @@ platformdirs==4.3.8
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-pluggy==1.6.0
+pluggy==1.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
@@ -269,7 +269,7 @@ semver==3.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-setuptools==80.8.0
+setuptools==80.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   pip-tools
@@ -281,7 +281,7 @@ six==1.17.0
     # via
     #   -c requirements/common-constraints.txt
     #   python-dateutil
-typer==0.15.4
+typer==0.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -297,7 +297,7 @@ urllib3==2.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.7.8
+uv==0.7.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
