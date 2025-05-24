@@ -416,9 +416,9 @@ class InputOutput:
         # Conditionally add 'completion-menu.completion.current' style
         completion_menu_current_style = []
         if self.completion_menu_current_bg_color:
-            completion_menu_current_style.append(self.completion_menu_current_bg_color)
+            completion_menu_current_style.append(f"bg:{self.completion_menu_current_bg_color}")
         if self.completion_menu_current_color:
-            completion_menu_current_style.append(f"bg:{self.completion_menu_current_color}")
+            completion_menu_current_style.append(self.completion_menu_current_color)
         if completion_menu_current_style:
             style_dict["completion-menu.completion.current"] = " ".join(
                 completion_menu_current_style
