@@ -208,8 +208,8 @@ cog.outl("```")
 #restore-chat-history: false
 
 ## Specify a directory to archive dated chat history files.
-## If set, files like YYYY-MM-DD HH-MM.aider.md will be saved here,
-## overriding the chat-history-file setting.
+## If set, files like YYYY-MM-DD HH-MM.aider.md (or YYYY-MM-DD HH-MM TASK_TITLE.aider.md if --task is used)
+## will be saved here, overriding the chat-history-file setting.
 #chat-history-archive: .ai-chats
 
 ## Log the conversation with the LLM to this file (for example, .aider.llm.history)
