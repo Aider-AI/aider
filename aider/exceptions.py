@@ -58,8 +58,10 @@ class LiteLLMExceptions:
         self._load()
 
     def _load(self, strict=False):
+        # Import litellm - json.load is already patched in aider.llm
         import litellm
 
+        # Load litellm exceptions
         for var in dir(litellm):
             if var.endswith("Error"):
                 if var not in self.exception_info:

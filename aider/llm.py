@@ -1,6 +1,8 @@
 import importlib
+import json
 import os
 import warnings
+from pathlib import Path
 
 from aider.dump import dump  # noqa: F401
 
@@ -16,6 +18,27 @@ os.environ["LITELLM_MODE"] = "PRODUCTION"
 # `import litellm` takes 1.5 seconds, defer it!
 
 VERBOSE = False
+
+# Patch json.load to handle UTF-8 encoding for litellm
+original_json_load = json.load
+
+def patched_json_load(fp, *args, **kwargs):
+    try:
+        # First try the original method
+        return original_json_load(fp, *args, **kwargs)
+    except UnicodeDecodeError:
+        # If it fails with UnicodeDecodeError, try with UTF-8 encoding
+        try:
+            # Read the file content with UTF-8 encoding
+            content = Path(fp.name).read_text(encoding='utf-8')
+            # Parse the content as JSON
+            return json.loads(content, *args, **kwargs)
+        except Exception:
+            # If that also fails, re-raise the original exception
+            raise
+
+# Apply the monkey patch
+json.load = patched_json_load
 
 
 class LazyLiteLLM:
