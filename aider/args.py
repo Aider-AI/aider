@@ -698,6 +698,18 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Specify the input device name for voice recording",
     )
+    group.add_argument(
+        "--voice-local",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Use local transcription with WhisperCpp (default: False)",
+    )
+    group.add_argument(
+        "--voice-local-model",
+        metavar="VOICE_LOCAL_MODEL",
+        default="tiny",
+        help="Model to use for local transcription with WhisperCpp (default: tiny)",
+    )
 
     ######
     group = parser.add_argument_group("Other settings")
