@@ -219,8 +219,6 @@ class Voice:
             model = WhisperModel(
                 self.local_model,
                 language=language,
-                # print_realtime=True,
-                # print_progress=False,
             )
             segments = model.transcribe(filename)
             return "".join(segment.text for segment in segments)
