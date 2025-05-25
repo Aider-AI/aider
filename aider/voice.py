@@ -17,6 +17,9 @@ try:
 except ImportError:
     HAS_WHISPER_CPP = False
 
+from pydub import AudioSegment
+from pydub.exceptions import CouldntDecodeError, CouldntEncodeError
+
 from .dump import dump  # noqa: F401
 
 warnings.filterwarnings(
@@ -24,13 +27,6 @@ warnings.filterwarnings(
     message="Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work",
 )
 warnings.filterwarnings("ignore", category=SyntaxWarning)
-
-try:
-    from pydub import AudioSegment
-    from pydub.exceptions import CouldntDecodeError, CouldntEncodeError
-except ImportError:
-    AudioSegment = None
-    CouldntDecodeError = CouldntEncodeError = Exception
 
 try:
     import soundfile as sf
