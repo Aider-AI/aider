@@ -10,9 +10,7 @@
         "output_cost_per_token": 0.00000219,
         "litellm_provider": "deepseek",
         "mode": "chat",
-        //"supports_function_calling": true, 
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-r1:free": {
@@ -26,9 +24,7 @@
         "output_cost_per_token": 0.0,
         "litellm_provider": "openrouter",
         "mode": "chat",
-        //"supports_function_calling": true, 
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-chat:free": {
@@ -42,9 +38,7 @@
         "output_cost_per_token": 0.0,
         "litellm_provider": "openrouter",
         "mode": "chat",
-        //"supports_function_calling": true, 
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-chat-v3-0324": {
@@ -58,9 +52,7 @@
         "output_cost_per_token": 0.00000219,
         "litellm_provider": "openrouter",
         "mode": "chat",
-        //"supports_function_calling": true, 
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-chat-v3-0324:free": {
@@ -81,7 +73,7 @@
         "litellm_provider": "fireworks_ai",
         "input_cost_per_token": 0.000008,
         "output_cost_per_token": 0.000008,
-        "mode": "chat",
+        "mode": "chat"
     },
     "fireworks_ai/accounts/fireworks/models/deepseek-v3-0324": {
         "max_tokens": 160000,
@@ -90,7 +82,7 @@
         "litellm_provider": "fireworks_ai",
         "input_cost_per_token": 0.0000009,
         "output_cost_per_token": 0.0000009,
-        "mode": "chat",
+        "mode": "chat"
     },
     "openrouter/openrouter/quasar-alpha": {
         "max_input_tokens": 1000000,
@@ -267,7 +259,6 @@
         "output_cost_per_character": 0,
         "output_cost_per_token_above_128k_tokens": 0,
         "output_cost_per_character_above_128k_tokens": 0,
-      //"litellm_provider": "vertex_ai-language-models",
         "litellm_provider": "gemini",
         "mode": "chat",
         "supports_system_messages": true,
@@ -537,8 +528,8 @@
         "supported_output_modalities": ["text"],
         "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro-preview"
     },
-  "together_ai/Qwen/Qwen3-235B-A22B-fp8-tput": {
+    "together_ai/Qwen/Qwen3-235B-A22B-fp8-tput": {
         "input_cost_per_token": 0.0000002,
-        "output_cost_per_token": 0.0000006,
-  }
+        "output_cost_per_token": 0.0000006
+    }
 }
