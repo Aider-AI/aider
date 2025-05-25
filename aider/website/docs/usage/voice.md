@@ -20,8 +20,8 @@ Your voice coding instructions will be transcribed,
 as if you had typed them into
 the aider chat session.
 
-By default, `aider` will try to use OpenAIs whisper model using the API. This requires an OpenAI API key to be set.
-Local voice transcription using `pywhisercpp` can be enabled by passing the `--voice-local` argument to `aider`.
+By default, aider will try to use OpenAIs whisper model using the API. This requires an OpenAI API key to be set.
+Local voice transcription using `pywhisercpp` can be enabled by passing the `--voice-local` argument to aider.
 This will download and use the `tiny` model. A different local model can be specified with the `--voice-local-model` argument.
 
 See the [installation instructions](https://aider.chat/docs/install/optional.html#enable-voice-coding) for
