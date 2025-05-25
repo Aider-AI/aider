@@ -15,4 +15,4 @@ aider/_version.py
 .venv/
 .#*
 .gitattributes
-tmp.benchmarks/
+tmp.benchmarks/.env

@@ -142,7 +142,7 @@
         "deprecation_date": "2025-10-01",
         "supports_tool_choice": true
     },
-    "anthropic/claude-4-sonnet-20250522": {
+    "claude-sonnet-4-20250514": {
         "max_tokens": 8192,
         "max_input_tokens": 1000000,
         "max_output_tokens": 8192,
@@ -161,7 +161,7 @@
         "supports_response_schema": true,
         "supports_tool_choice": true
     },
-    "anthropic/claude-4-opus-20250522": {
+    "claude-opus-4-20250514": {
         "max_tokens": 8192,
         "max_input_tokens": 1000000,
         "max_output_tokens": 8192,
