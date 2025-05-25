@@ -47,18 +47,14 @@ def test_voice_init_invalid_device(mock_sounddevice):
 
 
 def test_voice_init_invalid_format():
-    with patch(
-        "aider.voice.sf", MagicMock()
-    ):  # Need to mock sf to avoid SoundDeviceError
+    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
         with pytest.raises(ValueError) as exc:
             Voice(audio_format="invalid")
         assert "Unsupported audio format" in str(exc.value)
 
 
 def test_callback_processing():
-    with patch(
-        "aider.voice.sf", MagicMock()
-    ):  # Need to mock sf to avoid SoundDeviceError
+    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
         voice = Voice()
         voice.q = queue.Queue()
 
@@ -77,9 +73,7 @@ def test_callback_processing():
 
 
 def test_get_prompt():
-    with patch(
-        "aider.voice.sf", MagicMock()
-    ):  # Need to mock sf to avoid SoundDeviceError
+    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
         voice = Voice()
         voice.start_time = os.times().elapsed
         voice.pct = 0.5  # 50% volume level
@@ -94,9 +88,7 @@ def test_get_prompt():
 def test_record_and_transcribe_keyboard_interrupt():
     with patch("aider.voice.sf", MagicMock()):
         voice = Voice()
-        with patch.object(
-            voice, "_record_and_transcribe", side_effect=KeyboardInterrupt()
-        ):
+        with patch.object(voice, "_record_and_transcribe", side_effect=KeyboardInterrupt()):
             result = voice.record_and_transcribe()
             assert result is None
 

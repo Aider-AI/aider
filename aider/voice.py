@@ -6,6 +6,7 @@ import time
 import warnings
 
 from prompt_toolkit.shortcuts import prompt
+
 from aider.llm import litellm
 
 # Optional imports
@@ -47,9 +48,7 @@ class Voice:
     Supports both OpenAI Whisper API and local WhisperCpp transcription.
     """
 
-    def __init__(
-        self, audio_format="wav", device_name=None, use_local=False, local_model="tiny"
-    ):
+    def __init__(self, audio_format="wav", device_name=None, use_local=False, local_model="tiny"):
         self.use_local = use_local
         self.local_model = local_model
         self.audio_format = audio_format
@@ -97,11 +96,7 @@ class Voice:
 
     def get_prompt(self):
         num = 10
-        cnt = (
-            0
-            if math.isnan(self.pct) or self.pct < self.threshold
-            else int(self.pct * 10)
-        )
+        cnt = 0 if math.isnan(self.pct) or self.pct < self.threshold else int(self.pct * 10)
         bar = "░" * cnt + "█" * (num - cnt)
         bar = bar[:num]
         dur = time.time() - self.start_time
@@ -114,18 +109,14 @@ class Voice:
             return
         except SoundDeviceError as e:
             print(f"Error: {e}")
-            print(
-                "Please ensure you have a working audio input device connected and try again."
-            )
+            print("Please ensure you have a working audio input device connected and try again.")
             return
 
     def _get_target_sample_rate(self):
         if self.use_local:
             return 16000
         try:
-            return int(
-                self.sd.query_devices(self.device_id, "input")["default_samplerate"]
-            )
+            return int(self.sd.query_devices(self.device_id, "input")["default_samplerate"])
         except (TypeError, ValueError, AttributeError):
             return 16000
         except self.sd.PortAudioError:
@@ -168,22 +159,16 @@ class Voice:
         except Exception as e:
             raise SoundDeviceError(f"Unexpected error opening audio stream: {e}")
 
-        with sf.SoundFile(
-            temp_wav, mode="x", samplerate=target_sample_rate, channels=1
-        ) as file:
+        with sf.SoundFile(temp_wav, mode="x", samplerate=target_sample_rate, channels=1) as file:
             while not self.q.empty():
                 file.write(self.q.get())
 
         filename, use_audio_format = self._maybe_convert_audio(temp_wav)
         try:
             if self.use_local:
-                return self._transcribe_local(
-                    filename, use_audio_format, temp_wav, language
-                )
+                return self._transcribe_local(filename, use_audio_format, temp_wav, language)
             else:
-                return self._transcribe_api(
-                    filename, use_audio_format, temp_wav, history, language
-                )
+                return self._transcribe_api(filename, use_audio_format, temp_wav, history, language)
         finally:
             self._cleanup_files(filename, temp_wav, use_audio_format)
 
@@ -211,9 +196,7 @@ class Voice:
 
     def _transcribe_local(self, filename, use_audio_format, temp_wav, language):
         if not HAS_WHISPER_CPP:
-            print(
-                "pywhispercpp is not installed. Please install it to use local transcription."
-            )
+            print("pywhispercpp is not installed. Please install it to use local transcription.")
             return
         try:
             model = WhisperModel(
