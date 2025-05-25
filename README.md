@@ -42,7 +42,7 @@ src="https://img.shields.io/badge/🔄%20Singularity-54%25-e74c3c?style=flat-squ
 ### [Cloud and local LLMs](https://aider.chat/docs/llms.html)
 
 <a href="https://aider.chat/docs/llms.html"><img src="https://aider.chat/assets/icons/brain.svg" width="32" height="32" align="left" valign="middle" style="margin-right:10px"></a>
-Aider works best with Claude 3.7 Sonnet, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
+Aider works best with Claude 4, DeepSeek R1 & Chat V3, OpenAI o1, o3-mini & GPT-4o, but can connect to almost any LLM, including local models.
 
 <br>
 
@@ -112,8 +112,8 @@ cd /to/your/project
 # DeepSeek
 aider --model deepseek --api-key deepseek=<key>
 
-# Claude 3.7 Sonnet
-aider --model sonnet --api-key anthropic=<key>
+# Claude 4
+aider --model claude-4 --api-key anthropic=<key>
 
 # o3-mini
 aider --model o3-mini --api-key openai=<key>
