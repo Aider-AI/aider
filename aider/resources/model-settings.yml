@@ -1451,20 +1451,6 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
-- name: claude-opus-4-20250514
-  edit_format: diff
-  weak_model_name: claude-3-5-haiku-20241022
-  use_repo_map: true
-  examples_as_sys_msg: false
-  extra_params:
-    extra_headers:
-      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
-  cache_control: true
-  editor_model_name: claude-sonnet-4-20250514
-  editor_edit_format: editor-diff
-  accepts_settings: ["thinking_tokens"]
-
 - name: anthropic/claude-sonnet-4-20250514
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
@@ -1568,6 +1554,20 @@
     max_tokens: 64000
   cache_control: true
   editor_model_name: openrouter/anthropic/claude-sonnet-4
+  editor_edit_format: editor-diff
+  accepts_settings: ["thinking_tokens"]
+
+- name: claude-opus-4-20250514
+  edit_format: diff
+  weak_model_name: claude-3-5-haiku-20241022
+  use_repo_map: true
+  examples_as_sys_msg: false
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: claude-sonnet-4-20250514
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
