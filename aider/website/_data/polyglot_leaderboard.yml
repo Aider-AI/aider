@@ -1,3 +1,29 @@
+- dirname: 2025-05-24-07-23-28--mind-link-whole
+  test_cases: 225
+  model: hosted_vllm/mind-link
+  edit_format: whole
+  commit_hash: 73e9ced-dirty
+  pass_rate_1: 37.3
+  pass_rate_2: 84.4
+  pass_num_1: 84
+  pass_num_2: 190
+  percent_cases_well_formed: 100.0
+  error_outputs: 6
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 140
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model hosted_vllm/mind-link
+  date: 2025-05-24
+  versions: 0.82.3.dev
+  seconds_per_case: 86.6
+  total_cost: 0.0000
+  
 - dirname: 2025-02-25-20-23-07--gemini-pro
   test_cases: 225
   model: Gemini 2.0 Pro exp-02-05
