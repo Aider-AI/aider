@@ -506,18 +506,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     if args.chat_history_archive:
         archive_dir = Path(args.chat_history_archive).resolve()
-        datetime_str = datetime.datetime.now().strftime("%Y-%m-%d %H-%M")
+        now = datetime.datetime.now()
 
-        task_title_for_filename = ""
+        datetime_str = now.strftime("%Y-%m-%d %H-%M")
+        dated_filename = f"{datetime_str}.aider.md"
+
         if args.task:
             # Sanitize the task title for use in a filename. Keep only allowed characters.
             allowed_chars = ".,_-+#%&'!()[]=; "
             core_sanitized_title = "".join([c for c in args.task if c.isalnum() or c in allowed_chars]).strip()
 
             if core_sanitized_title:
-                task_title_for_filename = " " + core_sanitized_title
+                date_str = now.strftime("%Y-%m-%d")
+                dated_filename = f"{date_str} {core_sanitized_title}.aider.md"
 
-        dated_filename = f"{datetime_str}{task_title_for_filename}.aider.md"
         final_chat_history_path = archive_dir / dated_filename
 
         os.makedirs(archive_dir, exist_ok=True)
