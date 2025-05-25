@@ -1420,3 +1420,31 @@
   versions: 0.83.3.dev
   seconds_per_case: 44.1
   total_cost: 65.7484
+
+- dirname: 2025-05-25-22-42-53--flash25-05-20
+  test_cases: 225
+  model: gemini-2.5-flash-preview-05-20
+  edit_format: diff
+  commit_hash: a8568c3
+  pass_rate_1: 23.6
+  pass_rate_2: 55.1
+  pass_num_1: 53
+  pass_num_2: 124
+  percent_cases_well_formed: 96.4
+  error_outputs: 8
+  num_malformed_responses: 8
+  num_with_malformed_responses: 8
+  user_asks: 96
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 4512205
+  completion_tokens: 2991967
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-flash-preview-05-20
+  date: 2025-05-25
+  versions: 0.83.3.dev
+  seconds_per_case: 50.4
+  total_cost: 7.6091

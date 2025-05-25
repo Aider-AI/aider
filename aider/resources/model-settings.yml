@@ -1747,3 +1747,7 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
+- name: vertex_ai/gemini-2.5-flash-preview-05-20
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings: ["reasoning_effort", "thinking_tokens"]
