@@ -8,6 +8,7 @@ docker run \
        -v `pwd`:/aider \
        -v `pwd`/tmp.benchmarks/.:/benchmarks \
        -e OPENAI_API_KEY=$OPENAI_API_KEY \
+       -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
        -e HISTFILE=/aider/.bash_history \
        -e PROMPT_COMMAND='history -a' \
        -e HISTCONTROL=ignoredups \
