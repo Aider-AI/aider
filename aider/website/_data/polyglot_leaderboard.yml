@@ -1306,4 +1306,117 @@
   versions: 0.82.4.dev
   seconds_per_case: 45.4
   total_cost: 0.0000
+
+- dirname: 2025-05-24-21-17-54--sonnet4-diff-exuser
+  test_cases: 225
+  model: claude-sonnet-4-20250514 (no thinking)
+  edit_format: diff
+  commit_hash: ef3f8bb-dirty
+  pass_rate_1: 20.4
+  pass_rate_2: 56.4
+  pass_num_1: 46
+  pass_num_2: 127
+  percent_cases_well_formed: 98.2
+  error_outputs: 6
+  num_malformed_responses: 4
+  num_with_malformed_responses: 4
+  user_asks: 129
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 3460663
+  completion_tokens: 433373
+  test_timeouts: 7
+  total_tests: 225
+  command: aider --model claude-sonnet-4-20250514
+  date: 2025-05-24
+  versions: 0.83.3.dev
+  seconds_per_case: 29.8
+  total_cost: 15.8155
   
+- dirname: 2025-05-24-22-10-36--sonnet4-diff-exuser-think32k
+  test_cases: 225
+  model: claude-sonnet-4-20250514 (32k thinking)
+  edit_format: diff
+  commit_hash: e3cb907
+  thinking_tokens: 32000
+  pass_rate_1: 25.8
+  pass_rate_2: 61.3
+  pass_num_1: 58
+  pass_num_2: 138
+  percent_cases_well_formed: 97.3
+  error_outputs: 10
+  num_malformed_responses: 10
+  num_with_malformed_responses: 6
+  user_asks: 111
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2863068
+  completion_tokens: 1271074
+  test_timeouts: 6
+  total_tests: 225
+  command: aider --model claude-sonnet-4-20250514
+  date: 2025-05-24
+  versions: 0.83.3.dev
+  seconds_per_case: 79.9
+  total_cost: 26.5755
+
+- dirname: 2025-05-25-19-57-20--opus4-diff-exuser
+  test_cases: 225
+  model: claude-opus-4-20250514 (no think)
+  edit_format: diff
+  commit_hash: 9ef3211
+  pass_rate_1: 32.9
+  pass_rate_2: 70.7
+  pass_num_1: 74
+  pass_num_2: 159
+  percent_cases_well_formed: 98.7
+  error_outputs: 3
+  num_malformed_responses: 3
+  num_with_malformed_responses: 3
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2671437
+  completion_tokens: 380717
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model claude-opus-4-20250514
+  date: 2025-05-25
+  versions: 0.83.3.dev
+  seconds_per_case: 42.5
+  total_cost: 68.6253
+
+- dirname: 2025-05-25-20-40-51--opus4-diff-exuser
+  test_cases: 225
+  model: claude-opus-4-20250514 (32k thinking)
+  edit_format: diff
+  commit_hash: 9ef3211
+  thinking_tokens: 32000
+  pass_rate_1: 37.3
+  pass_rate_2: 72.0
+  pass_num_1: 84
+  pass_num_2: 162
+  percent_cases_well_formed: 97.3
+  error_outputs: 10
+  num_malformed_responses: 6
+  num_with_malformed_responses: 6
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2567514
+  completion_tokens: 363142
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model claude-opus-4-20250514
+  date: 2025-05-25
+  versions: 0.83.3.dev
+  seconds_per_case: 44.1
+  total_cost: 65.7484

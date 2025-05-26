@@ -346,7 +346,7 @@ class Commands:
             return
 
         commit_message = args.strip() if args else None
-        self.coder.repo.commit(message=commit_message)
+        self.coder.repo.commit(message=commit_message, coder=self.coder)
 
     def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"

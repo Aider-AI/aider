@@ -454,6 +454,7 @@ class Coder:
             fname = Path(fname)
             if self.repo and self.repo.git_ignored_file(fname):
                 self.io.tool_warning(f"Skipping {fname} that matches gitignore spec.")
+                continue
 
             if self.repo and self.repo.ignored_file(fname):
                 self.io.tool_warning(f"Skipping {fname} that matches aiderignore spec.")

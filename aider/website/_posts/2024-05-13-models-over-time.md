@@ -15,12 +15,12 @@ nav_exclude: true
 I recently wanted to draw a graph showing how LLM code editing skill has been
 changing over time as new models have been released by OpenAI, Anthropic and others.
 I have all the
-[data in a yaml file](https://github.com/Aider-AI/aider/blob/main/website/_data/edit_leaderboard.yml) that is used to render
+[data in a YAML file](https://github.com/Aider-AI/aider/blob/main/website/_data/edit_leaderboard.yml) that is used to render
 [aider's LLM leaderboards](https://aider.chat/docs/leaderboards/).
 
 Below is the aider chat transcript, which shows:
 
-- I launch aider with the yaml file, a file with other plots I've done recently (so GPT can crib the style) and an empty file called `over_time.py`.
+- I launch aider with the YAML file, a file with other plots I've done recently (so GPT can crib the style) and an empty file called `over_time.py`.
 - Then I ask GPT to draw the scatterplot I want.
 - I run the resulting script and share the error output with GPT so it can fix a small bug.
 - I ask it to color the points for GPT-4 and GPT-3.5 family models differently, to better see trends within those model families.
@@ -28,7 +28,7 @@ Below is the aider chat transcript, which shows:
 - I work through a series of other small style changes, like changing fonts and the graph border.
 
 In the end I have the graph, but I also have the python code in my repo.
-So I can update this graph easily whenever I add new entries to the yaml data file.
+So I can update this graph easily whenever I add new entries to the YAML data file.
 
 
 ## Aider chat transcript

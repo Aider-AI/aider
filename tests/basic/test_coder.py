@@ -835,6 +835,36 @@ two
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
+    def test_skip_gitignored_files_on_init(self):
+        with GitTemporaryDirectory() as _:
+            repo_path = Path(".")
+            repo = git.Repo.init(repo_path)
+
+            ignored_file = repo_path / "ignored_by_git.txt"
+            ignored_file.write_text("This file should be ignored by git.")
+
+            regular_file = repo_path / "regular_file.txt"
+            regular_file.write_text("This is a regular file.")
+
+            gitignore_content = "ignored_by_git.txt\n"
+            (repo_path / ".gitignore").write_text(gitignore_content)
+
+            repo.index.add([str(regular_file), ".gitignore"])
+            repo.index.commit("Initial commit with gitignore and regular file")
+
+            mock_io = MagicMock()
+            mock_io.tool_warning = MagicMock()
+
+            fnames_to_add = [str(ignored_file), str(regular_file)]
+
+            coder = Coder.create(self.GPT35, None, mock_io, fnames=fnames_to_add)
+
+            self.assertNotIn(str(ignored_file.resolve()), coder.abs_fnames)
+            self.assertIn(str(regular_file.resolve()), coder.abs_fnames)
+            mock_io.tool_warning.assert_any_call(
+                f"Skipping {ignored_file.name} that matches gitignore spec."
+            )
+
     def test_check_for_urls(self):
         io = InputOutput(yes=True)
         coder = Coder.create(self.GPT35, None, io=io)

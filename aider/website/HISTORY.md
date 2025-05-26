@@ -24,12 +24,21 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Bumped configargparse to 1.7.1 as 1.7 was pulled.
+- Added shell tab completion for file path arguments (by saviour) and for `--edit-format`/`--editor-edit-format` options.
+- Improved OpenRouter model metadata handling by introducing a local cache, increasing reliability and performance.
+- The `/settings` command now displays detailed metadata for active main, editor, and weak models.
+- Fixed an issue where files explicitly added via the command line were not correctly ignored if listed in `.gitignore`.
+- Improved automatic commit messages by providing more context during their generation, by wangboxue.
+- Aider wrote 89% of the code in this release.
+
 ### Aider v0.83.1
 
 - Improved user language detection by correctly normalizing hyphenated language codes (e.g., `en-US` to `en`) and enhancing the validation of locale results.
 - Prevented Aider from instructing the LLM to reply in 'C' or 'POSIX' when these are detected as the system locale.
 - Displayed a spinner with the model name when generating commit messages.
-- Aider wrote 74% of the code in this release.
 
 ### Aider v0.83.0
 
@@ -435,7 +444,7 @@ cog.out(text)
 - [Aider works with LLM web chat UIs](https://aider.chat/docs/usage/copypaste.html).
   - New `--copy-paste` mode.
   - New `/copy-context` command.
-- [Set API keys and other environment variables for all providers from command line or yaml conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
+- [Set API keys and other environment variables for all providers from command line or YAML conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
   - New `--api-key provider=key` setting.
   - New `--set-env VAR=value` setting.
 - Added bash and zsh support to `--watch-files`.
@@ -603,7 +612,7 @@ cog.out(text)
 
 ### Aider v0.59.1
 
-- Check for obsolete `yes: true` in yaml config, show helpful error.
+- Check for obsolete `yes: true` in YAML config, show helpful error.
 - Model settings for openrouter/anthropic/claude-3.5-sonnet:beta
 
 ### Aider v0.59.0
@@ -613,7 +622,7 @@ cog.out(text)
   - Still auto-completes the full paths of the repo files like `/add`.
   - Now supports globs like `src/**/*.py`
 - Renamed `--yes` to `--yes-always`.
-  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` yaml key.
+  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` YAML key.
   - Existing YAML and .env files will need to be updated.
   - Can still abbreviate to `--yes` on the command line.
 - Config file now uses standard YAML list syntax with `  - list entries`, one per line.  
@@ -820,7 +829,7 @@ cog.out(text)
   - Use `--map-refresh <always|files|manual|auto>` to configure.
 - Improved cost estimate logic for caching.
 - Improved editing performance on Jupyter Notebook `.ipynb` files.
-- Show which config yaml file is loaded with `--verbose`.
+- Show which config YAML file is loaded with `--verbose`.
 - Bumped dependency versions.
 - Bugfix: properly load `.aider.models.metadata.json` data.
 - Bugfix: Using `--msg /ask ...` caused an exception.
