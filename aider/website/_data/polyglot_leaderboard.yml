@@ -1448,3 +1448,32 @@
   versions: 0.83.3.dev
   seconds_per_case: 50.4
   total_cost: 7.6091
+
+- dirname: 2025-05-25-22-58-44--flash25-05-20-24k-think
+  test_cases: 225
+  model: gemini/gemini-2.5-flash-preview-05-20
+  edit_format: diff
+  commit_hash: a8568c3-dirty
+  thinking_tokens: 24576
+  pass_rate_1: 26.2
+  pass_rate_2: 55.1
+  pass_num_1: 59
+  pass_num_2: 124
+  percent_cases_well_formed: 95.6
+  error_outputs: 15
+  num_malformed_responses: 15
+  num_with_malformed_responses: 10
+  user_asks: 101
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 3666792
+  completion_tokens: 2703162
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-flash-preview-05-20
+  date: 2025-05-25
+  versions: 0.83.3.dev
+  seconds_per_case: 53.9
+  total_cost: 8.5625
