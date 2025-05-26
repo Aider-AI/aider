@@ -1423,7 +1423,7 @@
 
 - dirname: 2025-05-25-22-42-53--flash25-05-20
   test_cases: 225
-  model: gemini-2.5-flash-preview-05-20
+  model: gemini-2.5-flash-preview-05-20 (no think)
   edit_format: diff
   commit_hash: a8568c3
   pass_rate_1: 23.6
@@ -1451,7 +1451,7 @@
 
 - dirname: 2025-05-25-22-58-44--flash25-05-20-24k-think
   test_cases: 225
-  model: gemini/gemini-2.5-flash-preview-05-20
+  model: gemini-2.5-flash-preview-05-20 (24k think)
   edit_format: diff
   commit_hash: a8568c3-dirty
   thinking_tokens: 24576
