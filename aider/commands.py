@@ -844,7 +844,11 @@ class Commands:
                 )
                 continue
 
-            if self.coder.repo and self.coder.repo.git_ignored_file(matched_file):
+            if (
+                self.coder.repo
+                and self.coder.repo.git_ignored_file(matched_file)
+                and not self.coder.add_gitignore_files
+            ):
                 self.io.tool_error(f"Can't add {matched_file} which is in gitignore")
                 continue
 
