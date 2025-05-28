@@ -890,7 +890,10 @@ class Model(ModelSettings):
                 'Content-Type': 'application/json',
             }
             res = requests.get("https://api.github.com/copilot_internal/v2/token", headers=headers)
-            os.environ[openai_api_key] = res.json()['token']
+            json_data = res.json()
+            os.environ[openai_api_key] = json_data['token']
+            _default = os.environ.get('OPENAI_API_BASE')
+            os.environ['OPENAI_API_BASE'] = json_data.get('endpoints', {}).get('api', _default)
 
     def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
