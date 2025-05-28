@@ -8,6 +8,7 @@ import platform
 import sys
 import time
 from dataclasses import dataclass, fields
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
@@ -70,6 +71,7 @@ claude-3-opus-20240229
 claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
 claude-3-5-sonnet-20241022
+claude-sonnet-4-20250514
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
@@ -77,9 +79,9 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
     # Claude models
-    "sonnet": "anthropic/claude-3-7-sonnet-20250219",
+    "sonnet": "anthropic/claude-sonnet-4-20250514",
     "haiku": "claude-3-5-haiku-20241022",
-    "opus": "claude-3-opus-20240229",
+    "opus": "claude-opus-4-20250514",
     # GPT models
     "4": "gpt-4-0613",
     "4o": "gpt-4o",
@@ -873,6 +875,28 @@ class Model(ModelSettings):
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
+    def github_copilot_token_to_open_ai_key(self):
+        # check to see if there's an openai api key
+        # If so, check to see if it's expire
+        openai_api_key = "OPENAI_API_KEY"
+
+        if openai_api_key not in os.environ or (
+            int(dict(x.split("=") for x in os.environ[openai_api_key].split(";"))["exp"])
+            < int(datetime.now().timestamp())
+        ):
+            import requests
+
+            headers = {
+                "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
+                "Editor-Version": self.extra_params["extra_headers"]["Editor-Version"],
+                "Copilot-Integration-Id": self.extra_params["extra_headers"][
+                    "Copilot-Integration-Id"
+                ],
+                "Content-Type": "application/json",
+            }
+            res = requests.get("https://api.github.com/copilot_internal/v2/token", headers=headers)
+            os.environ[openai_api_key] = res.json()["token"]
+
     def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
@@ -913,6 +937,10 @@ class Model(ModelSettings):
         if self.verbose:
             dump(kwargs)
         kwargs["messages"] = messages
+
+        # Are we using github copilot?
+        if "GITHUB_COPILOT_TOKEN" in os.environ:
+            self.github_copilot_token_to_open_ai_key()
 
         res = litellm.completion(**kwargs)
         return hash_object, res

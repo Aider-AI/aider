@@ -58,6 +58,9 @@ cog.out(model_list)
 - anthropic.claude-3-5-haiku-20241022-v1:0
 - anthropic.claude-3-5-sonnet-20241022-v2:0
 - anthropic.claude-3-7-sonnet-20250219-v1:0
+- anthropic.claude-opus-4-20250514-v1:0
+- anthropic.claude-sonnet-4-20250514-v1:0
+- azure_ai/mistral-medium-2505
 - claude-3-5-haiku-20241022
 - claude-3-5-haiku-latest
 - claude-3-5-sonnet-20240620
@@ -69,6 +72,8 @@ cog.out(model_list)
 - claude-3-opus-20240229
 - claude-3-opus-latest
 - claude-3-sonnet-20240229
+- claude-opus-4-20250514
+- claude-sonnet-4-20250514
 - codestral/codestral-2405
 - codestral/codestral-latest
 - databricks/databricks-claude-3-7-sonnet
@@ -77,9 +82,13 @@ cog.out(model_list)
 - deepseek/deepseek-reasoner
 - eu.anthropic.claude-3-5-haiku-20241022-v1:0
 - eu.anthropic.claude-3-5-sonnet-20241022-v2:0
+- eu.anthropic.claude-3-7-sonnet-20250219-v1:0
+- eu.anthropic.claude-opus-4-20250514-v1:0
+- eu.anthropic.claude-sonnet-4-20250514-v1:0
 - mistral/codestral-2405
 - mistral/codestral-latest
 - mistral/codestral-mamba-latest
+- mistral/devstral-small-2505
 - mistral/mistral-large-2402
 - mistral/mistral-large-2407
 - mistral/mistral-large-2411
@@ -105,6 +114,8 @@ cog.out(model_list)
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
 - us.anthropic.claude-3-7-sonnet-20250219-v1:0
+- us.anthropic.claude-opus-4-20250514-v1:0
+- us.anthropic.claude-sonnet-4-20250514-v1:0
 - vertex_ai/claude-3-5-haiku
 - vertex_ai/claude-3-5-haiku@20241022
 - vertex_ai/claude-3-5-sonnet
@@ -118,6 +129,8 @@ cog.out(model_list)
 - vertex_ai/claude-3-opus@20240229
 - vertex_ai/claude-3-sonnet
 - vertex_ai/claude-3-sonnet@20240229
+- vertex_ai/claude-opus-4@20250514
+- vertex_ai/claude-sonnet-4@20250514
 <!--[[[end]]]-->
 
 

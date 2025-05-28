@@ -1306,4 +1306,175 @@
   versions: 0.82.4.dev
   seconds_per_case: 45.4
   total_cost: 0.0000
+
+- dirname: 2025-05-24-21-17-54--sonnet4-diff-exuser
+  test_cases: 225
+  model: claude-sonnet-4-20250514 (no thinking)
+  edit_format: diff
+  commit_hash: ef3f8bb-dirty
+  pass_rate_1: 20.4
+  pass_rate_2: 56.4
+  pass_num_1: 46
+  pass_num_2: 127
+  percent_cases_well_formed: 98.2
+  error_outputs: 6
+  num_malformed_responses: 4
+  num_with_malformed_responses: 4
+  user_asks: 129
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 3460663
+  completion_tokens: 433373
+  test_timeouts: 7
+  total_tests: 225
+  command: aider --model claude-sonnet-4-20250514
+  date: 2025-05-24
+  versions: 0.83.3.dev
+  seconds_per_case: 29.8
+  total_cost: 15.8155
   
+- dirname: 2025-05-24-22-10-36--sonnet4-diff-exuser-think32k
+  test_cases: 225
+  model: claude-sonnet-4-20250514 (32k thinking)
+  edit_format: diff
+  commit_hash: e3cb907
+  thinking_tokens: 32000
+  pass_rate_1: 25.8
+  pass_rate_2: 61.3
+  pass_num_1: 58
+  pass_num_2: 138
+  percent_cases_well_formed: 97.3
+  error_outputs: 10
+  num_malformed_responses: 10
+  num_with_malformed_responses: 6
+  user_asks: 111
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2863068
+  completion_tokens: 1271074
+  test_timeouts: 6
+  total_tests: 225
+  command: aider --model claude-sonnet-4-20250514
+  date: 2025-05-24
+  versions: 0.83.3.dev
+  seconds_per_case: 79.9
+  total_cost: 26.5755
+
+- dirname: 2025-05-25-19-57-20--opus4-diff-exuser
+  test_cases: 225
+  model: claude-opus-4-20250514 (no think)
+  edit_format: diff
+  commit_hash: 9ef3211
+  pass_rate_1: 32.9
+  pass_rate_2: 70.7
+  pass_num_1: 74
+  pass_num_2: 159
+  percent_cases_well_formed: 98.7
+  error_outputs: 3
+  num_malformed_responses: 3
+  num_with_malformed_responses: 3
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2671437
+  completion_tokens: 380717
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model claude-opus-4-20250514
+  date: 2025-05-25
+  versions: 0.83.3.dev
+  seconds_per_case: 42.5
+  total_cost: 68.6253
+
+- dirname: 2025-05-25-20-40-51--opus4-diff-exuser
+  test_cases: 225
+  model: claude-opus-4-20250514 (32k thinking)
+  edit_format: diff
+  commit_hash: 9ef3211
+  thinking_tokens: 32000
+  pass_rate_1: 37.3
+  pass_rate_2: 72.0
+  pass_num_1: 84
+  pass_num_2: 162
+  percent_cases_well_formed: 97.3
+  error_outputs: 10
+  num_malformed_responses: 6
+  num_with_malformed_responses: 6
+  user_asks: 97
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2567514
+  completion_tokens: 363142
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model claude-opus-4-20250514
+  date: 2025-05-25
+  versions: 0.83.3.dev
+  seconds_per_case: 44.1
+  total_cost: 65.7484
+
+- dirname: 2025-05-26-15-56-31--flash25-05-20-24k-think # dirname is misleading
+  test_cases: 225
+  model: gemini-2.5-flash-preview-05-20 (no think)
+  edit_format: diff
+  commit_hash: 214b811-dirty
+  thinking_tokens: 0 # <-- no thinking
+  pass_rate_1: 20.9
+  pass_rate_2: 44.0
+  pass_num_1: 47
+  pass_num_2: 99
+  percent_cases_well_formed: 93.8
+  error_outputs: 16
+  num_malformed_responses: 16
+  num_with_malformed_responses: 14
+  user_asks: 79
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 5512458
+  completion_tokens: 514145
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-flash-preview-05-20
+  date: 2025-05-26
+  versions: 0.83.3.dev
+  seconds_per_case: 12.2
+  total_cost: 1.1354
+  
+- dirname: 2025-05-25-22-58-44--flash25-05-20-24k-think
+  test_cases: 225
+  model: gemini-2.5-flash-preview-05-20 (24k think)
+  edit_format: diff
+  commit_hash: a8568c3-dirty
+  thinking_tokens: 24576
+  pass_rate_1: 26.2
+  pass_rate_2: 55.1
+  pass_num_1: 59
+  pass_num_2: 124
+  percent_cases_well_formed: 95.6
+  error_outputs: 15
+  num_malformed_responses: 15
+  num_with_malformed_responses: 10
+  user_asks: 101
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 3666792
+  completion_tokens: 2703162
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-flash-preview-05-20
+  date: 2025-05-25
+  versions: 0.83.3.dev
+  seconds_per_case: 53.9
+  total_cost: 8.5625
