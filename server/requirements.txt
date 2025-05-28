@@ -1,0 +1,6 @@
+fastapi==0.110.0
+fastapi-sessions==0.3.2
+uvicorn[standard]==0.29.0
+pydantic==2.7.0
+binaryornot==0.4.0
+aioconsole==0.8.1
