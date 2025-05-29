@@ -468,6 +468,88 @@ def load_results(dirname, stats_languages=None):
 def summarize_results(dirname, stats_languages=None):
     all_results = load_results(dirname, stats_languages)
 
+    # Each test & Each language summary
+    column_names = {
+        # key: name-for-table
+        'testdir': 'testdir',
+        'tests_outcomes': 'pass/fail',
+        'test_timeouts': 'timeouts',
+        'syntax_errors': 'syn_err',
+        'num_user_asks': 'user_asks',
+        'num_malformed_responses': 'malformed',
+        'num_exhausted_context_windows': 'exhausted',
+        'num_error_outputs': 'error',
+        'lazy_comments': 'lazy',
+        'indentation_errors': 'ind_err',
+    }
+
+    # Tests data
+    tests_data = {}
+    for result in all_results:
+        for column_key, column_name in column_names.items():
+            if column_name not in tests_data:
+                tests_data[column_name] = []
+            
+            value = result[column_key] if column_key in result else ''
+            if column_key == 'testdir':
+                value = re.sub(r'^.+((/[^/]+){4})$', '\\1', value).strip('/')
+                value = value.replace('exercises/practice', '...')
+            if column_key == 'tests_outcomes':
+                value = ', '.join([('P' if v else 'f') for v in value])
+                
+            tests_data[column_name].append(value)
+
+    # Languages data
+    langs_data = {}
+    for column_name in tests_data.keys():
+        if column_name not in langs_data:
+            langs_data[column_name] = []
+    
+        sum1, sum2 = 0, 0
+        for i, column_value in enumerate(tests_data[column_name]):
+            is_next_same_lang = tests_data['testdir'][i].split('/')[0] == tests_data['testdir'][i+1].split('/')[0] if (i + 1) < len(tests_data['testdir']) else False
+
+            if column_name == 'testdir':
+                if not is_next_same_lang:
+                    langs_data[column_name].append( column_value.split('/')[0] + '/...' )
+
+            elif column_name == 'pass/fail':
+                sum1 += 1 if column_value[-1] == 'P' else 0
+                sum2 += 1 if column_value[-1] == 'f' else 0
+                if not is_next_same_lang:
+                    langs_data[column_name].append(f'{sum1} / {sum2}')
+                    sum1, sum2 = 0, 0
+
+            else:
+                sum1 += column_value
+                if not is_next_same_lang:
+                    langs_data[column_name].append(sum1)
+                    sum1 = 0
+
+    # Print
+    tests_data_df = pd.DataFrame(tests_data)
+    tests_data_df.index = tests_data_df.index + 1  # Print index starting from 1
+    langs_data_df = pd.DataFrame(langs_data)
+    langs_data_df.index = langs_data_df.index + 1  # Print index starting from 1
+    print(
+        '\n\n' + tests_data_df.to_string(
+            justify='left',  # align left for HEADER
+            formatters={     # align left for string VALUES must be handled like this
+                'testdir': lambda x: str(x).ljust( max(tests_data_df['testdir'].astype(str).map(len).max(), len('testdir')) ),
+                'pass/fail': lambda x: str(x).ljust( max(tests_data_df['pass/fail'].astype(str).map(len).max(), len('pass/fail')) ),
+            }
+        ) +
+        '\n\n' + langs_data_df.to_string(
+            justify='left',  # align left for HEADER
+            formatters={     # align left for string VALUES must be handled like this
+                'testdir': lambda x: str(x).ljust( max(langs_data_df['testdir'].astype(str).map(len).max(), len('testdir')) ),
+                'pass/fail': lambda x: str(x).ljust( max(langs_data_df['pass/fail'].astype(str).map(len).max(), len('pass/fail')) ),
+            }
+        ) +
+        '\n'
+    )
+
+    # Overall summary for whole benchmark
     res = SimpleNamespace()
     res.total_tests = len(list(Path(dirname).glob("*/exercises/practice/*")))
 
