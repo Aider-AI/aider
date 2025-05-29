@@ -86,10 +86,10 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `grok3`: xai/grok-3-beta
 - `haiku`: claude-3-5-haiku-20241022
 - `optimus`: openrouter/openrouter/optimus-alpha
-- `opus`: claude-3-opus-20240229
+- `opus`: claude-opus-4-20250514
 - `quasar`: openrouter/openrouter/quasar-alpha
 - `r1`: deepseek/deepseek-reasoner
-- `sonnet`: anthropic/claude-3-7-sonnet-20250219
+- `sonnet`: anthropic/claude-sonnet-4-20250514
 <!--[[[end]]]-->
 
 ## Priority
