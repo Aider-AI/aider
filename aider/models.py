@@ -16,6 +16,7 @@ import json5
 import yaml
 from PIL import Image
 
+from aider._version import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
@@ -907,6 +908,7 @@ class Model(ModelSettings):
         kwargs = dict(
             model=self.name,
             stream=stream,
+            headers={"x-coding-assistant": f"aider-{__version__}"},
         )
 
         if self.use_temperature is not False:
