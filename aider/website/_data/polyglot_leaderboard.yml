@@ -1478,3 +1478,31 @@
   versions: 0.83.3.dev
   seconds_per_case: 53.9
   total_cost: 8.5625
+
+- dirname: 2025-05-29-09-41-29--deepseek-r1-0528-diff
+  test_cases: 225
+  model: DeepSeek R1(0528)
+  edit_format: diff
+  commit_hash: 119a44d-dirty
+  pass_rate_1: 35.1
+  pass_rate_2: 72.4
+  pass_num_1: 79
+  pass_num_2: 163
+  percent_cases_well_formed: 98.7
+  error_outputs: 48
+  num_malformed_responses: 4
+  num_with_malformed_responses: 3
+  user_asks: 101
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2285432
+  completion_tokens: 2425625
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-05-29
+  versions: 0.83.3.dev
+  seconds_per_case: 1152.1
+  total_cost: 6.0157
