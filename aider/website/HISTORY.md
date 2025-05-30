@@ -24,7 +24,7 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.84.0
 
 - Added support for new Claude models including the Sonnet 4 and Opus 4 series (e.g., `claude-sonnet-4-20250514`,
 `claude-opus-4-20250514`) across various providers. The default `sonnet` and `opus` aliases were updated to these newer
