@@ -95,6 +95,7 @@ cog.out(model_list)
 - mistral/mistral-large-latest
 - mistral/mistral-medium
 - mistral/mistral-medium-2312
+- mistral/mistral-medium-2505
 - mistral/mistral-medium-latest
 - mistral/mistral-small
 - mistral/mistral-small-latest

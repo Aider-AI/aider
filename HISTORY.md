@@ -8,7 +8,10 @@
 - The `/settings` command now displays detailed metadata for active main, editor, and weak models.
 - Fixed an issue where files explicitly added via the command line were not correctly ignored if listed in `.gitignore`.
 - Improved automatic commit messages by providing more context during their generation, by wangboxue.
-- Aider wrote 89% of the code in this release.
+- Added support for new Claude models including the Sonnet 4 and Opus 4 series (e.g., `claude-sonnet-4-20250514`, `claude-opus-4-20250514`) across various providers. The default `sonnet` and `opus` aliases were updated to these newer versions.
+- Added support for the `vertex_ai/gemini-2.5-flash-preview-05-20` model.
+- Automatically refresh GitHub Copilot tokens when used as OpenAI API keys, by Lih Chen.
+- Aider wrote 79% of the code in this release.
 
 ### Aider v0.83.1
 

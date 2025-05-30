@@ -165,7 +165,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
@@ -281,7 +281,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: anthropic/claude-sonnet-4-20250514
   editor_edit_format: editor-diff
@@ -530,7 +530,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: bedrock_converse/anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
@@ -558,7 +558,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: bedrock_converse/eu.anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
@@ -602,7 +602,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: bedrock_converse/us.anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
@@ -713,7 +713,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: claude-sonnet-4-20250514
   editor_edit_format: editor-diff
@@ -803,7 +803,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: eu.anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
@@ -1679,7 +1679,7 @@ cog.out("```\n")
   extra_params:
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
-    max_tokens: 64000
+    max_tokens: 32000
   cache_control: true
   editor_model_name: us.anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
@@ -1718,7 +1718,7 @@ cog.out("```\n")
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
   extra_params:
-    max_tokens: 64000
+    max_tokens: 32000
   editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-sonnet-4@20250514
   editor_edit_format: editor-diff
   accepts_settings:
@@ -1795,7 +1795,7 @@ cog.out("```\n")
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
   extra_params:
-    max_tokens: 64000
+    max_tokens: 32000
   editor_model_name: vertex_ai/claude-sonnet-4@20250514
   editor_edit_format: editor-diff
   accepts_settings:
