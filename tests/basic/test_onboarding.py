@@ -93,9 +93,7 @@ class TestOnboarding(unittest.TestCase):
     @patch.dict(os.environ, {"OPENROUTER_API_KEY": "or_key"}, clear=True)
     def test_try_select_default_model_openrouter_free(self, mock_check_tier):
         """Test OpenRouter free model selection."""
-        self.assertEqual(
-            try_to_select_default_model(), "openrouter/deepseek/deepseek-r1:free"
-        )
+        self.assertEqual(try_to_select_default_model(), "openrouter/deepseek/deepseek-r1:free")
         mock_check_tier.assert_called_once_with("or_key")
 
     @patch("aider.onboarding.check_openrouter_tier", return_value=False)  # Assume paid tier
