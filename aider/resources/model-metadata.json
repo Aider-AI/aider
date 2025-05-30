@@ -49,7 +49,7 @@
     },
     "openrouter/deepseek/deepseek-chat-v3-0324": {
         "max_tokens": 8192,
-        "max_input_tokens": 64000,
+        "max_input_tokens": 131072,
         "max_output_tokens": 8192,
         "input_cost_per_token": 0.00000055,
         "input_cost_per_token_cache_hit": 0.00000014,
