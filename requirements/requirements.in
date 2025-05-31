@@ -30,6 +30,7 @@ pillow
 shtab
 oslex
 google-generativeai
+mcp>=1.0.0
 
 # The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
