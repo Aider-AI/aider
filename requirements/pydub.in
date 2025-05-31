@@ -1,0 +1,2 @@
+# Remove if Python 3.13 support https://github.com/jiaaro/pydub/pull/816 gets released
+audioop-lts>=0.2.1; python_version >= "3.13"
