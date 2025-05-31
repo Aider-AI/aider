@@ -16,9 +16,14 @@ when you ask aider to edit your code.
 
 Use the in-chat `/voice` command to start recording,
 and press `ENTER` when you're done speaking.
-Your voice coding instructions will be transcribed, 
-as if you had  typed them into
+Your voice coding instructions will be transcribed,
+as if you had typed them into
 the aider chat session.
+
+By default, aider will try to use OpenAIs whisper model using the API. This requires an OpenAI API key to be set.
+
+Local voice transcription using `pywhisercpp` can be enabled by passing the `--voice-local` argument to aider.
+This will download and use the `tiny` model. A different local model can be specified with the `--voice-local-model` argument.
 
 See the [installation instructions](https://aider.chat/docs/install/optional.html#enable-voice-coding) for
 information on how to enable the `/voice` command.
@@ -27,7 +32,7 @@ information on how to enable the `/voice` command.
 <div class="chat-transcript" markdown="1">
 
 > Aider v0.11.2-dev  
-> Added app.py to the chat.  
+> Added app.py to the chat.
 
 #### /voice
 
@@ -83,7 +88,7 @@ window.onload = function() {
 “&nbsp;add a factorial endpoint that uses math factorial&nbsp;”
 </div>
 
-#### Add a factorial endpoint that uses math.factorial.
+#### Add a factorial endpoint that uses math.factorial
 
 To add a factorial endpoint to the Flask application, we need to modify the `app.py` file.
 
@@ -92,7 +97,7 @@ Here are the steps:
 1. Add a new route `/fact/<int:x>` to the Flask application.
 2. In the function for this route, call `math.factorial(x)` and return the result as a string.
 
-Here is the *edit block* for these changes:
+Here is the _edit block_ for these changes:
 
 ```python
 app.py
@@ -113,7 +118,7 @@ if __name__ == '__main__':
 ```
 
 > Applied edit to app.py  
-> Commit ef9e3e7 aider: Add a factorial endpoint that uses math.factorial.  
+> Commit ef9e3e7 aider: Add a factorial endpoint that uses math.factorial.
 
 </div>
 <br/>

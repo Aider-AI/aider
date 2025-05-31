@@ -358,6 +358,12 @@
 ## Specify the input device name for voice recording
 #voice-input-device: xxx
 
+## Use local voice transcription using whisper.cpp
+#voice-local: false
+
+## Set the whisper.cpp model
+#voice-local-model: tiny
+
 #################
 # Other settings:
 

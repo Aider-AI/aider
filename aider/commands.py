@@ -1223,12 +1223,17 @@ class Commands:
         "Record and transcribe voice input"
 
         if not self.voice:
-            if "OPENAI_API_KEY" not in os.environ:
+            use_local = getattr(self.args, "voice_local", False)
+            local_model = getattr(self.args, "voice_local_model", "tiny")
+            if not use_local and "OPENAI_API_KEY" not in os.environ:
                 self.io.tool_error("To use /voice you must provide an OpenAI API key.")
                 return
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
+                    audio_format=self.voice_format or "wav",
+                    device_name=self.voice_input_device,
+                    use_local=use_local,
+                    local_model=local_model,
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(

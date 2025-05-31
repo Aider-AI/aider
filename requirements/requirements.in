@@ -16,6 +16,7 @@ PyYAML
 diff-match-patch
 pypandoc
 litellm
+pywhispercpp
 flake8
 importlib_resources
 pyperclip
