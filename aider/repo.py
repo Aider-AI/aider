@@ -74,6 +74,7 @@ class GitRepo:
         subtree_only=False,
         git_commit_verify=True,
         attribute_co_authored_by=False,  # Added parameter
+        auto_commit_message=True,
     ):
         self.io = io
         self.models = models
@@ -86,6 +87,7 @@ class GitRepo:
         self.attribute_commit_message_author = attribute_commit_message_author
         self.attribute_commit_message_committer = attribute_commit_message_committer
         self.attribute_co_authored_by = attribute_co_authored_by  # Assign from parameter
+        self.auto_commit_message = auto_commit_message
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.git_commit_verify = git_commit_verify
@@ -208,10 +210,11 @@ class GitRepo:
         if message:
             commit_message = message
         else:
-            user_language = None
-            if coder:
-                user_language = coder.get_user_language()
-            commit_message = self.get_commit_message(diffs, context, user_language)
+            if coder and self.auto_commit_message:
+                user_language = coder.get_user_language() if coder else None
+                commit_message = self.get_commit_message(diffs, context, user_language)
+            else:
+                commit_message = None
 
         # Retrieve attribute settings, prioritizing coder.args if available
         if coder and hasattr(coder, "args"):
