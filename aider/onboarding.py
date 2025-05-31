@@ -13,6 +13,7 @@ import requests
 
 from aider import urls
 from aider.io import InputOutput
+from aider.utils import get_aider_config_dir
 
 
 def check_openrouter_tier(api_key):
@@ -360,9 +361,8 @@ def start_openrouter_oauth_flow(io, analytics):
 
         # Save the key to the oauth-keys.env file
         try:
-            config_dir = os.path.expanduser("~/.aider")
-            os.makedirs(config_dir, exist_ok=True)
-            key_file = os.path.join(config_dir, "oauth-keys.env")
+            config_dir = get_aider_config_dir()
+            key_file = config_dir / "oauth-keys.env"
             with open(key_file, "a", encoding="utf-8") as f:
                 f.write(f'OPENROUTER_API_KEY="{api_key}"\n')
 

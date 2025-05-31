@@ -34,6 +34,7 @@ from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.report import report_uncaught_exceptions
+from aider.utils import get_aider_config_dir, get_aider_data_dir
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
 
@@ -303,14 +304,35 @@ def parse_lint_cmds(lint_cmds, io):
 
 
 def generate_search_path_list(default_file, git_root, command_line_file):
-    files = []
-    files.append(Path.home() / default_file)  # homedir
-    if git_root:
-        files.append(Path(git_root) / default_file)  # git root
-    files.append(default_file)
-    if command_line_file:
-        files.append(command_line_file)
+    """
+    Generates a prioritized list of potential file paths to search.
 
+    Order:
+    4. Platform config directory file (if applicable and different from home)
+    3. Git root file (if applicable)
+    2. CWD file
+    1. Command line specified file (if any)
+    """
+    files = []
+
+    # Platform config directory file
+    config_dir = get_aider_config_dir()
+    if config_dir:
+        platform_config_file_path = config_dir / default_file
+        files.append(platform_config_file_path)
+
+    # Git root directory
+    if git_root:
+        files.append(Path(git_root) / default_file)
+
+    # Current working directory
+    files.append(Path(default_file))
+
+    # Highest priority: Command line argument
+    if command_line_file:
+        files.append(Path(command_line_file))
+
+    # Resolve paths and remove duplicates, preserving order
     resolved_files = []
     for fn in files:
         try:
@@ -318,16 +340,8 @@ def generate_search_path_list(default_file, git_root, command_line_file):
         except OSError:
             pass
 
-    files = resolved_files
-    files.reverse()
-    uniq = []
-    for fn in files:
-        if fn not in uniq:
-            uniq.append(fn)
-    uniq.reverse()
-    files = uniq
-    files = list(map(str, files))
-    files = list(dict.fromkeys(files))
+    string_files = [str(f) for f in resolved_files]
+    files = list(dict.fromkeys(string_files))
 
     return files
 
@@ -366,13 +380,14 @@ def load_dotenv_files(git_root, dotenv_fname, encoding="utf-8"):
         dotenv_fname,
     )
 
-    # Explicitly add the OAuth keys file to the beginning of the list
-    oauth_keys_file = Path.home() / ".aider" / "oauth-keys.env"
+    # Explicitly add the OAuth keys file from the data directory to the beginning
+    config_dir = get_aider_config_dir()
+    oauth_keys_file = config_dir / "oauth-keys.env"
     if oauth_keys_file.exists():
         # Insert at the beginning so it's loaded first (and potentially overridden)
         dotenv_files.insert(0, str(oauth_keys_file.resolve()))
-        # Remove duplicates if it somehow got included by generate_search_path_list
-        dotenv_files = list(dict.fromkeys(dotenv_files))
+    # Remove duplicates if it somehow got included by generate_search_path_list
+    dotenv_files = list(dict.fromkeys(dotenv_files))
 
     loaded = []
     for fname in dotenv_files:
@@ -461,20 +476,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         git_root = get_git_root()
 
-    conf_fname = Path(".aider.conf.yml")
-
-    default_config_files = []
-    try:
-        default_config_files += [conf_fname.resolve()]  # CWD
-    except OSError:
-        pass
-
-    if git_root:
-        git_conf = Path(git_root) / conf_fname  # git root
-        if git_conf not in default_config_files:
-            default_config_files.append(git_conf)
-    default_config_files.append(Path.home() / conf_fname)  # homedir
-    default_config_files = list(map(str, default_config_files))
+    default_config_files = generate_search_path_list(".aider.conf.yml", git_root, None)
+    # This case uses a straightforward priority list, so reverse it
+    default_config_files.reverse()
 
     parser = get_parser(default_config_files, git_root)
     try:
@@ -650,7 +654,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 analytics.disable(permanently=True)
                 io.tool_output("Analytics have been permanently disabled.")
 
-            analytics.save_data()
+            analytics.save_config()
             io.tool_output()
 
         # This is a no-op if the user has opted out
@@ -1174,7 +1178,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
 def is_first_run_of_new_version(io, verbose=False):
     """Check if this is the first run of a new version/executable combination"""
-    installs_file = Path.home() / ".aider" / "installs.json"
+    aider_data_dir = get_aider_data_dir()
+    installs_file = aider_data_dir / "installs.json"
     key = (__version__, sys.executable)
 
     # Never show notes for .dev versions

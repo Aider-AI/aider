@@ -336,6 +336,7 @@ pip-tools==7.4.1
     # via -r requirements/requirements-dev.in
 platformdirs==4.3.8
     # via
+    #   -r requirements/requirements.in
     #   banks
     #   virtualenv
 playwright==1.52.0
