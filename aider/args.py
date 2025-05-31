@@ -179,6 +179,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable automatic acceptance of architect changes (default: True)",
     )
     group.add_argument(
+        "--use-batch-editing",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable batch editing for architect mode (default: False)",
+    )
+    group.add_argument(
         "--weak-model",
         metavar="WEAK_MODEL",
         default=None,
