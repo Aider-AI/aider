@@ -59,6 +59,28 @@ class TestRepo(unittest.TestCase):
             self.assertIn("index", diffs)
             self.assertIn("workingdir", diffs)
 
+    def test_diffs_with_single_byte_encoding(self):
+        with GitTemporaryDirectory():
+            encoding = "cp1251"
+
+            repo = git.Repo()
+
+            fname = Path("foo.txt")
+            fname.write_text("index\n", encoding=encoding)
+            repo.git.add(str(fname))
+
+            # Make a change with non-ASCII symbols in the working dir
+            fname.write_text("АБВ\n", encoding=encoding)
+
+            git_repo = GitRepo(InputOutput(encoding=encoding), None, ".")
+            diffs = git_repo.get_diffs()
+
+            # check that all diff output can be converted to utf-8 for sending to model
+            diffs.encode("utf-8")
+
+            self.assertIn("index", diffs)
+            self.assertIn("АБВ", diffs)
+
     def test_diffs_detached_head(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
