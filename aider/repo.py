@@ -210,7 +210,9 @@ class GitRepo:
         else:
             user_language = None
             if coder:
-                user_language = coder.get_user_language()
+                user_language = coder.commit_language
+                if not user_language:
+                    user_language = coder.get_user_language()
             commit_message = self.get_commit_message(diffs, context, user_language)
 
         # Retrieve attribute settings, prioritizing coder.args if available
