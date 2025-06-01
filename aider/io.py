@@ -749,7 +749,7 @@ class InputOutput:
         if not self.llm_history_file:
             return
         timestamp = datetime.now().isoformat(timespec="seconds")
-        with open(self.llm_history_file, "a", encoding=self.encoding) as log_file:
+        with open(self.llm_history_file, "a", encoding="utf-8") as log_file:
             log_file.write(f"{role.upper()} {timestamp}\n")
             log_file.write(content + "\n")
 
