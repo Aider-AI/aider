@@ -272,6 +272,9 @@ def main(
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
+    discord_bot_mode: bool = typer.Option(
+        False, "--discord-bot", help="Run Discord bot-specific benchmarks and test scenarios"
+    ),
 ):
     repo = git.Repo(search_parent_directories=True)
     commit_hash = repo.head.object.hexsha[:7]
@@ -312,6 +315,19 @@ def main(
     if "AIDER_DOCKER" not in os.environ:
         print("Warning: benchmarking runs unvetted code from GPT, run in a docker container")
         return
+
+    # Handle Discord bot-specific benchmarking
+    if discord_bot_mode:
+        try:
+            from discord_bot_benchmark import DiscordBotBenchmark
+            print("Running Discord bot-specific benchmarks...")
+            discord_benchmark = DiscordBotBenchmark(dirname)
+            results = discord_benchmark.run_discord_bot_benchmark(model, edit_format)
+            print(f"Discord bot benchmark completed. Results saved to {dirname}")
+            return 0
+        except ImportError:
+            print("Error: Discord bot benchmark module not found. Please ensure discord_bot_benchmark.py is available.")
+            return 1
 
     assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
 
