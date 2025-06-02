@@ -20,7 +20,7 @@ from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
-from aider.utils import check_pip_install_extra
+from aider.utils import check_pip_install_extra, get_aider_cache_dir
 
 RETRY_TIMEOUT = 60
 
@@ -146,7 +146,7 @@ class ModelInfoManager:
     CACHE_TTL = 60 * 60 * 24  # 24 hours
 
     def __init__(self):
-        self.cache_dir = Path.home() / ".aider" / "caches"
+        self.cache_dir = get_aider_cache_dir()
         self.cache_file = self.cache_dir / "model_prices_and_context_window.json"
         self.content = None
         self.local_model_metadata = {}
@@ -165,8 +165,14 @@ class ModelInfoManager:
         if self._cache_loaded:
             return
 
+        if not self.cache_dir or not self.cache_file:
+            # If cache dir couldn't be determined, don't attempt to load/use cache
+            self._cache_loaded = True
+            return
+
         try:
-            self.cache_dir.mkdir(parents=True, exist_ok=True)
+            # cache_dir is already created by get_aider_cache_dir if possible
+            # self.cache_dir.mkdir(parents=True, exist_ok=True) # No longer needed here
             if self.cache_file.exists():
                 cache_age = time.time() - self.cache_file.stat().st_mtime
                 if cache_age < self.CACHE_TTL:
@@ -212,6 +218,11 @@ class ModelInfoManager:
             self._update_cache()
 
         if not self.content:
+            return dict()
+
+        # Check if self.content is actually a dict before proceeding
+        if not isinstance(self.content, dict):
+            # Cache might be corrupted or invalid format
             return dict()
 
         info = self.content.get(model, dict())
