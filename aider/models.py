@@ -16,6 +16,7 @@ import json5
 import yaml
 from PIL import Image
 
+from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
@@ -72,6 +73,7 @@ claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
 claude-3-5-sonnet-20241022
 claude-sonnet-4-20250514
+claude-opus-4-20250514
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
@@ -875,7 +877,7 @@ class Model(ModelSettings):
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
-    def github_copilot_token_to_open_ai_key(self):
+    def github_copilot_token_to_open_ai_key(self, extra_headers):
         # check to see if there's an openai api key
         # If so, check to see if it's expire
         openai_api_key = "OPENAI_API_KEY"
@@ -888,10 +890,8 @@ class Model(ModelSettings):
 
             headers = {
                 "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
-                "Editor-Version": self.extra_params["extra_headers"]["Editor-Version"],
-                "Copilot-Integration-Id": self.extra_params["extra_headers"][
-                    "Copilot-Integration-Id"
-                ],
+                "Editor-Version": extra_headers["Editor-Version"],
+                "Copilot-Integration-Id": extra_headers["Copilot-Integration-Id"],
                 "Content-Type": "application/json",
             }
             res = requests.get("https://api.github.com/copilot_internal/v2/token", headers=headers)
@@ -940,7 +940,13 @@ class Model(ModelSettings):
 
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ:
-            self.github_copilot_token_to_open_ai_key()
+            if "extra_headers" not in kwargs:
+                kwargs["extra_headers"] = {
+                    "Editor-Version": f"aider/{__version__}",
+                    "Copilot-Integration-Id": "vscode-chat",
+                }
+
+            self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
         res = litellm.completion(**kwargs)
         return hash_object, res

@@ -732,6 +732,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the language to use in the chat (default: None, uses system settings)",
     )
     group.add_argument(
+        "--commit-language",
+        metavar="COMMIT_LANGUAGE",
+        default=None,
+        help="Specify the language to use in the commit message (default: None, user language)",
+    )
+    group.add_argument(
         "--yes-always",
         action="store_true",
         help="Always say yes to every confirmation",

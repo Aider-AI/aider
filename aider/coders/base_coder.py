@@ -123,6 +123,7 @@ class Coder:
     detect_urls = True
     ignore_mentions = None
     chat_language = None
+    commit_language = None
     file_watcher = None
     mcp_servers = None
     mcp_tools = None
@@ -335,6 +336,7 @@ class Coder:
         num_cache_warming_pings=0,
         suggest_shell_commands=True,
         chat_language=None,
+        commit_language=None,
         detect_urls=True,
         ignore_mentions=None,
         total_tokens_sent=0,
@@ -349,6 +351,7 @@ class Coder:
 
         self.event = self.analytics.event
         self.chat_language = chat_language
+        self.commit_language = commit_language
         self.commit_before_message = []
         self.aider_commit_hashes = set()
         self.rejected_urls = set()

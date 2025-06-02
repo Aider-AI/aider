@@ -4659,3 +4659,69 @@
     zjy1412: 54
   start_tag: v0.82.0
   total_lines: 2594
+- aider_percentage: 78.92
+  aider_total: 655
+  end_date: '2025-05-30'
+  end_tag: v0.84.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/args.py:
+      Paul Gauthier (aider): 27
+      saviour: 2
+    aider/args_formatter.py:
+      Paul Gauthier: 1
+    aider/coders/base_coder.py:
+      Paul Gauthier: 4
+      Paul Gauthier (aider): 10
+    aider/commands.py:
+      Paul Gauthier (aider): 23
+      wangboxue: 1
+    aider/models.py:
+      Lih Chen: 15
+      Paul Gauthier: 16
+      Paul Gauthier (aider): 12
+    aider/onboarding.py:
+      Paul Gauthier: 2
+    aider/openrouter.py:
+      Paul Gauthier (aider): 120
+    aider/repo.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 10
+    aider/repomap.py:
+      Paul Gauthier (aider): 1
+    aider/resources/model-settings.yml:
+      Paul Gauthier: 71
+      Paul Gauthier (aider): 193
+      Trung Dinh: 11
+    aider/utils.py:
+      Paul Gauthier (aider): 1
+    aider/waiting.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 6
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    aider/website/index.html:
+      Paul Gauthier: 43
+    scripts/update-history.py:
+      Paul Gauthier: 2
+    tests/basic/test_coder.py:
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 144
+    tests/basic/test_main.py:
+      Paul Gauthier (aider): 28
+    tests/basic/test_models.py:
+      Paul Gauthier (aider): 2
+    tests/basic/test_onboarding.py:
+      Paul Gauthier (aider): 5
+    tests/basic/test_openrouter.py:
+      Paul Gauthier (aider): 73
+  grand_total:
+    Lih Chen: 15
+    Paul Gauthier: 146
+    Paul Gauthier (aider): 655
+    Trung Dinh: 11
+    saviour: 2
+    wangboxue: 1
+  start_tag: v0.83.0
+  total_lines: 830

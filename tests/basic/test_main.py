@@ -1035,6 +1035,16 @@ class TestMain(TestCase):
             system_info = coder.get_platform_info()
             self.assertIn("Spanish", system_info)
 
+    def test_commit_language_japanese(self):
+        with GitTemporaryDirectory():
+            coder = main(
+                ["--commit-language", "japanese", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertIn("japanese", coder.commit_language)
+
     @patch("git.Repo.init")
     def test_main_exit_with_git_command_not_found(self, mock_git_init):
         mock_git_init.side_effect = git.exc.GitCommandNotFound("git", "Command 'git' not found")

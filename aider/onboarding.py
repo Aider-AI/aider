@@ -55,9 +55,9 @@ def try_to_select_default_model():
         # Check if the user is on a free tier
         is_free_tier = check_openrouter_tier(openrouter_key)
         if is_free_tier:
-            return "openrouter/google/gemini-2.5-pro-exp-03-25:free"
+            return "openrouter/deepseek/deepseek-r1:free"
         else:
-            return "openrouter/anthropic/claude-3.7-sonnet"
+            return "openrouter/anthropic/claude-sonnet-4"
 
     # Select model based on other available API keys
     model_key_pairs = [

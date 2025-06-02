@@ -158,6 +158,34 @@ cog.out("```\n")
   system_prompt_prefix: null
   accepts_settings: null
 
+- name: anthropic.claude-opus-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: anthropic/claude-3-5-haiku-20241022
   edit_format: diff
   weak_model_name: anthropic/claude-3-5-haiku-20241022
@@ -245,6 +273,34 @@ cog.out("```\n")
     extra_headers:
       anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25
   cache_control: true
+
+- name: anthropic/claude-opus-4-20250514
+  edit_format: diff
+  weak_model_name: anthropic/claude-3-5-haiku-20241022
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: anthropic/claude-sonnet-4-20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: anthropic/claude-sonnet-4-20250514
+  edit_format: diff
+  weak_model_name: anthropic/claude-3-5-haiku-20241022
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: anthropic/claude-sonnet-4-20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: azure/gpt-4.1
   edit_format: diff
@@ -407,6 +463,20 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: bedrock/anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: bedrock/anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
   weak_model_name: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
@@ -419,6 +489,20 @@ cog.out("```\n")
     max_tokens: 64000
   cache_control: true
   editor_model_name: bedrock/us.anthropic.claude-3-7-sonnet-20250219-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
@@ -439,6 +523,62 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: bedrock_converse/anthropic.claude-opus-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock_converse/anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: bedrock_converse/anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: bedrock_converse/anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock_converse/anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: bedrock_converse/anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: bedrock_converse/eu.anthropic.claude-opus-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock_converse/eu.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: bedrock_converse/eu.anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: bedrock_converse/eu.anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock_converse/eu.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: bedrock_converse/eu.anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
   edit_format: diff
   weak_model_name: bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0
@@ -451,6 +591,34 @@ cog.out("```\n")
     max_tokens: 64000
   cache_control: true
   editor_model_name: bedrock_converse/us.anthropic.claude-3-7-sonnet-20250219-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: bedrock_converse/us.anthropic.claude-opus-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: bedrock_converse/us.anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: bedrock_converse/us.anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: bedrock_converse/us.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: bedrock_converse/us.anthropic.claude-sonnet-4-20250514-v1:0
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
@@ -538,6 +706,34 @@ cog.out("```\n")
 - name: claude-3-sonnet-20240229
   weak_model_name: claude-3-5-haiku-20241022
 
+- name: claude-opus-4-20250514
+  edit_format: diff
+  weak_model_name: claude-3-5-haiku-20241022
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: claude-sonnet-4-20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: claude-sonnet-4-20250514
+  edit_format: diff
+  weak_model_name: claude-3-5-haiku-20241022
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: claude-sonnet-4-20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: cohere_chat/command-a-03-2025
   examples_as_sys_msg: true
 
@@ -599,6 +795,34 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: deepseek/deepseek-chat
   editor_edit_format: editor-diff
+
+- name: eu.anthropic.claude-opus-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: eu.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: eu.anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: eu.anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: eu.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: eu.anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
 
 - name: fireworks_ai/accounts/fireworks/models/deepseek-r1
   edit_format: diff
@@ -1145,6 +1369,34 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: openrouter/anthropic/claude-opus-4
+  edit_format: diff
+  weak_model_name: openrouter/anthropic/claude-3-5-haiku
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: openrouter/anthropic/claude-sonnet-4
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: openrouter/anthropic/claude-sonnet-4
+  edit_format: diff
+  weak_model_name: openrouter/anthropic/claude-3-5-haiku
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: openrouter/anthropic/claude-sonnet-4
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: openrouter/cohere/command-a-03-2025
   examples_as_sys_msg: true
 
@@ -1434,6 +1686,34 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: us.anthropic.claude-opus-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: us.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 32000
+  cache_control: true
+  editor_model_name: us.anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: us.anthropic.claude-sonnet-4-20250514-v1:0
+  edit_format: diff
+  weak_model_name: us.anthropic.claude-3-5-haiku-20241022-v1:0
+  use_repo_map: true
+  extra_params:
+    extra_headers:
+      anthropic-beta: prompt-caching-2024-07-31,pdfs-2024-09-25,output-128k-2025-02-19
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: us.anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
@@ -1443,6 +1723,28 @@ cog.out("```\n")
   extra_params:
     max_tokens: 64000
   editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: vertex_ai-anthropic_models/vertex_ai/claude-opus-4@20250514
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-3-5-haiku@20241022
+  use_repo_map: true
+  extra_params:
+    max_tokens: 32000
+  editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-sonnet-4@20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: vertex_ai-anthropic_models/vertex_ai/claude-sonnet-4@20250514
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-3-5-haiku@20241022
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-sonnet-4@20250514
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
@@ -1501,6 +1803,35 @@ cog.out("```\n")
 
 - name: vertex_ai/claude-3-sonnet@20240229
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
+
+- name: vertex_ai/claude-opus-4@20250514
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-3-5-haiku@20241022
+  use_repo_map: true
+  extra_params:
+    max_tokens: 32000
+  editor_model_name: vertex_ai/claude-sonnet-4@20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: vertex_ai/claude-sonnet-4@20250514
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-3-5-haiku@20241022
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  editor_model_name: vertex_ai/claude-sonnet-4@20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: vertex_ai/gemini-2.5-flash-preview-05-20
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
+  - thinking_tokens
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced

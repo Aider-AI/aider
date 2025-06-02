@@ -210,7 +210,9 @@ class GitRepo:
         else:
             user_language = None
             if coder:
-                user_language = coder.get_user_language()
+                user_language = coder.commit_language
+                if not user_language:
+                    user_language = coder.get_user_language()
             commit_message = self.get_commit_message(diffs, context, user_language)
 
         # Retrieve attribute settings, prioritizing coder.args if available
@@ -389,14 +391,20 @@ class GitRepo:
         try:
             if current_branch_has_commits:
                 args = ["HEAD", "--"] + list(fnames)
-                diffs += self.repo.git.diff(*args)
+                diffs += self.repo.git.diff(*args, stdout_as_string=False).decode(
+                    self.io.encoding, "replace"
+                )
                 return diffs
 
             wd_args = ["--"] + list(fnames)
             index_args = ["--cached"] + wd_args
 
-            diffs += self.repo.git.diff(*index_args)
-            diffs += self.repo.git.diff(*wd_args)
+            diffs += self.repo.git.diff(*index_args, stdout_as_string=False).decode(
+                self.io.encoding, "replace"
+            )
+            diffs += self.repo.git.diff(*wd_args, stdout_as_string=False).decode(
+                self.io.encoding, "replace"
+            )
 
             return diffs
         except ANY_GIT_ERROR as err:
@@ -410,7 +418,9 @@ class GitRepo:
             args += ["--color=never"]
 
         args += [from_commit, to_commit]
-        diffs = self.repo.git.diff(*args)
+        diffs = self.repo.git.diff(*args, stdout_as_string=False).decode(
+            self.io.encoding, "replace"
+        )
 
         return diffs
 
