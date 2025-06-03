@@ -683,3 +683,34 @@ class TestRepo(unittest.TestCase):
             # Verify the commit was actually made
             latest_commit_msg = raw_repo.head.commit.message
             self.assertEqual(latest_commit_msg.strip(), "Should succeed")
+
+    @patch("aider.models.Model.simple_send_with_retries")
+    def test_get_commit_message_uses_system_prompt_prefix(self, mock_send):
+        """
+        Verify that GitRepo.get_commit_message() prepends the model.system_prompt_prefix
+        to the system prompt sent to the LLM.
+        """
+        mock_send.return_value = "good commit message"
+
+        prefix = "MY-CUSTOM-PREFIX"
+        model = Model("gpt-3.5-turbo")
+        model.system_prompt_prefix = prefix
+
+        with GitTemporaryDirectory():
+            repo = GitRepo(InputOutput(), None, None, models=[model])
+
+            # Call the function under test
+            repo.get_commit_message("dummy diff", "dummy context")
+
+            # Ensure the LLM was invoked once
+            mock_send.assert_called_once()
+
+            # Grab the system message sent to the model
+            messages = mock_send.call_args[0][0]
+            system_msg_content = messages[0]["content"]
+
+            # Verify the prefix is at the start of the system message
+            self.assertTrue(
+                system_msg_content.startswith(prefix),
+                "system_prompt_prefix should be prepended to the system prompt",
+            )
