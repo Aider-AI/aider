@@ -888,14 +888,44 @@ class Model(ModelSettings):
         ):
             import requests
 
+            class GitHubCopilotTokenError(Exception):
+                """Custom exception for GitHub Copilot token-related errors."""
+                pass
+
+            # Validate GitHub Copilot token exists
+            if "GITHUB_COPILOT_TOKEN" not in os.environ:
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable not found")
+
+            github_token = os.environ["GITHUB_COPILOT_TOKEN"]
+            if not github_token.strip():
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable is empty")
+
             headers = {
                 "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
                 "Editor-Version": extra_headers["Editor-Version"],
                 "Copilot-Integration-Id": extra_headers["Copilot-Integration-Id"],
                 "Content-Type": "application/json",
             }
-            res = requests.get("https://api.github.com/copilot_internal/v2/token", headers=headers)
-            os.environ[openai_api_key] = res.json()["token"]
+
+            url = "https://api.github.com/copilot_internal/v2/token"
+            res = requests.get(url, headers=headers)
+            if res.status_code != 200:
+                safe_headers = {k: v for k, v in headers.items() if k != "Authorization"}
+                token_preview = github_token[:5] + "..." if len(github_token) >= 5 else github_token
+                safe_headers["Authorization"] = f"Bearer {token_preview}"
+                raise GitHubCopilotTokenError(
+                    f"GitHub Copilot API request failed (Status: {res.status_code})\n"
+                    f"URL: {url}\n"
+                    f"Headers: {json.dumps(safe_headers, indent=2)}\n"
+                    f"JSON: {res.text}"
+                )
+
+            response_data = res.json()
+            token = response_data.get("token")
+            if not token:
+                raise GitHubCopilotTokenError("Response missing 'token' field")
+
+            os.environ[openai_api_key] = token
 
     def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
