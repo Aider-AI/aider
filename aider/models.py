@@ -890,6 +890,7 @@ class Model(ModelSettings):
 
             class GitHubCopilotTokenError(Exception):
                 """Custom exception for GitHub Copilot token-related errors."""
+
                 pass
 
             # Validate GitHub Copilot token exists
