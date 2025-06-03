@@ -386,6 +386,9 @@
 ## Specify the language to use in the chat (default: None, uses system settings)
 #chat-language: xxx
 
+## Specify the language to use in the commit message (default: None, user language)
+#commit-language: xxx
+
 ## Always say yes to every confirmation
 #yes-always: false
 
