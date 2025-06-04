@@ -16,11 +16,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const filteredTitle = "Aider polyglot coding benchmark results (selected)";
 
   function applySearchFilter() {
-    const searchTerm = searchInput.value.toLowerCase();
+    const searchInputValue = searchInput.value.toLowerCase();
+    // Split by comma, trim whitespace from each term, and filter out empty terms
+    const searchTerms = searchInputValue.split(',').map(term => term.trim()).filter(term => term.length > 0);
+
     allMainRows.forEach(row => {
       const textContent = row.textContent.toLowerCase();
       const detailsRow = document.getElementById(row.id.replace('main-row-', 'details-'));
-      const matchesSearch = textContent.includes(searchTerm);
+      let matchesSearch = false;
+
+      if (searchTerms.length === 0) { // If no search terms (e.g., input is empty or just commas/spaces)
+        matchesSearch = true; // Show all rows
+      } else {
+        // Check if the row's text content includes *any* of the search terms (OR logic)
+        matchesSearch = searchTerms.some(term => textContent.includes(term));
+      }
 
       if (matchesSearch) {
         row.classList.remove('hidden-by-search');
