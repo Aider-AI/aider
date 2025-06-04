@@ -310,7 +310,11 @@ class GitRepo:
                     )
 
                 # Perform the commit
-                self.repo.git.commit(cmd)
+                # GitPython's command interface expects the arguments to be
+                # passed individually.  Passing a list results in the entire
+                # list being interpreted as a single argument, which breaks the
+                # commit.  Use *cmd to expand the list correctly.
+                self.repo.git.commit(*cmd)
                 commit_hash = self.get_head_commit_sha(short=True)
                 self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
                 return commit_hash, commit_message
