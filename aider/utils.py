@@ -186,6 +186,7 @@ def split_chat_history_markdown(text, include_tool=False):
 
     append_msg("assistant", assistant)
     append_msg("user", user)
+    append_msg("tool", tool)
 
     if not include_tool:
         messages = [m for m in messages if m["role"] != "tool"]
