@@ -253,29 +253,40 @@ human intervention.
     width: 100%;
     table-layout: auto;
   }
-  /* Model column */
+  /* Model column – ~10% wider */
   table thead th:nth-child(2),
   table tbody tr:not(.details-row) td:nth-child(2) {
     min-width: 80px;
-    max-width: 40vw;
-    word-break: break-word;
-    white-space: normal;
+    max-width: 65vw;
   }
-  /* Percent correct column */
+
+  /* Percent correct – ~15% narrower */
   table thead th:nth-child(3),
-  table tbody tr:not(.details-row) td:nth-child(3) {
-    min-width: 60px;
-    max-width: 20vw;
-    word-break: break-word;
-    white-space: normal;
-  }
-  /* Cost column */
+  table tbody tr:not(.details-row) td:nth-child(3),
+  /* Cost – same as percent correct */
   table thead th:nth-child(4),
   table tbody tr:not(.details-row) td:nth-child(4) {
-    min-width: 60px;
-    max-width: 20vw;
-    word-break: break-word;
-    white-space: normal;
+    min-width: 30px;
+    max-width: 12vw;
+  }
+
+  /* (combined above) */
+
+  /* make table cells more compact */
+  th, td {
+    padding: 4px 6px;
+  }
+
+  /* fix every row to the same height */
+  table tbody tr:not(.details-row) {
+    height: 48px;
+  }
+
+  /* prevent the command column from wrapping */
+  .col-command code {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
