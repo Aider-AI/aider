@@ -37,7 +37,7 @@ human intervention.
       <th style="padding: 8px; text-align: center; width: 20%; cursor: pointer;" data-sort-key="pass_rate_2" data-sort-direction="desc">Percent correct <span class="sort-indicator">▼</span></th>
       <th style="padding: 8px; text-align: center; width: 20%; cursor: pointer;" data-sort-key="total_cost">Cost <span class="sort-indicator"></span></th>
       <th style="padding: 8px; text-align: left; width: 14%;" class="col-command">Command</th>
-      <th style="padding: 8px; text-align: center; width: 10%; cursor: pointer;" class="col-conform" data-sort-key="percent_cases_well_formed">Correct edit format <span class="sort-indicator"></span></th>
+      <th style="padding: 8px; text-align: left; width: 10%; cursor: pointer;" class="col-conform" data-sort-key="percent_cases_well_formed">Correct edit format <span class="sort-indicator"></span></th>
       <th style="padding: 8px; text-align: left; width: 10%" class="col-edit-format">Edit Format <span class="sort-indicator-placeholder"></span></th>
     </tr>
   </thead>
