@@ -74,7 +74,7 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--apply-clipboard-edits] [--exit] [--show-repo-map]
              [--show-prompts] [--voice-format] [--voice-language]
              [--voice-input-device] [--disable-playwright] [--file]
-             [--read] [--vim] [--chat-language] [--yes-always] [-v]
+             [--read] [--vim] [--chat-language] [--commit-language] [--yes-always] [-v]
              [--load] [--encoding] [--line-endings] [-c]
              [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
@@ -682,6 +682,10 @@ Environment variable: `AIDER_VIM`
 ### `--chat-language CHAT_LANGUAGE`
 Specify the language to use in the chat (default: None, uses system settings)  
 Environment variable: `AIDER_CHAT_LANGUAGE`  
+
+### `--commit-language COMMIT_LANGUAGE`
+Specify the language to use in the commit message (default: None, user language)  
+Environment variable: `AIDER_COMMIT_LANGUAGE`  
 
 ### `--yes-always`
 Always say yes to every confirmation  

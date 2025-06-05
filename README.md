@@ -33,7 +33,7 @@ src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-3498db?style=flat-squ
   <a href="https://openrouter.ai/#options-menu"><img alt="OpenRouter Ranking" title="Aider's ranking among applications on the OpenRouter platform"
 src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
   <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="Percentage of the new code in Aider's last release written by Aider itself"
-src="https://img.shields.io/badge/🔄%20Singularity-54%25-e74c3c?style=flat-square&labelColor=555555"/></a>
+src="https://img.shields.io/badge/🔄%20Singularity-79%25-e74c3c?style=flat-square&labelColor=555555"/></a>
 <!--[[[end]]]-->  
 </p>
 
@@ -136,6 +136,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - [LLM Leaderboards](https://aider.chat/docs/leaderboards/)
 - [GitHub Repository](https://github.com/Aider-AI/aider)
 - [Discord Community](https://discord.gg/Y7X7bhMQFV)
+- [Release notes](https://aider.chat/HISTORY.html)
 - [Blog](https://aider.chat/blog/)
 
 ## Kind Words From Users
