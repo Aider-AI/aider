@@ -45,7 +45,7 @@ Copy the `oauth_token` value – that string is your `OPENAI_API_KEY`.
 
 *Note:* tokens created by the Neovim **copilot.lua** plugin (old `hosts.json`) sometimes lack the
 needed scopes. If you see “access to this endpoint is forbidden”, regenerate the token with a
-JetBrains IDE or the VS Code Copilot extension.
+JetBrains IDE.
 
 ---
 
