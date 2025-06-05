@@ -88,7 +88,7 @@ def test_get_prompt():
 def test_record_and_transcribe_keyboard_interrupt():
     with patch("aider.voice.sf", MagicMock()):
         voice = Voice()
-        with patch.object(voice, "raw_record_and_transcribe", side_effect=KeyboardInterrupt()):
+        with patch.object(voice, "_record_and_transcribe", side_effect=KeyboardInterrupt()):
             result = voice.record_and_transcribe()
             assert result is None
 
@@ -97,7 +97,9 @@ def test_record_and_transcribe_device_error():
     with patch("aider.voice.sf", MagicMock()):
         voice = Voice()
         with patch.object(
-            voice, "raw_record_and_transcribe", side_effect=SoundDeviceError("Test error")
+            voice,
+            "_record_and_transcribe",
+            side_effect=SoundDeviceError("Test error"),
         ):
             result = voice.record_and_transcribe()
             assert result is None
