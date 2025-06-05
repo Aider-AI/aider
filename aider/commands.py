@@ -21,7 +21,8 @@ from aider.io import CommandCompletionException
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
-from aider.scrape import Scraper, install_playwright
+# from aider.scrape import Scraper, install_playwright # REMOVED
+from aider.search_enhancer import SearchEnhancer
 from aider.utils import is_image_file
 # from aider.coders.agent_coder import AgentCoder # Import AgentCoder - Moved inside cmd_agent
 
@@ -36,7 +37,8 @@ class SwitchCoder(Exception):
 
 class Commands:
     voice = None
-    scraper = None
+    # scraper = None # REMOVED
+    search_enhancer_instance = None
 
     def clone(self):
         return Commands(
@@ -221,23 +223,22 @@ class Commands:
             return
 
         self.io.tool_output(f"Scraping {url}...")
-        if not self.scraper:
-            disable_playwright = getattr(self.args, "disable_playwright", False)
-            if disable_playwright:
-                res = False
-            else:
-                res = install_playwright(self.io)
-                if not res:
-                    self.io.tool_warning("Unable to initialize playwright.")
 
-            self.scraper = Scraper(
-                print_error=self.io.tool_error,
-                playwright_available=res,
-                verify_ssl=self.verify_ssl,
-            )
+        if not self.search_enhancer_instance:
+            if not self.coder:
+                self.io.tool_error("Coder not available for SearchEnhancer initialization in cmd_web.")
+                return
+            self.search_enhancer_instance = SearchEnhancer(self.coder.main_model, self.io, self.coder.args)
 
-        content = self.scraper.scrape(url) or ""
-        content = f"Here is the content of {url}:\n\n" + content
+        content = self.search_enhancer_instance.fetch_url_content(url)
+
+        if not content:
+            self.io.tool_error(f"Failed to scrape content from {url}.")
+            if return_content:
+                return ""
+            return
+
+        content = f"Here is the content of {url}:\\n\\n" + content
         if return_content:
             return content
 

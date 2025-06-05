@@ -13,6 +13,7 @@ import traceback
 
 import aider.models # Added for model instantiation
 
+from aider.coders.editblock_coder import EditBlockCoder # For parsing edits
 from aider.prompts import (
     agent_coding_system,
     agent_debugging_system,
@@ -33,7 +34,6 @@ from aider.prompts import (
     agent_implement_fix_plan_system,
     agent_analyze_integration_error_system,
 )
-from aider.search_enhancer import SearchEnhancer # ADDED IMPORT
 
 # Constants for phase transitions, can be centralized if used elsewhere
 MAX_CODING_RETRIES_PER_DELIVERABLE = 3
@@ -97,7 +97,6 @@ class AgentCoder(Coder):
         self.executor_model_name = None
         self.planner_llm = None # Will hold the planner model instance
         self.executor_llm = None # Will hold the executor model instance
-        self.search_enhancer = None # ADDED
 
         # Store new agent config from args
         self.agent_hierarchical_planning = "none"
@@ -177,17 +176,6 @@ class AgentCoder(Coder):
             self.planner_llm = self.main_model
             self.executor_llm = self.main_model
 
-        # Initialize SearchEnhancer if web search is enabled for the agent
-        if hasattr(self.args, 'agent_web_search') and self.args.agent_web_search != "never":
-            try:
-                # Use planner_llm if available and P/E arch is on, otherwise main_model
-                llm_for_search = self.planner_llm if self.enable_planner_executor_arch and self.planner_llm else self.main_model
-                self.search_enhancer = SearchEnhancer(llm_for_search, self.io, self.args) # MODIFIED: Added self.args
-                self.io.tool_output("Agent Mode: SearchEnhancer initialized for web searches.")
-            except Exception as e:
-                self.io.tool_error(f"Agent Mode: Failed to initialize SearchEnhancer: {e}")
-                self.search_enhancer = None
-
         # Headless mode setup & output_plan_only implications
         if self.output_plan_only:
             self.is_headless = True # output_plan_only implies headless
@@ -218,6 +206,22 @@ class AgentCoder(Coder):
 
         # but this could be made configurable if agent could reliably output other formats.
         self.edit_format = "diff" # AgentCoder is designed to work with edit blocks
+
+        self.initial_task = initial_task
+        self.clarified_task = None
+        self.task_decomposition = None
+        self.execution_plan = None
+        self.clarification_history = []
+        self.current_phase = "idle"  # Possible phases: clarification, planning, test_design, approval, execution, integration_testing, reporting, outputting_plan
+        self.is_headless = False
+        self.output_plan_only = False
+        self.web_search_client = None
+        self.agent_touched_files_rel = set()
+        self.overall_integration_tests_generated = False
+
+
+        if args:
+            self.is_headless = getattr(args, 'agent_headless', False)
 
     def run(self, with_message=None):
         """
@@ -265,31 +269,11 @@ class AgentCoder(Coder):
                 self.current_phase = "idle"
                 return "Agent stopped due to missing input during clarification."
 
-        # === Web search for clarification phase (using Browser-Use) ===
-        web_search_results_str = None
-        if self.search_enhancer and self.args.agent_web_search != "never":
-            search_now_flag = False
-            if self.args.agent_web_search == "always":
-                search_now_flag = True
-            elif self.args.agent_web_search == "on_demand":
-                if self._confirm_action(f"Perform web search for query '{current_query_for_web_search}' during agent phase 'Clarification'?", default_response="n"):
-                    search_now_flag = True
-            
-            if search_now_flag:
-                self.io.tool_output(f"Agent (Clarification - Web Search): Using Browser-Use for: {current_query_for_web_search}")
-                try:
-                    web_search_results_str = self.search_enhancer.perform_browser_task(current_query_for_web_search)
-                    if web_search_results_str:
-                        self.io.tool_output(f"Agent (Clarification - Web Search): Found relevant information.\n{web_search_results_str[:300]}...")
-                    else:
-                        self.io.tool_output("Agent (Clarification - Web Search): No useful information returned from web task.")
-                except Exception as e:
-                    self.io.tool_error(f"Agent (Clarification - Web Search): Error during Browser-Use task: {e}")
-        # === End Web search for clarification phase ===
-
+        # Perform web search if needed
+        web_search_results = self._perform_web_search_if_needed(current_query_for_web_search, "Clarification")
         web_context_for_llm = ""
-        if web_search_results_str: # Check the string result
-            web_context_for_llm = f"\n\nRelevant information from web search:\n{web_search_results_str}"
+        if web_search_results:
+            web_context_for_llm = f"\n\nRelevant information from web search:\n{web_search_results}"
             # Prepend to the latest user message for context, or add as a new system/user message?
             # For clarification, adding it to the system prompt might be cleaner.
             # Or, modify the current user message to include this context.
@@ -300,13 +284,13 @@ class AgentCoder(Coder):
         # The system prompt guides the LLM to ask clarifying questions or confirm understanding.
         # The history provides the conversation so far.
         messages_for_llm = list(self.clarification_history) # Start with history (includes initial system prompt)
-        if web_context_for_llm: # web_context_for_llm is now populated directly by perform_browser_task if results exist
+        if web_context_for_llm:
             # Add web context as part of the user's last message, or a separate user message before LLM thinks.
             # Modifying the last user message:
             if messages_for_llm and messages_for_llm[-1]["role"] == "user":
-                messages_for_llm[-1]["content"] += f"\n\nRelevant information from web search:\n{web_search_results_str}" # Use web_search_results_str directly
+                messages_for_llm[-1]["content"] += web_context_for_llm
             else: # Should not happen if logic is correct, but as a fallback
-                messages_for_llm.append({"role": "user", "content": f"Context from web search:\n{web_search_results_str}"})
+                messages_for_llm.append({"role": "user", "content": f"Context from web search:\n{web_search_results}"}) 
 
         self.io.tool_output("Agent (Clarification): Thinking...")
         # Use only the main system prompt and the subsequent user/assistant turns for the actual LLM call
@@ -399,31 +383,10 @@ class AgentCoder(Coder):
         self.current_task_effective_depth = max(0, self.current_task_effective_depth)
         self.io.tool_output(f"Agent (Planning): Final effective decomposition depth for this task: {self.current_task_effective_depth}")
 
-        # === Web search for planning phase (using Browser-Use) ===
-        web_search_results_str_planning = None
-        if self.search_enhancer and self.args.agent_web_search != "never":
-            search_now_flag = False
-            if self.args.agent_web_search == "always":
-                search_now_flag = True
-            elif self.args.agent_web_search == "on_demand":
-                if self._confirm_action(f"Perform web search for query '{self.clarified_task}' during agent phase 'Planning'?", default_response="n"):
-                    search_now_flag = True
-            
-            if search_now_flag:
-                self.io.tool_output(f"Agent (Planning - Web Search): Using Browser-Use for: {self.clarified_task[:100]}...")
-                try:
-                    web_search_results_str_planning = self.search_enhancer.perform_browser_task(self.clarified_task)
-                    if web_search_results_str_planning:
-                         self.io.tool_output(f"Agent (Planning - Web Search): Found relevant information.\n{web_search_results_str_planning[:300]}...")
-                    else:
-                        self.io.tool_output("Agent (Planning - Web Search): No useful information returned from web task.")
-                except Exception as e:
-                    self.io.tool_error(f"Agent (Planning - Web Search): Error during Browser-Use task: {e}")
-        # === End Web search for planning phase ===
-        
+        web_search_results = self._perform_web_search_if_needed(self.clarified_task, "Planning")
         web_context_for_llm = ""
-        if web_search_results_str_planning: # Use the planning-specific results
-            web_context_for_llm = f"\n\nRelevant information from web search to consider for planning:\n{web_search_results_str_planning}"
+        if web_search_results:
+            web_context_for_llm = f"\n\nRelevant information from web search to consider for planning:\n{web_search_results}"
 
         # The task used for the highest level of planning (recursive decomposition starts here)
         # We no longer use task_for_planning_prompt directly with agent_planning_system for major deliverables
@@ -828,7 +791,7 @@ class AgentCoder(Coder):
                         "type": f"Sub-Task of {task_id}" # More descriptive type
                     }
                     # We pass the parent description for context to _execute_atomic_task
-                    sub_task_success = self._execute_task_recursively(sub_task_to_execute, parent_description=task_description)
+                    sub_task_success = self._execute_task_recursively(sub_task_to_execute, parent_md_description=task_description)
                     
                     if not sub_task_success:
                         all_sub_tasks_completed = False
@@ -868,27 +831,8 @@ class AgentCoder(Coder):
                                 failed_test_desc_for_parent = f"Integration tests for parent task '{task_description}' (part of overall plan) failed."
                                 
                                 parent_it_web_search_query = f"Fix integration test error for parent task {task_description}: {current_test_output[:200]}"
-                                # === Web search for parent IT debug ===
-                                parent_it_web_results_str = None
-                                if self.search_enhancer and self.args.agent_web_search != "never":
-                                    search_now_flag = False
-                                    # For debugging, let's assume 'always' or pre-approved 'on_demand' for now to simplify, 
-                                    # or make it 'always' if in a debugging loop.
-                                    # Let's lean towards 'always' during debugging if search is generally enabled.
-                                    if self.args.agent_web_search == "always" or self.args.agent_web_search == "on_demand": # Simplified for debug
-                                        search_now_flag = True # For on_demand, assume user would want it in a fix loop
-                                    
-                                    if search_now_flag:
-                                        self.io.tool_output(f"Agent (Execution - Parent IT Debug - Web Search): Using Browser-Use for: {parent_it_web_search_query}")
-                                        try:
-                                            parent_it_web_results_str = self.search_enhancer.perform_browser_task(parent_it_web_search_query)
-                                            if parent_it_web_results_str:
-                                                self.io.tool_output(f"Agent (Execution - Parent IT Debug - Web Search): Found relevant information.\n{parent_it_web_results_str[:300]}...")
-                                            else: self.io.tool_output("Agent (Execution - Parent IT Debug - Web Search): No useful extracts.")
-                                        except Exception as e:
-                                            self.io.tool_error(f"Agent (Execution - Parent IT Debug - Web Search): Error: {e}")
-                                # === End Web search for parent IT debug ===
-                                parent_it_web_context_str = parent_it_web_results_str if parent_it_web_results_str else "No web search performed or no results found."
+                                parent_it_web_results = self._perform_web_search_if_needed(parent_it_web_search_query, f"Execution - Parent IT Debug - {task_id}")
+                                parent_it_web_context_str = parent_it_web_results if parent_it_web_results else "No web search performed or no results found."
                                 
                                 llm_fix_response_parent = None
 
@@ -1013,10 +957,8 @@ class AgentCoder(Coder):
         """Handles the final integration testing phase."""
         self.io.tool_output("Agent (Integration Testing): Running integration tests...")
 
-        overall_tests = self.plan.get("overall_integration_tests", []) if self.plan else []
-
-        if not overall_tests:
-            self.io.tool_output("Agent (Integration Testing): No overall integration tests defined in the plan. Skipping.")
+        if not self.tests or not self.tests.get("integration_tests"):
+            self.io.tool_output("Agent (Integration Testing): No integration tests defined. Skipping.")
             self.current_phase = "reporting"
             return self.run()
 
@@ -1046,24 +988,8 @@ class AgentCoder(Coder):
                 failed_test_description = "Integration tests failed. See output above."
                 
                 it_web_search_query = f"Fix integration test error: {test_output[:200]}"
-                # === Web search for integration testing debug ===
-                it_web_results_str = None
-                if self.search_enhancer and self.args.agent_web_search != "never":
-                    search_now_flag = False
-                    if self.args.agent_web_search == "always" or self.args.agent_web_search == "on_demand": # Simplified for debug
-                        search_now_flag = True
-                            
-                    if search_now_flag:
-                        self.io.tool_output(f"Agent (Integration Testing - Debug - Web Search): Using Browser-Use for: {it_web_search_query}")
-                        try:
-                            it_web_results_str = self.search_enhancer.perform_browser_task(it_web_search_query)
-                            if it_web_results_str:
-                                self.io.tool_output(f"Agent (Integration Testing - Debug - Web Search): Found relevant information.\n{it_web_results_str[:300]}...")
-                            else: self.io.tool_output("Agent (Integration Testing - Debug - Web Search): No useful extracts.")
-                        except Exception as e:
-                            self.io.tool_error(f"Agent (Integration Testing - Debug - Web Search): Error: {e}")
-                # === End Web search for integration testing debug ===
-                it_web_context_str = it_web_results_str if it_web_results_str else "No web search performed or no results found."
+                it_web_results = self._perform_web_search_if_needed(it_web_search_query, "Integration Testing - Debugging")
+                it_web_context_str = it_web_results if it_web_results else "No web search performed or no results found."
 
                 self.check_added_files()
                 code_context_for_it_debug = self.get_context_for_prompts(show_abs_paths=True)
@@ -1141,14 +1067,6 @@ class AgentCoder(Coder):
     def run_reporting_phase(self):
         """Summarizes the work and switches back to the original coder."""
         self.io.tool_output("Agent (Reporting): Task processing complete.")
-
-        # Close browser if SearchEnhancer was used
-        if self.search_enhancer and hasattr(self.search_enhancer, 'close_browser'):
-            self.io.tool_output("Agent (Reporting): Closing browser used by SearchEnhancer...")
-            try:
-                self.search_enhancer.close_browser()
-            except Exception as e:
-                self.io.tool_error(f"Agent (Reporting): Error closing browser: {e}")
 
         summary = ["### Agent Task Summary ###"]
         summary.append(f"**Initial Task:** {self.initial_task}")
@@ -1247,7 +1165,7 @@ class AgentCoder(Coder):
 
     # Helper methods
     def _get_llm_response(self, messages, expecting_json=False, model_role="planner"):
-        """ Helper to send messages to the chosen model and get the response content. """
+        """ Helper to send messages to the chosen model (planner or executor) and get the response content. """
         attempt_count = 0
         max_attempts = 10 if expecting_json else 2 # Allow more retries for JSON parsing
 
@@ -1257,7 +1175,8 @@ class AgentCoder(Coder):
                 active_model = self.planner_llm
             elif model_role == "executor" and self.executor_llm:
                 active_model = self.executor_llm
-            else: # Fallback
+            else: # Fallback or if roles are not distinctly set up but arch is enabled
+                self.io.tool_warning(f"AgentCoder: Planner/Executor arch enabled, but role '{model_role}' requested an LLM that is not configured. Using main_model.")
                 active_model = self.main_model
         else:
             active_model = self.main_model
@@ -1266,59 +1185,130 @@ class AgentCoder(Coder):
             self.io.tool_error("AgentCoder: Critical error - no active model determined for LLM call.")
             return None
 
+        # The gpt_prompts to be used for this call should come from the active_model.
+        # The self.send method in BaseCoder, if called with a specific model, should ideally use
+        # that model's gpt_prompts or have them passed.
+        # For now, we assume self.send will correctly use prompts associated with the 'active_model' if 'active_model' is passed to it.
+        # We no longer manipulate self.model or self.gpt_prompts on the instance here.
+
+        # self.io.tool_output(f"DEBUG: _get_llm_response using model: {active_model.name} for role: {model_role}")
+
         while attempt_count < max_attempts:
             attempt_count += 1
             try:
                 self.partial_response_content = ""
                 self.partial_response_function_call = dict()
-                self.message_cost = 0.0 
+                self.message_cost = 0.0
 
-                # For Gemini models, add a user message if we only have a system message
-                if active_model.name.startswith("gemini/") and len(messages) == 1 and messages[0].get("role") == "system":
-                    messages.append({"role": "user", "content": "Please provide your response based on the system instructions above."})
-                
+                # Enhanced Debug: Log messages being sent to LLM
+                verbose_debug = self.verbose or (self.args and getattr(self.args, "agent_debug_planning", False))
+                if verbose_debug:
+                    try:
+                        formatted_msgs_to_send = utils.format_messages(messages, title=f"AgentCoder: Messages to LLM (Attempt {attempt_count}/{max_attempts}, Model: {active_model.name}, Role: {model_role}, Expecting JSON: {expecting_json})")
+                        self.io.tool_output(formatted_msgs_to_send, log_only=True)
+                    except Exception as log_e:
+                        self.io.tool_warning(f"AgentCoder: Error formatting messages for debug log: {log_e}")
+
+                full_response_chunks = []
                 for chunk_content in self.send(messages, model=active_model):
-                    pass  # Just consume the stream
+                    full_response_chunks.append(chunk_content)
 
                 response_content = self.partial_response_content
 
+                if verbose_debug:
+                    self.io.tool_output(f"AgentCoder: Raw LLM Response Content (Attempt {attempt_count}):\n>>>\n{response_content}\n<<<", log_only=True)
+
                 if expecting_json:
-                    # Strip markdown fences if present
-                    stripped_response = response_content.strip()
-                    if stripped_response.startswith("```") and stripped_response.endswith("```"):
-                        first_newline = stripped_response.find('\n')
-                        if first_newline != -1:
-                            stripped_response = stripped_response[first_newline + 1:-3].strip()
-                        else:
-                            stripped_response = stripped_response[3:-3].strip()
+                    # First, try to strip any generic triple-backtick fences
+                    # and leading/trailing whitespace from the raw response.
+                    stripped_response_content = response_content.strip()
+                    if stripped_response_content.startswith("```") and stripped_response_content.endswith("```"):
+                        # Find the first newline after the opening ```
+                        first_newline_index = stripped_response_content.find('\n')
+                        if first_newline_index != -1:
+                            # Content is after the first newline and before the closing ```
+                            stripped_response_content = stripped_response_content[first_newline_index + 1:-3].strip()
+                        else: # Should not happen with valid fenced blocks, but as a fallback
+                            stripped_response_content = stripped_response_content[3:-3].strip()
                     
+                    if verbose_debug:
+                        self.io.tool_output(f"AgentCoder: Stripped response for JSON parsing:\n>>>\n{stripped_response_content}\n<<<", log_only=True)
+
                     try:
-                        parsed_json = json.loads(stripped_response)
+                        # Attempt to parse the stripped response directly
+                        if verbose_debug:
+                            self.io.tool_output("AgentCoder: Attempting to parse (generically stripped) response as JSON.", log_only=True)
+                        parsed_json = json.loads(stripped_response_content) # Use stripped_response_content
+                        if verbose_debug:
+                            self.io.tool_output("AgentCoder: Successfully parsed (generically stripped) response as JSON.", log_only=True)
                         return parsed_json
-                    except json.JSONDecodeError:
-                        # Try finding specific ```json block
+                    except json.JSONDecodeError as e_direct:
+                        if verbose_debug:
+                            self.io.tool_output(f"AgentCoder: Failed to parse (generically stripped) response as JSON: {e_direct}. Original response content will be checked for specific ```json block.", log_only=True)
+                        e_direct_str = str(e_direct) # Store for logging
+                        
+                        # If direct parse of stripped content fails, fall back to looking for a specific ```json fenced block in the ORIGINAL response_content
                         match = re.search(r"```json\n(.*?)\n```", response_content, re.DOTALL)
                         if match:
+                            json_str_fenced = match.group(1).strip() # Also strip the content of the fenced block
+                            if verbose_debug:
+                                self.io.tool_output(f"AgentCoder: Found specific ```json fenced block. Extracted and stripped:\n>>>\n{json_str_fenced}\n<<<", log_only=True)
                             try:
-                                return json.loads(match.group(1).strip())
-                            except json.JSONDecodeError:
-                                pass
+                                parsed_json_fenced = json.loads(json_str_fenced)
+                                if verbose_debug:
+                                    self.io.tool_output("AgentCoder: Successfully parsed specific ```json fenced block.", log_only=True)
+                                return parsed_json_fenced
+                            except json.JSONDecodeError as e_fenced:
+                                if verbose_debug:
+                                    self.io.tool_output(f"AgentCoder: Failed to parse specific ```json fenced block: {e_fenced}", log_only=True)
+                                e_fenced_str = str(e_fenced) # Store for logging
+                        elif verbose_debug:
+                            self.io.tool_output("AgentCoder: No specific ```json fenced block found after stripped parse failed.", log_only=True)
+                        
+                        # If all attempts to parse JSON from this response failed:
+                        log_msg = (
+                            f"AgentCoder: Failed to parse JSON from LLM response (Attempt {attempt_count}/{max_attempts}).\n"
+                            f"  Error parsing generically stripped response: {e_direct_str}\n"
+                            f"  Error parsing specific '```json' fenced block (if found): {e_fenced_str if 'e_fenced_str' in locals() else 'N/A (no specific block found or parsed)'}\n"
+                            f"  Original raw response was:\n{response_content}"
+                        )
+                        self.io.tool_error(log_msg)
+
+                        if attempt_count < max_attempts:
+                            self.io.tool_output("AgentCoder: Will retry LLM call for JSON.", log_only=True)
+                            continue # Go to the next attempt in the while loop (retry LLM call)
+                        else:
+                            self.io.tool_error("AgentCoder: Max LLM attempts reached for JSON. Giving up.")
+                            return None # All LLM attempts exhausted
                 
-                if attempt_count < max_attempts:
-                            self.io.tool_warning(f"Failed to parse JSON response (attempt {attempt_count}/{max_attempts}). Retrying...")
-                            continue
-                else:
-                            self.io.tool_error("Failed to parse JSON after all attempts.")
-                            return None
-                
-                return response_content
+                return response_content # Success (not expecting JSON, or JSON was parsed and returned already)
 
             except Exception as e:
-                self.io.tool_error(f"Error communicating with LLM (attempt {attempt_count}/{max_attempts}): {e}")
-                if attempt_count >= max_attempts:
-                    return None
+                self.io.tool_error(f"AgentCoder: Error communicating with LLM via self.send() (Attempt {attempt_count}/{max_attempts}): {e}")
+                try:
+                    formatted_messages = utils.format_messages(messages, title=f"LLM Call Failed (Attempt {attempt_count}) - Messages")
+                    self.io.tool_error(formatted_messages)
+                except Exception as fm_e:
+                    self.io.tool_error(f"AgentCoder: Additionally, failed to format messages for error log: {fm_e}")
+                
+                if attempt_count < max_attempts:
+                    # Use new helper _confirm_action
+                    if self._confirm_action("LLM communication failed. Retry call?", default_response="y"):
+                        self.io.tool_output("Retrying LLM call...")
+                        continue # Retry the while loop
+                    else:
+                        self.io.tool_warning("LLM call retry declined or not possible. Aborting LLM call.")
+                        return None # User declined retry or no retry possible
+                else:
+                    self.io.tool_error("Maximum LLM call attempts reached.")
+                    return None # Max attempts reached
         
-        return None
+        # Ensure self.model is restored if it was changed
+        # if hasattr(self, 'model') and original_model_for_send: # <-- REMOVE THIS BLOCK
+        #      self.model = original_model_for_send
+        #      self.gpt_prompts = original_model_for_send.gpt_prompts
+        
+        return None # Should be at the same indentation level as the 'while' loop, if all attempts fail
 
     def _run_shell_command(self, command):
         """ Helper to run a shell command and return output, error, and exit code. """
@@ -1335,61 +1325,239 @@ class AgentCoder(Coder):
             self.io.tool_error(f"Error running shell command '{command}': {e}")
             return None, str(e), -1 # Indicate error with -1 exit code
 
-    def _delegate_to_coder(self, task_message, use_executor_model=True):
-        """
-        Delegates a task to the existing coder infrastructure.
-        Returns True if successful, False otherwise.
-        """
+    def _parse_and_apply_edits(self, llm_response_content):
+        """Parses LLM response for edit blocks and applies them using aider.utils."""
+        # Return a dict: {"applied_paths": set(), "created_paths": set()}
+        applied_paths_rel = set()
+        created_paths_rel = set()
         try:
-            # Choose the model for the delegated coder
-            if use_executor_model and self.enable_planner_executor_arch and self.executor_llm:
-                model_for_delegation = self.executor_llm
-            else:
-                model_for_delegation = self.main_model
-
-            # Import here to avoid circular imports
-            from aider.coders.editblock_coder import EditBlockCoder
-            
-            # Create a temporary coder with the same context
-            delegated_coder = EditBlockCoder(
-                main_model=model_for_delegation,
-                io=self.io,
-                args=self.args,
-                repo=self.repo,
-                fnames=list(self.abs_fnames),
-                read_only_fnames=list(self.abs_read_only_fnames)
+            # Use utils.find_original_update_blocks
+            edits = list(
+                utils.find_original_update_blocks(
+                    llm_response_content,
+                    self.fence,
+                    self.get_inchat_relative_files(),
+                )
             )
-            
-            # Transfer essential state
-            delegated_coder.abs_fnames = self.abs_fnames.copy()
-            delegated_coder.abs_read_only_fnames = self.abs_read_only_fnames.copy()
-            
-            # Run the coder for one iteration with the task message
-            response = delegated_coder.run(with_message=task_message)
-            
-            # Update our file tracking based on what the delegated coder did
-            new_files = delegated_coder.abs_fnames - self.abs_fnames
-            modified_files = delegated_coder.abs_fnames & self.abs_fnames
-            
-            # Update our state
-            self.abs_fnames = delegated_coder.abs_fnames.copy()
-            self.abs_read_only_fnames = delegated_coder.abs_read_only_fnames.copy()
-            
-            # Track changes for reporting
-            for new_file in new_files:
-                rel_path = self.get_rel_fname(new_file)
-                self.agent_touched_files_rel.add(rel_path)
-            
-            for modified_file in modified_files:
-                rel_path = self.get_rel_fname(modified_file)
-                self.agent_touched_files_rel.add(rel_path)
-            
-            # Consider successful if no exceptions and response was generated
-            return response is not None
-            
+
+            # Separate shell commands from file edits
+            shell_commands_from_llm = [edit[1] for edit in edits if edit[0] is None]
+            file_edits = [edit for edit in edits if edit[0] is not None]
+
+            for cmd_content in shell_commands_from_llm:
+                # We need to decide how AgentCoder handles shell commands from LLM.
+                # For now, let's queue them or log them. BaseCoder normally runs them via Commands.
+                self.io.tool_output(f"AgentCoder received shell command block (will be handled by main command loop if not run by agent directly):\\n{cmd_content}")
+                # self.commands.queue_llm_command(cmd_content) # Or similar
+
+            if not file_edits:
+                self.io.tool_warning("AgentCoder: LLM response contained no file edit blocks.")
+                return {"applied_paths": set(), "created_paths": set()}
+
+            # Apply file edits using logic similar to EditBlockCoder.apply_edits
+            failed_edits = []
+            passed_edits = []
+
+            for path, original, updated in file_edits:
+                full_path_abs = self.abs_root_path(path)
+                applied_to_path = path 
+                is_new_file = False
+
+                if not self.allowed_to_edit(path):
+                    self.io.tool_warning(f"AgentCoder: Edit to {path} skipped (not allowed).")
+                    failed_edits.append((path, original, updated, "Edit not allowed"))
+                    continue
+
+                current_content = None
+                if Path(full_path_abs).exists():
+                    current_content = self.io.read_text(full_path_abs)
+                elif not original.strip(): # New file implied by empty original block
+                    self.io.tool_output(f"AgentCoder: New file {path} will be created with provided content.")
+                    current_content = "" # Start with empty content for new file
+                    # No need to touch or mkdir here, _write_file_ensure_path will handle it.
+                    is_new_file = True
+                else:
+                    # Original block provided, but file doesn't exist - this is an error
+                    self.io.tool_error(f"AgentCoder: Cannot apply edit to non-existent file {path} with non-empty SEARCH block.")
+                    failed_edits.append((path, original, updated, "File not found for non-empty search block"))
+                    continue
+                
+                final_content_to_write = None
+                if current_content is not None: # current_content could be None if file didn't exist and original was not empty
+                    final_content_to_write = utils.do_replace(str(full_path_abs), current_content, original, updated, self.fence)
+
+                # Fallback: if edit failed, try applying to other files in chat (like EditBlockCoder)
+                if not final_content_to_write and original.strip() and current_content is not None: 
+                    self.io.tool_warning(f"AgentCoder: Edit for {path} failed. Trying other in-chat files.")
+                    for other_fname_abs_str in self.abs_fnames:
+                        if other_fname_abs_str == str(full_path_abs):
+                            continue
+                        other_content_fallback = self.io.read_text(other_fname_abs_str)
+                        if other_content_fallback is not None:
+                            potential_new_content_fallback = utils.do_replace(other_fname_abs_str, other_content_fallback, original, updated, self.fence)
+                            if potential_new_content_fallback and potential_new_content_fallback != other_content_fallback:
+                                self.io.tool_warning(f"AgentCoder: Edit for {path} was applied to {self.get_rel_fname(other_fname_abs_str)} instead.")
+                                final_content_to_write = potential_new_content_fallback
+                                applied_to_path = self.get_rel_fname(other_fname_abs_str) # The path that the edit was actually applied to
+                                full_path_abs = Path(other_fname_abs_str) # Update full_path if successfully applied elsewhere
+                                is_new_file = False # If applied to an existing file via fallback, it's not a new file in that context
+                                current_content = other_content_fallback # Update current_content to that of the fallback file
+                                break
+                
+                # Write the final_content_to_write if it's valid and different from original content of the target file
+                if final_content_to_write is not None and final_content_to_write != current_content:
+                    path_to_write_abs_str = str(full_path_abs) # Path where content will actually be written
+
+                    if self._write_file_ensure_path(path_to_write_abs_str, final_content_to_write):
+                        passed_edits.append((applied_to_path, original, updated))
+                        
+                        # If the file was newly created (is_new_file is True) 
+                        # AND it was written to its original intended path (not a fallback path)
+                        original_intended_path_abs_str = str(self.abs_root_path(path))
+                        if is_new_file and path_to_write_abs_str == original_intended_path_abs_str:
+                            if original_intended_path_abs_str not in self.abs_fnames:
+                                self.abs_fnames.add(original_intended_path_abs_str)
+                                # self.check_added_files() should be called after all edits in a batch, 
+                                # or if a specific file needs to be immediately available for next step context.
+                                # For now, let's keep it here for immediate reflection of new files.
+                                self.check_added_files()
+                            created_paths_rel.add(path) # Log the original relative path as created
+                        else: 
+                            # Either an existing file was modified, or a new file's content was written to a fallback path.
+                            applied_paths_rel.add(applied_to_path) 
+                        
+                        self.check_for_dirty_commit(applied_to_path)
+                    else:
+                        self.io.tool_error(f"AgentCoder: Failed to write changes to {applied_to_path}")
+                        failed_edits.append((path, original, updated, f"Failed to write file {applied_to_path}"))
+                
+                elif final_content_to_write is not None and final_content_to_write == current_content:
+                    self.io.tool_output(f"AgentCoder: Edit for {applied_to_path} resulted in no changes.")
+                
+                else: # final_content_to_write is None (meaning search block didn't match anywhere)
+                    failed_edits.append((path, original, updated, "Search block did not match or apply"))
+
+            if failed_edits:
+                error_message = f"# AgentCoder: {len(failed_edits)} SEARCH/REPLACE block(s) failed to apply!\n"
+                for path, original, updated, reason in failed_edits:
+                    error_message += f"## Failed Edit for: {path} (Reason: {reason})\n"
+                    error_message += f"{utils.HEAD_FMT.format(' '+path if path else '')}\n{original}{utils.DIVIDER_FMT}\n{updated}{utils.UPDATED_FMT}\n\n"
+                    
+                    # Add context about similar lines if it was a matching failure
+                    if reason == "Search block did not match":
+                        file_content_for_error = self.io.read_text(self.abs_root_path(path))
+                        if file_content_for_error:
+                            similar_lines = utils.find_similar_lines(original, file_content_for_error)
+                            if similar_lines:
+                                error_message += f"Did you mean to match some of these actual lines from {path}?\n{self.fence[0]}\n{similar_lines}\n{self.fence[1]}\n\n"
+                self.io.tool_error(error_message)
+                # Decide if this should raise an exception or just be a warning for the agent's loop
+
+            if passed_edits:
+                self.io.tool_output(f"AgentCoder: Successfully applied {len(passed_edits)} edit block(s).")
+
+            # Update the agent's internal tracking of touched files
+            self.agent_touched_files_rel.update(applied_paths_rel)
+            self.agent_touched_files_rel.update(created_paths_rel)
+
+            return {"applied_paths": applied_paths_rel, "created_paths": created_paths_rel}
+
+        except ValueError as e:
+            self.io.tool_error(f"AgentCoder: Error parsing LLM response for edits: {e}")
+            return {"applied_paths": set(), "created_paths": set()} # Return empty sets on parsing error
         except Exception as e:
-            self.io.tool_error(f"Error delegating to coder: {e}")
-            return False
+            self.io.tool_error(f"AgentCoder: Unexpected error applying edits: {e}")
+            return {"applied_paths": set(), "created_paths": set()} # Return empty sets on unexpected error
+
+    def _perform_web_search_if_needed(self, query, phase_name):
+        """Checks web search config and performs search if criteria met."""
+        if not self.args or not hasattr(self.args, 'agent_web_search') or self.args.agent_web_search == "never":
+            return None # No search
+
+        search_now = False
+        if self.args.agent_web_search == "always":
+            search_now = True
+        elif self.args.agent_web_search == "on_demand":
+            # Use new helper _confirm_action
+            if self._confirm_action(f"Perform web search for query '{query}' during agent phase '{phase_name}'?", default_response="n"):
+                search_now = True
+
+        if search_now:
+            self.io.tool_output(f"Agent ({phase_name} - Web Search): Searching for: {query}")
+            try:
+                # cmd_websearch returns a string with search results, or None/empty on failure
+                search_results_str = self.commands.cmd_websearch(query)
+                if search_results_str and search_results_str.strip():
+                    self.io.tool_output(f"Agent ({phase_name} - Web Search): Results:\n{search_results_str}")
+                    return search_results_str
+                else:
+                    self.io.tool_output(f"Agent ({phase_name} - Web Search): No results found or error during search.")
+                    return None
+            except Exception as e:
+                self.io.tool_error(f"Agent ({phase_name} - Web Search): Error executing web search: {e}")
+                return None
+        return None
+
+    def _run_tests(self, is_integration_test=False):
+        """
+        Runs tests and returns their output and success status.
+        Uses self.agent_test_command if set, otherwise io.test_command or io.integration_test_command.
+        """
+        test_command = None
+        if self.agent_test_command:
+            test_command = self.agent_test_command
+            self.io.tool_output(f"Using LLM suggested test command: {test_command}")
+        elif is_integration_test:
+            test_command = self.io.integration_test_command
+            self.io.tool_output(f"Using configured integration test command: {test_command}")
+        else: # Unit test
+            test_command = self.io.test_command
+            self.io.tool_output(f"Using configured unit test command: {test_command}")
+
+        if not test_command:
+            self.io.tool_output("No test command configured or suggested. Skipping tests.")
+            return "No test command.", True # Assume success if no command
+
+        self.io.tool_output(f"Running test command: {test_command}")
+        
+        original_cwd = os.getcwd()
+        if self.io.basedir and original_cwd != self.io.basedir:
+            try:
+                os.chdir(self.io.basedir)
+                self.io.tool_output(f"Changed directory to {self.io.basedir} for test execution.")
+            except Exception as e:
+                self.io.tool_error(f"Failed to change directory to {self.io.basedir}: {e}")
+        
+        # _run_shell_command returns stdout, stderr, returncode
+        cmd_stdout, cmd_stderr, cmd_returncode = self._run_shell_command(test_command)
+        
+        if self.io.basedir and os.getcwd() != original_cwd:
+            try:
+                os.chdir(original_cwd)
+                self.io.tool_output(f"Restored directory to {original_cwd}.")
+            except Exception as e:
+                 self.io.tool_error(f"Failed to restore directory to {original_cwd}: {e}")
+
+        # Check if _run_shell_command itself indicated a failure to run
+        if cmd_stdout is None and cmd_returncode == -1:
+            # cmd_stderr contains the exception message from _run_shell_command
+            return f"Failed to execute test command '{test_command}'. Error: {cmd_stderr}", False
+
+        output = ""
+        if cmd_stdout:
+            output += cmd_stdout
+        if cmd_stderr:
+            # Append stderr, especially if the command failed
+            if cmd_returncode != 0:
+                output += f"\nSTDERR:\n{cmd_stderr}"
+            else:
+                # Also include stderr even if tests passed, as some runners use it for verbose info
+                output += f"\nOutput to STDERR (command successful):\n{cmd_stderr}"
+
+        if cmd_returncode == 0:
+            return output, True
+        else:
+            return output, False
 
     def _decompose_task_recursively(self, task_description, current_depth, max_depth, parent_id_prefix):
         """
@@ -1585,24 +1753,8 @@ class AgentCoder(Coder):
                         failed_test_desc_recursive = f"Integration tests for task {full_task_desc_for_logging} failed."
                         
                         recursive_it_web_query = f"Fix integration test error for {task_desc}: {current_recursive_test_output[:200]}"
-                        # === Web search for recursive IT debug ===
-                        recursive_it_web_results_str = None
-                        if self.search_enhancer and self.args.agent_web_search != "never":
-                            search_now_flag = False
-                            if self.args.agent_web_search == "always" or self.args.agent_web_search == "on_demand": # Simplified for debug
-                                search_now_flag = True
-
-                            if search_now_flag:
-                                self.io.tool_output(f"Agent (Exec - Recursive IT Debug - Web Search): Using Browser-Use for: {recursive_it_web_query}")
-                                try:
-                                    recursive_it_web_results_str = self.search_enhancer.perform_browser_task(recursive_it_web_query)
-                                    if recursive_it_web_results_str:
-                                        self.io.tool_output(f"Agent (Exec - Recursive IT Debug - Web Search): Found relevant information.\n{recursive_it_web_results_str[:300]}...")
-                                    else: self.io.tool_output("Agent (Exec - Recursive IT Debug - Web Search): No useful extracts.")
-                                except Exception as e:
-                                    self.io.tool_error(f"Agent (Exec - Recursive IT Debug - Web Search): Error: {e}")
-                        # === End Web search for recursive IT debug ===
-                        recursive_it_web_context = recursive_it_web_results_str if recursive_it_web_results_str else "No web search."
+                        recursive_it_web_results = self._perform_web_search_if_needed(recursive_it_web_query, f"Exec - Recursive IT Debug - {task_id}")
+                        recursive_it_web_context = recursive_it_web_results if recursive_it_web_results else "No web search."
 
                         llm_fix_response_recursive = None
                         if self.enable_planner_executor_arch:
@@ -1683,29 +1835,206 @@ class AgentCoder(Coder):
                 return True # Parent task success (all sub-tasks passed, no integration tests to fail)
 
     def _execute_atomic_task(self, task_to_execute, parent_md_description=None):
-        """Executes an atomic task using delegation to existing coder infrastructure."""
-        if not task_to_execute or not task_to_execute.get("description"):
-            self.io.tool_warning("AgentCoder: Atomic task has no description. Skipping.")
-            return False
+        """
+        Executes a single, atomic task/deliverable.
+        This involves:
+        1. Prompting LLM for code.
+        2. Parsing and applying edits.
+        3. Running unit tests.
+        4. Attempting to debug if tests fail (up to MAX_CODING_RETRIES_PER_DELIVERABLE).
+        Returns True if successful, False otherwise.
+        Assumes task_to_execute has: id, description, unit_tests (list of strings), type (string for logging)
+        parent_md_description is optional context for the LLM.
+        """
+        task_id = task_to_execute["id"]
+        task_desc = task_to_execute["description"]
+        unit_test_ideas = task_to_execute.get("unit_tests", [])
+        task_type = task_to_execute.get("type", "Atomic Task")
 
-        task_description = task_to_execute["description"]
-        self.io.tool_output(f"AgentCoder: Executing atomic task: {task_description}")
+        self.io.tool_output(f"Agent (Execution - Atomic): Starting: '{task_desc}' (ID: {task_id}, Type: {task_type})")
 
-        # Prepare task message with context
-        task_message = f"Please implement the following task:\n\n{task_description}"
+        retries = 0
+        task_successful = False
+
+        while retries < MAX_CODING_RETRIES_PER_DELIVERABLE:
+            self.io.tool_output(f"Agent (Execution - Atomic): Attempt {retries + 1}/{MAX_CODING_RETRIES_PER_DELIVERABLE} for '{task_desc}'")
+
+            # Prepare context for LLM
+            self.check_added_files()
+
+            # ==> ADD DEBUGGING HERE <==
+            self.io.tool_output(f"AGENT_CODER_DEBUG: In _execute_atomic_task for task '{task_desc}'")
+            self.io.tool_output(f"AGENT_CODER_DEBUG: MRO: {type(self).__mro__}")
+            self.io.tool_output(f"AGENT_CODER_DEBUG: hasattr(self, 'get_context_for_prompts'): {hasattr(self, 'get_context_for_prompts')}")
+            if hasattr(self, 'get_context_for_prompts'):
+                self.io.tool_output(f"AGENT_CODER_DEBUG: type(self.get_context_for_prompts): {type(self.get_context_for_prompts)}")
+            # ==> END DEBUGGING <==
+
+            coding_context = self.get_context_for_prompts(show_abs_paths=True)
+            
+            # Repo search context
+            repo_search_context_str = ""
+            if self.repo_search_results and task_desc in self.repo_search_results:
+                 repo_search_context_str = f"Relevant context from repository search for '{task_desc}':\\n{self.repo_search_results[task_desc]}"
+            else:
+                 # Perform a targeted search if not already done broadly or if specific
+                 # For now, let's assume repo_search_results were populated during planning phase if needed
+                 # Or we could do a fresh search here:
+                 # temp_search_results = self.commands.cmd_repo_search(task_desc) # If available
+                 pass
+
+
+            # Web search context (specific to this atomic task)
+            web_search_query = f"How to implement: {task_desc}" # Example query
+            task_web_results = self._perform_web_search_if_needed(web_search_query, f"Execution - {task_type} - {task_id}")
+            web_search_context_str = task_web_results if task_web_results else "No web search performed or no results."
+            
+
+            tests_context_str = "No specific unit tests provided."
+            if unit_test_ideas:
+                tests_context_str = "Unit test ideas/requirements:\\n" + "\\n".join([f"- {idea}" for idea in unit_test_ideas])
+            
+            # Construct system prompt
+            # Adding parent_md_description if available for more context
+            deliverable_desc_for_prompt = task_desc
+            if parent_md_description:
+                deliverable_desc_for_prompt = f"Sub-task of '{parent_md_description}': {task_desc}"
+
+            system_prompt_content = prompts.agent_coding_system.format(
+                deliverable_description=deliverable_desc_for_prompt,
+                tests_context=tests_context_str,
+                coding_context=coding_context,
+                repo_search_context=repo_search_context_str if repo_search_context_str else "No repository search context available for this specific sub-task.",
+                web_search_context=web_search_context_str
+            )
+            
+            # Initial code generation call uses Executor LLM
+            messages = [{"role": "system", "content": system_prompt_content}]
+            llm_code_response = self._get_llm_response(messages, model_role="executor")
+
+            if not llm_code_response:
+                self.io.tool_error(f"Agent (Execution - Atomic): LLM failed to provide code for '{task_desc}'. Retrying if attempts left.")
+                retries += 1
+                continue
+
+            # Parse and apply edits
+            # _parse_and_apply_edits returns: {"applied_paths": set(), "created_paths": set()}
+            applied_info = self._parse_and_apply_edits(llm_code_response)
+            
+            if not applied_info["applied_paths"] and not applied_info["created_paths"]:
+                self.io.tool_warning(f"Agent (Execution - Atomic): LLM response for '{task_desc}' resulted in no file changes. Retrying if attempts left.")
+                # This might happen if LLM responds with "No changes needed" or malformed edits
+                # Or if the edit was a no-op.
+                # Consider if this should always be a retry, or if LLM can validly say "no change".
+                # For now, treat as needing retry if the task was supposed to make a change.
+                retries += 1
+                continue
+
+            # Add newly created files to chat context
+            for new_file_path_rel in applied_info["created_paths"]:
+                new_file_path_abs = self.abs_root_path(new_file_path_rel)
+                if new_file_path_abs not in self.abs_fnames: # Check if already added by _parse_and_apply_edits
+                    self.io.add_abs_fname(new_file_path_abs) 
+            self.check_added_files() # Ensure repo map is updated after potential new files
+
+
+            # Run unit tests (using general test command for now)
+            self.io.tool_output(f"Agent (Execution - Atomic): Running unit tests for '{task_desc}'...")
+            test_output, test_success = self._run_tests(is_integration_test=False)
+
+            if test_success:
+                self.io.tool_output(f"Agent (Execution - Atomic): Unit tests PASSED for '{task_desc}'. Task considered successful.")
+                task_successful = True
+                break # Exit retry loop
+            else:
+                self.io.tool_error(f"Agent (Execution - Atomic): Unit tests FAILED for '{task_desc}'. Output:\\n{test_output}")
+                retries += 1
+                if retries >= MAX_CODING_RETRIES_PER_DELIVERABLE:
+                    self.io.tool_error(f"Agent (Execution - Atomic): Max retries reached for '{task_desc}'. Task failed.")
+                    break # Exit retry loop
+
+                # Attempt to debug
+                self.io.tool_output(f"Agent (Execution - Atomic): Attempting to debug '{task_desc}' (Retry {retries}/{MAX_CODING_RETRIES_PER_DELIVERABLE})...")
+                
+                # Refresh file content for debugging context
+                self.check_added_files()
+                debug_file_context = self.get_context_for_prompts(show_abs_paths=True)
+
+                debug_web_search_query = f"Fix unit test error for {task_description}: {test_output[:200]}" 
+                debug_web_results = self._perform_web_search_if_needed(debug_web_search_query, f"Execution - Debugging - {task_id}")
+                debug_web_context_str = debug_web_results if debug_web_results else "No web search results for this error."
+
+                if self.enable_planner_executor_arch:
+                    # === Planner/Executor Debugging Flow ===
+                    self.io.tool_output("Agent (Execution - Atomic): Using Planner/Executor debugging flow.")
+                    analysis_prompt_content = prompts.agent_analyze_error_system.format(
+                        task_description=deliverable_desc_for_prompt,
+                        unit_test_ideas=tests_context_str,
+                        code_attempt=llm_code_response, # The raw response from executor that failed
+                        test_output_and_errors=test_output,
+                        file_context=debug_file_context,
+                        web_search_context=debug_web_context_str
+                    )
+                    analysis_messages = [{"role": "system", "content": analysis_prompt_content}]
+                    planner_analysis_json = self._get_llm_response(analysis_messages, expecting_json=True, model_role="planner")
+
+                    if planner_analysis_json and isinstance(planner_analysis_json, dict) and \
+                       all(k in planner_analysis_json for k in ["error_analysis", "fix_plan", "target_files_and_lines_suggestion"]):
+                        
+                        error_analysis = planner_analysis_json["error_analysis"]
+                        fix_plan = planner_analysis_json["fix_plan"]
+                        suggestion = planner_analysis_json["target_files_and_lines_suggestion"]
+                        self.io.tool_output(f"Agent (Planner Analysis): Error: {error_analysis}. Plan: {fix_plan}. Suggestion: {suggestion}")
+
+                        implement_fix_prompt_content = prompts.agent_implement_fix_plan_system.format(
+                            task_description=deliverable_desc_for_prompt,
+                            failed_code_attempt=llm_code_response, # Original failing code response
+                            test_output_and_errors=test_output,
+                            error_analysis_from_planner=error_analysis,
+                            fix_plan_from_planner=fix_plan,
+                            target_files_and_lines_suggestion_from_planner=suggestion,
+                            file_context=debug_file_context # Fresh file context for executor
+                        )
+                        implement_fix_messages = [{"role": "system", "content": implement_fix_prompt_content}]
+                        # The next llm_code_response will be from the Executor trying to implement the fix
+                        # This will then be picked up at the start of the while loop for parsing/application
+                        llm_code_response = self._get_llm_response(implement_fix_messages, model_role="executor")
+                        if not llm_code_response:
+                            self.io.tool_warning("Agent (Executor): Failed to get fix implementation from Executor LLM. Ending retries for this task.")
+                            break # Break from while loop, task failed
+                        else:
+                            self.io.tool_output("Agent (Executor): Received fix implementation. Will apply and re-test.")
+                            # Continue to next iteration of while loop to apply and test this new llm_code_response
+                            continue 
+                    else:
+                        self.io.tool_warning("Agent (Planner Analysis): Failed to get valid analysis from Planner LLM. Ending retries for this task.")
+                        break # Break from while loop, task failed
+                else:
+                    # === Legacy Debugging Flow (uses agent_debugging_system) ===
+                    self.io.tool_output("Agent (Execution - Atomic): Using legacy debugging flow.")
+                    debug_system_prompt = prompts.agent_debugging_system.format(
+                        deliverable_description=deliverable_desc_for_prompt, 
+                        unit_test_ideas=tests_context_str,
+                        previous_code_attempt=llm_code_response, 
+                        test_output_and_errors=test_output,
+                        file_context=debug_file_context,
+                        web_search_context=debug_web_context_str 
+                    )
+                    debug_messages = [{"role": "system", "content": debug_system_prompt}]
+                    # This call expects code edits back directly, uses Planner role as it's analysis + fix
+                    llm_code_response = self._get_llm_response(debug_messages, model_role="planner")
+                    if not llm_code_response:
+                        self.io.tool_warning("Agent (Legacy Debugging): Failed to get fix from LLM. Ending retries for this task.")
+                        break # Break from while loop, task failed
+                    else:
+                        self.io.tool_output("Agent (Legacy Debugging): Received fix. Will apply and re-test.")
+                        # Continue to next iteration of while loop to apply and test
+                        continue
+
+                # The loop will then re-apply and re-test if a new llm_code_response was generated by a debug path.
+                # If a debug path failed to produce a new llm_code_response and did `break`, this task fails.
         
-        if parent_md_description:
-            task_message += f"\n\nThis task is part of the larger deliverable: {parent_md_description}"
-
-        # Use delegation instead of custom edit parsing
-        success = self._delegate_to_coder(task_message, use_executor_model=True)
-        
-        if success:
-            self.io.tool_output("AgentCoder: Atomic task completed successfully.")
-            return True
-        else:
-            self.io.tool_error("AgentCoder: Atomic task failed.")
-            return False
+        return task_successful
 
     # Helper methods start here
     def _write_file_ensure_path(self, file_path_abs_str: str, content: str) -> bool:
@@ -1742,30 +2071,4 @@ class AgentCoder(Coder):
             return True
         return self.io.confirm_ask(prompt_message, default=default_response)
 
-    def _run_tests(self, is_integration_test=False):
-        """
-        Runs tests and returns their output and success status.
-        Uses self.agent_test_command if set, otherwise io.test_command or io.integration_test_command.
-        """
-        test_command = None
-        if self.agent_test_command:
-            test_command = self.agent_test_command
-            self.io.tool_output(f"Using LLM suggested test command: {test_command}")
-        elif is_integration_test:
-            test_command = self.io.integration_test_command
-            self.io.tool_output(f"Using configured integration test command: {test_command}")
-        else: # Unit test
-            test_command = self.io.test_command
-            self.io.tool_output(f"Using configured unit test command: {test_command}")
-
-        if not test_command:
-            self.io.tool_warning("No test command configured. Skipping test run.")
-            return "No test command configured.", False
-
-        self.io.tool_output(f"Running: {test_command}")
-        output, error, exit_code = self._run_shell_command(test_command)
-        
-        full_output = f"STDOUT:\n{output}\nSTDERR:\n{error}\nEXIT CODE: {exit_code}"
-        success = (exit_code == 0)
-        
-        return full_output, success
+    # TODO: Add more helpers for file ops, test execution etc. <-- This line will be removed by the edit.

@@ -250,6 +250,63 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Agent Mode settings")
+    group.add_argument(
+        "--agent-auto-approve",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable the agent to automatically approve its plan and tests without user confirmation (default: False)",
+    )
+    group.add_argument(
+        "--agent-headless",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable headless mode for programmatic agent execution. Implies --agent-auto-approve, skips interactive clarification, and defaults on-demand web search to 'never'. (default: False)",
+    )
+    group.add_argument(
+        "--agent-hierarchical-planning",
+        choices=["none", "deliverables_only", "full_two_level"],
+        default="none",
+        help="Configure hierarchical planning for AgentCoder: 'none' (flat plan), 'deliverables_only' (plan deliverables, test them as units), 'full_two_level' (plan deliverables, decompose to sub-tasks, test both levels). Default: none."
+    )
+    group.add_argument(
+        "--agent-generate-tests",
+        choices=["none", "descriptions", "all_code"],
+        default="none", # Default to none for now, logic for conditional default can be in AgentCoder
+        help="Configure test generation for AgentCoder: 'none' (no explicit test generation), 'descriptions' (generate textual test descriptions), 'all_code' (attempt to generate full executable test code). Default: none (or 'descriptions' if hierarchical planning is active - see agent logic)."
+    )
+    group.add_argument(
+        "--agent-max-decomposition-depth",
+        type=int,
+        default=2, # Default to 2, which matches current 'full_two_level'
+        help="Configure the maximum depth for hierarchical task decomposition in AgentCoder. (default: 2)",
+    )
+    group.add_argument(
+        "--agent-output-plan-only",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable AgentCoder to generate a plan and tests, output them, and then stop without execution. Implies headless and auto-approval. (default: False)",
+    )
+    group.add_argument(
+        "--agent-enable-planner-executor-arch",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable the Planner/Executor architecture where different models can be used for planning/debugging and execution. (default: False)",
+    )
+    group.add_argument(
+        "--agent-planner-model",
+        metavar="PLANNER_MODEL",
+        default=None,
+        help="Specify the model for the Planner/Debugger role in AgentCoder. Defaults to the main model if not set.",
+    )
+    group.add_argument(
+        "--agent-executor-model",
+        metavar="EXECUTOR_MODEL",
+        default=None,
+        help="Specify the model for the Executor (code generation) role in AgentCoder. Defaults to the main model if not set.",
+    )
+
+    ##########
     group = parser.add_argument_group("History Files")
     default_input_history_file = (
         os.path.join(git_root, ".aider.input.history") if git_root else ".aider.input.history"
@@ -826,6 +883,20 @@ def get_parser(default_config_files, git_root):
             "Print shell completion script for the specified SHELL and exit. Supported shells:"
             f" {', '.join(supported_shells_list)}. Example: aider --shell-completions bash"
         ),
+    )
+
+    ##########
+    group = parser.add_argument_group("Agent settings")
+    group.add_argument(
+        "--agent-coder",
+        action="store_true",
+        help="Enable the experimental AgentCoder for autonomous task completion (requires a task via /agent or --message)",
+    )
+    group.add_argument(
+        "--agent-web-search",
+        choices=["always", "on_demand", "never"],
+        default="never",
+        help="Configure web search for AgentCoder: 'always' (search at relevant steps), 'on_demand' (ask before searching), 'never' (no web search). Default: never."
     )
 
     ##########

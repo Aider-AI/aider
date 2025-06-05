@@ -52,3 +52,5 @@ this is usually because the model isn't capable of properly
 returning "code edits".
 Models weaker than GPT 3.5 may have problems working well with aider.
 
+The **Agent Mode** in particular, with its complex planning, test generation, and debugging phases, benefits significantly from highly capable models. Using a less capable model with Agent Mode may lead to suboptimal plans, poor code quality, or an inability to effectively debug issues.
+

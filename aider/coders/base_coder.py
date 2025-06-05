@@ -49,7 +49,6 @@ from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 from aider.waiting import WaitingSpinner
 from aider.chroma_manager import ChromaManager # ADDED FOR CODEBASE AWARENESS
-from aider.search_enhancer import SearchEnhancer
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -351,7 +350,6 @@ class Coder:
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
         self.chroma_manager = None # ADDED FOR CODEBASE AWARENESS
-        self.search_enhancer = None
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
@@ -556,14 +554,6 @@ class Coder:
             self.io.tool_warning(f"Root path '{self.root}' is not a directory. ChromaManager not initialized.")
             self.chroma_manager = None
 
-        if self.args.search_mode: # Changed self.io.args to self.args
-            try:
-                self.search_enhancer = SearchEnhancer(self.main_model, self.io)
-                self.io.tool_output("Search mode is enabled.")
-            except Exception as e:
-                self.io.tool_error(f"Failed to initialize SearchEnhancer: {e}")
-                self.search_enhancer = None
-
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
             return
@@ -618,8 +608,11 @@ class Coder:
             finally:
                 self.waiting_spinner = None
 
-    def get_abs_fnames_content(self):
-        for fname in list(self.abs_fnames):
+    def get_abs_fnames_content(self, fnames_to_process=None):
+        if fnames_to_process is None:
+            fnames_to_process = list(self.abs_fnames)
+            
+        for fname in fnames_to_process:
             content = self.io.read_text(fname)
 
             if content is None:
@@ -658,11 +651,10 @@ class Coder:
         return
 
     def get_files_content(self, fnames=None):
-        if not fnames:
-            fnames = self.abs_fnames
+        processed_fnames = fnames if fnames is not None else self.abs_fnames
 
         prompt = ""
-        for fname, content in self.get_abs_fnames_content():
+        for fname, content in self.get_abs_fnames_content(fnames_to_process=processed_fnames): # Pass processed_fnames
             if not is_image_file(fname):
                 relative_fname = self.get_rel_fname(fname)
                 prompt += "\n"
@@ -677,6 +669,25 @@ class Coder:
 
                 prompt += f"{self.fence[1]}\n"
 
+        return prompt
+
+    def get_context_for_prompts(self, fnames=None, show_abs_paths=False):
+        if not fnames:
+            fnames = self.abs_fnames
+
+        prompt = ""
+        for fname, content in self.get_abs_fnames_content(fnames_to_process=fnames): # Pass fnames here
+            if not is_image_file(fname):
+                if show_abs_paths:
+                    path_to_display = fname
+                else:
+                    path_to_display = self.get_rel_fname(fname)
+                
+                prompt += "\\n"
+                prompt += path_to_display
+                prompt += f"\\n{self.fence[0]}\\n"
+                prompt += content
+                prompt += f"{self.fence[1]}\\n"
         return prompt
 
     def get_context_files_content(self, relative_paths: list[str]) -> str:
@@ -1022,47 +1033,6 @@ class Coder:
             message = self.preproc_user_input(user_message)
         else:
             message = user_message
-
-        original_message_for_search = message # Keep a copy for search enhancer
-
-        # Web search augmentation
-        supplementary_context = ""
-        if self.args.search_mode and self.search_enhancer and original_message_for_search and not self.commands.is_command(original_message_for_search):
-            self.io.tool_output("Search mode: Checking relevance...", log_only=True)
-            if self.search_enhancer.check_search_relevance(original_message_for_search):
-                self.io.tool_output("Search mode: Relevant. Generating queries...", log_only=True)
-                queries = self.search_enhancer.generate_search_queries(original_message_for_search)
-                if queries:
-                    self.io.tool_output(f"Search mode: Generated queries: {queries}", log_only=True)
-                    urls = self.search_enhancer.perform_web_search_and_get_urls(queries)
-                    if urls:
-                        self.io.tool_output(f"Search mode: Found {len(urls)} URLs. Fetching content...", log_only=True)
-                        fetched_content = self.search_enhancer.fetch_content_for_urls(urls)
-                        if fetched_content:
-                            self.io.tool_output(f"Search mode: Fetched {len(fetched_content)} pages. Assessing utility...", log_only=True)
-                            assessed_results = self.search_enhancer.assess_results_utility(original_message_for_search, fetched_content)
-                            self.io.tool_output("Search mode: Compiling useful extracts...", log_only=True)
-                            supplementary_context = self.search_enhancer.compile_useful_context_extracts(assessed_results, original_message_for_search)
-                            if supplementary_context:
-                                self.io.tool_output("Search mode: Added supplementary context from web search.", log_only=True)
-                                message = (
-                                    f"[Supplementary information from web search (for current query only):\n"
-                                    f"--- BEGIN SEARCH CONTEXT ---\n"
-                                    f"{supplementary_context}\n"
-                                    f"--- END SEARCH CONTEXT ---]\n\n"
-                                    f"Original User Query: {original_message_for_search}"
-                                )
-                            else:
-                                self.io.tool_output("Search mode: No useful extracts found or compiled.", log_only=True)
-                        else:
-                            self.io.tool_output("Search mode: No content fetched from URLs.", log_only=True)
-                    else:
-                        self.io.tool_output("Search mode: No URLs found for generated queries.", log_only=True)
-                else:
-                    self.io.tool_output("Search mode: Could not generate search queries.", log_only=True)
-            else:
-                self.io.tool_output("Search mode: Not relevant for this prompt.", log_only=True)
-
 
         while message: # This loop handles reflections
             self.reflected_message = None
@@ -1818,6 +1788,7 @@ class Coder:
         for fname in fnames:
             if not fname:
                 continue
+            # Cache buster comment
             errors = self.linter.lint(self.abs_root_path(fname))
 
             if errors:

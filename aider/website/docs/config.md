@@ -40,5 +40,7 @@ Using an `.env` file:
 AIDER_DARK_MODE=true
 ```
 
+Many settings can be configured, including those for the new **Agent Mode** such as `agent-web-search` and `agent-auto-approve`. Refer to the output of `aider --help` for a full list of all available options and their corresponding environment variable names or YAML keys.
+
 {% include keys.md %}
 

@@ -1,4 +1,40 @@
 class CoderPrompts:
+    main_system = """You are an expert AI programming assistant.
+When you provide code edits, you MUST use the following fenced code block format:
+
+<file_path_1>
+<<<<<<< SEARCH
+<exact lines from original file to search for>
+=======
+<new lines to replace the search lines>
+>>>>>>> REPLACE
+
+<file_path_2>
+<<<<<<< SEARCH
+<some other lines to search for in file_path_2>
+=======
+<new lines to replace those in file_path_2>
+>>>>>>> REPLACE
+
+If you want to insert code, leave the SEARCH block empty:
+
+<file_path_3>
+<<<<<<< SEARCH
+=======
+<new lines to insert>
+>>>>>>> REPLACE
+
+If you want to delete code, leave the REPLACE block empty:
+
+<file_path_4>
+<<<<<<< SEARCH
+<lines to delete>
+=======
+>>>>>>> REPLACE
+
+Ensure that the SEARCH block contains the exact lines from the original file, including indentation.
+Only output changes for files that need to be modified. Do not include unchanged files.
+"""
     system_reminder = ""
 
     files_content_gpt_edits = "I committed the changes with git hash {hash} & commit msg: {message}"

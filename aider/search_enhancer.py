@@ -1,397 +1,329 @@
-import requests
-from bs4 import BeautifulSoup
+import asyncio
 import json
+import os
 from typing import List, Dict, Any
 
-# Assuming aider.llm.LLM is the class for LLM interactions
-# This might need adjustment based on actual LLM class structure in aider
-# from aider.llm import LLM
+# For Browser-Use
+from browser_use import Agent as BrowserUseAgent, Browser, BrowserConfig
+from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
+from dotenv import load_dotenv
+
+# For parsing HTML if fetch_url_content needs it
+from bs4 import BeautifulSoup
+
+# Retain aider's LLM type hint if possible, or use Any
+# from aider.llm import LLM # Assuming this is the type for aider's main LLM
 
 class SearchEnhancer:
-    def __init__(self, llm, io): # llm: Model, io: InputOutput
-        self.llm = llm
+    def __init__(self, llm, io, args=None): # llm: Model (aider's), io: InputOutput, args: for config
+        self.llm = llm # LLM for generating Browser-Use task instruction
         self.io = io
+        self.args = args
+        self.browser_instance = None
+        self.llm_for_browser_use = None
 
-    def _ask_llm(self, messages: List[Dict[str, str]], temperature: float = 0.1) -> str:
-        """Helper function to send messages to the LLM and get a non-streamed response."""
+        if not self.args:
+            self.io.tool_warning("SearchEnhancer: self.args not provided. Browser-Use functionality will be disabled.")
+            return
+
         try:
-            # Ensure llm is the Model object, not the litellm module
-            if not hasattr(self.llm, 'send_completion'):
-                self.io.tool_error("SearchEnhancer: LLM object does not have send_completion method.")
-                return ""
+            load_dotenv() # Load .env file for API keys if present
+            
+            deepseek_api_key_val = getattr(self.args, 'deepseek_api_key', None) or os.getenv("DEEPSEEK_API_KEY")
+            if not deepseek_api_key_val:
+                self.io.tool_error("SearchEnhancer: DEEPSEEK_API_KEY not found in args or environment. Browser-Use will be disabled.")
+                return
 
-            _hash, completion = self.llm.send_completion(
-                messages=messages,
-                functions=None,
-                stream=False,
-                temperature=temperature,
+            self.llm_for_browser_use = ChatOpenAI(
+                base_url='https://api.deepseek.com/v1',
+                model=getattr(self.args, 'deepseek_model_name', 'deepseek-chat'), # e.g., deepseek-chat
+                api_key=SecretStr(deepseek_api_key_val),
+                temperature=0.0
             )
-            if completion and completion.choices and completion.choices[0].message:
-                content = completion.choices[0].message.content
-                if content:
-                    return content.strip()
-            self.io.tool_warning("SearchEnhancer: LLM returned empty or malformed response.")
-            return ""
+            self.io.tool_output("SearchEnhancer: DeepSeek LLM for Browser-Use initialized.")
+
+            browser_path = getattr(self.args, 'browser_use_real_browser_path', None)
+            headless_default = not browser_path # Headless if no specific browser path
+            headless = getattr(self.args, 'browser_use_headless', headless_default)
+            
+            browser_config_params = {
+                "headless": headless,
+                "disable_security": True  # Often helpful for automation
+            }
+            if browser_path:
+                # Assuming if a path is given, it's for a Chrome-like browser as hinted by Browser-Use error
+                browser_config_params["chrome_instance_path"] = browser_path
+            
+            browser_config = BrowserConfig(**browser_config_params)
+            self.browser_instance = Browser(config=browser_config)
+            self.io.tool_output(f"SearchEnhancer: Browser-Use Browser initialized (headless: {headless}, path: {browser_path or 'default'}).")
+
         except Exception as e:
-            self.io.tool_error(f"SearchEnhancer: Error during LLM call: {e}")
-            return ""
+            self.io.tool_error(f"SearchEnhancer: Error during initialization: {e}. Browser-Use may be disabled.")
+            self.browser_instance = None
+            self.llm_for_browser_use = None
 
-    def check_search_relevance(self, original_prompt: str) -> bool:
-        """Asks LLM if web search is relevant for the given prompt."""
-        messages = [
-            {"role": "system", "content": "You are an AI assistant. Your task is to determine if a web search would likely provide relevant information to help answer the user's prompt. Respond with only 'YES' or 'NO'."},
-            {"role": "user", "content": f"User prompt: \"{original_prompt}\"\n\nIs web search likely relevant for this prompt?"}
-        ]
-        response = self._ask_llm(messages, temperature=0.0)
-        return response.upper() == "YES"
-
-    def generate_search_queries(self, original_prompt: str) -> List[str]:
-        """Asks LLM to generate 3 search queries based on the prompt."""
-        messages = [
-            {"role": "system", "content": "You are an AI assistant. Based on the user's prompt, generate exactly 3 concise search queries that would help find relevant information. Respond ONLY with a JSON object containing a single key 'queries' which is a list of 3 strings. Example: {\"queries\": [\"query one\", \"query two\", \"query three\"]}"},
-            {"role": "user", "content": f"User prompt: \"{original_prompt}\"\n\nGenerate search queries."}
-        ]
-        response_str = self._ask_llm(messages)
+    def _sync_run_async(self, coro):
+        """Helper to run an async coroutine synchronously."""
         try:
-            data = json.loads(response_str)
-            queries = data.get("queries")
-            if isinstance(queries, list) and len(queries) == 3 and all(isinstance(q, str) for q in queries):
-                return queries
+            # Attempt to get the current running loop in the current OS thread.
+            loop = asyncio.get_running_loop()
+            if loop.is_running():
+                # If a loop is running, we cannot use asyncio.run().
+                # This scenario is complex if called from a synchronous context.
+                # Ideally, the caller should be async or manage thread safety.
+                # For now, we'll log a warning and attempt to schedule it if possible,
+                # but this might not work as expected without further infrastructure.
+                self.io.tool_warning(
+                    "SearchEnhancer: _sync_run_async called when a loop is running. " 
+                    "Attempting to create task. This may not work correctly from sync code."
+                )
+                # This is not ideal from a truly synchronous function without knowing more about the loop.
+                # A more robust solution would involve asyncio.run_coroutine_threadsafe if in a different thread,
+                # or making the calling chain async.
+                # As a fallback that might work in some contexts (but can cause issues):
+                future = asyncio.ensure_future(coro, loop=loop)
+                return loop.run_until_complete(future) # This blocks, but might conflict with outer loop management.
             else:
-                self.io.tool_warning(f"SearchEnhancer: LLM returned malformed JSON for search queries: {response_str}")
-        except json.JSONDecodeError:
-            self.io.tool_warning(f"SearchEnhancer: LLM response for search queries was not valid JSON: {response_str}")
-        # Fallback: try to generate queries from the prompt directly if JSON fails
-        # This is a simple fallback, could be improved.
-        # For now, let's return empty list on failure to ensure structured output.
-        return []
-
-
-    def _search_duckduckgo_urls(self, query: str, num_results: int = 10) -> List[str]:
-        """
-        Use DuckDuckGo's Instant Answer API to get top result URLs.
-        Adapted from user-provided code.
-        """
-        urls_to_fetch = []
-        try:
-            api_url = "https://api.duckduckgo.com/"
-            params = {
-                "q": query,
-                "format": "json",
-                "no_html": 1,
-                "no_redirect": 1,
-                "t": "aider_search_enhancer" # Application name for DDG API
-            }
-            resp = requests.get(api_url, params=params, timeout=10)
-            resp.raise_for_status()
-            data = resp.json()
-
-            collected_urls = []
-            for item in data.get("Results", []):
-                if item.get("FirstURL"):
-                    collected_urls.append(item.get("FirstURL"))
-            for topic in data.get("RelatedTopics", []):
-                if "Topics" in topic:  # Group of sub-topics
-                    for sub_topic in topic.get("Topics", []):
-                        if sub_topic.get("FirstURL"):
-                            collected_urls.append(sub_topic.get("FirstURL"))
-                else:  # Single topic
-                    if topic.get("FirstURL"):
-                        collected_urls.append(topic.get("FirstURL"))
-            
-            # Deduplicate and limit
-            seen = set()
-            for u in collected_urls:
-                if u and u not in seen:
-                    seen.add(u)
-                    urls_to_fetch.append(u)
-                if len(urls_to_fetch) >= num_results:
-                    break
-        except requests.RequestException as e:
-            # Handle errors (e.g., network issues, bad response)
-            self.io.tool_warning(f"Error during DuckDuckGo search for '{query}': {e}")
-        return urls_to_fetch
-
-    def perform_web_search_and_get_urls(self, queries: List[str], max_unique_urls: int = 20) -> List[str]:
-        """
-        Performs web search for multiple queries and returns a deduplicated list of URLs.
-        """
-        all_urls = []
-        # Aim for roughly max_unique_urls / len(queries) results per query,
-        # but ensure at least a few results if many queries.
-        results_per_query = max(3, (max_unique_urls + len(queries) -1) // len(queries) if queries else 0)
-
-        for query in queries:
-            all_urls.extend(self._search_duckduckgo_urls(query, num_results=results_per_query))
-
-        # Deduplicate across all queries and limit
-        seen_urls = set()
-        unique_urls = []
-        for url in all_urls:
-            if url and url not in seen_urls:
-                seen_urls.add(url)
-                unique_urls.append(url)
-            if len(unique_urls) >= max_unique_urls:
-                break
-        return unique_urls
-
-    def _fetch_full_text_from_url(self, url: str, timeout: int = 10) -> str:
-        """
-        Fetches the HTML at `url`, strips scripts/styles, and returns
-        the visible text from the <body>.
-        Adapted from user-provided code.
-        """
-        try:
-            headers = { # Some sites block requests without a common user-agent
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-            }
-            resp = requests.get(url, timeout=timeout, headers=headers)
-            resp.raise_for_status()
-        except requests.RequestException as e:
-            self.io.tool_warning(f"Error fetching {url}: {e}")
-            return ""
-
-        soup = BeautifulSoup(resp.text, "html.parser")
-
-        for tag in soup(["script", "style", "noscript", "header", "footer", "nav", "aside", "form", "button", "input", "textarea", "select", "option"]):
-            tag.decompose()
-        
-        # Try to get main content if available, otherwise body
-        main_content = soup.find("main")
-        if not main_content:
-            article_content = soup.find("article")
-            if not article_content:
-                body = soup.body
-            else:
-                body = article_content
-        else:
-            body = main_content
-        
-        if not body: # Fallback if no body, main, or article
-            text = soup.get_text(separator="\\n", strip=True)
-        else:
-            text = body.get_text(separator="\\n", strip=True)
-        
-        # Basic cleaning: reduce multiple newlines
-        return "\\n".join([line for line in text.splitlines() if line.strip()])
-
-
-    def fetch_content_for_urls(self, urls: List[str]) -> List[Dict[str, str]]:
-        """
-        Fetches full text content for a list of URLs.
-        """
-        fetched_data = []
-        for url in urls:
-            self.io.tool_output(f"Fetching content from: {url}", log_only=True) # User feedback
-            text = self._fetch_full_text_from_url(url)
-            if text: # Only add if text was successfully fetched
-                # Limit text size early to avoid overly large payloads later
-                max_text_len = 20000 # Approx 5k tokens, can be tuned
-                if len(text) > max_text_len:
-                    text = text[:max_text_len] + "\n... [TRUNCATED TEXT] ..."
-                    self.io.tool_warning(f"Truncated fetched text from {url} to {max_text_len} chars.")
-                fetched_data.append({"url": url, "full_text": text})
-        return fetched_data
-
-    def assess_results_utility(self, original_prompt: str, fetched_content: List[Dict[str, str]]) -> List[Dict[str, Any]]:
-        """
-        Assesses the utility of each fetched content against the original prompt using LLM.
-        """
-        assessed_results = []
-        for item in fetched_content:
-            self.io.tool_output(f"Assessing utility of content from: {item['url']}", log_only=True)
-            is_useful = False
-            try:
-                # Truncate full_text for this specific LLM call if it's very long
-                text_for_assessment = item['full_text']
-                # Max length for assessment prompt, can be tuned (e.g. 8000 chars ~ 2k tokens)
-                max_assess_len = 8000
-                if len(text_for_assessment) > max_assess_len:
-                    text_for_assessment = text_for_assessment[:max_assess_len] + "\n... [TRUNCATED FOR ASSESSMENT] ..."
-
-                messages = [
-                    {"role": "system", "content": "You are an AI assistant. Your task is to determine if the provided text content is useful for answering the given user prompt. Respond ONLY with a JSON object containing a single key 'is_useful' which is a boolean (true or false). Example: {\"is_useful\": true}"},
-                    {"role": "user", "content": f"User prompt: \"{original_prompt}\"\n\nText content from URL {item['url']}:\n\"\"\"\n{text_for_assessment}\n\"\"\"\n\nIs this content useful for answering the user prompt?"}
-                ]
-                
-                response_str = self._ask_llm(messages, temperature=0.0)
-                if response_str:
-                    parsed_response = json.loads(response_str)
-                    is_useful = parsed_response.get("is_useful", False)
-                else: # LLM call failed or returned empty
-                    self.io.tool_warning(f"SearchEnhancer: No response from LLM for utility assessment of {item['url']}")
-
-
-            except json.JSONDecodeError:
-                self.io.tool_warning(f"SearchEnhancer: Error decoding LLM JSON response for utility assessment of {item['url']}")
-            except Exception as e:
-                self.io.tool_error(f"SearchEnhancer: Error during LLM utility assessment for {item['url']}: {e}")
-            
-            assessed_results.append({**item, "is_useful": is_useful})
-        return assessed_results
-
-    def compile_useful_context_extracts(self, assessed_results: List[Dict[str, Any]], original_prompt: str) -> str:
-        """
-        Compiles extracts from useful content using LLM.
-        """
-        useful_texts_extracts = []
-        for item in assessed_results:
-            if item.get("is_useful"):
-                self.io.tool_output(f"Extracting relevant parts from: {item['url']}", log_only=True)
-                extract = ""
+                # If loop.is_running() is false, it means get_running_loop() returned a loop
+                # that is not currently running, or get_event_loop() was implicitly called and returned one.
+                # asyncio.run() should be safe here as it creates a new loop if needed.
+                return asyncio.run(coro)
+        except RuntimeError as e:
+            # This typically means "asyncio.run() cannot be called when another asyncio event loop is running"
+            # OR "no event loop ... and no current event loop set".
+            if "no current event loop" in str(e) or "cannot be called when another" not in str(e).lower():
+                # If no loop exists, asyncio.run() is the right tool.
                 try:
-                    # Truncate full_text for this specific LLM call if it's very long
-                    text_for_extraction = item['full_text']
-                    # Max length for extraction prompt, can be tuned (e.g. 12000 chars ~ 3k tokens)
-                    max_extract_len = 12000 
-                    if len(text_for_extraction) > max_extract_len:
-                         text_for_extraction = text_for_extraction[:max_extract_len] + "\n... [TRUNCATED FOR EXTRACTION] ..."
+                    return asyncio.run(coro)
+                except Exception as run_e:
+                    self.io.tool_error(f"SearchEnhancer: Error in asyncio.run within _sync_run_async: {run_e}")
+                    return None
+            else:
+                # Loop is running, and asyncio.run() failed as expected.
+                # This reiterates the complex scenario above.
+                self.io.tool_error(f"SearchEnhancer: asyncio runtime error in _sync_run_async (loop already running): {e}. Coroutine not run.")
+                return None
+        except Exception as e:
+            self.io.tool_error(f"SearchEnhancer: Unexpected error in _sync_run_async: {e}")
+            return None
 
-                    messages = [
-                        {"role": "system", "content": "You are an AI assistant. Your task is to extract the most relevant sentences or paragraphs from the provided text content that directly help answer or provide context for the given user prompt. If no specific part of the text is highly relevant, respond with an empty string. Do not add any explanatory text, just the extracted content or an empty string."},
-                        {"role": "user", "content": f"User prompt: \"{original_prompt}\"\n\nText content from URL {item['url']}:\n\"\"\"\n{text_for_extraction}\n\"\"\"\n\nExtract relevant parts:"}
-                    ]
-                    extract = self._ask_llm(messages)
-                    
-                    if extract.strip(): # Add only if extract is not empty
-                        useful_texts_extracts.append(f"Source: {item['url']}\n{extract.strip()}\n---")
+    def _ask_llm_for_browser_task_instruction(self, original_user_query: str) -> str:
+        """Uses the main LLM (from AgentCoder) to generate a task instruction for Browser-Use."""
+        line1 = f"""Given the user's information need: \"{original_user_query}\"\n\n"""
+        line2 = "Formulate a concise, actionable task for an AI-driven web browsing agent (which uses the DeepSeek LLM). "
+        line3 = "The task should instruct the agent to find the relevant information and then compile and return a comprehensive textual summary of its findings. "
+        line4 = "The output summary should be directly usable as context for the original user need. "
+        line5 = "Be specific about what information to look for and what the final summary should contain. "
+        line6 = "The browser agent can navigate websites, read content, and interact with elements if necessary. "
+        line7 = "Task Instruction:"
+        prompt = line1 + line2 + line3 + line4 + line5 + line6 + line7
+        
+        messages = [{"role": "user", "content": prompt}]
+        
+        try:
+            # Assuming self.llm is an Aider Coder instance which has a 'send' method for streaming
+            # and 'main_model' attribute for model name.
+            if hasattr(self.llm, 'send') and hasattr(self.llm, 'main_model'):
+                full_response_content = ""
+                # Ensure partial_response_content exists if Coder expects it
+                if hasattr(self.llm, 'partial_response_content'): 
+                    self.llm.partial_response_content = ""
+                
+                # Iterate over the streaming response from Coder.send
+                # This might need adjustment if Coder.send has a non-streaming mode or a helper for it.
+                # For now, accumulating the stream.
+                response_stream = self.llm.send(
+                    messages,
+                    model=self.llm.main_model, # Use the Coder's main_model
+                    functions=None, 
+                    temperature=0.1 # Low temperature for task generation
+                )
+                for chunk in response_stream:
+                    if chunk: # Ensure chunk is not None or empty
+                        full_response_content += chunk
+                
+                if full_response_content.strip():
+                    return full_response_content.strip()
+                else:
+                    self.io.tool_warning("SearchEnhancer: LLM (Coder.send) returned empty response for browser task generation.")
+            else:
+                self.io.tool_error(
+                    "SearchEnhancer: Main LLM object (self.llm) does not have the expected 'send' and 'main_model' attributes. "
+                    "Cannot generate browser task instruction."
+                )
+        except Exception as e:
+            self.io.tool_error(f"SearchEnhancer: Error generating browser task instruction via LLM: {e}")
+        
+        # Fallback instruction if LLM fails
+        return f"Based on the user query \"{original_user_query}\", find relevant information and provide a comprehensive summary."
+
+
+    def perform_browser_task(self, original_user_query: str) -> str:
+        """
+        Uses Browser-Use with DeepSeek to perform a web task based on the original_user_query.
+        Returns a textual summary of the findings.
+        """
+        if not self.browser_instance or not self.llm_for_browser_use:
+            self.io.tool_warning("SearchEnhancer: Browser-Use components not initialized. Skipping web task.")
+            return ""
+
+        self.io.tool_output(f"SearchEnhancer: Generating task for Browser-Use based on: {original_user_query[:100]}...")
+        browser_agent_task_instruction = self._ask_llm_for_browser_task_instruction(original_user_query)
+        
+        if not browser_agent_task_instruction or browser_agent_task_instruction.startswith("Based on the user query"):
+            self.io.tool_error("SearchEnhancer: Failed to generate a specific task instruction for Browser-Use, or using fallback.")
+            # If using fallback, we might still proceed if it's deemed useful enough.
+            if not browser_agent_task_instruction: # Complete failure
+                 return ""
+            
+        self.io.tool_output(f"SearchEnhancer: Browser-Use task: {browser_agent_task_instruction}")
+
+        try:
+            bu_agent = BrowserUseAgent(
+                task=browser_agent_task_instruction,
+                llm=self.llm_for_browser_use,
+                browser=self.browser_instance,
+                use_vision=False,
+            )
+            
+            self.io.tool_output("SearchEnhancer: Running Browser-Use agent...")
+            result = self._sync_run_async(bu_agent.run()) # MODIFIED: Use _sync_run_async with agent.run()
+
+            if result is None: # _sync_run_async might return None on error
+                self.io.tool_error("SearchEnhancer: Browser-Use agent execution failed or returned None.")
+                return ""
+                
+            if isinstance(result, dict) and "output" in result:
+                result_text = str(result["output"])
+            elif isinstance(result, str):
+                result_text = result
+            else:
+                self.io.tool_warning(f"SearchEnhancer: Browser-Use agent returned an unexpected result type: {type(result)}. Content: {str(result)[:200]}")
+                result_text = str(result) if result is not None else ""
+
+            self.io.tool_output(f"SearchEnhancer: Browser-Use agent finished. Result snippet: {result_text[:200]}...")
+            return result_text
+
+        except Exception as e:
+            self.io.tool_error(f"SearchEnhancer: Error during Browser-Use agent execution: {e}")
+            import traceback
+            self.io.tool_error(traceback.format_exc())
+            return ""
+        finally:
+            pass # Browser closing handled by close_browser() method
+
+    async def _fetch_url_content_async(self, url: str) -> str:
+        """Async helper to fetch and parse URL content using Playwright via Browser-Use Browser."""
+        if not self.browser_instance:
+            self.io.tool_warning("SearchEnhancer: Browser-Use Browser not initialized for _fetch_url_content_async. Cannot fetch URL.")
+            return ""
+        # Further check if browser_instance is usable (e.g. underlying playwright browser is connected)
+        if not hasattr(self.browser_instance, 'new_page') or not self.browser_instance._browser:
+            self.io.tool_error("SearchEnhancer: Browser-Use Browser internal state seems invalid. Cannot fetch URL.")
+            return ""
+
+        page = None
+        cleaned_text = "" # Initialize to ensure it's defined
+        try:
+            page = await self.browser_instance.new_page() # This is an async call
+            await page.goto(url, timeout=getattr(self.args, 'browser_use_page_timeout', 30000)) # Default 30s timeout
+            html_content = await page.content()
+
+            # Use BeautifulSoup to parse and extract text
+            soup = BeautifulSoup(html_content, "html.parser")
+            
+            # Remove script, style, and other non-content tags
+            for tag_name in ["script", "style", "noscript", "header", "footer", "nav", "aside", "form", "button", "input", "textarea", "select", "option"]:
+                for tag in soup.find_all(tag_name): # Iterate over actual found tags
+                    tag.decompose()
+            
+            main_content = soup.find("main")
+            if not main_content:
+                article_content = soup.find("article")
+                body_like_content = article_content if article_content else soup.body
+            else:
+                body_like_content = main_content
+            
+            text = ""
+            if body_like_content:
+                text = body_like_content.get_text(separator="\\n", strip=True)
+            else: # Fallback if no main structural tags found
+                text = soup.get_text(separator="\\n", strip=True)
+            
+            # Basic cleaning: reduce multiple newlines
+            cleaned_text = "\\n".join([line for line in text.splitlines() if line.strip()])
+            
+            # Limit text size
+            max_text_len = getattr(self.args, 'browser_use_max_content_length', 20000)
+            if len(cleaned_text) > max_text_len:
+                cleaned_text = cleaned_text[:max_text_len] + "\\n... [TRUNCATED TEXT] ..."
+                self.io.tool_warning(f"SearchEnhancer: Truncated fetched text from {url} to {max_text_len} chars.")
+            
+            # Return cleaned_text from within the try block if successful
+            return cleaned_text
+
+        except Exception as e:
+            self.io.tool_error(f"SearchEnhancer: Error fetching or parsing {url}: {e}")
+            import traceback
+            self.io.tool_error(traceback.format_exc()) # Log full traceback
+            return "" # Return empty string on error
+        finally:
+            if page:
+                try:
+                    await page.close()
                 except Exception as e:
-                    self.io.tool_error(f"SearchEnhancer: Error during LLM context extraction for {item['url']}: {e}")
-                    useful_texts_extracts.append(f"Source: {item['url']}\nError extracting content.\n---")
-        
-        return "\\n\\n".join(useful_texts_extracts)
-
-if __name__ == '__main__':
-    # Basic test (requires aider.llm.LLM and aider.io.InputOutput to be defined or mocked)
-    class MockModel:
-        def __init__(self, name="mock-model"):
-            self.name = name
-            # Mock .info attribute if SearchEnhancer or other parts rely on it
-            self.info = {"input_cost_per_token": 0, "output_cost_per_token": 0, "max_input_tokens": 4096}
-
-
-        def send_completion(self, messages, functions, stream, temperature):
-            # Simulate LLM responses for testing
-            # This mock needs to be more sophisticated to handle different prompts correctly
-            last_message_content = messages[-1]["content"]
-            response_content = ""
-
-            if "Is web search likely relevant" in last_message_content:
-                if "python" in last_message_content.lower():
-                    response_content = "YES"
-                else:
-                    response_content = "NO"
-            elif "Generate search queries" in last_message_content:
-                response_content = json.dumps({"queries": ["query for python", "another python query", "last python query"]})
-            elif "Is this content useful" in last_message_content:
-                if "example.com/useful" in last_message_content or "highly relevant" in last_message_content.lower() :
-                    response_content = json.dumps({"is_useful": True})
-                else:
-                    response_content = json.dumps({"is_useful": False})
-            elif "Extract relevant parts" in last_message_content:
-                if "example.com/useful" in last_message_content or "highly relevant" in last_message_content.lower():
-                    response_content = "This is a very relevant sentence from the useful page about Python."
-                else:
-                    response_content = ""
-            
-            # Mocking the completion object structure expected by _ask_llm
-            class MockChoice:
-                def __init__(self, content):
-                    self.message = MockMessage(content)
-            class MockMessage:
-                def __init__(self, content):
-                    self.content = content
-            class MockCompletion:
-                def __init__(self, content):
-                    self.choices = [MockChoice(content)]
-            
-            return hashlib.sha1(), MockCompletion(response_content)
-
-
-    class MockIO:
-        def __init__(self):
-            self.args = argparse.Namespace(search_mode=True) # Mock args
-
-        def tool_output(self, message, log_only=False, bold=False):
-            print(f"IO: {message}")
-        def tool_warning(self, message):
-            print(f"IO WARNING: {message}")
-        def tool_error(self, message):
-            print(f"IO ERROR: {message}")
-
-    mock_llm_instance = MockModel()
-    mock_io_instance = MockIO()
-    enhancer = SearchEnhancer(llm=mock_llm_instance, io=mock_io_instance)
-
-    test_prompt = "Tell me about python programming benefits"
-
-    # Test 0: Relevance Check
-    print("\\n--- Test: check_search_relevance ---")
-    is_relevant = enhancer.check_search_relevance(test_prompt)
-    print(f"Search relevant for '{test_prompt}': {is_relevant}")
+                    self.io.tool_warning(f"SearchEnhancer: Error closing page for {url}: {e}")
     
-    is_relevant_false = enhancer.check_search_relevance("Tell me a joke")
-    print(f"Search relevant for 'Tell me a joke': {is_relevant_false}")
-
-    # Test 0.5: Query Generation
-    print("\\n--- Test: generate_search_queries ---")
-    if is_relevant:
-        queries = enhancer.generate_search_queries(test_prompt)
-        print(f"Generated queries for '{test_prompt}': {queries}")
-    else:
-        print("Skipping query generation as not relevant.")
+    def fetch_url_content(self, url: str) -> str:
+        """Synchronous wrapper for fetching URL content."""
+        return self._sync_run_async(self._fetch_url_content_async(url))
 
 
-    # Test 1: _search_duckduckgo_urls
-    print("\\n--- Test: _search_duckduckgo_urls ---")
-    # Using generated queries if available, else default
-    generated_queries_for_test = queries if is_relevant and queries else ["python programming benefits", "why use python"]
-    
-    python_urls = enhancer._search_duckduckgo_urls(generated_queries_for_test[0], num_results=2)
-    print(f"URLs for '{generated_queries_for_test[0]}': {python_urls}")
+    def close_browser(self):
+        """Closes the Browser-Use browser instance if it's open."""
+        if self.browser_instance:
+            try:
+                self.io.tool_output("SearchEnhancer: Closing Browser-Use browser...")
+                # Browser.close() is async
+                self._sync_run_async(self.browser_instance.close())
+                self.browser_instance = None
+                self.io.tool_output("SearchEnhancer: Browser-Use browser closed.")
+            except Exception as e:
+                self.io.tool_error(f"SearchEnhancer: Error closing browser: {e}")
 
-    # Test 2: perform_web_search_and_get_urls
-    print("\\n--- Test: perform_web_search_and_get_urls ---")
-    multi_query_urls = enhancer.perform_web_search_and_get_urls(generated_queries_for_test, max_unique_urls=3)
-    print(f"URLs for multiple queries: {multi_query_urls}")
+    # Removed old methods:
+    # - check_search_relevance
+    # - generate_search_queries
+    # - _search_duckduckgo_urls
+    # - perform_web_search_and_get_urls
+    # - _fetch_full_text_from_url (replaced by fetch_url_content using Browser-Use)
+    # - fetch_content_for_urls
+    # - assess_results_utility
+    # - compile_useful_context_extracts
 
-    # Test 4: fetch_content_for_urls
-    print("\\n--- Test: fetch_content_for_urls ---")
-    # Use real URLs if found, otherwise mock. For safety, let's use example.com for general tests.
-    urls_to_actually_fetch = multi_query_urls[:2] if multi_query_urls else ["http://example.com/useful", "http://example.com/irrelevant"]
-    
-    # To make the test more robust with mock LLM, let's ensure one URL is "useful"
-    # and its content reflects that for the mock LLM.
-    # We'll simulate fetching by creating the structure `fetch_content_for_urls` expects.
-    
-    simulated_fetched_content = []
-    if urls_to_actually_fetch:
-        # Simulate fetching for the first URL, making it "useful"
-        simulated_fetched_content.append(
-            {"url": urls_to_actually_fetch[0], "full_text": "This page contains highly relevant information about Python benefits and programming."}
-        )
-        # Simulate fetching for a second URL, making it "irrelevant"
-        if len(urls_to_actually_fetch) > 1:
-             simulated_fetched_content.append(
-                {"url": urls_to_actually_fetch[1], "full_text": "This page is about unrelated topics like cooking recipes."}
-            )
-        else: # ensure we have at least two items for assessment test
-            simulated_fetched_content.append(
-                {"url": "http://example.com/another_irrelevant", "full_text": "More unrelated stuff."}
-            )
+    # Mock classes (if any were here for testing) would also be removed or updated.
+    # For this refactor, I'm focusing on the main class logic.
 
-    print(f"Simulated fetched content for assessment: {simulated_fetched_content}")
-    
-    # Test 5 & 6: assess_results_utility and compile_useful_context_extracts (using mock LLM)
-    print("\\n--- Test: assess_results_utility & compile_useful_context_extracts ---")
-        
-    assessed_results_live = enhancer.assess_results_utility(test_prompt, simulated_fetched_content)
-    print(f"Assessed results (live test with mock LLM): {assessed_results_live}")
-    
-    compiled_extracts_live = enhancer.compile_useful_context_extracts(assessed_results_live, test_prompt)
-    print(f"Compiled extracts (live test with mock LLM):\\n{compiled_extracts_live}")
+# Example of how AgentCoder might use the new SearchEnhancer (conceptual)
+# class AgentCoder:
+#     def __init__(self, ...):
+#         # ...
+#         if self.args.agent_web_search != "never":
+#             self.search_enhancer = SearchEnhancer(self.planner_llm or self.main_model, self.io, self.args)
+#     
+#     def some_phase_needing_search(self, query):
+#         # ...
+#         if self.search_enhancer:
+#             web_results = self.search_enhancer.perform_browser_task(query)
+#             # Use web_results
+#         # ...
+# 
+#     def __del__(self): # Or a more explicit cleanup method
+#         if hasattr(self, 'search_enhancer') and self.search_enhancer:
+#             self.search_enhancer.close_browser()
 
-    print("\\n--- End of Tests ---")
-
-# Need to import argparse for the mock IO's args
-import argparse
+# Main execution part for standalone testing (if any) should be updated or removed.
+# if __name__ == \'__main__\':
+#   pass # Update for new SearchEnhancer

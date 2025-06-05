@@ -52,6 +52,6 @@ chromadb>=0.4.22
 tiktoken>=0.5.1
 
 # for aider/search_enhancer.py
-requests
-beautifulsoup4
-duckduckgo-search
+browser-use
+python-dotenv
+langchain-openai
