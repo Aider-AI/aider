@@ -109,7 +109,7 @@ class RelativeIndenter:
         """
 
         if self.marker in text:
-            raise ValueError("Text already contains the outdent marker: {self.marker}")
+            raise ValueError(f"Text already contains the outdent marker: {self.marker}")
 
         lines = text.splitlines(keepends=True)
 
