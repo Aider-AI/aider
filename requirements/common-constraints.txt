@@ -273,7 +273,7 @@ narwhals==1.41.1
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
-networkx==3.5
+networkx==3.4.2
     # via
     #   -r requirements/requirements.in
     #   llama-index-core

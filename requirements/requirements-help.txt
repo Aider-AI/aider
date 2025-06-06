@@ -163,7 +163,7 @@ nest-asyncio==1.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-networkx==3.5
+networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core

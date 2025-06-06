@@ -246,7 +246,7 @@ multidict==6.4.4
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-networkx==3.5
+networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
