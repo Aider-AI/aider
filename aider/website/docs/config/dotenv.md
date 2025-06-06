@@ -397,6 +397,9 @@ cog.outl("```")
 ## Specify the language to use in the chat (default: None, uses system settings)
 #AIDER_CHAT_LANGUAGE=
 
+## Specify the language to use in the commit message (default: None, user language)
+#AIDER_COMMIT_LANGUAGE=
+
 ## Always say yes to every confirmation
 #AIDER_YES_ALWAYS=
 
