@@ -337,6 +337,8 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        deep_context_search=True,
+        min_identifier_length=3,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -351,6 +353,10 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+
+        # Auto mode settings
+        self.deep_context_search = deep_context_search
+        self.min_identifier_length = min_identifier_length
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -595,23 +601,34 @@ class Coder:
 
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
-            content = self.io.read_text(fname)
+            try:
+                content = self.io.read_text(fname)
 
-            if content is None:
+                if content is None:
+                    relative_fname = self.get_rel_fname(fname)
+                    self.io.tool_warning(f"Dropping {relative_fname} from the chat.")
+                    self.abs_fnames.remove(fname)
+                else:
+                    yield fname, content
+            except UnicodeDecodeError:
+                # Skip binary files that can't be decoded as text
                 relative_fname = self.get_rel_fname(fname)
-                self.io.tool_warning(f"Dropping {relative_fname} from the chat.")
+                self.io.tool_warning(f"Dropping binary file {relative_fname} from the chat.")
                 self.abs_fnames.remove(fname)
-            else:
-                yield fname, content
 
     def choose_fence(self):
         all_content = ""
         for _fname, content in self.get_abs_fnames_content():
             all_content += content + "\n"
         for _fname in self.abs_read_only_fnames:
-            content = self.io.read_text(_fname)
-            if content is not None:
-                all_content += content + "\n"
+            try:
+                content = self.io.read_text(_fname)
+                if content is not None:
+                    all_content += content + "\n"
+            except UnicodeDecodeError:
+                # Skip binary files that can't be decoded as text
+                relative_fname = self.get_rel_fname(_fname)
+                self.io.tool_warning(f"Skipping binary file {relative_fname} when choosing fence.")
 
         lines = all_content.splitlines()
         good = False
@@ -657,14 +674,19 @@ class Coder:
     def get_read_only_files_content(self):
         prompt = ""
         for fname in self.abs_read_only_fnames:
-            content = self.io.read_text(fname)
-            if content is not None and not is_image_file(fname):
+            try:
+                content = self.io.read_text(fname)
+                if content is not None and not is_image_file(fname):
+                    relative_fname = self.get_rel_fname(fname)
+                    prompt += "\n"
+                    prompt += relative_fname
+                    prompt += f"\n{self.fence[0]}\n"
+                    prompt += content
+                    prompt += f"{self.fence[1]}\n"
+            except UnicodeDecodeError:
+                # Skip binary files that can't be decoded as text
                 relative_fname = self.get_rel_fname(fname)
-                prompt += "\n"
-                prompt += relative_fname
-                prompt += f"\n{self.fence[0]}\n"
-                prompt += content
-                prompt += f"{self.fence[1]}\n"
+                self.io.tool_warning(f"Skipping binary file {relative_fname} from read-only files.")
         return prompt
 
     def get_cur_message_text(self):
@@ -1708,6 +1730,11 @@ class Coder:
                     function_call=self.partial_response_function_call,
                 )
             ]
+
+    def get_enhanced_file_mentions(self, content):
+        """Base implementation of enhanced file mentions - just returns standard file mentions.
+        This method is overridden in AutoCoder to provide more sophisticated context finding."""
+        return self.get_file_mentions(content, ignore_current=True)
 
     def get_file_mentions(self, content, ignore_current=False):
         words = set(word for word in content.split())
