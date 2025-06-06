@@ -937,6 +937,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         parser=parser,
         verbose=args.verbose,
         editor=args.editor,
+        runner=args.runner,
         original_read_only_fnames=read_only_fnames,
     )
 
@@ -997,6 +998,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
+            runner=args.runner,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
