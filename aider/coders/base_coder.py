@@ -243,6 +243,10 @@ class Coder:
             )
             lines.append(output)
 
+            # Show batch editing status for architect mode
+            if hasattr(self, 'use_batch_editing') and self.use_batch_editing:
+                lines.append("Batch editing: enabled for context limit management")
+
         if weak_model is not main_model:
             output = f"Weak model: {weak_model.name}"
             lines.append(output)
@@ -337,6 +341,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        use_batch_editing=False,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -1757,6 +1762,9 @@ class Coder:
         return mentioned_rel_fnames
 
     def check_for_file_mentions(self, content):
+        # Skip file detection during batch editing mode to avoid conflicts
+        if getattr(self, '_in_batch_editing_mode', False):
+            return
         mentioned_rel_fnames = self.get_file_mentions(content)
 
         new_mentions = mentioned_rel_fnames - self.ignore_mentions

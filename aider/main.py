@@ -997,6 +997,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
+            use_batch_editing=args.use_batch_editing,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
