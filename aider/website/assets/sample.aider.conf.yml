@@ -173,6 +173,9 @@
 ## Set the color for user input (default: #00cc00)
 #user-input-color: "#00cc00"
 
+## Set the color for user submitted input (default: None)
+#user-input-submitted-color: "xxx"
+
 ## Set the color for tool output (default: None)
 #tool-output-color: "xxx"
 
