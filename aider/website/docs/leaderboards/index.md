@@ -17,27 +17,28 @@ human intervention.
 <h2 id="leaderboard-title">Aider polyglot coding leaderboard</h2>
 
 <div id="controls-container" style="display: flex; align-items: center; width: 100%; max-width: 800px; margin: 10px auto; gap: 10px; box-sizing: border-box; padding: 0 5px; position: relative;">
-  <input type="text" id="editSearchInput" placeholder="Search..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+  <input type="text" id="editSearchInput" placeholder="Filter, enter multiple values separated by commas..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
   <div id="view-mode-toggle" style="display: inline-flex; border: 1px solid #ccc; border-radius: 4px;">
     <button id="mode-view-btn" class="mode-button active" data-mode="view" style="padding: 8px 8px; border: none; border-radius: 3px 0 0 3px; cursor: pointer; font-size: 14px; line-height: 1.5; min-width: 50px;">View</button>
     <button id="mode-select-btn" class="mode-button" data-mode="select" style="padding: 8px 8px; border: none; background-color: #f8f9fa; border-radius: 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5; min-width: 50px;">Select</button>
     <button id="mode-detail-btn" class="mode-button" data-mode="detail" style="padding: 8px 8px; border: none; background-color: #f8f9fa; border-radius: 0 3px 3px 0; cursor: pointer; border-left: 1px solid #ccc; font-size: 14px; line-height: 1.5; min-width: 50px;">Detail</button>
   </div>
 <button id="close-controls-btn" style="width: 18px; height: 18px; padding: 0; border: 1px solid #ddd; border-radius: 50%; background-color: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-left: 4px; color: #999;">×</button>
-</div>
 
-<table style="width: 100%; max-width: 800px; margin: auto; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
+</div>
+<div id="leaderboard-table-wrapper" style="max-width: 800px; margin: auto; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+<table style="width: 100%; border-collapse: collapse; box-shadow: 0 2px 4px rgba(0,0,0,0.1); font-size: 14px;">
   <thead style="background-color: #f2f2f2;">
     <tr>
       <th style="padding: 8px; width: 40px; text-align: center; vertical-align: middle;">
         <input type="checkbox" id="select-all-checkbox" style="display: none; cursor: pointer; vertical-align: middle;">
       </th> <!-- Header checkbox added here -->
-      <th style="padding: 8px; text-align: left;">Model</th>
-      <th style="padding: 8px; text-align: center; width: 25%">Percent correct</th>
-      <th style="padding: 8px; text-align: center; width: 25%">Cost</th>
-      <th style="padding: 8px; text-align: left;" class="col-command">Command</th>
-      <th style="padding: 8px; text-align: center; width: 10%" class="col-conform">Correct edit format</th>
-      <th style="padding: 8px; text-align: left; width: 10%" class="col-edit-format">Edit Format</th>
+      <th style="padding: 8px; text-align: left; width: 14%; cursor: pointer;" data-sort-key="model">Model <span class="sort-indicator"></span></th>
+      <th style="padding: 8px; text-align: center; width: 20%; cursor: pointer;" data-sort-key="pass_rate_2" data-sort-direction="desc">Percent correct <span class="sort-indicator">▼</span></th>
+      <th style="padding: 8px; text-align: center; width: 20%; cursor: pointer;" data-sort-key="total_cost">Cost <span class="sort-indicator"></span></th>
+      <th style="padding: 8px; text-align: left; width: 14%;" class="col-command">Command</th>
+      <th style="padding: 8px; text-align: left; width: 10%; cursor: pointer;" class="col-conform" data-sort-key="percent_cases_well_formed">Correct edit format <span class="sort-indicator"></span></th>
+      <th style="padding: 8px; text-align: left; width: 10%" class="col-edit-format">Edit Format <span class="sort-indicator-placeholder"></span></th>
     </tr>
   </thead>
   <tbody>
@@ -94,6 +95,7 @@ human intervention.
     {% endfor %}
   </tbody>
 </table>
+</div>
 
 <style>
   #leaderboard-title {
@@ -114,34 +116,17 @@ human intervention.
     overflow-wrap: break-word;
     vertical-align: middle; /* Ensure consistent vertical alignment */
   }
-  tbody tr {
-    height: 50px; /* Set a minimum height for all data rows */
+  table tbody tr[id^="main-row-"] {
+    height: 65px; /* Ensure consistent row height */
   }
-  td.col-command { /* Command column */
-    font-size: 12px; /* Keep font size adjustment for command column if desired, or remove */
+  td.col-command code {
+    white-space: normal; /* Allow text to wrap */
+    word-break: break-word; /* Break words if necessary to prevent overflow */
+    display: inline-block; /* Helps with width and wrapping behavior */
   }
-
-  /* Hide new columns first on smaller screens */
-  @media screen and (max-width: 991px) {
-    th.col-conform, td.col-conform,
-    th.col-edit-format, td.col-edit-format {
-      display: none;
-    }
-    /* Increase width of Percent correct and Cost columns when others are hidden */
-    th:nth-child(3), td:nth-child(3), /* Percent correct */
-    th:nth-child(4), td:nth-child(4) { /* Cost */
-      width: 33% !important; /* Override inline style */
-    }
+    /* Ensure specific column widths are respected if needed, or let table auto-adjust */
+    /* Example: .col-command { width: 200px; } */
   }
-
-  /* Hide command column on even smaller screens */
-  @media screen and (max-width: 767px) {
-    th.col-command, td.col-command { /* Command column */
-      display: none;
-    }
-  }
-
-  /* --- Control Styles --- */
   #controls-container {
     margin-bottom: 20px; /* Add some space below controls */
   }
@@ -255,6 +240,71 @@ human intervention.
      border-left: 4px solid #ffc107; /* Warning yellow border */
      /* Original padding is 8px. Subtract border width. */
      padding-left: 4px;
+  }
+
+  @media screen and (max-width: 499px) {
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+  }
+  table {
+    min-width: 600px;
+    width: 100%;
+    table-layout: auto;
+  }
+  /* Model column – ~10% wider */
+  table thead th:nth-child(2),
+  table tbody tr:not(.details-row) td:nth-child(2) {
+    min-width: 80px;
+    max-width: 65vw;
+  }
+
+  /* Percent correct – ~15% narrower */
+  table thead th:nth-child(3),
+  table tbody tr:not(.details-row) td:nth-child(3),
+  /* Cost – same as percent correct */
+  table thead th:nth-child(4),
+  table tbody tr:not(.details-row) td:nth-child(4) {
+    min-width: 30px;
+    max-width: 12vw;
+  }
+
+  /* (combined above) */
+
+  /* make table cells more compact */
+  th, td {
+    padding: 4px 6px;
+  }
+
+  /* fix every row to the same height */
+  table tbody tr:not(.details-row) {
+    height: 48px;
+  }
+
+  /* prevent the command column from wrapping */
+  .col-command code {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+  @media screen and (max-width: 764px) {
+    #leaderboard-table-wrapper table {
+      min-width: 765px;
+    }
+  }
+  .sort-indicator {
+    margin-left: 0.3em;
+    display: inline-block;
+    width: 1em; /* Reserve space */
+    text-align: center;
+  }
+  .sort-indicator-placeholder {
+    margin-left: 0.3em;
+    display: inline-block;
+    width: 1em; /* Reserve space for alignment */
   }
 </style>
 
