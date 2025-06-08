@@ -388,6 +388,11 @@ Aliases:
   - `--gitignore`
   - `--no-gitignore`
 
+### `--add-gitignore-files`
+Enable/disable the addition of files listed in .gitignore to Aider's editing scope.
+Default: False
+Environment variable: `AIDER_ADD_GITIGNORE_FILES`
+
 ### `--aiderignore AIDERIGNORE`
 Specify the aider ignore file (default: .aiderignore in git root)  
 Default: .aiderignore  
