@@ -329,7 +329,22 @@ class Model(ModelSettings):
 
         self.configure_model_settings(model)
         if self.name_override:
+            # Store settings that differ from defaults
+            non_defaults = {}
+            defaults = {field.name: field.default for field in fields(ModelSettings)}
+            for field in fields(ModelSettings):
+                value = getattr(self, field.name)
+                if value != defaults[field.name]:
+                    non_defaults[field.name] = value
+            
+            # Apply override model settings
             self.configure_model_settings(self.name_override)
+            
+            # Restore non-default settings
+            for field_name, value in non_defaults.items():
+                if field_name != 'name':
+                    setattr(self, field_name, value)
+            
             model = self.name
         self.info = self.get_model_info(model)
 
