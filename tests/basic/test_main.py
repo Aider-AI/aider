@@ -163,7 +163,7 @@ class TestMain(TestCase):
             # Create an ignored file
             ignored_file = git_dir / "ignored.txt"
             ignored_file.write_text("This file should be ignored.")
-            
+
             # Get the absolute path to the ignored file
             abs_ignored_file = str(ignored_file.resolve())
 
@@ -202,7 +202,7 @@ class TestMain(TestCase):
                 )
                 # Verify the ignored file is not in the chat
                 self.assertNotIn(abs_ignored_file, coder.abs_fnames)
-                
+
     def test_add_command_gitignore_files_flag(self):
         with GitTemporaryDirectory() as git_dir:
             git_dir = Path(git_dir)
@@ -214,7 +214,7 @@ class TestMain(TestCase):
             # Create an ignored file
             ignored_file = git_dir / "ignored.txt"
             ignored_file.write_text("This file should be ignored.")
-            
+
             # Get the absolute path to the ignored file
             abs_ignored_file = str(ignored_file.resolve())
             rel_ignored_file = "ignored.txt"
@@ -228,7 +228,7 @@ class TestMain(TestCase):
                     return_coder=True,
                     force_git_root=git_dir,
                 )
-                
+
                 with patch.object(coder.io, "confirm_ask", return_value=True):
                     coder.commands.cmd_add(rel_ignored_file)
 
