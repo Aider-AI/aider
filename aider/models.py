@@ -129,6 +129,7 @@ class ModelSettings:
     remove_reasoning: Optional[str] = None  # Deprecated alias for reasoning_tag
     system_prompt_prefix: Optional[str] = None
     accepts_settings: Optional[list] = None
+    name_override: Optional[str] = None
 
 
 # Load model settings from package resource
@@ -326,6 +327,10 @@ class Model(ModelSettings):
             (ms for ms in MODEL_SETTINGS if ms.name == "aider/extra_params"), None
         )
 
+        self.configure_model_settings(model)
+        if self.name_override:
+            self.configure_model_settings(self.name_override)
+            model = self.name
         self.info = self.get_model_info(model)
 
         # Are all needed keys/params available?
@@ -338,7 +343,6 @@ class Model(ModelSettings):
         # with minimum 1k and maximum 8k
         self.max_chat_history_tokens = min(max(max_input_tokens / 16, 1024), 8192)
 
-        self.configure_model_settings(model)
         if weak_model is False:
             self.weak_model_name = None
         else:
