@@ -409,6 +409,8 @@ class InputOutput:
             style_dict.update(
                 {
                     "pygments.literal.string": f"bold italic {self.user_input_color}",
+                    "pygments.generic.heading": f"bold {self.user_input_color}",
+                    "pygments.keyword": f"{self.user_input_color}",
                 }
             )
 
