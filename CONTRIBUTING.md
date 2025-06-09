@@ -153,7 +153,7 @@ The built documentation will be available in the `aider/website/_site` directory
 
 ## Suggesting UI/UX Style Changes
 
-We welcome suggestions for improving the default look and feel of the user input and other terminal interface elements. Aider utilizes `prompt_toolkit` which in turn often uses `Pygments` tokens for styling various text components.
+Aider utilizes `prompt_toolkit` which in turn often uses `Pygments` tokens for styling various text components.
 
 If you have ideas for different colors, text styles (like bold, underline, italics), or other visual enhancements, you can help by:
 
@@ -191,7 +191,9 @@ def main():
     from pygments.lexers.markup import MarkdownLexer
     tokens = list(pygments.lex("""# some title
 * something
-* else""", lexer=MarkdownLexer()))
+* else
+
+some `code`""", lexer=MarkdownLexer()))
     print("Tokens found:")
     print(tokens)
 
