@@ -151,7 +151,7 @@ The project's documentation is built using Jekyll and hosted on GitHub Pages. To
 
 The built documentation will be available in the `aider/website/_site` directory.
 
-### Suggesting UI/UX Style Changes
+## Suggesting UI/UX Style Changes
 
 We welcome suggestions for improving the default look and feel of the user input and other terminal interface elements. Aider utilizes `prompt_toolkit` which in turn often uses `Pygments` tokens for styling various text components.
 
@@ -163,7 +163,7 @@ If you have ideas for different colors, text styles (like bold, underline, itali
 
 You can submit these suggestions as GitHub issues or, if you're comfortable, as part of a Pull Request modifying the relevant style definitions in the Aider codebase.
 
-#### Example: Identifying Pygments Tokens
+### Example: Identifying Pygments Tokens
 
 The following Python script can help you identify the Pygments tokens used for different text elements. You can adapt it to explore Aider's UI components.
 
