@@ -30,6 +30,7 @@ from rich.color import ColorParseError
 from rich.columns import Columns
 from rich.console import Console
 from rich.markdown import Markdown
+from rich.panel import Panel
 from rich.style import Style as RichStyle
 from rich.text import Text
 
@@ -1000,13 +1001,16 @@ class InputOutput:
         style = RichStyle(**style)
         self.console.print(*messages, style=style)
 
-    def get_assistant_mdstream(self):
-        mdargs = dict(
+    def get_markdown_args(self):
+        md_args = dict(
             style=self.assistant_output_color,
             code_theme=self.code_theme,
             inline_code_lexer="text",
         )
-        mdStream = MarkdownStream(mdargs=mdargs)
+        return md_args
+
+    def get_assistant_mdstream(self):
+        mdStream = MarkdownStream(mdargs=self.get_markdown_args())
         return mdStream
 
     def assistant_output(self, message, pretty=None):
@@ -1021,9 +1025,7 @@ class InputOutput:
             pretty = self.pretty
 
         if pretty:
-            show_resp = Markdown(
-                message, style=self.assistant_output_color, code_theme=self.code_theme
-            )
+            show_resp = Panel(Markdown(message, **self.get_markdown_args()))
         else:
             show_resp = Text(message or "(empty response)")
 
