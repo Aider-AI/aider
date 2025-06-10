@@ -241,6 +241,9 @@ cog.outl("```")
 ## Enable/disable adding .aider* to .gitignore (default: True)
 #AIDER_GITIGNORE=true
 
+## Enable/disable the addition of files listed in .gitignore to Aider's editing scope.
+#AIDER_ADD_GITIGNORE_FILES=false
+
 ## Specify the aider ignore file (default: .aiderignore in git root)
 #AIDER_AIDERIGNORE=.aiderignore
 
@@ -396,6 +399,9 @@ cog.outl("```")
 
 ## Specify the language to use in the chat (default: None, uses system settings)
 #AIDER_CHAT_LANGUAGE=
+
+## Specify the language to use in the commit message (default: None, user language)
+#AIDER_COMMIT_LANGUAGE=
 
 ## Always say yes to every confirmation
 #AIDER_YES_ALWAYS=

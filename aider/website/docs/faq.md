@@ -264,11 +264,11 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>1,109,768</td><td class='right'>61.9%</td></tr>
-<tr><td>o3</td><td class='right'>542,669</td><td class='right'>30.3%</td></tr>
-<tr><td>anthropic/claude-sonnet-4-20250514</td><td class='right'>92,508</td><td class='right'>5.2%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-05-06</td><td class='right'>40,256</td><td class='right'>2.2%</td></tr>
-<tr><td>gemini/gemini-2.5-flash-preview-05-20</td><td class='right'>7,638</td><td class='right'>0.4%</td></tr>
+<tr><td>o3</td><td class='right'>542,669</td><td class='right'>38.0%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>479,518</td><td class='right'>33.6%</td></tr>
+<tr><td>anthropic/claude-sonnet-4-20250514</td><td class='right'>357,856</td><td class='right'>25.0%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-05-06</td><td class='right'>40,256</td><td class='right'>2.8%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-preview-05-20</td><td class='right'>7,638</td><td class='right'>0.5%</td></tr>
 <tr><td>gemini/REDACTED</td><td class='right'>643</td><td class='right'>0.0%</td></tr>
 </table>
 

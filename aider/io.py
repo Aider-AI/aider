@@ -749,7 +749,7 @@ class InputOutput:
         if not self.llm_history_file:
             return
         timestamp = datetime.now().isoformat(timespec="seconds")
-        with open(self.llm_history_file, "a", encoding=self.encoding) as log_file:
+        with open(self.llm_history_file, "a", encoding="utf-8") as log_file:
             log_file.write(f"{role.upper()} {timestamp}\n")
             log_file.write(content + "\n")
 
@@ -1001,7 +1001,11 @@ class InputOutput:
         self.console.print(*messages, style=style)
 
     def get_assistant_mdstream(self):
-        mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+        mdargs = dict(
+            style=self.assistant_output_color,
+            code_theme=self.code_theme,
+            inline_code_lexer="text",
+        )
         mdStream = MarkdownStream(mdargs=mdargs)
         return mdStream
 

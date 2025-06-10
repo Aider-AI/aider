@@ -24,7 +24,19 @@ cog.out(text)
 ]]]-->
 
 
-### main branch
+### Aider v0.84.0
+
+- Added support for new Claude models including the Sonnet 4 and Opus 4 series (e.g., `claude-sonnet-4-20250514`,
+`claude-opus-4-20250514`) across various providers. The default `sonnet` and `opus` aliases were updated to these newer
+versions.
+- Added support for the `vertex_ai/gemini-2.5-flash-preview-05-20` model.
+- Fixed OpenRouter token cost calculation for improved accuracy.
+- Updated default OpenRouter models during onboarding to `deepseek/deepseek-r1:free` for the free tier and
+`anthropic/claude-sonnet-4` for paid tiers.
+- Automatically refresh GitHub Copilot tokens when used as OpenAI API keys, by Lih Chen.
+- Aider wrote 79% of the code in this release.
+
+### Aider v0.83.2
 
 - Bumped configargparse to 1.7.1 as 1.7 was pulled.
 - Added shell tab completion for file path arguments (by saviour) and for `--edit-format`/`--editor-edit-format` options.
@@ -32,7 +44,6 @@ cog.out(text)
 - The `/settings` command now displays detailed metadata for active main, editor, and weak models.
 - Fixed an issue where files explicitly added via the command line were not correctly ignored if listed in `.gitignore`.
 - Improved automatic commit messages by providing more context during their generation, by wangboxue.
-- Aider wrote 89% of the code in this release.
 
 ### Aider v0.83.1
 

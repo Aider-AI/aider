@@ -49,8 +49,10 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--completion-menu-current-color]
              [--completion-menu-current-bg-color] [--code-theme]
              [--show-diffs] [--git | --no-git]
-             [--gitignore | --no-gitignore] [--aiderignore]
-             [--subtree-only] [--auto-commits | --no-auto-commits]
+             [--gitignore | --no-gitignore]
+             [--add-gitignore-files | --no-add-gitignore-files]
+             [--aiderignore] [--subtree-only]
+             [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
@@ -74,9 +76,9 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--apply-clipboard-edits] [--exit] [--show-repo-map]
              [--show-prompts] [--voice-format] [--voice-language]
              [--voice-input-device] [--disable-playwright] [--file]
-             [--read] [--vim] [--chat-language] [--yes-always] [-v]
-             [--load] [--encoding] [--line-endings] [-c]
-             [--env-file]
+             [--read] [--vim] [--chat-language] [--commit-language]
+             [--yes-always] [-v] [--load] [--encoding]
+             [--line-endings] [-c] [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
@@ -388,6 +390,14 @@ Aliases:
   - `--gitignore`
   - `--no-gitignore`
 
+### `--add-gitignore-files`
+Enable/disable the addition of files listed in .gitignore to Aider's editing scope.  
+Default: False  
+Environment variable: `AIDER_ADD_GITIGNORE_FILES`  
+Aliases:
+  - `--add-gitignore-files`
+  - `--no-add-gitignore-files`
+
 ### `--aiderignore AIDERIGNORE`
 Specify the aider ignore file (default: .aiderignore in git root)  
 Default: .aiderignore  
@@ -682,6 +692,10 @@ Environment variable: `AIDER_VIM`
 ### `--chat-language CHAT_LANGUAGE`
 Specify the language to use in the chat (default: None, uses system settings)  
 Environment variable: `AIDER_CHAT_LANGUAGE`  
+
+### `--commit-language COMMIT_LANGUAGE`
+Specify the language to use in the commit message (default: None, user language)  
+Environment variable: `AIDER_COMMIT_LANGUAGE`  
 
 ### `--yes-always`
 Always say yes to every confirmation  

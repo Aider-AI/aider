@@ -16,6 +16,7 @@ import json5
 import yaml
 from PIL import Image
 
+from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
@@ -72,6 +73,7 @@ claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
 claude-3-5-sonnet-20241022
 claude-sonnet-4-20250514
+claude-opus-4-20250514
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
@@ -94,8 +96,8 @@ MODEL_ALIASES = {
     "flash": "gemini/gemini-2.5-flash-preview-04-17",
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
-    "gemini-2.5-pro": "gemini/gemini-2.5-pro-preview-05-06",
-    "gemini": "gemini/gemini-2.5-pro-preview-05-06",
+    "gemini-2.5-pro": "gemini/gemini-2.5-pro-preview-06-05",
+    "gemini": "gemini/gemini-2.5-pro-preview-06-05",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
     "optimus": "openrouter/openrouter/optimus-alpha",
@@ -875,7 +877,7 @@ class Model(ModelSettings):
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
-    def github_copilot_token_to_open_ai_key(self):
+    def github_copilot_token_to_open_ai_key(self, extra_headers):
         # check to see if there's an openai api key
         # If so, check to see if it's expire
         openai_api_key = "OPENAI_API_KEY"
@@ -886,16 +888,45 @@ class Model(ModelSettings):
         ):
             import requests
 
+            class GitHubCopilotTokenError(Exception):
+                """Custom exception for GitHub Copilot token-related errors."""
+
+                pass
+
+            # Validate GitHub Copilot token exists
+            if "GITHUB_COPILOT_TOKEN" not in os.environ:
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable not found")
+
+            github_token = os.environ["GITHUB_COPILOT_TOKEN"]
+            if not github_token.strip():
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable is empty")
+
             headers = {
                 "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
-                "Editor-Version": self.extra_params["extra_headers"]["Editor-Version"],
-                "Copilot-Integration-Id": self.extra_params["extra_headers"][
-                    "Copilot-Integration-Id"
-                ],
+                "Editor-Version": extra_headers["Editor-Version"],
+                "Copilot-Integration-Id": extra_headers["Copilot-Integration-Id"],
                 "Content-Type": "application/json",
             }
-            res = requests.get("https://api.github.com/copilot_internal/v2/token", headers=headers)
-            os.environ[openai_api_key] = res.json()["token"]
+
+            url = "https://api.github.com/copilot_internal/v2/token"
+            res = requests.get(url, headers=headers)
+            if res.status_code != 200:
+                safe_headers = {k: v for k, v in headers.items() if k != "Authorization"}
+                token_preview = github_token[:5] + "..." if len(github_token) >= 5 else github_token
+                safe_headers["Authorization"] = f"Bearer {token_preview}"
+                raise GitHubCopilotTokenError(
+                    f"GitHub Copilot API request failed (Status: {res.status_code})\n"
+                    f"URL: {url}\n"
+                    f"Headers: {json.dumps(safe_headers, indent=2)}\n"
+                    f"JSON: {res.text}"
+                )
+
+            response_data = res.json()
+            token = response_data.get("token")
+            if not token:
+                raise GitHubCopilotTokenError("Response missing 'token' field")
+
+            os.environ[openai_api_key] = token
 
     def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
@@ -940,7 +971,13 @@ class Model(ModelSettings):
 
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ:
-            self.github_copilot_token_to_open_ai_key()
+            if "extra_headers" not in kwargs:
+                kwargs["extra_headers"] = {
+                    "Editor-Version": f"aider/{__version__}",
+                    "Copilot-Integration-Id": "vscode-chat",
+                }
+
+            self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
         res = litellm.completion(**kwargs)
         return hash_object, res

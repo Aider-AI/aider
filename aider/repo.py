@@ -210,7 +210,9 @@ class GitRepo:
         else:
             user_language = None
             if coder:
-                user_language = coder.get_user_language()
+                user_language = coder.commit_language
+                if not user_language:
+                    user_language = coder.get_user_language()
             commit_message = self.get_commit_message(diffs, context, user_language)
 
         # Retrieve attribute settings, prioritizing coder.args if available
@@ -332,24 +334,32 @@ class GitRepo:
         content += diffs
 
         system_content = self.commit_prompt or prompts.commit_system
+
         language_instruction = ""
         if user_language:
             language_instruction = f"\n- Is written in {user_language}."
         system_content = system_content.format(language_instruction=language_instruction)
 
-        messages = [
-            dict(role="system", content=system_content),
-            dict(role="user", content=content),
-        ]
-
         commit_message = None
         for model in self.models:
             spinner_text = f"Generating commit message with {model.name}"
             with WaitingSpinner(spinner_text):
+                if model.system_prompt_prefix:
+                    current_system_content = model.system_prompt_prefix + "\n" + system_content
+                else:
+                    current_system_content = system_content
+
+                messages = [
+                    dict(role="system", content=current_system_content),
+                    dict(role="user", content=content),
+                ]
+
                 num_tokens = model.token_count(messages)
                 max_tokens = model.info.get("max_input_tokens") or 0
+
                 if max_tokens and num_tokens > max_tokens:
                     continue
+
                 commit_message = model.simple_send_with_retries(messages)
                 if commit_message:
                     break  # Found a model that could generate the message
@@ -389,14 +399,20 @@ class GitRepo:
         try:
             if current_branch_has_commits:
                 args = ["HEAD", "--"] + list(fnames)
-                diffs += self.repo.git.diff(*args)
+                diffs += self.repo.git.diff(*args, stdout_as_string=False).decode(
+                    self.io.encoding, "replace"
+                )
                 return diffs
 
             wd_args = ["--"] + list(fnames)
             index_args = ["--cached"] + wd_args
 
-            diffs += self.repo.git.diff(*index_args)
-            diffs += self.repo.git.diff(*wd_args)
+            diffs += self.repo.git.diff(*index_args, stdout_as_string=False).decode(
+                self.io.encoding, "replace"
+            )
+            diffs += self.repo.git.diff(*wd_args, stdout_as_string=False).decode(
+                self.io.encoding, "replace"
+            )
 
             return diffs
         except ANY_GIT_ERROR as err:
@@ -410,7 +426,9 @@ class GitRepo:
             args += ["--color=never"]
 
         args += [from_commit, to_commit]
-        diffs = self.repo.git.diff(*args)
+        diffs = self.repo.git.diff(*args, stdout_as_string=False).decode(
+            self.io.encoding, "replace"
+        )
 
         return diffs
 

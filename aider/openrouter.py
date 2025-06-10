@@ -17,11 +17,11 @@ import requests
 
 
 def _cost_per_token(val: str | None) -> float | None:
-    """Convert a per-million price string to a per-token float."""
+    """Convert a price string (USD per token) to a float."""
     if val in (None, "", "0"):
         return 0.0 if val == "0" else None
     try:
-        return float(val) / 1_000_000
+        return float(val)
     except Exception:  # noqa: BLE001
         return None
 
