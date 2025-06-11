@@ -1157,6 +1157,20 @@
   #  extra_body:
   #    reasoning_effort: high
 
+- name: o3-pro
+  streaming: false
+  edit_format: diff
+  weak_model_name: gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
 - name: openai/o4-mini
   edit_format: diff
   weak_model_name: openai/gpt-4.1-mini
@@ -1200,6 +1214,20 @@
   #   reasoning_effort: high
 
 - name: openai/o3
+  streaming: false
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
+- name: openai/o3-pro
   streaming: false
   edit_format: diff
   weak_model_name: openai/gpt-4.1-mini
@@ -1269,6 +1297,20 @@
   #  extra_body:
   #    reasoning_effort: high
 
+- name: openrouter/openai/o3-pro
+  streaming: false
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: openrouter/openai/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
 - name: openai/o4-mini
   edit_format: diff
   weak_model_name: openai/gpt-4.1-mini
@@ -1312,6 +1354,20 @@
   #   reasoning_effort: high
 
 - name: azure/o3
+  streaming: false
+  edit_format: diff
+  weak_model_name: azure/gpt-4.1-mini
+  use_repo_map: true
+  editor_model_name: azure/gpt-4.1
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  #extra_params:
+  #  extra_body:
+  #    reasoning_effort: high
+
+- name: azure/o3-pro
   streaming: false
   edit_format: diff
   weak_model_name: azure/gpt-4.1-mini
