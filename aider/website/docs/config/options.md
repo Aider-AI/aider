@@ -49,8 +49,10 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--completion-menu-current-color]
              [--completion-menu-current-bg-color] [--code-theme]
              [--show-diffs] [--git | --no-git]
-             [--gitignore | --no-gitignore] [--aiderignore]
-             [--subtree-only] [--auto-commits | --no-auto-commits]
+             [--gitignore | --no-gitignore]
+             [--add-gitignore-files | --no-add-gitignore-files]
+             [--aiderignore] [--subtree-only]
+             [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
@@ -389,9 +391,12 @@ Aliases:
   - `--no-gitignore`
 
 ### `--add-gitignore-files`
-Enable/disable the addition of files listed in .gitignore to Aider's editing scope.
-Default: False
-Environment variable: `AIDER_ADD_GITIGNORE_FILES`
+Enable/disable the addition of files listed in .gitignore to Aider's editing scope.  
+Default: False  
+Environment variable: `AIDER_ADD_GITIGNORE_FILES`  
+Aliases:
+  - `--add-gitignore-files`
+  - `--no-add-gitignore-files`
 
 ### `--aiderignore AIDERIGNORE`
 Specify the aider ignore file (default: .aiderignore in git root)  

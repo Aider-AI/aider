@@ -241,6 +241,9 @@ cog.outl("```")
 ## Enable/disable adding .aider* to .gitignore (default: True)
 #AIDER_GITIGNORE=true
 
+## Enable/disable the addition of files listed in .gitignore to Aider's editing scope.
+#AIDER_ADD_GITIGNORE_FILES=false
+
 ## Specify the aider ignore file (default: .aiderignore in git root)
 #AIDER_AIDERIGNORE=.aiderignore
 
