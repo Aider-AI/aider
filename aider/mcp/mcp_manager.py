@@ -34,6 +34,12 @@ class MCPConnectedServer:
                 if not self.config.command or not isinstance(self.config.command, list) or len(self.config.command) == 0:
                     raise ValueError("Stdio command not properly configured.")
 
+                # Conceptual placeholder for StdioServerParameters:
+                # params = StdioServerParameters(
+                #     command=self.config.command[0],
+                #     args=self.config.command[1:],
+                #     env=self.config.env # TODO: Ensure this is passed to the SDK
+                # )
                 params = StdioServerParameters(command=self.config.command[0], args=self.config.command[1:])
                 # The stdio_client itself is the async context manager
                 # We need to manage its lifecycle carefully with the session
@@ -70,7 +76,12 @@ class MCPConnectedServer:
                 if not self.config.http_url:
                     raise ValueError("HTTP/S URL not configured.")
                 # Similarly, streamablehttp_client is an async context manager
-                # async with streamablehttp_client(self.config.http_url) as (rs, ws, _resp):
+                # Conceptual placeholder for streamablehttp_client call:
+                # async with streamablehttp_client(
+                #     self.config.http_url,
+                #     # TODO: Pass SSL verification preference, e.g.,
+                #     # ssl_verify=get_aider_global_ssl_verify_setting()
+                # ) as (rs, ws, _resp):
                 #    self.session = ClientSession(rs, ws)
                 #    await self.session.initialize()
                 print(f"INFO: Establishing HTTP/S connection for '{self.config.name}' (conceptual)...")
@@ -137,41 +148,134 @@ class MCPConnectedServer:
         print(f"INFO: Fetching capabilities for '{self.config.name}'...")
         self.last_error = None
         try:
-            # Actual SDK calls
+            # Hypothetical specific SDK errors
+            # Replace with actual SDK error types if known e.g. from mcp.exceptions import MCPAuthError, etc.
+            # class MCPAuthError(Exception): pass
+            # class MCPConnectionError(Exception): pass
+            # class MCPTimeoutError(Exception): pass
+
+            # Add comment about potential timeout for the whole operation
+            # For example: await asyncio.wait_for(self._do_fetch_capabilities(), timeout=FETCH_TIMEOUT)
             self.resources = await self.session.list_resources()
             self.tools = await self.session.list_tools()
             self.prompts = await self.session.list_prompts()
             print(f"INFO: Successfully fetched {len(self.resources)} resources, {len(self.tools)} tools, {len(self.prompts)} prompts for '{self.config.name}'.")
-        except Exception as e:
-            self.last_error = f"Error fetching capabilities: {type(e).__name__} - {e}"
-            print(f"ERROR: Fetching capabilities for '{self.config.name}': {self.last_error}")
+        # except MCPAuthError as e:
+        #     self.last_error = f"Authentication error fetching capabilities: {e}"
+        #     print(f"ERROR: Auth error for '{self.config.name}': {self.last_error}")
+        # except MCPConnectionError as e:
+        #     self.last_error = f"Connection error fetching capabilities: {e}"
+        #     print(f"ERROR: Connection error for '{self.config.name}': {self.last_error}")
+        # except MCPTimeoutError as e:
+        #     self.last_error = f"Timeout error fetching capabilities: {e}"
+        #     print(f"ERROR: Timeout for '{self.config.name}': {self.last_error}")
+        except Exception as e: # Generic fallback
+            self.last_error = f"Generic error fetching capabilities: {type(e).__name__} - {e}"
+            print(f"ERROR: Generic error for '{self.config.name}' during fetch_capabilities: {self.last_error}")
+
+        if self.last_error: # If any error occurred
             self.resources = []
             self.tools = []
             self.prompts = []
-            # Potentially set self.status = "error" here too
-            # For now, connect() handles status update if fetch_capabilities fails during connect.
+            # Note: self.status is not changed here; caller (connect or rescan) handles status.
 
-    # read_resource_content and execute_mcp_tool will be updated in later steps
-    # but ensure their type hints for return values match general expectations or SDK specifics if known.
-    async def read_resource_content(self, resource_uri: str) -> Optional[Tuple[str, str]]:
-        # ... (implementation using self.session.read_resource in a later step)
-        # For now, keep the stub but update signature if mcp_types defines resource content structure
-        if not self.session: # Basic guard
-            print(f"ERROR: Read resource failed for {self.config.name}, not connected.")
+
+    async def read_resource_content(self, resource_uri: str) -> Optional[Tuple[str, str]]: # (content_str, mime_type)
+        if not self.session:
+            self.last_error = "Not connected"
+            print(f"ERROR: Cannot read resource '{resource_uri}' from '{self.config.name}': Not connected.")
             return None
-        print(f"STUB: Reading resource {resource_uri} for {self.config.name}")
-        await asyncio.sleep(0.05)
-        return (f"Content of {resource_uri}", "text/plain")
 
+        print(f"INFO: Reading resource '{resource_uri}' from '{self.config.name}'...")
+        self.last_error = None
+        try:
+            # Conceptual: Add timeout for SDK call if needed
+            # content_bytes, mime_type = await asyncio.wait_for(
+            #    self.session.read_resource(resource_uri),
+            #    timeout=self.config.get("read_timeout_seconds", 30) # Example: get timeout from config
+            # )
+            content_bytes, mime_type = await self.session.read_resource(resource_uri)
 
-    async def execute_mcp_tool(self, tool_name: str, arguments: Dict) -> Optional[Any]:
-        # ... (implementation using self.session.call_tool in a later step)
-        if not self.session: # Basic guard
-            print(f"ERROR: Execute tool failed for {self.config.name}, not connected.")
+            content_str: str
+            # Attempt to decode known text types, default to UTF-8 for others.
+            # This could be expanded with a more comprehensive mime_type check.
+            if mime_type.startswith("text/"):
+                try:
+                    # Try common encodings if specific charset isn't in mime_type
+                    # For simplicity, just trying utf-8. A real app might check mime_type for charset.
+                    content_str = content_bytes.decode('utf-8')
+                except UnicodeDecodeError:
+                    try:
+                        content_str = content_bytes.decode('latin-1') # Fallback for some cases
+                    except UnicodeDecodeError:
+                        print(f"WARNING: Could not decode resource '{resource_uri}' (mime: {mime_type}) as UTF-8 or Latin-1. Content may be binary or an unsupported text encoding.")
+                        # Represent binary or undecodable content as a placeholder or error message.
+                        # For now, returning a placeholder. Aider primarily handles text.
+                        content_str = f"[Undecodable content: {mime_type}]"
+            elif mime_type in ("application/json", "application/xml", "application/javascript", "application/yaml"): # Add other text-based application types
+                 try:
+                    content_str = content_bytes.decode('utf-8')
+                 except UnicodeDecodeError:
+                    content_str = f"[Undecodable JSON/XML/etc. content: {mime_type}]"
+            else:
+                # For non-text or unknown types, indicate it's binary or provide a generic message.
+                print(f"INFO: Resource '{resource_uri}' has non-primary-text mime_type '{mime_type}'. Treating as binary/opaque.")
+                content_str = f"[Content of type '{mime_type}', not displayed as text]"
+
+            print(f"INFO: Successfully read resource '{resource_uri}' (mime: {mime_type}) from '{self.config.name}'.")
+            return content_str, mime_type
+            # Hypothetical specific SDK errors
+            # except mcp_types.MCPAuthError as e:
+            #     self.last_error = f"Authentication error reading resource {resource_uri}: {e}"
+            # except mcp_types.MCPConnectionError as e:
+            #     self.last_error = f"Connection error reading resource {resource_uri}: {e}"
+            # except mcp_types.MCPTimeoutError as e: # If asyncio.TimeoutError is not used
+            #     self.last_error = f"Timeout reading resource {resource_uri}: {e}"
+            # except asyncio.TimeoutError: # If using asyncio.wait_for
+            #     self.last_error = f"Timeout reading resource {resource_uri}"
+        except Exception as e: # Generic fallback
+            self.last_error = f"Generic error reading resource {resource_uri}: {type(e).__name__} - {e}"
+
+        if self.last_error:
+            print(f"ERROR: Reading resource '{resource_uri}' from '{self.config.name}': {self.last_error}")
             return None
-        print(f"STUB: Executing tool {tool_name} with {arguments} for {self.config.name}")
-        await asyncio.sleep(0.1)
-        return {"status": "success", "output": f"Tool {tool_name} stub executed"}
+
+        print(f"INFO: Successfully read resource '{resource_uri}' (mime: {mime_type}) from '{self.config.name}'.")
+        return content_str, mime_type
+
+
+    async def execute_mcp_tool(self, tool_name: str, arguments: Dict[str, Any]) -> Optional[Any]:
+        if not self.session:
+            self.last_error = "Not connected"
+            print(f"ERROR: Cannot execute tool '{tool_name}' on '{self.config.name}': Not connected.")
+            return None
+
+        print(f"INFO: Executing MCP tool '{tool_name}' with args {arguments} on server '{self.config.name}'...")
+        self.last_error = None
+        try:
+            # Conceptual: Add timeout for SDK call if needed
+            # result = await asyncio.wait_for(
+            #    self.session.call_tool(tool_name=tool_name, arguments=arguments),
+            #    timeout=self.config.get("tool_timeout_seconds", 60) # Example
+            # )
+            result = await self.session.call_tool(tool_name=tool_name, arguments=arguments)
+
+            print(f"INFO: Successfully executed MCP tool '{tool_name}' on '{self.config.name}'. Result: {result}")
+            return result
+        # except mcp_types.MCPAuthError as e:
+        #     self.last_error = f"Authentication error executing tool {tool_name}: {e}"
+        # except mcp_types.MCPConnectionError as e:
+        #     self.last_error = f"Connection error executing tool {tool_name}: {e}"
+        # except mcp_types.MCPTimeoutError as e: # If asyncio.TimeoutError is not used
+        #     self.last_error = f"Timeout executing tool {tool_name}: {e}"
+        # except asyncio.TimeoutError: # If using asyncio.wait_for
+        #     self.last_error = f"Timeout executing tool {tool_name}"
+        except Exception as e: # Generic fallback
+            self.last_error = f"Generic error executing tool {tool_name}: {type(e).__name__} - {e}"
+
+        if self.last_error:
+            print(f"ERROR: Executing MCP tool '{tool_name}' on '{self.config.name}': {self.last_error}")
+            return None
 
 class MCPManager:
     def __init__(self, mcp_server_configs: List[MCPServerConfig]):
@@ -301,25 +405,32 @@ class MCPManager:
         return all_resources
 
     async def read_mcp_resource(self, server_name: str, resource_uri: str) -> Optional[Tuple[str, str]]:
-        if server_name in self.connected_servers:
-            server = self.connected_servers[server_name]
-            if server.status == "connected":
-                return await server.read_resource_content(resource_uri)
-            else:
-                print(f"ERROR: Server '{server_name}' is not connected. Cannot read resource '{resource_uri}'.")
-                return None
-        else:
-            print(f"ERROR: Server '{server_name}' not found. Cannot read resource '{resource_uri}'.")
+        server = self.connected_servers.get(server_name)
+        if not server:
+            print(f"ERROR: Server '{server_name}' not found for read_mcp_resource.")
+            return None
+        if server.status != "connected":
+            print(f"ERROR: Server '{server_name}' is not connected (status: {server.status}). Cannot read resource '{resource_uri}'.")
             return None
 
+        result = await server.read_resource_content(resource_uri)
+        if result is None:
+            # server.last_error should be set by MCPConnectedServer method
+            print(f"ERROR: Failed to read resource '{resource_uri}' from '{server_name}'. Server error: {server.last_error or 'Unknown error within server method.'}")
+        return result
+
     async def call_mcp_tool(self, server_name: str, tool_name: str, arguments: Dict) -> Optional[Any]:
-        if server_name in self.connected_servers:
-            server = self.connected_servers[server_name]
-            if server.status == "connected":
-                return await server.execute_mcp_tool(tool_name, arguments)
-            else:
-                print(f"ERROR: Server '{server_name}' is not connected. Cannot call tool '{tool_name}'.")
-                return None
-        else:
-            print(f"ERROR: Server '{server_name}' not found. Cannot call tool '{tool_name}'.")
+        server = self.connected_servers.get(server_name)
+        if not server:
+            print(f"ERROR: Server '{server_name}' not found for call_mcp_tool.")
+            return None
+        if server.status != "connected":
+            print(f"ERROR: Server '{server_name}' is not connected (status: {server.status}). Cannot call tool '{tool_name}'.")
+            return None
+
+        result = await server.execute_mcp_tool(tool_name, arguments)
+        if result is None:
+            # server.last_error should be set by MCPConnectedServer method
+            print(f"ERROR: Failed to execute tool '{tool_name}' on '{server_name}'. Server error: {server.last_error or 'Unknown error within server method.'}")
+        return result
             return None

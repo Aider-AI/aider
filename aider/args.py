@@ -8,7 +8,7 @@ from pathlib import Path
 import configargparse
 import shtab
 import yaml
-from typing import List
+from typing import List, Dict, Any # Ensure Dict and Any are imported
 
 from aider import __version__
 from aider.args_formatter import (
@@ -980,91 +980,72 @@ if __name__ == "__main__":
     sys.exit(status)
 
 
-def process_mcp_configurations(args, parser):
-    # Initialize an empty list for the processed configs
+def process_mcp_configurations(args, parser): # parser might not be needed if not using get_config_source_value_for_key
     args.mcp_server_configs: List[MCPServerConfig] = []
 
-    # Configargparse might load the mcp_servers from YAML directly into args.mcp_servers
-    # if the YAML key is 'mcp_servers' and the arg is '--mcp-servers'.
-    # Or, it might be a string if specified via env var, needing yaml.safe_load.
-    # Or, we might need to get it from the config file source directly.
-
-    raw_mcp_servers_config = None
-    if args.mcp_servers: # This is the attribute from --mcp-servers
+    raw_mcp_servers_data = None
+    # Try to get mcp_servers from the args namespace first (populated by configargparse from YAML/CLI/env)
+    if hasattr(args, 'mcp_servers') and args.mcp_servers is not None:
         if isinstance(args.mcp_servers, str):
             try:
-                raw_mcp_servers_config = yaml.safe_load(args.mcp_servers)
+                raw_mcp_servers_data = yaml.safe_load(args.mcp_servers)
             except yaml.YAMLError as e:
                 print(f"Error parsing MCP servers YAML/JSON from --mcp-servers or AIDER_MCP_SERVERS: {e}")
-                raw_mcp_servers_config = []
-        elif isinstance(args.mcp_servers, list):
-            raw_mcp_servers_config = args.mcp_servers
+        elif isinstance(args.mcp_servers, dict): # Expecting a dict now
+            raw_mcp_servers_data = args.mcp_servers
         else:
-            print(f"Warning: Unexpected type for mcp_servers argument: {type(args.mcp_servers)}. Expected list or YAML string.")
-            raw_mcp_servers_config = []
+            print(f"Warning: Unexpected type for mcp_servers argument: {type(args.mcp_servers)}. Expected dict or YAML string representing a dict.")
 
-    # Fallback or primary way: try to get it from the config file sources if not populated as expected
-    if raw_mcp_servers_config is None:
-        # configargparse stores config file values. We need to find how to access them.
-        # Let's assume the parser object `parser` can give us access to values from config files.
-        # This part is speculative about configargparse API.
-        # A common way is that `args.mcp_servers` would already be populated if defined in YAML.
-        # If the --mcp-servers arg was defined with `action='append'` and `type=dict` (if supported)
-        # or if configargparse has a way to directly map list of dicts from YAML...
-        # For now, we'll rely on args.mcp_servers being populated correctly by configargparse
-        # when 'mcp_servers:' is a top-level key in the YAML.
-        # If it's not populated, and was not given by env var, then there are no configs.
-        if not args.mcp_servers: # Check again if it was None initially
-             raw_mcp_servers_config = []
-
-
-    if not isinstance(raw_mcp_servers_config, list):
-        if raw_mcp_servers_config is not None: # only print warning if it was set but malformed
-             print(f"Warning: 'mcp_servers' configuration is not a list. Found: {type(raw_mcp_servers_config)}. MCP servers will not be loaded.")
-        raw_mcp_servers_config = []
+    if not isinstance(raw_mcp_servers_data, dict):
+        if raw_mcp_servers_data is not None: # only print warning if it was set but malformed
+             print(f"Warning: 'mcp_servers' configuration is not a dictionary. Found: {type(raw_mcp_servers_data)}. MCP servers will not be loaded.")
+        raw_mcp_servers_data = {} # Default to empty dict if not found or malformed
 
     parsed_configs = []
-    for server_conf_dict in raw_mcp_servers_config:
+    for server_name, server_conf_dict in raw_mcp_servers_data.items():
         if not isinstance(server_conf_dict, dict):
-            print(f"Warning: MCP server configuration entry is not a dictionary: {server_conf_dict}. Skipping.")
+            print(f"Warning: MCP server configuration for '{server_name}' is not a dictionary: {server_conf_dict}. Skipping.")
             continue
         try:
-            # Ensure 'name' and 'url' are present, as MCPServerConfig requires them.
-            if 'name' not in server_conf_dict or 'url' not in server_conf_dict:
-                print(f"Warning: MCP server config missing 'name' or 'url': {server_conf_dict}. Skipping.")
-                continue
-            parsed_configs.append(MCPServerConfig(**server_conf_dict))
+            # Pass the server_name (key from the dict) explicitly to MCPServerConfig
+            # **server_conf_dict will pass all other keys like command, args, enabled, etc.
+            config_instance = MCPServerConfig(name=server_name, **server_conf_dict)
+            parsed_configs.append(config_instance)
         except (TypeError, ValueError) as e:
-            print(f"Error parsing MCP server configuration '{server_conf_dict.get('name', 'Unknown')}': {e}. Skipping.")
+            print(f"Error parsing MCP server configuration for '{server_name}': {e}. Skipping.")
+            # Example: MCPServerConfig might raise ValueError for invalid URL or missing command for stdio
 
-    # Apply overrides
-    if args.no_mcp:
+    # Apply CLI overrides (this logic remains largely the same)
+    if hasattr(args, 'no_mcp') and args.no_mcp:
         for conf in parsed_configs:
             conf.enabled = False
     else:
-        for server_name_to_enable in args.mcp_enable_server:
-            found = False
-            for conf in parsed_configs:
-                if conf.name == server_name_to_enable:
-                    conf.enabled = True
-                    found = True
-                    break
-            if not found:
-                print(f"Warning: --mcp-enable-server: Server name '{server_name_to_enable}' not found in configuration.")
+        if hasattr(args, 'mcp_enable_server') and args.mcp_enable_server:
+            for server_name_to_enable in args.mcp_enable_server:
+                found = False
+                for conf in parsed_configs:
+                    if conf.name == server_name_to_enable:
+                        conf.enabled = True
+                        found = True
+                        break
+                if not found:
+                    print(f"Warning: --mcp-enable-server: Server name '{server_name_to_enable}' not found in configuration.")
 
-        for server_name_to_disable in args.mcp_disable_server:
-            found = False
-            for conf in parsed_configs:
-                if conf.name == server_name_to_disable:
-                    conf.enabled = False
-                    found = True
-                    break
-            if not found:
-                print(f"Warning: --mcp-disable-server: Server name '{server_name_to_disable}' not found in configuration.")
+        if hasattr(args, 'mcp_disable_server') and args.mcp_disable_server:
+            for server_name_to_disable in args.mcp_disable_server:
+                found = False
+                for conf in parsed_configs:
+                    if conf.name == server_name_to_disable:
+                        conf.enabled = False
+                        found = True
+                        break
+                if not found:
+                    print(f"Warning: --mcp-disable-server: Server name '{server_name_to_disable}' not found in configuration.")
 
     args.mcp_server_configs = parsed_configs
-    # For debugging, you might want to print the loaded configs
-    # if args.verbose and args.mcp_server_configs:
-    #    print("Loaded MCP Server Configurations:")
+
+    # For debugging (optional, can be removed or kept under verbose flag)
+    # if hasattr(args, 'verbose') and args.verbose and args.mcp_server_configs:
+    #    print("Loaded MCP Server Configurations (post-override):")
     #    for cfg in args.mcp_server_configs:
-    #        print(f"  - Name: {cfg.name}, URL: {cfg.url}, Enabled: {cfg.enabled}, Protocol: {cfg.protocol}")
+    #        print(f"  - Name: {cfg.name}, Enabled: {cfg.enabled}, Protocol: {cfg.protocol}, Command: {cfg.command}, Args: {cfg.args}, URL: {cfg.url}")
