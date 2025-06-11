@@ -1,3 +1,4 @@
+import asyncio
 import glob
 import os
 import re
@@ -1098,6 +1099,94 @@ class Commands:
         self.io.tool_output()
         self.io.tool_output("Use `/help <question>` to ask questions about how to use aider.")
 
+    def cmd_mcp_status(self, args_str):
+        "Show status of all configured MCP servers. Alias: /mcp_list_servers"
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized or no servers are configured.")
+            return
+
+        statuses = self.coder.mcp_manager.get_all_server_statuses()
+        if not statuses:
+            self.io.tool_output("No MCP servers configured.")
+            return
+
+        self.io.tool_output("MCP Server Status:")
+        for stat in statuses:
+            name = stat.get('name', 'N/A')
+            url = stat.get('url', 'N/A')
+            conf_enabled = stat.get('configured_enabled', False)
+            current_status = stat.get('status', 'N/A')
+            last_err = stat.get('last_error', '')
+
+            status_line = f"- {name} (url: {url}, config_enabled: {conf_enabled}, status: {current_status})"
+            if last_err and current_status == "error":
+                status_line += f" (Error: {last_err})"
+            self.io.tool_output(status_line)
+
+    def cmd_mcp_list_servers(self, args_str):
+        "Alias for /mcp_status. Shows status of all configured MCP servers."
+        return self.cmd_mcp_status(args_str)
+
+    def cmd_mcp_connect(self, args_str):
+        "Connect to a specific MCP server."
+        server_name = args_str.strip()
+        if not server_name:
+            self.io.tool_output("Usage: /mcp_connect <server_name>")
+            return
+
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized.")
+            return
+
+        self.io.tool_output(f"Attempting to connect to MCP server: {server_name}...")
+        # Assuming self.coder.mcp_manager.connect_server is an async method
+        loop = asyncio.get_event_loop()
+        success = loop.run_until_complete(self.coder.mcp_manager.connect_server(server_name))
+
+        if success:
+            self.io.tool_output(f"Successfully connected to MCP server: {server_name}.")
+        else:
+            last_error = self.coder.mcp_manager.get_server_last_error(server_name)
+            self.io.tool_error(f"Failed to connect to MCP server: {server_name}. Error: {last_error or 'Unknown error'}")
+
+    def cmd_mcp_disconnect(self, args_str):
+        "Disconnect from a specific MCP server."
+        server_name = args_str.strip()
+        if not server_name:
+            self.io.tool_output("Usage: /mcp_disconnect <server_name>")
+            return
+
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized.")
+            return
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.coder.mcp_manager.disconnect_server(server_name))
+        self.io.tool_output(f"Disconnected from MCP server: {server_name}.")
+
+
+    def cmd_mcp_rescan(self, args_str):
+        "Rescan capabilities of a specific server or all connected servers."
+        server_name = args_str.strip() if args_str else None
+
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized.")
+            return
+
+        loop = asyncio.get_event_loop()
+        if server_name:
+            self.io.tool_output(f"Rescanning capabilities for MCP server: {server_name}...")
+            success = loop.run_until_complete(self.coder.mcp_manager.refresh_server_capabilities(server_name))
+            if success:
+                self.io.tool_output(f"Successfully rescanned capabilities for {server_name}.")
+            else:
+                last_error = self.coder.mcp_manager.get_server_last_error(server_name)
+                self.io.tool_error(f"Failed to rescan capabilities for {server_name}. Error: {last_error or 'Unknown error'}")
+        else:
+            self.io.tool_output("Rescanning capabilities for all connected MCP servers...")
+            loop.run_until_complete(self.coder.mcp_manager.refresh_all_connected_servers_capabilities())
+            self.io.tool_output("Finished rescanning all connected MCP servers.")
+
     def cmd_help(self, args):
         "Ask questions about aider"
 
@@ -1211,11 +1300,14 @@ class Commands:
 |:------|:----------|
 """
         commands = sorted(self.get_commands())
-        for cmd in commands:
+        # Filter out internal commands or aliases if not desired in markdown
+        commands_for_md = [cmd for cmd in commands if cmd not in ("/mcp_list_servers")]
+
+        for cmd in commands_for_md:
             cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
             cmd_method = getattr(self, cmd_method_name, None)
             if cmd_method:
-                description = cmd_method.__doc__
+                description = cmd_method.__doc__.splitlines()[0] # Get first line of docstring
                 res += f"| **{cmd}** | {description} |\n"
             else:
                 res += f"| **{cmd}** | |\n"

@@ -20,7 +20,7 @@ from prompt_toolkit.enums import EditingMode
 
 from aider import __version__, models, urls, utils
 from aider.analytics import Analytics
-from aider.args import get_parser
+from aider.args import get_parser, process_mcp_configurations
 from aider.coders import Coder
 from aider.coders.base_coder import UnknownEditFormat
 from aider.commands import Commands, SwitchCoder
@@ -502,6 +502,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+    # (Immediately after args = parser.parse_args(argv))
+    process_mcp_configurations(args, parser)
+    # Now args.mcp_server_configs should be populated and ready for use
 
     if args.shell_completions:
         # Ensure parser.prog is set for shtab, though it should be by default
