@@ -1769,12 +1769,26 @@ class Coder:
         added_fnames = []
         group = ConfirmGroup(new_mentions)
         for rel_fname in sorted(new_mentions):
-            if self.io.confirm_ask(
-                "Add file to the chat?", subject=rel_fname, group=group, allow_never=True
-            ):
+            response = self.io.confirm_ask(
+                "Add file to the chat?",
+                subject=rel_fname,
+                group=group,
+                allow_never=True,
+                show_readonly=True,
+                return_string=True,
+            )
+
+            if response == "yes":
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
+            elif response == "readonly":
+                abs_fname = self.abs_root_path(rel_fname)
+                self.abs_read_only_fnames.add(abs_fname)
+                added_fnames.append(f"{rel_fname} (read-only)")
+            elif response == "never":
+                self.ignore_mentions.add(rel_fname)
             else:
+                # "no" response
                 self.ignore_mentions.add(rel_fname)
 
         if added_fnames:
