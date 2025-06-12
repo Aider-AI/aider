@@ -151,6 +151,76 @@ The project's documentation is built using Jekyll and hosted on GitHub Pages. To
 
 The built documentation will be available in the `aider/website/_site` directory.
 
+## Suggesting UI/UX Style Changes
+
+Aider utilizes `prompt_toolkit` which in turn often uses `Pygments` tokens for styling various text components.
+
+If you have ideas for different colors, text styles (like bold, underline, italics), or other visual enhancements, you can help by:
+
+1.  Identifying the specific UI element you'd like to change (e.g., user input prompt, code blocks, AI responses).
+2.  Using a script to determine the `Pygments` token associated with that element.
+3.  Suggesting the new style (e.g., color, attributes) for that token.
+
+You can submit these suggestions as GitHub issues or, if you're comfortable, as part of a Pull Request modifying the relevant style definitions in the Aider codebase.
+
+### Example: Identifying Pygments Tokens
+
+The following Python script can help you identify the Pygments tokens used for different text elements. You can adapt it to explore Aider's UI components.
+
+```python
+#!/usr/bin/env python
+"""
+Printing a list of Pygments (Token, text) tuples,
+or an output of a Pygments lexer.
+"""
+
+import pygments
+from pygments.lexers.python import PythonLexer
+from pygments.token import Token
+
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import PygmentsTokens
+from prompt_toolkit.styles import Style
+
+
+def main():
+    # Printing the output of a pygments lexer.
+    # This example uses MarkdownLexer. You may need to install it
+    # (e.g., it's part of Pygments' standard lexers) or ensure Pygments is installed.
+    # You can import it with: from pygments.lexers.markup import MarkdownLexer
+    from pygments.lexers.markup import MarkdownLexer
+    tokens = list(pygments.lex("""# some title
+* something
+* else
+
+some `code`""", lexer=MarkdownLexer()))
+    print("Tokens found:")
+    print(tokens)
+
+    # With a custom style.
+    style = Style.from_dict(
+        {
+            "pygments.generic.heading": "underline",
+            "pygments.keyword": "underline", # Example style for keywords
+        }
+    )
+    print("\nFormatted text with custom style:")
+    print_formatted_text(PygmentsTokens(tokens), style=style)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+To use this script:
+
+1.  **Input Text**: Change the string in `pygments.lex()` to match the UI element you're inspecting.
+2.  **Lexer**: Select an appropriate lexer. For general input, `TextLexer` (from `pygments.lexers.special`) is a good start. For code, use the relevant language lexer (e.g., `PythonLexer`). Ensure `Pygments` is installed.
+3.  **Output**: Run the script. It will print `(Token, text)` tuples. The `Token` (e.g., `Token.Generic.Heading`) is what you need.
+4.  **Styles**: Experiment by modifying the `style` dictionary with token names and `prompt_toolkit` style strings (e.g., `"underline"`, `"#ff0000"`).
+
+This process will help you pinpoint tokens and test styles, providing valuable information for suggesting UI improvements.
+
 ## Coding Standards
 
 ### Python Compatibility
