@@ -1730,7 +1730,7 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
-- name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
+- name: vertex_ai/claude-3-7-sonnet@20250219
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
@@ -1738,29 +1738,29 @@ cog.out("```\n")
   examples_as_sys_msg: true
   extra_params:
     max_tokens: 64000
-  editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-3-7-sonnet@20250219
+  editor_model_name: vertex_ai/claude-3-7-sonnet@20250219
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
 
-- name: vertex_ai-anthropic_models/vertex_ai/claude-opus-4@20250514
+- name: vertex_ai/claude-opus-4@20250514
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
   extra_params:
     max_tokens: 32000
-  editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-sonnet-4@20250514
+  editor_model_name: vertex_ai/claude-sonnet-4@20250514
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
 
-- name: vertex_ai-anthropic_models/vertex_ai/claude-sonnet-4@20250514
+- name: vertex_ai/claude-sonnet-4@20250514
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
   use_repo_map: true
   extra_params:
     max_tokens: 64000
-  editor_model_name: vertex_ai-anthropic_models/vertex_ai/claude-sonnet-4@20250514
+  editor_model_name: vertex_ai/claude-sonnet-4@20250514
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
