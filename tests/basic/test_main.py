@@ -152,6 +152,114 @@ class TestMain(TestCase):
             self.assertEqual("one\ntwo\n.aider*\n.env\n", gitignore.read_text())
             del os.environ["GIT_CONFIG_GLOBAL"]
 
+    def test_command_line_gitignore_files_flag(self):
+        with GitTemporaryDirectory() as git_dir:
+            git_dir = Path(git_dir)
+
+            # Create a .gitignore file
+            gitignore_file = git_dir / ".gitignore"
+            gitignore_file.write_text("ignored.txt\n")
+
+            # Create an ignored file
+            ignored_file = git_dir / "ignored.txt"
+            ignored_file.write_text("This file should be ignored.")
+
+            # Get the absolute path to the ignored file
+            abs_ignored_file = str(ignored_file.resolve())
+
+            # Test without the --add-gitignore-files flag (default: False)
+            coder = main(
+                ["--exit", "--yes", abs_ignored_file],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+                force_git_root=git_dir,
+            )
+            # Verify the ignored file is not in the chat
+            self.assertNotIn(abs_ignored_file, coder.abs_fnames)
+
+            # Test with --add-gitignore-files set to True
+            coder = main(
+                ["--add-gitignore-files", "--exit", "--yes", abs_ignored_file],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+                force_git_root=git_dir,
+            )
+            # Verify the ignored file is in the chat
+            self.assertIn(abs_ignored_file, coder.abs_fnames)
+
+            # Test with --add-gitignore-files set to False
+            coder = main(
+                ["--no-add-gitignore-files", "--exit", "--yes", abs_ignored_file],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+                force_git_root=git_dir,
+            )
+            # Verify the ignored file is not in the chat
+            self.assertNotIn(abs_ignored_file, coder.abs_fnames)
+
+    def test_add_command_gitignore_files_flag(self):
+        with GitTemporaryDirectory() as git_dir:
+            git_dir = Path(git_dir)
+
+            # Create a .gitignore file
+            gitignore_file = git_dir / ".gitignore"
+            gitignore_file.write_text("ignored.txt\n")
+
+            # Create an ignored file
+            ignored_file = git_dir / "ignored.txt"
+            ignored_file.write_text("This file should be ignored.")
+
+            # Get the absolute path to the ignored file
+            abs_ignored_file = str(ignored_file.resolve())
+            rel_ignored_file = "ignored.txt"
+
+            # Test without the --add-gitignore-files flag (default: False)
+            coder = main(
+                ["--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+                force_git_root=git_dir,
+            )
+
+            with patch.object(coder.io, "confirm_ask", return_value=True):
+                coder.commands.cmd_add(rel_ignored_file)
+
+            # Verify the ignored file is not in the chat
+            self.assertNotIn(abs_ignored_file, coder.abs_fnames)
+
+            # Test with --add-gitignore-files set to True
+            coder = main(
+                ["--add-gitignore-files", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+                force_git_root=git_dir,
+            )
+            with patch.object(coder.io, "confirm_ask", return_value=True):
+                coder.commands.cmd_add(rel_ignored_file)
+
+            # Verify the ignored file is in the chat
+            self.assertIn(abs_ignored_file, coder.abs_fnames)
+
+            # Test with --add-gitignore-files set to False
+            coder = main(
+                ["--no-add-gitignore-files", "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+                force_git_root=git_dir,
+            )
+
+            with patch.object(coder.io, "confirm_ask", return_value=True):
+                coder.commands.cmd_add(rel_ignored_file)
+
+            # Verify the ignored file is not in the chat
+            self.assertNotIn(abs_ignored_file, coder.abs_fnames)
+
     def test_main_args(self):
         with patch("aider.coders.Coder.create") as MockCoder:
             # --yes will just ok the git repo without blocking on input

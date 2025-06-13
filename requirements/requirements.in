@@ -35,7 +35,9 @@ google-generativeai
 # in matplotlib and a bunch of other deps
 # https://github.com/networkx/networkx/blob/d7132daa8588f653eacac7a5bae1ee85a183fa43/pyproject.toml#L57
 # We really only need networkx itself and scipy for the repomap.
-networkx
+#
+# >3.5 seems to not be available for py3.10
+networkx<3.5
 
 # This is the one networkx dependency that we need.
 # Including it here explicitly because we
@@ -46,6 +48,3 @@ scipy
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
 # Uses importlib-metadata
 importlib-metadata<8.0.0
-
-# configargparse was 1.7 pulled
-configargparse>1.7
