@@ -1563,3 +1563,32 @@
   versions: 0.84.1.dev
   seconds_per_case: 716.6
   total_cost: 4.8016
+
+- dirname: 2025-06-13-04-39-44--gemini-udiff
+  test_cases: 225
+  model: gemini/gemini-2.5-pro-preview-06-05
+  edit_format: udiff
+  commit_hash: 2df4beb
+  thinking_tokens: 32768
+  pass_rate_1: 48.0
+  pass_rate_2: 80.0
+  pass_num_1: 108
+  pass_num_2: 180
+  percent_cases_well_formed: 97.8
+  error_outputs: 13
+  num_malformed_responses: 11
+  num_with_malformed_responses: 5
+  user_asks: 109
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2709801
+  completion_tokens: 5152238
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-06-05
+  date: 2025-06-13
+  versions: 0.84.1.dev
+  seconds_per_case: 229.4
+  total_cost: 55.4773
