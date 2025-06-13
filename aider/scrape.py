@@ -82,10 +82,11 @@ class Scraper:
     playwright_instructions_shown = False
 
     # Public API...
-    def __init__(self, print_error=None, playwright_available=None, verify_ssl=True):
+    def __init__(self, print_error=None, playwright_available=None, verify_ssl=True, playwright_proxy=None):
         """
         `print_error` - a function to call to print error/debug info.
         `verify_ssl` - if False, disable SSL certificate verification when scraping.
+        `playwright_proxy` - proxy server for Playwright Chromium (e.g., http://127.0.0.1:7890)
         """
         if print_error:
             self.print_error = print_error
@@ -94,6 +95,7 @@ class Scraper:
 
         self.playwright_available = playwright_available
         self.verify_ssl = verify_ssl
+        self.playwright_proxy = playwright_proxy
 
     def scrape(self, url):
         """
@@ -141,6 +143,7 @@ class Scraper:
 
     # Internals...
     def scrape_with_playwright(self, url):
+        import os
         import playwright  # noqa: F401
         from playwright.sync_api import Error as PlaywrightError
         from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
@@ -155,7 +158,12 @@ class Scraper:
                 return None, None
 
             try:
-                context = browser.new_context(ignore_https_errors=not self.verify_ssl)
+                context_args = {"ignore_https_errors": not self.verify_ssl}
+                # Use --playwright-proxy if provided, else try system env
+                proxy_url = self.playwright_proxy or os.environ.get("HTTP_PROXY") or os.environ.get("http_proxy")
+                if proxy_url:
+                    context_args["proxy"] = {"server": proxy_url}
+                context = browser.new_context(**context_args)
                 page = context.new_page()
 
                 user_agent = page.evaluate("navigator.userAgent")
@@ -271,14 +279,20 @@ def slimdown_html(soup):
     return soup
 
 
-def main(url):
-    scraper = Scraper(playwright_available=has_playwright())
-    content = scraper.scrape(url)
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(description="Scrape a URL using Playwright or HTTPX.")
+    parser.add_argument("url", help="The URL to scrape")
+    parser.add_argument("--playwright-proxy", help="Proxy server for Playwright Chromium (e.g., http://127.0.0.1:7890)")
+    args = parser.parse_args()
+
+    scraper = Scraper(
+        playwright_available=has_playwright(),
+        playwright_proxy=args.playwright_proxy
+    )
+    content = scraper.scrape(args.url)
     print(content)
 
-
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python playw.py <URL>")
-        sys.exit(1)
-    main(sys.argv[1])
+    main()
