@@ -274,6 +274,9 @@ cog.outl("```")
 ## Enable/disable git pre-commit hooks with --no-verify (default: False)
 #AIDER_GIT_COMMIT_VERIFY=false
 
+## Disable git commit signing with --no-gpg-sign (default: False)
+#AIDER_GIT_COMMIT_NO_SIGN=false
+
 ## Commit all pending changes with a suitable commit message, then exit
 #AIDER_COMMIT=false
 

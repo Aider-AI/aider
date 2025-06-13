@@ -620,6 +620,58 @@ class TestRepo(unittest.TestCase):
             self.assertNotIn(str(root_file), tracked_files)
             self.assertNotIn(str(another_subdir_file), tracked_files)
 
+    @patch("aider.repo.GitRepo.get_commit_message")
+    @patch("git.Repo.git")
+    def test_git_commit_no_sign(self, mock_git, mock_get_commit_message):
+        """Test that git_commit_no_sign controls whether --no-gpg-sign is passed to git commit"""
+        mock_get_commit_message.return_value = "Test commit message"
+
+        with GitTemporaryDirectory():
+            # Create a new repo
+            raw_repo = git.Repo()
+
+            # Create a file to commit
+            fname = Path("test_file.txt")
+            fname.write_text("initial content")
+            raw_repo.git.add(str(fname))
+
+            # Do the initial commit
+            raw_repo.git.commit("-m", "Initial commit")
+
+            # Modify the file
+            fname.write_text("modified content")
+            raw_repo.git.add(str(fname))  # Stage the change
+
+            # Create GitRepo with no_sign=True
+            io = InputOutput()
+            git_repo_no_sign = GitRepo(io, None, None, git_commit_no_sign=True)
+
+            # Attempt to commit with no_sign=True
+            # Mock the actual git.commit call on the Git object returned by mock_git
+            mock_git.commit = MagicMock()
+            commit_result = git_repo_no_sign.commit(fnames=[str(fname)], message="Should not sign")
+
+            # Verify that commit was called with --no-gpg-sign
+            mock_git.commit.assert_called_once()
+            call_args, call_kwargs = mock_git.commit.call_args
+            self.assertIn("--no-gpg-sign", call_args[0])
+            self.assertIsNotNone(commit_result)  # Should return commit hash/message tuple
+
+            # Reset mock for the next test case
+            mock_git.commit.reset_mock()
+
+            # Create GitRepo with no_sign=False
+            git_repo_sign = GitRepo(io, None, None, git_commit_no_sign=False)
+
+            # Attempt to commit with no_sign=False
+            commit_result = git_repo_sign.commit(fnames=[str(fname)], message="Should sign")
+
+            # Verify that commit was called WITHOUT --no-gpg-sign
+            mock_git.commit.assert_called_once()
+            call_args, call_kwargs = mock_git.commit.call_args
+            self.assertNotIn("--no-gpg-sign", call_args[0])
+            self.assertIsNotNone(commit_result)  # Should return commit hash/message tuple
+
     @patch("aider.models.Model.simple_send_with_retries")
     def test_noop_commit(self, mock_send):
         mock_send.return_value = '"a good commit message"'
