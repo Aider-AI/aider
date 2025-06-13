@@ -83,6 +83,21 @@ You can run `./benchmark/benchmark.py --help` for a list of all the arguments, b
 - `--num-tests` specifies how many of the tests to run before stopping. This is another way to start gently as you debug your benchmarking setup.
 - `--keywords` filters the tests to run to only the ones whose name match the supplied argument (similar to `pytest -k xxxx`).
 - `--read-model-settings=<filename.yml>` specify model settings, see here: https://aider.chat/docs/config/adv-model-settings.html#model-settings
+- `--resume` resume a previously paused benchmark run from its checkpoint
+- `--edit-format architect` run in architect mode, which uses two models: one to propose changes and another to implement them
+- `--editor-model` specify the model to use for implementing changes in architect mode
+- `--reasoning-effort` set reasoning effort for models that support it (e.g., "high", "medium", "low")
+
+### Pausing and Resuming Benchmarks
+
+Benchmarks can take a long time to run. You can pause a running benchmark by pressing `Ctrl+C` once. The benchmark will complete the current test and then save a checkpoint before exiting. To resume the benchmark later, use the `--resume` flag:
+
+```
+# Resume a previously paused benchmark
+./benchmark/benchmark.py YYYY-MM-DD-HH-MM-SS--a-helpful-name-for-this-run --resume --model gpt-3.5-turbo --edit-format whole --threads 10
+```
+
+When you resume a benchmark, it will pick up where it left off, using the list of pending tests from the checkpoint file. This allows you to run benchmarks over multiple sessions.
 
 ### Benchmark report
 
@@ -137,6 +152,64 @@ should be enough to reliably reproduce any benchmark run.
 You can see examples of the benchmark report yaml in the
 [aider leaderboard data files](https://github.com/Aider-AI/aider/blob/main/aider/website/_data/).
 
+### Running benchmarks in architect mode
+
+Architect mode uses two models: a main model that proposes changes and an editor model that implements them. This can be particularly useful for models that are good at reasoning but struggle with precise code edits.
+
+Here's an example of running a benchmark in architect mode:
+
+```
+./benchmark/benchmark.py grook-mini-architect-deepseek-editor --model openrouter/x-ai/grok-3-mini-beta --editor-model openrouter/deepseek/deepseek-chat-v3-0324 --edit-format architect --threads 15 --exercises-dir polyglot-benchmark --reasoning-effort high
+```
+
+In this example:
+- The main model is Grok-3-mini-beta (via OpenRouter)
+- The editor model is DeepSeek Chat v3 (via OpenRouter)
+- The edit format is set to "architect"
+- Reasoning effort is set to "high"
+- 15 threads are used for parallel processing
+
+When running in architect mode, the benchmark report will include additional information about the editor model used.
+
+### Running Discord Bot-Specific Benchmarks
+
+The benchmark system now includes comprehensive Discord bot-specific test scenarios that evaluate:
+
+- **Mention-based command parsing** and validation
+- **Message length handling** (2000 character Discord limits)
+- **Thread creation and management** functionality
+- **URL scraping** with X/Twitter routing to Apify
+- **Message summarization** features (/sum-day, /psalm-day commands)
+- **Database operations** for message and summary storage
+- **Edge case handling** for Discord-specific constraints
+- **Error recovery** and graceful degradation
+
+To run Discord bot-specific benchmarks:
+
+```
+./benchmark/benchmark.py discord-bot-test --model gpt-4 --edit-format whole --discord-bot --threads 5
+```
+
+The Discord bot benchmarks include:
+
+#### Test Categories:
+- **Message Handling**: Mention parsing, length limits, thread management
+- **URL Scraping**: Twitter/X detection, Apify routing, fallback mechanisms
+- **Summarization**: Daily summaries, content filtering, formatting
+- **Database Operations**: SQLite persistence, query optimization, data cleanup
+- **Edge Cases**: Rate limiting, error conditions, performance under load
+
+#### Enhanced Prompts:
+- **Structured requirements** with clear success criteria
+- **Discord-specific constraints** and API limitations
+- **Comprehensive error handling** guidance
+- **Implementation best practices** for Discord bots
+
+#### Metrics Tracked:
+- **Functional correctness**: Command parsing accuracy, response relevance
+- **Performance**: Response time, memory efficiency, database query speed
+- **Reliability**: Error recovery rate, uptime, data consistency
+- **Discord compliance**: Rate limit adherence, message format compliance
 
 ## Limitations, notes
 
