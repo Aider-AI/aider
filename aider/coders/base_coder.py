@@ -219,6 +219,10 @@ class Coder:
 
         output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
 
+        # Check for copy paste mode instead of api
+        if main_model.copy_paste_instead_of_api:
+            output += ", copy paste mode"
+
         # Check for thinking token budget
         thinking_tokens = main_model.get_thinking_tokens()
         if thinking_tokens:
@@ -241,10 +245,18 @@ class Coder:
                 f"Editor model: {main_model.editor_model.name} with"
                 f" {main_model.editor_edit_format} edit format"
             )
+
+            if main_model.editor_model.copy_paste_instead_of_api:
+                output += ", copy paste mode"
+
             lines.append(output)
 
         if weak_model is not main_model:
             output = f"Weak model: {weak_model.name}"
+
+            if main_model.weak_model.copy_paste_instead_of_api:
+                output += ", copy paste mode"
+
             lines.append(output)
 
         # Repo
@@ -421,7 +433,7 @@ class Coder:
             self.main_model.reasoning_tag if self.main_model.reasoning_tag else REASONING_TAG
         )
 
-        self.stream = stream and main_model.streaming
+        self.stream = stream and main_model.streaming and not main_model.copy_paste_instead_of_api
 
         if cache_prompts and self.main_model.cache_control:
             self.add_cache_headers = True
