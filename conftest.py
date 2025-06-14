@@ -1,4 +1,4 @@
-import pytest
+import pytest  # noqa: F401
 
 
 def pytest_addoption(parser):

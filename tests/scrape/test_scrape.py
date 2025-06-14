@@ -1,7 +1,8 @@
 import time
 import unittest
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 
 from aider.commands import Commands
 from aider.io import InputOutput
@@ -26,8 +27,10 @@ class TestScrape(unittest.TestCase):
 
         # Test with SSL verification
         scraper_verify = Scraper(
-            print_error=MagicMock(), playwright_available=True,
-            playwright_ws_endpoint=self.playwright_ws_endpoint, verify_ssl=True
+            print_error=MagicMock(),
+            playwright_available=True,
+            playwright_ws_endpoint=self.playwright_ws_endpoint,
+            verify_ssl=True,
         )
         result_verify = scrape_with_retries(scraper_verify, "https://self-signed.badssl.com")
         self.assertIsNone(result_verify)
@@ -35,8 +38,10 @@ class TestScrape(unittest.TestCase):
 
         # Test without SSL verification
         scraper_no_verify = Scraper(
-            print_error=MagicMock(), playwright_available=True,
-            playwright_ws_endpoint=self.playwright_ws_endpoint, verify_ssl=False
+            print_error=MagicMock(),
+            playwright_available=True,
+            playwright_ws_endpoint=self.playwright_ws_endpoint,
+            verify_ssl=False,
         )
         result_no_verify = scrape_with_retries(scraper_no_verify, "https://self-signed.badssl.com")
         self.assertIsNotNone(result_no_verify)
@@ -80,8 +85,11 @@ class TestScrape(unittest.TestCase):
         # Create a Scraper instance with a mock print_error function
         mock_print_error = MagicMock()
 
-        scraper = Scraper(print_error=mock_print_error, playwright_available=True,
-                          playwright_ws_endpoint=self.playwright_ws_endpoint)
+        scraper = Scraper(
+            print_error=mock_print_error,
+            playwright_available=True,
+            playwright_ws_endpoint=self.playwright_ws_endpoint,
+        )
 
         # Scrape a real URL
         result = scraper.scrape("https://example.com")

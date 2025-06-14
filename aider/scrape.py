@@ -86,8 +86,13 @@ class Scraper:
     playwright_instructions_shown = False
 
     # Public API...
-    def __init__(self, print_error=None, playwright_available=None,
-                 playwright_ws_endpoint=None, verify_ssl=True):
+    def __init__(
+        self,
+        print_error=None,
+        playwright_available=None,
+        playwright_ws_endpoint=None,
+        verify_ssl=True,
+    ):
         """
         `print_error` - a function to call to print error/debug info.
         `verify_ssl` - if False, disable SSL certificate verification when scraping.
@@ -281,8 +286,10 @@ def slimdown_html(soup):
 
 
 def main(url, playwright_ws_endpoint=None):
-    scraper = Scraper(playwright_available=has_playwright(playwright_ws_endpoint),
-                      playwright_ws_endpoint=playwright_ws_endpoint)
+    scraper = Scraper(
+        playwright_available=has_playwright(playwright_ws_endpoint),
+        playwright_ws_endpoint=playwright_ws_endpoint,
+    )
     content = scraper.scrape(url)
     print(content)
 
