@@ -215,6 +215,9 @@ def main(
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
+    seed: Optional[int] = typer.Option(
+        None, "--seed", help="Random seed for reproducible test selection"
+    ),
 ):
     repo = git.Repo(search_parent_directories=True)
     commit_hash = repo.head.object.hexsha[:7]
@@ -340,6 +343,8 @@ def main(
         keywords = keywords.split(",")
         test_dnames = [dn for dn in test_dnames for keyword in keywords if keyword in dn]
 
+    if seed:
+        random.seed(seed)
     random.shuffle(test_dnames)
     if num_tests > 0:
         test_dnames = test_dnames[:num_tests]

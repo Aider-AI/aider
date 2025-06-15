@@ -8,6 +8,7 @@ from .editor_diff_fenced_coder import EditorDiffFencedCoder
 from .editor_editblock_coder import EditorEditBlockCoder
 from .editor_whole_coder import EditorWholeFileCoder
 from .help_coder import HelpCoder
+from .morph_coder import MorphCoder
 from .patch_coder import PatchCoder
 from .udiff_coder import UnifiedDiffCoder
 from .udiff_simple import UnifiedDiffSimpleCoder
@@ -22,6 +23,7 @@ __all__ = [
     EditBlockCoder,
     EditBlockFencedCoder,
     WholeFileCoder,
+    MorphCoder,
     PatchCoder,
     UnifiedDiffCoder,
     UnifiedDiffSimpleCoder,
