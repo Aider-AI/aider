@@ -1541,7 +1541,7 @@ class Commands:
         return self.cmd_editor(args)
 
     def cmd_think_tokens(self, args):
-        "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M)"
+        "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M, or 0 to disable)"
         model = self.coder.main_model
 
         if not args.strip():
@@ -1559,10 +1559,14 @@ class Commands:
         value = args.strip()
         model.set_thinking_tokens(value)
 
-        formatted_budget = model.get_thinking_tokens()
-        budget = model.get_raw_thinking_tokens()
+        # Handle the special case of 0 to disable thinking tokens
+        if value == "0":
+            self.io.tool_output("Thinking tokens disabled.")
+        else:
+            formatted_budget = model.get_thinking_tokens()
+            budget = model.get_raw_thinking_tokens()
+            self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
 
-        self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
         self.io.tool_output()
 
         # Output announcements

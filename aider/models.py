@@ -794,6 +794,7 @@ class Model(ModelSettings):
         """
         Set the thinking token budget for models that support it.
         Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
+        Pass "0" to disable thinking tokens.
         """
         if value is not None:
             num_tokens = self.parse_token_value(value)
@@ -805,9 +806,17 @@ class Model(ModelSettings):
             if self.name.startswith("openrouter/"):
                 if "extra_body" not in self.extra_params:
                     self.extra_params["extra_body"] = {}
-                self.extra_params["extra_body"]["reasoning"] = {"max_tokens": num_tokens}
+                if num_tokens > 0:
+                    self.extra_params["extra_body"]["reasoning"] = {"max_tokens": num_tokens}
+                else:
+                    if "reasoning" in self.extra_params["extra_body"]:
+                        del self.extra_params["extra_body"]["reasoning"]
             else:
-                self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                if num_tokens > 0:
+                    self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                else:
+                    if "thinking" in self.extra_params:
+                        del self.extra_params["thinking"]
 
     def get_raw_thinking_tokens(self):
         """Get formatted thinking token budget if available"""

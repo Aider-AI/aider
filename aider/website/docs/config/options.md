@@ -173,7 +173,7 @@ Set the reasoning_effort API parameter (default: not set)
 Environment variable: `AIDER_REASONING_EFFORT`  
 
 ### `--thinking-tokens VALUE`
-Set the thinking token budget for models that support it (default: not set)  
+Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)  
 Environment variable: `AIDER_THINKING_TOKENS`  
 
 ### `--verify-ssl`
