@@ -12,7 +12,8 @@ from datetime import datetime
 from io import StringIO
 from pathlib import Path
 
-from prompt_toolkit.completion import Completer, Completion, ThreadedCompleter
+from prompt_toolkit.completion import Completer,Completion, ThreadedCompleter, FuzzyWordCompleter
+from prompt_toolkit.document import Document
 from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.filters import Condition, is_searching
@@ -179,9 +180,9 @@ class AutoCompleter(Completer):
         if candidates is None:
             return
 
-        candidates = [word for word in candidates if partial in word.lower()]
-        for candidate in sorted(candidates):
-            yield Completion(candidate, start_position=-len(words[-1]))
+        partial_doc = Document(text=words[-1], cursor_position=len(words[-1]))
+        completer = FuzzyWordCompleter(candidates)
+        yield from completer.get_completions(partial_doc, complete_event)
 
     def get_completions(self, document, complete_event):
         self.tokenize()
@@ -213,18 +214,22 @@ class AutoCompleter(Completer):
         if len(last_word) < 3:
             return
 
-        completions = []
-        for word_match, word_insert in candidates:
-            if word_match.lower().startswith(last_word.lower()):
-                completions.append((word_insert, -len(last_word), word_match))
+        candidate_texts = []
+        for item in candidates:
+            word_insert = item[1] if isinstance(item, tuple) else item
+            if " " in word_insert and '"' not in word_insert:
+                word_insert = f'"{word_insert}"'
+            candidate_texts.append(word_insert)
 
-                rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
-                if rel_fnames:
-                    for rel_fname in rel_fnames:
-                        completions.append((rel_fname, -len(last_word), rel_fname))
+        for key in self.fname_to_rel_fnames.keys():
+            text = f'"{key}"' if " " in key and '"' not in key else key
+            candidate_texts.append(text)
 
-        for ins, pos, match in sorted(completions):
-            yield Completion(ins, start_position=pos, display=match)
+        # Deduplicate while preserving original order.
+        candidate_texts = list(dict.fromkeys(candidate_texts))
+        completer = FuzzyWordCompleter(candidate_texts)
+
+        yield from completer.get_completions(document, complete_event)
 
 
 class InputOutput:
