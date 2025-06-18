@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.11.18
+aiohttp==3.12.9
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -39,7 +39,7 @@ charset-normalizer==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-click==8.1.8
+click==8.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   nltk
@@ -70,18 +70,18 @@ filetype==1.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-frozenlist==1.6.0
+frozenlist==1.6.2
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   aiosignal
-fsspec==2025.3.2
+fsspec==2025.5.1
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
     #   llama-index-core
     #   torch
-greenlet==3.2.2
+greenlet==3.2.3
     # via
     #   -c requirements/common-constraints.txt
     #   sqlalchemy
@@ -93,7 +93,7 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.1.0
+hf-xet==1.1.3
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -105,7 +105,7 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-huggingface-hub[inference]==0.31.1
+huggingface-hub[inference]==0.32.4
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -124,7 +124,7 @@ jinja2==3.1.6
     #   -c requirements/common-constraints.txt
     #   banks
     #   torch
-joblib==1.5.0
+joblib==1.5.1
     # via
     #   -c requirements/common-constraints.txt
     #   nltk
@@ -134,7 +134,7 @@ llama-index-core==0.12.26
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
     #   llama-index-embeddings-huggingface
-llama-index-embeddings-huggingface==0.5.3
+llama-index-embeddings-huggingface==0.5.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -150,7 +150,7 @@ mpmath==1.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   sympy
-multidict==6.4.3
+multidict==6.4.4
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -200,7 +200,7 @@ propcache==0.3.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-pydantic==2.11.4
+pydantic==2.11.5
     # via
     #   -c requirements/common-constraints.txt
     #   banks
@@ -232,7 +232,7 @@ safetensors==0.5.3
     # via
     #   -c requirements/common-constraints.txt
     #   transformers
-scikit-learn==1.6.1
+scikit-learn==1.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
@@ -249,7 +249,7 @@ sniffio==1.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   anyio
-sqlalchemy[asyncio]==2.0.40
+sqlalchemy[asyncio]==2.0.41
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -286,11 +286,11 @@ tqdm==4.67.1
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.51.3
+transformers==4.52.4
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   -c requirements/common-constraints.txt
     #   anyio
@@ -308,7 +308,7 @@ typing-inspect==0.9.0
     #   -c requirements/common-constraints.txt
     #   dataclasses-json
     #   llama-index-core
-typing-inspection==0.4.0
+typing-inspection==0.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic

@@ -72,6 +72,8 @@ cog.out(model_list)
 - claude-3-opus-20240229
 - claude-3-opus-latest
 - claude-3-sonnet-20240229
+- claude-4-opus-20250514
+- claude-4-sonnet-20250514
 - claude-opus-4-20250514
 - claude-sonnet-4-20250514
 - codestral/codestral-2405

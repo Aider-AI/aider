@@ -41,11 +41,17 @@ After you authenticate a file appears:
 ~/.config/github-copilot/apps.json
 ```
 
+On Windows the config can be found in:
+
+```
+~\AppData\Local\github-copilot\apps.json
+```
+
 Copy the `oauth_token` value – that string is your `OPENAI_API_KEY`.
 
 *Note:* tokens created by the Neovim **copilot.lua** plugin (old `hosts.json`) sometimes lack the
 needed scopes. If you see “access to this endpoint is forbidden”, regenerate the token with a
-JetBrains IDE or the VS Code Copilot extension.
+JetBrains IDE.
 
 ---
 

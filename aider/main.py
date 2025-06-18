@@ -922,8 +922,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Repository sanity check failed")
             return 1
 
-    if repo:
-        analytics.event("repo", num_files=len(repo.get_tracked_files()))
+    if repo and not args.skip_sanity_check_repo:
+        num_files = len(repo.get_tracked_files())
+        analytics.event("repo", num_files=num_files)
     else:
         analytics.event("no-repo")
 
@@ -1005,6 +1006,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
             mcp_servers=mcp_servers,
+            add_gitignore_files=args.add_gitignore_files,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))

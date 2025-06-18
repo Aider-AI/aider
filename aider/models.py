@@ -96,8 +96,8 @@ MODEL_ALIASES = {
     "flash": "gemini/gemini-2.5-flash-preview-04-17",
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
-    "gemini-2.5-pro": "gemini/gemini-2.5-pro-preview-05-06",
-    "gemini": "gemini/gemini-2.5-pro-preview-05-06",
+    "gemini-2.5-pro": "gemini/gemini-2.5-pro-preview-06-05",
+    "gemini": "gemini/gemini-2.5-pro-preview-06-05",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
     "optimus": "openrouter/openrouter/optimus-alpha",
@@ -794,6 +794,7 @@ class Model(ModelSettings):
         """
         Set the thinking token budget for models that support it.
         Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
+        Pass "0" to disable thinking tokens.
         """
         if value is not None:
             num_tokens = self.parse_token_value(value)
@@ -805,9 +806,17 @@ class Model(ModelSettings):
             if self.name.startswith("openrouter/"):
                 if "extra_body" not in self.extra_params:
                     self.extra_params["extra_body"] = {}
-                self.extra_params["extra_body"]["reasoning"] = {"max_tokens": num_tokens}
+                if num_tokens > 0:
+                    self.extra_params["extra_body"]["reasoning"] = {"max_tokens": num_tokens}
+                else:
+                    if "reasoning" in self.extra_params["extra_body"]:
+                        del self.extra_params["extra_body"]["reasoning"]
             else:
-                self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                if num_tokens > 0:
+                    self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                else:
+                    if "thinking" in self.extra_params:
+                        del self.extra_params["thinking"]
 
     def get_raw_thinking_tokens(self):
         """Get formatted thinking token budget if available"""
@@ -888,14 +897,45 @@ class Model(ModelSettings):
         ):
             import requests
 
+            class GitHubCopilotTokenError(Exception):
+                """Custom exception for GitHub Copilot token-related errors."""
+
+                pass
+
+            # Validate GitHub Copilot token exists
+            if "GITHUB_COPILOT_TOKEN" not in os.environ:
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable not found")
+
+            github_token = os.environ["GITHUB_COPILOT_TOKEN"]
+            if not github_token.strip():
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable is empty")
+
             headers = {
                 "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
                 "Editor-Version": extra_headers["Editor-Version"],
                 "Copilot-Integration-Id": extra_headers["Copilot-Integration-Id"],
                 "Content-Type": "application/json",
             }
-            res = requests.get("https://api.github.com/copilot_internal/v2/token", headers=headers)
-            os.environ[openai_api_key] = res.json()["token"]
+
+            url = "https://api.github.com/copilot_internal/v2/token"
+            res = requests.get(url, headers=headers)
+            if res.status_code != 200:
+                safe_headers = {k: v for k, v in headers.items() if k != "Authorization"}
+                token_preview = github_token[:5] + "..." if len(github_token) >= 5 else github_token
+                safe_headers["Authorization"] = f"Bearer {token_preview}"
+                raise GitHubCopilotTokenError(
+                    f"GitHub Copilot API request failed (Status: {res.status_code})\n"
+                    f"URL: {url}\n"
+                    f"Headers: {json.dumps(safe_headers, indent=2)}\n"
+                    f"JSON: {res.text}"
+                )
+
+            response_data = res.json()
+            token = response_data.get("token")
+            if not token:
+                raise GitHubCopilotTokenError("Response missing 'token' field")
+
+            os.environ[openai_api_key] = token
 
     def send_completion(self, messages, functions, stream, temperature=None, tools=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):

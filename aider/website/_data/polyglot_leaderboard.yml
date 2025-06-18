@@ -1478,3 +1478,88 @@
   versions: 0.83.3.dev
   seconds_per_case: 53.9
   total_cost: 8.5625
+
+- dirname: 2025-06-06-18-38-56--gemini0605-diff-fenced
+  test_cases: 225
+  model: gemini-2.5-pro-preview-06-05 (default think)
+  edit_format: diff-fenced
+  commit_hash: 4c161f9-dirty
+  pass_rate_1: 44.9
+  pass_rate_2: 79.1
+  pass_num_1: 101
+  pass_num_2: 178
+  percent_cases_well_formed: 100.0
+  error_outputs: 4
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  prompt_tokens: 2751296
+  completion_tokens: 4142197
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-06-05
+  date: 2025-06-06
+  versions: 0.84.1.dev
+  seconds_per_case: 175.2
+  total_cost: 45.5961
+
+- dirname: 2025-06-06-16-36-21--gemini0605-32k-think-diff-fenced
+  test_cases: 225
+  model: gemini-2.5-pro-preview-06-05 (32k think)
+  edit_format: diff-fenced
+  commit_hash: f827f22
+  thinking_tokens: 32768
+  pass_rate_1: 46.2
+  pass_rate_2: 83.1
+  pass_num_1: 104
+  pass_num_2: 187
+  percent_cases_well_formed: 99.6
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 112
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2719961
+  completion_tokens: 4648227
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-06-05 --thinking-tokens 32k
+  date: 2025-06-06
+  versions: 0.84.1.dev
+  seconds_per_case: 200.3
+  total_cost: 49.8822
+
+- dirname: 2025-06-06-16-47-07--r1-diff
+  test_cases: 224
+  model: DeepSeek R1 (0528)
+  edit_format: diff
+  commit_hash: 4c161f9-dirty
+  pass_rate_1: 34.4
+  pass_rate_2: 71.4
+  pass_num_1: 77
+  pass_num_2: 160
+  percent_cases_well_formed: 94.6
+  error_outputs: 28
+  num_malformed_responses: 15
+  num_with_malformed_responses: 12
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2644169
+  completion_tokens: 1842168
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-06-06
+  versions: 0.84.1.dev
+  seconds_per_case: 716.6
+  total_cost: 4.8016

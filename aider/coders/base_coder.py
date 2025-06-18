@@ -309,6 +309,7 @@ class Coder:
         io,
         repo=None,
         fnames=None,
+        add_gitignore_files=False,
         read_only_fnames=None,
         show_diffs=False,
         auto_commits=True,
@@ -398,6 +399,7 @@ class Coder:
         self.verbose = verbose
         self.abs_fnames = set()
         self.abs_read_only_fnames = set()
+        self.add_gitignore_files = add_gitignore_files
 
         if cur_messages:
             self.cur_messages = cur_messages
@@ -455,7 +457,7 @@ class Coder:
 
         for fname in fnames:
             fname = Path(fname)
-            if self.repo and self.repo.git_ignored_file(fname):
+            if self.repo and self.repo.git_ignored_file(fname) and not self.add_gitignore_files:
                 self.io.tool_warning(f"Skipping {fname} that matches gitignore spec.")
                 continue
 

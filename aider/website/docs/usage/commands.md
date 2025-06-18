@@ -57,7 +57,7 @@ cog.out(get_help_md())
 | **/save** | Save commands to a file that can reconstruct the current chat session's files |
 | **/settings** | Print out the current settings |
 | **/test** | Run a shell command and add the output to the chat on non-zero exit code |
-| **/think-tokens** | Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M) |
+| **/think-tokens** | Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M, or 0 to disable) |
 | **/tokens** | Report on the number of tokens used by the current chat context |
 | **/undo** | Undo the last git commit if it was done by aider |
 | **/voice** | Record and transcribe voice input |
