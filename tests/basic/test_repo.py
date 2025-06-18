@@ -372,6 +372,46 @@ class TestRepo(unittest.TestCase):
             )
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
+    def test_commit_with_custom_co_author_email(self):
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # add a file and commit it
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            # Mock coder args: Co-authored-by enabled with custom email
+            mock_coder = MagicMock()
+            mock_coder.args.attribute_co_authored_by = True
+            mock_coder.args.co_author_email = "custom-aider@example.com"
+            mock_coder.args.attribute_author = None
+            mock_coder.args.attribute_committer = None
+            mock_coder.args.attribute_commit_message_author = False
+            mock_coder.args.attribute_commit_message_committer = False
+            mock_coder.main_model = MagicMock()
+            mock_coder.main_model.name = "gpt-test-custom"
+
+            io = InputOutput()
+            git_repo = GitRepo(io, None, None)
+
+            # commit a change with aider_edits=True and custom co-author email
+            fname.write_text("new content with custom email")
+            commit_result = git_repo.commit(
+                fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Custom email edit"
+            )
+            self.assertIsNotNone(commit_result)
+
+            # check the commit message uses custom email
+            commit = raw_repo.head.commit
+            self.assertIn("Co-authored-by: aider (gpt-test-custom) <custom-aider@example.com>", commit.message)
+            self.assertEqual(commit.message.splitlines()[0], "Custom email edit")
+
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_ai_edits_no_coauthor_explicit_false(self):
         # Test AI edits (aider_edits=True) when co-authored-by is False,
         # but author or committer attribution is explicitly disabled.

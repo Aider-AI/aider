@@ -455,12 +455,17 @@ Aliases:
   - `--no-attribute-commit-message-committer`
 
 ### `--attribute-co-authored-by`
-Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
-Default: False  
+Attribute aider edits using the Co-authored-by trailer in the commit message (default: True). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
+Default: True  
 Environment variable: `AIDER_ATTRIBUTE_CO_AUTHORED_BY`  
 Aliases:
   - `--attribute-co-authored-by`
   - `--no-attribute-co-authored-by`
+
+### `--co-author-email`
+Custom email address for co-authorship (default: noreply@aider.chat)  
+Default: noreply@aider.chat  
+Environment variable: `AIDER_CO_AUTHOR_EMAIL`
 
 ### `--git-commit-verify`
 Enable/disable git pre-commit hooks with --no-verify (default: False)  

@@ -74,3 +74,7 @@ Additionally, you can use the following options to prefix commit messages:
 Finally, you can use `--attribute-co-authored-by` to have aider append a Co-authored-by trailer to the end of the commit string. 
 This will disable appending `(aider)` to the git author and git committer unless you have explicitly enabled those settings.
 
+When using `--attribute-co-authored-by`, you can specify a custom email address with `--co-author-email`. 
+This allows you to use a GitHub-registered email address so that aider appears as a contributor in the repository's Contributors section. 
+The default email is `noreply@aider.chat`.
+
