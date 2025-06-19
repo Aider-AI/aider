@@ -212,10 +212,12 @@ class TestRepo(unittest.TestCase):
             commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True)
             self.assertIsNotNone(commit_result)
 
-            # check the committer name (defaults interpreted as True)
+            # check the committer name (with co-authored-by=True by default, names not modified)
             commit = raw_repo.head.commit
-            self.assertEqual(commit.author.name, "Test User (aider)")
-            self.assertEqual(commit.committer.name, "Test User (aider)")
+            self.assertEqual(commit.author.name, "Test User")
+            self.assertEqual(commit.committer.name, "Test User")
+            # With co-authored-by=True by default, should have Co-authored-by trailer
+            self.assertIn("Co-authored-by:", commit.message)
 
             # commit a change without aider_edits (using default attributes)
             fname.write_text("new content again!")
@@ -280,6 +282,7 @@ class TestRepo(unittest.TestCase):
             # Mock coder args: Co-authored-by enabled, author/committer use default (None)
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = True
+            mock_coder.args.co_author_email = "noreply@aider.chat"
             mock_coder.args.attribute_author = None  # Default
             mock_coder.args.attribute_committer = None  # Default
             mock_coder.args.attribute_commit_message_author = False
@@ -294,7 +297,10 @@ class TestRepo(unittest.TestCase):
             # commit a change with aider_edits=True and co-authored-by flag
             fname.write_text("new content")
             commit_result = git_repo.commit(
-                fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit"
+                fnames=[str(fname)],
+                aider_edits=True,
+                coder=mock_coder,
+                message="Aider edit",
             )
             self.assertIsNotNone(commit_result)
 
@@ -335,6 +341,7 @@ class TestRepo(unittest.TestCase):
             # author/committer modification explicitly enabled
             mock_coder = MagicMock()
             mock_coder.args.attribute_co_authored_by = True
+            mock_coder.args.co_author_email = "noreply@aider.chat"
             mock_coder.args.attribute_author = True  # Explicitly enable
             mock_coder.args.attribute_committer = True  # Explicitly enable
             mock_coder.args.attribute_commit_message_author = False
@@ -348,14 +355,18 @@ class TestRepo(unittest.TestCase):
             # commit a change with aider_edits=True and combo flags
             fname.write_text("new content combo")
             commit_result = git_repo.commit(
-                fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider combo edit"
+                fnames=[str(fname)],
+                aider_edits=True,
+                coder=mock_coder,
+                message="Aider combo edit",
             )
             self.assertIsNotNone(commit_result)
 
             # check the commit message and author/committer
             commit = raw_repo.head.commit
             self.assertIn(
-                "Co-authored-by: aider (gpt-test-combo) <noreply@aider.chat>", commit.message
+                "Co-authored-by: aider (gpt-test-combo) <noreply@aider.chat>",
+                commit.message,
             )
             self.assertEqual(commit.message.splitlines()[0], "Aider combo edit")
             # When co-authored-by is true BUT author/committer are explicit True,
@@ -370,6 +381,52 @@ class TestRepo(unittest.TestCase):
                 "Test User (aider)",
                 msg="Committer name should be modified when explicitly True, even with co-author",
             )
+
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
+    def test_commit_with_custom_co_author_email(self):
+        with GitTemporaryDirectory():
+            # new repo
+            raw_repo = git.Repo()
+            raw_repo.config_writer().set_value("user", "name", "Test User").release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
+
+            # add a file and commit it
+            fname = Path("file.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "initial commit")
+
+            # Mock coder args: Co-authored-by enabled with custom email
+            mock_coder = MagicMock()
+            mock_coder.args.attribute_co_authored_by = True
+            mock_coder.args.co_author_email = "custom-aider@example.com"
+            mock_coder.args.attribute_author = None
+            mock_coder.args.attribute_committer = None
+            mock_coder.args.attribute_commit_message_author = False
+            mock_coder.args.attribute_commit_message_committer = False
+            mock_coder.main_model = MagicMock()
+            mock_coder.main_model.name = "gpt-test-custom"
+
+            io = InputOutput()
+            git_repo = GitRepo(io, None, None)
+
+            # commit a change with aider_edits=True and custom co-author email
+            fname.write_text("new content with custom email")
+            commit_result = git_repo.commit(
+                fnames=[str(fname)],
+                aider_edits=True,
+                coder=mock_coder,
+                message="Custom email edit",
+            )
+            self.assertIsNotNone(commit_result)
+
+            # check the commit message uses custom email
+            commit = raw_repo.head.commit
+            self.assertIn(
+                "Co-authored-by: aider (gpt-test-custom) <custom-aider@example.com>",
+                commit.message,
+            )
+            self.assertEqual(commit.message.splitlines()[0], "Custom email edit")
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_ai_edits_no_coauthor_explicit_false(self):
@@ -453,7 +510,12 @@ class TestRepo(unittest.TestCase):
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
-        filenames = ["README.md", "subdir/fänny.md", "systemüber/blick.md", 'file"with"quotes.txt']
+        filenames = [
+            "README.md",
+            "subdir/fänny.md",
+            "systemüber/blick.md",
+            'file"with"quotes.txt',
+        ]
         created_files = []
         for filename in filenames:
             file_path = tempdir / filename

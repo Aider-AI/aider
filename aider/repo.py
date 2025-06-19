@@ -73,7 +73,7 @@ class GitRepo:
         commit_prompt=None,
         subtree_only=False,
         git_commit_verify=True,
-        attribute_co_authored_by=False,  # Added parameter
+        attribute_co_authored_by=True,  # Added parameter
     ):
         self.io = io
         self.models = models
@@ -249,9 +249,13 @@ class GitRepo:
             model_name = "unknown-model"
             if coder and hasattr(coder, "main_model") and coder.main_model.name:
                 model_name = coder.main_model.name
-            commit_message_trailer = (
-                f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.chat>"
-            )
+
+            # Get custom co-author email if provided
+            co_author_email = "noreply@aider.chat"
+            if coder and hasattr(coder, "args") and hasattr(coder.args, "co_author_email"):
+                co_author_email = coder.args.co_author_email
+
+            commit_message_trailer = f"\n\nCo-authored-by: aider ({model_name}) <{co_author_email}>"
 
         # Determine if author/committer names should be modified
         # Author modification applies only to aider edits.

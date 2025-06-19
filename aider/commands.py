@@ -140,7 +140,7 @@ class Commands:
             sorted(
                 (
                     coder.edit_format,
-                    coder.__doc__.strip().split("\n")[0] if coder.__doc__ else "No description",
+                    (coder.__doc__.strip().split("\n")[0] if coder.__doc__ else "No description"),
                 )
                 for coder in coders.__all__
                 if getattr(coder, "edit_format", None)
@@ -1541,7 +1541,7 @@ class Commands:
         return self.cmd_editor(args)
 
     def cmd_think_tokens(self, args):
-        "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M, or 0 to disable)"
+        "Set the thinking token budget (formats: 8096, 8k, 10.5k, 0.5M, or 0 to disable)"
         model = self.coder.main_model
 
         if not args.strip():
@@ -1565,7 +1565,9 @@ class Commands:
         else:
             formatted_budget = model.get_thinking_tokens()
             budget = model.get_raw_thinking_tokens()
-            self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
+            self.io.tool_output(
+                f"Set thinking token budget to {budget:,} tokens ({formatted_budget})."
+            )
 
         self.io.tool_output()
 

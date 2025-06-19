@@ -143,7 +143,10 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--thinking-tokens",
         type=str,
-        help="Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)",
+        help=(
+            "Set the thinking token budget for models that support it. Use 0 to disable. (default:"
+            " not set)"
+        ),
     )
     group.add_argument(
         "--verify-ssl",
@@ -478,12 +481,17 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--attribute-co-authored-by",
         action=argparse.BooleanOptionalAction,
-        default=False,
+        default=True,
         help=(
             "Attribute aider edits using the Co-authored-by trailer in the commit message"
-            " (default: False). If True, this takes precedence over default --attribute-author and"
+            " (default: True). If True, this takes precedence over default --attribute-author and"
             " --attribute-committer behavior unless they are explicitly set to True."
         ),
+    )
+    group.add_argument(
+        "--co-author-email",
+        help="Custom email address for co-authorship (default: noreply@aider.chat)",
+        default="noreply@aider.chat",
     )
     group.add_argument(
         "--git-commit-verify",
@@ -912,7 +920,10 @@ def main():
             shell = sys.argv[2]
             if shell not in shtab.SUPPORTED_SHELLS:
                 print(f"Error: Unsupported shell '{shell}'.", file=sys.stderr)
-                print(f"Supported shells are: {', '.join(shtab.SUPPORTED_SHELLS)}", file=sys.stderr)
+                print(
+                    f"Supported shells are: {', '.join(shtab.SUPPORTED_SHELLS)}",
+                    file=sys.stderr,
+                )
                 sys.exit(1)
             parser = get_parser([], None)
             parser.prog = "aider"  # Set the program name on the parser
@@ -920,7 +931,10 @@ def main():
         else:
             print("Error: Please specify a shell for completion.", file=sys.stderr)
             print(f"Usage: python {sys.argv[0]} completion <shell_name>", file=sys.stderr)
-            print(f"Supported shells are: {', '.join(shtab.SUPPORTED_SHELLS)}", file=sys.stderr)
+            print(
+                f"Supported shells are: {', '.join(shtab.SUPPORTED_SHELLS)}",
+                file=sys.stderr,
+            )
             sys.exit(1)
     else:
         # Default to YAML for any other unrecognized argument, or if 'yaml' was explicitly passed
