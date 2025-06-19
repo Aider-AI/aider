@@ -18,9 +18,9 @@ class ChatChunks:
             self.system
             + self.examples
             + self.readonly_files
-            + self.repo
-            + self.done
             + self.chat_files
+            + self.done
+            + self.repo
             + self.cur
             + self.reminder
         )
@@ -31,14 +31,16 @@ class ChatChunks:
         else:
             self.add_cache_control(self.system)
 
-        if self.repo:
-            # this will mark both the readonly_files and repomap chunk as cacheable
-            self.add_cache_control(self.repo)
-        else:
-            # otherwise, just cache readonly_files if there are any
-            self.add_cache_control(self.readonly_files)
-
+        # The files form a cacheable block.
+        # The block starts with readonly_files and ends with chat_files.
+        # So we mark the end of chat_files.
         self.add_cache_control(self.chat_files)
+
+        # The history is ephemeral on its own.
+        self.add_cache_control(self.done)
+
+        # The repo map is its own cacheable block.
+        self.add_cache_control(self.repo)
 
     def add_cache_control(self, messages):
         if not messages:

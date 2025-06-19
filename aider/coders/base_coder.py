@@ -179,6 +179,8 @@ class Coder:
                 ignore_mentions=from_coder.ignore_mentions,
                 total_tokens_sent=from_coder.total_tokens_sent,
                 total_tokens_received=from_coder.total_tokens_received,
+                session_edited_files=from_coder.session_edited_files,
+                abs_fnames_at_start_of_turn=from_coder.abs_fnames_at_start_of_turn,
                 file_watcher=from_coder.file_watcher,
             )
             use_kwargs.update(update)  # override to complete the switch
@@ -335,6 +337,8 @@ class Coder:
         ignore_mentions=None,
         total_tokens_sent=0,
         total_tokens_received=0,
+        session_edited_files=None,
+        abs_fnames_at_start_of_turn=None,
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
@@ -388,9 +392,12 @@ class Coder:
         self.message_tokens_received = 0
 
         self.verbose = verbose
-        self.abs_fnames = set()
+        self.abs_fnames = []
         self.abs_read_only_fnames = set()
         self.add_gitignore_files = add_gitignore_files
+
+        self.session_edited_files = session_edited_files or set()
+        self.abs_fnames_at_start_of_turn = abs_fnames_at_start_of_turn or set()
 
         if cur_messages:
             self.cur_messages = cur_messages
@@ -446,6 +453,7 @@ class Coder:
         if self.repo:
             self.root = self.repo.root
 
+        fnames_to_add = []
         for fname in fnames:
             fname = Path(fname)
             if self.repo and self.repo.git_ignored_file(fname) and not self.add_gitignore_files:
@@ -467,13 +475,12 @@ class Coder:
                 self.io.tool_warning(f"Skipping {fname} that is not a normal file.")
                 continue
 
-            fname = str(fname.resolve())
-
-            self.abs_fnames.add(fname)
-            self.check_added_files()
+            fnames_to_add.append(str(fname.resolve()))
 
         if not self.repo:
-            self.root = utils.find_common_root(self.abs_fnames)
+            self.root = utils.find_common_root(fnames_to_add)
+
+        self.add_abs_fnames(fnames_to_add)
 
         if read_only_fnames:
             self.abs_read_only_fnames = set()
@@ -553,9 +560,30 @@ class Coder:
             self.io.tool_output(line, bold=bold)
             bold = False
 
-    def add_rel_fname(self, rel_fname):
-        self.abs_fnames.add(self.abs_root_path(rel_fname))
+    def add_abs_fnames(self, fnames):
+        new_fnames = [f for f in fnames if f not in self.abs_fnames]
+        if not new_fnames:
+            return []
+
+        # Sort the new batch by size descending, then alphabetically
+        try:
+            new_fnames.sort(key=lambda f: (-os.path.getsize(f), f))
+        except FileNotFoundError:
+            # Handle case where a file might have been deleted between globbing and sorting
+            self.io.tool_warning(
+                "A file was not found during sorting, skipping sort for this batch."
+            )
+
+        self.abs_fnames.extend(new_fnames)
         self.check_added_files()
+        return new_fnames
+
+    def add_rel_fnames(self, rel_fnames):
+        abs_fnames = [self.abs_root_path(f) for f in rel_fnames]
+        return self.add_abs_fnames(abs_fnames)
+
+    def add_rel_fname(self, rel_fname):
+        return self.add_rel_fnames([rel_fname])
 
     def drop_rel_fname(self, fname):
         abs_fname = self.abs_root_path(fname)
@@ -595,8 +623,31 @@ class Coder:
             finally:
                 self.waiting_spinner = None
 
+    def get_sorted_abs_fnames(self):
+        """
+        Get the absolute file names, sorted according to the 3-tier caching strategy.
+        The order is:
+        1. Unedited files (in chronological order of being added).
+        2. New files from this turn (in chronological order of being added).
+        3. Edited files from this session (in chronological order of being added).
+        """
+        edited_abs_paths = {self.abs_root_path(p) for p in self.session_edited_files}
+        new_abs_paths = {f for f in self.abs_fnames if f not in self.abs_fnames_at_start_of_turn}
+
+        unedited, new, edited = [], [], []
+
+        for fname in self.abs_fnames:
+            if fname in edited_abs_paths:
+                edited.append(fname)
+            elif fname in new_abs_paths:
+                new.append(fname)
+            else:
+                unedited.append(fname)
+
+        return unedited + new + edited
+
     def get_abs_fnames_content(self):
-        for fname in list(self.abs_fnames):
+        for fname in self.get_sorted_abs_fnames():
             content = self.io.read_text(fname)
 
             if content is None:
@@ -658,7 +709,7 @@ class Coder:
 
     def get_read_only_files_content(self):
         prompt = ""
-        for fname in self.abs_read_only_fnames:
+        for fname in sorted(list(self.abs_read_only_fnames)):
             content = self.io.read_text(fname)
             if content is not None and not is_image_file(fname):
                 relative_fname = self.get_rel_fname(fname)
@@ -862,6 +913,7 @@ class Coder:
         yield from self.send_message(user_message)
 
     def init_before_message(self):
+        self.abs_fnames_at_start_of_turn = set(self.abs_fnames)
         self.aider_edited_files = set()
         self.reflected_message = None
         self.num_reflections = 0
@@ -1585,6 +1637,7 @@ class Coder:
         edited = self.apply_updates()
 
         if edited:
+            self.session_edited_files.update(edited)
             self.aider_edited_files.update(edited)
             saved_message = self.auto_commit(edited)
 
@@ -2219,8 +2272,7 @@ class Coder:
                 if need_to_add:
                     self.repo.repo.git.add(full_path)
 
-            self.abs_fnames.add(full_path)
-            self.check_added_files()
+            self.add_abs_fnames([full_path])
             return True
 
         if not self.io.confirm_ask(
@@ -2233,8 +2285,7 @@ class Coder:
         if need_to_add:
             self.repo.repo.git.add(full_path)
 
-        self.abs_fnames.add(full_path)
-        self.check_added_files()
+        self.add_abs_fnames([full_path])
         self.check_for_dirty_commit(path)
 
         return True
