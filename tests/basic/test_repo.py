@@ -148,12 +148,8 @@ class TestRepo(unittest.TestCase):
         self.assertEqual(mock_send.call_count, 2)
 
         # Check that both calls were made with the same messages
-        first_call_messages = mock_send.call_args_list[0][0][
-            0
-        ]  # Get messages from first call
-        second_call_messages = mock_send.call_args_list[1][0][
-            0
-        ]  # Get messages from second call
+        first_call_messages = mock_send.call_args_list[0][0][0]  # Get messages from first call
+        second_call_messages = mock_send.call_args_list[1][0][0]  # Get messages from second call
         self.assertEqual(first_call_messages, second_call_messages)
 
     @patch("aider.models.Model.simple_send_with_retries")
@@ -183,21 +179,15 @@ class TestRepo(unittest.TestCase):
         mock_send.return_value = "Custom commit message"
         custom_prompt = "Generate a commit message in the style of Shakespeare"
 
-        repo = GitRepo(
-            InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt
-        )
+        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
         result = repo.get_commit_message("dummy diff", "dummy context")
 
         self.assertEqual(result, "Custom commit message")
         mock_send.assert_called_once()
         args = mock_send.call_args[0]  # Get positional args
-        self.assertEqual(
-            args[0][0]["content"], custom_prompt
-        )  # Check first message content
+        self.assertEqual(args[0][0]["content"], custom_prompt)  # Check first message content
 
-    @unittest.skipIf(
-        platform.system() == "Windows", "Git env var behavior differs on Windows"
-    )
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     @patch("aider.repo.GitRepo.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
         mock_send.return_value = '"a good commit message"'
@@ -215,9 +205,7 @@ class TestRepo(unittest.TestCase):
 
             io = InputOutput()
             # Initialize GitRepo with default None values for attributes
-            git_repo = GitRepo(
-                io, None, None, attribute_author=None, attribute_committer=None
-            )
+            git_repo = GitRepo(io, None, None, attribute_author=None, attribute_committer=None)
 
             # commit a change with aider_edits=True (using default attributes)
             fname.write_text("new content")
@@ -244,9 +232,7 @@ class TestRepo(unittest.TestCase):
                 io, None, None, attribute_author=False, attribute_committer=False
             )
             fname.write_text("explicit false content")
-            commit_result = git_repo_explicit_false.commit(
-                fnames=[str(fname)], aider_edits=True
-            )
+            commit_result = git_repo_explicit_false.commit(fnames=[str(fname)], aider_edits=True)
             self.assertIsNotNone(commit_result)
             commit = raw_repo.head.commit
             self.assertEqual(commit.author.name, "Test User")  # Explicit False
@@ -259,9 +245,7 @@ class TestRepo(unittest.TestCase):
             self.assertIsNone(original_author_name)
 
             # Test user commit with explicit no-committer attribution
-            git_repo_user_no_committer = GitRepo(
-                io, None, None, attribute_committer=False
-            )
+            git_repo_user_no_committer = GitRepo(io, None, None, attribute_committer=False)
             fname.write_text("user no committer content")
             commit_result = git_repo_user_no_committer.commit(
                 fnames=[str(fname)], aider_edits=False
@@ -269,9 +253,7 @@ class TestRepo(unittest.TestCase):
             self.assertIsNotNone(commit_result)
             commit = raw_repo.head.commit
             self.assertEqual(
-                commit.author.name,
-                "Test User",
-                msg="Author name should not be modified for user commits",
+                commit.author.name, "Test User", msg="Author name should not be modified for user commits"
             )
             self.assertEqual(
                 commit.committer.name,
@@ -279,9 +261,7 @@ class TestRepo(unittest.TestCase):
                 msg="Committer name should not be modified when attribute_committer=False",
             )
 
-    @unittest.skipIf(
-        platform.system() == "Windows", "Git env var behavior differs on Windows"
-    )
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_with_co_authored_by(self):
         with GitTemporaryDirectory():
             # new repo
@@ -340,9 +320,7 @@ class TestRepo(unittest.TestCase):
                 msg="Committer name should not be modified when co-authored-by takes precedence",
             )
 
-    @unittest.skipIf(
-        platform.system() == "Windows", "Git env var behavior differs on Windows"
-    )
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_co_authored_by_with_explicit_name_modification(self):
         # Test scenario where Co-authored-by is true AND
         # author/committer modification are explicitly True
@@ -406,9 +384,7 @@ class TestRepo(unittest.TestCase):
                 msg="Committer name should be modified when explicitly True, even with co-author",
             )
 
-    @unittest.skipIf(
-        platform.system() == "Windows", "Git env var behavior differs on Windows"
-    )
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_with_custom_co_author_email(self):
         with GitTemporaryDirectory():
             # new repo
@@ -456,9 +432,7 @@ class TestRepo(unittest.TestCase):
             )
             self.assertEqual(commit.message.splitlines()[0], "Custom email edit")
 
-    @unittest.skipIf(
-        platform.system() == "Windows", "Git env var behavior differs on Windows"
-    )
+    @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     def test_commit_ai_edits_no_coauthor_explicit_false(self):
         # Test AI edits (aider_edits=True) when co-authored-by is False,
         # but author or committer attribution is explicitly disabled.
