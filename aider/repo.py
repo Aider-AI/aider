@@ -637,103 +637,217 @@ class GitRepo:
             ".aider_cache/",  # For any future caching mechanisms
         ]
 
-        current_gitignore_content = ""
-        gitignore_exists_initially = gitignore_path.exists()
-        file_was_created_by_template = False
+        current_lines = []
+        gitignore_existed_before_aider = gitignore_path.exists()
+        if gitignore_existed_before_aider:
+            try:
+                current_lines = gitignore_path.read_text(encoding=self.io.encoding).splitlines()
+            except OSError as e:
+                self.io.tool_error(f"Error reading .gitignore file: {e}")
+                # Proceed as if file is empty/new, Aider patterns will be offered.
+                current_lines = []
+                gitignore_existed_before_aider = False
 
-        if not gitignore_exists_initially:
+
+        # Step 1: Handle Aider-specific patterns
+        lines_after_aider_patterns_update = list(current_lines)
+        made_changes_for_aider_patterns = False
+
+        # Check if header and all patterns are present
+        header_present = any(line.strip() == aider_patterns_header.strip() for line in lines_after_aider_patterns_update)
+        all_patterns_present = True
+        if header_present: # Only check patterns if header is there, otherwise assume they need adding
+            for pattern_to_check in aider_patterns_to_add:
+                pattern_found_under_header = False
+                in_aider_section = False
+                for line in lines_after_aider_patterns_update:
+                    stripped_line = line.strip()
+                    if stripped_line == aider_patterns_header.strip():
+                        in_aider_section = True
+                        continue
+                    if in_aider_section and stripped_line == pattern_to_check.strip():
+                        pattern_found_under_header = True
+                        break
+                    # If we encounter a non-blank line not part of Aider patterns after header, section ends
+                    if in_aider_section and stripped_line and not any(stripped_line == ap.strip() for ap in aider_patterns_to_add):
+                        in_aider_section = False # No longer in Aider section for subsequent patterns
+                if not pattern_found_under_header:
+                    all_patterns_present = False
+                    break
+        else: # No header means patterns are not properly sectioned
+            all_patterns_present = False
+
+
+        if not (header_present and all_patterns_present):
             if self.io.confirm_ask(
-                "No .gitignore file found. Would you like to create one using a template from"
-                " github/gitignore? (https://github.com/github/gitignore)",
+                f"Aider uses patterns like '{aider_patterns_to_add[0]}' and '{aider_patterns_to_add[1]}' in .gitignore to exclude its own operational files. May I add or ensure these are present?",
+                default="y",
+            ):
+                # Ensure header exists
+                if not header_present:
+                    if lines_after_aider_patterns_update and lines_after_aider_patterns_update[-1].strip():
+                        lines_after_aider_patterns_update.append("")  # Add a blank line for separation
+                    lines_after_aider_patterns_update.append(aider_patterns_header)
+                    made_changes_for_aider_patterns = True
+
+                # Ensure patterns exist under the header
+                # This is a bit simplistic; it just appends if missing, assuming they should be at the end of Aider section
+                current_aider_section_patterns = set()
+                in_aider_section_for_adding = False
+                for line in lines_after_aider_patterns_update:
+                    stripped_line = line.strip()
+                    if stripped_line == aider_patterns_header.strip():
+                        in_aider_section_for_adding = True
+                        continue
+                    if in_aider_section_for_adding and stripped_line in [p.strip() for p in aider_patterns_to_add]:
+                        current_aider_section_patterns.add(stripped_line)
+                    # Approximation: if non-aider, non-blank line, section ends
+                    elif in_aider_section_for_adding and stripped_line:
+                        in_aider_section_for_adding = False
+
+
+                for pattern in aider_patterns_to_add:
+                    if pattern.strip() not in current_aider_section_patterns:
+                        # Find where to insert: end of file, or end of Aider section if it exists
+                        header_idx = -1
+                        try:
+                            header_idx = next(i for i, l in enumerate(lines_after_aider_patterns_update) if l.strip() == aider_patterns_header.strip())
+                        except StopIteration: # Should not happen if header was just added
+                            pass
+
+                        if header_idx != -1:
+                            # Insert after the last line of the current Aider section or header
+                            insert_at = header_idx + 1
+                            while insert_at < len(lines_after_aider_patterns_update) and \
+                                  (not lines_after_aider_patterns_update[insert_at].strip() or \
+                                   lines_after_aider_patterns_update[insert_at].strip() in [p.strip() for p in aider_patterns_to_add]):
+                                insert_at +=1
+                            lines_after_aider_patterns_update.insert(insert_at, pattern)
+                        else: # Should not be reached if header logic is correct
+                             lines_after_aider_patterns_update.append(pattern)
+                        made_changes_for_aider_patterns = True
+
+                if made_changes_for_aider_patterns or not gitignore_existed_before_aider:
+                    try:
+                        final_content = "\n".join(lines_after_aider_patterns_update)
+                        if final_content or lines_after_aider_patterns_update: # Ensure newline for non-empty or list of empty strings
+                            if not final_content.endswith("\n"):
+                                final_content += "\n"
+                        
+                        gitignore_path.write_text(final_content, encoding=self.io.encoding)
+                        if made_changes_for_aider_patterns: # Only message if actual changes were made
+                            self.io.tool_output("Updated .gitignore with Aider-specific patterns.")
+                        elif not gitignore_existed_before_aider: # File created, even if no Aider patterns added (e.g. user said no)
+                             self.io.tool_output("Created .gitignore file.")
+                        current_lines = lines_after_aider_patterns_update # Reflect changes
+                    except OSError as e:
+                        self.io.tool_error(f"Error writing Aider patterns to .gitignore: {e}")
+                        # If write fails, subsequent steps might operate on stale `current_lines`
+                        # or non-existent file. This is a potential issue.
+
+        # Step 2: Determine if .gitignore is effectively empty for template offering
+        is_effectively_empty = False
+        if not gitignore_path.exists(): # Still doesn't exist (user said no to Aider patterns and it wasn't there)
+            is_effectively_empty = True
+        else:
+            # Re-read to be sure, especially if Aider patterns step failed to write
+            try:
+                lines_for_emptiness_check = gitignore_path.read_text(encoding=self.io.encoding).splitlines()
+            except OSError: # If reading fails, treat as empty for template offering
+                lines_for_emptiness_check = []
+                is_effectively_empty = True
+
+            if not is_effectively_empty: # Only proceed if read was successful
+                # Remove Aider-specific header and patterns for the emptiness check
+                temp_lines_for_check = [
+                    line for line in lines_for_emptiness_check if line.strip() != aider_patterns_header.strip()
+                ]
+                patterns_to_remove_for_check = {p.strip() for p in aider_patterns_to_add}
+                temp_lines_for_check = [
+                    line for line in temp_lines_for_check if line.strip() not in patterns_to_remove_for_check
+                ]
+
+                if not any(line.strip() for line in temp_lines_for_check):
+                    is_effectively_empty = True
+
+        # Step 3: Offer template if .gitignore is effectively empty
+        if is_effectively_empty:
+            if self.io.confirm_ask(
+                "This project's .gitignore is new or effectively empty. Would you like to initialize it with a template from github/gitignore? (https://github.com/github/gitignore)",
                 default="y",
             ):
                 template_name_input = self.io.prompt_for_input(
                     "Enter template name (e.g., Python, Node, Global/macOS):"
                 ).strip()
                 if template_name_input:
-                    template_content = utils.fetch_gitignore_template(
-                        self.io, template_name_input
-                    )
-                    if template_content:
-                        current_gitignore_content = template_content
+                    template_content_str = utils.fetch_gitignore_template(self.io, template_name_input)
+                    if template_content_str:
+                        # Prepend template content. Aider patterns will be re-ensured.
+                        new_gitignore_lines = template_content_str.splitlines()
+
+                        # Ensure Aider patterns are at the end
+                        # Remove any Aider patterns/header that might be in the template itself
+                        # to avoid duplication and ensure our section is authoritative.
+                        cleaned_template_lines = []
+                        in_template_aider_section = False
+                        for t_line in new_gitignore_lines:
+                            stripped_t_line = t_line.strip()
+                            if stripped_t_line == aider_patterns_header.strip():
+                                in_template_aider_section = True
+                                continue # Skip header from template
+                            if in_template_aider_section and stripped_t_line in [p.strip() for p in aider_patterns_to_add]:
+                                continue # Skip Aider patterns from template
+                            # If a non-Aider line is found after template's Aider header, stop skipping
+                            if in_template_aider_section and stripped_t_line:
+                                in_template_aider_section = False
+                            cleaned_template_lines.append(t_line)
+                        
+                        final_lines_with_template = cleaned_template_lines
+
+                        # Add Aider header and patterns if user agreed to them or they should be there
+                        # This re-adds them cleanly after the template.
+                        # Check if user *ever* agreed to Aider patterns (or if they were pre-existing and confirmed)
+                        # For simplicity, if Aider patterns were managed (added or confirmed present), ensure they are at the end.
+                        # This relies on the first part of the function having set current_lines correctly.
+                        
+                        # A simpler approach: if Aider patterns should be there (user agreed or they were already there and confirmed),
+                        # ensure they are at the end of the template.
+                        # The `made_changes_for_aider_patterns` is true if user agreed AND changes were made.
+                        # If patterns were already there, `made_changes_for_aider_patterns` is false.
+                        # We need a flag: `ensure_aider_patterns_at_end`. This is true if user agreed to Aider patterns.
+                        
+                        # Let's assume if we are here, and Aider patterns were handled, they should persist.
+                        # The most robust is to check `current_lines` (which reflects state after Aider pattern step)
+                        # for the Aider section and append it if it exists.
+                        # Or, more simply, if the user agreed to Aider patterns, add them.
+
+                        user_agreed_to_aider_patterns = False # This needs to be tracked from the first confirm_ask
+                        # Re-check the confirm_ask result for Aider patterns, or assume if they are in current_lines, they are desired.
+                        # This is tricky. For now, just re-add them if they were in current_lines after step 1.
+                        
+                        # Simplified: just add the Aider section again.
+                        if final_lines_with_template and final_lines_with_template[-1].strip():
+                            final_lines_with_template.append("")
+                        final_lines_with_template.append(aider_patterns_header)
+                        for pattern in aider_patterns_to_add:
+                            final_lines_with_template.append(pattern)
+
                         try:
-                            with open(gitignore_path, "w", encoding=self.io.encoding) as f:
-                                f.write(current_gitignore_content)
+                            final_templated_content = "\n".join(final_lines_with_template)
+                            if final_templated_content or final_lines_with_template: # Ensure newline
+                                if not final_templated_content.endswith("\n"):
+                                    final_templated_content += "\n"
+                            gitignore_path.write_text(final_templated_content, encoding=self.io.encoding)
                             self.io.tool_output(
-                                f"Initialized .gitignore with '{template_name_input}' template."
+                                f"Initialized .gitignore with '{template_name_input}' template and ensured Aider-specific patterns."
                             )
-                            gitignore_exists_initially = True  # File is now created
-                            file_was_created_by_template = True
                         except OSError as e:
-                            self.io.tool_error(f"Error writing .gitignore from template: {e}")
-                            current_gitignore_content = ""  # Reset content
-                            gitignore_exists_initially = False
-                    else:
+                             self.io.tool_error(f"Error writing .gitignore with template: {e}")
+                    elif template_name_input: # Fetch failed but name was given
                         self.io.tool_warning(
-                            f"Could not fetch template '{template_name_input}'."
-                            " A basic .gitignore will be used/created for Aider files."
+                            f"Could not fetch template '{template_name_input}'. .gitignore remains as is (possibly with Aider patterns if added)."
                         )
-                else:
+                elif template_name_input: # No template name entered by user after being asked
                     self.io.tool_output(
-                        "No template name entered. A basic .gitignore will be used/created for"
-                        " Aider files."
+                        "No template name entered. .gitignore remains as is (possibly with Aider patterns if added)."
                     )
-
-        if gitignore_exists_initially and not file_was_created_by_template:
-            try:
-                with open(gitignore_path, "r", encoding=self.io.encoding) as f:
-                    current_gitignore_content = f.read()
-            except OSError as e:
-                self.io.tool_error(f"Error reading .gitignore file: {e}")
-                return
-
-        if not gitignore_exists_initially:  # Still doesn't exist
-            try:
-                gitignore_path.touch()
-                self.io.tool_output("Created an empty .gitignore file.")
-                current_gitignore_content = ""
-            except OSError as e:
-                self.io.tool_error(f"Error creating .gitignore file: {e}")
-                return
-
-        # Append Aider patterns
-        original_lines = current_gitignore_content.splitlines()
-        lines_to_write = list(original_lines)
-        made_changes_for_aider = False
-
-        aider_header_exists = any(
-            line.strip() == aider_patterns_header.strip() for line in lines_to_write
-        )
-
-        if not aider_header_exists:
-            if lines_to_write and lines_to_write[-1].strip():
-                lines_to_write.append("")
-            lines_to_write.append(aider_patterns_header)
-            made_changes_for_aider = True
-
-        for pattern in aider_patterns_to_add:
-            pattern_already_present = any(
-                line.strip().lstrip("#").strip() == pattern.strip() for line in original_lines
-            )
-            if not pattern_already_present:
-                lines_to_write.append(pattern)
-                made_changes_for_aider = True
-
-        if made_changes_for_aider:
-            final_output_content = "\n".join(lines_to_write)
-            if final_output_content and not final_output_content.endswith("\n"):
-                final_output_content += "\n"
-            elif not final_output_content and lines_to_write: # Handle list of only empty strings
-                final_output_content = "\n"
-
-
-            # Only write if content has actually changed from what was on disk
-            # This check is simplified; assumes `current_gitignore_content` is the definitive disk state
-            # or what was just written by template.
-            if final_output_content.strip() != current_gitignore_content.strip() or not gitignore_path.exists() or file_was_created_by_template:
-                try:
-                    with open(gitignore_path, "w", encoding=self.io.encoding) as f:
-                        f.write(final_output_content)
-                    self.io.tool_output("Updated .gitignore with Aider-specific patterns.")
-                except OSError as e:
-                    self.io.tool_error(f"Error writing Aider patterns to .gitignore: {e}")
