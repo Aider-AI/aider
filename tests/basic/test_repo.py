@@ -730,18 +730,14 @@ class TestRepo(unittest.TestCase):
             git_repo_verify = GitRepo(io, None, None, git_commit_verify=True)
 
             # Attempt to commit - should fail due to pre-commit hook
-            commit_result = git_repo_verify.commit(
-                fnames=[str(fname)], message="Should fail"
-            )
+            commit_result = git_repo_verify.commit(fnames=[str(fname)], message="Should fail")
             self.assertIsNone(commit_result)
 
             # Create GitRepo with verify=False
             git_repo_no_verify = GitRepo(io, None, None, git_commit_verify=False)
 
             # Attempt to commit - should succeed by bypassing the hook
-            commit_result = git_repo_no_verify.commit(
-                fnames=[str(fname)], message="Should succeed"
-            )
+            commit_result = git_repo_no_verify.commit(fnames=[str(fname)], message="Should succeed")
             self.assertIsNotNone(commit_result)
 
             # Verify the commit was actually made
