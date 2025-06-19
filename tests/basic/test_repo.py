@@ -212,10 +212,12 @@ class TestRepo(unittest.TestCase):
             commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True)
             self.assertIsNotNone(commit_result)
 
-            # check the committer name (defaults interpreted as True)
+            # check the committer name (with co-authored-by=True by default, names not modified)
             commit = raw_repo.head.commit
-            self.assertEqual(commit.author.name, "Test User (aider)")
-            self.assertEqual(commit.committer.name, "Test User (aider)")
+            self.assertEqual(commit.author.name, "Test User")
+            self.assertEqual(commit.committer.name, "Test User")
+            # With co-authored-by=True by default, should have Co-authored-by trailer
+            self.assertIn("Co-authored-by:", commit.message)
 
             # commit a change without aider_edits (using default attributes)
             fname.write_text("new content again!")
