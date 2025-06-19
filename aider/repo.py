@@ -255,9 +255,7 @@ class GitRepo:
             if coder and hasattr(coder, "args") and hasattr(coder.args, "co_author_email"):
                 co_author_email = coder.args.co_author_email
 
-            commit_message_trailer = (
-                f"\n\nCo-authored-by: aider ({model_name}) <{co_author_email}>"
-            )
+            commit_message_trailer = f"\n\nCo-authored-by: aider ({model_name}) <{co_author_email}>"
 
         # Determine if author/committer names should be modified
         # Author modification applies only to aider edits.
@@ -306,7 +304,9 @@ class GitRepo:
             with contextlib.ExitStack() as stack:
                 if use_attribute_committer:
                     stack.enter_context(
-                        set_git_env("GIT_COMMITTER_NAME", committer_name, original_committer_name_env)
+                        set_git_env(
+                            "GIT_COMMITTER_NAME", committer_name, original_committer_name_env
+                        )
                     )
                 if use_attribute_author:
                     stack.enter_context(

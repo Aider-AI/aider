@@ -253,7 +253,9 @@ class TestRepo(unittest.TestCase):
             self.assertIsNotNone(commit_result)
             commit = raw_repo.head.commit
             self.assertEqual(
-                commit.author.name, "Test User", msg="Author name should not be modified for user commits"
+                commit.author.name,
+                "Test User",
+                msg="Author name should not be modified for user commits",
             )
             self.assertEqual(
                 commit.committer.name,
@@ -267,9 +269,7 @@ class TestRepo(unittest.TestCase):
             # new repo
             raw_repo = git.Repo()
             raw_repo.config_writer().set_value("user", "name", "Test User").release()
-            raw_repo.config_writer().set_value(
-                "user", "email", "test@example.com"
-            ).release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
 
             # add a file and commit it
             fname = Path("file.txt")
@@ -329,9 +329,7 @@ class TestRepo(unittest.TestCase):
             # new repo
             raw_repo = git.Repo()
             raw_repo.config_writer().set_value("user", "name", "Test User").release()
-            raw_repo.config_writer().set_value(
-                "user", "email", "test@example.com"
-            ).release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
 
             # add a file and commit it
             fname = Path("file.txt")
@@ -390,9 +388,7 @@ class TestRepo(unittest.TestCase):
             # new repo
             raw_repo = git.Repo()
             raw_repo.config_writer().set_value("user", "name", "Test User").release()
-            raw_repo.config_writer().set_value(
-                "user", "email", "test@example.com"
-            ).release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
 
             # add a file and commit it
             fname = Path("file.txt")
@@ -440,9 +436,7 @@ class TestRepo(unittest.TestCase):
             # Setup repo
             raw_repo = git.Repo()
             raw_repo.config_writer().set_value("user", "name", "Test User").release()
-            raw_repo.config_writer().set_value(
-                "user", "email", "test@example.com"
-            ).release()
+            raw_repo.config_writer().set_value("user", "email", "test@example.com").release()
             fname = Path("file.txt")
             fname.touch()
             raw_repo.git.add(str(fname))
