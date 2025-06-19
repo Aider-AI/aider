@@ -952,6 +952,45 @@ class InputOutput:
 
         return res
 
+    @restore_multiline
+    def prompt_for_input(self, question, default="", subject=None):
+        self.num_user_asks += 1
+
+        # Ring the bell if needed
+        self.ring_bell()
+
+        if subject:
+            self.tool_output()
+            self.tool_output(subject, bold=True)
+
+        style = self._get_style()
+
+        if self.yes is True: # Should not happen for free-form input, but handle defensively
+            res = default
+        elif self.yes is False: # Should not happen for free-form input
+            res = default
+        else:
+            try:
+                if self.prompt_session:
+                    res = self.prompt_session.prompt(
+                        question + " ",
+                        default=default,
+                        style=style,
+                        complete_while_typing=True, # Or False, depending on desired behavior
+                    )
+                else:
+                    res = input(question + " ")
+            except EOFError:
+                # Treat EOF (Ctrl+D) as if the user pressed Enter with the default
+                res = default
+
+        hist = f"{question.strip()} {res.strip()}"
+        self.append_chat_history(hist, linebreak=True, blockquote=True)
+        # Unlike confirm_ask, we don't re-print if self.yes is set,
+        # as it's less about confirming a pre-set answer.
+
+        return res
+
     def _tool_message(self, message="", strip=True, color=None):
         if message.strip():
             if "\n" in message:
