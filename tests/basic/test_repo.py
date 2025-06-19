@@ -304,9 +304,7 @@ class TestRepo(unittest.TestCase):
 
             # check the commit message and author/committer
             commit = raw_repo.head.commit
-            self.assertIn(
-                "Co-authored-by: aider (gpt-test) <noreply@aider.chat>", commit.message
-            )
+            self.assertIn("Co-authored-by: aider (gpt-test) <noreply@aider.chat>", commit.message)
             self.assertEqual(commit.message.splitlines()[0], "Aider edit")
             # With default (None), co-authored-by takes precedence
             self.assertEqual(
@@ -507,9 +505,7 @@ class TestRepo(unittest.TestCase):
         # Initialize a git repository in the temporary directory and set user name and email
         repo = git.Repo.init(tempdir)
         repo.config_writer().set_value("user", "name", "Test User").release()
-        repo.config_writer().set_value(
-            "user", "email", "testuser@example.com"
-        ).release()
+        repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
         filenames = [
