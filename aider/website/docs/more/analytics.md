@@ -52,10 +52,9 @@ will confirm you wish to opt-in to analytics.
 - `--no-analytics` will turn off analytics for the current session.
 - By default, if you don't provide `--analytics` or `--no-analytics`,
 aider will enable analytics for a random subset of users.
+Such randomly selected users will be asked if they wish to opt-in to analytics.
 This will never happen if you have permanently disabled analytics 
 with `--analytics-disable`.
-Randomly selected users will be asked if they wish to opt-in to analytics.
-
 
 ## Opting in
 
