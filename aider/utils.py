@@ -4,8 +4,10 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+from typing import Optional
 
 import oslex
+import requests
 
 from aider.dump import dump  # noqa: F401
 from aider.waiting import Spinner
@@ -336,3 +338,40 @@ def printable_shell_command(cmd_list):
         str: Shell-escaped command string.
     """
     return oslex.join(cmd_list)
+
+
+def fetch_gitignore_template(io, template_name: str) -> Optional[str]:
+    """
+    Fetches a .gitignore template from the github/gitignore repository.
+    Handles common naming conventions like 'Python' or 'Global/macOS'.
+    """
+    if not template_name:
+        io.tool_warning("No template name provided.")
+        return None
+
+    template_name = template_name.strip()
+    # Ensure it ends with .gitignore if it's a simple name,
+    # but be careful with paths like Global/macOS
+    if "/" not in template_name and not template_name.lower().endswith(".gitignore"):
+        template_name += ".gitignore"
+    elif "/" in template_name:
+        parts = template_name.split("/")
+        if not parts[-1].lower().endswith(".gitignore"):
+            parts[-1] += ".gitignore"
+        template_name = "/".join(parts)
+
+    url = f"https://raw.githubusercontent.com/github/gitignore/main/{template_name}"
+    io.tool_output(f"Fetching .gitignore template from {url} ...")
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        return response.text
+    except requests.exceptions.HTTPError as e:
+        if e.response.status_code == 404:
+            io.tool_error(f"Error: .gitignore template '{template_name}' not found at {url}.")
+        else:
+            io.tool_error(f"Error fetching .gitignore template '{template_name}': {e}")
+        return None
+    except requests.exceptions.RequestException as e:
+        io.tool_error(f"Error fetching .gitignore template '{template_name}': {e}")
+        return None
