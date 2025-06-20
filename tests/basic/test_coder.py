@@ -149,7 +149,7 @@ class TestCoder(unittest.TestCase):
                 ]
             )
 
-            self.assertEqual(coder.abs_fnames, expected_files)
+            self.assertEqual(set(coder.abs_fnames), expected_files)
 
     def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
         with GitTemporaryDirectory():
@@ -170,7 +170,7 @@ class TestCoder(unittest.TestCase):
             # Call the check_for_file_mentions method
             coder.check_for_file_mentions(f"Please check {fname}!")
 
-            self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
+            self.assertEqual(set(coder.abs_fnames), {str(fname.resolve())})
 
     def test_skip_duplicate_basename_mentions(self):
         with GitTemporaryDirectory():
@@ -228,7 +228,7 @@ class TestCoder(unittest.TestCase):
             self.assertIsNone(result)
 
             # Assert that abs_fnames is still empty (file not added)
-            self.assertEqual(coder.abs_fnames, set())
+            self.assertEqual(coder.abs_fnames, [])
 
     def test_check_for_file_mentions_with_mocked_confirm(self):
         with GitTemporaryDirectory():
@@ -283,7 +283,7 @@ class TestCoder(unittest.TestCase):
             # Call the check_for_file_mentions method
             coder.check_for_file_mentions(f"Please check `{fname}`")
 
-            self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
+            self.assertEqual(set(coder.abs_fnames), {str(fname.resolve())})
 
     def test_get_file_mentions_various_formats(self):
         with GitTemporaryDirectory():
@@ -966,7 +966,7 @@ two
             expected_abs_path = os.path.realpath(str(test_file))
             coder1_abs_fnames = set(os.path.realpath(path) for path in coder1.abs_fnames)
             self.assertIn(expected_abs_path, coder1_abs_fnames)
-            self.assertIn(expected_abs_path, coder2.abs_fnames)
+            self.assertIn(expected_abs_path, set(coder2.abs_fnames))
 
             # Check that the abs_fnames do not contain duplicate or incorrect paths
             self.assertEqual(len(coder1.abs_fnames), 1)

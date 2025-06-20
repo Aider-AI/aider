@@ -398,7 +398,7 @@ class Commands:
 
             lint_coder.add_rel_fname(fname)
             lint_coder.run(errors)
-            lint_coder.abs_fnames = set()
+            lint_coder.abs_fnames = []
 
         if lint_coder and self.coder.repo.is_dirty() and self.coder.auto_commits:
             self.cmd_commit("")
@@ -409,7 +409,7 @@ class Commands:
         self._clear_chat_history()
 
     def _drop_all_files(self):
-        self.coder.abs_fnames = set()
+        self.coder.abs_fnames = []
 
         # When dropping all files, keep those that were originally provided via args.read
         if self.original_read_only_fnames:
@@ -434,6 +434,7 @@ class Commands:
         "Drop all files and clear the chat history"
         self._drop_all_files()
         self._clear_chat_history()
+        self.coder.session_edited_files = set()
         self.io.tool_output("All files dropped and chat history cleared.")
 
     def cmd_tokens(self, args):
@@ -835,6 +836,7 @@ class Commands:
                 except OSError as e:
                     self.io.tool_error(f"Error creating file {fname}: {e}")
 
+        fnames_to_add = []
         for matched_file in sorted(all_matched_files):
             abs_file_path = self.coder.abs_root_path(matched_file)
 
@@ -858,7 +860,7 @@ class Commands:
             elif abs_file_path in self.coder.abs_read_only_fnames:
                 if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
                     self.coder.abs_read_only_fnames.remove(abs_file_path)
-                    self.coder.abs_fnames.add(abs_file_path)
+                    fnames_to_add.append(abs_file_path)
                     self.io.tool_output(
                         f"Moved {matched_file} from read-only to editable files in the chat"
                     )
@@ -879,10 +881,12 @@ class Commands:
                 if content is None:
                     self.io.tool_error(f"Unable to read {matched_file}")
                 else:
-                    self.coder.abs_fnames.add(abs_file_path)
-                    fname = self.coder.get_rel_fname(abs_file_path)
-                    self.io.tool_output(f"Added {fname} to the chat")
-                    self.coder.check_added_files()
+                    fnames_to_add.append(abs_file_path)
+
+        newly_added = self.coder.add_abs_fnames(fnames_to_add)
+        for abs_file_path in newly_added:
+            fname = self.coder.get_rel_fname(abs_file_path)
+            self.io.tool_output(f"Added {fname} to the chat")
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
@@ -1281,9 +1285,8 @@ class Commands:
                     self.coder.abs_fnames.remove(existing_file)
                     self.io.tool_output(f"Replaced existing image in the chat: {existing_file}")
 
-                self.coder.abs_fnames.add(str(abs_file_path))
+                self.coder.add_abs_fnames([str(abs_file_path)])
                 self.io.tool_output(f"Added clipboard image to the chat: {abs_file_path}")
-                self.coder.check_added_files()
 
                 return
 
