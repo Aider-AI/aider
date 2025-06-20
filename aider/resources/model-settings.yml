@@ -1486,7 +1486,14 @@
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
   accepts_settings: ["thinking_tokens"]
-  
+
+- name: openrouter/google/gemini-2.5-pro
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  weak_model_name: openrouter/google/gemini-2.5-flash
+  accepts_settings: ["thinking_tokens"]
+
 #- name: openrouter/qwen/qwen3-235b-a22b
 #  system_prompt_prefix: "/no_think"
 #  use_temperature: 0.7
