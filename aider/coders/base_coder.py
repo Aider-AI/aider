@@ -60,7 +60,8 @@ class UnknownEditFormat(ValueError):
         self.edit_format = edit_format
         self.valid_formats = valid_formats
         super().__init__(
-            f"Unknown edit format {edit_format}. Valid formats are: {', '.join(valid_formats)}"
+            f"Unknown edit format {edit_format}. Valid formats are: {
+                ', '.join(valid_formats)}"
         )
 
 
@@ -167,7 +168,8 @@ class Coder:
             done_messages = from_coder.done_messages
             if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
                 try:
-                    done_messages = from_coder.summarizer.summarize_all(done_messages)
+                    done_messages = from_coder.summarizer.summarize_all(
+                        done_messages)
                 except ValueError:
                     # If summarization fails, keep the original messages and warn the user
                     io.tool_warning(
@@ -177,7 +179,8 @@ class Coder:
             # Bring along context from the old Coder
             update = dict(
                 fnames=list(from_coder.abs_fnames),
-                read_only_fnames=list(from_coder.abs_read_only_fnames),  # Copy read-only files
+                # Copy read-only files
+                read_only_fnames=list(from_coder.abs_read_only_fnames),
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
@@ -224,7 +227,8 @@ class Coder:
         else:
             prefix = "Model"
 
-        output = f"{prefix}: {main_model.name} with {self.edit_format} edit format"
+        output = f"{prefix}: {main_model.name} with {
+            self.edit_format} edit format"
 
         # Check for thinking token budget
         thinking_tokens = main_model.get_thinking_tokens()
@@ -273,11 +277,13 @@ class Coder:
             map_tokens = self.repo_map.max_map_tokens
             if map_tokens > 0:
                 refresh = self.repo_map.refresh
-                lines.append(f"Repo-map: using {map_tokens} tokens, {refresh} refresh")
+                lines.append(
+                    f"Repo-map: using {map_tokens} tokens, {refresh} refresh")
                 max_map_tokens = self.main_model.get_repo_map_tokens() * 2
                 if map_tokens > max_map_tokens:
                     lines.append(
-                        f"Warning: map-tokens > {max_map_tokens} is not recommended. Too much"
+                        f"Warning: map-tokens > {
+                            max_map_tokens} is not recommended. Too much"
                         " irrelevant code can confuse LLMs."
                     )
             else:
@@ -297,7 +303,8 @@ class Coder:
             lines.append("Restored previous conversation history.")
 
         if self.io.multiline_mode:
-            lines.append("Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
+            lines.append(
+                "Multiline mode: Enabled. Enter inserts newline, Alt-Enter submits text")
 
         return lines
 
@@ -458,11 +465,13 @@ class Coder:
         for fname in fnames:
             fname = Path(fname)
             if self.repo and self.repo.git_ignored_file(fname) and not self.add_gitignore_files:
-                self.io.tool_warning(f"Skipping {fname} that matches gitignore spec.")
+                self.io.tool_warning(
+                    f"Skipping {fname} that matches gitignore spec.")
                 continue
 
             if self.repo and self.repo.ignored_file(fname):
-                self.io.tool_warning(f"Skipping {fname} that matches aiderignore spec.")
+                self.io.tool_warning(
+                    f"Skipping {fname} that matches aiderignore spec.")
                 continue
 
             if not fname.exists():
@@ -473,7 +482,8 @@ class Coder:
                     continue
 
             if not fname.is_file():
-                self.io.tool_warning(f"Skipping {fname} that is not a normal file.")
+                self.io.tool_warning(
+                    f"Skipping {fname} that is not a normal file.")
                 continue
 
             fname = str(fname.resolve())
@@ -491,7 +501,8 @@ class Coder:
                 if os.path.exists(abs_fname):
                     self.abs_read_only_fnames.add(abs_fname)
                 else:
-                    self.io.tool_warning(f"Error: Read-only file {fname} does not exist. Skipping.")
+                    self.io.tool_warning(
+                        f"Error: Read-only file {fname} does not exist. Skipping.")
 
         if map_tokens is None:
             use_repo_map = main_model.use_repo_map
@@ -501,7 +512,8 @@ class Coder:
 
         max_inp_tokens = self.main_model.info.get("max_input_tokens") or 0
 
-        has_map_prompt = hasattr(self, "gpt_prompts") and self.gpt_prompts.repo_content_prefix
+        has_map_prompt = hasattr(
+            self, "gpt_prompts") and self.gpt_prompts.repo_content_prefix
 
         if use_repo_map and self.repo and has_map_prompt:
             self.repo_map = RepoMap(
@@ -528,7 +540,8 @@ class Coder:
         if not self.done_messages and restore_chat_history:
             history_md = self.io.read_text(self.io.chat_history_file)
             if history_md:
-                self.done_messages = utils.split_chat_history_markdown(history_md)
+                self.done_messages = utils.split_chat_history_markdown(
+                    history_md)
                 self.summarize_start()
 
         # Linting and testing
@@ -613,7 +626,8 @@ class Coder:
 
             if content is None:
                 relative_fname = self.get_rel_fname(fname)
-                self.io.tool_warning(f"Dropping {relative_fname} from the chat.")
+                self.io.tool_warning(
+                    f"Dropping {relative_fname} from the chat.")
                 self.abs_fnames.remove(fname)
             else:
                 yield fname, content
@@ -729,10 +743,12 @@ class Coder:
         mentioned_fnames = self.get_file_mentions(cur_msg_text)
         mentioned_idents = self.get_ident_mentions(cur_msg_text)
 
-        mentioned_fnames.update(self.get_ident_filename_matches(mentioned_idents))
+        mentioned_fnames.update(
+            self.get_ident_filename_matches(mentioned_idents))
 
         all_abs_files = set(self.get_all_abs_files())
-        repo_abs_read_only_fnames = set(self.abs_read_only_fnames) & all_abs_files
+        repo_abs_read_only_fnames = set(
+            self.abs_read_only_fnames) & all_abs_files
         chat_files = set(self.abs_fnames) | repo_abs_read_only_fnames
         other_files = all_abs_files - chat_files
 
@@ -796,7 +812,8 @@ class Coder:
         if images_message is not None:
             readonly_messages += [
                 images_message,
-                dict(role="assistant", content="Ok, I will use these images as references."),
+                dict(role="assistant",
+                     content="Ok, I will use these images as references."),
             ]
 
         return readonly_messages
@@ -851,14 +868,16 @@ class Coder:
                 continue
 
             with open(fname, "rb") as image_file:
-                encoded_string = base64.b64encode(image_file.read()).decode("utf-8")
+                encoded_string = base64.b64encode(
+                    image_file.read()).decode("utf-8")
             image_url = f"data:{mime_type};base64,{encoded_string}"
             rel_fname = self.get_rel_fname(fname)
 
             if mime_type.startswith("image/") and supports_images:
                 image_messages += [
                     {"type": "text", "text": f"Image file: {rel_fname}"},
-                    {"type": "image_url", "image_url": {"url": image_url, "detail": "high"}},
+                    {"type": "image_url", "image_url": {
+                        "url": image_url, "detail": "high"}},
                 ]
             elif mime_type == "application/pdf" and supports_pdfs:
                 image_messages += [
@@ -912,7 +931,8 @@ class Coder:
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
-        read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
+        read_only_files = [self.get_rel_fname(
+            fname) for fname in self.abs_read_only_fnames]
         all_files = sorted(set(inchat_files + read_only_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
@@ -952,7 +972,8 @@ class Coder:
                 break
 
             if self.num_reflections >= self.max_reflections:
-                self.io.tool_warning(f"Only {self.max_reflections} reflections allowed, stopping.")
+                self.io.tool_warning(
+                    f"Only {self.max_reflections} reflections allowed, stopping.")
                 return
 
             self.num_reflections += 1
@@ -970,7 +991,8 @@ class Coder:
 
         # Exclude double quotes from the matched URL characters
         url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*)')
-        urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
+        # Use set to remove duplicates
+        urls = list(set(url_pattern.findall(text)))
         for url in urls:
             url = url.rstrip(".',\"}")  # Added } to the characters to strip
             self.io.offer_url(url)
@@ -983,7 +1005,8 @@ class Coder:
 
         # Exclude double quotes from the matched URL characters
         url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*[^\s,.])')
-        urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
+        # Use set to remove duplicates
+        urls = list(set(url_pattern.findall(inp)))
         group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
@@ -1029,7 +1052,8 @@ class Coder:
     def summarize_worker(self):
         self.summarizing_messages = list(self.done_messages)
         try:
-            self.summarized_done_messages = self.summarizer.summarize(self.summarizing_messages)
+            self.summarized_done_messages = self.summarizer.summarize(
+                self.summarizing_messages)
         except ValueError as err:
             self.io.tool_warning(err.args[0])
 
@@ -1201,11 +1225,14 @@ class Coder:
         platform_text = self.get_platform_info()
 
         if self.suggest_shell_commands:
-            shell_cmd_prompt = self.gpt_prompts.shell_cmd_prompt.format(platform=platform_text)
-            shell_cmd_reminder = self.gpt_prompts.shell_cmd_reminder.format(platform=platform_text)
+            shell_cmd_prompt = self.gpt_prompts.shell_cmd_prompt.format(
+                platform=platform_text)
+            shell_cmd_reminder = self.gpt_prompts.shell_cmd_reminder.format(
+                platform=platform_text)
             rename_with_shell = self.gpt_prompts.rename_with_shell
         else:
-            shell_cmd_prompt = self.gpt_prompts.no_shell_cmd_prompt.format(platform=platform_text)
+            shell_cmd_prompt = self.gpt_prompts.no_shell_cmd_prompt.format(
+                platform=platform_text)
             shell_cmd_reminder = self.gpt_prompts.no_shell_cmd_reminder.format(
                 platform=platform_text
             )
@@ -1214,7 +1241,8 @@ class Coder:
         if user_lang:  # user_lang is the result of self.get_user_language()
             language = user_lang
         else:
-            language = "the same language they are using"  # Default if no specific lang detected
+            # Default if no specific lang detected
+            language = "the same language they are using"
 
         if self.fence[0] == "`" * 4:
             quad_backtick_reminder = (
@@ -1278,7 +1306,8 @@ class Coder:
                 ]
 
         if self.gpt_prompts.system_reminder:
-            main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+            main_sys += "\n" + \
+                self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
         chunks = ChatChunks()
 
@@ -1404,7 +1433,8 @@ class Coder:
                 ) or getattr(completion.usage, "cache_read_input_tokens", 0)
 
                 if self.verbose:
-                    self.io.tool_output(f"Warmed {format_tokens(cache_hit_tokens)} cached tokens.")
+                    self.io.tool_output(
+                        f"Warmed {format_tokens(cache_hit_tokens)} cached tokens.")
 
         self.cache_warming_thread = threading.Timer(0, warm_cache_worker)
         self.cache_warming_thread.daemon = True
@@ -1419,11 +1449,14 @@ class Coder:
 
         if max_input_tokens and input_tokens >= max_input_tokens:
             self.io.tool_error(
-                f"Your estimated chat context of {input_tokens:,} tokens exceeds the"
-                f" {max_input_tokens:,} token limit for {self.main_model.name}!"
+                f"Your estimated chat context of {
+                    input_tokens:,} tokens exceeds the"
+                f" {max_input_tokens:,} token limit for {
+                    self.main_model.name}!"
             )
             self.io.tool_output("To reduce the chat context:")
-            self.io.tool_output("- Use /drop to remove unneeded files from the chat")
+            self.io.tool_output(
+                "- Use /drop to remove unneeded files from the chat")
             self.io.tool_output("- Use /clear to clear the chat history")
             self.io.tool_output("- Break your code into smaller files")
             self.io.tool_output(
@@ -1457,7 +1490,8 @@ class Coder:
 
         self.multi_response_content = ""
         if self.show_pretty():
-            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
+            self.waiting_spinner = WaitingSpinner(
+                "Waiting for " + self.main_model.name)
             self.waiting_spinner.start()
             if self.stream:
                 self.mdstream = self.io.get_assistant_mdstream()
@@ -1503,7 +1537,8 @@ class Coder:
                     else:
                         self.io.tool_error(err_msg)
 
-                    self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
+                    self.io.tool_output(
+                        f"Retrying in {retry_delay:.1f} seconds...")
                     time.sleep(retry_delay)
                     continue
                 except KeyboardInterrupt:
@@ -1521,11 +1556,13 @@ class Coder:
                         messages[-1]["content"] = self.multi_response_content
                     else:
                         messages.append(
-                            dict(role="assistant", content=self.multi_response_content, prefix=True)
+                            dict(role="assistant",
+                                 content=self.multi_response_content, prefix=True)
                         )
                 except Exception as err:
                     self.mdstream = None
-                    lines = traceback.format_exception(type(err), err, err.__traceback__)
+                    lines = traceback.format_exception(
+                        type(err), err, err.__traceback__)
                     self.io.tool_warning("".join(lines))
                     self.io.tool_error(str(err))
                     self.event("message_send_exception", exception=str(err))
@@ -1538,7 +1575,8 @@ class Coder:
             # Ensure any waiting spinner is stopped
             self._stop_waiting_spinner()
 
-            self.partial_response_content = self.get_multi_response_content_in_progress(True)
+            self.partial_response_content = self.get_multi_response_content_in_progress(
+                True)
             self.remove_reasoning_content()
             self.multi_response_content = ""
 
@@ -1587,7 +1625,8 @@ class Coder:
                 return
 
             # Process any tools using MCP servers
-            tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
+            tool_call_response = litellm.stream_chunk_builder(
+                self.partial_response_tool_call)
             if self.process_tool_calls(tool_call_response):
                 self.num_tool_calls += 1
                 return self.run(with_message="Continue with tool call response", preproc=False)
@@ -1604,9 +1643,11 @@ class Coder:
             if self.cur_messages and self.cur_messages[-1]["role"] == "user":
                 self.cur_messages[-1]["content"] += "\n^C KeyboardInterrupt"
             else:
-                self.cur_messages += [dict(role="user", content="^C KeyboardInterrupt")]
+                self.cur_messages += [dict(role="user",
+                                           content="^C KeyboardInterrupt")]
             self.cur_messages += [
-                dict(role="assistant", content="I see that you interrupted my previous reply.")
+                dict(role="assistant",
+                     content="I see that you interrupted my previous reply.")
             ]
             return
 
@@ -1666,7 +1707,8 @@ class Coder:
 
                 # Add the assistant message with tool calls
                 # Converting to a dict so it can be safely dumped to json
-                self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
+                self.cur_messages.append(
+                    tool_call_response.choices[0].message.to_dict())
 
                 # Add all tool responses
                 for tool_response in tool_responses:
@@ -1674,7 +1716,8 @@ class Coder:
 
                 return True
         elif self.num_tool_calls >= self.max_tool_calls:
-            self.io.tool_warning(f"Only {self.max_tool_calls} tool calls allowed, stopping.")
+            self.io.tool_warning(
+                f"Only {self.max_tool_calls} tool calls allowed, stopping.")
             return False
 
     def _print_tool_call_info(self, server_tool_calls):
@@ -1684,7 +1727,8 @@ class Coder:
         for server, tool_calls in server_tool_calls.items():
             for tool_call in tool_calls:
                 self.io.tool_output(f"Tool Call: {tool_call.function.name}")
-                self.io.tool_output(f"Arguments: {tool_call.function.arguments}")
+                self.io.tool_output(
+                    f"Arguments: {tool_call.function.arguments}")
                 self.io.tool_output(f"MCP Server: {server.name}")
 
                 if self.verbose:
@@ -1733,19 +1777,55 @@ class Coder:
                 session = await server.connect()
                 # Execute all tool calls for this server
                 for tool_call in tool_calls_list:
+
+
+<< << << < HEAD
                     try:
                         call_result = await experimental_mcp_client.call_openai_tool(
                             session=session,
                             openai_tool=tool_call,
                         )
-                        result_text = str(call_result.content[0].text)
+
+                        content_parts = []
+                        if call_result.content:
+                            for item in call_result.content:
+                                if hasattr(item, "resource"):  # EmbeddedResource
+                                    resource = item.resource
+                                    if hasattr(resource, "text"):  # TextResourceContents
+                                        content_parts.append(resource.text)
+                                    elif hasattr(resource, "blob"):  # BlobResourceContents
+                                        try:
+                                            decoded_blob = base64.b64decode(resource.blob).decode(
+                                                "utf-8"
+                                            )
+                                            content_parts.append(decoded_blob)
+                                        except (UnicodeDecodeError, TypeError):
+                                            # Handle non-text blobs gracefully
+                                            name = getattr(
+                                                resource, "name", "unnamed")
+                                            mime_type = getattr(
+                                                resource, "mimeType", "unknown mime type"
+                                            )
+                                            content_parts.append(
+                                                f"[embedded binary resource: {
+                                                    name} ({mime_type})]"
+                                            )
+                                elif hasattr(item, "text"):  # TextContent
+                                    content_parts.append(item.text)
+
+                        result_text = "".join(content_parts)
+
                         tool_responses.append(
-                            {"role": "tool", "tool_call_id": tool_call.id, "content": result_text}
+                            {"role": "tool", "tool_call_id": tool_call.id,
+                                "content": result_text}
                         )
                     except Exception as e:
-                        tool_error = f"Error executing tool call {tool_call.function.name}: \n{e}"
-                        self.io.tool_warning(f"Executing {tool_call.function.name} on {server.name} failed: \n  Error: {e}\n")
-                        tool_responses.append({"role": "tool", "tool_call_id": tool_call.id, "content": tool_error})
+                        tool_error = f"Error executing tool call {
+                            tool_call.function.name}: \n{e}"
+                        self.io.tool_warning(f"Executing {tool_call.function.name} on {
+                                             server.name} failed: \n  Error: {e}\n")
+                        tool_responses.append(
+                            {"role": "tool", "tool_call_id": tool_call.id, "content": tool_error})
             except Exception as e:
                 connection_error = f"Could not connect to server {server.name}\n{e}"
                 self.io.tool_warning(connection_error)
