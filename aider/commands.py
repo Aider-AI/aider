@@ -1565,7 +1565,9 @@ class Commands:
         else:
             formatted_budget = model.get_thinking_tokens()
             budget = model.get_raw_thinking_tokens()
-            self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
+            self.io.tool_output(
+                f"Set thinking token budget to {budget:,} tokens ({formatted_budget})."
+            )
 
         self.io.tool_output()
 
