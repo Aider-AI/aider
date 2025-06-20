@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.12.9
+aiohttp==3.12.12
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -70,7 +70,7 @@ filetype==1.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-frozenlist==1.6.2
+frozenlist==1.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -105,7 +105,7 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-huggingface-hub[inference]==0.32.4
+huggingface-hub[inference]==0.33.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -195,12 +195,12 @@ platformdirs==4.3.8
     # via
     #   -c requirements/common-constraints.txt
     #   banks
-propcache==0.3.1
+propcache==0.3.2
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-pydantic==2.11.5
+pydantic==2.11.6
     # via
     #   -c requirements/common-constraints.txt
     #   banks
@@ -221,7 +221,7 @@ regex==2024.11.6
     #   nltk
     #   tiktoken
     #   transformers
-requests==2.32.3
+requests==2.32.4
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -321,7 +321,7 @@ wrapt==1.17.2
     #   -c requirements/common-constraints.txt
     #   deprecated
     #   llama-index-core
-yarl==1.20.0
+yarl==1.20.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
