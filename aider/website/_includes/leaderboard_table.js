@@ -16,11 +16,21 @@ document.addEventListener('DOMContentLoaded', function() {
   const filteredTitle = "Aider polyglot coding benchmark results (selected)";
 
   function applySearchFilter() {
-    const searchTerm = searchInput.value.toLowerCase();
+    const searchInputValue = searchInput.value.toLowerCase();
+    // Split by comma, trim whitespace from each term, and filter out empty terms
+    const searchTerms = searchInputValue.split(',').map(term => term.trim()).filter(term => term.length > 0);
+
     allMainRows.forEach(row => {
       const textContent = row.textContent.toLowerCase();
       const detailsRow = document.getElementById(row.id.replace('main-row-', 'details-'));
-      const matchesSearch = textContent.includes(searchTerm);
+      let matchesSearch = false;
+
+      if (searchTerms.length === 0) { // If no search terms (e.g., input is empty or just commas/spaces)
+        matchesSearch = true; // Show all rows
+      } else {
+        // Check if the row's text content includes *any* of the search terms (OR logic)
+        matchesSearch = searchTerms.some(term => textContent.includes(term));
+      }
 
       if (matchesSearch) {
         row.classList.remove('hidden-by-search');
@@ -505,6 +515,97 @@ document.addEventListener('DOMContentLoaded', function() {
   // --- Initial Setup ---
   updateTableView('view'); // Initialize view to 'view' mode
   applySearchFilter(); // Apply initial search filter (if any text is pre-filled or just to set initial state)
+
+  // --- Sorting Logic ---
+  const sortableHeaders = document.querySelectorAll('th[data-sort-key]');
+  const tableBodyForSort = document.querySelector('table tbody');
+
+  function getCellValue(row, sortKey) {
+    let cellValue;
+    let cell;
+    switch (sortKey) {
+      case 'model':
+        cell = row.querySelector('td:nth-child(2) span'); // Model is in the 2nd td
+        cellValue = cell ? cell.textContent.trim().toLowerCase() : ''; // For case-insensitive sort
+        break;
+      case 'pass_rate_2': // Percent correct
+        cell = row.querySelector('td:nth-child(3) span'); // Percent correct is in the 3rd td
+        cellValue = cell ? parseFloat(cell.textContent) : -1; // Default to -1 if parsing fails
+        break;
+      case 'total_cost': // Cost
+        cell = row.querySelector('td:nth-child(4) span'); // Cost is in the 4th td
+        const costText = cell ? cell.textContent.trim() : '';
+        if (costText === "" || costText === "$0.00") { // Treat empty or "$0.00" as null for sorting
+          cellValue = null;
+        } else {
+          cellValue = parseFloat(costText.substring(1)); // Remove '$'
+          if (isNaN(cellValue)) cellValue = null; // If parsing fails, treat as null
+        }
+        break;
+      case 'percent_cases_well_formed': // Correct edit format
+        cell = row.querySelector('td.col-conform span'); // Uses class .col-conform
+        cellValue = cell ? parseFloat(cell.textContent) : -1; // Default to -1
+        break;
+      default:
+        cellValue = '';
+    }
+    return cellValue;
+  }
+
+  function sortTable(sortKey, direction) {
+    const rowsToSort = Array.from(allMainRows); // Use the globally available allMainRows
+
+    rowsToSort.sort((rowA, rowB) => {
+      const valA = getCellValue(rowA, sortKey);
+      const valB = getCellValue(rowB, sortKey);
+
+      let comparison = 0;
+
+      // Handle nulls for cost: nulls go to the bottom regardless of direction
+      if (sortKey === 'total_cost') {
+        if (valA === null && valB !== null) return 1; // A (null) is greater, goes to bottom
+        if (valB === null && valA !== null) return -1; // B (null) is greater, A goes to top (relative to B)
+        if (valA === null && valB === null) return 0; // Both null, equal
+      }
+
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        comparison = valA.localeCompare(valB, undefined, { numeric: false, sensitivity: 'base' });
+      } else { // Numeric comparison
+        if (valA < valB) comparison = -1;
+        else if (valA > valB) comparison = 1;
+      }
+      return direction === 'asc' ? comparison : -comparison;
+    });
+
+    // Re-append rows (main and their details)
+    rowsToSort.forEach(row => {
+      tableBodyForSort.appendChild(row);
+      const detailsRowId = row.id.replace('main-row-', 'details-');
+      const detailsRow = document.getElementById(detailsRowId);
+      if (detailsRow) {
+        tableBodyForSort.appendChild(detailsRow);
+      }
+    });
+
+    applySearchFilter(); // Re-apply search and view mode filters
+  }
+
+  sortableHeaders.forEach(header => {
+    header.addEventListener('click', () => {
+      const sortKey = header.dataset.sortKey;
+      const currentDirection = header.dataset.sortDirection;
+      const newDirection = (currentDirection === 'desc') ? 'asc' : 'desc'; // Default to desc if not set, or toggle
+
+      sortableHeaders.forEach(h => {
+        h.querySelector('.sort-indicator').textContent = '';
+        if (h !== header) delete h.dataset.sortDirection; // Clear direction from other headers
+      });
+
+      header.dataset.sortDirection = newDirection;
+      header.querySelector('.sort-indicator').textContent = newDirection === 'asc' ? '▲' : '▼';
+      sortTable(sortKey, newDirection);
+    });
+  });
 
 // Close button functionality
 const closeControlsBtn = document.getElementById('close-controls-btn');
