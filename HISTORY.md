@@ -1,5 +1,21 @@
 # Release history
 
+### main branch
+
+- Added support for new Gemini models including `gemini-2.5-pro`, `gemini-2.5-flash`, and `gemini-2.5-pro-preview-06-05` with thinking tokens support.
+- Updated model aliases: `flash` now points to `gemini-2.5-flash` and `gemini` now points to `gemini-2.5-pro`.
+- Added `--add-gitignore-files` flag to enable adding files listed in .gitignore to Aider's editing scope, by omarcinkonis.
+- Added `--commit-language` option to specify the language for commit messages, by Kyosuke Takayama.
+- Enhanced thinking tokens support: can now be disabled by setting to 0, and improved help text with examples.
+- Added MATLAB language support for repository maps, by Matthew Tofano.
+- Added support for OpenAI o3-pro model across multiple providers.
+- Improved GitHub Copilot token handling with better validation and error messages, by Vincent Taverna and Sebastian Estrella.
+- Fixed encoding issues in git diff output and LLM history logging.
+- Enhanced commit message generation to use system prompt prefixes, by Luke Reeves.
+- Improved inline code rendering in Rich markdown output, by Vamsi Talupula.
+- Fixed Vertex AI model name prefixes in settings, by Wietse Venema.
+- Aider wrote 20% of the code in this release.
+
 ### Aider v0.84.0
 
 - Added support for new Claude models including the Sonnet 4 and Opus 4 series (e.g., `claude-sonnet-4-20250514`,
