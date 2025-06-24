@@ -213,7 +213,7 @@ jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.72.4
+litellm==1.73.0rc1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
