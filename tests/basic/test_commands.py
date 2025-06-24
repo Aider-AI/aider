@@ -1621,6 +1621,33 @@ class TestCommands(TestCase):
                 # Clean up: remove the test file from the home directory
                 test_file.unlink()
 
+    # pytest tests/basic/test_commands.py  -k test_cmd_read_only_with_square_brackets
+    def test_cmd_read_only_with_square_brackets(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create test layout
+            test_dir = Path(repo_dir) / "[id]"
+            test_dir.mkdir()
+            test_file = Path(repo_dir) / "[id]" / "page.tsx"
+            test_file.write_text("Test file")
+
+            # Test the /read-only command
+            commands.cmd_read_only("[id]/page.tsx")
+
+            # Check if test file was added to abs_read_only_fnames
+            self.assertTrue(
+                any(os.path.samefile(str(test_file), fname) for fname in coder.abs_read_only_fnames)
+            )
+
+            # Test dropping all read-only files
+            commands.cmd_drop("[id]/page.tsx")
+
+            # Check if all files were removed from abs_read_only_fnames
+            self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
     def test_cmd_diff(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)
