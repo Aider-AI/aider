@@ -112,7 +112,7 @@ cog.outl("```")
 ## Set the reasoning_effort API parameter (default: not set)
 #AIDER_REASONING_EFFORT=
 
-## Set the thinking token budget for models that support it (default: not set)
+## Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)
 #AIDER_THINKING_TOKENS=
 
 ## Verify the SSL cert when connecting to models (default: True)

@@ -60,6 +60,8 @@ cog.out(model_list)
 - anthropic.claude-3-7-sonnet-20250219-v1:0
 - anthropic.claude-opus-4-20250514-v1:0
 - anthropic.claude-sonnet-4-20250514-v1:0
+- apac.anthropic.claude-3-5-sonnet-20241022-v2:0
+- apac.anthropic.claude-sonnet-4-20250514-v1:0
 - azure_ai/mistral-medium-2505
 - claude-3-5-haiku-20241022
 - claude-3-5-haiku-latest
@@ -91,6 +93,10 @@ cog.out(model_list)
 - mistral/codestral-latest
 - mistral/codestral-mamba-latest
 - mistral/devstral-small-2505
+- mistral/magistral-medium-2506
+- mistral/magistral-medium-latest
+- mistral/magistral-small-2506
+- mistral/magistral-small-latest
 - mistral/mistral-large-2402
 - mistral/mistral-large-2407
 - mistral/mistral-large-2411
@@ -113,7 +119,9 @@ cog.out(model_list)
 - mistral/pixtral-large-latest
 - openrouter/anthropic/claude-3.5-sonnet
 - openrouter/anthropic/claude-3.7-sonnet
+- openrouter/anthropic/claude-sonnet-4
 - openrouter/deepseek/deepseek-r1
+- openrouter/deepseek/deepseek-r1-0528
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
 - us.anthropic.claude-3-7-sonnet-20250219-v1:0
@@ -132,7 +140,9 @@ cog.out(model_list)
 - vertex_ai/claude-3-opus@20240229
 - vertex_ai/claude-3-sonnet
 - vertex_ai/claude-3-sonnet@20240229
+- vertex_ai/claude-opus-4
 - vertex_ai/claude-opus-4@20250514
+- vertex_ai/claude-sonnet-4
 - vertex_ai/claude-sonnet-4@20250514
 <!--[[[end]]]-->
 
