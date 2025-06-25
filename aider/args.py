@@ -481,10 +481,10 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--attribute-co-authored-by",
         action=argparse.BooleanOptionalAction,
-        default=False,
+        default=True,
         help=(
             "Attribute aider edits using the Co-authored-by trailer in the commit message"
-            " (default: False). If True, this takes precedence over default --attribute-author and"
+            " (default: True). If True, this takes precedence over default --attribute-author and"
             " --attribute-committer behavior unless they are explicitly set to True."
         ),
     )
