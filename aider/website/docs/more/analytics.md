@@ -105,6 +105,12 @@ If you want to just log analytics without reporting them, you can do:
 aider --analytics-log filename.jsonl --no-analytics
 ```
 
+### Sending analytics to custom PostHog project or installation
+
+Aider uses PostHog for analytics collection. You can configure aider to send analytics to your own PostHog project or a custom PostHog installation using these parameters:
+
+- `--analytics-posthog-project-api-key KEY` - Set a custom PostHog project API key
+- `--analytics-posthog-host HOST` - Set a custom PostHog host (default is app.posthog.com)
 
 ## Reporting issues
 
