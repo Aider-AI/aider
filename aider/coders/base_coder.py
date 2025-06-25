@@ -755,7 +755,7 @@ class Coder:
                 dict(role="user", content=repo_content),
                 dict(
                     role="assistant",
-                    content="Ok, I won't try and edit those files without asking first.",
+                    content="Ok, I won't try to edit those files without asking first.",
                 ),
             ]
         return repo_messages
