@@ -308,11 +308,9 @@ class InputOutput:
         self.yes = yes
 
         self.input_history_file = input_history_file
-        Path(self.input_history_file).parent.mkdir(parents=True, exist_ok=True)
         self.llm_history_file = llm_history_file
         if chat_history_file is not None:
             self.chat_history_file = Path(chat_history_file)
-            self.chat_history_file.parent.mkdir(parents=True, exist_ok=True)
         else:
             self.chat_history_file = None
 
@@ -733,6 +731,7 @@ class InputOutput:
         if not self.input_history_file:
             return
         try:
+            Path(self.input_history_file).parent.mkdir(parents=True, exist_ok=True)
             FileHistory(self.input_history_file).append_string(inp)
             # Also add to the in-memory history if it exists
             if self.prompt_session and self.prompt_session.history:
@@ -1118,6 +1117,7 @@ class InputOutput:
             text += "\n"
         if self.chat_history_file is not None:
             try:
+                self.chat_history_file.parent.mkdir(parents=True, exist_ok=True)
                 with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
                     f.write(text)
             except (PermissionError, OSError) as err:
