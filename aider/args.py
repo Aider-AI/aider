@@ -590,7 +590,7 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--analytics-posthog-project-api-key",
         metavar="ANALYTICS_POSTHOG_PROJECT_API_KEY",
-        help="Send analytics to custom PostHog project"
+        help="Send analytics to custom PostHog project",
     )
 
     #########

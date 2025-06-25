@@ -71,11 +71,11 @@ class Analytics:
     logfile = None
 
     def __init__(
-            self,
-            logfile=None,
-            permanently_disable=False,
-            posthog_host=None,
-            posthog_project_api_key=None
+        self,
+        logfile=None,
+        permanently_disable=False,
+        posthog_host=None,
+        posthog_project_api_key=None,
     ):
         self.logfile = logfile
         self.get_or_create_uuid()
