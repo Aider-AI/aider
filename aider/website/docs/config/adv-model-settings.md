@@ -1894,6 +1894,13 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: vertex_ai/gemini-2.5-flash
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  accepts_settings:
+  - thinking_tokens
+
 - name: vertex_ai/gemini-2.5-flash-preview-04-17
   edit_format: diff
   use_repo_map: true
@@ -1906,6 +1913,15 @@ cog.out("```\n")
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
+  - thinking_tokens
+
+- name: vertex_ai/gemini-2.5-pro
+  edit_format: diff-fenced
+  weak_model_name: vertex_ai/gemini-2.5-flash
+  use_repo_map: true
+  overeager: true
+  editor_model_name: vertex_ai/gemini-2.5-flash
+  accepts_settings:
   - thinking_tokens
 
 - name: vertex_ai/gemini-2.5-pro-exp-03-25

@@ -14,7 +14,10 @@
 - Enhanced commit message generation to use system prompt prefixes, by Luke Reeves.
 - Improved inline code rendering in Rich markdown output, by Vamsi Talupula.
 - Fixed Vertex AI model name prefixes in settings, by Wietse Venema.
-- Aider wrote 20% of the code in this release.
+- Improved `/read-only` command to resolve literal paths correctly, by Matteo Landi.
+- Skip expensive file tracking operations when `--skip-sanity-check-repo` is enabled for better performance, by Makar Ivashko.
+- Ensure pip is available before package installation.
+- Aider wrote 18% of the code in this release.
 
 ### Aider v0.84.0
 
