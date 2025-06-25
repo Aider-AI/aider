@@ -355,6 +355,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_chatito(self):
         self._test_language_repo_map("chatito", "chatito", "intent")
 
+    def test_language_clojure(self):
+        self._test_language_repo_map("clojure", "clj", "greet")
+
     def test_language_commonlisp(self):
         self._test_language_repo_map("commonlisp", "lisp", "greet")
 
