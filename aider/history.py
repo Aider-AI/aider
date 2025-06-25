@@ -64,7 +64,6 @@ class ChatSummary:
             return self.summarize_all(messages)
 
         # Split head and tail
-        head = messages[:split_index]
         tail = messages[split_index:]
 
         # Only size the head once
