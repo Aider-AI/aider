@@ -298,10 +298,10 @@
 ## Permanently disable analytics
 #analytics-disable: false
 
-## PostHog host (default: https://us.i.posthog.com)
+## Send analytics to custom PostHog instance
 #analytics-posthog-host: xxx
 
-## PostHog project api key (default: phc_99T7muzafUMMZX15H8XePbMSreEUzahHbtWjy3l5Qbv)
+## Send analytics to custom PostHog project
 #analytics-posthog-project-api-key: xxx
 
 ############

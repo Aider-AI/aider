@@ -43,7 +43,11 @@ cog.out(text)
 - Ensure pip is available before package installation.
 - Auto-create parent directories for chat history files to prevent startup errors, by contributor.
 - Fixed search block regex to accept optional closing tags when working with HTML content, by Mathis Beer.
-- Aider wrote 18% of the code in this release.
+- Co-authored-by attribution is now enabled by default for commit messages.
+- Added Clojure language support for repository maps, by Garrett Hopper.
+- Added custom PostHog analytics configuration options with `--analytics-posthog-host` and `--analytics-posthog-project-api-key` flags, by Vasil Markoukin.
+- Optimized chat history summarization performance, by jayeshthk.
+- Aider wrote 21% of the code in this release.
 
 ### Aider v0.84.0
 

@@ -77,10 +77,10 @@ cog.out(get_supported_languages_md())
 | capnp                | .capnp               |          |   ✓    |
 | chatito              | .chatito             |    ✓     |   ✓    |
 | clarity              | .clar                |          |   ✓    |
-| clojure              | .clj                 |          |   ✓    |
-| clojure              | .cljc                |          |   ✓    |
-| clojure              | .cljs                |          |   ✓    |
-| clojure              | .edn                 |          |   ✓    |
+| clojure              | .clj                 |    ✓     |   ✓    |
+| clojure              | .cljc                |    ✓     |   ✓    |
+| clojure              | .cljs                |    ✓     |   ✓    |
+| clojure              | .edn                 |    ✓     |   ✓    |
 | cmake                | .cmake               |          |   ✓    |
 | cmake                | CMakeLists.txt       |          |   ✓    |
 | commonlisp           | .cl                  |    ✓     |   ✓    |

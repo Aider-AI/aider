@@ -352,6 +352,12 @@ cog.outl("```")
 ## Permanently disable analytics
 #analytics-disable: false
 
+## Send analytics to custom PostHog instance
+#analytics-posthog-host: xxx
+
+## Send analytics to custom PostHog project
+#analytics-posthog-project-api-key: xxx
+
 ############
 # Upgrading:
 
