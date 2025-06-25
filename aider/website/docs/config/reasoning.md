@@ -25,7 +25,7 @@ aider --model r1
 ```
 
 Inside the aider chat, you can use `/thinking-tokens 4k` or `/reasoning-effort low` to change
-the amount of reasoning.
+the amount of reasoning. Use `/thinking-tokens 0` to disable thinking tokens.
 
 The rest of this document describes more advanced details which are mainly needed
 if you're configuring aider to work with a lesser known reasoning model or one served
@@ -47,6 +47,7 @@ You can use the `--thinking-tokens` switch to request
 the model use a certain number of thinking tokens.
 This switch is useful for Sonnet 3.7.
 You can specify the token budget like "1024", "1k", "8k" or "0.01M".
+Use "0" to disable thinking tokens.
 
 ### Model compatibility and settings
 

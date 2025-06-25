@@ -137,7 +137,7 @@ cog.outl("```")
 ## Set the reasoning_effort API parameter (default: not set)
 #reasoning-effort: xxx
 
-## Set the thinking token budget for models that support it (default: not set)
+## Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)
 #thinking-tokens: xxx
 
 ## Verify the SSL cert when connecting to models (default: True)
@@ -265,6 +265,9 @@ cog.outl("```")
 
 ## Enable/disable adding .aider* to .gitignore (default: True)
 #gitignore: true
+
+## Enable/disable the addition of files listed in .gitignore to Aider's editing scope.
+#add-gitignore-files: false
 
 ## Specify the aider ignore file (default: .aiderignore in git root)
 #aiderignore: .aiderignore

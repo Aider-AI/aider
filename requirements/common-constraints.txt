@@ -2,7 +2,7 @@
 #    uv pip compile --no-strip-extras --output-file=requirements/common-constraints.txt requirements/requirements.in requirements/requirements-browser.in requirements/requirements-dev.in requirements/requirements-help.in requirements/requirements-playwright.in
 aiohappyeyeballs==2.6.1
     # via aiohttp
-aiohttp==3.12.9
+aiohttp==3.12.12
     # via
     #   huggingface-hub
     #   litellm
@@ -61,7 +61,7 @@ click==8.2.1
     #   typer
 codespell==2.4.1
     # via -r requirements/requirements-dev.in
-cogapp==3.5.0
+cogapp==3.5.1
     # via -r requirements/requirements-dev.in
 colorama==0.4.6
     # via griffe
@@ -103,9 +103,9 @@ filetype==1.2.0
     # via llama-index-core
 flake8==7.2.0
     # via -r requirements/requirements.in
-fonttools==4.58.2
+fonttools==4.58.3
     # via matplotlib
-frozenlist==1.6.2
+frozenlist==1.7.0
     # via
     #   aiohttp
     #   aiosignal
@@ -122,14 +122,14 @@ gitpython==3.1.44
     #   streamlit
 google-ai-generativelanguage==0.6.15
     # via google-generativeai
-google-api-core[grpc]==2.25.0
+google-api-core[grpc]==2.25.1
     # via
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-cloud-bigquery
     #   google-cloud-core
     #   google-generativeai
-google-api-python-client==2.171.0
+google-api-python-client==2.172.0
     # via google-generativeai
 google-auth==2.40.3
     # via
@@ -164,7 +164,7 @@ grep-ast==0.9.0
     # via -r requirements/requirements.in
 griffe==1.7.3
     # via banks
-grpcio==1.72.1
+grpcio==1.73.0
     # via
     #   google-api-core
     #   grpcio-status
@@ -185,7 +185,7 @@ httpx==0.28.1
     #   litellm
     #   llama-index-core
     #   openai
-huggingface-hub[inference]==0.32.4
+huggingface-hub[inference]==0.33.0
     # via
     #   llama-index-embeddings-huggingface
     #   sentence-transformers
@@ -233,7 +233,7 @@ jsonschema-specifications==2025.4.1
     # via jsonschema
 kiwisolver==1.4.8
     # via matplotlib
-litellm==1.72.1
+litellm==1.72.4
     # via -r requirements/requirements.in
 llama-index-core==0.12.26
     # via
@@ -269,7 +269,7 @@ multiprocess==0.70.18
     # via pathos
 mypy-extensions==1.1.0
     # via typing-inspect
-narwhals==1.41.1
+narwhals==1.42.1
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -295,7 +295,7 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
-openai==1.84.0
+openai==1.86.0
     # via litellm
 oslex==0.1.3
     # via -r requirements/requirements.in
@@ -342,7 +342,7 @@ playwright==1.52.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.6.0
     # via pytest
-posthog==4.3.2
+posthog==4.9.0
     # via -r requirements/requirements.in
 pox==0.3.6
     # via pathos
@@ -352,7 +352,7 @@ pre-commit==4.2.0
     # via -r requirements/requirements-dev.in
 prompt-toolkit==3.0.51
     # via -r requirements/requirements.in
-propcache==0.3.1
+propcache==0.3.2
     # via
     #   aiohttp
     #   yarl
@@ -385,7 +385,7 @@ pycodestyle==2.13.0
     # via flake8
 pycparser==2.22
     # via cffi
-pydantic==2.11.5
+pydantic==2.11.6
     # via
     #   banks
     #   google-generativeai
@@ -450,7 +450,7 @@ regex==2024.11.6
     #   nltk
     #   tiktoken
     #   transformers
-requests==2.32.3
+requests==2.32.4
     # via
     #   google-api-core
     #   google-cloud-bigquery
@@ -554,7 +554,7 @@ tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
 tree-sitter-embedded-template==0.23.2
     # via tree-sitter-language-pack
-tree-sitter-language-pack==0.7.3
+tree-sitter-language-pack==0.8.0
     # via grep-ast
 tree-sitter-yaml==0.7.1
     # via tree-sitter-language-pack
@@ -594,7 +594,7 @@ urllib3==2.4.0
     # via
     #   mixpanel
     #   requests
-uv==0.7.11
+uv==0.7.13
     # via -r requirements/requirements-dev.in
 virtualenv==20.31.2
     # via pre-commit
@@ -608,7 +608,7 @@ wrapt==1.17.2
     # via
     #   deprecated
     #   llama-index-core
-yarl==1.20.0
+yarl==1.20.1
     # via aiohttp
-zipp==3.22.0
+zipp==3.23.0
     # via importlib-metadata

@@ -172,8 +172,8 @@ cog.out(get_supported_languages_md())
 | make                 | Makefile             |          |   ✓    |
 | markdown             | .markdown            |          |   ✓    |
 | markdown             | .md                  |          |   ✓    |
-| matlab               | .m                   |          |   ✓    |
-| matlab               | .mat                 |          |   ✓    |
+| matlab               | .m                   |    ✓     |   ✓    |
+| matlab               | .mat                 |    ✓     |   ✓    |
 | mermaid              | .mermaid             |          |   ✓    |
 | meson                | meson.build          |          |   ✓    |
 | ninja                | .ninja               |          |   ✓    |

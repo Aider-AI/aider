@@ -1001,7 +1001,11 @@ class InputOutput:
         self.console.print(*messages, style=style)
 
     def get_assistant_mdstream(self):
-        mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+        mdargs = dict(
+            style=self.assistant_output_color,
+            code_theme=self.code_theme,
+            inline_code_lexer="text",
+        )
         mdStream = MarkdownStream(mdargs=mdargs)
         return mdStream
 

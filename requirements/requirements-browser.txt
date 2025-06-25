@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.41.1
+narwhals==1.42.1
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -106,7 +106,7 @@ referencing==0.36.2
     #   -c requirements/common-constraints.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.3
+requests==2.32.4
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit

@@ -79,9 +79,9 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `4-turbo`: gpt-4-1106-preview
 - `4o`: gpt-4o
 - `deepseek`: deepseek/deepseek-chat
-- `flash`: gemini/gemini-2.5-flash-preview-04-17
-- `gemini`: gemini/gemini-2.5-pro-preview-06-05
-- `gemini-2.5-pro`: gemini/gemini-2.5-pro-preview-06-05
+- `flash`: gemini/gemini-2.5-flash
+- `gemini`: gemini/gemini-2.5-pro
+- `gemini-2.5-pro`: gemini/gemini-2.5-pro
 - `gemini-exp`: gemini/gemini-2.5-pro-exp-03-25
 - `grok3`: xai/grok-3-beta
 - `haiku`: claude-3-5-haiku-20241022

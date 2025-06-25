@@ -921,8 +921,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Repository sanity check failed")
             return 1
 
-    if repo:
-        analytics.event("repo", num_files=len(repo.get_tracked_files()))
+    if repo and not args.skip_sanity_check_repo:
+        num_files = len(repo.get_tracked_files())
+        analytics.event("repo", num_files=num_files)
     else:
         analytics.event("no-repo")
 

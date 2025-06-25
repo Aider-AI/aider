@@ -1,93 +1,3 @@
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905656}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905657}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905658}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905741}
-{"event": "repo", "properties": {"num_files": 624}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "exit", "properties": {"reason": "Exit flag set"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "repo", "properties": {"num_files": 624}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905743}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905784}
-{"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905784}
-{"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746905784}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906166}
-{"event": "repo", "properties": {"num_files": 624}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906167}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906167}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "udiff-simple"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906167}
-{"event": "command_edit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906168}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906321}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906476}
-{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906479}
-{"event": "command_reasoning-effort", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906480}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906483}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906490}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906498}
-{"event": "repo", "properties": {"num_files": 624}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906498}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906498}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "udiff-simple"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906498}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906515}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906516}
-{"event": "repo", "properties": {"num_files": 624}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906517}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906517}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "udiff-simple"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906517}
-{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906520}
-{"event": "command_reasoning-effort", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906522}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906525}
-{"event": "message_send", "properties": {"main_model": "o3", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "diff", "prompt_tokens": 16465, "completion_tokens": 7678, "total_tokens": 24143, "cost": 0.47177, "total_cost": 0.47177}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906630}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906722}
-{"event": "repo", "properties": {"num_files": 625}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906725}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906725}
-{"event": "cli session", "properties": {"main_model": "openrouter/REDACTED", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "openrouter/REDACTED", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906725}
-{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906728}
-{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906728}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906732}
-{"event": "repo", "properties": {"num_files": 625}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906734}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906734}
-{"event": "cli session", "properties": {"main_model": "openrouter/REDACTED", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "openrouter/REDACTED", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906734}
-{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906743}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906757}
-{"event": "repo", "properties": {"num_files": 625}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906759}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906759}
-{"event": "cli session", "properties": {"main_model": "openrouter/REDACTED", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "openrouter/REDACTED", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906759}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906773}
-{"event": "repo", "properties": {"num_files": 625}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906774}
 {"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906774}
 {"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-exp-03-25", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-exp-03-25", "edit_format": "udiff-simple"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906774}
 {"event": "command_settings", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1746906785}
@@ -998,3 +908,93 @@
 {"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227216}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227231}
 {"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 39764, "completion_tokens": 2126, "total_tokens": 41890, "cost": 0.151182, "total_cost": 0.33669000000000004}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227272}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227340}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 42644, "completion_tokens": 532, "total_tokens": 43176, "cost": 0.13591199999999998, "total_cost": 0.472602}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227351}
+{"event": "command_exit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227396}
+{"event": "exit", "properties": {"reason": "/exit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227396}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227737}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227737}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227737}
+{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro-preview-06-05", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "gemini/gemini-2.5-pro-preview-06-05", "edit_format": "diff-fenced"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749227737}
+{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749228116}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749228203}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749228203}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749228203}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749228205}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403019}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403020}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403020}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403022}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403044}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403044}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403044}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403053}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 19910, "completion_tokens": 501, "total_tokens": 20411, "cost": 0.067245, "total_cost": 0.067245}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403064}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403128}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 21221, "completion_tokens": 490, "total_tokens": 21711, "cost": 0.07101299999999999, "total_cost": 0.138258}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403139}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403173}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 22510, "completion_tokens": 486, "total_tokens": 22996, "cost": 0.07482000000000001, "total_cost": 0.213078}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403185}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749403188}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749475689}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749475689}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749475689}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749475692}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476063}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476064}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476064}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476066}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476328}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476328}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476328}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash-preview-04-17", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476328}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476348}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476348}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476348}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1749476351}
+{"event": "ai-comments file-add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750452185}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750452234}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750452234}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750452234}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750452312}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 19513, "completion_tokens": 403, "total_tokens": 19916, "cost": 0.064584, "total_cost": 0.064584}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750452327}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453265}
+{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453269}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453273}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453273}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453273}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453273}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 20234, "completion_tokens": 131, "total_tokens": 20365, "cost": 0.062667, "total_cost": 0.127251}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453275}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453290}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 11757, "completion_tokens": 432, "total_tokens": 12189, "cost": 0.041751, "total_cost": 0.041751}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453304}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453320}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453321}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453321}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453321}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453547}
+{"event": "repo", "properties": {"num_files": 218}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453547}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453547}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453547}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453561}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 6459, "completion_tokens": 175, "total_tokens": 6634, "cost": 0.022002, "total_cost": 0.022002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453569}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453660}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453660}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453660}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453660}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453661}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 10190, "completion_tokens": 67, "total_tokens": 10257, "cost": 0.031575, "total_cost": 0.031575}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453666}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453667}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 19251, "completion_tokens": 398, "total_tokens": 19649, "cost": 0.063723, "total_cost": 0.095298}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453683}
+{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453713}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453718}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453718}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453718}
+{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750453721}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454522}
+{"event": "repo", "properties": {"num_files": 627}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454523}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454523}
+{"event": "cli session", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454523}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454535}
+{"event": "message_send", "properties": {"main_model": "anthropic/claude-sonnet-4-20250514", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "anthropic/claude-sonnet-4-20250514", "edit_format": "diff", "prompt_tokens": 8240, "completion_tokens": 497, "total_tokens": 8737, "cost": 0.032174999999999995, "total_cost": 0.032174999999999995}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454548}
+{"event": "command_undo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454562}
+{"event": "exit", "properties": {"reason": "Control-C"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750454580}
+{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1750455437}
