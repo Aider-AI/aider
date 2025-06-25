@@ -1459,7 +1459,7 @@ cog.out("```\n")
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 65536
   caches_by_default: true
 
 - name: openrouter/deepseek/deepseek-chat-v3-0324:free

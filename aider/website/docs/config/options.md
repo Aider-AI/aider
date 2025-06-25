@@ -455,8 +455,8 @@ Aliases:
   - `--no-attribute-commit-message-committer`
 
 ### `--attribute-co-authored-by`
-Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
-Default: False  
+Attribute aider edits using the Co-authored-by trailer in the commit message (default: True). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
+Default: True  
 Environment variable: `AIDER_ATTRIBUTE_CO_AUTHORED_BY`  
 Aliases:
   - `--attribute-co-authored-by`
