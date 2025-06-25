@@ -308,7 +308,7 @@ class InputOutput:
         self.yes = yes
 
         if input_history_file is not None:
-            Path(input_history_file).mkdir(parents=True, exist_ok=True)
+            Path(input_history_file).parent.mkdir(parents=True, exist_ok=True)
         self.input_history_file = input_history_file
         self.llm_history_file = llm_history_file
         if chat_history_file is not None:
