@@ -891,6 +891,10 @@ class Commands:
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
 
+    def completions_export_context(self):
+        """Return possible completions for export-context command"""
+        return ["100", "1000", "5000"]
+
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
 
@@ -1611,7 +1615,6 @@ class Commands:
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
-
         chunks = self.coder.format_chat_chunks()
 
         markdown = ""
@@ -1652,6 +1655,209 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+
+    def _create_export_directory(self):
+        """Create and return a timestamped directory for exports"""
+        from datetime import datetime
+        import os
+        import tempfile
+
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H%M%S")
+        export_dir = os.path.join(tempfile.gettempdir(), f"export_{timestamp}")
+        os.makedirs(export_dir, exist_ok=True)
+        return export_dir
+
+    def _get_file_content(self, abs_fname, relative_fname):
+        """Get content for a file with appropriate handling for image files"""
+        if is_image_file(relative_fname):
+            # For image files we can't get content directly
+            return None
+
+        content = self.io.read_text(abs_fname)
+        return content
+
+    def _get_context_files(self):
+        """Get file information categorized by type (editable, read-only)"""
+        file_info = {
+            'editable': [],
+            'read_only': []
+        }
+
+        # Regular editable files
+        for fname in self.coder.abs_fnames:
+            relative_fname = self.coder.get_rel_fname(fname)
+            file_info['editable'].append((fname, relative_fname))
+
+        # Read-only files
+        for fname in self.coder.abs_read_only_fnames:
+            relative_fname = self.coder.get_rel_fname(fname)
+            file_info['read_only'].append((fname, relative_fname))
+
+        return file_info
+
+    def _parse_chunk_size(self, args):
+        """Parse the chunk size argument, return None for flat mode or a valid chunk size"""
+        if not args.strip():
+            return None
+
+        try:
+            chunk_size = int(args.strip())
+            if chunk_size < 50:
+                chunk_size = 50
+                self.io.tool_warning(f"Chunk size must be at least 50. Using default: 50")
+        except ValueError:
+            chunk_size = 50
+            self.io.tool_warning(f"Invalid chunk size. Using default: 50")
+
+        return chunk_size
+
+    def _export_flat(self, file_info, export_dir):
+        """Export each file to its own file with flattened path"""
+        import os
+
+        count = 0
+
+        # Process all file types
+        for file_type, files in file_info.items():
+            for abs_fname, rel_fname in files:
+                # Get content
+                content = self._get_file_content(abs_fname, rel_fname)
+
+                if content is None:
+                    if is_image_file(rel_fname):
+                        self.io.tool_warning(f"Skipping image file: {rel_fname}")
+                    else:
+                        self.io.tool_warning(f"Could not read {rel_fname}, skipping")
+                    continue
+
+                # Add a marker for read-only files
+                marker = ""
+                if file_type == 'read_only':
+                    marker = " (read-only)"
+
+                # Flatten filename and ensure .txt extension
+                flat_fname = f"{rel_fname}{marker}".replace('/', '|').replace('\\', '|')
+                if not flat_fname.endswith('.txt'):
+                    flat_fname += '.txt'
+                out_path = os.path.join(export_dir, flat_fname)
+
+                # Write content
+                try:
+                    with open(out_path, 'w', encoding=self.io.encoding) as f:
+                        f.write(content)
+                    count += 1
+                except Exception as e:
+                    self.io.tool_error(f"Error writing {flat_fname}: {str(e)}")
+
+        return count
+
+    def _export_chunked(self, file_info, export_dir, chunk_size):
+        """Export files as chunks, treating each file as atomic"""
+        import os
+
+        # Collect file contents with line counts (excluding empty lines)
+        file_data = []
+
+        # Process all file types
+        for file_type, files in file_info.items():
+            for abs_fname, rel_fname in files:
+                # Get content
+                content = self._get_file_content(abs_fname, rel_fname)
+
+                if content is None:
+                    if is_image_file(rel_fname):
+                        self.io.tool_warning(f"Skipping image file: {rel_fname}")
+                    else:
+                        self.io.tool_warning(f"Could not read {rel_fname}, skipping")
+                    continue
+
+                # Add a marker for read-only files
+                marker = ""
+                if file_type == 'read_only':
+                    marker = " (read-only)"
+
+                # Count non-empty lines
+                non_empty_lines = len([line for line in content.splitlines() if line.strip()])
+                file_data.append((f"{rel_fname}{marker}", content, non_empty_lines))
+
+        # Create chunks (treating each file as atomic)
+        chunks = []
+        current_chunk = []
+        current_chunk_size = 0
+
+        for rel_fname, content, lines in file_data:
+            # If adding this file would exceed chunk size and we already have files,
+            # start a new chunk (unless this is the first file in a new chunk)
+            if current_chunk and current_chunk_size + lines > chunk_size:
+                chunks.append(current_chunk)
+                current_chunk = []
+                current_chunk_size = 0
+
+            # Add file to current chunk
+            current_chunk.append((rel_fname, content))
+            current_chunk_size += lines
+
+        # Add the last chunk if not empty
+        if current_chunk:
+            chunks.append(current_chunk)
+
+        # Write chunk files
+        count = 0
+        for i, chunk in enumerate(chunks, 1):
+            # Create chunk filename - different format if only one file in the chunk
+            if len(chunk) == 1:
+                # Just use the single filename for single-file chunks
+                chunk_fname = f"{chunk[0][0]}_chunk_{i}"
+            else:
+                # Get first and last file in chunk for multi-file chunks
+                first_file = chunk[0][0]
+                last_file = chunk[-1][0]
+                chunk_fname = f"{first_file}...{last_file}_chunk_{i}"
+            # Replace path separators with pipe characters for better readability
+            chunk_fname = chunk_fname.replace('/', '|').replace('\\', '|')
+            # Ensure .txt extension
+            if not chunk_fname.endswith('.txt'):
+                chunk_fname += '.txt'
+            out_path = os.path.join(export_dir, chunk_fname)
+
+            # Write content with file markers
+            try:
+                with open(out_path, 'w', encoding=self.io.encoding) as f:
+                    for rel_fname, content in chunk:
+                        f.write(f"========== START FILE: {rel_fname} ==========\n")
+                        f.write(content)
+                        f.write("\n\n")
+                count += 1
+            except Exception as e:
+                self.io.tool_error(f"Error writing chunk {i}: {str(e)}")
+
+        return count
+
+    def cmd_export_context(self, args):
+        "Export files in chat context to a timestamped directory"
+
+        # Parse arguments
+        chunk_size = self._parse_chunk_size(args)
+
+        # Get files in context by category
+        file_info = self._get_context_files()
+
+        # Check if there are any files to export
+        total_files = len(file_info['editable']) + len(file_info['read_only'])
+        if total_files == 0:
+            self.io.tool_output("No files in context to export.")
+            return
+
+        # Create timestamped directory
+        export_dir = self._create_export_directory()
+
+        # Export files based on mode
+        if chunk_size is None:
+            count = self._export_flat(file_info, export_dir)
+            self.io.tool_output(f"Exported {count} files to {export_dir}/")
+        else:
+            count = self._export_chunked(file_info, export_dir, chunk_size)
+            self.io.tool_output(f"Exported {count} chunk files to {export_dir}/")
 
 
 def expand_subdir(file_path):
