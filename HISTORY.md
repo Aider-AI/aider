@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.85.0
 
 - Support for Responses API models like o1-pro, o3-pro.
 - Updated pricing for o3.
