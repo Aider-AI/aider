@@ -81,15 +81,20 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="Print each step without actually executing them"
     )
+    parser.add_argument("--force", action="store_true", help="Skip pre-push checks")
 
     args = parser.parse_args()
     dry_run = args.dry_run
+    force = args.force
 
-    # Perform checks before proceeding
-    check_branch()
-    check_working_directory_clean()
-    check_main_branch_up_to_date()
-    check_ok_to_push()
+    # Perform checks before proceeding unless --force is used
+    if not force:
+        check_branch()
+        check_working_directory_clean()
+        check_main_branch_up_to_date()
+        check_ok_to_push()
+    else:
+        print("Skipping pre-push checks due to --force flag.")
 
     new_version_str = args.new_version
     if not re.match(r"^\d+\.\d+\.\d+$", new_version_str):

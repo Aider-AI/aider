@@ -308,6 +308,12 @@ class InputOutput:
         self.yes = yes
 
         self.input_history_file = input_history_file
+        if self.input_history_file:
+            try:
+                Path(self.input_history_file).parent.mkdir(parents=True, exist_ok=True)
+            except (PermissionError, OSError) as e:
+                self.tool_warning(f"Could not create directory for input history: {e}")
+                self.input_history_file = None
         self.llm_history_file = llm_history_file
         if chat_history_file is not None:
             self.chat_history_file = Path(chat_history_file)
@@ -595,7 +601,7 @@ class InputOutput:
             current_text = buffer.text
 
             # Open the editor with the current text
-            edited_text = pipe_editor(input_data=current_text)
+            edited_text = pipe_editor(input_data=current_text, suffix="md")
 
             # Replace the buffer with the edited text, strip any trailing newlines
             buffer.text = edited_text.rstrip("\n")
@@ -749,9 +755,14 @@ class InputOutput:
         if not self.llm_history_file:
             return
         timestamp = datetime.now().isoformat(timespec="seconds")
-        with open(self.llm_history_file, "a", encoding=self.encoding) as log_file:
-            log_file.write(f"{role.upper()} {timestamp}\n")
-            log_file.write(content + "\n")
+        try:
+            Path(self.llm_history_file).parent.mkdir(parents=True, exist_ok=True)
+            with open(self.llm_history_file, "a", encoding="utf-8") as log_file:
+                log_file.write(f"{role.upper()} {timestamp}\n")
+                log_file.write(content + "\n")
+        except (PermissionError, OSError) as err:
+            self.tool_warning(f"Unable to write to llm history file {self.llm_history_file}: {err}")
+            self.llm_history_file = None
 
     def display_user_input(self, inp):
         if self.pretty and self.user_input_color:
@@ -1001,7 +1012,11 @@ class InputOutput:
         self.console.print(*messages, style=style)
 
     def get_assistant_mdstream(self):
-        mdargs = dict(style=self.assistant_output_color, code_theme=self.code_theme)
+        mdargs = dict(
+            style=self.assistant_output_color,
+            code_theme=self.code_theme,
+            inline_code_lexer="text",
+        )
         mdStream = MarkdownStream(mdargs=mdargs)
         return mdStream
 
@@ -1112,6 +1127,7 @@ class InputOutput:
             text += "\n"
         if self.chat_history_file is not None:
             try:
+                self.chat_history_file.parent.mkdir(parents=True, exist_ok=True)
                 with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
                     f.write(text)
             except (PermissionError, OSError) as err:
@@ -1144,18 +1160,19 @@ class InputOutput:
             ro_paths = []
             for rel_path in read_only_files:
                 abs_path = os.path.abspath(os.path.join(self.root, rel_path))
-                ro_paths.append(abs_path if len(abs_path) < len(rel_path) else rel_path)
+                ro_paths.append(Text(abs_path if len(abs_path) < len(rel_path) else rel_path))
 
-            files_with_label = ["Readonly:"] + ro_paths
+            files_with_label = [Text("Readonly:")] + ro_paths
             read_only_output = StringIO()
             Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
             read_only_lines = read_only_output.getvalue().splitlines()
             console.print(Columns(files_with_label))
 
         if editable_files:
-            files_with_label = editable_files
+            text_editable_files = [Text(f) for f in editable_files]
+            files_with_label = text_editable_files
             if read_only_files:
-                files_with_label = ["Editable:"] + editable_files
+                files_with_label = [Text("Editable:")] + text_editable_files
                 editable_output = StringIO()
                 Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
                 editable_lines = editable_output.getvalue().splitlines()

@@ -4,10 +4,10 @@ import subprocess
 import sys
 import traceback
 import warnings
-import shlex
 from dataclasses import dataclass
 from pathlib import Path
 
+import oslex
 from grep_ast import TreeContext, filename_to_lang
 from grep_ast.tsl import get_parser  # noqa: E402
 
@@ -45,7 +45,7 @@ class Linter:
             return fname
 
     def run_cmd(self, cmd, rel_fname, code):
-        cmd += " " + shlex.quote(rel_fname)
+        cmd += " " + oslex.quote(rel_fname)
 
         returncode = 0
         stdout = ""

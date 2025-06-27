@@ -47,6 +47,7 @@ class Commands:
             parser=self.parser,
             verbose=self.verbose,
             editor=self.editor,
+            original_read_only_fnames=self.original_read_only_fnames,
         )
 
     def __init__(
@@ -220,12 +221,18 @@ class Commands:
 
         self.io.tool_output(f"Scraping {url}...")
         if not self.scraper:
-            res = install_playwright(self.io)
-            if not res:
-                self.io.tool_warning("Unable to initialize playwright.")
+            disable_playwright = getattr(self.args, "disable_playwright", False)
+            if disable_playwright:
+                res = False
+            else:
+                res = install_playwright(self.io)
+                if not res:
+                    self.io.tool_warning("Unable to initialize playwright.")
 
             self.scraper = Scraper(
-                print_error=self.io.tool_error, playwright_available=res, verify_ssl=self.verify_ssl
+                print_error=self.io.tool_error,
+                playwright_available=res,
+                verify_ssl=self.verify_ssl,
             )
 
         content = self.scraper.scrape(url) or ""
@@ -339,7 +346,7 @@ class Commands:
             return
 
         commit_message = args.strip() if args else None
-        self.coder.repo.commit(message=commit_message)
+        self.coder.repo.commit(message=commit_message, coder=self.coder)
 
     def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"
@@ -837,7 +844,11 @@ class Commands:
                 )
                 continue
 
-            if self.coder.repo and self.coder.repo.git_ignored_file(matched_file):
+            if (
+                self.coder.repo
+                and self.coder.repo.git_ignored_file(matched_file)
+                and not self.coder.add_gitignore_files
+            ):
                 self.io.tool_error(f"Can't add {matched_file} which is in gitignore")
                 continue
 
@@ -1305,12 +1316,23 @@ class Commands:
         # First collect all expanded paths
         for pattern in filenames:
             expanded_pattern = expanduser(pattern)
-            if os.path.isabs(expanded_pattern):
-                # For absolute paths, glob it
-                matches = list(glob.glob(expanded_pattern))
+            path_obj = Path(expanded_pattern)
+            is_abs = path_obj.is_absolute()
+            if not is_abs:
+                path_obj = Path(self.coder.root) / path_obj
+
+            matches = []
+            # Check for literal path existence first
+            if path_obj.exists():
+                matches = [path_obj]
             else:
-                # For relative paths and globs, use glob from the root directory
-                matches = list(Path(self.coder.root).glob(expanded_pattern))
+                # If literal path doesn't exist, try globbing
+                if is_abs:
+                    # For absolute paths, glob it
+                    matches = [Path(p) for p in glob.glob(expanded_pattern)]
+                else:
+                    # For relative paths and globs, use glob from the root directory
+                    matches = list(Path(self.coder.root).glob(expanded_pattern))
 
             if not matches:
                 self.io.tool_error(f"No matches found for: {pattern}")
@@ -1385,7 +1407,30 @@ class Commands:
         "Print out the current settings"
         settings = format_settings(self.parser, self.args)
         announcements = "\n".join(self.coder.get_announcements())
+
+        # Build metadata for the active models (main, editor, weak)
+        model_sections = []
+        active_models = [
+            ("Main model", self.coder.main_model),
+            ("Editor model", getattr(self.coder.main_model, "editor_model", None)),
+            ("Weak model", getattr(self.coder.main_model, "weak_model", None)),
+        ]
+        for label, model in active_models:
+            if not model:
+                continue
+            info = getattr(model, "info", {}) or {}
+            if not info:
+                continue
+            model_sections.append(f"{label} ({model.name}):")
+            for k, v in sorted(info.items()):
+                model_sections.append(f"  {k}: {v}")
+            model_sections.append("")  # blank line between models
+
+        model_metadata = "\n".join(model_sections)
+
         output = f"{announcements}\n{settings}"
+        if model_metadata:
+            output += "\n" + model_metadata
         self.io.tool_output(output)
 
     def completions_raw_load(self, document, complete_event):
@@ -1507,7 +1552,7 @@ class Commands:
         return self.cmd_editor(args)
 
     def cmd_think_tokens(self, args):
-        "Set the thinking token budget (supports formats like 8096, 8k, 10.5k, 0.5M)"
+        """Set the thinking token budget, eg: 8096, 8k, 10.5k, 0.5M, or 0 to disable."""
         model = self.coder.main_model
 
         if not args.strip():
@@ -1525,10 +1570,16 @@ class Commands:
         value = args.strip()
         model.set_thinking_tokens(value)
 
-        formatted_budget = model.get_thinking_tokens()
-        budget = model.get_raw_thinking_tokens()
+        # Handle the special case of 0 to disable thinking tokens
+        if value == "0":
+            self.io.tool_output("Thinking tokens disabled.")
+        else:
+            formatted_budget = model.get_thinking_tokens()
+            budget = model.get_raw_thinking_tokens()
+            self.io.tool_output(
+                f"Set thinking token budget to {budget:,} tokens ({formatted_budget})."
+            )
 
-        self.io.tool_output(f"Set thinking token budget to {budget:,} tokens ({formatted_budget}).")
         self.io.tool_output()
 
         # Output announcements

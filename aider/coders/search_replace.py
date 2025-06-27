@@ -109,7 +109,7 @@ class RelativeIndenter:
         """
 
         if self.marker in text:
-            raise ValueError("Text already contains the outdent marker: {self.marker}")
+            raise ValueError(f"Text already contains the outdent marker: {self.marker}")
 
         lines = text.splitlines(keepends=True)
 
@@ -235,20 +235,6 @@ Left
 Left
 """
 
-"""
-ri = RelativeIndenter([example])
-dump(example)
-
-rel_example = ri.make_relative(example)
-dump(repr(rel_example))
-
-abs_example = ri.make_absolute(rel_example)
-dump(abs_example)
-
-
-sys.exit()
-"""
-
 
 def relative_indent(texts):
     ri = RelativeIndenter(texts)
@@ -349,7 +335,7 @@ def lines_to_chars(lines, mapping):
     return new_text
 
 
-def dmp_lines_apply(texts, remap=True):
+def dmp_lines_apply(texts):
     debug = False
     # debug = True
 
@@ -654,8 +640,6 @@ def proc(dname):
         # (dmp_apply, all_preprocs),
         (dmp_lines_apply, all_preprocs),
     ]
-
-    _strategies = editblock_strategies  # noqa: F841
 
     short_names = dict(
         search_and_replace="sr",

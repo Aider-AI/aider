@@ -8,6 +8,7 @@ import platform
 import sys
 import time
 from dataclasses import dataclass, fields
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
@@ -15,8 +16,10 @@ import json5
 import yaml
 from PIL import Image
 
+from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
 
@@ -69,6 +72,8 @@ claude-3-opus-20240229
 claude-3-sonnet-20240229
 claude-3-5-sonnet-20240620
 claude-3-5-sonnet-20241022
+claude-sonnet-4-20250514
+claude-opus-4-20250514
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
@@ -76,9 +81,9 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
     # Claude models
-    "sonnet": "anthropic/claude-3-7-sonnet-20250219",
+    "sonnet": "anthropic/claude-sonnet-4-20250514",
     "haiku": "claude-3-5-haiku-20241022",
-    "opus": "claude-3-opus-20240229",
+    "opus": "claude-opus-4-20250514",
     # GPT models
     "4": "gpt-4-0613",
     "4o": "gpt-4o",
@@ -88,12 +93,14 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
-    "flash": "gemini/gemini-2.0-flash-exp",
+    "flash": "gemini/gemini-2.5-flash",
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
-    "gemini-2.5-pro": "gemini/gemini-2.5-pro-exp-03-25",
-    "gemini": "gemini/gemini-2.5-pro-preview-03-25",
+    "gemini-2.5-pro": "gemini/gemini-2.5-pro",
+    "gemini": "gemini/gemini-2.5-pro",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
+    "grok3": "xai/grok-3-beta",
+    "optimus": "openrouter/openrouter/optimus-alpha",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -147,8 +154,13 @@ class ModelInfoManager:
         self.verify_ssl = True
         self._cache_loaded = False
 
+        # Manager for the cached OpenRouter model database
+        self.openrouter_manager = OpenRouterModelManager()
+
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
+        if hasattr(self, "openrouter_manager"):
+            self.openrouter_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -229,7 +241,67 @@ class ModelInfoManager:
         if litellm_info:
             return litellm_info
 
+        if not cached_info and model.startswith("openrouter/"):
+            # First try using the locally cached OpenRouter model database
+            openrouter_info = self.openrouter_manager.get_model_info(model)
+            if openrouter_info:
+                return openrouter_info
+
+            # Fallback to legacy web-scraping if the API cache does not contain the model
+            openrouter_info = self.fetch_openrouter_model_info(model)
+            if openrouter_info:
+                return openrouter_info
+
         return cached_info
+
+    def fetch_openrouter_model_info(self, model):
+        """
+        Fetch model info by scraping the openrouter model page.
+        Expected URL: https://openrouter.ai/<model_route>
+        Example: openrouter/qwen/qwen-2.5-72b-instruct:free
+        Returns a dict with keys: max_tokens, max_input_tokens, max_output_tokens,
+        input_cost_per_token, output_cost_per_token.
+        """
+        url_part = model[len("openrouter/") :]
+        url = "https://openrouter.ai/" + url_part
+        try:
+            import requests
+
+            response = requests.get(url, timeout=5, verify=self.verify_ssl)
+            if response.status_code != 200:
+                return {}
+            html = response.text
+            import re
+
+            if re.search(
+                rf"The model\s*.*{re.escape(url_part)}.* is not available", html, re.IGNORECASE
+            ):
+                print(f"\033[91mError: Model '{url_part}' is not available\033[0m")
+                return {}
+            text = re.sub(r"<[^>]+>", " ", html)
+            context_match = re.search(r"([\d,]+)\s*context", text)
+            if context_match:
+                context_str = context_match.group(1).replace(",", "")
+                context_size = int(context_str)
+            else:
+                context_size = None
+            input_cost_match = re.search(r"\$\s*([\d.]+)\s*/M input tokens", text, re.IGNORECASE)
+            output_cost_match = re.search(r"\$\s*([\d.]+)\s*/M output tokens", text, re.IGNORECASE)
+            input_cost = float(input_cost_match.group(1)) / 1000000 if input_cost_match else None
+            output_cost = float(output_cost_match.group(1)) / 1000000 if output_cost_match else None
+            if context_size is None or input_cost is None or output_cost is None:
+                return {}
+            params = {
+                "max_input_tokens": context_size,
+                "max_tokens": context_size,
+                "max_output_tokens": context_size,
+                "input_cost_per_token": input_cost,
+                "output_cost_per_token": output_cost,
+            }
+            return params
+        except Exception as e:
+            print("Error fetching openrouter info:", str(e))
+            return {}
 
 
 model_info_manager = ModelInfoManager()
@@ -312,7 +384,11 @@ class Model(ModelSettings):
             self.apply_generic_model_settings(model)
 
         # Apply override settings last if they exist
-        if self.extra_model_settings and self.extra_model_settings.extra_params:
+        if (
+            self.extra_model_settings
+            and self.extra_model_settings.extra_params
+            and self.extra_model_settings.name == "aider/extra_params"
+        ):
             # Initialize extra_params if it doesn't exist
             if not self.extra_params:
                 self.extra_params = {}
@@ -326,14 +402,38 @@ class Model(ModelSettings):
                     # For non-dict values, simply update
                     self.extra_params[key] = value
 
+        # Ensure OpenRouter models accept thinking_tokens and reasoning_effort
+        if self.name.startswith("openrouter/"):
+            if self.accepts_settings is None:
+                self.accepts_settings = []
+            if "thinking_tokens" not in self.accepts_settings:
+                self.accepts_settings.append("thinking_tokens")
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
+
     def apply_generic_model_settings(self, model):
         if "/o3-mini" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.use_temperature = False
             self.system_prompt_prefix = "Formatting re-enabled. "
+            self.system_prompt_prefix = "Formatting re-enabled. "
             if "reasoning_effort" not in self.accepts_settings:
                 self.accepts_settings.append("reasoning_effort")
+            return  # <--
+
+        if "gpt-4.1-mini" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = False
+            return  # <--
+
+        if "gpt-4.1" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.reminder = "sys"
+            self.examples_as_sys_msg = False
             return  # <--
 
         if "/o1-mini" in model:
@@ -439,6 +539,14 @@ class Model(ModelSettings):
             self.extra_params = dict(top_p=0.95)
             return  # <--
 
+        if "qwen3" in model and "235b" in model:
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.system_prompt_prefix = "/no_think"
+            self.use_temperature = 0.7
+            self.extra_params = {"top_p": 0.8, "top_k": 20, "min_p": 0.0}
+            return  # <--
+
         # use the defaults
         if self.edit_format == "diff":
             self.use_repo_map = True
@@ -486,6 +594,8 @@ class Model(ModelSettings):
 
         if not self.editor_edit_format:
             self.editor_edit_format = self.editor_model.edit_format
+            if self.editor_edit_format in ("diff", "whole", "diff-fenced"):
+                self.editor_edit_format = "editor-" + self.editor_edit_format
 
         return self.editor_model
 
@@ -636,11 +746,18 @@ class Model(ModelSettings):
     def set_reasoning_effort(self, effort):
         """Set the reasoning effort parameter for models that support it"""
         if effort is not None:
-            if not self.extra_params:
-                self.extra_params = {}
-            if "extra_body" not in self.extra_params:
-                self.extra_params["extra_body"] = {}
-            self.extra_params["extra_body"]["reasoning_effort"] = effort
+            if self.name.startswith("openrouter/"):
+                if not self.extra_params:
+                    self.extra_params = {}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning"] = {"effort": effort}
+            else:
+                if not self.extra_params:
+                    self.extra_params = {}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                self.extra_params["extra_body"]["reasoning_effort"] = effort
 
     def parse_token_value(self, value):
         """
@@ -677,6 +794,7 @@ class Model(ModelSettings):
         """
         Set the thinking token budget for models that support it.
         Accepts formats: 8096, "8k", "10.5k", "0.5M", "10K", etc.
+        Pass "0" to disable thinking tokens.
         """
         if value is not None:
             num_tokens = self.parse_token_value(value)
@@ -686,9 +804,19 @@ class Model(ModelSettings):
 
             # OpenRouter models use 'reasoning' instead of 'thinking'
             if self.name.startswith("openrouter/"):
-                self.extra_params["reasoning"] = {"max_tokens": num_tokens}
+                if "extra_body" not in self.extra_params:
+                    self.extra_params["extra_body"] = {}
+                if num_tokens > 0:
+                    self.extra_params["extra_body"]["reasoning"] = {"max_tokens": num_tokens}
+                else:
+                    if "reasoning" in self.extra_params["extra_body"]:
+                        del self.extra_params["extra_body"]["reasoning"]
             else:
-                self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                if num_tokens > 0:
+                    self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                else:
+                    if "thinking" in self.extra_params:
+                        del self.extra_params["thinking"]
 
     def get_raw_thinking_tokens(self):
         """Get formatted thinking token budget if available"""
@@ -696,8 +824,13 @@ class Model(ModelSettings):
 
         if self.extra_params:
             # Check for OpenRouter reasoning format
-            if "reasoning" in self.extra_params and "max_tokens" in self.extra_params["reasoning"]:
-                budget = self.extra_params["reasoning"]["max_tokens"]
+            if self.name.startswith("openrouter/"):
+                if (
+                    "extra_body" in self.extra_params
+                    and "reasoning" in self.extra_params["extra_body"]
+                    and "max_tokens" in self.extra_params["extra_body"]["reasoning"]
+                ):
+                    budget = self.extra_params["extra_body"]["reasoning"]["max_tokens"]
             # Check for standard thinking format
             elif (
                 "thinking" in self.extra_params and "budget_tokens" in self.extra_params["thinking"]
@@ -727,12 +860,21 @@ class Model(ModelSettings):
 
     def get_reasoning_effort(self):
         """Get reasoning effort value if available"""
-        if (
-            self.extra_params
-            and "extra_body" in self.extra_params
-            and "reasoning_effort" in self.extra_params["extra_body"]
-        ):
-            return self.extra_params["extra_body"]["reasoning_effort"]
+        if self.extra_params:
+            # Check for OpenRouter reasoning format
+            if self.name.startswith("openrouter/"):
+                if (
+                    "extra_body" in self.extra_params
+                    and "reasoning" in self.extra_params["extra_body"]
+                    and "effort" in self.extra_params["extra_body"]["reasoning"]
+                ):
+                    return self.extra_params["extra_body"]["reasoning"]["effort"]
+            # Check for standard reasoning_effort format (e.g. in extra_body)
+            elif (
+                "extra_body" in self.extra_params
+                and "reasoning_effort" in self.extra_params["extra_body"]
+            ):
+                return self.extra_params["extra_body"]["reasoning_effort"]
         return None
 
     def is_deepseek_r1(self):
@@ -743,6 +885,57 @@ class Model(ModelSettings):
 
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
+
+    def github_copilot_token_to_open_ai_key(self, extra_headers):
+        # check to see if there's an openai api key
+        # If so, check to see if it's expire
+        openai_api_key = "OPENAI_API_KEY"
+
+        if openai_api_key not in os.environ or (
+            int(dict(x.split("=") for x in os.environ[openai_api_key].split(";"))["exp"])
+            < int(datetime.now().timestamp())
+        ):
+            import requests
+
+            class GitHubCopilotTokenError(Exception):
+                """Custom exception for GitHub Copilot token-related errors."""
+
+                pass
+
+            # Validate GitHub Copilot token exists
+            if "GITHUB_COPILOT_TOKEN" not in os.environ:
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable not found")
+
+            github_token = os.environ["GITHUB_COPILOT_TOKEN"]
+            if not github_token.strip():
+                raise KeyError("GITHUB_COPILOT_TOKEN environment variable is empty")
+
+            headers = {
+                "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
+                "Editor-Version": extra_headers["Editor-Version"],
+                "Copilot-Integration-Id": extra_headers["Copilot-Integration-Id"],
+                "Content-Type": "application/json",
+            }
+
+            url = "https://api.github.com/copilot_internal/v2/token"
+            res = requests.get(url, headers=headers)
+            if res.status_code != 200:
+                safe_headers = {k: v for k, v in headers.items() if k != "Authorization"}
+                token_preview = github_token[:5] + "..." if len(github_token) >= 5 else github_token
+                safe_headers["Authorization"] = f"Bearer {token_preview}"
+                raise GitHubCopilotTokenError(
+                    f"GitHub Copilot API request failed (Status: {res.status_code})\n"
+                    f"URL: {url}\n"
+                    f"Headers: {json.dumps(safe_headers, indent=2)}\n"
+                    f"JSON: {res.text}"
+                )
+
+            response_data = res.json()
+            token = response_data.get("token")
+            if not token:
+                raise GitHubCopilotTokenError("Response missing 'token' field")
+
+            os.environ[openai_api_key] = token
 
     def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
@@ -785,6 +978,16 @@ class Model(ModelSettings):
             dump(kwargs)
         kwargs["messages"] = messages
 
+        # Are we using github copilot?
+        if "GITHUB_COPILOT_TOKEN" in os.environ:
+            if "extra_headers" not in kwargs:
+                kwargs["extra_headers"] = {
+                    "Editor-Version": f"aider/{__version__}",
+                    "Copilot-Integration-Id": "vscode-chat",
+                }
+
+            self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
+
         res = litellm.completion(**kwargs)
         return hash_object, res
 
@@ -795,6 +998,9 @@ class Model(ModelSettings):
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)
         retry_delay = 0.125
+
+        if self.verbose:
+            dump(messages)
 
         while True:
             try:

@@ -264,12 +264,13 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>701,602</td><td class='right'>85.1%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>71,324</td><td class='right'>8.6%</td></tr>
-<tr><td>openrouter/openrouter/quasar-alpha</td><td class='right'>36,847</td><td class='right'>4.5%</td></tr>
-<tr><td>openrouter/deepseek/deepseek-chat-v3-0324:free</td><td class='right'>11,324</td><td class='right'>1.4%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>1,755</td><td class='right'>0.2%</td></tr>
-<tr><td>vertex_ai/REDACTED</td><td class='right'>1,739</td><td class='right'>0.2%</td></tr>
+<tr><td>anthropic/claude-sonnet-4-20250514</td><td class='right'>557,537</td><td class='right'>43.6%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>459,688</td><td class='right'>36.0%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>167,714</td><td class='right'>13.1%</td></tr>
+<tr><td>o3</td><td class='right'>44,529</td><td class='right'>3.5%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-preview-05-06</td><td class='right'>40,256</td><td class='right'>3.1%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-preview-05-20</td><td class='right'>7,638</td><td class='right'>0.6%</td></tr>
+<tr><td>gemini/REDACTED</td><td class='right'>643</td><td class='right'>0.1%</td></tr>
 </table>
 
 {: .note :}
@@ -286,6 +287,16 @@ The
 by doing something like `git blame` on the repo,
 and counting up who wrote all the new lines of code in each release.
 Only lines in source code files are counted, not documentation or prompt files.
+
+## Why did aider ignore/discard its proposed edits after it asked to add a new file to the chat?
+
+If aider prompts you to add a new file to the chat and you say yes,
+it will re-submit the original request. 
+The fact that the LLM's reply indicated that it needed to see another file (and you said yes)
+is often a sign that the LLM should have been able to see/edit that file in the first place. 
+Without access to it, there is increased chance that it's done a bad implementation of the requested change.
+Often LLMs will hallucinate content for the files they needed but didn't have.
+So aider re-submits the original request in this situation.
 
 ## Why does aider sometimes stop highlighting code in its replies?
 

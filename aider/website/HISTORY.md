@@ -24,12 +24,151 @@ cog.out(text)
 ]]]-->
 
 
+### main branch
+
+- Added support for new Gemini models including `gemini-2.5-pro`, `gemini-2.5-flash`, and `gemini-2.5-pro-preview-06-05` with thinking tokens support.
+- Updated model aliases: `flash` now points to `gemini-2.5-flash` and `gemini` now points to `gemini-2.5-pro`.
+- Added `--add-gitignore-files` flag to enable adding files listed in .gitignore to Aider's editing scope, by omarcinkonis.
+- Added `--commit-language` option to specify the language for commit messages, by Kyosuke Takayama.
+- Enhanced thinking tokens support: can now be disabled by setting to 0, and improved help text with examples.
+- Added MATLAB language support for repository maps, by Matthew Tofano.
+- Added support for OpenAI o3-pro model across multiple providers.
+- Improved GitHub Copilot token handling with better validation and error messages, by Vincent Taverna and Sebastian Estrella.
+- Fixed encoding issues in git diff output and LLM history logging.
+- Enhanced commit message generation to use system prompt prefixes, by Luke Reeves.
+- Improved inline code rendering in Rich markdown output, by Vamsi Talupula.
+- Fixed Vertex AI model name prefixes in settings, by Wietse Venema.
+- Improved `/read-only` command to resolve literal paths correctly, by Matteo Landi.
+- Skip expensive file tracking operations when `--skip-sanity-check-repo` is enabled for better performance, by Makar Ivashko.
+- Ensure pip is available before package installation.
+- Auto-create parent directories for chat history files to prevent startup errors, by contributor.
+- Fixed search block regex to accept optional closing tags when working with HTML content, by Mathis Beer.
+- Co-authored-by attribution is now enabled by default for commit messages.
+- Added Clojure language support for repository maps, by Garrett Hopper.
+- Added custom PostHog analytics configuration options with `--analytics-posthog-host` and `--analytics-posthog-project-api-key` flags, by Vasil Markoukin.
+- Optimized chat history summarization performance, by jayeshthk.
+- Aider wrote 21% of the code in this release.
+
+### Aider v0.84.0
+
+- Added support for new Claude models including the Sonnet 4 and Opus 4 series (e.g., `claude-sonnet-4-20250514`,
+`claude-opus-4-20250514`) across various providers. The default `sonnet` and `opus` aliases were updated to these newer
+versions.
+- Added support for the `vertex_ai/gemini-2.5-flash-preview-05-20` model.
+- Fixed OpenRouter token cost calculation for improved accuracy.
+- Updated default OpenRouter models during onboarding to `deepseek/deepseek-r1:free` for the free tier and
+`anthropic/claude-sonnet-4` for paid tiers.
+- Automatically refresh GitHub Copilot tokens when used as OpenAI API keys, by Lih Chen.
+- Aider wrote 79% of the code in this release.
+
+### Aider v0.83.2
+
+- Bumped configargparse to 1.7.1 as 1.7 was pulled.
+- Added shell tab completion for file path arguments (by saviour) and for `--edit-format`/`--editor-edit-format` options.
+- Improved OpenRouter model metadata handling by introducing a local cache, increasing reliability and performance.
+- The `/settings` command now displays detailed metadata for active main, editor, and weak models.
+- Fixed an issue where files explicitly added via the command line were not correctly ignored if listed in `.gitignore`.
+- Improved automatic commit messages by providing more context during their generation, by wangboxue.
+
+### Aider v0.83.1
+
+- Improved user language detection by correctly normalizing hyphenated language codes (e.g., `en-US` to `en`) and enhancing the validation of locale results.
+- Prevented Aider from instructing the LLM to reply in 'C' or 'POSIX' when these are detected as the system locale.
+- Displayed a spinner with the model name when generating commit messages.
+
+### Aider v0.83.0
+
+- Added support for `gemini-2.5-pro-preview-05-06` models.
+- Added support for `qwen3-235b` models.
+- Added repo-map support for OCaml and OCaml interface files, by Andrey Popp.
+- Added a spinner animation while waiting for the LLM to start streaming its response.
+- Updated the spinner animation to a Knight Rider style.
+- Introduced `--attribute-co-authored-by` option to add co-author trailer to commit messages, by Andrew Grigorev.
+- Updated Gemini model aliases (e.g., `gemini`, `gemini-2.5-pro`) to point to the `05-06` preview versions.
+- Marked Gemini 2.5 Pro preview models as `overeager` by default.
+- Commit message prompt specifies the user's language.
+- Updated the default weak model for Gemini 2.5 Pro models to `gemini/gemini-2.5-flash-preview-04-17`.
+- Corrected `gemini-2.5-pro-exp-03-25` model settings to reflect its lack of support for `thinking_budget`.
+- Ensured model-specific system prompt prefixes are placed on a new line before the main system prompt.
+- Added tracking of total tokens sent and received, now included in benchmark statistics.
+- Automatically fetch model parameters (context window, pricing) for OpenRouter models directly from their website, by Stefan Hladnik.
+- Enabled support for `thinking_tokens` and `reasoning_effort` parameters for OpenRouter models.
+- Improved cost calculation using `litellm.completion_cost` where available.
+- Added model settings for `openrouter/google/gemini-2.5-pro-preview-03-25`.
+- Added `--disable-playwright` flag to prevent Playwright installation prompts and usage, by Andrew Grigorev.
+- The `aider scrape` command-line tool will now use Playwright for web scraping if it is available, by Jon Keys.
+- Fixed linter command execution on Windows by adopting `oslex` for argument quoting, by Titusz Pan.
+- Improved cross-platform display of shell commands by using `oslex` for robust argument quoting, by Titusz Pan.
+- Improved `/ask` mode to instruct the LLM to elide unchanging code in its responses.
+- Ensured web scraping in the GUI also respects Playwright availability and the `--disable-playwright` flag.
+- Improved display of filenames in the prompt header using rich Text formatting.
+- Enabled `reasoning_effort` for Gemini 2.5 Flash models.
+- Added a `--shell-completions` argument to generate shell completion scripts (e.g., for bash, zsh).
+- Explicit `--attribute-author` or `--attribute-committer` flags now override the default behavior when `--attribute-co-authored-by` is used, allowing finer control over commit attribution, by Andrew Grigorev.
+- Fixed an issue where read-only status of files might not be preserved correctly by some commands (e.g. `/drop` after adding a read-only file).
+- The `aider-args` utility (or `python -m aider.args`) now defaults to printing a sample YAML configuration if no arguments are provided.
+- Displayed token count progress and the name of the file or identifier being processed during repo map updates.
+- Extended the waiting spinner to also show for non-streaming responses and further enhanced its animation with console width clipping, cursor hiding, and a more continuous appearance.
+- Dropped support for Python 3.9.
+- Aider wrote 55% of the code in this release.
+
+### Aider v0.82.3
+
+- Add support for `gemini-2.5-flash-preview-04-17` models.
+- Improved robustness of edit block parsing when filenames start with backticks or fences.
+- Add new `udiff-simple` edit format, for Gemini 2.5 Pro.
+- Update default weak/editor models for Gemini 2.5 Pro models to use `gemini-2.5-flash-preview-04-17`.
+- Instruct models to reply in the user's detected system language.
+- Fix parsing of diffs for newly created files (`--- /dev/null`).
+- Add markdown syntax highlighting support when editing multi-line commit messages via `/commit`, by Kay Gosho.
+- Set Gemini 2.5 Pro models to use the `overeager` prompt setting by default.
+- Add common file types (`.svg`, `.pdf`) to the default list of ignored files for AI comment scanning (`--watch`).
+- Skip scanning files larger than 1MB for AI comments (`--watch`).
+
+### Aider v0.82.2
+
+- Fix editing shell files with diff-fenced, by zjy1412.
+- Improve robustness of patch application by allowing multiple update/delete actions for the same file within a single response.
+- Update prompts to instruct LLMs to consolidate all edits for a given file into a single block within the patch.
+
+### Aider v0.82.1
+
+- Added support for `o3` and `o4-mini` including provider-specific versions for OpenAI, OpenRouter, and Azure.
+- Added support for Azure specific `gpt-4.1` and `gpt-4.1-mini` models.
+- Disabled streaming for `o3` models since you need identity verification to stream.
+- Fixed handling of file paths in unified diffs, especially those generated by git.
+
+### Aider v0.82.0
+
+- Support for GPT 4.1, mini and nano.
+- Added new `patch` edit format for OpenAI's GPT-4.1 model.
+- Improved support for using architect mode with Gemini 2.5 Pro.
+- Added new `editor-diff`, `editor-whole`, and `editor-diff-fenced` edit formats.
+- Bugfix for automatically selecting the best edit format to use in architect mode.
+- Added support for `grok-3-fast-beta` and `grok-3-mini-fast-beta` models.
+- Aider wrote 92% of the code in this release.
+
+### Aider v0.81.3
+
+- Commit messages generated by aider are no longer forced to be entirely lowercase, by Peter Hadlaw.
+- Updated default settings for Grok models.
+
+### Aider v0.81.2
+
+- Add support for `xai/grok-3-beta`, `xai/grok-3-mini-beta`, `openrouter/x-ai/grok-3-beta`, `openrouter/x-ai/grok-3-mini-beta`, and `openrouter/openrouter/optimus-alpha` models.
+- Add alias "grok3" for `xai/grok-3-beta`.
+- Add alias "optimus" for `openrouter/openrouter/optimus-alpha`.
+- Fix URL extraction from error messages.
+- Allow adding files by full path even if a file with the same basename is already in the chat.
+- Fix quoting of values containing '#' in the sample `aider.conf.yml`.
+- Add support for Fireworks AI model 'deepseek-v3-0324', by Felix Lisczyk.
+- Commit messages generated by aider are now lowercase, by Anton Ödman.
+
 ### Aider v0.81.1
 
 - Added support for the `gemini/gemini-2.5-pro-preview-03-25` model.
 - Updated the `gemini` alias to point to `gemini/gemini-2.5-pro-preview-03-25`.
 - Added the `gemini-exp` alias for `gemini/gemini-2.5-pro-exp-03-25`.
-- Aider wrote 87% of the code in this release.
 
 ### Aider v0.81.0
 
@@ -341,7 +480,7 @@ cog.out(text)
 - [Aider works with LLM web chat UIs](https://aider.chat/docs/usage/copypaste.html).
   - New `--copy-paste` mode.
   - New `/copy-context` command.
-- [Set API keys and other environment variables for all providers from command line or yaml conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
+- [Set API keys and other environment variables for all providers from command line or YAML conf file](https://aider.chat/docs/config/aider_conf.html#storing-llm-keys).
   - New `--api-key provider=key` setting.
   - New `--set-env VAR=value` setting.
 - Added bash and zsh support to `--watch-files`.
@@ -509,7 +648,7 @@ cog.out(text)
 
 ### Aider v0.59.1
 
-- Check for obsolete `yes: true` in yaml config, show helpful error.
+- Check for obsolete `yes: true` in YAML config, show helpful error.
 - Model settings for openrouter/anthropic/claude-3.5-sonnet:beta
 
 ### Aider v0.59.0
@@ -519,7 +658,7 @@ cog.out(text)
   - Still auto-completes the full paths of the repo files like `/add`.
   - Now supports globs like `src/**/*.py`
 - Renamed `--yes` to `--yes-always`.
-  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` yaml key.
+  - Now uses `AIDER_YES_ALWAYS` env var and `yes-always:` YAML key.
   - Existing YAML and .env files will need to be updated.
   - Can still abbreviate to `--yes` on the command line.
 - Config file now uses standard YAML list syntax with `  - list entries`, one per line.  
@@ -726,7 +865,7 @@ cog.out(text)
   - Use `--map-refresh <always|files|manual|auto>` to configure.
 - Improved cost estimate logic for caching.
 - Improved editing performance on Jupyter Notebook `.ipynb` files.
-- Show which config yaml file is loaded with `--verbose`.
+- Show which config YAML file is loaded with `--verbose`.
 - Bumped dependency versions.
 - Bugfix: properly load `.aider.models.metadata.json` data.
 - Bugfix: Using `--msg /ask ...` caused an exception.

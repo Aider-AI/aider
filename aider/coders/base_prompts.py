@@ -15,7 +15,9 @@ You always COMPLETELY IMPLEMENT the needed code!
 """
 
     overeager_prompt = """Pay careful attention to the scope of the user's request.
-Do what they ask, but no more."""
+Do what they ask, but no more.
+Do not improve, comment, fix or modify unrelated parts of the code in any way!
+"""
 
     example_messages = []
 
@@ -53,3 +55,6 @@ Do not edit these files!
     shell_cmd_reminder = ""
     no_shell_cmd_prompt = ""
     no_shell_cmd_reminder = ""
+
+    rename_with_shell = ""
+    go_ahead_tip = ""

@@ -14,6 +14,7 @@ except ImportError:
     git = None
 
 import importlib_resources
+import shtab
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
@@ -502,6 +503,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
 
+    if args.shell_completions:
+        # Ensure parser.prog is set for shtab, though it should be by default
+        parser.prog = "aider"
+        print(shtab.complete(parser, shell=args.shell_completions))
+        sys.exit(0)
+
     if git is None:
         args.git = False
 
@@ -626,7 +633,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         )
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
+    analytics = Analytics(
+        logfile=args.analytics_log,
+        permanently_disable=args.analytics_disable,
+        posthog_host=args.analytics_posthog_host,
+        posthog_project_api_key=args.analytics_posthog_project_api_key,
+    )
     if args.analytics is not False:
         if analytics.need_to_ask(args.analytics):
             io.tool_output(
@@ -857,7 +869,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 )
 
     if args.copy_paste and args.edit_format is None:
-        if main_model.edit_format in ("diff", "whole"):
+        if main_model.edit_format in ("diff", "whole", "diff-fenced"):
             main_model.edit_format = "editor-" + main_model.edit_format
 
     if args.verbose:
@@ -904,6 +916,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 commit_prompt=args.commit_prompt,
                 subtree_only=args.subtree_only,
                 git_commit_verify=args.git_commit_verify,
+                attribute_co_authored_by=args.attribute_co_authored_by,  # Pass the arg
             )
         except FileNotFoundError:
             pass
@@ -913,8 +926,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Repository sanity check failed")
             return 1
 
-    if repo:
-        analytics.event("repo", num_files=len(repo.get_tracked_files()))
+    if repo and not args.skip_sanity_check_repo:
+        num_files = len(repo.get_tracked_files())
+        analytics.event("repo", num_files=num_files)
     else:
         analytics.event("no-repo")
 
@@ -985,9 +999,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
+            commit_language=args.commit_language,
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
+            add_gitignore_files=args.add_gitignore_files,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
