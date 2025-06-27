@@ -26,6 +26,8 @@ cog.out(text)
 
 ### main branch
 
+- Support for Responses API models like o1-pro, o3-pro.
+- Updated pricing for o3.
 - Added support for new Gemini models including `gemini-2.5-pro`, `gemini-2.5-flash`, and `gemini-2.5-pro-preview-06-05` with thinking tokens support.
 - Updated model aliases: `flash` now points to `gemini-2.5-flash` and `gemini` now points to `gemini-2.5-pro`.
 - Added `--add-gitignore-files` flag to enable adding files listed in .gitignore to Aider's editing scope, by omarcinkonis.
@@ -47,6 +49,8 @@ cog.out(text)
 - Added Clojure language support for repository maps, by Garrett Hopper.
 - Added custom PostHog analytics configuration options with `--analytics-posthog-host` and `--analytics-posthog-project-api-key` flags, by Vasil Markoukin.
 - Optimized chat history summarization performance, by jayeshthk.
+- Improved kebab-case identifier recognition in repository maps for better code analysis.
+- Increased max tokens for Deepseek models to 65536 for better performance.
 - Aider wrote 21% of the code in this release.
 
 ### Aider v0.84.0
