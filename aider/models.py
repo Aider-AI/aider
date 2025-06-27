@@ -683,6 +683,7 @@ class Model(ModelSettings):
             anthropic="ANTHROPIC_API_KEY",
             groq="GROQ_API_KEY",
             fireworks_ai="FIREWORKS_API_KEY",
+            github="GITHUB_API_KEY",
         )
         var = None
         if model in OPENAI_MODELS:
@@ -987,6 +988,12 @@ class Model(ModelSettings):
                 }
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
+
+        # Are we using GitHub Models?
+        if "GITHUB_API_KEY" in os.environ:
+            kwargs["api_base"] = "https://models.github.ai/inference"
+            # litellm requires an "openai/" prefix for OpenAI-compatible APIs, so let's add it in
+            kwargs["model"] = "openai/" + kwargs["model"]
 
         res = litellm.completion(**kwargs)
         return hash_object, res

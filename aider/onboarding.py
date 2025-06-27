@@ -64,6 +64,7 @@ def try_to_select_default_model():
         ("ANTHROPIC_API_KEY", "sonnet"),
         ("DEEPSEEK_API_KEY", "deepseek"),
         ("OPENAI_API_KEY", "gpt-4o"),
+        ("GITHUB_API_KEY", "openai/gpt-4.1"),
         ("GEMINI_API_KEY", "gemini/gemini-2.5-pro-exp-03-25"),
         ("VERTEXAI_PROJECT", "vertex_ai/gemini-2.5-pro-exp-03-25"),
     ]
