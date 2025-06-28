@@ -1587,6 +1587,40 @@ class TestCommands(TestCase):
             # Check if all files were removed from abs_read_only_fnames
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
+    def test_check_for_file_mentions_with_readonly_option(self):
+        with GitTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+
+            # Create a test file
+            test_file = Path("test_file.py")
+            test_file.write_text("print('Hello, world!')")
+
+            # Mock get_file_mentions to return our test file and confirm_ask to return "readonly"
+            with (
+                mock.patch.object(coder, "get_file_mentions", return_value={"test_file.py"}),
+                mock.patch.object(io, "confirm_ask", return_value="readonly"),
+            ):
+                # Call check_for_file_mentions with content mentioning the file
+                result = coder.check_for_file_mentions("Let's look at test_file.py")
+
+                # Verify confirm_ask was called with show_readonly=True
+                io.confirm_ask.assert_called_with(
+                    "Add file to the chat?",
+                    subject="test_file.py",
+                    group=mock.ANY,
+                    allow_never=True,
+                    show_readonly=True,
+                    return_string=True,
+                )
+
+                # Verify the file was added as read-only
+                self.assertEqual(len(coder.abs_fnames), 0)
+                self.assertEqual(len(coder.abs_read_only_fnames), 1)
+
+                # Verify the return message includes "(read-only)"
+                self.assertIn("(read-only)", result)
+
     def test_cmd_read_only_with_tilde_path(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
