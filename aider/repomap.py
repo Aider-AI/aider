@@ -480,18 +480,15 @@ class RepoMap:
                 mul *= 0.1
 
             for referencer, num_refs in Counter(references[ident]).items():
+                use_mul = mul
+                if referencer in chat_rel_fnames:
+                    use_mul *= 50
+                # scale down so high freq (low value) mentions don't dominate
+                num_refs = math.sqrt(num_refs)
                 for definer in definers:
                     # dump(referencer, definer, num_refs, mul)
                     # if referencer == definer:
                     #    continue
-
-                    use_mul = mul
-                    if referencer in chat_rel_fnames:
-                        use_mul *= 50
-
-                    # scale down so high freq (low value) mentions don't dominate
-                    num_refs = math.sqrt(num_refs)
-
                     G.add_edge(referencer, definer, weight=use_mul * num_refs, ident=ident)
 
         if not references:
@@ -637,8 +634,7 @@ class RepoMap:
         other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
         special_fnames = filter_important_files(other_rel_fnames)
         ranked_tags_fnames = set(tag[0] for tag in ranked_tags)
-        special_fnames = [fn for fn in special_fnames if fn not in ranked_tags_fnames]
-        special_fnames = [(fn,) for fn in special_fnames]
+        special_fnames = [(fn,) for fn in special_fnames if fn not in ranked_tags_fnames]
 
         ranked_tags = special_fnames + ranked_tags
 
