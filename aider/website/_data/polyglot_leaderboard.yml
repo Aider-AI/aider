@@ -1119,34 +1119,6 @@
   seconds_per_case: 176.5
   total_cost: 19.6399
 
-- dirname: 2025-04-17-01-20-35--o3-mini-high-diff-arch
-  test_cases: 225
-  model: o3 (high) + gpt-4.1
-  edit_format: architect
-  commit_hash: 80909e1-dirty
-  editor_model: gpt-4.1
-  editor_edit_format: editor-diff
-  pass_rate_1: 36.0
-  pass_rate_2: 82.7
-  pass_num_1: 81
-  pass_num_2: 186
-  percent_cases_well_formed: 100.0
-  error_outputs: 9
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 166
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 0
-  total_tests: 225
-  command: aider --model o3 --architect
-  date: 2025-04-17
-  versions: 0.82.2.dev
-  seconds_per_case: 110.0
-  total_cost: 69.2921
-
 - dirname: 2025-04-19-14-43-04--o4-mini-patch
   test_cases: 225
   model: openhands-lm-32b-v0.1
@@ -1594,3 +1566,34 @@
   versions: 0.84.1.dev
   seconds_per_case: 101.7
   total_cost: 13.7517
+
+- dirname: 2025-06-27-23-53-57--o3-mini-high-diff-arch
+  test_cases: 224
+  model: o3 (high) + gpt-4.1
+  edit_format: architect
+  commit_hash: 4f4f00f-dirty
+  editor_model: gpt-4.1
+  editor_edit_format: editor-diff
+  reasoning_effort: high
+  pass_rate_1: 34.8
+  pass_rate_2: 78.2
+  pass_num_1: 78
+  pass_num_2: 176
+  percent_cases_well_formed: 100.0
+  error_outputs: 18
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 172
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 1306877
+  completion_tokens: 1327154
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model o3
+  date: 2025-06-27
+  versions: 0.85.1.dev
+  seconds_per_case: 121.8
+  total_cost: 17.5518
