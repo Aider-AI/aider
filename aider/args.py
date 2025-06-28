@@ -7,6 +7,8 @@ from pathlib import Path
 
 import configargparse
 import shtab
+import yaml
+from typing import List, Dict, Any # Ensure Dict and Any are imported
 
 from aider import __version__
 from aider.args_formatter import (
@@ -15,6 +17,7 @@ from aider.args_formatter import (
     YamlHelpFormatter,
 )
 from aider.deprecated import add_deprecated_model_args
+from aider.mcp.mcp_config import MCPServerConfig
 
 from .dump import dump  # noqa: F401
 
@@ -850,6 +853,51 @@ def get_parser(default_config_files, git_root):
         help="Specify which editor to use for the /editor command",
     )
 
+    ##########
+    group = parser.add_argument_group("MCP (Model Context Protocol) Settings")
+    group.add_argument(
+        "--mcp-servers",
+        metavar="MCP_SERVERS_YAML_LIST",
+        type=str, # Will be parsed as YAML by configargparse if it's a string from config file
+        # configargparse should pick this up from a top-level 'mcp-servers:' key in the YAML config.
+        # Or, if using default_config_files, it might directly parse a list of dicts.
+        # We'll need to check how configargparse handles lists of dicts from YAML.
+        # For now, let's assume it can populate an 'mcp_servers' attribute on 'args'
+        # if 'mcp_servers:' is a top-level key in the YAML.
+        # This will likely need adjustment based on how configargparse handles complex types.
+        # A common way is to let configargparse load it as a string and then use yaml.safe_load.
+        # Let's assume for now it's loaded as a list of dicts directly by configargparse.
+        # The key in the YAML file should be `mcp_servers` (not `mcp-servers`).
+        help="MCP server configurations (typically set in YAML config file under 'mcp_servers' key).",
+        is_config_file_arg=False, # This is not a config file itself, but a key within it.
+                                 # This might need to be handled manually after parsing if
+                                 # configargparse doesn't directly map list of dicts.
+        env_var="AIDER_MCP_SERVERS", # For setting via env var as a YAML/JSON string
+    )
+    group.add_argument(
+        "--no-mcp",
+        action="store_true",
+        default=False,
+        help="Disable all MCP integrations for the current session.",
+        env_var="AIDER_NO_MCP",
+    )
+    group.add_argument(
+        "--mcp-enable-server",
+        action="append",
+        metavar="SERVER_NAME",
+        default=[],
+        help="Enable a specific MCP server by name for this session (overrides 'enabled: false' in config). Can be used multiple times.",
+        env_var="AIDER_MCP_ENABLE_SERVER", # Will be a comma-separated list if set by env var
+    )
+    group.add_argument(
+        "--mcp-disable-server",
+        action="append",
+        metavar="SERVER_NAME",
+        default=[],
+        help="Disable a specific MCP server by name for this session (overrides 'enabled: true' in config). Can be used multiple times.",
+        env_var="AIDER_MCP_DISABLE_SERVER", # Will be a comma-separated list if set by env var
+    )
+
     supported_shells_list = sorted(list(shtab.SUPPORTED_SHELLS))
     group.add_argument(
         "--shell-completions",
@@ -943,3 +991,74 @@ def main():
 if __name__ == "__main__":
     status = main()
     sys.exit(status)
+
+
+def process_mcp_configurations(args, parser): # parser might not be needed if not using get_config_source_value_for_key
+    args.mcp_server_configs: List[MCPServerConfig] = []
+
+    raw_mcp_servers_data = None
+    # Try to get mcp_servers from the args namespace first (populated by configargparse from YAML/CLI/env)
+    if hasattr(args, 'mcp_servers') and args.mcp_servers is not None:
+        if isinstance(args.mcp_servers, str):
+            try:
+                raw_mcp_servers_data = yaml.safe_load(args.mcp_servers)
+            except yaml.YAMLError as e:
+                print(f"Error parsing MCP servers YAML/JSON from --mcp-servers or AIDER_MCP_SERVERS: {e}")
+        elif isinstance(args.mcp_servers, dict): # Expecting a dict now
+            raw_mcp_servers_data = args.mcp_servers
+        else:
+            print(f"Warning: Unexpected type for mcp_servers argument: {type(args.mcp_servers)}. Expected dict or YAML string representing a dict.")
+
+    if not isinstance(raw_mcp_servers_data, dict):
+        if raw_mcp_servers_data is not None: # only print warning if it was set but malformed
+             print(f"Warning: 'mcp_servers' configuration is not a dictionary. Found: {type(raw_mcp_servers_data)}. MCP servers will not be loaded.")
+        raw_mcp_servers_data = {} # Default to empty dict if not found or malformed
+
+    parsed_configs = []
+    for server_name, server_conf_dict in raw_mcp_servers_data.items():
+        if not isinstance(server_conf_dict, dict):
+            print(f"Warning: MCP server configuration for '{server_name}' is not a dictionary: {server_conf_dict}. Skipping.")
+            continue
+        try:
+            # Pass the server_name (key from the dict) explicitly to MCPServerConfig
+            # **server_conf_dict will pass all other keys like command, args, enabled, etc.
+            config_instance = MCPServerConfig(name=server_name, **server_conf_dict)
+            parsed_configs.append(config_instance)
+        except (TypeError, ValueError) as e:
+            print(f"Error parsing MCP server configuration for '{server_name}': {e}. Skipping.")
+            # Example: MCPServerConfig might raise ValueError for invalid URL or missing command for stdio
+
+    # Apply CLI overrides (this logic remains largely the same)
+    if hasattr(args, 'no_mcp') and args.no_mcp:
+        for conf in parsed_configs:
+            conf.enabled = False
+    else:
+        if hasattr(args, 'mcp_enable_server') and args.mcp_enable_server:
+            for server_name_to_enable in args.mcp_enable_server:
+                found = False
+                for conf in parsed_configs:
+                    if conf.name == server_name_to_enable:
+                        conf.enabled = True
+                        found = True
+                        break
+                if not found:
+                    print(f"Warning: --mcp-enable-server: Server name '{server_name_to_enable}' not found in configuration.")
+
+        if hasattr(args, 'mcp_disable_server') and args.mcp_disable_server:
+            for server_name_to_disable in args.mcp_disable_server:
+                found = False
+                for conf in parsed_configs:
+                    if conf.name == server_name_to_disable:
+                        conf.enabled = False
+                        found = True
+                        break
+                if not found:
+                    print(f"Warning: --mcp-disable-server: Server name '{server_name_to_disable}' not found in configuration.")
+
+    args.mcp_server_configs = parsed_configs
+
+    # For debugging (optional, can be removed or kept under verbose flag)
+    # if hasattr(args, 'verbose') and args.verbose and args.mcp_server_configs:
+    #    print("Loaded MCP Server Configurations (post-override):")
+    #    for cfg in args.mcp_server_configs:
+    #        print(f"  - Name: {cfg.name}, Enabled: {cfg.enabled}, Protocol: {cfg.protocol}, Command: {cfg.command}, Args: {cfg.args}, URL: {cfg.url}")
