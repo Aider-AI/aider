@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.12.9
+aiohttp==3.12.13
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -41,7 +41,7 @@ cachetools==5.5.2
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
-certifi==2025.4.26
+certifi==2025.6.15
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
@@ -81,11 +81,11 @@ filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
-flake8==7.2.0
+flake8==7.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-frozenlist==1.6.2
+frozenlist==1.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -106,13 +106,13 @@ google-ai-generativelanguage==0.6.15
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
-google-api-core[grpc]==2.25.0
+google-api-core[grpc]==2.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-ai-generativelanguage
     #   google-api-python-client
     #   google-generativeai
-google-api-python-client==2.171.0
+google-api-python-client==2.174.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
@@ -141,7 +141,7 @@ grep-ast==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-grpcio==1.72.1
+grpcio==1.73.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -154,7 +154,7 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.1.3
+hf-xet==1.1.5
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -172,7 +172,7 @@ httpx==0.28.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   openai
-huggingface-hub==0.32.4
+huggingface-hub==0.33.1
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -213,7 +213,7 @@ jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.72.1
+litellm==1.73.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -241,7 +241,7 @@ mslex==1.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   oslex
-multidict==6.4.4
+multidict==6.5.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -255,7 +255,7 @@ numpy==1.26.4
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.84.0
+openai==1.91.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -263,7 +263,7 @@ oslex==0.1.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-packaging==24.2
+packaging==25.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -281,7 +281,7 @@ pillow==11.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==4.3.2
+posthog==5.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -289,7 +289,7 @@ prompt-toolkit==3.0.51
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-propcache==0.3.1
+propcache==0.3.2
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -325,7 +325,7 @@ pyasn1-modules==0.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
-pycodestyle==2.13.0
+pycodestyle==2.14.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
@@ -333,7 +333,7 @@ pycparser==2.22
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
-pydantic==2.11.5
+pydantic==2.11.7
     # via
     #   -c requirements/common-constraints.txt
     #   google-generativeai
@@ -347,11 +347,11 @@ pydub==0.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pyflakes==3.3.2
+pyflakes==3.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
-pygments==2.19.1
+pygments==2.19.2
     # via
     #   -c requirements/common-constraints.txt
     #   rich
@@ -371,7 +371,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c requirements/common-constraints.txt
     #   posthog
-python-dotenv==1.1.0
+python-dotenv==1.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -389,7 +389,7 @@ regex==2024.11.6
     # via
     #   -c requirements/common-constraints.txt
     #   tiktoken
-requests==2.32.3
+requests==2.32.4
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -453,7 +453,7 @@ tiktoken==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-tokenizers==0.21.1
+tokenizers==0.21.2
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -474,7 +474,7 @@ tree-sitter-embedded-template==0.23.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-tree-sitter-language-pack==0.7.3
+tree-sitter-language-pack==0.8.0
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
@@ -502,12 +502,12 @@ uritemplate==4.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-python-client
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   mixpanel
     #   requests
-watchfiles==1.0.5
+watchfiles==1.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -515,11 +515,11 @@ wcwidth==0.2.13
     # via
     #   -c requirements/common-constraints.txt
     #   prompt-toolkit
-yarl==1.20.0
+yarl==1.20.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-zipp==3.22.0
+zipp==3.23.0
     # via
     #   -c requirements/common-constraints.txt
     #   importlib-metadata

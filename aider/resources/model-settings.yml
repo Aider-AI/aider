@@ -533,27 +533,9 @@
   edit_format: diff-fenced
   use_repo_map: true
 
-- name: gemini/gemini-1.5-pro-exp-0827
-  edit_format: diff-fenced
-  use_repo_map: true
-
 - name: gemini/gemini-exp-1206
   edit_format: diff
   use_repo_map: true
-
-- name: gemini/gemini-exp-1114
-  edit_format: diff
-  use_repo_map: true
-
-- name: gemini/gemini-exp-1121
-  edit_format: diff
-  use_repo_map: true
-
-- name: vertex_ai/gemini-pro-experimental
-  edit_format: diff-fenced
-  use_repo_map: true
-
-- name: gemini/gemini-1.5-flash-exp-0827
 
 - name: gemini/gemini-2.0-flash-exp
   edit_format: diff
@@ -674,7 +656,7 @@
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 65536
   caches_by_default: true
 
 - name: openrouter/openai/gpt-4o
@@ -1462,6 +1444,21 @@
   weak_model_name: gemini/gemini-2.5-flash-preview-04-17
   accepts_settings: ["thinking_tokens"]
 
+- name: gemini/gemini-2.5-flash
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini/gemini-2.5-pro
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  weak_model_name: gemini/gemini-2.5-flash
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
 - name: vertex_ai/gemini-2.5-pro-preview-05-06
   edit_format: diff-fenced
   use_repo_map: true
@@ -1477,6 +1474,20 @@
   editor_model_name: vertex_ai/gemini-2.5-flash-preview-04-17
   accepts_settings: ["thinking_tokens"]
 
+- name: vertex_ai/gemini-2.5-pro
+  edit_format: diff-fenced
+  use_repo_map: true
+  weak_model_name: vertex_ai/gemini-2.5-flash
+  overeager: true
+  editor_model_name: vertex_ai/gemini-2.5-flash
+  accepts_settings: ["thinking_tokens"]
+
+- name: vertex_ai/gemini-2.5-flash
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
+
 - name: openrouter/google/gemini-2.5-pro-preview-05-06
   overeager: true
   edit_format: diff-fenced
@@ -1489,7 +1500,14 @@
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
   accepts_settings: ["thinking_tokens"]
-  
+
+- name: openrouter/google/gemini-2.5-pro
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  weak_model_name: openrouter/google/gemini-2.5-flash
+  accepts_settings: ["thinking_tokens"]
+
 #- name: openrouter/qwen/qwen3-235b-a22b
 #  system_prompt_prefix: "/no_think"
 #  use_temperature: 0.7

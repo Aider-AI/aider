@@ -66,7 +66,9 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--analytics | --no-analytics] [--analytics-log]
-             [--analytics-disable] [--just-check-update]
+             [--analytics-disable] [--analytics-posthog-host]
+             [--analytics-posthog-project-api-key]
+             [--just-check-update]
              [--check-update | --no-check-update]
              [--show-release-notes | --no-show-release-notes]
              [--install-main-branch] [--upgrade] [--version]
@@ -455,8 +457,8 @@ Aliases:
   - `--no-attribute-commit-message-committer`
 
 ### `--attribute-co-authored-by`
-Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
-Default: False  
+Attribute aider edits using the Co-authored-by trailer in the commit message (default: True). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
+Default: True  
 Environment variable: `AIDER_ATTRIBUTE_CO_AUTHORED_BY`  
 Aliases:
   - `--attribute-co-authored-by`
@@ -555,6 +557,14 @@ Environment variable: `AIDER_ANALYTICS_LOG`
 Permanently disable analytics  
 Default: False  
 Environment variable: `AIDER_ANALYTICS_DISABLE`  
+
+### `--analytics-posthog-host ANALYTICS_POSTHOG_HOST`
+Send analytics to custom PostHog instance  
+Environment variable: `AIDER_ANALYTICS_POSTHOG_HOST`  
+
+### `--analytics-posthog-project-api-key ANALYTICS_POSTHOG_PROJECT_API_KEY`
+Send analytics to custom PostHog project  
+Environment variable: `AIDER_ANALYTICS_POSTHOG_PROJECT_API_KEY`  
 
 ## Upgrading:
 
