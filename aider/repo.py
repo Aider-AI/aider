@@ -73,6 +73,7 @@ class GitRepo:
         commit_prompt=None,
         subtree_only=False,
         git_commit_verify=True,
+        git_commit_no_sign=False,
         attribute_co_authored_by=False,  # Added parameter
     ):
         self.io = io
@@ -89,6 +90,7 @@ class GitRepo:
         self.commit_prompt = commit_prompt
         self.subtree_only = subtree_only
         self.git_commit_verify = git_commit_verify
+        self.git_commit_no_sign = git_commit_no_sign
         self.ignore_file_cache = {}
 
         if git_dname:
@@ -277,6 +279,8 @@ class GitRepo:
         cmd = ["-m", full_commit_message]
         if not self.git_commit_verify:
             cmd.append("--no-verify")
+        if self.git_commit_no_sign:
+            cmd.append("--no-gpg-sign")
         if fnames:
             fnames = [str(self.abs_root_path(fn)) for fn in fnames]
             for fname in fnames:
