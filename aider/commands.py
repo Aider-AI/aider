@@ -88,6 +88,11 @@ class Commands:
         "Switch the Main Model to a new LLM"
 
         model_name = args.strip()
+        if not model_name:
+            announcements = "\n".join(self.coder.get_announcements())
+            self.io.tool_output(announcements)
+            return
+
         model = models.Model(
             model_name,
             editor_model=self.coder.main_model.editor_model.name,
