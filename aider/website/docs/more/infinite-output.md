@@ -83,7 +83,9 @@ cog.out(model_list)
 - databricks/databricks-claude-3-7-sonnet
 - deepseek/deepseek-chat
 - deepseek/deepseek-coder
+- deepseek/deepseek-r1
 - deepseek/deepseek-reasoner
+- deepseek/deepseek-v3
 - eu.anthropic.claude-3-5-haiku-20241022-v1:0
 - eu.anthropic.claude-3-5-sonnet-20241022-v2:0
 - eu.anthropic.claude-3-7-sonnet-20250219-v1:0
