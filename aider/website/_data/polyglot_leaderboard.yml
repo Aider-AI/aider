@@ -1597,3 +1597,32 @@
   versions: 0.85.1.dev
   seconds_per_case: 121.8
   total_cost: 17.5518
+
+- dirname: 2025-06-28-00-38-18--o3-pro-high
+  test_cases: 225
+  model: o3-pro (high)
+  edit_format: diff
+  commit_hash: 5318380
+  reasoning_effort: high
+  pass_rate_1: 43.6
+  pass_rate_2: 84.9
+  pass_num_1: 98
+  pass_num_2: 191
+  percent_cases_well_formed: 97.8
+  error_outputs: 20
+  num_malformed_responses: 8
+  num_with_malformed_responses: 5
+  user_asks: 100
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2372636
+  completion_tokens: 1235902
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model o3-pro
+  date: 2025-06-28
+  versions: 0.85.1.dev
+  seconds_per_case: 449.0
+  total_cost: 146.3249
