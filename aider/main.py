@@ -615,11 +615,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.openai_api_key:
         os.environ["OPENAI_API_KEY"] = args.openai_api_key
 
-    # Set GitHub Models API base when GitHub API key is present
-    if os.environ.get("GITHUB_API_KEY"):
-        os.environ["OPENAI_API_BASE"] = "https://models.github.ai/inference"
-        os.environ["OPENAI_API_KEY"] = os.environ["GITHUB_API_KEY"]
-
     # Handle deprecated model shortcut args
     handle_deprecated_model_args(args, io)
     if args.openai_api_base:

@@ -29,7 +29,7 @@ You can set up GitHub Models in two ways:
 
 **Option 1: Using --api-key (recommended)**
 ```bash
-aider --api-key github=<your_github_pat> --model openai/gpt-4.1
+aider --api-key github=<your_github_pat> --model github/gpt-4.1
 ```
 
 **Option 2: Using environment variables**
@@ -58,21 +58,21 @@ GitHub Models provides access to various AI models with their publisher prefixes
 
 ```bash
 # OpenAI models
-aider --model openai/gpt-4.1
-aider --model deepseek/deepseek-r1
-aider --model mistral-ai/codestral-2501
-aider --model microsoft/phi-4-mini-reasoning
+aider --model github/gpt-4.1
+aider --model github/deepseek-r1
+aider --model github/codestral-2501
+aider --model github/phi-4-mini-reasoning
 ```
 
 ### Quick start
 
 ```bash
 # Using --api-key
-aider --api-key github=ghp_your_token_here --model openai/gpt-4o
+aider --api-key github=ghp_your_token_here --model github/gpt-4.1
 
 # Or with environment variable
 export GITHUB_API_KEY=ghp_your_token_here
-aider --model openai/gpt-4o
+aider --model github/gpt-4.1
 ```
 
 ### Optional config file (`~/.aider.conf.yml`)
@@ -80,8 +80,8 @@ aider --model openai/gpt-4o
 ```yaml
 api-key:
   - github=<your_github_pat>
-model: openai/gpt-4o
-weak-model: openai/gpt-4o-mini
+model: github/gpt-4.1
+weak-model: github/gpt-4.1-mini
 ```
 
 ---
@@ -170,81 +170,6 @@ show-model-warnings: false
 
 ---
 
-## GitHub Models
-
-GitHub Models provides access to AI models through a simple API using your GitHub Personal Access Token.
-Unlike Copilot, GitHub Models uses the endpoint:
-
-```
-https://models.github.ai/inference
-```
-
-### Configure your environment
-
-You can set up GitHub Models in two ways:
-
-**Option 1: Using --api-key (recommended)**
-```bash
-aider --api-key github=<your_github_pat> --model openai/gpt-4o
-```
-
-**Option 2: Using environment variables**
-```bash
-# macOS/Linux
-export GITHUB_API_KEY=<your_github_pat>
-
-# Windows (PowerShell)
-setx GITHUB_API_KEY <your_github_pat>
-# …restart the shell after setx commands
-```
-
-When you set `GITHUB_API_KEY`, aider automatically configures the GitHub Models endpoint.
-
-### Where do I get the GitHub Personal Access Token?
-
-1. Go to [GitHub Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens)
-2. Click "Generate new token (classic)" or "Fine-grained personal access token"
-3. For classic tokens: Select the `models:read` scope
-4. For fine-grained tokens: Grant "Models" repository permissions
-5. Copy the generated token
-
-### Available models
-
-GitHub Models provides access to various AI models with their publisher prefixes:
-
-```bash
-# OpenAI models
-aider --model openai/gpt-4o
-aider --model openai/gpt-4o-mini
-aider --model openai/o1-preview
-aider --model openai/o1-mini
-
-# Other providers may be available
-# Check the GitHub Models documentation for the latest list
-```
-
-### Quick start
-
-```bash
-# Using --api-key
-aider --api-key github=ghp_your_token_here --model openai/gpt-4o
-
-# Or with environment variable
-export GITHUB_API_KEY=ghp_your_token_here
-aider --model openai/gpt-4o
-```
-
-### Optional config file (`~/.aider.conf.yml`)
-
-```yaml
-api-key:
-  - github=<your_github_pat>
-model: openai/gpt-4o
-weak-model: openai/gpt-4o-mini
-```
-
----
-
 ## FAQ
 
 ### GitHub Models
@@ -255,7 +180,7 @@ weak-model: openai/gpt-4o-mini
 ### GitHub Copilot
 * Calls made through aider are billed through your Copilot subscription  
   (aider will still print *estimated* costs).
-* The Copilot docs explicitly allow third-party "agents" that hit this API – aider is playing by
+* The Copilot docs explicitly allow third-party “agents” that hit this API – aider is playing by
   the rules.
 * Aider talks directly to the REST endpoint—no web-UI scraping or browser automation.
 

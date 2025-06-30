@@ -117,9 +117,6 @@ aider --model sonnet --api-key anthropic=<key>
 
 # o3-mini
 aider --model o3-mini --api-key openai=<key>
-
-# GitHub Models
-aider --model openai/gpt-4o --api-key github=<github_token>
 ```
 
 See the [installation instructions](https://aider.chat/docs/install.html) and [usage documentation](https://aider.chat/docs/usage.html) for more details.
