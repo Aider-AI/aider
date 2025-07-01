@@ -1,5 +1,10 @@
 # Release history
 
+### Aider v0.85.1
+
+- Display model announcements with no-arg `/model` command.
+- Aider wrote 0% of the code in this release.
+
 ### Aider v0.85.0
 
 - Support for Responses API models like o1-pro, o3-pro.

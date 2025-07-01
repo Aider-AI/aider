@@ -989,9 +989,6 @@
   edit_format: whole
   accepts_settings:
     - reasoning_effort 
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: openai/o4-mini
   edit_format: diff
@@ -1003,9 +1000,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: openrouter/openai/o4-mini
   edit_format: diff
@@ -1017,9 +1011,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: azure/o4-mini
   edit_format: diff
@@ -1031,18 +1022,12 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: xai/grok-3-mini-beta
   use_repo_map: true
   edit_format: whole
   accepts_settings:
     - reasoning_effort
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: low
 
 - name: openrouter/x-ai/grok-3-fast-beta
   use_repo_map: true
@@ -1135,9 +1120,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: o3-pro
   streaming: false
@@ -1149,9 +1131,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: openai/o4-mini
   edit_format: diff
@@ -1163,9 +1142,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: openrouter/openai/o4-mini
   edit_format: diff
@@ -1177,9 +1153,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: azure/o4-mini
   edit_format: diff
@@ -1191,9 +1164,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: openai/o3
   streaming: false
@@ -1205,9 +1175,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: openai/o3-pro
   streaming: false
@@ -1219,9 +1186,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: openai/o4-mini
   edit_format: diff
@@ -1233,9 +1197,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: openrouter/openai/o4-mini
   edit_format: diff
@@ -1247,9 +1208,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: azure/o4-mini
   edit_format: diff
@@ -1261,9 +1219,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: openrouter/openai/o3
   streaming: false
@@ -1275,9 +1230,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: openrouter/openai/o3-pro
   streaming: false
@@ -1289,9 +1241,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: openai/o4-mini
   edit_format: diff
@@ -1303,9 +1252,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: openrouter/openai/o4-mini
   edit_format: diff
@@ -1317,9 +1263,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: azure/o4-mini
   edit_format: diff
@@ -1331,9 +1274,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
 
 - name: azure/o3
   streaming: false
@@ -1345,9 +1285,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: azure/o3-pro
   streaming: false
@@ -1359,9 +1296,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #    reasoning_effort: high
 
 - name: openai/o4-mini
   edit_format: diff
@@ -1406,9 +1340,6 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-  #extra_params:
-  #  extra_body:
-  #   reasoning_effort: high
       
 - name: gemini/gemini-2.5-flash-preview-04-17
   edit_format: diff
