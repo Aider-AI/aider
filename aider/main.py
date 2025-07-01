@@ -448,7 +448,7 @@ def sanity_check_repo(repo, io):
     return False
 
 
-def find_config_files(start_dir=None, fname=".aider.config.yml"):
+def find_config_files(start_dir=None, fname=".aider.conf.yml"):
     config_files = []
 
     if start_dir is None:
