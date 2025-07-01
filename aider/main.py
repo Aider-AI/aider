@@ -633,7 +633,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         )
         os.environ["OPENAI_ORGANIZATION"] = args.openai_organization_id
 
-    analytics = Analytics(logfile=args.analytics_log, permanently_disable=args.analytics_disable)
+    analytics = Analytics(
+        logfile=args.analytics_log,
+        permanently_disable=args.analytics_disable,
+        posthog_host=args.analytics_posthog_host,
+        posthog_project_api_key=args.analytics_posthog_project_api_key,
+    )
     if args.analytics is not False:
         if analytics.need_to_ask(args.analytics):
             io.tool_output(

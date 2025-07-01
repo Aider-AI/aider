@@ -211,6 +211,13 @@ def run_install(cmd):
     print()
     print("Installing:", printable_shell_command(cmd))
 
+    # First ensure pip is available
+    ensurepip_cmd = [sys.executable, "-m", "ensurepip", "--upgrade"]
+    try:
+        subprocess.run(ensurepip_cmd, capture_output=True, check=False)
+    except Exception:
+        pass  # Continue even if ensurepip fails
+
     try:
         output = []
         process = subprocess.Popen(

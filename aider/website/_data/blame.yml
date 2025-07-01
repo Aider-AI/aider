@@ -4725,3 +4725,126 @@
     wangboxue: 1
   start_tag: v0.83.0
   total_lines: 830
+- aider_percentage: 20.82
+  aider_total: 127
+  end_date: '2025-06-27'
+  end_tag: v0.85.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier: 5
+      Vasil Markoukin (aider): 6
+    aider/args.py:
+      Kyosuke Takayama: 6
+      Paul Gauthier: 7
+      Vasil Markoukin (aider): 9
+      omarcinkonis: 6
+    aider/coders/base_coder.py:
+      Kyosuke Takayama: 3
+      omarcinkonis: 3
+    aider/coders/editblock_coder.py:
+      Mathis Beer (aider): 1
+    aider/coders/search_replace.py:
+      Emmanuel Ferdman: 1
+    aider/commands.py:
+      Ali Ayas (claude-sonnet-4-20250514): 6
+      Matteo Landi: 16
+      Paul Gauthier: 4
+      omarcinkonis: 5
+    aider/history.py:
+      jayeshthk: 18
+    aider/io.py:
+      Paul Gauthier: 1
+      Paul Gauthier (aider): 14
+      Vamsi Talupula: 5
+    aider/main.py:
+      Kyosuke Takayama: 1
+      Makar Ivashko: 1
+      Paul Gauthier: 3
+      Vasil Markoukin (aider): 5
+      omarcinkonis: 1
+    aider/models.py:
+      Ali Ayas (claude-sonnet-4-20250514): 11
+      Nimesh Ghelani: 3
+      Paul Gauthier: 1
+      Sebastian Estrella: 11
+      Vincent Taverna: 32
+    aider/queries/tree-sitter-language-pack/clojure-tags.scm:
+      Garrett Hopper: 7
+    aider/queries/tree-sitter-language-pack/matlab-tags.scm:
+      Matthew Tofano: 4
+    aider/queries/tree-sitter-languages/matlab-tags.scm:
+      Matthew Tofano: 4
+    aider/repo.py:
+      Kyosuke Takayama: 3
+      Luke Reeves: 13
+      Paul Gauthier: 2
+      muravvv: 12
+    aider/repomap.py:
+      Garrett Hopper: 2
+    aider/resources/model-settings.yml:
+      Andrew Grigorev: 7
+      Leon Mergen: 20
+      Nimesh Ghelani: 15
+      Paul Gauthier: 2
+      Paul Gauthier (aider): 20
+      Trung Dinh: 8
+      Wietse Venema: 9
+      therealmarv: 14
+    aider/utils.py:
+      Paul Gauthier (aider): 7
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    aider/website/index.html:
+      Paul Gauthier: 8
+      Paul Gauthier (aider): 1
+    benchmark/benchmark.py:
+      Paul Gauthier: 1
+    tests/basic/test_commands.py:
+      Matteo Landi: 22
+    tests/basic/test_history.py:
+      Paul Gauthier: 15
+    tests/basic/test_main.py:
+      Kyosuke Takayama: 10
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 64
+      omarcinkonis: 41
+    tests/basic/test_repo.py:
+      Luke Reeves: 31
+      Paul Gauthier: 2
+      muravvv: 22
+    tests/basic/test_repomap.py:
+      Matthew Tofano: 3
+      Paul Gauthier: 3
+    tests/fixtures/languages/clojure/test.clj:
+      Paul Gauthier: 6
+    tests/fixtures/languages/matlab/test.m:
+      Matthew Tofano: 42
+  grand_total:
+    Ali Ayas (claude-sonnet-4-20250514): 17
+    Andrew Grigorev: 7
+    Emmanuel Ferdman: 1
+    Garrett Hopper: 9
+    Kyosuke Takayama: 23
+    Leon Mergen: 20
+    Luke Reeves: 44
+    Makar Ivashko: 1
+    Mathis Beer (aider): 1
+    Matteo Landi: 38
+    Matthew Tofano: 53
+    Nimesh Ghelani: 18
+    Paul Gauthier: 65
+    Paul Gauthier (aider): 106
+    Sebastian Estrella: 11
+    Trung Dinh: 8
+    Vamsi Talupula: 5
+    Vasil Markoukin (aider): 20
+    Vincent Taverna: 32
+    Wietse Venema: 9
+    jayeshthk: 18
+    muravvv: 34
+    omarcinkonis: 56
+    therealmarv: 14
+  start_tag: v0.84.0
+  total_lines: 610
