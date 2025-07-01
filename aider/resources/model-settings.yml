@@ -990,17 +990,6 @@
   accepts_settings:
     - reasoning_effort 
 
-- name: openai/o4-mini
-  edit_format: diff
-  weak_model_name: openai/gpt-4.1-mini
-  use_repo_map: true
-  use_temperature: false
-  editor_model_name: openai/gpt-4.1
-  editor_edit_format: editor-diff
-  system_prompt_prefix: "Formatting re-enabled. "
-  accepts_settings: ["reasoning_effort"]
-  examples_as_sys_msg: true
-
 - name: openrouter/openai/o4-mini
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4.1-mini
@@ -1121,17 +1110,6 @@
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
 
-- name: openai/o4-mini
-  edit_format: diff
-  weak_model_name: openai/gpt-4.1-mini
-  use_repo_map: true
-  use_temperature: false
-  editor_model_name: openai/gpt-4.1
-  editor_edit_format: editor-diff
-  system_prompt_prefix: "Formatting re-enabled. "
-  accepts_settings: ["reasoning_effort"]
-  examples_as_sys_msg: true
-
 - name: openrouter/openai/o4-mini
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4.1-mini
@@ -1159,17 +1137,6 @@
   edit_format: diff
   weak_model_name: openai/gpt-4.1-mini
   use_repo_map: true
-  editor_model_name: openai/gpt-4.1
-  editor_edit_format: editor-diff
-  system_prompt_prefix: "Formatting re-enabled. "
-  accepts_settings: ["reasoning_effort"]
-  examples_as_sys_msg: true
-
-- name: openai/o4-mini
-  edit_format: diff
-  weak_model_name: openai/gpt-4.1-mini
-  use_repo_map: true
-  use_temperature: false
   editor_model_name: openai/gpt-4.1
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
@@ -1204,17 +1171,6 @@
   weak_model_name: openrouter/openai/gpt-4.1-mini
   use_repo_map: true
   editor_model_name: openrouter/openai/gpt-4.1
-  editor_edit_format: editor-diff
-  system_prompt_prefix: "Formatting re-enabled. "
-  accepts_settings: ["reasoning_effort"]
-  examples_as_sys_msg: true
-
-- name: openai/o4-mini
-  edit_format: diff
-  weak_model_name: openai/gpt-4.1-mini
-  use_repo_map: true
-  use_temperature: false
-  editor_model_name: openai/gpt-4.1
   editor_edit_format: editor-diff
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
