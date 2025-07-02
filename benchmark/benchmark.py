@@ -631,6 +631,13 @@ def summarize_results(dirname, stats_languages=None):
     res.indentation_errors = 0
     res.lazy_comments = 0
 
+    # Token count metrics
+    res.prompt_tokens = 0
+    res.completion_tokens = 0
+    res.cache_hit_tokens = 0
+    res.cache_write_tokens = 0
+    res.total_tokens = 0
+
     res.reasoning_effort = None
     res.thinking_tokens = None
     variants = defaultdict(set)
@@ -669,6 +676,13 @@ def summarize_results(dirname, stats_languages=None):
 
         res.syntax_errors += results.get("syntax_errors", 0)
         res.indentation_errors += results.get("indentation_errors", 0)
+
+        # Aggregate token counts
+        res.prompt_tokens += results.get("prompt_tokens", 0)
+        res.completion_tokens += results.get("completion_tokens", 0)
+        res.cache_hit_tokens += results.get("cache_hit_tokens", 0)
+        res.cache_write_tokens += results.get("cache_write_tokens", 0)
+        res.total_tokens += results.get("total_tokens", 0)
 
         res.reasoning_effort = results.get("reasoning_effort")
         res.thinking_tokens = results.get("thinking_tokens")
@@ -771,6 +785,26 @@ def summarize_results(dirname, stats_languages=None):
     res.avg_cost = res.cost / res.completed_tests
 
     projected_cost = res.avg_cost * res.total_tests
+
+    # Display token counts
+    if res.prompt_tokens > 0 or res.completion_tokens > 0:
+        print(f"  prompt_tokens: {res.prompt_tokens:,}")
+        print(f"  completion_tokens: {res.completion_tokens:,}")
+        print(f"  total_tokens: {res.total_tokens:,}")
+
+        # Display cache-related tokens if present
+        if res.cache_hit_tokens > 0:
+            print(f"  cache_hit_tokens: {res.cache_hit_tokens:,}")
+        if res.cache_write_tokens > 0:
+            print(f"  cache_write_tokens: {res.cache_write_tokens:,}")
+
+        # Calculate average tokens per test case
+        avg_prompt_tokens = res.prompt_tokens / res.completed_tests
+        avg_completion_tokens = res.completion_tokens / res.completed_tests
+        avg_total_tokens = res.total_tokens / res.completed_tests
+        print(f"  avg_prompt_tokens_per_case: {avg_prompt_tokens:.1f}")
+        print(f"  avg_completion_tokens_per_case: {avg_completion_tokens:.1f}")
+        print(f"  avg_total_tokens_per_case: {avg_total_tokens:.1f}")
 
     print()
     print(
@@ -1122,6 +1156,12 @@ def run_test_real(
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
         reasoning_effort=reasoning_effort,
         thinking_tokens=thinking_tokens,
+        # Add token count metrics
+        prompt_tokens=getattr(coder, 'total_prompt_tokens', 0),
+        completion_tokens=getattr(coder, 'total_completion_tokens', 0),
+        cache_hit_tokens=getattr(coder, 'total_cache_hit_tokens', 0),
+        cache_write_tokens=getattr(coder, 'total_cache_write_tokens', 0),
+        total_tokens=getattr(coder, 'total_prompt_tokens', 0) + getattr(coder, 'total_completion_tokens', 0),
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,

@@ -324,6 +324,11 @@ class Coder:
         auto_copy_context=False,
         auto_accept_architect=True,
     ):
+        # Initialize token tracking attributes
+        self.total_prompt_tokens = 0
+        self.total_completion_tokens = 0
+        self.total_cache_hit_tokens = 0
+        self.total_cache_write_tokens = 0
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
 
@@ -1895,6 +1900,12 @@ class Coder:
             )
             cache_write_tokens = getattr(completion.usage, "cache_creation_input_tokens", 0)
 
+            # Update total token counts for benchmark tracking
+            self.total_prompt_tokens += prompt_tokens
+            self.total_completion_tokens += completion_tokens
+            self.total_cache_hit_tokens += cache_hit_tokens
+            self.total_cache_write_tokens += cache_write_tokens
+
             if hasattr(completion.usage, "cache_read_input_tokens") or hasattr(
                 completion.usage, "cache_creation_input_tokens"
             ):
@@ -1906,6 +1917,11 @@ class Coder:
         else:
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
+
+            # Update total token counts for benchmark tracking
+            self.total_prompt_tokens += prompt_tokens
+            self.total_completion_tokens += completion_tokens
+
             self.message_tokens_sent += prompt_tokens
 
         self.message_tokens_received += completion_tokens
