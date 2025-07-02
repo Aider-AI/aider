@@ -355,6 +355,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_chatito(self):
         self._test_language_repo_map("chatito", "chatito", "intent")
 
+    def test_language_clojure(self):
+        self._test_language_repo_map("clojure", "clj", "greet")
+
     def test_language_commonlisp(self):
         self._test_language_repo_map("commonlisp", "lisp", "greet")
 
@@ -387,6 +390,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
     def test_language_ocaml_interface(self):
         self._test_language_repo_map("ocaml_interface", "mli", "Greeter")
+
+    def test_language_matlab(self):
+        self._test_language_repo_map("matlab", "m", "Person")
 
     def _test_language_repo_map(self, lang, key, symbol):
         """Helper method to test repo map generation for a specific language."""

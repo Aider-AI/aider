@@ -17,7 +17,7 @@ cachetools==5.5.2
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-certifi==2025.4.26
+certifi==2025.6.15
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.41.1
+narwhals==1.44.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -68,7 +68,7 @@ numpy==1.26.4
     #   pandas
     #   pydeck
     #   streamlit
-packaging==24.2
+packaging==25.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -106,7 +106,7 @@ referencing==0.36.2
     #   -c requirements/common-constraints.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.3
+requests==2.32.4
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -123,7 +123,7 @@ smmap==5.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   gitdb
-streamlit==1.45.1
+streamlit==1.46.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-browser.in
@@ -149,7 +149,7 @@ tzdata==2025.2
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests

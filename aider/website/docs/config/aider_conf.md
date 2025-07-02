@@ -137,7 +137,7 @@ cog.outl("```")
 ## Set the reasoning_effort API parameter (default: not set)
 #reasoning-effort: xxx
 
-## Set the thinking token budget for models that support it (default: not set)
+## Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)
 #thinking-tokens: xxx
 
 ## Verify the SSL cert when connecting to models (default: True)
@@ -293,8 +293,8 @@ cog.outl("```")
 ## Prefix all commit messages with 'aider: ' (default: False)
 #attribute-commit-message-committer: false
 
-## Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.
-#attribute-co-authored-by: false
+## Attribute aider edits using the Co-authored-by trailer in the commit message (default: True). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.
+#attribute-co-authored-by: true
 
 ## Enable/disable git pre-commit hooks with --no-verify (default: False)
 #git-commit-verify: false
@@ -351,6 +351,12 @@ cog.outl("```")
 
 ## Permanently disable analytics
 #analytics-disable: false
+
+## Send analytics to custom PostHog instance
+#analytics-posthog-host: xxx
+
+## Send analytics to custom PostHog project
+#analytics-posthog-project-api-key: xxx
 
 ############
 # Upgrading:
