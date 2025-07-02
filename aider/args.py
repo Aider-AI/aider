@@ -143,7 +143,10 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--thinking-tokens",
         type=str,
-        help="Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)",
+        help=(
+            "Set the thinking token budget for models that support it. Use 0 to disable. (default:"
+            " not set)"
+        ),
     )
     group.add_argument(
         "--verify-ssl",
@@ -478,10 +481,10 @@ def get_parser(default_config_files, git_root):
     group.add_argument(
         "--attribute-co-authored-by",
         action=argparse.BooleanOptionalAction,
-        default=False,
+        default=True,
         help=(
             "Attribute aider edits using the Co-authored-by trailer in the commit message"
-            " (default: False). If True, this takes precedence over default --attribute-author and"
+            " (default: True). If True, this takes precedence over default --attribute-author and"
             " --attribute-committer behavior unless they are explicitly set to True."
         ),
     )
@@ -578,6 +581,16 @@ def get_parser(default_config_files, git_root):
         action="store_true",
         help="Permanently disable analytics",
         default=False,
+    )
+    group.add_argument(
+        "--analytics-posthog-host",
+        metavar="ANALYTICS_POSTHOG_HOST",
+        help="Send analytics to custom PostHog instance",
+    )
+    group.add_argument(
+        "--analytics-posthog-project-api-key",
+        metavar="ANALYTICS_POSTHOG_PROJECT_API_KEY",
+        help="Send analytics to custom PostHog project",
     )
 
     #########

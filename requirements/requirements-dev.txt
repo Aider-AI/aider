@@ -8,7 +8,7 @@ cachetools==5.5.2
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
-certifi==2025.4.26
+certifi==2025.6.15
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -29,7 +29,7 @@ codespell==2.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-cogapp==3.5.0
+cogapp==3.5.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -54,11 +54,11 @@ filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-fonttools==4.58.2
+fonttools==4.58.4
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
-google-api-core[grpc]==2.25.0
+google-api-core[grpc]==2.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-cloud-bigquery
@@ -90,7 +90,7 @@ googleapis-common-protos==1.70.0
     #   -c requirements/common-constraints.txt
     #   google-api-core
     #   grpcio-status
-grpcio==1.72.1
+grpcio==1.73.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -149,7 +149,7 @@ numpy==1.26.4
     #   contourpy
     #   matplotlib
     #   pandas
-packaging==24.2
+packaging==25.0
     # via
     #   -c requirements/common-constraints.txt
     #   build
@@ -216,7 +216,7 @@ pyasn1-modules==0.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
-pygments==2.19.1
+pygments==2.19.2
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
@@ -230,7 +230,7 @@ pyproject-hooks==1.2.0
     #   -c requirements/common-constraints.txt
     #   build
     #   pip-tools
-pytest==8.4.0
+pytest==8.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -253,7 +253,7 @@ pyyaml==6.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
-requests==2.32.3
+requests==2.32.4
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -294,11 +294,11 @@ tzdata==2025.2
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.7.11
+uv==0.7.15
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in

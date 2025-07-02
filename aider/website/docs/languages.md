@@ -77,10 +77,10 @@ cog.out(get_supported_languages_md())
 | capnp                | .capnp               |          |   ✓    |
 | chatito              | .chatito             |    ✓     |   ✓    |
 | clarity              | .clar                |          |   ✓    |
-| clojure              | .clj                 |          |   ✓    |
-| clojure              | .cljc                |          |   ✓    |
-| clojure              | .cljs                |          |   ✓    |
-| clojure              | .edn                 |          |   ✓    |
+| clojure              | .clj                 |    ✓     |   ✓    |
+| clojure              | .cljc                |    ✓     |   ✓    |
+| clojure              | .cljs                |    ✓     |   ✓    |
+| clojure              | .edn                 |    ✓     |   ✓    |
 | cmake                | .cmake               |          |   ✓    |
 | cmake                | CMakeLists.txt       |          |   ✓    |
 | commonlisp           | .cl                  |    ✓     |   ✓    |
@@ -172,8 +172,8 @@ cog.out(get_supported_languages_md())
 | make                 | Makefile             |          |   ✓    |
 | markdown             | .markdown            |          |   ✓    |
 | markdown             | .md                  |          |   ✓    |
-| matlab               | .m                   |          |   ✓    |
-| matlab               | .mat                 |          |   ✓    |
+| matlab               | .m                   |    ✓     |   ✓    |
+| matlab               | .mat                 |    ✓     |   ✓    |
 | mermaid              | .mermaid             |          |   ✓    |
 | meson                | meson.build          |          |   ✓    |
 | ninja                | .ninja               |          |   ✓    |

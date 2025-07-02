@@ -184,7 +184,7 @@ def main(
         False, "--clean", "-c", help="Discard the existing testdir and make a clean copy"
     ),
     cont: bool = typer.Option(False, "--cont", help="Continue the (single) matching testdir"),
-    make_new: bool = typer.Option(False, "--new", "-n", help="Make a new dated testdir"),
+    make_new: bool = typer.Option(False, "--new", help="Make a new dated testdir"),
     no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
     no_aider: bool = typer.Option(False, "--no-aider", help="Do not run aider"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),

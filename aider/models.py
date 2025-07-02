@@ -93,11 +93,11 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
-    "flash": "gemini/gemini-2.5-flash-preview-04-17",
+    "flash": "gemini/gemini-2.5-flash",
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
-    "gemini-2.5-pro": "gemini/gemini-2.5-pro-preview-06-05",
-    "gemini": "gemini/gemini-2.5-pro-preview-06-05",
+    "gemini-2.5-pro": "gemini/gemini-2.5-pro",
+    "gemini": "gemini/gemini-2.5-pro",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
     "optimus": "openrouter/openrouter/optimus-alpha",
@@ -1052,12 +1052,10 @@ def register_models(model_settings_fnames):
 
             for model_settings_dict in model_settings_list:
                 model_settings = ModelSettings(**model_settings_dict)
-                existing_model_settings = next(
-                    (ms for ms in MODEL_SETTINGS if ms.name == model_settings.name), None
-                )
 
-                if existing_model_settings:
-                    MODEL_SETTINGS.remove(existing_model_settings)
+                # Remove all existing settings for this model name
+                MODEL_SETTINGS[:] = [ms for ms in MODEL_SETTINGS if ms.name != model_settings.name]
+                # Add the new settings
                 MODEL_SETTINGS.append(model_settings)
         except Exception as e:
             raise Exception(f"Error loading model settings from {model_settings_fname}: {e}")
