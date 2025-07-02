@@ -112,7 +112,7 @@ cog.outl("```")
 ## Set the reasoning_effort API parameter (default: not set)
 #AIDER_REASONING_EFFORT=
 
-## Set the thinking token budget for models that support it (default: not set)
+## Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)
 #AIDER_THINKING_TOKENS=
 
 ## Verify the SSL cert when connecting to models (default: True)
@@ -241,6 +241,9 @@ cog.outl("```")
 ## Enable/disable adding .aider* to .gitignore (default: True)
 #AIDER_GITIGNORE=true
 
+## Enable/disable the addition of files listed in .gitignore to Aider's editing scope.
+#AIDER_ADD_GITIGNORE_FILES=false
+
 ## Specify the aider ignore file (default: .aiderignore in git root)
 #AIDER_AIDERIGNORE=.aiderignore
 
@@ -265,8 +268,8 @@ cog.outl("```")
 ## Prefix all commit messages with 'aider: ' (default: False)
 #AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER=false
 
-## Attribute aider edits using the Co-authored-by trailer in the commit message (default: False). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.
-#AIDER_ATTRIBUTE_CO_AUTHORED_BY=false
+## Attribute aider edits using the Co-authored-by trailer in the commit message (default: True). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.
+#AIDER_ATTRIBUTE_CO_AUTHORED_BY=true
 
 ## Enable/disable git pre-commit hooks with --no-verify (default: False)
 #AIDER_GIT_COMMIT_VERIFY=false
@@ -318,6 +321,12 @@ cog.outl("```")
 
 ## Permanently disable analytics
 #AIDER_ANALYTICS_DISABLE=false
+
+## Send analytics to custom PostHog instance
+#AIDER_ANALYTICS_POSTHOG_HOST=
+
+## Send analytics to custom PostHog project
+#AIDER_ANALYTICS_POSTHOG_PROJECT_API_KEY=
 
 ############
 # Upgrading:
@@ -396,6 +405,9 @@ cog.outl("```")
 
 ## Specify the language to use in the chat (default: None, uses system settings)
 #AIDER_CHAT_LANGUAGE=
+
+## Specify the language to use in the commit message (default: None, user language)
+#AIDER_COMMIT_LANGUAGE=
 
 ## Always say yes to every confirmation
 #AIDER_YES_ALWAYS=

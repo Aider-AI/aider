@@ -1093,32 +1093,6 @@
   seconds_per_case: 12.0
   total_cost: 0.4281
 
-- dirname: 2025-04-16-21-20-55--o3-high-diff-temp0-exsys
-  test_cases: 225
-  model: o3 (high)
-  edit_format: diff
-  commit_hash: 24805ff-dirty
-  pass_rate_1: 36.9
-  pass_rate_2: 79.6
-  pass_num_1: 83
-  pass_num_2: 179
-  percent_cases_well_formed: 95.1
-  error_outputs: 11
-  num_malformed_responses: 11
-  num_with_malformed_responses: 11
-  user_asks: 110
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 2
-  total_tests: 225
-  command: aider --model o3
-  date: 2025-04-16
-  versions: 0.82.1.dev
-  seconds_per_case: 113.8
-  total_cost: 111.0325
-
 - dirname: 2025-04-16-22-01-58--o4-mini-high-diff-exsys
   test_cases: 225
   model: o4-mini (high)
@@ -1144,34 +1118,6 @@
   versions: 0.82.1.dev
   seconds_per_case: 176.5
   total_cost: 19.6399
-
-- dirname: 2025-04-17-01-20-35--o3-mini-high-diff-arch
-  test_cases: 225
-  model: o3 (high) + gpt-4.1
-  edit_format: architect
-  commit_hash: 80909e1-dirty
-  editor_model: gpt-4.1
-  editor_edit_format: editor-diff
-  pass_rate_1: 36.0
-  pass_rate_2: 82.7
-  pass_num_1: 81
-  pass_num_2: 186
-  percent_cases_well_formed: 100.0
-  error_outputs: 9
-  num_malformed_responses: 0
-  num_with_malformed_responses: 0
-  user_asks: 166
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  test_timeouts: 0
-  total_tests: 225
-  command: aider --model o3 --architect
-  date: 2025-04-17
-  versions: 0.82.2.dev
-  seconds_per_case: 110.0
-  total_cost: 69.2921
 
 - dirname: 2025-04-19-14-43-04--o4-mini-patch
   test_cases: 225
@@ -1478,3 +1424,205 @@
   versions: 0.83.3.dev
   seconds_per_case: 53.9
   total_cost: 8.5625
+
+- dirname: 2025-06-06-18-38-56--gemini0605-diff-fenced
+  test_cases: 225
+  model: gemini-2.5-pro-preview-06-05 (default think)
+  edit_format: diff-fenced
+  commit_hash: 4c161f9-dirty
+  pass_rate_1: 44.9
+  pass_rate_2: 79.1
+  pass_num_1: 101
+  pass_num_2: 178
+  percent_cases_well_formed: 100.0
+  error_outputs: 4
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 4
+  prompt_tokens: 2751296
+  completion_tokens: 4142197
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-06-05
+  date: 2025-06-06
+  versions: 0.84.1.dev
+  seconds_per_case: 175.2
+  total_cost: 45.5961
+
+- dirname: 2025-06-06-16-36-21--gemini0605-32k-think-diff-fenced
+  test_cases: 225
+  model: gemini-2.5-pro-preview-06-05 (32k think)
+  edit_format: diff-fenced
+  commit_hash: f827f22
+  thinking_tokens: 32768
+  pass_rate_1: 46.2
+  pass_rate_2: 83.1
+  pass_num_1: 104
+  pass_num_2: 187
+  percent_cases_well_formed: 99.6
+  error_outputs: 1
+  num_malformed_responses: 1
+  num_with_malformed_responses: 1
+  user_asks: 112
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2719961
+  completion_tokens: 4648227
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model gemini/gemini-2.5-pro-preview-06-05 --thinking-tokens 32k
+  date: 2025-06-06
+  versions: 0.84.1.dev
+  seconds_per_case: 200.3
+  total_cost: 49.8822
+
+- dirname: 2025-06-06-16-47-07--r1-diff
+  test_cases: 224
+  model: DeepSeek R1 (0528)
+  edit_format: diff
+  commit_hash: 4c161f9-dirty
+  pass_rate_1: 34.4
+  pass_rate_2: 71.4
+  pass_num_1: 77
+  pass_num_2: 160
+  percent_cases_well_formed: 94.6
+  error_outputs: 28
+  num_malformed_responses: 15
+  num_with_malformed_responses: 12
+  user_asks: 105
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2644169
+  completion_tokens: 1842168
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-06-06
+  versions: 0.84.1.dev
+  seconds_per_case: 716.6
+  total_cost: 4.8016
+
+- dirname: 2025-06-25-21-04-24--o3-price-reduction-high
+  test_cases: 225
+  model: o3 (high)
+  edit_format: diff
+  commit_hash: c48fea6
+  reasoning_effort: high
+  pass_rate_1: 40.0
+  pass_rate_2: 81.3
+  pass_num_1: 90
+  pass_num_2: 183
+  percent_cases_well_formed: 94.7
+  error_outputs: 25
+  num_malformed_responses: 23
+  num_with_malformed_responses: 12
+  user_asks: 116
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 3148932
+  completion_tokens: 2047615
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model o3 --reasoning-effort high
+  date: 2025-06-25
+  versions: 0.84.1.dev
+  seconds_per_case: 197.3
+  total_cost: 21.2259
+
+- dirname: 2025-06-25-20-30-16--o3-price-reduction
+  test_cases: 225
+  model: o3
+  edit_format: diff
+  commit_hash: c48fea6
+  pass_rate_1: 40.9
+  pass_rate_2: 76.9
+  pass_num_1: 92
+  pass_num_2: 173
+  percent_cases_well_formed: 93.8
+  error_outputs: 22
+  num_malformed_responses: 22
+  num_with_malformed_responses: 14
+  user_asks: 108
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2893189
+  completion_tokens: 1154767
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model o3
+  date: 2025-06-25
+  versions: 0.84.1.dev
+  seconds_per_case: 101.7
+  total_cost: 13.7517
+
+- dirname: 2025-06-27-23-53-57--o3-mini-high-diff-arch
+  test_cases: 224
+  model: o3 (high) + gpt-4.1
+  edit_format: architect
+  commit_hash: 4f4f00f-dirty
+  editor_model: gpt-4.1
+  editor_edit_format: editor-diff
+  reasoning_effort: high
+  pass_rate_1: 34.8
+  pass_rate_2: 78.2
+  pass_num_1: 78
+  pass_num_2: 176
+  percent_cases_well_formed: 100.0
+  error_outputs: 18
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 172
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 1306877
+  completion_tokens: 1327154
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model o3
+  date: 2025-06-27
+  versions: 0.85.1.dev
+  seconds_per_case: 121.8
+  total_cost: 17.5518
+
+- dirname: 2025-06-28-00-38-18--o3-pro-high
+  test_cases: 225
+  model: o3-pro (high)
+  edit_format: diff
+  commit_hash: 5318380
+  reasoning_effort: high
+  pass_rate_1: 43.6
+  pass_rate_2: 84.9
+  pass_num_1: 98
+  pass_num_2: 191
+  percent_cases_well_formed: 97.8
+  error_outputs: 20
+  num_malformed_responses: 8
+  num_with_malformed_responses: 5
+  user_asks: 100
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2372636
+  completion_tokens: 1235902
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model o3-pro
+  date: 2025-06-28
+  versions: 0.85.1.dev
+  seconds_per_case: 449.0
+  total_cost: 146.3249

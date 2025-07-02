@@ -165,7 +165,7 @@ class GitRepo:
         - --attribute-author: Modify Author name to "User Name (aider)".
         - --attribute-committer: Modify Committer name to "User Name (aider)".
         - --attribute-co-authored-by: Add
-          "Co-authored-by: aider (<model>) <noreply@aider.chat>" trailer to commit message.
+          "Co-authored-by: aider (<model>) <aider@aider.chat>" trailer to commit message.
 
         Behavior Summary:
 
@@ -249,9 +249,7 @@ class GitRepo:
             model_name = "unknown-model"
             if coder and hasattr(coder, "main_model") and coder.main_model.name:
                 model_name = coder.main_model.name
-            commit_message_trailer = (
-                f"\n\nCo-authored-by: aider ({model_name}) <noreply@aider.chat>"
-            )
+            commit_message_trailer = f"\n\nCo-authored-by: aider ({model_name}) <aider@aider.chat>"
 
         # Determine if author/committer names should be modified
         # Author modification applies only to aider edits.

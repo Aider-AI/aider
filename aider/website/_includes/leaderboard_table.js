@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   let currentMode = 'view'; // 'view', 'select', 'detail'
   let selectedRows = new Set(); // Store indices of selected rows
-  const MAX_DISPLAY_COST_CAP = 75; // Define the constant here
+  const MAX_DISPLAY_COST_CAP = 200; // Define the constant here
 
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
