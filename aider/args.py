@@ -786,6 +786,18 @@ def get_parser(default_config_files, git_root):
         help="Line endings to use when writing files (default: platform)",
     )
     group.add_argument(
+        "--mcp-servers",
+        metavar="MCP_CONFIG_JSON",
+        help="Specify MCP server configurations as a JSON string",
+        default=None,
+    )
+    group.add_argument(
+        "--mcp-servers-file",
+        metavar="MCP_CONFIG_FILE",
+        help="Specify a file path with MCP server configurations",
+        default=None,
+    )
+    group.add_argument(
         "-c",
         "--config",
         is_config_file=True,
