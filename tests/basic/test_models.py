@@ -558,6 +558,30 @@ class TestModels(unittest.TestCase):
             timeout=600,
         )
 
+    def test_no_duplicate_model_names(self):
+        import importlib.resources
+
+        import yaml
+
+        with importlib.resources.open_text("aider.resources", "model-settings.yml") as f:
+            model_settings_list = yaml.safe_load(f)
+
+        model_names = [d["name"] for d in model_settings_list]
+        seen = set()
+        duplicates = set()
+
+        for name in model_names:
+            if name in seen:
+                duplicates.add(name)
+            else:
+                seen.add(name)
+
+        self.assertEqual(
+            len(duplicates),
+            0,
+            f"Duplicate model names found: {', '.join(sorted(duplicates))}",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1240,12 +1240,26 @@ def get_model_settings_as_yaml():
     import yaml
 
     model_settings_list = []
-    # Add default settings first with all field values
+    # Create a header with default values
+    header_str = """# Model settings
+#
+# To keep this file properly formatted after making any changes, please use the
+# following command:
+#
+#     python aider/models.py --yaml model-settings.yml && mv model-settings.yml aider/resources/
+#
+# Default values for model settings:
+#
+"""
     defaults = {}
     for field in fields(ModelSettings):
         defaults[field.name] = field.default
     defaults["name"] = "(default values)"
-    model_settings_list.append(defaults)
+    header_str += (
+        "# - "
+        + "\n#   ".join(yaml.dump(defaults, default_flow_style=False, sort_keys=False).splitlines())
+        + "\n#\n\n"
+    )
 
     # Sort model settings by name
     for ms in sorted(MODEL_SETTINGS, key=lambda x: x.name):
@@ -1266,7 +1280,7 @@ def get_model_settings_as_yaml():
         sort_keys=False,  # Preserve field order from dataclass
     )
     # Add actual blank lines between entries
-    return yaml_str.replace("\n- ", "\n\n- ")
+    return header_str + yaml_str.replace("\n- ", "\n\n- ")
 
 
 def main():
