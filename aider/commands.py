@@ -42,6 +42,7 @@ class Commands:
             self.io,
             None,
             voice_language=self.voice_language,
+            voice_model=self.voice_model,
             verify_ssl=self.verify_ssl,
             args=self.args,
             parser=self.parser,
@@ -57,6 +58,7 @@ class Commands:
         voice_language=None,
         voice_input_device=None,
         voice_format=None,
+        voice_model=None,
         verify_ssl=True,
         args=None,
         parser=None,
@@ -72,11 +74,12 @@ class Commands:
 
         self.verify_ssl = verify_ssl
         if voice_language == "auto":
-            voice_language = None
+            voice_language = None 
 
         self.voice_language = voice_language
         self.voice_format = voice_format
         self.voice_input_device = voice_input_device
+        self.voice_model = voice_model
 
         self.help = None
         self.editor = editor
@@ -1232,12 +1235,14 @@ class Commands:
         "Record and transcribe voice input"
 
         if not self.voice:
-            if "OPENAI_API_KEY" not in os.environ:
-                self.io.tool_error("To use /voice you must provide an OpenAI API key.")
+            if "OPENAI_API_KEY" not in os.environ and self.voice_model is None:
+                self.io.tool_error("To use /voice you must provide an OpenAI API key or a voice model.")
                 return
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
+                    audio_format=self.voice_format or "wav",
+                    device_name=self.voice_input_device,
+                    voice_model=self.voice_model,
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(
