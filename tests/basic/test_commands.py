@@ -2133,6 +2133,17 @@ class TestCommands(TestCase):
                         "Command '/model gpt-4' is only supported in interactive mode, skipping."
                     )
 
+    def test_loadscript(self):
+        # Test that /loadscript can run shell that is interpreted as aider commands
+        # Create some test files
+        with open("test1.py", "w") as f:
+            f.write("print('test1')")
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+        commands.cmd_loadscript("echo /add test1.py")
+        self.assertIn(str(Path("test1.py").resolve()), coder.abs_fnames)
+
     def test_reset_after_coder_clone_preserves_original_read_only_files(self):
         with GitTemporaryDirectory() as _:
             repo_dir = str(".")
