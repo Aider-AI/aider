@@ -1626,3 +1626,29 @@
   versions: 0.85.1.dev
   seconds_per_case: 449.0
   total_cost: 146.3249
+
+- dirname: 2025-07-05-08-07-28--MindLink_Beta
+  test_cases: 225
+  model: hosted_vllm/MindLink_Beta
+  edit_format: diff
+  commit_hash: c1dc3a7-dirty
+  pass_rate_1: 33.8
+  pass_rate_2: 80.0
+  pass_num_1: 76
+  pass_num_2: 180
+  percent_cases_well_formed: 95.6
+  error_outputs: 202
+  num_malformed_responses: 20
+  num_with_malformed_responses: 10
+  user_asks: 88
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model hosted_vllm/MindLink_Beta
+  date: 2025-07-05
+  versions: 0.82.3.dev
+  seconds_per_case: 231.4
+  total_cost: 0.0000
