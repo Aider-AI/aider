@@ -176,6 +176,13 @@ def get_parser(default_config_files, git_root):
         help="Use architect edit format for the main chat",
     )
     group.add_argument(
+        "--navigator",
+        action="store_const",
+        dest="edit_format",
+        const="navigator",
+        help="Use navigator edit format for the main chat (autonomous file management)",
+    )
+    group.add_argument(
         "--auto-accept-architect",
         action=argparse.BooleanOptionalAction,
         default=True,

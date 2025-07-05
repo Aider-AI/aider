@@ -120,6 +120,10 @@ class Coder:
     chat_language = None
     commit_language = None
     file_watcher = None
+    
+    # Context management settings (for all modes)
+    context_management_enabled = False  # Disabled by default except for navigator mode
+    large_file_token_threshold = 25000  # Files larger than this will be truncated when context management is enabled
 
     @classmethod
     def create(
@@ -646,11 +650,36 @@ class Coder:
                 prompt += relative_fname
                 prompt += f"\n{self.fence[0]}\n"
 
-                prompt += content
-
-                # lines = content.splitlines(keepends=True)
-                # lines = [f"{i+1:03}:{line}" for i, line in enumerate(lines)]
-                # prompt += "".join(lines)
+                # Apply context management if enabled for large files
+                if self.context_management_enabled:
+                    # Calculate tokens for this file
+                    file_tokens = self.main_model.token_count(content)
+                    
+                    if file_tokens > self.large_file_token_threshold:
+                        # Truncate the file content
+                        lines = content.splitlines()
+                        total_lines = len(lines)
+                        
+                        # Keep the first and last parts of the file with a marker in between
+                        keep_lines = self.large_file_token_threshold // 40  # Rough estimate of tokens per line
+                        first_chunk = lines[:keep_lines//2]
+                        last_chunk = lines[-(keep_lines//2):]
+                        
+                        truncated_content = "\n".join(first_chunk)
+                        truncated_content += f"\n\n... [File truncated due to size ({file_tokens} tokens). Use /context-management to toggle truncation off] ...\n\n"
+                        truncated_content += "\n".join(last_chunk)
+                        
+                        # Add message about truncation
+                        self.io.tool_output(
+                            f"⚠️ '{relative_fname}' is very large ({file_tokens} tokens). "
+                            "Use /context-management to toggle truncation off if needed."
+                        )
+                        
+                        prompt += truncated_content
+                    else:
+                        prompt += content
+                else:
+                    prompt += content
 
                 prompt += f"{self.fence[1]}\n"
 
@@ -665,7 +694,38 @@ class Coder:
                 prompt += "\n"
                 prompt += relative_fname
                 prompt += f"\n{self.fence[0]}\n"
-                prompt += content
+                
+                # Apply context management if enabled for large files (same as get_files_content)
+                if self.context_management_enabled:
+                    # Calculate tokens for this file
+                    file_tokens = self.main_model.token_count(content)
+                    
+                    if file_tokens > self.large_file_token_threshold:
+                        # Truncate the file content
+                        lines = content.splitlines()
+                        total_lines = len(lines)
+                        
+                        # Keep the first and last parts of the file with a marker in between
+                        keep_lines = self.large_file_token_threshold // 40  # Rough estimate of tokens per line
+                        first_chunk = lines[:keep_lines//2]
+                        last_chunk = lines[-(keep_lines//2):]
+                        
+                        truncated_content = "\n".join(first_chunk)
+                        truncated_content += f"\n\n... [File truncated due to size ({file_tokens} tokens). Use /context-management to toggle truncation off] ...\n\n"
+                        truncated_content += "\n".join(last_chunk)
+                        
+                        # Add message about truncation
+                        self.io.tool_output(
+                            f"⚠️ '{relative_fname}' is very large ({file_tokens} tokens). "
+                            "Use /context-management to toggle truncation off if needed."
+                        )
+                        
+                        prompt += truncated_content
+                    else:
+                        prompt += content
+                else:
+                    prompt += content
+                    
                 prompt += f"{self.fence[1]}\n"
         return prompt
 
