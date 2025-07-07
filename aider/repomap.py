@@ -1,7 +1,5 @@
-import colorsys
 import math
 import os
-import random
 import shutil
 import sqlite3
 import sys
@@ -752,7 +750,9 @@ class RepoMap:
                     output += cur_fname + ":\n"
 
                     # truncate long lines, in case we get minified js or something else crazy
-                    output += truncate_long_lines(self.render_tree(cur_abs_fname, cur_fname, lois), self.max_code_line_length)
+                    output += truncate_long_lines(
+                        self.render_tree(cur_abs_fname, cur_fname, lois), self.max_code_line_length
+                    )
 
                     lois = None
                 elif cur_fname:
@@ -767,8 +767,10 @@ class RepoMap:
 
         return output
 
+
 def truncate_long_lines(text, max_length):
     return "\n".join([line[:max_length] for line in text.splitlines()]) + "\n"
+
 
 def find_src_files(directory):
     if not os.path.isdir(directory):

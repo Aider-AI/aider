@@ -275,7 +275,7 @@ print(my_function(3, 4))
 
     def test_get_repo_map_follows_max_line_length(self):
         hundred_chars = "0123456789" * 10
-        test_file_name = f"file1.py"
+        test_file_name = "file1.py"
         method_name = f"my_method_with_more_than_100_chars_{hundred_chars}"
 
         test_file_name_100_chars_content = f"""
@@ -289,7 +289,9 @@ class MyClass:
                 f.write(test_file_name_100_chars_content)
 
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io, max_code_line_length=200)
+            repo_map = RepoMap(
+                main_model=self.GPT35, root=temp_dir, io=io, max_code_line_length=200
+            )
 
             other_files = [
                 os.path.join(temp_dir, test_file_name),
@@ -317,7 +319,9 @@ class MyClass:
                 f.write(test_file_name_100_chars_content)
 
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io, max_code_line_length=100)
+            repo_map = RepoMap(
+                main_model=self.GPT35, root=temp_dir, io=io, max_code_line_length=100
+            )
 
             other_files = [
                 os.path.join(temp_dir, test_file_name_100_chars),

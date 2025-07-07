@@ -269,8 +269,10 @@ def get_parser(default_config_files, git_root):
         "--map-max-line-length",
         type=int,
         default=100,
-        help="Maximum line length for the repo map code. Prevents sending crazy long lines of minified"
-             " JS files etc. (default: 100)",
+        help=(
+            "Maximum line length for the repo map code. Prevents sending crazy long lines of"
+            " minified JS files etc. (default: 100)"
+        ),
     )
 
     ##########
