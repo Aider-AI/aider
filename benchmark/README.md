@@ -171,46 +171,6 @@ In this example:
 
 When running in architect mode, the benchmark report will include additional information about the editor model used.
 
-### Running Discord Bot-Specific Benchmarks
-
-The benchmark system now includes comprehensive Discord bot-specific test scenarios that evaluate:
-
-- **Mention-based command parsing** and validation
-- **Message length handling** (2000 character Discord limits)
-- **Thread creation and management** functionality
-- **URL scraping** with X/Twitter routing to Apify
-- **Message summarization** features (/sum-day, /psalm-day commands)
-- **Database operations** for message and summary storage
-- **Edge case handling** for Discord-specific constraints
-- **Error recovery** and graceful degradation
-
-To run Discord bot-specific benchmarks:
-
-```
-./benchmark/benchmark.py discord-bot-test --model gpt-4 --edit-format whole --discord-bot --threads 5
-```
-
-The Discord bot benchmarks include:
-
-#### Test Categories:
-- **Message Handling**: Mention parsing, length limits, thread management
-- **URL Scraping**: Twitter/X detection, Apify routing, fallback mechanisms
-- **Summarization**: Daily summaries, content filtering, formatting
-- **Database Operations**: SQLite persistence, query optimization, data cleanup
-- **Edge Cases**: Rate limiting, error conditions, performance under load
-
-#### Enhanced Prompts:
-- **Structured requirements** with clear success criteria
-- **Discord-specific constraints** and API limitations
-- **Comprehensive error handling** guidance
-- **Implementation best practices** for Discord bots
-
-#### Metrics Tracked:
-- **Functional correctness**: Command parsing accuracy, response relevance
-- **Performance**: Response time, memory efficiency, database query speed
-- **Reliability**: Error recovery rate, uptime, data consistency
-- **Discord compliance**: Rate limit adherence, message format compliance
-
 ## Limitations, notes
 
 - Contributions of benchmark results are welcome! Submit results by opening a PR with edits to the
