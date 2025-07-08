@@ -412,6 +412,7 @@ class Commands:
         "Clear the chat history"
 
         self._clear_chat_history()
+        self.io.tool_output("All chat history cleared.")
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
