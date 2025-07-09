@@ -1,17 +1,12 @@
 ; Functions
-(function_declaration
+(fn_proto
   name: (identifier) @name.definition.function)
 
 ; Structs, Enums, Unions and Opaque types
-(variable_declaration
+(var_decl
   name: (identifier) @name.definition.class
-  value: [
-    (struct_declaration)
-    (enum_declaration)
-    (union_declaration)
-    (opaque_declaration)
-  ])
+  value: (container_decl))
 
 ; Tests
-(test_declaration
-  name: (string) @name.definition.test)
+(test_decl
+  name: (string_literal) @name.definition.test)
