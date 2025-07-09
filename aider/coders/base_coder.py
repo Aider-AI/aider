@@ -1747,7 +1747,10 @@ class Coder:
                         self.io.tool_warning(f"Executing {tool_call.function.name} on {server.name} failed: \n  Error: {e}\n")
                         tool_responses.append({"role": "tool", "tool_call_id": tool_call.id, "content": tool_error})
             except Exception as e:
-                self.io.tool_warning(f"Could not connect to server {server.name}\n{e}")
+                connection_error = f"Could not connect to server {server.name}\n{e}"
+                self.io.tool_warning(connection_error)
+                for tool_call in tool_calls_list:
+                    tool_responses.append({"role": "tool", "tool_call_id": tool_call.id, "content": connection_error})
             finally:
                 await server.disconnect()
 
