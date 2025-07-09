@@ -2579,7 +2579,8 @@ class Coder:
         context = ""
         if history:
             for msg in history:
-                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+                msg_content = msg.get("content") or ""
+                context += "\n" + msg["role"].upper() + ": " + msg_content + "\n"
 
         return context
 

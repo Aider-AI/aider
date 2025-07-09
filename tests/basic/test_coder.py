@@ -1752,6 +1752,46 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(result[0]["tool_call_id"], "test_id")
             self.assertEqual(result[0]["content"], "Tool execution result")
 
+    def test_auto_commit_with_none_content_message(self):
+        """
+        Verify that auto_commit works with messages that have None content.
+        This is common with tool calls.
+        """
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname = Path("file1.txt")
+            fname.write_text("one\n")
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "initial")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+
+            coder.cur_messages = [
+                {"role": "user", "content": "do a thing"},
+                {"role": "assistant", "content": None},
+            ]
+
+            # The context for commit message will be generated from cur_messages.
+            # This call should not raise an exception due to `content: None`.
+
+            def mock_get_commit_message(diffs, context, user_language=None):
+                self.assertIn("USER: do a thing", context)
+                self.assertIn("ASSISTANT: \n", context)  # None becomes empty string.
+                return "commit message"
+
+            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
+
+            res = coder.auto_commit({str(fname)})
+            self.assertIsNotNone(res)
+
+            # Don't expect any commits as nothing has changed
+            num_commits = len(list(repo.iter_commits()))
+            self.assertEqual(num_commits, 1)
+
+            coder.repo.get_commit_message.assert_called_once()
+
 
 if __name__ == "__main__":
     unittest.main()
