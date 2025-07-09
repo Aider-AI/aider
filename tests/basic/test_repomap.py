@@ -394,6 +394,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_matlab(self):
         self._test_language_repo_map("matlab", "m", "Person")
 
+    def test_language_zig(self):
+        self._test_language_repo_map("zig", "zig", "Person")
+
     def _test_language_repo_map(self, lang, key, symbol):
         """Helper method to test repo map generation for a specific language."""
         # Get the fixture file path and name based on language
