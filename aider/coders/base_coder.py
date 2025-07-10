@@ -321,6 +321,7 @@ class Coder:
         test_cmd=None,
         aider_commit_hashes=None,
         map_mul_no_files=8,
+        map_max_line_length=100,
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -505,6 +506,7 @@ class Coder:
                 max_inp_tokens,
                 map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
+                max_code_line_length=map_max_line_length,
             )
 
         self.summarizer = summarizer or ChatSummary(
