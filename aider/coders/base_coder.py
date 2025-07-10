@@ -1424,7 +1424,7 @@ class Coder:
 
         # Check if we need to clear old messages
         if (self.main_model.max_done_messages > 0 and 
-            len(self.done_messages) > self.main_model.max_done_messages):
+            len(self.done_messages) >= self.main_model.max_done_messages):
             if self.io.confirm_ask(
                 f"Chat history has {len(self.done_messages)} messages (max is {self.main_model.max_done_messages}). Clear old messages?"
             ):
