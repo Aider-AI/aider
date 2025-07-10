@@ -619,6 +619,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     handle_deprecated_model_args(args, io)
     if args.openai_api_base:
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
+        # Add the new canonical ENV variable for litellm
+        # (see: https://github.com/BerriAI/litellm/pull/10423)
+        os.environ["OPENAI_BASE_URL"] = args.openai_api_base
     if args.openai_api_version:
         io.tool_warning(
             "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
