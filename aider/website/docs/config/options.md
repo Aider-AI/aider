@@ -42,10 +42,10 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--restore-chat-history | --no-restore-chat-history]
              [--llm-history-file] [--dark-mode] [--light-mode]
              [--pretty | --no-pretty] [--stream | --no-stream]
-             [--user-input-color] [--tool-output-color]
-             [--tool-error-color] [--tool-warning-color]
-             [--assistant-output-color] [--completion-menu-color]
-             [--completion-menu-bg-color]
+             [--user-input-color] [--user-input-submitted-color]
+             [--tool-output-color] [--tool-error-color]
+             [--tool-warning-color] [--assistant-output-color]
+             [--completion-menu-color] [--completion-menu-bg-color]
              [--completion-menu-current-color]
              [--completion-menu-current-bg-color] [--code-theme]
              [--show-diffs] [--git | --no-git]
@@ -328,6 +328,10 @@ Aliases:
 Set the color for user input (default: #00cc00)  
 Default: #00cc00  
 Environment variable: `AIDER_USER_INPUT_COLOR`  
+
+### `--user-input-submitted-color VALUE`
+Set the color for user submitted input (default: None)  
+Environment variable: `AIDER_USER_INPUT_SUBMITTED_COLOR`  
 
 ### `--tool-output-color VALUE`
 Set the color for tool output (default: None)  
