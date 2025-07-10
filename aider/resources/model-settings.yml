@@ -1023,6 +1023,12 @@
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
 
+- name: xai/grok-4
+  use_repo_map: true
+  edit_format: diff
+  accepts_settings:
+    - reasoning_effort
+
 - name: xai/grok-3-mini-beta
   use_repo_map: true
   edit_format: whole
