@@ -60,6 +60,7 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
              [--attribute-co-authored-by | --no-attribute-co-authored-by]
              [--git-commit-verify | --no-git-commit-verify]
+             [--git-commit-no-sign | --no-git-commit-no-sign]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--skip-sanity-check-repo]
              [--watch-files | --no-watch-files] [--lint]
@@ -471,6 +472,14 @@ Environment variable: `AIDER_GIT_COMMIT_VERIFY`
 Aliases:
   - `--git-commit-verify`
   - `--no-git-commit-verify`
+
+### `--git-commit-no-sign`
+Disable git commit signing with --no-gpg-sign (default: False)  
+Default: False  
+Environment variable: `AIDER_GIT_COMMIT_NO_SIGN`  
+Aliases:
+  - `--git-commit-no-sign`
+  - `--no-git-commit-no-sign`
 
 ### `--commit`
 Commit all pending changes with a suitable commit message, then exit  
