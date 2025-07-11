@@ -1626,3 +1626,32 @@
   versions: 0.85.1.dev
   seconds_per_case: 449.0
   total_cost: 146.3249
+
+- dirname: 2025-07-11-19-37-40--xai-or-grok4-high
+  test_cases: 225
+  model: grok-4 (high)
+  edit_format: diff
+  commit_hash: f7870b6-dirty
+  reasoning_effort: high
+  pass_rate_1: 40.9
+  pass_rate_2: 79.6
+  pass_num_1: 92
+  pass_num_2: 179
+  percent_cases_well_formed: 97.3
+  error_outputs: 11
+  num_malformed_responses: 8
+  num_with_malformed_responses: 6
+  user_asks: 133
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2815347
+  completion_tokens: 3411480
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openrouter/x-ai/grok-4
+  date: 2025-07-11
+  versions: 0.85.2.dev
+  seconds_per_case: 403.2
+  total_cost: 59.6182

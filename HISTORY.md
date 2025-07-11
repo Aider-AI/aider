@@ -1,5 +1,14 @@
 # Release history
 
+### main branch
+
+- Added support for Grok-4 via `xai/grok-4` and `openrouter/x-ai/grok-4` model names.
+- Added support for `gemini/gemini-2.5-flash-lite-preview-06-17` model, by Tamir Zahavi-Brunner.
+- `/clear` now prints “All chat history cleared.” so you know it worked, by Zexin Yuan.
+- `/undo` output now shows only the first line of each commit message, making it easier to read.
+- Fixed an issue where new settings for an existing model didn't replace the old ones, by Andrew Grigorev.
+- Aider wrote 0% of the code in this release.
+
 ### Aider v0.85.1
 
 - Display model announcements with no-arg `/model` command.

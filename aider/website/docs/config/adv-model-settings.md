@@ -913,6 +913,14 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: gemini/gemini-2.5-flash-lite-preview-06-17
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
+
 - name: gemini/gemini-2.5-flash-preview-04-17
   edit_format: diff
   use_repo_map: true
@@ -1761,6 +1769,12 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: openrouter/x-ai/grok-4
+  edit_format: diff
+  use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
+
 - name: us.anthropic.claude-opus-4-20250514-v1:0
   edit_format: diff
   weak_model_name: us.anthropic.claude-3-5-haiku-20241022-v1:0
@@ -1968,6 +1982,12 @@ cog.out("```\n")
   - reasoning_effort
 
 - name: xai/grok-3-mini-fast-beta
+  use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
+
+- name: xai/grok-4
+  edit_format: diff
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
