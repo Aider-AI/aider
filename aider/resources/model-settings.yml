@@ -803,8 +803,9 @@
 - name: openrouter/moonshotai/kimi-k2
   edit_format: diff
   use_repo_map: true
-  reminder: sys
   examples_as_sys_msg: true
+  extra_params:
+    temperature: 0.6
 
 - name: fireworks_ai/accounts/fireworks/models/deepseek-r1
   edit_format: diff

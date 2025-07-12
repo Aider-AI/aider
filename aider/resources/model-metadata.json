@@ -121,7 +121,8 @@
         "litellm_provider": "openrouter",
         "mode": "chat",
         "supports_tool_choice": true,
-        "supports_system_messages": true
+        "supports_system_messages": true,
+        "source": "https://openrouter.ai/moonshotai/kimi-k2"
     },
     "openrouter/openai/gpt-4o-mini": {
         "max_tokens": 16384,
