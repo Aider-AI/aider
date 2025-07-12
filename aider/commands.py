@@ -1709,8 +1709,10 @@ Just show me the edits I need to make.
             self._session_load(subcommand_args)
         elif subcommand == "delete":
             self._session_delete(subcommand_args)
+        elif subcommand == "view":
+            self._session_view(subcommand_args)
         else:
-            self.io.tool_error(f"Invalid subcommand '{subcommand}'. Use list, save, load, or delete.")
+            self.io.tool_error(f"Invalid subcommand '{subcommand}'. Use list, save, load, view, or delete.")
 
     def _get_sessions_dir(self):
         "Helper to get the sessions directory, creating it if needed."
@@ -1819,6 +1821,49 @@ Just show me the edits I need to make.
             self.io.tool_output(f"Session '{session_name}' deleted.")
         except Exception as e:
             self.io.tool_error(f"Error deleting session file: {e}")
+
+    def _session_view(self, session_name):
+        "View the details of a saved session"
+        if not session_name:
+            self.io.tool_error("Please provide the name of the session to view.")
+            return
+
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        session_file = sessions_dir / f"{session_name}.json"
+
+        if not session_file.exists():
+            self.io.tool_error(f"Session '{session_name}' not found.")
+            return
+
+        try:
+            with open(session_file, "r") as f:
+                data = json.load(f)
+        except Exception as e:
+            self.io.tool_error(f"Error reading session file: {e}")
+            return
+
+        self.io.tool_output(f"Session Details: {session_name}")
+        self.io.tool_output("-" * (len(session_name) + 17))
+        self.io.tool_output(f"  Version: {data.get('version', 'N/A')}")
+        self.io.tool_output(f"  Timestamp: {data.get('timestamp', 'N/A')}")
+
+        self.io.tool_output("\n  Editable Files:")
+        for fname in data.get("editable_files", []):
+            self.io.tool_output(f"    - {self.coder.get_rel_fname(fname)}")
+
+        self.io.tool_output("\n  Read-only Files:")
+        for fname in data.get("read_only_files", []):
+            self.io.tool_output(f"    - {self.coder.get_rel_fname(fname)}")
+
+        self.io.tool_output("\n  Chat History Preview:")
+        for msg in data.get("chat_history", []):
+            role = msg.get('role', 'unknown')
+            content = msg.get('content', '')
+            preview = (content[:70] + '...') if len(content) > 70 else content
+            self.io.tool_output(f"    - {role.capitalize()}: {preview.splitlines()[0]}")
 
 
 def expand_subdir(file_path):

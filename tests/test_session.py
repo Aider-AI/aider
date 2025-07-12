@@ -65,6 +65,15 @@ def test_session_management(monkeypatch, tmp_path):
     commands.cmd_session("list")
     assert f"- {session_name}" in captured_output
 
+    # --- Test /session view ---
+    captured_output.clear()
+    commands.cmd_session(f"view {session_name}")
+    output = "".join(captured_output)
+    assert session_name in output
+    assert "file1.py" in output
+    assert "file2.py" in output
+    assert "hello" in output  # from chat history
+
     # --- Test /session load ---
     commands.cmd_reset("")  # Reset state
     commands.cmd_session(f"load {session_name}")
