@@ -85,6 +85,10 @@ aider in a terminal alongside your editor and use `--watch-files`.
 
 [https://github.com/joshuavial/aider.nvim](https://github.com/joshuavial/aider.nvim)
 
+[GeorgesAlkhouri](https://github.com/GeorgesAlkhouri) has also created a NeoVim plugin for aider:
+
+[https://github.com/GeorgesAlkhouri/nvim-aider](https://github.com/GeorgesAlkhouri/nvim-aider)
+
 ### VS Code
 
 You can run aider inside a VS Code terminal window.
