@@ -717,6 +717,12 @@ def get_parser(default_config_files, git_root):
         default=None,
         help="Specify the input device name for voice recording",
     )
+    group.add_argument(
+        "--voice-model",
+        metavar="VOICE_MODEL",
+        default=None,
+        help="Specify the speech-to-text model to use for voice input (default: whisper-1, requires OPENAI_API_KEY)",
+    )
 
     ######
     group = parser.add_argument_group("Other settings")
