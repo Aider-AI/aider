@@ -1658,39 +1658,6 @@ Just show me the edits I need to make.
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
 
-    def cmd_blame(self, args):
-        "Show git blame for a specific line in a file (e.g. /blame path/to/file.py:123)"
-        if not self.coder.repo:
-            self.io.tool_error("No git repository found.")
-            return
-
-        try:
-            fname, line_num_str = args.rsplit(":", 1)
-            line_num = int(line_num_str)
-        except (ValueError, IndexError):
-            self.io.tool_error("Invalid format. Use /blame <file>:<line_number>")
-            return
-
-        rel_fname = self.coder.repo.normalize_path(fname)
-        if not rel_fname or not self.coder.repo.path_in_repo(rel_fname):
-            self.io.tool_error(f"File '{fname}' is not in the git repository.")
-            return
-
-        try:
-            blame_output = self.coder.repo.repo.git.blame(f"-L{line_num},{line_num}", "--porcelain", "--", rel_fname)
-            if not blame_output.strip():
-                self.io.tool_error(f"Line number {line_num} is out of bounds for file {rel_fname}.")
-                return
-
-            commit_hash = blame_output.split(" ")[0]
-            commit = self.coder.repo.repo.commit(commit_hash)
-            blame_info = f"{commit.hexsha[:7]} ({commit.author.name} {commit.authored_datetime.isoformat()}) {commit.summary}"
-            self.io.tool_output(blame_info)
-            self.io.tool_output(blame_output.splitlines()[-1])
-
-        except ANY_GIT_ERROR as e:
-            self.io.tool_error(f"Error running git blame: {e}")
-
     def cmd_session(self, args):
         "Manage chat sessions (list, save, load, delete)"
         parts = args.strip().split()
