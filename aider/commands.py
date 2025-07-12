@@ -1691,6 +1691,27 @@ Just show me the edits I need to make.
         except ANY_GIT_ERROR as e:
             self.io.tool_error(f"Error running git blame: {e}")
 
+    def cmd_session(self, args):
+        "Manage chat sessions (list, save, load, delete)"
+        parts = args.strip().split()
+        if not parts:
+            self.io.tool_error("Please provide a subcommand for /session (list, save, load, delete).")
+            return
+
+        subcommand = parts[0]
+        subcommand_args = " ".join(parts[1:])
+
+        if subcommand == "list":
+            self._session_list()
+        elif subcommand == "save":
+            self._session_save(subcommand_args)
+        elif subcommand == "load":
+            self._session_load(subcommand_args)
+        elif subcommand == "delete":
+            self._session_delete(subcommand_args)
+        else:
+            self.io.tool_error(f"Invalid subcommand '{subcommand}'. Use list, save, load, or delete.")
+
     def _get_sessions_dir(self):
         "Helper to get the sessions directory, creating it if needed."
         if not self.coder.root:
@@ -1700,7 +1721,7 @@ Just show me the edits I need to make.
         sessions_dir.mkdir(parents=True, exist_ok=True)
         return sessions_dir
 
-    def cmd_sessions(self, args):
+    def _session_list(self):
         "List all saved sessions"
         sessions_dir = self._get_sessions_dir()
         if not sessions_dir:
@@ -1715,9 +1736,8 @@ Just show me the edits I need to make.
         for session_file in sessions:
             self.io.tool_output(f"- {session_file.stem}")
 
-    def cmd_session_save(self, args):
+    def _session_save(self, session_name):
         "Save the current chat session to a named file"
-        session_name = args.strip()
         if not session_name:
             self.io.tool_error("Please provide a name for the session.")
             return
@@ -1728,7 +1748,6 @@ Just show me the edits I need to make.
 
         session_file = sessions_dir / f"{session_name}.json"
 
-        # Combine done_messages and cur_messages for a complete history
         chat_history = self.coder.done_messages + self.coder.cur_messages
 
         session_data = {
@@ -1746,9 +1765,8 @@ Just show me the edits I need to make.
         except Exception as e:
             self.io.tool_error(f"Error saving session: {e}")
 
-    def cmd_session_load(self, args):
+    def _session_load(self, session_name):
         "Load a chat session from a named file"
-        session_name = args.strip()
         if not session_name:
             self.io.tool_error("Please provide the name of the session to load.")
             return
@@ -1770,17 +1788,37 @@ Just show me the edits I need to make.
             self.io.tool_error(f"Error loading session file: {e}")
             return
 
-        # Clear current state before loading
         self._clear_chat_history()
         self._drop_all_files()
 
-        # Restore state from file
         self.coder.done_messages = session_data.get("chat_history", [])
         self.coder.abs_fnames = set(session_data.get("editable_files", []))
         self.coder.abs_read_only_fnames = set(session_data.get("read_only_files", []))
 
         self.io.tool_output(f"Session '{session_name}' loaded.")
         self.io.tool_output("Use /ls to see the files that are now in the chat.")
+
+    def _session_delete(self, session_name):
+        "Delete a saved session file"
+        if not session_name:
+            self.io.tool_error("Please provide the name of the session to delete.")
+            return
+
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        session_file = sessions_dir / f"{session_name}.json"
+
+        if not session_file.exists():
+            self.io.tool_error(f"Session '{session_name}' not found.")
+            return
+
+        try:
+            session_file.unlink()
+            self.io.tool_output(f"Session '{session_name}' deleted.")
+        except Exception as e:
+            self.io.tool_error(f"Error deleting session file: {e}")
 
 
 def expand_subdir(file_path):
