@@ -10,6 +10,11 @@ from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
 
+from PIL import ImageGrab, Image
+from prompt_toolkit.clipboard import pyperclip
+from prompt_toolkit.completion import PathCompleter, Completion
+from prompt_toolkit.document import Document
+
 from aider import __version__, models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
