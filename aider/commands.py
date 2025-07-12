@@ -4,6 +4,8 @@ import re
 import subprocess
 import sys
 import tempfile
+import json
+from datetime import datetime
 from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
@@ -1693,6 +1695,97 @@ Just show me the edits I need to make.
 
         except ANY_GIT_ERROR as e:
             self.io.tool_error(f"Error running git blame: {e}")
+
+    def _get_sessions_dir(self):
+        "Helper to get the sessions directory, creating it if needed."
+        if not self.coder.root:
+            self.io.tool_error("Cannot manage sessions without a git repository root.")
+            return None
+        sessions_dir = Path(self.coder.root) / ".aider" / "sessions"
+        sessions_dir.mkdir(parents=True, exist_ok=True)
+        return sessions_dir
+
+    def cmd_sessions(self, args):
+        "List all saved sessions"
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        sessions = sorted(sessions_dir.glob("*.json"))
+        if not sessions:
+            self.io.tool_output("No saved sessions found.")
+            return
+
+        self.io.tool_output("Saved sessions:")
+        for session_file in sessions:
+            self.io.tool_output(f"- {session_file.stem}")
+
+    def cmd_session_save(self, args):
+        "Save the current chat session to a named file"
+        session_name = args.strip()
+        if not session_name:
+            self.io.tool_error("Please provide a name for the session.")
+            return
+
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        session_file = sessions_dir / f"{session_name}.json"
+
+        # Combine done_messages and cur_messages for a complete history
+        chat_history = self.coder.done_messages + self.coder.cur_messages
+
+        session_data = {
+            "version": self.coder.version,
+            "timestamp": datetime.now().isoformat(),
+            "chat_history": chat_history,
+            "editable_files": sorted(list(self.coder.abs_fnames)),
+            "read_only_files": sorted(list(self.coder.abs_read_only_fnames)),
+        }
+
+        try:
+            with open(session_file, "w") as f:
+                json.dump(session_data, f, indent=4)
+            self.io.tool_output(f"Session '{session_name}' saved.")
+        except Exception as e:
+            self.io.tool_error(f"Error saving session: {e}")
+
+    def cmd_session_load(self, args):
+        "Load a chat session from a named file"
+        session_name = args.strip()
+        if not session_name:
+            self.io.tool_error("Please provide the name of the session to load.")
+            return
+
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        session_file = sessions_dir / f"{session_name}.json"
+
+        if not session_file.exists():
+            self.io.tool_error(f"Session '{session_name}' not found.")
+            return
+
+        try:
+            with open(session_file, "r") as f:
+                session_data = json.load(f)
+        except Exception as e:
+            self.io.tool_error(f"Error loading session file: {e}")
+            return
+
+        # Clear current state before loading
+        self._clear_chat_history()
+        self._drop_all_files()
+
+        # Restore state from file
+        self.coder.done_messages = session_data.get("chat_history", [])
+        self.coder.abs_fnames = set(session_data.get("editable_files", []))
+        self.coder.abs_read_only_fnames = set(session_data.get("read_only_files", []))
+
+        self.io.tool_output(f"Session '{session_name}' loaded.")
+        self.io.tool_output("Use /ls to see the files that are now in the chat.")
 
 
 def expand_subdir(file_path):
