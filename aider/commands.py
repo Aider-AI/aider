@@ -10,12 +10,7 @@ from collections import OrderedDict
 from os.path import expanduser
 from pathlib import Path
 
-import pyperclip
-from PIL import Image, ImageGrab
-from prompt_toolkit.completion import Completion, PathCompleter
-from prompt_toolkit.document import Document
-
-from aider import models, prompts, voice
+from aider import __version__, models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
@@ -1737,7 +1732,7 @@ Just show me the edits I need to make.
         chat_history = self.coder.done_messages + self.coder.cur_messages
 
         session_data = {
-            "version": self.coder.version,
+            "version": __version__,
             "timestamp": datetime.now().isoformat(),
             "chat_history": chat_history,
             "editable_files": sorted(list(self.coder.abs_fnames)),

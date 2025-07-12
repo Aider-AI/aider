@@ -34,7 +34,6 @@ def test_session_save_and_load(monkeypatch, tmp_path):
     coder.repo = git_repo
     # Make coder.root available for session path resolution
     coder.root = git_repo.root
-    coder.version = "1.2.3" # Set a mock version
     
     def get_rel_fname(path):
         return os.path.relpath(path, git_repo.root)
