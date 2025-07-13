@@ -1320,11 +1320,10 @@ class Commands:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
     def cmd_read_only(self, args):
-        (
-            "Add files to the chat that are for reference only, or turn added files to read-only.\n"
-            "With no args, opens a fuzzy finder to select files from the repo.\n"
-            "If no files are selected, converts all editable files in chat to read-only."
-        )
+        """Add files to the chat that are for reference only, or turn added files to read-only.
+        With no args, opens a fuzzy finder to select files from the repo.
+        If no files are selected, converts all editable files in chat to read-only.
+        """
         if not args.strip():
             all_files = self.coder.get_all_relative_files()
             if self.coder.repo:
