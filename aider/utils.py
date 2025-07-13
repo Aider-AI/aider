@@ -1,10 +1,10 @@
 import os
 import platform
+import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
-import shutil
 
 import oslex
 
@@ -40,7 +40,7 @@ def run_fzf(input_data, multi=False):
 
     if process.returncode == 0:
         # fzf returns selected items newline-separated
-        return stdout.strip().split("\n")
+        return stdout.strip().splitlines()
     else:
         # User cancelled (e.g., pressed Esc)
         return []
@@ -153,7 +153,9 @@ def format_messages(messages, title=None):
                 if isinstance(item, dict):
                     for key, value in item.items():
                         if isinstance(value, dict) and "url" in value:
-                            output.append(f"{role} {key.capitalize()} URL: {value['url']}")
+                            output.append(
+                                f"{role} {key.capitalize()} URL: {value['url']}"
+                            )
                         else:
                             output.append(f"{role} {key}: {value}")
                 else:
@@ -344,7 +346,9 @@ def check_pip_install_extra(io, module, prompt, pip_install_cmd, self_update=Fal
         print(printable_shell_command(cmd))  # plain print so it doesn't line-wrap
         return
 
-    if not io.confirm_ask("Run pip install?", default="y", subject=printable_shell_command(cmd)):
+    if not io.confirm_ask(
+        "Run pip install?", default="y", subject=printable_shell_command(cmd)
+    ):
         return
 
     success, output = run_install(cmd)
