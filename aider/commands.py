@@ -1746,7 +1746,7 @@ Just show me the edits I need to make.
         parts = args.strip().split()
         if not parts:
             self.io.tool_error(
-                "Please provide a subcommand for /session (list, save, load, delete)."
+                "Please provide a subcommand for /session (list, save, load, delete, view)."
             )
             return
 
@@ -1802,7 +1802,7 @@ Just show me the edits I need to make.
         if not sessions_dir:
             return
 
-        session_file = sessions_dir / f"{session_name}.json"
+        session_file = self._get_session_file(session_name, sessions_dir)
 
         chat_history = self.coder.done_messages + self.coder.cur_messages
 
@@ -1818,7 +1818,7 @@ Just show me the edits I need to make.
             with open(session_file, "w") as f:
                 json.dump(session_data, f, indent=4)
             self.io.tool_output(f"Session '{session_name}' saved.")
-        except Exception as e:
+        except (IOError, OSError) as e:
             self.io.tool_error(f"Error saving session: {e}")
 
     def _session_load(self, session_name):
@@ -1831,7 +1831,7 @@ Just show me the edits I need to make.
         if not sessions_dir:
             return
 
-        session_file = sessions_dir / f"{session_name}.json"
+        session_file = self._get_session_file(session_name, sessions_dir)
 
         if not session_file.exists():
             self.io.tool_error(f"Session '{session_name}' not found.")
@@ -1854,6 +1854,11 @@ Just show me the edits I need to make.
         self.io.tool_output(f"Session '{session_name}' loaded.")
         self.io.tool_output("Use /ls to see the files that are now in the chat.")
 
+    @staticmethod
+    def _get_session_file(session_name, sessions_dir):
+        session_file = sessions_dir / f"{session_name}.json"
+        return session_file
+
     def _session_delete(self, session_name):
         "Delete a saved session file"
         if not session_name:
@@ -1864,7 +1869,7 @@ Just show me the edits I need to make.
         if not sessions_dir:
             return
 
-        session_file = sessions_dir / f"{session_name}.json"
+        session_file = self._get_session_file(session_name, sessions_dir)
 
         if not session_file.exists():
             self.io.tool_error(f"Session '{session_name}' not found.")
@@ -1886,7 +1891,7 @@ Just show me the edits I need to make.
         if not sessions_dir:
             return
 
-        session_file = sessions_dir / f"{session_name}.json"
+        session_file = self._get_session_file(session_name, sessions_dir)
 
         if not session_file.exists():
             self.io.tool_error(f"Session '{session_name}' not found.")
