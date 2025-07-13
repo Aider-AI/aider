@@ -1884,7 +1884,7 @@ Just show me the edits I need to make.
         try:
             session_file.unlink()
             self.io.tool_output(f"Session '{session_name}' deleted.")
-        except Exception as e:
+        except OSError as e:
             self.io.tool_error(f"Error deleting session file: {e}")
 
     def _session_view(self, session_name):
