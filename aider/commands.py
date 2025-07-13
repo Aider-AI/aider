@@ -1742,7 +1742,7 @@ Just show me the edits I need to make.
             )
 
     def cmd_session(self, args):
-        "Manage chat sessions (list, save, load, delete)"
+        "Manage chat sessions. Subcommands: list, save <name>, load <name>, delete <name>, view <name>."
         parts = args.strip().split()
         if not parts:
             self.io.tool_error(
