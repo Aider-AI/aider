@@ -85,11 +85,17 @@ class TestCommands(TestCase):
 
         # Add messages to done_messages and cur_messages
         coder.done_messages = [
-            {"role": "assistant", "content": "First assistant message in done_messages"},
+            {
+                "role": "assistant",
+                "content": "First assistant message in done_messages",
+            },
             {"role": "user", "content": "User message in done_messages"},
         ]
         coder.cur_messages = [
-            {"role": "assistant", "content": "Latest assistant message in cur_messages"},
+            {
+                "role": "assistant",
+                "content": "Latest assistant message in cur_messages",
+            },
         ]
 
         # Mock pyperclip.copy and io.tool_output
@@ -136,7 +142,8 @@ class TestCommands(TestCase):
         # Mock pyperclip.copy to raise an exception
         with (
             mock.patch(
-                "pyperclip.copy", side_effect=pyperclip.PyperclipException("Clipboard error")
+                "pyperclip.copy",
+                side_effect=pyperclip.PyperclipException("Clipboard error"),
             ),
             mock.patch.object(io, "tool_error") as mock_tool_error,
         ):
@@ -392,7 +399,11 @@ class TestCommands(TestCase):
         repo.config_writer().set_value("user", "email", "testuser@example.com").release()
 
         # Create three empty files and add them to the git repository
-        filenames = ["one.py", Path("subdir") / "two.py", Path("anotherdir") / "three.py"]
+        filenames = [
+            "one.py",
+            Path("subdir") / "two.py",
+            Path("anotherdir") / "three.py",
+        ]
         for filename in filenames:
             file_path = Path(filename)
             file_path.parent.mkdir(parents=True, exist_ok=True)
@@ -997,7 +1008,11 @@ class TestCommands(TestCase):
 
             # Create a directory structure with files
             (Path(repo_dir) / "subdir").mkdir()
-            test_files = ["test_file1.txt", "subdir/test_file2.txt", "subdir/other_file.txt"]
+            test_files = [
+                "test_file1.txt",
+                "subdir/test_file2.txt",
+                "subdir/other_file.txt",
+            ]
             for file_name in test_files:
                 file_path = Path(repo_dir) / file_name
                 file_path.write_text(f"Content of {file_name}")
@@ -1324,7 +1339,8 @@ class TestCommands(TestCase):
 
                 # Check that the model's thinking tokens were updated
                 self.assertEqual(
-                    coder.main_model.extra_params["thinking"]["budget_tokens"], expected_tokens
+                    coder.main_model.extra_params["thinking"]["budget_tokens"],
+                    expected_tokens,
                 )
 
                 # Check that the tool output shows the correct value with format
@@ -1685,7 +1701,7 @@ class TestCommands(TestCase):
                 )
 
     def test_cmd_read_only_with_fuzzy_finder_no_selection(self):
-        with GitTemporaryDirectory() as repo_dir:
+        with GitTemporaryDirectory():
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
             coder = Coder.create(self.GPT35, None, io)
             commands = Commands(io, coder)
@@ -1789,7 +1805,8 @@ class TestCommands(TestCase):
             self.GPT35.editor_model.name,
         )
         self.assertEqual(
-            context.exception.kwargs.get("main_model").weak_model.name, self.GPT35.weak_model.name
+            context.exception.kwargs.get("main_model").weak_model.name,
+            self.GPT35.weak_model.name,
         )
         # Check that the edit format is updated to the new model's default
         self.assertEqual(context.exception.kwargs.get("edit_format"), "diff")
@@ -1826,7 +1843,8 @@ class TestCommands(TestCase):
         self.assertEqual(context.exception.kwargs.get("main_model").name, self.GPT35.name)
         self.assertEqual(context.exception.kwargs.get("main_model").editor_model.name, "gpt-4")
         self.assertEqual(
-            context.exception.kwargs.get("main_model").weak_model.name, self.GPT35.weak_model.name
+            context.exception.kwargs.get("main_model").weak_model.name,
+            self.GPT35.weak_model.name,
         )
 
     def test_cmd_weak_model(self):
@@ -2214,7 +2232,9 @@ class TestCommands(TestCase):
 
             # Replace its commands object with one that has the original_read_only_fnames
             orig_coder.commands = Commands(
-                io, orig_coder, original_read_only_fnames=list(original_read_only_fnames_set)
+                io,
+                orig_coder,
+                original_read_only_fnames=list(original_read_only_fnames_set),
             )
             orig_coder.commands.coder = orig_coder
 
@@ -2260,7 +2280,9 @@ class TestCommands(TestCase):
             orig_coder = Coder.create(main_model=self.GPT35, io=io, fnames=[], repo=None)
             orig_coder.root = repo_dir
             orig_coder.commands = Commands(
-                io, orig_coder, original_read_only_fnames=list(original_read_only_fnames_set)
+                io,
+                orig_coder,
+                original_read_only_fnames=list(original_read_only_fnames_set),
             )
             orig_coder.commands.coder = orig_coder
 
