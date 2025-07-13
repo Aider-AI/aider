@@ -1648,6 +1648,65 @@ class TestCommands(TestCase):
             # Check if all files were removed from abs_read_only_fnames
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
+    def test_cmd_read_only_with_fuzzy_finder(self):
+        with GitTemporaryDirectory() as repo_dir:
+            repo = git.Repo(repo_dir)
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create some test files
+            test_files = ["test1.txt", "test2.txt", "test3.txt"]
+            for fname in test_files:
+                Path(fname).write_text(f"Content of {fname}")
+                repo.git.add(fname)
+            repo.git.commit("-m", "initial commit")
+
+            # Mock run_fzf to return a selection
+            with mock.patch("aider.commands.run_fzf") as mock_run_fzf:
+                mock_run_fzf.return_value = ["test1.txt", "test3.txt"]
+
+                # Run the /read-only command without arguments
+                commands.cmd_read_only("")
+
+                # Verify that the selected files were added as read-only
+                self.assertEqual(len(coder.abs_read_only_fnames), 2)
+                self.assertTrue(
+                    any(
+                        os.path.samefile(str(Path("test1.txt").resolve()), fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
+                self.assertTrue(
+                    any(
+                        os.path.samefile(str(Path("test3.txt").resolve()), fname)
+                        for fname in coder.abs_read_only_fnames
+                    )
+                )
+
+    def test_cmd_read_only_with_fuzzy_finder_no_selection(self):
+        with GitTemporaryDirectory() as repo_dir:
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            # Create and add some test files
+            test_files = ["test1.txt", "test2.txt", "test3.txt"]
+            for fname in test_files:
+                Path(fname).write_text(f"Content of {fname}")
+                commands.cmd_add(fname)
+
+            # Mock run_fzf to return an empty selection
+            with mock.patch("aider.commands.run_fzf") as mock_run_fzf:
+                mock_run_fzf.return_value = []
+
+                # Run the /read-only command without arguments
+                commands.cmd_read_only("")
+
+                # Verify that all editable files were converted to read-only
+                self.assertEqual(len(coder.abs_fnames), 0)
+                self.assertEqual(len(coder.abs_read_only_fnames), 3)
+
     def test_cmd_diff(self):
         with GitTemporaryDirectory() as repo_dir:
             repo = git.Repo(repo_dir)

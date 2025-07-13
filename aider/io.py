@@ -264,6 +264,13 @@ class InputOutput:
         notifications=False,
         notifications_command=None,
     ):
+        self.console = Console()
+        self.pretty = pretty
+        if chat_history_file is not None:
+            self.chat_history_file = Path(chat_history_file)
+        else:
+            self.chat_history_file = None
+
         self.placeholder = None
         self.interrupted = False
         self.never_prompts = set()

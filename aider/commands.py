@@ -1319,22 +1319,36 @@ class Commands:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
     def cmd_read_only(self, args):
-        "Add files to the chat that are for reference only, or turn added files to read-only"
+        (
+            "Add files to the chat that are for reference only, or turn added files to read-only.\n"
+            "With no args, opens a fuzzy finder to select files from the repo.\n"
+            "If no files are selected, converts all editable files in chat to read-only."
+        )
         if not args.strip():
             all_files = self.coder.get_all_relative_files()
-            if not all_files:
-                self.io.tool_output("No files available to add.")
+            if self.coder.repo:
+                all_files = self.coder.repo.get_tracked_files()
+
+            if not all_files and not self.coder.abs_fnames:
+                self.io.tool_output("No files in the repo or chat to make read-only.")
                 return
-            selected_files = run_fzf(all_files, multi=True)
+
+            selected_files = []
+            if all_files:
+                selected_files = run_fzf(all_files, multi=True)
+
             if not selected_files:
-                # Convert all files in chat to read-only
+                # Fallback behavior: convert all editable files to read-only
                 if self.coder.abs_fnames:
                     for fname in list(self.coder.abs_fnames):
                         self.coder.abs_fnames.remove(fname)
                         self.coder.abs_read_only_fnames.add(fname)
                         rel_fname = self.coder.get_rel_fname(fname)
                         self.io.tool_output(f"Converted {rel_fname} to read-only")
+                else:
+                    self.io.tool_output("No files selected.")
                 return
+
             args = " ".join([self.quote_fname(f) for f in selected_files])
 
         filenames = parse_quoted_filenames(args)
