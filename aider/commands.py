@@ -1742,7 +1742,7 @@ Just show me the edits I need to make.
             )
 
     def cmd_session(self, args):
-        "Manage chat sessions. Subcommands: list, save <name>, load <name>, delete <name>, view <name>."
+        """Manage chat sessions. Subcommands: list, save <name>, load <name>, delete <name>, view <name>."""
         parts = args.strip().split()
         if not parts:
             self.io.tool_error(
@@ -1769,7 +1769,7 @@ Just show me the edits I need to make.
             )
 
     def _get_sessions_dir(self):
-        "Helper to get the sessions directory, creating it if needed."
+        """Helper to get the sessions directory, creating it if needed."""
         if not self.coder.root:
             self.io.tool_error("Cannot manage sessions without a git repository root.")
             return None
@@ -1778,7 +1778,7 @@ Just show me the edits I need to make.
         return sessions_dir
 
     def _session_list(self):
-        "List all saved sessions"
+        """List all saved sessions"""
         sessions_dir = self._get_sessions_dir()
         if not sessions_dir:
             return
@@ -1822,11 +1822,24 @@ Just show me the edits I need to make.
             self.io.tool_error(f"Error saving session: {e}")
 
     def _session_load(self, session_name):
-        "Load a chat session from a named file"
+        """Load a chat session from a named file"""
         if not session_name:
             self.io.tool_error("Please provide the name of the session to load.")
             return
 
+        session_data = self._get_session_data(session_name)
+
+        self._clear_chat_history()
+        self._drop_all_files()
+
+        self.coder.done_messages = session_data.get("chat_history", [])
+        self.coder.abs_fnames = set(session_data.get("editable_files", []))
+        self.coder.abs_read_only_fnames = set(session_data.get("read_only_files", []))
+
+        self.io.tool_output(f"Session '{session_name}' loaded.")
+        self.io.tool_output("Use /ls to see the files that are now in the chat.")
+
+    def _get_session_data(self, session_name):
         sessions_dir = self._get_sessions_dir()
         if not sessions_dir:
             return
@@ -1844,23 +1857,13 @@ Just show me the edits I need to make.
             self.io.tool_error(f"Error loading session file: {e}")
             return
 
-        self._clear_chat_history()
-        self._drop_all_files()
-
-        self.coder.done_messages = session_data.get("chat_history", [])
-        self.coder.abs_fnames = set(session_data.get("editable_files", []))
-        self.coder.abs_read_only_fnames = set(session_data.get("read_only_files", []))
-
-        self.io.tool_output(f"Session '{session_name}' loaded.")
-        self.io.tool_output("Use /ls to see the files that are now in the chat.")
-
     @staticmethod
     def _get_session_file(session_name, sessions_dir):
         session_file = sessions_dir / f"{session_name}.json"
         return session_file
 
     def _session_delete(self, session_name):
-        "Delete a saved session file"
+        """Delete a saved session file"""
         if not session_name:
             self.io.tool_error("Please provide the name of the session to delete.")
             return
@@ -1882,43 +1885,28 @@ Just show me the edits I need to make.
             self.io.tool_error(f"Error deleting session file: {e}")
 
     def _session_view(self, session_name):
-        "View the details of a saved session"
+        """View the details of a saved session"""
         if not session_name:
             self.io.tool_error("Please provide the name of the session to view.")
             return
 
-        sessions_dir = self._get_sessions_dir()
-        if not sessions_dir:
-            return
-
-        session_file = self._get_session_file(session_name, sessions_dir)
-
-        if not session_file.exists():
-            self.io.tool_error(f"Session '{session_name}' not found.")
-            return
-
-        try:
-            with open(session_file, "r") as f:
-                data = json.load(f)
-        except Exception as e:
-            self.io.tool_error(f"Error reading session file: {e}")
-            return
+        session_data = self._get_session_data(session_name)
 
         self.io.tool_output(f"Session Details: {session_name}")
         self.io.tool_output("-" * (len(session_name) + 17))
-        self.io.tool_output(f"  Version: {data.get('version', 'N/A')}")
-        self.io.tool_output(f"  Timestamp: {data.get('timestamp', 'N/A')}")
+        self.io.tool_output(f"  Version: {session_data.get('version', 'N/A')}")
+        self.io.tool_output(f"  Timestamp: {session_data.get('timestamp', 'N/A')}")
 
         self.io.tool_output("\n  Editable Files:")
-        for fname in data.get("editable_files", []):
+        for fname in session_data.get("editable_files", []):
             self.io.tool_output(f"    - {self.coder.get_rel_fname(fname)}")
 
         self.io.tool_output("\n  Read-only Files:")
-        for fname in data.get("read_only_files", []):
+        for fname in session_data.get("read_only_files", []):
             self.io.tool_output(f"    - {self.coder.get_rel_fname(fname)}")
 
         self.io.tool_output("\n  Chat History Preview:")
-        for msg in data.get("chat_history", []):
+        for msg in session_data.get("chat_history", []):
             role = msg.get("role", "unknown")
             content = msg.get("content", "")
             preview = (content[:70] + "...") if len(content) > 70 else content
