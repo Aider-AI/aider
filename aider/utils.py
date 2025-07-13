@@ -20,7 +20,7 @@ def run_fzf(input_data, multi=False):
     Returns the selected items.
     """
     if not shutil.which("fzf"):
-        return None  # Or raise an exception
+        return []  # fzf not available
 
     fzf_command = ["fzf"]
     if multi:

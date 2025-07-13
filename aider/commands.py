@@ -23,7 +23,6 @@ from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file, run_fzf
-
 from .dump import dump  # noqa: F401
 
 
@@ -802,7 +801,7 @@ class Commands:
         if not args.strip():
             all_files = self.coder.get_all_relative_files()
             files_in_chat = self.coder.get_inchat_relative_files()
-            addable_files = sorted(list(set(all_files) - set(files_in_chat)))
+            addable_files = sorted(set(all_files) - set(files_in_chat))
             if not addable_files:
                 self.io.tool_output("No files available to add.")
                 return
@@ -1325,9 +1324,10 @@ class Commands:
         If no files are selected, converts all editable files in chat to read-only.
         """
         if not args.strip():
-            all_files = self.coder.get_all_relative_files()
             if self.coder.repo:
                 all_files = self.coder.repo.get_tracked_files()
+            else:
+                all_files = self.coder.get_all_relative_files()
 
             if not all_files and not self.coder.abs_fnames:
                 self.io.tool_output("No files in the repo or chat to make read-only.")
