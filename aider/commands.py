@@ -1828,6 +1828,8 @@ Just show me the edits I need to make.
             return
 
         session_data = self._get_session_data(session_name)
+        if not session_data:
+            return
 
         self._clear_chat_history()
         self._drop_all_files()
@@ -1842,20 +1844,21 @@ Just show me the edits I need to make.
     def _get_session_data(self, session_name):
         sessions_dir = self._get_sessions_dir()
         if not sessions_dir:
-            return
+            return None
 
         session_file = self._get_session_file(session_name, sessions_dir)
 
         if not session_file.exists():
             self.io.tool_error(f"Session '{session_name}' not found.")
-            return
+            return None
 
         try:
             with open(session_file, "r") as f:
                 session_data = json.load(f)
+                return session_data
         except Exception as e:
             self.io.tool_error(f"Error loading session file: {e}")
-            return
+            return None
 
     @staticmethod
     def _get_session_file(session_name, sessions_dir):
@@ -1891,6 +1894,8 @@ Just show me the edits I need to make.
             return
 
         session_data = self._get_session_data(session_name)
+        if not session_data:
+            return
 
         self.io.tool_output(f"Session Details: {session_name}")
         self.io.tool_output("-" * (len(session_name) + 17))
