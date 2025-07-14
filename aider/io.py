@@ -264,6 +264,7 @@ class InputOutput:
         notifications=False,
         notifications_command=None,
     ):
+        # Initialize input/output configuration and UI settings
         self.placeholder = None
         self.interrupted = False
         self.never_prompts = set()
