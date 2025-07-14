@@ -105,6 +105,25 @@ class TestModels(unittest.TestCase):
             any("bogus-model" in msg for msg in warning_messages)
         )  # Check that one of the warnings mentions the bogus model
 
+    def test_sanity_check_models_bogus_ask(self):
+        mock_io = MagicMock()
+        main_model = Model("gpt-4")
+        main_model.ask_model = Model("bogus-model")
+
+        result = sanity_check_models(mock_io, main_model)
+
+        self.assertTrue(result)  # Should return True because there's a problem with the ask model
+        mock_io.tool_warning.assert_called_with(ANY)  # Ensure a warning was issued
+
+        warning_messages = [
+            warning_call.args[0] for warning_call in mock_io.tool_warning.call_args_list
+        ]
+
+        self.assertGreaterEqual(mock_io.tool_warning.call_count, 1)  # Expect warnings
+        self.assertTrue(
+            any("bogus-model" in msg for msg in warning_messages)
+        )  # Check that one of the warnings mentions the bogus model
+
     @patch("aider.models.check_for_dependencies")
     def test_sanity_check_model_calls_check_dependencies(self, mock_check_deps):
         """Test that sanity_check_model calls check_for_dependencies"""

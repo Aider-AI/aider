@@ -1787,6 +1787,44 @@ class TestCommands(TestCase):
         )
         self.assertEqual(context.exception.kwargs.get("main_model").weak_model.name, "gpt-4")
 
+    def test_cmd_ask_model(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Test switching the ask model
+        with self.assertRaises(SwitchCoder) as context:
+            commands.cmd_ask_model("gpt-4")
+
+        # Check that the SwitchCoder exception contains the correct model configuration
+        self.assertEqual(context.exception.kwargs.get("main_model").name, self.GPT35.name)
+        self.assertEqual(
+            context.exception.kwargs.get("main_model").editor_model.name,
+            self.GPT35.editor_model.name,
+        )
+        self.assertEqual(
+            context.exception.kwargs.get("main_model").weak_model.name, self.GPT35.weak_model.name
+        )
+        self.assertEqual(context.exception.kwargs.get("main_model").ask_model.name, "gpt-4")
+
+    def test_completions_ask_model(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Mock litellm.model_cost to return a predictable list of models
+        with mock.patch("litellm.model_cost", {"model1": {}, "model2": {}, "model3": {}}):
+            models = commands.completions_ask_model()
+            self.assertEqual(list(models), ["model1", "model2", "model3"])
+
+    def test_completions_editor_model(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+        with mock.patch("litellm.model_cost", {"model1": {}, "model2": {}, "model3": {}}):
+            models = commands.completions_editor_model()
+            self.assertEqual(list(models), ["model1", "model2", "model3"])
+
     def test_cmd_model_updates_default_edit_format(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
         # Use gpt-3.5-turbo (default 'diff')
