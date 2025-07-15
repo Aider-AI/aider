@@ -1576,6 +1576,13 @@ cog.out("```\n")
   weak_model_name: openrouter/meta-llama/llama-3-70b-instruct
   examples_as_sys_msg: true
 
+- name: openrouter/moonshotai/kimi-k2
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    temperature: 0.6
+
 - name: openrouter/openai/gpt-4.1
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4.1-mini
