@@ -13,7 +13,7 @@ _site
 aider/__version__.py
 aider/_version.py
 .venv/
-aider_vir_env/...
+aider_vir_env/
 .#*
 .gitattributes
 tmp.benchmarks/
