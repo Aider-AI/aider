@@ -2134,7 +2134,8 @@ class Coder:
 
         return cur + new
 
-    def get_rel_fname(self, fname):
+    def get_relative_filename(self, fname: str) -> str:
+        """Convert absolute path to repository-relative path"""
         try:
             return os.path.relpath(fname, self.root)
         except ValueError:

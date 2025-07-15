@@ -314,7 +314,8 @@ class GitRepo:
                 return commit_hash, commit_message
 
         except ANY_GIT_ERROR as err:
-            self.io.tool_error(f"Unable to commit: {err}")
+            self.io.tool_error(f"Git commit failed: {err}")
+            self.io.tool_output("Try running 'git status' to check repository state")
             # No return here, implicitly returns None
 
     def get_rel_repo_dir(self):

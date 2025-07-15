@@ -23,7 +23,8 @@ def main():
         input()
 
 
-def create_progress_bar(percentage):
+def create_progress_bar(percentage: float) -> str:
+    """Generate visual progress bar using block characters"""
     block = "█"
     empty = "░"
     total_blocks = 30
