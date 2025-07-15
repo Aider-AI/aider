@@ -1655,3 +1655,31 @@
   versions: 0.85.2.dev
   seconds_per_case: 403.2
   total_cost: 59.6182
+
+- dirname: 2025-07-15-08-44-52--kimi-k2-diff
+  test_cases: 225
+  model: Kimi K2
+  edit_format: diff
+  commit_hash: 90dffa9
+  pass_rate_1: 17.8
+  pass_rate_2: 56.0
+  pass_num_1: 40
+  pass_num_2: 126
+  percent_cases_well_formed: 92.9
+  error_outputs: 23
+  num_malformed_responses: 16
+  num_with_malformed_responses: 16
+  user_asks: 59
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2353923
+  completion_tokens: 364827
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openrouter/moonshotai/kimi-k2
+  date: 2025-07-15
+  versions: 0.85.2.dev
+  seconds_per_case: 171.1
+  total_cost: 0.2181
