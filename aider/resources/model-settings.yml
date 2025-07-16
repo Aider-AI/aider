@@ -800,6 +800,13 @@
   editor_model_name: openrouter/deepseek/deepseek-chat
   editor_edit_format: editor-diff
 
+- name: openrouter/moonshotai/kimi-k2
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    temperature: 0.6
+
 - name: fireworks_ai/accounts/fireworks/models/deepseek-r1
   edit_format: diff
   weak_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
