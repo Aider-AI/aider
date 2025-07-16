@@ -791,8 +791,8 @@ def get_parser(default_config_files, git_root):
         is_config_file=True,
         metavar="CONFIG_FILE",
         help=(
-            "Specify the config file (default: search for .aider.conf.yml in git root, cwd"
-            " or home directory)"
+            "Specify the config file (default: searches for .aider.conf.yml then .aider.conf.yaml"
+            " in git root, cwd or home directory)"
         ),
     ).complete = shtab.FILE
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
