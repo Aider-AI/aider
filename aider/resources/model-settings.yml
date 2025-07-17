@@ -800,6 +800,13 @@
   editor_model_name: openrouter/deepseek/deepseek-chat
   editor_edit_format: editor-diff
 
+- name: openrouter/moonshotai/kimi-k2
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    temperature: 0.6
+
 - name: fireworks_ai/accounts/fireworks/models/deepseek-r1
   edit_format: diff
   weak_model_name: fireworks_ai/accounts/fireworks/models/deepseek-v3
@@ -1022,6 +1029,18 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
+
+- name: xai/grok-4
+  use_repo_map: true
+  edit_format: diff
+  accepts_settings:
+    - reasoning_effort
+
+- name: openrouter/x-ai/grok-4
+  use_repo_map: true
+  edit_format: diff
+  accepts_settings:
+    - reasoning_effort
 
 - name: xai/grok-3-mini-beta
   use_repo_map: true
@@ -1387,6 +1406,13 @@
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: gemini/gemini-2.5-flash
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini/gemini-2.5-flash-lite-preview-06-17
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
   use_temperature: false
   accepts_settings: ["thinking_tokens"]
 
