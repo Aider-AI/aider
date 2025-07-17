@@ -112,18 +112,6 @@
         "litellm_provider": "openrouter",
         "mode": "chat"
     },
-    "openrouter/moonshotai/kimi-k2": {
-        "max_tokens": 131072,
-        "max_input_tokens": 131072,
-        "max_output_tokens": 131072,
-        "input_cost_per_token": 0.000000057,
-        "output_cost_per_token": 0.00000023,
-        "litellm_provider": "openrouter",
-        "mode": "chat",
-        "supports_tool_choice": true,
-        "supports_system_messages": true,
-        "source": "https://openrouter.ai/moonshotai/kimi-k2"
-    },
     "openrouter/openai/gpt-4o-mini": {
         "max_tokens": 16384,
         "max_input_tokens": 128000,
