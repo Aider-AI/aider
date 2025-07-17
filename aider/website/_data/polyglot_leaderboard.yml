@@ -1655,34 +1655,6 @@
   versions: 0.85.2.dev
   seconds_per_case: 403.2
   total_cost: 59.6182
-
-- dirname: 2025-07-12-04-33-00--DeepSeek-TNG-R1T2-Chimera_fp8_bx
-  test_cases: 225
-  model: openai/tngtech/DeepSeek-TNG-R1T2-Chimera
-  edit_format: diff
-  commit_hash: f7870b6
-  pass_rate_1: 32.9
-  pass_rate_2: 64.4
-  pass_num_1: 74
-  pass_num_2: 145
-  percent_cases_well_formed: 94.2
-  error_outputs: 23
-  num_malformed_responses: 20
-  num_with_malformed_responses: 13
-  user_asks: 76
-  lazy_comments: 0
-  syntax_errors: 0
-  indentation_errors: 0
-  exhausted_context_windows: 0
-  prompt_tokens: 2345864
-  completion_tokens: 838946
-  test_timeouts: 5
-  total_tests: 225
-  command: aider --model openai/tngtech/DeepSeek-TNG-R1T2-Chimera
-  date: 2025-07-12
-  versions: 0.85.2.dev
-  seconds_per_case: 263.2
-  total_cost: 0.0000
   
 - dirname: 2025-07-15-08-44-52--kimi-k2-diff
   test_cases: 225
@@ -1711,3 +1683,31 @@
   versions: 0.85.2.dev
   seconds_per_case: 171.1
   total_cost: 0.2181
+
+- dirname: 2025-07-12-04-33-00--DeepSeek-TNG-R1T2-Chimera_fp8_bx
+  test_cases: 225
+  model: openai/tngtech/DeepSeek-TNG-R1T2-Chimera
+  edit_format: diff
+  commit_hash: f7870b6
+  pass_rate_1: 32.9
+  pass_rate_2: 64.4
+  pass_num_1: 74
+  pass_num_2: 145
+  percent_cases_well_formed: 94.2
+  error_outputs: 23
+  num_malformed_responses: 20
+  num_with_malformed_responses: 13
+  user_asks: 76
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2345864
+  completion_tokens: 838946
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openai/tngtech/DeepSeek-TNG-R1T2-Chimera
+  date: 2025-07-12
+  versions: 0.85.2.dev
+  seconds_per_case: 263.2
+  total_cost: 0.0000
