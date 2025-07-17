@@ -94,7 +94,9 @@ cog.out(model_list)
 - mistral/codestral-2405
 - mistral/codestral-latest
 - mistral/codestral-mamba-latest
+- mistral/devstral-medium-2507
 - mistral/devstral-small-2505
+- mistral/devstral-small-2507
 - mistral/magistral-medium-2506
 - mistral/magistral-medium-latest
 - mistral/magistral-small-2506

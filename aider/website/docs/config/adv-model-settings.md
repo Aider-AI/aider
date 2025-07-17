@@ -913,6 +913,14 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: gemini/gemini-2.5-flash-lite-preview-06-17
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
+
 - name: gemini/gemini-2.5-flash-preview-04-17
   edit_format: diff
   use_repo_map: true
@@ -1568,6 +1576,13 @@ cog.out("```\n")
   weak_model_name: openrouter/meta-llama/llama-3-70b-instruct
   examples_as_sys_msg: true
 
+- name: openrouter/moonshotai/kimi-k2
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    temperature: 0.6
+
 - name: openrouter/openai/gpt-4.1
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-4.1-mini
@@ -1757,6 +1772,12 @@ cog.out("```\n")
   - reasoning_effort
 
 - name: openrouter/x-ai/grok-3-mini-fast-beta
+  use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/x-ai/grok-4
+  edit_format: diff
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
@@ -1968,6 +1989,12 @@ cog.out("```\n")
   - reasoning_effort
 
 - name: xai/grok-3-mini-fast-beta
+  use_repo_map: true
+  accepts_settings:
+  - reasoning_effort
+
+- name: xai/grok-4
+  edit_format: diff
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
