@@ -1,10 +1,13 @@
+import asyncio
 import glob
 import os
+import json # For pretty printing args_schema
 import re
+import shlex # For robust argument parsing
 import subprocess
 import sys
 import tempfile
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from os.path import expanduser
 from pathlib import Path
 
@@ -1106,6 +1109,256 @@ class Commands:
         self.io.tool_output()
         self.io.tool_output("Use `/help <question>` to ask questions about how to use aider.")
 
+    def cmd_mcp_list_resources(self, args_str: str):
+        """
+        /mcp_list_resources [server_name_filter]
+        Lists all available MCP resources from connected and enabled servers.
+        Optionally filters by server name. (Filter not implemented in this step)
+        """
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized or no servers are configured.")
+            return
+
+        all_resources_tuples = self.coder.mcp_manager.get_all_resources()
+
+        if not all_resources_tuples:
+            self.io.tool_output("No MCP resources found from connected and enabled servers.")
+            return
+
+        self.io.tool_output("MCP Resources Available:")
+
+        resources_by_server = {}
+        # Need to handle the actual type of resource_def from get_all_resources
+        # Assuming it's an object with .uri, .description, and optionally .name
+        for server_config, resource_def_obj in all_resources_tuples:
+            server_name = server_config.name
+            if server_name not in resources_by_server:
+                resources_by_server[server_name] = []
+
+            res_info = {
+                "uri": getattr(resource_def_obj, 'uri', 'N/A'),
+                "description": getattr(resource_def_obj, 'description', None) or "No description",
+                "name": getattr(resource_def_obj, 'name', None) # Get 'name' if available
+            }
+            resources_by_server[server_name].append(res_info)
+
+        for server_name, res_list in resources_by_server.items():
+            self.io.tool_output(f"  Server: {server_name}")
+            if not res_list:
+                self.io.tool_output("    (No resources found for this server, or an error occurred fetching them)")
+                continue
+            for res_info in res_list:
+                display_name = res_info['name']
+                uri = res_info['uri']
+                description = res_info['description']
+
+                if display_name and display_name != uri:
+                    self.io.tool_output(f"    - Name: {display_name}")
+                    self.io.tool_output(f"      URI: {uri}")
+                    self.io.tool_output(f"      Description: {description}")
+                else:
+                    self.io.tool_output(f"    - URI: {uri}")
+                    self.io.tool_output(f"      Description: {description}")
+        self.io.tool_output("") # Add a blank line for spacing
+
+    def cmd_mcp_status(self, args_str):
+        "Show status of all configured MCP servers. Alias: /mcp_list_servers"
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized or no servers are configured.")
+            return
+
+        statuses = self.coder.mcp_manager.get_all_server_statuses()
+        if not statuses:
+            self.io.tool_output("No MCP servers configured.")
+            return
+
+        self.io.tool_output("MCP Server Status:")
+        for stat in statuses:
+            name = stat.get('name', 'N/A')
+            url = stat.get('url', 'N/A')
+            conf_enabled = stat.get('configured_enabled', False)
+            current_status = stat.get('status', 'N/A')
+            last_err = stat.get('last_error', '')
+
+            status_line = f"- {name} (url: {url}, config_enabled: {conf_enabled}, status: {current_status})"
+            if last_err and current_status == "error":
+                status_line += f" (Error: {last_err})"
+            self.io.tool_output(status_line)
+
+    def cmd_mcp_list_servers(self, args_str):
+        "Alias for /mcp_status. Shows status of all configured MCP servers."
+        return self.cmd_mcp_status(args_str)
+
+    def cmd_mcp_connect(self, args_str):
+        "Connect to a specific MCP server."
+        server_name = args_str.strip()
+        if not server_name:
+            self.io.tool_output("Usage: /mcp_connect <server_name>")
+            return
+
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized.")
+            return
+
+        self.io.tool_output(f"Attempting to connect to MCP server: {server_name}...")
+        # Assuming self.coder.mcp_manager.connect_server is an async method
+        loop = asyncio.get_event_loop()
+        success = loop.run_until_complete(self.coder.mcp_manager.connect_server(server_name))
+
+        if success:
+            self.io.tool_output(f"Successfully connected to MCP server: {server_name}.")
+        else:
+            last_error = self.coder.mcp_manager.get_server_last_error(server_name)
+            self.io.tool_error(f"Failed to connect to MCP server: {server_name}. Error: {last_error or 'Unknown error'}")
+
+    def cmd_mcp_disconnect(self, args_str):
+        "Disconnect from a specific MCP server."
+        server_name = args_str.strip()
+        if not server_name:
+            self.io.tool_output("Usage: /mcp_disconnect <server_name>")
+            return
+
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized.")
+            return
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.coder.mcp_manager.disconnect_server(server_name))
+        self.io.tool_output(f"Disconnected from MCP server: {server_name}.")
+
+
+    def cmd_mcp_rescan(self, args_str):
+        "Rescan capabilities of a specific server or all connected servers."
+        server_name = args_str.strip() if args_str else None
+
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized.")
+            return
+
+        loop = asyncio.get_event_loop()
+        if server_name:
+            self.io.tool_output(f"Rescanning capabilities for MCP server: {server_name}...")
+            success = loop.run_until_complete(self.coder.mcp_manager.refresh_server_capabilities(server_name))
+            if success:
+                self.io.tool_output(f"Successfully rescanned capabilities for {server_name}.")
+            else:
+                last_error = self.coder.mcp_manager.get_server_last_error(server_name)
+                self.io.tool_error(f"Failed to rescan capabilities for {server_name}. Error: {last_error or 'Unknown error'}")
+        else:
+            self.io.tool_output("Rescanning capabilities for all connected MCP servers...")
+            loop.run_until_complete(self.coder.mcp_manager.refresh_all_connected_servers_capabilities())
+            self.io.tool_output("Finished rescanning all connected MCP servers.")
+
+    def cmd_mcp_list_tools(self, args_str: str):
+        """
+        /mcp_list_tools [server_name_filter]
+        Lists all available MCP tools from connected and enabled servers.
+        Optionally filters by server name. (Filter not implemented in this step)
+        """
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_output("MCP integration is not initialized or no servers are configured.")
+            return
+
+        all_tools_tuples = self.coder.mcp_manager.get_all_tools()
+
+        if not all_tools_tuples:
+            self.io.tool_output("No MCP tools found from connected and enabled servers.")
+            return
+
+        self.io.tool_output("MCP Tools Available:")
+
+        tools_by_server = defaultdict(list)
+        for server_config, tool_def_obj in all_tools_tuples:
+            server_name = server_config.name
+
+            tool_info = {
+                "name": getattr(tool_def_obj, 'name', 'N/A'),
+                "description": getattr(tool_def_obj, 'description', None) or "No description.",
+                "arguments_schema": getattr(tool_def_obj, 'arguments_schema', None) or {}
+            }
+            tools_by_server[server_name].append(tool_info)
+
+        for server_name, tool_list in tools_by_server.items():
+            self.io.tool_output(f"  Server: {server_name}")
+            if not tool_list:
+                self.io.tool_output("    (No tools found for this server, or an error occurred fetching them)")
+                continue
+            for tool_info in tool_list:
+                self.io.tool_output(f"    - Tool: {tool_info['name']}")
+                self.io.tool_output(f"      Description: {tool_info['description']}")
+                try:
+                    args_schema_str = json.dumps(tool_info['arguments_schema'], indent=2)
+                    indented_args_schema_str = "\n".join(["        " + line for line in args_schema_str.splitlines()])
+                    self.io.tool_output(f"      Arguments Schema:\n{indented_args_schema_str}")
+                except TypeError:
+                    self.io.tool_output(f"      Arguments Schema: {tool_info['arguments_schema']}")
+                self.io.tool_output("")
+        self.io.tool_output("")
+
+
+    def cmd_mcp_add_context(self, args_str: str):
+        """
+        /mcp_add_context <server_name> <resource_uri>
+        Reads the specified MCP resource and adds its content to the chat context.
+        Example: /mcp_add_context MyDocsServer docs://project/api/auth
+        """
+        if not hasattr(self.coder, 'mcp_manager') or not self.coder.mcp_manager:
+            self.io.tool_error("MCP integration is not initialized or no servers are configured.")
+            return
+
+        try:
+            args = shlex.split(args_str)
+            if len(args) != 2:
+                self.io.tool_error("Usage: /mcp_add_context <server_name> <resource_uri>")
+                self.io.tool_output("Example: /mcp_add_context MyDocsServer docs://project/api/auth")
+                return
+            server_name, resource_uri = args
+        except ValueError:
+            self.io.tool_error("Error parsing arguments. Ensure server_name and resource_uri are correctly quoted if they contain spaces.")
+            return
+
+        self.io.tool_output(f"Fetching content from MCP resource '{resource_uri}' on server '{server_name}'...")
+
+        loop = asyncio.get_event_loop()
+        content_tuple = loop.run_until_complete(
+            self.coder.mcp_manager.read_mcp_resource(server_name, resource_uri)
+        )
+
+        if content_tuple:
+            content_str, mime_type = content_tuple
+
+            if content_str.startswith("[Undecodable content:") or content_str.startswith("[Content of type"):
+                self.io.tool_error(f"Failed to retrieve or decode content for '{resource_uri}': {content_str}")
+                return
+
+            formatted_for_user = (
+                f"Content from MCP resource '{resource_uri}' (Server: {server_name}, MIME: {mime_type}):\n"
+                f"```\n{content_str}\n```"
+            )
+            self.io.tool_output(formatted_for_user)
+
+            context_block_for_llm = (
+                f"[MCP Resource Context from server '{server_name}', resource '{resource_uri}' (MIME Type: {mime_type})]\n"
+                f"{content_str}\n"
+                f"[/MCP Resource Context]"
+            )
+
+            if hasattr(self.coder, 'cur_messages'):
+                 self.coder.cur_messages.append(dict(role="user", content=context_block_for_llm))
+                 # Optionally, add an assistant "Ok." message if that's the pattern
+                 self.coder.cur_messages.append(dict(role="assistant", content="Ok, I have noted the context from the MCP resource."))
+                 self.io.tool_output(f"Added content from '{resource_uri}' to the chat context for the LLM.")
+            else:
+                 self.io.tool_error("Could not add MCP resource to chat history: Coder has no 'cur_messages' attribute.")
+                 self.io.tool_output("Please copy the content above and include it in your next message if needed.")
+
+        else:
+            last_err = self.coder.mcp_manager.get_server_last_error(server_name)
+            error_message = f"Failed to retrieve content from MCP resource '{resource_uri}' on server '{server_name}'."
+            if last_err:
+                error_message += f" Error: {last_err}"
+            self.io.tool_error(error_message)
+
     def cmd_help(self, args):
         "Ask questions about aider"
 
@@ -1219,14 +1472,36 @@ class Commands:
 |:------|:----------|
 """
         commands = sorted(self.get_commands())
-        for cmd in commands:
+        # Filter out internal commands or aliases if not desired in markdown
+        commands_for_md = [cmd for cmd in commands if cmd not in ("/mcp_list_servers")]
+
+        # Manually add /mcp_list_resources to the markdown output if it's not picked up by get_commands yet
+        # or to control its position and description precisely.
+        # However, get_commands() should pick it up. Let's ensure the description is appropriate.
+
+        # The existing loop should handle new cmd_* methods correctly.
+        # We just need to ensure the docstring for cmd_mcp_list_resources is suitable.
+        # The commands_for_md list already filters out /mcp_list_servers, which is an alias.
+        # If /mcp_list_resources is the canonical name, it should be included.
+
+        # Let's refine the markdown generation slightly to ensure all desired commands are present.
+        # The current logic for get_commands() and then filtering should be okay.
+        # The main thing is that the docstring for cmd_mcp_list_resources is correctly parsed.
+
+        for cmd in commands_for_md:
             cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
             cmd_method = getattr(self, cmd_method_name, None)
-            if cmd_method:
-                description = cmd_method.__doc__
+            if cmd_method and hasattr(cmd_method, "__doc__") and cmd_method.__doc__:
+                description = cmd_method.__doc__.strip().splitlines()[0]
                 res += f"| **{cmd}** | {description} |\n"
             else:
-                res += f"| **{cmd}** | |\n"
+                # Fallback for commands that might somehow not have a docstring or are missed
+                res += f"| **{cmd}** | No description available. |\n"
+
+        # Manually ensure /mcp_add_context and /mcp_list_tools are in the markdown
+        # The loop above should handle them correctly due to get_commands()
+        # and their docstrings being the source of truth for the description.
+        # No explicit manual add needed here if cmd_* methods exist with docstrings.
 
         res += "\n"
         return res

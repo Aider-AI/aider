@@ -49,6 +49,22 @@ from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 from aider.waiting import WaitingSpinner
 
+# For MCP
+import asyncio # Not strictly needed here, but good for consistency if other parts use it
+from typing import Optional # Make sure Optional is imported for type hints
+from aider.mcp.mcp_manager import MCPManager # For type hinting
+from aider.mcp.mcp_config import MCPServerConfig # For type hinting
+# Assuming mcp_types.ResourceDefinition is the actual type, using placeholder if not directly available
+try:
+    from mcp.types import ResourceDefinition as ResourceDefinitionType
+except ImportError:
+    # Fallback to a placeholder if mcp.types isn't available or ResourceDefinition isn't there
+    class ResourceDefinitionType: # type: ignore
+        uri: str
+        description: Optional[str]
+        name: Optional[str]
+
+
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
@@ -338,9 +354,11 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        mcp_manager: Optional[MCPManager] = None, # Added mcp_manager
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
+        self.mcp_manager = mcp_manager # Store MCPManager instance
 
         self.event = self.analytics.event
         self.chat_language = chat_language
@@ -534,12 +552,153 @@ class Coder:
         if self.functions:
             from jsonschema import Draft7Validator
 
-            for function in self.functions:
-                Draft7Validator.check_schema(function)
+            for function_def in self.functions: # Corrected variable name
+                Draft7Validator.check_schema(function_def) # Corrected variable name
+        else:
+            self.functions = [] # Ensure self.functions is a list
 
-            if self.verbose:
-                self.io.tool_output("JSON Schema:")
-                self.io.tool_output(json.dumps(self.functions, indent=4))
+        # Add get_mcp_resource tool if mcp_manager is available
+        if self.mcp_manager:
+            available_resources_str = "Currently available MCP resources:\n"
+            # get_all_resources is synchronous as per mcp_manager.py
+            resources_tuples = self.mcp_manager.get_all_resources()
+
+            if not resources_tuples:
+                available_resources_str += "No MCP resources currently available or servers connected."
+            else:
+                res_by_server = defaultdict(list)
+                for server_conf, res_def in resources_tuples:
+                    # Ensure server_conf is MCPServerConfig and res_def is ResourceDefinitionType
+                    server_name = server_conf.name
+                    res_name = getattr(res_def, 'name', None)
+                    res_uri = getattr(res_def, 'uri', 'N/A')
+                    res_desc = getattr(res_def, 'description', 'N/A') or 'N/A'
+
+                    res_display = f"  - URI: {res_uri}"
+                    if res_name and res_name != res_uri:
+                        res_display += f" (Name: {res_name})"
+                    res_display += f" (Description: {res_desc})"
+                    res_by_server[server_name].append(res_display)
+
+                if not res_by_server:
+                    available_resources_str += "No MCP resources found on connected and enabled servers."
+                else:
+                    for s_name, res_list_str_items in res_by_server.items():
+                        available_resources_str += f"Server {s_name}:\n" + "\n".join(res_list_str_items) + "\n"
+
+            get_mcp_resource_tool_schema = {
+                "type": "function",
+                "function": {
+                    "name": "get_mcp_resource",
+                    "description": (
+                        "Retrieves the content of a specific resource from a connected Model Context Protocol (MCP) server. "
+                        "Use this tool to fetch context when you need more information from an MCP source. "
+                        "If you are unsure about URIs, use /mcp_list_resources command or refer to the list below.\n" + available_resources_str
+                    ),
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "server_name": {"type": "string", "description": "The name of the MCP server hosting the resource."},
+                            "resource_uri": {"type": "string", "description": "The URI of the resource to retrieve (e.g., 'docs://project/api/overview')."}
+                        },
+                        "required": ["server_name", "resource_uri"]
+                    }
+                }
+            }
+            self.functions.append(get_mcp_resource_tool_schema)
+
+            # Now, add all other tools from MCP servers
+            all_mcp_tools_tuples = self.mcp_manager.get_all_tools()
+            if all_mcp_tools_tuples and self.verbose: # Check verbose before io.tool_output
+                self.io.tool_output(f"INFO: Found {len(all_mcp_tools_tuples)} additional MCP tools to potentially expose to LLM.", log_only=True)
+
+            for server_config, tool_def in all_mcp_tools_tuples:
+                # NEW: Check for exclusion
+                if tool_def.name in server_config.exclude_tools:
+                    if self.verbose:
+                        self.io.tool_output(
+                            f"INFO: MCP tool '{tool_def.name}' from server '{server_config.name}' is in exclude_tools list. Skipping."
+                        , log_only=True)
+                    continue # Skip this tool
+
+                safe_server_name = re.sub(r'[^a-zA-Z0-9_-]', '_', server_config.name)
+                safe_tool_name = re.sub(r'[^a-zA-Z0-9_-]', '_', tool_def.name)
+                llm_tool_name = f"mcp__{safe_server_name}__{safe_tool_name}"
+
+                parameters_schema = tool_def.arguments_schema
+                if not parameters_schema: # Handles None or empty dict
+                    parameters_schema = {"type": "object", "properties": {}}
+                # Basic validation: ensure it's a dict and has 'type' and 'properties' if not empty
+                elif not (isinstance(parameters_schema, dict) and \
+                          parameters_schema.get("type") == "object" and \
+                          isinstance(parameters_schema.get("properties"), dict)):
+                    self.io.tool_warning(
+                        f"Warning: MCP tool '{tool_def.name}' from server '{server_config.name}' has an invalid "
+                        f"parameters schema: {parameters_schema}. Exposing with empty parameters."
+                    )
+                    parameters_schema = {"type": "object", "properties": {}}
+
+                description = tool_def.description or f"MCP tool '{tool_def.name}' from server '{server_config.name}'."
+
+                mcp_tool_schema = {
+                    "type": "function",
+                    "function": {
+                        "name": llm_tool_name,
+                        "description": description,
+                        "parameters": parameters_schema
+                    }
+                }
+                self.functions.append(mcp_tool_schema)
+                if self.verbose:
+                    self.io.tool_output(f"INFO: Exposing MCP tool to LLM: '{llm_tool_name}' from server '{server_config.name}'.", log_only=True)
+            # Now, add all other tools from MCP servers
+            all_mcp_tools_tuples = self.mcp_manager.get_all_tools()
+            if all_mcp_tools_tuples and self.verbose: # Check verbose before io.tool_output
+                self.io.tool_output(f"INFO: Found {len(all_mcp_tools_tuples)} additional MCP tools to potentially expose to LLM.", log_only=True)
+
+            for server_config, tool_def in all_mcp_tools_tuples:
+                # Check for exclusion
+                if tool_def.name in server_config.exclude_tools:
+                    if self.verbose:
+                        self.io.tool_output(
+                            f"INFO: MCP tool '{tool_def.name}' from server '{server_config.name}' is in exclude_tools list. Skipping."
+                        , log_only=True)
+                    continue # Skip this tool
+
+                safe_server_name = re.sub(r'[^a-zA-Z0-9_-]', '_', server_config.name)
+                safe_tool_name = re.sub(r'[^a-zA-Z0-9_-]', '_', tool_def.name)
+                llm_tool_name = f"mcp__{safe_server_name}__{safe_tool_name}"
+
+                parameters_schema = tool_def.arguments_schema
+                if not parameters_schema: # Handles None or empty dict
+                    parameters_schema = {"type": "object", "properties": {}}
+                # Basic validation: ensure it's a dict and has 'type' and 'properties' if not empty
+                elif not (isinstance(parameters_schema, dict) and \
+                          parameters_schema.get("type") == "object" and \
+                          isinstance(parameters_schema.get("properties"), dict)):
+                    self.io.tool_warning(
+                        f"Warning: MCP tool '{tool_def.name}' from server '{server_config.name}' has an invalid "
+                        f"parameters schema: {parameters_schema}. Exposing with empty parameters."
+                    )
+                    parameters_schema = {"type": "object", "properties": {}}
+
+                description = tool_def.description or f"MCP tool '{tool_def.name}' from server '{server_config.name}'."
+
+                mcp_tool_schema = {
+                    "type": "function",
+                    "function": {
+                        "name": llm_tool_name,
+                        "description": description,
+                        "parameters": parameters_schema
+                    }
+                }
+                self.functions.append(mcp_tool_schema)
+                if self.verbose:
+                    self.io.tool_output(f"INFO: Exposing MCP tool to LLM: '{llm_tool_name}' from server '{server_config.name}'.", log_only=True)
+
+        if self.verbose and self.functions:
+            self.io.tool_output("JSON Schema (including all MCP tools):")
+            self.io.tool_output(json.dumps(self.functions, indent=4))
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
@@ -1822,16 +1981,164 @@ class Coder:
         finally:
             self.io.log_llm_history(
                 "LLM RESPONSE",
-                format_content("ASSISTANT", self.partial_response_content),
+                format_content("ASSISTANT", self.partial_response_content), # type: ignore
             )
 
-            if self.partial_response_content:
-                self.io.ai_output(self.partial_response_content)
-            elif self.partial_response_function_call:
-                # TODO: push this into subclasses
+            if self.partial_response_function_call:
+                tool_call_id = self.partial_response_function_call.get('id', None)
+                final_tool_call_id = None
+                if hasattr(self, 'last_tool_call_info') and self.last_tool_call_info and hasattr(self.last_tool_call_info, 'id'):
+                    final_tool_call_id = self.last_tool_call_info.id
+                elif tool_call_id:
+                    final_tool_call_id = tool_call_id
+
+                if not final_tool_call_id:
+                    # Attempt to find it from the tool_calls list if the model (like Claude) nests it
+                    if self.main_model.send_tool_call_id and hasattr(completion, 'choices') and completion.choices \
+                            and hasattr(completion.choices[0], 'message') and hasattr(completion.choices[0].message, 'tool_calls') \
+                            and completion.choices[0].message.tool_calls:
+                        final_tool_call_id = completion.choices[0].message.tool_calls[0].id
+
+                if not final_tool_call_id and self.main_model.send_tool_call_id:
+                     self.io.tool_warning("Tool call ID not found or captured, response might be misattributed by LLM or fail.")
+
+
+                llm_tool_name = self.partial_response_function_call.get("name")
                 args = self.parse_partial_args()
-                if args:
-                    self.io.ai_output(json.dumps(args, indent=4))
+
+                if llm_tool_name == "get_mcp_resource":
+                    server_name = args.get("server_name")
+                    resource_uri = args.get("resource_uri")
+
+                    if not self.mcp_manager:
+                        tool_response_content = "Error: MCPManager not available."
+                    elif not server_name or not resource_uri:
+                        tool_response_content = "Error: server_name and resource_uri are required for get_mcp_resource."
+                    else:
+                        try:
+                            try:
+                                loop = asyncio.get_event_loop_policy().get_event_loop()
+                            except RuntimeError:
+                                loop = asyncio.new_event_loop()
+                                asyncio.set_event_loop(loop)
+
+                            if loop.is_running():
+                                self.io.tool_warning("Async MCP call from a running loop context. Using thread workaround.")
+                                import concurrent.futures
+                                with concurrent.futures.ThreadPoolExecutor() as executor:
+                                    future = executor.submit(lambda: asyncio.run(self.mcp_manager.read_mcp_resource(server_name, resource_uri)))
+                                    content_tuple = future.result(timeout=30)
+                            else:
+                                content_tuple = loop.run_until_complete(self.mcp_manager.read_mcp_resource(server_name, resource_uri))
+
+                        except Exception as e:
+                             self.io.tool_error(f"Error during MCP get_mcp_resource execution: {e}")
+                             content_tuple = None
+                             tool_response_content = f"Error: Could not execute MCP tool get_mcp_resource for {resource_uri}. Details: {e}"
+
+                        if content_tuple:
+                            content_str, mime_type = content_tuple
+                            if content_str.startswith("[Undecodable content:") or content_str.startswith("[Content of type"):
+                                tool_response_content = f"Error: Content for '{resource_uri}' is undecodable or binary: {content_str}"
+                            else:
+                                tool_response_content = f"Content from MCP resource '{resource_uri}' on server '{server_name}' (MIME: {mime_type}):\n{content_str}"
+                        else:
+                            last_err = self.mcp_manager.get_server_last_error(server_name) if self.mcp_manager else "MCP Manager not available"
+                            error_msg = f"Failed to retrieve MCP resource '{resource_uri}' from server '{server_name}'."
+                            if last_err: error_msg += f" Error: {last_err}"
+                            if not content_tuple and not last_err and "tool_response_content" not in locals() :
+                                error_msg += " (No content returned or connection error)"
+                            tool_response_content = error_msg if "tool_response_content" not in locals() else tool_response_content
+
+                    tool_response = dict(role="tool", tool_call_id=final_tool_call_id, name="get_mcp_resource", content=tool_response_content)
+                    self.cur_messages.append(tool_response)
+                    self.io.tool_output(f"Tool 'get_mcp_resource' called. Response added to chat context:\n{tool_response_content[:1000]}...") # Log truncated content
+
+                elif llm_tool_name and llm_tool_name.startswith("mcp__"):
+                    # Dynamic MCP tool call
+                    try:
+                        _, safe_server_name, safe_tool_name = llm_tool_name.split("__", 2)
+                        # Potentially reverse sanitization if needed, or find original from a map.
+                        # For now, assume safe names are usable or MCPManager handles it.
+                        # More robust: Store a map from llm_tool_name to (original_server_name, original_tool_name)
+                        # This requires Coder to have access to this map, or MCPManager to parse llm_tool_name.
+                        # Let's assume MCPManager's call_mcp_tool can take the llm_tool_name and parse it,
+                        # OR we need to find the original names. For now, we pass safe names.
+                        # This part is tricky: the llm_tool_name is what the LLM knows.
+                        # The MCP server knows tool_def.name. We need a mapping or parsing.
+                        # For this step, we'll assume MCPManager needs original names,
+                        # and we don't have a direct mapping here. This highlights a design gap.
+                        # WORKAROUND: We need to find the original server_name and tool_name.
+                        # This info was available when creating the schema. We'd need to store it.
+                        # For now, this call will likely fail if safe_server_name/safe_tool_name are not original.
+                        # Let's proceed with a placeholder that it calls the mcp_manager,
+                        # which would ideally handle the llm_tool_name directly or via a lookup.
+                        # This part of the logic needs to be revisited for correctness.
+                        # The conceptual diff for MCPManager.call_mcp_tool expects original server/tool names.
+
+                        self.io.tool_output(f"Attempting to call dynamic MCP tool: {llm_tool_name} with args: {args}")
+
+                        if not self.mcp_manager:
+                            tool_response_content = f"Error: MCPManager not available for tool {llm_tool_name}."
+                        else:
+                            # This is the critical call. We need original server_name and tool_name.
+                            # This requires a lookup from llm_tool_name.
+                            # For now, we'll simulate this part as it needs more infrastructure.
+                            # A proper solution would involve looking up original names from llm_tool_name.
+                            # E.g., by iterating self.mcp_manager.get_all_tools() and matching the sanitized name.
+
+                            original_server_name = None
+                            original_tool_name = None
+                            tool_found = False
+                            for sc, td in self.mcp_manager.get_all_tools():
+                                s_name_s = re.sub(r'[^a-zA-Z0-9_-]', '_', sc.name)
+                                t_name_s = re.sub(r'[^a-zA-Z0-9_-]', '_', td.name)
+                                if f"mcp__{s_name_s}__{t_name_s}" == llm_tool_name:
+                                    original_server_name = sc.name
+                                    original_tool_name = td.name
+                                    tool_found = True
+                                    break
+
+                            if not tool_found:
+                                tool_response_content = f"Error: Could not map LLM tool name {llm_tool_name} to an MCP tool."
+                            else:
+                                try:
+                                    loop = asyncio.get_event_loop_policy().get_event_loop()
+                                except RuntimeError:
+                                    loop = asyncio.new_event_loop()
+                                    asyncio.set_event_loop(loop)
+
+                                if loop.is_running():
+                                    self.io.tool_warning(f"Async MCP call for {llm_tool_name} from running loop. Using thread workaround.")
+                                    import concurrent.futures
+                                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                                        future = executor.submit(lambda: asyncio.run(self.mcp_manager.call_mcp_tool(original_server_name, original_tool_name, args)))
+                                        tool_result = future.result(timeout=60) # Tool timeout
+                                else:
+                                    tool_result = loop.run_until_complete(self.mcp_manager.call_mcp_tool(original_server_name, original_tool_name, args))
+
+                                tool_response_content = json.dumps(tool_result) if tool_result is not None else "Error: Tool execution failed or returned None."
+
+                        except Exception as e:
+                            self.io.tool_error(f"Error during dynamic MCP tool {llm_tool_name} execution: {e}")
+                            tool_response_content = f"Error: Could not execute MCP tool {llm_tool_name}. Details: {e}"
+
+                    tool_response = dict(role="tool", tool_call_id=final_tool_call_id, name=llm_tool_name, content=tool_response_content)
+                    self.cur_messages.append(tool_response)
+                    self.io.tool_output(f"Tool '{llm_tool_name}' called. Response added to chat context:\n{tool_response_content[:1000]}...")
+
+                else: # Other, non-MCP function calls
+                    parsed_args = self.parse_partial_args()
+                    if parsed_args:
+                        self.io.ai_output(f"Function call: {llm_tool_name}\nArguments: {json.dumps(parsed_args, indent=2)}")
+                    else:
+                         self.io.ai_output(f"Function call: {llm_tool_name} with unparsed args: {self.partial_response_function_call.get('arguments')}")
+
+                self.partial_response_function_call = None
+                self.partial_response_content = ""
+
+            elif self.partial_response_content: # Regular content response
+                self.io.ai_output(self.partial_response_content)
 
     def show_send_output(self, completion):
         # Stop spinner once we have a response
@@ -1919,6 +2226,15 @@ class Coder:
                     else:
                         self.partial_response_function_call[k] = v
                 received_content = True
+                # Capture the tool_call_id if available in the stream chunk
+                # LiteLLM often sends tool_calls as a list, even if only one call.
+                if hasattr(chunk.choices[0].delta, 'tool_calls') and chunk.choices[0].delta.tool_calls:
+                    # Assuming the first tool call if multiple are streamed.
+                    # Store the tool_call object which might contain the 'id'.
+                    # The 'id' might only come once at the beginning of the tool_call stream.
+                    streamed_tool_call = chunk.choices[0].delta.tool_calls[0]
+                    if hasattr(streamed_tool_call, 'id') and streamed_tool_call.id:
+                         self.last_tool_call_info = streamed_tool_call # Store the object that has the id
             except AttributeError:
                 pass
 
