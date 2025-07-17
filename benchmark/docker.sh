@@ -8,6 +8,7 @@ docker run \
        -v `pwd`:/aider \
        -v `pwd`/tmp.benchmarks/.:/benchmarks \
        -e OPENAI_API_KEY=$OPENAI_API_KEY \
+       -e OPENAI_API_BASE=$OPENAI_API_BASE \
        -e HISTFILE=/aider/.bash_history \
        -e PROMPT_COMMAND='history -a' \
        -e HISTCONTROL=ignoredups \
@@ -16,4 +17,4 @@ docker run \
        -e AIDER_DOCKER=1 \
        -e AIDER_BENCHMARK_DIR=/benchmarks \
        aider-benchmark \
-       bash
+       "$@"
