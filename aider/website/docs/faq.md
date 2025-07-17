@@ -264,18 +264,14 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-sonnet-4-20250514</td><td class='right'>493,971</td><td class='right'>52.8%</td></tr>
-<tr><td>gemini/gemini-2.5-pro</td><td class='right'>322,822</td><td class='right'>34.5%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>90,523</td><td class='right'>9.7%</td></tr>
+<tr><td>anthropic/claude-sonnet-4-20250514</td><td class='right'>493,971</td><td class='right'>52.1%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>322,822</td><td class='right'>34.0%</td></tr>
+<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>78,209</td><td class='right'>8.2%</td></tr>
+<tr><td>openrouter/moonshotai/kimi-k2</td><td class='right'>18,794</td><td class='right'>2.0%</td></tr>
+<tr><td>o3</td><td class='right'>14,004</td><td class='right'>1.5%</td></tr>
 <tr><td>o3-pro</td><td class='right'>11,150</td><td class='right'>1.2%</td></tr>
 <tr><td>xai/grok-4</td><td class='right'>9,573</td><td class='right'>1.0%</td></tr>
-<tr><td>o3</td><td class='right'>7,004</td><td class='right'>0.7%</td></tr>
-<tr><td>gemini/REDACTED</td><td class='right'>643</td><td class='right'>0.1%</td></tr>
 </table>
-
-{: .note :}
-Some models show as REDACTED, because they are new or unpopular models.
-Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?
