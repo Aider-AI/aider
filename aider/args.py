@@ -661,6 +661,29 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--gui-port",
+        help="Local port to bind web server to (default: 8501 or first in use after)",
+        type=int,
+        default=None,
+    )
+    group.add_argument(
+        "--gui-ip",
+        help="Local ip to bind web server to (default: None)",
+        default=None,
+    )
+    group.add_argument(
+        "--gui-launch",
+        help="Launch browser when web server setup (default: True)",
+        default=True,
+        action=argparse.BooleanOptionalAction,
+    )
+    group.add_argument(
+        "--gui-dev",
+        help="Run the web server in dev mode (watch changes, min ui, etc) (default: False)",
+        default=False,
+        action=argparse.BooleanOptionalAction,
+    )
+    group.add_argument(
         "--copy-paste",
         action=argparse.BooleanOptionalAction,
         default=False,
