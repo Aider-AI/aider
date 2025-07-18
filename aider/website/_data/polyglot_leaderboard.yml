@@ -1658,7 +1658,7 @@
 
 - dirname: 2025-07-17-17-41-54--kimi-k2-diff-or-pricing
   test_cases: 225
-  model: openrouter/moonshotai/kimi-k2
+  model: Kimi K2
   edit_format: diff
   commit_hash: 915ebff-dirty
   pass_rate_1: 20.4
