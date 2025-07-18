@@ -1460,12 +1460,32 @@ class Commands:
             self.io.tool_error(f"Error reading file: {e}")
             return
 
-        for cmd in commands:
-            cmd = cmd.strip()
+        self._execute_commands(commands)
+
+    def cmd_loadscript(self, args):
+        "Run a shell script/program and execute each non-empty stdout line as a command."
+        if not args.strip():
+            self.io.tool_error("Please provide a script to run.")
+            return
+
+        # Run the script, capture its stdout
+        exit_status, output = run_cmd(
+            args,
+            verbose=self.verbose,
+            error_print=self.io.tool_error,
+            cwd=(self.coder.root if self.coder else None),
+        )
+        if output is None:
+            return
+
+        # Split into non-empty lines and execute each as a command
+        self._execute_commands(output.splitlines())
+
+    def _execute_commands(self, commands):
+        for line in commands:
+            cmd = line.strip()
             if not cmd or cmd.startswith("#"):
                 continue
-
-            self.io.tool_output(f"\nExecuting: {cmd}")
             try:
                 self.run(cmd)
             except SwitchCoder:
