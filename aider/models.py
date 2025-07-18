@@ -125,6 +125,7 @@ class ModelSettings:
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
+    ask_model_name: Optional[str] = None
     reasoning_tag: Optional[str] = None
     remove_reasoning: Optional[str] = None  # Deprecated alias for reasoning_tag
     system_prompt_prefix: Optional[str] = None
@@ -309,7 +310,13 @@ model_info_manager = ModelInfoManager()
 
 class Model(ModelSettings):
     def __init__(
-        self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False
+        self,
+        model,
+        weak_model=None,
+        editor_model=None,
+        editor_edit_format=None,
+        ask_model=None,
+        verbose=False,
     ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
@@ -320,6 +327,7 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
+        self.ask_model = None
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -348,6 +356,11 @@ class Model(ModelSettings):
             self.editor_model_name = None
         else:
             self.get_editor_model(editor_model, editor_edit_format)
+
+        if ask_model is False:
+            self.ask_model_name = None
+        else:
+            self.get_ask_model(ask_model)
 
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
@@ -598,6 +611,21 @@ class Model(ModelSettings):
                 self.editor_edit_format = "editor-" + self.editor_edit_format
 
         return self.editor_model
+
+    def get_ask_model(self, provided_ask_model_name):
+        # If ask_model_name is provided, override the model settings
+        if provided_ask_model_name:
+            self.ask_model_name = provided_ask_model_name
+
+        if not self.ask_model_name or self.ask_model_name == self.name:
+            self.ask_model = self
+        else:
+            self.ask_model = Model(
+                self.ask_model_name,
+                ask_model=False,
+            )
+
+        return self.ask_model
 
     def tokenizer(self, text):
         return litellm.encode(model=self.name, text=text)
@@ -1113,7 +1141,16 @@ def sanity_check_models(io, main_model):
     ):
         problem_editor = sanity_check_model(io, main_model.editor_model)
 
-    return problem_main or problem_weak or problem_editor
+    problem_ask = None
+    if (
+        main_model.ask_model
+        and main_model.ask_model is not main_model
+        and main_model.ask_model is not main_model.weak_model
+        and main_model.ask_model is not main_model.editor_model
+    ):
+        problem_ask = sanity_check_model(io, main_model.ask_model)
+
+    return problem_main or problem_weak or problem_editor or problem_ask
 
 
 def sanity_check_model(io, model):
