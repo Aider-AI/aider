@@ -90,3 +90,17 @@ so they are easy to track and undo.
 
 You can always use the `/undo` command to undo AI changes that you don't
 like.
+
+## Chat Sessions
+
+Aider allows you to save and load your chat sessions. This can be useful if you want to take a break and resume your work later, or if you want to switch between different tasks.
+
+The `/session` command provides subcommands to manage your chat sessions:
+
+*   `/session list`: Lists all saved sessions.
+*   `/session save <name>`: Saves the current chat session with the given name.
+*   `/session load <name>`: Loads a previously saved chat session. This will restore the chat history and the files that were in the chat.
+*   `/session delete <name>`: Deletes a saved session.
+*   `/session view <name>`: Shows the details of a saved session, including the chat history and the files in the chat.
+
+All session data is stored locally in the `.aider/sessions` directory inside your project's git repository.
