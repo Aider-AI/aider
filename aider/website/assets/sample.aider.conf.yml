@@ -367,6 +367,9 @@
 ## Specify the input device name for voice recording
 #voice-input-device: xxx
 
+## Specify the transcribing model for voice recording
+#voice-model: xxx
+
 #################
 # Other settings:
 

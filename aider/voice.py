@@ -37,7 +37,7 @@ class Voice:
 
     threshold = 0.15
 
-    def __init__(self, audio_format="wav", device_name=None):
+    def __init__(self, audio_format="wav", device_name=None, voice_model=None):
         if sf is None:
             raise SoundDeviceError
         try:
@@ -73,6 +73,7 @@ class Voice:
         if audio_format not in ["wav", "mp3", "webm"]:
             raise ValueError(f"Unsupported audio format: {audio_format}")
         self.audio_format = audio_format
+        self.voice_model = voice_model
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -167,7 +168,7 @@ class Voice:
         with open(filename, "rb") as fh:
             try:
                 transcript = litellm.transcription(
-                    model="whisper-1", file=fh, prompt=history, language=language
+                    model=self.voice_model or "whisper-1", file=fh, prompt=history, language=language
                 )
             except Exception as err:
                 print(f"Unable to transcribe {filename}: {err}")
