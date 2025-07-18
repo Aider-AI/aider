@@ -30,6 +30,7 @@ from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
+from aider.mcp import load_mcp_servers
 from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
@@ -970,6 +971,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
     try:
+        # Load MCP servers from config string or file
+        mcp_servers = load_mcp_servers(args.mcp_servers, args.mcp_servers_file, io, args.verbose)
+
+        if not mcp_servers:
+            mcp_servers = []
+
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
@@ -1003,6 +1010,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
+            mcp_servers=mcp_servers,
             add_gitignore_files=args.add_gitignore_files,
         )
     except UnknownEditFormat as err:
