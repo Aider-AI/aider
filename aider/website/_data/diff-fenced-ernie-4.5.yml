@@ -1,0 +1,31 @@
+──────────────────── tmp.benchmarks/2025-07-18-11-23-35--a-helpful-name-for-4.5-run ─────────────────────
+- dirname: 2025-07-18-11-23-35--a-helpful-name-for-4.5-run
+  test_cases: 225
+  model: openai/ernie-4.5-turbo-128k-preview
+  edit_format: diff-fenced
+  commit_hash: 90dffa9
+  pass_rate_1: 35.1
+  pass_rate_2: 53.3
+  pass_num_1: 79
+  pass_num_2: 120
+  percent_cases_well_formed: 93.3
+  error_outputs: 25
+  num_malformed_responses: 25
+  num_with_malformed_responses: 15
+  user_asks: 134
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 3068968
+  completion_tokens: 427640
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model openai/ernie-4.5-turbo-128k-preview
+  date: 2025-07-18
+  versions: 0.85.2.dev
+  seconds_per_case: 72.4
+  total_cost: 0.0000
+
+costs: $0.0000/test-case, $0.00 total, $0.00 projected
+─────────────────────────────────────────────────────────────────────────────────────────────────────────
