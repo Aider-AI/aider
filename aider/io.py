@@ -600,24 +600,39 @@ class InputOutput:
         if self.fzf_history_search:
             @kb.add("c-r")
             def _(event):
-                if self.input_history_file:
-                    history_lines = "\n".join(
-                        FileHistory(self.input_history_file).load_history_strings()
-                    )
-
-                    output = (
-                        subprocess.check_output(
-                            ["fzf", "--reverse", "--height", "20"],
-                            input=history_lines.encode("utf-8"),
-                        )
-                        .decode("utf-8")
-                        .rstrip("\n")
-                    )
+                if not self.input_history_file:
+                    self.tool_error("Reverse search attempt without history file")
 
                     event.app.reset()
-                    buffer = event.current_buffer
-                    buffer.text = output
-                    buffer.cursor_position = len(buffer.text)
+
+                    return
+
+                history_lines = "\n".join(
+                    FileHistory(self.input_history_file).load_history_strings()
+                )
+
+                fzf_result = (
+                    subprocess.run(
+                        ["fzf", "--reverse", "--height", "20"],
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                        input=history_lines,
+                    )
+                )
+                if fzf_result.returncode != 0:
+                    self.tool_error(f"fzf returned error: {fzf_result.stderr}")
+
+                    event.app.reset()
+
+                    return
+
+                fzf_output = fzf_result.stdout.rstrip("\n")
+
+                event.app.reset()
+                buffer = event.current_buffer
+                buffer.text = fzf_output
+                buffer.cursor_position = len(buffer.text)
 
         @kb.add("c-x", "c-e")
         def _(event):
