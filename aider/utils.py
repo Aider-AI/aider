@@ -126,7 +126,18 @@ def format_messages(messages, title=None):
                 else:
                     output.append(f"{role} {item}")
         elif isinstance(content, str):  # Handle string content
-            output.append(format_content(role, content))
+            # For large content, especially with many files, use a truncated display approach
+            if len(content) > 5000:
+                # Count the number of code blocks (approximation)
+                fence_count = content.count("```") // 2
+                if fence_count > 5:
+                    # Show truncated content with file count for large files to improve performance
+                    first_line = content.split("\n", 1)[0]
+                    output.append(f"{role} {first_line} [content with ~{fence_count} files truncated]")
+                else:
+                    output.append(format_content(role, content))
+            else:
+                output.append(format_content(role, content))
         function_call = msg.get("function_call")
         if function_call:
             output.append(f"{role} Function Call: {function_call}")
