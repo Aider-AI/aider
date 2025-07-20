@@ -548,7 +548,7 @@ tqdm==4.67.1
     #   transformers
 transformers==4.52.4
     # via sentence-transformers
-tree-sitter==0.24.0
+tree-sitter==0.25.0
     # via tree-sitter-language-pack
 tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
