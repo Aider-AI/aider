@@ -718,14 +718,27 @@ def get_parser(default_config_files, git_root):
         help="Specify the input device name for voice recording",
     )
 
-    ######
-    group = parser.add_argument_group("Other settings")
+    ##########
+    group = parser.add_argument_group("Playwright settings")
     group.add_argument(
         "--disable-playwright",
+        "--playwright-disable",
         action="store_true",
         help="Never prompt for or attempt to install Playwright for web scraping (default: False).",
         default=False,
     )
+    group.add_argument(
+        "--playwright-ws-endpoint",
+        metavar="URL",
+        default=None,
+        help=(
+            "Specify the WebSocket endpoint for a Playwright browser server to connect to "
+            "(default: None, use the locally installed Playwright)."
+        ),
+    )
+
+    ##########
+    group = parser.add_argument_group("Other settings")
     group.add_argument(
         "--file",
         action="append",

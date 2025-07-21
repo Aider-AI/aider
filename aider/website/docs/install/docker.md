@@ -17,6 +17,8 @@ installed the first time you access them. Since containers are
 ephemeral, the extras will need to be reinstalled the next time you
 launch the aider core container.
 
+You can also use Docker to [only run Playwright](/docs/more/dockerized-playwright.html).
+
 ### Aider core 
 
 ```
