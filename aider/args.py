@@ -751,6 +751,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the language to use in the chat (default: None, uses system settings)",
     )
     group.add_argument(
+        "--playwright-proxy",
+        metavar="PROXY_URL",
+        default=None,
+        help="Specify a proxy URL for Playwright web scraping (default: None)",
+    )
+    group.add_argument(
         "--commit-language",
         metavar="COMMIT_LANGUAGE",
         default=None,
