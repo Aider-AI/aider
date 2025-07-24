@@ -25,7 +25,7 @@ from aider.utils import check_pip_install_extra
 
 RETRY_TIMEOUT = 60
 
-request_timeout = 600
+request_timeout = 1800
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
