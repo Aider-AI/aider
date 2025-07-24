@@ -6,7 +6,7 @@ docker run \
        --memory-swap=12g \
        --add-host=host.docker.internal:host-gateway \
        -v `pwd`:/aider \
-       -v `pwd`/tmp.benchmarks/.:/benchmarks \
+       -v `pwd`/benchmarks/.:/benchmarks \
        -e OPENAI_API_KEY=$OPENAI_API_KEY \
        -e HISTFILE=/aider/.bash_history \
        -e PROMPT_COMMAND='history -a' \
