@@ -1683,3 +1683,31 @@
   versions: 0.85.3.dev
   seconds_per_case: 67.6
   total_cost: 1.2357
+
+- dirname: 2025-07-23-14-42-21--qwen3-coder
+  test_cases: 225
+  model: openrouter/qwen/qwen3-coder
+  edit_format: diff
+  commit_hash: 3db4d37-dirty
+  pass_rate_1: 28.4
+  pass_rate_2: 60.4
+  pass_num_1: 64
+  pass_num_2: 136
+  percent_cases_well_formed: 90.2
+  error_outputs: 26
+  num_malformed_responses: 25
+  num_with_malformed_responses: 22
+  user_asks: 120
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 3613684
+  completion_tokens: 434983
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openrouter/qwen/qwen3-coder
+  date: 2025-07-23
+  versions: 0.85.2.dev
+  seconds_per_case: 93.7
+  total_cost: 8.0973
