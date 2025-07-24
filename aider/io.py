@@ -23,6 +23,7 @@ from prompt_toolkit.keys import Keys
 from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.output.vt100 import is_dumb_terminal
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
+from prompt_toolkit.output.color_depth import ColorDepth
 from prompt_toolkit.styles import Style
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
@@ -662,6 +663,7 @@ class InputOutput:
                         style=style,
                         key_bindings=kb,
                         complete_while_typing=True,
+                        color_depth=ColorDepth.TRUE_COLOR,
                         prompt_continuation=get_continuation,
                     )
                 else:
