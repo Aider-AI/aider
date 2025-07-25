@@ -952,6 +952,12 @@
   use_repo_map: true
   weak_model_name: gemini/gemini-2.0-flash
 
+- name: gemini/gemini-2.5-pro-preview-05-06
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  weak_model_name: gemini/gemini-2.0-flash
+
 - name: gemini/gemini-2.5-pro-exp-03-25
   edit_format: diff-fenced
   use_repo_map: true
