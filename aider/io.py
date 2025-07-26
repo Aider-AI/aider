@@ -527,6 +527,7 @@ class InputOutput:
         addable_rel_fnames,
         commands,
         abs_read_only_fnames=None,
+        abs_rag_fnames=None,
         edit_format=None,
     ):
         self.rule()
@@ -540,7 +541,10 @@ class InputOutput:
             rel_read_only_fnames = [
                 get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
             ]
-            show = self.format_files_for_input(rel_fnames, rel_read_only_fnames)
+            rel_rag_fnames = [
+                get_rel_fname(fname, root) for fname in (abs_rag_fnames or [])
+            ]
+            show = self.format_files_for_input(rel_fnames, rel_read_only_fnames, rel_rag_fnames)
 
         prompt_prefix = ""
         if edit_format:
@@ -1135,25 +1139,36 @@ class InputOutput:
                 print(err)
                 self.chat_history_file = None  # Disable further attempts to write
 
-    def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
+    def format_files_for_input(self, rel_fnames, rel_read_only_fnames, rel_rag_fnames):
         if not self.pretty:
             read_only_files = []
+            rag_files = []
             for full_path in sorted(rel_read_only_fnames or []):
                 read_only_files.append(f"{full_path} (read only)")
 
+            for full_path in sorted(rel_rag_fnames or []):
+                rag_files.append(f"{full_path} (RAG)")
+
             editable_files = []
             for full_path in sorted(rel_fnames):
-                if full_path in rel_read_only_fnames:
+                if full_path in rel_read_only_fnames or full_path in rel_rag_fnames:
                     continue
                 editable_files.append(f"{full_path}")
 
-            return "\n".join(read_only_files + editable_files) + "\n"
+            return "\n".join(rag_files + read_only_files + editable_files) + "\n"
 
         output = StringIO()
         console = Console(file=output, force_terminal=False)
 
         read_only_files = sorted(rel_read_only_fnames or [])
-        editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
+        rag_files = sorted(rel_rag_fnames or [])
+        editable_files = []
+
+        for f in sorted(rel_fnames):
+            if f in rel_read_only_fnames or f in rel_rag_fnames:
+                continue
+            else:
+                editable_files.append(f)
 
         if read_only_files:
             # Use shorter of abs/rel paths for readonly files
@@ -1168,16 +1183,30 @@ class InputOutput:
             read_only_lines = read_only_output.getvalue().splitlines()
             console.print(Columns(files_with_label))
 
+        if rag_files:
+            # Use shorter of abs/rel paths for rag files
+            rag_paths = []
+            for rel_path in rag_files:
+                abs_path = os.path.abspath(os.path.join(self.root, rel_path))
+                rag_paths.append(Text(abs_path if len(abs_path) < len(rel_path) else rel_path))
+
+            if read_only_files or rag_files:
+                files_with_label = [Text("RAG:")] + rag_paths
+                rag_output = StringIO()
+                Console(file=rag_output, force_terminal=False).print(Columns(files_with_label))
+                rag_lines = rag_output.getvalue().splitlines()
+                console.print(Columns(files_with_label))
+
         if editable_files:
             text_editable_files = [Text(f) for f in editable_files]
             files_with_label = text_editable_files
-            if read_only_files:
+            if read_only_files or rag_files:
                 files_with_label = [Text("Editable:")] + text_editable_files
                 editable_output = StringIO()
                 Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
                 editable_lines = editable_output.getvalue().splitlines()
 
-                if len(read_only_lines) > 1 or len(editable_lines) > 1:
+                if len(editable_lines) > 1 or (read_only_files and len(read_only_lines) > 1) or (rag_files and len(rag_lines) > 1):
                     console.print()
             console.print(Columns(files_with_label))
 

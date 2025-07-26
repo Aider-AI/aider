@@ -416,6 +416,7 @@ class Commands:
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
+        self.coder.abs_rag_fnames = set()
 
         # When dropping all files, keep those that were originally provided via args.read
         if self.original_read_only_fnames:
@@ -431,6 +432,7 @@ class Commands:
             self.coder.abs_read_only_fnames = to_keep
         else:
             self.coder.abs_read_only_fnames = set()
+            self.coder.abs_rag_fnames = set()
 
     def _clear_chat_history(self):
         self.coder.done_messages = []
@@ -936,6 +938,25 @@ class Commands:
                 self.coder.abs_read_only_fnames.remove(matched_file)
                 self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
 
+            # Handle rag files with substring matching and samefile check
+            rag_matched = []
+            for f in self.coder.abs_rag_fnames:
+                if expanded_word in f:
+                    rag_matched.append(f)
+                    continue
+
+                # Try samefile comparison for relative paths
+                try:
+                    abs_word = os.path.abspath(expanded_word)
+                    if os.path.samefile(abs_word, f):
+                        rag_matched.append(f)
+                except (FileNotFoundError, OSError):
+                    continue
+
+            for matched_file in rag_matched:
+                self.coder.abs_rag_fnames.remove(matched_file)
+                self.io.tool_output(f"Removed RAG file {matched_file} from the chat")
+
             # For editable files, use glob if word contains glob chars, otherwise use substring
             if any(c in expanded_word for c in "*?[]"):
                 matched_files = self.glob_filtered_to_repo(expanded_word)
@@ -1396,6 +1417,96 @@ class Commands:
             )
         else:
             self.io.tool_output(f"No new files added from directory {original_name}.")
+
+    def _add_rag_file(self, abs_path, original_name):
+        if is_image_file(original_name):
+            self.io.tool_error(
+                f"The RAG pipeline cannot add image files ({original_name}) for processing."
+            )
+            return
+
+        if abs_path in self.coder.abs_read_only_fnames:
+            self.coder.abs_read_only_fnames.remove(abs_path)
+            self.coder.abs_rag_fnames.add(abs_path)
+            self.io.tool_output(
+                f"Moved {original_name} from read-only to RAG files in the chat"
+            )
+        elif abs_path in self.coder.abs_fnames:
+            self.coder.abs_fnames.remove(abs_path)
+            self.coder.abs_rag_fnames.add(abs_path)
+            self.io.tool_output(
+                f"Moved {original_name} from editable to RAG files in the chat"
+            )
+        else:
+            self.coder.abs_rag_fnames.add(abs_path)
+            self.io.tool_output(f"Added {original_name} to RAG files.")
+
+    def _add_rag_directory(self, abs_path, original_name):
+        added_files = 0
+        for root, _, files in os.walk(abs_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                if (
+                    file_path not in self.coder.abs_fnames
+                    and file_path not in self.coder.abs_read_only_fnames
+                    and file_path not in self.coder.abs_rag_fnames
+                ):
+                    self.coder.abs_rag_fnames.add(file_path)
+                    added_files += 1
+
+        if added_files > 0:
+            self.io.tool_output(
+                f"Added {added_files} files from directory {original_name} to RAG files."
+            )
+        else:
+            self.io.tool_output(f"No new files added from directory {original_name}.")
+
+    def completions_raw_rag(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
+
+    def cmd_rag(self, args):
+        "Add files to be processed into the RAG knowledge base for token-efficient queries"
+        if not args.strip():
+            return
+
+        filenames = parse_quoted_filenames(args)
+        all_paths = []
+
+        # First collect all expanded paths
+        for pattern in filenames:
+            expanded_pattern = expanduser(pattern)
+            path_obj = Path(expanded_pattern)
+            is_abs = path_obj.is_absolute()
+            if not is_abs:
+                path_obj = Path(self.coder.root) / path_obj
+
+            matches = []
+            # Check for literal path existence first
+            if path_obj.exists():
+                matches = [path_obj]
+            else:
+                # If literal path doesn't exist, try globbing
+                if is_abs:
+                    # For absolute paths, glob it
+                    matches = [Path(p) for p in glob.glob(expanded_pattern)]
+                else:
+                    # For relative paths and globs, use glob from the root directory
+                    matches = list(Path(self.coder.root).glob(expanded_pattern))
+
+            if not matches:
+                self.io.tool_error(f"No matches found for: {pattern}")
+            else:
+                all_paths.extend(matches)
+
+        # Then process them in sorted order
+        for path in sorted(all_paths):
+            abs_path = self.coder.abs_root_path(path)
+            if os.path.isfile(abs_path):
+                self._add_rag_file(abs_path, path)
+            elif os.path.isdir(abs_path):
+                self._add_rag_directory(abs_path, path)
+            else:
+                self.io.tool_error(f"Not a file or directory: {abs_path}")
 
     def cmd_map(self, args):
         "Print out the current repository map"

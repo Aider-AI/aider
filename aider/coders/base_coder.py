@@ -88,6 +88,7 @@ all_fences = [
 class Coder:
     abs_fnames = None
     abs_read_only_fnames = None
+    abs_rag_fnames = None
     repo = None
     last_aider_commit_hash = None
     aider_edited_files = None
@@ -171,6 +172,7 @@ class Coder:
             update = dict(
                 fnames=list(from_coder.abs_fnames),
                 read_only_fnames=list(from_coder.abs_read_only_fnames),  # Copy read-only files
+                rag_fnames=list(from_coder.abs_rag_fnames),
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
@@ -286,6 +288,10 @@ class Coder:
             rel_fname = self.get_rel_fname(fname)
             lines.append(f"Added {rel_fname} to the chat (read-only).")
 
+        for fname in self.abs_rag_fnames:
+            rel_fname = self.get_rel_fname(fname)
+            lines.append(f"Added {rel_fname} to the chat (RAG).")
+
         if self.done_messages:
             lines.append("Restored previous conversation history.")
 
@@ -304,6 +310,7 @@ class Coder:
         fnames=None,
         add_gitignore_files=False,
         read_only_fnames=None,
+        rag_fnames=None,
         show_diffs=False,
         auto_commits=True,
         dirty_commits=True,
@@ -390,6 +397,7 @@ class Coder:
         self.verbose = verbose
         self.abs_fnames = set()
         self.abs_read_only_fnames = set()
+        self.abs_rag_fnames = set()
         self.add_gitignore_files = add_gitignore_files
 
         if cur_messages:
@@ -483,6 +491,15 @@ class Coder:
                     self.abs_read_only_fnames.add(abs_fname)
                 else:
                     self.io.tool_warning(f"Error: Read-only file {fname} does not exist. Skipping.")
+
+        if rag_fnames:
+            self.abs_rag_fnames = set()
+            for fname in rag_fnames:
+                abs_fname = self.abs_root_path(fname)
+                if os.path.exists(abs_fname):
+                    self.abs_rag_fnames.add(abs_fname)
+                else:
+                    self.io.tool_warning(f"Error: RAG file {fname} does not exist. Skipping.")
 
         if map_tokens is None:
             use_repo_map = main_model.use_repo_map
@@ -614,6 +631,12 @@ class Coder:
             content = self.io.read_text(_fname)
             if content is not None:
                 all_content += content + "\n"
+        for _fname in self.abs_rag_fnames:
+            # TODO: What happens when there are RAG files in the context? How should they be treated?
+            # for now, placeholding as readonly
+            content = self.io.read_text(_fname)
+            if content is not None:
+                all_content += content + "\n"
 
         lines = all_content.splitlines()
         good = False
@@ -718,8 +741,10 @@ class Coder:
 
         all_abs_files = set(self.get_all_abs_files())
         repo_abs_read_only_fnames = set(self.abs_read_only_fnames) & all_abs_files
+        repo_abs_rag_fnames = set(self.abs_rag_fnames)
         chat_files = set(self.abs_fnames) | repo_abs_read_only_fnames
-        other_files = all_abs_files - chat_files
+        # I dont think rag files should be repomapped due to the nature of their use
+        other_files = all_abs_files - chat_files - repo_abs_rag_fnames
 
         repo_content = self.repo_map.get_repo_map(
             chat_files,
@@ -785,6 +810,25 @@ class Coder:
             ]
 
         return readonly_messages
+
+    def get_rag_files_messages(self):
+        rag_messages = []
+
+        rag_content = self.get_read_only_files_content()
+        if rag_content:
+            # TODO: I guess the main logic for the RAG pipeline should reside here.
+            # for now, placeholding as readonly
+            rag_messages += [
+                dict(
+                    role="user", content=self.gpt_prompts.read_only_files_prefix + rag_content
+                ),
+                dict(
+                    role="assistant",
+                    content="Ok, I will use these files as references.",
+                ),
+            ]
+
+        return rag_messages
 
     def get_chat_files_messages(self):
         chat_files_messages = []
@@ -898,7 +942,8 @@ class Coder:
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
         read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
-        all_files = sorted(set(inchat_files + read_only_files))
+        rag_files = [self.get_rel_fname(fname) for fname in self.abs_rag_fnames]
+        all_files = sorted(set(inchat_files + read_only_files + rag_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
             self.root,
@@ -906,6 +951,7 @@ class Coder:
             self.get_addable_relative_files(),
             self.commands,
             self.abs_read_only_fnames,
+            self.abs_rag_fnames,
             edit_format=edit_format,
         )
 
@@ -1280,6 +1326,7 @@ class Coder:
 
         chunks.repo = self.get_repo_messages()
         chunks.readonly_files = self.get_readonly_files_messages()
+        chunks.rag_files = self.get_rag_files_messages()
         chunks.chat_files = self.get_chat_files_messages()
 
         if self.gpt_prompts.system_reminder:
@@ -1727,9 +1774,11 @@ class Coder:
         else:
             addable_rel_fnames = self.get_addable_relative_files()
 
-            # Get basenames of files already in chat or read-only
+            # Get basenames of files already in chat or read-only or rag
             existing_basenames = {os.path.basename(f) for f in self.get_inchat_relative_files()} | {
                 os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
+            } | {
+                os.path.basename(self.get_rel_fname(f)) for f in self.abs_rag_fnames
             }
 
         mentioned_rel_fnames = set()
@@ -2170,7 +2219,8 @@ class Coder:
         all_files = set(self.get_all_relative_files())
         inchat_files = set(self.get_inchat_relative_files())
         read_only_files = set(self.get_rel_fname(fname) for fname in self.abs_read_only_fnames)
-        return all_files - inchat_files - read_only_files
+        rag_files = set(self.get_rel_fname(fname) for fname in self.abs_rag_fnames)
+        return all_files - inchat_files - read_only_files - rag_files
 
     def check_for_dirty_commit(self, path):
         if not self.repo:

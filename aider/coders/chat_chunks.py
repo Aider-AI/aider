@@ -9,6 +9,7 @@ class ChatChunks:
     done: List = field(default_factory=list)
     repo: List = field(default_factory=list)
     readonly_files: List = field(default_factory=list)
+    rag_files: List = field(default_factory=list)
     chat_files: List = field(default_factory=list)
     cur: List = field(default_factory=list)
     reminder: List = field(default_factory=list)
@@ -18,6 +19,7 @@ class ChatChunks:
             self.system
             + self.examples
             + self.readonly_files
+            + self.rag_files
             + self.repo
             + self.done
             + self.chat_files
