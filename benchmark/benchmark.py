@@ -216,10 +216,14 @@ def main(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
 ):
-    repo = git.Repo(search_parent_directories=True)
-    commit_hash = repo.head.object.hexsha[:7]
-    if repo.is_dirty():
-        commit_hash += "-dirty"
+    
+    commit_hash = "UNKNOWN"
+    git_dir = Path.cwd() / '.git'
+    if git_dir.is_dir(): # Exists and is a dir
+        repo = git.Repo(search_parent_directories=True)
+        commit_hash = repo.head.object.hexsha[:7]
+        if repo.is_dirty():
+            commit_hash += "-dirty"
 
     if stats_only and not dirnames:
         latest_dir = find_latest_benchmark_dir()
