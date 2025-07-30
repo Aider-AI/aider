@@ -15,6 +15,7 @@ import time
 import traceback
 from collections import defaultdict
 from datetime import datetime
+from chromadb import QueryResult
 
 # Optional dependency: used to convert locale codes (eg ``en_US``)
 # into human-readable language names (eg ``English``).
@@ -51,6 +52,8 @@ from aider.waiting import WaitingSpinner
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
+
+from aider.rag import RagManager
 
 
 class UnknownEditFormat(ValueError):
@@ -121,6 +124,7 @@ class Coder:
     chat_language = None
     commit_language = None
     file_watcher = None
+    ragManager: RagManager
 
     @classmethod
     def create(
@@ -128,6 +132,7 @@ class Coder:
         main_model=None,
         edit_format=None,
         io=None,
+        ragManager=None,
         from_coder=None,
         summarize_from_coder=True,
         **kwargs,
@@ -191,7 +196,7 @@ class Coder:
 
         for coder in coders.__all__:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
-                res = coder(main_model, io, **kwargs)
+                res = coder(main_model, io, ragManager, **kwargs)
                 res.original_kwargs = dict(kwargs)
                 return res
 
@@ -306,6 +311,7 @@ class Coder:
         self,
         main_model,
         io,
+        ragManager: RagManager,
         repo=None,
         fnames=None,
         add_gitignore_files=False,
@@ -378,6 +384,9 @@ class Coder:
 
         if io is None:
             io = InputOutput()
+
+        if ragManager is None:
+            self.ragManager = RagManager(io)
 
         if aider_commit_hashes:
             self.aider_commit_hashes = aider_commit_hashes
@@ -692,6 +701,27 @@ class Coder:
                 prompt += f"{self.fence[1]}\n"
         return prompt
 
+    def get_rag_files_chunks(self):
+        if self.abs_rag_fnames is None:
+            return None
+
+        return self.ragManager.chunk_files(self.abs_rag_fnames)
+
+    def get_rag_files_content(self, rag_query_result: QueryResult):
+        prompt = ""
+        chunks = rag_query_result.get("documents")
+        metadatas = rag_query_result.get("metadatas")
+        if chunks is None or metadatas is None:
+            return prompt
+
+        for i in range(len(chunks)):
+            prompt += "\n"
+            prompt += str(metadatas[0][i]["file_name"])
+            prompt += f"\n{self.fence[0]}\n"
+            prompt += chunks[0][i]
+            prompt += f"{self.fence[1]}\n"
+        return prompt
+
     def get_cur_message_text(self):
         text = ""
         for msg in self.cur_messages:
@@ -811,22 +841,21 @@ class Coder:
 
         return readonly_messages
 
-    def get_rag_files_messages(self):
+    def get_rag_file_messages(self, rag_query_result: QueryResult | None):
         rag_messages = []
 
-        rag_content = self.get_read_only_files_content()
-        if rag_content:
-            # TODO: I guess the main logic for the RAG pipeline should reside here.
-            # for now, placeholding as readonly
-            rag_messages += [
-                dict(
-                    role="user", content=self.gpt_prompts.read_only_files_prefix + rag_content
-                ),
-                dict(
-                    role="assistant",
-                    content="Ok, I will use these files as references.",
-                ),
-            ]
+        if rag_query_result is None:
+            return rag_messages
+        rag_content = self.get_rag_files_content(rag_query_result)
+        rag_messages += [
+            dict(
+                role="user", content=self.gpt_prompts.rag_files_prefix + rag_content
+            ),
+            dict(
+                role="assistant",
+                content="Ok, I will use these file chunks as references.",
+            ),
+        ]
 
         return rag_messages
 
@@ -1269,7 +1298,7 @@ class Coder:
 
         return prompt
 
-    def format_chat_chunks(self):
+    def format_chat_chunks(self, rag_query_result: QueryResult | None):
         self.choose_fence()
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
         if self.main_model.system_prompt_prefix:
@@ -1326,7 +1355,7 @@ class Coder:
 
         chunks.repo = self.get_repo_messages()
         chunks.readonly_files = self.get_readonly_files_messages()
-        chunks.rag_files = self.get_rag_files_messages()
+        chunks.rag_files = self.get_rag_file_messages(rag_query_result)
         chunks.chat_files = self.get_chat_files_messages()
 
         if self.gpt_prompts.system_reminder:
@@ -1377,8 +1406,8 @@ class Coder:
 
         return chunks
 
-    def format_messages(self):
-        chunks = self.format_chat_chunks()
+    def format_messages(self, rag_query_result: QueryResult | None):
+        chunks = self.format_chat_chunks(rag_query_result)
         if self.add_cache_headers:
             chunks.add_cache_control_headers()
 
@@ -1469,11 +1498,19 @@ class Coder:
         # Notify IO that LLM processing is starting
         self.io.llm_started()
 
+        rag_file_chunks = self.get_rag_files_chunks()
+        if rag_file_chunks:
+            self.ragManager.embed_store_chunks(all_chunks=rag_file_chunks)
+            rag_query_result = self.ragManager.embed_retrieve_query(
+                query=inp, file_names=list(self.abs_rag_fnames))
+        else:
+            rag_query_result = None
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
 
-        chunks = self.format_messages()
+        chunks = self.format_messages(rag_query_result)
         messages = chunks.all_messages()
         if not self.check_tokens(messages):
             return

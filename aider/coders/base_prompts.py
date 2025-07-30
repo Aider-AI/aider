@@ -51,6 +51,10 @@ If you need to edit any of these files, ask me to *add them to the chat* first.
 Do not edit these files!
 """
 
+    rag_files_prefix = """Here are some READ ONLY chunks from files that were embedded and then had the most relevant chunks retrieved based on the user query, provided for your reference.
+Do not edit these files!
+"""
+
     shell_cmd_prompt = ""
     shell_cmd_reminder = ""
     no_shell_cmd_prompt = ""

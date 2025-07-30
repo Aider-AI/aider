@@ -33,10 +33,16 @@ backoff==2.2.1
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   posthog
+bcrypt==4.3.0
+    # via chromadb
 beautifulsoup4==4.13.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+build==1.2.2.post1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   chromadb
 cachetools==5.5.2
     # via
     #   -c requirements/common-constraints.txt
@@ -46,6 +52,7 @@ certifi==2025.6.15
     #   -c requirements/common-constraints.txt
     #   httpcore
     #   httpx
+    #   kubernetes
     #   requests
 cffi==1.17.1
     # via
@@ -56,10 +63,16 @@ charset-normalizer==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
+chromadb==1.0.15
+    # via -r requirements/requirements.in
 click==8.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+    #   typer
+    #   uvicorn
+coloredlogs==15.0.1
+    # via onnxruntime
 configargparse==1.7.1
     # via
     #   -c requirements/common-constraints.txt
@@ -77,6 +90,8 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
+durationpy==0.10
+    # via kubernetes
 filelock==3.18.0
     # via
     #   -c requirements/common-constraints.txt
@@ -85,6 +100,8 @@ flake8==7.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+flatbuffers==25.2.10
+    # via onnxruntime
 frozenlist==1.7.0
     # via
     #   -c requirements/common-constraints.txt
@@ -124,6 +141,7 @@ google-auth==2.40.3
     #   google-api-python-client
     #   google-auth-httplib2
     #   google-generativeai
+    #   kubernetes
 google-auth-httplib2==0.2.0
     # via
     #   -c requirements/common-constraints.txt
@@ -137,6 +155,11 @@ googleapis-common-protos==1.70.0
     #   -c requirements/common-constraints.txt
     #   google-api-core
     #   grpcio-status
+    #   opentelemetry-exporter-otlp-proto-grpc
+greenlet==3.2.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   sqlalchemy
 grep-ast==0.9.0
     # via
     #   -c requirements/common-constraints.txt
@@ -144,8 +167,10 @@ grep-ast==0.9.0
 grpcio==1.73.0
     # via
     #   -c requirements/common-constraints.txt
+    #   chromadb
     #   google-api-core
     #   grpcio-status
+    #   opentelemetry-exporter-otlp-proto-grpc
 grpcio-status==1.71.0
     # via
     #   -c requirements/common-constraints.txt
@@ -154,6 +179,7 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
+    #   uvicorn
 hf-xet==1.1.5
     # via
     #   -c requirements/common-constraints.txt
@@ -167,15 +193,21 @@ httplib2==0.22.0
     #   -c requirements/common-constraints.txt
     #   google-api-python-client
     #   google-auth-httplib2
+httptools==0.6.4
+    # via uvicorn
 httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
+    #   chromadb
+    #   langsmith
     #   litellm
     #   openai
 huggingface-hub==0.33.1
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
+humanfriendly==10.0
+    # via coloredlogs
 idna==3.10
     # via
     #   -c requirements/common-constraints.txt
@@ -188,10 +220,12 @@ importlib-metadata==7.2.1
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   litellm
+    #   opentelemetry-api
 importlib-resources==6.5.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   chromadb
 jinja2==3.1.6
     # via
     #   -c requirements/common-constraints.txt
@@ -204,15 +238,34 @@ json5==0.12.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+jsonpatch==1.33
+    # via langchain-core
+jsonpointer==3.0.0
+    # via jsonpatch
 jsonschema==4.24.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   chromadb
     #   litellm
 jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
+kubernetes==33.1.0
+    # via chromadb
+langchain==0.3.27
+    # via -r requirements/requirements.in
+langchain-core==0.3.72
+    # via
+    #   langchain
+    #   langchain-text-splitters
+langchain-text-splitters==0.3.9
+    # via langchain
+langsmith==0.4.8
+    # via
+    #   langchain
+    #   langchain-core
 litellm==1.73.1
     # via
     #   -c requirements/common-constraints.txt
@@ -237,6 +290,12 @@ mixpanel==4.10.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+mmh3==5.2.0
+    # via chromadb
+mpmath==1.3.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   sympy
 mslex==1.3.0
     # via
     #   -c requirements/common-constraints.txt
@@ -253,21 +312,59 @@ networkx==3.4.2
 numpy==1.26.4
     # via
     #   -c requirements/common-constraints.txt
+    #   chromadb
+    #   onnxruntime
     #   scipy
     #   soundfile
+oauthlib==3.3.1
+    # via
+    #   kubernetes
+    #   requests-oauthlib
+onnxruntime==1.22.1
+    # via chromadb
 openai==1.91.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+opentelemetry-api==1.36.0
+    # via
+    #   chromadb
+    #   opentelemetry-exporter-otlp-proto-grpc
+    #   opentelemetry-sdk
+    #   opentelemetry-semantic-conventions
+opentelemetry-exporter-otlp-proto-common==1.36.0
+    # via opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-exporter-otlp-proto-grpc==1.36.0
+    # via chromadb
+opentelemetry-proto==1.36.0
+    # via
+    #   opentelemetry-exporter-otlp-proto-common
+    #   opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-sdk==1.36.0
+    # via
+    #   chromadb
+    #   opentelemetry-exporter-otlp-proto-grpc
+opentelemetry-semantic-conventions==0.57b0
+    # via opentelemetry-sdk
+orjson==3.11.1
+    # via
+    #   chromadb
+    #   langsmith
 oslex==0.1.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+overrides==7.7.0
+    # via chromadb
 packaging==25.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   build
     #   huggingface-hub
+    #   langchain-core
+    #   langsmith
+    #   onnxruntime
 pathspec==0.12.1
     # via
     #   -c requirements/common-constraints.txt
@@ -285,6 +382,7 @@ posthog==5.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   chromadb
 prompt-toolkit==3.0.51
     # via
     #   -c requirements/common-constraints.txt
@@ -307,6 +405,8 @@ protobuf==5.29.5
     #   google-generativeai
     #   googleapis-common-protos
     #   grpcio-status
+    #   onnxruntime
+    #   opentelemetry-proto
     #   proto-plus
 psutil==7.0.0
     # via
@@ -325,6 +425,8 @@ pyasn1-modules==0.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
+pybase64==1.4.2
+    # via chromadb
 pycodestyle==2.14.0
     # via
     #   -c requirements/common-constraints.txt
@@ -336,7 +438,11 @@ pycparser==2.22
 pydantic==2.11.7
     # via
     #   -c requirements/common-constraints.txt
+    #   chromadb
     #   google-generativeai
+    #   langchain
+    #   langchain-core
+    #   langsmith
     #   litellm
     #   openai
 pydantic-core==2.33.2
@@ -367,19 +473,32 @@ pyperclip==1.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+pypika==0.48.9
+    # via chromadb
+pyproject-hooks==1.2.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   build
 python-dateutil==2.9.0.post0
     # via
     #   -c requirements/common-constraints.txt
+    #   kubernetes
     #   posthog
 python-dotenv==1.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+    #   uvicorn
 pyyaml==6.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   chromadb
     #   huggingface-hub
+    #   kubernetes
+    #   langchain
+    #   langchain-core
+    #   uvicorn
 referencing==0.36.2
     # via
     #   -c requirements/common-constraints.txt
@@ -394,13 +513,24 @@ requests==2.32.4
     #   -c requirements/common-constraints.txt
     #   google-api-core
     #   huggingface-hub
+    #   kubernetes
+    #   langchain
+    #   langsmith
     #   mixpanel
     #   posthog
+    #   requests-oauthlib
+    #   requests-toolbelt
     #   tiktoken
+requests-oauthlib==2.0.0
+    # via kubernetes
+requests-toolbelt==1.0.0
+    # via langsmith
 rich==14.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   chromadb
+    #   typer
 rpds-py==0.25.1
     # via
     #   -c requirements/common-constraints.txt
@@ -414,6 +544,10 @@ scipy==1.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+shellingham==1.5.4
+    # via
+    #   -c requirements/common-constraints.txt
+    #   typer
 shtab==1.7.2
     # via
     #   -c requirements/common-constraints.txt
@@ -421,6 +555,7 @@ shtab==1.7.2
 six==1.17.0
     # via
     #   -c requirements/common-constraints.txt
+    #   kubernetes
     #   mixpanel
     #   posthog
     #   python-dateutil
@@ -449,6 +584,19 @@ soupsieve==2.7
     # via
     #   -c requirements/common-constraints.txt
     #   beautifulsoup4
+sqlalchemy==2.0.41
+    # via
+    #   -c requirements/common-constraints.txt
+    #   langchain
+sympy==1.14.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   onnxruntime
+tenacity==9.1.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   chromadb
+    #   langchain-core
 tiktoken==0.9.0
     # via
     #   -c requirements/common-constraints.txt
@@ -456,13 +604,16 @@ tiktoken==0.9.0
 tokenizers==0.21.2
     # via
     #   -c requirements/common-constraints.txt
+    #   chromadb
     #   litellm
 tqdm==4.67.1
     # via
     #   -c requirements/common-constraints.txt
+    #   chromadb
     #   google-generativeai
     #   huggingface-hub
     #   openai
+tree-sitter==0.24.0
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
@@ -482,17 +633,29 @@ tree-sitter-yaml==0.7.1
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
+typer==0.16.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   chromadb
 typing-extensions==4.14.0
     # via
     #   -c requirements/common-constraints.txt
     #   anyio
     #   beautifulsoup4
+    #   chromadb
     #   google-generativeai
     #   huggingface-hub
+    #   langchain-core
     #   openai
+    #   opentelemetry-api
+    #   opentelemetry-exporter-otlp-proto-grpc
+    #   opentelemetry-sdk
+    #   opentelemetry-semantic-conventions
     #   pydantic
     #   pydantic-core
     #   referencing
+    #   sqlalchemy
+    #   typer
     #   typing-inspection
 typing-inspection==0.4.1
     # via
@@ -505,16 +668,26 @@ uritemplate==4.2.0
 urllib3==2.5.0
     # via
     #   -c requirements/common-constraints.txt
+    #   kubernetes
     #   mixpanel
     #   requests
+uvicorn[standard]==0.35.0
+    # via chromadb
+uvloop==0.21.0
+    # via uvicorn
 watchfiles==1.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   uvicorn
 wcwidth==0.2.13
     # via
     #   -c requirements/common-constraints.txt
     #   prompt-toolkit
+websocket-client==1.8.0
+    # via kubernetes
+websockets==15.0.1
+    # via uvicorn
 yarl==1.20.1
     # via
     #   -c requirements/common-constraints.txt
@@ -523,6 +696,5 @@ zipp==3.23.0
     # via
     #   -c requirements/common-constraints.txt
     #   importlib-metadata
-    
-tree-sitter==0.23.2; python_version < "3.10"
-tree-sitter==0.24.0; python_version >= "3.10"
+zstandard==0.23.0
+    # via langsmith
