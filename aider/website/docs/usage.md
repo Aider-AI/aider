@@ -43,7 +43,7 @@ To edit files, you need to "add them to the chat".
 Do this
 by naming them on the aider command line.
 Or, you can use the in-chat
-`/add` command to add files.
+`/add` command to add files. With no arguments, `/add` will open a fuzzy finder that lets you select files from your repository. This feature is enabled if you have `fzf` installed. Otherwise, `/add` requires file paths as arguments.
 
 
 Only add the files that need to be edited for your task.
@@ -62,6 +62,16 @@ on your requests.
 You'll get the best results if you think about which files need to be
 edited. Add **just** those files to the chat. Aider will include
 relevant context from the rest of your repo.
+
+## Read-only files
+
+You can also add files to the chat as "read-only" files. Aider can see these files for context, but can't edit them. This is useful for providing reference documentation, specifications, or examples of existing code that you don't want the AI to modify.
+
+Use the `/read-only` command to add files in read-only mode. Like `/add`, running `/read-only` with no arguments will open a fuzzy finder to select files if `fzf` is installed.
+
+If you run `/read-only` with no arguments and don't select any files, it will convert all editable files currently in the chat to read-only. This is a convenient way to protect a set of files from being modified after you've added them for context.
+
+You can also move a file from read-only to editable by using `/add` on a file that is already in the chat as read-only.
 
 ## LLMs
 
