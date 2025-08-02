@@ -2,7 +2,7 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import git
 
@@ -575,6 +575,7 @@ Once I have these, I can show you precisely how to do the thing.
             fname = Path("file.txt")
 
             io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
             coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             self.assertTrue(fname.exists())
@@ -1432,6 +1433,364 @@ This command will print 'Hello, World!' to the console."""
                     # Verify that editor coder was NOT created or run
                     # (because user rejected the changes)
                     mock_editor.run.assert_not_called()
+
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    def test_mcp_server_connection(self, mock_mcp_client):
+        """Test that the coder connects to MCP servers for tools."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+            mock_server.connect = MagicMock()
+            mock_server.disconnect = MagicMock()
+
+            # Setup mock for initialize_mcp_tools
+            mock_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+
+            # Create coder with mock MCP server
+            with patch.object(Coder, "initialize_mcp_tools", return_value=mock_tools):
+                coder = Coder.create(self.GPT35, "diff", io=io, mcp_servers=[mock_server])
+
+                # Manually set mcp_tools since we're bypassing initialize_mcp_tools
+                coder.mcp_tools = mock_tools
+
+                # Verify that mcp_tools contains the expected data
+                self.assertIsNotNone(coder.mcp_tools)
+                self.assertEqual(len(coder.mcp_tools), 1)
+                self.assertEqual(coder.mcp_tools[0][0], "test_server")
+
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    def test_coder_creation_with_partial_failed_mcp_server(self, mock_mcp_client):
+        """Test that a coder can still be created even if an MCP server fails to initialize."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
+
+            # Create mock MCP servers - one working, one failing
+            working_server = AsyncMock()
+            working_server.name = "working_server"
+            working_server.connect = AsyncMock()
+            working_server.disconnect = AsyncMock()
+
+            failing_server = AsyncMock()
+            failing_server.name = "failing_server"
+            failing_server.connect = AsyncMock()
+            failing_server.disconnect = AsyncMock()
+
+            # Mock load_mcp_tools to succeed for working_server and fail for failing_server
+            async def mock_load_mcp_tools(session, format):
+                if session == await working_server.connect():
+                    return [{"function": {"name": "working_tool"}}]
+                else:
+                    raise Exception("Failed to load tools")
+
+            mock_mcp_client.load_mcp_tools = AsyncMock(side_effect=mock_load_mcp_tools)
+
+            # Create coder with both servers
+            coder = Coder.create(
+                self.GPT35,
+                "diff",
+                io=io,
+                mcp_servers=[working_server, failing_server],
+                verbose=True,
+            )
+
+            # Verify that coder was created successfully
+            self.assertIsInstance(coder, Coder)
+
+            # Verify that only the working server's tools were added
+            self.assertIsNotNone(coder.mcp_tools)
+            self.assertEqual(len(coder.mcp_tools), 1)
+            self.assertEqual(coder.mcp_tools[0][0], "working_server")
+
+            # Verify that the tool list contains only working tools
+            tool_list = coder.get_tool_list()
+            self.assertEqual(len(tool_list), 1)
+            self.assertEqual(tool_list[0]["function"]["name"], "working_tool")
+
+            # Verify that the warning was logged for the failing server
+            io.tool_warning.assert_called_with(
+                "Error initializing MCP server failing_server:\nFailed to load tools"
+            )
+
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    def test_coder_creation_with_all_failed_mcp_server(self, mock_mcp_client):
+        """Test that a coder can still be created even if an MCP server fails to initialize."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
+
+            failing_server = AsyncMock()
+            failing_server.name = "failing_server"
+            failing_server.connect = AsyncMock()
+            failing_server.disconnect = AsyncMock()
+
+            # Mock load_mcp_tools to succeed for working_server and fail for failing_server
+            async def mock_load_mcp_tools(session, format):
+                raise Exception("Failed to load tools")
+
+            mock_mcp_client.load_mcp_tools = AsyncMock(side_effect=mock_load_mcp_tools)
+
+            # Create coder with both servers
+            coder = Coder.create(
+                self.GPT35,
+                "diff",
+                io=io,
+                mcp_servers=[failing_server],
+                verbose=True,
+            )
+
+            # Verify that coder was created successfully
+            self.assertIsInstance(coder, Coder)
+
+            # Verify that only the working server's tools were added
+            self.assertIsNotNone(coder.mcp_tools)
+            self.assertEqual(len(coder.mcp_tools), 0)
+
+            # Verify that the tool list contains only working tools
+            tool_list = coder.get_tool_list()
+            self.assertEqual(len(tool_list), 0)
+
+            # Verify that the warning was logged for the failing server
+            io.tool_warning.assert_called_with(
+                "Error initializing MCP server failing_server:\nFailed to load tools"
+            )
+
+    def test_process_tool_calls_none_response(self):
+        """Test that process_tool_calls handles None response correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Test with None response
+            result = coder.process_tool_calls(None)
+            self.assertFalse(result)
+
+    def test_process_tool_calls_no_tool_calls(self):
+        """Test that process_tool_calls handles response with no tool calls."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Create a response with no tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = []
+
+            result = coder.process_tool_calls(response)
+            self.assertFalse(result)
+
+    @patch("aider.coders.base_coder.experimental_mcp_client")
+    @patch("asyncio.run")
+    def test_process_tool_calls_with_tools(self, mock_asyncio_run, mock_mcp_client):
+        """Test that process_tool_calls processes tool calls correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=True)
+
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+
+            # Create a tool call
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+            tool_call.function.arguments = '{"param": "value"}'
+
+            # Create a response with tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = [tool_call]
+            response.choices[0].message.to_dict = MagicMock(
+                return_value={"role": "assistant", "tool_calls": [{"id": "test_id"}]}
+            )
+
+            # Create coder with mock MCP tools and servers
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+            coder.mcp_servers = [mock_server]
+
+            # Mock asyncio.run to return tool responses
+            tool_responses = [
+                [{"role": "tool", "tool_call_id": "test_id", "content": "Tool execution result"}]
+            ]
+            mock_asyncio_run.return_value = tool_responses
+
+            # Test process_tool_calls
+            result = coder.process_tool_calls(response)
+            self.assertTrue(result)
+
+            # Verify that asyncio.run was called
+            mock_asyncio_run.assert_called_once()
+
+            # Verify that the messages were added
+            self.assertEqual(len(coder.cur_messages), 2)
+            self.assertEqual(coder.cur_messages[0]["role"], "assistant")
+            self.assertEqual(coder.cur_messages[1]["role"], "tool")
+            self.assertEqual(coder.cur_messages[1]["tool_call_id"], "test_id")
+            self.assertEqual(coder.cur_messages[1]["content"], "Tool execution result")
+
+    def test_process_tool_calls_max_calls_exceeded(self):
+        """Test that process_tool_calls handles max tool calls exceeded."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.tool_warning = MagicMock()
+
+            # Create a tool call
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+
+            # Create a response with tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = [tool_call]
+
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+
+            # Create coder with max tool calls exceeded
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.num_tool_calls = coder.max_tool_calls
+            coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+            coder.mcp_servers = [mock_server]
+
+            # Test process_tool_calls
+            result = coder.process_tool_calls(response)
+            self.assertFalse(result)
+
+            # Verify that warning was shown
+            io.tool_warning.assert_called_once_with(
+                f"Only {coder.max_tool_calls} tool calls allowed, stopping."
+            )
+
+    def test_process_tool_calls_user_rejects(self):
+        """Test that process_tool_calls handles user rejection."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=False)
+
+            # Create a tool call
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+
+            # Create a response with tool calls
+            response = MagicMock()
+            response.choices = [MagicMock()]
+            response.choices[0].message = MagicMock()
+            response.choices[0].message.tool_calls = [tool_call]
+
+            # Create mock MCP server
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+
+            # Create coder with mock MCP tools
+            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
+            coder.mcp_servers = [mock_server]
+
+            # Test process_tool_calls
+            result = coder.process_tool_calls(response)
+            self.assertFalse(result)
+
+            # Verify that confirm_ask was called
+            io.confirm_ask.assert_called_once_with("Run tools?")
+
+            # Verify that no messages were added
+            self.assertEqual(len(coder.cur_messages), 0)
+
+    @patch("asyncio.run")
+    def test_execute_tool_calls(self, mock_asyncio_run):
+        """Test that _execute_tool_calls executes tool calls correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Create mock server and tool call
+            mock_server = MagicMock()
+            mock_server.name = "test_server"
+
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+            tool_call.function.arguments = '{"param": "value"}'
+
+            # Create server_tool_calls
+            server_tool_calls = {mock_server: [tool_call]}
+
+            # Mock asyncio.run to return tool responses
+            tool_responses = [
+                [{"role": "tool", "tool_call_id": "test_id", "content": "Tool execution result"}]
+            ]
+            mock_asyncio_run.return_value = tool_responses
+
+            # Test _execute_tool_calls directly
+            result = coder._execute_tool_calls(server_tool_calls)
+
+            # Verify that asyncio.run was called
+            mock_asyncio_run.assert_called_once()
+
+            # Verify that the correct tool responses were returned
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]["role"], "tool")
+            self.assertEqual(result[0]["tool_call_id"], "test_id")
+            self.assertEqual(result[0]["content"], "Tool execution result")
+
+    def test_auto_commit_with_none_content_message(self):
+        """
+        Verify that auto_commit works with messages that have None content.
+        This is common with tool calls.
+        """
+        with GitTemporaryDirectory():
+            repo = git.Repo()
+
+            fname = Path("file1.txt")
+            fname.write_text("one\n")
+            repo.git.add(str(fname))
+            repo.git.commit("-m", "initial")
+
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+
+            coder.cur_messages = [
+                {"role": "user", "content": "do a thing"},
+                {"role": "assistant", "content": None},
+            ]
+
+            # The context for commit message will be generated from cur_messages.
+            # This call should not raise an exception due to `content: None`.
+
+            def mock_get_commit_message(diffs, context, user_language=None):
+                self.assertIn("USER: do a thing", context)
+                self.assertIn("ASSISTANT: \n", context)  # None becomes empty string.
+                return "commit message"
+
+            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
+
+            res = coder.auto_commit({str(fname)})
+            self.assertIsNotNone(res)
+
+            # Don't expect any commits as nothing has changed
+            num_commits = len(list(repo.iter_commits()))
+            self.assertEqual(num_commits, 1)
+
+            coder.repo.get_commit_message.assert_called_once()
 
 
 if __name__ == "__main__":
