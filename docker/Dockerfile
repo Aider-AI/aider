@@ -32,47 +32,31 @@ RUN git config --system --add safe.directory /app
 ENV HOME=/app
 
 #########################
-FROM base AS aider-full
-
-ENV AIDER_DOCKER_IMAGE=paulgauthier/aider-full
-
-COPY . /tmp/aider
-
-# Install dependencies as root
-RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[help,browser,playwright] boto3 \
-       --extra-index-url https://download.pytorch.org/whl/cpu && \
-    rm -rf /tmp/aider
-
-# Install playwright browsers
-RUN /venv/bin/python -m playwright install --with-deps chromium
-
-# Fix site-packages permissions
-RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
-
-# Switch to appuser
-USER appuser
-
-ENTRYPOINT ["/venv/bin/aider"]
-
-#########################
 FROM base AS aider
 
-ENV AIDER_DOCKER_IMAGE=paulgauthier/aider
+ENV AIDER_DOCKER_IMAGE=dustinwashington/aider
 
-COPY . /tmp/aider
+# Copy requirements files
+COPY requirements.txt /tmp/aider/
+COPY requirements/ /tmp/aider/requirements/
 
 # Install dependencies as root
 RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
-    /venv/bin/python -m pip install --no-cache-dir /tmp/aider[playwright] boto3 google-cloud-aiplatform \
-       --extra-index-url https://download.pytorch.org/whl/cpu && \
+    /venv/bin/python -m pip install --no-cache-dir -r /tmp/aider/requirements.txt && \
     rm -rf /tmp/aider
 
 # Install playwright browsers
-RUN /venv/bin/python -m playwright install --with-deps chromium
+RUN /venv/bin/python -m pip install --no-cache-dir playwright && \
+    /venv/bin/python -m playwright install --with-deps chromium
 
 # Fix site-packages permissions
 RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
+
+# Copy the rest of the application code
+COPY . /app/
+
+# Install the application as a package
+RUN /venv/bin/python -m pip install .
 
 # Switch to appuser
 USER appuser
