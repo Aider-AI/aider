@@ -113,13 +113,3 @@ class HttpStreamingServer(McpServer):
             await self.disconnect()
             raise
 
-    async def disconnect(self):
-        """Disconnect from the MCP server and clean up resources."""
-        async with self._cleanup_lock:
-            try:
-                if self.aiohttp_session:
-                    await self.aiohttp_session.close()
-                    self.aiohttp_session = None
-                await super().disconnect()
-            except Exception as e:
-                logging.error(f"Error during cleanup of server {self.name}: {e}")
