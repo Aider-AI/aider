@@ -972,7 +972,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     try:
         # Load MCP servers from config string or file
-        mcp_servers = load_mcp_servers(args.mcp_servers, args.mcp_servers_file, io, args.verbose)
+        mcp_servers = load_mcp_servers(
+            args.mcp_servers, args.mcp_servers_file, io, args.verbose, args.mcp_transport
+        )
 
         if not mcp_servers:
             mcp_servers = []
