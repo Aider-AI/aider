@@ -1711,3 +1711,31 @@
   versions: 0.85.3.dev
   seconds_per_case: 38.8
   total_cost: 0.5413
+
+- dirname: 2025-08-03-11-33-59--glm-4.5-thinking-polyglot
+  test_cases: 225
+  model: openrouter/z-ai/glm-4.5
+  edit_format: diff
+  commit_hash: f38200c
+  pass_rate_1: 20.4
+  pass_rate_2: 50.2
+  pass_num_1: 46
+  pass_num_2: 113
+  percent_cases_well_formed: 97.8
+  error_outputs: 417
+  num_malformed_responses: 7
+  num_with_malformed_responses: 5
+  user_asks: 54
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2037070
+  completion_tokens: 1357681
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openrouter/z-ai/glm-4.5
+  date: 2025-08-03
+  versions: 0.85.3.dev
+  seconds_per_case: 318.0
+  total_cost: 0.6790
