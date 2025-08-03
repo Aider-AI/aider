@@ -1845,56 +1845,91 @@ class Coder:
                 # Execute all tool calls for this server
                 for tool_call in tool_calls_list:
                     try:
-                        call_result = await experimental_mcp_client.call_openai_tool(
-                            session=session,
-                            openai_tool=tool_call,
-                        )
+                        # Arguments can be a stream of JSON objects.
+                        # We need to parse them and run a tool call for each.
+                        decoder = json.JSONDecoder()
+                        args_string = tool_call.function.arguments.strip()
+                        pos = 0
+                        parsed_args_list = []
+                        if args_string:
+                            while pos < len(args_string):
+                                try:
+                                    obj, end_pos = decoder.raw_decode(args_string, pos)
+                                    parsed_args_list.append(obj)
+                                    pos = end_pos
+                                    # skip whitespace
+                                    while pos < len(args_string) and args_string[pos].isspace():
+                                        pos += 1
+                                except json.JSONDecodeError:
+                                    # If we fail to decode, just break and process what we have.
+                                    # If we haven't parsed anything, it will be an error below
+                                    # if the arg string was not empty.
+                                    break
 
-                        content_parts = []
-                        if call_result.content:
-                            for item in call_result.content:
-                                if hasattr(item, "resource"):  # EmbeddedResource
-                                    resource = item.resource
-                                    if hasattr(resource, "text"):  # TextResourceContents
-                                        content_parts.append(resource.text)
-                                    elif hasattr(resource, "blob"):  # BlobResourceContents
-                                        try:
-                                            decoded_blob = base64.b64decode(resource.blob).decode(
-                                                "utf-8"
-                                            )
-                                            content_parts.append(decoded_blob)
-                                        except (UnicodeDecodeError, TypeError):
-                                            # Handle non-text blobs gracefully
-                                            name = getattr(
-                                                resource, "name", "unnamed")
-                                            mime_type = getattr(
-                                                resource, "mimeType", "unknown mime type"
-                                            )
-                                            content_parts.append(
-                                                f"[embedded binary resource: {
-                                                    name} ({mime_type})]"
-                                            )
-                                elif hasattr(item, "text"):  # TextContent
-                                    content_parts.append(item.text)
+                        if not parsed_args_list and not args_string:
+                            parsed_args_list.append({})  # For tool calls with no arguments
 
-                        result_text = "".join(content_parts)
+                        all_results_content = []
+                        for args in parsed_args_list:
+                            new_tool_call = tool_call.model_copy(deep=True)
+                            new_tool_call.function.arguments = json.dumps(args)
+
+                            call_result = await experimental_mcp_client.call_openai_tool(
+                                session=session,
+                                openai_tool=new_tool_call,
+                            )
+
+                            content_parts = []
+                            if call_result.content:
+                                for item in call_result.content:
+                                    if hasattr(item, "resource"):  # EmbeddedResource
+                                        resource = item.resource
+                                        if hasattr(resource, "text"):  # TextResourceContents
+                                            content_parts.append(resource.text)
+                                        elif hasattr(resource, "blob"):  # BlobResourceContents
+                                            try:
+                                                decoded_blob = base64.b64decode(
+                                                    resource.blob
+                                                ).decode("utf-8")
+                                                content_parts.append(decoded_blob)
+                                            except (UnicodeDecodeError, TypeError):
+                                                # Handle non-text blobs gracefully
+                                                name = getattr(resource, "name", "unnamed")
+                                                mime_type = getattr(
+                                                    resource, "mimeType", "unknown mime type"
+                                                )
+                                                content_parts.append(
+                                                    f"[embedded binary resource: {name} ({mime_type})]"
+                                                )
+                                    elif hasattr(item, "text"):  # TextContent
+                                        content_parts.append(item.text)
+
+                            result_text = "".join(content_parts)
+                            all_results_content.append(result_text)
 
                         tool_responses.append(
-                            {"role": "tool", "tool_call_id": tool_call.id,
-                                "content": result_text}
+                            {
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "content": "\n\n".join(all_results_content),
+                            }
                         )
+
                     except Exception as e:
-                        tool_error = f"Error executing tool call {
-                            tool_call.function.name}: \n{e}"
-                        self.io.tool_warning(f"Executing {tool_call.function.name} on {
-                                             server.name} failed: \n  Error: {e}\n")
+                        tool_error = f"Error executing tool call {tool_call.function.name}: \n{e}"
+                        self.io.tool_warning(
+                            f"Executing {tool_call.function.name} on {server.name} failed: \n  Error: {e}\n"
+                        )
                         tool_responses.append(
-                            {"role": "tool", "tool_call_id": tool_call.id, "content": tool_error})
+                            {"role": "tool", "tool_call_id": tool_call.id, "content": tool_error}
+                        )
             except Exception as e:
                 connection_error = f"Could not connect to server {server.name}\n{e}"
                 self.io.tool_warning(connection_error)
                 for tool_call in tool_calls_list:
-                    tool_responses.append({"role": "tool", "tool_call_id": tool_call.id, "content": connection_error})
+                    tool_responses.append(
+                        {"role": "tool", "tool_call_id": tool_call.id, "content": connection_error}
+                    )
             finally:
                 await server.disconnect()
 
