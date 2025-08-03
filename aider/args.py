@@ -805,6 +805,13 @@ def get_parser(default_config_files, git_root):
         default=None,
     )
     group.add_argument(
+        "--mcp-transport",
+        metavar="MCP_TRANSPORT",
+        help="Specify the transport for MCP servers (default: stdio)",
+        default="stdio",
+        choices=["stdio", "http-streaming"],
+    )
+    group.add_argument(
         "-c",
         "--config",
         is_config_file=True,

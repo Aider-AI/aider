@@ -1,9 +1,9 @@
 import json
 
-from aider.mcp.server import McpServer
+from aider.mcp.server import McpServer, HttpStreamingServer
 
 
-def _parse_mcp_servers_from_json_string(json_string, io, verbose=False):
+def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_transport="stdio"):
     """Parse MCP servers from a JSON string."""
     servers = []
 
@@ -19,7 +19,11 @@ def _parse_mcp_servers_from_json_string(json_string, io, verbose=False):
 
                 # Create a server config with name included
                 server_config["name"] = name
-                servers.append(McpServer(server_config))
+                transport = server_config.get("transport", mcp_transport)
+                if transport == "stdio":
+                    servers.append(McpServer(server_config))
+                elif transport == "http-streaming":
+                    servers.append(HttpStreamingServer(server_config))
 
             if verbose:
                 io.tool_output(f"Loaded {len(servers)} MCP servers from JSON string")
@@ -34,7 +38,7 @@ def _parse_mcp_servers_from_json_string(json_string, io, verbose=False):
     return servers
 
 
-def _parse_mcp_servers_from_file(file_path, io, verbose=False):
+def _parse_mcp_servers_from_file(file_path, io, verbose=False, mcp_transport="stdio"):
     """Parse MCP servers from a JSON file."""
     servers = []
 
@@ -52,7 +56,11 @@ def _parse_mcp_servers_from_file(file_path, io, verbose=False):
 
                 # Create a server config with name included
                 server_config["name"] = name
-                servers.append(McpServer(server_config))
+                transport = server_config.get("transport", mcp_transport)
+                if transport == "stdio":
+                    servers.append(McpServer(server_config))
+                elif transport == "http-streaming":
+                    servers.append(HttpStreamingServer(server_config))
 
             if verbose:
                 io.tool_output(f"Loaded {len(servers)} MCP servers from {file_path}")
@@ -69,18 +77,18 @@ def _parse_mcp_servers_from_file(file_path, io, verbose=False):
     return servers
 
 
-def load_mcp_servers(mcp_servers, mcp_servers_file, io, verbose=False):
+def load_mcp_servers(mcp_servers, mcp_servers_file, io, verbose=False, mcp_transport="stdio"):
     """Load MCP servers from a JSON string or file."""
     servers = []
 
     # First try to load from the JSON string (preferred)
     if mcp_servers:
-        servers = _parse_mcp_servers_from_json_string(mcp_servers, io, verbose)
+        servers = _parse_mcp_servers_from_json_string(mcp_servers, io, verbose, mcp_transport)
         if servers:
             return servers
 
     # If JSON string failed or wasn't provided, try the file
     if mcp_servers_file:
-        servers = _parse_mcp_servers_from_file(mcp_servers_file, io, verbose)
+        servers = _parse_mcp_servers_from_file(mcp_servers_file, io, verbose, mcp_transport)
 
     return servers
