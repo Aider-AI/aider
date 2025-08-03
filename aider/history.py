@@ -101,6 +101,8 @@ class ChatSummary:
             role = msg["role"].upper()
             if role not in ("USER", "ASSISTANT"):
                 continue
+            if not msg.get("content"):
+                continue
             content += f"# {role}\n"
             content += msg["content"]
             if not content.endswith("\n"):

@@ -1680,6 +1680,6 @@
   total_tests: 225
   command: aider --model openrouter/moonshotai/kimi-k2
   date: 2025-07-17
-  versions: 0.86.0.dev
+  versions: 0.85.2.dev
   seconds_per_case: 67.6
   total_cost: 1.2357

@@ -86,7 +86,7 @@ class HttpStreamingServer(McpServer):
         try:
             url = self.config["url"]
             http_transport = await self.exit_stack.enter_async_context(streamablehttp_client(url))
-            read, write, _ = http_transport
+            read, write, _response = http_transport
 
             session = await self.exit_stack.enter_async_context(ClientSession(read, write))
             await session.initialize()
