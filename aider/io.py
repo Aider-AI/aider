@@ -233,6 +233,7 @@ class InputOutput:
     clipboard_watcher = None
     bell_on_next_input = False
     notifications_command = None
+    encoding = "utf-8"
 
     def __init__(
         self,
@@ -1164,7 +1165,7 @@ class InputOutput:
         if self.chat_history_file is not None:
             try:
                 self.chat_history_file.parent.mkdir(parents=True, exist_ok=True)
-                with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
+                with self.chat_history_file.open("a", encoding=self.encoding or "utf-8", errors="ignore") as f:
                     f.write(text)
             except (PermissionError, OSError) as err:
                 print(f"Warning: Unable to write to chat history file {self.chat_history_file}.")

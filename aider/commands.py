@@ -196,10 +196,14 @@ class Commands:
         elif ef == "ask":
             summarize_from_coder = False
 
-        raise SwitchCoder(
-            edit_format=edit_format,
-            summarize_from_coder=summarize_from_coder,
-        )
+        try:
+            raise SwitchCoder(
+                edit_format=edit_format,
+                summarize_from_coder=summarize_from_coder,
+            )
+
+        except Exception as e:
+            raise e.with_traceback(None)
 
     def completions_model(self):
         models = litellm.model_cost.keys()

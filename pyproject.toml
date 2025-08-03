@@ -19,7 +19,7 @@ requires-python = ">=3.10,<3.13"
 dynamic = ["dependencies", "optional-dependencies", "version"]
 
 [project.urls]
-Homepage = "https://github.com/Aider-AI/aider"
+Homepage = "https://github.com/dwash96/aider"
 
 [project.scripts]
 aider = "aider.main:main"

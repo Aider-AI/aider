@@ -1249,10 +1249,15 @@ class Coder:
     def fmt_system_prompt(self, prompt):
         final_reminders = []
 
+        lazy_prompt = ""
         if self.main_model.lazy:
-            final_reminders.append(self.gpt_prompts.lazy_prompt)
+            lazy_prompt = self.gpt_prompts.lazy_prompt
+            final_reminders.append(lazy_prompt)
+
+        overeager_prompt = ""
         if self.main_model.overeager:
-            final_reminders.append(self.gpt_prompts.overeager_prompt)
+            overeager_prompt = self.gpt_prompts.overeager_prompt
+            final_reminders.append(overeager_prompt)
 
         user_lang = self.get_user_language()
         if user_lang:
@@ -1298,6 +1303,8 @@ class Coder:
             shell_cmd_reminder=shell_cmd_reminder,
             go_ahead_tip=self.gpt_prompts.go_ahead_tip,
             language=language,
+            lazy_prompt=lazy_prompt,
+            overeager_prompt=overeager_prompt,
         )
 
         return prompt

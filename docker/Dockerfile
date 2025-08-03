@@ -1,4 +1,4 @@
-FROM python:3.10-slim AS base
+FROM python:3.12-slim AS base
 
 # Install system dependencies
 RUN apt-get update && \
@@ -50,7 +50,7 @@ RUN /venv/bin/python -m pip install --no-cache-dir playwright && \
     /venv/bin/python -m playwright install --with-deps chromium
 
 # Fix site-packages permissions
-RUN find /venv/lib/python3.10/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
+RUN find /venv/lib/python3.12/site-packages \( -type d -exec chmod a+rwx {} + \) -o \( -type f -exec chmod a+rw {} + \)
 
 # Copy the rest of the application code
 COPY . /app/
