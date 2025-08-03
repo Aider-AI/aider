@@ -1683,3 +1683,31 @@
   versions: 0.85.3.dev
   seconds_per_case: 67.6
   total_cost: 1.2357
+
+- dirname: 2025-08-03-13-07-25--glm-4.5-polyglot
+  test_cases: 225
+  model: openrouter/z-ai/glm-4.5
+  edit_format: diff
+  commit_hash: f38200c
+  pass_rate_1: 15.1
+  pass_rate_2: 38.7
+  pass_num_1: 34
+  pass_num_2: 87
+  percent_cases_well_formed: 96.9
+  error_outputs: 25
+  num_malformed_responses: 9
+  num_with_malformed_responses: 7
+  user_asks: 83
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2352344
+  completion_tokens: 354322
+  test_timeouts: 7
+  total_tests: 225
+  command: aider --model openrouter/z-ai/glm-4.5
+  date: 2025-08-03
+  versions: 0.85.3.dev
+  seconds_per_case: 38.8
+  total_cost: 0.5413
