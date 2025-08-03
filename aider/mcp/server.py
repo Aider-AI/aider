@@ -5,6 +5,7 @@ from contextlib import AsyncExitStack
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
+from mcp.client.streamable_http import streamablehttp_client
 
 
 class McpServer:
@@ -74,3 +75,25 @@ class McpServer:
                 self.stdio_context = None
             except Exception as e:
                 logging.error(f"Error during cleanup of server {self.name}: {e}")
+
+class HttpStreamingServer(McpServer):
+    async def connect(self):
+        if self.session is not None:
+            logging.info(f"Using existing session for MCP server: {self.name}")
+            return self.session
+
+        logging.info(f"Establishing new connection to MCP server: {self.name}")
+        try:
+            url = self.config["url"]
+            http_transport = await self.exit_stack.enter_async_context(streamablehttp_client(url))
+            read, write, _ = http_transport
+
+            session = await self.exit_stack.enter_async_context(ClientSession(read, write))
+            await session.initialize()
+            self.session = session
+            return session
+        except Exception as e:
+            logging.error(f"Error initializing server {self.name}: {e}")
+            await self.disconnect()
+            raise
+

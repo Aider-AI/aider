@@ -239,7 +239,7 @@ mccabe==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
-mcp==1.6.0
+mcp==1.12.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
