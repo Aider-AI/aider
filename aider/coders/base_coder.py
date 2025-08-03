@@ -1844,9 +1844,6 @@ class Coder:
                 session = await server.connect()
                 # Execute all tool calls for this server
                 for tool_call in tool_calls_list:
-
-
-<< << << < HEAD
                     try:
                         call_result = await experimental_mcp_client.call_openai_tool(
                             session=session,
