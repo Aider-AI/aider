@@ -1,8 +1,9 @@
+import base64
 import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch, PropertyMock
 
 import git
 
@@ -236,7 +237,9 @@ class TestCoder(unittest.TestCase):
             coder = Coder.create(self.GPT35, None, io)
 
             # Mock get_file_mentions to return two file names
-            coder.get_file_mentions = MagicMock(return_value=set(["file1.txt", "file2.txt"]))
+            coder.get_file_mentions = MagicMock(
+                return_value=set(["file1.txt", "file2.txt"])
+            )
 
             # Mock confirm_ask to return False for the first call and True for the second
             io.confirm_ask = MagicMock(side_effect=[False, True, True])
@@ -317,7 +320,10 @@ class TestCoder(unittest.TestCase):
                 # Simple plain text mentions
                 (f"You should edit {test_files[0]} first", {test_files[0]}),
                 # Multiple files in plain text
-                (f"Edit both {test_files[0]} and {test_files[1]}", {test_files[0], test_files[1]}),
+                (
+                    f"Edit both {test_files[0]} and {test_files[1]}",
+                    {test_files[0], test_files[1]},
+                ),
                 # Files in backticks
                 (f"Check the file `{test_files[2]}`", {test_files[2]}),
                 # Files in code blocks
@@ -336,7 +342,9 @@ class TestCoder(unittest.TestCase):
                 (
                     (
                         f"First, edit `{test_files[0]}`. Then modify {test_files[1]}.\n"
-                        f"```js\n// Update this file\nconst file = '{test_files[2]}';\n```\n"
+                        f"```js\n// Update this file\nconst file = '{
+                            test_files[2]
+                        }';\n```\n"
                         f"Finally check {win_path3}"
                     ),
                     {test_files[0], test_files[1], test_files[2], test_files[3]},
@@ -402,7 +410,9 @@ Once I have these, I can show you precisely how to do the thing.
             self.assertEqual(
                 mentioned_files,
                 expected_mentions,
-                f"Failed to extract mentions from multiline backticked content: {content}",
+                f"Failed to extract mentions from multiline backticked content: {
+                    content
+                }",
             )
 
     def test_get_file_mentions_path_formats(self):
@@ -434,13 +444,17 @@ Once I have these, I can show you precisely how to do the thing.
 
             for content, addable_files in test_cases:
                 with self.subTest(content=content, addable_files=addable_files):
-                    coder.get_addable_relative_files = MagicMock(return_value=set(addable_files))
+                    coder.get_addable_relative_files = MagicMock(
+                        return_value=set(addable_files)
+                    )
                     mentioned_files = coder.get_file_mentions(content)
                     expected_files = set(addable_files)
                     self.assertEqual(
                         mentioned_files,
                         expected_files,
-                        f"Failed for content: {content}, addable_files: {addable_files}",
+                        f"Failed for content: {content}, addable_files: {
+                            addable_files
+                        }",
                     )
 
     def test_run_with_file_deletion(self):
@@ -558,7 +572,9 @@ Once I have these, I can show you precisely how to do the thing.
         coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 2)
 
-        some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(encoding)
+        some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(
+            encoding
+        )
         with open(file1, "wb") as f:
             f.write(some_content_which_will_error_if_read_with_encoding_utf8)
 
@@ -633,7 +649,9 @@ new
             fname1.write_text("ONE\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)])
+            coder = Coder.create(
+                self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)]
+            )
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -656,7 +674,9 @@ TWO
                 return "commit message"
 
             coder.send = mock_send
-            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
+            coder.repo.get_commit_message = MagicMock(
+                side_effect=mock_get_commit_message
+            )
 
             coder.run(with_message="hi")
 
@@ -709,7 +729,9 @@ three
                 saved_diffs.append(diffs)
                 return "commit message"
 
-            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
+            coder.repo.get_commit_message = MagicMock(
+                side_effect=mock_get_commit_message
+            )
             coder.send = mock_send
 
             coder.run(with_message="hi")
@@ -787,7 +809,9 @@ two
                 saved_diffs.append(diffs)
                 return "commit message"
 
-            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
+            coder.repo.get_commit_message = MagicMock(
+                side_effect=mock_get_commit_message
+            )
             coder.send = mock_send
 
             coder.run(with_message="hi")
@@ -874,7 +898,10 @@ two
         # Test various URL formats
         test_cases = [
             ("Check http://example.com, it's cool", "http://example.com"),
-            ("Visit https://www.example.com/page and see stuff", "https://www.example.com/page"),
+            (
+                "Visit https://www.example.com/page and see stuff",
+                "https://www.example.com/page",
+            ),
             (
                 "Go to http://subdomain.example.com:8080/path?query=value, or not",
                 "http://subdomain.example.com:8080/path?query=value",
@@ -884,13 +911,19 @@ two
                 "https://example.com/path#fragment",
             ),
             ("Look at http://localhost:3000", "http://localhost:3000"),
-            ("View https://example.com/setup#whatever", "https://example.com/setup#whatever"),
+            (
+                "View https://example.com/setup#whatever",
+                "https://example.com/setup#whatever",
+            ),
             ("Open http://127.0.0.1:8000/api/v1/", "http://127.0.0.1:8000/api/v1/"),
             (
                 "Try https://example.com/path/to/page.html?param1=value1&param2=value2",
                 "https://example.com/path/to/page.html?param1=value1&param2=value2",
             ),
-            ("Access http://user:password@example.com", "http://user:password@example.com"),
+            (
+                "Access http://user:password@example.com",
+                "http://user:password@example.com",
+            ),
             (
                 "Use https://example.com/path_(with_parentheses)",
                 "https://example.com/path_(with_parentheses)",
@@ -965,7 +998,9 @@ two
 
             # Ensure the abs_fnames contain the correct absolute path
             expected_abs_path = os.path.realpath(str(test_file))
-            coder1_abs_fnames = set(os.path.realpath(path) for path in coder1.abs_fnames)
+            coder1_abs_fnames = set(
+                os.path.realpath(path) for path in coder1.abs_fnames
+            )
             self.assertIn(expected_abs_path, coder1_abs_fnames)
             self.assertIn(expected_abs_path, coder2.abs_fnames)
 
@@ -1007,7 +1042,9 @@ This command will print 'Hello, World!' to the console."""
     def test_no_suggest_shell_commands(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, suggest_shell_commands=False)
+            coder = Coder.create(
+                self.GPT35, "diff", io=io, suggest_shell_commands=False
+            )
             self.assertFalse(coder.suggest_shell_commands)
 
     def test_detect_urls_enabled(self):
@@ -1040,9 +1077,9 @@ This command will print 'Hello, World!' to the console."""
         invalid_format = "invalid_format"
         valid_formats = ["diff", "whole", "map"]
         exc = UnknownEditFormat(invalid_format, valid_formats)
-        expected_msg = (
-            f"Unknown edit format {invalid_format}. Valid formats are: {', '.join(valid_formats)}"
-        )
+        expected_msg = f"Unknown edit format {invalid_format}. Valid formats are: {
+            ', '.join(valid_formats)
+        }"
         self.assertEqual(str(exc), expected_msg)
 
     def test_unknown_edit_format_creation(self):
@@ -1100,7 +1137,10 @@ This command will print 'Hello, World!' to the console."""
 
             # Set up some real done_messages and cur_messages
             coder.done_messages = [
-                {"role": "user", "content": "Hello, can you help me with a Python problem?"},
+                {
+                    "role": "user",
+                    "content": "Hello, can you help me with a Python problem?",
+                },
                 {
                     "role": "assistant",
                     "content": "Of course! I'd be happy to help. What's the problem you're facing?",
@@ -1121,7 +1161,10 @@ This command will print 'Hello, World!' to the console."""
             ]
 
             coder.cur_messages = [
-                {"role": "user", "content": "Can you optimize this function for large numbers?"},
+                {
+                    "role": "user",
+                    "content": "Can you optimize this function for large numbers?",
+                },
             ]
 
             # Set up real values for the main model
@@ -1253,7 +1296,9 @@ This command will print 'Hello, World!' to the console."""
             mock_locale_instance.get_display_name.assert_called_with("en")
 
             mock_locale_instance.get_display_name.return_value = "french"  # For fr-FR
-            self.assertEqual(coder.normalize_language("fr-FR"), "French")  # Test with hyphen
+            self.assertEqual(
+                coder.normalize_language("fr-FR"), "French"
+            )  # Test with hyphen
             mock_babel_locale.parse.assert_called_with("fr_FR")  # Hyphen replaced
             mock_locale_instance.get_display_name.assert_called_with("en")
 
@@ -1261,7 +1306,9 @@ This command will print 'Hello, World!' to the console."""
         mock_babel_locale_error = MagicMock()
         mock_babel_locale_error.parse.side_effect = Exception("Babel parse error")
         with patch("aider.coders.base_coder.Locale", mock_babel_locale_error):
-            self.assertEqual(coder.normalize_language("en_US"), "English")  # Falls back to map
+            self.assertEqual(
+                coder.normalize_language("en_US"), "English"
+            )  # Falls back to map
 
     def test_get_user_language(self):
         io = InputOutput()
@@ -1269,13 +1316,17 @@ This command will print 'Hello, World!' to the console."""
 
         # 1. Test with self.chat_language set
         coder.chat_language = "fr_CA"
-        with patch.object(coder, "normalize_language", return_value="French Canadian") as mock_norm:
+        with patch.object(
+            coder, "normalize_language", return_value="French Canadian"
+        ) as mock_norm:
             self.assertEqual(coder.get_user_language(), "French Canadian")
             mock_norm.assert_called_once_with("fr_CA")
         coder.chat_language = None  # Reset
 
         # 2. Test with locale.getlocale()
-        with patch("locale.getlocale", return_value=("en_GB", "UTF-8")) as mock_getlocale:
+        with patch(
+            "locale.getlocale", return_value=("en_GB", "UTF-8")
+        ) as mock_getlocale:
             with patch.object(
                 coder, "normalize_language", return_value="British English"
             ) as mock_norm:
@@ -1285,17 +1336,24 @@ This command will print 'Hello, World!' to the console."""
 
         # Test with locale.getlocale() returning None or empty
         with patch("locale.getlocale", return_value=(None, None)) as mock_getlocale:
-            with patch("os.environ.get") as mock_env_get:  # Ensure env vars are not used yet
+            with patch(
+                "os.environ.get"
+            ) as mock_env_get:  # Ensure env vars are not used yet
                 mock_env_get.return_value = None
-                self.assertIsNone(coder.get_user_language())  # Should be None if nothing found
+                # Should be None if nothing found
+                self.assertIsNone(coder.get_user_language())
 
         # 3. Test with environment variables: LANG
         with patch(
             "locale.getlocale", side_effect=Exception("locale error")
         ):  # Mock locale to fail
             with patch("os.environ.get") as mock_env_get:
-                mock_env_get.side_effect = lambda key: "de_DE.UTF-8" if key == "LANG" else None
-                with patch.object(coder, "normalize_language", return_value="German") as mock_norm:
+                mock_env_get.side_effect = (
+                    lambda key: "de_DE.UTF-8" if key == "LANG" else None
+                )
+                with patch.object(
+                    coder, "normalize_language", return_value="German"
+                ) as mock_norm:
                     self.assertEqual(coder.get_user_language(), "German")
                     mock_env_get.assert_any_call("LANG")
                     mock_norm.assert_called_once_with("de_DE")
@@ -1304,20 +1362,29 @@ This command will print 'Hello, World!' to the console."""
         # by os.environ.get, but our code checks in order, so we mock the first one it finds)
         with patch("locale.getlocale", side_effect=Exception("locale error")):
             with patch("os.environ.get") as mock_env_get:
-                mock_env_get.side_effect = lambda key: "es_ES" if key == "LANGUAGE" else None
-                with patch.object(coder, "normalize_language", return_value="Spanish") as mock_norm:
+                mock_env_get.side_effect = (
+                    lambda key: "es_ES" if key == "LANGUAGE" else None
+                )
+                with patch.object(
+                    coder, "normalize_language", return_value="Spanish"
+                ) as mock_norm:
                     self.assertEqual(coder.get_user_language(), "Spanish")
-                    mock_env_get.assert_any_call("LANGUAGE")  # LANG would be called first
+                    # LANG would be called first
+                    mock_env_get.assert_any_call("LANGUAGE")
                     mock_norm.assert_called_once_with("es_ES")
 
         # 4. Test priority: chat_language > locale > env
         coder.chat_language = "it_IT"
-        with patch("locale.getlocale", return_value=("en_US", "UTF-8")) as mock_getlocale:
+        with patch(
+            "locale.getlocale", return_value=("en_US", "UTF-8")
+        ) as mock_getlocale:
             with patch("os.environ.get", return_value="de_DE") as mock_env_get:
                 with patch.object(
                     coder, "normalize_language", side_effect=lambda x: x.upper()
                 ) as mock_norm:
-                    self.assertEqual(coder.get_user_language(), "IT_IT")  # From chat_language
+                    self.assertEqual(
+                        coder.get_user_language(), "IT_IT"
+                    )  # From chat_language
                     mock_norm.assert_called_once_with("it_IT")
                     mock_getlocale.assert_not_called()
                     mock_env_get.assert_not_called()
@@ -1334,7 +1401,9 @@ This command will print 'Hello, World!' to the console."""
             io.confirm_ask = MagicMock(return_value=True)
 
             # Create an ArchitectCoder with auto_accept_architect=True
-            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+            with patch(
+                "aider.coders.architect_coder.AskCoder.__init__", return_value=None
+            ):
                 from aider.coders.architect_coder import ArchitectCoder
 
                 coder = ArchitectCoder()
@@ -1350,7 +1419,10 @@ This command will print 'Hello, World!' to the console."""
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
-                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                with patch(
+                    "aider.coders.architect_coder.Coder.create",
+                    return_value=mock_editor,
+                ):
                     # Set partial response content
                     coder.partial_response_content = "Make these changes to the code"
 
@@ -1369,7 +1441,9 @@ This command will print 'Hello, World!' to the console."""
             io.confirm_ask = MagicMock(return_value=True)
 
             # Create an ArchitectCoder with auto_accept_architect=False
-            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+            with patch(
+                "aider.coders.architect_coder.AskCoder.__init__", return_value=None
+            ):
                 from aider.coders.architect_coder import ArchitectCoder
 
                 coder = ArchitectCoder()
@@ -1389,7 +1463,10 @@ This command will print 'Hello, World!' to the console."""
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
-                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                with patch(
+                    "aider.coders.architect_coder.Coder.create",
+                    return_value=mock_editor,
+                ):
                     # Set partial response content
                     coder.partial_response_content = "Make these changes to the code"
 
@@ -1408,7 +1485,9 @@ This command will print 'Hello, World!' to the console."""
             io.confirm_ask = MagicMock(return_value=False)
 
             # Create an ArchitectCoder with auto_accept_architect=False
-            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+            with patch(
+                "aider.coders.architect_coder.AskCoder.__init__", return_value=None
+            ):
                 from aider.coders.architect_coder import ArchitectCoder
 
                 coder = ArchitectCoder()
@@ -1420,7 +1499,10 @@ This command will print 'Hello, World!' to the console."""
 
                 # Mock editor_coder creation and execution
                 mock_editor = MagicMock()
-                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                with patch(
+                    "aider.coders.architect_coder.Coder.create",
+                    return_value=mock_editor,
+                ):
                     # Set partial response content
                     coder.partial_response_content = "Make these changes to the code"
 
@@ -1451,7 +1533,9 @@ This command will print 'Hello, World!' to the console."""
 
             # Create coder with mock MCP server
             with patch.object(Coder, "initialize_mcp_tools", return_value=mock_tools):
-                coder = Coder.create(self.GPT35, "diff", io=io, mcp_servers=[mock_server])
+                coder = Coder.create(
+                    self.GPT35, "diff", io=io, mcp_servers=[mock_server]
+                )
 
                 # Manually set mcp_tools since we're bypassing initialize_mcp_tools
                 coder.mcp_tools = mock_tools
@@ -1619,7 +1703,13 @@ This command will print 'Hello, World!' to the console."""
 
             # Mock asyncio.run to return tool responses
             tool_responses = [
-                [{"role": "tool", "tool_call_id": "test_id", "content": "Tool execution result"}]
+                [
+                    {
+                        "role": "tool",
+                        "tool_call_id": "test_id",
+                        "content": "Tool execution result",
+                    }
+                ]
             ]
             mock_asyncio_run.return_value = tool_responses
 
@@ -1736,7 +1826,13 @@ This command will print 'Hello, World!' to the console."""
 
             # Mock asyncio.run to return tool responses
             tool_responses = [
-                [{"role": "tool", "tool_call_id": "test_id", "content": "Tool execution result"}]
+                [
+                    {
+                        "role": "tool",
+                        "tool_call_id": "test_id",
+                        "content": "Tool execution result",
+                    }
+                ]
             ]
             mock_asyncio_run.return_value = tool_responses
 
@@ -1778,10 +1874,13 @@ This command will print 'Hello, World!' to the console."""
 
             def mock_get_commit_message(diffs, context, user_language=None):
                 self.assertIn("USER: do a thing", context)
-                self.assertIn("ASSISTANT: \n", context)  # None becomes empty string.
+                # None becomes empty string.
+                self.assertIn("ASSISTANT: \n", context)
                 return "commit message"
 
-            coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
+            coder.repo.get_commit_message = MagicMock(
+                side_effect=mock_get_commit_message
+            )
 
             res = coder.auto_commit({str(fname)})
             self.assertIsNotNone(res)
@@ -1791,6 +1890,130 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(num_commits, 1)
 
             coder.repo.get_commit_message.assert_called_once()
+
+    @patch(
+        "aider.coders.base_coder.experimental_mcp_client.call_openai_tool",
+        new_callable=AsyncMock,
+    )
+    def test_execute_tool_calls_multiple_content(self, mock_call_openai_tool):
+        """Test that _execute_tool_calls handles multiple content blocks correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Create mock server and tool call
+            mock_server = AsyncMock()
+            mock_server.name = "test_server"
+
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+            tool_call.function.arguments = '{"param": "value"}'
+
+            # Create server_tool_calls
+            server_tool_calls = {mock_server: [tool_call]}
+
+            # Mock the return value of call_openai_tool
+            mock_content1 = MagicMock()
+            mock_content1.text = "First part. "
+            mock_content2 = MagicMock()
+            mock_content2.text = "Second part."
+
+            mock_call_result = MagicMock()
+            mock_call_result.content = [mock_content1, mock_content2]
+            mock_call_openai_tool.return_value = mock_call_result
+
+            # Test _execute_tool_calls directly
+            result = coder._execute_tool_calls(server_tool_calls)
+
+            # Verify that call_openai_tool was called
+            mock_call_openai_tool.assert_called_once()
+
+            # Verify that the correct tool responses were returned
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]["role"], "tool")
+            self.assertEqual(result[0]["tool_call_id"], "test_id")
+            # This will fail with the current code, which is the point of the test.
+            # The current code returns a hardcoded string.
+            # A fixed version should concatenate the text from all content blocks.
+            self.assertEqual(result[0]["content"], "First part. Second part.")
+
+    @patch(
+        "aider.coders.base_coder.experimental_mcp_client.call_openai_tool",
+        new_callable=AsyncMock,
+    )
+    def test_execute_tool_calls_blob_content(self, mock_call_openai_tool):
+        """Test that _execute_tool_calls handles BlobResourceContents correctly."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            coder = Coder.create(self.GPT35, "diff", io=io)
+
+            # Create mock server and tool call
+            mock_server = AsyncMock()
+            mock_server.name = "test_server"
+
+            tool_call = MagicMock()
+            tool_call.id = "test_id"
+            tool_call.type = "function"
+            tool_call.function = MagicMock()
+            tool_call.function.name = "test_tool"
+            tool_call.function.arguments = '{"param": "value"}'
+
+            # Create server_tool_calls
+            server_tool_calls = {mock_server: [tool_call]}
+
+            # Mock BlobResourceContents for text
+            text_blob_content = "Hello from blob! "
+            encoded_text_blob = base64.b64encode(
+                text_blob_content.encode("utf-8")
+            ).decode("utf-8")
+            mock_text_blob_resource = MagicMock(spec=["blob"])
+            mock_text_blob_resource.blob = encoded_text_blob
+
+            mock_embedded_text_resource = MagicMock(spec=["resource"])
+            mock_embedded_text_resource.resource = mock_text_blob_resource
+
+            # Mock BlobResourceContents for binary data
+            binary_blob_content = b"\x80\x81\x82"
+            encoded_binary_blob = base64.b64encode(binary_blob_content).decode("utf-8")
+            mock_binary_blob_resource = MagicMock(spec=["blob", "name", "mimeType"])
+            mock_binary_blob_resource.blob = encoded_binary_blob
+            mock_binary_blob_resource.name = "binary.dat"
+            mock_binary_blob_resource.mimeType = "application/octet-stream"
+
+            mock_embedded_binary_resource = MagicMock(spec=["resource"])
+            mock_embedded_binary_resource.resource = mock_binary_blob_resource
+
+            # Mock TextContent
+            mock_text_content = MagicMock(spec=["text"])
+            mock_text_content.text = "Plain text. "
+
+            mock_call_result = MagicMock()
+            mock_call_result.content = [
+                mock_text_content,
+                mock_embedded_text_resource,
+                mock_embedded_binary_resource,
+            ]
+            mock_call_openai_tool.return_value = mock_call_result
+
+            # Test _execute_tool_calls directly
+            result = coder._execute_tool_calls(server_tool_calls)
+
+            # Verify that call_openai_tool was called
+            mock_call_openai_tool.assert_called_once()
+
+            # Verify that the correct tool responses were returned
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0]["role"], "tool")
+            self.assertEqual(result[0]["tool_call_id"], "test_id")
+
+            expected_content = (
+                "Plain text. Hello from blob! [embedded binary resource: binary.dat"
+                " (application/octet-stream)]"
+            )
+            self.assertEqual(result[0]["content"], expected_content)
 
 
 if __name__ == "__main__":
