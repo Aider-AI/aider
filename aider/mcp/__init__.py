@@ -22,7 +22,7 @@ def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_tran
                 transport = server_config.get("transport", mcp_transport)
                 if transport == "stdio":
                     servers.append(McpServer(server_config))
-                elif transport == "http-streaming":
+                elif transport == "http":
                     servers.append(HttpStreamingServer(server_config))
 
             if verbose:
@@ -59,7 +59,7 @@ def _parse_mcp_servers_from_file(file_path, io, verbose=False, mcp_transport="st
                 transport = server_config.get("transport", mcp_transport)
                 if transport == "stdio":
                     servers.append(McpServer(server_config))
-                elif transport == "http-streaming":
+                elif transport == "http":
                     servers.append(HttpStreamingServer(server_config))
 
             if verbose:

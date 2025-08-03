@@ -17,7 +17,8 @@ for more information.
 You have two ways of sharing your MCP server configuration with Aider.
 
 {: .note }
-> Today, Aider supports connecting to MCP servers using stdio and http-streaming transports.
+
+> Today, Aider supports connecting to MCP servers using stdio and http transports.
 
 ### Config Files
 
@@ -28,7 +29,7 @@ mcp-servers: |
   {
     "mcpServers": {
       "git": {
-        "transport": "http-streaming",
+        "transport": "http",
         "url": "http://localhost:8000"
       }
     }
@@ -50,7 +51,7 @@ You can specify MCP servers directly on the command line using the `--mcp-server
 #### Using a JSON String
 
 ```bash
-aider --mcp-servers '{"mcpServers":{"git":{"transport":"http-streaming","url":"http://localhost:8000"}}}'
+aider --mcp-servers '{"mcpServers":{"git":{"transport":"http","url":"http://localhost:8000"}}}'
 ```
 
 #### Using a configuration file
@@ -66,9 +67,8 @@ aider --mcp-servers-file mcp.json
 You can use the `--mcp-transport` flag to specify the transport for all configured MCP servers that do not have a transport specified.
 
 ```bash
-aider --mcp-transport http-streaming
+aider --mcp-transport http
 ```
-
 
 ### Environment Variables
 

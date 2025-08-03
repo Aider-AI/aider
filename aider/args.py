@@ -809,7 +809,7 @@ def get_parser(default_config_files, git_root):
         metavar="MCP_TRANSPORT",
         help="Specify the transport for MCP servers (default: stdio)",
         default="stdio",
-        choices=["stdio", "http-streaming"],
+        choices=["stdio", "http"],
     )
     group.add_argument(
         "-c",
