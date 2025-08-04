@@ -256,6 +256,11 @@ class Coder:
             output = f"Weak model: {weak_model.name}"
             lines.append(output)
 
+        # Ask model
+        if main_model.ask_model and main_model.ask_model is not main_model:
+            output = f"Ask model: {main_model.ask_model.name}"
+            lines.append(output)
+
         # Repo
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
