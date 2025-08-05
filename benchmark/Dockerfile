@@ -58,6 +58,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     eslint@8.49.0
 
 COPY . /aider
+ENV SETUPTOOLS_SCM_PRETEND_VERSION_FOR_AIDER_CHAT="0.86.1"
+
 RUN pip3 install --no-cache-dir --upgrade pip uv
 RUN uv pip install --system --no-cache-dir -e /aider[dev]
 RUN git config --global --add safe.directory /aider
