@@ -52,6 +52,8 @@ See the
 [Playwright for Python documentation](https://playwright.dev/python/docs/browsers#install-system-dependencies)
 for additional information.
 
+If your OS is not supported by Playwright, you may want to [run it using Docker](/docs/more/dockerized-playwright.html)
+or use the [full Aider Docker image](/docs/install/docker.html) that contains Playwright.
 
 ## Enable voice coding 
 
