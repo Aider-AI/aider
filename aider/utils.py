@@ -159,7 +159,18 @@ def format_messages(messages, title=None):
                 else:
                     output.append(f"{role} {item}")
         elif isinstance(content, str):  # Handle string content
-            output.append(format_content(role, content))
+            # For large content, especially with many files, use a truncated display approach
+            if len(content) > 5000:
+                # Count the number of code blocks (approximation)
+                fence_count = content.count("```") // 2
+                if fence_count > 5:
+                    # Show truncated content with file count for large files to improve performance
+                    first_line = content.split("\n", 1)[0]
+                    output.append(f"{role} {first_line} [content with ~{fence_count} files truncated]")
+                else:
+                    output.append(format_content(role, content))
+            else:
+                output.append(format_content(role, content))
         function_call = msg.get("function_call")
         if function_call:
             output.append(f"{role} Function Call: {function_call}")
@@ -376,3 +387,66 @@ def printable_shell_command(cmd_list):
         str: Shell-escaped command string.
     """
     return oslex.join(cmd_list)
+
+
+def split_concatenated_json(s: str) -> list[str]:
+    """
+    Splits a string containing one or more concatenated JSON objects.
+    """
+    res = []
+    i = 0
+    s_len = len(s)
+    while i < s_len:
+        # skip leading whitespace
+        while i < s_len and s[i].isspace():
+            i += 1
+        if i >= s_len:
+            break
+
+        start_char = s[i]
+        if start_char == "{":
+            end_char = "}"
+        elif start_char == "[":
+            end_char = "]"
+        else:
+            # Doesn't start with a JSON object/array, so we can't parse it as a stream.
+            # Return the rest of the string as a single chunk.
+            res.append(s[i:])
+            break
+
+        start_index = i
+        stack_depth = 0
+        in_string = False
+        escape = False
+
+        for j in range(start_index, s_len):
+            char = s[j]
+
+            if escape:
+                escape = False
+                continue
+
+            if char == "\\":
+                escape = True
+                continue
+
+            if char == '"':
+                in_string = not in_string
+
+            if in_string:
+                continue
+
+            if char == start_char:
+                stack_depth += 1
+            elif char == end_char:
+                stack_depth -= 1
+                if stack_depth == 0:
+                    res.append(s[start_index : j + 1])
+                    i = j + 1
+                    break
+        else:
+            # Unclosed object, add the remainder as the last chunk
+            res.append(s[start_index:])
+            break
+
+    return res

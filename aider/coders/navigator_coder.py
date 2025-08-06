@@ -1,4 +1,5 @@
 import ast
+import json
 import re
 import fnmatch
 import os
@@ -21,6 +22,7 @@ from .navigator_prompts import NavigatorPrompts
 from .navigator_legacy_prompts import NavigatorLegacyPrompts
 from aider.repo import ANY_GIT_ERROR
 from aider import urls
+from aider import utils
 # Import run_cmd for potentially interactive execution and run_cmd_subprocess for guaranteed non-interactive
 from aider.run_cmd import run_cmd, run_cmd_subprocess
 # Import the change tracker
@@ -49,6 +51,8 @@ from aider.tools.undo_change import _execute_undo_change
 from aider.tools.list_changes import _execute_list_changes
 from aider.tools.extract_lines import _execute_extract_lines
 from aider.tools.show_numbered_context import execute_show_numbered_context
+from aider.tools.grep import _execute_grep
+from aider.mcp.server import LocalServer
 
 
 class NavigatorCoder(Coder):
@@ -100,6 +104,540 @@ class NavigatorCoder(Coder):
         self.tokens_calculated = False
         
         super().__init__(*args, **kwargs)
+        self.initialize_local_tools()
+        
+    def initialize_local_tools(self):
+        if not self.use_granular_editing:
+            return
+
+        local_tools = self.get_local_tool_schemas()
+        if not local_tools:
+            return
+
+        local_server_config = {"name": "local_tools"}
+        local_server = LocalServer(local_server_config)
+
+        if not self.mcp_servers:
+            self.mcp_servers = []
+        if not any(isinstance(s, LocalServer) for s in self.mcp_servers):
+            self.mcp_servers.append(local_server)
+
+        if not self.mcp_tools:
+            self.mcp_tools = []
+
+        if "local_tools" not in [name for name, _ in self.mcp_tools]:
+            self.mcp_tools.append((local_server.name, local_tools))
+            self.functions = self.get_tool_list()
+
+    def get_local_tool_schemas(self):
+        """Returns the JSON schemas for all local tools."""
+        return [
+            {
+                "type": "function",
+                "function": {
+                    "name": "ViewFilesAtGlob",
+                    "description": "View files matching a glob pattern.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "pattern": {"type": "string", "description": "The glob pattern to match files."},
+                        },
+                        "required": ["pattern"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ViewFilesMatching",
+                    "description": "View files containing a specific pattern.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "pattern": {"type": "string", "description": "The pattern to search for in file contents."},
+                            "file_pattern": {"type": "string", "description": "An optional glob pattern to filter which files are searched."},
+                            "regex": {"type": "boolean", "description": "Whether the pattern is a regular expression. Defaults to False."},
+                        },
+                        "required": ["pattern"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "Ls",
+                    "description": "List files in a directory.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "directory": {"type": "string", "description": "The directory to list."},
+                        },
+                        "required": ["directory"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "View",
+                    "description": "View a specific file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string", "description": "The path to the file to view."},
+                        },
+                        "required": ["file_path"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "Remove",
+                    "description": "Remove a file from the chat context.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string", "description": "The path to the file to remove."},
+                        },
+                        "required": ["file_path"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "MakeEditable",
+                    "description": "Make a read-only file editable.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string", "description": "The path to the file to make editable."},
+                        },
+                        "required": ["file_path"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "MakeReadonly",
+                    "description": "Make an editable file read-only.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string", "description": "The path to the file to make read-only."},
+                        },
+                        "required": ["file_path"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ViewFilesWithSymbol",
+                    "description": "View files that contain a specific symbol (e.g., class, function).",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "symbol": {"type": "string", "description": "The symbol to search for."},
+                        },
+                        "required": ["symbol"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "Command",
+                    "description": "Execute a shell command.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "command_string": {"type": "string", "description": "The shell command to execute."},
+                        },
+                        "required": ["command_string"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "CommandInteractive",
+                    "description": "Execute a shell command interactively.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "command_string": {"type": "string", "description": "The interactive shell command to execute."},
+                        },
+                        "required": ["command_string"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "Grep",
+                    "description": "Search for a pattern in files.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "pattern": {"type": "string", "description": "The pattern to search for."},
+                            "file_pattern": {"type": "string", "description": "Glob pattern for files to search. Defaults to '*'."},
+                            "directory": {"type": "string", "description": "Directory to search in. Defaults to '.'."},
+                            "use_regex": {"type": "boolean", "description": "Whether to use regex. Defaults to False."},
+                            "case_insensitive": {"type": "boolean", "description": "Whether to perform a case-insensitive search. Defaults to False."},
+                            "context_before": {"type": "integer", "description": "Number of lines to show before a match. Defaults to 5."},
+                            "context_after": {"type": "integer", "description": "Number of lines to show after a match. Defaults to 5."},
+                        },
+                        "required": ["pattern"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ReplaceText",
+                    "description": "Replace text in a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "find_text": {"type": "string"},
+                            "replace_text": {"type": "string"},
+                            "near_context": {"type": "string"},
+                            "occurrence": {"type": "integer", "default": 1},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "find_text", "replace_text"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ReplaceAll",
+                    "description": "Replace all occurrences of text in a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "find_text": {"type": "string"},
+                            "replace_text": {"type": "string"},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "find_text", "replace_text"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "InsertBlock",
+                    "description": "Insert a block of content into a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "content": {"type": "string"},
+                            "after_pattern": {"type": "string"},
+                            "before_pattern": {"type": "string"},
+                            "occurrence": {"type": "integer", "default": 1},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                            "position": {"type": "string", "enum": ["top", "bottom"]},
+                            "auto_indent": {"type": "boolean", "default": True},
+                            "use_regex": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "content"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "DeleteBlock",
+                    "description": "Delete a block of lines from a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "start_pattern": {"type": "string"},
+                            "end_pattern": {"type": "string"},
+                            "line_count": {"type": "integer"},
+                            "near_context": {"type": "string"},
+                            "occurrence": {"type": "integer", "default": 1},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "start_pattern"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ReplaceLine",
+                    "description": "Replace a single line in a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "line_number": {"type": "integer"},
+                            "new_content": {"type": "string"},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "line_number", "new_content"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ReplaceLines",
+                    "description": "Replace a range of lines in a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "start_line": {"type": "integer"},
+                            "end_line": {"type": "integer"},
+                            "new_content": {"type": "string"},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "start_line", "end_line", "new_content"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "IndentLines",
+                    "description": "Indent a block of lines in a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "start_pattern": {"type": "string"},
+                            "end_pattern": {"type": "string"},
+                            "line_count": {"type": "integer"},
+                            "indent_levels": {"type": "integer", "default": 1},
+                            "near_context": {"type": "string"},
+                            "occurrence": {"type": "integer", "default": 1},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "start_pattern"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "DeleteLine",
+                    "description": "Delete a single line from a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "line_number": {"type": "integer"},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "line_number"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "DeleteLines",
+                    "description": "Delete a range of lines from a file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "start_line": {"type": "integer"},
+                            "end_line": {"type": "integer"},
+                            "change_id": {"type": "string"},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["file_path", "start_line", "end_line"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "UndoChange",
+                    "description": "Undo a previously applied change.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "change_id": {"type": "string"},
+                            "file_path": {"type": "string"},
+                        },
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ListChanges",
+                    "description": "List recent changes made.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "limit": {"type": "integer", "default": 10},
+                        },
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ExtractLines",
+                    "description": "Extract lines from a source file and append them to a target file.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "source_file_path": {"type": "string"},
+                            "target_file_path": {"type": "string"},
+                            "start_pattern": {"type": "string"},
+                            "end_pattern": {"type": "string"},
+                            "line_count": {"type": "integer"},
+                            "near_context": {"type": "string"},
+                            "occurrence": {"type": "integer", "default": 1},
+                            "dry_run": {"type": "boolean", "default": False},
+                        },
+                        "required": ["source_file_path", "target_file_path", "start_pattern"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "ShowNumberedContext",
+                    "description": "Show numbered lines of context around a pattern or line number.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "file_path": {"type": "string"},
+                            "pattern": {"type": "string"},
+                            "line_number": {"type": "integer"},
+                            "context_lines": {"type": "integer", "default": 3},
+                        },
+                        "required": ["file_path"],
+                    },
+                },
+            },
+        ]
+
+    async def _execute_local_tool_calls(self, tool_calls_list):
+        tool_responses = []
+        for tool_call in tool_calls_list:
+            tool_name = tool_call.function.name
+            result_message = ""
+            try:
+                # Arguments can be a stream of JSON objects.
+                # We need to parse them and run a tool call for each.
+                args_string = tool_call.function.arguments.strip()
+                parsed_args_list = []
+                if args_string:
+                    json_chunks = utils.split_concatenated_json(args_string)
+                    for chunk in json_chunks:
+                        try:
+                            parsed_args_list.append(json.loads(chunk))
+                        except json.JSONDecodeError:
+                            self.io.tool_warning(
+                                f"Could not parse JSON chunk for tool {tool_name}: {chunk}"
+                            )
+                            continue
+
+                if not parsed_args_list and not args_string:
+                    parsed_args_list.append({})  # For tool calls with no arguments
+
+                all_results_content = []
+                norm_tool_name = tool_name.lower()
+
+                for params in parsed_args_list:
+                    single_result = ""
+                    # Dispatch to the correct tool execution function
+                    if norm_tool_name == "viewfilesatglob":
+                        single_result = execute_view_files_at_glob(self, **params)
+                    elif norm_tool_name == "viewfilesmatching":
+                        single_result = execute_view_files_matching(self, **params)
+                    elif norm_tool_name == "ls":
+                        single_result = execute_ls(self, **params)
+                    elif norm_tool_name == "view":
+                        single_result = execute_view(self, **params)
+                    elif norm_tool_name == "remove":
+                        single_result = _execute_remove(self, **params)
+                    elif norm_tool_name == "makeeditable":
+                        single_result = _execute_make_editable(self, **params)
+                    elif norm_tool_name == "makereadonly":
+                        single_result = _execute_make_readonly(self, **params)
+                    elif norm_tool_name == "viewfileswithsymbol":
+                        single_result = _execute_view_files_with_symbol(self, **params)
+                    elif norm_tool_name == "command":
+                        single_result = _execute_command(self, **params)
+                    elif norm_tool_name == "commandinteractive":
+                        single_result = _execute_command_interactive(self, **params)
+                    elif norm_tool_name == "grep":
+                        single_result = _execute_grep(self, **params)
+                    elif norm_tool_name == "replacetext":
+                        single_result = _execute_replace_text(self, **params)
+                    elif norm_tool_name == "replaceall":
+                        single_result = _execute_replace_all(self, **params)
+                    elif norm_tool_name == "insertblock":
+                        single_result = _execute_insert_block(self, **params)
+                    elif norm_tool_name == "deleteblock":
+                        single_result = _execute_delete_block(self, **params)
+                    elif norm_tool_name == "replaceline":
+                        single_result = _execute_replace_line(self, **params)
+                    elif norm_tool_name == "replacelines":
+                        single_result = _execute_replace_lines(self, **params)
+                    elif norm_tool_name == "indentlines":
+                        single_result = _execute_indent_lines(self, **params)
+                    elif norm_tool_name == "deleteline":
+                        single_result = _execute_delete_line(self, **params)
+                    elif norm_tool_name == "deletelines":
+                        single_result = _execute_delete_lines(self, **params)
+                    elif norm_tool_name == "undochange":
+                        single_result = _execute_undo_change(self, **params)
+                    elif norm_tool_name == "listchanges":
+                        single_result = _execute_list_changes(self, **params)
+                    elif norm_tool_name == "extractlines":
+                        single_result = _execute_extract_lines(self, **params)
+                    elif norm_tool_name == "shownumberedcontext":
+                        single_result = execute_show_numbered_context(self, **params)
+                    else:
+                        single_result = f"Error: Unknown local tool name '{tool_name}'"
+
+                    all_results_content.append(str(single_result))
+
+                result_message = "\n\n".join(all_results_content)
+
+            except Exception as e:
+                result_message = f"Error executing {tool_name}: {e}"
+                self.io.tool_error(
+                    f"Error during {tool_name} execution: {e}\n{traceback.format_exc()}"
+                )
+
+            tool_responses.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": tool_call.id,
+                    "name": tool_name,
+                    "content": result_message,
+                }
+            )
+        return tool_responses
         
     def _calculate_context_block_tokens(self, force=False):
         """
@@ -604,6 +1142,34 @@ class NavigatorCoder(Coder):
         iteratively discover and analyze relevant files before providing
         a final answer to the user's question.
         """
+        # In granular editing mode, tool calls are handled by BaseCoder's process_tool_calls.
+        # This method is now only for legacy tool call format and search/replace blocks.
+        if self.use_granular_editing:
+            # Handle SEARCH/REPLACE blocks
+            content = self.partial_response_content
+            if not content or not content.strip():
+                return True
+            
+            # Check for search/replace blocks
+            has_search = "<<<<<<< SEARCH" in content
+            has_divider = "=======" in content
+            has_replace = ">>>>>>> REPLACE" in content
+            if has_search and has_divider and has_replace:
+                self.io.tool_output("Detected edit blocks, applying changes...")
+                edited_files = self._apply_edits_from_response()
+                if self.reflected_message:
+                    return False # Trigger reflection if edits failed
+                
+                # If edits were successful, we might want to reflect.
+                # For now, let's consider the turn complete.
+            
+            # Since tool calls are handled earlier, we finalize the turn.
+            self.tool_call_count = 0
+            self.files_added_in_exploration = set()
+            self.move_back_cur_messages(None)
+            return True
+
+        # Legacy tool call processing for use_granular_editing=False
         content = self.partial_response_content
         if not content or not content.strip():
             return True
@@ -744,7 +1310,7 @@ class NavigatorCoder(Coder):
         max_calls = self.max_tool_calls
 
         # Check if there's a '---' separator and only process tool calls after the LAST one
-        separator_marker = "\n---\n"
+        separator_marker = "---"
         content_parts = content.split(separator_marker)
         
         # If there's no separator, treat the entire content as before the separator
@@ -760,23 +1326,34 @@ class NavigatorCoder(Coder):
         # Find tool calls using a more robust method, but only in the content after separator
         processed_content = content_before_separator + separator_marker
         last_index = 0
-        start_marker = "[tool_call("
+        
+        # Support any [tool_...(...)] format
+        tool_call_pattern = re.compile(r"\[tool_.*?\(", re.DOTALL)
         end_marker = "]" # The parenthesis balancing finds the ')', we just need the final ']'
 
         while True:
-            start_pos = content_after_separator.find(start_marker, last_index)
-            if start_pos == -1:
+            match = tool_call_pattern.search(content_after_separator, last_index)
+            if not match:
                 processed_content += content_after_separator[last_index:]
                 break
 
-            # Check for escaped tool call: \[tool_call(
-            if start_pos > 0 and content_after_separator[start_pos - 1] == '\\':
-                # Append the content including the escaped marker
-                # We append up to start_pos + len(start_marker) to include the marker itself.
+            start_pos = match.start()
+            start_marker = match.group(0)
+
+            # Check for escaped tool call: \[tool_...
+            # Count preceding backslashes to handle \\
+            backslashes = 0
+            p = start_pos - 1
+            while p >= 0 and content_after_separator[p] == '\\':
+                backslashes += 1
+                p -= 1
+
+            if backslashes % 2 == 1:
+                # Odd number of backslashes means it's escaped. Treat as text.
+                # We append up to the end of the marker and continue searching.
                 processed_content += content_after_separator[last_index : start_pos + len(start_marker)]
-                # Update last_index to search after this escaped marker
                 last_index = start_pos + len(start_marker)
-                continue # Continue searching for the next potential marker
+                continue
 
             # Append content before the (non-escaped) tool call
             processed_content += content_after_separator[last_index:start_pos]
@@ -870,6 +1447,25 @@ class NavigatorCoder(Coder):
             tool_calls_found = True
 
             try:
+                # Pre-process inner_content to handle non-identifier tool names by quoting them.
+                # This allows ast.parse to succeed on names like 'resolve-library-id'.
+                if inner_content:
+                    parts = inner_content.split(",", 1)
+                    potential_tool_name = parts[0].strip()
+
+                    is_string = (potential_tool_name.startswith("'") and potential_tool_name.endswith(
+                        "'"
+                    )) or (potential_tool_name.startswith('"') and potential_tool_name.endswith('"'))
+
+                    if not potential_tool_name.isidentifier() and not is_string:
+                        # It's not a valid identifier and not a string, so quote it.
+                        # Use json.dumps to handle escaping correctly.
+                        quoted_tool_name = json.dumps(potential_tool_name)
+                        if len(parts) > 1:
+                            inner_content = quoted_tool_name + ", " + parts[1]
+                        else:
+                            inner_content = quoted_tool_name
+
                 # Wrap the inner content to make it parseable as a function call
                 # Example: ToolName, key="value" becomes f(ToolName, key="value")
                 parse_str = f"f({inner_content})"
@@ -883,9 +1479,16 @@ class NavigatorCoder(Coder):
                      raise ValueError("Expected a Call node")
 
                 # Extract tool name (should be the first positional argument)
-                if not call_node.args or not isinstance(call_node.args[0], ast.Name):
+                if not call_node.args:
                     raise ValueError("Tool name not found or invalid")
-                tool_name = call_node.args[0].id
+                
+                tool_name_node = call_node.args[0]
+                if isinstance(tool_name_node, ast.Name):
+                    tool_name = tool_name_node.id
+                elif isinstance(tool_name_node, ast.Constant) and isinstance(tool_name_node.value, str):
+                    tool_name = tool_name_node.value
+                else:
+                    raise ValueError("Tool name must be an identifier or a string literal")
 
                 # Extract keyword arguments
                 for keyword in call_node.keywords:
@@ -905,8 +1508,16 @@ class NavigatorCoder(Coder):
                                     value = value[1:]
                                 if value.endswith('\n'):
                                     value = value[:-1]
-                    elif isinstance(value_node, ast.Name): # Handle unquoted values like True/False/None or variables (though variables are unlikely here)
-                        value = value_node.id
+                    elif isinstance(value_node, ast.Name): # Handle unquoted values like True/False/None or variables
+                        id_val = value_node.id.lower()
+                        if id_val == 'true':
+                            value = True
+                        elif id_val == 'false':
+                            value = False
+                        elif id_val == 'none':
+                            value = None
+                        else:
+                            value = value_node.id # Keep as string if it's something else
                     # Add more types if needed (e.g., ast.List, ast.Dict)
                     else:
                         # Attempt to reconstruct the source for complex types, or raise error
