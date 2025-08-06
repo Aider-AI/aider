@@ -9,12 +9,17 @@ import subprocess
 import traceback
 import platform
 import locale
+import asyncio
+import base64
 from datetime import datetime
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from xml.etree.ElementTree import ParseError
 # Add necessary imports if not already present
 from collections import defaultdict
+from types import SimpleNamespace
+
+from litellm import experimental_mcp_client
 
 from .base_coder import Coder, ChatChunks
 from .editblock_coder import find_original_update_blocks, do_replace, find_similar_lines
@@ -639,6 +644,58 @@ class NavigatorCoder(Coder):
             )
         return tool_responses
         
+    def _execute_mcp_tool(self, server, tool_name, params):
+        """Helper to execute a single MCP tool call, created from legacy format."""
+
+        # This is a simplified, synchronous wrapper around async logic
+        # It's duplicating logic from BaseCoder for legacy tool support.
+        async def _exec_async():
+            # Construct a ToolCall object-like structure to be compatible with mcp_client
+            function_dict = {"name": tool_name, "arguments": json.dumps(params)}
+            tool_call_dict = {
+                "id": f"mcp-tool-call-{time.time()}",
+                "function": function_dict,
+                "type": "function",
+            }
+            try:
+                session = await server.connect()
+                call_result = await experimental_mcp_client.call_openai_tool(
+                    session=session,
+                    openai_tool=tool_call_dict,
+                )
+
+                content_parts = []
+                if call_result.content:
+                    for item in call_result.content:
+                        if hasattr(item, "resource"):  # EmbeddedResource
+                            resource = item.resource
+                            if hasattr(resource, "text"):  # TextResourceContents
+                                content_parts.append(resource.text)
+                            elif hasattr(resource, "blob"):  # BlobResourceContents
+                                try:
+                                    decoded_blob = base64.b64decode(resource.blob).decode("utf-8")
+                                    content_parts.append(decoded_blob)
+                                except (UnicodeDecodeError, TypeError):
+                                    name = getattr(resource, "name", "unnamed")
+                                    mime_type = getattr(resource, "mimeType", "unknown mime type")
+                                    content_parts.append(
+                                        f"[embedded binary resource: {name} ({mime_type})]"
+                                    )
+                        elif hasattr(item, "text"):  # TextContent
+                            content_parts.append(item.text)
+
+                return "".join(content_parts)
+
+            except Exception as e:
+                self.io.tool_warning(
+                    f"Executing {tool_name} on {server.name} failed: \n  Error: {e}\n"
+                )
+                return f"Error executing tool call {tool_name}: {e}"
+            finally:
+                await server.disconnect()
+
+        return asyncio.run(_exec_async())
+
     def _calculate_context_block_tokens(self, force=False):
         """
         Calculate token counts for all enhanced context blocks.
@@ -1828,6 +1885,24 @@ class NavigatorCoder(Coder):
 
                 else:
                     result_message = f"Error: Unknown tool name '{tool_name}'"
+                    if self.mcp_tools:
+                        for server_name, server_tools in self.mcp_tools:
+                            if any(
+                                t.get("function", {}).get("name") == tool_name
+                                for t in server_tools
+                            ):
+                                server = next(
+                                    (s for s in self.mcp_servers if s.name == server_name), None
+                                )
+                                if server:
+                                    result_message = self._execute_mcp_tool(
+                                        server, tool_name, params
+                                    )
+                                else:
+                                    result_message = (
+                                        f"Error: Could not find server instance for {server_name}"
+                                    )
+                                break
 
             except Exception as e:
                 result_message = f"Error executing {tool_name}: {str(e)}"
