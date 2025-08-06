@@ -1683,3 +1683,59 @@
   versions: 0.85.3.dev
   seconds_per_case: 67.6
   total_cost: 1.2357
+
+- dirname: 2025-08-06-11-09-17--gpt-oss-120b-high-edit-whole-temp-0
+  test_cases: 225
+  model: gpt-oss-120b (high) whole edit
+  edit_format: whole
+  commit_hash: 1af0e59-dirty
+  pass_rate_1: 15.6
+  pass_rate_2: 51.1
+  pass_num_1: 35
+  pass_num_2: 115
+  percent_cases_well_formed: 100.0
+  error_outputs: 1
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 144
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2447890
+  completion_tokens: 1258367
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openrouter/openai/gpt-oss-120b
+  date: 2025-08-06
+  versions: 0.85.3.dev
+  seconds_per_case: 13.9
+  total_cost: 0.8740
+
+- dirname: 2025-08-06-13-04-56--gpt-oss-20b-high-edit-whole-temp-0
+  test_cases: 225
+  model: gpt-oss-20b (high) whole edit
+  edit_format: whole
+  commit_hash: 1af0e59-dirty
+  pass_rate_1: 8.0
+  pass_rate_2: 34.2
+  pass_num_1: 18
+  pass_num_2: 77
+  percent_cases_well_formed: 95.1
+  error_outputs: 40
+  num_malformed_responses: 16
+  num_with_malformed_responses: 11
+  user_asks: 138
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2293248
+  completion_tokens: 1640880
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model openrouter/openai/gpt-oss-20b
+  date: 2025-08-06
+  versions: 0.85.3.dev
+  seconds_per_case: 19.4
+  total_cost: 0.4428
