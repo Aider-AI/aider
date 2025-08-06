@@ -97,3 +97,22 @@ class HttpStreamingServer(McpServer):
             await self.disconnect()
             raise
 
+class LocalServer(McpServer):
+    """
+    A dummy McpServer for executing local, in-process tools
+    that are not provided by an external MCP server.
+    """
+
+    async def connect(self):
+        """Local tools don't need a connection."""
+        if self.session is not None:
+            logging.info(f"Using existing session for local tools: {self.name}")
+            return self.session
+
+        self.session = object()  # Dummy session object
+        return self.session
+
+    async def disconnect(self):
+        """Disconnect from the MCP server and clean up resources."""
+        self.session = None
+

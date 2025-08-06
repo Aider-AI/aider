@@ -38,6 +38,7 @@ from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
+from aider.mcp.server import LocalServer
 from aider.models import RETRY_TIMEOUT
 from aider.reasoning_tags import (
     REASONING_TAG,
@@ -1762,7 +1763,48 @@ class Coder:
         if tool_call_response is None:
             return False
 
-        tool_calls = tool_call_response.choices[0].message.tool_calls
+        original_tool_calls = tool_call_response.choices[0].message.tool_calls
+        if not original_tool_calls:
+            return False
+
+        # Expand any tool calls that have concatenated JSON in their arguments.
+        # This is necessary because some models (like Gemini) will serialize
+        # multiple tool calls in this way.
+        expanded_tool_calls = []
+        for tool_call in original_tool_calls:
+            args_string = tool_call.function.arguments.strip()
+
+            # If there are no arguments, or it's not a string that looks like it could
+            # be concatenated JSON, just add it and continue.
+            if not args_string or not (
+                args_string.startswith("{") or args_string.startswith("[")
+            ):
+                expanded_tool_calls.append(tool_call)
+                continue
+
+            json_chunks = utils.split_concatenated_json(args_string)
+
+            # If it's just a single JSON object, there's nothing to expand.
+            if len(json_chunks) <= 1:
+                expanded_tool_calls.append(tool_call)
+                continue
+
+            # We have concatenated JSON, so expand it into multiple tool calls.
+            for i, chunk in enumerate(json_chunks):
+                if not chunk.strip():
+                    continue
+
+                # Create a new tool call for each JSON chunk, with a unique ID.
+                new_function = tool_call.function.model_copy(update={"arguments": chunk})
+                new_tool_call = tool_call.model_copy(
+                    update={"id": f"{tool_call.id}-{i}", "function": new_function}
+                )
+                expanded_tool_calls.append(new_tool_call)
+
+        # Replace the original tool_calls in the response object with the expanded list.
+        tool_call_response.choices[0].message.tool_calls = expanded_tool_calls
+        tool_calls = expanded_tool_calls
+
         # Collect all tool calls grouped by server
         server_tool_calls = self._gather_server_tool_calls(tool_calls)
 
@@ -1772,10 +1814,9 @@ class Coder:
             if self.io.confirm_ask("Run tools?"):
                 tool_responses = self._execute_tool_calls(server_tool_calls)
 
-                # Add the assistant message with tool calls
-                # Converting to a dict so it can be safely dumped to json
-                self.cur_messages.append(
-                    tool_call_response.choices[0].message.to_dict())
+                # Add the assistant message with the modified (expanded) tool calls.
+                # This ensures that what's stored in history is valid.
+                self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
 
                 # Add all tool responses
                 for tool_response in tool_responses:
@@ -1784,8 +1825,10 @@ class Coder:
                 return True
         elif self.num_tool_calls >= self.max_tool_calls:
             self.io.tool_warning(
-                f"Only {self.max_tool_calls} tool calls allowed, stopping.")
-            return False
+                f"Only {self.max_tool_calls} tool calls allowed, stopping."
+            )
+
+        return False
 
     def _print_tool_call_info(self, server_tool_calls):
         """Print information about an MCP tool call."""
@@ -1838,6 +1881,22 @@ class Coder:
 
         # Define the coroutine to execute all tool calls for a single server
         async def _exec_server_tools(server, tool_calls_list):
+            if isinstance(server, LocalServer):
+                if hasattr(self, "_execute_local_tool_calls"):
+                    return await self._execute_local_tool_calls(tool_calls_list)
+                else:
+                    # This coder doesn't support local tools, return errors for all calls
+                    error_responses = []
+                    for tool_call in tool_calls_list:
+                        error_responses.append(
+                            {
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "content": f"Coder does not support local tool: {tool_call.function.name}",
+                            }
+                        )
+                    return error_responses
+
             tool_responses = []
             try:
                 # Connect to the server once
@@ -1847,24 +1906,19 @@ class Coder:
                     try:
                         # Arguments can be a stream of JSON objects.
                         # We need to parse them and run a tool call for each.
-                        decoder = json.JSONDecoder()
                         args_string = tool_call.function.arguments.strip()
-                        pos = 0
                         parsed_args_list = []
                         if args_string:
-                            while pos < len(args_string):
+                            json_chunks = utils.split_concatenated_json(args_string)
+                            for chunk in json_chunks:
                                 try:
-                                    obj, end_pos = decoder.raw_decode(args_string, pos)
-                                    parsed_args_list.append(obj)
-                                    pos = end_pos
-                                    # skip whitespace
-                                    while pos < len(args_string) and args_string[pos].isspace():
-                                        pos += 1
+                                    parsed_args_list.append(json.loads(chunk))
                                 except json.JSONDecodeError:
-                                    # If we fail to decode, just break and process what we have.
-                                    # If we haven't parsed anything, it will be an error below
-                                    # if the arg string was not empty.
-                                    break
+                                    self.io.tool_warning(
+                                        "Could not parse JSON chunk for tool"
+                                        f" {tool_call.function.name}: {chunk}"
+                                    )
+                                    continue
 
                         if not parsed_args_list and not args_string:
                             parsed_args_list.append({})  # For tool calls with no arguments

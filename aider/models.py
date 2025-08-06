@@ -950,7 +950,7 @@ class Model(ModelSettings):
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
-        kwargs = dict(model=self.name, stream=stream, tools=[])
+        kwargs = dict(model=self.name, stream=stream)
 
         if self.use_temperature is not False:
             if temperature is None:
@@ -961,18 +961,36 @@ class Model(ModelSettings):
 
             kwargs["temperature"] = temperature
 
-        if functions is not None:
+        # `tools` is for modern tool usage. `functions` is for legacy/forced calls.
+        # If `tools` is provided, it's the canonical list. If not, use `functions`.
+        # This handles `base_coder` sending both with same content for `navigator_coder`.
+        effective_tools = tools if tools is not None else functions
+
+        if effective_tools:
+            # Check if we have legacy format functions (which lack a 'type' key) and convert them.
+            # This is a simplifying assumption that works for aider's use cases.
+            is_legacy = any("type" not in tool for tool in effective_tools)
+            if is_legacy:
+                kwargs["tools"] = [dict(type="function", function=tool) for tool in effective_tools]
+            else:
+                kwargs["tools"] = effective_tools
+
+        # Forcing a function call is for legacy style `functions` with a single function.
+        # This is used by ArchitectCoder and not intended for NavigatorCoder's tools.
+        if functions and len(functions) == 1:
             function = functions[0]
-            kwargs["tools"] = [dict(type="function", function=function)]
-            kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+            is_legacy = "type" not in function
+
+            if is_legacy and "name" in function:
+                tool_name = function.get("name")
+                if tool_name:
+                    kwargs["tool_choice"] = {"type": "function", "function": {"name": tool_name}}
+
         if self.extra_params:
             kwargs.update(self.extra_params)
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
-
-        if tools:
-            kwargs["tools"] = kwargs["tools"] + tools
 
         key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
