@@ -56,7 +56,8 @@ RUN find /venv/lib/python3.12/site-packages \( -type d -exec chmod a+rwx {} + \)
 COPY . /app/
 
 # Install the application as a package
-RUN /venv/bin/python -m pip install .
+RUN /venv/bin/python -m pip install . && \
+    find . -mindepth 1 -delete
 
 # Switch to appuser
 USER appuser
