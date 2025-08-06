@@ -1310,7 +1310,7 @@ class NavigatorCoder(Coder):
         max_calls = self.max_tool_calls
 
         # Check if there's a '---' separator and only process tool calls after the LAST one
-        separator_marker = "\n---\n"
+        separator_marker = "---"
         content_parts = content.split(separator_marker)
         
         # If there's no separator, treat the entire content as before the separator
@@ -1508,8 +1508,16 @@ class NavigatorCoder(Coder):
                                     value = value[1:]
                                 if value.endswith('\n'):
                                     value = value[:-1]
-                    elif isinstance(value_node, ast.Name): # Handle unquoted values like True/False/None or variables (though variables are unlikely here)
-                        value = value_node.id
+                    elif isinstance(value_node, ast.Name): # Handle unquoted values like True/False/None or variables
+                        id_val = value_node.id.lower()
+                        if id_val == 'true':
+                            value = True
+                        elif id_val == 'false':
+                            value = False
+                        elif id_val == 'none':
+                            value = None
+                        else:
+                            value = value_node.id # Keep as string if it's something else
                     # Add more types if needed (e.g., ast.List, ast.Dict)
                     else:
                         # Attempt to reconstruct the source for complex types, or raise error
