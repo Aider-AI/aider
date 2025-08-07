@@ -17,7 +17,7 @@ cachetools==5.5.2
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-certifi==2025.6.15
+certifi==2025.8.3
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -33,7 +33,7 @@ gitdb==4.0.12
     # via
     #   -c requirements/common-constraints.txt
     #   gitpython
-gitpython==3.1.44
+gitpython==3.1.45
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -46,7 +46,7 @@ jinja2==3.1.6
     #   -c requirements/common-constraints.txt
     #   altair
     #   pydeck
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -58,7 +58,7 @@ markupsafe==3.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==1.44.0
+narwhals==2.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -73,11 +73,11 @@ packaging==25.0
     #   -c requirements/common-constraints.txt
     #   altair
     #   streamlit
-pandas==2.3.0
+pandas==2.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-pillow==11.2.1
+pillow==11.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -85,7 +85,7 @@ protobuf==5.29.5
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-pyarrow==20.0.0
+pyarrow==21.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -110,7 +110,7 @@ requests==2.32.4
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-rpds-py==0.25.1
+rpds-py==0.27.0
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
@@ -123,7 +123,7 @@ smmap==5.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   gitdb
-streamlit==1.46.0
+streamlit==1.48.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-browser.in
@@ -139,7 +139,7 @@ tornado==6.5.1
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -c requirements/common-constraints.txt
     #   altair
