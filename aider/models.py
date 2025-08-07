@@ -436,6 +436,10 @@ class Model(ModelSettings):
             self.examples_as_sys_msg = False
             return  # <--
 
+        if "gpt-5" in model:
+            self.use_temperature = False
+            return  # <--
+
         if "/o1-mini" in model:
             self.use_repo_map = True
             self.use_temperature = False
