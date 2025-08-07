@@ -76,6 +76,7 @@ cog.out(model_list)
 - claude-3-opus-latest
 - claude-4-opus-20250514
 - claude-4-sonnet-20250514
+- claude-opus-4-1
 - claude-opus-4-1-20250805
 - claude-opus-4-20250514
 - claude-sonnet-4-20250514
