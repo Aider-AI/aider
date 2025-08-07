@@ -440,6 +440,8 @@ class Model(ModelSettings):
         if last_segment in ("gpt-5", "gpt-5-2025-08-07"):
             self.use_temperature = False
             self.edit_format = "diff"
+            if "reasoning_effort" not in self.accepts_settings:
+                self.accepts_settings.append("reasoning_effort")
             return  # <--
 
         if "/o1-mini" in model:
