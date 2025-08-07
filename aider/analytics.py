@@ -237,7 +237,7 @@ class Analytics:
                 self.mp = None  # Disable mixpanel on connection errors
 
         if self.ph:
-            self.ph.capture(self.user_id, event_name, dict(properties))
+            self.ph.capture(event_name, distinct_id=self.user_id, properties=dict(properties))
 
         if self.logfile:
             log_entry = {
