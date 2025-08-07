@@ -439,6 +439,7 @@ class Model(ModelSettings):
         last_segment = model.split("/")[-1]
         if last_segment in ("gpt-5", "gpt-5-2025-08-07"):
             self.use_temperature = False
+            self.edit_format = "diff"
             return  # <--
 
         if "/o1-mini" in model:
