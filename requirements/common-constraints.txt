@@ -485,7 +485,9 @@ semver==3.0.4
 sentence-transformers==5.1.0
     # via llama-index-embeddings-huggingface
 setuptools==80.9.0
-    # via pip-tools
+    # via
+    #   pip-tools
+    #   torch
 shellingham==1.5.4
     # via typer
 shtab==1.7.2
@@ -531,10 +533,8 @@ tokenizers==0.21.4
     #   transformers
 toml==0.10.2
     # via streamlit
-torch==2.2.2
-    # via
-    #   -r requirements/requirements-help.in
-    #   sentence-transformers
+torch==2.8.0
+    # via sentence-transformers
 tornado==6.5.1
     # via streamlit
 tqdm==4.67.1
