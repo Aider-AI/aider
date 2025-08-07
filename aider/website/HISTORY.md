@@ -24,6 +24,10 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.85.3
+
+- Bumped dependencies to pick up latest litellm==1.75.0.
+
 ### Aider v0.85.2
 
 - Added support for Grok-4 via `xai/grok-4` and `openrouter/x-ai/grok-4` model names.
