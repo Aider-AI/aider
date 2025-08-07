@@ -24,6 +24,12 @@ cog.out(text)
 ]]]-->
 
 
+### Aider v0.85.4
+
+- Added support for openai/gpt-5
+- Fixed analytics to support the latest PostHog SDK event-capture API.
+- Disabled temperature when using GPT-5 models for more deterministic outputs.
+
 ### Aider v0.85.3
 
 - Bumped dependencies to pick up latest litellm==1.75.0.
