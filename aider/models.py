@@ -436,7 +436,8 @@ class Model(ModelSettings):
             self.examples_as_sys_msg = False
             return  # <--
 
-        if "gpt-5" in model:
+        last_segment = model.split("/")[-1]
+        if last_segment in ("gpt-5", "gpt-5-2025-08-07"):
             self.use_temperature = False
             return  # <--
 
