@@ -1825,32 +1825,24 @@
   weak_model_name: gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: gpt-5-mini
-  editor_edit_format: editor-diff
 
 - name: gpt-5-2025-08-07
   edit_format: diff
   weak_model_name: gpt-5-nano-2025-08-07
   use_repo_map: true
   use_temperature: false
-  editor_model_name: gpt-5-mini-2025-08-07
-  editor_edit_format: editor-diff
 
 - name: gpt-5-mini
   edit_format: diff
   weak_model_name: gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: gpt-5-mini
-  editor_edit_format: editor-diff
 
 - name: gpt-5-mini-2025-08-07
   edit_format: diff
   weak_model_name: gpt-5-nano-2025-08-07
   use_repo_map: true
   use_temperature: false
-  editor_model_name: gpt-5-mini-2025-08-07
-  editor_edit_format: editor-diff
 
 - name: gpt-5-nano
   edit_format: diff
@@ -1869,48 +1861,36 @@
   weak_model_name: gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: gpt-5-mini
-  editor_edit_format: editor-diff
 
 - name: gpt-5-chat-latest
   edit_format: diff
   weak_model_name: gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: gpt-5-mini
-  editor_edit_format: editor-diff
 
 - name: azure/gpt-5
   edit_format: diff
   weak_model_name: azure/gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: azure/gpt-5-mini
-  editor_edit_format: editor-diff
 
 - name: azure/gpt-5-2025-08-07
   edit_format: diff
   weak_model_name: azure/gpt-5-nano-2025-08-07
   use_repo_map: true
   use_temperature: false
-  editor_model_name: azure/gpt-5-mini-2025-08-07
-  editor_edit_format: editor-diff
 
 - name: azure/gpt-5-mini
   edit_format: diff
   weak_model_name: azure/gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: azure/gpt-5-mini
-  editor_edit_format: editor-diff
 
 - name: azure/gpt-5-mini-2025-08-07
   edit_format: diff
   weak_model_name: azure/gpt-5-nano-2025-08-07
   use_repo_map: true
   use_temperature: false
-  editor_model_name: azure/gpt-5-mini-2025-08-07
-  editor_edit_format: editor-diff
 
 - name: azure/gpt-5-nano
   edit_format: diff
@@ -1929,14 +1909,10 @@
   weak_model_name: azure/gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: azure/gpt-5-mini
-  editor_edit_format: editor-diff
 
 - name: azure/gpt-5-chat-latest
   edit_format: diff
   weak_model_name: azure/gpt-5-nano
   use_repo_map: true
   use_temperature: false
-  editor_model_name: azure/gpt-5-mini
-  editor_edit_format: editor-diff
 
