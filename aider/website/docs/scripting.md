@@ -88,7 +88,7 @@ for all the supported arguments.
 
 It can also be helpful to set the equivalent of `--yes` by doing this:
 
-```
+```python
 from aider.io import InputOutput
 io = InputOutput(yes=True)
 # ...
