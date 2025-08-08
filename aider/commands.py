@@ -4,7 +4,7 @@ import re
 import subprocess
 import sys
 import tempfile
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 from os.path import expanduser
 from pathlib import Path
 
@@ -23,6 +23,7 @@ from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
+from aider.stats import hash_len, get_all_commit_hashes_between_tags, get_commit_authors, get_counts_for_file
 
 from .dump import dump  # noqa: F401
 
@@ -1506,6 +1507,95 @@ class Commands:
     def cmd_multiline_mode(self, args):
         "Toggle multiline mode (swaps behavior of Enter and Meta+Enter)"
         self.io.toggle_multiline_mode()
+
+    def cmd_stats(self, args):
+        """Show statistics about code changes and aider's contributions by counting lines of code through git blame.
+
+        Usage:
+            /stats                   Compare against main/master branch
+            /stats <revision>        Compare against specific revision
+            /stats rev1..rev2        Compare between two specific revisions
+
+        Examples:
+            /stats                   Show stats vs main/master branch
+            /stats HEAD~5            Show stats vs 5 commits ago
+            /stats v1.0.0           Show stats vs version 1.0.0
+            /stats main..HEAD        Show stats between main and current HEAD
+
+        Lines are attributed to aider when the git author or committer contains "(aider)".
+        Binary files (images, audio, etc.) are excluded from the analysis.
+        """
+        if not self.coder.repo:
+            self.io.tool_error("No git repository found.")
+            return
+
+        try:
+            # Get the revision range
+            if not args:
+                # Default to comparing against main/master branch
+                for default_branch in ["main", "master"]:
+                    try:
+                        self.coder.repo.repo.rev_parse(default_branch)
+                        args = default_branch
+                        break
+                    except:
+                        continue
+                if not args:
+                    self.io.tool_error("No main or master branch found. Please specify a revision.")
+                    return
+            source_revision, target_revision = args.split("..") if ".." in args else (args, "HEAD")
+            commits = get_all_commit_hashes_between_tags(source_revision, target_revision)
+            commits = [commit[:hash_len] for commit in commits] if commits else []
+            if not commits:
+                self.io.tool_error(
+                    f"There are no commits between the specified revisions from {source_revision} to {target_revision}."
+                )
+                return
+            authors = get_commit_authors(commits)
+
+            # Get files changed between revisions
+            diff_files = self.coder.repo.repo.git.diff(
+                "--name-only", f"{source_revision}..{target_revision}"
+            ).splitlines()
+            # Filter out media files
+            files = [f for f in diff_files if not any(f.lower().endswith(ext) for ext in (
+                '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.ico', '.svg',  # images
+                '.mp3', '.wav', '.ogg', '.m4a', '.flac',  # audio
+                '.mp4', '.avi', '.mov', '.wmv', '.flv', '.webm',  # video
+                '.pdf', '.doc', '.docx', '.ppt', '.pptx', '.xls', '.xlsx',  # documents
+                '.zip', '.tar', '.gz', '.7z', '.rar',  # archives
+                '.ttf', '.otf', '.woff', '.woff2', '.eot'  # fonts
+            ))]
+            self.io.tool_output(f"Found {len(files)} non-binary tracked files in the repository.")
+
+            all_file_counts = {}
+            grand_total = defaultdict(int)
+            aider_total = 0
+            for file in files:
+                file_counts = get_counts_for_file(source_revision, target_revision, authors, file)
+                if file_counts:
+                    all_file_counts[file] = file_counts
+                    for author, count in file_counts.items():
+                        grand_total[author] += count
+                        if "(aider)" in author.lower():
+                            aider_total += count
+            total_lines = sum(grand_total.values())
+            aider_percentage = (aider_total / total_lines) * 100 if total_lines > 0 else 0
+
+            # Calculate percentages
+            if total_lines > 0:
+                # Output overall statistics
+                self.io.tool_output(f"\nAnalysis from {source_revision} to {target_revision}:")
+                self.io.tool_output(f"Total lines analyzed: {total_lines:,}")
+                self.io.tool_output(f"Lines by aider: {aider_total:,} ({aider_percentage:.1f}%)")
+                self.io.tool_output(f"Lines by humans: {total_lines - aider_total:,} ({100 - aider_percentage:.1f}%)")
+
+            else:
+                self.io.tool_output("No lines of code found in the repository.")
+
+        except Exception as e:
+            self.io.tool_error(f"Error analyzing aider statistics: {e}")
+
 
     def cmd_copy(self, args):
         "Copy the last assistant message to the clipboard"
