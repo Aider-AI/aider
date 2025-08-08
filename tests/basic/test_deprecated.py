@@ -48,7 +48,10 @@ class TestDeprecated(TestCase):
         for flag in deprecated_flags:
             mock_tool_warning.reset_mock()
 
-            with patch("aider.models.Model"), self.subTest(flag=flag):
+            with patch("aider.models.Model") as mock_model, self.subTest(flag=flag):
+                mock_model.return_value.info = {"max_input_tokens": 100}
+                mock_model.return_value.use_repo_map = False
+                mock_model.return_value.get_repo_map_tokens.return_value = 0
                 main(
                     [flag, "--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput()
                 )
@@ -78,7 +81,10 @@ class TestDeprecated(TestCase):
         mock_offer_url.return_value = False
         # Test that the warning uses the model alias if available
         with patch("aider.models.MODEL_ALIASES", {"gpt4": "gpt-4-0613"}):
-            with patch("aider.models.Model"):
+            with patch("aider.models.Model") as mock_model:
+                mock_model.return_value.info = {"max_input_tokens": 100}
+                mock_model.return_value.use_repo_map = False
+                mock_model.return_value.get_repo_map_tokens.return_value = 0
                 main(
                     ["--4", "--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput()
                 )
