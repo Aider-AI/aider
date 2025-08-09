@@ -4854,3 +4854,43 @@
     therealmarv: 14
   start_tag: v0.84.0
   total_lines: 610
+- aider_percentage: 87.75
+  aider_total: 222
+  end_date: '2025-08-09'
+  end_tag: v0.86.0
+  file_counts:
+    aider/__init__.py:
+      Paul Gauthier: 1
+    aider/analytics.py:
+      Paul Gauthier (aider): 1
+    aider/commands.py:
+      Paul Gauthier (aider): 7
+      Zexin Yuan: 1
+    aider/models.py:
+      Andrew Grigorev (aider): 3
+      Paul Gauthier: 3
+      Paul Gauthier (aider): 5
+    aider/resources/model-settings.yml:
+      Jack Harrington: 7
+      Paul Gauthier: 6
+      Paul Gauthier (aider): 199
+      Tamir Zahavi-Brunner: 7
+    aider/website/_includes/leaderboard_table.js:
+      Paul Gauthier: 1
+    aider/website/docs/leaderboards/index.md:
+      Paul Gauthier: 1
+    aider/website/index.html:
+      Paul Gauthier: 3
+    scripts/blame.py:
+      Paul Gauthier (aider): 7
+    scripts/update-history.py:
+      Paul Gauthier: 1
+  grand_total:
+    Andrew Grigorev (aider): 3
+    Jack Harrington: 7
+    Paul Gauthier: 16
+    Paul Gauthier (aider): 219
+    Tamir Zahavi-Brunner: 7
+    Zexin Yuan: 1
+  start_tag: v0.85.0
+  total_lines: 253

@@ -1,6 +1,6 @@
 # Release history
 
-### main branch
+### Aider v0.86.0
 
 - Expanded GPT-5 model support across family variants and providers (OpenAI, Azure, OpenRouter), including dated and chat/mini/nano variants.
 - Aider wrote 88% of the code in this release.
