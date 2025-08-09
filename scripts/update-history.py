@@ -113,7 +113,7 @@ def main():
     cmd = [
         "aider",
         "--model",
-        "o3",
+        "gpt-5",
         hist_path,
         "--read",
         log_path,
