@@ -1184,6 +1184,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             if "show_announcements" in kwargs:
                 del kwargs["show_announcements"]
 
+            # Disable cache warming for the new coder
+            kwargs["num_cache_warming_pings"] = 0
+ 
             coder = Coder.create(**kwargs)
 
             if switch.kwargs.get("show_announcements") is not False:
