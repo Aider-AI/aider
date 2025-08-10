@@ -1012,7 +1012,15 @@ class Model(ModelSettings):
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
-        res = litellm.completion(**kwargs)
+
+        try:
+            res = litellm.completion(**kwargs)
+        except Exception as err:
+            res = "Model API Response Error. Please retry the previous request"
+
+            if self.verbose:
+                print(f"LiteLLM API Error: {str(err)}")
+
         return hash_object, res
 
     def simple_send_with_retries(self, messages):
