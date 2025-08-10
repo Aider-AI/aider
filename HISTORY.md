@@ -1,5 +1,26 @@
 # Release history
 
+### Aider v0.86.0
+
+- Expanded GPT-5 model support across family variants and providers (OpenAI, Azure, OpenRouter), including dated and chat/mini/nano variants.
+- Aider wrote 88% of the code in this release.
+
+### Aider v0.85.5
+
+- Enforced diff edit format for GPT-5 models.
+- Added support for the reasoning_effort setting for GPT-5 models.
+- Fixed model detection to correctly apply GPT-5 settings to versioned names (gpt-5 and gpt-5-2025-08-07).
+
+### Aider v0.85.4
+
+- Added support for openai/gpt-5
+- Fixed analytics to support the latest PostHog SDK event-capture API.
+- Disabled temperature when using GPT-5 models for more deterministic outputs.
+
+### Aider v0.85.3
+
+- Bumped dependencies to pick up latest litellm==1.75.0.
+
 ### Aider v0.85.2
 
 - Added support for Grok-4 via `xai/grok-4` and `openrouter/x-ai/grok-4` model names.
