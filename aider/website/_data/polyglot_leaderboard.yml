@@ -1686,7 +1686,7 @@
 
 - dirname: 2025-08-06-04-54-48--gpt-oss-120b-high-polyglot
   test_cases: 225
-  model: openrouter/openai/gpt-oss-120b
+  model: gpt-oss-120b (high)
   edit_format: diff
   commit_hash: 1af0e59
   pass_rate_1: 13.8
@@ -1706,7 +1706,7 @@
   completion_tokens: 856495
   test_timeouts: 4
   total_tests: 225
-  command: aider --model openrouter/openai/gpt-oss-120b
+  command: aider --model openrouter/openai/gpt-oss-120b --reasoning-effort high
   date: 2025-08-06
   versions: 0.85.3.dev
   seconds_per_case: 35.5
