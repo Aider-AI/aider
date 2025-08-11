@@ -37,6 +37,14 @@
   .ea-ad { 
     margin: 1rem 0; 
   }
+
+  /* Responsive ad placement: default hide mobile; show mobile on narrow screens */
+  .ea-ad--mobile { display: none; }
+
+  @media (max-width: 50em) {
+    .ea-ad--sidebar { display: none; }
+    .ea-ad--mobile { display: block; }
+  }
 </style>
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{ site.url }}/feed.xml">
 <link rel="preconnect" href="https://fonts.gstatic.com">
