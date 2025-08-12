@@ -61,8 +61,7 @@ class UnknownEditFormat(ValueError):
         self.edit_format = edit_format
         self.valid_formats = valid_formats
         super().__init__(
-            f"Unknown edit format {edit_format}. Valid formats are: {
-                ', '.join(valid_formats)}"
+            f"Unknown edit format {edit_format}. Valid formats are: {', '.join(valid_formats)}"
         )
 
 
