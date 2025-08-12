@@ -967,6 +967,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         map_tokens = args.map_tokens
 
+    if args.enable_context_compaction and args.context_compaction_max_tokens is None:
+        max_input_tokens = main_model.info.get("max_input_tokens")
+        if max_input_tokens:
+            args.context_compaction_max_tokens = int(max_input_tokens * 0.8)
+
     # Track auto-commits configuration
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
@@ -1005,6 +1010,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             map_refresh=args.map_refresh,
             cache_prompts=args.cache_prompts,
             map_mul_no_files=args.map_multiplier_no_files,
+            map_max_line_length=args.map_max_line_length,
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
@@ -1014,6 +1020,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_accept_architect=args.auto_accept_architect,
             mcp_servers=mcp_servers,
             add_gitignore_files=args.add_gitignore_files,
+            enable_context_compaction=args.enable_context_compaction,
+            context_compaction_max_tokens=args.context_compaction_max_tokens,
+            context_compaction_summary_tokens=args.context_compaction_summary_tokens,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))

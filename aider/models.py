@@ -618,17 +618,19 @@ class Model(ModelSettings):
         return litellm.encode(model=self.name, text=text)
 
     def token_count(self, messages):
-        if type(messages) is list:
+        if isinstance(messages, dict):
+            messages = [messages]
+
+        if isinstance(messages, list):
             try:
                 return litellm.token_counter(model=self.name, messages=messages)
-            except Exception as err:
-                print(f"Unable to count tokens: {err}")
-                return 0
+            except Exception:
+                pass  # fall back to raw tokenizer
 
         if not self.tokenizer:
-            return
+            return 0
 
-        if type(messages) is str:
+        if isinstance(messages, str):
             msgs = messages
         else:
             msgs = json.dumps(messages)
@@ -636,7 +638,7 @@ class Model(ModelSettings):
         try:
             return len(self.tokenizer(msgs))
         except Exception as err:
-            print(f"Unable to count tokens: {err}")
+            print(f"Unable to count tokens with tokenizer: {err}")
             return 0
 
     def token_count_for_image(self, fname):
@@ -952,7 +954,7 @@ class Model(ModelSettings):
 
             os.environ[openai_api_key] = token
 
-    def send_completion(self, messages, functions, stream, temperature=None, tools=None):
+    def send_completion(self, messages, functions, stream, temperature=None, tools=None, max_tokens=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
@@ -997,6 +999,12 @@ class Model(ModelSettings):
 
         if self.extra_params:
             kwargs.update(self.extra_params)
+
+        if max_tokens:
+            kwargs["max_tokens"] = max_tokens
+
+        if "max_tokens" in kwargs and kwargs["max_tokens"]:
+            kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
@@ -1032,7 +1040,7 @@ class Model(ModelSettings):
 
         return hash_object, res
 
-    def simple_send_with_retries(self, messages):
+    def simple_send_with_retries(self, messages, max_tokens=None):
         from aider.exceptions import LiteLLMExceptions
 
         litellm_ex = LiteLLMExceptions()
@@ -1045,13 +1053,12 @@ class Model(ModelSettings):
 
         while True:
             try:
-                kwargs = {
-                    "messages": messages,
-                    "functions": None,
-                    "stream": False,
-                }
-
-                _hash, response = self.send_completion(**kwargs)
+                _hash, response = self.send_completion(
+                    messages=messages,
+                    functions=None,
+                    stream=False,
+                    max_tokens=max_tokens,
+                )
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
                 res = response.choices[0].message.content

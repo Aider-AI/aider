@@ -61,8 +61,7 @@ class UnknownEditFormat(ValueError):
         self.edit_format = edit_format
         self.valid_formats = valid_formats
         super().__init__(
-            f"Unknown edit format {edit_format}. Valid formats are: {
-                ', '.join(valid_formats)}"
+            f"Unknown edit format {edit_format}. Valid formats are: {', '.join(valid_formats)}"
         )
 
 
@@ -340,6 +339,7 @@ class Coder:
         test_cmd=None,
         aider_commit_hashes=None,
         map_mul_no_files=8,
+        map_max_line_length=100,
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -358,6 +358,9 @@ class Coder:
         auto_copy_context=False,
         auto_accept_architect=True,
         mcp_servers=None,
+        enable_context_compaction=False,
+        context_compaction_max_tokens=None,
+        context_compaction_summary_tokens=8192,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -386,6 +389,11 @@ class Coder:
 
         self.num_cache_warming_pings = num_cache_warming_pings
         self.mcp_servers = mcp_servers
+        self.enable_context_compaction = enable_context_compaction
+
+
+        self.context_compaction_max_tokens = context_compaction_max_tokens
+        self.context_compaction_summary_tokens = context_compaction_summary_tokens
 
         if not fnames:
             fnames = []
@@ -531,6 +539,7 @@ class Coder:
                 max_inp_tokens,
                 map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
+                max_code_line_length=map_max_line_length,
             )
 
         self.summarizer = summarizer or ChatSummary(
@@ -979,6 +988,7 @@ class Coder:
                     if not self.io.placeholder:
                         self.copy_context()
                     user_message = self.get_input()
+                    self.compact_context_if_needed()
                     self.run_one(user_message, preproc)
                     self.show_undo_hint()
                 except KeyboardInterrupt:
@@ -1099,7 +1109,7 @@ class Coder:
         self.last_keyboard_interrupt = now
 
     def summarize_start(self):
-        if not self.summarizer.too_big(self.done_messages):
+        if not self.summarizer.check_max_tokens(self.done_messages):
             return
 
         self.summarize_end()
@@ -1113,10 +1123,10 @@ class Coder:
     def summarize_worker(self):
         self.summarizing_messages = list(self.done_messages)
         try:
-            self.summarized_done_messages = self.summarizer.summarize(
-                self.summarizing_messages)
+            self.summarized_done_messages = self.summarizer.summarize(self.summarizing_messages)
         except ValueError as err:
             self.io.tool_warning(err.args[0])
+            self.summarized_done_messages = self.summarizing_messages
 
         if self.verbose:
             self.io.tool_output("Finished summarizing chat history.")
@@ -1133,9 +1143,49 @@ class Coder:
         self.summarizing_messages = None
         self.summarized_done_messages = []
 
+    def compact_context_if_needed(self):
+        if not self.enable_context_compaction:
+            self.summarize_start()
+            return
+        
+        if not self.summarizer.check_max_tokens(self.done_messages, max_tokens=self.context_compaction_max_tokens):
+            return
+
+        self.io.tool_output("Compacting chat history to make room for new messages...")
+
+        try:
+            # Create a summary of the conversation
+            summary_text = self.summarizer.summarize_all_as_text(
+                self.done_messages,
+                self.gpt_prompts.compaction_prompt,
+                self.context_compaction_summary_tokens,
+            )
+            if not summary_text:
+                raise ValueError("Summarization returned an empty result.")
+
+            # Replace old messages with the summary
+            self.done_messages = [
+                {
+                    "role": "user",
+                    "content": summary_text,
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Ok, I will use this summary as the context for our conversation going"
+                        " forward."
+                    ),
+                },
+            ]
+            self.io.tool_output("...chat history compacted.")
+        except Exception as e:
+            self.io.tool_warning(f"Context compaction failed: {e}")
+            self.io.tool_warning("Proceeding with full history for now.")
+            self.summarize_start()
+            return
+
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
-        self.summarize_start()
 
         # TODO check for impact on image messages
         if message:
@@ -2341,59 +2391,63 @@ class Coder:
         self.partial_response_tool_call = []
 
         for chunk in completion:
-            if len(chunk.choices) == 0:
-                continue
-
-            if (
-                hasattr(chunk.choices[0], "finish_reason")
-                and chunk.choices[0].finish_reason == "length"
-            ):
-                raise FinishReasonLength()
-
-            if chunk.choices[0].delta.tool_calls:
-                self.partial_response_tool_call.append(chunk)
-
-            try:
-                func = chunk.choices[0].delta.function_call
-                # dump(func)
-                for k, v in func.items():
-                    if k in self.partial_response_function_call:
-                        self.partial_response_function_call[k] += v
-                    else:
-                        self.partial_response_function_call[k] = v
-
+            if isinstance(chunk, str):
+                text = chunk
                 received_content = True
-            except AttributeError:
-                pass
+            else:
+                if len(chunk.choices) == 0:
+                    continue
 
-            text = ""
+                if (
+                    hasattr(chunk.choices[0], "finish_reason")
+                    and chunk.choices[0].finish_reason == "length"
+                ):
+                    raise FinishReasonLength()
 
-            try:
-                reasoning_content = chunk.choices[0].delta.reasoning_content
-            except AttributeError:
+                if chunk.choices[0].delta.tool_calls:
+                    self.partial_response_tool_call.append(chunk)
+
                 try:
-                    reasoning_content = chunk.choices[0].delta.reasoning
-                except AttributeError:
-                    reasoning_content = None
+                    func = chunk.choices[0].delta.function_call
+                    # dump(func)
+                    for k, v in func.items():
+                        if k in self.partial_response_function_call:
+                            self.partial_response_function_call[k] += v
+                        else:
+                            self.partial_response_function_call[k] = v
 
-            if reasoning_content:
-                if not self.got_reasoning_content:
-                    text += f"<{REASONING_TAG}>\n\n"
-                text += reasoning_content
-                self.got_reasoning_content = True
-                received_content = True
-
-            try:
-                content = chunk.choices[0].delta.content
-                if content:
-                    if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"\n\n</{self.reasoning_tag_name}>\n\n"
-                        self.ended_reasoning_content = True
-
-                    text += content
                     received_content = True
-            except AttributeError:
-                pass
+                except AttributeError:
+                    pass
+
+                text = ""
+
+                try:
+                    reasoning_content = chunk.choices[0].delta.reasoning_content
+                except AttributeError:
+                    try:
+                        reasoning_content = chunk.choices[0].delta.reasoning
+                    except AttributeError:
+                        reasoning_content = None
+
+                if reasoning_content:
+                    if not self.got_reasoning_content:
+                        text += f"<{REASONING_TAG}>\n\n"
+                    text += reasoning_content
+                    self.got_reasoning_content = True
+                    received_content = True
+
+                try:
+                    content = chunk.choices[0].delta.content
+                    if content:
+                        if self.got_reasoning_content and not self.ended_reasoning_content:
+                            text += f"\n\n</{self.reasoning_tag_name}>\n\n"
+                            self.ended_reasoning_content = True
+
+                        text += content
+                        received_content = True
+                except AttributeError:
+                    pass
 
             if received_content:
                 self._stop_waiting_spinner()
@@ -2805,6 +2859,28 @@ class Coder:
             return json.loads(data + '"}]}')
         except JSONDecodeError:
             pass
+
+    def _find_occurrences(self, content, pattern, near_context=None):
+        """Find all occurrences of pattern, optionally filtered by near_context."""
+        occurrences = []
+        start = 0
+        while True:
+            index = content.find(pattern, start)
+            if index == -1:
+                break
+
+            if near_context:
+                # Check if near_context is within a window around the match
+                window_start = max(0, index - 200)
+                window_end = min(len(content), index + len(pattern) + 200)
+                window = content[window_start:window_end]
+                if near_context in window:
+                    occurrences.append(index)
+            else:
+                occurrences.append(index)
+
+            start = index + 1  # Move past this occurrence's start
+        return occurrences
 
     # commits...
 
