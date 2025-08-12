@@ -235,6 +235,30 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Context Compaction")
+    group.add_argument(
+        "--enable-context-compaction",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable automatic compaction of chat history to conserve tokens (default: False)",
+    )
+    group.add_argument(
+        "--context-compaction-max-tokens",
+        type=int,
+        default=None,
+        help=(
+            "The maximum number of tokens in the conversation before context compaction is"
+            " triggered. (default: 80%% of model's context window)"
+        ),
+    )
+    group.add_argument(
+        "--context-compaction-summary-tokens",
+        type=int,
+        default=4096,
+        help="The target maximum number of tokens for the generated summary. (default: 4096)",
+    )
+
+    ##########
     group = parser.add_argument_group("Cache settings")
     group.add_argument(
         "--cache-prompts",

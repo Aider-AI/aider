@@ -2445,40 +2445,4 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             self.tokens_calculated = False
         
         return True
-        
-
-    def _find_occurrences(self, content, pattern, near_context=None):
-        """Find all occurrences of pattern, optionally filtered by near_context."""
-        occurrences = []
-        start = 0
-        while True:
-            index = content.find(pattern, start)
-            if index == -1:
-                break
-            
-            if near_context:
-                # Check if near_context is within a window around the match
-                window_start = max(0, index - 200)
-                window_end = min(len(content), index + len(pattern) + 200)
-                window = content[window_start:window_end]
-                if near_context in window:
-                    occurrences.append(index)
-            else:
-                occurrences.append(index)
-            
-            start = index + 1 # Move past this occurrence's start
-        return occurrences
-
-    # ------------------- Helper for finding occurrences -------------------
-
-
-    
-    
-            
-            
-             
-            
-    
-    
-
 

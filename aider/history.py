@@ -12,10 +12,16 @@ class ChatSummary:
         self.max_tokens = max_tokens
         self.token_count = self.models[0].token_count
 
-    def too_big(self, messages):
+    def check_max_tokens(self, messages, max_tokens=None):
+        if max_tokens is None:
+            max_tokens = self.max_tokens
+
+        if not max_tokens:
+            return False
+
         sized = self.tokenize(messages)
         total = sum(tokens for tokens, _msg in sized)
-        return total > self.max_tokens
+        return total > max_tokens
 
     def tokenize(self, messages):
         sized = []
@@ -36,11 +42,16 @@ class ChatSummary:
 
         sized = self.tokenize(messages)
         total = sum(tokens for tokens, _msg in sized)
-        if total <= self.max_tokens and depth == 0:
-            return messages
+
+        if total <= self.max_tokens:
+            if depth == 0:
+                # All fit, no summarization needed
+                return messages
+            # This is a chunk that's small enough to summarize in one go
+            return self.summarize_all(messages)
 
         min_split = 4
-        if len(messages) <= min_split or depth > 3:
+        if len(messages) <= min_split or depth > 4:
             return self.summarize_all(messages)
 
         tail_tokens = 0
@@ -56,6 +67,12 @@ class ChatSummary:
             else:
                 break
 
+        # If we couldn't find a split point from the end, it's because the
+        # last message was too big. So just split off the last message and
+        # summarize the rest. This prevents infinite recursion.
+        if split_index == len(messages):
+            split_index = len(messages) - 1
+
         # Ensure the head ends with an assistant message
         while messages[split_index - 1]["role"] != "assistant" and split_index > 1:
             split_index -= 1
@@ -64,36 +81,22 @@ class ChatSummary:
             return self.summarize_all(messages)
 
         # Split head and tail
+        head = messages[:split_index]
         tail = messages[split_index:]
 
-        # Only size the head once
-        sized_head = sized[:split_index]
-
-        # Precompute token limit (fallback to 4096 if undefined)
-        model_max_input_tokens = self.models[0].info.get("max_input_tokens") or 4096
-        model_max_input_tokens -= 512  # reserve buffer for safety
-
-        keep = []
-        total = 0
-
-        # Iterate in original order, summing tokens until limit
-        for tokens, msg in sized_head:
-            total += tokens
-            if total > model_max_input_tokens:
-                break
-            keep.append(msg)
-        # No need to reverse lists back and forth
-
-        summary = self.summarize_all(keep)
+        summary = self.summarize_real(head, depth + 1)
 
         # If the combined summary and tail still fits, return directly
-        summary_tokens = self.token_count(summary)
-        tail_tokens = sum(tokens for tokens, _ in sized[split_index:])
-        if summary_tokens + tail_tokens < self.max_tokens:
-            return summary + tail
+        new_messages = summary + tail
+
+        sized_new = self.tokenize(new_messages)
+        total_new = sum(tokens for tokens, _msg in sized_new)
+
+        if total_new < self.max_tokens:
+            return new_messages
 
         # Otherwise recurse with increased depth
-        return self.summarize_real(summary + tail, depth + 1)
+        return self.summarize_real(new_messages, depth + 1)
 
     def summarize_all(self, messages):
         content = ""
@@ -119,6 +122,38 @@ class ChatSummary:
                 if summary is not None:
                     summary = prompts.summary_prefix + summary
                     return [dict(role="user", content=summary)]
+            except Exception as e:
+                print(f"Summarization failed for model {model.name}: {str(e)}")
+
+        err = "summarizer unexpectedly failed for all models"
+        print(err)
+        raise ValueError(err)
+
+    def summarize_all_as_text(self, messages, prompt, max_tokens=None):
+        content = ""
+        for msg in messages:
+            role = msg["role"].upper()
+            if role not in ("USER", "ASSISTANT"):
+                continue
+            if not msg.get("content"):
+                continue
+            content += f"# {role}\n"
+            content += msg["content"]
+            if not content.endswith("\n"):
+                content += "\n"
+
+        summarize_messages = [
+            dict(role="system", content=prompt),
+            dict(role="user", content=content),
+        ]
+
+        for model in self.models:
+            try:
+                summary = model.simple_send_with_retries(
+                    summarize_messages, max_tokens=max_tokens
+                )
+                if summary is not None:
+                    return summary
             except Exception as e:
                 print(f"Summarization failed for model {model.name}: {str(e)}")
 
