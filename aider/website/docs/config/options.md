@@ -35,6 +35,9 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--show-model-warnings | --no-show-model-warnings]
              [--check-model-accepts-settings | --no-check-model-accepts-settings]
              [--max-chat-history-tokens]
+             [--enable-context-compaction | --no-enable-context-compaction]
+             [--context-compaction-max-tokens]
+             [--context-compaction-summary-tokens]
              [--cache-prompts | --no-cache-prompts]
              [--cache-keepalive-pings] [--map-tokens]
              [--map-refresh] [--map-multiplier-no-files]
@@ -240,6 +243,25 @@ Aliases:
 ### `--max-chat-history-tokens VALUE`
 Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.  
 Environment variable: `AIDER_MAX_CHAT_HISTORY_TOKENS`  
+
+## Context Compaction:
+
+### `--enable-context-compaction`
+Enable automatic compaction of chat history to conserve tokens (default: False)  
+Default: False  
+Environment variable: `AIDER_ENABLE_CONTEXT_COMPACTION`  
+Aliases:
+  - `--enable-context-compaction`
+  - `--no-enable-context-compaction`
+
+### `--context-compaction-max-tokens VALUE`
+The maximum number of tokens in the conversation before context compaction is triggered. (default: 80% of model's context window)  
+Environment variable: `AIDER_CONTEXT_COMPACTION_MAX_TOKENS`  
+
+### `--context-compaction-summary-tokens VALUE`
+The target maximum number of tokens for the generated summary. (default: 4096)  
+Default: 4096  
+Environment variable: `AIDER_CONTEXT_COMPACTION_SUMMARY_TOKENS`  
 
 ## Cache settings:
 

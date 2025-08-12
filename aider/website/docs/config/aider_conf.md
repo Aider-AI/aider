@@ -173,6 +173,18 @@ cog.outl("```")
 ## Soft limit on tokens for chat history, after which summarization begins. If unspecified, defaults to the model's max_chat_history_tokens.
 #max-chat-history-tokens: xxx
 
+######################
+# Context Compaction:
+
+## Enable automatic compaction of chat history to conserve tokens (default: False)
+#enable-context-compaction: false
+
+## The maximum number of tokens in the conversation before context compaction is triggered. (default: 80% of model's context window)
+#context-compaction-max-tokens: xxx
+
+## The target maximum number of tokens for the generated summary. (default: 4096)
+#context-compaction-summary-tokens: 4096
+
 #################
 # Cache settings:
 
