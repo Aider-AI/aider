@@ -1684,30 +1684,30 @@
   seconds_per_case: 67.6
   total_cost: 1.2357
 
-- dirname: 2025-08-06-04-54-48--gpt-oss-120b-high-polyglot
+- dirname: 2025-08-10-08-45-03--GPT-OSS-120_bc
   test_cases: 225
-  model: gpt-oss-120b (high)
+  model: openai/gpt-oss-120b
   edit_format: diff
-  commit_hash: 1af0e59
-  pass_rate_1: 13.8
-  pass_rate_2: 41.8
-  pass_num_1: 31
-  pass_num_2: 94
-  percent_cases_well_formed: 79.1
-  error_outputs: 95
-  num_malformed_responses: 77
-  num_with_malformed_responses: 47
-  user_asks: 142
-  lazy_comments: 0
+  commit_hash: f38200c
+  pass_rate_1: 21.8
+  pass_rate_2: 68.4
+  pass_num_1: 49
+  pass_num_2: 154
+  percent_cases_well_formed: 89.8
+  error_outputs: 55
+  num_malformed_responses: 26
+  num_with_malformed_responses: 23
+  user_asks: 106
+  lazy_comments: 1
   syntax_errors: 0
   indentation_errors: 0
-  exhausted_context_windows: 0
-  prompt_tokens: 3123768
-  completion_tokens: 856495
-  test_timeouts: 4
+  exhausted_context_windows: 1
+  prompt_tokens: 2635667
+  completion_tokens: 3706392
+  test_timeouts: 1
   total_tests: 225
-  command: aider --model openrouter/openai/gpt-oss-120b --reasoning-effort high
-  date: 2025-08-06
+  command: aider --model openai/gpt-oss-120b reasoning high
+  date: 2025-08-10
   versions: 0.85.3.dev
-  seconds_per_case: 35.5
-  total_cost: 0.7406
+  seconds_per_case: 1463.4
+  total_cost: 0.0000
