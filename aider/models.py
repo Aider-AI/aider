@@ -130,6 +130,7 @@ class ModelSettings:
     remove_reasoning: Optional[str] = None  # Deprecated alias for reasoning_tag
     system_prompt_prefix: Optional[str] = None
     accepts_settings: Optional[list] = None
+    max_done_messages: int = 0
 
 
 # Load model settings from package resource
