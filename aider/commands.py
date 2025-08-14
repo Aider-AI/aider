@@ -1,10 +1,12 @@
 import glob
+import json
 import os
 import re
 import subprocess
 import sys
 import tempfile
 from collections import OrderedDict
+from datetime import datetime
 from os.path import expanduser
 from pathlib import Path
 
@@ -13,7 +15,7 @@ from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
-from aider import models, prompts, voice
+from aider import __version__, models, prompts, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
@@ -145,7 +147,7 @@ class Commands:
             sorted(
                 (
                     coder.edit_format,
-                    coder.__doc__.strip().split("\n")[0] if coder.__doc__ else "No description",
+                    (coder.__doc__.strip().split("\n")[0] if coder.__doc__ else "No description"),
                 )
                 for coder in coders.__all__
                 if getattr(coder, "edit_format", None)
@@ -1003,7 +1005,10 @@ class Commands:
     def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
         exit_status, combined_output = run_cmd(
-            args, verbose=self.verbose, error_print=self.io.tool_error, cwd=self.coder.root
+            args,
+            verbose=self.verbose,
+            error_print=self.io.tool_error,
+            cwd=self.coder.root,
         )
 
         if combined_output is None:
@@ -1240,7 +1245,8 @@ class Commands:
                 return
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
+                    audio_format=self.voice_format or "wav",
+                    device_name=self.voice_input_device,
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(
@@ -1283,7 +1289,8 @@ class Commands:
 
                 # Check if a file with the same name already exists in the chat
                 existing_file = next(
-                    (f for f in self.coder.abs_fnames if Path(f).name == abs_file_path.name), None
+                    (f for f in self.coder.abs_fnames if Path(f).name == abs_file_path.name),
+                    None,
                 )
                 if existing_file:
                     self.coder.abs_fnames.remove(existing_file)
@@ -1660,6 +1667,182 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+
+    def cmd_session(self, args):
+        """Manage chat sessions. Subcommands: list, save <name>, load <name>, delete <name>, view <name>."""
+        parts = args.strip().split()
+        if not parts:
+            self.io.tool_error(
+                "Please provide a subcommand for /session (list, save, load, delete, view)."
+            )
+            return
+
+        subcommand = parts[0]
+        subcommand_args = " ".join(parts[1:])
+
+        if subcommand == "list":
+            self._session_list()
+        elif subcommand == "save":
+            self._session_save(subcommand_args)
+        elif subcommand == "load":
+            self._session_load(subcommand_args)
+        elif subcommand == "delete":
+            self._session_delete(subcommand_args)
+        elif subcommand == "view":
+            self._session_view(subcommand_args)
+        else:
+            self.io.tool_error(
+                f"Invalid subcommand '{subcommand}'. Use list, save, load, view, or delete."
+            )
+
+    def _get_sessions_dir(self):
+        """Helper to get the sessions directory, creating it if needed."""
+        if not self.coder.root:
+            self.io.tool_error("Cannot manage sessions without a git repository root.")
+            return None
+        sessions_dir = Path(self.coder.root) / ".aider" / "sessions"
+        sessions_dir.mkdir(parents=True, exist_ok=True)
+        return sessions_dir
+
+    def _session_list(self):
+        """List all saved sessions"""
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        sessions = sorted(sessions_dir.glob("*.json"))
+        if not sessions:
+            self.io.tool_output("No saved sessions found.")
+            return
+
+        self.io.tool_output("Saved sessions:")
+        for session_file in sessions:
+            self.io.tool_output(f"- {session_file.stem}")
+
+    def _session_save(self, session_name):
+        "Save the current chat session to a named file"
+        if not session_name:
+            self.io.tool_error("Please provide a name for the session.")
+            return
+
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        session_file = self._get_session_file(session_name, sessions_dir)
+
+        chat_history = self.coder.done_messages + self.coder.cur_messages
+
+        session_data = {
+            "version": __version__,
+            "timestamp": datetime.now().isoformat(),
+            "chat_history": chat_history,
+            "editable_files": sorted(list(self.coder.abs_fnames)),
+            "read_only_files": sorted(list(self.coder.abs_read_only_fnames)),
+        }
+
+        try:
+            with open(session_file, "w") as f:
+                json.dump(session_data, f, indent=4)
+            self.io.tool_output(f"Session '{session_name}' saved.")
+        except (IOError, OSError) as e:
+            self.io.tool_error(f"Error saving session: {e}")
+
+    def _session_load(self, session_name):
+        """Load a chat session from a named file"""
+        if not session_name:
+            self.io.tool_error("Please provide the name of the session to load.")
+            return
+
+        session_data = self._get_session_data(session_name)
+        if not session_data:
+            return
+
+        self._clear_chat_history()
+        self._drop_all_files()
+
+        self.coder.done_messages = session_data.get("chat_history", [])
+        self.coder.abs_fnames = set(session_data.get("editable_files", []))
+        self.coder.abs_read_only_fnames = set(session_data.get("read_only_files", []))
+
+        self.io.tool_output(f"Session '{session_name}' loaded.")
+        self.io.tool_output("Use /ls to see the files that are now in the chat.")
+
+    def _get_session_data(self, session_name):
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return None
+
+        session_file = self._get_session_file(session_name, sessions_dir)
+
+        if not session_file.exists():
+            self.io.tool_error(f"Session '{session_name}' not found.")
+            return None
+
+        try:
+            with open(session_file, "r") as f:
+                session_data = json.load(f)
+                return session_data
+        except Exception as e:
+            self.io.tool_error(f"Error loading session file: {e}")
+            return None
+
+    @staticmethod
+    def _get_session_file(session_name, sessions_dir):
+        session_file = sessions_dir / f"{session_name}.json"
+        return session_file
+
+    def _session_delete(self, session_name):
+        """Delete a saved session file"""
+        if not session_name:
+            self.io.tool_error("Please provide the name of the session to delete.")
+            return
+
+        sessions_dir = self._get_sessions_dir()
+        if not sessions_dir:
+            return
+
+        session_file = self._get_session_file(session_name, sessions_dir)
+
+        if not session_file.exists():
+            self.io.tool_error(f"Session '{session_name}' not found.")
+            return
+
+        try:
+            session_file.unlink()
+            self.io.tool_output(f"Session '{session_name}' deleted.")
+        except OSError as e:
+            self.io.tool_error(f"Error deleting session file: {e}")
+
+    def _session_view(self, session_name):
+        """View the details of a saved session"""
+        if not session_name:
+            self.io.tool_error("Please provide the name of the session to view.")
+            return
+
+        session_data = self._get_session_data(session_name)
+        if not session_data:
+            return
+
+        self.io.tool_output(f"Session Details: {session_name}")
+        self.io.tool_output("-" * (len(session_name) + 17))
+        self.io.tool_output(f"  Version: {session_data.get('version', 'N/A')}")
+        self.io.tool_output(f"  Timestamp: {session_data.get('timestamp', 'N/A')}")
+
+        self.io.tool_output("\n  Editable Files:")
+        for fname in session_data.get("editable_files", []):
+            self.io.tool_output(f"    - {self.coder.get_rel_fname(fname)}")
+
+        self.io.tool_output("\n  Read-only Files:")
+        for fname in session_data.get("read_only_files", []):
+            self.io.tool_output(f"    - {self.coder.get_rel_fname(fname)}")
+
+        self.io.tool_output("\n  Chat History Preview:")
+        for msg in session_data.get("chat_history", []):
+            role = msg.get("role", "unknown")
+            content = msg.get("content", "")
+            preview = (content[:70] + "...") if len(content) > 70 else content
+            self.io.tool_output(f"    - {role.capitalize()}: {preview.splitlines()[0]}")
 
 
 def expand_subdir(file_path):
