@@ -264,13 +264,14 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>anthropic/claude-sonnet-4-20250514</td><td class='right'>493,971</td><td class='right'>52.8%</td></tr>
-<tr><td>gemini/gemini-2.5-pro</td><td class='right'>322,822</td><td class='right'>34.5%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>90,523</td><td class='right'>9.7%</td></tr>
-<tr><td>o3-pro</td><td class='right'>11,150</td><td class='right'>1.2%</td></tr>
-<tr><td>xai/grok-4</td><td class='right'>9,573</td><td class='right'>1.0%</td></tr>
-<tr><td>o3</td><td class='right'>7,004</td><td class='right'>0.7%</td></tr>
-<tr><td>gemini/REDACTED</td><td class='right'>643</td><td class='right'>0.1%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>222,908</td><td class='right'>33.2%</td></tr>
+<tr><td>gpt-5</td><td class='right'>211,072</td><td class='right'>31.4%</td></tr>
+<tr><td>None</td><td class='right'>168,988</td><td class='right'>25.1%</td></tr>
+<tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>5.4%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite</td><td class='right'>15,470</td><td class='right'>2.3%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite-preview-06-17</td><td class='right'>11,371</td><td class='right'>1.7%</td></tr>
+<tr><td>o3</td><td class='right'>3,915</td><td class='right'>0.6%</td></tr>
+<tr><td>openai/REDACTED</td><td class='right'>1,970</td><td class='right'>0.3%</td></tr>
 </table>
 
 {: .note :}
@@ -373,6 +374,10 @@ Aider is
 [open source and available on GitHub](https://github.com/Aider-AI/aider)
 under an 
 [Apache 2.0 license](https://github.com/Aider-AI/aider/blob/main/LICENSE.txt).
+
+## Can I Script Aider?
+
+Yes. You can script aider via the command line or python. See more from here: [Scripting aider](https://aider.chat/docs/scripting.html)
 
 
 <div style="height:80vh"></div>

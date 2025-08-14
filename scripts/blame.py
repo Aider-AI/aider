@@ -89,8 +89,13 @@ def get_commit_authors(commits):
     commit_to_author = dict()
     for commit in commits:
         author = run(["git", "show", "-s", "--format=%an", commit]).strip()
-        commit_message = run(["git", "show", "-s", "--format=%s", commit]).strip()
-        if commit_message.lower().startswith("aider:"):
+        subject = run(["git", "show", "-s", "--format=%s", commit]).strip()
+        full_message = run(["git", "show", "-s", "--format=%B", commit]).strip()
+
+        lower_subject = subject.lower()
+        lower_full = full_message.lower()
+
+        if lower_subject.startswith("aider:") or "co-authored-by: aider" in lower_full:
             author += " (aider)"
         commit_to_author[commit] = author
     return commit_to_author

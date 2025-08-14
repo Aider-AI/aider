@@ -58,6 +58,7 @@ cog.out(model_list)
 - anthropic.claude-3-5-haiku-20241022-v1:0
 - anthropic.claude-3-5-sonnet-20241022-v2:0
 - anthropic.claude-3-7-sonnet-20250219-v1:0
+- anthropic.claude-opus-4-1-20250805-v1:0
 - anthropic.claude-opus-4-20250514-v1:0
 - anthropic.claude-sonnet-4-20250514-v1:0
 - apac.anthropic.claude-3-5-sonnet-20241022-v2:0
@@ -73,9 +74,10 @@ cog.out(model_list)
 - claude-3-haiku-20240307
 - claude-3-opus-20240229
 - claude-3-opus-latest
-- claude-3-sonnet-20240229
 - claude-4-opus-20250514
 - claude-4-sonnet-20250514
+- claude-opus-4-1
+- claude-opus-4-1-20250805
 - claude-opus-4-20250514
 - claude-sonnet-4-20250514
 - codestral/codestral-2405
@@ -89,12 +91,15 @@ cog.out(model_list)
 - eu.anthropic.claude-3-5-haiku-20241022-v1:0
 - eu.anthropic.claude-3-5-sonnet-20241022-v2:0
 - eu.anthropic.claude-3-7-sonnet-20250219-v1:0
+- eu.anthropic.claude-opus-4-1-20250805-v1:0
 - eu.anthropic.claude-opus-4-20250514-v1:0
 - eu.anthropic.claude-sonnet-4-20250514-v1:0
 - mistral/codestral-2405
 - mistral/codestral-latest
 - mistral/codestral-mamba-latest
+- mistral/devstral-medium-2507
 - mistral/devstral-small-2505
+- mistral/devstral-small-2507
 - mistral/magistral-medium-2506
 - mistral/magistral-medium-latest
 - mistral/magistral-small-2506
@@ -127,6 +132,7 @@ cog.out(model_list)
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
 - us.anthropic.claude-3-7-sonnet-20250219-v1:0
+- us.anthropic.claude-opus-4-1-20250805-v1:0
 - us.anthropic.claude-opus-4-20250514-v1:0
 - us.anthropic.claude-sonnet-4-20250514-v1:0
 - vertex_ai/claude-3-5-haiku
@@ -143,6 +149,8 @@ cog.out(model_list)
 - vertex_ai/claude-3-sonnet
 - vertex_ai/claude-3-sonnet@20240229
 - vertex_ai/claude-opus-4
+- vertex_ai/claude-opus-4-1
+- vertex_ai/claude-opus-4-1@20250805
 - vertex_ai/claude-opus-4@20250514
 - vertex_ai/claude-sonnet-4
 - vertex_ai/claude-sonnet-4@20250514
