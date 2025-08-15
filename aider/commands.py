@@ -353,6 +353,34 @@ class Commands:
         commit_message = args.strip() if args else None
         self.coder.repo.commit(message=commit_message, coder=self.coder)
 
+    def cmd_scommit(self, args=None):
+        "Commit edits to the repo made outside the chat (commit message optional)"
+        try:
+            self.raw_cmd_scommit(args)
+        except ANY_GIT_ERROR as err:
+            self.io.tool_error(f"Unable to complete commit: {err}")
+
+    def raw_cmd_scommit(self, args=None):
+        if not self.coder.repo:
+            self.io.tool_error("No git repository found.")
+            return
+
+        commit_message = args.strip() if args else None
+
+        # Show the diff of the staged changes
+        self.io.tool_output("Staged changes diff:")
+        diff = self.coder.repo.repo.git.diff("--cached")  # Access git attribute of self.repo.repo
+        self.io.print(diff)
+
+        # Check if the repository is dirty (optional warning)
+        if self.coder.repo.is_dirty():
+            self.io.tool_warning("The repository has uncommitted changes in the working tree. Proceeding with the commit of staged changes.")
+
+        # staged ONLY:
+        self.coder.repo.repo.git.commit("-m", commit_message or "Staged changes commit") # test1.txt should be clean after commit
+
+        self.io.tool_output("Staged changes committed successfully.")
+
     def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"
 
@@ -1533,6 +1561,51 @@ class Commands:
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+
+    def cmd_md(self, args):
+        "Save the last assistant message to a specified file and directory"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to save the message to.")
+            return
+
+        try:
+            # Parse the filename from the arguments
+            filename = args.strip()
+            default_dir = Path(self.coder.root) / "notes"
+
+            # Ensure the default directory exists
+            default_dir.mkdir(parents=True, exist_ok=True)
+
+            # Set the filepath to the default directory if only a filename is provided
+            if not Path(filename).parent or Path(filename).parent == Path('.'):
+                filepath = default_dir / filename
+            else:
+                filepath = Path(expanduser(filename))
+
+            # Get the last assistant message
+            all_messages = self.coder.done_messages + self.coder.cur_messages
+            assistant_messages = [msg for msg in reversed(all_messages) if msg["role"] == "assistant"]
+
+            if not assistant_messages:
+                self.io.tool_error("No assistant messages found to save.")
+                return
+
+            last_assistant_message = assistant_messages[0]["content"]
+
+            # Save the message to the specified file
+            with open(filepath, "w", encoding=self.io.encoding) as f:
+                f.write(last_assistant_message)
+
+            self.io.tool_output(f"Saved last assistant message to {filepath}")
+
+        except PermissionError as e:
+            self.io.tool_error(f"Permission denied: {e}")
+            self.io.tool_output("Please ensure you have write permissions for the specified directory.")
+        except ValueError:
+            self.io.tool_error("Please provide a valid filename.")
+        except Exception as e:
+            self.io.tool_error(f"An unexpected error occurred while saving the message: {str(e)}")
+
 
     def cmd_report(self, args):
         "Report a problem by opening a GitHub Issue"
