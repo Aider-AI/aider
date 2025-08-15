@@ -226,6 +226,12 @@ def get_parser(default_config_files, git_root):
             " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
     )
+    group.add_argument(
+        "--max-output-tokens",
+        type=int,
+        default=None,
+        help="Set the maximum number of output tokens for LLM responses (overrides model default)",
+    )
 
     ##########
     group = parser.add_argument_group("Cache settings")

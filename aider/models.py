@@ -310,7 +310,7 @@ model_info_manager = ModelInfoManager()
 
 class Model(ModelSettings):
     def __init__(
-        self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False
+        self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False, max_tokens=None
     ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
@@ -321,6 +321,7 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
+        self.max_tokens = max_tokens
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -957,6 +958,10 @@ class Model(ModelSettings):
             model=self.name,
             stream=stream,
         )
+
+        # Add user-specified max_tokens if set
+        if self.max_tokens is not None:
+            kwargs["max_tokens"] = self.max_tokens
 
         if self.use_temperature is not False:
             if temperature is None:
