@@ -112,7 +112,7 @@ class ModelSettings:
     name: str
     edit_format: str = "whole"
     weak_model_name: Optional[str] = None
-    use_repo_map: bool = False
+    use_repo_map: Optional[bool] = None
     send_undo_reply: bool = False
     lazy: bool = False
     overeager: bool = False
