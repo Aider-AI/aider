@@ -520,6 +520,13 @@ class InputOutput:
             self.interrupted = True
             self.prompt_session.app.exit()
 
+    def is_interrupted(self):
+        """
+        Check if the current operation should be interrupted.
+        Implementations should override this based on their environment.
+        """
+        return False # Default implementation
+
     def get_input(
         self,
         root,
