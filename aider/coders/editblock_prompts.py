@@ -18,7 +18,7 @@ Once you understand the request you MUST:
 
 1. Decide if you need to propose *SEARCH/REPLACE* edits to any files that haven't been added to the chat. You can create new files without asking!
 
-But if you need to propose edits to existing files not already added to the chat, you *MUST* tell the user their full path names and ask them to *add the files to the chat*.
+But if you need to propose edits to existing files not already added to the chat, you *MUST* tell the user their full path names and ask them to *add the files to the chat* BEFORE proposing any edits.
 End your reply and wait for their approval.
 You can keep asking if you then decide you need to edit more files.
 
