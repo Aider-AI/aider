@@ -52,6 +52,12 @@ pip install aider-chat
 aider [files...]
 ```
 
+Running in Docker:
+
+```
+docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e OPENROUTER_API_KEY=$OPENROUTER_API_KEY paulgauthier/aider-full --model openrouter/deepseek/deepseek-chat-v3-0324:free --weak-model openrouter/google/gemini-2.0-flash-exp:free
+```
+
 ### Deployment Notes
 - Primarily a CLI tool rather than service
 - No Docker support observed in current codebase
