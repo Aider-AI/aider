@@ -25,7 +25,7 @@ Once you understand the request you MUST:
    • End your reply and wait for their approval.
    • You can keep asking if you then decide you need to edit more files.
 
-2. Think step‑by‑step and explain the needed changes in a few short sentences.
+2. Think step-by-step and explain the needed changes in a few short sentences.
 
 3. Describe the changes using the V4A diff format, enclosed within `*** Begin Patch` and `*** End Patch` markers.
 
