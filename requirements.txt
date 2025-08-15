@@ -525,6 +525,6 @@ zipp==3.23.0
     # via
     #   -c requirements/common-constraints.txt
     #   importlib-metadata
-    
+
 tree-sitter==0.23.2; python_version < "3.10"
 tree-sitter==0.24.0; python_version >= "3.10"
