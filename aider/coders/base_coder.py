@@ -2050,7 +2050,21 @@ class Coder:
 
         # Run the async execution and collect results
         if tool_calls:
-            all_results = asyncio.run(_execute_all_tool_calls())
+            all_results = []
+            max_retries = 3
+            for i in range(max_retries):
+                try:
+                    all_results = asyncio.run(_execute_all_tool_calls())
+                    break
+                except asyncio.exceptions.CancelledError:
+                    if i < max_retries - 1:
+                        time.sleep(0.1)  # Brief pause before retrying
+                    else:
+                        self.io.tool_warning(
+                            "MCP tool execution failed after multiple retries due to cancellation."
+                        )
+                        all_results = []
+
             # Flatten the results from all servers
             for server_results in all_results:
                 tool_responses.extend(server_results)
@@ -2083,7 +2097,21 @@ class Coder:
             return [result for result in results if result is not None]
 
         if self.mcp_servers:
-            tools = asyncio.run(get_all_server_tools())
+            # Retry initialization in case of CancelledError
+            max_retries = 3
+            for i in range(max_retries):
+                try:
+                    tools = asyncio.run(get_all_server_tools())
+                    break
+                except asyncio.exceptions.CancelledError:
+                    if i < max_retries - 1:
+                        time.sleep(0.1)  # Brief pause before retrying
+                    else:
+                        self.io.tool_warning(
+                            "MCP tool initialization failed after multiple retries due to"
+                            " cancellation."
+                        )
+                        tools = []
 
         if len(tools) > 0:
             self.io.tool_output("MCP servers configured:")
