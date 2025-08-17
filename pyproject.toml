@@ -1,6 +1,7 @@
 
 [project]
 name = "aider-ce"
+version = "0.87.2"
 description = "Aider is AI pair programming in your terminal"
 readme = "README.md"
 classifiers = [
