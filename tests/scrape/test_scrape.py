@@ -1,3 +1,4 @@
+import sys
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -40,7 +41,14 @@ class TestScrape(unittest.TestCase):
     @patch("aider.commands.install_playwright")
     @patch("aider.commands.Scraper")
     def test_cmd_web_imports_playwright(self, mock_scraper_class, mock_install_playwright):
-        mock_install_playwright.return_value = True
+        # Since install_playwright is mocked, we need to simulate its side effect
+        # of making the playwright module importable.
+        def mock_install(*args, **kwargs):
+            sys.modules["playwright"] = MagicMock()
+            return True
+
+        mock_install_playwright.side_effect = mock_install
+
         mock_scraper_instance = mock_scraper_class.return_value
         mock_scraper_instance.scrape.return_value = "Scraped content"
 
@@ -48,28 +56,33 @@ class TestScrape(unittest.TestCase):
         mock_print_error = MagicMock()
         self.commands.io.tool_error = mock_print_error
 
-        # Run the cmd_web command
-        result = self.commands.cmd_web("https://example.com", return_content=True)
-
-        # Assert that the result contains some content
-        self.assertIsNotNone(result)
-        self.assertIn("Scraped content", result)
-
-        # Try to import playwright
         try:
-            import playwright  # noqa: F401
+            # Run the cmd_web command
+            result = self.commands.cmd_web("https://example.com", return_content=True)
 
-            playwright_imported = True
-        except ImportError:
-            playwright_imported = False
+            # Assert that the result contains some content
+            self.assertIsNotNone(result)
+            self.assertIn("Scraped content", result)
 
-        # Assert that playwright was successfully imported
-        self.assertTrue(
-            playwright_imported, "Playwright should be importable after running cmd_web"
-        )
+            # Try to import playwright
+            try:
+                import playwright  # noqa: F401
 
-        # Assert that print_error was never called
-        mock_print_error.assert_not_called()
+                playwright_imported = True
+            except ImportError:
+                playwright_imported = False
+
+            # Assert that playwright was successfully imported
+            self.assertTrue(
+                playwright_imported, "Playwright should be importable after running cmd_web"
+            )
+
+            # Assert that print_error was never called
+            mock_print_error.assert_not_called()
+        finally:
+            # Clean up sys.modules to avoid side effects on other tests
+            if "playwright" in sys.modules:
+                del sys.modules["playwright"]
 
     @patch("aider.scrape.Scraper.scrape_with_playwright")
     def test_scrape_actual_url_with_playwright(self, mock_scrape_playwright):
