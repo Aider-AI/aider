@@ -23,6 +23,7 @@ Homepage = "https://github.com/dwash96/aider-ce"
 
 [project.scripts]
 aider = "aider.main:main"
+aider-ce = "aider.main:main"
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.txt" }

@@ -20,7 +20,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
     * [Enforce single tool call at a time](https://github.com/Aider-AI/aider/commit/3346c3e6194096cef64b1899b017bde36a65f794)
     * [Upgraded MCP dep to 1.12.3 for Remote MCP Tool Calls](https://github.com/dwash96/aider-ce/commit/a91ee1c03627a31093364fd2a09e654781b1b879)
     * [Updated base Python version to 3.12 to better support navigator mode (might consider undoing this, if dependency list supports it)](https://github.com/dwash96/aider-ce/commit/9ed416d523c11362a3ba9fc4c02134e0e79d41fc)
-* [Supress LiteLLM asyncio errors that clutter output](https://github.com/Aider-AI/aider/issues/6)
+* [Suppress LiteLLM asyncio errors that clutter output](https://github.com/Aider-AI/aider/issues/6)
 * [Updated Docker File Build Process](https://github.com/Aider-AI/aider/commit/cbab01458d0a35c03b30ac2f6347a74fc2b9f662)
     * [Manually install necessary ubuntu dependencies](https://github.com/dwash96/aider-ce/issues/14)
 * [.gitignore updates](https://github.com/dwash96/aider-ce/commit/7c7e803fa63d1acd860eef1423e5a03220df6017)

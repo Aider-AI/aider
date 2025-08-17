@@ -1826,12 +1826,15 @@ This command will print 'Hello, World!' to the console."""
 
             coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
 
+            # To trigger a commit, the file must be modified
+            fname.write_text("one changed\n")
+
             res = coder.auto_commit({str(fname)})
             self.assertIsNotNone(res)
 
-            # Don't expect any commits as nothing has changed
+            # A new commit should be created
             num_commits = len(list(repo.iter_commits()))
-            self.assertEqual(num_commits, 1)
+            self.assertEqual(num_commits, 2)
 
             coder.repo.get_commit_message.assert_called_once()
 
@@ -1860,9 +1863,9 @@ This command will print 'Hello, World!' to the console."""
             server_tool_calls = {mock_server: [tool_call]}
 
             # Mock the return value of call_openai_tool
-            mock_content1 = MagicMock()
+            mock_content1 = MagicMock(spec=["text"])
             mock_content1.text = "First part. "
-            mock_content2 = MagicMock()
+            mock_content2 = MagicMock(spec=["text"])
             mock_content2.text = "Second part."
 
             mock_call_result = MagicMock()
