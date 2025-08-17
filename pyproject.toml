@@ -1,7 +1,6 @@
 
 [project]
 name = "aider-ce"
-version = "0.87.2"
 description = "Aider is AI pair programming in your terminal"
 readme = "README.md"
 classifiers = [
@@ -47,6 +46,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools_scm]
 write_to = "aider/_version.py"
+local_scheme = "no-local-version"
 
 [tool.codespell]
 skip = "*.svg,Gemfile.lock,tests/fixtures/*,aider/website/assets/*"
