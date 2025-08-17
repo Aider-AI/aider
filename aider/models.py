@@ -78,6 +78,15 @@ claude-opus-4-20250514
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
 
+GITHUB_COPILOT_MODELS = """
+github_copilot/gpt-4.1
+github_copilot/gpt-4o
+github_copilot/o3-mini
+github_copilot/claude-sonnet-4
+"""
+
+GITHUB_COPILOT_MODELS = [ln.strip() for ln in GITHUB_COPILOT_MODELS.splitlines() if ln.strip()]
+
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
     # Claude models
@@ -91,6 +100,11 @@ MODEL_ALIASES = {
     "35turbo": "gpt-3.5-turbo",
     "35-turbo": "gpt-3.5-turbo",
     "3": "gpt-3.5-turbo",
+    # GitHub Copilot models
+    "copilot-4o": "github_copilot/gpt-4o",
+    "copilot-4.1": "github_copilot/gpt-4.1",
+    "copilot-o3-mini": "github_copilot/o3-mini",
+    "copilot-sonnet-4": "github_copilot/claude-sonnet-4",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
     "flash": "gemini/gemini-2.5-flash",
@@ -988,13 +1002,14 @@ class Model(ModelSettings):
         kwargs["messages"] = messages
 
         # Are we using github copilot?
-        if "GITHUB_COPILOT_TOKEN" in os.environ:
+        if "GITHUB_COPILOT_TOKEN" in os.environ or self.name.startswith("github_copilot/"):
             if "extra_headers" not in kwargs:
                 kwargs["extra_headers"] = {
                     "Editor-Version": f"aider/{__version__}",
                     "Copilot-Integration-Id": "vscode-chat",
                 }
 
+        if "GITHUB_COPILOT_TOKEN" in os.environ:
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
         res = litellm.completion(**kwargs)
