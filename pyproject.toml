@@ -1,6 +1,6 @@
 
 [project]
-name = "aider-chat"
+name = "aider-ce"
 description = "Aider is AI pair programming in your terminal"
 readme = "README.md"
 classifiers = [

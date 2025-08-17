@@ -2,7 +2,15 @@ FROM python:3.12-slim AS base
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y build-essential git libportaudio2 pandoc  && \
+    apt-get install --no-install-recommends -y build-essential git libportaudio2 pandoc wget fonts-unifont fontconfig  && \
+    wget -O /tmp/fonts-ubuntu.deb http://ftp.de.debian.org/debian/pool/non-free/f/fonts-ubuntu/fonts-ubuntu_0.83-6_all.deb && \
+    wget -O /tmp/ttf-unifont.deb http://ftp.de.debian.org/debian/pool/main/u/unifont/ttf-unifont_13.0.06-1_all.deb && \
+    wget -O /tmp/ttf-ubuntu-font-family.deb http://ftp.de.debian.org/debian/pool/non-free/f/fonts-ubuntu/ttf-ubuntu-font-family_0.83-4_all.deb && \
+    dpkg -i /tmp/fonts-ubuntu.deb /tmp/ttf-unifont.deb /tmp/ttf-ubuntu-font-family.deb && \
+    apt-get install -f -y && \
+    rm /tmp/fonts-ubuntu.deb /tmp/ttf-unifont.deb /tmp/ttf-ubuntu-font-family.deb && \
+    fc-cache -fv && \
+    rm -rf /var/lib/apt/lists/* && \    
     rm -rf /var/lib/apt/lists/*
 
 # Create app user with UID 1000
@@ -32,7 +40,7 @@ RUN git config --system --add safe.directory /app
 ENV HOME=/app
 
 #########################
-FROM base AS aider
+FROM base AS aider-ce
 
 ENV AIDER_DOCKER_IMAGE=dustinwashington/aider
 
@@ -45,17 +53,7 @@ RUN /venv/bin/python -m pip install --no-cache-dir -r /tmp/aider/requirements.tx
     rm -rf /tmp/aider
 
 # Install playwright browsers
-RUN apt update && \
-    apt install -y wget fonts-unifont fontconfig && \
-    wget -O /tmp/fonts-ubuntu.deb http://ftp.de.debian.org/debian/pool/non-free/f/fonts-ubuntu/fonts-ubuntu_0.83-6_all.deb && \
-    wget -O /tmp/ttf-unifont.deb http://ftp.de.debian.org/debian/pool/main/u/unifont/ttf-unifont_13.0.06-1_all.deb && \
-    wget -O /tmp/ttf-ubuntu-font-family.deb http://ftp.de.debian.org/debian/pool/non-free/f/fonts-ubuntu/ttf-ubuntu-font-family_0.83-4_all.deb && \
-    dpkg -i /tmp/fonts-ubuntu.deb /tmp/ttf-unifont.deb /tmp/ttf-ubuntu-font-family.deb && \
-    apt-get install -f -y && \
-    rm /tmp/fonts-ubuntu.deb /tmp/ttf-unifont.deb /tmp/ttf-ubuntu-font-family.deb && \
-    fc-cache -fv && \
-    rm -rf /var/lib/apt/lists/* && \
-    /venv/bin/python -m pip install --no-cache-dir playwright && \
+RUN /venv/bin/python -m pip install --no-cache-dir playwright && \
     /venv/bin/python -m playwright install --with-deps chromium
 
 # Fix site-packages permissions
