@@ -1,6 +1,38 @@
+## Fork Additions
+
+This project aims to be compatible with upstream Aider, but with priority commits merged in and with some opportunistic bug fixes and optimizations
+
+### Merged PRs
+
+* [MCP: #3937](https://github.com/Aider-AI/aider/pull/3937)
+    * [MCP Multi Tool Response](https://github.com/quinlanjager/aider/pull/1)
+* [Navigator Mode: #3781](https://github.com/Aider-AI/aider/pull/3781)
+    * [Navigator Mode Large File Count](https://github.com/Aider-AI/aider/commit/b88a7bda649931798209945d9687718316c7427f)
+* [Qwen 3: #4383](https://github.com/Aider-AI/aider/pull/4383)
+* [Fuzzy Search: #4366](https://github.com/Aider-AI/aider/pull/4366)
+* [Map Cache Location Config: #2911](https://github.com/Aider-AI/aider/pull/2911)
+* [Enhanced System Prompts: #3804](https://github.com/Aider-AI/aider/pull/3804)
+* [Repo Map File Name Truncation Fix: #4320](https://github.com/Aider-AI/aider/pull/4320)
+
+### Other Updates
+
+* [Added Remote MCP Tool Calls With HTTP Streaming](https://github.com/Aider-AI/aider/commit/a86039f73579df7c32fee910967827c9fccdec0d)
+    * [Enforce single tool call at a time](https://github.com/Aider-AI/aider/commit/3346c3e6194096cef64b1899b017bde36a65f794)
+    * [Upgraded MCP dep to 1.12.3 for Remote MCP Tool Calls](https://github.com/dwash96/aider-ce/commit/a91ee1c03627a31093364fd2a09e654781b1b879)
+    * [Updated base Python version to 3.12 to better support navigator mode (might consider undoing this, if dependency list supports it)](https://github.com/dwash96/aider-ce/commit/9ed416d523c11362a3ba9fc4c02134e0e79d41fc)
+* [Suppress LiteLLM asyncio errors that clutter output](https://github.com/Aider-AI/aider/issues/6)
+* [Updated Docker File Build Process](https://github.com/Aider-AI/aider/commit/cbab01458d0a35c03b30ac2f6347a74fc2b9f662)
+    * [Manually install necessary ubuntu dependencies](https://github.com/dwash96/aider-ce/issues/14)
+* [.gitignore updates](https://github.com/dwash96/aider-ce/commit/7c7e803fa63d1acd860eef1423e5a03220df6017)
+* [Experimental Context Compaction For Longer Running Generation Tasks](https://github.com/Aider-AI/aider/issues/6)
+
+### Other Notes
+* [MCP Configuration](https://github.com/dwash96/aider/blob/main/aider-ce/website/docs/config/mcp.md)
+
 <p align="center">
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
 </p>
+
 
 <h1 align="center">
 AI Pair Programming in Your Terminal

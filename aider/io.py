@@ -128,13 +128,13 @@ class AutoCompleter(Completer):
         if self.tokenized:
             return
         self.tokenized = True
-        
+
         # Performance optimization for large file sets
         if len(self.all_fnames) > 100:
             # Skip tokenization for very large numbers of files to avoid input lag
             self.tokenized = True
             return
-            
+
         # Limit number of files to process to avoid excessive tokenization time
         process_fnames = self.all_fnames
         if len(process_fnames) > 50:
@@ -1177,7 +1177,9 @@ class InputOutput:
         if self.chat_history_file is not None:
             try:
                 self.chat_history_file.parent.mkdir(parents=True, exist_ok=True)
-                with self.chat_history_file.open("a", encoding=self.encoding or "utf-8", errors="ignore") as f:
+                with self.chat_history_file.open(
+                    "a", encoding=self.encoding or "utf-8", errors="ignore"
+                ) as f:
                     f.write(text)
             except (PermissionError, OSError) as err:
                 print(f"Warning: Unable to write to chat history file {self.chat_history_file}.")
@@ -1187,18 +1189,18 @@ class InputOutput:
     def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
         # Optimization for large number of files
         total_files = len(rel_fnames) + len(rel_read_only_fnames or [])
-        
+
         # For very large numbers of files, use a summary display
         if total_files > 50:
             read_only_count = len(rel_read_only_fnames or [])
             editable_count = len([f for f in rel_fnames if f not in (rel_read_only_fnames or [])])
-            
+
             summary = f"{editable_count} editable file(s)"
             if read_only_count > 0:
                 summary += f", {read_only_count} read-only file(s)"
             summary += " (use /ls to list all files)\n"
             return summary
-            
+
         # Original implementation for reasonable number of files
         if not self.pretty:
             read_only_files = []

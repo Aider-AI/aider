@@ -1,6 +1,6 @@
 
 [project]
-name = "aider-chat"
+name = "aider-ce"
 description = "Aider is AI pair programming in your terminal"
 readme = "README.md"
 classifiers = [
@@ -19,10 +19,11 @@ requires-python = ">=3.10,<3.13"
 dynamic = ["dependencies", "optional-dependencies", "version"]
 
 [project.urls]
-Homepage = "https://github.com/dwash96/aider"
+Homepage = "https://github.com/dwash96/aider-ce"
 
 [project.scripts]
 aider = "aider.main:main"
+aider-ce = "aider.main:main"
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.txt" }

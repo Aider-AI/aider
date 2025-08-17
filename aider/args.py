@@ -305,6 +305,16 @@ def get_parser(default_config_files, git_root):
             " minified JS files etc. (default: 100)"
         ),
     )
+    group.add_argument(
+        "--map-cache-dir",
+        metavar="MAP_CACHE_DIR",
+        dest="map_cache_dir",
+        default=".",
+        help=(
+            "Directory for the repository map cache .aider.tags.cache.v3"
+            " (default: current directory)"
+        ),
+    )
 
     ##########
     group = parser.add_argument_group("History Files")

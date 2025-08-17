@@ -3,9 +3,12 @@ import os
 import re
 import traceback
 
+
 class ToolError(Exception):
     """Custom exception for tool-specific errors that should be reported to the LLM."""
+
     pass
+
 
 def resolve_paths(coder, file_path):
     """Resolves absolute and relative paths for a given file path."""
@@ -16,6 +19,7 @@ def resolve_paths(coder, file_path):
     except Exception as e:
         # Wrap unexpected errors during path resolution
         raise ToolError(f"Error resolving path '{file_path}': {e}")
+
 
 def validate_file_for_edit(coder, file_path):
     """
@@ -42,10 +46,13 @@ def validate_file_for_edit(coder, file_path):
     content = coder.io.read_text(abs_path)
     if content is None:
         # This indicates an issue reading a file we know exists and is in context
-        coder.io.tool_error(f"Internal error: Could not read file '{file_path}' which should be accessible.")
+        coder.io.tool_error(
+            f"Internal error: Could not read file '{file_path}' which should be accessible."
+        )
         raise ToolError(f"Could not read file '{file_path}'")
 
     return abs_path, rel_path, content
+
 
 def find_pattern_indices(lines, pattern, use_regex=False):
     """Finds all line indices matching a pattern."""
@@ -54,6 +61,7 @@ def find_pattern_indices(lines, pattern, use_regex=False):
         if (use_regex and re.search(pattern, line)) or (not use_regex and pattern in line):
             indices.append(i)
     return indices
+
 
 def select_occurrence_index(indices, occurrence, pattern_desc="Pattern"):
     """
@@ -65,25 +73,29 @@ def select_occurrence_index(indices, occurrence, pattern_desc="Pattern"):
         raise ToolError(f"{pattern_desc} not found")
 
     try:
-        occurrence = int(occurrence) # Ensure occurrence is an integer
-        if occurrence == -1: # Last occurrence
+        occurrence = int(occurrence)  # Ensure occurrence is an integer
+        if occurrence == -1:  # Last occurrence
             if num_occurrences == 0:
-                 raise ToolError(f"{pattern_desc} not found, cannot select last occurrence.")
+                raise ToolError(f"{pattern_desc} not found, cannot select last occurrence.")
             target_idx = num_occurrences - 1
         elif 1 <= occurrence <= num_occurrences:
-            target_idx = occurrence - 1 # Convert 1-based to 0-based
+            target_idx = occurrence - 1  # Convert 1-based to 0-based
         else:
-            raise ToolError(f"Occurrence number {occurrence} is out of range for {pattern_desc}. Found {num_occurrences} occurrences.")
+            raise ToolError(
+                f"Occurrence number {occurrence} is out of range for {pattern_desc}. Found"
+                f" {num_occurrences} occurrences."
+            )
     except ValueError:
         raise ToolError(f"Invalid occurrence value: '{occurrence}'. Must be an integer.")
 
     return indices[target_idx]
 
+
 def determine_line_range(
     coder,
     file_path,
     lines,
-    start_pattern_line_index=None, # Made optional
+    start_pattern_line_index=None,  # Made optional
     end_pattern=None,
     line_count=None,
     target_symbol=None,
@@ -102,36 +114,42 @@ def determine_line_range(
     if sum(targeting_methods) > 1:
         raise ToolError("Cannot specify target_symbol along with start_pattern.")
     if sum(targeting_methods) == 0:
-         raise ToolError("Must specify either target_symbol or start_pattern.") # Or line numbers for line-based tools, handled elsewhere
+        raise ToolError(
+            "Must specify either target_symbol or start_pattern."
+        )  # Or line numbers for line-based tools, handled elsewhere
 
     if target_symbol:
         if end_pattern or line_count:
-             raise ToolError("Cannot specify end_pattern or line_count when using target_symbol.")
+            raise ToolError("Cannot specify end_pattern or line_count when using target_symbol.")
         try:
             # Use repo_map to find the symbol's definition range
-            start_line, end_line = coder.repo_map.get_symbol_definition_location(file_path, target_symbol)
+            start_line, end_line = coder.repo_map.get_symbol_definition_location(
+                file_path, target_symbol
+            )
             return start_line, end_line
-        except AttributeError: # Use specific exception
-             # Check if repo_map exists and is initialized before accessing methods
-             if not hasattr(coder, 'repo_map') or coder.repo_map is None:
-                 raise ToolError("RepoMap is not available or not initialized.")
-             # If repo_map exists, the error might be from get_symbol_definition_location itself
-             # Re-raise ToolErrors directly
-             raise
+        except AttributeError:  # Use specific exception
+            # Check if repo_map exists and is initialized before accessing methods
+            if not hasattr(coder, "repo_map") or coder.repo_map is None:
+                raise ToolError("RepoMap is not available or not initialized.")
+            # If repo_map exists, the error might be from get_symbol_definition_location itself
+            # Re-raise ToolErrors directly
+            raise
         except ToolError as e:
-             # Propagate specific ToolErrors from repo_map (not found, ambiguous, etc.)
-             raise e
+            # Propagate specific ToolErrors from repo_map (not found, ambiguous, etc.)
+            raise e
         except Exception as e:
-             # Catch other unexpected errors during symbol lookup
-             raise ToolError(f"Unexpected error looking up symbol '{target_symbol}': {e}")
+            # Catch other unexpected errors during symbol lookup
+            raise ToolError(f"Unexpected error looking up symbol '{target_symbol}': {e}")
 
     # --- Existing logic for pattern/line_count based targeting ---
     # Ensure start_pattern_line_index is provided if not using target_symbol
     if start_pattern_line_index is None:
-         raise ToolError("Internal error: start_pattern_line_index is required when not using target_symbol.")
+        raise ToolError(
+            "Internal error: start_pattern_line_index is required when not using target_symbol."
+        )
 
     # Assign start_line here for the pattern-based logic path
-    start_line = start_pattern_line_index # Start of existing logic
+    start_line = start_pattern_line_index  # Start of existing logic
     start_line = start_pattern_line_index
     end_line = -1
 
@@ -147,7 +165,10 @@ def determine_line_range(
                 found_end = True
                 break
         if not found_end:
-            raise ToolError(f"End pattern '{end_pattern}' not found after start pattern on line {start_line + 1}")
+            raise ToolError(
+                f"End pattern '{end_pattern}' not found after start pattern on line"
+                f" {start_line + 1}"
+            )
     elif line_count:
         try:
             line_count = int(line_count)
@@ -156,7 +177,9 @@ def determine_line_range(
             # Calculate end line index, ensuring it doesn't exceed file bounds
             end_line = min(start_line + line_count - 1, len(lines) - 1)
         except ValueError:
-            raise ToolError(f"Invalid line_count value: '{line_count}'. Must be a positive integer.")
+            raise ToolError(
+                f"Invalid line_count value: '{line_count}'. Must be a positive integer."
+            )
     else:
         # If neither end_pattern nor line_count is given, the range is just the start line
         end_line = start_line
@@ -188,7 +211,7 @@ def generate_unified_diff_snippet(original_content, new_content, file_path, cont
         new_lines,
         fromfile=f"a/{file_path}",
         tofile=f"b/{file_path}",
-        n=context_lines, # Number of context lines
+        n=context_lines,  # Number of context lines
     )
 
     # Join the diff lines, potentially skipping the header if desired,
@@ -196,11 +219,15 @@ def generate_unified_diff_snippet(original_content, new_content, file_path, cont
     diff_snippet = "".join(diff)
 
     # Ensure snippet ends with a newline for cleaner formatting in results
-    if diff_snippet and not diff_snippet.endswith('\n'):
-        diff_snippet += '\n'
+    if diff_snippet and not diff_snippet.endswith("\n"):
+        diff_snippet += "\n"
 
     return diff_snippet
-def apply_change(coder, abs_path, rel_path, original_content, new_content, change_type, metadata, change_id=None):
+
+
+def apply_change(
+    coder, abs_path, rel_path, original_content, new_content, change_type, metadata, change_id=None
+):
     """
     Writes the new content, tracks the change, and updates coder state.
     Returns the final change ID. Raises ToolError on tracking failure.
@@ -213,7 +240,7 @@ def apply_change(coder, abs_path, rel_path, original_content, new_content, chang
             original_content=original_content,
             new_content=new_content,
             metadata=metadata,
-            change_id=change_id
+            change_id=change_id,
         )
     except Exception as track_e:
         # Log the error but also raise ToolError to inform the LLM
@@ -233,27 +260,37 @@ def handle_tool_error(coder, tool_name, e, add_traceback=True):
     # Return only the core error message to the LLM for brevity
     return f"Error: {str(e)}"
 
-def format_tool_result(coder, tool_name, success_message, change_id=None, diff_snippet=None, dry_run=False, dry_run_message=None):
+
+def format_tool_result(
+    coder,
+    tool_name,
+    success_message,
+    change_id=None,
+    diff_snippet=None,
+    dry_run=False,
+    dry_run_message=None,
+):
     """Formats the result message for tool execution."""
     if dry_run:
         full_message = dry_run_message or f"Dry run: Would execute {tool_name}."
         if diff_snippet:
             full_message += f" Diff snippet:\n{diff_snippet}"
-        coder.io.tool_output(full_message) # Log the dry run action
+        coder.io.tool_output(full_message)  # Log the dry run action
         return full_message
     else:
         # Use the provided success message, potentially adding change_id and diff
         full_message = f"✅ {success_message}"
         if change_id:
             full_message += f" (change_id: {change_id})"
-        coder.io.tool_output(full_message) # Log the success action
+        coder.io.tool_output(full_message)  # Log the success action
 
         result_for_llm = f"Successfully executed {tool_name}."
         if change_id:
-             result_for_llm += f" Change ID: {change_id}."
+            result_for_llm += f" Change ID: {change_id}."
         if diff_snippet:
             result_for_llm += f" Diff snippet:\n{diff_snippet}"
         return result_for_llm
+
 
 # Example usage within a hypothetical tool:
 # try:
@@ -263,7 +300,13 @@ def format_tool_result(coder, tool_name, success_message, change_id=None, diff_s
 #         return format_tool_result(coder, "MyTool", "", dry_run=True, diff_snippet=diff)
 #
 #     change_id = apply_change(coder, abs_path, rel_path, original_content, new_content, 'mytool', metadata)
-#     return format_tool_result(coder, "MyTool", f"Applied change to {file_path}", change_id=change_id, diff_snippet=diff)
+#     return format_tool_result(
+#       coder,
+#       "MyTool",
+#       f"Applied change to {file_path}",
+#       change_id=change_id,
+#       diff_snippet=diff
+#     )
 # except ToolError as e:
 #     return handle_tool_error(coder, "MyTool", e, add_traceback=False) # Don't need traceback for ToolErrors
 # except Exception as e:

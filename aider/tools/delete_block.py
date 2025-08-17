@@ -1,17 +1,27 @@
-import traceback
 from .tool_utils import (
     ToolError,
-    validate_file_for_edit,
-    find_pattern_indices,
-    select_occurrence_index,
-    determine_line_range,
     apply_change,
-    handle_tool_error,
+    determine_line_range,
+    find_pattern_indices,
     format_tool_result,
     generate_unified_diff_snippet,
+    handle_tool_error,
+    select_occurrence_index,
+    validate_file_for_edit,
 )
 
-def _execute_delete_block(coder, file_path, start_pattern, end_pattern=None, line_count=None, near_context=None, occurrence=1, change_id=None, dry_run=False):
+
+def _execute_delete_block(
+    coder,
+    file_path,
+    start_pattern,
+    end_pattern=None,
+    line_count=None,
+    near_context=None,
+    occurrence=1,
+    change_id=None,
+    dry_run=False,
+):
     """
     Delete a block of text between start_pattern and end_pattern (inclusive).
     Uses utility functions for validation, finding lines, and applying changes.
@@ -37,18 +47,18 @@ def _execute_delete_block(coder, file_path, start_pattern, end_pattern=None, lin
             start_pattern_line_index=start_line_idx,
             end_pattern=end_pattern,
             line_count=line_count,
-            target_symbol=None, # DeleteBlock uses patterns, not symbols
-            pattern_desc=pattern_desc
+            target_symbol=None,  # DeleteBlock uses patterns, not symbols
+            pattern_desc=pattern_desc,
         )
 
         # 4. Prepare the deletion
-        deleted_lines = lines[start_line:end_line+1]
-        new_lines = lines[:start_line] + lines[end_line+1:]
-        new_content = '\n'.join(new_lines)
+        deleted_lines = lines[start_line : end_line + 1]
+        new_lines = lines[:start_line] + lines[end_line + 1 :]
+        new_content = "\n".join(new_lines)
 
         if original_content == new_content:
-            coder.io.tool_warning(f"No changes made: deletion would not change file")
-            return f"Warning: No changes made (deletion would not change file)"
+            coder.io.tool_warning("No changes made: deletion would not change file")
+            return "Warning: No changes made (deletion would not change file)"
 
         # 5. Generate diff for feedback
         diff_snippet = generate_unified_diff_snippet(original_content, new_content, rel_path)
@@ -58,26 +68,46 @@ def _execute_delete_block(coder, file_path, start_pattern, end_pattern=None, lin
 
         # 6. Handle dry run
         if dry_run:
-            dry_run_message = f"Dry run: Would delete {num_deleted} lines ({start_line+1}-{end_line+1}) based on {occurrence_str}start pattern '{start_pattern}' in {file_path}."
-            return format_tool_result(coder, tool_name, "", dry_run=True, dry_run_message=dry_run_message, diff_snippet=diff_snippet)
+            dry_run_message = (
+                f"Dry run: Would delete {num_deleted} lines ({start_line + 1}-{end_line + 1}) based"
+                f" on {occurrence_str}start pattern '{start_pattern}' in {file_path}."
+            )
+            return format_tool_result(
+                coder,
+                tool_name,
+                "",
+                dry_run=True,
+                dry_run_message=dry_run_message,
+                diff_snippet=diff_snippet,
+            )
 
         # 7. Apply Change (Not dry run)
         metadata = {
-            'start_line': start_line + 1,
-            'end_line': end_line + 1,
-            'start_pattern': start_pattern,
-            'end_pattern': end_pattern,
-            'line_count': line_count,
-            'near_context': near_context,
-            'occurrence': occurrence,
-            'deleted_content': '\n'.join(deleted_lines)
+            "start_line": start_line + 1,
+            "end_line": end_line + 1,
+            "start_pattern": start_pattern,
+            "end_pattern": end_pattern,
+            "line_count": line_count,
+            "near_context": near_context,
+            "occurrence": occurrence,
+            "deleted_content": "\n".join(deleted_lines),
         }
         final_change_id = apply_change(
-            coder, abs_path, rel_path, original_content, new_content, 'deleteblock', metadata, change_id
+            coder,
+            abs_path,
+            rel_path,
+            original_content,
+            new_content,
+            "deleteblock",
+            metadata,
+            change_id,
         )
 
         # 8. Format and return result, adding line range to success message
-        success_message = f"Deleted {num_deleted} lines ({start_line+1}-{end_line+1}) (from {occurrence_str}start pattern) in {file_path}"
+        success_message = (
+            f"Deleted {num_deleted} lines ({start_line + 1}-{end_line + 1}) (from"
+            f" {occurrence_str}start pattern) in {file_path}"
+        )
         return format_tool_result(
             coder, tool_name, success_message, change_id=final_change_id, diff_snippet=diff_snippet
         )

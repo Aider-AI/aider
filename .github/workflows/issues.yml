@@ -25,5 +25,5 @@ jobs:
           
       - name: Run issues script
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
         run: python scripts/issues.py --yes

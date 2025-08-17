@@ -76,6 +76,7 @@ class McpServer:
             except Exception as e:
                 logging.error(f"Error during cleanup of server {self.name}: {e}")
 
+
 class HttpStreamingServer(McpServer):
     async def connect(self):
         if self.session is not None:
@@ -97,6 +98,7 @@ class HttpStreamingServer(McpServer):
             await self.disconnect()
             raise
 
+
 class LocalServer(McpServer):
     """
     A dummy McpServer for executing local, in-process tools
@@ -115,4 +117,3 @@ class LocalServer(McpServer):
     async def disconnect(self):
         """Disconnect from the MCP server and clean up resources."""
         self.session = None
-

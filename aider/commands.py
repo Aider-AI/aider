@@ -23,6 +23,7 @@ from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file, run_fzf
+
 from .dump import dump  # noqa: F401
 
 
@@ -195,7 +196,6 @@ class Commands:
             summarize_from_coder = False
         elif ef == "ask":
             summarize_from_coder = False
-
 
         raise SwitchCoder(
             edit_format=edit_format,
@@ -483,18 +483,20 @@ class Commands:
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
         # Enhanced context blocks (only for navigator mode)
-        if hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
+        if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
             # Force token calculation if it hasn't been done yet
-            if hasattr(self.coder, '_calculate_context_block_tokens'):
-                if not hasattr(self.coder, 'tokens_calculated') or not self.coder.tokens_calculated:
+            if hasattr(self.coder, "_calculate_context_block_tokens"):
+                if not hasattr(self.coder, "tokens_calculated") or not self.coder.tokens_calculated:
                     self.coder._calculate_context_block_tokens()
-                    
+
             # Add enhanced context blocks to the display
-            if hasattr(self.coder, 'context_block_tokens') and self.coder.context_block_tokens:
+            if hasattr(self.coder, "context_block_tokens") and self.coder.context_block_tokens:
                 for block_name, tokens in self.coder.context_block_tokens.items():
                     # Format the block name more nicely
-                    display_name = block_name.replace('_', ' ').title()
-                    res.append((tokens, f"{display_name} context block", "/context-blocks to toggle"))
+                    display_name = block_name.replace("_", " ").title()
+                    res.append(
+                        (tokens, f"{display_name} context block", "/context-blocks to toggle")
+                    )
 
         fence = "`" * 3
 
@@ -502,17 +504,19 @@ class Commands:
         # Process files with progress indication
         total_editable_files = len(self.coder.abs_fnames)
         total_readonly_files = len(self.coder.abs_read_only_fnames)
-        
+
         # Display progress for editable files
         if total_editable_files > 0:
             if total_editable_files > 20:
-                self.io.tool_output(f"Calculating tokens for {total_editable_files} editable files...")
-            
+                self.io.tool_output(
+                    f"Calculating tokens for {total_editable_files} editable files..."
+                )
+
             # Calculate tokens for editable files
             for i, fname in enumerate(self.coder.abs_fnames):
                 if i > 0 and i % 20 == 0 and total_editable_files > 20:
                     self.io.tool_output(f"Processed {i}/{total_editable_files} editable files...")
-                
+
                 relative_fname = self.coder.get_rel_fname(fname)
                 content = self.io.read_text(fname)
                 if is_image_file(relative_fname):
@@ -522,17 +526,19 @@ class Commands:
                     content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
                     tokens = self.coder.main_model.token_count(content)
                 file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
-        
+
         # Display progress for read-only files
         if total_readonly_files > 0:
             if total_readonly_files > 20:
-                self.io.tool_output(f"Calculating tokens for {total_readonly_files} read-only files...")
-            
+                self.io.tool_output(
+                    f"Calculating tokens for {total_readonly_files} read-only files..."
+                )
+
             # Calculate tokens for read-only files
             for i, fname in enumerate(self.coder.abs_read_only_fnames):
                 if i > 0 and i % 20 == 0 and total_readonly_files > 20:
                     self.io.tool_output(f"Processed {i}/{total_readonly_files} read-only files...")
-                
+
                 relative_fname = self.coder.get_rel_fname(fname)
                 content = self.io.read_text(fname)
                 if content is not None and not is_image_file(relative_fname):
@@ -945,10 +951,13 @@ class Commands:
                     fname = self.coder.get_rel_fname(abs_file_path)
                     self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
-                    
+
                     # Recalculate context block tokens if using navigator mode
-                    if hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
-                        if hasattr(self.coder, '_calculate_context_block_tokens'):
+                    if (
+                        hasattr(self.coder, "use_enhanced_context")
+                        and self.coder.use_enhanced_context
+                    ):
+                        if hasattr(self.coder, "_calculate_context_block_tokens"):
                             self.coder._calculate_context_block_tokens()
 
     def completions_drop(self):
@@ -957,27 +966,27 @@ class Commands:
         all_files = files + read_only_files
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
-        
+
     def completions_context_blocks(self):
         """Return available context block names for auto-completion."""
-        if not hasattr(self.coder, 'use_enhanced_context') or not self.coder.use_enhanced_context:
+        if not hasattr(self.coder, "use_enhanced_context") or not self.coder.use_enhanced_context:
             return []
-            
+
         # If the coder has context blocks available
-        if hasattr(self.coder, 'context_block_tokens') and self.coder.context_block_tokens:
+        if hasattr(self.coder, "context_block_tokens") and self.coder.context_block_tokens:
             # Get all block names from the tokens dictionary
             block_names = list(self.coder.context_block_tokens.keys())
             # Format them for display (convert snake_case to Title Case)
-            formatted_blocks = [name.replace('_', ' ').title() for name in block_names]
+            formatted_blocks = [name.replace("_", " ").title() for name in block_names]
             return formatted_blocks
-            
+
         # Standard blocks that are typically available
         return [
-            "Context Summary", 
-            "Directory Structure", 
-            "Environment Info", 
-            "Git Status", 
-            "Symbol Outline"
+            "Context Summary",
+            "Directory Structure",
+            "Environment Info",
+            "Git Status",
+            "Symbol Outline",
         ]
 
     def cmd_drop(self, args=""):
@@ -991,16 +1000,16 @@ class Commands:
             else:
                 self.io.tool_output("Dropping all files from the chat session.")
             self._drop_all_files()
-            
+
             # Recalculate context block tokens after dropping all files
-            if hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
-                if hasattr(self.coder, '_calculate_context_block_tokens'):
+            if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
+                if hasattr(self.coder, "_calculate_context_block_tokens"):
                     self.coder._calculate_context_block_tokens()
             return
 
         filenames = parse_quoted_filenames(args)
         files_changed = False
-        
+
         for word in filenames:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
@@ -1043,10 +1052,14 @@ class Commands:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
                     files_changed = True
-                    
+
         # Recalculate context block tokens if any files were changed and using navigator mode
-        if files_changed and hasattr(self.coder, 'use_enhanced_context') and self.coder.use_enhanced_context:
-            if hasattr(self.coder, '_calculate_context_block_tokens'):
+        if (
+            files_changed
+            and hasattr(self.coder, "use_enhanced_context")
+            and self.coder.use_enhanced_context
+        ):
+            if hasattr(self.coder, "_calculate_context_block_tokens"):
                 self.coder._calculate_context_block_tokens()
 
     def cmd_git(self, args):
@@ -1148,39 +1161,39 @@ class Commands:
 
     def cmd_context_management(self, args=""):
         "Toggle context management for large files"
-        if not hasattr(self.coder, 'context_management_enabled'):
+        if not hasattr(self.coder, "context_management_enabled"):
             self.io.tool_error("Context management is only available in navigator mode.")
             return
-            
+
         # Toggle the setting
         self.coder.context_management_enabled = not self.coder.context_management_enabled
-        
+
         # Report the new state
         if self.coder.context_management_enabled:
             self.io.tool_output("Context management is now ON - large files may be truncated.")
         else:
             self.io.tool_output("Context management is now OFF - files will not be truncated.")
-            
+
     def cmd_context_blocks(self, args=""):
         "Toggle enhanced context blocks or print a specific block"
-        if not hasattr(self.coder, 'use_enhanced_context'):
+        if not hasattr(self.coder, "use_enhanced_context"):
             self.io.tool_error("Enhanced context blocks are only available in navigator mode.")
             return
-        
+
         # If an argument is provided, try to print that specific context block
         if args.strip():
             # Format block name to match internal naming conventions
             block_name = args.strip().lower().replace(" ", "_")
-            
+
             # Check if the coder has the necessary method to get context blocks
-            if hasattr(self.coder, '_generate_context_block'):
+            if hasattr(self.coder, "_generate_context_block"):
                 # Force token recalculation to ensure blocks are fresh
-                if hasattr(self.coder, '_calculate_context_block_tokens'):
+                if hasattr(self.coder, "_calculate_context_block_tokens"):
                     self.coder._calculate_context_block_tokens(force=True)
-                
+
                 # Try to get the requested block
                 block_content = self.coder._generate_context_block(block_name)
-                
+
                 if block_content:
                     # Calculate token count
                     tokens = self.coder.main_model.token_count(block_content)
@@ -1190,50 +1203,64 @@ class Commands:
                 else:
                     # List available blocks if the requested one wasn't found
                     self.io.tool_error(f"Context block '{args.strip()}' not found or empty.")
-                    if hasattr(self.coder, 'context_block_tokens'):
+                    if hasattr(self.coder, "context_block_tokens"):
                         available_blocks = list(self.coder.context_block_tokens.keys())
-                        formatted_blocks = [name.replace('_', ' ').title() for name in available_blocks]
+                        formatted_blocks = [
+                            name.replace("_", " ").title() for name in available_blocks
+                        ]
                         self.io.tool_output(f"Available blocks: {', '.join(formatted_blocks)}")
                     return
             else:
                 self.io.tool_error("This coder doesn't support generating context blocks.")
                 return
-                
+
         # If no argument, toggle the enhanced context setting
         self.coder.use_enhanced_context = not self.coder.use_enhanced_context
-        
+
         # Report the new state
         if self.coder.use_enhanced_context:
-            self.io.tool_output("Enhanced context blocks are now ON - directory structure and git status will be included.")
-            if hasattr(self.coder, 'context_block_tokens'):
+            self.io.tool_output(
+                "Enhanced context blocks are now ON - directory structure and git status will be"
+                " included."
+            )
+            if hasattr(self.coder, "context_block_tokens"):
                 available_blocks = list(self.coder.context_block_tokens.keys())
-                formatted_blocks = [name.replace('_', ' ').title() for name in available_blocks]
+                formatted_blocks = [name.replace("_", " ").title() for name in available_blocks]
                 self.io.tool_output(f"Available blocks: {', '.join(formatted_blocks)}")
                 self.io.tool_output("Use '/context-blocks [block name]' to view a specific block.")
         else:
-            self.io.tool_output("Enhanced context blocks are now OFF - directory structure and git status will not be included.")
-            
+            self.io.tool_output(
+                "Enhanced context blocks are now OFF - directory structure and git status will not"
+                " be included."
+            )
+
     def cmd_granular_editing(self, args=""):
         "Toggle granular editing tools in navigator mode"
-        if not hasattr(self.coder, 'use_granular_editing'):
+        if not hasattr(self.coder, "use_granular_editing"):
             self.io.tool_error("Granular editing toggle is only available in navigator mode.")
             return
-            
+
         # Toggle the setting using the navigator's method if available
         new_state = not self.coder.use_granular_editing
-        
-        if hasattr(self.coder, 'set_granular_editing'):
+
+        if hasattr(self.coder, "set_granular_editing"):
             self.coder.set_granular_editing(new_state)
         else:
             # Fallback if method doesn't exist
             self.coder.use_granular_editing = new_state
-        
+
         # Report the new state
         if self.coder.use_granular_editing:
-            self.io.tool_output("Granular editing tools are now ON - navigator will use specific editing tools instead of search/replace.")
+            self.io.tool_output(
+                "Granular editing tools are now ON - navigator will use specific editing tools"
+                " instead of search/replace."
+            )
         else:
-            self.io.tool_output("Granular editing tools are now OFF - navigator will use search/replace blocks for editing.")
-    
+            self.io.tool_output(
+                "Granular editing tools are now OFF - navigator will use search/replace blocks for"
+                " editing."
+            )
+
     def cmd_ls(self, args):
         "List all known files and indicate which are included in the chat session"
 
@@ -1351,7 +1378,7 @@ class Commands:
 
     def completions_context(self):
         raise CommandCompletionException()
-        
+
     def completions_navigator(self):
         raise CommandCompletionException()
 
@@ -1370,14 +1397,14 @@ class Commands:
     def cmd_context(self, args):
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
-        
+
     def cmd_navigator(self, args):
         """Enter navigator mode to autonomously discover and manage relevant files. If no prompt provided, switches to navigator mode."""  # noqa
         # Enable context management when entering navigator mode
-        if hasattr(self.coder, 'context_management_enabled'):
+        if hasattr(self.coder, "context_management_enabled"):
             self.coder.context_management_enabled = True
             self.io.tool_output("Context management enabled for large files")
-            
+
         return self._generic_chat_command(args, "navigator", placeholder=args.strip() or None)
 
     def _generic_chat_command(self, args, edit_format, placeholder=None):

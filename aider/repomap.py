@@ -17,19 +17,52 @@ from tqdm import tqdm
 
 from aider.dump import dump
 from aider.special import filter_important_files
+from aider.tools.tool_utils import ToolError
 from aider.waiting import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
 from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
+
 # Define the Tag namedtuple with a default for specific_kind to maintain compatibility
 # with cached entries that might have been created with the old definition
-class TagBase(namedtuple("TagBase", "rel_fname fname line name kind specific_kind start_line end_line start_byte end_byte")):
+class TagBase(
+    namedtuple(
+        "TagBase",
+        "rel_fname fname line name kind specific_kind start_line end_line start_byte end_byte",
+    )
+):
     __slots__ = ()
-    def __new__(cls, rel_fname, fname, line, name, kind, specific_kind=None, start_line=None, end_line=None, start_byte=None, end_byte=None):
+
+    def __new__(
+        cls,
+        rel_fname,
+        fname,
+        line,
+        name,
+        kind,
+        specific_kind=None,
+        start_line=None,
+        end_line=None,
+        start_byte=None,
+        end_byte=None,
+    ):
         # Provide a default value for specific_kind to handle old cached objects
-        return super(TagBase, cls).__new__(cls, rel_fname, fname, line, name, kind, specific_kind, start_line, end_line, start_byte, end_byte)
+        return super(TagBase, cls).__new__(
+            cls,
+            rel_fname,
+            fname,
+            line,
+            name,
+            kind,
+            specific_kind,
+            start_line,
+            end_line,
+            start_byte,
+            end_byte,
+        )
+
 
 Tag = TagBase
 
@@ -52,18 +85,26 @@ class RepoMap:
     # Define kinds that typically represent definitions across languages
     # Used by NavigatorCoder to filter tags for the symbol outline
     definition_kinds = {
-        "class", "struct", "enum", "interface", "trait", # Structure definitions
-        "function", "method", "constructor",             # Function/method definitions
-        "module", "namespace",                           # Module/namespace definitions
-        "constant", "variable",                          # Top-level/class variable definitions (consider refining)
-        "type",                                          # Type definitions
+        "class",
+        "struct",
+        "enum",
+        "interface",
+        "trait",  # Structure definitions
+        "function",
+        "method",
+        "constructor",  # Function/method definitions
+        "module",
+        "namespace",  # Module/namespace definitions
+        "constant",
+        "variable",  # Top-level/class variable definitions (consider refining)
+        "type",  # Type definitions
         # Add more based on tree-sitter queries if needed
     }
 
     def __init__(
         self,
         map_tokens=1024,
-        root=None,
+        map_cache_dir=".",
         main_model=None,
         io=None,
         repo_content_prefix=None,
@@ -77,9 +118,8 @@ class RepoMap:
         self.verbose = verbose
         self.refresh = refresh
 
-        if not root:
-            root = os.getcwd()
-        self.root = root
+        self.map_cache_dir = map_cache_dir
+        self.root = os.getcwd()
 
         self.load_tags_cache()
         self.cache_threshold = 0.95
@@ -104,6 +144,8 @@ class RepoMap:
             self.io.tool_output(
                 f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}"
             )
+            self.io.tool_output(f"RepoMap initialized with map_cache_dir: {self.map_cache_dir}")
+            self.io.tool_output(f"RepoMap assumes repo root is: {self.root}")
 
     def token_count(self, text):
         len_text = len(text)
@@ -202,7 +244,7 @@ class RepoMap:
         if isinstance(getattr(self, "TAGS_CACHE", None), dict):
             return
 
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = Path(self.map_cache_dir) / self.TAGS_CACHE_DIR
 
         # Try to recreate the cache
         try:
@@ -234,7 +276,7 @@ class RepoMap:
         self.TAGS_CACHE = dict()
 
     def load_tags_cache(self):
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = Path(self.map_cache_dir) / self.TAGS_CACHE_DIR
         try:
             self.TAGS_CACHE = Cache(path)
         except SQLITE_ERRORS as e:
@@ -266,10 +308,10 @@ class RepoMap:
             try:
                 # Get the cached data
                 data = self.TAGS_CACHE[cache_key]["data"]
-                
+
                 # Let our Tag class handle compatibility with old cache formats
                 # No need for special handling as TagBase.__new__ will supply default specific_kind
-                
+
                 return data
             except SQLITE_ERRORS as e:
                 self.tags_cache_error(e)
@@ -294,6 +336,7 @@ class RepoMap:
             self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
 
         return data
+
     def get_symbol_definition_location(self, file_path, symbol_name):
         """
         Finds the unique definition location (start/end line) for a symbol in a file.
@@ -308,8 +351,8 @@ class RepoMap:
         Raises:
             ToolError: If the symbol is not found, not unique, or not a definition.
         """
-        abs_path = self.io.root_abs_path(file_path) # Assuming io has this helper or similar
-        rel_path = self.get_rel_fname(abs_path) # Ensure we use consistent relative path
+        abs_path = self.io.root_abs_path(file_path)  # Assuming io has this helper or similar
+        rel_path = self.get_rel_fname(abs_path)  # Ensure we use consistent relative path
 
         tags = self.get_tags(abs_path, rel_path)
         if not tags:
@@ -319,7 +362,7 @@ class RepoMap:
         for tag in tags:
             # Check if it's a definition and the name matches
             if tag.kind == "def" and tag.name == symbol_name:
-                 # Ensure we have valid location info
+                # Ensure we have valid location info
                 if tag.start_line is not None and tag.end_line is not None and tag.start_line >= 0:
                     definitions.append(tag)
 
@@ -327,14 +370,20 @@ class RepoMap:
             # Check if it exists as a non-definition tag
             non_defs = [tag for tag in tags if tag.name == symbol_name and tag.kind != "def"]
             if non_defs:
-                 raise ToolError(f"Symbol '{symbol_name}' found in '{file_path}', but not as a unique definition (found as {non_defs[0].kind}).")
+                raise ToolError(
+                    f"Symbol '{symbol_name}' found in '{file_path}', but not as a unique definition"
+                    f" (found as {non_defs[0].kind})."
+                )
             else:
                 raise ToolError(f"Symbol '{symbol_name}' definition not found in '{file_path}'.")
 
         if len(definitions) > 1:
             # Provide more context about ambiguity if possible
-            lines = sorted([d.start_line + 1 for d in definitions]) # 1-based for user message
-            raise ToolError(f"Symbol '{symbol_name}' is ambiguous in '{file_path}'. Found definitions on lines: {', '.join(map(str, lines))}.")
+            lines = sorted([d.start_line + 1 for d in definitions])  # 1-based for user message
+            raise ToolError(
+                f"Symbol '{symbol_name}' is ambiguous in '{file_path}'. Found definitions on lines:"
+                f" {', '.join(map(str, lines))}."
+            )
 
         # Unique definition found
         definition_tag = definitions[0]
@@ -386,7 +435,7 @@ class RepoMap:
             saw.add(kind)
 
             # Extract specific kind from the tag, e.g., 'function' from 'name.definition.function'
-            specific_kind = tag.split('.')[-1] if '.' in tag else None
+            specific_kind = tag.split(".")[-1] if "." in tag else None
 
             result = Tag(
                 rel_fname=rel_fname,
@@ -427,8 +476,8 @@ class RepoMap:
                 fname=fname,
                 name=token,
                 kind="ref",
-                specific_kind="name", # Default for pygments fallback
-                line=-1, # Pygments doesn't give precise locations easily
+                specific_kind="name",  # Default for pygments fallback
+                line=-1,  # Pygments doesn't give precise locations easily
                 start_line=-1,
                 end_line=-1,
                 start_byte=-1,

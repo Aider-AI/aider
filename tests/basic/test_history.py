@@ -28,10 +28,10 @@ class TestChatSummary(TestCase):
             {"role": "user", "content": "This is a short message"},
             {"role": "assistant", "content": "This is also a short message"},
         ]
-        self.assertFalse(self.chat_summary.too_big(messages))
+        self.assertFalse(self.chat_summary.check_max_tokens(messages))
 
         long_message = {"role": "user", "content": " ".join(["word"] * 101)}
-        self.assertTrue(self.chat_summary.too_big([long_message]))
+        self.assertTrue(self.chat_summary.check_max_tokens([long_message]))
 
     def test_tokenize(self):
         messages = [
@@ -53,9 +53,7 @@ class TestChatSummary(TestCase):
             [
                 {
                     "role": "user",
-                    "content": (
-                        "I spoke to you previously about a number of things.\nThis is a summary"
-                    ),
+                    "content": "This is a summary of our recent conversation:\nThis is a summary",
                 }
             ],
         )
@@ -113,7 +111,7 @@ class TestChatSummary(TestCase):
                 {
                     "role": "user",
                     "content": (
-                        "I spoke to you previously about a number of things.\nSummary from Model 2"
+                        "This is a summary of our recent conversation:\nSummary from Model 2"
                     ),
                 }
             ],

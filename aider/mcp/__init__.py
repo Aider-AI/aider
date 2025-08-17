@@ -1,6 +1,6 @@
 import json
 
-from aider.mcp.server import McpServer, HttpStreamingServer
+from aider.mcp.server import HttpStreamingServer, McpServer
 
 
 def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_transport="stdio"):

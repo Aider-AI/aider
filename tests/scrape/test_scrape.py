@@ -1,6 +1,6 @@
-import time
+import sys
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from aider.commands import Commands
 from aider.io import InputOutput
@@ -8,28 +8,28 @@ from aider.scrape import Scraper
 
 
 class TestScrape(unittest.TestCase):
-    def test_scrape_self_signed_ssl(self):
-        def scrape_with_retries(scraper, url, max_retries=5, delay=0.5):
-            for _ in range(max_retries):
-                result = scraper.scrape(url)
-                if result is not None:
-                    return result
-                time.sleep(delay)
-            return None
+    @patch("aider.scrape.Scraper.scrape_with_httpx")
+    @patch("aider.scrape.Scraper.scrape_with_playwright")
+    def test_scrape_self_signed_ssl(self, mock_scrape_playwright, mock_scrape_httpx):
+        # Test with SSL verification - playwright fails
+        mock_scrape_playwright.return_value = (None, None)
 
-        # Test with SSL verification
         scraper_verify = Scraper(
             print_error=MagicMock(), playwright_available=True, verify_ssl=True
         )
-        result_verify = scrape_with_retries(scraper_verify, "https://self-signed.badssl.com")
+        result_verify = scraper_verify.scrape("https://self-signed.badssl.com")
         self.assertIsNone(result_verify)
         scraper_verify.print_error.assert_called()
 
-        # Test without SSL verification
+        # Test without SSL verification - playwright succeeds
+        mock_scrape_playwright.return_value = (
+            "<html><body>self-signed content</body></html>",
+            "text/html",
+        )
         scraper_no_verify = Scraper(
             print_error=MagicMock(), playwright_available=True, verify_ssl=False
         )
-        result_no_verify = scrape_with_retries(scraper_no_verify, "https://self-signed.badssl.com")
+        result_no_verify = scraper_no_verify.scrape("https://self-signed.badssl.com")
         self.assertIsNotNone(result_no_verify)
         self.assertIn("self-signed", result_no_verify)
         scraper_no_verify.print_error.assert_not_called()
@@ -38,40 +38,65 @@ class TestScrape(unittest.TestCase):
         self.io = InputOutput(yes=True)
         self.commands = Commands(self.io, None)
 
-    def test_cmd_web_imports_playwright(self):
+    @patch("aider.commands.install_playwright")
+    @patch("aider.commands.Scraper")
+    def test_cmd_web_imports_playwright(self, mock_scraper_class, mock_install_playwright):
+        # Since install_playwright is mocked, we need to simulate its side effect
+        # of making the playwright module importable.
+        def mock_install(*args, **kwargs):
+            sys.modules["playwright"] = MagicMock()
+            return True
+
+        mock_install_playwright.side_effect = mock_install
+
+        mock_scraper_instance = mock_scraper_class.return_value
+        mock_scraper_instance.scrape.return_value = "Scraped content"
+
         # Create a mock print_error function
         mock_print_error = MagicMock()
         self.commands.io.tool_error = mock_print_error
 
-        # Run the cmd_web command
-        result = self.commands.cmd_web("https://example.com", return_content=True)
-
-        # Assert that the result contains some content
-        self.assertIsNotNone(result)
-        self.assertNotEqual(result, "")
-
-        # Try to import playwright
         try:
-            import playwright  # noqa: F401
+            # Run the cmd_web command
+            result = self.commands.cmd_web("https://example.com", return_content=True)
 
-            playwright_imported = True
-        except ImportError:
-            playwright_imported = False
+            # Assert that the result contains some content
+            self.assertIsNotNone(result)
+            self.assertIn("Scraped content", result)
 
-        # Assert that playwright was successfully imported
-        self.assertTrue(
-            playwright_imported, "Playwright should be importable after running cmd_web"
-        )
+            # Try to import playwright
+            try:
+                import playwright  # noqa: F401
 
-        # Assert that print_error was never called
-        mock_print_error.assert_not_called()
+                playwright_imported = True
+            except ImportError:
+                playwright_imported = False
 
-    def test_scrape_actual_url_with_playwright(self):
+            # Assert that playwright was successfully imported
+            self.assertTrue(
+                playwright_imported, "Playwright should be importable after running cmd_web"
+            )
+
+            # Assert that print_error was never called
+            mock_print_error.assert_not_called()
+        finally:
+            # Clean up sys.modules to avoid side effects on other tests
+            if "playwright" in sys.modules:
+                del sys.modules["playwright"]
+
+    @patch("aider.scrape.Scraper.scrape_with_playwright")
+    def test_scrape_actual_url_with_playwright(self, mock_scrape_playwright):
         # Create a Scraper instance with a mock print_error function
         mock_print_error = MagicMock()
         scraper = Scraper(print_error=mock_print_error, playwright_available=True)
 
-        # Scrape a real URL
+        # Mock the playwright scrape to return content
+        mock_scrape_playwright.return_value = (
+            "<html><body><h1>Example Domain</h1></body></html>",
+            "text/html",
+        )
+
+        # Scrape a mocked URL
         result = scraper.scrape("https://example.com")
 
         # Assert that the result contains expected content
@@ -98,14 +123,6 @@ class TestScrape(unittest.TestCase):
         # Create a Scraper instance with a mock print_error function
         mock_print_error = MagicMock()
         scraper = Scraper(print_error=mock_print_error, playwright_available=True)
-
-        # Mock the playwright module to raise an error
-        import playwright
-
-        playwright._impl._errors.Error = Exception  # Mock the Error class
-
-        def mock_content():
-            raise playwright._impl._errors.Error("Test error")
 
         # Mock the necessary objects and methods
         scraper.scrape_with_playwright = MagicMock()

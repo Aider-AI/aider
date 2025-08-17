@@ -149,9 +149,7 @@ class ChatSummary:
 
         for model in self.models:
             try:
-                summary = model.simple_send_with_retries(
-                    summarize_messages, max_tokens=max_tokens
-                )
+                summary = model.simple_send_with_retries(summarize_messages, max_tokens=max_tokens)
                 if summary is not None:
                     return summary
             except Exception as e:

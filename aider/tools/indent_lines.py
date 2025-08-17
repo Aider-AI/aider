@@ -1,18 +1,28 @@
-import os
-import traceback
 from .tool_utils import (
     ToolError,
-    validate_file_for_edit,
-    find_pattern_indices,
-    select_occurrence_index,
-    determine_line_range,
     apply_change,
-    handle_tool_error,
+    determine_line_range,
+    find_pattern_indices,
     format_tool_result,
     generate_unified_diff_snippet,
+    handle_tool_error,
+    select_occurrence_index,
+    validate_file_for_edit,
 )
 
-def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, line_count=None, indent_levels=1, near_context=None, occurrence=1, change_id=None, dry_run=False):
+
+def _execute_indent_lines(
+    coder,
+    file_path,
+    start_pattern,
+    end_pattern=None,
+    line_count=None,
+    indent_levels=1,
+    near_context=None,
+    occurrence=1,
+    change_id=None,
+    dry_run=False,
+):
     """
     Indent or unindent a block of lines in a file using utility functions.
 
@@ -51,8 +61,8 @@ def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, lin
             start_pattern_line_index=start_line_idx,
             end_pattern=end_pattern,
             line_count=line_count,
-            target_symbol=None, # IndentLines uses patterns, not symbols
-            pattern_desc=pattern_desc
+            target_symbol=None,  # IndentLines uses patterns, not symbols
+            pattern_desc=pattern_desc,
         )
 
         # 4. Validate and prepare indentation
@@ -61,7 +71,7 @@ def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, lin
         except ValueError:
             raise ToolError(f"Invalid indent_levels value: '{indent_levels}'. Must be an integer.")
 
-        indent_str = ' ' * 4 # Assume 4 spaces per level
+        indent_str = " " * 4  # Assume 4 spaces per level
         modified_lines = list(lines)
 
         # Apply indentation logic (core logic remains)
@@ -70,16 +80,16 @@ def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, lin
                 modified_lines[i] = (indent_str * indent_levels) + modified_lines[i]
             elif indent_levels < 0:
                 spaces_to_remove = abs(indent_levels) * len(indent_str)
-                current_leading_spaces = len(modified_lines[i]) - len(modified_lines[i].lstrip(' '))
+                current_leading_spaces = len(modified_lines[i]) - len(modified_lines[i].lstrip(" "))
                 actual_remove = min(spaces_to_remove, current_leading_spaces)
                 if actual_remove > 0:
                     modified_lines[i] = modified_lines[i][actual_remove:]
 
-        new_content = '\n'.join(modified_lines)
+        new_content = "\n".join(modified_lines)
 
         if original_content == new_content:
-            coder.io.tool_warning(f"No changes made: indentation would not change file")
-            return f"Warning: No changes made (indentation would not change file)"
+            coder.io.tool_warning("No changes made: indentation would not change file")
+            return "Warning: No changes made (indentation would not change file)"
 
         # 5. Generate diff for feedback
         diff_snippet = generate_unified_diff_snippet(original_content, new_content, rel_path)
@@ -92,27 +102,48 @@ def _execute_indent_lines(coder, file_path, start_pattern, end_pattern=None, lin
 
         # 6. Handle dry run
         if dry_run:
-            dry_run_message = f"Dry run: Would {action} {num_lines} lines ({start_line+1}-{end_line+1}) by {levels} {level_text} (based on {occurrence_str}start pattern '{start_pattern}') in {file_path}."
-            return format_tool_result(coder, tool_name, "", dry_run=True, dry_run_message=dry_run_message, diff_snippet=diff_snippet)
+            dry_run_message = (
+                f"Dry run: Would {action} {num_lines} lines ({start_line + 1}-{end_line + 1}) by"
+                f" {levels} {level_text} (based on {occurrence_str}start pattern '{start_pattern}')"
+                f" in {file_path}."
+            )
+            return format_tool_result(
+                coder,
+                tool_name,
+                "",
+                dry_run=True,
+                dry_run_message=dry_run_message,
+                diff_snippet=diff_snippet,
+            )
 
         # 7. Apply Change (Not dry run)
         metadata = {
-            'start_line': start_line + 1,
-            'end_line': end_line + 1,
-            'start_pattern': start_pattern,
-            'end_pattern': end_pattern,
-            'line_count': line_count,
-            'indent_levels': indent_levels,
-            'near_context': near_context,
-            'occurrence': occurrence,
+            "start_line": start_line + 1,
+            "end_line": end_line + 1,
+            "start_pattern": start_pattern,
+            "end_pattern": end_pattern,
+            "line_count": line_count,
+            "indent_levels": indent_levels,
+            "near_context": near_context,
+            "occurrence": occurrence,
         }
         final_change_id = apply_change(
-            coder, abs_path, rel_path, original_content, new_content, 'indentlines', metadata, change_id
+            coder,
+            abs_path,
+            rel_path,
+            original_content,
+            new_content,
+            "indentlines",
+            metadata,
+            change_id,
         )
 
         # 8. Format and return result
         action_past = "Indented" if indent_levels > 0 else "Unindented"
-        success_message = f"{action_past} {num_lines} lines by {levels} {level_text} (from {occurrence_str}start pattern) in {file_path}"
+        success_message = (
+            f"{action_past} {num_lines} lines by {levels} {level_text} (from {occurrence_str}start"
+            f" pattern) in {file_path}"
+        )
         return format_tool_result(
             coder, tool_name, success_message, change_id=final_change_id, diff_snippet=diff_snippet
         )
