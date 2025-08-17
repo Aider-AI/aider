@@ -1023,6 +1023,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             enable_context_compaction=args.enable_context_compaction,
             context_compaction_max_tokens=args.context_compaction_max_tokens,
             context_compaction_summary_tokens=args.context_compaction_summary_tokens,
+            map_cache_dir=args.map_cache_dir,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))

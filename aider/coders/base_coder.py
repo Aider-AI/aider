@@ -361,7 +361,11 @@ class Coder:
         enable_context_compaction=False,
         context_compaction_max_tokens=None,
         context_compaction_summary_tokens=8192,
+        map_cache_dir='.',
     ):
+        # initialize from args.map_cache_dir
+        self.map_cache_dir = map_cache_dir
+        
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
 
@@ -531,7 +535,7 @@ class Coder:
         if use_repo_map and self.repo and has_map_prompt:
             self.repo_map = RepoMap(
                 map_tokens,
-                self.root,
+                self.map_cache_dir,
                 self.main_model,
                 io,
                 self.gpt_prompts.repo_content_prefix,
