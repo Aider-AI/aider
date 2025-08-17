@@ -1,6 +1,7 @@
 # Import necessary functions
 from aider.run_cmd import run_cmd_subprocess
 
+
 def _execute_command(coder, command_string):
     """
     Execute a non-interactive shell command after user confirmation.
@@ -12,8 +13,8 @@ def _execute_command(coder, command_string):
         confirmed = coder.io.confirm_ask(
             "Allow execution of this command?",
             subject=command_string,
-            explicit_yes_required=True, # Require explicit 'yes' or 'always'
-            allow_never=True           # Enable the 'Always' option
+            explicit_yes_required=True,  # Require explicit 'yes' or 'always'
+            allow_never=True,  # Enable the 'Always' option
         )
 
         if not confirmed:
@@ -27,9 +28,7 @@ def _execute_command(coder, command_string):
 
         # Use run_cmd_subprocess for non-interactive execution
         exit_status, combined_output = run_cmd_subprocess(
-            command_string,
-            verbose=coder.verbose,
-            cwd=coder.root # Execute in the project root
+            command_string, verbose=coder.verbose, cwd=coder.root  # Execute in the project root
         )
 
         # Format the output for the result message, include more content
@@ -38,7 +37,11 @@ def _execute_command(coder, command_string):
         output_limit = coder.large_file_token_threshold
         if len(output_content) > output_limit:
             # Truncate and add a clear message using the constant value
-            output_content = output_content[:output_limit] + f"\n... (output truncated at {output_limit} characters, based on large_file_token_threshold)"
+            output_content = (
+                output_content[:output_limit]
+                + f"\n... (output truncated at {output_limit} characters, based on"
+                " large_file_token_threshold)"
+            )
 
         if exit_status == 0:
             return f"Shell command executed successfully (exit code 0). Output:\n{output_content}"
@@ -46,7 +49,9 @@ def _execute_command(coder, command_string):
             return f"Shell command failed with exit code {exit_status}. Output:\n{output_content}"
 
     except Exception as e:
-        coder.io.tool_error(f"Error executing non-interactive shell command '{command_string}': {str(e)}")
+        coder.io.tool_error(
+            f"Error executing non-interactive shell command '{command_string}': {str(e)}"
+        )
         # Optionally include traceback for debugging if verbose
         # if coder.verbose:
         #     coder.io.tool_error(traceback.format_exc())

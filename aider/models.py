@@ -954,7 +954,9 @@ class Model(ModelSettings):
 
             os.environ[openai_api_key] = token
 
-    def send_completion(self, messages, functions, stream, temperature=None, tools=None, max_tokens=None):
+    def send_completion(
+        self, messages, functions, stream, temperature=None, tools=None, max_tokens=None
+    ):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
@@ -1028,7 +1030,6 @@ class Model(ModelSettings):
                 }
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
-
 
         try:
             res = litellm.completion(**kwargs)

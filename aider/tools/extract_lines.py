@@ -1,8 +1,20 @@
 import os
 import traceback
+
 from .tool_utils import generate_unified_diff_snippet
 
-def _execute_extract_lines(coder, source_file_path, target_file_path, start_pattern, end_pattern=None, line_count=None, near_context=None, occurrence=1, dry_run=False):
+
+def _execute_extract_lines(
+    coder,
+    source_file_path,
+    target_file_path,
+    start_pattern,
+    end_pattern=None,
+    line_count=None,
+    near_context=None,
+    occurrence=1,
+    dry_run=False,
+):
     """
     Extract a range of lines from a source file and move them to a target file.
 
@@ -26,15 +38,17 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
 
         if not os.path.isfile(abs_source_path):
             coder.io.tool_error(f"Source file '{source_file_path}' not found")
-            return f"Error: Source file not found"
+            return "Error: Source file not found"
 
         if abs_source_path not in coder.abs_fnames:
             if abs_source_path in coder.abs_read_only_fnames:
-                coder.io.tool_error(f"Source file '{source_file_path}' is read-only. Use MakeEditable first.")
-                return f"Error: Source file is read-only. Use MakeEditable first."
+                coder.io.tool_error(
+                    f"Source file '{source_file_path}' is read-only. Use MakeEditable first."
+                )
+                return "Error: Source file is read-only. Use MakeEditable first."
             else:
                 coder.io.tool_error(f"Source file '{source_file_path}' not in context")
-                return f"Error: Source file not in context"
+                return "Error: Source file not in context"
 
         # --- Validate Target File ---
         abs_target_path = coder.abs_root_path(target_file_path)
@@ -45,17 +59,24 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
 
         if target_exists and not target_is_editable:
             if target_is_readonly:
-                coder.io.tool_error(f"Target file '{target_file_path}' exists but is read-only. Use MakeEditable first.")
-                return f"Error: Target file exists but is read-only. Use MakeEditable first."
+                coder.io.tool_error(
+                    f"Target file '{target_file_path}' exists but is read-only. Use MakeEditable"
+                    " first."
+                )
+                return "Error: Target file exists but is read-only. Use MakeEditable first."
             else:
                 # This case shouldn't happen if file exists, but handle defensively
-                coder.io.tool_error(f"Target file '{target_file_path}' exists but is not in context. Add it first.")
-                return f"Error: Target file exists but is not in context."
+                coder.io.tool_error(
+                    f"Target file '{target_file_path}' exists but is not in context. Add it first."
+                )
+                return "Error: Target file exists but is not in context."
 
         # --- Read Source Content ---
         source_content = coder.io.read_text(abs_source_path)
         if source_content is None:
-            coder.io.tool_error(f"Could not read source file '{source_file_path}' before ExtractLines operation.")
+            coder.io.tool_error(
+                f"Could not read source file '{source_file_path}' before ExtractLines operation."
+            )
             return f"Error: Could not read source file '{source_file_path}'"
 
         # --- Find Extraction Range ---
@@ -80,7 +101,8 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
 
         if not start_pattern_line_indices:
             err_msg = f"Start pattern '{start_pattern}' not found"
-            if near_context: err_msg += f" near context '{near_context}'"
+            if near_context:
+                err_msg += f" near context '{near_context}'"
             err_msg += f" in source file '{source_file_path}'."
             coder.io.tool_error(err_msg)
             return f"Error: {err_msg}"
@@ -93,8 +115,12 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
             elif occurrence > 0 and occurrence <= num_occurrences:
                 target_idx = occurrence - 1
             else:
-                err_msg = f"Occurrence number {occurrence} is out of range for start pattern '{start_pattern}'. Found {num_occurrences} occurrences"
-                if near_context: err_msg += f" near '{near_context}'"
+                err_msg = (
+                    f"Occurrence number {occurrence} is out of range for start pattern"
+                    f" '{start_pattern}'. Found {num_occurrences} occurrences"
+                )
+                if near_context:
+                    err_msg += f" near '{near_context}'"
                 err_msg += f" in '{source_file_path}'."
                 coder.io.tool_error(err_msg)
                 return f"Error: {err_msg}"
@@ -112,24 +138,30 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
                     end_line = i
                     break
             if end_line == -1:
-                err_msg = f"End pattern '{end_pattern}' not found after {occurrence_str}start pattern '{start_pattern}' (line {start_line + 1}) in '{source_file_path}'."
+                err_msg = (
+                    f"End pattern '{end_pattern}' not found after {occurrence_str}start pattern"
+                    f" '{start_pattern}' (line {start_line + 1}) in '{source_file_path}'."
+                )
                 coder.io.tool_error(err_msg)
                 return f"Error: {err_msg}"
         elif line_count:
             try:
                 line_count = int(line_count)
-                if line_count <= 0: raise ValueError("Line count must be positive")
+                if line_count <= 0:
+                    raise ValueError("Line count must be positive")
                 end_line = min(start_line + line_count - 1, len(source_lines) - 1)
             except ValueError:
-                coder.io.tool_error(f"Invalid line_count value: '{line_count}'. Must be a positive integer.")
+                coder.io.tool_error(
+                    f"Invalid line_count value: '{line_count}'. Must be a positive integer."
+                )
                 return f"Error: Invalid line_count value '{line_count}'"
         else:
-            end_line = start_line # Extract just the start line if no end specified
+            end_line = start_line  # Extract just the start line if no end specified
 
         # --- Prepare Content Changes ---
-        extracted_lines = source_lines[start_line:end_line+1]
-        new_source_lines = source_lines[:start_line] + source_lines[end_line+1:]
-        new_source_content = '\n'.join(new_source_lines)
+        extracted_lines = source_lines[start_line : end_line + 1]
+        new_source_lines = source_lines[:start_line] + source_lines[end_line + 1 :]
+        new_source_content = "\n".join(new_source_lines)
 
         target_content = ""
         if target_exists:
@@ -137,29 +169,37 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
             if target_content is None:
                 coder.io.tool_error(f"Could not read existing target file '{target_file_path}'.")
                 return f"Error: Could not read target file '{target_file_path}'"
-        original_target_content = target_content # For tracking
+        original_target_content = target_content  # For tracking
 
         # Append extracted lines to target content, ensuring a newline if target wasn't empty
-        extracted_block = '\n'.join(extracted_lines)
-        if target_content and not target_content.endswith('\n'):
-             target_content += '\n' # Add newline before appending if needed
+        extracted_block = "\n".join(extracted_lines)
+        if target_content and not target_content.endswith("\n"):
+            target_content += "\n"  # Add newline before appending if needed
         new_target_content = target_content + extracted_block
 
         # --- Generate Diffs ---
-        source_diff_snippet = generate_unified_diff_snippet(original_source_content, new_source_content, rel_source_path)
+        source_diff_snippet = generate_unified_diff_snippet(
+            original_source_content, new_source_content, rel_source_path
+        )
         target_insertion_line = len(target_content.splitlines()) if target_content else 0
-        target_diff_snippet = generate_unified_diff_snippet(original_target_content, new_target_content, rel_target_path)
+        target_diff_snippet = generate_unified_diff_snippet(
+            original_target_content, new_target_content, rel_target_path
+        )
 
         # --- Handle Dry Run ---
         if dry_run:
             num_extracted = end_line - start_line + 1
             target_action = "append to" if target_exists else "create"
-            coder.io.tool_output(f"Dry run: Would extract {num_extracted} lines (from {occurrence_str}start pattern '{start_pattern}') in {source_file_path} and {target_action} {target_file_path}")
+            coder.io.tool_output(
+                f"Dry run: Would extract {num_extracted} lines (from {occurrence_str}start pattern"
+                f" '{start_pattern}') in {source_file_path} and {target_action} {target_file_path}"
+            )
             # Provide more informative dry run response with diffs
             return (
-                f"Dry run: Would extract {num_extracted} lines from {rel_source_path} and {target_action} {rel_target_path}.\n"
-                f"Source Diff (Deletion):\n{source_diff_snippet}\n"
-                f"Target Diff (Insertion):\n{target_diff_snippet}"
+                f"Dry run: Would extract {num_extracted} lines from {rel_source_path} and"
+                f" {target_action} {rel_target_path}.\nSource Diff"
+                f" (Deletion):\n{source_diff_snippet}\nTarget Diff"
+                f" (Insertion):\n{target_diff_snippet}"
             )
 
         # --- Apply Changes (Not Dry Run) ---
@@ -171,28 +211,38 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
         target_change_id = "TRACKING_FAILED"
         try:
             source_metadata = {
-                'start_line': start_line + 1, 'end_line': end_line + 1,
-                'start_pattern': start_pattern, 'end_pattern': end_pattern, 'line_count': line_count,
-                'near_context': near_context, 'occurrence': occurrence,
-                'extracted_content': extracted_block, 'target_file': rel_target_path
+                "start_line": start_line + 1,
+                "end_line": end_line + 1,
+                "start_pattern": start_pattern,
+                "end_pattern": end_pattern,
+                "line_count": line_count,
+                "near_context": near_context,
+                "occurrence": occurrence,
+                "extracted_content": extracted_block,
+                "target_file": rel_target_path,
             }
             source_change_id = coder.change_tracker.track_change(
-                file_path=rel_source_path, change_type='extractlines_source',
-                original_content=original_source_content, new_content=new_source_content,
-                metadata=source_metadata
+                file_path=rel_source_path,
+                change_type="extractlines_source",
+                original_content=original_source_content,
+                new_content=new_source_content,
+                metadata=source_metadata,
             )
         except Exception as track_e:
             coder.io.tool_error(f"Error tracking source change for ExtractLines: {track_e}")
 
         try:
             target_metadata = {
-                'insertion_line': target_insertion_line + 1,
-                'inserted_content': extracted_block, 'source_file': rel_source_path
+                "insertion_line": target_insertion_line + 1,
+                "inserted_content": extracted_block,
+                "source_file": rel_source_path,
             }
             target_change_id = coder.change_tracker.track_change(
-                file_path=rel_target_path, change_type='extractlines_target',
-                original_content=original_target_content, new_content=new_target_content,
-                metadata=target_metadata
+                file_path=rel_target_path,
+                change_type="extractlines_target",
+                original_content=original_target_content,
+                new_content=new_target_content,
+                metadata=target_metadata,
             )
         except Exception as track_e:
             coder.io.tool_error(f"Error tracking target change for ExtractLines: {track_e}")
@@ -208,12 +258,17 @@ def _execute_extract_lines(coder, source_file_path, target_file_path, start_patt
         # --- Return Result ---
         num_extracted = end_line - start_line + 1
         target_action = "appended to" if target_exists else "created"
-        coder.io.tool_output(f"✅ Extracted {num_extracted} lines from {rel_source_path} (change_id: {source_change_id}) and {target_action} {rel_target_path} (change_id: {target_change_id})")
+        coder.io.tool_output(
+            f"✅ Extracted {num_extracted} lines from {rel_source_path} (change_id:"
+            f" {source_change_id}) and {target_action} {rel_target_path} (change_id:"
+            f" {target_change_id})"
+        )
         # Provide more informative success response with change IDs and diffs
         return (
-            f"Successfully extracted {num_extracted} lines from {rel_source_path} and {target_action} {rel_target_path}.\n"
-            f"Source Change ID: {source_change_id}\nSource Diff (Deletion):\n{source_diff_snippet}\n"
-            f"Target Change ID: {target_change_id}\nTarget Diff (Insertion):\n{target_diff_snippet}"
+            f"Successfully extracted {num_extracted} lines from {rel_source_path} and"
+            f" {target_action} {rel_target_path}.\nSource Change ID: {source_change_id}\nSource"
+            f" Diff (Deletion):\n{source_diff_snippet}\nTarget Change ID:"
+            f" {target_change_id}\nTarget Diff (Insertion):\n{target_diff_snippet}"
         )
 
     except Exception as e:

@@ -1,6 +1,13 @@
 import os
-import traceback
-from .tool_utils import ToolError, generate_unified_diff_snippet, handle_tool_error, format_tool_result, apply_change
+
+from .tool_utils import (
+    ToolError,
+    apply_change,
+    format_tool_result,
+    generate_unified_diff_snippet,
+    handle_tool_error,
+)
+
 
 def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=False):
     """
@@ -46,17 +53,19 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
             line_num_int = int(line_number)
             if line_num_int < 1 or line_num_int > len(lines):
                 raise ToolError(f"Line number {line_num_int} is out of range (1-{len(lines)})")
-            line_idx = line_num_int - 1 # Convert to 0-based index
+            line_idx = line_num_int - 1  # Convert to 0-based index
         except ValueError:
             raise ToolError(f"Invalid line_number value: '{line_number}'. Must be an integer.")
 
         # Prepare the deletion
         deleted_line = lines[line_idx]
-        new_lines = lines[:line_idx] + lines[line_idx+1:]
-        new_content = '\n'.join(new_lines)
+        new_lines = lines[:line_idx] + lines[line_idx + 1 :]
+        new_content = "\n".join(new_lines)
 
         if original_content == new_content:
-            coder.io.tool_warning(f"No changes made: deleting line {line_num_int} would not change file")
+            coder.io.tool_warning(
+                f"No changes made: deleting line {line_num_int} would not change file"
+            )
             return f"Warning: No changes made (deleting line {line_num_int} would not change file)"
 
         # Generate diff snippet
@@ -65,15 +74,26 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
         # Handle dry run
         if dry_run:
             dry_run_message = f"Dry run: Would delete line {line_num_int} in {file_path}"
-            return format_tool_result(coder, tool_name, "", dry_run=True, dry_run_message=dry_run_message, diff_snippet=diff_snippet)
+            return format_tool_result(
+                coder,
+                tool_name,
+                "",
+                dry_run=True,
+                dry_run_message=dry_run_message,
+                diff_snippet=diff_snippet,
+            )
 
         # --- Apply Change (Not dry run) ---
-        metadata = {
-            'line_number': line_num_int,
-            'deleted_content': deleted_line
-        }
+        metadata = {"line_number": line_num_int, "deleted_content": deleted_line}
         final_change_id = apply_change(
-            coder, abs_path, rel_path, original_content, new_content, 'deleteline', metadata, change_id
+            coder,
+            abs_path,
+            rel_path,
+            original_content,
+            new_content,
+            "deleteline",
+            metadata,
+            change_id,
         )
 
         coder.aider_edited_files.add(rel_path)

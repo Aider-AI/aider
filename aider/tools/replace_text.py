@@ -1,14 +1,23 @@
-import traceback
 from .tool_utils import (
     ToolError,
-    validate_file_for_edit,
     apply_change,
-    handle_tool_error,
     format_tool_result,
     generate_unified_diff_snippet,
+    handle_tool_error,
+    validate_file_for_edit,
 )
 
-def _execute_replace_text(coder, file_path, find_text, replace_text, near_context=None, occurrence=1, change_id=None, dry_run=False):
+
+def _execute_replace_text(
+    coder,
+    file_path,
+    find_text,
+    replace_text,
+    near_context=None,
+    occurrence=1,
+    change_id=None,
+    dry_run=False,
+):
     """
     Replace specific text with new text, optionally using nearby context for disambiguation.
     Uses utility functions for validation, finding occurrences, and applying changes.
@@ -38,10 +47,14 @@ def _execute_replace_text(coder, file_path, find_text, replace_text, near_contex
                     raise ToolError(f"Text '{find_text}' not found, cannot select last occurrence.")
                 target_idx = num_occurrences - 1
             elif 1 <= occurrence <= num_occurrences:
-                target_idx = occurrence - 1 # Convert 1-based to 0-based
+                target_idx = occurrence - 1  # Convert 1-based to 0-based
             else:
-                err_msg = f"Occurrence number {occurrence} is out of range. Found {num_occurrences} occurrences of '{find_text}'"
-                if near_context: err_msg += f" near '{near_context}'"
+                err_msg = (
+                    f"Occurrence number {occurrence} is out of range. Found"
+                    f" {num_occurrences} occurrences of '{find_text}'"
+                )
+                if near_context:
+                    err_msg += f" near '{near_context}'"
                 err_msg += f" in '{file_path}'."
                 raise ToolError(err_msg)
         except ValueError:
@@ -50,11 +63,15 @@ def _execute_replace_text(coder, file_path, find_text, replace_text, near_contex
         start_index = occurrences[target_idx]
 
         # 4. Perform the replacement
-        new_content = original_content[:start_index] + replace_text + original_content[start_index + len(find_text):]
+        new_content = (
+            original_content[:start_index]
+            + replace_text
+            + original_content[start_index + len(find_text) :]
+        )
 
         if original_content == new_content:
-            coder.io.tool_warning(f"No changes made: replacement text is identical to original")
-            return f"Warning: No changes made (replacement identical to original)"
+            coder.io.tool_warning("No changes made: replacement text is identical to original")
+            return "Warning: No changes made (replacement identical to original)"
 
         # 5. Generate diff for feedback
         # Note: _generate_diff_snippet is currently on the Coder class
@@ -63,19 +80,35 @@ def _execute_replace_text(coder, file_path, find_text, replace_text, near_contex
 
         # 6. Handle dry run
         if dry_run:
-            dry_run_message = f"Dry run: Would replace {occurrence_str} of '{find_text}' in {file_path}."
-            return format_tool_result(coder, tool_name, "", dry_run=True, dry_run_message=dry_run_message, diff_snippet=diff_snippet)
+            dry_run_message = (
+                f"Dry run: Would replace {occurrence_str} of '{find_text}' in {file_path}."
+            )
+            return format_tool_result(
+                coder,
+                tool_name,
+                "",
+                dry_run=True,
+                dry_run_message=dry_run_message,
+                diff_snippet=diff_snippet,
+            )
 
         # 7. Apply Change (Not dry run)
         metadata = {
-            'start_index': start_index,
-            'find_text': find_text,
-            'replace_text': replace_text,
-            'near_context': near_context,
-            'occurrence': occurrence
+            "start_index": start_index,
+            "find_text": find_text,
+            "replace_text": replace_text,
+            "near_context": near_context,
+            "occurrence": occurrence,
         }
         final_change_id = apply_change(
-            coder, abs_path, rel_path, original_content, new_content, 'replacetext', metadata, change_id
+            coder,
+            abs_path,
+            rel_path,
+            original_content,
+            new_content,
+            "replacetext",
+            metadata,
+            change_id,
         )
 
         # 8. Format and return result

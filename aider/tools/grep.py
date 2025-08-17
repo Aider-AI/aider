@@ -1,20 +1,32 @@
 import shlex
 import shutil
 from pathlib import Path
+
 from aider.run_cmd import run_cmd_subprocess
+
 
 def _find_search_tool():
     """Find the best available command-line search tool (rg, ag, grep)."""
-    if shutil.which('rg'):
-        return 'rg', shutil.which('rg')
-    elif shutil.which('ag'):
-        return 'ag', shutil.which('ag')
-    elif shutil.which('grep'):
-        return 'grep', shutil.which('grep')
+    if shutil.which("rg"):
+        return "rg", shutil.which("rg")
+    elif shutil.which("ag"):
+        return "ag", shutil.which("ag")
+    elif shutil.which("grep"):
+        return "grep", shutil.which("grep")
     else:
         return None, None
 
-def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=False, case_insensitive=False, context_before=5, context_after=5):
+
+def _execute_grep(
+    coder,
+    pattern,
+    file_pattern="*",
+    directory=".",
+    use_regex=False,
+    case_insensitive=False,
+    context_before=5,
+    context_after=5,
+):
     """
     Search for lines matching a pattern in files within the project repository.
     Uses rg (ripgrep), ag (the silver searcher), or grep, whichever is available.
@@ -52,7 +64,7 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
         cmd_args = [tool_path]
 
         # Common options or tool-specific equivalents
-        if tool_name in ['rg', 'grep']:
+        if tool_name in ["rg", "grep"]:
             cmd_args.append("-n")  # Line numbers for rg and grep
         # ag includes line numbers by default
 
@@ -66,37 +78,39 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
 
         # Case sensitivity
         if case_insensitive:
-            cmd_args.append("-i") # Add case-insensitivity flag for all tools
+            cmd_args.append("-i")  # Add case-insensitivity flag for all tools
 
         # Pattern type (regex vs fixed string)
         if use_regex:
-            if tool_name == 'grep':
-                cmd_args.append("-E") # Use extended regex for grep
+            if tool_name == "grep":
+                cmd_args.append("-E")  # Use extended regex for grep
             # rg and ag use regex by default, no flag needed for basic ERE
         else:
-            if tool_name == 'rg':
-                cmd_args.append("-F") # Fixed strings for rg
-            elif tool_name == 'ag':
-                cmd_args.append("-Q") # Literal/fixed strings for ag
-            elif tool_name == 'grep':
-                cmd_args.append("-F") # Fixed strings for grep
+            if tool_name == "rg":
+                cmd_args.append("-F")  # Fixed strings for rg
+            elif tool_name == "ag":
+                cmd_args.append("-Q")  # Literal/fixed strings for ag
+            elif tool_name == "grep":
+                cmd_args.append("-F")  # Fixed strings for grep
 
         # File filtering
-        if file_pattern != "*": # Avoid adding glob if it's the default '*' which might behave differently
-            if tool_name == 'rg':
+        if (
+            file_pattern != "*"
+        ):  # Avoid adding glob if it's the default '*' which might behave differently
+            if tool_name == "rg":
                 cmd_args.extend(["-g", file_pattern])
-            elif tool_name == 'ag':
+            elif tool_name == "ag":
                 cmd_args.extend(["-G", file_pattern])
-            elif tool_name == 'grep':
+            elif tool_name == "grep":
                 # grep needs recursive flag when filtering
                 cmd_args.append("-r")
                 cmd_args.append(f"--include={file_pattern}")
-        elif tool_name == 'grep':
-             # grep needs recursive flag even without include filter
-             cmd_args.append("-r")
+        elif tool_name == "grep":
+            # grep needs recursive flag even without include filter
+            cmd_args.append("-r")
 
         # Directory exclusion (rg and ag respect .gitignore/.git by default)
-        if tool_name == 'grep':
+        if tool_name == "grep":
             cmd_args.append("--exclude-dir=.git")
 
         # Add pattern and directory path
@@ -110,9 +124,7 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
         # Use run_cmd_subprocess for execution
         # Note: rg, ag, and grep return 1 if no matches are found, which is not an error for this tool.
         exit_status, combined_output = run_cmd_subprocess(
-            command_string,
-            verbose=coder.verbose,
-            cwd=coder.root # Execute in the project root
+            command_string, verbose=coder.verbose, cwd=coder.root  # Execute in the project root
         )
 
         # Format the output for the result message
@@ -121,15 +133,18 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
         # Handle exit codes (consistent across rg, ag, grep)
         if exit_status == 0:
             # Limit output size if necessary
-            max_output_lines = 50 # Consider making this configurable
+            max_output_lines = 50  # Consider making this configurable
             output_lines = output_content.splitlines()
             if len(output_lines) > max_output_lines:
                 truncated_output = "\n".join(output_lines[:max_output_lines])
-                result_message = f"Found matches (truncated):\n```text\n{truncated_output}\n... ({len(output_lines) - max_output_lines} more lines)\n```"
+                result_message = (
+                    f"Found matches (truncated):\n```text\n{truncated_output}\n..."
+                    f" ({len(output_lines) - max_output_lines} more lines)\n```"
+                )
             elif not output_content:
-                 # Should not happen if return code is 0, but handle defensively
-                 coder.io.tool_warning(f"{tool_name} returned 0 but produced no output.")
-                 result_message = "No matches found (unexpected)."
+                # Should not happen if return code is 0, but handle defensively
+                coder.io.tool_warning(f"{tool_name} returned 0 but produced no output.")
+                result_message = "No matches found (unexpected)."
             else:
                 result_message = f"Found matches:\n```text\n{output_content}\n```"
             return result_message
@@ -142,7 +157,7 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
             error_message = f"{tool_name.capitalize()} command failed with exit code {exit_status}."
             if output_content:
                 # Truncate error output as well if it's too long
-                error_limit = 1000 # Example limit for error output
+                error_limit = 1000  # Example limit for error output
                 if len(output_content) > error_limit:
                     output_content = output_content[:error_limit] + "\n... (error output truncated)"
                 error_message += f" Output:\n{output_content}"
@@ -151,6 +166,6 @@ def _execute_grep(coder, pattern, file_pattern="*", directory=".", use_regex=Fal
 
     except Exception as e:
         # Add command_string to the error message if it's defined
-        cmd_str_info = f"'{command_string}' " if 'command_string' in locals() else ""
+        cmd_str_info = f"'{command_string}' " if "command_string" in locals() else ""
         coder.io.tool_error(f"Error executing {tool_name} command {cmd_str_info}: {str(e)}")
         return f"Error executing {tool_name}: {str(e)}"

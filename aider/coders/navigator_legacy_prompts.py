@@ -6,12 +6,12 @@ from .base_prompts import CoderPrompts
 class NavigatorLegacyPrompts(CoderPrompts):
     """
     Prompt templates for the Navigator mode using search/replace instead of granular editing tools.
-    
+
     The NavigatorCoder uses these prompts to guide its behavior when exploring and modifying
     a codebase using special tool commands like Glob, Grep, Add, etc. This version uses the legacy
     search/replace editing method instead of granular editing tools.
     """
-    
+
     main_system = r'''<context name="session_config">
 ## Role and Purpose
 Act as an expert software engineer with the ability to autonomously navigate and modify a codebase.
@@ -253,11 +253,12 @@ Trust this message as the true contents of the files!
 </context>
 '''
 
-    files_content_assistant_reply = (
-        "I understand. I'll use these files to help with your request."
-    )
+    files_content_assistant_reply = "I understand. I'll use these files to help with your request."
 
-    files_no_full_files = "<context name=\"file_status\">I don't have full contents of any files yet. I'll add them as needed using the tool commands.</context>"
+    files_no_full_files = (
+        "<context name=\"file_status\">I don't have full contents of any files yet. I'll add them"
+        " as needed using the tool commands.</context>"
+    )
 
     files_no_full_files_with_repo_map = """<context name="repo_map_status">
 I have access to a map of the repository with summary information about files, but I don't have the complete content of any files yet.

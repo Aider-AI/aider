@@ -303,7 +303,7 @@ def get_parser(default_config_files, git_root):
         help=(
             "Maximum line length for the repo map code. Prevents sending crazy long lines of"
             " minified JS files etc. (default: 100)"
-        ),   
+        ),
     )
     group.add_argument(
         "--map-cache-dir",
@@ -612,7 +612,7 @@ def get_parser(default_config_files, git_root):
         help="Run tests, fix problems found and then exit",
         default=False,
     )
-    
+
     ##########
     group = parser.add_argument_group("Analytics")
     group.add_argument(
