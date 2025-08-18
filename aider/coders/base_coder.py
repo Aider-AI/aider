@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import asyncio
 import base64
 import hashlib
 import json
@@ -26,6 +27,7 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
 
+from litellm import experimental_mcp_client
 from rich.console import Console
 
 from aider import __version__, models, prompts, urls, utils
@@ -99,6 +101,8 @@ class Coder:
     last_keyboard_interrupt = None
     num_reflections = 0
     max_reflections = 3
+    num_tool_calls = 0
+    max_tool_calls = 25
     edit_format = None
     yield_stream = False
     temperature = None
@@ -109,6 +113,7 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     partial_response_content = ""
+    partial_response_tool_call = []
     commit_before_message = []
     message_cost = 0.0
     add_cache_headers = False
@@ -120,6 +125,8 @@ class Coder:
     chat_language = None
     commit_language = None
     file_watcher = None
+    mcp_servers = None
+    mcp_tools = None
 
     @classmethod
     def create(
@@ -338,6 +345,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        mcp_servers=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -365,6 +373,7 @@ class Coder:
         self.detect_urls = detect_urls
 
         self.num_cache_warming_pings = num_cache_warming_pings
+        self.mcp_servers = mcp_servers
 
         if not fnames:
             fnames = []
@@ -530,6 +539,9 @@ class Coder:
         self.auto_test = auto_test
         self.test_cmd = test_cmd
 
+        # Instantiate MCP tools
+        if self.mcp_servers:
+            self.initialize_mcp_tools()
         # validate the functions jsonschema
         if self.functions:
             from jsonschema import Draft7Validator
@@ -672,7 +684,10 @@ class Coder:
     def get_cur_message_text(self):
         text = ""
         for msg in self.cur_messages:
-            text += msg["content"] + "\n"
+            # For some models the content is None if the message
+            # contains tool calls.
+            content = msg["content"] or ""
+            text += content + "\n"
         return text
 
     def get_ident_mentions(self, text):
@@ -1173,6 +1188,7 @@ class Coder:
 
     def fmt_system_prompt(self, prompt):
         final_reminders = []
+
         if self.main_model.lazy:
             final_reminders.append(self.gpt_prompts.lazy_prompt)
         if self.main_model.overeager:
@@ -1206,6 +1222,9 @@ class Coder:
             )
         else:
             quad_backtick_reminder = ""
+
+        if self.mcp_tools and len(self.mcp_tools) > 0:
+            final_reminders.append(self.gpt_prompts.tool_prompt)
 
         final_reminders = "\n\n".join(final_reminders)
 
@@ -1428,6 +1447,7 @@ class Coder:
 
         chunks = self.format_messages()
         messages = chunks.all_messages()
+
         if not self.check_tokens(messages):
             return
         self.warm_cache(chunks)
@@ -1566,6 +1586,14 @@ class Coder:
                     self.reflected_message = add_rel_files_message
                 return
 
+            # Process any tools using MCP servers
+            tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
+            if self.process_tool_calls(tool_call_response):
+                self.num_tool_calls += 1
+                return self.run(with_message="Continue with tool call response", preproc=False)
+
+            self.num_tool_calls = 0
+
             try:
                 if self.reply_completed():
                     return
@@ -1621,6 +1649,179 @@ class Coder:
                 if ok:
                     self.reflected_message = test_errors
                     return
+
+    def process_tool_calls(self, tool_call_response):
+        if tool_call_response is None:
+            return False
+
+        tool_calls = tool_call_response.choices[0].message.tool_calls
+        # Collect all tool calls grouped by server
+        server_tool_calls = self._gather_server_tool_calls(tool_calls)
+
+        if server_tool_calls and self.num_tool_calls < self.max_tool_calls:
+            self._print_tool_call_info(server_tool_calls)
+
+            if self.io.confirm_ask("Run tools?"):
+                tool_responses = self._execute_tool_calls(server_tool_calls)
+
+                # Add the assistant message with tool calls
+                # Converting to a dict so it can be safely dumped to json
+                self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
+
+                # Add all tool responses
+                for tool_response in tool_responses:
+                    self.cur_messages.append(tool_response)
+
+                return True
+        elif self.num_tool_calls >= self.max_tool_calls:
+            self.io.tool_warning(f"Only {self.max_tool_calls} tool calls allowed, stopping.")
+            return False
+
+    def _print_tool_call_info(self, server_tool_calls):
+        """Print information about an MCP tool call."""
+        self.io.tool_output("Preparing to run MCP tools", bold=True)
+
+        for server, tool_calls in server_tool_calls.items():
+            for tool_call in tool_calls:
+                self.io.tool_output(f"Tool Call: {tool_call.function.name}")
+                self.io.tool_output(f"Arguments: {tool_call.function.arguments}")
+                self.io.tool_output(f"MCP Server: {server.name}")
+
+                if self.verbose:
+                    self.io.tool_output(f"Tool ID: {tool_call.id}")
+                    self.io.tool_output(f"Tool type: {tool_call.type}")
+
+                self.io.tool_output("\n")
+
+    def _gather_server_tool_calls(self, tool_calls):
+        """Collect all tool calls grouped by server.
+        Args:
+            tool_calls: List of tool calls from the LLM response
+
+        Returns:
+            dict: Dictionary mapping servers to their respective tool calls
+        """
+        if not self.mcp_tools or len(self.mcp_tools) == 0:
+            return None
+
+        server_tool_calls = {}
+        for tool_call in tool_calls:
+            # Check if this tool_call matches any MCP tool
+            for server_name, server_tools in self.mcp_tools:
+                for tool in server_tools:
+                    if tool.get("function", {}).get("name") == tool_call.function.name:
+                        # Find the McpServer instance that will be used for communication
+                        for server in self.mcp_servers:
+                            if server.name == server_name:
+                                if server not in server_tool_calls:
+                                    server_tool_calls[server] = []
+                                server_tool_calls[server].append(tool_call)
+                                break
+
+        return server_tool_calls
+
+    def _execute_tool_calls(self, tool_calls):
+        """Process tool calls from the response and execute them if they match MCP tools.
+        Returns a list of tool response messages."""
+        tool_responses = []
+
+        # Define the coroutine to execute all tool calls for a single server
+        async def _exec_server_tools(server, tool_calls_list):
+            tool_responses = []
+            try:
+                # Connect to the server once
+                session = await server.connect()
+                # Execute all tool calls for this server
+                for tool_call in tool_calls_list:
+                    try:
+                        call_result = await experimental_mcp_client.call_openai_tool(
+                            session=session,
+                            openai_tool=tool_call,
+                        )
+                        result_text = str(call_result.content[0].text)
+                        tool_responses.append(
+                            {"role": "tool", "tool_call_id": tool_call.id, "content": result_text}
+                        )
+                    except Exception as e:
+                        tool_error = f"Error executing tool call {tool_call.function.name}: \n{e}"
+                        self.io.tool_warning(f"Executing {tool_call.function.name} on {server.name} failed: \n  Error: {e}\n")
+                        tool_responses.append({"role": "tool", "tool_call_id": tool_call.id, "content": tool_error})
+            except Exception as e:
+                connection_error = f"Could not connect to server {server.name}\n{e}"
+                self.io.tool_warning(connection_error)
+                for tool_call in tool_calls_list:
+                    tool_responses.append({"role": "tool", "tool_call_id": tool_call.id, "content": connection_error})
+            finally:
+                await server.disconnect()
+
+            return tool_responses
+
+        # Execute all tool calls concurrently
+        async def _execute_all_tool_calls():
+            tasks = []
+            for server, tool_calls_list in tool_calls.items():
+                tasks.append(_exec_server_tools(server, tool_calls_list))
+            # Wait for all tasks to complete
+            results = await asyncio.gather(*tasks)
+            return results
+
+        # Run the async execution and collect results
+        if tool_calls:
+            all_results = asyncio.run(_execute_all_tool_calls())
+            # Flatten the results from all servers
+            for server_results in all_results:
+                tool_responses.extend(server_results)
+
+        return tool_responses
+
+    def initialize_mcp_tools(self):
+        """
+        Initialize tools from all configured MCP servers. MCP Servers that fail to be
+        initialized will not be available to the Coder instance.
+        """
+        tools = []
+
+        async def get_server_tools(server):
+            try:
+                session = await server.connect()
+                server_tools = await experimental_mcp_client.load_mcp_tools(
+                    session=session, format="openai"
+                )
+                return (server.name, server_tools)
+            except Exception as e:
+                self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
+                return None
+            finally:
+                await server.disconnect()
+
+        async def get_all_server_tools():
+            tasks = [get_server_tools(server) for server in self.mcp_servers]
+            results = await asyncio.gather(*tasks)
+            return [result for result in results if result is not None]
+
+        if self.mcp_servers:
+            tools = asyncio.run(get_all_server_tools())
+
+        if len(tools) > 0:
+            self.io.tool_output("MCP servers configured:")
+            for server_name, server_tools in tools:
+                self.io.tool_output(f"  - {server_name}")
+
+                if self.verbose:
+                    for tool in server_tools:
+                        tool_name = tool.get("function", {}).get("name", "unknown")
+                        tool_desc = tool.get("function", {}).get("description", "").split("\n")[0]
+                        self.io.tool_output(f"    - {tool_name}: {tool_desc}")
+
+        self.mcp_tools = tools
+
+    def get_tool_list(self):
+        """Get a flattened list of all MCP tools."""
+        tool_list = []
+        if self.mcp_tools:
+            for _, server_tools in self.mcp_tools:
+                tool_list.extend(server_tools)
+        return tool_list
 
     def reply_completed(self):
         pass
@@ -1793,12 +1994,17 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
+
         try:
+            tool_list = self.get_tool_list()
+
             hash_object, completion = model.send_completion(
                 messages,
                 functions,
                 self.stream,
                 self.temperature,
+                # This could include any tools, but for now it is just MCP tools
+                tools=tool_list,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
@@ -1899,6 +2105,7 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         received_content = False
+        self.partial_response_tool_call = []
 
         for chunk in completion:
             if len(chunk.choices) == 0:
@@ -1910,6 +2117,9 @@ class Coder:
             ):
                 raise FinishReasonLength()
 
+            if chunk.choices[0].delta.tool_calls:
+                self.partial_response_tool_call.append(chunk)
+
             try:
                 func = chunk.choices[0].delta.function_call
                 # dump(func)
@@ -1918,6 +2128,7 @@ class Coder:
                         self.partial_response_function_call[k] += v
                     else:
                         self.partial_response_function_call[k] = v
+
                 received_content = True
             except AttributeError:
                 pass
@@ -1971,7 +2182,7 @@ class Coder:
                 sys.stdout.flush()
                 yield text
 
-        if not received_content:
+        if not received_content and len(self.partial_response_tool_call) == 0:
             self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def live_incremental_response(self, final):
@@ -2368,7 +2579,8 @@ class Coder:
         context = ""
         if history:
             for msg in history:
-                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+                msg_content = msg.get("content") or ""
+                context += "\n" + msg["role"].upper() + ": " + msg_content + "\n"
 
         return context
 

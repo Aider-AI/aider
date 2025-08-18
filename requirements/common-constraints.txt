@@ -18,7 +18,10 @@ annotated-types==0.7.0
 anyio==4.10.0
     # via
     #   httpx
+    #   mcp
     #   openai
+    #   sse-starlette
+    #   starlette
     #   watchfiles
 attrs==25.3.0
     # via
@@ -61,6 +64,7 @@ click==8.2.1
     #   pip-tools
     #   streamlit
     #   typer
+    #   uvicorn
 codespell==2.4.1
     # via -r requirements/requirements-dev.in
 cogapp==3.5.1
@@ -174,7 +178,9 @@ grpcio==1.74.0
 grpcio-status==1.71.2
     # via google-api-core
 h11==0.16.0
-    # via httpcore
+    # via
+    #   httpcore
+    #   uvicorn
 hf-xet==1.1.7
     # via huggingface-hub
 httpcore==1.0.9
@@ -187,7 +193,10 @@ httpx==0.28.1
     # via
     #   litellm
     #   llama-index-core
+    #   mcp
     #   openai
+httpx-sse==0.4.0
+    # via mcp
 huggingface-hub[inference]==0.34.3
     # via
     #   llama-index-embeddings-huggingface
@@ -258,6 +267,8 @@ matplotlib==3.10.5
     # via -r requirements/requirements-dev.in
 mccabe==0.7.0
     # via flake8
+mcp==1.6.0
+    # via -r requirements/requirements.in
 mdurl==0.1.2
     # via markdown-it-py
 mixpanel==4.10.1
@@ -397,11 +408,15 @@ pydantic==2.11.7
     #   google-generativeai
     #   litellm
     #   llama-index-core
+    #   mcp
     #   llama-index-instrumentation
     #   llama-index-workflows
     #   openai
+    #   pydantic-settings
 pydantic-core==2.33.2
     # via pydantic
+pydantic-settings==2.9.1
+    # via mcp
 pydeck==0.9.1
     # via streamlit
 pydub==0.25.1
@@ -440,6 +455,7 @@ python-dateutil==2.9.0.post0
     #   posthog
 python-dotenv==1.1.1
     # via litellm
+    #   pydantic-settings
 pytz==2025.2
     # via pandas
 pyyaml==6.0.2
@@ -522,6 +538,12 @@ soupsieve==2.7
     # via beautifulsoup4
 sqlalchemy[asyncio]==2.0.42
     # via llama-index-core
+sse-starlette==2.3.3
+    # via mcp
+starlette==0.46.2
+    # via
+    #   mcp
+    #   sse-starlette
 streamlit==1.48.0
     # via -r requirements/requirements-browser.in
 sympy==1.14.0
@@ -598,7 +620,9 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   llama-index-core
 typing-inspection==0.4.1
-    # via pydantic
+    # via 
+    #   pydantic
+    #   pydantic-settings
 tzdata==2025.2
     # via pandas
 uritemplate==4.2.0
@@ -609,6 +633,8 @@ urllib3==2.5.0
     #   requests
 uv==0.8.5
     # via -r requirements/requirements-dev.in
+uvicorn==0.34.2
+    # via mcp
 virtualenv==20.33.1
     # via pre-commit
 watchfiles==1.1.0

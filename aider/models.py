@@ -946,17 +946,14 @@ class Model(ModelSettings):
 
             os.environ[openai_api_key] = token
 
-    def send_completion(self, messages, functions, stream, temperature=None):
+    def send_completion(self, messages, functions, stream, temperature=None, tools=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
-        kwargs = dict(
-            model=self.name,
-            stream=stream,
-        )
+        kwargs = dict(model=self.name, stream=stream, tools=[])
 
         if self.use_temperature is not False:
             if temperature is None:
@@ -976,8 +973,11 @@ class Model(ModelSettings):
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
-        key = json.dumps(kwargs, sort_keys=True).encode()
 
+        if tools:
+            kwargs["tools"] = kwargs["tools"] + tools
+
+        key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
