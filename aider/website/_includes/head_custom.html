@@ -32,11 +32,18 @@
   .side-bar { 
     background: linear-gradient(135deg, #ffffff 0%, rgba(20, 176, 20, 0.01) 25%, rgba(20, 176, 20, 0.04) 40%, rgba(220, 230, 255, 0.4) 60%, rgba(205, 218, 255, 0.4) 80%, #F5F6FA 100%);
   }
+
+  @media (max-width: 50em) {
+    .ea-ad--sidebar { display: none; }
+    .ea-ad--mobile { display: block; }
+  }
 </style>
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{ site.url }}/feed.xml">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link rel="preload" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" as="style" type="text/css" crossorigin>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script async src="https://media.ethicalads.io/media/client/ethicalads.min.js"></script>
 
 <!-- Logo Progressive Enhancement for Jekyll pages -->
 <script>

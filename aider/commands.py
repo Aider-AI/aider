@@ -412,6 +412,7 @@ class Commands:
         "Clear the chat history"
 
         self._clear_chat_history()
+        self.io.tool_output("All chat history cleared.")
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
@@ -568,6 +569,7 @@ class Commands:
 
         last_commit_hash = self.coder.repo.get_head_commit_sha(short=True)
         last_commit_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
+        last_commit_message = (last_commit_message.splitlines() or [""])[0]
         if last_commit_hash not in self.coder.aider_commit_hashes:
             self.io.tool_error("The last commit was not made by aider in this chat session.")
             self.io.tool_output(
@@ -646,6 +648,7 @@ class Commands:
         # Get the current HEAD after undo
         current_head_hash = self.coder.repo.get_head_commit_sha(short=True)
         current_head_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
+        current_head_message = (current_head_message.splitlines() or [""])[0]
         self.io.tool_output(f"Now at:  {current_head_hash} {current_head_message}")
 
         if self.coder.main_model.send_undo_reply:

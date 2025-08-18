@@ -27,13 +27,13 @@ cog.out(text)
   <a href="https://github.com/Aider-AI/aider/stargazers"><img alt="GitHub Stars" title="Total number of GitHub stars the Aider project has received"
 src="https://img.shields.io/github/stars/Aider-AI/aider?style=flat-square&logo=github&color=f1c40f&labelColor=555555"/></a>
   <a href="https://pypi.org/project/aider-chat/"><img alt="PyPI Downloads" title="Total number of installations via pip from PyPI"
-src="https://img.shields.io/badge/📦%20Installs-2.7M-2ecc71?style=flat-square&labelColor=555555"/></a>
+src="https://img.shields.io/badge/📦%20Installs-3.0M-2ecc71?style=flat-square&labelColor=555555"/></a>
   <img alt="Tokens per week" title="Number of tokens processed weekly by Aider users"
 src="https://img.shields.io/badge/📈%20Tokens%2Fweek-15B-3498db?style=flat-square&labelColor=555555"/>
   <a href="https://openrouter.ai/#options-menu"><img alt="OpenRouter Ranking" title="Aider's ranking among applications on the OpenRouter platform"
 src="https://img.shields.io/badge/🏆%20OpenRouter-Top%2020-9b59b6?style=flat-square&labelColor=555555"/></a>
   <a href="https://aider.chat/HISTORY.html"><img alt="Singularity" title="Percentage of the new code in Aider's last release written by Aider itself"
-src="https://img.shields.io/badge/🔄%20Singularity-21%25-e74c3c?style=flat-square&labelColor=555555"/></a>
+src="https://img.shields.io/badge/🔄%20Singularity-88%25-e74c3c?style=flat-square&labelColor=555555"/></a>
 <!--[[[end]]]-->  
 </p>
 
