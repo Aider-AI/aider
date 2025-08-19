@@ -1711,3 +1711,31 @@
   versions: 0.85.3.dev
   seconds_per_case: 35.5
   total_cost: 0.7406
+
+- dirname: 2025-08-19-18-53-15--deepseek-v3.1
+  test_cases: 225
+  model: deepseek/deepseek-chat
+  edit_format: diff
+  commit_hash: 176847f
+  pass_rate_1: 41.8
+  pass_rate_2: 72.0
+  pass_num_1: 94
+  pass_num_2: 162
+  percent_cases_well_formed: 95.6
+  error_outputs: 13
+  num_malformed_responses: 11
+  num_with_malformed_responses: 10
+  user_asks: 68
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 2346960
+  completion_tokens: 559312
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model deepseek/deepseek-chat
+  date: 2025-08-19
+  versions: 0.86.2.dev
+  seconds_per_case: 136.8
+  total_cost: 0.9864
