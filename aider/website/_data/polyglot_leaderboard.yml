@@ -1711,3 +1711,90 @@
   versions: 0.85.3.dev
   seconds_per_case: 35.5
   total_cost: 0.7406
+
+- dirname: 2025-08-21-08-40-31--gpt-5-mini-low
+  test_cases: 225
+  model: openai/gpt-5-mini
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: low
+  pass_rate_1: 20.9
+  pass_rate_2: 60.0
+  pass_num_1: 47
+  pass_num_2: 135
+  percent_cases_well_formed: 97.8
+  error_outputs: 5
+  num_malformed_responses: 5
+  num_with_malformed_responses: 5
+  user_asks: 157
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2810113
+  completion_tokens: 605896
+  test_timeouts: 2
+  total_tests: 225
+  command: aider --model openai/gpt-5-mini
+  date: 2025-08-21
+  versions: 0.86.2.dev
+  seconds_per_case: 41.2
+  total_cost: 1.7540
+
+- dirname: 2025-08-21-07-55-32--gpt-5-mini-medium
+  test_cases: 225
+  model: openai/gpt-5-mini
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: medium
+  pass_rate_1: 28.4
+  pass_rate_2: 68.0
+  pass_num_1: 64
+  pass_num_2: 153
+  percent_cases_well_formed: 99.1
+  error_outputs: 2
+  num_malformed_responses: 2
+  num_with_malformed_responses: 2
+  user_asks: 139
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2557134
+  completion_tokens: 1155662
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model openai/gpt-5-mini
+  date: 2025-08-21
+  versions: 0.86.2.dev
+  seconds_per_case: 96.2
+  total_cost: 2.7996
+
+- dirname: 2025-08-21-09-00-17--gpt-5-mini-high
+  test_cases: 225
+  model: openai/gpt-5-mini
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: high
+  pass_rate_1: 32.4
+  pass_rate_2: 74.2
+  pass_num_1: 73
+  pass_num_2: 167
+  percent_cases_well_formed: 97.8
+  error_outputs: 6
+  num_malformed_responses: 5
+  num_with_malformed_responses: 5
+  user_asks: 157
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2764302
+  completion_tokens: 3464001
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model openai/gpt-5-mini
+  date: 2025-08-21
+  versions: 0.86.2.dev
+  seconds_per_case: 237.0
+  total_cost: 7.4568
