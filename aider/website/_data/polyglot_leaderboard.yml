@@ -1711,3 +1711,90 @@
   versions: 0.85.3.dev
   seconds_per_case: 35.5
   total_cost: 0.7406
+
+- dirname: 2025-08-21-11-04-55--gpt-5-nano-high
+  test_cases: 225
+  model: openai/gpt-5-nano
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: high
+  pass_rate_1: 16.4
+  pass_rate_2: 44.4
+  pass_num_1: 37
+  pass_num_2: 100
+  percent_cases_well_formed: 79.1
+  error_outputs: 170
+  num_malformed_responses: 131
+  num_with_malformed_responses: 47
+  user_asks: 128
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 3910185
+  completion_tokens: 8383362
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/gpt-5-nano
+  date: 2025-08-21
+  versions: 0.86.2.dev
+  seconds_per_case: 226.1
+  total_cost: 3.5149
+
+- dirname: 2025-08-21-12-47-53--gpt-5-nano-medium
+  test_cases: 225
+  model: openai/gpt-5-nano
+  edit_format: diff
+  commit_hash: b866cb1
+  reasoning_effort: medium
+  pass_rate_1: 16.4
+  pass_rate_2: 40.4
+  pass_num_1: 37
+  pass_num_2: 91
+  percent_cases_well_formed: 77.3
+  error_outputs: 479
+  num_malformed_responses: 138
+  num_with_malformed_responses: 51
+  user_asks: 156
+  lazy_comments: 2
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 4509265
+  completion_tokens: 4039687
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openai/gpt-5-nano
+  date: 2025-08-21
+  versions: 0.86.2.dev
+  seconds_per_case: 149.5
+  total_cost: 1.8026
+
+- dirname: 2025-08-21-13-42-02--gpt-5-nano-low
+  test_cases: 225
+  model: openai/gpt-5-nano
+  edit_format: diff
+  commit_hash: b866cb1
+  reasoning_effort: low
+  pass_rate_1: 11.1
+  pass_rate_2: 29.8
+  pass_num_1: 25
+  pass_num_2: 67
+  percent_cases_well_formed: 83.1
+  error_outputs: 430
+  num_malformed_responses: 77
+  num_with_malformed_responses: 38
+  user_asks: 143
+  lazy_comments: 9
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 4129092
+  completion_tokens: 993987
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model openai/gpt-5-nano
+  date: 2025-08-21
+  versions: 0.86.2.dev
+  seconds_per_case: 85.3
+  total_cost: 0.5682
