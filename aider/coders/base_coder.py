@@ -1716,6 +1716,18 @@ class Coder:
         else:
             content = ""
 
+        if interrupted:
+            if self.cur_messages and self.cur_messages[-1]["role"] == "user":
+                self.cur_messages[-1]["content"] += "\n^C KeyboardInterrupt"
+            else:
+                self.cur_messages += [dict(role="user", content="^C KeyboardInterrupt")]
+            self.cur_messages += [
+                dict(role="assistant", content="I see that you interrupted my previous reply.")
+            ]
+            return
+
+        edited = self.apply_updates()
+
         if not interrupted:
             add_rel_files_message = self.check_for_file_mentions(content)
             if add_rel_files_message:
@@ -1738,18 +1750,6 @@ class Coder:
                     return
             except KeyboardInterrupt:
                 interrupted = True
-
-        if interrupted:
-            if self.cur_messages and self.cur_messages[-1]["role"] == "user":
-                self.cur_messages[-1]["content"] += "\n^C KeyboardInterrupt"
-            else:
-                self.cur_messages += [dict(role="user", content="^C KeyboardInterrupt")]
-            self.cur_messages += [
-                dict(role="assistant", content="I see that you interrupted my previous reply.")
-            ]
-            return
-
-        edited = self.apply_updates()
 
         if edited:
             self.aider_edited_files.update(edited)
