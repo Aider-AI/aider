@@ -27,7 +27,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [Experimental Context Compaction For Longer Running Generation Tasks](https://github.com/Aider-AI/aider/issues/6)
 
 ### Other Notes
-* [MCP Configuration](https://github.com/dwash96/aider/blob/main/aider/website/docs/config/mcp.md)
+* [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
 
 <p align="center">
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
