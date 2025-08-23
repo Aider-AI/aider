@@ -68,17 +68,13 @@ def mock_litellm_transcription():
         yield mock_transcribe_func
 
 
-@pytest.fixture
-def mock_soundfile():
-    with patch("aider.voice.sf") as mock_sf:
-        yield mock_sf
-
-
 def test_voice_init_default_device(mock_sounddevice):
-    voice = Voice()
-    assert voice.device_id is None
-    assert voice.audio_format == "wav"
-    assert voice.sd == mock_sounddevice
+    # Need to mock sf here as Voice() init checks for it, but not in all other tests where it's not relevant.
+    with patch("aider.voice.sf", MagicMock()):
+        voice = Voice()
+        assert voice.device_id is None
+        assert voice.audio_format == "wav"
+        assert voice.sd == mock_sounddevice
 
 
 def test_voice_init_specific_device(mock_sounddevice):
@@ -95,14 +91,15 @@ def test_voice_init_invalid_device(mock_sounddevice):
 
 
 def test_voice_init_invalid_format():
-    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
+    with patch("aider.voice.sf", MagicMock()): # Need to mock sf to avoid SoundDeviceError
         with pytest.raises(ValueError) as exc:
             Voice(audio_format="invalid")
         assert "Unsupported audio format" in str(exc.value)
 
 
 def test_callback_processing():
-    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
+    # Soundfile not needed for callback, but Voice init requires it
+    with patch("aider.voice.sf", MagicMock()):
         voice = Voice()
         voice.q = queue.Queue()
 
@@ -121,7 +118,8 @@ def test_callback_processing():
 
 
 def test_get_prompt():
-    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
+    # Soundfile not needed for get_prompt, but Voice init requires it
+    with patch("aider.voice.sf", MagicMock()):
         voice = Voice()
         voice.start_time = os.times().elapsed
         voice.pct = 0.5  # 50% volume level
@@ -134,6 +132,7 @@ def test_get_prompt():
 
 
 def test_record_and_transcribe_keyboard_interrupt():
+    # Soundfile not needed for this test, but Voice init requires it
     with patch("aider.voice.sf", MagicMock()):
         voice = Voice()
         with patch.object(voice, "raw_record_and_transcribe", side_effect=KeyboardInterrupt()):
@@ -142,7 +141,7 @@ def test_record_and_transcribe_keyboard_interrupt():
 
 
 def test_raw_record_and_transcribe_success_no_conversion(
-    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+    mock_sounddevice, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
 ):
     # Simulate small audio file, should not trigger conversion
     mock_sounddevice.InputStream.dummy_data_size_samples = 16000 * 5  # 5 seconds of 16kHz audio
@@ -167,7 +166,7 @@ def test_raw_record_and_transcribe_success_no_conversion(
 
 
 def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
-    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+    mock_sounddevice, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
 ):
     # Simulate large audio file (over 24.9MB for 16kHz, 1-channel, 16-bit WAV), should trigger MP3 conversion
     # Approx 1MB/min for 16kHz, 16-bit mono WAV. So ~25 mins = 25MB
@@ -196,7 +195,7 @@ def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
 
 
 def test_raw_record_and_transcribe_success_direct_mp3_format(
-    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+    mock_sounddevice, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
 ):
     # Specify mp3 format directly, should convert regardless of size
     mock_sounddevice.InputStream.dummy_data_size_samples = 16000 * 10  # 10 seconds of 16kHz audio
@@ -223,7 +222,7 @@ def test_raw_record_and_transcribe_success_direct_mp3_format(
 
 
 def test_raw_record_and_transcribe_transcription_failure_cleanup(
-    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+    mock_sounddevice, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
 ):
     # Simulate transcription failure, ensure temporary files are cleaned up
     mock_litellm_transcription.side_effect = Exception("Transcription failed!")
@@ -245,6 +244,7 @@ def test_raw_record_and_transcribe_transcription_failure_cleanup(
 
 
 def test_record_and_transcribe_device_error():
+    # Soundfile not needed for this test, but Voice init requires it
     with patch("aider.voice.sf", MagicMock()):
         voice = Voice()
         with patch.object(
