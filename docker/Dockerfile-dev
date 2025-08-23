@@ -1,0 +1,46 @@
+FROM python:3.10-slim-bookworm AS base
+
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y \
+    build-essential git libportaudio2 pandoc \
+    vim-tiny curl procps && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m -u 1000 -s /bin/bash appuser
+
+WORKDIR /app
+
+RUN python -m venv /venv
+ENV PATH="/venv/bin:$PATH"
+
+ENV PLAYWRIGHT_BROWSERS_PATH=/home/appuser/pw-browsers
+ENV PLAYWRIGHT_SKIP_BROWSER_GC=1
+
+RUN mkdir -p /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers && \
+    chown -R appuser:appuser /home/appuser /app /venv && \
+    chmod -R 777 /home/appuser/.aider /home/appuser/.cache /home/appuser/pw-browsers
+
+RUN git config --system --add safe.directory /app
+
+ENV HOME=/app
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+FROM base AS aider-dev
+
+RUN /venv/bin/python -m pip install --upgrade --no-cache-dir pip && \
+    /venv/bin/python -m pip install --no-cache-dir \
+    "pytest>=7.0" "pytest-mock>=3.0" \
+    playwright boto3 google-cloud-aiplatform
+
+COPY . /app
+RUN /venv/bin/python -m pip install -e .[test,help,browser,playwright]
+
+RUN /venv/bin/python -m playwright install --with-deps chromium
+
+RUN chown -R appuser:appuser /app && \
+    chmod -R 777 /venv/lib/python3.10/site-packages
+
+USER appuser
+
+CMD ["bash"]
