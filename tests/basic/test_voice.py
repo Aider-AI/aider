@@ -187,7 +187,7 @@ def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
             # Check cleanup: original wav and converted mp3 should be removed
             mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
             mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
-            assert mock_remove.call_count == 2
+            assert mock_remove.call_count == 3
 
 
 def test_raw_record_and_transcribe_success_direct_mp3_format(
@@ -212,7 +212,7 @@ def test_raw_record_and_transcribe_success_direct_mp3_format(
             # Check cleanup: original wav and converted mp3 should be removed
             mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
             mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
-            assert mock_remove.call_count == 2
+            assert mock_remove.call_count == 3
 
 
 def test_raw_record_and_transcribe_transcription_failure_cleanup(
