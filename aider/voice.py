@@ -169,22 +169,22 @@ class Voice:
                     with av.open(output_filename, "w") as out_container:
                         out_stream = out_container.add_stream(use_audio_format)
 
-                        # Attempt to match input properties
+                        # Attempt to match input properties by setting properties on codec_context
                         if in_stream.sample_rate:
-                            out_stream.sample_rate = in_stream.sample_rate
+                            out_stream.codec_context.sample_rate = in_stream.sample_rate
                         if in_stream.channels:
-                            out_stream.channels = in_stream.channels
+                            out_stream.codec_context.channels = in_stream.channels
                         if in_stream.format.name:
                             # Use an appropriate sample format if possible, otherwise default
                             if out_stream.codec_context.sample_formats and \
                                in_stream.format.name in out_stream.codec_context.sample_formats:
-                                out_stream.format = in_stream.format.name
+                                out_stream.codec_context.format = in_stream.format.name
                             else:
-                                out_stream.format = "fltp" # Default float planar for good compatibility
+                                out_stream.codec_context.format = "fltp" # Default float planar for good compatibility
 
                         # Set bitrate, common for MP3
                         if use_audio_format == "mp3":
-                            out_stream.bit_rate = 128000 # 128 kbps
+                            out_stream.codec_context.bit_rate = 128000 # 128 kbps
 
                         for frame in in_container.decode(in_stream):
                             for packet in out_stream.encode(frame):
