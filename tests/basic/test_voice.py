@@ -152,7 +152,7 @@ def test_raw_record_and_transcribe_success_no_conversion(
             voice = Voice(audio_format="wav", device_name="another_device")
             voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav")])
             with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
-                result = voice.raw_record_and_transcribe()
+                result = voice.raw_record_and_transcribe(None, None)
 
                 assert result == "This is a test transcription."
                 mock_prompt_toolkit.assert_called_once()
@@ -179,7 +179,7 @@ def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
             voice = Voice(audio_format="wav", device_name="another_device")
             voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav"), str(tmp_path / "output.mp3")])
             with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
-                result = voice.raw_record_and_transcribe()
+                result = voice.raw_record_and_transcribe(None, None)
 
                 assert result == "This is a test transcription."
                 mock_prompt_toolkit.assert_called_once()
@@ -206,7 +206,7 @@ def test_raw_record_and_transcribe_success_direct_mp3_format(
             voice = Voice(audio_format="mp3", device_name="another_device")
             voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav"), str(tmp_path / "output.mp3")])
             with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
-                result = voice.raw_record_and_transcribe()
+                result = voice.raw_record_and_transcribe(None, None)
 
                 assert result == "This is a test transcription."
                 mock_prompt_toolkit.assert_called_once()
@@ -234,7 +234,7 @@ def test_raw_record_and_transcribe_transcription_failure_cleanup(
             voice = Voice(audio_format="wav", device_name="another_device")
             voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav")])
             with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
-                result = voice.raw_record_and_transcribe()
+                result = voice.raw_record_and_transcribe(None, None)
 
                 assert result is None  # Should return None on transcription failure
                 mock_prompt_toolkit.assert_called_once()
