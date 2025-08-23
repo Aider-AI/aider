@@ -13,11 +13,59 @@ from aider.voice import SoundDeviceError, Voice
 def mock_sounddevice():
     mock_sd = MagicMock()
     mock_sd.query_devices.return_value = [
-        {"name": "test_device", "max_input_channels": 2},
-        {"name": "another_device", "max_input_channels": 1},
+        {"name": "test_device", "max_input_channels": 2, "default_samplerate": 44100},
+        {"name": "another_device", "max_input_channels": 1, "default_samplerate": 16000},
     ]
+
+    class MockInputStream:
+        def __init__(self, samplerate, channels, callback, device):
+            self.samplerate = samplerate
+            self.channels = channels
+            self.callback = callback
+            self.device = device
+            self.is_active = True
+
+        def __enter__(self):
+            # Simulate some audio input by calling the callback
+            # Use fixed dummy data to control file size in tests
+            # Roughly 16kHz, 1-channel, 16-bit WAV is ~1MB per minute.
+            # 1 MB data ~ 60 seconds * 16000 samples/sec = 960,000 samples.
+            # 24.9 MB threshold / ~1MB/min = ~24.9 minutes of audio
+            # Let's use 1 second of data for small files, 30 seconds for large files.
+            # The dummy_data_size_samples attribute will be set by the test
+            if not hasattr(self, 'dummy_data_size_samples'):
+                self.dummy_data_size_samples = self.samplerate * 1 # Default 1 sec
+            
+            # Divide into chunks for callback
+            num_chunks = 5
+            samples_per_chunk = self.dummy_data_size_samples // num_chunks
+            for _ in range(num_chunks):
+                # Using 0.5 amplitude to get a good RMS for pct calculation
+                dummy_data = np.full((samples_per_chunk, self.channels), 0.5, dtype=np.float32)
+                self.callback(dummy_data, None, None, None)
+            return self
+
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            self.is_active = False
+            pass
+
+    mock_sd.InputStream = MockInputStream
     with patch.dict("sys.modules", {"sounddevice": mock_sd}):
         yield mock_sd
+
+
+@pytest.fixture
+def mock_prompt_toolkit():
+    with patch("aider.voice.prompt") as mock_prompt:
+        yield mock_prompt
+
+
+@pytest.fixture
+def mock_litellm_transcription():
+    mock_transcript = MagicMock()
+    mock_transcript.text = "This is a test transcription."
+    with patch("aider.llm.litellm.transcription", return_value=mock_transcript) as mock_transcribe_func:
+        yield mock_transcribe_func
 
 
 @pytest.fixture
@@ -91,6 +139,109 @@ def test_record_and_transcribe_keyboard_interrupt():
         with patch.object(voice, "raw_record_and_transcribe", side_effect=KeyboardInterrupt()):
             result = voice.record_and_transcribe()
             assert result is None
+
+
+def test_raw_record_and_transcribe_success_no_conversion(
+    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+):
+    # Simulate small audio file, should not trigger conversion
+    mock_sounddevice.InputStream.dummy_data_size_samples = 16000 * 5  # 5 seconds of 16kHz audio
+
+    with patch("os.path.exists", return_value=True): # For tempfile cleanup check
+        with patch("os.remove") as mock_remove:
+            voice = Voice(audio_format="wav", device_name="another_device")
+            voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav")])
+            with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
+                result = voice.raw_record_and_transcribe()
+
+                assert result == "This is a test transcription."
+                mock_prompt_toolkit.assert_called_once()
+                mock_litellm_transcription.assert_called_once()
+
+                # Check transcription was called with the wav file
+                call_args, _ = mock_litellm_transcription.call_args
+                assert "temp.wav" in call_args[0].name
+
+                # Check cleanup
+                mock_remove.assert_called_once_with(str(tmp_path / "temp.wav"))
+
+
+def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
+    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+):
+    # Simulate large audio file (over 24.9MB for 16kHz, 1-channel, 16-bit WAV), should trigger MP3 conversion
+    # Approx 1MB/min for 16kHz, 16-bit mono WAV. So ~25 mins = 25MB
+    # 25 mins * 60 sec/min * 16000 samples/sec = 24,000,000 samples
+    mock_sounddevice.InputStream.dummy_data_size_samples = 16000 * 60 * 26 # 26 minutes of audio
+
+    with patch("os.path.exists", side_effect=lambda x: True): # Ensure os.path.exists always returns True for temp files
+        with patch("os.remove") as mock_remove:
+            voice = Voice(audio_format="wav", device_name="another_device")
+            voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav"), str(tmp_path / "output.mp3")])
+            with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
+                result = voice.raw_record_and_transcribe()
+
+                assert result == "This is a test transcription."
+                mock_prompt_toolkit.assert_called_once()
+                mock_litellm_transcription.assert_called_once()
+
+                # Check transcription was called with the mp3 file
+                call_args, _ = mock_litellm_transcription.call_args
+                assert "output.mp3" in call_args[0].name
+
+                # Check cleanup: original wav and converted mp3 should be removed
+                mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
+                mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
+                assert mock_remove.call_count == 2
+
+
+def test_raw_record_and_transcribe_success_direct_mp3_format(
+    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+):
+    # Specify mp3 format directly, should convert regardless of size
+    mock_sounddevice.InputStream.dummy_data_size_samples = 16000 * 10  # 10 seconds of 16kHz audio
+
+    with patch("os.path.exists", side_effect=lambda x: True):
+        with patch("os.remove") as mock_remove:
+            voice = Voice(audio_format="mp3", device_name="another_device")
+            voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav"), str(tmp_path / "output.mp3")])
+            with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
+                result = voice.raw_record_and_transcribe()
+
+                assert result == "This is a test transcription."
+                mock_prompt_toolkit.assert_called_once()
+                mock_litellm_transcription.assert_called_once()
+
+                # Check transcription was called with the mp3 file
+                call_args, _ = mock_litellm_transcription.call_args
+                assert "output.mp3" in call_args[0].name
+
+                # Check cleanup: original wav and converted mp3 should be removed
+                mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
+                mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
+                assert mock_remove.call_count == 2
+
+
+def test_raw_record_and_transcribe_transcription_failure_cleanup(
+    mock_sounddevice, mock_soundfile, mock_prompt_toolkit, mock_litellm_transcription, tmp_path
+):
+    # Simulate transcription failure, ensure temporary files are cleaned up
+    mock_litellm_transcription.side_effect = Exception("Transcription failed!")
+    mock_sounddevice.InputStream.dummy_data_size_samples = 16000 * 5  # 5 seconds of audio
+
+    with patch("os.path.exists", side_effect=lambda x: True):
+        with patch("os.remove") as mock_remove:
+            voice = Voice(audio_format="wav", device_name="another_device")
+            voice.tempfile_mktemp = MagicMock(side_effect=[str(tmp_path / "temp.wav")])
+            with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
+                result = voice.raw_record_and_transcribe()
+
+                assert result is None  # Should return None on transcription failure
+                mock_prompt_toolkit.assert_called_once()
+                mock_litellm_transcription.assert_called_once()
+
+                # Ensure temp wav file was removed even after transcription failure
+                mock_remove.assert_called_once_with(str(tmp_path / "temp.wav"))
 
 
 def test_record_and_transcribe_device_error():
