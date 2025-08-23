@@ -1,4 +1,4 @@
-pydub
+av
 configargparse
 GitPython
 jsonschema
