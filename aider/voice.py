@@ -167,24 +167,27 @@ class Voice:
                     in_stream = in_container.streams.audio[0]
 
                     with av.open(output_filename, "w") as out_container:
-                        out_stream = out_container.add_stream(use_audio_format)
+                        stream_options = {}
 
-                        # Attempt to match input properties by setting properties on codec_context
+                        # Attempt to match input properties
                         if in_stream.sample_rate:
-                            out_stream.codec_context.sample_rate = in_stream.sample_rate
+                            stream_options['sample_rate'] = in_stream.sample_rate
                         if in_stream.channels:
-                            out_stream.codec_context.channels = in_stream.channels
+                            stream_options['channels'] = in_stream.channels
                         if in_stream.format.name:
                             # Use an appropriate sample format if possible, otherwise default
-                            if out_stream.codec_context.sample_formats and \
-                               in_stream.format.name in out_stream.codec_context.sample_formats:
-                                out_stream.codec_context.format = in_stream.format.name
+                            # We need to add the stream first to check available formats for the codec
+                            # For simplicity, we'll try to set common sensible defaults
+                            if use_audio_format == "mp3":
+                                stream_options['sample_fmt'] = 'fltp' # MP3 often uses float planar
                             else:
-                                out_stream.codec_context.format = "fltp" # Default float planar for good compatibility
+                                stream_options['sample_fmt'] = in_stream.format.name if in_stream.format.name else "s16"
 
                         # Set bitrate, common for MP3
                         if use_audio_format == "mp3":
-                            out_stream.codec_context.bit_rate = 128000 # 128 kbps
+                            stream_options['bit_rate'] = 128000 # 128 kbps
+
+                        out_stream = out_container.add_stream(use_audio_format, options=stream_options)
 
                         for frame in in_container.decode(in_stream):
                             for packet in out_stream.encode(frame):
