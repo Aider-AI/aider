@@ -158,8 +158,7 @@ def test_raw_record_and_transcribe_success_no_conversion(
                 mock_litellm_transcription.assert_called_once()
 
                 # Check transcription was called with the wav file
-                call_args, _ = mock_litellm_transcription.call_args
-                assert "temp.wav" in call_args.kwargs['file'].name
+                assert "temp.wav" in mock_litellm_transcription.call_args.kwargs['file'].name
 
                 # Check cleanup
                 mock_remove.assert_called_once_with(str(tmp_path / "temp.wav"))
@@ -185,8 +184,7 @@ def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
                 mock_litellm_transcription.assert_called_once()
 
                 # Check transcription was called with the mp3 file
-                call_args, _ = mock_litellm_transcription.call_args
-                assert "output.mp3" in call_args.kwargs['file'].name
+                assert "output.mp3" in mock_litellm_transcription.call_args.kwargs['file'].name
 
                 # Check cleanup: original wav and converted mp3 should be removed
                 mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
@@ -212,8 +210,7 @@ def test_raw_record_and_transcribe_success_direct_mp3_format(
                 mock_litellm_transcription.assert_called_once()
 
                 # Check transcription was called with the mp3 file
-                call_args, _ = mock_litellm_transcription.call_args
-                assert "output.mp3" in call_args.kwargs['file'].name
+                assert "output.mp3" in mock_litellm_transcription.call_args.kwargs['file'].name
 
                 # Check cleanup: original wav and converted mp3 should be removed
                 mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
