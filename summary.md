@@ -58,6 +58,10 @@ Running in Docker:
 docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e OPENROUTER_API_KEY=$OPENROUTER_API_KEY paulgauthier/aider-full --model openrouter/deepseek/deepseek-chat-v3-0324:free --weak-model openrouter/google/gemini-2.0-flash-exp:free
 ```
 
+```
+docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e GEMINI_API_KEY=$GEMINI_API_KEY paulgauthier/aider-full
+```
+
 ### Deployment Notes
 - Primarily a CLI tool rather than service
 - No Docker support observed in current codebase
@@ -65,3 +69,32 @@ docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e OPENROUTER_API_K
 - Extensive test suite (pytest) for validation
 
 <!-- Add project-specific deployment details as needed -->
+
+
+## Dev Environment
+
+### Basic usage
+
+```
+python -m aider.main file1.py file2.txt
+```
+
+### With OpenAI API key
+
+```
+OPENAI_API_KEY=sk-... python -m aider.main
+```
+
+### Show help
+
+```
+python -m aider.main --help
+```
+
+In Docker environment (from previous setup):
+
+```
+docker-compose run --rm aider-dev python -m aider.main [options] [files...]
+```
+
+The Python command directly invokes aider's main module while respecting all the argument parsing and configuration defined in aider/args.py and related modules.
