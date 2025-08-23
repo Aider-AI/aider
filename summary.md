@@ -73,28 +73,56 @@ docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e GEMINI_API_KEY=$
 
 ## Dev Environment
 
-### Basic usage
+### Local Setup
+```bash
+# Clone repository
+git clone https://github.com/your-org/aider.git
+cd aider
 
-```
-python -m aider.main file1.py file2.txt
-```
+# Create and activate virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate  # Windows
 
-### With OpenAI API key
+# Install with development dependencies
+pip install -e .[dev]
 
-```
-OPENAI_API_KEY=sk-... python -m aider.main
-```
-
-### Show help
-
-```
-python -m aider.main --help
-```
-
-In Docker environment (from previous setup):
-
-```
-docker-compose run --rm aider-dev python -m aider.main [options] [files...]
+# Configure API key (one of)
+export OPENAI_API_KEY=sk-...
+export ANTHROPIC_API_KEY=your-key
+export GEMINI_API_KEY=your-key
 ```
 
-The Python command directly invokes aider's main module while respecting all the argument parsing and configuration defined in aider/args.py and related modules.
+### Basic Usage
+```bash
+# Start aider with specific files
+python -m aider file1.py file2.txt
+
+# With model selection
+python -m aider --model openai/gpt-4-turbo
+
+# Start in git commit mode
+python -m aider --commit
+```
+
+### Testing & Validation
+```bash
+# Run all tests
+pytest tests/
+
+# Run specific test suite
+pytest tests/scrape/test_playwright_disable.py
+
+# Check code formatting
+black --check .
+
+# Run linter
+flake8 aider/ tests/
+```
+
+### Contribution Tips
+1. Follow existing code style (Black formatting, Flake8 linting)
+2. Add tests for new features in tests/ directory
+3. Update documentation in summary.md and help texts
+4. Use type hints and docstrings for new code
+5. Validate changes against multiple LLM providers
