@@ -28,6 +28,10 @@ attrs==25.3.0
     #   aiohttp
     #   jsonschema
     #   referencing
+av==15.0.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 backoff==2.2.1
     # via
     #   -c requirements/common-constraints.txt
@@ -60,6 +64,11 @@ click==8.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+colorama==0.4.6
+    # via
+    #   -c requirements/common-constraints.txt
+    #   click
+    #   tqdm
 configargparse==1.7.1
     # via
     #   -c requirements/common-constraints.txt
@@ -154,10 +163,6 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.1.7
-    # via
-    #   -c requirements/common-constraints.txt
-    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
@@ -343,10 +348,6 @@ pydantic-core==2.33.2
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
-pydub==0.25.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
 pyflakes==3.4.0
     # via
     #   -c requirements/common-constraints.txt
@@ -485,8 +486,6 @@ tree-sitter-yaml==0.7.1
 typing-extensions==4.14.1
     # via
     #   -c requirements/common-constraints.txt
-    #   aiosignal
-    #   anyio
     #   beautifulsoup4
     #   google-generativeai
     #   huggingface-hub
@@ -494,7 +493,6 @@ typing-extensions==4.14.1
     #   posthog
     #   pydantic
     #   pydantic-core
-    #   referencing
     #   typing-inspection
 typing-inspection==0.4.1
     # via
