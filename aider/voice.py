@@ -17,13 +17,20 @@ warnings.filterwarnings(
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
-from pydub import AudioSegment  # noqa
-from pydub.exceptions import CouldntDecodeError, CouldntEncodeError  # noqa
+import av
+import av.filter
+import av.codec
+import av.container
+import av.stream
 
 try:
     import soundfile as sf
 except (OSError, ModuleNotFoundError):
     sf = None
+
+# Custom exception for FFmpeg-related errors during audio processing
+class FFmpegError(Exception):
+    pass
 
 
 class SoundDeviceError(Exception):
@@ -145,24 +152,67 @@ class Voice:
 
         # Check file size and offer to convert to mp3 if too large
         file_size = os.path.getsize(temp_wav)
+        filename = temp_wav
+        output_filename = None
+
         if file_size > 24.9 * 1024 * 1024 and self.audio_format == "wav":
-            print("\nWarning: {temp_wav} is too large, switching to mp3 format.")
+            print(f"\nWarning: {temp_wav} is too large ({file_size / (1024*1024):.2f}MB), switching to mp3 format.")
             use_audio_format = "mp3"
 
-        filename = temp_wav
         if use_audio_format != "wav":
             try:
-                new_filename = tempfile.mktemp(suffix=f".{use_audio_format}")
-                audio = AudioSegment.from_wav(temp_wav)
-                audio.export(new_filename, format=use_audio_format)
+                output_filename = tempfile.mktemp(suffix=f".{use_audio_format}")
+
+                with av.open(temp_wav, "r") as in_container:
+                    in_stream = in_container.streams.audio[0]
+
+                    with av.open(output_filename, "w") as out_container:
+                        out_stream = out_container.add_stream(use_audio_format)
+
+                        # Attempt to match input properties
+                        if in_stream.sample_rate:
+                            out_stream.sample_rate = in_stream.sample_rate
+                        if in_stream.channels:
+                            out_stream.channels = in_stream.channels
+                        if in_stream.format.name:
+                            # Use an appropriate sample format if possible, otherwise default
+                            if out_stream.codec_context.sample_formats and \
+                               in_stream.format.name in out_stream.codec_context.sample_formats:
+                                out_stream.format = in_stream.format.name
+                            else:
+                                out_stream.format = "fltp" # Default float planar for good compatibility
+
+                        # Set bitrate, common for MP3
+                        if use_audio_format == "mp3":
+                            out_stream.bit_rate = 128000 # 128 kbps
+
+                        for frame in in_container.decode(in_stream):
+                            for packet in out_stream.encode(frame):
+                                out_container.mux(packet)
+                        # Flush stream
+                        for packet in out_stream.encode():
+                            out_container.mux(packet)
+
                 os.remove(temp_wav)
-                filename = new_filename
-            except (CouldntDecodeError, CouldntEncodeError) as e:
-                print(f"Error converting audio: {e}")
+                filename = output_filename
+
+            except av.FFmpegError as e:
+                print(f"Error converting audio with FFmpeg: {e}")
+                if output_filename and os.path.exists(output_filename):
+                    os.remove(output_filename)
+                # Fallback to original wav if conversion fails and continue attempting transcription
             except (OSError, FileNotFoundError) as e:
                 print(f"File system error during conversion: {e}")
+                # Fallback to original wav
             except Exception as e:
                 print(f"Unexpected error during audio conversion: {e}")
+                # Fallback to original wav
+
+        # Ensure filename is set to the correct file for transcription
+        if output_filename and os.path.exists(output_filename):
+            filename = output_filename
+        else:
+            filename = temp_wav # Use the original WAV if conversion failed or wasn't needed
 
         with open(filename, "rb") as fh:
             try:
@@ -171,13 +221,18 @@ class Voice:
                 )
             except Exception as err:
                 print(f"Unable to transcribe {filename}: {err}")
+                if output_filename and os.path.exists(output_filename):
+                    os.remove(output_filename)
+                os.remove(temp_wav)
                 return
 
-        if filename != temp_wav:
-            os.remove(filename)
+        # Clean up files regardless of transcription success, but only if they exist
+        if output_filename and os.path.exists(output_filename):
+            os.remove(output_filename)
+        if temp_wav and os.path.exists(temp_wav): # Always remove the initial temp wav
+            os.remove(temp_wav)
 
-        text = transcript.text
-        return text
+        return transcript.text
 
 
 if __name__ == "__main__":
