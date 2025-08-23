@@ -5,6 +5,11 @@ import tempfile
 import time
 import warnings
 
+import av
+import av.codec
+import av.container
+import av.filter
+import av.stream
 from prompt_toolkit.shortcuts import prompt
 
 from aider.llm import litellm
@@ -16,17 +21,11 @@ warnings.filterwarnings(
 )
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 
-
-import av
-import av.filter
-import av.codec
-import av.container
-import av.stream
-
 try:
     import soundfile as sf
 except (OSError, ModuleNotFoundError):
     sf = None
+
 
 # Custom exception for FFmpeg-related errors during audio processing
 class FFmpegError(Exception):
@@ -156,7 +155,10 @@ class Voice:
         output_filename = None
 
         if file_size > 24.9 * 1024 * 1024 and self.audio_format == "wav":
-            print(f"\nWarning: {temp_wav} is too large ({file_size / (1024*1024):.2f}MB), switching to mp3 format.")
+            print(
+                f"\nWarning: {temp_wav} is too large ({file_size / (1024 * 1024):.2f}MB),"
+                " switching to mp3 format."
+            )
             use_audio_format = "mp3"
 
         if use_audio_format != "wav":
@@ -171,23 +173,27 @@ class Voice:
 
                         # Attempt to match input properties
                         if in_stream.sample_rate:
-                            stream_options['sample_rate'] = str(in_stream.sample_rate)
+                            stream_options["sample_rate"] = str(in_stream.sample_rate)
                         if in_stream.channels:
-                            stream_options['channels'] = str(in_stream.channels)
+                            stream_options["channels"] = str(in_stream.channels)
                         if in_stream.format.name:
                             # Use an appropriate sample format if possible, otherwise default
                             # For simplicity, we'll try to set common sensible defaults
                             if use_audio_format == "mp3":
-                                stream_options['sample_fmt'] = 'fltp' # MP3 often uses float planar
+                                stream_options["sample_fmt"] = "fltp"  # MP3 often uses float planar
                             else:
                                 # Ensure default format is string if in_stream.format.name is None
-                                stream_options['sample_fmt'] = in_stream.format.name if in_stream.format.name else "s16"
+                                stream_options["sample_fmt"] = (
+                                    in_stream.format.name if in_stream.format.name else "s16"
+                                )
 
                         # Set bitrate, common for MP3
                         if use_audio_format == "mp3":
-                            stream_options['bit_rate'] = str(128000) # 128 kbps
+                            stream_options["bit_rate"] = str(128000)  # 128 kbps
 
-                        out_stream = out_container.add_stream(use_audio_format, options=stream_options)
+                        out_stream = out_container.add_stream(
+                            use_audio_format, options=stream_options
+                        )
 
                         for frame in in_container.decode(in_stream):
                             for packet in out_stream.encode(frame):
@@ -215,7 +221,7 @@ class Voice:
         if output_filename and os.path.exists(output_filename):
             filename = output_filename
         else:
-            filename = temp_wav # Use the original WAV if conversion failed or wasn't needed
+            filename = temp_wav  # Use the original WAV if conversion failed or wasn't needed
 
         with open(filename, "rb") as fh:
             try:
@@ -232,7 +238,7 @@ class Voice:
         # Clean up files regardless of transcription success, but only if they exist
         if output_filename and os.path.exists(output_filename):
             os.remove(output_filename)
-        if temp_wav and os.path.exists(temp_wav): # Always remove the initial temp wav
+        if temp_wav and os.path.exists(temp_wav):  # Always remove the initial temp wav
             os.remove(temp_wav)
 
         return transcript.text
