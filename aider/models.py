@@ -585,7 +585,8 @@ class Model(ModelSettings):
         return self.weak_model
 
     def commit_message_models(self):
-        """Returns models to use for commit messages in try-order: weak model first, then main model"""
+        """Returns models to use for commit messages in try-order: weak model first, then main model
+        The weak model is tried first to save costs/API rate limits, falling back to main model if needed"""
         return [self.weak_model, self]
 
     def get_editor_model(self, provided_editor_model_name, editor_edit_format):
