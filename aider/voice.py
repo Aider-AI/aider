@@ -171,21 +171,21 @@ class Voice:
 
                         # Attempt to match input properties
                         if in_stream.sample_rate:
-                            stream_options['sample_rate'] = in_stream.sample_rate
+                            stream_options['sample_rate'] = str(in_stream.sample_rate)
                         if in_stream.channels:
-                            stream_options['channels'] = in_stream.channels
+                            stream_options['channels'] = str(in_stream.channels)
                         if in_stream.format.name:
                             # Use an appropriate sample format if possible, otherwise default
-                            # We need to add the stream first to check available formats for the codec
                             # For simplicity, we'll try to set common sensible defaults
                             if use_audio_format == "mp3":
                                 stream_options['sample_fmt'] = 'fltp' # MP3 often uses float planar
                             else:
+                                # Ensure default format is string if in_stream.format.name is None
                                 stream_options['sample_fmt'] = in_stream.format.name if in_stream.format.name else "s16"
 
                         # Set bitrate, common for MP3
                         if use_audio_format == "mp3":
-                            stream_options['bit_rate'] = 128000 # 128 kbps
+                            stream_options['bit_rate'] = str(128000) # 128 kbps
 
                         out_stream = out_container.add_stream(use_audio_format, options=stream_options)
 
