@@ -152,15 +152,15 @@ def test_raw_record_and_transcribe_success_no_conversion(
         with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
             result = voice.raw_record_and_transcribe(None, None)
 
-                assert result == "This is a test transcription."
-                mock_prompt_toolkit.assert_called_once()
-                mock_litellm_transcription.assert_called_once()
+            assert result == "This is a test transcription."
+            mock_prompt_toolkit.assert_called_once()
+            mock_litellm_transcription.assert_called_once()
 
-                # Check transcription was called with the wav file
-                assert "temp.wav" in mock_litellm_transcription.call_args.kwargs['file'].name
+            # Check transcription was called with the wav file
+            assert "temp.wav" in mock_litellm_transcription.call_args.kwargs['file'].name
 
-                # Check cleanup
-                mock_remove.assert_called_once_with(str(tmp_path / "temp.wav"))
+            # Check cleanup
+            mock_remove.assert_called_once_with(str(tmp_path / "temp.wav"))
 
 
 def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
@@ -177,17 +177,17 @@ def test_raw_record_and_transcribe_success_with_conversion_to_mp3(
         with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
             result = voice.raw_record_and_transcribe(None, None)
 
-                assert result == "This is a test transcription."
-                mock_prompt_toolkit.assert_called_once()
-                mock_litellm_transcription.assert_called_once()
+            assert result == "This is a test transcription."
+            mock_prompt_toolkit.assert_called_once()
+            mock_litellm_transcription.assert_called_once()
 
-                # Check transcription was called with the mp3 file
-                assert "output.mp3" in mock_litellm_transcription.call_args.kwargs['file'].name
+            # Check transcription was called with the mp3 file
+            assert "output.mp3" in mock_litellm_transcription.call_args.kwargs['file'].name
 
-                # Check cleanup: original wav and converted mp3 should be removed
-                mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
-                mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
-                assert mock_remove.call_count == 2
+            # Check cleanup: original wav and converted mp3 should be removed
+            mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
+            mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
+            assert mock_remove.call_count == 2
 
 
 def test_raw_record_and_transcribe_success_direct_mp3_format(
@@ -202,17 +202,17 @@ def test_raw_record_and_transcribe_success_direct_mp3_format(
         with patch("tempfile.mktemp", new=voice.tempfile_mktemp):
             result = voice.raw_record_and_transcribe(None, None)
 
-                assert result == "This is a test transcription."
-                mock_prompt_toolkit.assert_called_once()
-                mock_litellm_transcription.assert_called_once()
+            assert result == "This is a test transcription."
+            mock_prompt_toolkit.assert_called_once()
+            mock_litellm_transcription.assert_called_once()
 
-                # Check transcription was called with the mp3 file
-                assert "output.mp3" in mock_litellm_transcription.call_args.kwargs['file'].name
+            # Check transcription was called with the mp3 file
+            assert "output.mp3" in mock_litellm_transcription.call_args.kwargs['file'].name
 
-                # Check cleanup: original wav and converted mp3 should be removed
-                mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
-                mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
-                assert mock_remove.call_count == 2
+            # Check cleanup: original wav and converted mp3 should be removed
+            mock_remove.assert_any_call(str(tmp_path / "temp.wav"))
+            mock_remove.assert_any_call(str(tmp_path / "output.mp3"))
+            assert mock_remove.call_count == 2
 
 
 def test_raw_record_and_transcribe_transcription_failure_cleanup(
