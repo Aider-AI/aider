@@ -585,7 +585,7 @@ class Model(ModelSettings):
         return self.weak_model
 
     def commit_message_models(self):
-        # Weak model is tried first, falling back to main model
+        # Weak model is tried first for commit messages, falling back to main model
         return [self.weak_model, self]
 
     def get_editor_model(self, provided_editor_model_name, editor_edit_format):
