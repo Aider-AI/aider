@@ -314,6 +314,70 @@ cog.out("```\n")
   use_repo_map: true
   reminder: sys
 
+- name: azure/gpt-5
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5-2025-08-07
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5-chat
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5-chat-latest
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5-mini
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5-mini-2025-08-07
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5-nano
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5-nano-2025-08-07
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
 - name: azure/o1
   edit_format: diff
   weak_model_name: azure/gpt-4o-mini
@@ -1096,6 +1160,70 @@ cog.out("```\n")
   lazy: true
   reminder: sys
 
+- name: gpt-5
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5-2025-08-07
+  edit_format: diff
+  weak_model_name: gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5-chat
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5-chat-latest
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5-mini
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5-mini-2025-08-07
+  edit_format: diff
+  weak_model_name: gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5-nano
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5-nano-2025-08-07
+  edit_format: diff
+  weak_model_name: gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
 - name: groq/llama3-70b-8192
   edit_format: diff
   weak_model_name: groq/llama3-8b-8192
@@ -1240,6 +1368,70 @@ cog.out("```\n")
   weak_model_name: openai/gpt-4o-mini
   lazy: true
   reminder: sys
+
+- name: openai/gpt-5
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5-2025-08-07
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5-chat
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5-chat-latest
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5-mini-2025-08-07
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5-nano
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5-nano-2025-08-07
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
 
 - name: openai/o1
   edit_format: diff
@@ -1603,6 +1795,70 @@ cog.out("```\n")
   reminder: sys
   examples_as_sys_msg: true
   editor_edit_format: editor-diff
+
+- name: openrouter/openai/gpt-5
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5-2025-08-07
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5-chat
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5-chat-latest
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5-mini-2025-08-07
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5-nano
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5-nano-2025-08-07
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
 
 - name: openrouter/openai/o1
   edit_format: diff
