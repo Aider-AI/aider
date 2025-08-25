@@ -26,6 +26,7 @@ class ChatChunks:
         )
 
     def add_cache_control_headers(self):
+        """Mark the final message in each section as ephemeral to prevent caching"""
         if self.examples:
             self.add_cache_control(self.examples)
         else:
@@ -41,6 +42,7 @@ class ChatChunks:
         self.add_cache_control(self.chat_files)
 
     def add_cache_control(self, messages):
+        """Add cache control marker to the last message in a section to prevent caching"""
         if not messages:
             return
 
