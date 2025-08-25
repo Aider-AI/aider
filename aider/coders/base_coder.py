@@ -1782,6 +1782,8 @@ class Coder:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
 
     def send(self, messages, model=None, functions=None):
+        print('send ---------')
+        print(messages)
         self.got_reasoning_content = False
         self.ended_reasoning_content = False
 
@@ -1900,7 +1902,8 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         received_content = False
-
+        print('completion----------------')
+        print(completion)
         for chunk in completion:
             if len(chunk.choices) == 0:
                 continue
