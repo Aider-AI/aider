@@ -1740,3 +1740,61 @@
   versions: 0.86.2.dev
   seconds_per_case: 194.0
   total_cost: 29.0829
+
+- dirname: 2025-08-25-13-23-27--gpt-5-medium
+  test_cases: 225
+  model: openai/gpt-5
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: medium
+  pass_rate_1: 49.8
+  pass_rate_2: 86.7
+  pass_num_1: 112
+  pass_num_2: 195
+  percent_cases_well_formed: 88.4
+  error_outputs: 40
+  num_malformed_responses: 40
+  num_with_malformed_responses: 26
+  user_asks: 102
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2827261
+  completion_tokens: 1468799
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openai/gpt-5
+  date: 2025-08-25
+  versions: 0.86.2.dev
+  seconds_per_case: 118.7
+  total_cost: 17.6930
+
+- dirname: 2025-08-25-14-16-37--gpt-5-low
+  test_cases: 225
+  model: openai/gpt-5
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: low
+  pass_rate_1: 43.1
+  pass_rate_2: 81.3
+  pass_num_1: 97
+  pass_num_2: 183
+  percent_cases_well_formed: 86.7
+  error_outputs: 46
+  num_malformed_responses: 46
+  num_with_malformed_responses: 30
+  user_asks: 113
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2534059
+  completion_tokens: 779568
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/gpt-5
+  date: 2025-08-25
+  versions: 0.86.2.dev
+  seconds_per_case: 62.4
+  total_cost: 10.3713
