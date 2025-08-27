@@ -318,18 +318,16 @@ def generate_search_path_list(default_file, git_root, command_line_file):
         except OSError:
             pass
 
-    files = resolved_files
-    files.reverse()
-    uniq = []
-    for fn in files:
-        if fn not in uniq:
-            uniq.append(fn)
-    uniq.reverse()
-    files = uniq
-    files = list(map(str, files))
-    files = list(dict.fromkeys(files))
+    # Unique the paths, keeping the last one
+    seen = set()
+    unique_files = []
+    for fn in reversed(resolved_files):
+        if fn not in seen:
+            unique_files.append(fn)
+            seen.add(fn)
+    unique_files.reverse()
 
-    return files
+    return [str(fn) for fn in unique_files]
 
 
 def register_models(git_root, model_settings_fname, io, verbose=False):
