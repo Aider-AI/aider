@@ -1011,6 +1011,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
             add_gitignore_files=args.add_gitignore_files,
+            controller_model=controller_model,
+            handlers=args.handlers,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))

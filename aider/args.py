@@ -142,6 +142,13 @@ def get_parser(default_config_files, git_root):
         help="Specify a model to use for request preprocessing and analysis",
     )
     group.add_argument(
+        "--handlers",
+        action="append",
+        metavar="HANDLERS",
+        help="Specify a handler for the controller model to use (can be used multiple times)",
+        default=None,
+    )
+    group.add_argument(
         "--reasoning-effort",
         type=str,
         help="Set the reasoning_effort API parameter (default: not set)",
