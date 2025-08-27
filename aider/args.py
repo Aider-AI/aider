@@ -139,7 +139,7 @@ def get_parser(default_config_files, git_root):
         "--handlers",
         action="append",
         metavar="HANDLERS",
-        help="Specify a handler for the controller model to use (can be used multiple times)",
+        help="Specify a handler and optional handler config to load (can be used multiple times)",
         default=None,
     )
     group.add_argument(
