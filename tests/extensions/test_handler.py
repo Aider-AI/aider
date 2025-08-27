@@ -4,7 +4,7 @@ from aider.extensions.handler import ImmutableContextHandler, MutableContextHand
 class MockMutableHandler(MutableContextHandler):
     @property
     def entrypoints(self):
-        return ["pre-commit"]
+        return ["pre"]
 
     def handle(self, messages):
         messages.append("new message")
@@ -14,7 +14,7 @@ class MockMutableHandler(MutableContextHandler):
 class MockImmutableHandler(ImmutableContextHandler):
     @property
     def entrypoints(self):
-        return ["post-commit"]
+        return ["post"]
 
     def _handle(self, messages):
         # This handler inspects but doesn't modify messages
@@ -29,7 +29,7 @@ def test_mutable_context_handler():
 
     assert modified is True
     assert messages == ["original message", "new message"]
-    assert handler.entrypoints == ["pre-commit"]
+    assert handler.entrypoints == ["pre"]
 
 
 def test_immutable_context_handler():
@@ -40,4 +40,4 @@ def test_immutable_context_handler():
 
     assert modified is False
     assert messages == ["original message"]
-    assert handler.entrypoints == ["post-commit"]
+    assert handler.entrypoints == ["post"]
