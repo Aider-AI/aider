@@ -136,6 +136,12 @@ def get_parser(default_config_files, git_root):
         help="Add a model alias (can be used multiple times)",
     )
     group.add_argument(
+        "--controller-model",
+        metavar="CONTROLLER_MODEL",
+        default=None,
+        help="Specify a model to use for request preprocessing and analysis",
+    )
+    group.add_argument(
         "--reasoning-effort",
         type=str,
         help="Set the reasoning_effort API parameter (default: not set)",

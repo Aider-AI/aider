@@ -120,6 +120,7 @@ class Coder:
     chat_language = None
     commit_language = None
     file_watcher = None
+    controller_model = None
 
     @classmethod
     def create(
@@ -338,6 +339,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        controller_model=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -349,6 +351,7 @@ class Coder:
         self.aider_commit_hashes = set()
         self.rejected_urls = set()
         self.abs_root_path_cache = {}
+        self.controller_model = controller_model
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
