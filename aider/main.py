@@ -868,13 +868,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                     " setting."
                 )
 
-    controller_model = None
-    if args.controller_model:
-        if args.llm_command:
-            io.tool_warning("--controller-model is not supported with --llm-command.")
-        else:
-            controller_model = models.Model(args.controller_model, verbose=args.verbose)
-
     if args.copy_paste and args.edit_format is None:
         if main_model.edit_format in ("diff", "whole", "diff-fenced"):
             main_model.edit_format = "editor-" + main_model.edit_format
@@ -1011,7 +1004,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
             add_gitignore_files=args.add_gitignore_files,
-            controller_model=controller_model,
             handlers=args.handlers,
         )
     except UnknownEditFormat as err:
