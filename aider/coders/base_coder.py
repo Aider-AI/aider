@@ -279,6 +279,10 @@ class Coder:
         else:
             lines.append("Repo-map: disabled")
 
+        if self.handler_manager and self.handler_manager.handlers:
+            handler_names = [h.name for h in self.handler_manager.handlers]
+            lines.append(f"Handlers: {' '.join(handler_names)}")
+
         # Files
         for fname in self.get_inchat_relative_files():
             lines.append(f"Added {fname} to the chat.")
@@ -543,9 +547,9 @@ class Coder:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
 
-        from aider.extensions.handler_manager import HandlerManager
 
         if handlers:
+            from aider.extensions.handler_manager import HandlerManager
             self.handler_manager = HandlerManager(self, handlers)
         else:
             self.handler_manager = None

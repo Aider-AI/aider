@@ -84,6 +84,7 @@ class HandlerManager:
 
             if handler_class:
                 handler_instance = handler_class(self.main_coder, **config)
+                handler_instance.name = handler_name
                 self.handlers.append(handler_instance)
             else:
                 self.main_coder.io.tool_warning(
