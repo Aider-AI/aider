@@ -94,6 +94,7 @@ MODEL_ALIASES = {
     # Other models
     "deepseek": "deepseek/deepseek-chat",
     "flash": "gemini/gemini-2.5-flash",
+    "flash-lite": "gemini/gemini-2.5-flash-lite",
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
     "gemini-2.5-pro": "gemini/gemini-2.5-pro",

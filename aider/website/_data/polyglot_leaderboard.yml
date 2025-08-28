@@ -1683,3 +1683,31 @@
   versions: 0.85.3.dev
   seconds_per_case: 67.6
   total_cost: 1.2357
+
+- dirname: 2025-08-06-04-54-48--gpt-oss-120b-high-polyglot
+  test_cases: 225
+  model: gpt-oss-120b (high)
+  edit_format: diff
+  commit_hash: 1af0e59
+  pass_rate_1: 13.8
+  pass_rate_2: 41.8
+  pass_num_1: 31
+  pass_num_2: 94
+  percent_cases_well_formed: 79.1
+  error_outputs: 95
+  num_malformed_responses: 77
+  num_with_malformed_responses: 47
+  user_asks: 142
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 3123768
+  completion_tokens: 856495
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model openrouter/openai/gpt-oss-120b --reasoning-effort high
+  date: 2025-08-06
+  versions: 0.85.3.dev
+  seconds_per_case: 35.5
+  total_cost: 0.7406

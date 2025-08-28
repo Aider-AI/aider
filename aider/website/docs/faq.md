@@ -264,16 +264,14 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro</td><td class='right'>349,929</td><td class='right'>66.6%</td></tr>
-<tr><td>anthropic/claude-sonnet-4-20250514</td><td class='right'>76,669</td><td class='right'>14.6%</td></tr>
-<tr><td>openrouter/moonshotai/kimi-k2</td><td class='right'>32,483</td><td class='right'>6.2%</td></tr>
-<tr><td>o3</td><td class='right'>22,003</td><td class='right'>4.2%</td></tr>
-<tr><td>None</td><td class='right'>17,389</td><td class='right'>3.3%</td></tr>
-<tr><td>o3-pro</td><td class='right'>12,707</td><td class='right'>2.4%</td></tr>
-<tr><td>xai/grok-4</td><td class='right'>9,573</td><td class='right'>1.8%</td></tr>
-<tr><td>openrouter/REDACTED</td><td class='right'>2,342</td><td class='right'>0.4%</td></tr>
-<tr><td>openai/REDACTED</td><td class='right'>1,970</td><td class='right'>0.4%</td></tr>
-<tr><td>claude-opus-4-20250514</td><td class='right'>502</td><td class='right'>0.1%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>222,908</td><td class='right'>33.2%</td></tr>
+<tr><td>gpt-5</td><td class='right'>211,072</td><td class='right'>31.4%</td></tr>
+<tr><td>None</td><td class='right'>168,988</td><td class='right'>25.1%</td></tr>
+<tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>5.4%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite</td><td class='right'>15,470</td><td class='right'>2.3%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite-preview-06-17</td><td class='right'>11,371</td><td class='right'>1.7%</td></tr>
+<tr><td>o3</td><td class='right'>3,915</td><td class='right'>0.6%</td></tr>
+<tr><td>openai/REDACTED</td><td class='right'>1,970</td><td class='right'>0.3%</td></tr>
 </table>
 
 {: .note :}
