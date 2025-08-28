@@ -90,8 +90,8 @@ class HandlerManager:
                 self.main_coder.io.tool_warning(
                     f"No handler class found in module for: {handler_name}"
                 )
-        except ImportError:
-            self.main_coder.io.tool_warning(f"Could not import handler: {handler_name}")
+        except ImportError as e:
+            self.main_coder.io.tool_warning(f"Could not import handler: {handler_name}\n{e}")
         except Exception as e:
             self.main_coder.io.tool_warning(f"Failed to instantiate handler {handler_name}: {e}")
 
