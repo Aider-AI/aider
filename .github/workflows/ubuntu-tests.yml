@@ -50,7 +50,10 @@ jobs:
         uv pip install --system \
           pytest \
           -r requirements/requirements.in \
-          .
+          -r requirements/requirements-browser.in \
+          -r requirements/requirements-help.in \
+          -r requirements/requirements-playwright.in \
+          ".[browser,help,playwright]"
 
     - name: Run tests
       env:

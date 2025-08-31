@@ -64,7 +64,7 @@ RUN find /venv/lib/python3.12/site-packages \( -type d -exec chmod a+rwx {} + \)
 COPY . /app/
 
 # Install the application as a package
-RUN uv pip install --no-cache-dir . && \
+RUN uv pip install . && \
     find . -mindepth 1 -delete
 
 # Switch to appuser
