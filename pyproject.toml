@@ -15,7 +15,7 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Software Development",
 ]
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.10"
 dynamic = ["dependencies", "optional-dependencies", "version"]
 
 [project.urls]
@@ -26,13 +26,13 @@ aider = "aider.main:main"
 aider-ce = "aider.main:main"
 
 [tool.setuptools.dynamic]
-dependencies = { file = "requirements.txt" }
+dependencies = { file = "requirements.in" }
 
 [tool.setuptools.dynamic.optional-dependencies]
-dev = { file = "requirements/requirements-dev.txt" }
-help = { file = "requirements/requirements-help.txt" }
-browser = { file = "requirements/requirements-browser.txt" }
-playwright = { file = "requirements/requirements-playwright.txt" }
+dev = { file = "requirements/requirements-dev.in" }
+help = { file = "requirements/requirements-help.in" }
+browser = { file = "requirements/requirements-browser.in" }
+playwright = { file = "requirements/requirements-playwright.in" }
 
 [tool.setuptools]
 include-package-data = true

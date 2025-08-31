@@ -1,36 +1,36 @@
-pydub
-configargparse
-GitPython
-jsonschema
-rich
+pydub>=0.25.1
+configargparse>=1.7.1
+GitPython>=3.1.45
+jsonschema>=4.25.0
+rich>=14.1.0
 prompt_toolkit
-backoff
-pathspec
-diskcache
+backoff>=2.2.1
+pathspec>=0.12.1
+diskcache>=5.6.3
 grep_ast
-packaging
-sounddevice
-soundfile
-beautifulsoup4
-PyYAML
-diff-match-patch
-pypandoc
-litellm
-flake8
+packaging>=25.0
+sounddevice>=0.5.2
+soundfile>=0.13.1
+beautifulsoup4>=4.13.4
+PyYAML>=6.0.2
+diff-match-patch>=20241021
+pypandoc>=1.15
+litellm>=1.75.0
+flake8>=7.3.0
 importlib_resources
-pyperclip
-posthog
-mixpanel
-pexpect
-json5
-psutil
-watchfiles
-socksio
-pillow
-shtab
-oslex
-google-generativeai
-mcp==1.12.3
+pyperclip>=1.9.0
+posthog>=6.4.1
+mixpanel>=4.10.1
+pexpect>=4.9.0
+json5>=0.12.0
+psutil>=7.0.0
+watchfiles>=1.1.0
+socksio>=1.0.0
+pillow>=11.3.0
+shtab>=1.7.2
+oslex>=0.1.3
+google-generativeai>=0.8.5
+mcp>=1.12.3
 
 # The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
@@ -38,16 +38,19 @@ mcp==1.12.3
 # We really only need networkx itself and scipy for the repomap.
 #
 # >3.5 seems to not be available for py3.10
-networkx<3.5
+networkx>=3.4.2
 
 # This is the one networkx dependency that we need.
 # Including it here explicitly because we
 # didn't specify networkx[default] above.
 #
 # 1.16 onwards only supports python3.11+
-scipy<1.16
+scipy>=1.15.3
 
 # GitHub Release action failing on "KeyError: 'home-page'"
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
 # Uses importlib-metadata
-importlib-metadata<8.0.0
+importlib-metadata>=7.2.1
+
+tree-sitter==0.23.2; python_version < "3.10"
+tree-sitter>=0.25.1; python_version >= "3.10"
