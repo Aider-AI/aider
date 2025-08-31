@@ -1728,6 +1728,15 @@ class Coder:
 
         edited = self.apply_updates()
 
+        if edited:
+            self.aider_edited_files.update(edited)
+            saved_message = self.auto_commit(edited)
+
+            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
+
+            self.move_back_cur_messages(saved_message)
+
         if not interrupted:
             add_rel_files_message = self.check_for_file_mentions(content)
             if add_rel_files_message:
@@ -1750,15 +1759,6 @@ class Coder:
                     return
             except KeyboardInterrupt:
                 interrupted = True
-
-        if edited:
-            self.aider_edited_files.update(edited)
-            saved_message = self.auto_commit(edited)
-
-            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
-                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
-
-            self.move_back_cur_messages(saved_message)
 
         if self.reflected_message:
             return
