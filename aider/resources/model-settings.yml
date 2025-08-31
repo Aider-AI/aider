@@ -597,7 +597,7 @@
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 128000
   caches_by_default: true
 
 - name: openrouter/deepseek/deepseek-chat:free
@@ -606,7 +606,7 @@
   use_repo_map: true
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 128000
   caches_by_default: true
   use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-chat:free
@@ -627,7 +627,7 @@
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 128000
 
 - name: deepseek-coder
   edit_format: diff
@@ -635,7 +635,7 @@
   reminder: sys
   examples_as_sys_msg: true
   extra_params:
-    max_tokens: 8192
+    max_tokens: 128000
   caches_by_default: true
 
 - name: openrouter/deepseek/deepseek-coder
@@ -995,7 +995,7 @@
   use_repo_map: true
   edit_format: whole
   accepts_settings:
-    - reasoning_effort 
+    - reasoning_effort
 
 - name: openai/o4-mini
   edit_format: diff
@@ -1072,7 +1072,7 @@
   use_repo_map: true
   edit_format: diff
   examples_as_sys_msg: true
-  
+
 - name: gpt-4.1
   edit_format: diff
   weak_model_name: gpt-4.1-mini
@@ -1359,7 +1359,7 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
-      
+
 - name: gemini/gemini-2.5-flash-preview-04-17
   edit_format: diff
   use_repo_map: true
@@ -1380,7 +1380,7 @@
   edit_format: diff-fenced
   use_repo_map: true
   weak_model_name: openrouter/google/gemini-2.0-flash-001
-    
+
 - name: gemini/gemini-2.5-pro-preview-05-06
   overeager: true
   edit_format: diff-fenced
@@ -1487,7 +1487,7 @@
 #    top_p: 0.8
 #    top_k: 20
 #    min_p: 0.0
-#    temperature: 0.7  
+#    temperature: 0.7
 
 
 - name: claude-sonnet-4-20250514
