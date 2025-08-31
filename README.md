@@ -25,9 +25,26 @@ This project aims to be compatible with upstream Aider, but with priority commit
     * [Manually install necessary ubuntu dependencies](https://github.com/dwash96/aider-ce/issues/14)
 * [.gitignore updates](https://github.com/dwash96/aider-ce/commit/7c7e803fa63d1acd860eef1423e5a03220df6017)
 * [Experimental Context Compaction For Longer Running Generation Tasks](https://github.com/Aider-AI/aider/issues/6)
+* [Fix Deepseek model configurations](https://github.com/Aider-AI/aider/commit/c839a6dd8964d702172cae007375e299732d3823)
+* [Relax Version Pinning For Easier Distribution](https://github.com/dwash96/aider-ce/issues/18)
 
 ### Other Notes
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
+
+### Installation Instructions
+This project should be installable using the commands
+
+```
+pip install aider-ce
+```
+
+or
+
+```
+uv install aider-ce
+```
+
+The package exports an `aider-ce` command that accepts all of Aider's configuration options
 
 <p align="center">
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
