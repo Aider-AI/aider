@@ -51,6 +51,7 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: false
         target: aider-ce
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc
 
     - name: Build Docker images (Push)
       if: ${{ github.event_name != 'pull_request' }}
@@ -62,3 +63,4 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:dev
         target: aider-ce
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc     

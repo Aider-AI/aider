@@ -38,4 +38,6 @@ jobs:
           ${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:${{ github.ref_name }}
           ${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest
         target: aider-ce
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc
+        cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc,mode=max        
 

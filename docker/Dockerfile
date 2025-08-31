@@ -21,6 +21,7 @@ WORKDIR /app
 # Create virtual environment
 RUN python -m venv /venv
 ENV PATH="/venv/bin:$PATH"
+RUN /venv/bin/python -m pip install --no-cache-dir uv
 
 # Playwright browser settings
 ENV PLAYWRIGHT_BROWSERS_PATH=/home/appuser/pw-browsers
@@ -42,18 +43,18 @@ ENV HOME=/app
 #########################
 FROM base AS aider-ce
 
-ENV AIDER_DOCKER_IMAGE=dustinwashington/aider
+ENV AIDER_DOCKER_IMAGE=dustinwashington/aider-ce
 
 # Copy requirements files
 COPY requirements.txt /tmp/aider/
 COPY requirements/ /tmp/aider/requirements/
 
 # Install dependencies as root
-RUN /venv/bin/python -m pip install --no-cache-dir -r /tmp/aider/requirements.txt && \
+RUN uv pip install --no-cache-dir -r /tmp/aider/requirements.txt && \
     rm -rf /tmp/aider
 
 # Install playwright browsers
-RUN /venv/bin/python -m pip install --no-cache-dir playwright && \
+RUN uv pip install --no-cache-dir playwright && \
     /venv/bin/python -m playwright install --with-deps chromium
 
 # Fix site-packages permissions
@@ -63,7 +64,7 @@ RUN find /venv/lib/python3.12/site-packages \( -type d -exec chmod a+rwx {} + \)
 COPY . /app/
 
 # Install the application as a package
-RUN /venv/bin/python -m pip install . && \
+RUN uv pip install . && \
     find . -mindepth 1 -delete
 
 # Switch to appuser

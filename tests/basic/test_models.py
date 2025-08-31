@@ -442,9 +442,44 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            tools=[],
             temperature=0,
             num_ctx=expected_ctx,
+            timeout=600,
+        )
+
+    @patch("aider.models.litellm.completion")
+    def test_modern_tool_call_propagation(self, mock_completion):
+        # Test modern tool calling (used for MCP Server Tool Calls)
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+
+        model.send_completion(
+            messages, functions=None, stream=False, tools=[dict(type="function", function="test")]
+        )
+
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            tools=[dict(type="function", function="test")],
+            temperature=0,
+            timeout=600,
+        )
+
+    @patch("aider.models.litellm.completion")
+    def test_legacy_tool_call_propagation(self, mock_completion):
+        # Test modern tool calling (used for legacy server tool calling)
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+
+        model.send_completion(messages, functions=["test"], stream=False)
+
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            tools=[dict(type="function", function="test")],
+            temperature=0,
             timeout=600,
         )
 
@@ -461,7 +496,6 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            tools=[],
             temperature=0,
             num_ctx=4096,
             timeout=600,
@@ -480,7 +514,6 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            tools=[],
             temperature=0,
             timeout=600,
         )
@@ -512,7 +545,6 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            tools=[],
             temperature=0,
             timeout=600,  # Default timeout
         )
@@ -528,7 +560,6 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            tools=[],
             temperature=0,
             timeout=300,  # From extra_params
         )
@@ -544,7 +575,6 @@ class TestModels(unittest.TestCase):
             model=model.name,
             messages=messages,
             stream=False,
-            tools=[],
             temperature=0,
             timeout=600,
         )
@@ -564,7 +594,6 @@ class TestModels(unittest.TestCase):
         mock_completion.assert_called_with(
             model=model.name,
             messages=messages,
-            tools=[],
             stream=False,
             temperature=0.7,
             timeout=600,
