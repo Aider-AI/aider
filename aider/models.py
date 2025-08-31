@@ -987,8 +987,6 @@ class Model(ModelSettings):
                 kwargs["tools"] = [dict(type="function", function=tool) for tool in effective_tools]
             else:
                 kwargs["tools"] = effective_tools
-        else:
-            kwargs["tools"] = []
 
         # Forcing a function call is for legacy style `functions` with a single function.
         # This is used by ArchitectCoder and not intended for NavigatorCoder's tools.

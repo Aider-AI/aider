@@ -17,8 +17,20 @@ warnings.filterwarnings(
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 
 
-from pydub import AudioSegment  # noqa
-from pydub.exceptions import CouldntDecodeError, CouldntEncodeError  # noqa
+try:
+    from pydub import AudioSegment  # noqa
+    from pydub.exceptions import CouldntDecodeError, CouldntEncodeError  # noqa
+
+    PYDUB_AVAILABLE = True
+except (ModuleNotFoundError, ImportError) as e:
+    if "audioop" in str(e) or "pyaudioop" in str(e):
+        # Handle missing audioop/pyaudioop dependency gracefully
+        PYDUB_AVAILABLE = False
+        AudioSegment = None
+        CouldntDecodeError = Exception
+        CouldntEncodeError = Exception
+    else:
+        raise
 
 try:
     import soundfile as sf
@@ -152,11 +164,17 @@ class Voice:
         filename = temp_wav
         if use_audio_format != "wav":
             try:
-                new_filename = tempfile.mktemp(suffix=f".{use_audio_format}")
-                audio = AudioSegment.from_wav(temp_wav)
-                audio.export(new_filename, format=use_audio_format)
-                os.remove(temp_wav)
-                filename = new_filename
+                if not PYDUB_AVAILABLE:
+                    print(
+                        f"Warning: pydub not available, cannot convert to {use_audio_format}. Using"
+                        " original WAV file."
+                    )
+                else:
+                    new_filename = tempfile.mktemp(suffix=f".{use_audio_format}")
+                    audio = AudioSegment.from_wav(temp_wav)
+                    audio.export(new_filename, format=use_audio_format)
+                    os.remove(temp_wav)
+                    filename = new_filename
             except (CouldntDecodeError, CouldntEncodeError) as e:
                 print(f"Error converting audio: {e}")
             except (OSError, FileNotFoundError) as e:
