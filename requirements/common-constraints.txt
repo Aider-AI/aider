@@ -241,6 +241,7 @@ jsonschema==4.25.0
     #   -r requirements/requirements.in
     #   altair
     #   litellm
+    #   mcp
 jsonschema-specifications==2025.4.1
     # via jsonschema
 kiwisolver==1.4.8
@@ -311,6 +312,43 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
+nvidia-cublas-cu12==12.8.4.1
+    # via
+    #   nvidia-cudnn-cu12
+    #   nvidia-cusolver-cu12
+    #   torch
+nvidia-cuda-cupti-cu12==12.8.90
+    # via torch
+nvidia-cuda-nvrtc-cu12==12.8.93
+    # via torch
+nvidia-cuda-runtime-cu12==12.8.90
+    # via torch
+nvidia-cudnn-cu12==9.10.2.21
+    # via torch
+nvidia-cufft-cu12==11.3.3.83
+    # via torch
+nvidia-cufile-cu12==1.13.1.3
+    # via torch
+nvidia-curand-cu12==10.3.9.90
+    # via torch
+nvidia-cusolver-cu12==11.7.3.90
+    # via torch
+nvidia-cusparse-cu12==12.5.8.93
+    # via
+    #   nvidia-cusolver-cu12
+    #   torch
+nvidia-cusparselt-cu12==0.7.1
+    # via torch
+nvidia-nccl-cu12==2.27.3
+    # via torch
+nvidia-nvjitlink-cu12==12.8.93
+    # via
+    #   nvidia-cufft-cu12
+    #   nvidia-cusolver-cu12
+    #   nvidia-cusparse-cu12
+    #   torch
+nvidia-nvtx-cu12==12.8.90
+    # via torch
 openai==1.99.1
     # via litellm
 oslex==0.1.3
@@ -454,8 +492,11 @@ python-dateutil==2.9.0.post0
     #   pandas
     #   posthog
 python-dotenv==1.1.1
-    # via litellm
+    # via
+    #   litellm
     #   pydantic-settings
+python-multipart==0.0.20
+    # via mcp
 pytz==2025.2
     # via pandas
 pyyaml==6.0.2
@@ -513,6 +554,7 @@ setuptools==80.9.0
     #   llama-index-core
     #   pip-tools
     #   torch
+    #   triton
 shellingham==1.5.4
     # via typer
 shtab==1.7.2
@@ -580,7 +622,9 @@ tqdm==4.67.1
 transformers==4.55.0
     # via sentence-transformers
 tree-sitter==0.25.1
-    # via tree-sitter-language-pack
+    # via
+    #   -r requirements/requirements.in
+    #   tree-sitter-language-pack
 tree-sitter-c-sharp==0.23.1
     # via tree-sitter-language-pack
 tree-sitter-embedded-template==0.23.2
@@ -589,6 +633,8 @@ tree-sitter-language-pack==0.9.0
     # via grep-ast
 tree-sitter-yaml==0.7.1
     # via tree-sitter-language-pack
+triton==3.4.0
+    # via torch
 typer==0.16.0
     # via -r requirements/requirements-dev.in
 typing-extensions==4.14.1
@@ -620,7 +666,7 @@ typing-inspect==0.9.0
     #   dataclasses-json
     #   llama-index-core
 typing-inspection==0.4.1
-    # via 
+    # via
     #   pydantic
     #   pydantic-settings
 tzdata==2025.2
@@ -637,6 +683,8 @@ uvicorn==0.34.2
     # via mcp
 virtualenv==20.33.1
     # via pre-commit
+watchdog==6.0.0
+    # via streamlit
 watchfiles==1.1.0
     # via -r requirements/requirements.in
 wcwidth==0.2.13
