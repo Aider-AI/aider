@@ -25,6 +25,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
     * [Manually install necessary ubuntu dependencies](https://github.com/dwash96/aider-ce/issues/14)
 * [.gitignore updates](https://github.com/dwash96/aider-ce/commit/7c7e803fa63d1acd860eef1423e5a03220df6017)
 * [Experimental Context Compaction For Longer Running Generation Tasks](https://github.com/Aider-AI/aider/issues/6)
+* [Edit Before Adding Files and Reflecting](https://github.com/dwash96/aider-ce/pull/22)
 * [Fix Deepseek model configurations](https://github.com/Aider-AI/aider/commit/c839a6dd8964d702172cae007375e299732d3823)
 * [Relax Version Pinning For Easier Distribution](https://github.com/dwash96/aider-ce/issues/18)
 
