@@ -46,13 +46,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest
-        pip install -r requirements/requirements.in
-        pip install -r requirements/requirements-browser.in
-        pip install -r requirements/requirements-dev.in
-        pip install -r requirements/requirements-help.in
-        pip install -r requirements/requirements-playwright.in
-        pip install ".[dev,help,browser,playwright]"
+        pip install uv
+        uv pip install \
+          pytest \
+          -r requirements/requirements.in \
+          .
 
     - name: Run tests
       env:
