@@ -43,7 +43,7 @@ ENV HOME=/app
 #########################
 FROM base AS aider-ce
 
-ENV AIDER_DOCKER_IMAGE=dustinwashington/aider
+ENV AIDER_DOCKER_IMAGE=dustinwashington/aider-ce
 
 # Copy requirements files
 COPY requirements.txt /tmp/aider/

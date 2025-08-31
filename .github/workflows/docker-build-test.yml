@@ -63,5 +63,4 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:dev
         target: aider-ce
-        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:dev-bc
-        cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:dev-bc,mode=max          
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc     
