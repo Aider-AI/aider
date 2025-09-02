@@ -1714,7 +1714,7 @@
 
 - dirname: 2025-08-23-15-47-21--gpt-5-high
   test_cases: 225
-  model: openai/gpt-5
+  model: gpt-5 (high)
   edit_format: diff
   commit_hash: 32faf82
   reasoning_effort: high
@@ -1743,7 +1743,7 @@
 
 - dirname: 2025-08-25-13-23-27--gpt-5-medium
   test_cases: 225
-  model: gpt-5 (high)
+  model: gpt-5 (medium)
   edit_format: diff
   commit_hash: 32faf82
   reasoning_effort: medium
