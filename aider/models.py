@@ -22,6 +22,7 @@ from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
+from aider.vercel import VercelAIGatewayModelManager
 
 RETRY_TIMEOUT = 60
 
@@ -158,10 +159,15 @@ class ModelInfoManager:
         # Manager for the cached OpenRouter model database
         self.openrouter_manager = OpenRouterModelManager()
 
+        # Manager for the cached Vercel AI Gateway model database
+        self.vercel_manager = VercelAIGatewayModelManager()
+
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
         if hasattr(self, "openrouter_manager"):
             self.openrouter_manager.set_verify_ssl(verify_ssl)
+        if hasattr(self, "vercel_manager"):
+            self.vercel_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -252,6 +258,12 @@ class ModelInfoManager:
             openrouter_info = self.fetch_openrouter_model_info(model)
             if openrouter_info:
                 return openrouter_info
+
+        if not cached_info and model.startswith("vercel_ai_gateway/"):
+            # Try using the locally cached Vercel AI Gateway model database
+            vercel_info = self.vercel_manager.get_model_info(model)
+            if vercel_info:
+                return vercel_info
 
         return cached_info
 
@@ -686,6 +698,7 @@ class Model(ModelSettings):
 
         keymap = dict(
             openrouter="OPENROUTER_API_KEY",
+            vercel_ai_gateway="VERCEL_AI_GATEWAY_API_KEY",
             openai="OPENAI_API_KEY",
             deepseek="DEEPSEEK_API_KEY",
             gemini="GEMINI_API_KEY",
