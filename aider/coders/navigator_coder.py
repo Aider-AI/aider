@@ -646,61 +646,45 @@ class NavigatorCoder(Coder):
                 all_results_content = []
                 norm_tool_name = tool_name.lower()
 
-                for params in parsed_args_list:
-                    single_result = ""
-                    # Dispatch to the correct tool execution function
-                    if norm_tool_name == "viewfilesatglob":
-                        single_result = execute_view_files_at_glob(self, **params)
-                    elif norm_tool_name == "viewfilesmatching":
-                        single_result = execute_view_files_matching(self, **params)
-                    elif norm_tool_name == "ls":
-                        single_result = execute_ls(self, **params)
-                    elif norm_tool_name == "view":
-                        single_result = execute_view(self, **params)
-                    elif norm_tool_name == "remove":
-                        single_result = _execute_remove(self, **params)
-                    elif norm_tool_name == "makeeditable":
-                        single_result = _execute_make_editable(self, **params)
-                    elif norm_tool_name == "makereadonly":
-                        single_result = _execute_make_readonly(self, **params)
-                    elif norm_tool_name == "viewfileswithsymbol":
-                        single_result = _execute_view_files_with_symbol(self, **params)
-                    elif norm_tool_name == "command":
-                        single_result = _execute_command(self, **params)
-                    elif norm_tool_name == "commandinteractive":
-                        single_result = _execute_command_interactive(self, **params)
-                    elif norm_tool_name == "grep":
-                        single_result = _execute_grep(self, **params)
-                    elif norm_tool_name == "replacetext":
-                        single_result = _execute_replace_text(self, **params)
-                    elif norm_tool_name == "replaceall":
-                        single_result = _execute_replace_all(self, **params)
-                    elif norm_tool_name == "insertblock":
-                        single_result = _execute_insert_block(self, **params)
-                    elif norm_tool_name == "deleteblock":
-                        single_result = _execute_delete_block(self, **params)
-                    elif norm_tool_name == "replaceline":
-                        single_result = _execute_replace_line(self, **params)
-                    elif norm_tool_name == "replacelines":
-                        single_result = _execute_replace_lines(self, **params)
-                    elif norm_tool_name == "indentlines":
-                        single_result = _execute_indent_lines(self, **params)
-                    elif norm_tool_name == "deleteline":
-                        single_result = _execute_delete_line(self, **params)
-                    elif norm_tool_name == "deletelines":
-                        single_result = _execute_delete_lines(self, **params)
-                    elif norm_tool_name == "undochange":
-                        single_result = _execute_undo_change(self, **params)
-                    elif norm_tool_name == "listchanges":
-                        single_result = _execute_list_changes(self, **params)
-                    elif norm_tool_name == "extractlines":
-                        single_result = _execute_extract_lines(self, **params)
-                    elif norm_tool_name == "shownumberedcontext":
-                        single_result = execute_show_numbered_context(self, **params)
-                    else:
-                        single_result = f"Error: Unknown local tool name '{tool_name}'"
+                tasks = []
+                tool_functions = {
+                    "viewfilesatglob": execute_view_files_at_glob,
+                    "viewfilesmatching": execute_view_files_matching,
+                    "ls": execute_ls,
+                    "view": execute_view,
+                    "remove": _execute_remove,
+                    "makeeditable": _execute_make_editable,
+                    "makereadonly": _execute_make_readonly,
+                    "viewfileswithsymbol": _execute_view_files_with_symbol,
+                    "command": _execute_command,
+                    "commandinteractive": _execute_command_interactive,
+                    "grep": _execute_grep,
+                    "replacetext": _execute_replace_text,
+                    "replaceall": _execute_replace_all,
+                    "insertblock": _execute_insert_block,
+                    "deleteblock": _execute_delete_block,
+                    "replaceline": _execute_replace_line,
+                    "replacelines": _execute_replace_lines,
+                    "indentlines": _execute_indent_lines,
+                    "deleteline": _execute_delete_line,
+                    "deletelines": _execute_delete_lines,
+                    "undochange": _execute_undo_change,
+                    "listchanges": _execute_list_changes,
+                    "extractlines": _execute_extract_lines,
+                    "shownumberedcontext": execute_show_numbered_context,
+                }
 
-                    all_results_content.append(str(single_result))
+                func = tool_functions.get(norm_tool_name)
+
+                if func:
+                    for params in parsed_args_list:
+                        tasks.append(asyncio.to_thread(func, self, **params))
+                else:
+                    all_results_content.append(f"Error: Unknown local tool name '{tool_name}'")
+
+                if tasks:
+                    task_results = await asyncio.gather(*tasks)
+                    all_results_content.extend(str(res) for res in task_results)
 
                 result_message = "\n\n".join(all_results_content)
 
@@ -720,7 +704,7 @@ class NavigatorCoder(Coder):
             )
         return tool_responses
 
-    def _execute_mcp_tool(self, server, tool_name, params):
+    async def _execute_mcp_tool(self, server, tool_name, params):
         """Helper to execute a single MCP tool call, created from legacy format."""
 
         # This is a simplified, synchronous wrapper around async logic
@@ -770,7 +754,7 @@ class NavigatorCoder(Coder):
             finally:
                 await server.disconnect()
 
-        return asyncio.run(_exec_async())
+        return await _exec_async()
 
     def _calculate_context_block_tokens(self, force=False):
         """
@@ -1293,7 +1277,7 @@ class NavigatorCoder(Coder):
             self.io.tool_error(f"Error generating environment info: {str(e)}")
             return None
 
-    def reply_completed(self):
+    async def reply_completed(self):
         """Process the completed response from the LLM.
 
         This is a key method that:
@@ -1319,7 +1303,7 @@ class NavigatorCoder(Coder):
             has_replace = ">>>>>>> REPLACE" in content
             if has_search and has_divider and has_replace:
                 self.io.tool_output("Detected edit blocks, applying changes...")
-                edited_files = self._apply_edits_from_response()
+                edited_files = await self._apply_edits_from_response()
                 if self.reflected_message:
                     return False  # Trigger reflection if edits failed
 
@@ -1341,7 +1325,7 @@ class NavigatorCoder(Coder):
         # Process tool commands: returns content with tool calls removed, results, flag if any tool calls were found,
         # and the content before the last '---' line
         processed_content, result_messages, tool_calls_found, content_before_last_separator = (
-            self._process_tool_commands(content)
+            await self._process_tool_commands(content)
         )
 
         # Since we are no longer suppressing, the partial_response_content IS the final content.
@@ -1370,7 +1354,7 @@ class NavigatorCoder(Coder):
 
         if edit_match:
             self.io.tool_output("Detected edit blocks, applying changes within Navigator...")
-            edited_files = self._apply_edits_from_response()
+            edited_files = await self._apply_edits_from_response()
             # If _apply_edits_from_response set a reflected_message (due to errors),
             # return False to trigger a reflection loop.
             if self.reflected_message:
@@ -1468,7 +1452,7 @@ class NavigatorCoder(Coder):
         )  # Pass None as we handled commit message earlier if needed
         return True  # Indicate exploration is finished for this round
 
-    def _process_tool_commands(self, content):
+    async def _process_tool_commands(self, content):
         """
         Process tool commands in the `[tool_call(name, param=value)]` format within the content.
 
@@ -2150,7 +2134,7 @@ class NavigatorCoder(Coder):
                                     (s for s in self.mcp_servers if s.name == server_name), None
                                 )
                                 if server:
-                                    result_message = self._execute_mcp_tool(
+                                    result_message = await self._execute_mcp_tool(
                                         server, tool_name, params
                                     )
                                 else:
@@ -2181,7 +2165,7 @@ class NavigatorCoder(Coder):
 
         return modified_content, result_messages, tool_calls_found, content_before_separator
 
-    def _apply_edits_from_response(self):
+    async def _apply_edits_from_response(self):
         """
         Parses and applies SEARCH/REPLACE edits found in self.partial_response_content.
         Returns a set of relative file paths that were successfully edited.
@@ -2318,20 +2302,20 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     lint_errors = self.lint_edited(edited_files)
                     self.auto_commit(edited_files, context="Ran the linter")
                     if lint_errors and not self.reflected_message:  # Reflect only if no edit errors
-                        ok = self.io.confirm_ask("Attempt to fix lint errors?")
+                        ok = await self.io.confirm_ask_async("Attempt to fix lint errors?")
                         if ok:
                             self.reflected_message = lint_errors
 
-                shared_output = self.run_shell_commands()
+                shared_output = await self.run_shell_commands()
                 if shared_output:
                     # Add shell output as a new user message? Or just display?
                     # Let's just display for now to avoid complex history manipulation
                     self.io.tool_output("Shell command output:\n" + shared_output)
 
                 if self.auto_test and not self.reflected_message:  # Reflect only if no prior errors
-                    test_errors = self.commands.cmd_test(self.test_cmd)
+                    test_errors = await self.commands.cmd_test(self.test_cmd)
                     if test_errors:
-                        ok = self.io.confirm_ask("Attempt to fix test errors?")
+                        ok = await self.io.confirm_ask_async("Attempt to fix test errors?")
                         if ok:
                             self.reflected_message = test_errors
 
@@ -2448,13 +2432,13 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         # Do nothing - disable implicit file adds in navigator mode.
         pass
 
-    def preproc_user_input(self, inp):
+    async def preproc_user_input(self, inp):
         """
         Override parent's method to wrap user input in a context block.
         This clearly delineates user input from other sections in the context window.
         """
         # First apply the parent's preprocessing
-        inp = super().preproc_user_input(inp)
+        inp = await super().preproc_user_input(inp)
 
         # If we still have input after preprocessing, wrap it in a context block
         if inp and not inp.startswith('<context name="user_input">'):

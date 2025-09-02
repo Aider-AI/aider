@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import functools
 import os
@@ -63,6 +64,23 @@ def restore_multiline(func):
         self.multiline_mode = False
         try:
             return func(self, *args, **kwargs)
+        except Exception:
+            raise
+        finally:
+            self.multiline_mode = orig_multiline
+
+    return wrapper
+
+
+def restore_multiline_async(func):
+    """Decorator to restore multiline mode after async function execution"""
+
+    @functools.wraps(func)
+    async def wrapper(self, *args, **kwargs):
+        orig_multiline = self.multiline_mode
+        self.multiline_mode = False
+        try:
+            return await func(self, *args, **kwargs)
         except Exception:
             raise
         finally:
@@ -547,7 +565,7 @@ class InputOutput:
             self.interrupted = True
             self.prompt_session.app.exit()
 
-    def get_input(
+    async def get_input(
         self,
         root,
         rel_fnames,
@@ -702,7 +720,7 @@ class InputOutput:
                     def get_continuation(width, line_number, is_soft_wrap):
                         return self.prompt_prefix
 
-                    line = self.prompt_session.prompt(
+                    line = await self.prompt_session.prompt_async(
                         show,
                         default=default,
                         completer=completer_instance,
@@ -714,7 +732,7 @@ class InputOutput:
                         prompt_continuation=get_continuation,
                     )
                 else:
-                    line = input(show)
+                    line = await asyncio.get_event_loop().run_in_executor(None, input, show)
 
                 # Check if we were interrupted by a file change
                 if self.interrupted:
@@ -930,6 +948,127 @@ class InputOutput:
                         )
                     else:
                         res = input(question)
+                except EOFError:
+                    # Treat EOF (Ctrl+D) as if the user pressed Enter
+                    res = default
+                    break
+
+                if not res:
+                    res = default
+                    break
+                res = res.lower()
+                good = any(valid_response.startswith(res) for valid_response in valid_responses)
+                if good:
+                    break
+
+                error_message = f"Please answer with one of: {', '.join(valid_responses)}"
+                self.tool_error(error_message)
+
+        res = res.lower()[0]
+
+        if res == "d" and allow_never:
+            self.never_prompts.add(question_id)
+            hist = f"{question.strip()} {res}"
+            self.append_chat_history(hist, linebreak=True, blockquote=True)
+            return False
+
+        if explicit_yes_required:
+            is_yes = res == "y"
+        else:
+            is_yes = res in ("y", "a")
+
+        is_all = res == "a" and group is not None and not explicit_yes_required
+        is_skip = res == "s" and group is not None
+
+        if group:
+            if is_all and not explicit_yes_required:
+                group.preference = "all"
+            elif is_skip:
+                group.preference = "skip"
+
+        hist = f"{question.strip()} {res}"
+        self.append_chat_history(hist, linebreak=True, blockquote=True)
+
+        return is_yes
+
+    @restore_multiline_async
+    async def confirm_ask_async(
+        self,
+        question,
+        default="y",
+        subject=None,
+        explicit_yes_required=False,
+        group=None,
+        allow_never=False,
+    ):
+        self.num_user_asks += 1
+
+        # Ring the bell if needed
+        self.ring_bell()
+
+        question_id = (question, subject)
+
+        if question_id in self.never_prompts:
+            return False
+
+        if group and not group.show_group:
+            group = None
+        if group:
+            allow_never = True
+
+        valid_responses = ["yes", "no", "skip", "all"]
+        options = " (Y)es/(N)o"
+        if group:
+            if not explicit_yes_required:
+                options += "/(A)ll"
+            options += "/(S)kip all"
+        if allow_never:
+            options += "/(D)on't ask again"
+            valid_responses.append("don't")
+
+        if default.lower().startswith("y"):
+            question += options + " [Yes]: "
+        elif default.lower().startswith("n"):
+            question += options + " [No]: "
+        else:
+            question += options + f" [{default}]: "
+
+        if subject:
+            self.tool_output()
+            if "\n" in subject:
+                lines = subject.splitlines()
+                max_length = max(len(line) for line in lines)
+                padded_lines = [line.ljust(max_length) for line in lines]
+                padded_subject = "\n".join(padded_lines)
+                self.tool_output(padded_subject, bold=True)
+            else:
+                self.tool_output(subject, bold=True)
+
+        style = self._get_style()
+
+        def is_valid_response(text):
+            if not text:
+                return True
+            return text.lower() in valid_responses
+
+        if self.yes is True:
+            res = "n" if explicit_yes_required else "y"
+        elif self.yes is False:
+            res = "n"
+        elif group and group.preference:
+            res = group.preference
+            self.user_input(f"{question}{res}", log_only=False)
+        else:
+            while True:
+                try:
+                    if self.prompt_session:
+                        res = await self.prompt_session.prompt_async(
+                            question,
+                            style=style,
+                            complete_while_typing=False,
+                        )
+                    else:
+                        res = await asyncio.get_event_loop().run_in_executor(None, input, question)
                 except EOFError:
                     # Treat EOF (Ctrl+D) as if the user pressed Enter
                     res = default

@@ -136,7 +136,7 @@ class Coder:
     )
 
     @classmethod
-    def create(
+    async def create(
         self,
         main_model=None,
         edit_format=None,
@@ -174,7 +174,7 @@ class Coder:
             done_messages = from_coder.done_messages
             if edit_format != from_coder.edit_format and done_messages and summarize_from_coder:
                 try:
-                    done_messages = from_coder.summarizer.summarize_all(done_messages)
+                    done_messages = await from_coder.summarizer.summarize_all(done_messages)
                 except ValueError:
                     # If summarization fails, keep the original messages and warn the user
                     io.tool_warning(
@@ -205,6 +205,7 @@ class Coder:
         for coder in coders.__all__:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
                 res = coder(main_model, io, **kwargs)
+                await res.initialize_mcp_tools()
                 res.original_kwargs = dict(kwargs)
                 return res
 
@@ -215,8 +216,8 @@ class Coder:
         ]
         raise UnknownEditFormat(edit_format, valid_formats)
 
-    def clone(self, **kwargs):
-        new_coder = Coder.create(from_coder=self, **kwargs)
+    async def clone(self, **kwargs):
+        new_coder = await Coder.create(from_coder=self, **kwargs)
         return new_coder
 
     def get_announcements(self):
@@ -562,7 +563,7 @@ class Coder:
 
         # Instantiate MCP tools
         if self.mcp_servers:
-            self.initialize_mcp_tools()
+            pass
         # validate the functions jsonschema
         if self.functions:
             from jsonschema import Draft7Validator
@@ -956,10 +957,11 @@ class Coder:
 
         return {"role": "user", "content": image_messages}
 
-    def run_stream(self, user_message):
+    async def run_stream(self, user_message):
         self.io.user_input(user_message)
         self.init_before_message()
-        yield from self.send_message(user_message)
+        async for chunk in self.send_message(user_message):
+            yield chunk
 
     def init_before_message(self):
         self.aider_edited_files = set()
@@ -973,19 +975,19 @@ class Coder:
         if self.repo:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
 
-    def run(self, with_message=None, preproc=True):
+    async def run(self, with_message=None, preproc=True):
         try:
             if with_message:
                 self.io.user_input(with_message)
-                self.run_one(with_message, preproc)
+                await self.run_one(with_message, preproc)
                 return self.partial_response_content
             while True:
                 try:
                     if not self.io.placeholder:
                         self.copy_context()
-                    user_message = self.get_input()
-                    self.compact_context_if_needed()
-                    self.run_one(user_message, preproc)
+                    user_message = await self.get_input()
+                    await self.compact_context_if_needed()
+                    await self.run_one(user_message, preproc)
                     self.show_undo_hint()
                 except KeyboardInterrupt:
                     self.keyboard_interrupt()
@@ -996,12 +998,12 @@ class Coder:
         if self.auto_copy_context:
             self.commands.cmd_copy_context()
 
-    def get_input(self):
+    async def get_input(self):
         inchat_files = self.get_inchat_relative_files()
         read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
         all_files = sorted(set(inchat_files + read_only_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
-        return self.io.get_input(
+        return await self.io.get_input(
             self.root,
             all_files,
             self.get_addable_relative_files(),
@@ -1010,29 +1012,30 @@ class Coder:
             edit_format=edit_format,
         )
 
-    def preproc_user_input(self, inp):
+    async def preproc_user_input(self, inp):
         if not inp:
             return
 
         if self.commands.is_command(inp):
-            return self.commands.run(inp)
+            return await self.commands.run(inp)
 
         self.check_for_file_mentions(inp)
         inp = self.check_for_urls(inp)
 
         return inp
 
-    def run_one(self, user_message, preproc):
+    async def run_one(self, user_message, preproc):
         self.init_before_message()
 
         if preproc:
-            message = self.preproc_user_input(user_message)
+            message = await self.preproc_user_input(user_message)
         else:
             message = user_message
 
         while message:
             self.reflected_message = None
-            list(self.send_message(message))
+            async for _ in self.send_message(message):
+                pass
 
             if not self.reflected_message:
                 break
@@ -1117,7 +1120,9 @@ class Coder:
     def summarize_worker(self):
         self.summarizing_messages = list(self.done_messages)
         try:
-            self.summarized_done_messages = self.summarizer.summarize(self.summarizing_messages)
+            self.summarized_done_messages = asyncio.run(
+                self.summarizer.summarize(self.summarizing_messages)
+            )
         except ValueError as err:
             self.io.tool_warning(err.args[0])
             self.summarized_done_messages = self.summarizing_messages
@@ -1137,7 +1142,7 @@ class Coder:
         self.summarizing_messages = None
         self.summarized_done_messages = []
 
-    def compact_context_if_needed(self):
+    async def compact_context_if_needed(self):
         if not self.enable_context_compaction:
             self.summarize_start()
             return
@@ -1151,7 +1156,7 @@ class Coder:
 
         try:
             # Create a summary of the conversation
-            summary_text = self.summarizer.summarize_all_as_text(
+            summary_text = await self.summarizer.summarize_all_as_text(
                 self.done_messages,
                 self.gpt_prompts.compaction_prompt,
                 self.context_compaction_summary_tokens,
@@ -1574,7 +1579,7 @@ class Coder:
                 return False
         return True
 
-    def send_message(self, inp):
+    async def send_message(self, inp):
         self.event("message_send_starting")
 
         # Notify IO that LLM processing is starting
@@ -1615,7 +1620,8 @@ class Coder:
         try:
             while True:
                 try:
-                    yield from self.send(messages, functions=self.functions)
+                    async for chunk in self.send(messages, functions=self.functions):
+                        yield chunk
                     break
                 except litellm_ex.exceptions_tuple() as err:
                     ex_info = litellm_ex.get_ex_info(err)
@@ -1643,7 +1649,7 @@ class Coder:
                         self.io.tool_error(err_msg)
 
                     self.io.tool_output(f"Retrying in {retry_delay:.1f} seconds...")
-                    time.sleep(retry_delay)
+                    await asyncio.sleep(retry_delay)
                     continue
                 except KeyboardInterrupt:
                     interrupted = True
@@ -1748,14 +1754,15 @@ class Coder:
 
             # Process any tools using MCP servers
             tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
-            if self.process_tool_calls(tool_call_response):
+            if await self.process_tool_calls(tool_call_response):
                 self.num_tool_calls += 1
-                return self.run(with_message="Continue with tool call response", preproc=False)
+                self.reflected_message = "Continue with tool call response"
+                return
 
             self.num_tool_calls = 0
 
             try:
-                if self.reply_completed():
+                if await self.reply_completed():
                     return
             except KeyboardInterrupt:
                 interrupted = True
@@ -1768,12 +1775,12 @@ class Coder:
             self.auto_commit(edited, context="Ran the linter")
             self.lint_outcome = not lint_errors
             if lint_errors:
-                ok = self.io.confirm_ask("Attempt to fix lint errors?")
+                ok = await self.io.confirm_ask_async("Attempt to fix lint errors?")
                 if ok:
                     self.reflected_message = lint_errors
                     return
 
-        shared_output = self.run_shell_commands()
+        shared_output = await self.run_shell_commands()
         if shared_output:
             self.cur_messages += [
                 dict(role="user", content=shared_output),
@@ -1781,15 +1788,15 @@ class Coder:
             ]
 
         if edited and self.auto_test:
-            test_errors = self.commands.cmd_test(self.test_cmd)
+            test_errors = await self.commands.cmd_test(self.test_cmd)
             self.test_outcome = not test_errors
             if test_errors:
-                ok = self.io.confirm_ask("Attempt to fix test errors?")
+                ok = await self.io.confirm_ask_async("Attempt to fix test errors?")
                 if ok:
                     self.reflected_message = test_errors
                     return
 
-    def process_tool_calls(self, tool_call_response):
+    async def process_tool_calls(self, tool_call_response):
         if tool_call_response is None:
             return False
 
@@ -1840,7 +1847,7 @@ class Coder:
             self._print_tool_call_info(server_tool_calls)
 
             if self.io.confirm_ask("Run tools?"):
-                tool_responses = self._execute_tool_calls(server_tool_calls)
+                tool_responses = await self._execute_tool_calls(server_tool_calls)
 
                 # Add the assistant message with the modified (expanded) tool calls.
                 # This ensures that what's stored in history is valid.
@@ -1899,7 +1906,7 @@ class Coder:
 
         return server_tool_calls
 
-    def _execute_tool_calls(self, tool_calls):
+    async def _execute_tool_calls(self, tool_calls):
         """Process tool calls from the response and execute them if they match MCP tools.
         Returns a list of tool response messages."""
         tool_responses = []
@@ -2033,11 +2040,11 @@ class Coder:
             max_retries = 3
             for i in range(max_retries):
                 try:
-                    all_results = asyncio.run(_execute_all_tool_calls())
+                    all_results = await _execute_all_tool_calls()
                     break
                 except asyncio.exceptions.CancelledError:
                     if i < max_retries - 1:
-                        time.sleep(0.1)  # Brief pause before retrying
+                        await asyncio.sleep(0.1)  # Brief pause before retrying
                     else:
                         self.io.tool_warning(
                             "MCP tool execution failed after multiple retries due to cancellation."
@@ -2050,7 +2057,7 @@ class Coder:
 
         return tool_responses
 
-    def initialize_mcp_tools(self):
+    async def initialize_mcp_tools(self):
         """
         Initialize tools from all configured MCP servers. MCP Servers that fail to be
         initialized will not be available to the Coder instance.
@@ -2080,11 +2087,11 @@ class Coder:
             max_retries = 3
             for i in range(max_retries):
                 try:
-                    tools = asyncio.run(get_all_server_tools())
+                    tools = await get_all_server_tools()
                     break
                 except asyncio.exceptions.CancelledError:
                     if i < max_retries - 1:
-                        time.sleep(0.1)  # Brief pause before retrying
+                        await asyncio.sleep(0.1)  # Brief pause before retrying
                     else:
                         self.io.tool_warning(
                             "MCP tool initialization failed after multiple retries due to"
@@ -2113,7 +2120,7 @@ class Coder:
                 tool_list.extend(server_tools)
         return tool_list
 
-    def reply_completed(self):
+    async def reply_completed(self):
         pass
 
     def show_exhausted_error(self):
@@ -2271,7 +2278,7 @@ class Coder:
         if added_fnames:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
 
-    def send(self, messages, model=None, functions=None):
+    async def send(self, messages, model=None, functions=None):
         self.got_reasoning_content = False
         self.ended_reasoning_content = False
 
@@ -2288,7 +2295,7 @@ class Coder:
         try:
             tool_list = self.get_tool_list()
 
-            hash_object, completion = model.send_completion(
+            hash_object, completion = await model.send_completion(
                 messages,
                 functions,
                 self.stream,
@@ -2299,7 +2306,8 @@ class Coder:
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
             if self.stream:
-                yield from self.show_send_output_stream(completion)
+                async for chunk in self.show_send_output_stream(completion):
+                    yield chunk
             else:
                 self.show_send_output(completion)
 
@@ -2393,11 +2401,11 @@ class Coder:
         ):
             raise FinishReasonLength()
 
-    def show_send_output_stream(self, completion):
+    async def show_send_output_stream(self, completion):
         received_content = False
         self.partial_response_tool_call = []
 
-        for chunk in completion:
+        async for chunk in completion:
             if isinstance(chunk, str):
                 text = chunk
                 received_content = True
@@ -2959,7 +2967,7 @@ class Coder:
     def apply_edits_dry_run(self, edits):
         return edits
 
-    def run_shell_commands(self):
+    async def run_shell_commands(self):
         if not self.suggest_shell_commands:
             return ""
 
@@ -2970,18 +2978,18 @@ class Coder:
             if command in done:
                 continue
             done.add(command)
-            output = self.handle_shell_commands(command, group)
+            output = await self.handle_shell_commands(command, group)
             if output:
                 accumulated_output += output + "\n\n"
         return accumulated_output
 
-    def handle_shell_commands(self, commands_str, group):
+    async def handle_shell_commands(self, commands_str, group):
         commands = commands_str.strip().splitlines()
         command_count = sum(
             1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#")
         )
         prompt = "Run shell command?" if command_count == 1 else "Run shell commands?"
-        if not self.io.confirm_ask(
+        if not await self.io.confirm_ask_async(
             prompt,
             subject="\n".join(commands),
             explicit_yes_required=True,
@@ -3000,11 +3008,13 @@ class Coder:
             self.io.tool_output(f"Running {command}")
             # Add the command to input history
             self.io.add_to_input_history(f"/run {command.strip()}")
-            exit_status, output = run_cmd(command, error_print=self.io.tool_error, cwd=self.root)
+            exit_status, output = await asyncio.to_thread(
+                run_cmd, command, error_print=self.io.tool_error, cwd=self.root
+            )
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
 
-        if accumulated_output.strip() and self.io.confirm_ask(
+        if accumulated_output.strip() and await self.io.confirm_ask_async(
             "Add command output to the chat?", allow_never=True
         ):
             num_lines = len(accumulated_output.strip().splitlines())

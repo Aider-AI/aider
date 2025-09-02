@@ -1,3 +1,4 @@
+import asyncio
 import glob
 import os
 import re
@@ -284,7 +285,7 @@ class Commands:
 
         return commands
 
-    def do_run(self, cmd_name, args):
+    async def do_run(self, cmd_name, args):
         cmd_name = cmd_name.replace("-", "_")
         cmd_method_name = f"cmd_{cmd_name}"
         cmd_method = getattr(self, cmd_method_name, None)
@@ -293,7 +294,7 @@ class Commands:
             return
 
         try:
-            return cmd_method(args)
+            return await cmd_method(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
 
@@ -309,10 +310,10 @@ class Commands:
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
         return matching_commands, first_word, rest_inp
 
-    def run(self, inp):
+    async def run(self, inp):
         if inp.startswith("!"):
             self.coder.event("command_run")
-            return self.do_run("run", inp[1:])
+            return await self.do_run("run", inp[1:])
 
         res = self.matching_commands(inp)
         if res is None:
@@ -321,11 +322,11 @@ class Commands:
         if len(matching_commands) == 1:
             command = matching_commands[0][1:]
             self.coder.event(f"command_{command}")
-            return self.do_run(command, rest_inp)
+            return await self.do_run(command, rest_inp)
         elif first_word in matching_commands:
             command = first_word[1:]
             self.coder.event(f"command_{command}")
-            return self.do_run(command, rest_inp)
+            return await self.do_run(command, rest_inp)
         elif len(matching_commands) > 1:
             self.io.tool_error(f"Ambiguous command: {', '.join(matching_commands)}")
         else:
@@ -353,7 +354,7 @@ class Commands:
         commit_message = args.strip() if args else None
         self.coder.repo.commit(message=commit_message, coder=self.coder)
 
-    def cmd_lint(self, args="", fnames=None):
+    async def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"
 
         if not self.coder.repo:
@@ -394,7 +395,7 @@ class Commands:
                 self.cmd_commit("")
 
             if not lint_coder:
-                lint_coder = self.coder.clone(
+                lint_coder = await self.coder.clone(
                     # Clear the chat history, fnames
                     cur_messages=[],
                     done_messages=[],
@@ -402,7 +403,7 @@ class Commands:
                 )
 
             lint_coder.add_rel_fname(fname)
-            lint_coder.run(errors)
+            await lint_coder.run(errors)
             lint_coder.abs_fnames = set()
 
         if lint_coder and self.coder.repo.is_dirty() and self.coder.auto_commits:
@@ -1088,7 +1089,7 @@ class Commands:
 
         self.io.tool_output(combined_output)
 
-    def cmd_test(self, args):
+    async def cmd_test(self, args):
         "Run a shell command and add the output to the chat on non-zero exit code"
         if not args and self.coder.test_cmd:
             args = self.coder.test_cmd
@@ -1099,7 +1100,7 @@ class Commands:
         if not callable(args):
             if type(args) is not str:
                 raise ValueError(repr(args))
-            return self.cmd_run(args, True)
+            return await self.cmd_run(args, True)
 
         errors = args()
         if not errors:
@@ -1108,10 +1109,14 @@ class Commands:
         self.io.tool_output(errors)
         return errors
 
-    def cmd_run(self, args, add_on_nonzero_exit=False):
+    async def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
-        exit_status, combined_output = run_cmd(
-            args, verbose=self.verbose, error_print=self.io.tool_error, cwd=self.coder.root
+        exit_status, combined_output = await asyncio.to_thread(
+            run_cmd,
+            args,
+            verbose=self.verbose,
+            error_print=self.io.tool_error,
+            cwd=self.coder.root,
         )
 
         if combined_output is None:
@@ -1316,7 +1321,7 @@ class Commands:
         self.io.tool_output()
         self.io.tool_output("Use `/help <question>` to ask questions about how to use aider.")
 
-    def cmd_help(self, args):
+    async def cmd_help(self, args):
         "Ask questions about aider"
 
         if not args.strip():
@@ -1334,7 +1339,7 @@ class Commands:
 
             self.help = Help()
 
-        coder = Coder.create(
+        coder = await Coder.create(
             io=self.io,
             from_coder=self.coder,
             edit_format="help",
@@ -1349,7 +1354,7 @@ class Commands:
 """
         user_msg += "\n".join(self.coder.get_announcements()) + "\n"
 
-        coder.run(user_msg, preproc=False)
+        await coder.run(user_msg, preproc=False)
 
         if self.coder.repo_map:
             map_tokens = self.coder.repo_map.max_map_tokens
@@ -1382,39 +1387,39 @@ class Commands:
     def completions_navigator(self):
         raise CommandCompletionException()
 
-    def cmd_ask(self, args):
+    async def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
-        return self._generic_chat_command(args, "ask")
+        return await self._generic_chat_command(args, "ask")
 
-    def cmd_code(self, args):
+    async def cmd_code(self, args):
         """Ask for changes to your code. If no prompt provided, switches to code mode."""  # noqa
-        return self._generic_chat_command(args, self.coder.main_model.edit_format)
+        return await self._generic_chat_command(args, self.coder.main_model.edit_format)
 
-    def cmd_architect(self, args):
+    async def cmd_architect(self, args):
         """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
-        return self._generic_chat_command(args, "architect")
+        return await self._generic_chat_command(args, "architect")
 
-    def cmd_context(self, args):
+    async def cmd_context(self, args):
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
-        return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
+        return await self._generic_chat_command(args, "context", placeholder=args.strip() or None)
 
-    def cmd_navigator(self, args):
+    async def cmd_navigator(self, args):
         """Enter navigator mode to autonomously discover and manage relevant files. If no prompt provided, switches to navigator mode."""  # noqa
         # Enable context management when entering navigator mode
         if hasattr(self.coder, "context_management_enabled"):
             self.coder.context_management_enabled = True
             self.io.tool_output("Context management enabled for large files")
 
-        return self._generic_chat_command(args, "navigator", placeholder=args.strip() or None)
+        return await self._generic_chat_command(args, "navigator", placeholder=args.strip() or None)
 
-    def _generic_chat_command(self, args, edit_format, placeholder=None):
+    async def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
             # Switch to the corresponding chat mode if no args provided
             return self.cmd_chat_mode(edit_format)
 
         from aider.coders.base_coder import Coder
 
-        coder = Coder.create(
+        coder = await Coder.create(
             io=self.io,
             from_coder=self.coder,
             edit_format=edit_format,
@@ -1423,7 +1428,7 @@ class Commands:
         )
 
         user_msg = args
-        coder.run(user_msg)
+        await coder.run(user_msg)
 
         # Use the provided placeholder if any
         raise SwitchCoder(
@@ -1689,7 +1694,7 @@ class Commands:
     def completions_raw_load(self, document, complete_event):
         return self.completions_raw_read_only(document, complete_event)
 
-    def cmd_load(self, args):
+    async def cmd_load(self, args):
         "Load and execute commands from a file"
         if not args.strip():
             self.io.tool_error("Please provide a filename containing commands to load.")
@@ -1712,7 +1717,7 @@ class Commands:
 
             self.io.tool_output(f"\nExecuting: {cmd}")
             try:
-                self.run(cmd)
+                await self.run(cmd)
             except SwitchCoder:
                 self.io.tool_error(
                     f"Command '{cmd}' is only supported in interactive mode, skipping."

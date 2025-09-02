@@ -12,6 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
+import httpx
 import json5
 import yaml
 from PIL import Image
@@ -903,7 +904,7 @@ class Model(ModelSettings):
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
-    def github_copilot_token_to_open_ai_key(self, extra_headers):
+    async def github_copilot_token_to_open_ai_key(self, extra_headers):
         # check to see if there's an openai api key
         # If so, check to see if it's expire
         openai_api_key = "OPENAI_API_KEY"
@@ -912,7 +913,6 @@ class Model(ModelSettings):
             int(dict(x.split("=") for x in os.environ[openai_api_key].split(";"))["exp"])
             < int(datetime.now().timestamp())
         ):
-            import requests
 
             class GitHubCopilotTokenError(Exception):
                 """Custom exception for GitHub Copilot token-related errors."""
@@ -935,7 +935,8 @@ class Model(ModelSettings):
             }
 
             url = "https://api.github.com/copilot_internal/v2/token"
-            res = requests.get(url, headers=headers)
+            async with httpx.AsyncClient() as client:
+                res = await client.get(url, headers=headers)
             if res.status_code != 200:
                 safe_headers = {k: v for k, v in headers.items() if k != "Authorization"}
                 token_preview = github_token[:5] + "..." if len(github_token) >= 5 else github_token
@@ -954,7 +955,7 @@ class Model(ModelSettings):
 
             os.environ[openai_api_key] = token
 
-    def send_completion(
+    async def send_completion(
         self, messages, functions, stream, temperature=None, tools=None, max_tokens=None
     ):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
@@ -1029,10 +1030,10 @@ class Model(ModelSettings):
                     "Copilot-Integration-Id": "vscode-chat",
                 }
 
-            self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
+            await self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
         try:
-            res = litellm.completion(**kwargs)
+            res = await litellm.acompletion(**kwargs)
         except Exception as err:
             res = "Model API Response Error. Please retry the previous request"
 
@@ -1041,7 +1042,7 @@ class Model(ModelSettings):
 
         return hash_object, res
 
-    def simple_send_with_retries(self, messages, max_tokens=None):
+    async def simple_send_with_retries(self, messages, max_tokens=None):
         from aider.exceptions import LiteLLMExceptions
 
         litellm_ex = LiteLLMExceptions()
@@ -1054,7 +1055,7 @@ class Model(ModelSettings):
 
         while True:
             try:
-                _hash, response = self.send_completion(
+                _hash, response = await self.send_completion(
                     messages=messages,
                     functions=None,
                     stream=False,
