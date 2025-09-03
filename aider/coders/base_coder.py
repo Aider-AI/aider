@@ -507,6 +507,7 @@ class Coder:
                 refresh=map_refresh,
             )
 
+        # Use weak model first for summarization to save costs, falling back to main model
         self.summarizer = summarizer or ChatSummary(
             [self.main_model.weak_model, self.main_model],
             self.main_model.max_chat_history_tokens,
