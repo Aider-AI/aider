@@ -32,6 +32,27 @@ aider --model vercel_ai_gateway/<provideer>/<model>
 aider --list-models vercel_ai_gateway/
 ```
 
+## Controlling provider selection
+
+The Vercel AI Gateway often has multiple providers serving each model.
+You can control which providers are used for your requests by configuring "provider options" in a `.aider.model.settings.yml` file.
+
+Place that file in your home directory or the root of your git project, with
+entries like this:
+
+```yaml
+- name: vercel_ai_gateway/anthropic/claude-sonnet-4
+  extra_params:
+    providerOptions:
+      gateway:
+        # Filter to these providers only
+        only: ['bedrock', 'anthropic', 'vertex']
+        # Use providers in this order of preference
+        order: ['bedrock', 'vertex', 'anthropic']
+```
+
+See [Vercel AI Gateway provider options docs](https://vercel.com/docs/ai-gateway/provider-options) for full details on these settings.
+
 ## Helpful Links
 
 - [Team dashboard](https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai)
