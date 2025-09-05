@@ -265,6 +265,15 @@ def get_parser(default_config_files, git_root):
         default=2,
         help="Multiplier for map tokens when no files are specified (default: 2)",
     )
+    group.add_argument(
+        "--map-max-line-length",
+        type=int,
+        default=100,
+        help=(
+            "Maximum line length for the repo map code. Prevents sending crazy long lines of"
+            " minified JS files etc. (default: 100)"
+        ),
+    )
 
     ##########
     group = parser.add_argument_group("History Files")
