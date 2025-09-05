@@ -26,7 +26,7 @@ aider = "aider.main:main"
 aider-ce = "aider.main:main"
 
 [tool.setuptools.dynamic]
-dependencies = { file = "requirements.in" }
+dependencies = { file = "requirements/requirements.in" }
 
 [tool.setuptools.dynamic.optional-dependencies]
 dev = { file = "requirements/requirements-dev.in" }
