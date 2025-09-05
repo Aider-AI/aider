@@ -1,3 +1,5 @@
+import configparser
+import glob
 import json
 import os
 import re
@@ -448,6 +450,24 @@ def sanity_check_repo(repo, io):
     return False
 
 
+def expand_glob_patterns(patterns, root="."):
+    """Expand glob patterns in a list of file paths."""
+    expanded_files = []
+    for pattern in patterns:
+        # Check if the pattern contains glob characters
+        if any(c in pattern for c in "*?[]"):
+            # Use glob to expand the pattern
+            matches = glob.glob(pattern, recursive=True)
+            if matches:
+                expanded_files.extend(matches)
+            else:
+                # If no matches, keep the original pattern
+                expanded_files.append(pattern)
+        else:
+            # Not a glob pattern, keep as is
+            expanded_files.append(pattern)
+    return expanded_files
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
@@ -676,10 +696,16 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         for fname in loaded_dotenvs:
             io.tool_output(f"Loaded {fname}")
 
+    # Expand glob patterns in files and file arguments
     all_files = args.files + (args.file or [])
+    all_files = expand_glob_patterns(all_files)
     fnames = [str(Path(fn).resolve()) for fn in all_files]
+    
+    # Expand glob patterns in read arguments
+    read_patterns = args.read or []
+    read_expanded = expand_glob_patterns(read_patterns)
     read_only_fnames = []
-    for fn in args.read or []:
+    for fn in read_expanded:
         path = Path(fn).expanduser().resolve()
         if path.is_dir():
             read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
