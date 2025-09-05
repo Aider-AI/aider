@@ -42,7 +42,7 @@ pip install aider-ce
 or
 
 ```
-uv install aider-ce
+uv pip install aider-ce
 ```
 
 The package exports an `aider-ce` command that accepts all of Aider's configuration options
