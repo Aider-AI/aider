@@ -181,7 +181,8 @@ class AutoCompleter(Completer):
 
         candidates = [word for word in candidates if partial in word.lower()]
         for candidate in sorted(candidates):
-            yield Completion(candidate, start_position=-len(words[-1]))
+            if candidate not in words:
+                yield Completion(candidate, start_position=-len(words[-1]))
 
     def get_completions(self, document, complete_event):
         self.tokenize()
