@@ -47,6 +47,10 @@ You can also set those API keys via special entries in the
 ```yaml
 openai-api-key: <key>
 anthropic-api-key: <key>
+api-key:
+- openrouter=<key>
+- deepseek=<key>
+
 ```
 
 

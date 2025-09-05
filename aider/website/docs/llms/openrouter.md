@@ -32,6 +32,13 @@ aider --model openrouter/<provider>/<model>
 aider --list-models openrouter/
 ```
 
+Alternatively, you may set the API key in the config file ~/.aider.conf.yml , just add the line:
+
+```
+api-key: openrouter=sk-...
+```
+
+
 In particular, many aider users access Sonnet via OpenRouter:
 
 {: .tip }
