@@ -17,18 +17,18 @@ installed the first time you access them. Since containers are
 ephemeral, the extras will need to be reinstalled the next time you
 launch the aider core container.
 
-### Aider core 
+### Aider core
 
 ```
 docker pull paulgauthier/aider
-docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app paulgauthier/aider --openai-api-key $OPENAI_API_KEY [...other aider args...]
+docker run -it --volume $(pwd):/app paulgauthier/aider --openai-api-key $OPENAI_API_KEY [...other aider args...]
 ```
 
 ### Full version
 
 ```
 docker pull paulgauthier/aider-full
-docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app paulgauthier/aider-full --openai-api-key $OPENAI_API_KEY [...other aider args...]
+docker run -it --volume $(pwd):/app paulgauthier/aider-full --openai-api-key $OPENAI_API_KEY [...other aider args...]
 ```
 
 ## How to use it
