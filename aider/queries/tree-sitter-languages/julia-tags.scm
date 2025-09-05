@@ -1,3 +1,6 @@
+;; derived from: https://github.com/tree-sitter/tree-sitter-julia
+;; License: MIT
+
 (module
   name: (identifier) @name.definition.module) @definition.module
 
