@@ -678,7 +678,10 @@ class NavigatorCoder(Coder):
 
                 if func:
                     for params in parsed_args_list:
-                        tasks.append(asyncio.to_thread(func, self, **params))
+                        if asyncio.iscoroutinefunction(func):
+                            tasks.append(func(self, **params))
+                        else:
+                            tasks.append(asyncio.to_thread(func, self, **params))
                 else:
                     all_results_content.append(f"Error: Unknown local tool name '{tool_name}'")
 
@@ -752,7 +755,10 @@ class NavigatorCoder(Coder):
                 )
                 return f"Error executing tool call {tool_name}: {e}"
             finally:
-                await server.disconnect()
+                try:
+                    await server.disconnect()
+                except Exception as e:
+                    self.io.tool_warning(f"Error disconnecting from MCP server {server.name}:\n{e}")
 
         return await _exec_async()
 
@@ -1807,13 +1813,13 @@ class NavigatorCoder(Coder):
                 elif norm_tool_name == "command":
                     command_string = params.get("command_string")
                     if command_string is not None:
-                        result_message = _execute_command(self, command_string)
+                        result_message = await _execute_command(self, command_string)
                     else:
                         result_message = "Error: Missing 'command_string' parameter for Command"
                 elif norm_tool_name == "commandinteractive":
                     command_string = params.get("command_string")
                     if command_string is not None:
-                        result_message = _execute_command_interactive(self, command_string)
+                        result_message = await _execute_command_interactive(self, command_string)
                     else:
                         result_message = (
                             "Error: Missing 'command_string' parameter for CommandInteractive"
@@ -1835,7 +1841,7 @@ class NavigatorCoder(Coder):
                         # Import the function if not already imported (it should be)
                         from aider.tools.grep import _execute_grep
 
-                        result_message = _execute_grep(
+                        result_message = await _execute_grep(
                             self,
                             pattern,
                             file_pattern,
@@ -2336,7 +2342,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         except Exception as err:
             self.io.tool_error("Exception while applying edits:")
             self.io.tool_error(str(err), strip=False)
-            traceback.print_exc()
+            self.io.tool_error(traceback.format_exc())
             self.reflected_message = f"Exception while applying edits: {str(err)}"
 
         return edited_files

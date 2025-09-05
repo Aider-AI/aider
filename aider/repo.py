@@ -21,7 +21,7 @@ import pathspec
 from aider import prompts, utils
 
 from .dump import dump  # noqa: F401
-from .waiting import WaitingSpinner
+from .waiting import Spinner
 
 ANY_GIT_ERROR += [
     OSError,
@@ -341,7 +341,7 @@ class GitRepo:
         commit_message = None
         for model in self.models:
             spinner_text = f"Generating commit message with {model.name}"
-            with WaitingSpinner(spinner_text):
+            with Spinner(spinner_text):
                 if model.system_prompt_prefix:
                     current_system_content = model.system_prompt_prefix + "\n" + system_content
                 else:

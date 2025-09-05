@@ -27,7 +27,9 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
 
+import httpx
 from litellm import experimental_mcp_client
+from prompt_toolkit.patch_stdout import patch_stdout
 from rich.console import Console
 
 from aider import __version__, models, prompts, urls, utils
@@ -50,7 +52,6 @@ from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
-from aider.waiting import WaitingSpinner
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -128,6 +129,9 @@ class Coder:
     file_watcher = None
     mcp_servers = None
     mcp_tools = None
+    run_one_completed = True
+    compact_context_completed = True
+    suppress_announcements_for_next_prompt = False
 
     # Context management settings (for all modes)
     context_management_enabled = False  # Disabled by default except for navigator mode
@@ -294,13 +298,9 @@ class Coder:
         else:
             lines.append("Repo-map: disabled")
 
-        # Files
-        for fname in self.get_inchat_relative_files():
-            lines.append(f"Added {fname} to the chat.")
-
-        for fname in self.abs_read_only_fnames:
-            rel_fname = self.get_rel_fname(fname)
-            lines.append(f"Added {rel_fname} to the chat (read-only).")
+        if self.mcp_servers:
+            server_names = [server.name for server in self.mcp_servers]
+            lines.append(f"MCP servers configured: {', '.join(server_names)}")
 
         if self.done_messages:
             lines.append("Restored previous conversation history.")
@@ -622,12 +622,7 @@ class Coder:
 
     def _stop_waiting_spinner(self):
         """Stop and clear the waiting spinner if it is running."""
-        spinner = getattr(self, "waiting_spinner", None)
-        if spinner:
-            try:
-                spinner.stop()
-            finally:
-                self.waiting_spinner = None
+        self.io.stop_spinner()
 
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
@@ -976,23 +971,109 @@ class Coder:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
 
     async def run(self, with_message=None, preproc=True):
+        if self.io.prompt_session:
+            with patch_stdout(raw=True):
+                return await self._run_patched(with_message, preproc)
+        else:
+            return await self._run_patched(with_message, preproc)
+
+    async def _run_patched(self, with_message=None, preproc=True):
+        input_task = None
+        processing_task = None
         try:
             if with_message:
                 self.io.user_input(with_message)
                 await self.run_one(with_message, preproc)
                 return self.partial_response_content
+
+            user_message = None
+
             while True:
                 try:
-                    if not self.io.placeholder:
+                    if (
+                        not input_task
+                        and not user_message
+                        and (not processing_task or not self.io.placeholder)
+                    ):
+                        if not self.suppress_announcements_for_next_prompt:
+                            self.show_announcements()
+                        self.suppress_announcements_for_next_prompt = False
+
                         self.copy_context()
-                    user_message = await self.get_input()
-                    await self.compact_context_if_needed()
-                    await self.run_one(user_message, preproc)
-                    self.show_undo_hint()
+                        input_task = asyncio.create_task(self.get_input())
+
+                    tasks = set()
+                    if processing_task:
+                        tasks.add(processing_task)
+                    if input_task:
+                        tasks.add(input_task)
+
+                    if tasks:
+                        done, pending = await asyncio.wait(
+                            tasks, return_when=asyncio.FIRST_COMPLETED
+                        )
+
+                        if input_task and input_task in done:
+                            if processing_task:
+                                processing_task.cancel()
+                                try:
+                                    await processing_task
+                                except asyncio.CancelledError:
+                                    pass
+                                processing_task = None
+
+                            try:
+                                user_message = input_task.result()
+                            except (asyncio.CancelledError, KeyboardInterrupt):
+                                user_message = None
+                            input_task = None
+                            if user_message is None:
+                                continue
+
+                        if processing_task and processing_task in done:
+                            try:
+                                await processing_task
+                            except (asyncio.CancelledError, KeyboardInterrupt):
+                                pass
+                            processing_task = None
+
+                    if user_message and self.run_one_completed and self.compact_context_completed:
+                        processing_task = asyncio.create_task(
+                            self._processing_logic(user_message, preproc)
+                        )
+                        user_message = None  # Clear message after starting task
                 except KeyboardInterrupt:
+                    if processing_task:
+                        processing_task.cancel()
+                        processing_task = None
+                    if input_task:
+                        self.io.set_placeholder("")
+                        input_task.cancel()
+                        input_task = None
                     self.keyboard_interrupt()
         except EOFError:
             return
+        finally:
+            if input_task:
+                input_task.cancel()
+            if processing_task:
+                processing_task.cancel()
+
+    async def _processing_logic(self, user_message, preproc):
+        try:
+            self.compact_context_completed = False
+            await self.compact_context_if_needed()
+            self.compact_context_completed = True
+
+            self.run_one_completed = False
+            await self.run_one(user_message, preproc)
+            self.show_undo_hint()
+        except asyncio.CancelledError:
+            # Don't show undo hint if cancelled
+            raise
+        finally:
+            self.run_one_completed = True
+            self.compact_context_completed = True
 
     def copy_context(self):
         if self.auto_copy_context:
@@ -1093,17 +1174,9 @@ class Coder:
         # Ensure cursor is visible on exit
         Console().show_cursor(True)
 
-        now = time.time()
+        self.io.tool_warning("\n\n^C KeyboardInterrupt")
 
-        thresh = 2  # seconds
-        if self.last_keyboard_interrupt and now - self.last_keyboard_interrupt < thresh:
-            self.io.tool_warning("\n\n^C KeyboardInterrupt")
-            self.event("exit", reason="Control-C")
-            sys.exit()
-
-        self.io.tool_warning("\n\n^C again to exit")
-
-        self.last_keyboard_interrupt = now
+        self.last_keyboard_interrupt = time.time()
 
     def summarize_start(self):
         if not self.summarizer.check_max_tokens(self.done_messages):
@@ -1601,10 +1674,11 @@ class Coder:
 
         self.multi_response_content = ""
         if self.show_pretty():
-            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
-            self.waiting_spinner.start()
+            spinner_text = "Waiting for " + self.main_model.name
+            self.io.start_spinner(spinner_text)
+
             if self.stream:
-                self.mdstream = self.io.get_assistant_mdstream()
+                self.mdstream = True
             else:
                 self.mdstream = None
         else:
@@ -1677,8 +1751,10 @@ class Coder:
                     return
         finally:
             if self.mdstream:
-                self.live_incremental_response(True)
-                self.mdstream = None
+                show_resp = self.render_incremental_response(True)
+                show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
+                self.io.stream_output(show_resp, final=True)
+            self.mdstream = None
 
             # Ensure any waiting spinner is stopped
             self._stop_waiting_spinner()
@@ -2013,6 +2089,13 @@ class Coder:
                         tool_responses.append(
                             {"role": "tool", "tool_call_id": tool_call.id, "content": tool_error}
                         )
+            except httpx.RemoteProtocolError as e:
+                connection_error = f"Server {server.name} disconnected unexpectedly: {e}"
+                self.io.tool_warning(connection_error)
+                for tool_call in tool_calls_list:
+                    tool_responses.append(
+                        {"role": "tool", "tool_call_id": tool_call.id, "content": connection_error}
+                    )
             except Exception as e:
                 connection_error = f"Could not connect to server {server.name}\n{e}"
                 self.io.tool_warning(connection_error)
@@ -2491,7 +2574,7 @@ class Coder:
         show_resp = self.render_incremental_response(final)
         # Apply any reasoning tag formatting
         show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
-        self.mdstream.update(show_resp, final=final)
+        self.io.stream_output(show_resp, final=final)
 
     def render_incremental_response(self, final):
         return self.get_multi_response_content_in_progress()
@@ -2834,9 +2917,7 @@ class Coder:
         except Exception as err:
             self.io.tool_error("Exception while updating files:")
             self.io.tool_error(str(err), strip=False)
-
-            traceback.print_exc()
-
+            self.io.tool_error(traceback.format_exc())
             self.reflected_message = str(err)
             return edited
 

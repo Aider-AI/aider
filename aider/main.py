@@ -1064,8 +1064,6 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         analytics.event("copy-paste mode")
         ClipboardWatcher(coder.io, verbose=args.verbose)
 
-    coder.show_announcements()
-
     if args.show_prompts:
         coder.cur_messages += [
             dict(role="user", content="Hello!"),
@@ -1153,7 +1151,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         io.tool_output()
         try:
             await coder.run(with_message=args.message)
-        except SwitchCoder:
+        except (SwitchCoder, KeyboardInterrupt):
             pass
         analytics.event("exit", reason="Completed --message")
         return
@@ -1204,8 +1202,8 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
             coder = await Coder.create(**kwargs)
 
-            if switch.kwargs.get("show_announcements") is not False:
-                coder.show_announcements()
+            if switch.kwargs.get("show_announcements") is False:
+                coder.suppress_announcements_for_next_prompt = True
 
 
 def is_first_run_of_new_version(io, verbose=False):

@@ -294,7 +294,10 @@ class Commands:
             return
 
         try:
-            return await cmd_method(args)
+            if asyncio.iscoroutinefunction(cmd_method):
+                return await cmd_method(args)
+            else:
+                return cmd_method(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
 
