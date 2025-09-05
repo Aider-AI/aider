@@ -74,6 +74,10 @@ def get_parser(default_config_files, git_root):
         help="Specify the Anthropic API key",
     )
     group.add_argument(
+        "--vercel-ai-gateway-api-key",
+        help="Specify the Vercel AI Gateway API key",
+    )
+    group.add_argument(
         "--openai-api-base",
         help="Specify the api base url",
     )
