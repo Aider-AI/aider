@@ -238,6 +238,7 @@ class Commands:
                 print_error=self.io.tool_error,
                 playwright_available=res,
                 verify_ssl=self.verify_ssl,
+                playwright_proxy=getattr(self.args, "playwright_proxy", None),
             )
 
         content = self.scraper.scrape(url) or ""
