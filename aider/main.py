@@ -212,7 +212,7 @@ def check_streamlit_install(io):
         io,
         "streamlit",
         "You need to install the aider browser feature",
-        ["aider-chat[browser]"],
+        ["aider-ce[browser]"],
     )
 
 
@@ -996,6 +996,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             repo=repo,
             fnames=fnames,
             read_only_fnames=read_only_fnames,
+            read_only_stubs_fnames=[],
             show_diffs=args.show_diffs,
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,

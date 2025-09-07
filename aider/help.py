@@ -17,7 +17,7 @@ warnings.simplefilter("ignore", category=FutureWarning)
 
 def install_help_extra(io):
     pip_install_cmd = [
-        "aider-chat[help]",
+        "aider-ce[help]",
         "--extra-index-url",
         "https://download.pytorch.org/whl/cpu",
     ]
