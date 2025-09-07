@@ -71,6 +71,31 @@ def restore_multiline(func):
     return wrapper
 
 
+def without_input_history(func):
+    """Decorator to temporarily disable history saving for the prompt session buffer."""
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        orig_buf_append = None
+        try:
+            orig_buf_append = self.prompt_session.default_buffer.append_to_history
+            self.prompt_session.default_buffer.append_to_history = (
+                lambda: None
+            )  # Replace with no-op
+        except AttributeError:
+            pass
+
+        try:
+            return func(self, *args, **kwargs)
+        except Exception:
+            raise
+        finally:
+            if orig_buf_append:
+                self.prompt_session.default_buffer.append_to_history = orig_buf_append
+
+    return wrapper
+
+
 class CommandCompletionException(Exception):
     """Raised when a command should use the normal autocompleter instead of
     command-specific completion."""
@@ -554,6 +579,7 @@ class InputOutput:
         addable_rel_fnames,
         commands,
         abs_read_only_fnames=None,
+        abs_read_only_stubs_fnames=None,
         edit_format=None,
     ):
         self.rule()
@@ -567,9 +593,15 @@ class InputOutput:
             rel_read_only_fnames = [
                 get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
             ]
-            show = self.format_files_for_input(rel_fnames, rel_read_only_fnames)
+            rel_read_only_stubs_fnames = [
+                get_rel_fname(fname, root) for fname in (abs_read_only_stubs_fnames or [])
+            ]
+            show = self.format_files_for_input(
+                rel_fnames, rel_read_only_fnames, rel_read_only_stubs_fnames
+            )
 
         prompt_prefix = ""
+
         if edit_format:
             prompt_prefix += edit_format
         if self.multiline_mode:
@@ -591,7 +623,8 @@ class InputOutput:
                 addable_rel_fnames,
                 commands,
                 self.encoding,
-                abs_read_only_fnames=abs_read_only_fnames,
+                abs_read_only_fnames=(abs_read_only_fnames or set())
+                | (abs_read_only_stubs_fnames or set()),
             )
         )
 
@@ -853,6 +886,7 @@ class InputOutput:
         return False
 
     @restore_multiline
+    @without_input_history
     def confirm_ask(
         self,
         question,
@@ -1186,67 +1220,84 @@ class InputOutput:
                 print(err)
                 self.chat_history_file = None  # Disable further attempts to write
 
-    def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
+    def format_files_for_input(self, rel_fnames, rel_read_only_fnames, rel_read_only_stubs_fnames):
         # Optimization for large number of files
-        total_files = len(rel_fnames) + len(rel_read_only_fnames or [])
+        total_files = (
+            len(rel_fnames)
+            + len(rel_read_only_fnames or [])
+            + len(rel_read_only_stubs_fnames or [])
+        )
 
         # For very large numbers of files, use a summary display
         if total_files > 50:
             read_only_count = len(rel_read_only_fnames or [])
+            stub_file_count = len(rel_read_only_stubs_fnames or [])
             editable_count = len([f for f in rel_fnames if f not in (rel_read_only_fnames or [])])
 
             summary = f"{editable_count} editable file(s)"
             if read_only_count > 0:
                 summary += f", {read_only_count} read-only file(s)"
+            if stub_file_count > 0:
+                summary += f", {stub_file_count} stub file(s)"
             summary += " (use /ls to list all files)\n"
             return summary
 
         # Original implementation for reasonable number of files
         if not self.pretty:
-            read_only_files = []
-            for full_path in sorted(rel_read_only_fnames or []):
-                read_only_files.append(f"{full_path} (read only)")
-
-            editable_files = []
-            for full_path in sorted(rel_fnames):
-                if full_path in rel_read_only_fnames:
-                    continue
-                editable_files.append(f"{full_path}")
-
-            return "\n".join(read_only_files + editable_files) + "\n"
+            lines = []
+            # Handle regular read-only files
+            for fname in sorted(rel_read_only_fnames or []):
+                lines.append(f"{fname} (read only)")
+            # Handle stub files separately
+            for fname in sorted(rel_read_only_stubs_fnames or []):
+                lines.append(f"{fname} (read only stub)")
+            # Handle editable files
+            for fname in sorted(rel_fnames):
+                if fname not in rel_read_only_fnames and fname not in rel_read_only_stubs_fnames:
+                    lines.append(fname)
+            return "\n".join(lines) + "\n"
 
         output = StringIO()
         console = Console(file=output, force_terminal=False)
 
-        read_only_files = sorted(rel_read_only_fnames or [])
-        editable_files = [f for f in sorted(rel_fnames) if f not in rel_read_only_fnames]
-
-        if read_only_files:
-            # Use shorter of abs/rel paths for readonly files
+        # Handle read-only files
+        if rel_read_only_fnames or rel_read_only_stubs_fnames:
             ro_paths = []
-            for rel_path in read_only_files:
+            # Regular read-only files
+            for rel_path in sorted(rel_read_only_fnames or []):
                 abs_path = os.path.abspath(os.path.join(self.root, rel_path))
-                ro_paths.append(Text(abs_path if len(abs_path) < len(rel_path) else rel_path))
+                ro_paths.append(abs_path if len(abs_path) < len(rel_path) else rel_path)
+            # Stub files with (stub) marker
+            for rel_path in sorted(rel_read_only_stubs_fnames or []):
+                abs_path = os.path.abspath(os.path.join(self.root, rel_path))
+                path = abs_path if len(abs_path) < len(rel_path) else rel_path
+                ro_paths.append(f"{path} (stub)")
 
-            files_with_label = [Text("Readonly:")] + ro_paths
-            read_only_output = StringIO()
-            Console(file=read_only_output, force_terminal=False).print(Columns(files_with_label))
-            read_only_lines = read_only_output.getvalue().splitlines()
-            console.print(Columns(files_with_label))
+            if ro_paths:
+                files_with_label = ["Readonly:"] + ro_paths
+                read_only_output = StringIO()
+                Console(file=read_only_output, force_terminal=False).print(
+                    Columns(files_with_label)
+                )
+                read_only_lines = read_only_output.getvalue().splitlines()
+                console.print(Columns(files_with_label))
 
+        # Handle editable files
+        editable_files = [
+            f
+            for f in sorted(rel_fnames)
+            if f not in rel_read_only_fnames and f not in rel_read_only_stubs_fnames
+        ]
         if editable_files:
-            text_editable_files = [Text(f) for f in editable_files]
-            files_with_label = text_editable_files
-            if read_only_files:
-                files_with_label = [Text("Editable:")] + text_editable_files
+            files_with_label = editable_files
+            if rel_read_only_fnames or rel_read_only_stubs_fnames:
+                files_with_label = ["Editable:"] + editable_files
                 editable_output = StringIO()
                 Console(file=editable_output, force_terminal=False).print(Columns(files_with_label))
                 editable_lines = editable_output.getvalue().splitlines()
-
                 if len(read_only_lines) > 1 or len(editable_lines) > 1:
                     console.print()
             console.print(Columns(files_with_label))
-
         return output.getvalue()
 
 

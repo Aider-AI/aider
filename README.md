@@ -13,6 +13,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [Map Cache Location Config: #2911](https://github.com/Aider-AI/aider/pull/2911)
 * [Enhanced System Prompts: #3804](https://github.com/Aider-AI/aider/pull/3804)
 * [Repo Map File Name Truncation Fix: #4320](https://github.com/Aider-AI/aider/pull/4320)
+* [Read Only Stub Files For Context Window Management : #3056](https://github.com/Aider-AI/aider/pull/3056)
 
 ### Other Updates
 
@@ -28,6 +29,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [Edit Before Adding Files and Reflecting](https://github.com/dwash96/aider-ce/pull/22)
 * [Fix Deepseek model configurations](https://github.com/Aider-AI/aider/commit/c839a6dd8964d702172cae007375e299732d3823)
 * [Relax Version Pinning For Easier Distribution](https://github.com/dwash96/aider-ce/issues/18)
+* [Remove Confirm Responses from History](https://github.com/Aider-AI/aider/pull/3958)
 
 ### Other Notes
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
