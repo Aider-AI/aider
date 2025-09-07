@@ -36,7 +36,7 @@ from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
-from aider.models import RETRY_TIMEOUT
+from aider.models import RETRY_TIMEOUT, RETRY_FIXED_DELAY
 from aider.reasoning_tags import (
     REASONING_TAG,
     format_reasoning_content,
@@ -1446,7 +1446,8 @@ class Coder:
         else:
             self.mdstream = None
 
-        retry_delay = 0.125
+        # Start with small delay unless a fixed retry delay is configured
+        retry_delay = RETRY_FIXED_DELAY or 0.125
 
         litellm_ex = LiteLLMExceptions()
 
@@ -1467,9 +1468,13 @@ class Coder:
 
                     should_retry = ex_info.retry
                     if should_retry:
-                        retry_delay *= 2
-                        if retry_delay > RETRY_TIMEOUT:
-                            should_retry = False
+                        if RETRY_FIXED_DELAY is not None:
+                            # Use a constant retry delay if configured
+                            retry_delay = RETRY_FIXED_DELAY
+                        else:
+                            retry_delay *= 2
+                            if retry_delay > RETRY_TIMEOUT:
+                                should_retry = False
 
                     if not should_retry:
                         self.mdstream = None
