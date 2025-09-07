@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
-from rich.text import Text
 
 from aider.dump import dump  # noqa: F401
 from aider.io import AutoCompleter, ConfirmGroup, InputOutput
@@ -482,6 +481,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         io = InputOutput(pretty=False, fancy_input=False)
         rel_fnames = ["file1.txt", "file[markup].txt", "ro_file.txt"]
         rel_read_only_fnames = ["ro_file.txt"]
+        rel_read_only_stub_fnames = []
 
         expected_output = "file1.txt\nfile[markup].txt\nro_file.txt (read only)\n"
         # Sort the expected lines because the order of editable vs read-only might vary
@@ -504,7 +504,9 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         )
         expected_output = "\n".join(expected_output_lines) + "\n"
 
-        actual_output = io.format_files_for_input(rel_fnames, rel_read_only_fnames)
+        actual_output = io.format_files_for_input(
+            rel_fnames, rel_read_only_fnames, rel_read_only_stub_fnames
+        )
 
         # Normalizing actual output by splitting, sorting, and rejoining
         actual_output_lines = sorted(filter(None, actual_output.splitlines()))
@@ -519,7 +521,7 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         self, mock_join, mock_abspath, mock_columns, mock_is_dumb_terminal
     ):
         io = InputOutput(pretty=True, root="test_root")
-        io.format_files_for_input([], [])
+        io.format_files_for_input([], [], [])
         mock_columns.assert_not_called()
 
     @patch("aider.io.Columns")
@@ -531,17 +533,15 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         io = InputOutput(pretty=True, root="test_root")
         rel_fnames = ["edit1.txt", "edit[markup].txt"]
 
-        io.format_files_for_input(rel_fnames, [])
+        io.format_files_for_input(rel_fnames, [], [])
 
         mock_columns.assert_called_once()
         args, _ = mock_columns.call_args
         renderables = args[0]
 
         self.assertEqual(len(renderables), 2)
-        self.assertIsInstance(renderables[0], Text)
-        self.assertEqual(renderables[0].plain, "edit1.txt")
-        self.assertIsInstance(renderables[1], Text)
-        self.assertEqual(renderables[1].plain, "edit[markup].txt")
+        self.assertEqual(renderables[0], "edit1.txt")
+        self.assertEqual(renderables[1], "edit[markup].txt")
 
     @patch("aider.io.Columns")
     @patch("os.path.abspath")
@@ -558,20 +558,46 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         rel_read_only_fnames = ["ro1.txt", "ro[markup].txt"]
         # When all files in chat are read-only
         rel_fnames = list(rel_read_only_fnames)
+        rel_read_only_stub_fnames = []
 
-        io.format_files_for_input(rel_fnames, rel_read_only_fnames)
+        io.format_files_for_input(rel_fnames, rel_read_only_fnames, rel_read_only_stub_fnames)
 
         self.assertEqual(mock_columns.call_count, 2)
         args, _ = mock_columns.call_args
         renderables = args[0]
 
         self.assertEqual(len(renderables), 3)  # Readonly: + 2 files
-        self.assertIsInstance(renderables[0], Text)
-        self.assertEqual(renderables[0].plain, "Readonly:")
-        self.assertIsInstance(renderables[1], Text)
-        self.assertEqual(renderables[1].plain, "ro1.txt")
-        self.assertIsInstance(renderables[2], Text)
-        self.assertEqual(renderables[2].plain, "ro[markup].txt")
+        self.assertEqual(renderables[0], "Readonly:")
+        self.assertEqual(renderables[1], "ro1.txt")
+        self.assertEqual(renderables[2], "ro[markup].txt")
+
+    @patch("aider.io.Columns")
+    @patch("os.path.abspath")
+    @patch("os.path.join")
+    def test_format_files_for_input_pretty_true_readonly_stub_only(
+        self, mock_join, mock_abspath, mock_columns, mock_is_dumb_terminal
+    ):
+        io = InputOutput(pretty=True, root="test_root")
+
+        # Mock path functions to ensure rel_path is chosen by the shortener logic
+        mock_join.side_effect = lambda *args: "/".join(args)
+        mock_abspath.side_effect = lambda p: "/ABS_PREFIX_VERY_LONG/" + os.path.normpath(p)
+
+        rel_read_only_fnames = []
+        rel_read_only_stub_fnames = ["ro1.txt", "ro[markup].txt"]
+        # When all files in chat are read-only
+        rel_fnames = list(rel_read_only_stub_fnames)
+
+        io.format_files_for_input(rel_fnames, rel_read_only_fnames, rel_read_only_stub_fnames)
+
+        self.assertEqual(mock_columns.call_count, 2)
+        args, _ = mock_columns.call_args
+        renderables = args[0]
+
+        self.assertEqual(len(renderables), 3)  # Readonly: + 2 files
+        self.assertEqual(renderables[0], "Readonly:")
+        self.assertEqual(renderables[1], "ro1.txt (stub)")
+        self.assertEqual(renderables[2], "ro[markup].txt (stub)")
 
     @patch("aider.io.Columns")
     @patch("os.path.abspath")
@@ -586,24 +612,21 @@ class TestInputOutputFormatFiles(unittest.TestCase):
 
         rel_fnames = ["edit1.txt", "edit[markup].txt", "ro1.txt", "ro[markup].txt"]
         rel_read_only_fnames = ["ro1.txt", "ro[markup].txt"]
+        rel_read_only_stub_fnames = []
 
-        io.format_files_for_input(rel_fnames, rel_read_only_fnames)
+        io.format_files_for_input(rel_fnames, rel_read_only_fnames, rel_read_only_stub_fnames)
 
         self.assertEqual(mock_columns.call_count, 4)
 
         # Check arguments for the first rendering of read-only files (call 0)
         args_ro, _ = mock_columns.call_args_list[0]
         renderables_ro = args_ro[0]
-        self.assertEqual(
-            renderables_ro, [Text("Readonly:"), Text("ro1.txt"), Text("ro[markup].txt")]
-        )
+        self.assertEqual(renderables_ro, ["Readonly:", "ro1.txt", "ro[markup].txt"])
 
         # Check arguments for the first rendering of editable files (call 2)
         args_ed, _ = mock_columns.call_args_list[2]
         renderables_ed = args_ed[0]
-        self.assertEqual(
-            renderables_ed, [Text("Editable:"), Text("edit1.txt"), Text("edit[markup].txt")]
-        )
+        self.assertEqual(renderables_ed, ["Editable:", "edit1.txt", "edit[markup].txt"])
 
 
 if __name__ == "__main__":
