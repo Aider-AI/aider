@@ -1348,39 +1348,53 @@ class InputOutput:
         return output.getvalue()
 
     def stream_output(self, text, final=False):
+        """
+        Simplified stream output that just prints content and lets prompt_toolkit
+        handle the incremental updates through its native diffing.
+        """
+        # Initialize buffer if not exists
+        if not hasattr(self, "_stream_buffer"):
+            self._stream_buffer = ""
+
+        # Initialize buffer if not exists
+        if not hasattr(self, "_stream_line_count"):
+            self._stream_line_count = 0
+
+        self._stream_buffer += text
+
+        # Process the buffer to find complete lines
+        lines = self._stream_buffer.split("\n")
+        complete_lines = []
+        incomplete_line = ""
+        output = ""
+
+        if len(lines) > 1 or final:
+            # All lines except the last one are complete
+            complete_lines = lines[:-1] if not final else lines
+            incomplete_line = lines[-1] if not final else ""
+
+            for complete_line in complete_lines:
+                output += complete_line
+                self._stream_line_count += 1
+
+            self._stream_buffer = incomplete_line
+
         if not self.pretty or not self.prompt_session:
             if final:
                 self.assistant_output(text)
             return
 
-        pt_stdout = sys.stdout
-
-        erase_output = ""
-        if self._last_stream_output_lines > 0:
-            erase_output += f"\x1b[{self._last_stream_output_lines}A"  # Move cursor up
-            erase_output += "\x1b[J"  # Clear from cursor to end of screen
-
-        rendered_output = self.render_markdown(text).rstrip()
-        full_output = f"\n\n{rendered_output}\n\n"
-        pt_stdout.write(erase_output + full_output)
-        pt_stdout.flush()
-
-        if self.prompt_session.app:
-            self.prompt_session.app.invalidate()
-
-        self._last_stream_output_lines = full_output.count("\n")
-
         if final:
-            # On the final render, we use assistant_output for a clean final print
-            # and reset the line count.
-            final_erase = ""
-            if self._last_stream_output_lines > 0:
-                final_erase += f"\x1b[{self._last_stream_output_lines}A"
-                final_erase += "\x1b[J"
-            pt_stdout.write(final_erase)
-            pt_stdout.flush()
-            self.assistant_output(text)
-            self._last_stream_output_lines = 0
+            # Ensure any remaining buffered content is printed using the full response
+            print(output, flush=True)
+            self.reset_streaming_response()
+        else:
+            if len(lines) > 1:
+                print(output, flush=True)
+
+    def reset_streaming_response(self):
+        self._stream_buffer = ""
+        self._stream_line_count = 0
 
     def set_placeholder(self, placeholder):
         """Set a one-time placeholder text for the next input prompt."""

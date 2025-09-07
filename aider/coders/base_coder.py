@@ -966,6 +966,9 @@ class Coder:
         self.test_outcome = None
         self.shell_commands = []
         self.message_cost = 0
+        self._message_buffer = ""
+
+        self.io.reset_streaming_response()
 
         if self.repo:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
@@ -1751,9 +1754,8 @@ class Coder:
                     return
         finally:
             if self.mdstream:
-                show_resp = self.render_incremental_response(True)
-                show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
-                self.io.stream_output(show_resp, final=True)
+                content_to_show = self.live_incremental_response(True)
+                self.stream_wrapper(content_to_show, final=True)
             self.mdstream = None
 
             # Ensure any waiting spinner is stopped
@@ -1829,11 +1831,15 @@ class Coder:
                 return
 
             # Process any tools using MCP servers
-            tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
-            if await self.process_tool_calls(tool_call_response):
-                self.num_tool_calls += 1
-                self.reflected_message = "Continue with tool call response"
-                return
+            try:
+                tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
+                if tool_call_response and await self.process_tool_calls(tool_call_response):
+                    self.num_tool_calls += 1
+                    self.reflected_message = "Continue with tool call response"
+                    return
+            except Exception as e:
+                self.io.tool_error(f"Error processing tool calls: {str(e)}")
+                # Continue without tool processing
 
             self.num_tool_calls = 0
 
@@ -1876,7 +1882,21 @@ class Coder:
         if tool_call_response is None:
             return False
 
-        original_tool_calls = tool_call_response.choices[0].message.tool_calls
+        # Handle different response structures
+        try:
+            # Try to get tool calls from the standard OpenAI response format
+            if hasattr(tool_call_response, "choices") and tool_call_response.choices:
+                message = tool_call_response.choices[0].message
+                if hasattr(message, "tool_calls") and message.tool_calls:
+                    original_tool_calls = message.tool_calls
+                else:
+                    return False
+            else:
+                # Handle other response formats
+                return False
+        except (AttributeError, IndexError):
+            return False
+
         if not original_tool_calls:
             return False
 
@@ -1912,12 +1932,8 @@ class Coder:
                 )
                 expanded_tool_calls.append(new_tool_call)
 
-        # Replace the original tool_calls in the response object with the expanded list.
-        tool_call_response.choices[0].message.tool_calls = expanded_tool_calls
-        tool_calls = expanded_tool_calls
-
         # Collect all tool calls grouped by server
-        server_tool_calls = self._gather_server_tool_calls(tool_calls)
+        server_tool_calls = self._gather_server_tool_calls(expanded_tool_calls)
 
         if server_tool_calls and self.num_tool_calls < self.max_tool_calls:
             self._print_tool_call_info(server_tool_calls)
@@ -1925,9 +1941,9 @@ class Coder:
             if self.io.confirm_ask("Run tools?"):
                 tool_responses = await self._execute_tool_calls(server_tool_calls)
 
-                # Add the assistant message with the modified (expanded) tool calls.
-                # This ensures that what's stored in history is valid.
-                self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
+                # Add the assistant message with the tool calls
+                if hasattr(tool_call_response, "choices") and tool_call_response.choices:
+                    self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
 
                 # Add all tool responses
                 for tool_response in tool_responses:
@@ -2502,8 +2518,12 @@ class Coder:
                 ):
                     raise FinishReasonLength()
 
-                if chunk.choices[0].delta.tool_calls:
-                    self.partial_response_tool_call.append(chunk)
+                try:
+                    if chunk.choices[0].delta.tool_calls:
+                        self.partial_response_tool_call.append(chunk)
+                except (AttributeError, IndexError):
+                    # Handle cases where the response structure doesn't match expectations
+                    pass
 
                 try:
                     func = chunk.choices[0].delta.function_call
@@ -2552,9 +2572,11 @@ class Coder:
             self.partial_response_content += text
 
             if self.show_pretty():
-                self.live_incremental_response(False)
+                # Use simplified streaming - just call the method with full content
+                content_to_show = self.live_incremental_response(False)
+                self.stream_wrapper(content_to_show, final=False)
             elif text:
-                # Apply reasoning tag formatting
+                # Apply reasoning tag formatting for non-pretty output
                 text = replace_reasoning_tags(text, self.reasoning_tag_name)
                 try:
                     sys.stdout.write(text)
@@ -2570,13 +2592,41 @@ class Coder:
         if not received_content and len(self.partial_response_tool_call) == 0:
             self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
+    def stream_wrapper(self, content, final):
+        if not hasattr(self, "_streaming_buffer_length"):
+            self._streaming_buffer_length = 0
+
+        if final:
+            content += "\n\n"
+
+        if isinstance(content, str):
+            self._message_buffer += content
+            self._streaming_buffer_length += len(content)
+
+            self.io.stream_output(content, final=final)
+
+            if final:
+                self._message_buffer = ""
+                self._streaming_buffer_length = 0
+
     def live_incremental_response(self, final):
         show_resp = self.render_incremental_response(final)
         # Apply any reasoning tag formatting
         show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
-        self.io.stream_output(show_resp, final=final)
+
+        # Track streaming state to avoid repetitive output
+        if not hasattr(self, "_streaming_buffer_length"):
+            self._streaming_buffer_length = 0
+
+        # Only send new content that hasn't been streamed yet
+        if len(show_resp) >= self._streaming_buffer_length:
+            new_content = show_resp[self._streaming_buffer_length :]
+            return new_content
+        else:
+            return show_resp
 
     def render_incremental_response(self, final):
+        # Just return the current content - the streaming logic will handle incremental updates
         return self.get_multi_response_content_in_progress()
 
     def remove_reasoning_content(self):

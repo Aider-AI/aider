@@ -1039,6 +1039,7 @@ class Model(ModelSettings):
 
             if self.verbose:
                 print(f"LiteLLM API Error: {str(err)}")
+                raise
 
         return hash_object, res
 

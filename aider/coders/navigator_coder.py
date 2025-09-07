@@ -1841,7 +1841,8 @@ class NavigatorCoder(Coder):
                         # Import the function if not already imported (it should be)
                         from aider.tools.grep import _execute_grep
 
-                        result_message = await _execute_grep(
+                        result_message = await asyncio.to_thread(
+                            _execute_grep,
                             self,
                             pattern,
                             file_pattern,
