@@ -212,6 +212,16 @@ def main(
     thinking_tokens: Optional[int] = typer.Option(
         None, "--thinking-tokens", help="Set thinking tokens for models that support it"
     ),
+    map_tokens: Optional[int] = typer.Option(
+        None,
+        "--map-tokens",
+        help="Suggested number of tokens for repo map (0 to disable)",
+    ),
+    retry_wait: Optional[float] = typer.Option(
+        None,
+        "--retry-wait",
+        help="Fixed seconds to wait between API retries (overrides backoff)",
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
@@ -350,6 +360,17 @@ def main(
     base_coder.RETRY_TIMEOUT = LONG_TIMEOUT
     models.RETRY_TIMEOUT = LONG_TIMEOUT
 
+    # Optionally override incremental retry backoff with a fixed delay
+    if retry_wait is not None:
+        try:
+            wait_val = float(retry_wait)
+            if wait_val < 0:
+                raise ValueError
+            models.RETRY_FIXED_DELAY = wait_val
+        except ValueError:
+            print("Error: --retry-wait must be a non-negative number of seconds")
+            return 1
+
     if threads == 1:
         all_results = []
         for test_path in test_dnames:
@@ -370,6 +391,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                map_tokens,
             )
 
             all_results.append(results)
@@ -396,6 +418,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                map_tokens,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -693,6 +716,7 @@ def run_test_real(
     sleep=0,
     reasoning_effort: Optional[str] = None,
     thinking_tokens: Optional[int] = None,
+    map_tokens: Optional[int] = None,
     read_model_settings=None,
 ):
     if not os.path.isdir(testdir):
@@ -818,13 +842,30 @@ def run_test_real(
     dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
+    # Ensure this test directory is a standalone git repo so RepoMap can be used
+    try:
+        git_dir = testdir / ".git"
+        if not git_dir.exists():
+            r = git.Repo.init(testdir)
+            # Set a local identity to avoid commit failures in clean containers
+            with r.config_writer() as cw:
+                cw.set_value("user", "name", "aider-benchmark")
+                cw.set_value("user", "email", "aider-benchmark@example.com")
+            # Add existing files (solution set and any current files)
+            r.index.add([str(p.relative_to(testdir)) for p in testdir.rglob("*") if p.is_file()])
+            r.index.commit("Initial commit for aider benchmark")
+    except Exception as e:
+        if verbose:
+            print(f"Warning: failed to initialize git repo in {testdir}: {e}")
 
-    coder = Coder.create(
-        main_model,
-        edit_format,
-        io,
+    coder_kwargs = dict(
+        main_model=main_model,
+        edit_format=edit_format,
+        io=io,
         fnames=fnames,
-        use_git=False,
+        use_git=True,
+        auto_commits=False,
+        dirty_commits=False,
         stream=False,
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
@@ -832,6 +873,10 @@ def run_test_real(
         suggest_shell_commands=False,
         ignore_mentions=ignore_files,
     )
+    if map_tokens is not None:
+        coder_kwargs["map_tokens"] = map_tokens
+
+    coder = Coder.create(**coder_kwargs)
     dump(coder.ignore_mentions)
 
     coder.show_announcements()

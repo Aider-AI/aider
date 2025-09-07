@@ -24,6 +24,8 @@ from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
 
 RETRY_TIMEOUT = 60
+# If set (seconds), overrides exponential backoff with a fixed delay
+RETRY_FIXED_DELAY = None
 
 request_timeout = 600
 
@@ -1006,7 +1008,8 @@ class Model(ModelSettings):
         litellm_ex = LiteLLMExceptions()
         if "deepseek-reasoner" in self.name:
             messages = ensure_alternating_roles(messages)
-        retry_delay = 0.125
+        # Start with small delay unless a fixed retry delay is configured
+        retry_delay = RETRY_FIXED_DELAY or 0.125
 
         if self.verbose:
             dump(messages)
@@ -1034,9 +1037,13 @@ class Model(ModelSettings):
                     print(ex_info.description)
                 should_retry = ex_info.retry
                 if should_retry:
-                    retry_delay *= 2
-                    if retry_delay > RETRY_TIMEOUT:
-                        should_retry = False
+                    if RETRY_FIXED_DELAY is not None:
+                        # Use a constant retry delay if configured
+                        retry_delay = RETRY_FIXED_DELAY
+                    else:
+                        retry_delay *= 2
+                        if retry_delay > RETRY_TIMEOUT:
+                            should_retry = False
                 if not should_retry:
                     return None
                 print(f"Retrying in {retry_delay:.1f} seconds...")
