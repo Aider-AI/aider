@@ -15,20 +15,24 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import List, Optional
 
-import git
-import importlib_resources
-import lox
-import pandas as pd
-import prompts
+"""
+Performance-oriented refactors:
+- Avoid heavy imports unless needed for a given code path.
+- Fast path for `--stats` to skip GitPython and benchmarking deps.
+- Build DataFrame / import plotting only when `--graphs` is true.
+- Use json.load for result file parsing to reduce memory churn.
+- Cache git version lookups across a single invocation.
+"""
+
+# Heavy modules are lazily imported within the code paths that need them.
 import typer
 from dotenv import load_dotenv
-from plots import plot_refactoring
 from rich.console import Console
 
-from aider import models, sendchat
-from aider.coders import Coder, base_coder
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+
+# Cache for commit-hash -> version lookup
+_VERSION_CACHE = {}
 
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
@@ -122,11 +126,12 @@ def show_stats(dirnames, graphs, stats_languages=None):
 
     repeat_hi = repeat_lo = repeat_avg = None  # noqa: F841
 
-    df = pd.DataFrame.from_records(rows)
-    # df.sort_values(by=["model", "edit_format"], inplace=True)
-
-    # dump(df)
+    # Only build a DataFrame and import plotting libs when graphs are requested
     if graphs:
+        import pandas as pd  # Lazy import
+        from plots import plot_refactoring  # Lazy import
+
+        df = pd.DataFrame.from_records(rows)
         # plot_timing(df)
         # plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
         # plot_outcomes_claude(df)
@@ -212,15 +217,15 @@ def main(
     thinking_tokens: Optional[int] = typer.Option(
         None, "--thinking-tokens", help="Set thinking tokens for models that support it"
     ),
+    map_tokens: Optional[int] = typer.Option(
+        None,
+        "--map-tokens",
+        help="Suggested number of tokens for repo map (0 to disable)",
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
 ):
-    repo = git.Repo(search_parent_directories=True)
-    commit_hash = repo.head.object.hexsha[:7]
-    if repo.is_dirty():
-        commit_hash += "-dirty"
-
     if stats_only and not dirnames:
         latest_dir = find_latest_benchmark_dir()
         dirnames = [str(latest_dir)]
@@ -241,6 +246,7 @@ def main(
         updated_dirnames.append(dirname)
 
     if stats_only:
+        # Fast path: avoid importing/initializing benchmarking deps
         return show_stats(updated_dirnames, graphs, stats_languages)
 
     if diffs_only:
@@ -248,6 +254,18 @@ def main(
 
     assert len(updated_dirnames) == 1, updated_dirnames
     dirname = updated_dirnames[0]
+
+    # Lazy imports for the actual benchmark run
+    import git  # Heavy; avoid for --stats/--diffs
+    import importlib_resources  # Used for model metadata registration
+    import lox  # Only needed for threaded runs
+    from aider import models, sendchat
+    from aider.coders import base_coder
+
+    repo = git.Repo(search_parent_directories=True)
+    commit_hash = repo.head.object.hexsha[:7]
+    if repo.is_dirty():
+        commit_hash += "-dirty"
 
     if "AIDER_DOCKER" not in os.environ:
         print("Warning: benchmarking runs unvetted code from GPT, run in a docker container")
@@ -370,6 +388,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                map_tokens,
             )
 
             all_results.append(results)
@@ -396,6 +415,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                map_tokens,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -457,7 +477,8 @@ def load_results(dirname, stats_languages=None):
     for pattern in glob_patterns:
         for fname in dirname.glob(pattern):
             try:
-                results = json.loads(fname.read_text())
+                with open(fname, "r", encoding="utf-8", errors="replace") as f:
+                    results = json.load(f)
                 all_results.append(results)
             except json.JSONDecodeError:
                 print("json.JSONDecodeError", fname)
@@ -602,7 +623,7 @@ def summarize_results(dirname, stats_languages=None):
 
     if variants["model"]:
         a_model = set(variants["model"]).pop()
-        command = f"aider --model {a_model}"
+        command = f"aider-ce --model {a_model}"
         print(f"  command: {command}")
 
     print(f"  date: {date}")
@@ -634,14 +655,24 @@ def get_versions(commit_hashes):
     for hsh in commit_hashes:
         if not hsh:
             continue
-        hsh = hsh.split("-")[0]
+        short = hsh.split("-")[0]
+        if short in _VERSION_CACHE:
+            ver = _VERSION_CACHE.get(short)
+            if ver:
+                versions.add(ver)
+            continue
+
         try:
-            version = subprocess.check_output(
-                ["git", "show", f"{hsh}:aider/__init__.py"], universal_newlines=True
+            version_src = subprocess.check_output(
+                ["git", "show", f"{short}:aider/__init__.py"], universal_newlines=True
             )
-            version = re.search(r'__version__ = "(.*)"', version).group(1)
-            versions.add(version)
+            match = re.search(r'__version__ = "(.*)"', version_src)
+            ver = match.group(1) if match else None
+            _VERSION_CACHE[short] = ver
+            if ver:
+                versions.add(ver)
         except subprocess.CalledProcessError:
+            _VERSION_CACHE[short] = None
             pass
     return versions
 
@@ -693,8 +724,16 @@ def run_test_real(
     sleep=0,
     reasoning_effort: Optional[str] = None,
     thinking_tokens: Optional[int] = None,
+    map_tokens: Optional[int] = None,
     read_model_settings=None,
 ):
+    # Lazy imports: only needed in the actual benchmark execution path
+    from aider.io import InputOutput
+    from aider.coders import Coder
+    from aider import models
+    import prompts
+    import git
+
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -818,13 +857,30 @@ def run_test_real(
     dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
+    # Ensure this test directory is a standalone git repo so RepoMap can be used
+    try:
+        git_dir = testdir / ".git"
+        if not git_dir.exists():
+            r = git.Repo.init(testdir)
+            # Set a local identity to avoid commit failures in clean containers
+            with r.config_writer() as cw:
+                cw.set_value("user", "name", "aider-benchmark")
+                cw.set_value("user", "email", "aider-benchmark@example.com")
+            # Add existing files (solution set and any current files)
+            r.index.add([str(p.relative_to(testdir)) for p in testdir.rglob("*") if p.is_file()])
+            r.index.commit("Initial commit for aider benchmark")
+    except Exception as e:
+        if verbose:
+            print(f"Warning: failed to initialize git repo in {testdir}: {e}")
 
-    coder = Coder.create(
-        main_model,
-        edit_format,
-        io,
+    coder_kwargs = dict(
+        main_model=main_model,
+        edit_format=edit_format,
+        io=io,
         fnames=fnames,
-        use_git=False,
+        use_git=True,
+        auto_commits=False,
+        dirty_commits=False,
         stream=False,
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
@@ -832,6 +888,10 @@ def run_test_real(
         suggest_shell_commands=False,
         ignore_mentions=ignore_files,
     )
+    if map_tokens is not None:
+        coder_kwargs["map_tokens"] = map_tokens
+
+    coder = Coder.create(**coder_kwargs)
     dump(coder.ignore_mentions)
 
     coder.show_announcements()
