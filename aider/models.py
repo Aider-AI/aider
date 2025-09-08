@@ -1,3 +1,4 @@
+import asyncio
 import difflib
 import hashlib
 import importlib.resources
@@ -1035,7 +1036,7 @@ class Model(ModelSettings):
         try:
             res = await litellm.acompletion(**kwargs)
         except Exception as err:
-            res = "Model API Response Error. Please retry the previous request"
+            res = self.model_error_response()
 
             if self.verbose:
                 print(f"LiteLLM API Error: {str(err)}")
@@ -1086,6 +1087,22 @@ class Model(ModelSettings):
                 continue
             except AttributeError:
                 return None
+
+    async def model_error_response(self):
+        for i in range(1):
+            await asyncio.sleep(0.1)
+            yield litellm.ModelResponse(
+                choices=[
+                    litellm.Choices(
+                        finish_reason="stop",
+                        index=0,
+                        message=litellm.Message(
+                            content="Model API Response Error. Please retry the previous request"
+                        ),  # Provide an empty message object
+                    )
+                ],
+                model=self.name,
+            )
 
 
 def register_models(model_settings_fnames):

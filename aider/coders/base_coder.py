@@ -1007,9 +1007,6 @@ class Coder:
         self.test_outcome = None
         self.shell_commands = []
         self.message_cost = 0
-        self._message_buffer = ""
-
-        self.io.reset_streaming_response()
 
         if self.repo:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
@@ -2425,6 +2422,9 @@ class Coder:
         self.got_reasoning_content = False
         self.ended_reasoning_content = False
 
+        self._streaming_buffer_length = 0
+        self.io.reset_streaming_response()
+
         if not model:
             model = self.main_model
 
@@ -2481,9 +2481,6 @@ class Coder:
                     self.io.ai_output(json.dumps(args, indent=4))
 
     def show_send_output(self, completion):
-        # Stop spinner once we have a response
-        self._stop_waiting_spinner()
-
         if self.verbose:
             print(completion)
 
@@ -2611,8 +2608,6 @@ class Coder:
                 except AttributeError:
                     pass
 
-            if received_content:
-                self._stop_waiting_spinner()
             self.partial_response_content += text
 
             if self.show_pretty():
@@ -2623,14 +2618,13 @@ class Coder:
                 # Apply reasoning tag formatting for non-pretty output
                 text = replace_reasoning_tags(text, self.reasoning_tag_name)
                 try:
-                    sys.stdout.write(text)
+                    self.stream_wrapper(text, final=False)
                 except UnicodeEncodeError:
                     # Safely encode and decode the text
                     safe_text = text.encode(sys.stdout.encoding, errors="backslashreplace").decode(
                         sys.stdout.encoding
                     )
-                    sys.stdout.write(safe_text)
-                sys.stdout.flush()
+                    self.stream_wrapper(safe_text, final=False)
                 yield text
 
         if not received_content and len(self.partial_response_tool_call) == 0:
@@ -2644,13 +2638,11 @@ class Coder:
             content += "\n\n"
 
         if isinstance(content, str):
-            self._message_buffer += content
             self._streaming_buffer_length += len(content)
 
             self.io.stream_output(content, final=final)
 
             if final:
-                self._message_buffer = ""
                 self._streaming_buffer_length = 0
 
     def live_incremental_response(self, final):
@@ -2667,6 +2659,8 @@ class Coder:
             new_content = show_resp[self._streaming_buffer_length :]
             return new_content
         else:
+            self._streaming_buffer_length = 0
+            self.io.reset_streaming_response()
             return show_resp
 
     def render_incremental_response(self, final):

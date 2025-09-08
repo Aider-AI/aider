@@ -332,7 +332,6 @@ class InputOutput:
         self.fallback_spinner = None
         self.prompt_session = None
         self.interrupted = False
-        self._last_stream_output_lines = 0
         self.never_prompts = set()
         self.editingmode = editingmode
         self.multiline_mode = multiline_mode
@@ -371,6 +370,9 @@ class InputOutput:
             )
 
         self.code_theme = code_theme
+
+        self._stream_buffer = ""
+        self._stream_line_count = 0
 
         self.input = input
         self.output = output
@@ -1309,14 +1311,16 @@ class InputOutput:
             message = Text(message)
         color = ensure_hash_prefix(color) if color else None
         style = dict(style=color) if self.pretty and color else dict()
+
         try:
-            self.console.print(message, **style)
+            self.stream_print(message, **style)
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
             if isinstance(message, Text):
                 message = message.plain
             message = str(message).encode("ascii", errors="replace").decode("ascii")
-            self.console.print(message, **style)
+            self.stream_print(message, **style)
+
         if self.prompt_session and self.prompt_session.app:
             self.prompt_session.app.invalidate()
 
@@ -1344,15 +1348,13 @@ class InputOutput:
             style["reverse"] = bold
 
         style = RichStyle(**style)
-        self.console.print(*messages, style=style)
+
+        self.stream_print(*messages, style=style)
 
     def assistant_output(self, message, pretty=None):
         if not message:
             self.tool_warning("Empty response received from LLM. Check your provider account?")
             return
-
-        self.console.print()
-        self.console.print()
 
         show_resp = message
 
@@ -1367,12 +1369,7 @@ class InputOutput:
         else:
             show_resp = Text(message or "(empty response)")
 
-        self.console.print(show_resp)
-
-        self.console.print()
-        self.console.print()
-        if self.prompt_session and self.prompt_session.app:
-            self.prompt_session.app.invalidate()
+        self.stream_print(show_resp)
 
     def render_markdown(self, text):
         output = StringIO()
@@ -1413,22 +1410,23 @@ class InputOutput:
 
             self._stream_buffer = incomplete_line
 
-        if not self.pretty or not self.prompt_session:
-            if final:
-                self.assistant_output(text)
-            return
-
-        if final:
+        if not final:
+            if len(lines) > 1:
+                print(output, flush=True)
+        else:
             # Ensure any remaining buffered content is printed using the full response
             print(output, flush=True)
             self.reset_streaming_response()
-        else:
-            if len(lines) > 1:
-                print(output, flush=True)
 
     def reset_streaming_response(self):
         self._stream_buffer = ""
         self._stream_line_count = 0
+
+    def stream_print(self, *messages, **kwargs):
+        with self.console.capture() as capture:
+            self.console.print(*messages, **kwargs)
+        capture_text = capture.get()
+        self.stream_output(capture_text, final=False)
 
     def set_placeholder(self, placeholder):
         """Set a one-time placeholder text for the next input prompt."""
