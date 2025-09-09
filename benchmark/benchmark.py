@@ -368,6 +368,9 @@ def main(
     base_coder.RETRY_TIMEOUT = LONG_TIMEOUT
     models.RETRY_TIMEOUT = LONG_TIMEOUT
 
+    # Enable in-memory RepoMap cache when running multiple threads to avoid SQLite contention
+    repomap_in_memory = threads > 1
+
     if threads == 1:
         all_results = []
         for test_path in test_dnames:
@@ -389,6 +392,7 @@ def main(
                 reasoning_effort,
                 thinking_tokens,
                 map_tokens,
+                repomap_in_memory,
             )
 
             all_results.append(results)
@@ -416,6 +420,7 @@ def main(
                 reasoning_effort,
                 thinking_tokens,
                 map_tokens,
+                repomap_in_memory,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -518,6 +523,7 @@ def summarize_results(dirname, stats_languages=None):
 
     res.reasoning_effort = None
     res.thinking_tokens = None
+    res.map_tokens = None
     variants = defaultdict(set)
 
     for results in all_results:
@@ -551,6 +557,7 @@ def summarize_results(dirname, stats_languages=None):
 
         res.reasoning_effort = results.get("reasoning_effort")
         res.thinking_tokens = results.get("thinking_tokens")
+        res.map_tokens = results.get("map_tokens")
 
         for key in "model edit_format commit_hash editor_model editor_edit_format".split():
             val = results.get(key)
@@ -599,6 +606,8 @@ def summarize_results(dirname, stats_languages=None):
         print(f"  reasoning_effort: {res.reasoning_effort}")
     if res.thinking_tokens is not None:
         print(f"  thinking_tokens: {res.thinking_tokens}")
+    if res.map_tokens is not None:
+        print(f"  map_tokens: {res.map_tokens}")
 
     for i in range(tries):
         print(f"  pass_rate_{i + 1}: {percents[i]:.1f}")
@@ -726,6 +735,7 @@ def run_test_real(
     thinking_tokens: Optional[int] = None,
     map_tokens: Optional[int] = None,
     read_model_settings=None,
+    repomap_in_memory: bool = False,
 ):
     # Lazy imports: only needed in the actual benchmark execution path
     from aider.io import InputOutput
@@ -887,6 +897,10 @@ def run_test_real(
         cache_prompts=True,
         suggest_shell_commands=False,
         ignore_mentions=ignore_files,
+        # Reduce repo map contention and size for benchmarks
+        map_cache_dir=str(testdir),
+        repomap_in_memory=repomap_in_memory,
+        map_mul_no_files=4,
     )
     if map_tokens is not None:
         coder_kwargs["map_tokens"] = map_tokens
@@ -1020,6 +1034,7 @@ def run_test_real(
         prompt_tokens=coder.total_tokens_sent,
         completion_tokens=coder.total_tokens_received,
         thinking_tokens=thinking_tokens,
+        map_tokens=map_tokens,
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,
