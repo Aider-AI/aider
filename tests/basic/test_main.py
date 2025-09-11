@@ -14,8 +14,23 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, load_dotenv_files, main, setup_git
+from aider.main import (
+    check_gitignore,
+    discover_litellm_models,
+    load_dotenv_files,
+    main,
+    setup_git,
+)
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
+
+
+class DummyResponse:
+    def __init__(self, json_data, status_code=200):
+        self.json_data = json_data
+        self.status_code = status_code
+
+    def json(self):
+        return self.json_data
 
 
 class TestMain(TestCase):
@@ -44,6 +59,59 @@ class TestMain(TestCase):
         os.environ.update(self.original_env)
         self.input_patcher.stop()
         self.webbrowser_patcher.stop()
+
+    def test_litellm_discover_models(self):
+        """
+        discover_litellm_models should return correct metadata taken from the
+        downloaded (and locally cached) models JSON payload.
+        """
+        models_payload = {
+            "data": [
+                {
+                    "id": "bedrock-claude-opus-4.1",
+                    "object": "model",
+                    "created": 1677610602,
+                    "owned_by": "openai",
+                }
+            ]
+        }
+
+        model_group_payload = {
+            "data": [
+                {
+                    "model_group": "bedrock-claude-opus-4.1",
+                    "providers": ["bedrock"],
+                    "max_input_tokens": 200000,
+                    "max_output_tokens": 32000,
+                    "input_cost_per_token": 0.000015,
+                    "output_cost_per_token": 0.000075,
+                }
+            ]
+        }
+
+        def mock_get(url, **kwargs):
+            if "/models" in url:
+                return DummyResponse(models_payload)
+            elif "/model_group/info" in url:
+                return DummyResponse(model_group_payload)
+            return DummyResponse({}, 404)
+
+        with patch("requests.get", mock_get):
+            os.environ["LITELLM_API_BASE"] = "http://localhost:4000"
+            os.environ["LITELLM_API_KEY"] = "test-key"
+
+            io = MagicMock()
+            discover_litellm_models(io)
+
+            from aider import models
+
+            info = models.model_info_manager.get_model_info("litellm/bedrock-claude-opus-4.1")
+
+            assert info["max_input_tokens"] == 200000
+            assert info["input_cost_per_token"] == 0.000015
+            assert info["output_cost_per_token"] == 0.000075
+            assert info["litellm_provider"] == "litellm"
+            assert info["owned_by"] == "openai"
 
     def test_main_with_empty_dir_no_files_on_command(self):
         main(["--no-git", "--exit", "--yes"], input=DummyInput(), output=DummyOutput())

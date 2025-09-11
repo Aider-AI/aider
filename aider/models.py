@@ -953,8 +953,17 @@ class Model(ModelSettings):
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
+        model_name = self.name
+        if self.info.get("litellm_provider") == "litellm":
+            owned_by = self.info.get("owned_by")
+            model_id = model_name[len("litellm/") :]
+            if owned_by:
+                model_name = f"{owned_by}/{model_id}"
+            else:
+                model_name = model_id
+
         kwargs = dict(
-            model=self.name,
+            model=model_name,
             stream=stream,
         )
 
@@ -996,6 +1005,14 @@ class Model(ModelSettings):
                 }
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
+
+        if self.info.get("litellm_provider") == "litellm":
+            litellm_api_base = os.environ.get("LITELLM_API_BASE")
+            if litellm_api_base:
+                kwargs["api_base"] = litellm_api_base
+            litellm_api_key = os.environ.get("LITELLM_API_KEY")
+            if litellm_api_key:
+                kwargs["api_key"] = litellm_api_key
 
         res = litellm.completion(**kwargs)
         return hash_object, res
