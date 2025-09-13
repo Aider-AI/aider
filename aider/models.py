@@ -124,9 +124,11 @@ class ModelSettings:
     caches_by_default: bool = False
     use_system_prompt: bool = True
     use_temperature: Union[bool, float] = True
+    merge_temperature: float = 0.0
     streaming: bool = True
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
+    merge_model_name: Optional[str] = None
     reasoning_tag: Optional[str] = None
     remove_reasoning: Optional[str] = None  # Deprecated alias for reasoning_tag
     system_prompt_prefix: Optional[str] = None
@@ -311,7 +313,13 @@ model_info_manager = ModelInfoManager()
 
 class Model(ModelSettings):
     def __init__(
-        self, model, weak_model=None, editor_model=None, editor_edit_format=None, verbose=False
+        self,
+        model,
+        weak_model=None,
+        editor_model=None,
+        editor_edit_format=None,
+        merge_model=None,
+        verbose=False,
     ):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
@@ -322,6 +330,7 @@ class Model(ModelSettings):
         self.max_chat_history_tokens = 1024
         self.weak_model = None
         self.editor_model = None
+        self.merge_model = None
 
         # Find the extra settings
         self.extra_model_settings = next(
@@ -350,6 +359,11 @@ class Model(ModelSettings):
             self.editor_model_name = None
         else:
             self.get_editor_model(editor_model, editor_edit_format)
+
+        if merge_model is False:
+            self.merge_model_name = None
+        else:
+            self.get_merge_model(merge_model)
 
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
@@ -608,6 +622,28 @@ class Model(ModelSettings):
                 self.editor_edit_format = "editor-" + self.editor_edit_format
 
         return self.editor_model
+
+    def get_merge_model(self, provided_merge_model_name):
+        if provided_merge_model_name:
+            self.merge_model_name = provided_merge_model_name
+
+        if not self.merge_model_name:
+            self.merge_model = self.weak_model
+            return
+
+        if self.merge_model_name == self.name:
+            self.merge_model = self
+            return
+
+        if self.merge_model_name == self.weak_model_name:
+            self.merge_model = self.weak_model
+            return
+
+        self.merge_model = Model(
+            self.merge_model_name,
+            merge_model=False,
+        )
+        return self.merge_model
 
     def tokenizer(self, text):
         return litellm.encode(model=self.name, text=text)
@@ -1001,7 +1037,7 @@ class Model(ModelSettings):
         res = litellm.completion(**kwargs)
         return hash_object, res
 
-    def simple_send_with_retries(self, messages):
+    def simple_send_with_retries(self, messages, *, temperature=None):
         from aider.exceptions import LiteLLMExceptions
 
         litellm_ex = LiteLLMExceptions()
@@ -1018,6 +1054,7 @@ class Model(ModelSettings):
                     "messages": messages,
                     "functions": None,
                     "stream": False,
+                    "temperature": temperature,
                 }
 
                 _hash, response = self.send_completion(**kwargs)
@@ -1123,7 +1160,16 @@ def sanity_check_models(io, main_model):
     ):
         problem_editor = sanity_check_model(io, main_model.editor_model)
 
-    return problem_main or problem_weak or problem_editor
+    problem_merge = None
+    if (
+        main_model.merge_model
+        and main_model.merge_model is not main_model
+        and main_model.merge_model is not main_model.weak_model
+        and main_model.merge_model is not main_model.editor_model
+    ):
+        problem_merge = sanity_check_model(io, main_model.merge_model)
+
+    return problem_main or problem_weak or problem_editor or problem_merge
 
 
 def sanity_check_model(io, model):

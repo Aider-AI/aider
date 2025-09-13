@@ -243,6 +243,10 @@ class Coder:
             )
             lines.append(output)
 
+        if self.edit_format == "between":
+            output = f"Merge model: {main_model.merge_model.name}"
+            lines.append(output)
+
         if weak_model is not main_model:
             output = f"Weak model: {weak_model.name}"
             lines.append(output)
