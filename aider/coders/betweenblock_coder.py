@@ -4,6 +4,8 @@ import re
 from dataclasses import dataclass, field, fields
 from pathlib import Path
 
+from aider.utils import format_content, format_messages
+
 from .base_coder import Coder
 from .betweenblock_prompts import BetweenBlockPrompts
 
@@ -300,8 +302,12 @@ class BetweenBlockCoder(Coder):
         main_model_error = None
 
         for tryIdx in range(2):
+            self.io.log_llm_history("TO LLM (MERGE)", format_messages(messages))
             updated_responce = merge_model.simple_send_with_retries(
                 messages, temperature=merge_model.merge_temperature
+            )
+            self.io.log_llm_history(
+                "LLM RESPONSE (MERGE)", format_content("ASSISTANT", updated_responce)
             )
 
             retry_prompt = None  # error message to merge model
