@@ -173,12 +173,30 @@ class BetweenBlockCoder(Coder):
             add_edit()
         return edits
 
+    existing_line_space_pattern = re.compile(r"\s+")
+
+    def normalize_existing_line(self, line):
+        l = line.strip()
+        l = self.existing_line_space_pattern.sub(" ", l)
+        return l
+
     def find_existing_line(self, content_lines, existing_line: str):
-        existing_line = existing_line.strip()
+        existing_line = self.normalize_existing_line(existing_line)
         possible_idx = list()
         for i, line in enumerate(content_lines):
-            if line.strip() == existing_line:
+            if self.normalize_existing_line(line) == existing_line:
                 possible_idx.append(i)
+
+        if not possible_idx and len(existing_line) > 2:
+            for i, line in enumerate(content_lines):
+                idx = self.normalize_existing_line(line).find(existing_line)
+                if (
+                    idx != -1
+                    # allow omitting start of comment delimiter and other similar prefixes
+                    and idx <= 3
+                ):
+                    possible_idx.append(i)
+
         return possible_idx
 
     def apply_between_edit(self, content_lines, edit):
@@ -260,21 +278,23 @@ class BetweenBlockCoder(Coder):
 
         original_lines = list(content_lines[edit_range[0] : edit_range[1]])
         if edit_range[0] > 0:
+            original_lines.insert(0, "\n")
             original_lines.insert(
                 0,
                 self.gpt_prompts.skipped_lines_placeholder.format(lines_count=edit_range[0]) + "\n",
             )
-            placeholder_lines_at_begin += 1
+            placeholder_lines_at_begin += 2
         if edit_range[1] < content_lines_cnt:
             if original_lines[-1][-1] != "\n":
                 original_lines[-1] = original_lines[-1] + "\n"
+            original_lines.append("\n")
             original_lines.append(
                 self.gpt_prompts.skipped_lines_placeholder.format(
                     lines_count=content_lines_cnt - edit_range[1]
                 )
                 + "\n"
             )
-            placeholder_lines_at_end += 1
+            placeholder_lines_at_end += 2
 
         merge_model = self.main_model.merge_model or self.main_model.weak_model or self.main_model
 
@@ -320,11 +340,41 @@ class BetweenBlockCoder(Coder):
 
                 is_wrong_insertion = False
                 if edit_range[0] != 0:
-                    if updated_lines[0:1] != original_lines[0:1]:
-                        is_wrong_insertion = True
+                    if (
+                        updated_lines[: placeholder_lines_at_begin + 1]
+                        != original_lines[: placeholder_lines_at_begin + 1]
+                    ):
+                        for skipped_placeholder_lines in range(1, placeholder_lines_at_begin + 1):
+                            if (
+                                updated_lines[
+                                    : (placeholder_lines_at_begin - skipped_placeholder_lines) + 2
+                                ]
+                                == original_lines[
+                                    skipped_placeholder_lines : placeholder_lines_at_begin + 2
+                                ]
+                            ):
+                                placeholder_lines_at_begin -= skipped_placeholder_lines
+                                break
+                        else:
+                            is_wrong_insertion = True
                 if edit_range[1] != content_lines_cnt:
-                    if updated_lines[-2:-1] != original_lines[-2:-1]:
-                        is_wrong_insertion = True
+                    if (
+                        updated_lines[-placeholder_lines_at_end - 1 :]
+                        != original_lines[-placeholder_lines_at_end - 1 :]
+                    ):
+                        for skipped_placeholder_lines in range(1, placeholder_lines_at_end + 1):
+                            if (
+                                updated_lines[
+                                    -(placeholder_lines_at_end - skipped_placeholder_lines) - 2 :
+                                ]
+                                == original_lines[
+                                    -placeholder_lines_at_end - 2 : -skipped_placeholder_lines
+                                ]
+                            ):
+                                placeholder_lines_at_end -= skipped_placeholder_lines
+                                break
+                        else:
+                            is_wrong_insertion = True
 
                 if is_wrong_insertion:
                     retry_prompt = merge_not_between_err.format(lines=edit.tag.lines)

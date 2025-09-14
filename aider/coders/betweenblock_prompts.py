@@ -54,7 +54,6 @@ Enumerate the key changes made and explain the functionality modified.
 Keep code blocks concise.
 Break large code blocks into a series of smaller blocks that each change a small portion of the file.
 Include just the changing lines, and a few surrounding lines if needed for uniqueness.
-Never leave comments like "between other methods", always provide name of existing method or variable!
 
 For example if you need to add new function func2 to existing file file1:
 subdir/file1.py
@@ -73,7 +72,7 @@ def func2():
     print("func2")
 {fence[1]}
 
-Or, if you need to rewrite the whole file, add the line "@WHOLE FILE@" at the beginning of the code block. For example:
+Or, if you need to rewrite the most lines of the file, add the line "@WHOLE FILE@" at the beginning of the code block and then write entire content of the file. For example:
 subdir/file1.py
 {fence[0]}python
 @WHOLE FILE@
@@ -83,6 +82,7 @@ def func1():
 def func2():
     print("world!")
 {fence[1]}
+Do not use the @WHOLE FILE@ mode if you only need to change a few lines in a large file.
 """
 
     system_reminder = ""
@@ -106,6 +106,6 @@ def func2():
 {update_snippet}</update>
 
 Provide the complete updated code."""
-    skipped_lines_placeholder = "[{lines_count} more lines]"
+    skipped_lines_placeholder = "... {lines_count} more lines ..."
     merge_between_request = 'Merge this code between "{lines[0]}" and "{lines[1]}":'
     merge_result_regexp = "<updated-code>\n(.*)</updated-code>"

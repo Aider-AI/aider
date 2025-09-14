@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from aider.coders import Coder
+from aider.coders.betweenblock_coder import BetweenBlockCoder
 from aider.io import InputOutput
 from aider.models import Model
 
@@ -167,7 +168,8 @@ sixty three
 
             if 'Merge this code between "21" and "22":' in messages[-1]["content"]:
                 assert """<code>
-[18 more lines]
+... 18 more lines ...
+
 18
 19
 20
@@ -176,7 +178,8 @@ sixty three
 23
 24
 25
-[74 more lines]
+
+... 74 more lines ...
 </code>""" in messages[-1]["content"]
                 assert "<update>\n21.5\n</update>" in messages[-1]["content"]
 
@@ -186,7 +189,8 @@ sixty three
                             message=MagicMock(
                                 role="assistant",
                                 content="""<updated-code>
-[18 more lines]
+... 18 more lines ...
+
 18
 19
 20
@@ -196,7 +200,8 @@ sixty three
 23
 24
 25
-[74 more lines]
+
+... 74 more lines ...
 </updated-code>""",
                                 tool_calls=list(),
                             )
@@ -207,7 +212,8 @@ sixty three
             elif 'Merge this code between "61" and "64":' in messages[-1]["content"]:
                 # 59 lines because "21.5" line already inserted
                 assert """<code>
-[59 more lines]
+... 59 more lines ...
+
 58
 59
 60
@@ -218,7 +224,8 @@ sixty three
 65
 66
 67
-[32 more lines]
+
+... 32 more lines ...
 </code>""" in messages[-1]["content"]
                 assert "<update>\nsixty two\nsixty three\n</update>" in messages[-1]["content"]
 
@@ -228,7 +235,8 @@ sixty three
                             message=MagicMock(
                                 role="assistant",
                                 content="""<updated-code>
-[59 more lines]
+... 59 more lines ...
+
 58
 59
 60
@@ -239,7 +247,8 @@ sixty three
 65
 66
 67
-[32 more lines]
+
+... 32 more lines ...
 </updated-code>""",
                                 tool_calls=list(),
                             )
@@ -501,7 +510,8 @@ inserted line 2
 
             if 'Merge this code between "27" and "REPEATING LINE":' in messages[-1]["content"]:
                 assert """<code>
-[51 more lines]
+... 51 more lines ...
+
   REPEATING LINE
 26
   REPEATING LINE
@@ -510,7 +520,8 @@ inserted line 2
 28
   REPEATING LINE
 29
-[141 more lines]
+
+... 141 more lines ...
 </code>""" in messages[-1]["content"]
                 assert "<update>\ninserted line 1\n</update>" in messages[-1]["content"]
 
@@ -520,7 +531,8 @@ inserted line 2
                             message=MagicMock(
                                 role="assistant",
                                 content="""<updated-code>
-[51 more lines]
+... 51 more lines ...
+
   REPEATING LINE
 26
   REPEATING LINE
@@ -530,7 +542,8 @@ inserted line 2
 28
   REPEATING LINE
 29
-[141 more lines]
+
+... 141 more lines ...
 </updated-code>""",
                                 tool_calls=list(),
                             )
@@ -541,7 +554,8 @@ inserted line 2
             elif 'Merge this code between "REPEATING LINE" and "73":' in messages[-1]["content"]:
                 # 59 lines because "21.5" line already inserted
                 assert """<code>
-[143 more lines]
+... 143 more lines ...
+
 71
   REPEATING LINE
 72
@@ -550,7 +564,8 @@ inserted line 2
   REPEATING LINE
 74
   REPEATING LINE
-[50 more lines]
+
+... 50 more lines ...
 </code>""" in messages[-1]["content"]
                 assert "<update>\ninserted line 2\n</update>" in messages[-1]["content"]
 
@@ -560,7 +575,8 @@ inserted line 2
                             message=MagicMock(
                                 role="assistant",
                                 content="""<updated-code>
-[143 more lines]
+... 143 more lines ...
+
 71
   REPEATING LINE
 72
@@ -570,7 +586,8 @@ inserted line 2
   REPEATING LINE
 74
   REPEATING LINE
-[50 more lines]
+
+... 50 more lines ...
 </updated-code>""",
                                 tool_calls=list(),
                             )
@@ -658,7 +675,8 @@ inserted line 2
 
             if 'Merge this code between "17" and "19":' in messages[1]["content"]:
                 assert """<code>
-[14 more lines]
+... 14 more lines ...
+
 14
 15
 16
@@ -668,7 +686,8 @@ inserted line 2
 20
 21
 22
-[77 more lines]
+
+... 77 more lines ...
 </code>""" in messages[-1]["content"]
                 assert "<update>\n17.5\n</update>" in messages[-1]["content"]
                 assert len(messages) == 2
@@ -679,7 +698,8 @@ inserted line 2
                             message=MagicMock(
                                 role="assistant",
                                 content="""<updated-code>
-[14 more lines]
+... 14 more lines ...
+
 14
 15
 16
@@ -690,7 +710,8 @@ inserted line 2
 20
 21
 22
-[77 more lines]
+
+... 77 more lines ...
 </updated-code>""",
                                 tool_calls=list(),
                             )
@@ -700,7 +721,8 @@ inserted line 2
                 )
             elif 'Merge this code between "51" and "52":' in messages[1]["content"]:
                 assert """<code>
-[49 more lines]
+... 49 more lines ...
+
 48
 49
 50
@@ -709,7 +731,8 @@ inserted line 2
 53
 54
 55
-[44 more lines]
+
+... 44 more lines ...
 </code>""" in messages[1]["content"]
                 assert "<update>\n56.5\n</update>" in messages[1]["content"]
 
@@ -729,7 +752,8 @@ inserted line 2
                             message=MagicMock(
                                 role="assistant",
                                 content="""<updated-code>
-[49 more lines]
+... 49 more lines ...
+
 48
 49
 50
@@ -739,7 +763,8 @@ inserted line 2
 54
 55
 56.5
-[44 more lines]
+
+... 44 more lines ...
 </updated-code>""",
                                 tool_calls=list(),
                             )
@@ -795,7 +820,8 @@ inserted line 2
 
             assert 'Merge this code between "56" and "57":' in messages[-1]["content"]
             assert """<code>
-[54 more lines]
+... 54 more lines ...
+
 53
 54
 55
@@ -804,7 +830,8 @@ inserted line 2
 58
 59
 60
-[39 more lines]
+
+... 39 more lines ...
 </code>""" in messages[-1]["content"]
             assert "<update>\n56.5\n</update>" in messages[1]["content"]
             assert len(messages) == 2
@@ -815,7 +842,8 @@ inserted line 2
                         message=MagicMock(
                             role="assistant",
                             content="""<updated-code>
-[54 more lines]
+... 54 more lines ...
+
 53
 54
 55
@@ -825,7 +853,8 @@ inserted line 2
 58
 59
 60
-[39 more lines]
+
+... 39 more lines ...
 </updated-code>""",
                             tool_calls=list(),
                         )
@@ -844,6 +873,173 @@ inserted line 2
         self.assertEqual(mock_completion.call_count, 6)
 
         self.assertEqual(content, "\n".join(changed_lines))
+
+    @patch("litellm.completion")
+    def test_skipped_placeholder_at_begin(self, mock_completion: MagicMock):
+        _, file1 = tempfile.mkstemp()
+
+        original_lines = list(map(str, range(0, 100)))
+
+        with open(file1, "w", encoding="utf-8") as f:
+            f.write("\n".join(original_lines))
+
+        changed_lines = list(original_lines)
+
+        changed_lines[73] = "seventy three"
+
+        files = [file1]
+
+        coder = Coder.create(self.GPT4, "between", io=InputOutput(), fnames=files, stream=False)
+        coder.max_reflections = 1
+
+        mock_completion.side_effect = [
+            MagicMock(
+                choices=[
+                    MagicMock(
+                        message=MagicMock(
+                            role="assistant",
+                            content=f"""Do this:
+
+{Path(file1).name}
+```
+@BETWEEN@ "72" AND "73"
+seventy three
+```
+""",
+                            tool_calls=list(),
+                        )
+                    )
+                ],
+                usage=None,
+            ),
+            MagicMock(
+                choices=[
+                    MagicMock(
+                        message=MagicMock(
+                            role="assistant",
+                            content="""<updated-code>
+69
+70
+71
+72
+seventy three
+74
+75
+76
+
+... 23 more lines ...
+</updated-code>""",
+                            tool_calls=list(),
+                        )
+                    )
+                ],
+                usage=None,
+            ),
+        ]
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        self.assertEqual(mock_completion.call_count, 2)
+
+        content = Path(file1).read_text(encoding="utf-8")
+
+        self.assertEqual(content, "\n".join(changed_lines))
+
+    @patch("litellm.completion")
+    def test_skipped_placeholder_at_end(self, mock_completion: MagicMock):
+        _, file1 = tempfile.mkstemp()
+
+        original_lines = list(map(str, range(0, 100)))
+
+        with open(file1, "w", encoding="utf-8") as f:
+            f.write("\n".join(original_lines))
+
+        changed_lines = list(original_lines)
+
+        changed_lines[73] = "seventy three"
+
+        files = [file1]
+
+        coder = Coder.create(self.GPT4, "between", io=InputOutput(), fnames=files, stream=False)
+        coder.max_reflections = 1
+
+        mock_completion.side_effect = [
+            MagicMock(
+                choices=[
+                    MagicMock(
+                        message=MagicMock(
+                            role="assistant",
+                            content=f"""Do this:
+
+{Path(file1).name}
+```
+@BETWEEN@ "72" AND "73"
+seventy three
+```
+""",
+                            tool_calls=list(),
+                        )
+                    )
+                ],
+                usage=None,
+            ),
+            MagicMock(
+                choices=[
+                    MagicMock(
+                        message=MagicMock(
+                            role="assistant",
+                            content="""<updated-code>
+... 69 more lines ...
+
+69
+70
+71
+72
+seventy three
+74
+75
+76
+</updated-code>""",
+                            tool_calls=list(),
+                        )
+                    )
+                ],
+                usage=None,
+            ),
+        ]
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        self.assertEqual(mock_completion.call_count, 2)
+
+        content = Path(file1).read_text(encoding="utf-8")
+
+        self.assertEqual(content, "\n".join(changed_lines))
+
+    def test_find_existing_line(self):
+        coder = BetweenBlockCoder(main_model=self.GPT4, io=InputOutput(), fnames=[])
+        content_lines = [
+            "full line\n",
+            "   indented line\n",
+            "with-trailing-space \n",
+            "repeating line\n",
+            "tab\tin the  middle\n",
+            "table    formatting\n",
+            "  repeating line  \n",
+            "comment at the end   # comment\n",
+            "no eol at end",
+        ]
+
+        self.assertEqual(coder.find_existing_line(content_lines, "full line"), [0])
+        self.assertEqual(coder.find_existing_line(content_lines, "indented line"), [1])
+        self.assertEqual(coder.find_existing_line(content_lines, "with-trailing-space"), [2])
+        self.assertEqual(coder.find_existing_line(content_lines, "repeating line"), [3, 6])
+        self.assertEqual(coder.find_existing_line(content_lines, "tab in the middle"), [4])
+        self.assertEqual(coder.find_existing_line(content_lines, "table formatting"), [5])
+        self.assertEqual(coder.find_existing_line(content_lines, "comment at the end"), [7])
+        self.assertEqual(coder.find_existing_line(content_lines, "no eol at end"), [8])
 
 
 if __name__ == "__main__":
