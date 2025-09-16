@@ -1826,6 +1826,7 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+  overeager: true
 
 - name: gpt-5-2025-08-07
   edit_format: diff
