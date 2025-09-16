@@ -52,7 +52,7 @@ cffi==1.17.1
     #   soundfile
 cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
 click==8.2.1
     # via
@@ -82,10 +82,6 @@ deprecated==1.2.18
     #   llama-index-instrumentation
 diff-match-patch==20241021
     # via -r requirements/requirements.in
-dill==0.4.0
-    # via
-    #   multiprocess
-    #   pathos
 dirtyjson==1.0.8
     # via llama-index-core
 diskcache==5.6.3
@@ -96,7 +92,7 @@ distro==1.9.0
     # via
     #   openai
     #   posthog
-filelock==3.18.0
+filelock==3.19.1
     # via
     #   huggingface-hub
     #   torch
@@ -106,7 +102,7 @@ filetype==1.2.0
     # via llama-index-core
 flake8==7.3.0
     # via -r requirements/requirements.in
-fonttools==4.59.0
+fonttools==4.59.1
     # via matplotlib
 frozenlist==1.7.0
     # via
@@ -132,7 +128,7 @@ google-api-core[grpc]==2.25.1
     #   google-cloud-bigquery
     #   google-cloud-core
     #   google-generativeai
-google-api-python-client==2.178.0
+google-api-python-client==2.179.0
     # via google-generativeai
 google-auth==2.40.3
     # via
@@ -159,13 +155,13 @@ googleapis-common-protos==1.70.0
     # via
     #   google-api-core
     #   grpcio-status
-greenlet==3.2.3
+greenlet==3.2.4
     # via
     #   playwright
     #   sqlalchemy
 grep-ast==0.9.0
     # via -r requirements/requirements.in
-griffe==1.10.0
+griffe==1.12.1
     # via banks
 grpcio==1.74.0
     # via
@@ -188,13 +184,13 @@ httpx==0.28.1
     #   litellm
     #   llama-index-core
     #   openai
-huggingface-hub[inference]==0.34.3
+huggingface-hub[inference]==0.34.4
     # via
     #   llama-index-embeddings-huggingface
     #   sentence-transformers
     #   tokenizers
     #   transformers
-identify==2.6.12
+identify==2.6.13
     # via pre-commit
 idna==3.10
     # via
@@ -225,7 +221,7 @@ joblib==1.5.1
     # via
     #   nltk
     #   scikit-learn
-json5==0.12.0
+json5==0.12.1
     # via -r requirements/requirements.in
 jsonschema==4.25.0
     # via
@@ -234,11 +230,11 @@ jsonschema==4.25.0
     #   litellm
 jsonschema-specifications==2025.4.1
     # via jsonschema
-kiwisolver==1.4.8
+kiwisolver==1.4.9
     # via matplotlib
-litellm==1.75.0
+litellm==1.75.7
     # via -r requirements/requirements.in
-llama-index-core==0.13.0
+llama-index-core==0.13.2
     # via llama-index-embeddings-huggingface
 llama-index-embeddings-huggingface==0.6.0
     # via -r requirements/requirements-help.in
@@ -246,9 +242,9 @@ llama-index-instrumentation==0.4.0
     # via llama-index-workflows
 llama-index-workflows==1.3.0
     # via llama-index-core
-lox==0.13.0
+lox==1.0.0
     # via -r requirements/requirements-dev.in
-markdown-it-py==3.0.0
+markdown-it-py==4.0.0
     # via rich
 markupsafe==3.0.2
     # via jinja2
@@ -266,15 +262,13 @@ mpmath==1.3.0
     # via sympy
 mslex==1.3.0
     # via oslex
-multidict==6.6.3
+multidict==6.6.4
     # via
     #   aiohttp
     #   yarl
-multiprocess==0.70.18
-    # via pathos
 mypy-extensions==1.1.0
     # via typing-inspect
-narwhals==2.0.1
+narwhals==2.1.2
     # via altair
 nest-asyncio==1.6.0
     # via llama-index-core
@@ -300,7 +294,7 @@ numpy==1.26.4
     #   soundfile
     #   streamlit
     #   transformers
-openai==1.99.1
+openai==1.99.9
     # via litellm
 oslex==0.1.3
     # via -r requirements/requirements.in
@@ -320,8 +314,6 @@ pandas==2.3.1
     # via
     #   -r requirements/requirements-dev.in
     #   streamlit
-pathos==0.3.4
-    # via lox
 pathspec==0.12.1
     # via
     #   -r requirements/requirements.in
@@ -348,13 +340,9 @@ playwright==1.54.0
     # via -r requirements/requirements-playwright.in
 pluggy==1.6.0
     # via pytest
-posthog==6.4.1
+posthog==6.5.0
     # via -r requirements/requirements.in
-pox==0.3.6
-    # via pathos
-ppft==1.7.7
-    # via pathos
-pre-commit==4.2.0
+pre-commit==4.3.0
     # via -r requirements/requirements-dev.in
 prompt-toolkit==3.0.51
     # via -r requirements/requirements.in
@@ -479,7 +467,7 @@ rpds-py==0.27.0
     #   referencing
 rsa==4.9.1
     # via google-auth
-safetensors==0.6.1
+safetensors==0.6.2
     # via transformers
 scikit-learn==1.7.1
     # via sentence-transformers
@@ -520,9 +508,9 @@ soundfile==0.13.1
     # via -r requirements/requirements.in
 soupsieve==2.7
     # via beautifulsoup4
-sqlalchemy[asyncio]==2.0.42
+sqlalchemy[asyncio]==2.0.43
     # via llama-index-core
-streamlit==1.48.0
+streamlit==1.48.1
     # via -r requirements/requirements-browser.in
 sympy==1.14.0
     # via torch
@@ -532,7 +520,7 @@ tenacity==9.1.2
     #   streamlit
 threadpoolctl==3.6.0
     # via scikit-learn
-tiktoken==0.10.0
+tiktoken==0.11.0
     # via
     #   litellm
     #   llama-index-core
@@ -544,7 +532,7 @@ toml==0.10.2
     # via streamlit
 torch==2.8.0
     # via sentence-transformers
-tornado==6.5.1
+tornado==6.5.2
     # via streamlit
 tqdm==4.67.1
     # via
@@ -555,7 +543,7 @@ tqdm==4.67.1
     #   openai
     #   sentence-transformers
     #   transformers
-transformers==4.55.0
+transformers==4.55.2
     # via sentence-transformers
 tree-sitter==0.25.1
     # via tree-sitter-language-pack
@@ -607,9 +595,9 @@ urllib3==2.5.0
     # via
     #   mixpanel
     #   requests
-uv==0.8.5
+uv==0.8.11
     # via -r requirements/requirements-dev.in
-virtualenv==20.33.1
+virtualenv==20.34.0
     # via pre-commit
 watchfiles==1.1.0
     # via -r requirements/requirements.in
@@ -617,7 +605,7 @@ wcwidth==0.2.13
     # via prompt-toolkit
 wheel==0.45.1
     # via pip-tools
-wrapt==1.17.2
+wrapt==1.17.3
     # via
     #   deprecated
     #   llama-index-core
