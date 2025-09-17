@@ -7,6 +7,25 @@ from .tool_utils import (
     validate_file_for_edit,
 )
 
+replace_all_schema = {
+    "type": "function",
+    "function": {
+        "name": "ReplaceAll",
+        "description": "Replace all occurrences of text in a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "find_text": {"type": "string"},
+                "replace_text": {"type": "string"},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "find_text", "replace_text"],
+        },
+    },
+}
+
 
 def _execute_replace_all(coder, file_path, find_text, replace_text, change_id=None, dry_run=False):
     """

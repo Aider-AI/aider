@@ -8,6 +8,24 @@ from .tool_utils import (
     handle_tool_error,
 )
 
+delete_line_schema = {
+    "type": "function",
+    "function": {
+        "name": "DeleteLine",
+        "description": "Delete a single line from a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "line_number": {"type": "integer"},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "line_number"],
+        },
+    },
+}
+
 
 def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=False):
     """

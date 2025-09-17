@@ -1,6 +1,21 @@
 import traceback
 from datetime import datetime
 
+list_changes_schema = {
+    "type": "function",
+    "function": {
+        "name": "ListChanges",
+        "description": "List recent changes made.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "limit": {"type": "integer", "default": 10},
+            },
+        },
+    },
+}
+
 
 def _execute_list_changes(coder, file_path=None, limit=10):
     """

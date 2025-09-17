@@ -1,3 +1,22 @@
+make_readonly_schema = {
+    "type": "function",
+    "function": {
+        "name": "MakeReadonly",
+        "description": "Make an editable file read-only.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "The path to the file to make read-only.",
+                },
+            },
+            "required": ["file_path"],
+        },
+    },
+}
+
+
 def _execute_make_readonly(coder, file_path):
     """
     Convert an editable file to a read-only file.

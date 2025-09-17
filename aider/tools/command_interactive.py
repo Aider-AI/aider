@@ -1,6 +1,24 @@
 # Import necessary functions
 from aider.run_cmd import run_cmd
 
+command_interactive_schema = {
+    "type": "function",
+    "function": {
+        "name": "CommandInteractive",
+        "description": "Execute a shell command interactively.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "command_string": {
+                    "type": "string",
+                    "description": "The interactive shell command to execute.",
+                },
+            },
+            "required": ["command_string"],
+        },
+    },
+}
+
 
 def _execute_command_interactive(coder, command_string):
     """

@@ -1,6 +1,24 @@
 import fnmatch
 import os
 
+view_files_at_glob_schema = {
+    "type": "function",
+    "function": {
+        "name": "ViewFilesAtGlob",
+        "description": "View files matching a glob pattern.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "pattern": {
+                    "type": "string",
+                    "description": "The glob pattern to match files.",
+                },
+            },
+            "required": ["pattern"],
+        },
+    },
+}
+
 
 def execute_view_files_at_glob(coder, pattern):
     """

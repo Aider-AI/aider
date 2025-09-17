@@ -1,6 +1,25 @@
 import os
 import traceback
 
+replace_line_schema = {
+    "type": "function",
+    "function": {
+        "name": "ReplaceLine",
+        "description": "Replace a single line in a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "line_number": {"type": "integer"},
+                "new_content": {"type": "string"},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "line_number", "new_content"],
+        },
+    },
+}
+
 
 def _execute_replace_line(
     coder, file_path, line_number, new_content, change_id=None, dry_run=False

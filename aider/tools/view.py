@@ -1,3 +1,22 @@
+view_schema = {
+    "type": "function",
+    "function": {
+        "name": "View",
+        "description": "View a specific file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "The path to the file to view.",
+                },
+            },
+            "required": ["file_path"],
+        },
+    },
+}
+
+
 def execute_view(coder, file_path):
     """
     Explicitly add a file to context as read-only.

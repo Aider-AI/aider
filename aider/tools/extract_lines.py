@@ -3,6 +3,28 @@ import traceback
 
 from .tool_utils import generate_unified_diff_snippet
 
+extract_lines_schema = {
+    "type": "function",
+    "function": {
+        "name": "ExtractLines",
+        "description": "Extract lines from a source file and append them to a target file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "source_file_path": {"type": "string"},
+                "target_file_path": {"type": "string"},
+                "start_pattern": {"type": "string"},
+                "end_pattern": {"type": "string"},
+                "line_count": {"type": "integer"},
+                "near_context": {"type": "string"},
+                "occurrence": {"type": "integer", "default": 1},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["source_file_path", "target_file_path", "start_pattern"],
+        },
+    },
+}
+
 
 def _execute_extract_lines(
     coder,

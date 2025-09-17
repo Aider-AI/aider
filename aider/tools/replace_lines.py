@@ -8,6 +8,26 @@ from .tool_utils import (
     handle_tool_error,
 )
 
+replace_lines_schema = {
+    "type": "function",
+    "function": {
+        "name": "ReplaceLines",
+        "description": "Replace a range of lines in a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "start_line": {"type": "integer"},
+                "end_line": {"type": "integer"},
+                "new_content": {"type": "string"},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "start_line", "end_line", "new_content"],
+        },
+    },
+}
+
 
 def _execute_replace_lines(
     coder, file_path, start_line, end_line, new_content, change_id=None, dry_run=False

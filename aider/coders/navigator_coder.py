@@ -24,6 +24,30 @@ from aider.mcp.server import LocalServer
 from aider.repo import ANY_GIT_ERROR
 
 # Import run_cmd for potentially interactive execution and run_cmd_subprocess for guaranteed non-interactive
+from aider.tools import (  # grep_schema,; show_numbered_context_schema,
+    command_interactive_schema,
+    command_schema,
+    delete_block_schema,
+    delete_line_schema,
+    delete_lines_schema,
+    extract_lines_schema,
+    indent_lines_schema,
+    insert_block_schema,
+    list_changes_schema,
+    ls_schema,
+    make_editable_schema,
+    make_readonly_schema,
+    remove_schema,
+    replace_all_schema,
+    replace_line_schema,
+    replace_lines_schema,
+    replace_text_schema,
+    undo_change_schema,
+    view_files_at_glob_schema,
+    view_files_matching_schema,
+    view_files_with_symbol_schema,
+    view_schema,
+)
 from aider.tools.command import _execute_command
 from aider.tools.command_interactive import _execute_command_interactive
 from aider.tools.delete_block import _execute_delete_block
@@ -110,11 +134,38 @@ class NavigatorCoder(Coder):
         self.tokens_calculated = False
 
         super().__init__(*args, **kwargs)
-        self.initialize_local_tools()
 
-    def initialize_local_tools(self):
-        if not self.use_granular_editing:
-            return
+    def get_local_tool_schemas(self):
+        """Returns the JSON schemas for all local tools."""
+        return [
+            view_files_at_glob_schema,
+            view_files_matching_schema,
+            ls_schema,
+            view_schema,
+            remove_schema,
+            make_editable_schema,
+            make_readonly_schema,
+            view_files_with_symbol_schema,
+            command_schema,
+            command_interactive_schema,
+            # grep_schema,
+            replace_text_schema,
+            replace_all_schema,
+            insert_block_schema,
+            delete_block_schema,
+            replace_line_schema,
+            replace_lines_schema,
+            indent_lines_schema,
+            delete_line_schema,
+            delete_lines_schema,
+            undo_change_schema,
+            list_changes_schema,
+            extract_lines_schema,
+            # show_numbered_context_schema,
+        ]
+
+    async def initialize_mcp_tools(self):
+        await super().initialize_mcp_tools()
 
         local_tools = self.get_local_tool_schemas()
         if not local_tools:
@@ -133,491 +184,6 @@ class NavigatorCoder(Coder):
 
         if "local_tools" not in [name for name, _ in self.mcp_tools]:
             self.mcp_tools.append((local_server.name, local_tools))
-            self.functions = self.get_tool_list()
-
-    def get_local_tool_schemas(self):
-        """Returns the JSON schemas for all local tools."""
-        return [
-            {
-                "type": "function",
-                "function": {
-                    "name": "ViewFilesAtGlob",
-                    "description": "View files matching a glob pattern.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "pattern": {
-                                "type": "string",
-                                "description": "The glob pattern to match files.",
-                            },
-                        },
-                        "required": ["pattern"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ViewFilesMatching",
-                    "description": "View files containing a specific pattern.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "pattern": {
-                                "type": "string",
-                                "description": "The pattern to search for in file contents.",
-                            },
-                            "file_pattern": {
-                                "type": "string",
-                                "description": (
-                                    "An optional glob pattern to filter which files are searched."
-                                ),
-                            },
-                            "regex": {
-                                "type": "boolean",
-                                "description": (
-                                    "Whether the pattern is a regular expression. Defaults to"
-                                    " False."
-                                ),
-                            },
-                        },
-                        "required": ["pattern"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "Ls",
-                    "description": "List files in a directory.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "directory": {
-                                "type": "string",
-                                "description": "The directory to list.",
-                            },
-                        },
-                        "required": ["directory"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "View",
-                    "description": "View a specific file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {
-                                "type": "string",
-                                "description": "The path to the file to view.",
-                            },
-                        },
-                        "required": ["file_path"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "Remove",
-                    "description": "Remove a file from the chat context.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {
-                                "type": "string",
-                                "description": "The path to the file to remove.",
-                            },
-                        },
-                        "required": ["file_path"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "MakeEditable",
-                    "description": "Make a read-only file editable.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {
-                                "type": "string",
-                                "description": "The path to the file to make editable.",
-                            },
-                        },
-                        "required": ["file_path"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "MakeReadonly",
-                    "description": "Make an editable file read-only.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {
-                                "type": "string",
-                                "description": "The path to the file to make read-only.",
-                            },
-                        },
-                        "required": ["file_path"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ViewFilesWithSymbol",
-                    "description": (
-                        "View files that contain a specific symbol (e.g., class, function)."
-                    ),
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "symbol": {
-                                "type": "string",
-                                "description": "The symbol to search for.",
-                            },
-                        },
-                        "required": ["symbol"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "Command",
-                    "description": "Execute a shell command.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "command_string": {
-                                "type": "string",
-                                "description": "The shell command to execute.",
-                            },
-                        },
-                        "required": ["command_string"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "CommandInteractive",
-                    "description": "Execute a shell command interactively.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "command_string": {
-                                "type": "string",
-                                "description": "The interactive shell command to execute.",
-                            },
-                        },
-                        "required": ["command_string"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "Grep",
-                    "description": "Search for a pattern in files.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "pattern": {
-                                "type": "string",
-                                "description": "The pattern to search for.",
-                            },
-                            "file_pattern": {
-                                "type": "string",
-                                "description": "Glob pattern for files to search. Defaults to '*'.",
-                            },
-                            "directory": {
-                                "type": "string",
-                                "description": "Directory to search in. Defaults to '.'.",
-                            },
-                            "use_regex": {
-                                "type": "boolean",
-                                "description": "Whether to use regex. Defaults to False.",
-                            },
-                            "case_insensitive": {
-                                "type": "boolean",
-                                "description": (
-                                    "Whether to perform a case-insensitive search. Defaults to"
-                                    " False."
-                                ),
-                            },
-                            "context_before": {
-                                "type": "integer",
-                                "description": (
-                                    "Number of lines to show before a match. Defaults to 5."
-                                ),
-                            },
-                            "context_after": {
-                                "type": "integer",
-                                "description": (
-                                    "Number of lines to show after a match. Defaults to 5."
-                                ),
-                            },
-                        },
-                        "required": ["pattern"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ReplaceText",
-                    "description": "Replace text in a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "find_text": {"type": "string"},
-                            "replace_text": {"type": "string"},
-                            "near_context": {"type": "string"},
-                            "occurrence": {"type": "integer", "default": 1},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "find_text", "replace_text"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ReplaceAll",
-                    "description": "Replace all occurrences of text in a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "find_text": {"type": "string"},
-                            "replace_text": {"type": "string"},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "find_text", "replace_text"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "InsertBlock",
-                    "description": "Insert a block of content into a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "content": {"type": "string"},
-                            "after_pattern": {"type": "string"},
-                            "before_pattern": {"type": "string"},
-                            "occurrence": {"type": "integer", "default": 1},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                            "position": {"type": "string", "enum": ["top", "bottom"]},
-                            "auto_indent": {"type": "boolean", "default": True},
-                            "use_regex": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "content"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "DeleteBlock",
-                    "description": "Delete a block of lines from a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "start_pattern": {"type": "string"},
-                            "end_pattern": {"type": "string"},
-                            "line_count": {"type": "integer"},
-                            "near_context": {"type": "string"},
-                            "occurrence": {"type": "integer", "default": 1},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "start_pattern"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ReplaceLine",
-                    "description": "Replace a single line in a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "line_number": {"type": "integer"},
-                            "new_content": {"type": "string"},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "line_number", "new_content"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ReplaceLines",
-                    "description": "Replace a range of lines in a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "start_line": {"type": "integer"},
-                            "end_line": {"type": "integer"},
-                            "new_content": {"type": "string"},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "start_line", "end_line", "new_content"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "IndentLines",
-                    "description": "Indent a block of lines in a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "start_pattern": {"type": "string"},
-                            "end_pattern": {"type": "string"},
-                            "line_count": {"type": "integer"},
-                            "indent_levels": {"type": "integer", "default": 1},
-                            "near_context": {"type": "string"},
-                            "occurrence": {"type": "integer", "default": 1},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "start_pattern"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "DeleteLine",
-                    "description": "Delete a single line from a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "line_number": {"type": "integer"},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "line_number"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "DeleteLines",
-                    "description": "Delete a range of lines from a file.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "start_line": {"type": "integer"},
-                            "end_line": {"type": "integer"},
-                            "change_id": {"type": "string"},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["file_path", "start_line", "end_line"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "UndoChange",
-                    "description": "Undo a previously applied change.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "change_id": {"type": "string"},
-                            "file_path": {"type": "string"},
-                        },
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ListChanges",
-                    "description": "List recent changes made.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "limit": {"type": "integer", "default": 10},
-                        },
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ExtractLines",
-                    "description": (
-                        "Extract lines from a source file and append them to a target file."
-                    ),
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "source_file_path": {"type": "string"},
-                            "target_file_path": {"type": "string"},
-                            "start_pattern": {"type": "string"},
-                            "end_pattern": {"type": "string"},
-                            "line_count": {"type": "integer"},
-                            "near_context": {"type": "string"},
-                            "occurrence": {"type": "integer", "default": 1},
-                            "dry_run": {"type": "boolean", "default": False},
-                        },
-                        "required": ["source_file_path", "target_file_path", "start_pattern"],
-                    },
-                },
-            },
-            {
-                "type": "function",
-                "function": {
-                    "name": "ShowNumberedContext",
-                    "description": (
-                        "Show numbered lines of context around a pattern or line number."
-                    ),
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "file_path": {"type": "string"},
-                            "pattern": {"type": "string"},
-                            "line_number": {"type": "integer"},
-                            "context_lines": {"type": "integer", "default": 3},
-                        },
-                        "required": ["file_path"],
-                    },
-                },
-            },
-        ]
 
     async def _execute_local_tool_calls(self, tool_calls_list):
         tool_responses = []
@@ -701,7 +267,6 @@ class NavigatorCoder(Coder):
                 {
                     "role": "tool",
                     "tool_call_id": tool_call.id,
-                    "name": tool_name,
                     "content": result_message,
                 }
             )
@@ -955,63 +520,11 @@ class NavigatorCoder(Coder):
 
         This approach preserves prefix caching while providing fresh context information.
         """
-        # First get the normal chat chunks from the parent method without calling super
-        # We'll manually build the chunks to control placement of context blocks
-        chunks = self.format_chat_chunks_base()
-
-        # If enhanced context blocks are not enabled, just return the base chunks
+        # If enhanced context blocks are not enabled, use the base implementation
         if not self.use_enhanced_context:
-            return chunks
+            return super().format_chat_chunks()
 
-        # Make sure token counts are updated - using centralized method
-        # This also populates the context block cache
-        self._calculate_context_block_tokens()
-
-        # Get blocks from cache to avoid regenerating them
-        env_context = self.get_cached_context_block("environment_info")
-        dir_structure = self.get_cached_context_block("directory_structure")
-        git_status = self.get_cached_context_block("git_status")
-        symbol_outline = self.get_cached_context_block("symbol_outline")
-
-        # Context summary needs special handling because it depends on other blocks
-        context_summary = self.get_context_summary()
-
-        # 1. Add relatively static blocks BEFORE done_messages
-        # These blocks change less frequently and can be part of the cacheable prefix
-        static_blocks = []
-        if dir_structure:
-            static_blocks.append(dir_structure)
-        if env_context:
-            static_blocks.append(env_context)
-
-        if static_blocks:
-            static_message = "\n\n".join(static_blocks)
-            # Insert as a system message right before done_messages
-            chunks.done.insert(0, dict(role="system", content=static_message))
-
-        # 2. Add dynamic blocks AFTER chat_files
-        # These blocks change with the current files in context
-        dynamic_blocks = []
-        if context_summary:
-            dynamic_blocks.append(context_summary)
-        if symbol_outline:
-            dynamic_blocks.append(symbol_outline)
-        if git_status:
-            dynamic_blocks.append(git_status)
-
-        if dynamic_blocks:
-            dynamic_message = "\n\n".join(dynamic_blocks)
-            # Append as a system message after chat_files
-            chunks.chat_files.append(dict(role="system", content=dynamic_message))
-
-        return chunks
-
-    def format_chat_chunks_base(self):
-        """
-        Create base chat chunks without enhanced context blocks.
-        This is a copy of the parent's format_chat_chunks method to avoid
-        calling super() which would create a recursive loop.
-        """
+        # Build chunks from scratch to avoid duplication with enhanced context blocks
         self.choose_fence()
         main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
 
@@ -1062,12 +575,54 @@ class NavigatorCoder(Coder):
         chunks.examples = example_messages
 
         self.summarize_end()
-        chunks.done = self.done_messages
+        chunks.done = list(self.done_messages)
 
         chunks.repo = self.get_repo_messages()
         chunks.readonly_files = self.get_readonly_files_messages()
         chunks.chat_files = self.get_chat_files_messages()
 
+        # Make sure token counts are updated - using centralized method
+        # This also populates the context block cache
+        self._calculate_context_block_tokens()
+
+        # Get blocks from cache to avoid regenerating them
+        env_context = self.get_cached_context_block("environment_info")
+        dir_structure = self.get_cached_context_block("directory_structure")
+        git_status = self.get_cached_context_block("git_status")
+        symbol_outline = self.get_cached_context_block("symbol_outline")
+
+        # Context summary needs special handling because it depends on other blocks
+        context_summary = self.get_context_summary()
+
+        # 1. Add relatively static blocks BEFORE done_messages
+        # These blocks change less frequently and can be part of the cacheable prefix
+        static_blocks = []
+        if dir_structure:
+            static_blocks.append(dir_structure)
+        if env_context:
+            static_blocks.append(env_context)
+
+        if static_blocks:
+            static_message = "\n\n".join(static_blocks)
+            # Insert as a system message right before done_messages
+            chunks.done.insert(0, dict(role="system", content=static_message))
+
+        # 2. Add dynamic blocks AFTER chat_files
+        # These blocks change with the current files in context
+        dynamic_blocks = []
+        if context_summary:
+            dynamic_blocks.append(context_summary)
+        if symbol_outline:
+            dynamic_blocks.append(symbol_outline)
+        if git_status:
+            dynamic_blocks.append(git_status)
+
+        if dynamic_blocks:
+            dynamic_message = "\n\n".join(dynamic_blocks)
+            # Append as a system message after chat_files
+            chunks.chat_files.append(dict(role="system", content=dynamic_message))
+
+        # Add reminder if needed
         if self.gpt_prompts.system_reminder:
             reminder_message = [
                 dict(
@@ -1398,6 +953,7 @@ class NavigatorCoder(Coder):
         if tool_calls_found and self.num_reflections < self.max_reflections:
             # Reset tool counter for next iteration
             self.tool_call_count = 0
+
             # Clear exploration files for the next round
             self.files_added_in_exploration = set()
 
@@ -1758,7 +1314,7 @@ class NavigatorCoder(Coder):
                     pattern = params.get("pattern")
                     if pattern is not None:
                         # Call the imported function
-                        result_message = execute_view_files_at_glob(self, pattern)
+                        result_message = execute_view_files_at_glob(self, pattern=pattern)
                     else:
                         result_message = "Error: Missing 'pattern' parameter for ViewFilesAtGlob"
                 elif norm_tool_name == "viewfilesmatching":
@@ -1767,7 +1323,7 @@ class NavigatorCoder(Coder):
                     regex = params.get("regex", False)  # Default to False if not provided
                     if pattern is not None:
                         result_message = execute_view_files_matching(
-                            self, pattern, file_pattern, regex
+                            self, pattern=pattern, file_pattern=file_pattern, regex=regex
                         )
                     else:
                         result_message = "Error: Missing 'pattern' parameter for ViewFilesMatching"
@@ -2167,9 +1723,6 @@ class NavigatorCoder(Coder):
         # Return the content with tool calls removed
         modified_content = processed_content
 
-        # Update internal counter
-        self.tool_call_count += call_count
-
         return modified_content, result_messages, tool_calls_found, content_before_separator
 
     async def _apply_edits_from_response(self):
@@ -2309,7 +1862,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                     lint_errors = self.lint_edited(edited_files)
                     self.auto_commit(edited_files, context="Ran the linter")
                     if lint_errors and not self.reflected_message:  # Reflect only if no edit errors
-                        ok = await self.io.confirm_ask_async("Attempt to fix lint errors?")
+                        ok = await self.io.confirm_ask("Attempt to fix lint errors?")
                         if ok:
                             self.reflected_message = lint_errors
 
@@ -2322,7 +1875,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 if self.auto_test and not self.reflected_message:  # Reflect only if no prior errors
                     test_errors = await self.commands.cmd_test(self.test_cmd)
                     if test_errors:
-                        ok = await self.io.confirm_ask_async("Attempt to fix test errors?")
+                        ok = await self.io.confirm_ask("Attempt to fix test errors?")
                         if ok:
                             self.reflected_message = test_errors
 
@@ -2428,7 +1981,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         # Do nothing here for implicit mentions.
         pass
 
-    def check_for_file_mentions(self, content):
+    async def check_for_file_mentions(self, content):
         """
         Override parent's method to use our own file processing logic.
 

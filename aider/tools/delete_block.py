@@ -10,6 +10,28 @@ from .tool_utils import (
     validate_file_for_edit,
 )
 
+delete_block_schema = {
+    "type": "function",
+    "function": {
+        "name": "DeleteBlock",
+        "description": "Delete a block of lines from a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "start_pattern": {"type": "string"},
+                "end_pattern": {"type": "string"},
+                "line_count": {"type": "integer"},
+                "near_context": {"type": "string"},
+                "occurrence": {"type": "integer", "default": 1},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "start_pattern"],
+        },
+    },
+}
+
 
 def _execute_delete_block(
     coder,

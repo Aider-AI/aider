@@ -459,6 +459,7 @@ class InputOutput:
         self.file_watcher = file_watcher
         self.root = root
         self.outstanding_confirmations = []
+        self.coder = None
 
         # Validate color settings after console is initialized
         self._validate_color_settings()
@@ -655,11 +656,26 @@ class InputOutput:
             print()
 
     def interrupt_input(self):
+        coder = self.coder() if self.coder else None
+        # interrupted_for_confirmation = False
+
+        if (
+            coder
+            and hasattr(coder, "input_task")
+            and coder.input_task
+            and not coder.input_task.done()
+        ):
+            coder.input_task.cancel()
+
         if self.prompt_session and self.prompt_session.app:
             # Store any partial input before interrupting
             self.placeholder = self.prompt_session.app.current_buffer.text
             self.interrupted = True
-            self.prompt_session.app.exit()
+
+            try:
+                self.prompt_session.app.exit()
+            finally:
+                pass
 
     def reject_outstanding_confirmations(self):
         """Reject all outstanding confirmation dialogs."""
@@ -975,139 +991,40 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    def offer_url(self, url, prompt="Open URL for more info?", allow_never=True):
+    async def offer_url(self, url, prompt="Open URL for more info?", allow_never=True):
         """Offer to open a URL in the browser, returns True if opened."""
         if url in self.never_prompts:
             return False
-        if self.confirm_ask(prompt, subject=url, allow_never=allow_never):
+        if await self.confirm_ask(prompt, subject=url, allow_never=allow_never):
             webbrowser.open(url)
             return True
         return False
 
-    @restore_multiline
-    @without_input_history
-    def confirm_ask(
-        self,
-        question,
-        default="y",
-        subject=None,
-        explicit_yes_required=False,
-        group=None,
-        allow_never=False,
-    ):
-        self.num_user_asks += 1
-
-        # Ring the bell if needed
-        self.ring_bell()
-
-        question_id = (question, subject)
-
-        if question_id in self.never_prompts:
-            return False
-
-        if group and not group.show_group:
-            group = None
-        if group:
-            allow_never = True
-
-        valid_responses = ["yes", "no", "skip", "all"]
-        options = " (Y)es/(N)o"
-        if group:
-            if not explicit_yes_required:
-                options += "/(A)ll"
-            options += "/(S)kip all"
-        if allow_never:
-            options += "/(D)on't ask again"
-            valid_responses.append("don't")
-
-        if default.lower().startswith("y"):
-            question += options + " [Yes]: "
-        elif default.lower().startswith("n"):
-            question += options + " [No]: "
-        else:
-            question += options + f" [{default}]: "
-
-        if subject:
-            self.tool_output()
-            if "\n" in subject:
-                lines = subject.splitlines()
-                max_length = max(len(line) for line in lines)
-                padded_lines = [line.ljust(max_length) for line in lines]
-                padded_subject = "\n".join(padded_lines)
-                self.tool_output(padded_subject, bold=True)
-            else:
-                self.tool_output(subject, bold=True)
-
-        style = self._get_style()
-
-        def is_valid_response(text):
-            if not text:
-                return True
-            return text.lower() in valid_responses
-
-        if self.yes is True:
-            res = "n" if explicit_yes_required else "y"
-        elif self.yes is False:
-            res = "n"
-        elif group and group.preference:
-            res = group.preference
-            self.user_input(f"{question}{res}", log_only=False)
-        else:
-            while True:
-                try:
-                    if self.prompt_session:
-                        res = self.prompt_session.prompt(
-                            question,
-                            style=style,
-                            complete_while_typing=False,
-                        )
-                    else:
-                        res = input(question)
-                except EOFError:
-                    # Treat EOF (Ctrl+D) as if the user pressed Enter
-                    res = default
-                    break
-
-                if not res:
-                    res = default
-                    break
-                res = res.lower()
-                good = any(valid_response.startswith(res) for valid_response in valid_responses)
-                if good:
-                    break
-
-                error_message = f"Please answer with one of: {', '.join(valid_responses)}"
-                self.tool_error(error_message)
-
-        res = res.lower()[0]
-
-        if res == "d" and allow_never:
-            self.never_prompts.add(question_id)
-            hist = f"{question.strip()} {res}"
-            self.append_chat_history(hist, linebreak=True, blockquote=True)
-            return False
-
-        if explicit_yes_required:
-            is_yes = res == "y"
-        else:
-            is_yes = res in ("y", "a")
-
-        is_all = res == "a" and group is not None and not explicit_yes_required
-        is_skip = res == "s" and group is not None
-
-        if group:
-            if is_all and not explicit_yes_required:
-                group.preference = "all"
-            elif is_skip:
-                group.preference = "skip"
-
-        hist = f"{question.strip()} {res}"
-        self.append_chat_history(hist, linebreak=True, blockquote=True)
-
-        return is_yes
-
     @restore_multiline_async
-    async def confirm_ask_async(
+    async def confirm_ask(
+        self,
+        *args,
+        **kwargs,
+    ):
+        coder = self.coder() if self.coder else None
+        interrupted_for_confirmation = False
+        if (
+            coder
+            and hasattr(coder, "input_task")
+            and coder.input_task
+            and not coder.input_task.done()
+        ):
+            coder.confirmation_in_progress = True
+            interrupted_for_confirmation = True
+            # self.interrupt_input()
+
+        try:
+            return await asyncio.create_task(self._confirm_ask(*args, **kwargs))
+        finally:
+            if interrupted_for_confirmation:
+                coder.confirmation_in_progress = False
+
+    async def _confirm_ask(
         self,
         question,
         default="y",
@@ -1178,23 +1095,34 @@ class InputOutput:
                 while True:
                     try:
                         if self.prompt_session:
-                            prompt_task = asyncio.create_task(
-                                self.prompt_session.prompt_async(
-                                    question,
-                                    style=style,
-                                    complete_while_typing=False,
+                            coder = self.coder() if self.coder else None
+                            if (
+                                coder
+                                and hasattr(coder, "input_task")
+                                and coder.input_task
+                                and not coder.input_task.done()
+                            ):
+                                self.prompt_session.message = question
+                                self.prompt_session.app.invalidate()
+                                res = await coder.input_task
+                            else:
+                                prompt_task = asyncio.create_task(
+                                    self.prompt_session.prompt_async(
+                                        question,
+                                        style=style,
+                                        complete_while_typing=False,
+                                    )
                                 )
-                            )
-                            done, pending = await asyncio.wait(
-                                {prompt_task, confirmation_future},
-                                return_when=asyncio.FIRST_COMPLETED,
-                            )
+                                done, pending = await asyncio.wait(
+                                    {prompt_task, confirmation_future},
+                                    return_when=asyncio.FIRST_COMPLETED,
+                                )
 
-                            if confirmation_future in done:
-                                prompt_task.cancel()
-                                return await confirmation_future
+                                if confirmation_future in done:
+                                    prompt_task.cancel()
+                                    return await confirmation_future
 
-                            res = await prompt_task
+                                res = await prompt_task
                         else:
                             res = await asyncio.get_event_loop().run_in_executor(
                                 None, input, question

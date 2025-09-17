@@ -10,6 +10,29 @@ from .tool_utils import (
     validate_file_for_edit,
 )
 
+indent_lines_schema = {
+    "type": "function",
+    "function": {
+        "name": "IndentLines",
+        "description": "Indent a block of lines in a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "start_pattern": {"type": "string"},
+                "end_pattern": {"type": "string"},
+                "line_count": {"type": "integer"},
+                "indent_levels": {"type": "integer", "default": 1},
+                "near_context": {"type": "string"},
+                "occurrence": {"type": "integer", "default": 1},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "start_pattern"],
+        },
+    },
+}
+
 
 def _execute_indent_lines(
     coder,

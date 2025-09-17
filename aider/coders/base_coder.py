@@ -14,6 +14,7 @@ import sys
 import threading
 import time
 import traceback
+import weakref
 from collections import defaultdict
 from datetime import datetime
 
@@ -29,6 +30,13 @@ from typing import List
 
 import httpx
 from litellm import experimental_mcp_client
+from litellm.types.utils import (
+    ChatCompletionMessageToolCall,
+    Choices,
+    Function,
+    Message,
+    ModelResponse,
+)
 from prompt_toolkit.patch_stdout import patch_stdout
 from rich.console import Console
 
@@ -116,7 +124,7 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     partial_response_content = ""
-    partial_response_tool_call = []
+    partial_response_tool_calls = []
     commit_before_message = []
     message_cost = 0.0
     add_cache_headers = False
@@ -133,6 +141,7 @@ class Coder:
     run_one_completed = True
     compact_context_completed = True
     suppress_announcements_for_next_prompt = False
+    tool_reflection = False
 
     # Context management settings (for all modes)
     context_management_enabled = False  # Disabled by default except for navigator mode
@@ -442,8 +451,10 @@ class Coder:
             self.done_messages = []
 
         self.io = io
+        self.io.coder = weakref.ref(self)
 
         self.shell_commands = []
+        self.partial_response_tool_calls = []
 
         if not auto_commits:
             dirty_commits = False
@@ -566,6 +577,8 @@ class Coder:
         self.summarizer_thread = None
         self.summarized_done_messages = []
         self.summarizing_messages = None
+        self.input_task = None
+        self.confirmation_in_progress = False
 
         if not self.done_messages and restore_chat_history:
             history_md = self.io.read_text(self.io.chat_history_file)
@@ -1012,6 +1025,9 @@ class Coder:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
 
     async def run(self, with_message=None, preproc=True):
+        while self.confirmation_in_progress:
+            await asyncio.sleep(0.1)  # Yield control and wait briefly
+
         if self.io.prompt_session:
             with patch_stdout(raw=True):
                 return await self._run_patched(with_message, preproc)
@@ -1032,7 +1048,8 @@ class Coder:
             while True:
                 try:
                     if (
-                        not input_task
+                        not self.confirmation_in_progress
+                        and not input_task
                         and not user_message
                         and (not processing_task or not self.io.placeholder)
                     ):
@@ -1041,7 +1058,8 @@ class Coder:
                         self.suppress_announcements_for_next_prompt = False
 
                         self.copy_context()
-                        input_task = asyncio.create_task(self.get_input())
+                        self.input_task = asyncio.create_task(self.get_input())
+                        input_task = self.input_task
 
                     tasks = set()
                     if processing_task:
@@ -1056,18 +1074,20 @@ class Coder:
 
                         if input_task and input_task in done:
                             if processing_task:
-                                processing_task.cancel()
-                                try:
-                                    await processing_task
-                                except asyncio.CancelledError:
-                                    pass
-                                processing_task = None
+                                if not self.confirmation_in_progress:
+                                    processing_task.cancel()
+                                    try:
+                                        await processing_task
+                                    except asyncio.CancelledError:
+                                        pass
+                                    processing_task = None
 
                             try:
                                 user_message = input_task.result()
                             except (asyncio.CancelledError, KeyboardInterrupt):
                                 user_message = None
                             input_task = None
+                            self.input_task = None
                             if user_message is None:
                                 continue
 
@@ -1143,8 +1163,8 @@ class Coder:
         if self.commands.is_command(inp):
             return await self.commands.run(inp)
 
-        self.check_for_file_mentions(inp)
-        inp = self.check_for_urls(inp)
+        await self.check_for_file_mentions(inp)
+        inp = await self.check_for_urls(inp)
 
         return inp
 
@@ -1156,8 +1176,10 @@ class Coder:
         else:
             message = user_message
 
-        while message:
+        while True:
             self.reflected_message = None
+            self.tool_reflection = False
+
             async for _ in self.send_message(message):
                 pass
 
@@ -1169,7 +1191,14 @@ class Coder:
                 return
 
             self.num_reflections += 1
-            message = self.reflected_message
+
+            if self.tool_reflection:
+                self.num_reflections -= 1
+
+            if self.reflected_message is True:
+                message = None
+            else:
+                message = self.reflected_message
 
     def check_and_open_urls(self, exc, friendly_msg=None):
         """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
@@ -1190,7 +1219,7 @@ class Coder:
             self.io.offer_url(url)
         return urls
 
-    def check_for_urls(self, inp: str) -> List[str]:
+    async def check_for_urls(self, inp: str) -> List[str]:
         """Check input for URLs and offer to add them to the chat."""
         if not self.detect_urls:
             return inp
@@ -1203,7 +1232,7 @@ class Coder:
         for url in urls:
             if url not in self.rejected_urls:
                 url = url.rstrip(".',\"")
-                if self.io.confirm_ask(
+                if await self.io.confirm_ask(
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
                     inp += "\n\n"
@@ -1579,7 +1608,13 @@ class Coder:
         cur_tokens = self.main_model.token_count(chunks.cur)
 
         if None not in (messages_tokens, reminder_tokens, cur_tokens):
-            total_tokens = messages_tokens + reminder_tokens + cur_tokens
+            total_tokens = messages_tokens
+            # Only add tokens for reminder and cur if they're not already included
+            # in the messages_tokens calculation
+            if not chunks.reminder:
+                total_tokens += reminder_tokens
+            if not chunks.cur:
+                total_tokens += cur_tokens
         else:
             # add the reminder anyway
             total_tokens = 0
@@ -1701,9 +1736,10 @@ class Coder:
         # Notify IO that LLM processing is starting
         self.io.llm_started()
 
-        self.cur_messages += [
-            dict(role="user", content=inp),
-        ]
+        if inp:
+            self.cur_messages += [
+                dict(role="user", content=inp),
+            ]
 
         chunks = self.format_messages()
         messages = chunks.all_messages()
@@ -1737,7 +1773,7 @@ class Coder:
         try:
             while True:
                 try:
-                    async for chunk in self.send(messages, functions=self.functions):
+                    async for chunk in self.send(messages, tools=self.get_tool_list()):
                         yield chunk
                     break
                 except litellm_ex.exceptions_tuple() as err:
@@ -1805,11 +1841,6 @@ class Coder:
             self.remove_reasoning_content()
             self.multi_response_content = ""
 
-        ###
-        # print()
-        # print("=" * 20)
-        # dump(self.partial_response_content)
-
         self.io.tool_output()
 
         self.show_usage_report()
@@ -1862,7 +1893,7 @@ class Coder:
             self.move_back_cur_messages(saved_message)
 
         if not interrupted:
-            add_rel_files_message = self.check_for_file_mentions(content)
+            add_rel_files_message = await self.check_for_file_mentions(content)
             if add_rel_files_message:
                 if self.reflected_message:
                     self.reflected_message += "\n\n" + add_rel_files_message
@@ -1872,11 +1903,40 @@ class Coder:
 
             # Process any tools using MCP servers
             try:
-                tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
-                if tool_call_response and await self.process_tool_calls(tool_call_response):
-                    self.num_tool_calls += 1
-                    self.reflected_message = "Continue with tool call response"
-                    return
+                if self.partial_response_tool_calls:
+                    tool_calls = []
+                    for tool_call_dict in self.partial_response_tool_calls:
+                        tool_calls.append(
+                            ChatCompletionMessageToolCall(
+                                id=tool_call_dict.get("id"),
+                                function=Function(
+                                    name=tool_call_dict.get("function", {}).get("name"),
+                                    arguments=tool_call_dict.get("function", {}).get(
+                                        "arguments", ""
+                                    ),
+                                ),
+                                type=tool_call_dict.get("type"),
+                            )
+                        )
+
+                    tool_call_response = ModelResponse(
+                        choices=[
+                            Choices(
+                                finish_reason="tool_calls",
+                                index=0,
+                                message=Message(
+                                    content=None,
+                                    role="assistant",
+                                    tool_calls=tool_calls,
+                                ),
+                            )
+                        ]
+                    )
+
+                    if await self.process_tool_calls(tool_call_response):
+                        self.num_tool_calls += 1
+                        self.reflected_message = True
+                        return
             except Exception as e:
                 self.io.tool_error(f"Error processing tool calls: {str(e)}")
                 # Continue without tool processing
@@ -1897,7 +1957,7 @@ class Coder:
             self.auto_commit(edited, context="Ran the linter")
             self.lint_outcome = not lint_errors
             if lint_errors:
-                ok = await self.io.confirm_ask_async("Attempt to fix lint errors?")
+                ok = await self.io.confirm_ask("Attempt to fix lint errors?")
                 if ok:
                     self.reflected_message = lint_errors
                     return
@@ -1913,7 +1973,7 @@ class Coder:
             test_errors = await self.commands.cmd_test(self.test_cmd)
             self.test_outcome = not test_errors
             if test_errors:
-                ok = await self.io.confirm_ask_async("Attempt to fix test errors?")
+                ok = await self.io.confirm_ask("Attempt to fix test errors?")
                 if ok:
                     self.reflected_message = test_errors
                     return
@@ -1978,12 +2038,8 @@ class Coder:
         if server_tool_calls and self.num_tool_calls < self.max_tool_calls:
             self._print_tool_call_info(server_tool_calls)
 
-            if self.io.confirm_ask("Run tools?"):
+            if await self.io.confirm_ask("Run tools?"):
                 tool_responses = await self._execute_tool_calls(server_tool_calls)
-
-                # Add the assistant message with the tool calls
-                if hasattr(tool_call_response, "choices") and tool_call_response.choices:
-                    self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
 
                 # Add all tool responses
                 for tool_response in tool_responses:
@@ -2027,7 +2083,11 @@ class Coder:
             # Check if this tool_call matches any MCP tool
             for server_name, server_tools in self.mcp_tools:
                 for tool in server_tools:
-                    if tool.get("function", {}).get("name") == tool_call.function.name:
+                    tool_name_from_schema = tool.get("function", {}).get("name")
+                    if (
+                        tool_name_from_schema
+                        and tool_name_from_schema.lower() == tool_call.function.name.lower()
+                    ):
                         # Find the McpServer instance that will be used for communication
                         for server in self.mcp_servers:
                             if server.name == server_name:
@@ -2337,16 +2397,33 @@ class Coder:
         self.ok_to_warm_cache = False
 
     def add_assistant_reply_to_cur_messages(self):
-        if self.partial_response_content:
-            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
-        if self.partial_response_function_call:
-            self.cur_messages += [
-                dict(
-                    role="assistant",
-                    content=None,
-                    function_call=self.partial_response_function_call,
-                )
-            ]
+        """
+        Add the assistant's reply to `cur_messages`.
+        Handles model-specific quirks, like Deepseek which requires `content`
+        to be `None` when `tool_calls` are present.
+        """
+        msg = dict(role="assistant")
+        has_tool_calls = self.partial_response_tool_calls or self.partial_response_function_call
+
+        # If we have tool calls and we're using a Deepseek model, force content to be None.
+        if has_tool_calls and self.main_model.is_deepseek():
+            msg["content"] = None
+        else:
+            # Otherwise, use logic similar to the base implementation.
+            content = self.partial_response_content
+            if content:
+                msg["content"] = content
+            elif has_tool_calls:
+                msg["content"] = None
+
+        if self.partial_response_tool_calls:
+            msg["tool_calls"] = self.partial_response_tool_calls
+        elif self.partial_response_function_call:
+            msg["function_call"] = self.partial_response_function_call
+
+        # Only add a message if it's not empty.
+        if msg.get("content") is not None or msg.get("tool_calls") or msg.get("function_call"):
+            self.cur_messages.append(msg)
 
     def get_file_mentions(self, content, ignore_current=False):
         words = set(word for word in content.split())
@@ -2396,7 +2473,7 @@ class Coder:
 
         return mentioned_rel_fnames
 
-    def check_for_file_mentions(self, content):
+    async def check_for_file_mentions(self, content):
         mentioned_rel_fnames = self.get_file_mentions(content)
 
         new_mentions = mentioned_rel_fnames - self.ignore_mentions
@@ -2407,7 +2484,7 @@ class Coder:
         added_fnames = []
         group = ConfirmGroup(new_mentions)
         for rel_fname in sorted(new_mentions):
-            if self.io.confirm_ask(
+            if await self.io.confirm_ask(
                 "Add file to the chat?", subject=rel_fname, group=group, allow_never=True
             ):
                 self.add_rel_fname(rel_fname)
@@ -2418,7 +2495,7 @@ class Coder:
         if added_fnames:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
 
-    async def send(self, messages, model=None, functions=None):
+    async def send(self, messages, model=None, functions=None, tools=None):
         self.got_reasoning_content = False
         self.ended_reasoning_content = False
 
@@ -2430,21 +2507,20 @@ class Coder:
 
         self.partial_response_content = ""
         self.partial_response_function_call = dict()
+        self.partial_response_tool_calls = []
 
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
 
         try:
-            tool_list = self.get_tool_list()
-
             hash_object, completion = await model.send_completion(
                 messages,
                 functions,
                 self.stream,
                 self.temperature,
                 # This could include any tools, but for now it is just MCP tools
-                tools=tool_list,
+                tools=tools,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
@@ -2543,9 +2619,12 @@ class Coder:
 
     async def show_send_output_stream(self, completion):
         received_content = False
-        self.partial_response_tool_call = []
 
         async for chunk in completion:
+            # Check if confirmation is in progress and wait if needed
+            while self.confirmation_in_progress:
+                await asyncio.sleep(0.1)  # Yield control and wait briefly
+
             if isinstance(chunk, str):
                 text = chunk
                 received_content = True
@@ -2561,7 +2640,47 @@ class Coder:
 
                 try:
                     if chunk.choices[0].delta.tool_calls:
-                        self.partial_response_tool_call.append(chunk)
+                        received_content = True
+                        for tool_call_chunk in chunk.choices[0].delta.tool_calls:
+                            self.tool_reflection = True
+
+                            index = tool_call_chunk.index
+                            if len(self.partial_response_tool_calls) <= index:
+                                self.partial_response_tool_calls.extend(
+                                    [{}] * (index - len(self.partial_response_tool_calls) + 1)
+                                )
+
+                            if tool_call_chunk.id:
+                                self.partial_response_tool_calls[index]["id"] = tool_call_chunk.id
+                            if tool_call_chunk.type:
+                                self.partial_response_tool_calls[index][
+                                    "type"
+                                ] = tool_call_chunk.type
+                            if tool_call_chunk.function:
+                                if "function" not in self.partial_response_tool_calls[index]:
+                                    self.partial_response_tool_calls[index]["function"] = {}
+                                if tool_call_chunk.function.name:
+                                    if (
+                                        "name"
+                                        not in self.partial_response_tool_calls[index]["function"]
+                                    ):
+                                        self.partial_response_tool_calls[index]["function"][
+                                            "name"
+                                        ] = ""
+                                    self.partial_response_tool_calls[index]["function"][
+                                        "name"
+                                    ] += tool_call_chunk.function.name
+                                if tool_call_chunk.function.arguments:
+                                    if (
+                                        "arguments"
+                                        not in self.partial_response_tool_calls[index]["function"]
+                                    ):
+                                        self.partial_response_tool_calls[index]["function"][
+                                            "arguments"
+                                        ] = ""
+                                    self.partial_response_tool_calls[index]["function"][
+                                        "arguments"
+                                    ] += tool_call_chunk.function.arguments
                 except (AttributeError, IndexError):
                     # Handle cases where the response structure doesn't match expectations
                     pass
@@ -2570,6 +2689,8 @@ class Coder:
                     func = chunk.choices[0].delta.function_call
                     # dump(func)
                     for k, v in func.items():
+                        self.tool_reflection = True
+
                         if k in self.partial_response_function_call:
                             self.partial_response_function_call[k] += v
                         else:
@@ -2609,7 +2730,6 @@ class Coder:
                     pass
 
             self.partial_response_content += text
-
             if self.show_pretty():
                 # Use simplified streaming - just call the method with full content
                 content_to_show = self.live_incremental_response(False)
@@ -2627,7 +2747,7 @@ class Coder:
                     self.stream_wrapper(safe_text, final=False)
                 yield text
 
-        if not received_content and len(self.partial_response_tool_call) == 0:
+        if not received_content and len(self.partial_response_tool_calls) == 0:
             self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def stream_wrapper(self, content, final):
@@ -3162,7 +3282,7 @@ class Coder:
             1 for cmd in commands if cmd.strip() and not cmd.strip().startswith("#")
         )
         prompt = "Run shell command?" if command_count == 1 else "Run shell commands?"
-        if not await self.io.confirm_ask_async(
+        if not await self.io.confirm_ask(
             prompt,
             subject="\n".join(commands),
             explicit_yes_required=True,
@@ -3187,7 +3307,7 @@ class Coder:
             if output:
                 accumulated_output += f"Output from {command}\n{output}\n"
 
-        if accumulated_output.strip() and await self.io.confirm_ask_async(
+        if accumulated_output.strip() and await self.io.confirm_ask(
             "Add command output to the chat?", allow_never=True
         ):
             num_lines = len(accumulated_output.strip().splitlines())

@@ -1,5 +1,23 @@
 import os
 
+view_files_with_symbol_schema = {
+    "type": "function",
+    "function": {
+        "name": "ViewFilesWithSymbol",
+        "description": "View files that contain a specific symbol (e.g., class, function).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "description": "The symbol to search for.",
+                },
+            },
+            "required": ["symbol"],
+        },
+    },
+}
+
 
 def _execute_view_files_with_symbol(coder, symbol):
     """
