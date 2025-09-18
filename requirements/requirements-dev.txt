@@ -16,7 +16,7 @@ cfgv==3.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -41,20 +41,15 @@ cycler==0.12.1
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
-dill==0.4.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   multiprocess
-    #   pathos
 distlib==0.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-filelock==3.18.0
+filelock==3.19.1
     # via
     #   -c requirements/common-constraints.txt
     #   virtualenv
-fonttools==4.59.0
+fonttools==4.59.1
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
@@ -99,7 +94,7 @@ grpcio-status==1.71.2
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
-identify==2.6.12
+identify==2.6.13
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
@@ -115,15 +110,15 @@ iniconfig==2.1.0
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
-kiwisolver==1.4.8
+kiwisolver==1.4.9
     # via
     #   -c requirements/common-constraints.txt
     #   matplotlib
-lox==0.13.0
+lox==1.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-markdown-it-py==3.0.0
+markdown-it-py==4.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   rich
@@ -135,10 +130,6 @@ mdurl==0.1.2
     # via
     #   -c requirements/common-constraints.txt
     #   markdown-it-py
-multiprocess==0.70.18
-    # via
-    #   -c requirements/common-constraints.txt
-    #   pathos
 nodeenv==1.9.1
     # via
     #   -c requirements/common-constraints.txt
@@ -160,10 +151,6 @@ pandas==2.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-pathos==0.3.4
-    # via
-    #   -c requirements/common-constraints.txt
-    #   lox
 pillow==11.3.0
     # via
     #   -c requirements/common-constraints.txt
@@ -184,15 +171,7 @@ pluggy==1.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
-pox==0.3.6
-    # via
-    #   -c requirements/common-constraints.txt
-    #   pathos
-ppft==1.7.7
-    # via
-    #   -c requirements/common-constraints.txt
-    #   pathos
-pre-commit==4.2.0
+pre-commit==4.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
@@ -298,11 +277,11 @@ urllib3==2.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uv==0.8.5
+uv==0.8.11
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
-virtualenv==20.33.1
+virtualenv==20.34.0
     # via
     #   -c requirements/common-constraints.txt
     #   pre-commit
