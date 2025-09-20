@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import git
+import pytest
 
 from aider.coders import Coder
 from aider.coders.base_coder import FinishReasonLength, UnknownEditFormat
@@ -23,7 +24,7 @@ class TestCoder(unittest.TestCase):
         self.webbrowser_patcher = patch("aider.io.webbrowser.open")
         self.mock_webbrowser = self.webbrowser_patcher.start()
 
-    def test_allowed_to_edit(self):
+    async def test_allowed_to_edit(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -40,8 +41,8 @@ class TestCoder(unittest.TestCase):
             # YES!
             # Use a completely mocked IO object instead of a real one
             io = MagicMock()
-            io.confirm_ask = MagicMock(return_value=True)
-            coder = Coder.create(self.GPT35, None, io, fnames=["added.txt"])
+            io.confirm_ask = AsyncMock(return_value=True)
+            coder = await Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertTrue(coder.allowed_to_edit("repo.txt"))
@@ -52,7 +53,7 @@ class TestCoder(unittest.TestCase):
 
             self.assertFalse(coder.need_commit_before_edits)
 
-    def test_allowed_to_edit_no(self):
+    async def test_allowed_to_edit_no(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -69,7 +70,7 @@ class TestCoder(unittest.TestCase):
             # say NO
             io = InputOutput(yes=False)
 
-            coder = Coder.create(self.GPT35, None, io, fnames=["added.txt"])
+            coder = await Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertFalse(coder.allowed_to_edit("repo.txt"))
@@ -80,7 +81,7 @@ class TestCoder(unittest.TestCase):
 
             self.assertFalse(coder.need_commit_before_edits)
 
-    def test_allowed_to_edit_dirty(self):
+    async def test_allowed_to_edit_dirty(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -93,7 +94,7 @@ class TestCoder(unittest.TestCase):
             # say NO
             io = InputOutput(yes=False)
 
-            coder = Coder.create(self.GPT35, None, io, fnames=["added.txt"])
+            coder = await Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertFalse(coder.need_commit_before_edits)
@@ -102,7 +103,8 @@ class TestCoder(unittest.TestCase):
             self.assertTrue(coder.allowed_to_edit("added.txt"))
             self.assertTrue(coder.need_commit_before_edits)
 
-    def test_get_files_content(self):
+    @pytest.mark.asyncio
+    async def test_get_files_content(self):
         tempdir = Path(tempfile.mkdtemp())
 
         file1 = tempdir / "file1.txt"
@@ -114,13 +116,14 @@ class TestCoder(unittest.TestCase):
         files = [file1, file2]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
+        coder = await Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         content = coder.get_files_content().splitlines()
-        self.assertIn("file1.txt", content)
-        self.assertIn("file2.txt", content)
+        assert "file1.txt" in content
+        assert "file2.txt" in content
 
-    def test_check_for_filename_mentions(self):
+    @pytest.mark.asyncio
+    async def test_check_for_filename_mentions(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -137,7 +140,7 @@ class TestCoder(unittest.TestCase):
             repo.git.commit("-m", "new")
 
             # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(self.GPT35, None, mock_io)
+            coder = await Coder.create(self.GPT35, None, mock_io)
 
             # Call the check_for_file_mentions method
             coder.check_for_file_mentions("Please check file1.txt and file2.py")
@@ -150,12 +153,13 @@ class TestCoder(unittest.TestCase):
                 ]
             )
 
-            self.assertEqual(coder.abs_fnames, expected_files)
+            assert coder.abs_fnames == expected_files
 
-    def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
+    @pytest.mark.asyncio
+    async def test_check_for_ambiguous_filename_mentions_of_longer_paths(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             fname = Path("file1.txt")
             fname.touch()
@@ -173,10 +177,11 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
-    def test_skip_duplicate_basename_mentions(self):
+    @pytest.mark.asyncio
+    async def test_skip_duplicate_basename_mentions(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             # Create files with same basename in different directories
             fname1 = Path("dir1") / "file.txt"
@@ -204,13 +209,14 @@ class TestCoder(unittest.TestCase):
             mentioned = coder.get_file_mentions(f"Check {fname1} and {fname3}")
             self.assertEqual(mentioned, {str(fname3)})
 
-    def test_check_for_file_mentions_read_only(self):
+    @pytest.mark.asyncio
+    async def test_check_for_file_mentions_read_only(self):
         with GitTemporaryDirectory():
             io = InputOutput(
                 pretty=False,
                 yes=True,
             )
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             fname = Path("readonly_file.txt")
             fname.touch()
@@ -231,19 +237,19 @@ class TestCoder(unittest.TestCase):
             # Assert that abs_fnames is still empty (file not added)
             self.assertEqual(coder.abs_fnames, set())
 
-    def test_check_for_file_mentions_with_mocked_confirm(self):
+    async def test_check_for_file_mentions_with_mocked_confirm(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False)
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             # Mock get_file_mentions to return two file names
             coder.get_file_mentions = MagicMock(return_value=set(["file1.txt", "file2.txt"]))
 
             # Mock confirm_ask to return False for the first call and True for the second
-            io.confirm_ask = MagicMock(side_effect=[False, True, True])
+            io.confirm_ask = AsyncMock(side_effect=[False, True, True])
 
             # First call to check_for_file_mentions
-            coder.check_for_file_mentions("Please check file1.txt for the info")
+            await coder.check_for_file_mentions("Please check file1.txt for the info")
 
             # Assert that confirm_ask was called twice
             self.assertEqual(io.confirm_ask.call_count, 2)
@@ -256,7 +262,7 @@ class TestCoder(unittest.TestCase):
             io.confirm_ask.reset_mock()
 
             # Second call to check_for_file_mentions
-            coder.check_for_file_mentions("Please check file1.txt and file2.txt again")
+            await coder.check_for_file_mentions("Please check file1.txt and file2.txt again")
 
             # Assert that confirm_ask was called only once (for file1.txt)
             self.assertEqual(io.confirm_ask.call_count, 1)
@@ -268,10 +274,11 @@ class TestCoder(unittest.TestCase):
             # Assert that file1.txt is in ignore_mentions
             self.assertIn("file1.txt", coder.ignore_mentions)
 
-    def test_check_for_subdir_mention(self):
+    @pytest.mark.asyncio
+    async def test_check_for_subdir_mention(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             fname = Path("other") / "file1.txt"
             fname.parent.mkdir(parents=True, exist_ok=True)
@@ -286,10 +293,11 @@ class TestCoder(unittest.TestCase):
 
             self.assertEqual(coder.abs_fnames, set([str(fname.resolve())]))
 
-    def test_get_file_mentions_various_formats(self):
+    @pytest.mark.asyncio
+    async def test_get_file_mentions_various_formats(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             # Create test files
             test_files = [
@@ -370,10 +378,11 @@ class TestCoder(unittest.TestCase):
                         f"Failed to extract mentions from: {content}",
                     )
 
-    def test_get_file_mentions_multiline_backticks(self):
+    @pytest.mark.asyncio
+    async def test_get_file_mentions_multiline_backticks(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             # Create test files
             test_files = [
@@ -409,10 +418,10 @@ Once I have these, I can show you precisely how to do the thing.
                 f"Failed to extract mentions from multiline backticked content: {content}",
             )
 
-    def test_get_file_mentions_path_formats(self):
+    async def test_get_file_mentions_path_formats(self):
         with GitTemporaryDirectory():
             io = InputOutput(pretty=False, yes=True)
-            coder = Coder.create(self.GPT35, None, io)
+            coder = await Coder.create(self.GPT35, None, io)
 
             # Test cases with different path formats
             test_cases = [
@@ -447,7 +456,8 @@ Once I have these, I can show you precisely how to do the thing.
                         f"Failed for content: {content}, addable_files: {addable_files}",
                     )
 
-    def test_run_with_file_deletion(self):
+    @pytest.mark.asyncio
+    async def test_run_with_file_deletion(self):
         # Create a few temporary files
 
         tempdir = Path(tempfile.mkdtemp())
@@ -460,8 +470,7 @@ Once I have these, I can show you precisely how to do the thing.
 
         files = [file1, file2]
 
-        # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
+        coder = await Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -471,23 +480,23 @@ Once I have these, I can show you precisely how to do the thing.
         coder.send = mock_send
 
         # Call the run method with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 2)
 
         file1.unlink()
 
         # Call the run method again with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 1)
 
-    def test_run_with_file_unicode_error(self):
+    @pytest.mark.asyncio
+    async def test_run_with_file_unicode_error(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
         _, file2 = tempfile.mkstemp()
 
         files = [file1, file2]
 
-        # Initialize the Coder object with the mocked IO and mocked repo
         coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
@@ -498,7 +507,7 @@ Once I have these, I can show you precisely how to do the thing.
         coder.send = mock_send
 
         # Call the run method with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 2)
 
         # Write some non-UTF8 text into the file
@@ -506,10 +515,11 @@ Once I have these, I can show you precisely how to do the thing.
             f.write(b"\x80abc")
 
         # Call the run method again with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 1)
 
-    def test_choose_fence(self):
+    @pytest.mark.asyncio
+    async def test_choose_fence(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
 
@@ -518,8 +528,7 @@ Once I have these, I can show you precisely how to do the thing.
 
         files = [file1]
 
-        # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
+        coder = await Coder.create(self.GPT35, None, io=InputOutput(), fnames=files)
 
         def mock_send(*args, **kwargs):
             coder.partial_response_content = "ok"
@@ -529,22 +538,20 @@ Once I have these, I can show you precisely how to do the thing.
         coder.send = mock_send
 
         # Call the run method with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
 
         self.assertNotEqual(coder.fence[0], "```")
 
-    def test_run_with_file_utf_unicode_error(self):
+    @pytest.mark.asyncio
+    async def test_run_with_file_utf_unicode_error(self):
         "make sure that we honor InputOutput(encoding) and don't just assume utf-8"
-        # Create a few temporary files
+        encoding = "utf-16"
         _, file1 = tempfile.mkstemp()
         _, file2 = tempfile.mkstemp()
-
         files = [file1, file2]
 
-        encoding = "utf-16"
-
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(
+        coder = await Coder.create(
             self.GPT35,
             None,
             io=InputOutput(encoding=encoding),
@@ -559,19 +566,20 @@ Once I have these, I can show you precisely how to do the thing.
         coder.send = mock_send
 
         # Call the run method with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
         self.assertEqual(len(coder.abs_fnames), 2)
 
         some_content_which_will_error_if_read_with_encoding_utf8 = "ÅÍÎÏ".encode(encoding)
         with open(file1, "wb") as f:
             f.write(some_content_which_will_error_if_read_with_encoding_utf8)
 
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
 
         # both files should still be here
         self.assertEqual(len(coder.abs_fnames), 2)
 
-    def test_new_file_edit_one_commit(self):
+    @pytest.mark.asyncio
+    async def test_new_file_edit_one_commit(self):
         """A new file should get pre-committed before the GPT edit commit"""
         with GitTemporaryDirectory():
             repo = git.Repo()
@@ -580,7 +588,7 @@ Once I have these, I can show you precisely how to do the thing.
 
             io = InputOutput(yes=True)
             io.tool_warning = MagicMock()
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+            coder = await Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             self.assertTrue(fname.exists())
 
@@ -588,7 +596,7 @@ Once I have these, I can show you precisely how to do the thing.
             with self.assertRaises(git.exc.GitCommandError):
                 list(repo.iter_commits(repo.active_branch.name))
 
-            def mock_send(*args, **kwargs):
+            async def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
 Do this:
 
@@ -606,7 +614,7 @@ new
             coder.repo.get_commit_message = MagicMock()
             coder.repo.get_commit_message.return_value = "commit message"
 
-            coder.run(with_message="hi")
+            await coder.run(with_message="hi")
 
             content = fname.read_text()
             self.assertEqual(content, "new\n")
@@ -614,7 +622,8 @@ new
             num_commits = len(list(repo.iter_commits(repo.active_branch.name)))
             self.assertEqual(num_commits, 2)
 
-    def test_only_commit_gpt_edited_file(self):
+    @pytest.mark.asyncio
+    async def test_only_commit_gpt_edited_file(self):
         """
         Only commit file that gpt edits, not other dirty files.
         Also ensure commit msg only depends on diffs from the GPT edited file.
@@ -637,9 +646,9 @@ new
             fname1.write_text("ONE\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)])
+            coder = await Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname1), str(fname2)])
 
-            def mock_send(*args, **kwargs):
+            async def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
 Do this:
 
@@ -662,14 +671,15 @@ TWO
             coder.send = mock_send
             coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
 
-            coder.run(with_message="hi")
+            await coder.run(with_message="hi")
 
             content = fname2.read_text()
             self.assertEqual(content, "TWO\n")
 
             self.assertTrue(repo.is_dirty(path=str(fname1)))
 
-    def test_gpt_edit_to_dirty_file(self):
+    @pytest.mark.asyncio
+    async def test_gpt_edit_to_dirty_file(self):
         """A dirty file should be committed before the GPT edits are committed"""
 
         with GitTemporaryDirectory():
@@ -690,7 +700,7 @@ TWO
             fname2.write_text("OTHER\n")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+            coder = await Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -716,7 +726,7 @@ three
             coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
             coder.send = mock_send
 
-            coder.run(with_message="hi")
+            await coder.run(with_message="hi")
 
             content = fname.read_text()
             self.assertEqual(content, "three\n")
@@ -754,7 +764,8 @@ three
 
             self.assertEqual(len(saved_diffs), 2)
 
-    def test_gpt_edit_to_existing_file_not_in_repo(self):
+    @pytest.mark.asyncio
+    async def test_gpt_edit_to_existing_file_not_in_repo(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -768,7 +779,7 @@ three
             repo.git.commit("-m", "initial")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+            coder = await Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
@@ -794,7 +805,7 @@ two
             coder.repo.get_commit_message = MagicMock(side_effect=mock_get_commit_message)
             coder.send = mock_send
 
-            coder.run(with_message="hi")
+            await coder.run(with_message="hi")
 
             content = fname.read_text()
             self.assertEqual(content, "two\n")
@@ -802,7 +813,8 @@ two
             diff = saved_diffs[0]
             self.assertIn("file.txt", diff)
 
-    def test_skip_aiderignored_files(self):
+    @pytest.mark.asyncio
+    async def test_skip_aiderignored_files(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
 
@@ -827,7 +839,7 @@ two
                 aider_ignore_file=str(aignore),
             )
 
-            coder = Coder.create(
+            coder = await Coder.create(
                 self.GPT35,
                 None,
                 io,
@@ -839,7 +851,8 @@ two
             self.assertNotIn(fname2, str(coder.abs_fnames))
             self.assertNotIn(fname3, str(coder.abs_fnames))
 
-    def test_skip_gitignored_files_on_init(self):
+    @pytest.mark.asyncio
+    async def test_skip_gitignored_files_on_init(self):
         with GitTemporaryDirectory() as _:
             repo_path = Path(".")
             repo = git.Repo.init(repo_path)
@@ -861,7 +874,7 @@ two
 
             fnames_to_add = [str(ignored_file), str(regular_file)]
 
-            coder = Coder.create(self.GPT35, None, mock_io, fnames=fnames_to_add)
+            coder = await Coder.create(self.GPT35, None, mock_io, fnames=fnames_to_add)
 
             self.assertNotIn(str(ignored_file.resolve()), coder.abs_fnames)
             self.assertIn(str(regular_file.resolve()), coder.abs_fnames)
@@ -869,9 +882,10 @@ two
                 f"Skipping {ignored_file.name} that matches gitignore spec."
             )
 
-    def test_check_for_urls(self):
+    @pytest.mark.asyncio
+    async def test_check_for_urls(self):
         io = InputOutput(yes=True)
-        coder = Coder.create(self.GPT35, None, io=io)
+        coder = await Coder.create(self.GPT35, None, io=io)
         coder.commands.scraper = MagicMock()
         coder.commands.scraper.scrape = MagicMock(return_value="some content")
 
@@ -911,9 +925,8 @@ two
         ]
 
         for input_text, expected_url in test_cases:
-            with self.subTest(input_text=input_text):
-                result = coder.check_for_urls(input_text)
-                self.assertIn(expected_url, result)
+            result = await coder.check_for_urls(input_text)
+            assert expected_url in result
 
         # Test cases from the GitHub issue
         issue_cases = [
@@ -925,32 +938,32 @@ two
         ]
 
         for input_text, expected_url in issue_cases:
-            with self.subTest(input_text=input_text):
-                result = coder.check_for_urls(input_text)
-                self.assertIn(expected_url, result)
+            result = await coder.check_for_urls(input_text)
+            assert expected_url in result
 
         # Test case with multiple URLs
         multi_url_input = "Check http://example1.com and https://example2.com/page"
-        result = coder.check_for_urls(multi_url_input)
-        self.assertIn("http://example1.com", result)
-        self.assertIn("https://example2.com/page", result)
+        result = await coder.check_for_urls(multi_url_input)
+        assert "http://example1.com" in result
+        assert "https://example2.com/page" in result
 
         # Test case with no URL
         no_url_input = "This text contains no URL"
-        result = coder.check_for_urls(no_url_input)
-        self.assertEqual(result, no_url_input)
+        result = await coder.check_for_urls(no_url_input)
+        assert result == no_url_input
 
         # Test case with the same URL appearing multiple times
         repeated_url_input = (
             "Check https://example.com, then https://example.com again, and https://example.com one"
             " more time"
         )
-        result = coder.check_for_urls(repeated_url_input)
+        result = await coder.check_for_urls(repeated_url_input)
         # the original 3 in the input text, plus 1 more for the scraped text
-        self.assertEqual(result.count("https://example.com"), 4)
-        self.assertIn("https://example.com", result)
+        assert result.count("https://example.com") == 4
+        assert "https://example.com" in result
 
-    def test_coder_from_coder_with_subdir(self):
+    @pytest.mark.asyncio
+    async def test_coder_from_coder_with_subdir(self):
         with GitTemporaryDirectory() as root:
             repo = git.Repo.init(root)
 
@@ -968,10 +981,10 @@ two
 
             # Create the first coder
             io = InputOutput(yes=True)
-            coder1 = Coder.create(self.GPT35, None, io=io, fnames=[test_file.name])
+            coder1 = await Coder.create(self.GPT35, None, io=io, fnames=[test_file.name])
 
             # Create a new coder from the first coder
-            coder2 = Coder.create(from_coder=coder1)
+            coder2 = await Coder.create(from_coder=coder1)
 
             # Check if both coders have the same set of abs_fnames
             self.assertEqual(coder1.abs_fnames, coder2.abs_fnames)
@@ -986,12 +999,13 @@ two
             self.assertEqual(len(coder1.abs_fnames), 1)
             self.assertEqual(len(coder2.abs_fnames), 1)
 
-    def test_suggest_shell_commands(self):
+    @pytest.mark.asyncio
+    async def test_suggest_shell_commands(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
-            def mock_send(*args, **kwargs):
+            async def mock_send(*args, **kwargs):
                 coder.partial_response_content = """Here's a shell command to run:
 
 ```bash
@@ -1008,7 +1022,7 @@ This command will print 'Hello, World!' to the console."""
             coder.handle_shell_commands = MagicMock()
 
             # Run the coder with a message
-            coder.run(with_message="Suggest a shell command")
+            await coder.run(with_message="Suggest a shell command")
 
             # Check if the shell command was added to the list
             self.assertEqual(len(coder.shell_commands), 1)
@@ -1017,34 +1031,37 @@ This command will print 'Hello, World!' to the console."""
             # Check if handle_shell_commands was called with the correct argument
             coder.handle_shell_commands.assert_called_once()
 
-    def test_no_suggest_shell_commands(self):
+    @pytest.mark.asyncio
+    async def test_no_suggest_shell_commands(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, suggest_shell_commands=False)
+            coder = await Coder.create(self.GPT35, "diff", io=io, suggest_shell_commands=False)
             self.assertFalse(coder.suggest_shell_commands)
 
-    def test_detect_urls_enabled(self):
+    @pytest.mark.asyncio
+    async def test_detect_urls_enabled(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, detect_urls=True)
+            coder = await Coder.create(self.GPT35, "diff", io=io, detect_urls=True)
             coder.commands.scraper = MagicMock()
             coder.commands.scraper.scrape = MagicMock(return_value="some content")
 
             # Test with a message containing a URL
             message = "Check out https://example.com"
-            coder.check_for_urls(message)
+            await coder.check_for_urls(message)
             coder.commands.scraper.scrape.assert_called_once_with("https://example.com")
 
-    def test_detect_urls_disabled(self):
+    @pytest.mark.asyncio
+    async def test_detect_urls_disabled(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, detect_urls=False)
+            coder = await Coder.create(self.GPT35, "diff", io=io, detect_urls=False)
             coder.commands.scraper = MagicMock()
             coder.commands.scraper.scrape = MagicMock(return_value="some content")
 
             # Test with a message containing a URL
             message = "Check out https://example.com"
-            result = coder.check_for_urls(message)
+            result = await coder.check_for_urls(message)
             self.assertEqual(result, message)
             coder.commands.scraper.scrape.assert_not_called()
 
@@ -1058,20 +1075,22 @@ This command will print 'Hello, World!' to the console."""
         )
         self.assertEqual(str(exc), expected_msg)
 
-    def test_unknown_edit_format_creation(self):
+    @pytest.mark.asyncio
+    async def test_unknown_edit_format_creation(self):
         # Test that creating a Coder with invalid edit format raises the exception
         io = InputOutput(yes=True)
         invalid_format = "invalid_format"
 
         with self.assertRaises(UnknownEditFormat) as cm:
-            Coder.create(self.GPT35, invalid_format, io=io)
+            await Coder.create(self.GPT35, invalid_format, io=io)
 
         exc = cm.exception
         self.assertEqual(exc.edit_format, invalid_format)
         self.assertIsInstance(exc.valid_formats, list)
         self.assertTrue(len(exc.valid_formats) > 0)
 
-    def test_system_prompt_prefix(self):
+    @pytest.mark.asyncio
+    async def test_system_prompt_prefix(self):
         # Test that system_prompt_prefix is properly set and used
         io = InputOutput(yes=True)
         test_prefix = "Test prefix. "
@@ -1080,7 +1099,7 @@ This command will print 'Hello, World!' to the console."""
         model = Model("gpt-3.5-turbo")
         model.system_prompt_prefix = test_prefix
 
-        coder = Coder.create(model, None, io=io)
+        coder = await Coder.create(model, None, io=io)
 
         # Get the formatted messages
         chunks = coder.format_messages()
@@ -1090,7 +1109,8 @@ This command will print 'Hello, World!' to the console."""
         system_message = next(msg for msg in messages if msg["role"] == "system")
         self.assertTrue(system_message["content"].startswith(test_prefix))
 
-    def test_coder_create_with_new_file_oserror(self):
+    @pytest.mark.asyncio
+    async def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
             new_file = "new_file.txt"
@@ -1098,7 +1118,7 @@ This command will print 'Hello, World!' to the console."""
             # Mock Path.touch() to raise OSError
             with patch("pathlib.Path.touch", side_effect=OSError("Permission denied")):
                 # Create the coder with a new file
-                coder = Coder.create(self.GPT35, "diff", io=io, fnames=[new_file])
+                coder = await Coder.create(self.GPT35, "diff", io=io, fnames=[new_file])
 
             # Check if the coder was created successfully
             self.assertIsInstance(coder, Coder)
@@ -1106,10 +1126,11 @@ This command will print 'Hello, World!' to the console."""
             # Check if the new file is not in abs_fnames
             self.assertNotIn(new_file, [os.path.basename(f) for f in coder.abs_fnames])
 
-    def test_show_exhausted_error(self):
+    @pytest.mark.asyncio
+    async def test_show_exhausted_error(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Set up some real done_messages and cur_messages
             coder.done_messages = [
@@ -1166,13 +1187,14 @@ This command will print 'Hello, World!' to the console."""
             self.assertIn("Output tokens:", error_message)
             self.assertIn("Total tokens:", error_message)
 
-    def test_keyboard_interrupt_handling(self):
+    @pytest.mark.asyncio
+    async def test_keyboard_interrupt_handling(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Simulate keyboard interrupt during message processing
-            def mock_send(*args, **kwargs):
+            async def mock_send(*args, **kwargs):
                 coder.partial_response_content = "Partial response"
                 coder.partial_response_function_call = dict()
                 raise KeyboardInterrupt()
@@ -1183,19 +1205,20 @@ This command will print 'Hello, World!' to the console."""
             sanity_check_messages(coder.cur_messages)
 
             # Process message that will trigger interrupt
-            list(coder.send_message("Test message"))
+            list(await coder.send_message("Test message"))
 
             # Verify messages are still in valid state
             sanity_check_messages(coder.cur_messages)
             self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
-    def test_token_limit_error_handling(self):
+    @pytest.mark.asyncio
+    async def test_token_limit_error_handling(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Simulate token limit error
-            def mock_send(*args, **kwargs):
+            async def mock_send(*args, **kwargs):
                 coder.partial_response_content = "Partial response"
                 coder.partial_response_function_call = dict()
                 raise FinishReasonLength()
@@ -1206,33 +1229,35 @@ This command will print 'Hello, World!' to the console."""
             sanity_check_messages(coder.cur_messages)
 
             # Process message that hits token limit
-            list(coder.send_message("Long message"))
+            list(await coder.send_message("Long message"))
 
             # Verify messages are still in valid state
             sanity_check_messages(coder.cur_messages)
             self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
-    def test_message_sanity_after_partial_response(self):
+    @pytest.mark.asyncio
+    async def test_message_sanity_after_partial_response(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Simulate partial response then interrupt
-            def mock_send(*args, **kwargs):
+            async def mock_send(*args, **kwargs):
                 coder.partial_response_content = "Partial response"
                 coder.partial_response_function_call = dict()
                 raise KeyboardInterrupt()
 
             coder.send = mock_send
 
-            list(coder.send_message("Test"))
+            list(await coder.send_message("Test"))
 
             # Verify message structure remains valid
             sanity_check_messages(coder.cur_messages)
             self.assertEqual(coder.cur_messages[-1]["role"], "assistant")
 
-    def test_normalize_language(self):
-        coder = Coder.create(self.GPT35, None, io=InputOutput())
+    @pytest.mark.asyncio
+    async def test_normalize_language(self):
+        coder = await Coder.create(self.GPT35, None, io=InputOutput())
 
         # Test None and empty
         self.assertIsNone(coder.normalize_language(None))
@@ -1282,9 +1307,10 @@ This command will print 'Hello, World!' to the console."""
         with patch("aider.coders.base_coder.Locale", mock_babel_locale_error):
             self.assertEqual(coder.normalize_language("en_US"), "English")  # Falls back to map
 
-    def test_get_user_language(self):
+    @pytest.mark.asyncio
+    async def test_get_user_language(self):
         io = InputOutput()
-        coder = Coder.create(self.GPT35, None, io=io)
+        coder = await Coder.create(self.GPT35, None, io=io)
 
         # 1. Test with self.chat_language set
         coder.chat_language = "fr_CA"
@@ -1349,10 +1375,10 @@ This command will print 'Hello, World!' to the console."""
             with patch("os.environ.get", return_value=None) as mock_env_get:
                 self.assertIsNone(coder.get_user_language())
 
-    def test_architect_coder_auto_accept_true(self):
+    async def test_architect_coder_auto_accept_true(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            io.confirm_ask = MagicMock(return_value=True)
+            io.confirm_ask = AsyncMock(return_value=True)
 
             # Create an ArchitectCoder with auto_accept_architect=True
             with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
@@ -1379,7 +1405,7 @@ This command will print 'Hello, World!' to the console."""
                     coder.partial_response_content = "Make these changes to the code"
 
                     # Call reply_completed
-                    coder.reply_completed()
+                    await coder.reply_completed()
 
                     # Verify that confirm_ask was not called (auto-accepted)
                     io.confirm_ask.assert_not_called()
@@ -1387,10 +1413,10 @@ This command will print 'Hello, World!' to the console."""
                     # Verify that editor coder was created and run
                     mock_editor.run.assert_called_once()
 
-    def test_architect_coder_auto_accept_false_confirmed(self):
+    async def test_architect_coder_auto_accept_false_confirmed(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=False)
-            io.confirm_ask = MagicMock(return_value=True)
+            io.confirm_ask = AsyncMock(return_value=True)
 
             # Create an ArchitectCoder with auto_accept_architect=False
             with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
@@ -1421,7 +1447,7 @@ This command will print 'Hello, World!' to the console."""
                     coder.partial_response_content = "Make these changes to the code"
 
                     # Call reply_completed
-                    coder.reply_completed()
+                    await coder.reply_completed()
 
                     # Verify that confirm_ask was called
                     io.confirm_ask.assert_called_once_with("Edit the files?")
@@ -1429,10 +1455,10 @@ This command will print 'Hello, World!' to the console."""
                     # Verify that editor coder was created and run
                     mock_editor.run.assert_called_once()
 
-    def test_architect_coder_auto_accept_false_rejected(self):
+    async def test_architect_coder_auto_accept_false_rejected(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=False)
-            io.confirm_ask = MagicMock(return_value=False)
+            io.confirm_ask = AsyncMock(return_value=False)
 
             # Create an ArchitectCoder with auto_accept_architect=False
             with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
@@ -1455,7 +1481,7 @@ This command will print 'Hello, World!' to the console."""
                     coder.partial_response_content = "Make these changes to the code"
 
                     # Call reply_completed
-                    coder.reply_completed()
+                    await coder.reply_completed()
 
                     # Verify that confirm_ask was called
                     io.confirm_ask.assert_called_once_with("Edit the files?")
@@ -1464,8 +1490,9 @@ This command will print 'Hello, World!' to the console."""
                     # (because user rejected the changes)
                     mock_editor.run.assert_not_called()
 
+    @pytest.mark.asyncio
     @patch("aider.coders.base_coder.experimental_mcp_client")
-    def test_mcp_server_connection(self, mock_mcp_client):
+    async def test_mcp_server_connection(self, mock_mcp_client):
         """Test that the coder connects to MCP servers for tools."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
@@ -1481,7 +1508,7 @@ This command will print 'Hello, World!' to the console."""
 
             # Create coder with mock MCP server
             with patch.object(Coder, "initialize_mcp_tools", return_value=mock_tools):
-                coder = Coder.create(self.GPT35, "diff", io=io, mcp_servers=[mock_server])
+                coder = await Coder.create(self.GPT35, "diff", io=io, mcp_servers=[mock_server])
 
                 # Manually set mcp_tools since we're bypassing initialize_mcp_tools
                 coder.mcp_tools = mock_tools
@@ -1491,8 +1518,9 @@ This command will print 'Hello, World!' to the console."""
                 self.assertEqual(len(coder.mcp_tools), 1)
                 self.assertEqual(coder.mcp_tools[0][0], "test_server")
 
+    @pytest.mark.asyncio
     @patch("aider.coders.base_coder.experimental_mcp_client")
-    def test_coder_creation_with_partial_failed_mcp_server(self, mock_mcp_client):
+    async def test_coder_creation_with_partial_failed_mcp_server(self, mock_mcp_client, GPT35):
         """Test that a coder can still be created even if an MCP server fails to initialize."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
@@ -1519,8 +1547,8 @@ This command will print 'Hello, World!' to the console."""
             mock_mcp_client.load_mcp_tools = AsyncMock(side_effect=mock_load_mcp_tools)
 
             # Create coder with both servers
-            coder = Coder.create(
-                self.GPT35,
+            coder = await Coder.create(
+                GPT35,
                 "diff",
                 io=io,
                 mcp_servers=[working_server, failing_server],
@@ -1528,25 +1556,26 @@ This command will print 'Hello, World!' to the console."""
             )
 
             # Verify that coder was created successfully
-            self.assertIsInstance(coder, Coder)
+            assert isinstance(coder, Coder)
 
             # Verify that only the working server's tools were added
-            self.assertIsNotNone(coder.mcp_tools)
-            self.assertEqual(len(coder.mcp_tools), 1)
-            self.assertEqual(coder.mcp_tools[0][0], "working_server")
+            assert coder.mcp_tools is not None
+            assert len(coder.mcp_tools) == 1
+            assert coder.mcp_tools[0][0] == "working_server"
 
             # Verify that the tool list contains only working tools
             tool_list = coder.get_tool_list()
-            self.assertEqual(len(tool_list), 1)
-            self.assertEqual(tool_list[0]["function"]["name"], "working_tool")
+            assert len(tool_list) == 1
+            assert tool_list[0]["function"]["name"] == "working_tool"
 
             # Verify that the warning was logged for the failing server
             io.tool_warning.assert_called_with(
                 "Error initializing MCP server failing_server:\nFailed to load tools"
             )
 
+    @pytest.mark.asyncio
     @patch("aider.coders.base_coder.experimental_mcp_client")
-    def test_coder_creation_with_all_failed_mcp_server(self, mock_mcp_client):
+    async def test_coder_creation_with_all_failed_mcp_server(self, mock_mcp_client):
         """Test that a coder can still be created even if an MCP server fails to initialize."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
@@ -1564,7 +1593,7 @@ This command will print 'Hello, World!' to the console."""
             mock_mcp_client.load_mcp_tools = AsyncMock(side_effect=mock_load_mcp_tools)
 
             # Create coder with both servers
-            coder = Coder.create(
+            coder = await Coder.create(
                 self.GPT35,
                 "diff",
                 io=io,
@@ -1588,21 +1617,23 @@ This command will print 'Hello, World!' to the console."""
                 "Error initializing MCP server failing_server:\nFailed to load tools"
             )
 
-    def test_process_tool_calls_none_response(self):
+    @pytest.mark.asyncio
+    async def test_process_tool_calls_none_response(self):
         """Test that process_tool_calls handles None response correctly."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Test with None response
-            result = coder.process_tool_calls(None)
+            result = await coder.process_tool_calls(None)
             self.assertFalse(result)
 
-    def test_process_tool_calls_no_tool_calls(self):
+    @pytest.mark.asyncio
+    async def test_process_tool_calls_no_tool_calls(self):
         """Test that process_tool_calls handles response with no tool calls."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Create a response with no tool calls
             response = MagicMock()
@@ -1610,12 +1641,13 @@ This command will print 'Hello, World!' to the console."""
             response.choices[0].message = MagicMock()
             response.choices[0].message.tool_calls = []
 
-            result = coder.process_tool_calls(response)
+            result = await coder.process_tool_calls(response)
             self.assertFalse(result)
 
+    @pytest.mark.asyncio
     @patch("aider.coders.base_coder.experimental_mcp_client")
     @patch("asyncio.run")
-    def test_process_tool_calls_with_tools(self, mock_asyncio_run, mock_mcp_client):
+    async def test_process_tool_calls_with_tools(self, mock_asyncio_run, mock_mcp_client):
         """Test that process_tool_calls processes tool calls correctly."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
@@ -1643,7 +1675,7 @@ This command will print 'Hello, World!' to the console."""
             )
 
             # Create coder with mock MCP tools and servers
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
             coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
             coder.mcp_servers = [mock_server]
 
@@ -1660,7 +1692,7 @@ This command will print 'Hello, World!' to the console."""
             mock_asyncio_run.return_value = tool_responses
 
             # Test process_tool_calls
-            result = coder.process_tool_calls(response)
+            result = await coder.process_tool_calls(response)
             self.assertTrue(result)
 
             # Verify that asyncio.run was called
@@ -1673,7 +1705,8 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(coder.cur_messages[1]["tool_call_id"], "test_id")
             self.assertEqual(coder.cur_messages[1]["content"], "Tool execution result")
 
-    def test_process_tool_calls_max_calls_exceeded(self):
+    @pytest.mark.asyncio
+    async def test_process_tool_calls_max_calls_exceeded(self):
         """Test that process_tool_calls handles max tool calls exceeded."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
@@ -1697,13 +1730,13 @@ This command will print 'Hello, World!' to the console."""
             mock_server.name = "test_server"
 
             # Create coder with max tool calls exceeded
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
             coder.num_tool_calls = coder.max_tool_calls
             coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
             coder.mcp_servers = [mock_server]
 
             # Test process_tool_calls
-            result = coder.process_tool_calls(response)
+            result = await coder.process_tool_calls(response)
             self.assertFalse(result)
 
             # Verify that warning was shown
@@ -1711,7 +1744,8 @@ This command will print 'Hello, World!' to the console."""
                 f"Only {coder.max_tool_calls} tool calls allowed, stopping."
             )
 
-    def test_process_tool_calls_user_rejects(self):
+    @pytest.mark.asyncio
+    async def test_process_tool_calls_user_rejects(self):
         """Test that process_tool_calls handles user rejection."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
@@ -1735,12 +1769,12 @@ This command will print 'Hello, World!' to the console."""
             mock_server.name = "test_server"
 
             # Create coder with mock MCP tools
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
             coder.mcp_tools = [("test_server", [{"function": {"name": "test_tool"}}])]
             coder.mcp_servers = [mock_server]
 
             # Test process_tool_calls
-            result = coder.process_tool_calls(response)
+            result = await coder.process_tool_calls(response)
             self.assertFalse(result)
 
             # Verify that confirm_ask was called
@@ -1749,12 +1783,13 @@ This command will print 'Hello, World!' to the console."""
             # Verify that no messages were added
             self.assertEqual(len(coder.cur_messages), 0)
 
+    @pytest.mark.asyncio
     @patch("asyncio.run")
-    def test_execute_tool_calls(self, mock_asyncio_run):
+    async def test_execute_tool_calls(self, mock_asyncio_run):
         """Test that _execute_tool_calls executes tool calls correctly."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Create mock server and tool call
             mock_server = MagicMock()
@@ -1783,7 +1818,7 @@ This command will print 'Hello, World!' to the console."""
             mock_asyncio_run.return_value = tool_responses
 
             # Test _execute_tool_calls directly
-            result = coder._execute_tool_calls(server_tool_calls)
+            result = await coder._execute_tool_calls(server_tool_calls)
 
             # Verify that asyncio.run was called
             mock_asyncio_run.assert_called_once()
@@ -1794,7 +1829,7 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(result[0]["tool_call_id"], "test_id")
             self.assertEqual(result[0]["content"], "Tool execution result")
 
-    def test_auto_commit_with_none_content_message(self):
+    async def test_auto_commit_with_none_content_message(self):
         """
         Verify that auto_commit works with messages that have None content.
         This is common with tool calls.
@@ -1808,7 +1843,7 @@ This command will print 'Hello, World!' to the console."""
             repo.git.commit("-m", "initial")
 
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
+            coder = await Coder.create(self.GPT35, "diff", io=io, fnames=[str(fname)])
 
             coder.cur_messages = [
                 {"role": "user", "content": "do a thing"},
@@ -1838,15 +1873,16 @@ This command will print 'Hello, World!' to the console."""
 
             coder.repo.get_commit_message.assert_called_once()
 
+    @pytest.mark.asyncio
     @patch(
         "aider.coders.base_coder.experimental_mcp_client.call_openai_tool",
         new_callable=AsyncMock,
     )
-    def test_execute_tool_calls_multiple_content(self, mock_call_openai_tool):
+    async def test_execute_tool_calls_multiple_content(self, mock_call_openai_tool):
         """Test that _execute_tool_calls handles multiple content blocks correctly."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Create mock server and tool call
             mock_server = AsyncMock()
@@ -1873,7 +1909,7 @@ This command will print 'Hello, World!' to the console."""
             mock_call_openai_tool.return_value = mock_call_result
 
             # Test _execute_tool_calls directly
-            result = coder._execute_tool_calls(server_tool_calls)
+            result = await coder._execute_tool_calls(server_tool_calls)
 
             # Verify that call_openai_tool was called
             mock_call_openai_tool.assert_called_once()
@@ -1887,15 +1923,16 @@ This command will print 'Hello, World!' to the console."""
             # A fixed version should concatenate the text from all content blocks.
             self.assertEqual(result[0]["content"], "First part. Second part.")
 
+    @pytest.mark.asyncio
     @patch(
         "aider.coders.base_coder.experimental_mcp_client.call_openai_tool",
         new_callable=AsyncMock,
     )
-    def test_execute_tool_calls_blob_content(self, mock_call_openai_tool):
+    async def test_execute_tool_calls_blob_content(self, mock_call_openai_tool):
         """Test that _execute_tool_calls handles BlobResourceContents correctly."""
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
-            coder = Coder.create(self.GPT35, "diff", io=io)
+            coder = await Coder.create(self.GPT35, "diff", io=io)
 
             # Create mock server and tool call
             mock_server = AsyncMock()
@@ -1944,7 +1981,7 @@ This command will print 'Hello, World!' to the console."""
             mock_call_openai_tool.return_value = mock_call_result
 
             # Test _execute_tool_calls directly
-            result = coder._execute_tool_calls(server_tool_calls)
+            result = await coder._execute_tool_calls(server_tool_calls)
 
             # Verify that call_openai_tool was called
             mock_call_openai_tool.assert_called_once()
@@ -1961,5 +1998,4 @@ This command will print 'Hello, World!' to the console."""
             self.assertEqual(result[0]["content"], expected_content)
 
 
-if __name__ == "__main__":
-    unittest.main()
+# Remove the unittest.main() since we're using pytest
