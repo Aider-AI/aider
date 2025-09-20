@@ -5,7 +5,7 @@ import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import git
 from prompt_toolkit.input import DummyInput
@@ -200,7 +200,7 @@ class TestMain(TestCase):
             # Verify the ignored file is not in the chat
             self.assertNotIn(abs_ignored_file, coder.abs_fnames)
 
-    def test_add_command_gitignore_files_flag(self):
+    async def test_add_command_gitignore_files_flag(self):
         with GitTemporaryDirectory() as git_dir:
             git_dir = Path(git_dir)
 
@@ -217,7 +217,7 @@ class TestMain(TestCase):
             rel_ignored_file = "ignored.txt"
 
             # Test without the --add-gitignore-files flag (default: False)
-            coder = main(
+            coder = await main(
                 ["--exit", "--yes"],
                 input=DummyInput(),
                 output=DummyOutput(),
@@ -232,7 +232,7 @@ class TestMain(TestCase):
             self.assertNotIn(abs_ignored_file, coder.abs_fnames)
 
             # Test with --add-gitignore-files set to True
-            coder = main(
+            coder = await main(
                 ["--add-gitignore-files", "--exit", "--yes"],
                 input=DummyInput(),
                 output=DummyOutput(),
@@ -246,7 +246,7 @@ class TestMain(TestCase):
             self.assertIn(abs_ignored_file, coder.abs_fnames)
 
             # Test with --add-gitignore-files set to False
-            coder = main(
+            coder = await main(
                 ["--no-add-gitignore-files", "--exit", "--yes"],
                 input=DummyInput(),
                 output=DummyOutput(),
@@ -327,14 +327,23 @@ class TestMain(TestCase):
         with open(message_file_path, "w", encoding="utf-8") as message_file:
             message_file.write(message_file_content)
 
+        # Create a mock async function for the run method
+        async def mock_run(*args, **kwargs):
+            pass
+
         with patch("aider.coders.Coder.create") as MockCoder:
-            MockCoder.return_value.run = MagicMock()
+            # Create a mock coder instance with an async run method
+            mock_coder_instance = MagicMock()
+            mock_coder_instance.run = AsyncMock()
+            MockCoder.return_value = mock_coder_instance
+
             main(
                 ["--yes", "--message-file", message_file_path],
                 input=DummyInput(),
                 output=DummyOutput(),
             )
-            MockCoder.return_value.run.assert_called_once_with(with_message=message_file_content)
+            # Check that run was called with the correct message
+            mock_coder_instance.run.assert_called_once_with(with_message=message_file_content)
 
         os.remove(message_file_path)
 

@@ -1,6 +1,7 @@
+import asyncio
 import time
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock
 
 from requests.exceptions import ConnectionError, ReadTimeout
 
@@ -49,29 +50,44 @@ class TestHelp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Run the async setup synchronously for unittest compatibility
+        asyncio.run(cls.async_setup_class())
+
+    @classmethod
+    async def async_setup_class(cls):
         io = InputOutput(pretty=False, yes=True)
 
         GPT35 = Model("gpt-3.5-turbo")
 
-        coder = Coder.create(GPT35, None, io)
+        coder = await Coder.create(GPT35, None, io)
         commands = Commands(io, coder)
 
-        help_coder_run = MagicMock(return_value="")
-        aider.coders.HelpCoder.run = help_coder_run
+        help_mock = AsyncMock()
+        help_mock.run.return_value = ""
+        aider.coders.HelpCoder.run = help_mock.run
 
-        def run_help_command():
+        # Simple retry logic without the complex lambda
+        start_time = time.time()
+        delay = 1
+        max_time = 60
+
+        while time.time() - start_time < max_time:
             try:
-                commands.cmd_help("hi")
-            except aider.commands.SwitchCoder:
-                pass
-            else:
-                # If no exception was raised, fail the test
-                assert False, "SwitchCoder exception was not raised"
+                try:
+                    await commands.cmd_help("hi")
+                except aider.commands.SwitchCoder:
+                    break
+                else:
+                    # If no exception was raised, fail the test
+                    assert False, "SwitchCoder exception was not raised"
+                break
+            except (ReadTimeout, ConnectionError):
+                await asyncio.sleep(delay)
+                delay = min(delay * 2, 15)
+        else:
+            raise Exception("Retry timeout exceeded")
 
-        # Use retry with backoff for the help command that loads models
-        cls.retry_with_backoff(run_help_command)
-
-        help_coder_run.assert_called_once()
+        help_mock.run.assert_called_once()
 
     def test_init(self):
         help_inst = Help()

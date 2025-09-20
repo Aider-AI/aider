@@ -41,13 +41,13 @@ class TestChatSummary(TestCase):
         tokenized = self.chat_summary.tokenize(messages)
         self.assertEqual(tokenized, [(2, messages[0]), (2, messages[1])])
 
-    def test_summarize_all(self):
+    async def test_summarize_all(self):
         self.mock_model.simple_send_with_retries.return_value = "This is a summary"
         messages = [
             {"role": "user", "content": "Hello world"},
             {"role": "assistant", "content": "Hi there"},
         ]
-        summary = self.chat_summary.summarize_all(messages)
+        summary = await self.chat_summary.summarize_all(messages)
         self.assertEqual(
             summary,
             [
@@ -58,7 +58,7 @@ class TestChatSummary(TestCase):
             ],
         )
 
-    def test_summarize(self):
+    async def test_summarize(self):
         N = 100
         messages = [None] * (2 * N)
         for i in range(N):
@@ -70,7 +70,7 @@ class TestChatSummary(TestCase):
             "summarize_all",
             return_value=[{"role": "user", "content": "Summary"}],
         ):
-            result = self.chat_summary.summarize(messages)
+            result = await self.chat_summary.summarize(messages)
 
         print(result)
         self.assertIsInstance(result, list)
@@ -78,7 +78,7 @@ class TestChatSummary(TestCase):
         self.assertLess(len(result), len(messages))
         self.assertEqual(result[0]["content"], "Summary")
 
-    def test_fallback_to_second_model(self):
+    async def test_fallback_to_second_model(self):
         mock_model1 = mock.Mock(spec=Model)
         mock_model1.name = "gpt-4"
         mock_model1.simple_send_with_retries = mock.Mock(side_effect=Exception("Model 1 failed"))
@@ -98,7 +98,7 @@ class TestChatSummary(TestCase):
             {"role": "assistant", "content": "Hi there"},
         ]
 
-        summary = chat_summary.summarize_all(messages)
+        summary = await chat_summary.summarize_all(messages)
 
         # Check that both models were tried
         mock_model1.simple_send_with_retries.assert_called_once()

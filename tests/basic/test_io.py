@@ -1,7 +1,8 @@
+import asyncio
 import os
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
@@ -168,7 +169,7 @@ class TestInputOutput(unittest.TestCase):
 
         # Simulate IsADirectoryError
         with patch("aider.io.open", side_effect=IsADirectoryError):
-            result = io.get_input(root, rel_fnames, addable_rel_fnames, commands)
+            result = asyncio.run(io.get_input(root, rel_fnames, addable_rel_fnames, commands))
             self.assertEqual(result, "test input")
             mock_input.assert_called_once()
 
@@ -178,20 +179,20 @@ class TestInputOutput(unittest.TestCase):
 
         # Test case 1: explicit_yes_required=True, self.yes=True
         io.yes = True
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=True))
         self.assertFalse(result)
         mock_input.assert_not_called()
 
         # Test case 2: explicit_yes_required=True, self.yes=False
         io.yes = False
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=True))
         self.assertFalse(result)
         mock_input.assert_not_called()
 
         # Test case 3: explicit_yes_required=True, user input required
         io.yes = None
         mock_input.return_value = "y"
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=True)
+        result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=True))
         self.assertTrue(result)
         mock_input.assert_called_once()
 
@@ -200,7 +201,7 @@ class TestInputOutput(unittest.TestCase):
 
         # Test case 4: explicit_yes_required=False, self.yes=True
         io.yes = True
-        result = io.confirm_ask("Are you sure?", explicit_yes_required=False)
+        result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=False))
         self.assertTrue(result)
         mock_input.assert_not_called()
 
@@ -211,35 +212,37 @@ class TestInputOutput(unittest.TestCase):
 
         # Test case 1: No group preference, user selects 'All'
         mock_input.return_value = "a"
-        result = io.confirm_ask("Are you sure?", group=group)
+        result = asyncio.run(io.confirm_ask("Are you sure?", group=group))
         self.assertTrue(result)
         self.assertEqual(group.preference, "all")
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 2: Group preference is 'All', should not prompt
-        result = io.confirm_ask("Are you sure?", group=group)
+        result = asyncio.run(io.confirm_ask("Are you sure?", group=group))
         self.assertTrue(result)
         mock_input.assert_not_called()
 
         # Test case 3: No group preference, user selects 'Skip all'
         group.preference = None
         mock_input.return_value = "s"
-        result = io.confirm_ask("Are you sure?", group=group)
+        result = asyncio.run(io.confirm_ask("Are you sure?", group=group))
         self.assertFalse(result)
         self.assertEqual(group.preference, "skip")
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 4: Group preference is 'Skip all', should not prompt
-        result = io.confirm_ask("Are you sure?", group=group)
+        result = asyncio.run(io.confirm_ask("Are you sure?", group=group))
         self.assertFalse(result)
         mock_input.assert_not_called()
 
         # Test case 5: explicit_yes_required=True, should not offer 'All' option
         group.preference = None
         mock_input.return_value = "y"
-        result = io.confirm_ask("Are you sure?", group=group, explicit_yes_required=True)
+        result = asyncio.run(
+            io.confirm_ask("Are you sure?", group=group, explicit_yes_required=True)
+        )
         self.assertTrue(result)
         self.assertIsNone(group.preference)
         mock_input.assert_called_once()
@@ -252,49 +255,49 @@ class TestInputOutput(unittest.TestCase):
 
         # Test case 1: User selects 'Yes'
         mock_input.return_value = "y"
-        result = io.confirm_ask("Are you sure?")
+        result = asyncio.run(io.confirm_ask("Are you sure?"))
         self.assertTrue(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 2: User selects 'No'
         mock_input.return_value = "n"
-        result = io.confirm_ask("Are you sure?")
+        result = asyncio.run(io.confirm_ask("Are you sure?"))
         self.assertFalse(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 3: Empty input (default to Yes)
         mock_input.return_value = ""
-        result = io.confirm_ask("Are you sure?")
+        result = asyncio.run(io.confirm_ask("Are you sure?"))
         self.assertTrue(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 4: 'skip' functions as 'no' without group
         mock_input.return_value = "s"
-        result = io.confirm_ask("Are you sure?")
+        result = asyncio.run(io.confirm_ask("Are you sure?"))
         self.assertFalse(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 5: 'all' functions as 'yes' without group
         mock_input.return_value = "a"
-        result = io.confirm_ask("Are you sure?")
+        result = asyncio.run(io.confirm_ask("Are you sure?"))
         self.assertTrue(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 6: Full word 'skip' functions as 'no' without group
         mock_input.return_value = "skip"
-        result = io.confirm_ask("Are you sure?")
+        result = asyncio.run(io.confirm_ask("Are you sure?"))
         self.assertFalse(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
 
         # Test case 7: Full word 'all' functions as 'yes' without group
         mock_input.return_value = "all"
-        result = io.confirm_ask("Are you sure?")
+        result = asyncio.run(io.confirm_ask("Are you sure?"))
         self.assertTrue(result)
         mock_input.assert_called_once()
         mock_input.reset_mock()
@@ -305,7 +308,7 @@ class TestInputOutput(unittest.TestCase):
         io = InputOutput(pretty=False, fancy_input=False)
 
         # First call: user selects "Don't ask again"
-        result = io.confirm_ask("Are you sure?", allow_never=True)
+        result = asyncio.run(io.confirm_ask("Are you sure?", allow_never=True))
         self.assertFalse(result)
         mock_input.assert_called_once()
         self.assertIn(("Are you sure?", None), io.never_prompts)
@@ -314,28 +317,32 @@ class TestInputOutput(unittest.TestCase):
         mock_input.reset_mock()
 
         # Second call: should not prompt, immediately return False
-        result = io.confirm_ask("Are you sure?", allow_never=True)
+        result = asyncio.run(io.confirm_ask("Are you sure?", allow_never=True))
         self.assertFalse(result)
         mock_input.assert_not_called()
 
         # Test with subject parameter
         mock_input.reset_mock()
         mock_input.side_effect = ["d"]
-        result = io.confirm_ask("Confirm action?", subject="Subject Text", allow_never=True)
+        result = asyncio.run(
+            io.confirm_ask("Confirm action?", subject="Subject Text", allow_never=True)
+        )
         self.assertFalse(result)
         mock_input.assert_called_once()
         self.assertIn(("Confirm action?", "Subject Text"), io.never_prompts)
 
         # Subsequent call with the same question and subject
         mock_input.reset_mock()
-        result = io.confirm_ask("Confirm action?", subject="Subject Text", allow_never=True)
+        result = asyncio.run(
+            io.confirm_ask("Confirm action?", subject="Subject Text", allow_never=True)
+        )
         self.assertFalse(result)
         mock_input.assert_not_called()
 
         # Test that allow_never=False does not add to never_prompts
         mock_input.reset_mock()
         mock_input.side_effect = ["d", "n"]
-        result = io.confirm_ask("Do you want to proceed?", allow_never=False)
+        result = asyncio.run(io.confirm_ask("Do you want to proceed?", allow_never=False))
         self.assertFalse(result)
         self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
@@ -387,18 +394,21 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         io = InputOutput(fancy_input=True)
         io.prompt_session = MagicMock()
 
+        # Use AsyncMock for prompt_async (for confirm_ask)
+        io.prompt_session.prompt_async = AsyncMock(side_effect=KeyboardInterrupt)
+
         # Start in multiline mode
         io.multiline_mode = True
 
-        # Mock prompt() to raise KeyboardInterrupt
-        io.prompt_session.prompt.side_effect = KeyboardInterrupt
-
-        # Test confirm_ask()
+        # Test confirm_ask() - this is now async, so we need to handle it differently
         with self.assertRaises(KeyboardInterrupt):
-            io.confirm_ask("Test question?")
+            asyncio.run(io.confirm_ask("Test question?"))
         self.assertTrue(io.multiline_mode)  # Should be restored
 
-        # Test prompt_ask()
+        # Test prompt_ask() - this is still synchronous
+        # Mock the synchronous prompt method to raise KeyboardInterrupt
+        io.prompt_session.prompt = MagicMock(side_effect=KeyboardInterrupt)
+
         with self.assertRaises(KeyboardInterrupt):
             io.prompt_ask("Test prompt?")
         self.assertTrue(io.multiline_mode)  # Should be restored
@@ -408,17 +418,17 @@ class TestInputOutputMultilineMode(unittest.TestCase):
         io = InputOutput(fancy_input=True)
         io.prompt_session = MagicMock()
 
+        # Use AsyncMock for prompt_async that returns "y"
+        io.prompt_session.prompt_async = AsyncMock(return_value="y")
+
         # Start in multiline mode
         io.multiline_mode = True
 
-        # Mock prompt() to return normally
-        io.prompt_session.prompt.return_value = "y"
-
-        # Test confirm_ask()
-        io.confirm_ask("Test question?")
+        # Test confirm_ask() - this is now async
+        asyncio.run(io.confirm_ask("Test question?"))
         self.assertTrue(io.multiline_mode)  # Should be restored
 
-        # Test prompt_ask()
+        # Test prompt_ask() - this is still synchronous
         io.prompt_ask("Test prompt?")
         self.assertTrue(io.multiline_mode)  # Should be restored
 
