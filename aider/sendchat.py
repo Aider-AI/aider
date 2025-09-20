@@ -33,6 +33,9 @@ def ensure_alternating_roles(messages):
     of the same 'user' or 'assistant' role are found. Messages with other
     roles (e.g. 'system', 'tool') are ignored by the alternation logic.
 
+    Also handles tool call sequences properly - when an assistant message
+    contains tool_calls, processes the complete tool sequence atomically.
+
     Args:
         messages: List of message dictionaries with 'role' and 'content' keys.
 
@@ -42,26 +45,81 @@ def ensure_alternating_roles(messages):
     if not messages:
         return messages
 
-    fixed_messages = []
+    result = []
+    i = 0
+    n = len(messages)
     prev_role = None
 
-    for msg in messages:
-        current_role = msg.get("role")  # Get 'role', None if missing
+    while i < n:
+        msg = messages[i]
+        role = msg.get("role")
 
-        # Only consider user/assistant roles for alternation
-        if current_role not in ("user", "assistant"):
-            fixed_messages.append(msg)
+        # Handle tool call sequences atomically
+        if role == "assistant" and "tool_calls" in msg and msg["tool_calls"]:
+            # Start of tool sequence - collect all related messages
+            tool_sequence = [msg]
+            expected_ids = {call["id"] for call in msg["tool_calls"]}
+            i += 1
+
+            # Collect tool responses
+            while i < n and expected_ids:
+                next_msg = messages[i]
+                if next_msg.get("role") == "tool" and next_msg.get("tool_call_id") in expected_ids:
+                    tool_sequence.append(next_msg)
+                    expected_ids.discard(next_msg.get("tool_call_id"))
+                    i += 1
+                else:
+                    break
+
+            # Add missing tool responses as empty
+            for tool_id in expected_ids:
+                tool_sequence.append({"role": "tool", "tool_call_id": tool_id, "content": ""})
+
+            # Add the complete tool sequence to result
+            for tool_msg in tool_sequence:
+                result.append(tool_msg)
+
+            # Update prev_role to assistant after processing tool sequence
+            prev_role = "assistant"
             continue
 
-        # If current role same as previous, insert empty message
-        # of the opposite role
-        if current_role == prev_role:
-            if current_role == "user":
-                fixed_messages.append({"role": "assistant", "content": ""})
-            else:
-                fixed_messages.append({"role": "user", "content": ""})
+        # Handle normal message alternation
+        if role in ("user", "assistant"):
+            if role == prev_role:
+                # Insert empty message of opposite role
+                opposite_role = "user" if role == "assistant" else "assistant"
+                result.append({"role": opposite_role, "content": ""})
+                prev_role = opposite_role
 
-        fixed_messages.append(msg)
-        prev_role = current_role
+            result.append(msg)
+            prev_role = role
+        else:
+            # For non-user/assistant roles, just add them directly
+            result.append(msg)
 
-    return fixed_messages
+        i += 1
+
+    # Consolidate consecutive empty messages in a single pass
+    consolidated = []
+    for msg in result:
+        if not consolidated:
+            consolidated.append(msg)
+            continue
+
+        last_msg = consolidated[-1]
+        current_role = msg.get("role")
+        last_role = last_msg.get("role")
+
+        # Skip consecutive empty messages with the same role
+        if (
+            current_role in ("user", "assistant")
+            and last_role in ("user", "assistant")
+            and current_role == last_role
+            and msg.get("content") == ""
+            and last_msg.get("content") == ""
+        ):
+            continue
+
+        consolidated.append(msg)
+
+    return consolidated
