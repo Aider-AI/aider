@@ -27,11 +27,25 @@ from aider.repo import ANY_GIT_ERROR
 from aider.tools import (
     command_interactive_schema,
     command_schema,
+    delete_block_schema,
+    delete_line_schema,
+    delete_lines_schema,
+    extract_lines_schema,
+    grep_schema,
+    indent_lines_schema,
+    insert_block_schema,
+    list_changes_schema,
     ls_schema,
     make_editable_schema,
     make_readonly_schema,
     remove_schema,
+    replace_all_schema,
+    replace_line_schema,
+    replace_lines_schema,
     replace_text_schema,
+    show_numbered_context_schema,
+    undo_change_schema,
+    view_files_matching_schema,
     view_files_with_symbol_schema,
     view_schema,
 )
@@ -58,7 +72,6 @@ from aider.tools.undo_change import _execute_undo_change
 from aider.tools.view import execute_view
 
 # Import tool functions
-from aider.tools.view_files_at_glob import execute_view_files_at_glob
 from aider.tools.view_files_matching import execute_view_files_matching
 from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol
 
@@ -68,7 +81,6 @@ from .navigator_legacy_prompts import NavigatorLegacyPrompts
 from .navigator_prompts import NavigatorPrompts
 
 # UNUSED TOOL SCHEMAS
-# view_files_at_glob_schema,
 # view_files_matching_schema,
 # grep_schema,
 # replace_all_schema,
@@ -165,8 +177,7 @@ class NavigatorCoder(Coder):
     def get_local_tool_schemas(self):
         """Returns the JSON schemas for all local tools."""
         return [
-            # view_files_at_glob_schema,
-            # view_files_matching_schema,
+            view_files_matching_schema,
             ls_schema,
             view_schema,
             remove_schema,
@@ -175,20 +186,20 @@ class NavigatorCoder(Coder):
             view_files_with_symbol_schema,
             command_schema,
             command_interactive_schema,
-            # grep_schema,
+            grep_schema,
             replace_text_schema,
-            # replace_all_schema,
-            # insert_block_schema,
-            # delete_block_schema,
-            # replace_line_schema,
-            # replace_lines_schema,
-            # indent_lines_schema,
-            # delete_line_schema,
-            # delete_lines_schema,
-            # undo_change_schema,
-            # list_changes_schema,
-            # extract_lines_schema,
-            # show_numbered_context_schema,
+            replace_all_schema,
+            insert_block_schema,
+            delete_block_schema,
+            replace_line_schema,
+            replace_lines_schema,
+            indent_lines_schema,
+            delete_line_schema,
+            delete_lines_schema,
+            undo_change_schema,
+            list_changes_schema,
+            extract_lines_schema,
+            show_numbered_context_schema,
         ]
 
     async def initialize_mcp_tools(self):
@@ -241,7 +252,6 @@ class NavigatorCoder(Coder):
 
                 tasks = []
                 tool_functions = {
-                    "viewfilesatglob": execute_view_files_at_glob,
                     "viewfilesmatching": execute_view_files_matching,
                     "ls": execute_ls,
                     "view": execute_view,
@@ -251,20 +261,20 @@ class NavigatorCoder(Coder):
                     "viewfileswithsymbol": _execute_view_files_with_symbol,
                     "command": _execute_command,
                     "commandinteractive": _execute_command_interactive,
-                    # "grep": _execute_grep,
+                    "grep": _execute_grep,
                     "replacetext": _execute_replace_text,
                     "replaceall": _execute_replace_all,
                     "insertblock": _execute_insert_block,
                     "deleteblock": _execute_delete_block,
-                    # "replaceline": _execute_replace_line,
-                    # "replacelines": _execute_replace_lines,
-                    # "indentlines": _execute_indent_lines,
-                    # "deleteline": _execute_delete_line,
-                    # "deletelines": _execute_delete_lines,
+                    "replaceline": _execute_replace_line,
+                    "replacelines": _execute_replace_lines,
+                    "indentlines": _execute_indent_lines,
+                    "deleteline": _execute_delete_line,
+                    "deletelines": _execute_delete_lines,
                     "undochange": _execute_undo_change,
                     "listchanges": _execute_list_changes,
                     "extractlines": _execute_extract_lines,
-                    # "shownumberedcontext": execute_show_numbered_context,
+                    "shownumberedcontext": execute_show_numbered_context,
                 }
 
                 func = tool_functions.get(norm_tool_name)
@@ -1360,14 +1370,7 @@ class NavigatorCoder(Coder):
                 # Normalize tool name for case-insensitive matching
                 norm_tool_name = tool_name.lower()
 
-                if norm_tool_name == "viewfilesatglob":
-                    pattern = params.get("pattern")
-                    if pattern is not None:
-                        # Call the imported function
-                        result_message = execute_view_files_at_glob(self, pattern=pattern)
-                    else:
-                        result_message = "Error: Missing 'pattern' parameter for ViewFilesAtGlob"
-                elif norm_tool_name == "viewfilesmatching":
+                if norm_tool_name == "viewfilesmatching":
                     pattern = params.get("pattern")
                     file_pattern = params.get("file_pattern")  # Optional
                     regex = params.get("regex", False)  # Default to False if not provided
@@ -2032,7 +2035,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
 
         Parameters:
         - file_path: Path to the file to add
-        - explicit: Whether this was an explicit view command (vs. implicit through ViewFilesAtGlob/ViewFilesMatching)
+        - explicit: Whether this was an explicit view command (vs. implicit through ViewFilesMatching)
         """
         # Check if file exists
         abs_path = self.abs_root_path(file_path)
