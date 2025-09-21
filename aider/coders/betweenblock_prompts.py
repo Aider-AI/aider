@@ -23,7 +23,7 @@ Provide your response using the following structure:
    In the code block provide enough information to determine a piece of code where the changes needs to be made.
 3. Provide a summary of what the changes achieve, listing the key modifications.
 
-Write the indentation and code structure of exactly how you believe the final code will look (do not output lines that will not be in the final code after they are merged).
+Write the indentation and code structure of exactly how you believe the final code will look.
 Endeavour to put declarations and implementations of functions and variables in the logical order used in existing code.
 Write code in the same style as the rest of the file.
 {quad_backtick_reminder}
@@ -72,6 +72,15 @@ def func2():
     print("func2")
 {fence[1]}
 
+To delete a section of the file, write a comment with instructions for code apply model to remove this lines. For example, the following code block rolls back the addition of the func2 above:
+subdir/file1.py
+```python
+@BETWEEN@ "def func1():" AND "def func4():"
+# remove function func2()
+```
+
+To move code within a file, remove it from its current location, and then add in the new location.
+
 Or, if you need to rewrite the most lines of the file, add the line "@WHOLE FILE@" at the beginning of the code block and then write entire content of the file. For example:
 subdir/file1.py
 {fence[0]}python
@@ -93,6 +102,7 @@ Do not use the @WHOLE FILE@ mode if you only need to change a few lines in a lar
     )
     merge_prompt = """Merge all changes from the <update> snippet into the <code> below.
 - In <code> block preserve the code's structure, order, comments, and indentation exactly.
+- <update> snippet can contain instructions like "keep some function" or "remove some section of code". Carefully follow these instructions when merging the changes and do not write them to output.
 - Adjust the code style in <update> snippet to be the same as in the existing code.
 - Output only the updated code, enclosed within <updated-code> and </updated-code> tags.
 - Do not include any additional text, explanations, placeholders, ellipses, or code fences.
