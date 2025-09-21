@@ -367,6 +367,7 @@ class Coder:
         context_compaction_max_tokens=None,
         context_compaction_summary_tokens=8192,
         map_cache_dir=".",
+        repomap_in_memory=False,
     ):
         # initialize from args.map_cache_dir
         self.map_cache_dir = map_cache_dir
@@ -555,6 +556,8 @@ class Coder:
                 map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
                 max_code_line_length=map_max_line_length,
+                repo_root=self.root,
+                use_memory_cache=repomap_in_memory,
             )
 
         self.summarizer = summarizer or ChatSummary(
@@ -853,6 +856,19 @@ class Coder:
         mentioned_fnames.update(self.get_ident_filename_matches(mentioned_idents))
 
         all_abs_files = set(self.get_all_abs_files())
+
+        # Exclude metadata/docs from repo map inputs to reduce parsing overhead
+        def _include_in_map(abs_path):
+            try:
+                rel = self.get_rel_fname(abs_path)
+            except Exception:
+                rel = str(abs_path)
+            parts = Path(rel).parts
+            if ".meta" in parts or ".docs" in parts:
+                return False
+            return True
+
+        all_abs_files = {p for p in all_abs_files if _include_in_map(p)}
         repo_abs_read_only_fnames = set(self.abs_read_only_fnames) & all_abs_files
         repo_abs_read_only_stubs_fnames = set(self.abs_read_only_stubs_fnames) & all_abs_files
         chat_files = (
