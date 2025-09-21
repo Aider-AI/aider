@@ -30,6 +30,8 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [Fix Deepseek model configurations](https://github.com/Aider-AI/aider/commit/c839a6dd8964d702172cae007375e299732d3823)
 * [Relax Version Pinning For Easier Distribution](https://github.com/dwash96/aider-ce/issues/18)
 * [Remove Confirm Responses from History](https://github.com/Aider-AI/aider/pull/3958)
+* [Benchmark Results By Language](https://github.com/dwash96/aider-ce/pull/27)
+* [Allow Benchmarks to Use Repo Map For Better Accuracy](https://github.com/dwash96/aider-ce/pull/25)
 
 ### Other Notes
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)

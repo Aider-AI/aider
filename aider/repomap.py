@@ -146,15 +146,22 @@ class RepoMap:
         map_mul_no_files=8,
         refresh="auto",
         max_code_line_length=100,
+        repo_root=None,
+        use_memory_cache=False,
     ):
         self.io = io
         self.verbose = verbose
         self.refresh = refresh
 
         self.map_cache_dir = map_cache_dir
-        self.root = os.getcwd()
+        # Prefer an explicit repo root (eg per-test repo), fallback to CWD
+        self.root = repo_root or os.getcwd()
 
-        self.load_tags_cache()
+        # Allow opting into an in-memory tags cache to avoid disk/SQLite locks
+        if use_memory_cache:
+            self.TAGS_CACHE = dict()
+        else:
+            self.load_tags_cache()
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
