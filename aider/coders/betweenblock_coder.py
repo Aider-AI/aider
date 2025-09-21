@@ -1,10 +1,11 @@
 # flake8: noqa: E501
-
+import os
 import re
 from dataclasses import dataclass, field, fields
 from pathlib import Path
 
 from aider.utils import format_content, format_messages
+from aider.waiting import WaitingSpinner
 
 from .base_coder import Coder
 from .betweenblock_prompts import BetweenBlockPrompts
@@ -199,7 +200,7 @@ class BetweenBlockCoder(Coder):
 
         return possible_idx
 
-    def apply_between_edit(self, content_lines, edit):
+    def apply_between_edit(self, content_lines, edit, spinner_text):
         lines_pos = [self.find_existing_line(content_lines, l) for l in edit.tag.lines]
         if any(len(line_pos) == 0 for line_pos in lines_pos):
             not_found_line = edit.tag.lines[0 if len(lines_pos[0]) == 0 else 1]
@@ -323,9 +324,12 @@ class BetweenBlockCoder(Coder):
 
         for tryIdx in range(2):
             self.io.log_llm_history("TO LLM (MERGE)", format_messages(messages))
-            updated_responce = merge_model.simple_send_with_retries(
-                messages, temperature=merge_model.merge_temperature
-            )
+            if tryIdx != 0:
+                spinner_text = spinner_text + f" (retry {tryIdx})"
+            with WaitingSpinner(spinner_text):
+                updated_responce = merge_model.simple_send_with_retries(
+                    messages, temperature=merge_model.merge_temperature
+                )
             self.io.log_llm_history(
                 "LLM RESPONSE (MERGE)", format_content("ASSISTANT", updated_responce)
             )
@@ -403,8 +407,9 @@ class BetweenBlockCoder(Coder):
         failed: list[tuple[BetweenCoderEdit, str]] = []
         passed = []
 
-        for edit in edits:
+        for idx, edit in enumerate(edits):
             full_path = self.abs_root_path(edit.path)
+            base_name = os.path.basename(edit.path)
 
             content = None
             content_lines = None
@@ -416,7 +421,10 @@ class BetweenBlockCoder(Coder):
                 if edit.tag.is_bad:
                     failed.append((edit, bad_between_tag_err))
                     continue
-                success, changed_lines, error_message = self.apply_between_edit(content_lines, edit)
+                spinner_text = f"Merging snippet {idx+1} into {base_name}"
+                success, changed_lines, error_message = self.apply_between_edit(
+                    content_lines, edit, spinner_text
+                )
                 del content_lines  # became invalid after call
 
                 if success:
