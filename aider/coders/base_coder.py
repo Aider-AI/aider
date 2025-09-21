@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import asyncio
-import os
 import base64
 import hashlib
 import json
