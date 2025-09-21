@@ -1057,6 +1057,9 @@ class Coder:
                             self.show_announcements()
                         self.suppress_announcements_for_next_prompt = False
 
+                        # Stop spinner before showing announcements or getting input
+                        self.io.stop_spinner()
+
                         self.copy_context()
                         self.input_task = asyncio.create_task(self.get_input())
                         input_task = self.input_task
@@ -1080,6 +1083,7 @@ class Coder:
                                         await processing_task
                                     except asyncio.CancelledError:
                                         pass
+                                    self.io.stop_spinner()
                                     processing_task = None
 
                             try:
@@ -1097,16 +1101,22 @@ class Coder:
                             except (asyncio.CancelledError, KeyboardInterrupt):
                                 pass
                             processing_task = None
+                            # Stop spinner when processing task completes
+                            self.io.stop_spinner()
 
                     if user_message and self.run_one_completed and self.compact_context_completed:
                         processing_task = asyncio.create_task(
                             self._processing_logic(user_message, preproc)
                         )
+                        # Start spinner for processing task
+                        self.io.start_spinner("Processing...")
                         user_message = None  # Clear message after starting task
                 except KeyboardInterrupt:
                     if processing_task:
                         processing_task.cancel()
                         processing_task = None
+                        # Stop spinner when processing task is cancelled
+                        self.io.stop_spinner()
                     if input_task:
                         self.io.set_placeholder("")
                         input_task.cancel()
@@ -1175,6 +1185,9 @@ class Coder:
             message = await self.preproc_user_input(user_message)
         else:
             message = user_message
+
+        if self.commands.is_command(user_message):
+            return
 
         while True:
             self.reflected_message = None
@@ -1881,7 +1894,7 @@ class Coder:
             ]
             return
 
-        edited = self.apply_updates()
+        edited = await self.apply_updates()
 
         if edited:
             self.aider_edited_files.update(edited)
@@ -2496,6 +2509,48 @@ class Coder:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
 
     async def send(self, messages, model=None, functions=None, tools=None):
+        # Add tool usage context if this is a navigator coder with tool history
+        if hasattr(self, "tool_usage_history") and self.tool_usage_history:
+            # Get the last user message
+            last_user_message = messages[-1]
+            repetitive_tools = (
+                self._get_repetitive_tools() if hasattr(self, "_get_repetitive_tools") else set()
+            )
+
+            if repetitive_tools:
+                tool_context = (
+                    self._generate_tool_context(repetitive_tools)
+                    if hasattr(self, "_generate_tool_context")
+                    else ""
+                )
+
+                if tool_context and "content" in last_user_message:
+                    # Add tool context to the user message
+                    if messages[-1].get("role") == "user":
+                        messages[-1][
+                            "content"
+                        ] = f"{tool_context}\n\n{last_user_message['content']}"
+
+                # Filter out repetitive tools from the context
+                if tools:
+                    tools = [
+                        tool
+                        for tool in tools
+                        if tool.get("function", {}).get("name", "") not in repetitive_tools
+                    ]
+                if functions:
+                    functions = [
+                        func
+                        for func in functions
+                        if func.get("function", {}).get("name", "") not in repetitive_tools
+                    ]
+
+                if self.verbose:
+                    self.io.tool_output(
+                        "Temporarily hiding repetitive tool(s) to encourage progress:"
+                        f" {', '.join(sorted(repetitive_tools))}"
+                    )
+
         self.got_reasoning_content = False
         self.ended_reasoning_content = False
 
@@ -2996,7 +3051,7 @@ class Coder:
         self.io.tool_output(f"Committing {path} before applying edits.")
         self.need_commit_before_edits.add(path)
 
-    def allowed_to_edit(self, path):
+    async def allowed_to_edit(self, path):
         full_path = self.abs_root_path(path)
         if self.repo:
             need_to_add = not self.repo.path_in_repo(path)
@@ -3031,7 +3086,7 @@ class Coder:
             self.check_added_files()
             return True
 
-        if not self.io.confirm_ask(
+        if not await self.io.confirm_ask(
             "Allow edits to file that has not been added to the chat?",
             subject=path,
         ):
@@ -3074,7 +3129,7 @@ class Coder:
         self.io.tool_warning(urls.edit_errors)
         self.warning_given = True
 
-    def prepare_to_edit(self, edits):
+    async def prepare_to_edit(self, edits):
         res = []
         seen = dict()
 
@@ -3090,7 +3145,7 @@ class Coder:
             if path in seen:
                 allowed = seen[path]
             else:
-                allowed = self.allowed_to_edit(path)
+                allowed = await self.allowed_to_edit(path)
                 seen[path] = allowed
 
             if allowed:
@@ -3101,12 +3156,12 @@ class Coder:
 
         return res
 
-    def apply_updates(self):
+    async def apply_updates(self):
         edited = set()
         try:
             edits = self.get_edits()
             edits = self.apply_edits_dry_run(edits)
-            edits = self.prepare_to_edit(edits)
+            edits = await self.prepare_to_edit(edits)
             edited = set(edit[0] for edit in edits)
 
             self.apply_edits(edits)

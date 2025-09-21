@@ -1020,6 +1020,9 @@ class InputOutput:
 
         try:
             return await asyncio.create_task(self._confirm_ask(*args, **kwargs))
+        except KeyboardInterrupt:
+            # Re-raise KeyboardInterrupt to allow it to propagate
+            raise
         finally:
             if interrupted_for_confirmation:
                 coder.confirmation_in_progress = False

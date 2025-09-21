@@ -107,7 +107,7 @@ class WholeFileFunctionCoder(Coder):
 
         return "\n".join(show_diff)
 
-    def _update_files(self):
+    async def _update_files(self):
         name = self.partial_response_function_call.get("name")
         if name and name != "write_file":
             raise ValueError(f'Unknown function_call name="{name}", use name="write_file"')
@@ -128,7 +128,7 @@ class WholeFileFunctionCoder(Coder):
             if not content:
                 raise ValueError(f"Missing content parameter: {file_upd}")
 
-            if self.allowed_to_edit(path, content):
+            if await self.allowed_to_edit(path, content):
                 edited.add(path)
 
         return edited

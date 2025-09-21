@@ -43,9 +43,9 @@ class TestCoder(unittest.TestCase):
             io.confirm_ask = AsyncMock(return_value=True)
             coder = await Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
-            self.assertTrue(coder.allowed_to_edit("added.txt"))
-            self.assertTrue(coder.allowed_to_edit("repo.txt"))
-            self.assertTrue(coder.allowed_to_edit("new.txt"))
+            self.assertTrue(await coder.allowed_to_edit("added.txt"))
+            self.assertTrue(await coder.allowed_to_edit("repo.txt"))
+            self.assertTrue(await coder.allowed_to_edit("new.txt"))
 
             self.assertIn("repo.txt", str(coder.abs_fnames))
             self.assertIn("new.txt", str(coder.abs_fnames))
@@ -71,9 +71,9 @@ class TestCoder(unittest.TestCase):
 
             coder = await Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
-            self.assertTrue(coder.allowed_to_edit("added.txt"))
-            self.assertFalse(coder.allowed_to_edit("repo.txt"))
-            self.assertFalse(coder.allowed_to_edit("new.txt"))
+            self.assertTrue(await coder.allowed_to_edit("added.txt"))
+            self.assertFalse(await coder.allowed_to_edit("repo.txt"))
+            self.assertFalse(await coder.allowed_to_edit("new.txt"))
 
             self.assertNotIn("repo.txt", str(coder.abs_fnames))
             self.assertNotIn("new.txt", str(coder.abs_fnames))
@@ -95,11 +95,11 @@ class TestCoder(unittest.TestCase):
 
             coder = await Coder.create(self.GPT35, None, io, fnames=["added.txt"])
 
-            self.assertTrue(coder.allowed_to_edit("added.txt"))
+            self.assertTrue(await coder.allowed_to_edit("added.txt"))
             self.assertFalse(coder.need_commit_before_edits)
 
             fname.write_text("dirty!")
-            self.assertTrue(coder.allowed_to_edit("added.txt"))
+            self.assertTrue(await coder.allowed_to_edit("added.txt"))
             self.assertTrue(coder.need_commit_before_edits)
 
     async def test_get_files_content(self):

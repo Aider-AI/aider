@@ -92,7 +92,7 @@ class EditBlockFunctionCoder(Coder):
         res = json.dumps(args, indent=4)
         return res
 
-    def _update_files(self):
+    async def _update_files(self):
         name = self.partial_response_function_call.get("name")
 
         if name and name != "replace_lines":
@@ -121,7 +121,7 @@ class EditBlockFunctionCoder(Coder):
             if updated and not updated.endswith("\n"):
                 updated += "\n"
 
-            full_path = self.allowed_to_edit(path)
+            full_path = await self.allowed_to_edit(path)
             if not full_path:
                 continue
             content = self.io.read_text(full_path)

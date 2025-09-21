@@ -10,7 +10,7 @@ import time
 import traceback
 
 # Add necessary imports if not already present
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
 
@@ -24,27 +24,14 @@ from aider.mcp.server import LocalServer
 from aider.repo import ANY_GIT_ERROR
 
 # Import run_cmd for potentially interactive execution and run_cmd_subprocess for guaranteed non-interactive
-from aider.tools import (  # grep_schema,; show_numbered_context_schema,
+from aider.tools import (
     command_interactive_schema,
     command_schema,
-    delete_block_schema,
-    delete_line_schema,
-    delete_lines_schema,
-    extract_lines_schema,
-    indent_lines_schema,
-    insert_block_schema,
-    list_changes_schema,
     ls_schema,
     make_editable_schema,
     make_readonly_schema,
     remove_schema,
-    replace_all_schema,
-    replace_line_schema,
-    replace_lines_schema,
     replace_text_schema,
-    undo_change_schema,
-    view_files_at_glob_schema,
-    view_files_matching_schema,
     view_files_with_symbol_schema,
     view_schema,
 )
@@ -80,6 +67,23 @@ from .editblock_coder import do_replace, find_original_update_blocks, find_simil
 from .navigator_legacy_prompts import NavigatorLegacyPrompts
 from .navigator_prompts import NavigatorPrompts
 
+# UNUSED TOOL SCHEMAS
+# view_files_at_glob_schema,
+# view_files_matching_schema,
+# grep_schema,
+# replace_all_schema,
+# insert_block_schema,
+# delete_block_schema,
+# replace_line_schema,
+# replace_lines_schema,
+# indent_lines_schema,
+# delete_line_schema,
+# delete_lines_schema,
+# undo_change_schema,
+# list_changes_schema,
+# extract_lines_schema,
+# show_numbered_context_schema,
+
 
 class NavigatorCoder(Coder):
     """Mode where the LLM autonomously manages which files are in context."""
@@ -98,6 +102,29 @@ class NavigatorCoder(Coder):
 
         # Dictionary to track recently removed files
         self.recently_removed = {}
+
+        # Tool usage history
+        self.tool_usage_history = []
+        self.tool_usage_retries = 10
+        self.read_tools = {
+            "viewfilesatglob",
+            "viewfilesmatching",
+            "ls",
+            "viewfileswithsymbol",
+            "grep",
+            "listchanges",
+            "extractlines",
+            "shownumberedcontext",
+        }
+        self.write_tools = {
+            "command",
+            "commandinteractive",
+            "insertblock",
+            "replaceblock",
+            "replaceall",
+            "replacetext",
+            "undochange",
+        }
 
         # Configuration parameters
         self.max_tool_calls = 100  # Maximum number of tool calls per response
@@ -138,8 +165,8 @@ class NavigatorCoder(Coder):
     def get_local_tool_schemas(self):
         """Returns the JSON schemas for all local tools."""
         return [
-            view_files_at_glob_schema,
-            view_files_matching_schema,
+            # view_files_at_glob_schema,
+            # view_files_matching_schema,
             ls_schema,
             view_schema,
             remove_schema,
@@ -150,17 +177,17 @@ class NavigatorCoder(Coder):
             command_interactive_schema,
             # grep_schema,
             replace_text_schema,
-            replace_all_schema,
-            insert_block_schema,
-            delete_block_schema,
-            replace_line_schema,
-            replace_lines_schema,
-            indent_lines_schema,
-            delete_line_schema,
-            delete_lines_schema,
-            undo_change_schema,
-            list_changes_schema,
-            extract_lines_schema,
+            # replace_all_schema,
+            # insert_block_schema,
+            # delete_block_schema,
+            # replace_line_schema,
+            # replace_lines_schema,
+            # indent_lines_schema,
+            # delete_line_schema,
+            # delete_lines_schema,
+            # undo_change_schema,
+            # list_changes_schema,
+            # extract_lines_schema,
             # show_numbered_context_schema,
         ]
 
@@ -224,20 +251,20 @@ class NavigatorCoder(Coder):
                     "viewfileswithsymbol": _execute_view_files_with_symbol,
                     "command": _execute_command,
                     "commandinteractive": _execute_command_interactive,
-                    "grep": _execute_grep,
+                    # "grep": _execute_grep,
                     "replacetext": _execute_replace_text,
                     "replaceall": _execute_replace_all,
                     "insertblock": _execute_insert_block,
                     "deleteblock": _execute_delete_block,
-                    "replaceline": _execute_replace_line,
-                    "replacelines": _execute_replace_lines,
-                    "indentlines": _execute_indent_lines,
-                    "deleteline": _execute_delete_line,
-                    "deletelines": _execute_delete_lines,
+                    # "replaceline": _execute_replace_line,
+                    # "replacelines": _execute_replace_lines,
+                    # "indentlines": _execute_indent_lines,
+                    # "deleteline": _execute_delete_line,
+                    # "deletelines": _execute_delete_lines,
                     "undochange": _execute_undo_change,
                     "listchanges": _execute_list_changes,
                     "extractlines": _execute_extract_lines,
-                    "shownumberedcontext": execute_show_numbered_context,
+                    # "shownumberedcontext": execute_show_numbered_context,
                 }
 
                 func = tool_functions.get(norm_tool_name)
@@ -838,6 +865,20 @@ class NavigatorCoder(Coder):
             self.io.tool_error(f"Error generating environment info: {str(e)}")
             return None
 
+    async def process_tool_calls(self, tool_call_response):
+        """
+        Track tool usage before calling the base implementation.
+        """
+
+        if self.partial_response_tool_calls:
+            for tool_call in self.partial_response_tool_calls:
+                self.tool_usage_history.append(tool_call.get("function", {}).get("name"))
+
+        if len(self.tool_usage_history) > self.tool_usage_retries:
+            self.tool_usage_history.pop(0)
+
+        return await super().process_tool_calls(tool_call_response)
+
     async def reply_completed(self):
         """Process the completed response from the LLM.
 
@@ -850,8 +891,9 @@ class NavigatorCoder(Coder):
         iteratively discover and analyze relevant files before providing
         a final answer to the user's question.
         """
-        # In granular editing mode, tool calls are handled by BaseCoder's process_tool_calls.
-        # This method is now only for legacy tool call format and search/replace blocks.
+        # In granular editing mode, tool calls are handled by BaseCoder's process_tool_calls,
+        # which is overridden in this class to track tool usage. This method is now only for
+        # legacy tool call format and search/replace blocks.
         if self.use_granular_editing:
             # Handle SEARCH/REPLACE blocks
             content = self.partial_response_content
@@ -880,14 +922,19 @@ class NavigatorCoder(Coder):
         # Legacy tool call processing for use_granular_editing=False
         content = self.partial_response_content
         if not content or not content.strip():
+            if len(self.tool_usage_history) > self.tool_usage_retries:
+                self.tool_usage_history = []
             return True
         original_content = content  # Keep the original response
 
-        # Process tool commands: returns content with tool calls removed, results, flag if any tool calls were found,
-        # and the content before the last '---' line
-        processed_content, result_messages, tool_calls_found, content_before_last_separator = (
-            await self._process_tool_commands(content)
-        )
+        # Process tool commands: returns content with tool calls removed, results, flag if any tool calls were found
+        (
+            processed_content,
+            result_messages,
+            tool_calls_found,
+            content_before_last_separator,
+            tool_names_this_turn,
+        ) = await self._process_tool_commands(content)
 
         # Since we are no longer suppressing, the partial_response_content IS the final content.
         # We might want to update it to the processed_content (without tool calls) if we don't
@@ -1031,6 +1078,7 @@ class NavigatorCoder(Coder):
         tool_calls_found = False
         call_count = 0
         max_calls = self.max_tool_calls
+        tool_names = []
 
         # Check if there's a '---' separator and only process tool calls after the LAST one
         separator_marker = "---"
@@ -1039,7 +1087,7 @@ class NavigatorCoder(Coder):
         # If there's no separator, treat the entire content as before the separator
         if len(content_parts) == 1:
             # Return the original content with no tool calls processed, and the content itself as before_separator
-            return content, result_messages, False, content
+            return content, result_messages, False, content, tool_names
 
         # Take everything before the last separator (including intermediate separators)
         content_before_separator = separator_marker.join(content_parts[:-1])
@@ -1229,6 +1277,8 @@ class NavigatorCoder(Coder):
                 else:
                     raise ValueError("Tool name must be an identifier or a string literal")
 
+                tool_names.append(tool_name)
+
                 # Extract keyword arguments
                 for keyword in call_node.keywords:
                     key = keyword.arg
@@ -1394,9 +1444,6 @@ class NavigatorCoder(Coder):
                     context_after = params.get("context_after", 5)
 
                     if pattern is not None:
-                        # Import the function if not already imported (it should be)
-                        from aider.tools.grep import _execute_grep
-
                         result_message = await asyncio.to_thread(
                             _execute_grep,
                             self,
@@ -1723,7 +1770,85 @@ class NavigatorCoder(Coder):
         # Return the content with tool calls removed
         modified_content = processed_content
 
-        return modified_content, result_messages, tool_calls_found, content_before_separator
+        return (
+            modified_content,
+            result_messages,
+            tool_calls_found,
+            content_before_separator,
+            tool_names,
+        )
+
+    def _get_repetitive_tools(self):
+        """
+        Identifies repetitive tool usage patterns from a flat list of tool calls.
+
+        This method checks for the following patterns in order:
+        1. If the last tool used was a write tool, it assumes progress and returns no repetitive tools.
+        2. It checks for any read tool that has been used 2 or more times in the history.
+        3. If no tools are repeated, but all tools in the history are read tools,
+           it flags all of them as potentially repetitive.
+
+        It avoids flagging repetition if a "write" tool was used recently,
+        as that suggests progress is being made.
+        """
+        history_len = len(self.tool_usage_history)
+
+        # Not enough history to detect a pattern
+        if history_len < 2:
+            return set()
+
+        # If the last tool was a write tool, we're likely making progress.
+        if isinstance(self.tool_usage_history[-1], str):
+            last_tool_lower = self.tool_usage_history[-1].lower()
+
+            if last_tool_lower in self.write_tools:
+                self.tool_usage_history = []
+                return set()
+
+        # If all tools in history are read tools, return all of them
+        if all(tool.lower() in self.read_tools for tool in self.tool_usage_history):
+            return set(tool for tool in self.tool_usage_history)
+
+        # Check for any read tool used more than once
+        tool_counts = Counter(tool for tool in self.tool_usage_history)
+        repetitive_tools = {
+            tool
+            for tool, count in tool_counts.items()
+            if count >= 2 and tool.lower() in self.read_tools
+        }
+
+        if repetitive_tools:
+            return repetitive_tools
+
+        return set()
+
+    def _generate_tool_context(self, repetitive_tools):
+        """
+        Generate a context message for the LLM about recent tool usage.
+        """
+        if not self.tool_usage_history:
+            return ""
+
+        context_parts = ['<context name="tool_usage_history">']
+
+        if repetitive_tools:
+            context_parts.append(
+                "\n**Instruction:**\nYou have used the following tool(s) repeatedly:"
+            )
+
+            context_parts.append("### DO NOT USE THE FOLLOWING TOOLS/FUNCTIONS")
+
+            for tool in repetitive_tools:
+                context_parts.append(f"- `{tool}`")
+            context_parts.append(
+                "Disobedience will be severely punished. Use any other tool/function and you will"
+                " be spared.Your exploration and file search are stuck in a loop. Further attempts"
+                " are likely to be fruitless.You already have enough context for a subset of the"
+                " necessary changes so please prioritize file editing over further exploration."
+            )
+
+        context_parts.append("</context>")
+        return "\n".join(context_parts)
 
     async def _apply_edits_from_response(self):
         """
@@ -1757,7 +1882,7 @@ class NavigatorCoder(Coder):
                     allowed = seen_paths[path]
                 else:
                     # Use the base Coder's permission check method
-                    allowed = self.allowed_to_edit(path)
+                    allowed = await self.allowed_to_edit(path)
                     seen_paths[path] = allowed
                 if allowed:
                     prepared_edits.append(edit)

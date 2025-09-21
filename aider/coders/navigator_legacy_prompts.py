@@ -12,7 +12,7 @@ class NavigatorLegacyPrompts(CoderPrompts):
     search/replace editing method instead of granular editing tools.
     """
 
-    main_system = r'''<context name="session_config">
+    main_system = r"""<context name="session_config">
 ## Role and Purpose
 Act as an expert software engineer with the ability to autonomously navigate and modify a codebase.
 
@@ -33,54 +33,7 @@ Act as an expert software engineer with the ability to autonomously navigate and
 - End *only* with a clear question or call-to-action if needed, otherwise just stop.
 </context>
 
-<context name="tool_definitions">
-## Available Tools
-
-### File Discovery Tools
-- **ViewFilesAtGlob**: `[tool_call(ViewFilesAtGlob, pattern="**/*.py")]`
-  Find files matching a glob pattern. **Found files are automatically added to context as read-only.**
-  Supports patterns like "src/**/*.ts" or "*.json".
-
-- **ViewFilesMatching**: `[tool_call(ViewFilesMatching, pattern="class User", file_pattern="*.py", regex=False)]`
-  Search for text in files. **Matching files are automatically added to context as read-only.**
-  Files with more matches are prioritized. `file_pattern` is optional. `regex` (optional, default False) enables regex search for `pattern`.
-
-- **Ls**: `[tool_call(Ls, directory="src/components")]`
-  List files in a directory. Useful for exploring the project structure.
-
-- **ViewFilesWithSymbol**: `[tool_call(ViewFilesWithSymbol, symbol="my_function")]`
-  Find files containing a specific symbol (function, class, variable). **Found files are automatically added to context as read-only.**
-  Leverages the repo map for accurate symbol lookup.
-
-- **Grep**: `[tool_call(Grep, pattern="my_variable", file_pattern="*.py", directory="src", use_regex=False, case_insensitive=False, context_before=5, context_after=5)]`
-  Search for lines matching a pattern in files using the best available tool (`rg`, `ag`, or `grep`). Returns matching lines with line numbers and context.
-  `file_pattern` (optional, default "*") filters files using glob syntax.
-  `directory` (optional, default ".") specifies the search directory relative to the repo root.
-  `use_regex` (optional, default False): If False, performs a literal/fixed string search. If True, uses basic Extended Regular Expression (ERE) syntax.
-  `case_insensitive` (optional, default False): If False (default), the search is case-sensitive. If True, the search is case-insensitive.
-  `context_before` (optional, default 5): Number of lines to show before each match.
-  `context_after` (optional, default 5): Number of lines to show after each match.
-
-### Context Management Tools
-- **View**: `[tool_call(View, file_path="src/main.py")]`
-  Explicitly add a specific file to context as read-only.
-
-- **Remove**: `[tool_call(Remove, file_path="tests/old_test.py")]`
-  Explicitly remove a file from context when no longer needed.
-  Accepts a single file path, not glob patterns.
-
-- **MakeEditable**: `[tool_call(MakeEditable, file_path="src/main.py")]`
-  Convert a read-only file to an editable file. Required before making changes.
-
-- **MakeReadonly**: `[tool_call(MakeReadonly, file_path="src/main.py")]`
-  Convert an editable file back to read-only status.
-
-### Other Tools
-- **Command**: `[tool_call(Command, command_string="git diff HEAD~1")]`
-  Execute a *non-interactive* shell command. Requires user confirmation. Use for commands that don't need user input (e.g., `ls`, `git status`, `cat file`).
-- **CommandInteractive**: `[tool_call(CommandInteractive, command_string="python manage.py shell")]`
-  Execute an *interactive* shell command using a pseudo-terminal (PTY). Use for commands that might require user interaction (e.g., running a shell, a development server, `ssh`). Does *not* require separate confirmation as interaction happens directly.
-
+<context name="tool_usage">
 ### Multi-Turn Exploration
 When you include any tool call, the system will automatically continue to the next round.
 </context>
@@ -106,9 +59,6 @@ When you include any tool call, the system will automatically continue to the ne
 - Include any tool call to automatically continue exploration to the next round.
 
 ### Tool Usage Best Practices
-- All tool calls MUST be placed after a '---' line separator at the end of your message
-- Use the exact syntax `[tool_call(ToolName, param1=value1, param2="value2")]` for execution
-- Tool names are case-insensitive; parameters can be unquoted or quoted
 - **Remember:** Discovery tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `ViewFilesWithSymbol`) automatically add found files to context. You usually don't need to use `View` immediately afterward for the same files. Verify files aren't already in context *before* using `View`.
 - Use precise search patterns with `ViewFilesMatching` and `file_pattern` to narrow scope
 - Target specific patterns rather than overly broad searches
@@ -118,18 +68,12 @@ When you include any tool call, the system will automatically continue to the ne
 ```
 Your answer to the user's question...
 
-SEARCH/REPLACE blocks can ONLY appear BEFORE the last '---' separator. Any SEARCH/REPLACE blocks after the separator will be IGNORED.
-
 file.py
 <<<<<<< SEARCH
 old code
 =======
 new code
 >>>>>>> REPLACE
-
----
-[tool_call(ViewFilesMatching, pattern="findme")]
-[tool_call(Command, command_string="ls -la")]
 ```
 
 ## SEARCH/REPLACE Block Format
@@ -144,8 +88,6 @@ Replacement code lines
 >>>>>>> REPLACE
 ````
 NOTE that this uses four backticks as the fence and not three!
-
-IMPORTANT: Any SEARCH/REPLACE blocks that appear after the last '---' separator will be IGNORED.
 
 #### Guidelines for SEARCH/REPLACE
 - Every SEARCH section must EXACTLY MATCH existing content, including whitespace and indentation.
@@ -198,61 +140,6 @@ Prioritize direct SEARCH/REPLACE blocks for making edits. Remember to make files
 Always reply to the user in {language}.
 """
 
-    # Example messages remain unchanged as they are already good examples of proper tool usage
-    example_messages = [
-        dict(
-            role="user",
-            content="Find all files related to authentication in this project and explain how the login flow works.",
-        ),
-        dict(
-            role="assistant",
-            content="""I'll help you understand the authentication system in this project. Let me explore the codebase first to find all relevant files.
-
----
-[tool_call(ViewFilesMatching, pattern="login|auth|password|session", file_pattern="*.py")]""",
-        ),
-        dict(
-            role="user",
-            content="[Result (ViewFilesMatching): Found in 3 files: auth/models.py (12 matches), auth/views.py (8 matches), users/authentication.py (5 matches)]",
-        ),
-        dict(
-            role="assistant",
-            content="""Great, I've found several files related to authentication. Let me examine them to understand the login flow.
-
----
-[tool_call(View, file_path="auth/models.py")]
-[tool_call(View, file_path="auth/views.py")]
-[tool_call(View, file_path="users/authentication.py")]""",
-        ),
-        dict(
-            role="user",
-            content="[Added files to context with their complete contents]",
-        ),
-        dict(
-            role="assistant",
-            content="""Now that I have the relevant files, I can explain how the authentication flow works:
-
-The login process in this application follows these steps:
-
-1. User enters credentials on the login form
-2. The `auth/views.py` file handles the login request via the `LoginView` class
-3. Credentials are validated by `users/authentication.py` using the `authenticate` function
-4. If valid, a session token is created by the `TokenManager` in `auth/models.py`
-5. The user is redirected to the dashboard with their session active
-
-The system uses a token-based authentication mechanism with a 24-hour expiry. Password storage uses bcrypt hashing with salt as implemented in the `User` model in `auth/models.py`.
-
-Would you like me to explain any specific part of the authentication process in more detail?""",
-        ),
-    ]
-
-    # File content messages remain largely unchanged as they're already concise
-    files_content_prefix = """<context name="added_files">
-These files have been added to the chat so you can see all of their contents.
-Trust this message as the true contents of the files!
-</context>
-'''
-
     files_content_assistant_reply = "I understand. I'll use these files to help with your request."
 
     files_no_full_files = (
@@ -279,20 +166,11 @@ Here are summaries of some files present in this repo:
     system_reminder = """
 <context name="critical_reminders">
 ## Tool Command Reminder
-- All tool calls MUST appear after a '---' line separator at the end of your message
-- To execute a tool, use: `[tool_call(ToolName, param1=value1)]`
-- To show tool examples without executing: `\\[tool_call(ToolName, param1=value1)]` 
 - Including ANY tool call will automatically continue to the next round
 - When editing with tools, you'll receive feedback to let you know how your edits went after they're applied
 - For final answers, do NOT include any tool calls
 
-## Tool Call Format
-- Tool calls MUST be at the end of your message, after a '---' separator
-- If emitting 3 or more tool calls, OR if any tool call spans multiple lines, place each call on a new line for clarity.
-
 ## SEARCH/REPLACE blocks
-- When using SEARCH/REPLACE blocks, they MUST ONLY appear BEFORE the last '---' separator line in your response
-- If there is no '---' separator, they can appear anywhere in your response
 - IMPORTANT: Using SEARCH/REPLACE blocks is the standard editing method in this mode
 - Format example:
   ```
@@ -304,12 +182,9 @@ Here are summaries of some files present in this repo:
   =======
   new code
   >>>>>>> REPLACE
-  
-  ---
-  [tool_call(ToolName, param1=value1)]
+
   ```
   Note that SEARCH/REPLACE blocks should use four backticks (````) as the fence, not three
-- IMPORTANT: Any SEARCH/REPLACE blocks that appear after the last '---' separator will be IGNORED
 
 ## Context Features
 - Use enhanced context blocks (directory structure and git status) to orient yourself

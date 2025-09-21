@@ -1112,7 +1112,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         # For testing #2879
         # from aider.coders.base_coder import all_fences
         # coder.fence = all_fences[1]
-        coder.apply_updates()
+        await coder.apply_updates()
         analytics.event("exit", reason="Applied updates")
         return
 
