@@ -829,7 +829,7 @@ def run_test_real(
         io,
         fnames=fnames,
         use_git=False,
-        stream=False,
+        stream=True,
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
