@@ -1349,7 +1349,11 @@ class Commands:
 
         # Then process them in sorted order
         for path in sorted(all_paths):
-            abs_path = self.coder.abs_root_path(path)
+            try:
+                abs_path = self.coder.abs_root_path(path)
+            except RuntimeError as e:
+                self.io.tool_error(str(e))
+                continue
             if os.path.isfile(abs_path):
                 self._add_read_only_file(abs_path, path)
             elif os.path.isdir(abs_path):
