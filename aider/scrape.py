@@ -37,7 +37,7 @@ def has_playwright():
     return has_pip and has_chromium
 
 
-def install_playwright(io):
+async def install_playwright(io):
     has_pip, has_chromium = check_env()
     if has_pip and has_chromium:
         return True
@@ -59,7 +59,7 @@ See {urls.enable_playwright} for more info.
 """
 
     io.tool_output(text)
-    if not io.confirm_ask("Install playwright?", default="y"):
+    if not await io.confirm_ask("Install playwright?", default="y"):
         return
 
     if not has_pip:

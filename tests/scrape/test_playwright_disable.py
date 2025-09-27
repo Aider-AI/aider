@@ -52,7 +52,7 @@ def test_scraper_enable_playwright(monkeypatch):
     assert called["called"]
 
 
-def test_commands_web_disable_playwright(monkeypatch):
+async def test_commands_web_disable_playwright(monkeypatch):
     """
     Test that Commands.cmd_web does not emit a misleading warning when --disable-playwright is set.
     """
@@ -129,7 +129,7 @@ def test_commands_web_disable_playwright(monkeypatch):
     args = type("Args", (), {"disable_playwright": True})()
     commands = Commands(io, coder, args=args)
 
-    commands.cmd_web("http://example.com")
+    await commands.cmd_web("http://example.com")
     # Should not emit a warning about playwright
     assert not io.warnings
     # Should not contain message "For the best web scraping, install Playwright:"

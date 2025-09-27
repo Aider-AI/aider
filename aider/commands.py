@@ -217,7 +217,7 @@ class Commands:
         else:
             self.io.tool_output("Please provide a partial model name to search for.")
 
-    def cmd_web(self, args, return_content=False):
+    async def cmd_web(self, args, return_content=False):
         "Scrape a webpage, convert to markdown and send in a message"
 
         url = args.strip()
@@ -231,7 +231,7 @@ class Commands:
             if disable_playwright:
                 res = False
             else:
-                res = install_playwright(self.io)
+                res = await install_playwright(self.io)
                 if not res:
                     self.io.tool_warning("Unable to initialize playwright.")
 
@@ -390,7 +390,7 @@ class Commands:
                 continue
 
             self.io.tool_output(errors)
-            if not self.io.confirm_ask(f"Fix lint errors in {fname}?", default="y"):
+            if not await self.io.confirm_ask(f"Fix lint errors in {fname}?", default="y"):
                 continue
 
             # Commit everything before we start fixing lint errors
@@ -912,7 +912,9 @@ class Commands:
                 self.io.tool_output(f"You can add to git with: /git add {fname}")
                 continue
 
-            if self.io.confirm_ask(f"No files matched '{word}'. Do you want to create {fname}?"):
+            if await self.io.confirm_ask(
+                f"No files matched '{word}'. Do you want to create {fname}?"
+            ):
                 try:
                     fname.parent.mkdir(parents=True, exist_ok=True)
                     fname.touch()
@@ -1167,7 +1169,9 @@ class Commands:
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
+            add = await self.io.confirm_ask(
+                f"Add {k_tokens:.1f}k tokens of command output to the chat?"
+            )
 
         if add:
             num_lines = len(combined_output.strip().splitlines())

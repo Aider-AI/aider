@@ -1782,7 +1782,9 @@ class Coder:
 
         self.multi_response_content = ""
         if self.show_pretty():
-            spinner_text = "Waiting for " + self.main_model.name
+            spinner_text = (
+                f"Waiting for {self.main_model.name} • ${self.format_cost(self.total_cost)} session"
+            )
             self.io.start_spinner(spinner_text)
 
             if self.stream:
@@ -2921,18 +2923,9 @@ class Coder:
         self.total_cost += cost
         self.message_cost += cost
 
-        def format_cost(value):
-            if value == 0:
-                return "0.00"
-            magnitude = abs(value)
-            if magnitude >= 0.01:
-                return f"{value:.2f}"
-            else:
-                return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
-
         cost_report = (
-            f"Cost: ${format_cost(self.message_cost)} message,"
-            f" ${format_cost(self.total_cost)} session."
+            f"Cost: ${self.format_cost(self.message_cost)} message,"
+            f" ${self.format_cost(self.total_cost)} session."
         )
 
         if cache_hit_tokens and cache_write_tokens:
@@ -2941,6 +2934,15 @@ class Coder:
             sep = " "
 
         self.usage_report = tokens_report + sep + cost_report
+
+    def format_cost(self, value):
+        if value == 0:
+            return "0.00"
+        magnitude = abs(value)
+        if magnitude >= 0.01:
+            return f"{value:.2f}"
+        else:
+            return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
 
     def compute_costs_from_tokens(
         self, prompt_tokens, completion_tokens, cache_write_tokens, cache_hit_tokens
