@@ -4,7 +4,11 @@ remove_schema = {
     "type": "function",
     "function": {
         "name": "Remove",
-        "description": "Remove a file from the chat context.",
+        "description": (
+            "Remove a file from the chat context. Should be used proactively to keep con"
+            "Should be used after editing a file when all edits are done "
+            "and the file is no longer necessary in context."
+        ),
         "parameters": {
             "type": "object",
             "properties": {

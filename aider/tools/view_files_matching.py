@@ -32,7 +32,7 @@ view_files_matching_schema = {
 
 def execute_view_files_matching(coder, pattern, file_pattern=None, regex=False):
     """
-    Search for pattern (literal string or regex) in files and add matching files to context as read-only.
+    Search for pattern (literal string or regex) in files and return matching files as text.
 
     Args:
         coder: The Coder instance.
@@ -89,38 +89,26 @@ def execute_view_files_matching(coder, pattern, file_pattern=None, regex=False):
                 # Skip files that can't be read (binary, etc.)
                 pass
 
-        # Limit the number of files added if there are too many matches
-        if len(matches) > coder.max_files_per_glob:
-            coder.io.tool_output(
-                f"⚠️ Found '{pattern}' in {len(matches)} files, "
-                f"limiting to {coder.max_files_per_glob} files with most matches."
-            )
-            # Sort by number of matches (most matches first)
-            sorted_matches = sorted(matches.items(), key=lambda x: x[1], reverse=True)
-            matches = dict(sorted_matches[: coder.max_files_per_glob])
-
-        # Add matching files to context
-        for file in matches:
-            coder._add_file_to_context(file)
-
-        # Return a user-friendly result
+        # Return formatted text instead of adding to context
         if matches:
             # Sort by number of matches (most matches first)
             sorted_matches = sorted(matches.items(), key=lambda x: x[1], reverse=True)
-            match_list = [f"{file} ({count} matches)" for file, count in sorted_matches[:5]]
+            match_list = [f"{file} ({count} matches)" for file, count in sorted_matches]
 
-            if len(sorted_matches) > 5:
-                coder.io.tool_output(
-                    f"🔍 Found '{pattern}' in {len(matches)} files:"
-                    f" {', '.join(match_list)} and {len(matches) - 5} more"
+            if len(matches) > 10:
+                result = (
+                    f"Found '{pattern}' in {len(matches)} files: {', '.join(match_list[:10])} and"
+                    f" {len(matches) - 10} more"
                 )
-                return (
-                    f"Found in {len(matches)} files: {', '.join(match_list)} and"
-                    f" {len(matches) - 5} more"
-                )
+                coder.io.tool_output(f"🔍 Found '{pattern}' in {len(matches)} files")
             else:
-                coder.io.tool_output(f"🔍 Found '{pattern}' in: {', '.join(match_list)}")
-                return f"Found in {len(matches)} files: {', '.join(match_list)}"
+                result = f"Found '{pattern}' in {len(matches)} files: {', '.join(match_list)}"
+                coder.io.tool_output(
+                    f"🔍 Found '{pattern}' in:"
+                    f" {', '.join(match_list[:5])}{' and more' if len(matches) > 5 else ''}"
+                )
+
+            return result
         else:
             coder.io.tool_output(f"⚠️ Pattern '{pattern}' not found in any files")
             return "Pattern not found in any files"

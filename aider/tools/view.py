@@ -2,7 +2,11 @@ view_schema = {
     "type": "function",
     "function": {
         "name": "View",
-        "description": "View a specific file.",
+        "description": (
+            "View a specific file and add it to context."
+            "Only use this when the file is not already in the context "
+            "and when editing the file is necessary to accomplish the goal."
+        ),
         "parameters": {
             "type": "object",
             "properties": {
