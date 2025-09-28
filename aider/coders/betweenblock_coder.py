@@ -30,9 +30,9 @@ file_not_found_err = (
     " you want to create a new file use @WHOLE FILE@ tag."
 )
 
-existing_line_not_found_err = """Line "{not_found_line}" does not exists in file {fname}.
+existing_line_not_found_err = """Line "{not_found_line}" does not exist in the file "{fname}".
 Every [existing line] in tags must *EXACTLY MATCH* to one of the lines in the file, character for character, including all spaces.
-Also check that you suggest the code block for right file."""
+Also this error may be caused by a confused file name in beginning of the code block. In this case, write down the correct file path where the changes should be made."""
 
 lines_not_unique_err = (
     'Lines "{lines[0]}" and "{lines[1]}" occurs in file {fname} more than once. Rewrite the code'
