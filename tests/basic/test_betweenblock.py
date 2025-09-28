@@ -1029,6 +1029,7 @@ seventy three
             "table    formatting\n",
             "  repeating line  \n",
             "comment at the end   # comment\n",
+            '"line" with ""double" "-"quotes"\n',
             "no eol at end",
         ]
 
@@ -1039,7 +1040,10 @@ seventy three
         self.assertEqual(coder.find_existing_line(content_lines, "tab in the middle"), [4])
         self.assertEqual(coder.find_existing_line(content_lines, "table formatting"), [5])
         self.assertEqual(coder.find_existing_line(content_lines, "comment at the end"), [7])
-        self.assertEqual(coder.find_existing_line(content_lines, "no eol at end"), [8])
+        self.assertEqual(
+            coder.find_existing_line(content_lines, '"line" with "double "-"quotes"'), [8]
+        )
+        self.assertEqual(coder.find_existing_line(content_lines, "no eol at end"), [9])
 
 
 if __name__ == "__main__":

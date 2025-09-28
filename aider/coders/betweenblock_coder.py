@@ -90,7 +90,7 @@ class BetweenBlockCoder(Coder):
     gpt_prompts = BetweenBlockPrompts()
 
     tag_pattern = re.compile(r"^\s*(@[A-Z0-9\s_-]+@)(.*)$")
-    between_args_pattern = re.compile(r'^\s+"(.+)"\s+AND\s+"(.+)"\s*$')
+    between_args_pattern = re.compile(r'^\s+"(.+?)"?\s+AND\s+"(.+?)(:?"\s*)?$')
 
     def get_edits(self, mode="update"):
         chat_files = self.get_inchat_relative_files()
@@ -175,10 +175,19 @@ class BetweenBlockCoder(Coder):
         return edits
 
     existing_line_space_pattern = re.compile(r"\s+")
+    escaped_doublequotes_pattern = re.compile(r'\\"')
+    any_doublequotes_pattern = re.compile(r'"')
 
     def normalize_existing_line(self, line):
         l = line.strip()
         l = self.existing_line_space_pattern.sub(" ", l)
+
+        # llm may escape double quotes as line in tag is already quoted
+        while self.escaped_doublequotes_pattern.search(l):
+            l = self.escaped_doublequotes_pattern.sub('"', l)
+        # in strings like "\"text\"" llm can loss duplicating \" when escaping
+        # also it can lose first or last double quote
+        l = l.replace('"', "")
         return l
 
     def find_existing_line(self, content_lines, existing_line: str):
