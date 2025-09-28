@@ -771,6 +771,12 @@ def get_parser(default_config_files, git_root):
     ######
     group = parser.add_argument_group("Other settings")
     group.add_argument(
+        "--preserve-todo-list",
+        action="store_true",
+        help="Preserve the existing .aider.todo.txt file on startup (default: False)",
+        default=False,
+    )
+    group.add_argument(
         "--disable-playwright",
         action="store_true",
         help="Never prompt for or attempt to install Playwright for web scraping (default: False).",

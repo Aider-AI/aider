@@ -654,14 +654,14 @@ class NavigatorCoder(Coder):
         # 2. Add dynamic blocks AFTER chat_files
         # These blocks change with the current files in context
         dynamic_blocks = []
+        if todo_list:
+            dynamic_blocks.append(todo_list)
         if context_summary:
             dynamic_blocks.append(context_summary)
         if symbol_outline:
             dynamic_blocks.append(symbol_outline)
         if git_status:
             dynamic_blocks.append(git_status)
-        if todo_list:
-            dynamic_blocks.append(todo_list)
 
         if dynamic_blocks:
             dynamic_message = "\n\n".join(dynamic_blocks)
@@ -1865,6 +1865,18 @@ class NavigatorCoder(Coder):
         context_parts.append(f"- Total tool calls in session: {self.num_tool_calls}")
         context_parts.append("\n\n")
 
+        # Add recent tool usage history
+        context_parts.append("## Recent Tool Usage History")
+        if len(self.tool_usage_history) > 10:
+            recent_history = self.tool_usage_history[-10:]
+            context_parts.append("(Showing last 10 tools)")
+        else:
+            recent_history = self.tool_usage_history
+
+        for i, tool in enumerate(recent_history, 1):
+            context_parts.append(f"{i}. {tool}")
+        context_parts.append("\n\n")
+
         if repetitive_tools:
             context_parts.append(
                 "**Instruction:**\nYou have used the following tool(s) repeatedly:"
@@ -1875,11 +1887,29 @@ class NavigatorCoder(Coder):
             for tool in repetitive_tools:
                 context_parts.append(f"- `{tool}`")
             context_parts.append(
-                "Disobedience will be severely punished. Use any other tool/function and you will"
-                " be spared.Your exploration and file search are stuck in a loop. Further attempts"
-                " are likely to be fruitless.You already have enough context for a subset of the"
-                " necessary changes so please prioritize file editing over further exploration."
+                "Your exploration appears to be stuck in a loop. Please try a different approach:"
             )
+            context_parts.append("\n")
+            context_parts.append("**Suggestions for alternative approaches:**")
+            context_parts.append(
+                "- If you've been searching for files, try working with the files already in"
+                " context"
+            )
+            context_parts.append(
+                "- If you've been viewing files, try making actual edits to move forward"
+            )
+            context_parts.append("- Consider using different tools that you haven't used recently")
+            context_parts.append(
+                "- Focus on making concrete progress rather than gathering more information"
+            )
+            context_parts.append(
+                "- Use the files you've already discovered to implement the requested changes"
+            )
+            context_parts.append("\n")
+            context_parts.append(
+                "You most likely have enough context for a subset of the necessary changes."
+            )
+            context_parts.append("Please prioritize file editing over further exploration.")
 
         context_parts.append("</context>")
         return "\n".join(context_parts)
