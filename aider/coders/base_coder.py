@@ -469,17 +469,6 @@ class Coder:
         self.pretty = self.io.pretty
 
         self.main_model = main_model
-        # Clean up todo list file on startup unless preserve_todo_list is True
-        if not getattr(self, "preserve_todo_list", False):
-            todo_file_path = ".aider.todo.txt"
-            abs_path = self.abs_root_path(todo_file_path)
-            if os.path.isfile(abs_path):
-                try:
-                    os.remove(abs_path)
-                    if self.verbose:
-                        self.io.tool_output(f"Removed existing todo list file: {todo_file_path}")
-                except Exception as e:
-                    self.io.tool_warning(f"Could not remove todo list file {todo_file_path}: {e}")
 
         # Set the reasoning tag name based on model settings or default
         self.reasoning_tag_name = (
@@ -610,6 +599,18 @@ class Coder:
         self.lint_cmds = lint_cmds
         self.auto_test = auto_test
         self.test_cmd = test_cmd
+
+        # Clean up todo list file on startup unless preserve_todo_list is True
+        if not getattr(self, "preserve_todo_list", False):
+            todo_file_path = ".aider.todo.txt"
+            abs_path = self.abs_root_path(todo_file_path)
+            if os.path.isfile(abs_path):
+                try:
+                    os.remove(abs_path)
+                    if self.verbose:
+                        self.io.tool_output(f"Removed existing todo list file: {todo_file_path}")
+                except Exception as e:
+                    self.io.tool_warning(f"Could not remove todo list file {todo_file_path}: {e}")
 
         # Instantiate MCP tools
         if self.mcp_servers:
@@ -1279,7 +1280,7 @@ class Coder:
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
                     inp += "\n\n"
-                    inp += self.commands.cmd_web(url, return_content=True)
+                    inp += await self.commands.cmd_web(url, return_content=True)
                 else:
                     self.rejected_urls.add(url)
 
