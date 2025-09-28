@@ -27,6 +27,7 @@ from .show_numbered_context import (
     show_numbered_context_schema,
 )
 from .undo_change import _execute_undo_change, undo_change_schema
+from .update_todo_list import _execute_update_todo_list, update_todo_list_schema
 from .view import execute_view, view_schema
 from .view_files_at_glob import execute_view_files_at_glob, view_files_at_glob_schema
 from .view_files_matching import execute_view_files_matching, view_files_matching_schema

@@ -45,6 +45,7 @@ from aider.tools import (
     replace_text_schema,
     show_numbered_context_schema,
     undo_change_schema,
+    update_todo_list_schema,
     view_files_matching_schema,
     view_files_with_symbol_schema,
     view_schema,
@@ -69,6 +70,7 @@ from aider.tools.replace_lines import _execute_replace_lines
 from aider.tools.replace_text import _execute_replace_text
 from aider.tools.show_numbered_context import execute_show_numbered_context
 from aider.tools.undo_change import _execute_undo_change
+from aider.tools.update_todo_list import _execute_update_todo_list
 from aider.tools.view import execute_view
 
 # Import tool functions
@@ -200,6 +202,7 @@ class NavigatorCoder(Coder):
             list_changes_schema,
             extract_lines_schema,
             show_numbered_context_schema,
+            update_todo_list_schema,
         ]
 
     async def initialize_mcp_tools(self):
@@ -275,6 +278,7 @@ class NavigatorCoder(Coder):
                     "listchanges": _execute_list_changes,
                     "extractlines": _execute_extract_lines,
                     "shownumberedcontext": execute_show_numbered_context,
+                    "updatetodolist": _execute_update_todo_list,
                 }
 
                 func = tool_functions.get(norm_tool_name)
@@ -432,6 +436,8 @@ class NavigatorCoder(Coder):
             content = self.get_context_symbol_outline()
         elif block_name == "context_summary":
             content = self.get_context_summary()
+        elif block_name == "todo_list":
+            content = self.get_todo_list()
 
         # Cache the result if it's not None
         if content is not None:
@@ -627,6 +633,7 @@ class NavigatorCoder(Coder):
         dir_structure = self.get_cached_context_block("directory_structure")
         git_status = self.get_cached_context_block("git_status")
         symbol_outline = self.get_cached_context_block("symbol_outline")
+        todo_list = self.get_cached_context_block("todo_list")
 
         # Context summary needs special handling because it depends on other blocks
         context_summary = self.get_context_summary()
@@ -653,6 +660,8 @@ class NavigatorCoder(Coder):
             dynamic_blocks.append(symbol_outline)
         if git_status:
             dynamic_blocks.append(git_status)
+        if todo_list:
+            dynamic_blocks.append(todo_list)
 
         if dynamic_blocks:
             dynamic_message = "\n\n".join(dynamic_blocks)
@@ -1736,6 +1745,21 @@ class NavigatorCoder(Coder):
                             " and either pattern or line_number)"
                         )
 
+                elif norm_tool_name == "updatetodolist":
+                    content = params.get("content")
+                    append = params.get("append", False)
+                    change_id = params.get("change_id")
+                    dry_run = params.get("dry_run", False)
+
+                    if content is not None:
+                        result_message = _execute_update_todo_list(
+                            self, content, append, change_id, dry_run
+                        )
+                    else:
+                        result_message = (
+                            "Error: Missing required 'content' parameter for UpdateTodoList"
+                        )
+
                 else:
                     result_message = f"Error: Unknown tool name '{tool_name}'"
                     if self.mcp_tools:
@@ -1834,9 +1858,16 @@ class NavigatorCoder(Coder):
 
         context_parts = ['<context name="tool_usage_history">']
 
+        # Add turn and tool call statistics
+        context_parts.append("## Turn and Tool Call Statistics")
+        context_parts.append(f"- Current turn: {self.num_reflections + 1}")
+        context_parts.append(f"- Tool calls this turn: {self.tool_call_count}")
+        context_parts.append(f"- Total tool calls in session: {self.num_tool_calls}")
+        context_parts.append("\n\n")
+
         if repetitive_tools:
             context_parts.append(
-                "\n**Instruction:**\nYou have used the following tool(s) repeatedly:"
+                "**Instruction:**\nYou have used the following tool(s) repeatedly:"
             )
 
             context_parts.append("### DO NOT USE THE FOLLOWING TOOLS/FUNCTIONS")
@@ -2236,6 +2267,44 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             return result
         except Exception as e:
             self.io.tool_error(f"Error generating directory structure: {str(e)}")
+            return None
+
+    def get_todo_list(self):
+        """
+        Generate a todo list context block from the .aider.todo.txt file.
+        Returns formatted string with the current todo list or None if empty/not present.
+        """
+
+        try:
+            # Define the todo file path
+            todo_file_path = ".aider.todo.txt"
+            abs_path = self.abs_root_path(todo_file_path)
+
+            # Check if file exists
+            import os
+
+            if not os.path.isfile(abs_path):
+                return (
+                    '<context name="todo_list">\n'
+                    "Todo list does not exist. Please update it."
+                    "</context>"
+                )
+
+            # Read todo list content
+            content = self.io.read_text(abs_path)
+            if content is None or not content.strip():
+                return None
+
+            # Format the todo list context block
+            result = '<context name="todo_list">\n'
+            result += "## Current Todo List\n\n"
+            result += "Below is the current todo list managed via `UpdateTodoList` tool:\n\n"
+            result += f"```\n{content}\n```\n"
+            result += "</context>"
+
+            return result
+        except Exception as e:
+            self.io.tool_error(f"Error generating todo list context: {str(e)}")
             return None
 
     def get_git_status(self):

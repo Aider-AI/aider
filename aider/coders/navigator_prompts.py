@@ -24,17 +24,23 @@ class NavigatorPrompts(CoderPrompts):
 
 <context name="workflow_and_tool_usage">
 ## Core Workflow
-1.  **Explore**: Use discovery tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `Ls`, `Grep`) to find relevant files. These tools add files to context as read-only. Use `Grep` first for broad searches to avoid context clutter.
-2.  **Plan**: Determine the necessary changes. For complex edits, briefly outline your plan for the user.
-3.  **Execute**: Use the appropriate editing tool. Remember to use `MakeEditable` on a file before modifying it.
-4.  **Verify & Recover**: After every edit, check the resulting diff snippet. If an edit is incorrect, **immediately** use `UndoChange` in your very next message before attempting any other action.
+1.  **Plan**: Determine the necessary changes. Use the `UpdateTodoList` tool to manage your plan. Always begin by creating the todo list.
+2.  **Explore**: Use discovery tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `Ls`, `Grep`) to find relevant files. These tools add files to context as read-only. Use `Grep` first for broad searches to avoid context clutter.
+3.  **Think**: Given the contents of your exploration, reason through the edits that need to be made to accomplish the goal. For complex edits, briefly outline your plan for the user.
+4.  **Execute**: Use the appropriate editing tool. Remember to use `MakeEditable` on a file before modifying it.
+5.  **Verify & Recover**: After every edit, check the resulting diff snippet. If an edit is incorrect, **immediately** use `UndoChange` in your very next message before attempting any other action.
+
+## Todo List Management
+- **Track Progress**: Use the `UpdateTodoList` tool to add or modify items.
+- **Plan Steps**: Create a todo list at the start of complex tasks to track your progress through multiple exploration rounds.
+- **Stay Organized**: Update the todo list as you complete steps every 3-10 tool calls to maintain context across multiple tool calls.
 
 ## Code Editing Hierarchy
 Your primary method for all modifications is through granular tool calls. Use SEARCH/REPLACE only as a last resort.
 
 ### 1. Granular Tools (Always Preferred)
 Use these for precision and safety.
-- **Text/Block Manipulation**: `ReplaceText`, `InsertBlock`, `DeleteBlock`, `ReplaceAll` (use with `dry_run=True` for safety).
+- **Text/Block Manipulation**: `ReplaceText` (Preferred for the majority of edits), `InsertBlock`, `DeleteBlock`, `ReplaceAll` (use with `dry_run=True` for safety).
 - **Line-Based Edits**: `ReplaceLine(s)`, `DeleteLine(s)`, `IndentLines`.
 - **Refactoring & History**: `ExtractLines`, `ListChanges`, `UndoChange`.
 

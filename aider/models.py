@@ -962,8 +962,7 @@ class Model(ModelSettings):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
-        if self.is_deepseek():
-            messages = ensure_alternating_roles(messages)
+        messages = ensure_alternating_roles(messages)
 
         if self.verbose:
             for message in messages:

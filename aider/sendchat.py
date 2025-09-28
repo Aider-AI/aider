@@ -6,13 +6,52 @@ def sanity_check_messages(messages):
     """Check if messages alternate between user and assistant roles.
     System messages can be interspersed anywhere.
     Also verifies the last non-system message is from the user.
+    Validates tool message sequences.
     Returns True if valid, False otherwise."""
     last_role = None
     last_non_system_role = None
+    i = 0
+    n = len(messages)
 
-    for msg in messages:
+    while i < n:
+        msg = messages[i]
         role = msg.get("role")
+
+        # Handle tool sequences atomically
+        if role == "assistant" and "tool_calls" in msg and msg["tool_calls"]:
+            # Validate tool sequence
+            expected_ids = {call["id"] for call in msg["tool_calls"]}
+            i += 1
+
+            # Check for tool responses
+            while i < n and expected_ids:
+                next_msg = messages[i]
+                if next_msg.get("role") == "tool" and next_msg.get("tool_call_id") in expected_ids:
+                    expected_ids.discard(next_msg.get("tool_call_id"))
+                    i += 1
+                else:
+                    break
+
+            # If we still have expected IDs, the tool sequence is incomplete
+            if expected_ids:
+                turns = format_messages(messages)
+                raise ValueError(
+                    "Incomplete tool sequence - missing responses for tool calls:\n\n" + turns
+                )
+
+            # Continue to next message after tool sequence
+            continue
+
+        elif role == "tool":
+            # Orphaned tool message without preceding assistant tool_calls
+            turns = format_messages(messages)
+            raise ValueError(
+                "Orphaned tool message without preceding assistant tool_calls:\n\n" + turns
+            )
+
+        # Handle normal role alternation
         if role == "system":
+            i += 1
             continue
 
         if last_role and role == last_role:
@@ -21,9 +60,73 @@ def sanity_check_messages(messages):
 
         last_role = role
         last_non_system_role = role
+        i += 1
 
     # Ensure last non-system message is from user
     return last_non_system_role == "user"
+
+
+def clean_orphaned_tool_messages(messages):
+    """Remove orphaned tool messages and incomplete tool sequences.
+
+    This function removes:
+    - Tool messages without a preceding assistant message containing tool_calls
+    - Assistant messages with tool_calls that don't have complete tool responses
+
+    Args:
+        messages: List of message dictionaries
+
+    Returns:
+        Cleaned list of messages with orphaned tool sequences removed
+    """
+    if not messages:
+        return messages
+
+    cleaned = []
+    i = 0
+    n = len(messages)
+
+    while i < n:
+        msg = messages[i]
+        role = msg.get("role")
+
+        # If it's an assistant message with tool_calls, check if we have complete responses
+        if role == "assistant" and "tool_calls" in msg and msg["tool_calls"]:
+            # Start of potential tool sequence
+            tool_sequence = [msg]
+            expected_ids = {call["id"] for call in msg["tool_calls"]}
+            j = i + 1
+
+            # Collect tool responses
+            while j < n and expected_ids:
+                next_msg = messages[j]
+                if next_msg.get("role") == "tool" and next_msg.get("tool_call_id") in expected_ids:
+                    tool_sequence.append(next_msg)
+                    expected_ids.discard(next_msg.get("tool_call_id"))
+                    j += 1
+                else:
+                    break
+
+            # If we have all tool responses, keep the sequence
+            if not expected_ids:
+                cleaned.extend(tool_sequence)
+                i = j
+            else:
+                # Incomplete sequence - skip the entire tool sequence
+                i = j
+                # Don't add anything to cleaned
+                continue
+
+        elif role == "tool":
+            # Orphaned tool message without preceding assistant tool_calls - skip it
+            i += 1
+            continue
+        else:
+            # Regular message - add it
+            cleaned.append(msg)
+            i += 1
+
+    return cleaned
 
 
 def ensure_alternating_roles(messages):
@@ -44,6 +147,9 @@ def ensure_alternating_roles(messages):
     """
     if not messages:
         return messages
+
+    # First clean orphaned tool messages
+    messages = clean_orphaned_tool_messages(messages)
 
     result = []
     i = 0
