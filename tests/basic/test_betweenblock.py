@@ -1030,6 +1030,10 @@ seventy three
             "  repeating line  \n",
             "comment at the end   # comment\n",
             '"line" with ""double" "-"quotes"\n',
+            "multiple\n",
+            "lines\n",
+            "multiple\n",
+            "repeated lines\n",
             "no eol at end",
         ]
 
@@ -1043,7 +1047,9 @@ seventy three
         self.assertEqual(
             coder.find_existing_line(content_lines, '"line" with "double "-"quotes"'), [8]
         )
-        self.assertEqual(coder.find_existing_line(content_lines, "no eol at end"), [9])
+        self.assertEqual(coder.find_existing_line(content_lines, "multiple lines"), [9])
+        self.assertEqual(coder.find_existing_line(content_lines, "no eol at end"), [13])
+        self.assertEqual(coder.find_existing_line(content_lines, "non-existing line"), [])
 
 
 if __name__ == "__main__":

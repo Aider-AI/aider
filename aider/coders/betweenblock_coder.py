@@ -199,13 +199,24 @@ class BetweenBlockCoder(Coder):
 
         if not possible_idx and len(existing_line) > 2:
             for i, line in enumerate(content_lines):
-                idx = self.normalize_existing_line(line).find(existing_line)
+                norm_line = self.normalize_existing_line(line)
+                idx = norm_line.find(existing_line)
                 if (
                     idx != -1
                     # allow omitting start of comment delimiter and other similar prefixes
                     and idx <= 3
                 ):
                     possible_idx.append(i)
+
+                if i < len(content_lines) - 1:
+                    idx = existing_line.find(norm_line)
+                    if idx == 0:
+                        next_norm_line = self.normalize_existing_line(content_lines[i + 1])
+                        if not next_norm_line and i < len(content_lines) - 2:
+                            next_norm_line = self.normalize_existing_line(content_lines[i + 2])
+                        idx2 = existing_line.rfind(next_norm_line)
+                        if len(norm_line) <= idx2 < len(norm_line) + 3:
+                            possible_idx.append(i)
 
         return possible_idx
 
