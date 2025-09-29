@@ -663,6 +663,14 @@ class NavigatorCoder(Coder):
         if git_status:
             dynamic_blocks.append(git_status)
 
+        # Add tool usage context if there are repetitive tools
+        if hasattr(self, "tool_usage_history") and self.tool_usage_history:
+            repetitive_tools = self._get_repetitive_tools()
+            if repetitive_tools:
+                tool_context = self._generate_tool_context(repetitive_tools)
+                if tool_context:
+                    dynamic_blocks.append(tool_context)
+
         if dynamic_blocks:
             dynamic_message = "\n\n".join(dynamic_blocks)
             # Append as a system message after chat_files

@@ -2542,48 +2542,6 @@ class Coder:
             return prompts.added_files.format(fnames=", ".join(added_fnames))
 
     async def send(self, messages, model=None, functions=None, tools=None):
-        # Add tool usage context if this is a navigator coder with tool history
-        if hasattr(self, "tool_usage_history") and self.tool_usage_history:
-            # Get the last user message
-            last_user_message = messages[-1]
-            repetitive_tools = (
-                self._get_repetitive_tools() if hasattr(self, "_get_repetitive_tools") else set()
-            )
-
-            if repetitive_tools:
-                tool_context = (
-                    self._generate_tool_context(repetitive_tools)
-                    if hasattr(self, "_generate_tool_context")
-                    else ""
-                )
-
-                if tool_context and "content" in last_user_message:
-                    # Add tool context to the user message
-                    if messages[-1].get("role") == "user":
-                        messages[-1][
-                            "content"
-                        ] = f"{tool_context}\n\n{last_user_message['content']}"
-
-                # Filter out repetitive tools from the context
-                if tools:
-                    tools = [
-                        tool
-                        for tool in tools
-                        if tool.get("function", {}).get("name", "") not in repetitive_tools
-                    ]
-                if functions:
-                    functions = [
-                        func
-                        for func in functions
-                        if func.get("function", {}).get("name", "") not in repetitive_tools
-                    ]
-
-                if self.verbose:
-                    self.io.tool_output(
-                        "Temporarily hiding repetitive tool(s) to encourage progress:"
-                        f" {', '.join(sorted(repetitive_tools))}"
-                    )
-
         self.got_reasoning_content = False
         self.ended_reasoning_content = False
 
