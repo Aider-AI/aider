@@ -100,7 +100,7 @@ def make_new_repo(git_root, io):
     return repo
 
 
-def setup_vcs(git_root, io):
+def setup_git(git_root, io):
     if git is None:
         return
 
@@ -743,7 +743,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.vcs = "none"
 
     if args.vcs != "none":
-        git_root = setup_vcs(git_root, io)
+        git_root = setup_git(git_root, io)
         if args.gitignore:
             check_vcs_ignore(git_root, io)
 

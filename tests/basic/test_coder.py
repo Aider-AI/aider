@@ -11,7 +11,7 @@ from aider.coders.base_coder import FinishReasonLength, UnknownEditFormat
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
-from aider.repo import GitRepo
+from aider.repo import Repo as GitRepo
 from aider.sendchat import sanity_check_messages
 from aider.utils import GitTemporaryDirectory
 
