@@ -4,7 +4,8 @@ import re
 import subprocess
 from pathlib import Path, PurePosixPath
 
-from aider import prompts
+import pathspec
+
 from aider.vcs.common import get_commit_message
 from aider.vcs.git import set_git_env
 
@@ -224,7 +225,83 @@ class JjVCS:
         return files
 
     def is_ignored(self, path):
+        path_obj = Path(path)
+        if not path_obj.is_absolute():
+            path_obj = Path(self.root) / path_obj
+        path_obj = path_obj.resolve()
+
+        try:
+            relative_path_obj = path_obj.relative_to(self.root)
+        except ValueError:
+            return False
+
+        # Git precedence rules:
+        # 1. Last matching pattern in a file wins.
+        # 2. Patterns in deeper .gitignore files override parent dirs.
+        # 3. If a directory is excluded, files inside it cannot be re-included.
+
+        # Check parent directories first for exclusion.
+        for i in range(len(relative_path_obj.parts)):
+            # Don't check the file itself, just parent dirs
+            parent_dir_rel = Path(*relative_path_obj.parts[:i])
+            if str(parent_dir_rel) == ".":
+                continue
+
+            match = self._get_final_match(parent_dir_rel)
+            if match and not match.startswith("!"):
+                return True  # An ancestor dir is ignored, so this file is ignored.
+
+        # Now check the file itself
+        match = self._get_final_match(relative_path_obj)
+        if match and not match.startswith("!"):
+            return True
+
         return False
+
+    def _get_final_match(self, relative_path):
+        """
+        relative_path is relative to repo root.
+        Returns the last matching pattern string, or None.
+        """
+        last_match = None
+
+        # Walk from root down to file path
+        dirs_to_check = [Path(self.root)]
+        current_prefix = Path(self.root)
+
+        path_parts = relative_path.parts
+
+        for part in path_parts[:-1]:
+            current_prefix = current_prefix / part
+            dirs_to_check.append(current_prefix)
+
+        for gitignore_dir in dirs_to_check:
+            gitignore_path = gitignore_dir / ".gitignore"
+            if not gitignore_path.is_file():
+                continue
+
+            with gitignore_path.open(encoding="utf-8", errors="ignore") as f:
+                lines = f.read().splitlines()
+
+            try:
+                path_for_spec = relative_path.relative_to(
+                    gitignore_dir.relative_to(self.root)
+                )
+            except ValueError:
+                continue
+
+            for line in lines:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+
+                spec = pathspec.PathSpec.from_lines(
+                    pathspec.patterns.GitWildMatchPattern, [line]
+                )
+                if spec.match_file(str(path_for_spec)):
+                    last_match = line
+
+        return last_match
 
     def path_in_repo(self, path):
         return path in self.get_tracked_files()
