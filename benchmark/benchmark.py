@@ -715,7 +715,7 @@ def summarize_results(dirname, verbose, stats_languages=None):
                 setattr(lang_stats, f"pass_num_{i}", num_passed)
                 pass_rate = 100 * num_passed / float(lang_stats.completed_tests)
                 setattr(lang_stats, f"pass_rate_{i}", pass_rate)
-            
+
             # Then format attributes into ready-to-print strings
             for attr in lang_stats.__dict__:
                 val = getattr(lang_stats, attr)
