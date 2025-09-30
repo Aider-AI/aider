@@ -1891,6 +1891,13 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+- name: gpt-5-codex
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
 - name: azure/gpt-5
   edit_format: diff
   weak_model_name: azure/gpt-5-nano
