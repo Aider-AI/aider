@@ -704,8 +704,7 @@ def summarize_results(dirname, verbose, stats_languages=None):
     )
 
     if verbose and len(lang_to_stats) > 0:
-
-        def format_lang_stats(lang_stats):
+        def format_lang_stats(lang, lang_stats):
             # First, postprocess attributes for easier printing
             if lang_stats.completed_tests > 0:
                 lang_stats.avg_duration_per_test = lang_stats.duration / float(
@@ -716,7 +715,7 @@ def summarize_results(dirname, verbose, stats_languages=None):
                 setattr(lang_stats, f"pass_num_{i}", num_passed)
                 pass_rate = 100 * num_passed / float(lang_stats.completed_tests)
                 setattr(lang_stats, f"pass_rate_{i}", pass_rate)
-
+            
             # Then format attributes into ready-to-print strings
             for attr in lang_stats.__dict__:
                 val = getattr(lang_stats, attr)
@@ -742,7 +741,7 @@ def summarize_results(dirname, verbose, stats_languages=None):
         print("======== Stats by language ========")
         print()
 
-        [format_lang_stats(lang_stats) for lang_stats in lang_to_stats.values()]
+        [format_lang_stats(lang, lang_stats) for lang, lang_stats in lang_to_stats.items()]
         lang_to_col_widths = compute_lang_to_col_widths(lang_to_stats)
 
         any_stats = list(lang_to_stats.values())[0]
