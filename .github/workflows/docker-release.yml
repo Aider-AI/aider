@@ -35,18 +35,9 @@ jobs:
         platforms: linux/amd64,linux/arm64
         push: true
         tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/aider:${{ github.ref_name }}
-          ${{ secrets.DOCKERHUB_USERNAME }}/aider:latest
-        target: aider
+          ${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:${{ github.ref_name }}
+          ${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest
+        target: aider-ce
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc
+        cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc,mode=max        
 
-    - name: Build and push Docker full image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./docker/Dockerfile
-        platforms: linux/amd64,linux/arm64
-        push: true
-        tags: |
-          ${{ secrets.DOCKERHUB_USERNAME }}/aider-full:${{ github.ref_name }}
-          ${{ secrets.DOCKERHUB_USERNAME }}/aider-full:latest
-        target: aider-full

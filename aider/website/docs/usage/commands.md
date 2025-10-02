@@ -39,6 +39,7 @@ cog.out(get_help_md())
 | **/exit** | Exit the application |
 | **/git** | Run a git command (output excluded from chat) |
 | **/help** | Ask questions about aider |
+| **/history-search** | Fuzzy search your command history and paste the selected command into the chat. |
 | **/lint** | Lint and fix in-chat files or all dirty files if none in chat |
 | **/load** | Load and execute commands from a file |
 | **/ls** | List all known files and indicate which are included in the chat session |

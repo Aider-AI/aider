@@ -46,58 +46,54 @@ def test_voice_init_invalid_device(mock_sounddevice):
     assert "not found" in str(exc.value)
 
 
-def test_voice_init_invalid_format():
+def test_voice_init_invalid_format(mock_sounddevice):
     with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
         with pytest.raises(ValueError) as exc:
             Voice(audio_format="invalid")
         assert "Unsupported audio format" in str(exc.value)
 
 
-def test_callback_processing():
-    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
-        voice = Voice()
-        voice.q = queue.Queue()
+def test_callback_processing(mock_sounddevice, mock_soundfile):
+    voice = Voice()
+    voice.q = queue.Queue()
 
-        # Test with silence (low amplitude)
-        test_data = np.zeros((1000, 1))
-        voice.callback(test_data, None, None, None)
-        assert voice.pct == 0.5  # When range is too small (<=0.001), pct is set to 0.5
+    # Test with silence (low amplitude)
+    test_data = np.zeros((1000, 1))
+    voice.callback(test_data, None, None, None)
+    assert voice.pct == 0.5  # When range is too small (<=0.001), pct is set to 0.5
 
-        # Test with loud signal (high amplitude)
-        test_data = np.ones((1000, 1))
-        voice.callback(test_data, None, None, None)
-        assert voice.pct > 0.9
+    # Test with loud signal (high amplitude)
+    test_data = np.ones((1000, 1))
+    voice.callback(test_data, None, None, None)
+    assert voice.pct > 0.9
 
-        # Verify data is queued
-        assert not voice.q.empty()
-
-
-def test_get_prompt():
-    with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
-        voice = Voice()
-        voice.start_time = os.times().elapsed
-        voice.pct = 0.5  # 50% volume level
-
-        prompt = voice.get_prompt()
-        assert "Recording" in prompt
-        assert "sec" in prompt
-        assert "█" in prompt  # Should contain some filled blocks
-        assert "░" in prompt  # Should contain some empty blocks
+    # Verify data is queued
+    assert not voice.q.empty()
 
 
-def test_record_and_transcribe_keyboard_interrupt():
-    with patch("aider.voice.sf", MagicMock()):
-        voice = Voice()
-        with patch.object(voice, "raw_record_and_transcribe", side_effect=KeyboardInterrupt()):
-            result = voice.record_and_transcribe()
-            assert result is None
+def test_get_prompt(mock_sounddevice, mock_soundfile):
+    voice = Voice()
+    voice.start_time = os.times().elapsed
+    voice.pct = 0.5  # 50% volume level
+
+    prompt = voice.get_prompt()
+    assert "Recording" in prompt
+    assert "sec" in prompt
+    assert "█" in prompt  # Should contain some filled blocks
+    assert "░" in prompt  # Should contain some empty blocks
 
 
-def test_record_and_transcribe_device_error():
-    with patch("aider.voice.sf", MagicMock()):
-        voice = Voice()
-        with patch.object(
-            voice, "raw_record_and_transcribe", side_effect=SoundDeviceError("Test error")
-        ):
-            result = voice.record_and_transcribe()
-            assert result is None
+def test_record_and_transcribe_keyboard_interrupt(mock_sounddevice, mock_soundfile):
+    voice = Voice()
+    with patch.object(voice, "raw_record_and_transcribe", side_effect=KeyboardInterrupt()):
+        result = voice.record_and_transcribe()
+        assert result is None
+
+
+def test_record_and_transcribe_device_error(mock_sounddevice, mock_soundfile):
+    voice = Voice()
+    with patch.object(
+        voice, "raw_record_and_transcribe", side_effect=SoundDeviceError("Test error")
+    ):
+        result = voice.record_and_transcribe()
+        assert result is None

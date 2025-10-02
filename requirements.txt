@@ -20,7 +20,10 @@ anyio==4.10.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
+    #   mcp
     #   openai
+    #   sse-starlette
+    #   starlette
     #   watchfiles
 attrs==25.3.0
     # via
@@ -60,6 +63,7 @@ click==8.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+    #   uvicorn
 configargparse==1.7.1
     # via
     #   -c requirements/common-constraints.txt
@@ -154,6 +158,7 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
+    #   uvicorn
 hf-xet==1.1.7
     # via
     #   -c requirements/common-constraints.txt
@@ -171,7 +176,12 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+    #   mcp
     #   openai
+httpx-sse==0.4.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   mcp
 huggingface-hub==0.34.4
     # via
     #   -c requirements/common-constraints.txt
@@ -209,6 +219,7 @@ jsonschema==4.25.0
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   litellm
+    #   mcp
 jsonschema-specifications==2025.4.1
     # via
     #   -c requirements/common-constraints.txt
@@ -229,6 +240,10 @@ mccabe==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
+mcp==1.12.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 mdurl==0.1.2
     # via
     #   -c requirements/common-constraints.txt
@@ -338,11 +353,17 @@ pydantic==2.11.7
     #   -c requirements/common-constraints.txt
     #   google-generativeai
     #   litellm
+    #   mcp
     #   openai
+    #   pydantic-settings
 pydantic-core==2.33.2
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
+pydantic-settings==2.9.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   mcp
 pydub==0.25.1
     # via
     #   -c requirements/common-constraints.txt
@@ -375,6 +396,11 @@ python-dotenv==1.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+    #   pydantic-settings
+python-multipart==0.0.20
+    # via
+    #   -c requirements/common-constraints.txt
+    #   mcp
 pyyaml==6.0.2
     # via
     #   -c requirements/common-constraints.txt
@@ -449,6 +475,15 @@ soupsieve==2.7
     # via
     #   -c requirements/common-constraints.txt
     #   beautifulsoup4
+sse-starlette==2.3.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   mcp
+starlette==0.46.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   mcp
+    #   sse-starlette
 tiktoken==0.11.0
     # via
     #   -c requirements/common-constraints.txt
@@ -465,6 +500,7 @@ tqdm==4.67.1
     #   openai
     # via
     #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
     #   tree-sitter-language-pack
 tree-sitter-c-sharp==0.23.1
     # via
@@ -500,6 +536,7 @@ typing-inspection==0.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
+    #   pydantic-settings
 uritemplate==4.2.0
     # via
     #   -c requirements/common-constraints.txt
@@ -509,6 +546,10 @@ urllib3==2.5.0
     #   -c requirements/common-constraints.txt
     #   mixpanel
     #   requests
+uvicorn==0.34.2
+    # via
+    #   -c requirements/common-constraints.txt
+    #   mcp
 watchfiles==1.1.0
     # via
     #   -c requirements/common-constraints.txt
@@ -527,4 +568,4 @@ zipp==3.23.0
     #   importlib-metadata
     
 tree-sitter==0.23.2; python_version < "3.10"
-tree-sitter==0.24.0; python_version >= "3.10"
+tree-sitter>=0.25.1; python_version >= "3.10"

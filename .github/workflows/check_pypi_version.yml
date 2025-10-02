@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.12", "3.11", "3.10"]
 
     steps:
       - name: Set up Python ${{ matrix.python-version }}
@@ -23,14 +23,14 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install aider-chat
-        run: pip install aider-chat
+      - name: Install aider-ce
+        run: pip install aider-ce
 
       - name: Get installed aider version
         id: installed_version
         run: |
           set -x # Enable debugging output
-          aider_version_output=$(aider --version)
+          aider_version_output=$(aider-ce --version)
           if [ $? -ne 0 ]; then
             echo "Error: 'aider --version' command failed."
             exit 1

@@ -15,20 +15,24 @@ from pathlib import Path
 from types import SimpleNamespace
 from typing import List, Optional
 
-import git
-import importlib_resources
-import lox
-import pandas as pd
-import prompts
+"""
+Performance-oriented refactors:
+- Avoid heavy imports unless needed for a given code path.
+- Fast path for `--stats` to skip GitPython and benchmarking deps.
+- Build DataFrame / import plotting only when `--graphs` is true.
+- Use json.load for result file parsing to reduce memory churn.
+- Cache git version lookups across a single invocation.
+"""
+
+# Heavy modules are lazily imported within the code paths that need them.
 import typer
 from dotenv import load_dotenv
-from plots import plot_refactoring
 from rich.console import Console
 
-from aider import models, sendchat
-from aider.coders import Coder, base_coder
 from aider.dump import dump  # noqa: F401
-from aider.io import InputOutput
+
+# Cache for commit-hash -> version lookup
+_VERSION_CACHE = {}
 
 BENCHMARK_DNAME = Path(os.environ.get("AIDER_BENCHMARK_DIR", "tmp.benchmarks"))
 
@@ -88,10 +92,10 @@ def find_latest_benchmark_dir():
     return latest_dir
 
 
-def show_stats(dirnames, graphs, stats_languages=None):
+def show_stats(dirnames, graphs, verbose, stats_languages=None):
     raw_rows = []
     for dirname in dirnames:
-        row = summarize_results(dirname, stats_languages)
+        row = summarize_results(dirname, verbose, stats_languages)
         raw_rows.append(row)
 
     # return
@@ -122,11 +126,12 @@ def show_stats(dirnames, graphs, stats_languages=None):
 
     repeat_hi = repeat_lo = repeat_avg = None  # noqa: F841
 
-    df = pd.DataFrame.from_records(rows)
-    # df.sort_values(by=["model", "edit_format"], inplace=True)
-
-    # dump(df)
+    # Only build a DataFrame and import plotting libs when graphs are requested
     if graphs:
+        import pandas as pd  # Lazy import
+        from plots import plot_refactoring  # Lazy import
+
+        df = pd.DataFrame.from_records(rows)
         # plot_timing(df)
         # plot_outcomes(df, repeats, repeat_hi, repeat_lo, repeat_avg)
         # plot_outcomes_claude(df)
@@ -212,15 +217,15 @@ def main(
     thinking_tokens: Optional[int] = typer.Option(
         None, "--thinking-tokens", help="Set thinking tokens for models that support it"
     ),
+    map_tokens: Optional[int] = typer.Option(
+        None,
+        "--map-tokens",
+        help="Suggested number of tokens for repo map (0 to disable)",
+    ),
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
 ):
-    repo = git.Repo(search_parent_directories=True)
-    commit_hash = repo.head.object.hexsha[:7]
-    if repo.is_dirty():
-        commit_hash += "-dirty"
-
     if stats_only and not dirnames:
         latest_dir = find_latest_benchmark_dir()
         dirnames = [str(latest_dir)]
@@ -241,13 +246,26 @@ def main(
         updated_dirnames.append(dirname)
 
     if stats_only:
-        return show_stats(updated_dirnames, graphs, stats_languages)
+        return show_stats(updated_dirnames, graphs, verbose, stats_languages)
 
     if diffs_only:
         return show_diffs(updated_dirnames)
 
     assert len(updated_dirnames) == 1, updated_dirnames
     dirname = updated_dirnames[0]
+
+    # Lazy imports for the actual benchmark run
+    import git  # Heavy; avoid for --stats/--diffs
+    import importlib_resources  # Used for model metadata registration
+    import lox  # Only needed for threaded runs
+
+    from aider import models, sendchat
+    from aider.coders import base_coder
+
+    repo = git.Repo(search_parent_directories=True)
+    commit_hash = repo.head.object.hexsha[:7]
+    if repo.is_dirty():
+        commit_hash += "-dirty"
 
     if "AIDER_DOCKER" not in os.environ:
         print("Warning: benchmarking runs unvetted code from GPT, run in a docker container")
@@ -350,6 +368,9 @@ def main(
     base_coder.RETRY_TIMEOUT = LONG_TIMEOUT
     models.RETRY_TIMEOUT = LONG_TIMEOUT
 
+    # Enable in-memory RepoMap cache when running multiple threads to avoid SQLite contention
+    repomap_in_memory = threads > 1
+
     if threads == 1:
         all_results = []
         for test_path in test_dnames:
@@ -370,10 +391,12 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                map_tokens,
+                repomap_in_memory,
             )
 
             all_results.append(results)
-            summarize_results(dirname)
+            summarize_results(dirname, verbose)
             if sleep:
                 time.sleep(sleep)
     else:
@@ -396,13 +419,15 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                map_tokens,
+                repomap_in_memory,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
     print()
     print()
     print()
-    summarize_results(dirname)
+    summarize_results(dirname, verbose)
 
     return 0
 
@@ -446,7 +471,7 @@ def show_diffs(dirnames):
 
 def load_results(dirname, stats_languages=None):
     dirname = Path(dirname)
-    all_results = []
+    lang_to_results = {}
 
     if stats_languages:
         languages = [lang.strip().lower() for lang in stats_languages.split(",")]
@@ -458,21 +483,28 @@ def load_results(dirname, stats_languages=None):
         for fname in dirname.glob(pattern):
             try:
                 results = json.loads(fname.read_text())
-                all_results.append(results)
+                #      json / test / prac / exer / lang
+                lang = fname.parent.parent.parent.parent.name
+                lang_to_results.setdefault(lang, []).append(results)
             except json.JSONDecodeError:
                 print("json.JSONDecodeError", fname)
                 continue
-    return all_results
+    return lang_to_results
 
 
-def summarize_results(dirname, stats_languages=None):
-    all_results = load_results(dirname, stats_languages)
+def summarize_results(dirname, verbose, stats_languages=None):
+    lang_to_results = load_results(dirname, stats_languages)
 
     res = SimpleNamespace()
     res.total_tests = len(list(Path(dirname).glob("*/exercises/practice/*")))
 
     try:
-        tries = max(len(results.get("tests_outcomes", [])) for results in all_results if results)
+        tries = max(
+            len(results.get("tests_outcomes", []))
+            for results_list in lang_to_results.values()
+            for results in results_list
+            if results
+        )
     except ValueError:
         tries = 0
 
@@ -497,44 +529,90 @@ def summarize_results(dirname, stats_languages=None):
 
     res.reasoning_effort = None
     res.thinking_tokens = None
+    res.map_tokens = None
     variants = defaultdict(set)
 
-    for results in all_results:
-        if not results:
-            continue
+    def add(attr_name, increment, global_stats, lang_stats):
+        global_prev = getattr(global_stats, attr_name)
+        setattr(global_stats, attr_name, global_prev + increment)
 
-        res.completed_tests += 1
-        tests_outcomes = results.get("tests_outcomes", [])
-        passed = tests_outcomes and tests_outcomes[-1]
-        if passed:
-            for i in range(len(tests_outcomes) - 1, tries):
-                passed_tests[i] += 1
+        lang_prev = getattr(lang_stats, attr_name)
+        setattr(lang_stats, attr_name, lang_prev + increment)
 
-        res.cost += results.get("cost", 0)
-        res.duration += results.get("duration", 0)
-        res.test_timeouts += results.get("test_timeouts", 0)
+    lang_to_stats = {}
+    lang_to_passed_tests = {}
+    for lang, results_list in lang_to_results.items():
+        lang_stats = SimpleNamespace()
+        lang_stats.completed_tests = 0
+        lang_stats.duration = 0
+        lang_stats.avg_duration_per_test = 0
+        lang_stats.cost = 0
+        for i in range(tries):
+            setattr(lang_stats, f"pass_rate_{i + 1}", 0)
+        for i in range(tries):
+            setattr(lang_stats, f"pass_num_{i + 1}", 0)
+        lang_stats.error_outputs = 0
+        lang_stats.user_asks = 0
+        lang_stats.test_timeouts = 0
+        lang_stats.exhausted_context_windows = 0
+        lang_stats.num_malformed_responses = 0
+        lang_stats.num_with_malformed_responses = 0
+        lang_stats.syntax_errors = 0
+        lang_stats.indentation_errors = 0
+        lang_stats.lazy_comments = 0
+        lang_stats.prompt_tokens = 0
+        lang_stats.completion_tokens = 0
+        lang_to_stats[lang] = lang_stats
+        lang_to_passed_tests[lang] = [0] * tries
 
-        res.error_outputs += results.get("num_error_outputs", 0)
-        res.user_asks += results.get("num_user_asks", 0)
-        res.exhausted_context_windows += results.get("num_exhausted_context_windows", 0)
-        res.num_malformed_responses += results.get("num_malformed_responses", 0)
-        if results.get("num_malformed_responses"):
-            res.num_with_malformed_responses += 1
-        res.lazy_comments += results.get("lazy_comments", 0)
+        for results in results_list:
+            if not results:
+                continue
 
-        res.syntax_errors += results.get("syntax_errors", 0)
-        res.indentation_errors += results.get("indentation_errors", 0)
+            add("completed_tests", 1, res, lang_stats)
+            tests_outcomes = results.get("tests_outcomes", [])
+            passed = tests_outcomes and tests_outcomes[-1]
+            if passed:
+                for i in range(len(tests_outcomes) - 1, tries):
+                    passed_tests[i] += 1
+                    lang_to_passed_tests[lang][i] += 1
 
-        res.prompt_tokens += results.get("prompt_tokens", 0)
-        res.completion_tokens += results.get("completion_tokens", 0)
+            add("cost", results.get("cost", 0), res, lang_stats)
+            add("duration", results.get("duration", 0), res, lang_stats)
+            add("test_timeouts", results.get("test_timeouts", 0), res, lang_stats)
 
-        res.reasoning_effort = results.get("reasoning_effort")
-        res.thinking_tokens = results.get("thinking_tokens")
+            add("error_outputs", results.get("num_error_outputs", 0), res, lang_stats)
+            add("user_asks", results.get("num_user_asks", 0), res, lang_stats)
+            add(
+                "exhausted_context_windows",
+                results.get("num_exhausted_context_windows", 0),
+                res,
+                lang_stats,
+            )
+            add(
+                "num_malformed_responses",
+                results.get("num_malformed_responses", 0),
+                res,
+                lang_stats,
+            )
+            if results.get("num_malformed_responses"):
+                add("num_with_malformed_responses", 1, res, lang_stats)
+            add("lazy_comments", results.get("lazy_comments", 0), res, lang_stats)
 
-        for key in "model edit_format commit_hash editor_model editor_edit_format".split():
-            val = results.get(key)
-            if val:
-                variants[key].add(val)
+            add("syntax_errors", results.get("syntax_errors", 0), res, lang_stats)
+            add("indentation_errors", results.get("indentation_errors", 0), res, lang_stats)
+
+            add("prompt_tokens", results.get("prompt_tokens", 0), res, lang_stats)
+            add("completion_tokens", results.get("completion_tokens", 0), res, lang_stats)
+
+            res.reasoning_effort = results.get("reasoning_effort")
+            res.thinking_tokens = results.get("thinking_tokens")
+            res.map_tokens = results.get("map_tokens")
+
+            for key in "model edit_format commit_hash editor_model editor_edit_format".split():
+                val = results.get(key)
+                if val:
+                    variants[key].add(val)
 
     if not res.completed_tests:
         return
@@ -558,7 +636,7 @@ def summarize_results(dirname, stats_languages=None):
     for i in range(tries):
         pass_rate = 100 * passed_tests[i] / res.completed_tests
         percents[i] = pass_rate
-        # console.print(f"{pass_rate:.1f}% correct after try {i+1}")
+        # console.print(f"{pass_rate:.1f}% correct after try {i + 1}")
         setattr(res, f"pass_rate_{i + 1}", f"{pass_rate:.1f}")
         setattr(res, f"pass_num_{i + 1}", passed_tests[i])
 
@@ -578,6 +656,8 @@ def summarize_results(dirname, stats_languages=None):
         print(f"  reasoning_effort: {res.reasoning_effort}")
     if res.thinking_tokens is not None:
         print(f"  thinking_tokens: {res.thinking_tokens}")
+    if res.map_tokens is not None:
+        print(f"  map_tokens: {res.map_tokens}")
 
     for i in range(tries):
         print(f"  pass_rate_{i + 1}: {percents[i]:.1f}")
@@ -602,7 +682,7 @@ def summarize_results(dirname, stats_languages=None):
 
     if variants["model"]:
         a_model = set(variants["model"]).pop()
-        command = f"aider --model {a_model}"
+        command = f"aider-ce --model {a_model}"
         print(f"  command: {command}")
 
     print(f"  date: {date}")
@@ -623,6 +703,86 @@ def summarize_results(dirname, stats_languages=None):
         f" ${projected_cost:.2f} projected"
     )
 
+    if verbose and len(lang_to_stats) > 0:
+
+        def format_lang_stats(lang, lang_stats):
+            # First, postprocess attributes for easier printing
+            if lang_stats.completed_tests > 0:
+                lang_stats.avg_duration_per_test = lang_stats.duration / float(
+                    lang_stats.completed_tests
+                )
+            for i in range(tries):
+                num_passed = lang_to_passed_tests[lang][i]
+                setattr(lang_stats, f"pass_num_{i + 1}", num_passed)
+                pass_rate = 100 * num_passed / float(lang_stats.completed_tests)
+                setattr(lang_stats, f"pass_rate_{i + 1}", pass_rate)
+
+            # Then format attributes into ready-to-print strings
+            for attr in lang_stats.__dict__:
+                val = getattr(lang_stats, attr)
+                if val == 0:
+                    val = "-"
+                elif isinstance(val, float):
+                    val = f"{val:,.2f}"
+                else:
+                    val = f"{val:,}"
+
+                setattr(lang_stats, attr, val)
+
+        def compute_lang_to_col_widths(lang_to_stats):
+            lang_to_col_widths = {}
+            for lang, lang_stats in lang_to_stats.items():
+                lang_stat_attrs = [getattr(lang_stats, attr) for attr in lang_stats.__dict__]
+                lang_col_width = max(len(lang), len(max(lang_stat_attrs, key=len)))
+                lang_to_col_widths[lang] = lang_col_width
+
+            return lang_to_col_widths
+
+        print()
+        print("======== Stats by language ========")
+        print()
+
+        [format_lang_stats(lang, lang_stats) for lang, lang_stats in lang_to_stats.items()]
+        lang_to_col_widths = compute_lang_to_col_widths(lang_to_stats)
+
+        any_stats = list(lang_to_stats.values())[0]
+        attrs = list(any_stats.__dict__)
+        attr_col_width = len(max(["language"] + attrs, key=len))
+        langs = list(lang_to_stats.keys())
+
+        print("| " + ("-" * attr_col_width), end="")
+        for lang in langs:
+            col_width = lang_to_col_widths[lang]
+            print(" | " + ("-" * col_width), end="")
+        print(" |")
+
+        print(f"| {' '.center(attr_col_width)}", end="")
+        for lang in langs:
+            col_width = lang_to_col_widths[lang]
+            print(f" | {lang.center(col_width)}", end="")
+        print(" |")
+
+        print("| " + ("-" * attr_col_width), end="")
+        for lang in langs:
+            col_width = lang_to_col_widths[lang]
+            print(" | " + ("-" * col_width), end="")
+        print(" |")
+
+        for attr in attrs:
+            print(f"| {attr:<{attr_col_width}}", end="")
+            for lang in langs:
+                lang_stats = lang_to_stats[lang]
+                col_width = lang_to_col_widths[lang]
+                print(f" | {getattr(lang_stats, attr):>{col_width}}", end="")
+            print(" |")
+
+        print("| " + ("-" * attr_col_width), end="")
+        for lang in langs:
+            col_width = lang_to_col_widths[lang]
+            print(" | " + ("-" * col_width), end="")
+        print(" |")
+        print()
+
     console.rule()
 
     # print(json.dumps(vars(res), indent=4, sort_keys=True))
@@ -634,14 +794,24 @@ def get_versions(commit_hashes):
     for hsh in commit_hashes:
         if not hsh:
             continue
-        hsh = hsh.split("-")[0]
+        short = hsh.split("-")[0]
+        if short in _VERSION_CACHE:
+            ver = _VERSION_CACHE.get(short)
+            if ver:
+                versions.add(ver)
+            continue
+
         try:
-            version = subprocess.check_output(
-                ["git", "show", f"{hsh}:aider/__init__.py"], universal_newlines=True
+            version_src = subprocess.check_output(
+                ["git", "show", f"{short}:aider/__init__.py"], universal_newlines=True
             )
-            version = re.search(r'__version__ = "(.*)"', version).group(1)
-            versions.add(version)
+            match = re.search(r'__version__ = "(.*)"', version_src)
+            ver = match.group(1) if match else None
+            _VERSION_CACHE[short] = ver
+            if ver:
+                versions.add(ver)
         except subprocess.CalledProcessError:
+            _VERSION_CACHE[short] = None
             pass
     return versions
 
@@ -693,8 +863,18 @@ def run_test_real(
     sleep=0,
     reasoning_effort: Optional[str] = None,
     thinking_tokens: Optional[int] = None,
+    map_tokens: Optional[int] = None,
     read_model_settings=None,
+    repomap_in_memory: bool = False,
 ):
+    # Lazy imports: only needed in the actual benchmark execution path
+    import git
+    import prompts
+
+    from aider import models
+    from aider.coders import Coder
+    from aider.io import InputOutput
+
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -818,20 +998,45 @@ def run_test_real(
     dump(edit_format)
     show_fnames = ",".join(map(str, fnames))
     print("fnames:", show_fnames)
+    # Ensure this test directory is a standalone git repo so RepoMap can be used
+    try:
+        git_dir = testdir / ".git"
+        if not git_dir.exists():
+            r = git.Repo.init(testdir)
+            # Set a local identity to avoid commit failures in clean containers
+            with r.config_writer() as cw:
+                cw.set_value("user", "name", "aider-benchmark")
+                cw.set_value("user", "email", "aider-benchmark@example.com")
+            # Add existing files (solution set and any current files)
+            r.index.add([str(p.relative_to(testdir)) for p in testdir.rglob("*") if p.is_file()])
+            r.index.commit("Initial commit for aider benchmark")
+    except Exception as e:
+        if verbose:
+            print(f"Warning: failed to initialize git repo in {testdir}: {e}")
 
-    coder = Coder.create(
-        main_model,
-        edit_format,
-        io,
+    coder_kwargs = dict(
+        main_model=main_model,
+        edit_format=edit_format,
+        io=io,
         fnames=fnames,
-        use_git=False,
+        use_git=True,
+        auto_commits=False,
+        dirty_commits=False,
         stream=False,
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
         suggest_shell_commands=False,
         ignore_mentions=ignore_files,
+        # Reduce repo map contention and size for benchmarks
+        map_cache_dir=str(testdir),
+        repomap_in_memory=repomap_in_memory,
+        map_mul_no_files=4,
     )
+    if map_tokens is not None:
+        coder_kwargs["map_tokens"] = map_tokens
+
+    coder = Coder.create(**coder_kwargs)
     dump(coder.ignore_mentions)
 
     coder.show_announcements()
@@ -960,6 +1165,7 @@ def run_test_real(
         prompt_tokens=coder.total_tokens_sent,
         completion_tokens=coder.total_tokens_received,
         thinking_tokens=thinking_tokens,
+        map_tokens=map_tokens,
         chat_hashes=list(
             zip(
                 coder.chat_completion_call_hashes,

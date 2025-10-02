@@ -30,6 +30,7 @@ from aider.format_settings import format_settings, scrub_sensitive_info
 from aider.history import ChatSummary
 from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
+from aider.mcp import load_mcp_servers
 from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
@@ -210,7 +211,7 @@ def check_streamlit_install(io):
         io,
         "streamlit",
         "You need to install the aider browser feature",
-        ["aider-chat[browser]"],
+        ["aider-ce[browser]"],
     )
 
 
@@ -966,10 +967,23 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         map_tokens = args.map_tokens
 
+    if args.enable_context_compaction and args.context_compaction_max_tokens is None:
+        max_input_tokens = main_model.info.get("max_input_tokens")
+        if max_input_tokens:
+            args.context_compaction_max_tokens = int(max_input_tokens * 0.8)
+
     # Track auto-commits configuration
     analytics.event("auto_commits", enabled=bool(args.auto_commits))
 
     try:
+        # Load MCP servers from config string or file
+        mcp_servers = load_mcp_servers(
+            args.mcp_servers, args.mcp_servers_file, io, args.verbose, args.mcp_transport
+        )
+
+        if not mcp_servers:
+            mcp_servers = []
+
         coder = Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
@@ -977,6 +991,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             repo=repo,
             fnames=fnames,
             read_only_fnames=read_only_fnames,
+            read_only_stubs_fnames=[],
             show_diffs=args.show_diffs,
             auto_commits=args.auto_commits,
             dirty_commits=args.dirty_commits,
@@ -996,6 +1011,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             map_refresh=args.map_refresh,
             cache_prompts=args.cache_prompts,
             map_mul_no_files=args.map_multiplier_no_files,
+            map_max_line_length=args.map_max_line_length,
             num_cache_warming_pings=args.cache_keepalive_pings,
             suggest_shell_commands=args.suggest_shell_commands,
             chat_language=args.chat_language,
@@ -1003,7 +1019,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             detect_urls=args.detect_urls,
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
+            mcp_servers=mcp_servers,
             add_gitignore_files=args.add_gitignore_files,
+            enable_context_compaction=args.enable_context_compaction,
+            context_compaction_max_tokens=args.context_compaction_max_tokens,
+            context_compaction_summary_tokens=args.context_compaction_summary_tokens,
+            map_cache_dir=args.map_cache_dir,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
@@ -1173,6 +1194,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             kwargs.update(switch.kwargs)
             if "show_announcements" in kwargs:
                 del kwargs["show_announcements"]
+
+            # Disable cache warming for the new coder
+            kwargs["num_cache_warming_pings"] = 0
 
             coder = Coder.create(**kwargs)
 

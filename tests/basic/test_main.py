@@ -1481,3 +1481,57 @@ class TestMain(TestCase):
             )
         for call in mock_io_instance.tool_warning.call_args_list:
             self.assertNotIn("Cost estimates may be inaccurate", call[0][0])
+
+    @patch("aider.coders.Coder.create")
+    def test_mcp_servers_parsing(self, mock_coder_create):
+        # Setup mock coder
+        mock_coder_instance = MagicMock()
+        mock_coder_create.return_value = mock_coder_instance
+
+        # Test with --mcp-servers option
+        with GitTemporaryDirectory():
+            main(
+                [
+                    "--mcp-servers",
+                    '{"mcpServers":{"git":{"command":"uvx","args":["mcp-server-git"]}}}',
+                    "--exit",
+                    "--yes",
+                ],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+
+            # Verify that Coder.create was called with mcp_servers parameter
+            mock_coder_create.assert_called_once()
+            _, kwargs = mock_coder_create.call_args
+            self.assertIn("mcp_servers", kwargs)
+            self.assertIsNotNone(kwargs["mcp_servers"])
+            # At least one server should be in the list
+            self.assertTrue(len(kwargs["mcp_servers"]) > 0)
+            # First server should have a name attribute
+            self.assertTrue(hasattr(kwargs["mcp_servers"][0], "name"))
+
+        # Test with --mcp-servers-file option
+        mock_coder_create.reset_mock()
+
+        with GitTemporaryDirectory():
+            # Create a temporary MCP servers file
+            mcp_file = Path("mcp_servers.json")
+            mcp_content = {"mcpServers": {"git": {"command": "uvx", "args": ["mcp-server-git"]}}}
+            mcp_file.write_text(json.dumps(mcp_content))
+
+            main(
+                ["--mcp-servers-file", str(mcp_file), "--exit", "--yes"],
+                input=DummyInput(),
+                output=DummyOutput(),
+            )
+
+            # Verify that Coder.create was called with mcp_servers parameter
+            mock_coder_create.assert_called_once()
+            _, kwargs = mock_coder_create.call_args
+            self.assertIn("mcp_servers", kwargs)
+            self.assertIsNotNone(kwargs["mcp_servers"])
+            # At least one server should be in the list
+            self.assertTrue(len(kwargs["mcp_servers"]) > 0)
+            # First server should have a name attribute
+            self.assertTrue(hasattr(kwargs["mcp_servers"][0], "name"))

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import asyncio
 import base64
 import hashlib
 import json
@@ -26,6 +27,7 @@ from json.decoder import JSONDecodeError
 from pathlib import Path
 from typing import List
 
+from litellm import experimental_mcp_client
 from rich.console import Console
 
 from aider import __version__, models, prompts, urls, utils
@@ -36,6 +38,7 @@ from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
 from aider.llm import litellm
+from aider.mcp.server import LocalServer
 from aider.models import RETRY_TIMEOUT
 from aider.reasoning_tags import (
     REASONING_TAG,
@@ -88,6 +91,7 @@ all_fences = [
 class Coder:
     abs_fnames = None
     abs_read_only_fnames = None
+    abs_read_only_stubs_fnames = None
     repo = None
     last_aider_commit_hash = None
     aider_edited_files = None
@@ -99,6 +103,8 @@ class Coder:
     last_keyboard_interrupt = None
     num_reflections = 0
     max_reflections = 3
+    num_tool_calls = 0
+    max_tool_calls = 25
     edit_format = None
     yield_stream = False
     temperature = None
@@ -109,6 +115,7 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     partial_response_content = ""
+    partial_response_tool_call = []
     commit_before_message = []
     message_cost = 0.0
     add_cache_headers = False
@@ -120,6 +127,14 @@ class Coder:
     chat_language = None
     commit_language = None
     file_watcher = None
+    mcp_servers = None
+    mcp_tools = None
+
+    # Context management settings (for all modes)
+    context_management_enabled = False  # Disabled by default except for navigator mode
+    large_file_token_threshold = (
+        25000  # Files larger than this will be truncated when context management is enabled
+    )
 
     @classmethod
     def create(
@@ -171,6 +186,9 @@ class Coder:
             update = dict(
                 fnames=list(from_coder.abs_fnames),
                 read_only_fnames=list(from_coder.abs_read_only_fnames),  # Copy read-only files
+                read_only_stubs_fnames=list(
+                    from_coder.abs_read_only_stubs_fnames
+                ),  # Copy read-only stubs
                 done_messages=done_messages,
                 cur_messages=from_coder.cur_messages,
                 aider_commit_hashes=from_coder.aider_commit_hashes,
@@ -286,6 +304,10 @@ class Coder:
             rel_fname = self.get_rel_fname(fname)
             lines.append(f"Added {rel_fname} to the chat (read-only).")
 
+        for fname in self.abs_read_only_stubs_fnames:
+            rel_fname = self.get_rel_fname(fname)
+            lines.append(f"Added {rel_fname} to the chat (read-only stub).")
+
         if self.done_messages:
             lines.append("Restored previous conversation history.")
 
@@ -304,6 +326,7 @@ class Coder:
         fnames=None,
         add_gitignore_files=False,
         read_only_fnames=None,
+        read_only_stubs_fnames=None,
         show_diffs=False,
         auto_commits=True,
         dirty_commits=True,
@@ -321,6 +344,7 @@ class Coder:
         test_cmd=None,
         aider_commit_hashes=None,
         map_mul_no_files=8,
+        map_max_line_length=100,
         commands=None,
         summarizer=None,
         total_cost=0.0,
@@ -338,7 +362,16 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        mcp_servers=None,
+        enable_context_compaction=False,
+        context_compaction_max_tokens=None,
+        context_compaction_summary_tokens=8192,
+        map_cache_dir=".",
+        repomap_in_memory=False,
     ):
+        # initialize from args.map_cache_dir
+        self.map_cache_dir = map_cache_dir
+
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
 
@@ -365,6 +398,11 @@ class Coder:
         self.detect_urls = detect_urls
 
         self.num_cache_warming_pings = num_cache_warming_pings
+        self.mcp_servers = mcp_servers
+        self.enable_context_compaction = enable_context_compaction
+
+        self.context_compaction_max_tokens = context_compaction_max_tokens
+        self.context_compaction_summary_tokens = context_compaction_summary_tokens
 
         if not fnames:
             fnames = []
@@ -391,6 +429,7 @@ class Coder:
         self.abs_fnames = set()
         self.abs_read_only_fnames = set()
         self.add_gitignore_files = add_gitignore_files
+        self.abs_read_only_stubs_fnames = set()
 
         if cur_messages:
             self.cur_messages = cur_messages
@@ -484,6 +523,17 @@ class Coder:
                 else:
                     self.io.tool_warning(f"Error: Read-only file {fname} does not exist. Skipping.")
 
+        if read_only_stubs_fnames:
+            self.abs_read_only_stubs_fnames = set()
+            for fname in read_only_stubs_fnames:
+                abs_fname = self.abs_root_path(fname)
+                if os.path.exists(abs_fname):
+                    self.abs_read_only_stubs_fnames.add(abs_fname)
+                else:
+                    self.io.tool_warning(
+                        f"Error: Read-only (stub) file {fname} does not exist. Skipping."
+                    )
+
         if map_tokens is None:
             use_repo_map = main_model.use_repo_map
             map_tokens = 1024
@@ -497,7 +547,7 @@ class Coder:
         if use_repo_map and self.repo and has_map_prompt:
             self.repo_map = RepoMap(
                 map_tokens,
-                self.root,
+                self.map_cache_dir,
                 self.main_model,
                 io,
                 self.gpt_prompts.repo_content_prefix,
@@ -505,6 +555,9 @@ class Coder:
                 max_inp_tokens,
                 map_mul_no_files=map_mul_no_files,
                 refresh=map_refresh,
+                max_code_line_length=map_max_line_length,
+                repo_root=self.root,
+                use_memory_cache=repomap_in_memory,
             )
 
         self.summarizer = summarizer or ChatSummary(
@@ -530,6 +583,9 @@ class Coder:
         self.auto_test = auto_test
         self.test_cmd = test_cmd
 
+        # Instantiate MCP tools
+        if self.mcp_servers:
+            self.initialize_mcp_tools()
         # validate the functions jsonschema
         if self.functions:
             from jsonschema import Draft7Validator
@@ -614,6 +670,10 @@ class Coder:
             content = self.io.read_text(_fname)
             if content is not None:
                 all_content += content + "\n"
+        for _fname in self.abs_read_only_stubs_fnames:
+            content = self.io.read_text(_fname)
+            if content is not None:
+                all_content += content + "\n"
 
         lines = all_content.splitlines()
         good = False
@@ -646,11 +706,40 @@ class Coder:
                 prompt += relative_fname
                 prompt += f"\n{self.fence[0]}\n"
 
-                prompt += content
+                # Apply context management if enabled for large files
+                if self.context_management_enabled:
+                    # Calculate tokens for this file
+                    file_tokens = self.main_model.token_count(content)
 
-                # lines = content.splitlines(keepends=True)
-                # lines = [f"{i+1:03}:{line}" for i, line in enumerate(lines)]
-                # prompt += "".join(lines)
+                    if file_tokens > self.large_file_token_threshold:
+                        # Truncate the file content
+                        lines = content.splitlines()
+
+                        # Keep the first and last parts of the file with a marker in between
+                        keep_lines = (
+                            self.large_file_token_threshold // 40
+                        )  # Rough estimate of tokens per line
+                        first_chunk = lines[: keep_lines // 2]
+                        last_chunk = lines[-(keep_lines // 2) :]
+
+                        truncated_content = "\n".join(first_chunk)
+                        truncated_content += (
+                            f"\n\n... [File truncated due to size ({file_tokens} tokens). Use"
+                            " /context-management to toggle truncation off] ...\n\n"
+                        )
+                        truncated_content += "\n".join(last_chunk)
+
+                        # Add message about truncation
+                        self.io.tool_output(
+                            f"⚠️ '{relative_fname}' is very large ({file_tokens} tokens). "
+                            "Use /context-management to toggle truncation off if needed."
+                        )
+
+                        prompt += truncated_content
+                    else:
+                        prompt += content
+                else:
+                    prompt += content
 
                 prompt += f"{self.fence[1]}\n"
 
@@ -658,6 +747,7 @@ class Coder:
 
     def get_read_only_files_content(self):
         prompt = ""
+        # Handle regular read-only files
         for fname in self.abs_read_only_fnames:
             content = self.io.read_text(fname)
             if content is not None and not is_image_file(fname):
@@ -665,14 +755,63 @@ class Coder:
                 prompt += "\n"
                 prompt += relative_fname
                 prompt += f"\n{self.fence[0]}\n"
-                prompt += content
+
+                # Apply context management if enabled for large files (same as get_files_content)
+                if self.context_management_enabled:
+                    # Calculate tokens for this file
+                    file_tokens = self.main_model.token_count(content)
+
+                    if file_tokens > self.large_file_token_threshold:
+                        # Truncate the file content
+                        lines = content.splitlines()
+
+                        # Keep the first and last parts of the file with a marker in between
+                        keep_lines = (
+                            self.large_file_token_threshold // 40
+                        )  # Rough estimate of tokens per line
+                        first_chunk = lines[: keep_lines // 2]
+                        last_chunk = lines[-(keep_lines // 2) :]
+
+                        truncated_content = "\n".join(first_chunk)
+                        truncated_content += (
+                            f"\n\n... [File truncated due to size ({file_tokens} tokens). Use"
+                            " /context-management to toggle truncation off] ...\n\n"
+                        )
+                        truncated_content += "\n".join(last_chunk)
+
+                        # Add message about truncation
+                        self.io.tool_output(
+                            f"⚠️ '{relative_fname}' is very large ({file_tokens} tokens). "
+                            "Use /context-management to toggle truncation off if needed."
+                        )
+
+                        prompt += truncated_content
+                    else:
+                        prompt += content
+                else:
+                    prompt += content
+
+                prompt += f"{self.fence[1]}\n"
+
+        # Handle stub files
+        for fname in self.abs_read_only_stubs_fnames:
+            if not is_image_file(fname):
+                relative_fname = self.get_rel_fname(fname)
+                prompt += "\n"
+                prompt += f"{relative_fname} (stub)"
+                prompt += f"\n{self.fence[0]}\n"
+                stub = self.get_file_stub(fname)
+                prompt += stub
                 prompt += f"{self.fence[1]}\n"
         return prompt
 
     def get_cur_message_text(self):
         text = ""
         for msg in self.cur_messages:
-            text += msg["content"] + "\n"
+            # For some models the content is None if the message
+            # contains tool calls.
+            content = msg["content"] or ""
+            text += content + "\n"
         return text
 
     def get_ident_mentions(self, text):
@@ -717,8 +856,24 @@ class Coder:
         mentioned_fnames.update(self.get_ident_filename_matches(mentioned_idents))
 
         all_abs_files = set(self.get_all_abs_files())
+
+        # Exclude metadata/docs from repo map inputs to reduce parsing overhead
+        def _include_in_map(abs_path):
+            try:
+                rel = self.get_rel_fname(abs_path)
+            except Exception:
+                rel = str(abs_path)
+            parts = Path(rel).parts
+            if ".meta" in parts or ".docs" in parts:
+                return False
+            return True
+
+        all_abs_files = {p for p in all_abs_files if _include_in_map(p)}
         repo_abs_read_only_fnames = set(self.abs_read_only_fnames) & all_abs_files
-        chat_files = set(self.abs_fnames) | repo_abs_read_only_fnames
+        repo_abs_read_only_stubs_fnames = set(self.abs_read_only_stubs_fnames) & all_abs_files
+        chat_files = (
+            set(self.abs_fnames) | repo_abs_read_only_fnames | repo_abs_read_only_stubs_fnames
+        )
         other_files = all_abs_files - chat_files
 
         repo_content = self.repo_map.get_repo_map(
@@ -777,7 +932,9 @@ class Coder:
             ]
 
         # Handle image files
-        images_message = self.get_images_message(self.abs_read_only_fnames)
+        images_message = self.get_images_message(
+            list(self.abs_read_only_fnames) + list(self.abs_read_only_stubs_fnames)
+        )
         if images_message is not None:
             readonly_messages += [
                 images_message,
@@ -884,6 +1041,7 @@ class Coder:
                     if not self.io.placeholder:
                         self.copy_context()
                     user_message = self.get_input()
+                    self.compact_context_if_needed()
                     self.run_one(user_message, preproc)
                     self.show_undo_hint()
                 except KeyboardInterrupt:
@@ -897,15 +1055,17 @@ class Coder:
 
     def get_input(self):
         inchat_files = self.get_inchat_relative_files()
-        read_only_files = [self.get_rel_fname(fname) for fname in self.abs_read_only_fnames]
-        all_files = sorted(set(inchat_files + read_only_files))
+        all_read_only_fnames = self.abs_read_only_fnames | self.abs_read_only_stubs_fnames
+        all_read_only_files = [self.get_rel_fname(fname) for fname in all_read_only_fnames]
+        all_files = sorted(set(inchat_files + all_read_only_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
         return self.io.get_input(
             self.root,
             all_files,
             self.get_addable_relative_files(),
             self.commands,
-            self.abs_read_only_fnames,
+            abs_read_only_fnames=self.abs_read_only_fnames,
+            abs_read_only_stubs_fnames=self.abs_read_only_stubs_fnames,
             edit_format=edit_format,
         )
 
@@ -955,7 +1115,8 @@ class Coder:
 
         # Exclude double quotes from the matched URL characters
         url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*)')
-        urls = list(set(url_pattern.findall(text)))  # Use set to remove duplicates
+        # Use set to remove duplicates
+        urls = list(set(url_pattern.findall(text)))
         for url in urls:
             url = url.rstrip(".',\"}")  # Added } to the characters to strip
             self.io.offer_url(url)
@@ -968,7 +1129,8 @@ class Coder:
 
         # Exclude double quotes from the matched URL characters
         url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*[^\s,.])')
-        urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
+        # Use set to remove duplicates
+        urls = list(set(url_pattern.findall(inp)))
         group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
@@ -1000,7 +1162,7 @@ class Coder:
         self.last_keyboard_interrupt = now
 
     def summarize_start(self):
-        if not self.summarizer.too_big(self.done_messages):
+        if not self.summarizer.check_max_tokens(self.done_messages):
             return
 
         self.summarize_end()
@@ -1017,6 +1179,7 @@ class Coder:
             self.summarized_done_messages = self.summarizer.summarize(self.summarizing_messages)
         except ValueError as err:
             self.io.tool_warning(err.args[0])
+            self.summarized_done_messages = self.summarizing_messages
 
         if self.verbose:
             self.io.tool_output("Finished summarizing chat history.")
@@ -1033,9 +1196,51 @@ class Coder:
         self.summarizing_messages = None
         self.summarized_done_messages = []
 
+    def compact_context_if_needed(self):
+        if not self.enable_context_compaction:
+            self.summarize_start()
+            return
+
+        if not self.summarizer.check_max_tokens(
+            self.done_messages, max_tokens=self.context_compaction_max_tokens
+        ):
+            return
+
+        self.io.tool_output("Compacting chat history to make room for new messages...")
+
+        try:
+            # Create a summary of the conversation
+            summary_text = self.summarizer.summarize_all_as_text(
+                self.done_messages,
+                self.gpt_prompts.compaction_prompt,
+                self.context_compaction_summary_tokens,
+            )
+            if not summary_text:
+                raise ValueError("Summarization returned an empty result.")
+
+            # Replace old messages with the summary
+            self.done_messages = [
+                {
+                    "role": "user",
+                    "content": summary_text,
+                },
+                {
+                    "role": "assistant",
+                    "content": (
+                        "Ok, I will use this summary as the context for our conversation going"
+                        " forward."
+                    ),
+                },
+            ]
+            self.io.tool_output("...chat history compacted.")
+        except Exception as e:
+            self.io.tool_warning(f"Context compaction failed: {e}")
+            self.io.tool_warning("Proceeding with full history for now.")
+            self.summarize_start()
+            return
+
     def move_back_cur_messages(self, message):
         self.done_messages += self.cur_messages
-        self.summarize_start()
 
         # TODO check for impact on image messages
         if message:
@@ -1173,10 +1378,16 @@ class Coder:
 
     def fmt_system_prompt(self, prompt):
         final_reminders = []
+
+        lazy_prompt = ""
         if self.main_model.lazy:
-            final_reminders.append(self.gpt_prompts.lazy_prompt)
+            lazy_prompt = self.gpt_prompts.lazy_prompt
+            final_reminders.append(lazy_prompt)
+
+        overeager_prompt = ""
         if self.main_model.overeager:
-            final_reminders.append(self.gpt_prompts.overeager_prompt)
+            overeager_prompt = self.gpt_prompts.overeager_prompt
+            final_reminders.append(overeager_prompt)
 
         user_lang = self.get_user_language()
         if user_lang:
@@ -1198,7 +1409,8 @@ class Coder:
         if user_lang:  # user_lang is the result of self.get_user_language()
             language = user_lang
         else:
-            language = "the same language they are using"  # Default if no specific lang detected
+            # Default if no specific lang detected
+            language = "the same language they are using"
 
         if self.fence[0] == "`" * 4:
             quad_backtick_reminder = (
@@ -1206,6 +1418,9 @@ class Coder:
             )
         else:
             quad_backtick_reminder = ""
+
+        if self.mcp_tools and len(self.mcp_tools) > 0:
+            final_reminders.append(self.gpt_prompts.tool_prompt)
 
         final_reminders = "\n\n".join(final_reminders)
 
@@ -1219,6 +1434,8 @@ class Coder:
             shell_cmd_reminder=shell_cmd_reminder,
             go_ahead_tip=self.gpt_prompts.go_ahead_tip,
             language=language,
+            lazy_prompt=lazy_prompt,
+            overeager_prompt=overeager_prompt,
         )
 
         return prompt
@@ -1428,6 +1645,7 @@ class Coder:
 
         chunks = self.format_messages()
         messages = chunks.all_messages()
+
         if not self.check_tokens(messages):
             return
         self.warm_cache(chunks)
@@ -1557,21 +1775,6 @@ class Coder:
         else:
             content = ""
 
-        if not interrupted:
-            add_rel_files_message = self.check_for_file_mentions(content)
-            if add_rel_files_message:
-                if self.reflected_message:
-                    self.reflected_message += "\n\n" + add_rel_files_message
-                else:
-                    self.reflected_message = add_rel_files_message
-                return
-
-            try:
-                if self.reply_completed():
-                    return
-            except KeyboardInterrupt:
-                interrupted = True
-
         if interrupted:
             if self.cur_messages and self.cur_messages[-1]["role"] == "user":
                 self.cur_messages[-1]["content"] += "\n^C KeyboardInterrupt"
@@ -1592,6 +1795,29 @@ class Coder:
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
 
             self.move_back_cur_messages(saved_message)
+
+        if not interrupted:
+            add_rel_files_message = self.check_for_file_mentions(content)
+            if add_rel_files_message:
+                if self.reflected_message:
+                    self.reflected_message += "\n\n" + add_rel_files_message
+                else:
+                    self.reflected_message = add_rel_files_message
+                return
+
+            # Process any tools using MCP servers
+            tool_call_response = litellm.stream_chunk_builder(self.partial_response_tool_call)
+            if self.process_tool_calls(tool_call_response):
+                self.num_tool_calls += 1
+                return self.run(with_message="Continue with tool call response", preproc=False)
+
+            self.num_tool_calls = 0
+
+            try:
+                if self.reply_completed():
+                    return
+            except KeyboardInterrupt:
+                interrupted = True
 
         if self.reflected_message:
             return
@@ -1621,6 +1847,330 @@ class Coder:
                 if ok:
                     self.reflected_message = test_errors
                     return
+
+    def process_tool_calls(self, tool_call_response):
+        if tool_call_response is None:
+            return False
+
+        original_tool_calls = tool_call_response.choices[0].message.tool_calls
+        if not original_tool_calls:
+            return False
+
+        # Expand any tool calls that have concatenated JSON in their arguments.
+        # This is necessary because some models (like Gemini) will serialize
+        # multiple tool calls in this way.
+        expanded_tool_calls = []
+        for tool_call in original_tool_calls:
+            args_string = tool_call.function.arguments.strip()
+
+            # If there are no arguments, or it's not a string that looks like it could
+            # be concatenated JSON, just add it and continue.
+            if not args_string or not (args_string.startswith("{") or args_string.startswith("[")):
+                expanded_tool_calls.append(tool_call)
+                continue
+
+            json_chunks = utils.split_concatenated_json(args_string)
+
+            # If it's just a single JSON object, there's nothing to expand.
+            if len(json_chunks) <= 1:
+                expanded_tool_calls.append(tool_call)
+                continue
+
+            # We have concatenated JSON, so expand it into multiple tool calls.
+            for i, chunk in enumerate(json_chunks):
+                if not chunk.strip():
+                    continue
+
+                # Create a new tool call for each JSON chunk, with a unique ID.
+                new_function = tool_call.function.model_copy(update={"arguments": chunk})
+                new_tool_call = tool_call.model_copy(
+                    update={"id": f"{tool_call.id}-{i}", "function": new_function}
+                )
+                expanded_tool_calls.append(new_tool_call)
+
+        # Replace the original tool_calls in the response object with the expanded list.
+        tool_call_response.choices[0].message.tool_calls = expanded_tool_calls
+        tool_calls = expanded_tool_calls
+
+        # Collect all tool calls grouped by server
+        server_tool_calls = self._gather_server_tool_calls(tool_calls)
+
+        if server_tool_calls and self.num_tool_calls < self.max_tool_calls:
+            self._print_tool_call_info(server_tool_calls)
+
+            if self.io.confirm_ask("Run tools?"):
+                tool_responses = self._execute_tool_calls(server_tool_calls)
+
+                # Add the assistant message with the modified (expanded) tool calls.
+                # This ensures that what's stored in history is valid.
+                self.cur_messages.append(tool_call_response.choices[0].message.to_dict())
+
+                # Add all tool responses
+                for tool_response in tool_responses:
+                    self.cur_messages.append(tool_response)
+
+                return True
+        elif self.num_tool_calls >= self.max_tool_calls:
+            self.io.tool_warning(f"Only {self.max_tool_calls} tool calls allowed, stopping.")
+
+        return False
+
+    def _print_tool_call_info(self, server_tool_calls):
+        """Print information about an MCP tool call."""
+        self.io.tool_output("Preparing to run MCP tools", bold=True)
+
+        for server, tool_calls in server_tool_calls.items():
+            for tool_call in tool_calls:
+                self.io.tool_output(f"Tool Call: {tool_call.function.name}")
+                self.io.tool_output(f"Arguments: {tool_call.function.arguments}")
+                self.io.tool_output(f"MCP Server: {server.name}")
+
+                if self.verbose:
+                    self.io.tool_output(f"Tool ID: {tool_call.id}")
+                    self.io.tool_output(f"Tool type: {tool_call.type}")
+
+                self.io.tool_output("\n")
+
+    def _gather_server_tool_calls(self, tool_calls):
+        """Collect all tool calls grouped by server.
+        Args:
+            tool_calls: List of tool calls from the LLM response
+
+        Returns:
+            dict: Dictionary mapping servers to their respective tool calls
+        """
+        if not self.mcp_tools or len(self.mcp_tools) == 0:
+            return None
+
+        server_tool_calls = {}
+        for tool_call in tool_calls:
+            # Check if this tool_call matches any MCP tool
+            for server_name, server_tools in self.mcp_tools:
+                for tool in server_tools:
+                    if tool.get("function", {}).get("name") == tool_call.function.name:
+                        # Find the McpServer instance that will be used for communication
+                        for server in self.mcp_servers:
+                            if server.name == server_name:
+                                if server not in server_tool_calls:
+                                    server_tool_calls[server] = []
+                                server_tool_calls[server].append(tool_call)
+                                break
+
+        return server_tool_calls
+
+    def _execute_tool_calls(self, tool_calls):
+        """Process tool calls from the response and execute them if they match MCP tools.
+        Returns a list of tool response messages."""
+        tool_responses = []
+
+        # Define the coroutine to execute all tool calls for a single server
+        async def _exec_server_tools(server, tool_calls_list):
+            if isinstance(server, LocalServer):
+                if hasattr(self, "_execute_local_tool_calls"):
+                    return await self._execute_local_tool_calls(tool_calls_list)
+                else:
+                    # This coder doesn't support local tools, return errors for all calls
+                    error_responses = []
+                    for tool_call in tool_calls_list:
+                        error_responses.append(
+                            {
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "content": (
+                                    f"Coder does not support local tool: {tool_call.function.name}"
+                                ),
+                            }
+                        )
+                    return error_responses
+
+            tool_responses = []
+            try:
+                # Connect to the server once
+                session = await server.connect()
+                # Execute all tool calls for this server
+                for tool_call in tool_calls_list:
+                    try:
+                        # Arguments can be a stream of JSON objects.
+                        # We need to parse them and run a tool call for each.
+                        args_string = tool_call.function.arguments.strip()
+                        parsed_args_list = []
+                        if args_string:
+                            json_chunks = utils.split_concatenated_json(args_string)
+                            for chunk in json_chunks:
+                                try:
+                                    parsed_args_list.append(json.loads(chunk))
+                                except json.JSONDecodeError:
+                                    self.io.tool_warning(
+                                        "Could not parse JSON chunk for tool"
+                                        f" {tool_call.function.name}: {chunk}"
+                                    )
+                                    continue
+
+                        if not parsed_args_list and not args_string:
+                            parsed_args_list.append({})  # For tool calls with no arguments
+
+                        all_results_content = []
+                        for args in parsed_args_list:
+                            new_tool_call = tool_call.model_copy(deep=True)
+                            new_tool_call.function.arguments = json.dumps(args)
+
+                            call_result = await experimental_mcp_client.call_openai_tool(
+                                session=session,
+                                openai_tool=new_tool_call,
+                            )
+
+                            content_parts = []
+                            if call_result.content:
+                                for item in call_result.content:
+                                    if hasattr(item, "resource"):  # EmbeddedResource
+                                        resource = item.resource
+                                        if hasattr(resource, "text"):  # TextResourceContents
+                                            content_parts.append(resource.text)
+                                        elif hasattr(resource, "blob"):  # BlobResourceContents
+                                            try:
+                                                decoded_blob = base64.b64decode(
+                                                    resource.blob
+                                                ).decode("utf-8")
+                                                content_parts.append(decoded_blob)
+                                            except (UnicodeDecodeError, TypeError):
+                                                # Handle non-text blobs gracefully
+                                                name = getattr(resource, "name", "unnamed")
+                                                mime_type = getattr(
+                                                    resource, "mimeType", "unknown mime type"
+                                                )
+                                                content_parts.append(
+                                                    "[embedded binary resource:"
+                                                    f" {name} ({mime_type})]"
+                                                )
+                                    elif hasattr(item, "text"):  # TextContent
+                                        content_parts.append(item.text)
+
+                            result_text = "".join(content_parts)
+                            all_results_content.append(result_text)
+
+                        tool_responses.append(
+                            {
+                                "role": "tool",
+                                "tool_call_id": tool_call.id,
+                                "content": "\n\n".join(all_results_content),
+                            }
+                        )
+
+                    except Exception as e:
+                        tool_error = f"Error executing tool call {tool_call.function.name}: \n{e}"
+                        self.io.tool_warning(
+                            f"Executing {tool_call.function.name} on {server.name} failed: \n "
+                            f" Error: {e}\n"
+                        )
+                        tool_responses.append(
+                            {"role": "tool", "tool_call_id": tool_call.id, "content": tool_error}
+                        )
+            except Exception as e:
+                connection_error = f"Could not connect to server {server.name}\n{e}"
+                self.io.tool_warning(connection_error)
+                for tool_call in tool_calls_list:
+                    tool_responses.append(
+                        {"role": "tool", "tool_call_id": tool_call.id, "content": connection_error}
+                    )
+            finally:
+                await server.disconnect()
+
+            return tool_responses
+
+        # Execute all tool calls concurrently
+        async def _execute_all_tool_calls():
+            tasks = []
+            for server, tool_calls_list in tool_calls.items():
+                tasks.append(_exec_server_tools(server, tool_calls_list))
+            # Wait for all tasks to complete
+            results = await asyncio.gather(*tasks)
+            return results
+
+        # Run the async execution and collect results
+        if tool_calls:
+            all_results = []
+            max_retries = 3
+            for i in range(max_retries):
+                try:
+                    all_results = asyncio.run(_execute_all_tool_calls())
+                    break
+                except asyncio.exceptions.CancelledError:
+                    if i < max_retries - 1:
+                        time.sleep(0.1)  # Brief pause before retrying
+                    else:
+                        self.io.tool_warning(
+                            "MCP tool execution failed after multiple retries due to cancellation."
+                        )
+                        all_results = []
+
+            # Flatten the results from all servers
+            for server_results in all_results:
+                tool_responses.extend(server_results)
+
+        return tool_responses
+
+    def initialize_mcp_tools(self):
+        """
+        Initialize tools from all configured MCP servers. MCP Servers that fail to be
+        initialized will not be available to the Coder instance.
+        """
+        tools = []
+
+        async def get_server_tools(server):
+            try:
+                session = await server.connect()
+                server_tools = await experimental_mcp_client.load_mcp_tools(
+                    session=session, format="openai"
+                )
+                return (server.name, server_tools)
+            except Exception as e:
+                self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
+                return None
+            finally:
+                await server.disconnect()
+
+        async def get_all_server_tools():
+            tasks = [get_server_tools(server) for server in self.mcp_servers]
+            results = await asyncio.gather(*tasks)
+            return [result for result in results if result is not None]
+
+        if self.mcp_servers:
+            # Retry initialization in case of CancelledError
+            max_retries = 3
+            for i in range(max_retries):
+                try:
+                    tools = asyncio.run(get_all_server_tools())
+                    break
+                except asyncio.exceptions.CancelledError:
+                    if i < max_retries - 1:
+                        time.sleep(0.1)  # Brief pause before retrying
+                    else:
+                        self.io.tool_warning(
+                            "MCP tool initialization failed after multiple retries due to"
+                            " cancellation."
+                        )
+                        tools = []
+
+        if len(tools) > 0:
+            self.io.tool_output("MCP servers configured:")
+            for server_name, server_tools in tools:
+                self.io.tool_output(f"  - {server_name}")
+
+                if self.verbose:
+                    for tool in server_tools:
+                        tool_name = tool.get("function", {}).get("name", "unknown")
+                        tool_desc = tool.get("function", {}).get("description", "").split("\n")[0]
+                        self.io.tool_output(f"    - {tool_name}: {tool_desc}")
+
+        self.mcp_tools = tools
+
+    def get_tool_list(self):
+        """Get a flattened list of all MCP tools."""
+        tool_list = []
+        if self.mcp_tools:
+            for _, server_tools in self.mcp_tools:
+                tool_list.extend(server_tools)
+        return tool_list
 
     def reply_completed(self):
         pass
@@ -1729,7 +2279,8 @@ class Coder:
 
             # Get basenames of files already in chat or read-only
             existing_basenames = {os.path.basename(f) for f in self.get_inchat_relative_files()} | {
-                os.path.basename(self.get_rel_fname(f)) for f in self.abs_read_only_fnames
+                os.path.basename(self.get_rel_fname(f))
+                for f in self.abs_read_only_fnames | self.abs_read_only_stubs_fnames
             }
 
         mentioned_rel_fnames = set()
@@ -1793,12 +2344,17 @@ class Coder:
         self.io.log_llm_history("TO LLM", format_messages(messages))
 
         completion = None
+
         try:
+            tool_list = self.get_tool_list()
+
             hash_object, completion = model.send_completion(
                 messages,
                 functions,
                 self.stream,
                 self.temperature,
+                # This could include any tools, but for now it is just MCP tools
+                tools=tool_list,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
@@ -1899,57 +2455,66 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         received_content = False
+        self.partial_response_tool_call = []
 
         for chunk in completion:
-            if len(chunk.choices) == 0:
-                continue
-
-            if (
-                hasattr(chunk.choices[0], "finish_reason")
-                and chunk.choices[0].finish_reason == "length"
-            ):
-                raise FinishReasonLength()
-
-            try:
-                func = chunk.choices[0].delta.function_call
-                # dump(func)
-                for k, v in func.items():
-                    if k in self.partial_response_function_call:
-                        self.partial_response_function_call[k] += v
-                    else:
-                        self.partial_response_function_call[k] = v
+            if isinstance(chunk, str):
+                text = chunk
                 received_content = True
-            except AttributeError:
-                pass
+            else:
+                if len(chunk.choices) == 0:
+                    continue
 
-            text = ""
+                if (
+                    hasattr(chunk.choices[0], "finish_reason")
+                    and chunk.choices[0].finish_reason == "length"
+                ):
+                    raise FinishReasonLength()
 
-            try:
-                reasoning_content = chunk.choices[0].delta.reasoning_content
-            except AttributeError:
+                if chunk.choices[0].delta.tool_calls:
+                    self.partial_response_tool_call.append(chunk)
+
                 try:
-                    reasoning_content = chunk.choices[0].delta.reasoning
-                except AttributeError:
-                    reasoning_content = None
+                    func = chunk.choices[0].delta.function_call
+                    # dump(func)
+                    for k, v in func.items():
+                        if k in self.partial_response_function_call:
+                            self.partial_response_function_call[k] += v
+                        else:
+                            self.partial_response_function_call[k] = v
 
-            if reasoning_content:
-                if not self.got_reasoning_content:
-                    text += f"<{REASONING_TAG}>\n\n"
-                text += reasoning_content
-                self.got_reasoning_content = True
-                received_content = True
-
-            try:
-                content = chunk.choices[0].delta.content
-                if content:
-                    if self.got_reasoning_content and not self.ended_reasoning_content:
-                        text += f"\n\n</{self.reasoning_tag_name}>\n\n"
-                        self.ended_reasoning_content = True
-
-                    text += content
                     received_content = True
-            except AttributeError:
-                pass
+                except AttributeError:
+                    pass
+
+                text = ""
+
+                try:
+                    reasoning_content = chunk.choices[0].delta.reasoning_content
+                except AttributeError:
+                    try:
+                        reasoning_content = chunk.choices[0].delta.reasoning
+                    except AttributeError:
+                        reasoning_content = None
+
+                if reasoning_content:
+                    if not self.got_reasoning_content:
+                        text += f"<{REASONING_TAG}>\n\n"
+                    text += reasoning_content
+                    self.got_reasoning_content = True
+                    received_content = True
+
+                try:
+                    content = chunk.choices[0].delta.content
+                    if content:
+                        if self.got_reasoning_content and not self.ended_reasoning_content:
+                            text += f"\n\n</{self.reasoning_tag_name}>\n\n"
+                            self.ended_reasoning_content = True
+
+                        text += content
+                        received_content = True
+                except AttributeError:
+                    pass
 
             if received_content:
                 self._stop_waiting_spinner()
@@ -1971,7 +2536,7 @@ class Coder:
                 sys.stdout.flush()
                 yield text
 
-        if not received_content:
+        if not received_content and len(self.partial_response_tool_call) == 0:
             self.io.tool_warning("Empty response received from LLM. Check your provider account?")
 
     def live_incremental_response(self, final):
@@ -2134,6 +2699,9 @@ class Coder:
 
         return cur + new
 
+    def get_file_stub(self, fname):
+        return RepoMap.get_file_stub(fname, self.io)
+
     def get_rel_fname(self, fname):
         try:
             return os.path.relpath(fname, self.root)
@@ -2170,7 +2738,8 @@ class Coder:
         all_files = set(self.get_all_relative_files())
         inchat_files = set(self.get_inchat_relative_files())
         read_only_files = set(self.get_rel_fname(fname) for fname in self.abs_read_only_fnames)
-        return all_files - inchat_files - read_only_files
+        stub_files = set(self.get_rel_fname(fname) for fname in self.abs_read_only_stubs_fnames)
+        return all_files - inchat_files - read_only_files - stub_files
 
     def check_for_dirty_commit(self, path):
         if not self.repo:
@@ -2362,13 +2931,36 @@ class Coder:
         except JSONDecodeError:
             pass
 
+    def _find_occurrences(self, content, pattern, near_context=None):
+        """Find all occurrences of pattern, optionally filtered by near_context."""
+        occurrences = []
+        start = 0
+        while True:
+            index = content.find(pattern, start)
+            if index == -1:
+                break
+
+            if near_context:
+                # Check if near_context is within a window around the match
+                window_start = max(0, index - 200)
+                window_end = min(len(content), index + len(pattern) + 200)
+                window = content[window_start:window_end]
+                if near_context in window:
+                    occurrences.append(index)
+            else:
+                occurrences.append(index)
+
+            start = index + 1  # Move past this occurrence's start
+        return occurrences
+
     # commits...
 
     def get_context_from_history(self, history):
         context = ""
         if history:
             for msg in history:
-                context += "\n" + msg["role"].upper() + ": " + msg["content"] + "\n"
+                msg_content = msg.get("content") or ""
+                context += "\n" + msg["role"].upper() + ": " + msg_content + "\n"
 
         return context
 

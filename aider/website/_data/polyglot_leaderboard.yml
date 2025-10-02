@@ -75,7 +75,7 @@
   versions: 0.71.2.dev
   seconds_per_case: 21.4
   total_cost: 14.4063
-  
+
 - dirname: 2024-12-30-20-57-12--gpt-4o-2024-11-20-ex-as-sys
   test_cases: 225
   model: gpt-4o-2024-11-20
@@ -101,7 +101,7 @@
   versions: 0.70.1.dev
   seconds_per_case: 12.1
   total_cost: 6.7351
-  
+
 - dirname: 2024-12-30-20-44-54--gpt4o-ex-as-sys-clean-prompt
   test_cases: 225
   model: gpt-4o-2024-08-06
@@ -127,7 +127,7 @@
   versions: 0.70.1.dev
   seconds_per_case: 16.0
   total_cost: 7.0286
-  
+
 - dirname: 2024-12-21-19-23-03--polyglot-o1-hard-diff
   test_cases: 224
   model: o1-2024-12-17 (high)
@@ -283,7 +283,7 @@
   versions: 0.69.2.dev
   seconds_per_case: 45.5
   total_cost: 0.0000
-  
+
 - dirname: 2024-12-22-20-08-13--gemini-2.0-flash-exp-polyglot-whole
   test_cases: 225
   model: gemini-2.0-flash-exp
@@ -309,7 +309,7 @@
   versions: 0.69.2.dev
   seconds_per_case: 12.2
   total_cost: 0.0000
-  
+
 - dirname: 2024-12-23-01-11-56--yi-test
   test_cases: 225
   model: yi-lightning
@@ -988,7 +988,7 @@
   versions: 0.81.3.dev
   seconds_per_case: 79.1
   total_cost: 0.7346
-  
+
 - dirname: 2025-04-10-19-02-44--oalpha-diff-exsys
   test_cases: 225
   model: Optimus Alpha
@@ -1280,7 +1280,7 @@
   versions: 0.83.3.dev
   seconds_per_case: 29.8
   total_cost: 15.8155
-  
+
 - dirname: 2025-05-24-22-10-36--sonnet4-diff-exuser-think32k
   test_cases: 225
   model: claude-sonnet-4-20250514 (32k thinking)
@@ -1395,7 +1395,7 @@
   versions: 0.83.3.dev
   seconds_per_case: 12.2
   total_cost: 1.1354
-  
+
 - dirname: 2025-05-25-22-58-44--flash25-05-20-24k-think
   test_cases: 225
   model: gemini-2.5-flash-preview-05-20 (24k think)
@@ -1680,7 +1680,7 @@
   total_tests: 225
   command: aider --model openrouter/moonshotai/kimi-k2
   date: 2025-07-17
-  versions: 0.85.3.dev
+  versions: 0.85.2.dev
   seconds_per_case: 67.6
   total_cost: 1.2357
 

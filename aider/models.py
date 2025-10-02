@@ -548,12 +548,18 @@ class Model(ModelSettings):
             self.extra_params = dict(top_p=0.95)
             return  # <--
 
-        if "qwen3" in model and "235b" in model:
+        if "qwen3" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
-            self.system_prompt_prefix = "/no_think"
-            self.use_temperature = 0.7
-            self.extra_params = {"top_p": 0.8, "top_k": 20, "min_p": 0.0}
+            if "235b" in model:
+                self.system_prompt_prefix = "/no_think"
+                self.use_temperature = 0.7
+                self.extra_params = {"top_p": 0.8, "top_k": 20, "min_p": 0.0}
+            else:
+                self.examples_as_sys_msg = True
+                self.use_temperature = 0.6
+                self.reasoning_tag = "think"
+                self.extra_params = {"top_p": 0.95, "top_k": 20, "min_p": 0.0}
             return  # <--
 
         # use the defaults
@@ -612,17 +618,19 @@ class Model(ModelSettings):
         return litellm.encode(model=self.name, text=text)
 
     def token_count(self, messages):
-        if type(messages) is list:
+        if isinstance(messages, dict):
+            messages = [messages]
+
+        if isinstance(messages, list):
             try:
                 return litellm.token_counter(model=self.name, messages=messages)
-            except Exception as err:
-                print(f"Unable to count tokens: {err}")
-                return 0
+            except Exception:
+                pass  # fall back to raw tokenizer
 
         if not self.tokenizer:
-            return
+            return 0
 
-        if type(messages) is str:
+        if isinstance(messages, str):
             msgs = messages
         else:
             msgs = json.dumps(messages)
@@ -630,7 +638,7 @@ class Model(ModelSettings):
         try:
             return len(self.tokenizer(msgs))
         except Exception as err:
-            print(f"Unable to count tokens: {err}")
+            print(f"Unable to count tokens with tokenizer: {err}")
             return 0
 
     def token_count_for_image(self, fname):
@@ -946,17 +954,16 @@ class Model(ModelSettings):
 
             os.environ[openai_api_key] = token
 
-    def send_completion(self, messages, functions, stream, temperature=None):
+    def send_completion(
+        self, messages, functions, stream, temperature=None, tools=None, max_tokens=None
+    ):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
-        kwargs = dict(
-            model=self.name,
-            stream=stream,
-        )
+        kwargs = dict(model=self.name, stream=stream)
 
         if self.use_temperature is not False:
             if temperature is None:
@@ -967,17 +974,44 @@ class Model(ModelSettings):
 
             kwargs["temperature"] = temperature
 
-        if functions is not None:
+        # `tools` is for modern tool usage. `functions` is for legacy/forced calls.
+        # If `tools` is provided, it's the canonical list. If not, use `functions`.
+        # This handles `base_coder` sending both with same content for `navigator_coder`.
+        effective_tools = tools if tools is not None else functions
+
+        if effective_tools:
+            # Check if we have legacy format functions (which lack a 'type' key) and convert them.
+            # This is a simplifying assumption that works for aider's use cases.
+            is_legacy = any("type" not in tool for tool in effective_tools)
+            if is_legacy:
+                kwargs["tools"] = [dict(type="function", function=tool) for tool in effective_tools]
+            else:
+                kwargs["tools"] = effective_tools
+
+        # Forcing a function call is for legacy style `functions` with a single function.
+        # This is used by ArchitectCoder and not intended for NavigatorCoder's tools.
+        if functions and len(functions) == 1:
             function = functions[0]
-            kwargs["tools"] = [dict(type="function", function=function)]
-            kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
+            is_legacy = "type" not in function
+
+            if is_legacy and "name" in function:
+                tool_name = function.get("name")
+                if tool_name:
+                    kwargs["tool_choice"] = {"type": "function", "function": {"name": tool_name}}
+
         if self.extra_params:
             kwargs.update(self.extra_params)
+
+        if max_tokens:
+            kwargs["max_tokens"] = max_tokens
+
+        if "max_tokens" in kwargs and kwargs["max_tokens"]:
+            kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
-        key = json.dumps(kwargs, sort_keys=True).encode()
 
+        key = json.dumps(kwargs, sort_keys=True).encode()
         # dump(kwargs)
 
         hash_object = hashlib.sha1(key)
@@ -997,10 +1031,17 @@ class Model(ModelSettings):
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
-        res = litellm.completion(**kwargs)
+        try:
+            res = litellm.completion(**kwargs)
+        except Exception as err:
+            res = "Model API Response Error. Please retry the previous request"
+
+            if self.verbose:
+                print(f"LiteLLM API Error: {str(err)}")
+
         return hash_object, res
 
-    def simple_send_with_retries(self, messages):
+    def simple_send_with_retries(self, messages, max_tokens=None):
         from aider.exceptions import LiteLLMExceptions
 
         litellm_ex = LiteLLMExceptions()
@@ -1013,13 +1054,12 @@ class Model(ModelSettings):
 
         while True:
             try:
-                kwargs = {
-                    "messages": messages,
-                    "functions": None,
-                    "stream": False,
-                }
-
-                _hash, response = self.send_completion(**kwargs)
+                _hash, response = self.send_completion(
+                    messages=messages,
+                    functions=None,
+                    stream=False,
+                    max_tokens=max_tokens,
+                )
                 if not response or not hasattr(response, "choices") or not response.choices:
                     return None
                 res = response.choices[0].message.content

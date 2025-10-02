@@ -1,7 +1,5 @@
-import colorsys
 import math
 import os
-import random
 import shutil
 import sqlite3
 import sys
@@ -11,6 +9,7 @@ from collections import Counter, defaultdict, namedtuple
 from importlib import resources
 from pathlib import Path
 
+import tree_sitter
 from diskcache import Cache
 from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
@@ -19,21 +18,62 @@ from tqdm import tqdm
 
 from aider.dump import dump
 from aider.special import filter_important_files
+from aider.tools.tool_utils import ToolError
 from aider.waiting import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
 from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
-Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
+
+# Define the Tag namedtuple with a default for specific_kind to maintain compatibility
+# with cached entries that might have been created with the old definition
+class TagBase(
+    namedtuple(
+        "TagBase",
+        "rel_fname fname line name kind specific_kind start_line end_line start_byte end_byte",
+    )
+):
+    __slots__ = ()
+
+    def __new__(
+        cls,
+        rel_fname,
+        fname,
+        line,
+        name,
+        kind,
+        specific_kind=None,
+        start_line=None,
+        end_line=None,
+        start_byte=None,
+        end_byte=None,
+    ):
+        # Provide a default value for specific_kind to handle old cached objects
+        return super(TagBase, cls).__new__(
+            cls,
+            rel_fname,
+            fname,
+            line,
+            name,
+            kind,
+            specific_kind,
+            start_line,
+            end_line,
+            start_byte,
+            end_byte,
+        )
+
+
+Tag = TagBase
 
 
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
-CACHE_VERSION = 3
+CACHE_VERSION = 5
 if USING_TSL_PACK:
-    CACHE_VERSION = 4
+    CACHE_VERSION = 7
 
 UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
@@ -43,10 +83,61 @@ class RepoMap:
 
     warned_files = set()
 
+    # Define kinds that typically represent definitions across languages
+    # Used by NavigatorCoder to filter tags for the symbol outline
+    definition_kinds = {
+        "class",
+        "struct",
+        "enum",
+        "interface",
+        "trait",  # Structure definitions
+        "function",
+        "method",
+        "constructor",  # Function/method definitions
+        "module",
+        "namespace",  # Module/namespace definitions
+        "constant",
+        "variable",  # Top-level/class variable definitions (consider refining)
+        "type",  # Type definitions
+        # Add more based on tree-sitter queries if needed
+    }
+
+    @staticmethod
+    def get_file_stub(fname, io):
+        """Generate a complete structural outline of a source code file.
+
+        Args:
+            fname (str): Absolute path to the source file
+            io: InputOutput instance for file operations
+
+        Returns:
+            str: Formatted outline showing the file's structure
+        """
+        # Use cached instance if available
+        if not hasattr(RepoMap, "_stub_instance"):
+            RepoMap._stub_instance = RepoMap(map_tokens=0, io=io)
+
+        rm = RepoMap._stub_instance
+
+        rel_fname = rm.get_rel_fname(fname)
+
+        # Reuse existing tag parsing
+        tags = rm.get_tags(fname, rel_fname)
+        if not tags:
+            return "# No outline available"
+
+        # Get all definition lines
+        lois = [tag.line for tag in tags if tag.kind == "def"]
+
+        # Reuse existing tree rendering
+        outline = rm.render_tree(fname, rel_fname, lois)
+
+        return f"{outline}"
+
     def __init__(
         self,
         map_tokens=1024,
-        root=None,
+        map_cache_dir=".",
         main_model=None,
         io=None,
         repo_content_prefix=None,
@@ -54,21 +145,30 @@ class RepoMap:
         max_context_window=None,
         map_mul_no_files=8,
         refresh="auto",
+        max_code_line_length=100,
+        repo_root=None,
+        use_memory_cache=False,
     ):
         self.io = io
         self.verbose = verbose
         self.refresh = refresh
 
-        if not root:
-            root = os.getcwd()
-        self.root = root
+        self.map_cache_dir = map_cache_dir
+        # Prefer an explicit repo root (eg per-test repo), fallback to CWD
+        self.root = repo_root or os.getcwd()
 
-        self.load_tags_cache()
+        # Allow opting into an in-memory tags cache to avoid disk/SQLite locks
+        if use_memory_cache:
+            self.TAGS_CACHE = dict()
+        else:
+            self.load_tags_cache()
         self.cache_threshold = 0.95
 
         self.max_map_tokens = map_tokens
         self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
+
+        self.max_code_line_length = max_code_line_length
 
         self.repo_content_prefix = repo_content_prefix
 
@@ -84,6 +184,8 @@ class RepoMap:
             self.io.tool_output(
                 f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}"
             )
+            self.io.tool_output(f"RepoMap initialized with map_cache_dir: {self.map_cache_dir}")
+            self.io.tool_output(f"RepoMap assumes repo root is: {self.root}")
 
     def token_count(self, text):
         len_text = len(text)
@@ -182,7 +284,7 @@ class RepoMap:
         if isinstance(getattr(self, "TAGS_CACHE", None), dict):
             return
 
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = Path(self.map_cache_dir) / self.TAGS_CACHE_DIR
 
         # Try to recreate the cache
         try:
@@ -214,7 +316,7 @@ class RepoMap:
         self.TAGS_CACHE = dict()
 
     def load_tags_cache(self):
-        path = Path(self.root) / self.TAGS_CACHE_DIR
+        path = Path(self.map_cache_dir) / self.TAGS_CACHE_DIR
         try:
             self.TAGS_CACHE = Cache(path)
         except SQLITE_ERRORS as e:
@@ -244,10 +346,23 @@ class RepoMap:
 
         if val is not None and val.get("mtime") == file_mtime:
             try:
-                return self.TAGS_CACHE[cache_key]["data"]
+                # Get the cached data
+                data = self.TAGS_CACHE[cache_key]["data"]
+
+                # Let our Tag class handle compatibility with old cache formats
+                # No need for special handling as TagBase.__new__ will supply default specific_kind
+
+                return data
             except SQLITE_ERRORS as e:
                 self.tags_cache_error(e)
                 return self.TAGS_CACHE[cache_key]["data"]
+            except (TypeError, AttributeError) as e:
+                # If we hit an error related to missing fields in old cached Tag objects,
+                # force a cache refresh for this file
+                if self.verbose:
+                    self.io.tool_warning(f"Cache format error for {fname}, refreshing: {e}")
+                # Return empty list to trigger cache refresh
+                return []
 
         # miss!
         data = list(self.get_tags_raw(fname, rel_fname))
@@ -261,6 +376,59 @@ class RepoMap:
             self.TAGS_CACHE[cache_key] = {"mtime": file_mtime, "data": data}
 
         return data
+
+    def get_symbol_definition_location(self, file_path, symbol_name):
+        """
+        Finds the unique definition location (start/end line) for a symbol in a file.
+
+        Args:
+            file_path (str): The relative path to the file.
+            symbol_name (str): The name of the symbol to find.
+
+        Returns:
+            tuple: (start_line, end_line) (0-based) if a unique definition is found.
+
+        Raises:
+            ToolError: If the symbol is not found, not unique, or not a definition.
+        """
+        abs_path = self.io.root_abs_path(file_path)  # Assuming io has this helper or similar
+        rel_path = self.get_rel_fname(abs_path)  # Ensure we use consistent relative path
+
+        tags = self.get_tags(abs_path, rel_path)
+        if not tags:
+            raise ToolError(f"Symbol '{symbol_name}' not found in '{file_path}' (no tags).")
+
+        definitions = []
+        for tag in tags:
+            # Check if it's a definition and the name matches
+            if tag.kind == "def" and tag.name == symbol_name:
+                # Ensure we have valid location info
+                if tag.start_line is not None and tag.end_line is not None and tag.start_line >= 0:
+                    definitions.append(tag)
+
+        if not definitions:
+            # Check if it exists as a non-definition tag
+            non_defs = [tag for tag in tags if tag.name == symbol_name and tag.kind != "def"]
+            if non_defs:
+                raise ToolError(
+                    f"Symbol '{symbol_name}' found in '{file_path}', but not as a unique definition"
+                    f" (found as {non_defs[0].kind})."
+                )
+            else:
+                raise ToolError(f"Symbol '{symbol_name}' definition not found in '{file_path}'.")
+
+        if len(definitions) > 1:
+            # Provide more context about ambiguity if possible
+            lines = sorted([d.start_line + 1 for d in definitions])  # 1-based for user message
+            raise ToolError(
+                f"Symbol '{symbol_name}' is ambiguous in '{file_path}'. Found definitions on lines:"
+                f" {', '.join(map(str, lines))}."
+            )
+
+        # Unique definition found
+        definition_tag = definitions[0]
+        return definition_tag.start_line, definition_tag.end_line
+        # Check if the file is in the cache and if the modification time has not changed
 
     def get_tags_raw(self, fname, rel_fname):
         lang = filename_to_lang(fname)
@@ -285,8 +453,13 @@ class RepoMap:
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
-        query = language.query(query_scm)
-        captures = query.captures(tree.root_node)
+        if sys.version_info >= (3, 10):
+            query = tree_sitter.Query(language, query_scm)
+            cursor = tree_sitter.QueryCursor(query)
+            captures = cursor.captures(tree.root_node)
+        else:
+            query = language.query(query_scm)
+            captures = query.captures(tree.root_node)
 
         saw = set()
         if USING_TSL_PACK:
@@ -306,12 +479,20 @@ class RepoMap:
 
             saw.add(kind)
 
+            # Extract specific kind from the tag, e.g., 'function' from 'name.definition.function'
+            specific_kind = tag.split(".")[-1] if "." in tag else None
+
             result = Tag(
                 rel_fname=rel_fname,
                 fname=fname,
                 name=node.text.decode("utf-8"),
                 kind=kind,
-                line=node.start_point[0],
+                specific_kind=specific_kind,
+                line=node.start_point[0],  # Legacy line number
+                start_line=node.start_point[0],
+                end_line=node.end_point[0],
+                start_byte=node.start_byte,
+                end_byte=node.end_byte,
             )
 
             yield result
@@ -340,7 +521,12 @@ class RepoMap:
                 fname=fname,
                 name=token,
                 kind="ref",
-                line=-1,
+                specific_kind="name",  # Default for pygments fallback
+                line=-1,  # Pygments doesn't give precise locations easily
+                start_line=-1,
+                end_line=-1,
+                start_byte=-1,
+                end_byte=-1,
             )
 
     def get_ranked_tags(
@@ -747,7 +933,12 @@ class RepoMap:
                 if lois is not None:
                     output += "\n"
                     output += cur_fname + ":\n"
-                    output += self.render_tree(cur_abs_fname, cur_fname, lois)
+
+                    # truncate long lines, in case we get minified js or something else crazy
+                    output += truncate_long_lines(
+                        self.render_tree(cur_abs_fname, cur_fname, lois), self.max_code_line_length
+                    )
+
                     lois = None
                 elif cur_fname:
                     output += "\n" + cur_fname + "\n"
@@ -759,10 +950,11 @@ class RepoMap:
             if lois is not None:
                 lois.append(tag.line)
 
-        # truncate long lines, in case we get minified js or something else crazy
-        output = "\n".join([line[:100] for line in output.splitlines()]) + "\n"
-
         return output
+
+
+def truncate_long_lines(text, max_length):
+    return "\n".join([line[:max_length] for line in text.splitlines()]) + "\n"
 
 
 def find_src_files(directory):
@@ -774,13 +966,6 @@ def find_src_files(directory):
         for file in files:
             src_files.append(os.path.join(root, file))
     return src_files
-
-
-def get_random_color():
-    hue = random.random()
-    r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 1, 0.75)]
-    res = f"#{r:02x}{g:02x}{b:02x}"
-    return res
 
 
 def get_scm_fname(lang):

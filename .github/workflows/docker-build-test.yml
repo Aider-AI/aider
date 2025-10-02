@@ -50,7 +50,8 @@ jobs:
         file: ./docker/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: false
-        target: aider
+        target: aider-ce
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc
 
     - name: Build Docker images (Push)
       if: ${{ github.event_name != 'pull_request' }}
@@ -60,26 +61,6 @@ jobs:
         file: ./docker/Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider:dev
-        target: aider
-
-    - name: Build Docker full image (PR)
-      if: ${{ github.event_name == 'pull_request' }}
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./docker/Dockerfile
-        platforms: linux/amd64,linux/arm64
-        push: false
-        target: aider-full
-
-    - name: Build Docker full image (Push)
-      if: ${{ github.event_name != 'pull_request' }}
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: ./docker/Dockerfile
-        platforms: linux/amd64,linux/arm64
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider-full:dev
-        target: aider-full
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:dev
+        target: aider-ce
+        cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/aider-ce:latest-bc     

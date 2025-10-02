@@ -176,6 +176,13 @@ def get_parser(default_config_files, git_root):
         help="Use architect edit format for the main chat",
     )
     group.add_argument(
+        "--navigator",
+        action="store_const",
+        dest="edit_format",
+        const="navigator",
+        help="Use navigator edit format for the main chat (autonomous file management)",
+    )
+    group.add_argument(
         "--auto-accept-architect",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -228,6 +235,30 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
+    group = parser.add_argument_group("Context Compaction")
+    group.add_argument(
+        "--enable-context-compaction",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable automatic compaction of chat history to conserve tokens (default: False)",
+    )
+    group.add_argument(
+        "--context-compaction-max-tokens",
+        type=int,
+        default=None,
+        help=(
+            "The maximum number of tokens in the conversation before context compaction is"
+            " triggered. (default: 80%% of model's context window)"
+        ),
+    )
+    group.add_argument(
+        "--context-compaction-summary-tokens",
+        type=int,
+        default=4096,
+        help="The target maximum number of tokens for the generated summary. (default: 4096)",
+    )
+
+    ##########
     group = parser.add_argument_group("Cache settings")
     group.add_argument(
         "--cache-prompts",
@@ -264,6 +295,25 @@ def get_parser(default_config_files, git_root):
         type=float,
         default=2,
         help="Multiplier for map tokens when no files are specified (default: 2)",
+    )
+    group.add_argument(
+        "--map-max-line-length",
+        type=int,
+        default=100,
+        help=(
+            "Maximum line length for the repo map code. Prevents sending crazy long lines of"
+            " minified JS files etc. (default: 100)"
+        ),
+    )
+    group.add_argument(
+        "--map-cache-dir",
+        metavar="MAP_CACHE_DIR",
+        dest="map_cache_dir",
+        default=".",
+        help=(
+            "Directory for the repository map cache .aider.tags.cache.v3"
+            " (default: current directory)"
+        ),
     )
 
     ##########
@@ -784,6 +834,25 @@ def get_parser(default_config_files, git_root):
         choices=["platform", "lf", "crlf"],
         default="platform",
         help="Line endings to use when writing files (default: platform)",
+    )
+    group.add_argument(
+        "--mcp-servers",
+        metavar="MCP_CONFIG_JSON",
+        help="Specify MCP server configurations as a JSON string",
+        default=None,
+    )
+    group.add_argument(
+        "--mcp-servers-file",
+        metavar="MCP_CONFIG_FILE",
+        help="Specify a file path with MCP server configurations",
+        default=None,
+    )
+    group.add_argument(
+        "--mcp-transport",
+        metavar="MCP_TRANSPORT",
+        help="Specify the transport for MCP servers (default: stdio)",
+        default="stdio",
+        choices=["stdio", "http"],
     )
     group.add_argument(
         "-c",

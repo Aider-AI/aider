@@ -1,19 +1,34 @@
-.DS_Store
-.vscode/
-aider.code-workspace
-*.pyc
-.aider*
-aider_chat.egg-info/
-build
-dist/
-Gemfile.lock
-_site
-.jekyll-cache/
-.jekyll-metadata
+# Ignore everything
+*
+
+# But descend into directories
+!*/
+
+# Recursively allow files under subtree
+!/.github/**
+!/aider/**
+!/benchmark/**
+!/docker/**
+!/requirements/**
+!/scripts/**
+!/tests/**
+
+# Specific Files
+!/.dockerignore
+!/.flake8
+!/.gitignore
+!/.pre-commit-config.yaml
+!/CNAME
+!/CONTRIBUTING.metadata
+!/HISTORY.md
+!/LICENSE.txt
+!/MANIFEST.in
+!/pyproject.toml
+!/pytest.ini
+!/README.md
+!/requirements.txt
+
+# Ignore specific files
 aider/__version__.py
 aider/_version.py
-.venv/
-.#*
-.gitattributes
-tmp.benchmarks/
-.docker_bash_history
+*.pyc

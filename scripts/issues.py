@@ -62,8 +62,8 @@ CLOSE_FIXED_BUG_COMMENT = (
 
 # GitHub API configuration
 GITHUB_API_URL = "https://api.github.com"
-REPO_OWNER = "Aider-AI"
-REPO_NAME = "aider"
+REPO_OWNER = "dwash96"
+REPO_NAME = "aider-ce"
 TOKEN = os.getenv("GITHUB_TOKEN")
 
 headers = {"Authorization": f"token {TOKEN}", "Accept": "application/vnd.github.v3+json"}

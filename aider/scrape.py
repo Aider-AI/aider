@@ -42,7 +42,7 @@ def install_playwright(io):
     if has_pip and has_chromium:
         return True
 
-    pip_cmd = utils.get_pip_install(["aider-chat[playwright]"])
+    pip_cmd = utils.get_pip_install(["aider-ce[playwright]"])
     chromium_cmd = "-m playwright install --with-deps chromium"
     chromium_cmd = [sys.executable] + chromium_cmd.split()
 
@@ -169,7 +169,7 @@ class Scraper:
                 try:
                     response = page.goto(url, wait_until="networkidle", timeout=5000)
                 except PlaywrightTimeoutError:
-                    print(f"Page didn't quiesce, scraping content anyway: {url}")
+                    self.print_error(f"Page didn't quiesce, scraping content anyway: {url}")
                     response = None
                 except PlaywrightError as e:
                     self.print_error(f"Error navigating to {url}: {str(e)}")

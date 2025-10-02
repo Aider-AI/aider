@@ -22,7 +22,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
+from aider.utils import is_image_file, run_fzf
 
 from .dump import dump  # noqa: F401
 
@@ -416,6 +416,7 @@ class Commands:
 
     def _drop_all_files(self):
         self.coder.abs_fnames = set()
+        self.coder.abs_read_only_stubs_fnames = set()
 
         # When dropping all files, keep those that were originally provided via args.read
         if self.original_read_only_fnames:
@@ -449,6 +450,11 @@ class Commands:
 
         self.coder.choose_fence()
 
+        # Show progress indicator
+        total_files = len(self.coder.abs_fnames) + len(self.coder.abs_read_only_fnames)
+        if total_files > 20:
+            self.io.tool_output(f"Calculating tokens for {total_files} files...")
+
         # system messages
         main_sys = self.coder.fmt_system_prompt(self.coder.gpt_prompts.main_system)
         main_sys += "\n" + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
@@ -477,33 +483,85 @@ class Commands:
                 tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
+        # Enhanced context blocks (only for navigator mode)
+        if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
+            # Force token calculation if it hasn't been done yet
+            if hasattr(self.coder, "_calculate_context_block_tokens"):
+                if not hasattr(self.coder, "tokens_calculated") or not self.coder.tokens_calculated:
+                    self.coder._calculate_context_block_tokens()
+
+            # Add enhanced context blocks to the display
+            if hasattr(self.coder, "context_block_tokens") and self.coder.context_block_tokens:
+                for block_name, tokens in self.coder.context_block_tokens.items():
+                    # Format the block name more nicely
+                    display_name = block_name.replace("_", " ").title()
+                    res.append(
+                        (tokens, f"{display_name} context block", "/context-blocks to toggle")
+                    )
+
         fence = "`" * 3
 
         file_res = []
-        # files
-        for fname in self.coder.abs_fnames:
-            relative_fname = self.coder.get_rel_fname(fname)
-            content = self.io.read_text(fname)
-            if is_image_file(relative_fname):
-                tokens = self.coder.main_model.token_count_for_image(fname)
-            else:
-                # approximate
-                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
-                tokens = self.coder.main_model.token_count(content)
-            file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
+        # Process files with progress indication
+        total_editable_files = len(self.coder.abs_fnames)
+        total_readonly_files = len(self.coder.abs_read_only_fnames)
 
-        # read-only files
-        for fname in self.coder.abs_read_only_fnames:
-            relative_fname = self.coder.get_rel_fname(fname)
-            content = self.io.read_text(fname)
-            if content is not None and not is_image_file(relative_fname):
-                # approximate
-                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
-                tokens = self.coder.main_model.token_count(content)
-                file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
+        # Display progress for editable files
+        if total_editable_files > 0:
+            if total_editable_files > 20:
+                self.io.tool_output(
+                    f"Calculating tokens for {total_editable_files} editable files..."
+                )
+
+            # Calculate tokens for editable files
+            for i, fname in enumerate(self.coder.abs_fnames):
+                if i > 0 and i % 20 == 0 and total_editable_files > 20:
+                    self.io.tool_output(f"Processed {i}/{total_editable_files} editable files...")
+
+                relative_fname = self.coder.get_rel_fname(fname)
+                content = self.io.read_text(fname)
+                if is_image_file(relative_fname):
+                    tokens = self.coder.main_model.token_count_for_image(fname)
+                else:
+                    # approximate
+                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    tokens = self.coder.main_model.token_count(content)
+                file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
+
+        # Display progress for read-only files
+        if total_readonly_files > 0:
+            if total_readonly_files > 20:
+                self.io.tool_output(
+                    f"Calculating tokens for {total_readonly_files} read-only files..."
+                )
+
+            # Calculate tokens for read-only files
+            for i, fname in enumerate(self.coder.abs_read_only_fnames):
+                if i > 0 and i % 20 == 0 and total_readonly_files > 20:
+                    self.io.tool_output(f"Processed {i}/{total_readonly_files} read-only files...")
+
+                relative_fname = self.coder.get_rel_fname(fname)
+                content = self.io.read_text(fname)
+                if content is not None and not is_image_file(relative_fname):
+                    # approximate
+                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    tokens = self.coder.main_model.token_count(content)
+                    file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
+
+        if total_files > 20:
+            self.io.tool_output("Token calculation complete. Generating report...")
 
         file_res.sort()
         res.extend(file_res)
+
+        # stub files
+        for fname in self.coder.abs_read_only_stubs_fnames:
+            relative_fname = self.coder.get_rel_fname(fname)
+            if not is_image_file(relative_fname):
+                stub = self.coder.get_file_stub(fname)
+                content = f"{relative_fname} (stub)\n{fence}\n" + stub + "{fence}\n"
+                tokens = self.coder.main_model.token_count(content)
+                res.append((tokens, f"{relative_fname} (read-only stub)", "/drop to remove"))
 
         self.io.tool_output(
             f"Approximate context window usage for {self.coder.main_model.name}, in tokens:"
@@ -516,7 +574,7 @@ class Commands:
         def fmt(v):
             return format(int(v), ",").rjust(width)
 
-        col_width = max(len(row[1]) for row in res)
+        col_width = max(len(row[1]) for row in res) if res else 0
 
         cost_pad = " " * cost_width
         total = 0
@@ -699,6 +757,9 @@ class Commands:
             fname = f'"{fname}"'
         return fname
 
+    def completions_raw_read_only_stub(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
+
     def completions_raw_read_only(self, document, complete_event):
         # Get the text before the cursor
         text = document.text_before_cursor
@@ -799,6 +860,18 @@ class Commands:
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
 
+        if not args.strip():
+            all_files = self.coder.get_all_relative_files()
+            files_in_chat = self.coder.get_inchat_relative_files()
+            addable_files = sorted(set(all_files) - set(files_in_chat))
+            if not addable_files:
+                self.io.tool_output("No files available to add.")
+                return
+            selected_files = run_fzf(addable_files, multi=True)
+            if not selected_files:
+                return
+            args = " ".join([self.quote_fname(f) for f in selected_files])
+
         all_matched_files = set()
 
         filenames = parse_quoted_filenames(args)
@@ -863,6 +936,17 @@ class Commands:
             if abs_file_path in self.coder.abs_fnames:
                 self.io.tool_error(f"{matched_file} is already in the chat as an editable file")
                 continue
+            elif abs_file_path in self.coder.abs_read_only_stubs_fnames:
+                if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
+                    self.coder.abs_read_only_stubs_fnames.remove(abs_file_path)
+                    self.coder.abs_fnames.add(abs_file_path)
+                    self.io.tool_output(
+                        f"Moved {matched_file} from read-only (stub) to editable files in the chat"
+                    )
+                else:
+                    self.io.tool_error(
+                        f"Cannot add {matched_file} as it's not part of the repository"
+                    )
             elif abs_file_path in self.coder.abs_read_only_fnames:
                 if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
                     self.coder.abs_read_only_fnames.remove(abs_file_path)
@@ -892,12 +976,65 @@ class Commands:
                     self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
 
+                    # Recalculate context block tokens if using navigator mode
+                    if (
+                        hasattr(self.coder, "use_enhanced_context")
+                        and self.coder.use_enhanced_context
+                    ):
+                        if hasattr(self.coder, "_calculate_context_block_tokens"):
+                            self.coder._calculate_context_block_tokens()
+
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
-        read_only_files = [self.coder.get_rel_fname(fn) for fn in self.coder.abs_read_only_fnames]
+        read_only_files = [
+            self.coder.get_rel_fname(fn)
+            for fn in self.coder.abs_read_only_fnames | self.coder.abs_read_only_stubs_fnames
+        ]
         all_files = files + read_only_files
         all_files = [self.quote_fname(fn) for fn in all_files]
         return all_files
+
+    def completions_context_blocks(self):
+        """Return available context block names for auto-completion."""
+        if not hasattr(self.coder, "use_enhanced_context") or not self.coder.use_enhanced_context:
+            return []
+
+        # If the coder has context blocks available
+        if hasattr(self.coder, "context_block_tokens") and self.coder.context_block_tokens:
+            # Get all block names from the tokens dictionary
+            block_names = list(self.coder.context_block_tokens.keys())
+            # Format them for display (convert snake_case to Title Case)
+            formatted_blocks = [name.replace("_", " ").title() for name in block_names]
+            return formatted_blocks
+
+        # Standard blocks that are typically available
+        return [
+            "Context Summary",
+            "Directory Structure",
+            "Environment Info",
+            "Git Status",
+            "Symbol Outline",
+        ]
+
+    def _handle_read_only_files(self, expanded_word, file_set, description=""):
+        """Handle read-only files with substring matching and samefile check"""
+        matched = []
+        for f in file_set:
+            if expanded_word in f:
+                matched.append(f)
+                continue
+
+            # Try samefile comparison for relative paths
+            try:
+                abs_word = os.path.abspath(expanded_word)
+                if os.path.samefile(abs_word, f):
+                    matched.append(f)
+            except (FileNotFoundError, OSError):
+                continue
+
+        for matched_file in matched:
+            file_set.remove(matched_file)
+            self.io.tool_output(f"Removed {description} file {matched_file} from the chat")
 
     def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
@@ -910,31 +1047,27 @@ class Commands:
             else:
                 self.io.tool_output("Dropping all files from the chat session.")
             self._drop_all_files()
+
+            # Recalculate context block tokens after dropping all files
+            if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
+                if hasattr(self.coder, "_calculate_context_block_tokens"):
+                    self.coder._calculate_context_block_tokens()
             return
 
         filenames = parse_quoted_filenames(args)
+        files_changed = False
+
         for word in filenames:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
 
-            # Handle read-only files with substring matching and samefile check
-            read_only_matched = []
-            for f in self.coder.abs_read_only_fnames:
-                if expanded_word in f:
-                    read_only_matched.append(f)
-                    continue
-
-                # Try samefile comparison for relative paths
-                try:
-                    abs_word = os.path.abspath(expanded_word)
-                    if os.path.samefile(abs_word, f):
-                        read_only_matched.append(f)
-                except (FileNotFoundError, OSError):
-                    continue
-
-            for matched_file in read_only_matched:
-                self.coder.abs_read_only_fnames.remove(matched_file)
-                self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
+            # Handle read-only files
+            self._handle_read_only_files(
+                expanded_word, self.coder.abs_read_only_fnames, "read-only"
+            )
+            self._handle_read_only_files(
+                expanded_word, self.coder.abs_read_only_stubs_fnames, "read-only (stub)"
+            )
 
             # For editable files, use glob if word contains glob chars, otherwise use substring
             if any(c in expanded_word for c in "*?[]"):
@@ -953,6 +1086,16 @@ class Commands:
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
                     self.io.tool_output(f"Removed {matched_file} from the chat")
+                    files_changed = True
+
+        # Recalculate context block tokens if any files were changed and using navigator mode
+        if (
+            files_changed
+            and hasattr(self.coder, "use_enhanced_context")
+            and self.coder.use_enhanced_context
+        ):
+            if hasattr(self.coder, "_calculate_context_block_tokens"):
+                self.coder._calculate_context_block_tokens()
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"
@@ -1051,6 +1194,108 @@ class Commands:
         "Exit the application"
         self.cmd_exit(args)
 
+    def cmd_context_management(self, args=""):
+        "Toggle context management for large files"
+        if not hasattr(self.coder, "context_management_enabled"):
+            self.io.tool_error("Context management is only available in navigator mode.")
+            return
+
+        # Toggle the setting
+        self.coder.context_management_enabled = not self.coder.context_management_enabled
+
+        # Report the new state
+        if self.coder.context_management_enabled:
+            self.io.tool_output("Context management is now ON - large files may be truncated.")
+        else:
+            self.io.tool_output("Context management is now OFF - files will not be truncated.")
+
+    def cmd_context_blocks(self, args=""):
+        "Toggle enhanced context blocks or print a specific block"
+        if not hasattr(self.coder, "use_enhanced_context"):
+            self.io.tool_error("Enhanced context blocks are only available in navigator mode.")
+            return
+
+        # If an argument is provided, try to print that specific context block
+        if args.strip():
+            # Format block name to match internal naming conventions
+            block_name = args.strip().lower().replace(" ", "_")
+
+            # Check if the coder has the necessary method to get context blocks
+            if hasattr(self.coder, "_generate_context_block"):
+                # Force token recalculation to ensure blocks are fresh
+                if hasattr(self.coder, "_calculate_context_block_tokens"):
+                    self.coder._calculate_context_block_tokens(force=True)
+
+                # Try to get the requested block
+                block_content = self.coder._generate_context_block(block_name)
+
+                if block_content:
+                    # Calculate token count
+                    tokens = self.coder.main_model.token_count(block_content)
+                    self.io.tool_output(f"Context block '{args.strip()}' ({tokens} tokens):")
+                    self.io.tool_output(block_content)
+                    return
+                else:
+                    # List available blocks if the requested one wasn't found
+                    self.io.tool_error(f"Context block '{args.strip()}' not found or empty.")
+                    if hasattr(self.coder, "context_block_tokens"):
+                        available_blocks = list(self.coder.context_block_tokens.keys())
+                        formatted_blocks = [
+                            name.replace("_", " ").title() for name in available_blocks
+                        ]
+                        self.io.tool_output(f"Available blocks: {', '.join(formatted_blocks)}")
+                    return
+            else:
+                self.io.tool_error("This coder doesn't support generating context blocks.")
+                return
+
+        # If no argument, toggle the enhanced context setting
+        self.coder.use_enhanced_context = not self.coder.use_enhanced_context
+
+        # Report the new state
+        if self.coder.use_enhanced_context:
+            self.io.tool_output(
+                "Enhanced context blocks are now ON - directory structure and git status will be"
+                " included."
+            )
+            if hasattr(self.coder, "context_block_tokens"):
+                available_blocks = list(self.coder.context_block_tokens.keys())
+                formatted_blocks = [name.replace("_", " ").title() for name in available_blocks]
+                self.io.tool_output(f"Available blocks: {', '.join(formatted_blocks)}")
+                self.io.tool_output("Use '/context-blocks [block name]' to view a specific block.")
+        else:
+            self.io.tool_output(
+                "Enhanced context blocks are now OFF - directory structure and git status will not"
+                " be included."
+            )
+
+    def cmd_granular_editing(self, args=""):
+        "Toggle granular editing tools in navigator mode"
+        if not hasattr(self.coder, "use_granular_editing"):
+            self.io.tool_error("Granular editing toggle is only available in navigator mode.")
+            return
+
+        # Toggle the setting using the navigator's method if available
+        new_state = not self.coder.use_granular_editing
+
+        if hasattr(self.coder, "set_granular_editing"):
+            self.coder.set_granular_editing(new_state)
+        else:
+            # Fallback if method doesn't exist
+            self.coder.use_granular_editing = new_state
+
+        # Report the new state
+        if self.coder.use_granular_editing:
+            self.io.tool_output(
+                "Granular editing tools are now ON - navigator will use specific editing tools"
+                " instead of search/replace."
+            )
+        else:
+            self.io.tool_output(
+                "Granular editing tools are now OFF - navigator will use search/replace blocks for"
+                " editing."
+            )
+
     def cmd_ls(self, args):
         "List all known files and indicate which are included in the chat session"
 
@@ -1059,6 +1304,7 @@ class Commands:
         other_files = []
         chat_files = []
         read_only_files = []
+        read_only_stub_files = []
         for file in files:
             abs_file_path = self.coder.abs_root_path(file)
             if abs_file_path in self.coder.abs_fnames:
@@ -1071,7 +1317,12 @@ class Commands:
             rel_file_path = self.coder.get_rel_fname(abs_file_path)
             read_only_files.append(rel_file_path)
 
-        if not chat_files and not other_files and not read_only_files:
+        # Add read-only stub files
+        for abs_file_path in self.coder.abs_read_only_stubs_fnames:
+            rel_file_path = self.coder.get_rel_fname(abs_file_path)
+            read_only_stub_files.append(rel_file_path)
+
+        if not chat_files and not other_files and not read_only_files and not read_only_stub_files:
             self.io.tool_output("\nNo files in chat, git repo, or read-only list.")
             return
 
@@ -1080,10 +1331,13 @@ class Commands:
         for file in other_files:
             self.io.tool_output(f"  {file}")
 
-        if read_only_files:
+        # Read-only files:
+        if read_only_files or read_only_stub_files:
             self.io.tool_output("\nRead-only files:\n")
         for file in read_only_files:
             self.io.tool_output(f"  {file}")
+        for file in read_only_stub_files:
+            self.io.tool_output(f"  {file} (stub)")
 
         if chat_files:
             self.io.tool_output("\nFiles in chat:\n")
@@ -1169,6 +1423,9 @@ class Commands:
     def completions_context(self):
         raise CommandCompletionException()
 
+    def completions_navigator(self):
+        raise CommandCompletionException()
+
     def cmd_ask(self, args):
         """Ask questions about the code base without editing any files. If no prompt provided, switches to ask mode."""  # noqa
         return self._generic_chat_command(args, "ask")
@@ -1185,6 +1442,15 @@ class Commands:
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
 
+    def cmd_navigator(self, args):
+        """Enter navigator mode to autonomously discover and manage relevant files. If no prompt provided, switches to navigator mode."""  # noqa
+        # Enable context management when entering navigator mode
+        if hasattr(self.coder, "context_management_enabled"):
+            self.coder.context_management_enabled = True
+            self.io.tool_output("Context management enabled for large files")
+
+        return self._generic_chat_command(args, "navigator", placeholder=args.strip() or None)
+
     def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
             # Switch to the corresponding chat mode if no args provided
@@ -1197,6 +1463,7 @@ class Commands:
             from_coder=self.coder,
             edit_format=edit_format,
             summarize_from_coder=False,
+            num_cache_warming_pings=0,
         )
 
         user_msg = args
@@ -1307,15 +1574,25 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
-    def cmd_read_only(self, args):
-        "Add files to the chat that are for reference only, or turn added files to read-only"
+    def _cmd_read_only_base(self, args, source_set, target_set, source_mode, target_mode):
+        """Base implementation for read-only and read-only-stub commands"""
         if not args.strip():
-            # Convert all files in chat to read-only
+            # Handle editable files
             for fname in list(self.coder.abs_fnames):
                 self.coder.abs_fnames.remove(fname)
-                self.coder.abs_read_only_fnames.add(fname)
+                target_set.add(fname)
                 rel_fname = self.coder.get_rel_fname(fname)
-                self.io.tool_output(f"Converted {rel_fname} to read-only")
+                self.io.tool_output(f"Converted {rel_fname} from editable to {target_mode}")
+
+            # Handle source set files if provided
+            if source_set:
+                for fname in list(source_set):
+                    source_set.remove(fname)
+                    target_set.add(fname)
+                    rel_fname = self.coder.get_rel_fname(fname)
+                    self.io.tool_output(
+                        f"Converted {rel_fname} from {source_mode} to {target_mode}"
+                    )
             return
 
         filenames = parse_quoted_filenames(args)
@@ -1351,13 +1628,28 @@ class Commands:
         for path in sorted(all_paths):
             abs_path = self.coder.abs_root_path(path)
             if os.path.isfile(abs_path):
-                self._add_read_only_file(abs_path, path)
+                self._add_read_only_file(
+                    abs_path,
+                    path,
+                    target_set,
+                    source_set,
+                    source_mode=source_mode,
+                    target_mode=target_mode,
+                )
             elif os.path.isdir(abs_path):
-                self._add_read_only_directory(abs_path, path)
+                self._add_read_only_directory(abs_path, path, source_set, target_set, target_mode)
             else:
                 self.io.tool_error(f"Not a file or directory: {abs_path}")
 
-    def _add_read_only_file(self, abs_path, original_name):
+    def _add_read_only_file(
+        self,
+        abs_path,
+        original_name,
+        target_set,
+        source_set,
+        source_mode="read-only",
+        target_mode="read-only",
+    ):
         if is_image_file(original_name) and not self.coder.main_model.info.get("supports_vision"):
             self.io.tool_error(
                 f"Cannot add image file {original_name} as the"
@@ -1365,37 +1657,122 @@ class Commands:
             )
             return
 
-        if abs_path in self.coder.abs_read_only_fnames:
-            self.io.tool_error(f"{original_name} is already in the chat as a read-only file")
+        if abs_path in target_set:
+            self.io.tool_error(f"{original_name} is already in the chat as a {target_mode} file")
             return
         elif abs_path in self.coder.abs_fnames:
             self.coder.abs_fnames.remove(abs_path)
-            self.coder.abs_read_only_fnames.add(abs_path)
+            target_set.add(abs_path)
             self.io.tool_output(
-                f"Moved {original_name} from editable to read-only files in the chat"
+                f"Moved {original_name} from editable to {target_mode} files in the chat"
+            )
+        elif source_set and abs_path in source_set:
+            source_set.remove(abs_path)
+            target_set.add(abs_path)
+            self.io.tool_output(
+                f"Moved {original_name} from {source_mode} to {target_mode} files in the chat"
             )
         else:
-            self.coder.abs_read_only_fnames.add(abs_path)
-            self.io.tool_output(f"Added {original_name} to read-only files.")
+            target_set.add(abs_path)
+            self.io.tool_output(f"Added {original_name} to {target_mode} files.")
 
-    def _add_read_only_directory(self, abs_path, original_name):
+    def _add_read_only_directory(
+        self, abs_path, original_name, source_set, target_set, target_mode
+    ):
         added_files = 0
         for root, _, files in os.walk(abs_path):
             for file in files:
                 file_path = os.path.join(root, file)
                 if (
                     file_path not in self.coder.abs_fnames
-                    and file_path not in self.coder.abs_read_only_fnames
+                    and file_path not in target_set
+                    and (source_set is None or file_path not in source_set)
                 ):
-                    self.coder.abs_read_only_fnames.add(file_path)
+                    target_set.add(file_path)
                     added_files += 1
 
         if added_files > 0:
             self.io.tool_output(
-                f"Added {added_files} files from directory {original_name} to read-only files."
+                f"Added {added_files} files from directory {original_name} to {target_mode} files."
             )
         else:
             self.io.tool_output(f"No new files added from directory {original_name}.")
+
+    def cmd_read_only(self, args):
+        "Add files to the chat that are for reference only, or turn added files to read-only"
+        if not args.strip():
+            # If no args provided, use fuzzy finder to select files to add as read-only
+            all_files = self.coder.get_all_relative_files()
+            files_in_chat = self.coder.get_inchat_relative_files()
+            addable_files = sorted(set(all_files) - set(files_in_chat))
+            if not addable_files:
+                # If no files available to add, convert all editable files to read-only
+                self._cmd_read_only_base(
+                    "",
+                    source_set=self.coder.abs_read_only_stubs_fnames,
+                    target_set=self.coder.abs_read_only_fnames,
+                    source_mode="read-only (stub)",
+                    target_mode="read-only",
+                )
+                return
+            selected_files = run_fzf(addable_files, multi=True)
+            if not selected_files:
+                # If user didn't select any files, convert all editable files to read-only
+                self._cmd_read_only_base(
+                    "",
+                    source_set=self.coder.abs_read_only_stubs_fnames,
+                    target_set=self.coder.abs_read_only_fnames,
+                    source_mode="read-only (stub)",
+                    target_mode="read-only",
+                )
+                return
+            args = " ".join([self.quote_fname(f) for f in selected_files])
+
+        self._cmd_read_only_base(
+            args,
+            source_set=self.coder.abs_read_only_stubs_fnames,
+            target_set=self.coder.abs_read_only_fnames,
+            source_mode="read-only (stub)",
+            target_mode="read-only",
+        )
+
+    def cmd_read_only_stub(self, args):
+        "Add files to the chat as read-only stubs, or turn added files to read-only (stubs)"
+        if not args.strip():
+            # If no args provided, use fuzzy finder to select files to add as read-only stubs
+            all_files = self.coder.get_all_relative_files()
+            files_in_chat = self.coder.get_inchat_relative_files()
+            addable_files = sorted(set(all_files) - set(files_in_chat))
+            if not addable_files:
+                # If no files available to add, convert all editable files to read-only stubs
+                self._cmd_read_only_base(
+                    "",
+                    source_set=self.coder.abs_read_only_fnames,
+                    target_set=self.coder.abs_read_only_stubs_fnames,
+                    source_mode="read-only",
+                    target_mode="read-only (stub)",
+                )
+                return
+            selected_files = run_fzf(addable_files, multi=True)
+            if not selected_files:
+                # If user didn't select any files, convert all editable files to read-only stubs
+                self._cmd_read_only_base(
+                    "",
+                    source_set=self.coder.abs_read_only_fnames,
+                    target_set=self.coder.abs_read_only_stubs_fnames,
+                    source_mode="read-only",
+                    target_mode="read-only (stub)",
+                )
+                return
+            args = " ".join([self.quote_fname(f) for f in selected_files])
+
+        self._cmd_read_only_base(
+            args,
+            source_set=self.coder.abs_read_only_fnames,
+            target_set=self.coder.abs_read_only_stubs_fnames,
+            source_mode="read-only",
+            target_mode="read-only (stub)",
+        )
 
     def cmd_map(self, args):
         "Print out the current repository map"
@@ -1498,6 +1875,14 @@ class Commands:
                         f.write(f"/read-only {rel_fname}\n")
                     else:
                         f.write(f"/read-only {fname}\n")
+                # Write commands to add read-only stubs files
+                for fname in sorted(self.coder.abs_read_only_stubs_fnames):
+                    # Use absolute path for files outside repo root, relative path for files inside
+                    if Path(fname).is_relative_to(self.coder.root):
+                        rel_fname = self.coder.get_rel_fname(fname)
+                        f.write(f"/read-only-stub {rel_fname}\n")
+                    else:
+                        f.write(f"/read-only-stub {fname}\n")
 
             self.io.tool_output(f"Saved commands to {args.strip()}")
         except Exception as e:
@@ -1558,6 +1943,13 @@ class Commands:
     def cmd_edit(self, args=""):
         "Alias for /editor: Open an editor to write a prompt"
         return self.cmd_editor(args)
+
+    def cmd_history_search(self, args):
+        "Fuzzy search in history and paste it in the prompt"
+        history_lines = self.io.get_input_history()
+        selected_lines = run_fzf(history_lines)
+        if selected_lines:
+            self.io.set_placeholder("".join(selected_lines))
 
     def cmd_think_tokens(self, args):
         """Set the thinking token budget, eg: 8096, 8k, 10.5k, 0.5M, or 0 to disable."""

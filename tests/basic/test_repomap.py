@@ -33,7 +33,7 @@ class TestRepoMap(unittest.TestCase):
                     f.write("")
 
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, io=io)
             other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map([], other_files)
 
@@ -68,7 +68,7 @@ class TestRepoMap(unittest.TestCase):
 
             # Initialize RepoMap with refresh="files"
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io, refresh="files")
+            repo_map = RepoMap(main_model=self.GPT35, io=io, refresh="files")
             other_files = [
                 os.path.join(temp_dir, "file1.py"),
                 os.path.join(temp_dir, "file2.py"),
@@ -122,7 +122,7 @@ class TestRepoMap(unittest.TestCase):
 
             # Initialize RepoMap with refresh="auto"
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io, refresh="auto")
+            repo_map = RepoMap(main_model=self.GPT35, io=io, refresh="auto")
             chat_files = []
             other_files = [os.path.join(temp_dir, "file1.py"), os.path.join(temp_dir, "file2.py")]
 
@@ -195,7 +195,7 @@ print(my_function(3, 4))
                 f.write(file_content3)
 
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, io=io)
             other_files = [
                 os.path.join(temp_dir, test_file1),
                 os.path.join(temp_dir, test_file2),
@@ -229,7 +229,7 @@ print(my_function(3, 4))
                 with open(os.path.join(temp_dir, file), "w") as f:
                     f.write("")
 
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=InputOutput())
+            repo_map = RepoMap(main_model=self.GPT35, io=InputOutput())
 
             other_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map([], other_files)
@@ -258,7 +258,7 @@ print(my_function(3, 4))
                     f.write("def foo(): pass\n")
 
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, io=io)
             test_files = [os.path.join(temp_dir, file) for file in test_files]
             result = repo_map.get_repo_map(test_files[:2], test_files[2:])
 
@@ -271,6 +271,63 @@ print(my_function(3, 4))
             self.assertIn("test_file4.json", result)
 
             # close the open cache files, so Windows won't error
+            del repo_map
+
+    def test_get_repo_map_follows_max_line_length(self):
+        hundred_chars = "0123456789" * 10
+        test_file_name = "file1.py"
+        method_name = f"my_method_with_more_than_100_chars_{hundred_chars}"
+
+        test_file_name_100_chars_content = f"""
+class MyClass:
+    def {method_name}(self, arg1, arg2):
+        return arg1 + arg2
+""".lstrip()
+
+        with IgnorantTemporaryDirectory() as temp_dir:
+            with open(os.path.join(temp_dir, test_file_name), "w") as f:
+                f.write(test_file_name_100_chars_content)
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, io=io, max_code_line_length=200)
+
+            other_files = [
+                os.path.join(temp_dir, test_file_name),
+            ]
+
+            result = repo_map.get_repo_map([], other_files)
+
+            self.assertIn(method_name, result)
+
+            del repo_map
+
+    def test_get_repo_map_dont_truncate_file_path(self):
+        hundred_chars = "0123456789" * 10
+        test_file_name_100_chars = f"{hundred_chars}.py"
+        method_name = f"my_method_with_more_than_100_chars_{hundred_chars}"
+
+        test_file_name_100_chars_content = f"""
+class MyClass:
+    def {method_name}(self, arg1, arg2):
+        return arg1 + arg2
+""".lstrip()
+
+        with IgnorantTemporaryDirectory() as temp_dir:
+            with open(os.path.join(temp_dir, test_file_name_100_chars), "w") as f:
+                f.write(test_file_name_100_chars_content)
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, io=io, max_code_line_length=100)
+
+            other_files = [
+                os.path.join(temp_dir, test_file_name_100_chars),
+            ]
+
+            result = repo_map.get_repo_map([], other_files)
+
+            self.assertIn(test_file_name_100_chars, result)
+            self.assertNotIn(method_name, result)
+
             del repo_map
 
 
@@ -411,7 +468,7 @@ class TestRepoMapAllLanguages(unittest.TestCase):
                 f.write(content)
 
             io = InputOutput()
-            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            repo_map = RepoMap(main_model=self.GPT35, io=io)
             other_files = [test_file]
             result = repo_map.get_repo_map([], other_files)
             dump(lang)
@@ -448,10 +505,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
         # Initialize RepoMap with the sample code base as root
         io = InputOutput()
-        repomap_root = Path(__file__).parent.parent.parent
+
         repo_map = RepoMap(
             main_model=self.GPT35,
-            root=str(repomap_root),
             io=io,
         )
 

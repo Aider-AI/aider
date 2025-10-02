@@ -431,6 +431,7 @@ class TestModels(unittest.TestCase):
         mock_token_count.return_value = 1000
 
         model = Model("ollama/llama3")
+        model.extra_params = {}
         messages = [{"role": "user", "content": "Hello"}]
 
         model.send_completion(messages, functions=None, stream=False)
@@ -443,6 +444,42 @@ class TestModels(unittest.TestCase):
             stream=False,
             temperature=0,
             num_ctx=expected_ctx,
+            timeout=600,
+        )
+
+    @patch("aider.models.litellm.completion")
+    def test_modern_tool_call_propagation(self, mock_completion):
+        # Test modern tool calling (used for MCP Server Tool Calls)
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+
+        model.send_completion(
+            messages, functions=None, stream=False, tools=[dict(type="function", function="test")]
+        )
+
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            tools=[dict(type="function", function="test")],
+            temperature=0,
+            timeout=600,
+        )
+
+    @patch("aider.models.litellm.completion")
+    def test_legacy_tool_call_propagation(self, mock_completion):
+        # Test modern tool calling (used for legacy server tool calling)
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+
+        model.send_completion(messages, functions=["test"], stream=False)
+
+        mock_completion.assert_called_with(
+            model=model.name,
+            messages=messages,
+            stream=False,
+            tools=[dict(type="function", function="test")],
+            temperature=0,
             timeout=600,
         )
 
@@ -467,6 +504,7 @@ class TestModels(unittest.TestCase):
     @patch("aider.models.litellm.completion")
     def test_non_ollama_no_num_ctx(self, mock_completion):
         model = Model("gpt-4")
+        model.extra_params = {}
         messages = [{"role": "user", "content": "Hello"}]
 
         model.send_completion(messages, functions=None, stream=False)
@@ -500,6 +538,7 @@ class TestModels(unittest.TestCase):
     def test_request_timeout_default(self, mock_completion):
         # Test default timeout is used when not specified in extra_params
         model = Model("gpt-4")
+        model.extra_params = {}
         messages = [{"role": "user", "content": "Hello"}]
         model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
@@ -529,6 +568,7 @@ class TestModels(unittest.TestCase):
     def test_use_temperature_in_send_completion(self, mock_completion):
         # Test use_temperature=True sends temperature=0
         model = Model("gpt-4")
+        model.extra_params = {}
         messages = [{"role": "user", "content": "Hello"}]
         model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
@@ -547,6 +587,7 @@ class TestModels(unittest.TestCase):
 
         # Test use_temperature as float sends that value
         model = Model("gpt-4")
+        model.extra_params = {}
         model.use_temperature = 0.7
         messages = [{"role": "user", "content": "Hello"}]
         model.send_completion(messages, functions=None, stream=False)
