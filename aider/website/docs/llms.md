@@ -28,6 +28,7 @@ Aider works best with these models, which are skilled at editing code:
 Aider works with a number of **free** API providers:
 
 - [OpenRouter offers free access to many models](https://openrouter.ai/models/?q=free), with limitations on daily usage.
+- [Vercel AI Gateway](/docs/llms/vercel.html) provides $5 free credit per month to use with any available model.
 - Google's [Gemini 2.5 Pro Exp](/docs/llms/gemini.html) works very well with aider.
 
 ## Local models
