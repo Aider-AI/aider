@@ -1798,3 +1798,59 @@
   versions: 0.86.2.dev
   seconds_per_case: 62.4
   total_cost: 10.3713
+
+- dirname: 2025-10-03-09-45-34--deepseek-v3.2-reasoner
+  test_cases: 225
+  model: deepseek/deepseek-reasoner
+  edit_format: diff
+  commit_hash: cbb5376
+  pass_rate_1: 39.6
+  pass_rate_2: 74.2
+  pass_num_1: 89
+  pass_num_2: 167
+  percent_cases_well_formed: 97.3
+  error_outputs: 8
+  num_malformed_responses: 6
+  num_with_malformed_responses: 6
+  user_asks: 67
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 2191446
+  completion_tokens: 1645129
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-10-03
+  versions: 0.86.2.dev
+  seconds_per_case: 291.2
+  total_cost: 4.3854
+
+- dirname: 2025-10-03-09-21-36--deepseek-v3.2-chat
+  test_cases: 225
+  model: deepseek/deepseek-chat
+  edit_format: diff
+  commit_hash: cbb5376
+  pass_rate_1: 38.7
+  pass_rate_2: 70.2
+  pass_num_1: 87
+  pass_num_2: 158
+  percent_cases_well_formed: 98.2
+  error_outputs: 6
+  num_malformed_responses: 4
+  num_with_malformed_responses: 4
+  user_asks: 60
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 2266868
+  completion_tokens: 573477
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model deepseek/deepseek-chat
+  date: 2025-10-03
+  versions: 0.86.2.dev
+  seconds_per_case: 104.0
+  total_cost: 1.0493
