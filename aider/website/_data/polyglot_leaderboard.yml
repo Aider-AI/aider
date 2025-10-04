@@ -1801,7 +1801,7 @@
 
 - dirname: 2025-10-03-09-45-34--deepseek-v3.2-reasoner
   test_cases: 225
-  model: deepseek/deepseek-reasoner
+  model: DeepSeek-V3.2-Exp (Reasoner)
   edit_format: diff
   commit_hash: cbb5376
   pass_rate_1: 39.6
@@ -1825,11 +1825,11 @@
   date: 2025-10-03
   versions: 0.86.2.dev
   seconds_per_case: 291.2
-  total_cost: 4.3854
+  total_cost: 1.3045
 
 - dirname: 2025-10-03-09-21-36--deepseek-v3.2-chat
   test_cases: 225
-  model: deepseek/deepseek-chat
+  model: DeepSeek-V3.2-Exp (Chat)
   edit_format: diff
   commit_hash: cbb5376
   pass_rate_1: 38.7
@@ -1853,4 +1853,4 @@
   date: 2025-10-03
   versions: 0.86.2.dev
   seconds_per_case: 104.0
-  total_cost: 1.0493
+  total_cost: 0.8756
