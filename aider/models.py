@@ -124,6 +124,7 @@ class ModelSettings:
     use_system_prompt: bool = True
     use_temperature: Union[bool, float] = True
     streaming: bool = True
+    use_responses: bool = False
     editor_model_name: Optional[str] = None
     editor_edit_format: Optional[str] = None
     reasoning_tag: Optional[str] = None
@@ -946,6 +947,120 @@ class Model(ModelSettings):
 
             os.environ[openai_api_key] = token
 
+    def _adapt_responses_stream_to_chat(self, responses_stream):
+        """Adapt LiteLLM Responses streaming events to Chat Completions-like chunks.
+
+        Yields objects with `.choices[0].delta.content` or `.choices[0].delta.reasoning_content`.
+        """
+        from types import SimpleNamespace as NS
+
+        def generator():
+            for event in responses_stream:
+                try:
+                    # Chat Completions style chunk already
+                    _ = event.choices
+                    yield event
+                    continue
+                except Exception:
+                    pass
+
+                event_type = None
+                delta_text = None
+                is_reasoning = False
+
+                if isinstance(event, dict):
+                    event_type = event.get("type")
+                    delta_text = event.get("delta") or event.get("text") or event.get("content")
+                else:
+                    event_type = getattr(event, "type", None)
+                    delta_text = getattr(event, "delta", None) or getattr(event, "text", None)
+                    if delta_text is None:
+                        content_attr = getattr(event, "content", None)
+                        if isinstance(content_attr, str):
+                            delta_text = content_attr
+
+                if isinstance(event_type, str) and "reasoning" in event_type:
+                    is_reasoning = True
+
+                if delta_text:
+                    if is_reasoning:
+                        yield NS(choices=[NS(delta=NS(reasoning_content=str(delta_text)))])
+                    else:
+                        yield NS(choices=[NS(delta=NS(content=str(delta_text)))])
+
+                # Ignore other event types (completed, error, etc.) for streaming UX
+
+        return generator()
+
+    def _extract_text_from_responses_output(self, response):
+        """Extract concatenated assistant text from a non-streaming Responses API response."""
+        # Try attribute access first
+        output = getattr(response, "output", None)
+        if output is None and isinstance(response, dict):
+            output = response.get("output")
+
+        collected_text = []
+        collected_reasoning = []
+        if output and isinstance(output, (list, tuple)):
+            for item in output:
+                # Prefer content blocks (list of segments with .text)
+                content_blocks = getattr(item, "content", None)
+                if content_blocks is None and isinstance(item, dict):
+                    content_blocks = item.get("content")
+
+                if isinstance(content_blocks, (list, tuple)):
+                    for block in content_blocks:
+                        text = None
+                        if isinstance(block, dict):
+                            text = block.get("text") or block.get("content")
+                            block_type = block.get("type")
+                        else:
+                            block_type = getattr(block, "type", None)
+                            text = getattr(block, "text", None) or getattr(block, "content", None)
+
+                        if not text:
+                            continue
+                        if isinstance(block_type, str) and "reasoning" in block_type:
+                            collected_reasoning.append(str(text))
+                        else:
+                            collected_text.append(str(text))
+                else:
+                    # Fallbacks: some providers may expose plain `text`
+                    txt = None
+                    if isinstance(item, dict):
+                        txt = item.get("text") or item.get("output_text")
+                    else:
+                        txt = getattr(item, "text", None) or getattr(item, "output_text", None)
+                    if txt:
+                        collected_text.append(str(txt))
+
+        return "".join(collected_text), "".join(collected_reasoning) if collected_reasoning else None
+
+    def _messages_to_responses_payload(self, messages):
+        """Convert chat.completions-style messages to Responses API payload.
+
+        - Concatenate system messages into a single instructions string.
+        - Emit remaining messages (user/assistant) as input array.
+        """
+        instructions_parts = []
+        input_items = []
+        for msg in messages:
+            role = msg.get("role")
+            content = msg.get("content")
+            if role == "system":
+                if content:
+                    instructions_parts.append(str(content))
+                continue
+
+            # Only include roles commonly accepted by Responses API
+            if role in ("user", "assistant", "developer"):
+                if content is None:
+                    continue
+                input_items.append({"role": role, "content": content})
+
+        instructions = "\n\n".join(instructions_parts) if instructions_parts else None
+        return instructions, input_items
+
     def send_completion(self, messages, functions, stream, temperature=None):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
@@ -953,6 +1068,92 @@ class Model(ModelSettings):
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
+        # If toggled, use the OpenAI Responses API via LiteLLM
+        if getattr(self, "use_responses", False):
+            kwargs = dict(
+                model=self.name,
+                stream=stream,
+            )
+
+            if self.extra_params:
+                kwargs.update(self.extra_params)
+
+            instructions, input_items = self._messages_to_responses_payload(messages)
+            if input_items:
+                kwargs["input"] = input_items
+            if instructions:
+                kwargs["instructions"] = instructions
+
+            # Map function tools if present
+            if functions is not None:
+                function = functions[0]
+                # Prefer OpenAI-style function tool representation
+                kwargs["tools"] = [dict(type="function", function=function)]
+
+            key = json.dumps(kwargs, sort_keys=True, default=str).encode()
+            hash_object = hashlib.sha1(key)
+            if "timeout" not in kwargs:
+                kwargs["timeout"] = request_timeout
+            if self.verbose:
+                dump(kwargs)
+
+            # Use LiteLLM Responses API
+            res = litellm.responses(**kwargs)
+
+            # Adapt shape for downstream handlers
+            if stream:
+                res = self._adapt_responses_stream_to_chat(res)
+            else:
+                # Build Chat Completions-like response object
+                from types import SimpleNamespace as NS
+
+                text, reasoning = self._extract_text_from_responses_output(res)
+                usage = getattr(res, "usage", None)
+                if usage is None and isinstance(res, dict):
+                    usage = res.get("usage")
+
+                prompt_tokens = 0
+                completion_tokens = 0
+                cache_read_input_tokens = 0
+                cache_creation_input_tokens = 0
+
+                if isinstance(usage, dict):
+                    prompt_tokens = usage.get("input_tokens") or usage.get("prompt_tokens") or 0
+                    completion_tokens = (
+                        usage.get("output_tokens") or usage.get("completion_tokens") or 0
+                    )
+                    cache_read_input_tokens = usage.get("cache_read_input_tokens") or 0
+                    cache_creation_input_tokens = usage.get("cache_creation_input_tokens") or 0
+                else:
+                    # Try attribute access
+                    try:
+                        prompt_tokens = getattr(usage, "input_tokens", 0) or getattr(
+                            usage, "prompt_tokens", 0
+                        )
+                        completion_tokens = getattr(usage, "output_tokens", 0) or getattr(
+                            usage, "completion_tokens", 0
+                        )
+                        cache_read_input_tokens = getattr(usage, "cache_read_input_tokens", 0) or 0
+                        cache_creation_input_tokens = (
+                            getattr(usage, "cache_creation_input_tokens", 0) or 0
+                        )
+                    except Exception:
+                        pass
+
+                usage_ns = NS(
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    cache_read_input_tokens=cache_read_input_tokens,
+                    cache_creation_input_tokens=cache_creation_input_tokens,
+                )
+
+                message_ns = NS(content=text or "", reasoning_content=reasoning)
+                choice_ns = NS(message=message_ns, finish_reason="stop")
+                res = NS(choices=[choice_ns], usage=usage_ns)
+
+            return hash_object, res
+
+        # Default path: Chat Completions API
         kwargs = dict(
             model=self.name,
             stream=stream,
