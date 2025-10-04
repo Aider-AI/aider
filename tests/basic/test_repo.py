@@ -11,7 +11,8 @@ import git
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
 from aider.models import Model
-from aider.repo import GitRepo
+from aider.repo import Repo as GitRepo
+from aider.vcs.git import get_commit_message
 from aider.utils import GitTemporaryDirectory
 
 
@@ -136,10 +137,12 @@ class TestRepo(unittest.TestCase):
         model2 = Model("gpt-4")
         dump(model1)
         dump(model2)
-        repo = GitRepo(InputOutput(), None, None, models=[model1, model2])
+        io = InputOutput()
+        models = [model1, model2]
+        commit_prompt = None
 
         # Call the get_commit_message method with dummy diff and context
-        result = repo.get_commit_message("dummy diff", "dummy context")
+        result = get_commit_message(io, models, commit_prompt, "dummy diff", "dummy context")
 
         # Assert that the returned message is the expected one from the second model
         self.assertEqual(result, "a good commit message")
@@ -156,9 +159,11 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message_strip_quotes(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
-        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35])
+        io = InputOutput()
+        models = [self.GPT35]
+        commit_prompt = None
         # Call the get_commit_message method with dummy diff and context
-        result = repo.get_commit_message("dummy diff", "dummy context")
+        result = get_commit_message(io, models, commit_prompt, "dummy diff", "dummy context")
 
         # Assert that the returned message is the expected one
         self.assertEqual(result, "a good commit message")
@@ -167,9 +172,11 @@ class TestRepo(unittest.TestCase):
     def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
         mock_send.return_value = 'a good "commit message"'
 
-        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35])
+        io = InputOutput()
+        models = [self.GPT35]
+        commit_prompt = None
         # Call the get_commit_message method with dummy diff and context
-        result = repo.get_commit_message("dummy diff", "dummy context")
+        result = get_commit_message(io, models, commit_prompt, "dummy diff", "dummy context")
 
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
@@ -179,8 +186,10 @@ class TestRepo(unittest.TestCase):
         mock_send.return_value = "Custom commit message"
         custom_prompt = "Generate a commit message in the style of Shakespeare"
 
-        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
-        result = repo.get_commit_message("dummy diff", "dummy context")
+        io = InputOutput()
+        models = [self.GPT35]
+
+        result = get_commit_message(io, models, custom_prompt, "dummy diff", "dummy context")
 
         self.assertEqual(result, "Custom commit message")
         mock_send.assert_called_once()
@@ -188,7 +197,7 @@ class TestRepo(unittest.TestCase):
         self.assertEqual(args[0][0]["content"], custom_prompt)  # Check first message content
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
-    @patch("aider.repo.GitRepo.get_commit_message")
+    @patch("aider.vcs.git.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
@@ -687,7 +696,7 @@ class TestRepo(unittest.TestCase):
     @patch("aider.models.Model.simple_send_with_retries")
     def test_get_commit_message_uses_system_prompt_prefix(self, mock_send):
         """
-        Verify that GitRepo.get_commit_message() prepends the model.system_prompt_prefix
+        Verify that get_commit_message() prepends the model.system_prompt_prefix
         to the system prompt sent to the LLM.
         """
         mock_send.return_value = "good commit message"
@@ -696,11 +705,13 @@ class TestRepo(unittest.TestCase):
         model = Model("gpt-3.5-turbo")
         model.system_prompt_prefix = prefix
 
-        with GitTemporaryDirectory():
-            repo = GitRepo(InputOutput(), None, None, models=[model])
+        io = InputOutput()
+        models = [model]
+        commit_prompt = None
 
+        with GitTemporaryDirectory():
             # Call the function under test
-            repo.get_commit_message("dummy diff", "dummy context")
+            get_commit_message(io, models, commit_prompt, "dummy diff", "dummy context")
 
             # Ensure the LLM was invoked once
             mock_send.assert_called_once()
