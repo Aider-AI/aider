@@ -21,3 +21,4 @@ tree-sitter language implementations:
 * [https://github.com/tree-sitter/tree-sitter-ruby](https://github.com/tree-sitter/tree-sitter-ruby) — licensed under the MIT License.
 * [https://github.com/tree-sitter/tree-sitter-rust](https://github.com/tree-sitter/tree-sitter-rust) — licensed under the MIT License.
 * [https://github.com/tree-sitter/tree-sitter-typescript](https://github.com/tree-sitter/tree-sitter-typescript) — licensed under the MIT License.
+* [https://github.com/starelmanma/tree-sitter-fortran](https://github.com/starelmanma/tree-sitter-fortran) — licensed under the MIT License.

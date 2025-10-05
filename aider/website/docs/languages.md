@@ -110,11 +110,11 @@ cog.out(get_supported_languages_md())
 | fennel               | .fnl                 |          |   ✓    |
 | firrtl               | .fir                 |          |   ✓    |
 | fish                 | .fish                |          |   ✓    |
-| fortran              | .f                   |          |   ✓    |
-| fortran              | .f03                 |          |   ✓    |
-| fortran              | .f08                 |          |   ✓    |
-| fortran              | .f90                 |          |   ✓    |
-| fortran              | .f95                 |          |   ✓    |
+| fortran              | .f                   |    ✓     |   ✓    |
+| fortran              | .f03                 |    ✓     |   ✓    |
+| fortran              | .f08                 |    ✓     |   ✓    |
+| fortran              | .f90                 |    ✓     |   ✓    |
+| fortran              | .f95                 |    ✓     |   ✓    |
 | func                 | .fc                  |          |   ✓    |
 | gdscript             | .gd                  |          |   ✓    |
 | gitattributes        | .gitattributes       |          |   ✓    |
@@ -153,7 +153,7 @@ cog.out(get_supported_languages_md())
 | json                 | .json                |          |   ✓    |
 | jsonnet              | .jsonnet             |          |   ✓    |
 | jsonnet              | .libsonnet           |          |   ✓    |
-| julia                | .jl                  |          |   ✓    |
+| julia                | .jl                  |    ✓     |   ✓    |
 | kconfig              | Kconfig              |          |   ✓    |
 | kdl                  | .kdl                 |          |   ✓    |
 | kotlin               | .kt                  |    ✓     |   ✓    |
