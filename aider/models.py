@@ -9,11 +9,9 @@ import platform
 import sys
 import time
 from dataclasses import dataclass, fields
-from datetime import datetime
 from pathlib import Path
 from typing import Optional, Union
 
-import httpx
 import json5
 import yaml
 from PIL import Image
@@ -905,57 +903,6 @@ class Model(ModelSettings):
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
-    async def github_copilot_token_to_open_ai_key(self, extra_headers):
-        # check to see if there's an openai api key
-        # If so, check to see if it's expire
-        openai_api_key = "OPENAI_API_KEY"
-
-        if openai_api_key not in os.environ or (
-            int(dict(x.split("=") for x in os.environ[openai_api_key].split(";"))["exp"])
-            < int(datetime.now().timestamp())
-        ):
-
-            class GitHubCopilotTokenError(Exception):
-                """Custom exception for GitHub Copilot token-related errors."""
-
-                pass
-
-            # Validate GitHub Copilot token exists
-            if "GITHUB_COPILOT_TOKEN" not in os.environ:
-                raise KeyError("GITHUB_COPILOT_TOKEN environment variable not found")
-
-            github_token = os.environ["GITHUB_COPILOT_TOKEN"]
-            if not github_token.strip():
-                raise KeyError("GITHUB_COPILOT_TOKEN environment variable is empty")
-
-            headers = {
-                "Authorization": f"Bearer {os.environ['GITHUB_COPILOT_TOKEN']}",
-                "Editor-Version": extra_headers["Editor-Version"],
-                "Copilot-Integration-Id": extra_headers["Copilot-Integration-Id"],
-                "Content-Type": "application/json",
-            }
-
-            url = "https://api.github.com/copilot_internal/v2/token"
-            async with httpx.AsyncClient() as client:
-                res = await client.get(url, headers=headers)
-            if res.status_code != 200:
-                safe_headers = {k: v for k, v in headers.items() if k != "Authorization"}
-                token_preview = github_token[:5] + "..." if len(github_token) >= 5 else github_token
-                safe_headers["Authorization"] = f"Bearer {token_preview}"
-                raise GitHubCopilotTokenError(
-                    f"GitHub Copilot API request failed (Status: {res.status_code})\n"
-                    f"URL: {url}\n"
-                    f"Headers: {json.dumps(safe_headers, indent=2)}\n"
-                    f"JSON: {res.text}"
-                )
-
-            response_data = res.json()
-            token = response_data.get("token")
-            if not token:
-                raise GitHubCopilotTokenError("Response missing 'token' field")
-
-            os.environ[openai_api_key] = token
-
     async def send_completion(
         self, messages, functions, stream, temperature=None, tools=None, max_tokens=None
     ):
@@ -1036,8 +983,6 @@ class Model(ModelSettings):
                     "Editor-Version": f"aider/{__version__}",
                     "Copilot-Integration-Id": "vscode-chat",
                 }
-
-            await self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
         try:
             res = await litellm.acompletion(**kwargs)
