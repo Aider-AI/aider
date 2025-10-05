@@ -64,6 +64,7 @@ cog.out(model_list)
 - apac.anthropic.claude-3-5-sonnet-20241022-v2:0
 - apac.anthropic.claude-sonnet-4-20250514-v1:0
 - azure_ai/mistral-medium-2505
+- bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
 - claude-3-5-haiku-20241022
 - claude-3-5-haiku-latest
 - claude-3-5-sonnet-20240620
@@ -126,7 +127,10 @@ cog.out(model_list)
 - mistral/pixtral-large-latest
 - openrouter/anthropic/claude-3.5-sonnet
 - openrouter/anthropic/claude-3.7-sonnet
+- openrouter/anthropic/claude-opus-4
+- openrouter/anthropic/claude-opus-4.1
 - openrouter/anthropic/claude-sonnet-4
+- openrouter/deepseek/deepseek-chat-v3.1
 - openrouter/deepseek/deepseek-r1
 - openrouter/deepseek/deepseek-r1-0528
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
@@ -154,6 +158,8 @@ cog.out(model_list)
 - vertex_ai/claude-opus-4@20250514
 - vertex_ai/claude-sonnet-4
 - vertex_ai/claude-sonnet-4@20250514
+- vertex_ai/deepseek-ai/deepseek-r1-0528-maas
+- vertex_ai/deepseek-ai/deepseek-v3.1-maas
 <!--[[[end]]]-->
 
 
