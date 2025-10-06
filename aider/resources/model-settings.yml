@@ -575,9 +575,6 @@
   use_temperature: false
   editor_model_name: openrouter/deepseek/deepseek-chat-v3-0324:free
   editor_edit_format: editor-diff
-  use_temperature: false
-  editor_model_name: openrouter/deepseek/deepseek-r1:free
-  editor_edit_format: editor-diff
 
 - name: deepseek/deepseek-reasoner
   edit_format: diff
@@ -2062,6 +2059,21 @@
 - name: openrouter/openai/gpt-5-chat-latest
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+
+- name: openrouter/openai/gpt-5-codex
+  edit_format: diff
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+
+- name: openai/gpt-5-codex
+  edit_format: diff
+  use_responses: true
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
