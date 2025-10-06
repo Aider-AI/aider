@@ -570,13 +570,14 @@ class Model(ModelSettings):
             self.weak_model_name = provided_weak_model_name
 
         if not self.weak_model_name:
-            self.weak_model = self
+            self.weak_model = self  # Use main model if no weak model specified
             return
 
         if self.weak_model_name == self.name:
-            self.weak_model = self
+            self.weak_model = self  # Use main model if weak model matches
             return
 
+        # Create a new Model instance for the weak model
         self.weak_model = Model(
             self.weak_model_name,
             weak_model=False,
@@ -584,6 +585,8 @@ class Model(ModelSettings):
         return self.weak_model
 
     def commit_message_models(self):
+        """Returns models to use for commit messages in try-order: weak model first, then main model
+        The weak model is tried first to save costs/API rate limits, falling back to main model if needed"""
         return [self.weak_model, self]
 
     def get_editor_model(self, provided_editor_model_name, editor_edit_format):

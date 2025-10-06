@@ -17,3 +17,7 @@ aider/_version.py
 .gitattributes
 tmp.benchmarks/
 .docker_bash_history
+
+*~
+.gemini
+.python_history
