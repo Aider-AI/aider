@@ -191,6 +191,7 @@ def main(
     stats_only: bool = typer.Option(
         False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
     ),
+    stream: bool = typer.Option(False, "--stream", help="Stream model responses"),
     stats_languages: str = typer.Option(
         None,
         "--stats-languages",
@@ -374,6 +375,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                stream,
             )
 
             all_results.append(results)
@@ -400,6 +402,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                stream,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -698,6 +701,7 @@ def run_test_real(
     reasoning_effort: Optional[str] = None,
     thinking_tokens: Optional[int] = None,
     read_model_settings=None,
+    stream=False,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -829,7 +833,7 @@ def run_test_real(
         io,
         fnames=fnames,
         use_git=False,
-        stream=True,
+        stream=stream,
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,
