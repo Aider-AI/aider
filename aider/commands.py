@@ -459,7 +459,8 @@ class Commands:
             dict(role="system", content=main_sys),
             dict(
                 role="system",
-                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder),
+                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
+                + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_end_reminder),
             ),
         ]
 

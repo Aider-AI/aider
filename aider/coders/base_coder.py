@@ -1286,10 +1286,12 @@ class Coder:
         chunks.readonly_files = self.get_readonly_files_messages()
         chunks.chat_files = self.get_chat_files_messages()
 
-        if self.gpt_prompts.system_reminder:
+        if self.gpt_prompts.system_reminder or self.gpt_prompts.system_end_reminder:
             reminder_message = [
                 dict(
-                    role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                    role="system",
+                    content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                    + self.fmt_system_prompt(self.gpt_prompts.system_end_reminder),
                 ),
             ]
         else:
@@ -1329,6 +1331,7 @@ class Coder:
                     final["content"]
                     + "\n\n"
                     + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                    + self.fmt_system_prompt(self.gpt_prompts.system_end_reminder)
                 )
                 chunks.cur[-1] = dict(role=final["role"], content=new_content)
 

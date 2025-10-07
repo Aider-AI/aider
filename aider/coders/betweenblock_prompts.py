@@ -53,7 +53,6 @@ Enumerate the key changes made and explain the functionality modified.
 
 Keep code blocks concise.
 Break large code blocks into a series of smaller blocks that each change a small portion of the file.
-Include just the changing lines, and a few surrounding lines if needed for uniqueness.
 
 For example if you need to add new function func2 to existing file file1:
 subdir/file1.py
@@ -95,6 +94,35 @@ Do not use the @WHOLE FILE@ mode if you only need to change a few lines in a lar
 """
 
     system_reminder = ""
+    system_end_reminder = """
+Example output structure:
+
+Brief, impersonal response to the query.
+
+[full_file_path]
+```[language]
+@BETWEEN@ "[existing line]" AND "[existing line]"
+[Code content]
+
+@BETWEEN@ "[existing line]" AND "[existing line]"
+[Code content]
+```
+
+[full_file_path]
+```[language]
+@BETWEEN@ "[existing line]" AND "[existing line]"
+[Code content]
+```
+
+Enumerate the key changes made and explain the functionality modified.
+
+---
+
+Keep code blocks concise.
+Break large code blocks into a series of smaller blocks that each change a small portion of the file.
+
+{final_reminders}
+"""
 
     merge_system_message = (
         "You are a coding assistant that helps merge code updates, ensuring every modification is"
