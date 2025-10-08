@@ -1,6 +1,8 @@
+import os
 import unittest
 from unittest.mock import ANY, MagicMock, patch
 
+from aider.coders.base_coder import Coder
 from aider.models import (
     ANTHROPIC_BETA_HEADER,
     Model,
@@ -17,6 +19,7 @@ class TestModels(unittest.TestCase):
         from aider.models import MODEL_SETTINGS
 
         self._original_settings = MODEL_SETTINGS.copy()
+        self.original_env = os.environ.copy()
 
     def tearDown(self):
         """Restore original MODEL_SETTINGS after each test"""
@@ -24,6 +27,8 @@ class TestModels(unittest.TestCase):
 
         MODEL_SETTINGS.clear()
         MODEL_SETTINGS.extend(self._original_settings)
+        os.environ.clear()
+        os.environ.update(self.original_env)
 
     def test_get_model_info_nonexistent(self):
         manager = ModelInfoManager()
@@ -557,6 +562,64 @@ class TestModels(unittest.TestCase):
             temperature=0.7,
             timeout=600,
         )
+
+    @patch("aider.models.litellm.completion")
+    def test_litellm_send_completion(self, mock_completion):
+        """
+        Model.send_completion should call litellm.completion with the correct arguments.
+        """
+        os.environ["LITELLM_API_BASE"] = "http://localhost:4000"
+        os.environ["LITELLM_API_KEY"] = "test-key"
+
+        model = Model("litellm/my-model")
+        model.info["litellm_provider"] = "litellm"
+        model.info["owned_by"] = "my-provider"
+
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, None, True)
+
+        mock_completion.assert_called_once_with(
+            model="my-provider/my-model",
+            messages=messages,
+            stream=True,
+            temperature=0,
+            api_base="http://localhost:4000",
+            api_key="test-key",
+            timeout=600,
+        )
+
+    @patch("aider.coders.base_coder.litellm.completion_cost")
+    def test_litellm_cost_calculation(self, mock_completion_cost):
+        """
+        Test that the cost is calculated correctly for a litellm model.
+        """
+        os.environ["LITELLM_API_BASE"] = "http://localhost:4000"
+        os.environ["LITELLM_API_KEY"] = "test-key"
+
+        model = Model("litellm/my-model")
+        model.info["litellm_provider"] = "litellm"
+        model.info["input_cost_per_token"] = 0.00001
+        model.info["output_cost_per_token"] = 0.00002
+
+        messages = [{"role": "user", "content": "Hello"}]
+        completion = MagicMock()
+        completion.usage.prompt_tokens = 10
+        completion.usage.completion_tokens = 20
+        completion.usage.prompt_cache_hit_tokens = 0
+        completion.usage.cache_read_input_tokens = 0
+        completion.usage.cache_creation_input_tokens = 0
+
+        mock_completion_cost.return_value = (10 * 0.00001) + (20 * 0.00002)
+
+        coder = Coder.create(main_model=model, io=MagicMock())
+        coder.message_tokens_sent = 0
+        coder.message_tokens_received = 0
+        coder.total_cost = 0
+        coder.message_cost = 0
+        coder.calculate_and_show_tokens_and_cost(messages, completion)
+
+        self.assertIsNotNone(coder.usage_report)
+        self.assertIn("Cost: $0.0005", coder.usage_report)
 
 
 if __name__ == "__main__":

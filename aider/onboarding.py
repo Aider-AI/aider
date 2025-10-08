@@ -11,7 +11,7 @@ from urllib.parse import parse_qs, urlparse
 
 import requests
 
-from aider import urls
+from aider import models, urls
 from aider.io import InputOutput
 
 
@@ -72,6 +72,11 @@ def try_to_select_default_model():
         api_key_value = os.environ.get(env_key)
         if api_key_value:
             return model_name
+
+    if os.environ.get("LITELLM_API_BASE") and os.environ.get("LITELLM_API_KEY"):
+        for model_name, model_info in models.model_info_manager.local_model_metadata.items():
+            if model_info.get("litellm_provider") == "litellm":
+                return model_name
 
     return None
 
