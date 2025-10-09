@@ -50,7 +50,9 @@ click==8.2.1
 colorama==0.4.6
     # via
     #   -c requirements/common-constraints.txt
+    #   click
     #   griffe
+    #   tqdm
 dataclasses-json==0.6.7
     # via
     #   -c requirements/common-constraints.txt
@@ -98,10 +100,6 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.1.7
-    # via
-    #   -c requirements/common-constraints.txt
-    #   huggingface-hub
 httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
@@ -312,9 +310,7 @@ transformers==4.55.2
 typing-extensions==4.14.1
     # via
     #   -c requirements/common-constraints.txt
-    #   aiosignal
     #   aiosqlite
-    #   anyio
     #   huggingface-hub
     #   llama-index-core
     #   llama-index-workflows
