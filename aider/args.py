@@ -495,6 +495,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable git pre-commit hooks with --no-verify (default: False)",
     )
     group.add_argument(
+        "--git-commit-no-sign",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Disable git commit signing with --no-gpg-sign (default: False)",
+    )
+    group.add_argument(
         "--commit",
         action="store_true",
         help="Commit all pending changes with a suitable commit message, then exit",

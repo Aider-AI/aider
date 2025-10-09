@@ -299,6 +299,9 @@ cog.outl("```")
 ## Enable/disable git pre-commit hooks with --no-verify (default: False)
 #git-commit-verify: false
 
+## Disable git commit signing with --no-gpg-sign (default: False)
+#git-commit-no-sign: false
+
 ## Commit all pending changes with a suitable commit message, then exit
 #commit: false
 
