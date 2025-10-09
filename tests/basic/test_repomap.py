@@ -4,6 +4,7 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import git
 
@@ -18,7 +19,167 @@ class TestRepoMap(unittest.TestCase):
     def setUp(self):
         self.GPT35 = Model("gpt-3.5-turbo")
 
+    # Helper function to calculate MD5 hash of a file
+    def _calculate_md5_for_file(self, file_path):
+        import hashlib
+        hasher = hashlib.md5()
+        with open(file_path, 'rb') as f:
+            while True:
+                chunk = f.read(8192)
+                if not chunk:
+                    break
+                hasher.update(chunk)
+        return hasher.hexdigest()
+
     def test_get_repo_map(self):
+        pass
+
+    @patch("aider.io.InputOutput.tool_warning")
+    def test_get_tags_md5_change_same_mtime(self, mock_tool_warning):
+        """Verify MD5 detection when mtime is unchanged."""
+        with GitTemporaryDirectory() as temp_dir:
+            # Create a test file
+            test_file = Path(temp_dir) / "test.py"
+            initial_content = "def func_a(): pass\n"
+            test_file.write_text(initial_content)
+            abs_path = str(test_file.resolve())
+            rel_path = "test.py"
+
+            # Initialize RepoMap and populate cache
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            initial_tags = repo_map.get_tags(abs_path, rel_path)
+            self.assertTrue(any(tag.name == "func_a" for tag in initial_tags))
+            initial_mtime = os.path.getmtime(abs_path)
+
+            # Modify content, reset mtime
+            new_content = "def func_b(): pass\n"
+            test_file.write_text(new_content)
+            os.utime(abs_path, (initial_mtime, initial_mtime)) # Reset mtime
+
+            # Call get_tags again
+            new_tags = repo_map.get_tags(abs_path, rel_path)
+
+            # Assertions
+            mock_tool_warning.assert_called_once()
+            self.assertIn("MD5 mismatch", mock_tool_warning.call_args[0][0])
+            self.assertTrue(any(tag.name == "func_b" for tag in new_tags))
+            self.assertFalse(any(tag.name == "func_a" for tag in new_tags))
+
+            # Check cache update
+            cached_data = repo_map.TAGS_CACHE.get(abs_path)
+            self.assertIsNotNone(cached_data)
+            expected_md5 = self._calculate_md5_for_file(abs_path)
+            self.assertEqual(cached_data.get("md5"), expected_md5)
+            self.assertEqual(cached_data.get("mtime"), initial_mtime)
+
+            del repo_map # Close cache
+
+    @patch("aider.io.InputOutput.tool_warning")
+    @patch("aider.repomap.RepoMap.get_tags_raw")
+    def test_get_tags_no_change(self, mock_get_tags_raw, mock_tool_warning):
+        """Verify cache is used when file is unchanged."""
+        with GitTemporaryDirectory() as temp_dir:
+            test_file = Path(temp_dir) / "test.py"
+            initial_content = "def func_a(): pass\n"
+            test_file.write_text(initial_content)
+            abs_path = str(test_file.resolve())
+            rel_path = "test.py"
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            # Initial call to populate cache
+            initial_tags = repo_map.get_tags(abs_path, rel_path)
+            mock_get_tags_raw.assert_called_once() # Called once initially
+            mock_get_tags_raw.reset_mock() # Reset for the next check
+
+            # Call get_tags again without changes
+            second_tags = repo_map.get_tags(abs_path, rel_path)
+
+            # Assertions
+            mock_tool_warning.assert_not_called()
+            mock_get_tags_raw.assert_not_called() # Should not be called again
+            self.assertEqual(initial_tags, second_tags)
+
+            del repo_map # Close cache
+
+    @patch("aider.io.InputOutput.tool_warning")
+    def test_get_tags_mtime_change(self, mock_tool_warning):
+        """Verify standard mtime-based change detection still works."""
+        with GitTemporaryDirectory() as temp_dir:
+            test_file = Path(temp_dir) / "test.py"
+            initial_content = "def func_a(): pass\n"
+            test_file.write_text(initial_content)
+            abs_path = str(test_file.resolve())
+            rel_path = "test.py"
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            # Initial call
+            initial_tags = repo_map.get_tags(abs_path, rel_path)
+            self.assertTrue(any(tag.name == "func_a" for tag in initial_tags))
+
+            # Modify content (mtime will change naturally)
+            time.sleep(0.01) # Ensure mtime is different
+            new_content = "def func_b(): pass\n"
+            test_file.write_text(new_content)
+            new_mtime = os.path.getmtime(abs_path)
+
+            # Call get_tags again
+            new_tags = repo_map.get_tags(abs_path, rel_path)
+
+            # Assertions
+            mock_tool_warning.assert_called_once()
+            self.assertIn("mtime mismatch", mock_tool_warning.call_args[0][0])
+            self.assertTrue(any(tag.name == "func_b" for tag in new_tags))
+            self.assertFalse(any(tag.name == "func_a" for tag in new_tags))
+
+            # Check cache update
+            cached_data = repo_map.TAGS_CACHE.get(abs_path)
+            self.assertIsNotNone(cached_data)
+            expected_md5 = self._calculate_md5_for_file(abs_path)
+            self.assertEqual(cached_data.get("md5"), expected_md5)
+            self.assertEqual(cached_data.get("mtime"), new_mtime)
+
+            del repo_map # Close cache
+
+    @patch("aider.io.InputOutput.tool_warning")
+    def test_get_tags_file_not_found_after_cache(self, mock_tool_warning):
+        """Verify graceful handling if a cached file becomes inaccessible."""
+        with GitTemporaryDirectory() as temp_dir:
+            test_file = Path(temp_dir) / "test.py"
+            test_file.write_text("def func_a(): pass\n")
+            abs_path = str(test_file.resolve())
+            rel_path = "test.py"
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            # Populate cache
+            repo_map.get_tags(abs_path, rel_path)
+            self.assertIn(abs_path, repo_map.TAGS_CACHE)
+
+            # Delete the file
+            os.remove(abs_path)
+
+            # Call get_tags again
+            result = repo_map.get_tags(abs_path, rel_path)
+
+            # Assertions
+            mock_tool_warning.assert_called()
+            # Check if any call contains "Error accessing file" or "FileNotFoundError"
+            warning_found = any(
+                "Error accessing file" in call[0][0] or "FileNotFoundError" in call[0][0]
+                for call in mock_tool_warning.call_args_list
+            )
+            self.assertTrue(warning_found, "Expected file access error warning not found")
+
+            self.assertEqual(result, [])
+            self.assertNotIn(abs_path, repo_map.TAGS_CACHE)
+
+            del repo_map # Close cache
         # Create a temporary directory with sample files for testing
         test_files = [
             "test_file1.py",
