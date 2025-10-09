@@ -155,6 +155,21 @@ def get_parser(default_config_files, git_root):
         help="Verify the SSL cert when connecting to models (default: True)",
     )
     group.add_argument(
+        "--client-cert",
+        type=str,
+        help="Specify the client certificate file for TLS connections",
+    )
+    group.add_argument(
+        "--client-cert-key",
+        type=str,
+        help="Specify the client certificate key file for TLS connections",
+    )
+    group.add_argument(
+        "--auth-cookie",
+        type=str,
+        help="A cookie that will be sent with all HTTP requests (e.g. for authentication)",
+    )
+    group.add_argument(
         "--timeout",
         type=float,
         default=None,
