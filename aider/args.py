@@ -136,6 +136,13 @@ def get_parser(default_config_files, git_root):
         help="Add a model alias (can be used multiple times)",
     )
     group.add_argument(
+        "--handlers",
+        action="append",
+        metavar="HANDLERS",
+        help="Specify a handler and optional handler config to load (can be used multiple times)",
+        default=None,
+    )
+    group.add_argument(
         "--reasoning-effort",
         type=str,
         help="Set the reasoning_effort API parameter (default: not set)",
