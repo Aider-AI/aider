@@ -30,6 +30,7 @@ class ClipboardWatcher:
                         self.io.placeholder = current
                         if len(current.splitlines()) > 1:
                             self.io.placeholder = "\n" + self.io.placeholder + "\n"
+                        print("Clipboard changed:", repr(current))
 
                     time.sleep(0.5)
                 except Exception as e:
