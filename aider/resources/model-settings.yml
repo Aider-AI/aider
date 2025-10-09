@@ -2066,3 +2066,10 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+- name: gemini/gemini-2.5-pro
+  edit_format: diff
+  weak_model_name: gemini-1.5-flash  # <--- THIS IS THE CHANGE
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+

@@ -10,7 +10,6 @@
         "output_cost_per_token": 0.00000042,
         "litellm_provider": "deepseek",
         "mode": "chat",
-        //"supports_function_calling": true,
         "supports_assistant_prefill": true,
         "supports_tool_choice": false,
         "supports_prompt_caching": true
@@ -26,9 +25,7 @@
         "output_cost_per_token": 0.00000042,
         "litellm_provider": "deepseek",
         "mode": "chat",
-        //"supports_function_calling": true,
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-r1:free": {
@@ -42,9 +39,7 @@
         "output_cost_per_token": 0.0,
         "litellm_provider": "openrouter",
         "mode": "chat",
-        //"supports_function_calling": true, 
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-chat:free": {
@@ -58,9 +53,7 @@
         "output_cost_per_token": 0.0,
         "litellm_provider": "openrouter",
         "mode": "chat",
-        //"supports_function_calling": true, 
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-chat-v3-0324": {
@@ -74,9 +67,7 @@
         "output_cost_per_token": 0.00000219,
         "litellm_provider": "openrouter",
         "mode": "chat",
-        //"supports_function_calling": true, 
         "supports_assistant_prefill": true,
-        //"supports_tool_choice": true,
         "supports_prompt_caching": true
     },
     "openrouter/deepseek/deepseek-chat-v3-0324:free": {
@@ -97,7 +88,7 @@
         "litellm_provider": "fireworks_ai",
         "input_cost_per_token": 0.000008,
         "output_cost_per_token": 0.000008,
-        "mode": "chat",
+        "mode": "chat"
     },
     "fireworks_ai/accounts/fireworks/models/deepseek-v3-0324": {
         "max_tokens": 160000,
@@ -106,7 +97,7 @@
         "litellm_provider": "fireworks_ai",
         "input_cost_per_token": 0.0000009,
         "output_cost_per_token": 0.0000009,
-        "mode": "chat",
+        "mode": "chat"
     },
     "openrouter/openrouter/quasar-alpha": {
         "max_input_tokens": 1000000,
@@ -197,9 +188,9 @@
         "input_cost_per_video_per_second": 0,
         "input_cost_per_audio_per_second": 0,
         "input_cost_per_token": 0,
-        "input_cost_per_character": 0, 
-        "input_cost_per_token_above_128k_tokens": 0, 
-        "input_cost_per_character_above_128k_tokens": 0, 
+        "input_cost_per_character": 0,
+        "input_cost_per_token_above_128k_tokens": 0,
+        "input_cost_per_character_above_128k_tokens": 0,
         "input_cost_per_image_above_128k_tokens": 0,
         "input_cost_per_video_per_second_above_128k_tokens": 0,
         "input_cost_per_audio_per_second_above_128k_tokens": 0,
@@ -207,7 +198,6 @@
         "output_cost_per_character": 0,
         "output_cost_per_token_above_128k_tokens": 0,
         "output_cost_per_character_above_128k_tokens": 0,
-      //"litellm_provider": "vertex_ai-language-models",
         "litellm_provider": "gemini",
         "mode": "chat",
         "supports_system_messages": true,
@@ -234,9 +224,9 @@
         "input_cost_per_video_per_second": 0,
         "input_cost_per_audio_per_second": 0,
         "input_cost_per_token": 0,
-        "input_cost_per_character": 0, 
-        "input_cost_per_token_above_128k_tokens": 0, 
-        "input_cost_per_character_above_128k_tokens": 0, 
+        "input_cost_per_character": 0,
+        "input_cost_per_token_above_128k_tokens": 0,
+        "input_cost_per_character_above_128k_tokens": 0,
         "input_cost_per_image_above_128k_tokens": 0,
         "input_cost_per_video_per_second_above_128k_tokens": 0,
         "input_cost_per_audio_per_second_above_128k_tokens": 0,
@@ -524,7 +514,7 @@
         "input_cost_per_token": 0.00000125,
         "input_cost_per_token_above_200k_tokens": 0.0000025,
         "output_cost_per_token": 0.00001,
-        "output_cost_per_token_above_200k_tokens": 0.000015, 
+        "output_cost_per_token_above_200k_tokens": 0.000015,
         "litellm_provider": "vertex_ai-language-models",
         "mode": "chat",
         "supports_reasoning": true,
@@ -553,7 +543,7 @@
         "input_cost_per_token": 0.00000125,
         "input_cost_per_token_above_200k_tokens": 0.0000025,
         "output_cost_per_token": 0.00001,
-        "output_cost_per_token_above_200k_tokens": 0.000015, 
+        "output_cost_per_token_above_200k_tokens": 0.000015,
         "litellm_provider": "vertex_ai-language-models",
         "mode": "chat",
         "supports_reasoning": true,
@@ -580,9 +570,9 @@
         "max_pdf_size_mb": 30,
         "input_cost_per_audio_token": 0.0000007,
         "input_cost_per_token": 0.00000125,
-        "input_cost_per_token_above_200k_tokens": 0.0000025, 
+        "input_cost_per_token_above_200k_tokens": 0.0000025,
         "output_cost_per_token": 0.00001,
-        "output_cost_per_token_above_200k_tokens": 0.000015, 
+        "output_cost_per_token_above_200k_tokens": 0.000015,
         "litellm_provider": "gemini",
         "mode": "chat",
         "rpm": 10000,
@@ -609,9 +599,9 @@
         "max_pdf_size_mb": 30,
         "input_cost_per_audio_token": 0.0000007,
         "input_cost_per_token": 0.00000125,
-        "input_cost_per_token_above_200k_tokens": 0.0000025, 
+        "input_cost_per_token_above_200k_tokens": 0.0000025,
         "output_cost_per_token": 0.00001,
-        "output_cost_per_token_above_200k_tokens": 0.000015, 
+        "output_cost_per_token_above_200k_tokens": 0.000015,
         "litellm_provider": "gemini",
         "mode": "chat",
         "rpm": 10000,
@@ -711,5 +701,9 @@
   "together_ai/Qwen/Qwen3-235B-A22B-fp8-tput": {
         "input_cost_per_token": 0.0000002,
         "output_cost_per_token": 0.0000006,
+        "max_tokens": 65536,
+        "max_input_tokens": 1048576,
+        "litellm_provider": "together_ai",
+        "mode": "chat"
   }
 }
