@@ -1,0 +1,7 @@
+from aider.utils import show_messages
+
+messages = [
+    {"role": "user", "content": "Here is an emoji 😊🔥"}
+]
+
+show_messages(messages, title="Test Unicode")
