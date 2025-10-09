@@ -346,15 +346,17 @@ def strip_quoted_wrapping(res, fname=None, fence=DEFAULT_FENCE):
     if not res:
         return res
 
-    res = res.splitlines()
+    res_lines = res.splitlines()
 
-    if fname and res[0].strip().endswith(Path(fname).name):
-        res = res[1:]
+    if fname and len(res_lines) > 1 and res_lines[0].strip().endswith(Path(fname).name):
+        res_lines = res_lines[1:]
 
-    if res[0].startswith(fence[0]) and res[-1].startswith(fence[1]):
-        res = res[1:-1]
+    if res_lines[0].startswith(fence[0]) and res_lines[-1].startswith(fence[1]):
+        res_lines = res_lines[1:-1]
+    else:
+        return res  # Directly return the original string if it doesn't need to be stripped
 
-    res = "\n".join(res)
+    res = "\n".join(res_lines)
     if res and res[-1] != "\n":
         res += "\n"
 
