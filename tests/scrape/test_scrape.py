@@ -2,11 +2,19 @@ import time
 import unittest
 from unittest.mock import MagicMock
 
+import pytest
+
 from aider.commands import Commands
 from aider.io import InputOutput
 from aider.scrape import Scraper
 
 
+@pytest.fixture
+def playwright_ws_endpoint(request):
+    request.cls.playwright_ws_endpoint = request.config.getoption("--playwright-ws-endpoint")
+
+
+@pytest.mark.usefixtures("playwright_ws_endpoint")
 class TestScrape(unittest.TestCase):
     def test_scrape_self_signed_ssl(self):
         def scrape_with_retries(scraper, url, max_retries=5, delay=0.5):
@@ -19,7 +27,10 @@ class TestScrape(unittest.TestCase):
 
         # Test with SSL verification
         scraper_verify = Scraper(
-            print_error=MagicMock(), playwright_available=True, verify_ssl=True
+            print_error=MagicMock(),
+            playwright_available=True,
+            playwright_ws_endpoint=self.playwright_ws_endpoint,
+            verify_ssl=True,
         )
         result_verify = scrape_with_retries(scraper_verify, "https://self-signed.badssl.com")
         self.assertIsNone(result_verify)
@@ -27,7 +38,10 @@ class TestScrape(unittest.TestCase):
 
         # Test without SSL verification
         scraper_no_verify = Scraper(
-            print_error=MagicMock(), playwright_available=True, verify_ssl=False
+            print_error=MagicMock(),
+            playwright_available=True,
+            playwright_ws_endpoint=self.playwright_ws_endpoint,
+            verify_ssl=False,
         )
         result_no_verify = scrape_with_retries(scraper_no_verify, "https://self-signed.badssl.com")
         self.assertIsNotNone(result_no_verify)
@@ -36,7 +50,8 @@ class TestScrape(unittest.TestCase):
 
     def setUp(self):
         self.io = InputOutput(yes=True)
-        self.commands = Commands(self.io, None)
+        args = type("Args", (), {"playwright_ws_endpoint": self.playwright_ws_endpoint})()
+        self.commands = Commands(self.io, None, args=args)
 
     def test_cmd_web_imports_playwright(self):
         # Create a mock print_error function
@@ -69,7 +84,12 @@ class TestScrape(unittest.TestCase):
     def test_scrape_actual_url_with_playwright(self):
         # Create a Scraper instance with a mock print_error function
         mock_print_error = MagicMock()
-        scraper = Scraper(print_error=mock_print_error, playwright_available=True)
+
+        scraper = Scraper(
+            print_error=mock_print_error,
+            playwright_available=True,
+            playwright_ws_endpoint=self.playwright_ws_endpoint,
+        )
 
         # Scrape a real URL
         result = scraper.scrape("https://example.com")
