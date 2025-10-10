@@ -95,8 +95,14 @@ def is_image_file(file_name):
 
 def safe_abs_path(res):
     "Gives an abs path, which safely returns a full (not 8.3) windows path"
-    res = Path(res).resolve()
-    return str(res)
+    try:
+        res = Path(res).resolve(strict=False)
+        return str(res)
+    except RuntimeError as e:
+        if "Symlink loop" in str(e):
+            # If we encounter a symlink loop, return the absolute path without resolving symlinks
+            return str(Path(res).absolute())
+        raise
 
 
 def format_content(role, content):
