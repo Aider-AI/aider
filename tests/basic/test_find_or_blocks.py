@@ -73,7 +73,7 @@ def process_markdown(filename, fh):
 class TestFindOrBlocks(unittest.TestCase):
     def test_process_markdown(self):
         # Path to the input markdown file
-        input_file = "tests/fixtures/chat-history.md"
+        input_file = "tests/fixtures/.aider\chat-history.md"
 
         # Path to the expected output file
         expected_output_file = "tests/fixtures/chat-history-search-replace-gold.txt"
