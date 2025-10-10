@@ -553,6 +553,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.tool_warning_color = "#FFA500"
         args.assistant_output_color = "blue"
         args.code_theme = "default"
+        # Clear background colors for light mode
+        args.completion_menu_bg_color = None
+        args.completion_menu_current_bg_color = None
+        # Override Pygments theme to disable backgrounds
+        args.code_theme_no_background = True
 
     if return_coder and args.yes_always is None:
         args.yes_always = True
@@ -577,6 +582,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             completion_menu_current_bg_color=args.completion_menu_current_bg_color,
             assistant_output_color=args.assistant_output_color,
             code_theme=args.code_theme,
+            code_theme_no_background=args.code_theme_no_background,
             dry_run=args.dry_run,
             encoding=args.encoding,
             line_endings=args.line_endings,
