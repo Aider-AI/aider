@@ -1,51 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "aider-chat"
+version = "0.1.0"
 description = "Aider is AI pair programming in your terminal"
-readme = "README.md"
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Environment :: Console",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python",
-    "Topic :: Software Development",
+requires-python = ">=3.10"  # Changed to be more permissive
+dependencies = [
+    "prompt_toolkit",
+    "pygments",
+    "rich",
+    "fastapi[all]",
+    "uvicorn",
+    "packaging"
 ]
-requires-python = ">=3.10,<3.13"
-dynamic = ["dependencies", "optional-dependencies", "version"]
-
-[project.urls]
-Homepage = "https://github.com/Aider-AI/aider"
 
 [project.scripts]
 aider = "aider.main:main"
-
-[tool.setuptools.dynamic]
-dependencies = { file = "requirements.txt" }
-
-[tool.setuptools.dynamic.optional-dependencies]
-dev = { file = "requirements/requirements-dev.txt" }
-help = { file = "requirements/requirements-help.txt" }
-browser = { file = "requirements/requirements-browser.txt" }
-playwright = { file = "requirements/requirements-playwright.txt" }
-
-[tool.setuptools]
-include-package-data = true
-
-[tool.setuptools.packages.find]
-include = ["aider"]
-
-[build-system]
-requires = ["setuptools>=68", "setuptools_scm[toml]>=8"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools_scm]
-write_to = "aider/_version.py"
-
-[tool.codespell]
-skip = "*.svg,Gemfile.lock,tests/fixtures/*,aider/website/assets/*"
-write-changes = true
