@@ -1,34 +1,30 @@
-from .architect_coder import ArchitectCoder
-from .ask_coder import AskCoder
-from .base_coder import Coder
-from .context_coder import ContextCoder
-from .editblock_coder import EditBlockCoder
-from .editblock_fenced_coder import EditBlockFencedCoder
-from .editor_diff_fenced_coder import EditorDiffFencedCoder
-from .editor_editblock_coder import EditorEditBlockCoder
-from .editor_whole_coder import EditorWholeFileCoder
-from .help_coder import HelpCoder
-from .patch_coder import PatchCoder
-from .udiff_coder import UnifiedDiffCoder
-from .udiff_simple import UnifiedDiffSimpleCoder
-from .wholefile_coder import WholeFileCoder
+"""Initialize the coders package."""
+import importlib
+import logging
+from typing import Type, Optional
 
-# from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
+# Setup logging
+logger = logging.getLogger(__name__)
 
-__all__ = [
-    HelpCoder,
-    AskCoder,
-    Coder,
-    EditBlockCoder,
-    EditBlockFencedCoder,
-    WholeFileCoder,
-    PatchCoder,
-    UnifiedDiffCoder,
-    UnifiedDiffSimpleCoder,
-    #    SingleWholeFileFunctionCoder,
-    ArchitectCoder,
-    EditorEditBlockCoder,
-    EditorWholeFileCoder,
-    EditorDiffFencedCoder,
-    ContextCoder,
-]
+def load_coder(class_name: str) -> Optional[Type]:
+    """
+    Dynamically load a coder class by name.
+    
+    Args:
+        class_name: Name of the coder class to load
+        
+    Returns:
+        The coder class if found, None otherwise
+    """
+    try:
+        module_name = f"aider.coders.{class_name.lower()}"
+        module = importlib.import_module(module_name)
+        coder_class = getattr(module, class_name)
+        logger.info(f"Successfully loaded coder: {class_name}")
+        return coder_class
+    except Exception as e:
+        logger.warning(f"Failed to load coder '{class_name}': {e}")
+        return None
+
+# Public API
+__all__ = ["load_coder"]
