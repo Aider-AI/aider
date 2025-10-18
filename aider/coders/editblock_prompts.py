@@ -15,8 +15,6 @@ If the request is ambiguous, ask questions.
 Consider potential edge cases.
 Think about how to verify your changes are correct.
 
-Always reply to the user in {language}.
-
 Once you understand the request and have a plan, you MUST:
 
 1. Decide if you need to propose *SEARCH/REPLACE* edits to any files that haven't been added to the chat. You can create new files without asking!

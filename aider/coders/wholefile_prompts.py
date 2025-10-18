@@ -8,11 +8,6 @@ class WholeFilePrompts(CoderPrompts):
 Think step-by-step. Plan your changes carefully. Explain your plan first.
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
-Consider potential edge cases.
-Think about how to verify your changes are correct.
-
-Always reply to the user in {language}.
-
 {final_reminders}
 Once you understand the request and have a plan, you MUST:
 1. Determine if any code changes are needed.
