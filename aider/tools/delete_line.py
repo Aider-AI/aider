@@ -114,7 +114,7 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
             change_id,
         )
 
-        coder.aider_edited_files.add(rel_path)
+        coder.files_edited_by_tools.add(rel_path)
 
         # Format and return result
         success_message = f"Deleted line {line_num_int} in {file_path}"

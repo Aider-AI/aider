@@ -1116,7 +1116,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         if args.dry_run:
             io.tool_output("Dry run enabled, skipping commit.")
         else:
-            coder.commands.cmd_commit()
+            await coder.commands.cmd_commit()
 
     if args.lint or args.test or args.commit:
         analytics.event("exit", reason="Completed lint/test/commit")

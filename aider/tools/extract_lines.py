@@ -270,8 +270,9 @@ def _execute_extract_lines(
             coder.io.tool_error(f"Error tracking target change for ExtractLines: {track_e}")
 
         # --- Update Context ---
-        coder.aider_edited_files.add(rel_source_path)
-        coder.aider_edited_files.add(rel_target_path)
+        coder.files_edited_by_tools.add(rel_source_path)
+        coder.files_edited_by_tools.add(rel_target_path)
+
         if not target_exists:
             # Add the newly created file to editable context
             coder.abs_fnames.add(abs_target_path)

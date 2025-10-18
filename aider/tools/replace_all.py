@@ -82,6 +82,8 @@ def _execute_replace_all(coder, file_path, find_text, replace_text, change_id=No
             change_id,
         )
 
+        coder.files_edited_by_tools.add(rel_path)
+
         # 7. Format and return result
         success_message = f"Replaced {count} occurrences in {file_path}"
         return format_tool_result(

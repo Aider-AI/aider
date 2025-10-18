@@ -338,14 +338,14 @@ class Commands:
     # any method called cmd_xxx becomes a command automatically.
     # each one must take an args param.
 
-    def cmd_commit(self, args=None):
+    async def cmd_commit(self, args=None):
         "Commit edits to the repo made outside the chat (commit message optional)"
         try:
-            self.raw_cmd_commit(args)
+            await self.raw_cmd_commit(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete commit: {err}")
 
-    def raw_cmd_commit(self, args=None):
+    async def raw_cmd_commit(self, args=None):
         if not self.coder.repo:
             self.io.tool_error("No git repository found.")
             return
@@ -355,7 +355,7 @@ class Commands:
             return
 
         commit_message = args.strip() if args else None
-        self.coder.repo.commit(message=commit_message, coder=self.coder)
+        await self.coder.repo.commit(message=commit_message, coder=self.coder)
 
     async def cmd_lint(self, args="", fnames=None):
         "Lint and fix in-chat files or all dirty files if none in chat"
@@ -395,7 +395,7 @@ class Commands:
 
             # Commit everything before we start fixing lint errors
             if self.coder.repo.is_dirty() and self.coder.dirty_commits:
-                self.cmd_commit("")
+                await self.cmd_commit("")
 
             if not lint_coder:
                 lint_coder = await self.coder.clone(
@@ -410,7 +410,7 @@ class Commands:
             lint_coder.abs_fnames = set()
 
         if lint_coder and self.coder.repo.is_dirty() and self.coder.auto_commits:
-            self.cmd_commit("")
+            await self.cmd_commit("")
 
     def cmd_clear(self, args):
         "Clear the chat history"

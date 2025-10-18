@@ -211,6 +211,8 @@ def _execute_insert_block(
             change_id,
         )
 
+        coder.files_edited_by_tools.add(rel_path)
+
         # 9. Format and return result
         if position:
             success_message = f"Inserted block {pattern_type} {file_path}"

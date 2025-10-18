@@ -132,6 +132,7 @@ def _execute_replace_text(
             change_id,
         )
 
+        coder.files_edited_by_tools.add(rel_path)
         # 8. Format and return result
         success_message = f"Replaced {occurrence_str} in {file_path}"
         return format_tool_result(

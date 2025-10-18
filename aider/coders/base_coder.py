@@ -586,6 +586,8 @@ class Coder:
         self.input_task = None
         self.confirmation_in_progress = False
 
+        self.files_edited_by_tools = set()
+
         if not self.done_messages and restore_chat_history:
             history_md = self.io.read_text(self.io.chat_history_file)
             if history_md:
@@ -1931,7 +1933,7 @@ class Coder:
 
         if edited:
             self.aider_edited_files.update(edited)
-            saved_message = self.auto_commit(edited)
+            saved_message = await self.auto_commit(edited)
 
             if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
@@ -2000,7 +2002,7 @@ class Coder:
 
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
-            self.auto_commit(edited, context="Ran the linter")
+            await self.auto_commit(edited, context="Ran the linter")
             self.lint_outcome = not lint_errors
             if lint_errors:
                 ok = await self.io.confirm_ask("Attempt to fix lint errors?")
@@ -3142,7 +3144,7 @@ class Coder:
             if allowed:
                 res.append(edit)
 
-        self.dirty_commit()
+        await self.dirty_commit()
         self.need_commit_before_edits = set()
 
         return res
@@ -3247,7 +3249,7 @@ class Coder:
 
         return context
 
-    def auto_commit(self, edited, context=None):
+    async def auto_commit(self, edited, context=None):
         if not self.repo or not self.auto_commits or self.dry_run:
             return
 
@@ -3255,7 +3257,9 @@ class Coder:
             context = self.get_context_from_history(self.cur_messages)
 
         try:
-            res = self.repo.commit(fnames=edited, context=context, aider_edits=True, coder=self)
+            res = await self.repo.commit(
+                fnames=edited, context=context, aider_edits=True, coder=self
+            )
             if res:
                 self.show_auto_commit_outcome(res)
                 commit_hash, commit_message = res
@@ -3283,7 +3287,7 @@ class Coder:
         if self.commit_before_message[-1] != self.repo.get_head_commit_sha():
             self.io.tool_output("You can use /undo to undo and discard each aider commit.")
 
-    def dirty_commit(self):
+    async def dirty_commit(self):
         if not self.need_commit_before_edits:
             return
         if not self.dirty_commits:
@@ -3291,7 +3295,7 @@ class Coder:
         if not self.repo:
             return
 
-        self.repo.commit(fnames=self.need_commit_before_edits, coder=self)
+        await self.repo.commit(fnames=self.need_commit_before_edits, coder=self)
 
         # files changed, move cur messages back behind the files messages
         # self.move_back_cur_messages(self.gpt_prompts.files_content_local_edits)

@@ -138,7 +138,7 @@ def _execute_delete_lines(coder, file_path, start_line, end_line, change_id=None
             change_id,
         )
 
-        coder.aider_edited_files.add(rel_path)
+        coder.files_edited_by_tools.add(rel_path)
         num_deleted = end_idx - start_idx + 1
         # Format and return result
         success_message = (

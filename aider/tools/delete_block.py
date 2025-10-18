@@ -125,6 +125,7 @@ def _execute_delete_block(
             change_id,
         )
 
+        coder.files_edited_by_tools.add(rel_path)
         # 8. Format and return result, adding line range to success message
         success_message = (
             f"Deleted {num_deleted} lines ({start_line + 1}-{end_line + 1}) (from"

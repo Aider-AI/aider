@@ -159,7 +159,7 @@ def _execute_replace_lines(
             change_id,
         )
 
-        coder.aider_edited_files.add(rel_path)
+        coder.files_edited_by_tools.add(rel_path)
         replaced_count = end_line - start_line + 1
         new_count = len(new_lines)
 

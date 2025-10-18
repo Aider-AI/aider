@@ -161,6 +161,8 @@ def _execute_indent_lines(
             change_id,
         )
 
+        coder.files_edited_by_tools.add(rel_path)
+
         # 8. Format and return result
         action_past = "Indented" if indent_levels > 0 else "Unindented"
         success_message = (

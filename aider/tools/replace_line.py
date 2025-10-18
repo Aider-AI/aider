@@ -131,7 +131,7 @@ def _execute_replace_line(
             coder.io.tool_error(f"Error tracking change for ReplaceLine: {track_e}")
             change_id = "TRACKING_FAILED"
 
-        coder.aider_edited_files.add(rel_path)
+        coder.files_edited_by_tools.add(rel_path)
 
         # Improve feedback
         coder.io.tool_output(

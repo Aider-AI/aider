@@ -1080,8 +1080,17 @@ class NavigatorCoder(Coder):
 
         # After applying edits OR determining no edits were needed (and no reflection needed),
         # the turn is complete. Reset counters and finalize history.
+
+        # Auto-commit any files edited by granular tools
+        if self.files_edited_by_tools:
+            saved_message = await self.auto_commit(self.files_edited_by_tools)
+            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
+            self.move_back_cur_messages(saved_message)
+
         self.tool_call_count = 0
         self.files_added_in_exploration = set()
+        self.files_edited_by_tools = set()
         # Move cur_messages to done_messages
         self.move_back_cur_messages(
             None
@@ -1556,6 +1565,7 @@ class NavigatorCoder(Coder):
                             auto_indent,
                             use_regex,
                         )
+
                     else:
                         result_message = (
                             "Error: Missing required parameters for InsertBlock (file_path,"
@@ -1960,7 +1970,7 @@ class NavigatorCoder(Coder):
                     prepared_edits.append(edit)
 
             # Commit any dirty files identified by allowed_to_edit
-            self.dirty_commit()
+            await self.dirty_commit()
             self.need_commit_before_edits = set()  # Clear after commit
 
             # 3. Apply edits (logic adapted from EditBlockCoder.apply_edits)
