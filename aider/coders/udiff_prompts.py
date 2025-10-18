@@ -15,8 +15,6 @@ Think about how to verify your changes are correct.
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
 
-Always reply to the user in {language}.
-
 Once you have a plan, for each file that needs to be changed, write out the changes similar to a unified diff like `diff -U0` would produce.
 """
 

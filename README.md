@@ -1,3 +1,31 @@
+## Project Roadmap/Goals
+
+The current priorities are to improve core capabilities and user experience of the Aider project
+
+1. **Base Asynchronicity (aider-ce coroutine-experiment branch)**
+  * [x] Refactor codebase to have the main loop run asynchronously
+  * [x] Update test harness to work with new asynchronous methods
+
+2. **Repo Map Accuracy**
+  * [ ] [Bias page ranking toward active/editable files in repo map parsing](https://github.com/Aider-AI/aider/issues/2405)
+  * [ ] [Handle non-unique symbols that break down in large codebases](https://github.com/Aider-AI/aider/issues/2341)
+  * [ ] [Include AST information in repo map for richer context](https://github.com/Aider-AI/aider/issues/2688)
+
+3. **Context Discovery**
+  * [ ] Develop AST-based search capabilities
+  * [ ] Enhance file search with ripgrep integration
+  * [ ] Implement RAG (Retrieval-Augmented Generation) for better code retrieval
+  * [ ] Build an explicit workflow and local tooling for internal discovery mechanisms
+
+4. **Context Delivery**
+  * [ ] Use workflow for internal discovery to better target file snippets needed for specific tasks
+  * [ ] Add support for partial files and code snippets in model completion messages   
+
+5. **TUI Experience**
+  * [ ] Add a full TUI (probably using textual) to have a visual interface competitive with the other coding agent terminal programs
+  * [ ] Re-integrate pretty output formatting
+  * [ ] Implement a response area, a prompt area with current auto completion capabilities, and a helper area for management utility commands
+
 ## Fork Additions
 
 This project aims to be compatible with upstream Aider, but with priority commits merged in and with some opportunistic bug fixes and optimizations
@@ -32,6 +60,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [Remove Confirm Responses from History](https://github.com/Aider-AI/aider/pull/3958)
 * [Benchmark Results By Language](https://github.com/dwash96/aider-ce/pull/27)
 * [Allow Benchmarks to Use Repo Map For Better Accuracy](https://github.com/dwash96/aider-ce/pull/25)
+* [Read File Globbing](https://github.com/Aider-AI/aider/pull/3395)
 
 ### Other Notes
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
