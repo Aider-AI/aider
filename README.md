@@ -36,6 +36,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
     * [MCP Multi Tool Response](https://github.com/quinlanjager/aider/pull/1)
 * [Navigator Mode: #3781](https://github.com/Aider-AI/aider/pull/3781)
     * [Navigator Mode Large File Count](https://github.com/Aider-AI/aider/commit/b88a7bda649931798209945d9687718316c7427f)
+    * [Fix navigator mode auto commit](https://github.com/dwash96/aider-ce/issues/38)
 * [Qwen 3: #4383](https://github.com/Aider-AI/aider/pull/4383)
 * [Fuzzy Search: #4366](https://github.com/Aider-AI/aider/pull/4366)
 * [Map Cache Location Config: #2911](https://github.com/Aider-AI/aider/pull/2911)
