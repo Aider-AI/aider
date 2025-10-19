@@ -806,7 +806,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             alias, model = parts
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
-    selected_model_name = select_default_model(args, io, analytics)
+    selected_model_name = await select_default_model(args, io, analytics)
     if not selected_model_name:
         # Error message and analytics event are handled within select_default_model
         # It might have already offered OAuth if no model/keys were found.
@@ -821,7 +821,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             " found."
         )
         # Attempt OAuth flow because the specific model needs it
-        if offer_openrouter_oauth(io, analytics):
+        if await offer_openrouter_oauth(io, analytics):
             # OAuth succeeded, the key should now be in os.environ.
             # Check if the key is now present after the flow.
             if os.environ.get("OPENROUTER_API_KEY"):

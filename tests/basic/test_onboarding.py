@@ -288,19 +288,19 @@ class TestOnboarding(unittest.TestCase):
 
     @patch("aider.onboarding.try_to_select_default_model", return_value="gpt-4o")
     @patch("aider.onboarding.offer_openrouter_oauth")
-    def test_select_default_model_already_specified(self, mock_offer_oauth, mock_try_select):
+    async def test_select_default_model_already_specified(self, mock_offer_oauth, mock_try_select):
         """Test select_default_model returns args.model if provided."""
         args = argparse.Namespace(model="specific-model")
         io_mock = DummyIO()
         analytics_mock = DummyAnalytics()
-        selected_model = select_default_model(args, io_mock, analytics_mock)
+        selected_model = await select_default_model(args, io_mock, analytics_mock)
         self.assertEqual(selected_model, "specific-model")
         mock_try_select.assert_not_called()
         mock_offer_oauth.assert_not_called()
 
     @patch("aider.onboarding.try_to_select_default_model", return_value="gpt-4o")
     @patch("aider.onboarding.offer_openrouter_oauth")
-    def test_select_default_model_found_via_env(self, mock_offer_oauth, mock_try_select):
+    async def test_select_default_model_found_via_env(self, mock_offer_oauth, mock_try_select):
         """Test select_default_model returns model found by try_to_select."""
         args = argparse.Namespace(model=None)  # No model specified
         io_mock = DummyIO()
@@ -308,7 +308,7 @@ class TestOnboarding(unittest.TestCase):
         analytics_mock = DummyAnalytics()
         analytics_mock.event = MagicMock()  # Track events
 
-        selected_model = select_default_model(args, io_mock, analytics_mock)
+        selected_model = await select_default_model(args, io_mock, analytics_mock)
 
         self.assertEqual(selected_model, "gpt-4o")
         mock_try_select.assert_called_once()
@@ -324,7 +324,7 @@ class TestOnboarding(unittest.TestCase):
     @patch(
         "aider.onboarding.offer_openrouter_oauth", return_value=False
     )  # OAuth offered but fails/declined
-    def test_select_default_model_no_keys_oauth_fail(self, mock_offer_oauth, mock_try_select):
+    async def test_select_default_model_no_keys_oauth_fail(self, mock_offer_oauth, mock_try_select):
         """Test select_default_model offers OAuth when no keys, but OAuth fails."""
         args = argparse.Namespace(model=None)
         io_mock = DummyIO()
@@ -332,7 +332,7 @@ class TestOnboarding(unittest.TestCase):
         io_mock.offer_url = MagicMock()
         analytics_mock = DummyAnalytics()
 
-        selected_model = select_default_model(args, io_mock, analytics_mock)
+        selected_model = await select_default_model(args, io_mock, analytics_mock)
 
         self.assertIsNone(selected_model)
         self.assertEqual(mock_try_select.call_count, 2)  # Called before and after oauth attempt
@@ -349,14 +349,16 @@ class TestOnboarding(unittest.TestCase):
     @patch(
         "aider.onboarding.offer_openrouter_oauth", return_value=True
     )  # OAuth offered and succeeds
-    def test_select_default_model_no_keys_oauth_success(self, mock_offer_oauth, mock_try_select):
+    async def test_select_default_model_no_keys_oauth_success(
+        self, mock_offer_oauth, mock_try_select
+    ):
         """Test select_default_model offers OAuth, which succeeds."""
         args = argparse.Namespace(model=None)
         io_mock = DummyIO()
         io_mock.tool_warning = MagicMock()
         analytics_mock = DummyAnalytics()
 
-        selected_model = select_default_model(args, io_mock, analytics_mock)
+        selected_model = await select_default_model(args, io_mock, analytics_mock)
 
         self.assertEqual(selected_model, "openrouter/deepseek/deepseek-r1:free")
         self.assertEqual(mock_try_select.call_count, 2)  # Called before and after oauth
@@ -374,14 +376,14 @@ class TestOnboarding(unittest.TestCase):
     # --- Tests for offer_openrouter_oauth ---
     @patch("aider.onboarding.start_openrouter_oauth_flow", return_value="new_or_key")
     @patch.dict(os.environ, {}, clear=True)  # Ensure no key exists initially
-    def test_offer_openrouter_oauth_confirm_yes_success(self, mock_start_oauth):
+    async def test_offer_openrouter_oauth_confirm_yes_success(self, mock_start_oauth):
         """Test offer_openrouter_oauth when user confirms and OAuth succeeds."""
         io_mock = DummyIO()
         io_mock.confirm_ask = MagicMock(return_value=True)  # User says yes
         analytics_mock = DummyAnalytics()
         analytics_mock.event = MagicMock()
 
-        result = offer_openrouter_oauth(io_mock, analytics_mock)
+        result = await offer_openrouter_oauth(io_mock, analytics_mock)
 
         self.assertTrue(result)
         io_mock.confirm_ask.assert_called_once()
@@ -394,7 +396,7 @@ class TestOnboarding(unittest.TestCase):
 
     @patch("aider.onboarding.start_openrouter_oauth_flow", return_value=None)  # OAuth fails
     @patch.dict(os.environ, {}, clear=True)
-    def test_offer_openrouter_oauth_confirm_yes_fail(self, mock_start_oauth):
+    async def test_offer_openrouter_oauth_confirm_yes_fail(self, mock_start_oauth):
         """Test offer_openrouter_oauth when user confirms but OAuth fails."""
         io_mock = DummyIO()
         io_mock.confirm_ask = MagicMock(return_value=True)  # User says yes
@@ -402,7 +404,7 @@ class TestOnboarding(unittest.TestCase):
         analytics_mock = DummyAnalytics()
         analytics_mock.event = MagicMock()
 
-        result = offer_openrouter_oauth(io_mock, analytics_mock)
+        result = await offer_openrouter_oauth(io_mock, analytics_mock)
 
         self.assertFalse(result)
         io_mock.confirm_ask.assert_called_once()
@@ -415,14 +417,14 @@ class TestOnboarding(unittest.TestCase):
         analytics_mock.event.assert_any_call("oauth_flow_failure")
 
     @patch("aider.onboarding.start_openrouter_oauth_flow")
-    def test_offer_openrouter_oauth_confirm_no(self, mock_start_oauth):
+    async def test_offer_openrouter_oauth_confirm_no(self, mock_start_oauth):
         """Test offer_openrouter_oauth when user declines."""
         io_mock = DummyIO()
         io_mock.confirm_ask = MagicMock(return_value=False)  # User says no
         analytics_mock = DummyAnalytics()
         analytics_mock.event = MagicMock()
 
-        result = offer_openrouter_oauth(io_mock, analytics_mock)
+        result = await offer_openrouter_oauth(io_mock, analytics_mock)
 
         self.assertFalse(result)
         io_mock.confirm_ask.assert_called_once()
