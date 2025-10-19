@@ -6,22 +6,22 @@ The current priorities are to improve core capabilities and user experience of t
   * [x] Refactor codebase to have the main loop run asynchronously
   * [x] Update test harness to work with new asynchronous methods
 
-2. **Repo Map Accuracy**
-  * [ ] [Bias page ranking toward active/editable files in repo map parsing](https://github.com/Aider-AI/aider/issues/2405)
+2. **Repo Map Accuracy** - [Discussion](https://github.com/dwash96/aider-ce/issues/45)
+  * [x] [Bias page ranking toward active/editable files in repo map parsing](https://github.com/Aider-AI/aider/issues/2405)
+  * [ ] [Include AST information in repo map for richer context](https://github.com/Aider-AI/aider/issues/2688)  
   * [ ] [Handle non-unique symbols that break down in large codebases](https://github.com/Aider-AI/aider/issues/2341)
-  * [ ] [Include AST information in repo map for richer context](https://github.com/Aider-AI/aider/issues/2688)
 
-3. **Context Discovery**
+3. **Context Discovery** - [Discussion](https://github.com/dwash96/aider-ce/issues/46)
   * [ ] Develop AST-based search capabilities
   * [ ] Enhance file search with ripgrep integration
   * [ ] Implement RAG (Retrieval-Augmented Generation) for better code retrieval
   * [ ] Build an explicit workflow and local tooling for internal discovery mechanisms
 
-4. **Context Delivery**
+4. **Context Delivery** - [Discussion](https://github.com/dwash96/aider-ce/issues/47)
   * [ ] Use workflow for internal discovery to better target file snippets needed for specific tasks
   * [ ] Add support for partial files and code snippets in model completion messages   
 
-5. **TUI Experience**
+5. **TUI Experience** - [Discussion](https://github.com/dwash96/aider-ce/issues/48)
   * [ ] Add a full TUI (probably using textual) to have a visual interface competitive with the other coding agent terminal programs
   * [ ] Re-integrate pretty output formatting
   * [ ] Implement a response area, a prompt area with current auto completion capabilities, and a helper area for management utility commands

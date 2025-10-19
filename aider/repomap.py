@@ -612,6 +612,7 @@ class RepoMap:
                 personalization[rel_fname] = current_pers  # Assign the final calculated value
 
             tags = list(self.get_tags(fname, rel_fname))
+
             if tags is None:
                 continue
 
@@ -643,7 +644,7 @@ class RepoMap:
             if ident in references:
                 continue
             for definer in defines[ident]:
-                G.add_edge(definer, definer, weight=0.1, ident=ident)
+                G.add_edge(definer, definer, weight=0.01, ident=ident)
 
         for ident in idents:
             if progress:
@@ -658,12 +659,32 @@ class RepoMap:
             is_camel = any(c.isupper() for c in ident) and any(c.islower() for c in ident)
             if ident in mentioned_idents:
                 mul *= 10
-            if (is_snake or is_kebab or is_camel) and len(ident) >= 8:
+
+            # Prioritize function-like identifiers
+            if (
+                (is_snake or is_kebab or is_camel)
+                and len(ident) >= 8
+                and "test" not in ident.lower()
+            ):
                 mul *= 10
-            if ident.startswith("_"):
-                mul *= 0.1
+
+            # Downplay repetitive definitions in case of common boiler plate
+            # Scale down logarithmically given the increasing number of references in a codebase
+            # Ideally, this will help downweight boiler plate in frameworks, interfaces, and abstract classes
             if len(defines[ident]) > 5:
-                mul *= 0.1
+                mul *= math.log((5 / (len(defines[ident]) ** 2)) + 1)
+
+            # Calculate multiplier: log(number of unique file references * total references ^ 2)
+            # Used to balance the number of times an identifier appears with its number of refs per file
+            # Penetration in code base is important
+            # So is the frequency
+            # And the logarithm keeps them from scaling out of bounds forever
+            # Combined with the above downweighting
+            # There should be a push/pull that balances repetitiveness of identifier defs
+            # With absolute number of references throughout a codebase
+            unique_file_refs = len(set(references[ident]))
+            total_refs = len(references[ident])
+            ext_mul = math.log(unique_file_refs * total_refs**2 + 1)
 
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
@@ -671,7 +692,13 @@ class RepoMap:
                     # if referencer == definer:
                     #    continue
 
-                    use_mul = mul
+                    # Only add edge if file extensions match
+                    referencer_ext = Path(referencer).suffix
+                    definer_ext = Path(definer).suffix
+                    if referencer_ext != definer_ext:
+                        continue
+
+                    use_mul = mul * ext_mul
                     if referencer in chat_rel_fnames:
                         use_mul *= 50
 
