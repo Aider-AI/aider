@@ -360,11 +360,6 @@ class NavigatorCoder(Coder):
                     f"Executing {tool_name} on {server.name} failed: \n  Error: {e}\n"
                 )
                 return f"Error executing tool call {tool_name}: {e}"
-            finally:
-                try:
-                    await server.disconnect()
-                except Exception as e:
-                    self.io.tool_warning(f"Error disconnecting from MCP server {server.name}:\n{e}")
 
         return await _exec_async()
 

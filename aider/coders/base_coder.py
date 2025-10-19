@@ -2267,8 +2267,6 @@ class Coder:
                     tool_responses.append(
                         {"role": "tool", "tool_call_id": tool_call.id, "content": connection_error}
                     )
-            finally:
-                await server.disconnect()
 
             return tool_responses
 
@@ -2321,8 +2319,6 @@ class Coder:
             except Exception as e:
                 self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
                 return None
-            finally:
-                await server.disconnect()
 
         async def get_all_server_tools():
             tasks = [get_server_tools(server) for server in self.mcp_servers]
