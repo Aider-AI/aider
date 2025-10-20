@@ -75,7 +75,20 @@ from aider.tools.view import execute_view
 
 # Import tool functions
 from aider.tools.view_files_matching import execute_view_files_matching
-from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol
+from .view_files_with_symbol import (
+    _execute_view_files_with_symbol,
+    view_files_with_symbol_schema,
+)
+from .git import (
+    _execute_git_diff,
+    _execute_git_log,
+    _execute_git_show,
+    _execute_git_status,
+    git_diff_schema,
+    git_log_schema,
+    git_show_schema,
+    git_status_schema,
+)
 
 from .base_coder import ChatChunks, Coder
 from .editblock_coder import do_replace, find_original_update_blocks, find_similar_lines
@@ -203,6 +216,10 @@ class NavigatorCoder(Coder):
             extract_lines_schema,
             show_numbered_context_schema,
             update_todo_list_schema,
+            git_diff_schema,
+            git_log_schema,
+            git_show_schema,
+            git_status_schema,
         ]
 
     async def initialize_mcp_tools(self):
@@ -279,6 +296,10 @@ class NavigatorCoder(Coder):
                     "extractlines": _execute_extract_lines,
                     "shownumberedcontext": execute_show_numbered_context,
                     "updatetodolist": _execute_update_todo_list,
+                    "git_diff": _execute_git_diff,
+                    "git_log": _execute_git_log,
+                    "git_show": _execute_git_show,
+                    "git_status": _execute_git_status,
                 }
 
                 func = tool_functions.get(norm_tool_name)
