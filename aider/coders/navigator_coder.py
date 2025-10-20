@@ -75,11 +75,11 @@ from aider.tools.view import execute_view
 
 # Import tool functions
 from aider.tools.view_files_matching import execute_view_files_matching
-from .view_files_with_symbol import (
+from aider.tools.view_files_with_symbol import (
     _execute_view_files_with_symbol,
     view_files_with_symbol_schema,
 )
-from .git import (
+from aider.tools.git import (
     _execute_git_diff,
     _execute_git_log,
     _execute_git_show,
