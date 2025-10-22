@@ -1,4 +1,3 @@
-import shlex
 import shutil
 from pathlib import Path
 
@@ -117,7 +116,7 @@ def _execute_grep(
         cmd_args.extend([pattern, str(search_dir_path)])
 
         # Convert list to command string for run_cmd_subprocess
-        command_string = shlex.join(cmd_args)
+        command_string = " ".join(cmd_args)
 
         coder.io.tool_output(f"⚙️ Executing {tool_name}: {command_string}")
 
