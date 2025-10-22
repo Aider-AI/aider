@@ -56,6 +56,16 @@ from aider.tools.delete_block import _execute_delete_block
 from aider.tools.delete_line import _execute_delete_line
 from aider.tools.delete_lines import _execute_delete_lines
 from aider.tools.extract_lines import _execute_extract_lines
+from aider.tools.git import (
+    _execute_git_diff,
+    _execute_git_log,
+    _execute_git_show,
+    _execute_git_status,
+    git_diff_schema,
+    git_log_schema,
+    git_show_schema,
+    git_status_schema,
+)
 from aider.tools.grep import _execute_grep
 from aider.tools.indent_lines import _execute_indent_lines
 from aider.tools.insert_block import _execute_insert_block
@@ -75,20 +85,7 @@ from aider.tools.view import execute_view
 
 # Import tool functions
 from aider.tools.view_files_matching import execute_view_files_matching
-from aider.tools.view_files_with_symbol import (
-    _execute_view_files_with_symbol,
-    view_files_with_symbol_schema,
-)
-from aider.tools.git import (
-    _execute_git_diff,
-    _execute_git_log,
-    _execute_git_show,
-    _execute_git_status,
-    git_diff_schema,
-    git_log_schema,
-    git_show_schema,
-    git_status_schema,
-)
+from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol
 
 from .base_coder import ChatChunks, Coder
 from .editblock_coder import do_replace, find_original_update_blocks, find_similar_lines

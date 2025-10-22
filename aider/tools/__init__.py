@@ -10,6 +10,16 @@ from .delete_block import _execute_delete_block, delete_block_schema
 from .delete_line import _execute_delete_line, delete_line_schema
 from .delete_lines import _execute_delete_lines, delete_lines_schema
 from .extract_lines import _execute_extract_lines, extract_lines_schema
+from .git import (
+    _execute_git_diff,
+    _execute_git_log,
+    _execute_git_show,
+    _execute_git_status,
+    git_diff_schema,
+    git_log_schema,
+    git_show_schema,
+    git_status_schema,
+)
 from .grep import _execute_grep, grep_schema
 from .indent_lines import _execute_indent_lines, indent_lines_schema
 from .insert_block import _execute_insert_block, insert_block_schema
@@ -34,14 +44,4 @@ from .view_files_matching import execute_view_files_matching, view_files_matchin
 from .view_files_with_symbol import (
     _execute_view_files_with_symbol,
     view_files_with_symbol_schema,
-)
-from .git import (
-    _execute_git_diff,
-    _execute_git_log,
-    _execute_git_show,
-    _execute_git_status,
-    git_diff_schema,
-    git_log_schema,
-    git_show_schema,
-    git_status_schema,
 )

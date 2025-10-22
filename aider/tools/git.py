@@ -1,13 +1,12 @@
-# aider/tools/git.py
-
-import traceback
 from aider.repo import ANY_GIT_ERROR
 
 git_diff_schema = {
     "type": "function",
     "function": {
         "name": "git_diff",
-        "description": "Show the diff between the current working directory and a git branch or commit.",
+        "description": (
+            "Show the diff between the current working directory and a git branch or commit."
+        ),
         "parameters": {
             "type": "object",
             "properties": {
@@ -20,6 +19,7 @@ git_diff_schema = {
         },
     },
 }
+
 
 def _execute_git_diff(coder, branch=None):
     """
@@ -41,6 +41,7 @@ def _execute_git_diff(coder, branch=None):
         coder.io.tool_error(f"Error running git diff: {e}")
         return f"Error running git diff: {e}"
 
+
 git_log_schema = {
     "type": "function",
     "function": {
@@ -59,6 +60,7 @@ git_log_schema = {
     },
 }
 
+
 def _execute_git_log(coder, limit=10):
     """
     Show the git log.
@@ -71,12 +73,13 @@ def _execute_git_log(coder, limit=10):
         log_output = []
         for commit in commits:
             short_hash = commit.hexsha[:8]
-            message = commit.message.strip().split('\n')[0]
+            message = commit.message.strip().split("\n")[0]
             log_output.append(f"{short_hash} {message}")
         return "\n".join(log_output)
     except ANY_GIT_ERROR as e:
         coder.io.tool_error(f"Error running git log: {e}")
         return f"Error running git log: {e}"
+
 
 git_show_schema = {
     "type": "function",
@@ -96,6 +99,7 @@ git_show_schema = {
     },
 }
 
+
 def _execute_git_show(coder, object="HEAD"):
     """
     Show various types of objects (blobs, trees, tags, and commits).
@@ -109,6 +113,7 @@ def _execute_git_show(coder, object="HEAD"):
         coder.io.tool_error(f"Error running git show: {e}")
         return f"Error running git show: {e}"
 
+
 git_status_schema = {
     "type": "function",
     "function": {
@@ -121,6 +126,7 @@ git_status_schema = {
         },
     },
 }
+
 
 def _execute_git_status(coder):
     """
