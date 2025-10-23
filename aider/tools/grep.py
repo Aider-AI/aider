@@ -1,6 +1,8 @@
 import shutil
 from pathlib import Path
 
+import oslex
+
 from aider.run_cmd import run_cmd_subprocess
 
 
@@ -116,7 +118,7 @@ def _execute_grep(
         cmd_args.extend([pattern, str(search_dir_path)])
 
         # Convert list to command string for run_cmd_subprocess
-        command_string = " ".join(cmd_args)
+        command_string = oslex.join(cmd_args)
 
         coder.io.tool_output(f"⚙️ Executing {tool_name}: {command_string}")
 
