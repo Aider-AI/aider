@@ -1,6 +1,6 @@
 import json
 
-from aider.mcp.server import HttpStreamingServer, McpServer
+from aider.mcp.server import HttpStreamingServer, McpServer, SseServer
 
 
 def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_transport="stdio"):
@@ -24,6 +24,8 @@ def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_tran
                     servers.append(McpServer(server_config))
                 elif transport == "http":
                     servers.append(HttpStreamingServer(server_config))
+                elif transport == "sse":
+                    servers.append(SseServer(server_config))
 
             if verbose:
                 io.tool_output(f"Loaded {len(servers)} MCP servers from JSON string")

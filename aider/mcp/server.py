@@ -4,6 +4,7 @@ import os
 from contextlib import AsyncExitStack
 
 from mcp import ClientSession, StdioServerParameters
+from mcp.client.sse import sse_client
 from mcp.client.stdio import stdio_client
 from mcp.client.streamable_http import streamablehttp_client
 
@@ -13,12 +14,7 @@ class McpServer:
     A client for MCP servers that provides tools to Aider coders. An McpServer class
     is initialized per configured MCP Server
 
-    Current usage:
-
-        conn = await session.connect()  # Use connect() directly
-        tools = await experimental_mcp_client.load_mcp_tools(session=s, format="openai")
-        await session.disconnect()
-        print(tools)
+    Uses the mcp library to create and initialize ClientSession objects.
     """
 
     def __init__(self, server_config):
@@ -72,21 +68,25 @@ class McpServer:
             try:
                 await self.exit_stack.aclose()
                 self.session = None
-                self.stdio_context = None
             except Exception as e:
                 logging.error(f"Error during cleanup of server {self.name}: {e}")
 
 
 class HttpStreamingServer(McpServer):
+    """HTTP streaming MCP server using mcp.client.streamablehttp_client."""
+
     async def connect(self):
         if self.session is not None:
             logging.info(f"Using existing session for MCP server: {self.name}")
             return self.session
 
-        logging.info(f"Establishing new connection to MCP server: {self.name}")
+        logging.info(f"Establishing new connection to HTTP MCP server: {self.name}")
         try:
-            url = self.config["url"]
-            http_transport = await self.exit_stack.enter_async_context(streamablehttp_client(url))
+            url = self.config.get("url")
+            headers = self.config.get("headers", {})
+            http_transport = await self.exit_stack.enter_async_context(
+                streamablehttp_client(url, headers=headers)
+            )
             read, write, _response = http_transport
 
             session = await self.exit_stack.enter_async_context(ClientSession(read, write))
@@ -94,7 +94,33 @@ class HttpStreamingServer(McpServer):
             self.session = session
             return session
         except Exception as e:
-            logging.error(f"Error initializing server {self.name}: {e}")
+            logging.error(f"Error initializing HTTP server {self.name}: {e}")
+            await self.disconnect()
+            raise
+
+
+class SseServer(McpServer):
+    """SSE (Server-Sent Events) MCP server using mcp.client.sse_client."""
+
+    async def connect(self):
+        if self.session is not None:
+            logging.info(f"Using existing session for SSE MCP server: {self.name}")
+            return self.session
+
+        logging.info(f"Establishing new connection to SSE MCP server: {self.name}")
+        try:
+            url = self.config.get("url")
+            headers = self.config.get("headers", {})
+            sse_transport = await self.exit_stack.enter_async_context(
+                sse_client(url, headers=headers)
+            )
+            read, write, _response = sse_transport
+            session = await self.exit_stack.enter_async_context(ClientSession(read, write))
+            await session.initialize()
+            self.session = session
+            return session
+        except Exception as e:
+            logging.error(f"Error initializing SSE server {self.name}: {e}")
             await self.disconnect()
             raise
 
