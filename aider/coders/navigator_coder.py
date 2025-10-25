@@ -56,6 +56,16 @@ from aider.tools.delete_block import _execute_delete_block
 from aider.tools.delete_line import _execute_delete_line
 from aider.tools.delete_lines import _execute_delete_lines
 from aider.tools.extract_lines import _execute_extract_lines
+from aider.tools.git import (
+    _execute_git_diff,
+    _execute_git_log,
+    _execute_git_show,
+    _execute_git_status,
+    git_diff_schema,
+    git_log_schema,
+    git_show_schema,
+    git_status_schema,
+)
 from aider.tools.grep import _execute_grep
 from aider.tools.indent_lines import _execute_indent_lines
 from aider.tools.insert_block import _execute_insert_block
@@ -203,6 +213,10 @@ class NavigatorCoder(Coder):
             extract_lines_schema,
             show_numbered_context_schema,
             update_todo_list_schema,
+            git_diff_schema,
+            git_log_schema,
+            git_show_schema,
+            git_status_schema,
         ]
 
     async def initialize_mcp_tools(self):
@@ -279,6 +293,10 @@ class NavigatorCoder(Coder):
                     "extractlines": _execute_extract_lines,
                     "shownumberedcontext": execute_show_numbered_context,
                     "updatetodolist": _execute_update_todo_list,
+                    "git_diff": _execute_git_diff,
+                    "git_log": _execute_git_log,
+                    "git_show": _execute_git_show,
+                    "git_status": _execute_git_status,
                 }
 
                 func = tool_functions.get(norm_tool_name)
