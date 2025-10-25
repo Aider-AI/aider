@@ -1276,7 +1276,8 @@ class InputOutput:
         if self.pretty:
             if self.tool_output_color:
                 style["color"] = ensure_hash_prefix(self.tool_output_color)
-            style["reverse"] = bold
+            # if bold:
+            #     style["bold"] = True
 
         style = RichStyle(**style)
 
@@ -1311,8 +1312,8 @@ class InputOutput:
 
     def stream_output(self, text, final=False):
         """
-        Simplified stream output that just prints content and lets prompt_toolkit
-        handle the incremental updates through its native diffing.
+        Stream output using Rich console to respect pretty print settings.
+        This preserves formatting, colors, and other Rich features during streaming.
         """
         # Initialize buffer if not exists
         if not hasattr(self, "_stream_buffer"):
@@ -1343,10 +1344,10 @@ class InputOutput:
 
         if not final:
             if len(lines) > 1:
-                print(output, flush=True)
+                self.console.print(output)
         else:
             # Ensure any remaining buffered content is printed using the full response
-            print(output, flush=True)
+            self.console.print(output)
             self.reset_streaming_response()
 
     def reset_streaming_response(self):

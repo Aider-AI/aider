@@ -310,9 +310,11 @@ class Coder:
         else:
             lines.append("Repo-map: disabled")
 
-        if self.mcp_servers:
-            server_names = [server.name for server in self.mcp_servers]
-            lines.append(f"MCP servers configured: {', '.join(server_names)}")
+        if self.mcp_tools:
+            mcp_servers = []
+            for server_name, server_tools in self.mcp_tools:
+                mcp_servers.append(server_name)
+            lines.append(f"MCP servers configured: {', '.join(mcp_servers)}")
 
         for fname in self.abs_read_only_stubs_fnames:
             rel_fname = self.get_rel_fname(fname)
@@ -2101,12 +2103,45 @@ class Coder:
 
     def _print_tool_call_info(self, server_tool_calls):
         """Print information about an MCP tool call."""
-        self.io.tool_output("Preparing to run MCP tools", bold=True)
+        self.io.tool_output("Preparing to run MCP tools", bold=False)
 
         for server, tool_calls in server_tool_calls.items():
             for tool_call in tool_calls:
                 self.io.tool_output(f"Tool Call: {tool_call.function.name}")
-                self.io.tool_output(f"Arguments: {tool_call.function.arguments}")
+
+                # Parse and format arguments as headers with values
+                if tool_call.function.arguments:
+                    # Only do JSON unwrapping for tools containing "replace" in their name
+                    if "replace" in tool_call.function.name.lower():
+                        try:
+                            args_dict = json.loads(tool_call.function.arguments)
+                            first_key = True
+                            for key, value in args_dict.items():
+                                # Convert explicit \\n sequences to actual newlines using regex
+                                # Only match \\n that is not preceded by any other backslashes
+                                if isinstance(value, str):
+                                    value = re.sub(r"(?<!\\)\\n", "\n", value)
+                                # Add extra newline before first key/header
+                                if first_key:
+                                    self.io.tool_output("\n")
+                                    first_key = False
+                                self.io.tool_output(f"{key}:")
+                                # Split the value by newlines and output each line separately
+                                if isinstance(value, str):
+                                    for line in value.split("\n"):
+                                        self.io.tool_output(f"{line}")
+                                else:
+                                    self.io.tool_output(f"{str(value)}")
+                                self.io.tool_output("")
+                        except json.JSONDecodeError:
+                            # If JSON parsing fails, show raw arguments
+                            raw_args = tool_call.function.arguments
+                            self.io.tool_output(f"Arguments: {raw_args}")
+                    else:
+                        # For non-replace tools, show raw arguments
+                        raw_args = tool_call.function.arguments
+                        self.io.tool_output(f"Arguments: {raw_args}")
+
                 self.io.tool_output(f"MCP Server: {server.name}")
 
                 if self.verbose:
@@ -2343,11 +2378,12 @@ class Coder:
                         tools = []
 
         if len(tools) > 0:
-            self.io.tool_output("MCP servers configured:")
-            for server_name, server_tools in tools:
-                self.io.tool_output(f"  - {server_name}")
+            if self.verbose:
+                self.io.tool_output("MCP servers configured:")
 
-                if self.verbose:
+                for server_name, server_tools in tools:
+                    self.io.tool_output(f"  - {server_name}")
+
                     for tool in server_tools:
                         tool_name = tool.get("function", {}).get("name", "unknown")
                         tool_desc = tool.get("function", {}).get("description", "").split("\n")[0]
