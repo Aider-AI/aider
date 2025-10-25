@@ -67,19 +67,27 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
 
 ### Installation Instructions
-This project should be installable using the commands
+This project can be installed using several methods:
 
-```
+### Package Installation
+```bash
 pip install aider-ce
 ```
 
 or
 
-```
+```bash
 uv pip install aider-ce
 ```
 
 The package exports an `aider-ce` command that accepts all of Aider's configuration options
+
+### Tool Installation
+```bash
+uv tool install --python python3.12 aider-ce
+```
+
+Use the tool installation so aider doesn't interfere with your development environment
 
 <p align="center">
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
