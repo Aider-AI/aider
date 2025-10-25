@@ -3,6 +3,28 @@ import traceback
 
 from .tool_utils import generate_unified_diff_snippet
 
+extract_lines_schema = {
+    "type": "function",
+    "function": {
+        "name": "ExtractLines",
+        "description": "Extract lines from a source file and append them to a target file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "source_file_path": {"type": "string"},
+                "target_file_path": {"type": "string"},
+                "start_pattern": {"type": "string"},
+                "end_pattern": {"type": "string"},
+                "line_count": {"type": "integer"},
+                "near_context": {"type": "string"},
+                "occurrence": {"type": "integer", "default": 1},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["source_file_path", "target_file_path", "start_pattern"],
+        },
+    },
+}
+
 
 def _execute_extract_lines(
     coder,
@@ -248,8 +270,9 @@ def _execute_extract_lines(
             coder.io.tool_error(f"Error tracking target change for ExtractLines: {track_e}")
 
         # --- Update Context ---
-        coder.aider_edited_files.add(rel_source_path)
-        coder.aider_edited_files.add(rel_target_path)
+        coder.files_edited_by_tools.add(rel_source_path)
+        coder.files_edited_by_tools.add(rel_target_path)
+
         if not target_exists:
             # Add the newly created file to editable context
             coder.abs_fnames.add(abs_target_path)

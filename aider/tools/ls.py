@@ -1,7 +1,30 @@
 import os
 
+ls_schema = {
+    "type": "function",
+    "function": {
+        "name": "Ls",
+        "description": "List files in a directory.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "directory": {
+                    "type": "string",
+                    "description": "The directory to list.",
+                },
+            },
+            "required": ["directory"],
+        },
+    },
+}
 
-def execute_ls(coder, dir_path):
+
+def execute_ls(coder, dir_path=None, directory=None):
+    # Handle both positional and keyword arguments for backward compatibility
+    if dir_path is None and directory is not None:
+        dir_path = directory
+    elif dir_path is None:
+        return "Error: Missing directory parameter"
     """
     List files in directory and optionally add some to context.
 

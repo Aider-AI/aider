@@ -19,9 +19,9 @@ class TestSendChat(unittest.TestCase):
         litellm_ex = LiteLLMExceptions()
         litellm_ex._load(strict=True)
 
-    @patch("litellm.completion")
+    @patch("litellm.acompletion")
     @patch("builtins.print")
-    def test_simple_send_with_retries_rate_limit_error(self, mock_print, mock_completion):
+    async def test_simple_send_with_retries_rate_limit_error(self, mock_print, mock_completion):
         mock = MagicMock()
         mock.status_code = 500
 
@@ -40,28 +40,28 @@ class TestSendChat(unittest.TestCase):
         model = Model(self.mock_model)
         model.verbose = True
 
-        model.simple_send_with_retries(self.mock_messages)
+        await model.simple_send_with_retries(self.mock_messages)
         assert mock_print.call_count > 0
 
-    @patch("litellm.completion")
-    def test_send_completion_basic(self, mock_completion):
+    @patch("litellm.acompletion")
+    async def test_send_completion_basic(self, mock_completion):
         # Setup mock response
         mock_response = MagicMock()
         mock_completion.return_value = mock_response
 
         # Test basic send_completion
-        hash_obj, response = Model(self.mock_model).send_completion(
+        hash_obj, response = await Model(self.mock_model).send_completion(
             self.mock_messages, functions=None, stream=False
         )
 
         assert response == mock_response
         mock_completion.assert_called_once()
 
-    @patch("litellm.completion")
-    def test_send_completion_with_functions(self, mock_completion):
+    @patch("litellm.acompletion")
+    async def test_send_completion_with_functions(self, mock_completion):
         mock_function = {"name": "test_function", "parameters": {"type": "object"}}
 
-        hash_obj, response = Model(self.mock_model).send_completion(
+        hash_obj, response = await Model(self.mock_model).send_completion(
             self.mock_messages, functions=[mock_function], stream=False
         )
 
@@ -70,19 +70,19 @@ class TestSendChat(unittest.TestCase):
         assert "tools" in called_kwargs
         assert called_kwargs["tools"][0]["function"] == mock_function
 
-    @patch("litellm.completion")
-    def test_simple_send_attribute_error(self, mock_completion):
+    @patch("litellm.acompletion")
+    async def test_simple_send_attribute_error(self, mock_completion):
         # Setup mock to raise AttributeError
         mock_completion.return_value = MagicMock()
         mock_completion.return_value.choices = None
 
         # Should return None on AttributeError
-        result = Model(self.mock_model).simple_send_with_retries(self.mock_messages)
+        result = await Model(self.mock_model).simple_send_with_retries(self.mock_messages)
         assert result is None
 
-    @patch("litellm.completion")
+    @patch("litellm.acompletion")
     @patch("builtins.print")
-    def test_simple_send_non_retryable_error(self, mock_print, mock_completion):
+    async def test_simple_send_non_retryable_error(self, mock_print, mock_completion):
         # Test with an error that shouldn't trigger retries
         mock = MagicMock()
         mock.status_code = 400
@@ -94,7 +94,7 @@ class TestSendChat(unittest.TestCase):
         model = Model(self.mock_model)
         model.verbose = True
 
-        result = model.simple_send_with_retries(self.mock_messages)
+        result = await model.simple_send_with_retries(self.mock_messages)
         assert result is None
         # Should only print the error message
         assert mock_print.call_count > 0

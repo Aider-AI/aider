@@ -20,8 +20,20 @@ VERBOSE = False
 
 class LazyLiteLLM:
     _lazy_module = None
+    _lazy_classes = {
+        "ModelResponse": "ModelResponse",
+        "Choices": "Choices",
+        "Message": "Message",
+    }
 
     def __getattr__(self, name):
+        # Check if the requested attribute is one of the explicitly lazy-loaded classes
+        if name in self._lazy_classes:
+            self._load_litellm()
+            class_name = self._lazy_classes[name]
+            return getattr(self._lazy_module, class_name)
+
+        # Handle other attributes (like `acompletion`) as before
         if name == "_lazy_module":
             return super()
         self._load_litellm()
@@ -31,11 +43,7 @@ class LazyLiteLLM:
         if self._lazy_module is not None:
             return
 
-        if VERBOSE:
-            print("Loading litellm...")
-
         self._lazy_module = importlib.import_module("litellm")
-
         self._lazy_module.suppress_debug_info = True
         self._lazy_module.set_verbose = False
         self._lazy_module.drop_params = True

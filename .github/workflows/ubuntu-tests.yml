@@ -49,6 +49,7 @@ jobs:
         pip install uv
         uv pip install --system \
           pytest \
+          pytest-asyncio \
           -r requirements/requirements.in \
           -r requirements/requirements-browser.in \
           -r requirements/requirements-help.in \

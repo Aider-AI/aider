@@ -1,5 +1,23 @@
 import os
 
+make_editable_schema = {
+    "type": "function",
+    "function": {
+        "name": "MakeEditable",
+        "description": "Make a read-only file editable.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "The path to the file to make editable.",
+                },
+            },
+            "required": ["file_path"],
+        },
+    },
+}
+
 
 # Keep the underscore prefix as this function is primarily for internal coder use
 def _execute_make_editable(coder, file_path):

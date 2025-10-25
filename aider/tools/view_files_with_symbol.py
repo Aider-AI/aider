@@ -1,9 +1,25 @@
-import os
+view_files_with_symbol_schema = {
+    "type": "function",
+    "function": {
+        "name": "ViewFilesWithSymbol",
+        "description": "View files that contain a specific symbol (e.g., class, function).",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "description": "The symbol to search for.",
+                },
+            },
+            "required": ["symbol"],
+        },
+    },
+}
 
 
 def _execute_view_files_with_symbol(coder, symbol):
     """
-    Find files containing a symbol using RepoMap and add them to context.
+    Find files containing a symbol using RepoMap and return them as text.
     Checks files already in context first.
     """
     if not coder.repo_map:
@@ -13,7 +29,6 @@ def _execute_view_files_with_symbol(coder, symbol):
     if not symbol:
         return "Error: Missing 'symbol' parameter for ViewFilesWithSymbol"
 
-    # --- Start Modification ---
     # 1. Check files already in context
     files_in_context = list(coder.abs_fnames) + list(coder.abs_read_only_fnames)
     found_in_context = []
@@ -34,20 +49,11 @@ def _execute_view_files_with_symbol(coder, symbol):
     if found_in_context:
         # Symbol found in already loaded files. Report this and stop.
         file_list = ", ".join(sorted(list(set(found_in_context))))
-        coder.io.tool_output(
-            f"Symbol '{symbol}' found in already loaded file(s): {file_list}. No external search"
-            " performed."
-        )
-        return (
-            f"Symbol '{symbol}' found in already loaded file(s): {file_list}. No external search"
-            " performed."
-        )
-    # --- End Modification ---
+        coder.io.tool_output(f"Symbol '{symbol}' found in already loaded file(s): {file_list}")
+        return f"Symbol '{symbol}' found in already loaded file(s): {file_list}"
 
     # 2. If not found in context, search the repository using RepoMap
-    coder.io.tool_output(
-        f"🔎 Searching for symbol '{symbol}' in repository (excluding current context)..."
-    )
+    coder.io.tool_output(f"🔎 Searching for symbol '{symbol}' in repository...")
     try:
         found_files = set()
         current_context_files = coder.abs_fnames | coder.abs_read_only_fnames
@@ -71,50 +77,31 @@ def _execute_view_files_with_symbol(coder, symbol):
                 # Use absolute path directly if available, otherwise resolve from relative path
                 abs_fname = rel_fname_to_abs.get(tag.rel_fname) or coder.abs_root_path(tag.fname)
                 if abs_fname in files_to_search:  # Ensure we only add files we intended to search
-                    found_files.add(abs_fname)
+                    found_files.add(coder.get_rel_fname(abs_fname))
 
-        # Limit the number of files added
-        if len(found_files) > coder.max_files_per_glob:
-            coder.io.tool_output(
-                f"⚠️ Found symbol '{symbol}' in {len(found_files)} files, "
-                f"limiting to {coder.max_files_per_glob} most relevant files."
-            )
-            # Sort by modification time (most recent first) - approximate relevance
-            sorted_found_files = sorted(
-                list(found_files), key=lambda f: os.path.getmtime(f), reverse=True
-            )
-            found_files = set(sorted_found_files[: coder.max_files_per_glob])
-
-        # Add files to context (as read-only)
-        added_count = 0
-        added_files_rel = []
-        for abs_file_path in found_files:
-            rel_path = coder.get_rel_fname(abs_file_path)
-            # Double check it's not already added somehow
-            if (
-                abs_file_path not in coder.abs_fnames
-                and abs_file_path not in coder.abs_read_only_fnames
-            ):
-                # Use explicit=True for clear output, even though it's an external search result
-                add_result = coder._add_file_to_context(rel_path, explicit=True)
-                if "Added" in add_result or "Viewed" in add_result:  # Count successful adds/views
-                    added_count += 1
-                    added_files_rel.append(rel_path)
-
-        if added_count > 0:
-            if added_count > 5:
-                brief = ", ".join(added_files_rel[:5]) + f", and {added_count - 5} more"
-                coder.io.tool_output(f"🔎 Found '{symbol}' and added {added_count} files: {brief}")
-            else:
-                coder.io.tool_output(
-                    f"🔎 Found '{symbol}' and added files: {', '.join(added_files_rel)}"
+        # Return formatted text instead of adding to context
+        if found_files:
+            found_files_list = sorted(list(found_files))
+            if len(found_files) > 10:
+                result = (
+                    f"Found symbol '{symbol}' in {len(found_files)} files:"
+                    f" {', '.join(found_files_list[:10])} and {len(found_files) - 10} more"
                 )
-            return f"Found symbol '{symbol}' and added {added_count} files as read-only."
+                coder.io.tool_output(f"🔎 Found '{symbol}' in {len(found_files)} files")
+            else:
+                result = (
+                    f"Found symbol '{symbol}' in {len(found_files)} files:"
+                    f" {', '.join(found_files_list)}"
+                )
+                coder.io.tool_output(
+                    f"🔎 Found '{symbol}' in files:"
+                    f" {', '.join(found_files_list[:5])}{' and more' if len(found_files) > 5 else ''}"
+                )
+
+            return result
         else:
-            coder.io.tool_output(
-                f"⚠️ Symbol '{symbol}' not found in searchable files (outside current context)."
-            )
-            return f"Symbol '{symbol}' not found in searchable files (outside current context)."
+            coder.io.tool_output(f"⚠️ Symbol '{symbol}' not found in searchable files")
+            return f"Symbol '{symbol}' not found in searchable files"
 
     except Exception as e:
         coder.io.tool_error(f"Error in ViewFilesWithSymbol: {str(e)}")

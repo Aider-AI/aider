@@ -1,6 +1,25 @@
 import os
 import traceback
 
+replace_line_schema = {
+    "type": "function",
+    "function": {
+        "name": "ReplaceLine",
+        "description": "Replace a single line in a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "line_number": {"type": "integer"},
+                "new_content": {"type": "string"},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "line_number", "new_content"],
+        },
+    },
+}
+
 
 def _execute_replace_line(
     coder, file_path, line_number, new_content, change_id=None, dry_run=False
@@ -112,7 +131,7 @@ def _execute_replace_line(
             coder.io.tool_error(f"Error tracking change for ReplaceLine: {track_e}")
             change_id = "TRACKING_FAILED"
 
-        coder.aider_edited_files.add(rel_path)
+        coder.files_edited_by_tools.add(rel_path)
 
         # Improve feedback
         coder.io.tool_output(

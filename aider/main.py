@@ -1,3 +1,4 @@
+import asyncio
 import glob
 import json
 import os
@@ -470,6 +471,10 @@ def expand_glob_patterns(patterns, root="."):
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+    return asyncio.run(main_async(argv, input, output, force_git_root, return_coder))
+
+
+async def main_async(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
     if argv is None:
@@ -744,7 +749,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
             analytics.event("exit", reason="Recursing with correct repo")
-            return main(argv, input, output, right_repo_root, return_coder=return_coder)
+            return await main_async(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
         update_available = check_version(io, just_check=True, verbose=args.verbose)
@@ -801,7 +806,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             alias, model = parts
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
-    selected_model_name = select_default_model(args, io, analytics)
+    selected_model_name = await select_default_model(args, io, analytics)
     if not selected_model_name:
         # Error message and analytics event are handled within select_default_model
         # It might have already offered OAuth if no model/keys were found.
@@ -816,7 +821,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             " found."
         )
         # Attempt OAuth flow because the specific model needs it
-        if offer_openrouter_oauth(io, analytics):
+        if await offer_openrouter_oauth(io, analytics):
             # OAuth succeeded, the key should now be in os.environ.
             # Check if the key is now present after the flow.
             if os.environ.get("OPENROUTER_API_KEY"):
@@ -1010,7 +1015,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if not mcp_servers:
             mcp_servers = []
 
-        coder = Coder.create(
+        coder = await Coder.create(
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
@@ -1086,8 +1091,6 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("copy-paste mode")
         ClipboardWatcher(coder.io, verbose=args.verbose)
 
-    coder.show_announcements()
-
     if args.show_prompts:
         coder.cur_messages += [
             dict(role="user", content="Hello!"),
@@ -1098,22 +1101,22 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         return
 
     if args.lint:
-        coder.commands.cmd_lint(fnames=fnames)
+        await coder.commands.cmd_lint(fnames=fnames)
 
     if args.test:
         if not args.test_cmd:
             io.tool_error("No --test-cmd provided.")
             analytics.event("exit", reason="No test command provided")
             return 1
-        coder.commands.cmd_test(args.test_cmd)
+        await coder.commands.cmd_test(args.test_cmd)
         if io.placeholder:
-            coder.run(io.placeholder)
+            await coder.run(io.placeholder)
 
     if args.commit:
         if args.dry_run:
             io.tool_output("Dry run enabled, skipping commit.")
         else:
-            coder.commands.cmd_commit()
+            await coder.commands.cmd_commit()
 
     if args.lint or args.test or args.commit:
         analytics.event("exit", reason="Completed lint/test/commit")
@@ -1135,7 +1138,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         # For testing #2879
         # from aider.coders.base_coder import all_fences
         # coder.fence = all_fences[1]
-        coder.apply_updates()
+        await coder.apply_updates()
         analytics.event("exit", reason="Applied updates")
         return
 
@@ -1168,14 +1171,14 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_warning("Cost estimates may be inaccurate when using streaming and caching.")
 
     if args.load:
-        commands.cmd_load(args.load)
+        await commands.cmd_load(args.load)
 
     if args.message:
         io.add_to_input_history(args.message)
         io.tool_output()
         try:
-            coder.run(with_message=args.message)
-        except SwitchCoder:
+            await coder.run(with_message=args.message)
+        except (SwitchCoder, KeyboardInterrupt):
             pass
         analytics.event("exit", reason="Completed --message")
         return
@@ -1184,7 +1187,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         try:
             message_from_file = io.read_text(args.message_file)
             io.tool_output()
-            coder.run(with_message=message_from_file)
+            await coder.run(with_message=message_from_file)
         except FileNotFoundError:
             io.tool_error(f"Message file not found: {args.message_file}")
             analytics.event("exit", reason="Message file not found")
@@ -1206,7 +1209,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     while True:
         try:
             coder.ok_to_warm_cache = bool(args.cache_keepalive_pings)
-            coder.run()
+            await coder.run()
             analytics.event("exit", reason="Completed main CLI coder.run")
             return
         except SwitchCoder as switch:
@@ -1224,10 +1227,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             # Disable cache warming for the new coder
             kwargs["num_cache_warming_pings"] = 0
 
-            coder = Coder.create(**kwargs)
+            coder = await Coder.create(**kwargs)
 
-            if switch.kwargs.get("show_announcements") is not False:
-                coder.show_announcements()
+            if switch.kwargs.get("show_announcements") is False:
+                coder.suppress_announcements_for_next_prompt = True
 
 
 def is_first_run_of_new_version(io, verbose=False):

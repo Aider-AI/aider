@@ -5,6 +5,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from aider.coders import Coder
 from aider.coders import editblock_coder as eb
 from aider.dump import dump  # noqa: F401
@@ -320,7 +322,7 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
         result = eb.replace_most_similar_chunk(whole, part, replace)
         self.assertEqual(result, expected_output)
 
-    def test_create_new_file_with_other_file_in_chat(self):
+    async def test_create_new_file_with_other_file_in_chat(self):
         # https://github.com/Aider-AI/aider/issues/2258
         with ChdirTemporaryDirectory():
             # Create a few temporary files
@@ -332,11 +334,11 @@ These changes replace the `subprocess.run` patches with `subprocess.check_output
             files = [file1]
 
             # Initialize the Coder object with the mocked IO and mocked repo
-            coder = Coder.create(
+            coder = await Coder.create(
                 self.GPT35, "diff", use_git=False, io=InputOutput(yes=True), fnames=files
             )
 
-            def mock_send(*args, **kwargs):
+            async def mock_send(*args, **kwargs):
                 coder.partial_response_content = f"""
 Do this:
 
@@ -352,7 +354,7 @@ creating a new file
 
             coder.send = mock_send
 
-            coder.run(with_message="hi")
+            await coder.run(with_message="hi")
 
             content = Path(file1).read_text(encoding="utf-8")
             self.assertEqual(content, "one\ntwo\nthree\n")
@@ -360,7 +362,7 @@ creating a new file
             content = Path("newfile.txt").read_text(encoding="utf-8")
             self.assertEqual(content, "creating a new file\n")
 
-    def test_full_edit(self):
+    async def test_full_edit(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
 
@@ -370,9 +372,9 @@ creating a new file
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(self.GPT35, "diff", io=InputOutput(), fnames=files)
+        coder = await Coder.create(self.GPT35, "diff", io=InputOutput(), fnames=files)
 
-        def mock_send(*args, **kwargs):
+        async def mock_send(*args, **kwargs):
             coder.partial_response_content = f"""
 Do this:
 
@@ -390,12 +392,12 @@ new
         coder.send = mock_send
 
         # Call the run method with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
 
         content = Path(file1).read_text(encoding="utf-8")
         self.assertEqual(content, "one\nnew\nthree\n")
 
-    def test_full_edit_dry_run(self):
+    async def test_full_edit_dry_run(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
 
@@ -407,7 +409,7 @@ new
         files = [file1]
 
         # Initialize the Coder object with the mocked IO and mocked repo
-        coder = Coder.create(
+        coder = await Coder.create(
             self.GPT35,
             "diff",
             io=InputOutput(dry_run=True),
@@ -415,7 +417,7 @@ new
             dry_run=True,
         )
 
-        def mock_send(*args, **kwargs):
+        async def mock_send(*args, **kwargs):
             coder.partial_response_content = f"""
 Do this:
 
@@ -433,7 +435,7 @@ new
         coder.send = mock_send
 
         # Call the run method with a message
-        coder.run(with_message="hi")
+        await coder.run(with_message="hi")
 
         content = Path(file1).read_text(encoding="utf-8")
         self.assertEqual(content, orig_content)

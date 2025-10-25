@@ -1,8 +1,53 @@
-import shlex
 import shutil
 from pathlib import Path
 
+import oslex
+
 from aider.run_cmd import run_cmd_subprocess
+
+grep_schema = {
+    "type": "function",
+    "function": {
+        "name": "Grep",
+        "description": "Search for a pattern in files.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "pattern": {
+                    "type": "string",
+                    "description": "The pattern to search for.",
+                },
+                "file_pattern": {
+                    "type": "string",
+                    "description": "Glob pattern for files to search. Defaults to '*'.",
+                },
+                "directory": {
+                    "type": "string",
+                    "description": "Directory to search in. Defaults to '.'.",
+                },
+                "use_regex": {
+                    "type": "boolean",
+                    "description": "Whether to use regex. Defaults to False.",
+                },
+                "case_insensitive": {
+                    "type": "boolean",
+                    "description": (
+                        "Whether to perform a case-insensitive search. Defaults to False."
+                    ),
+                },
+                "context_before": {
+                    "type": "integer",
+                    "description": "Number of lines to show before a match. Defaults to 5.",
+                },
+                "context_after": {
+                    "type": "integer",
+                    "description": "Number of lines to show after a match. Defaults to 5.",
+                },
+            },
+            "required": ["pattern"],
+        },
+    },
+}
 
 
 def _find_search_tool():
@@ -117,7 +162,7 @@ def _execute_grep(
         cmd_args.extend([pattern, str(search_dir_path)])
 
         # Convert list to command string for run_cmd_subprocess
-        command_string = shlex.join(cmd_args)
+        command_string = oslex.join(cmd_args)
 
         coder.io.tool_output(f"⚙️ Executing {tool_name}: {command_string}")
 

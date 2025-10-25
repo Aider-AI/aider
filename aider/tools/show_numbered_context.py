@@ -2,6 +2,24 @@ import os
 
 from .tool_utils import ToolError, handle_tool_error, resolve_paths
 
+show_numbered_context_schema = {
+    "type": "function",
+    "function": {
+        "name": "ShowNumberedContext",
+        "description": "Show numbered lines of context around a pattern or line number.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "pattern": {"type": "string"},
+                "line_number": {"type": "integer"},
+                "context_lines": {"type": "integer", "default": 3},
+            },
+            "required": ["file_path"],
+        },
+    },
+}
+
 
 def execute_show_numbered_context(
     coder, file_path, pattern=None, line_number=None, context_lines=3

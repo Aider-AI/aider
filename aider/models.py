@@ -1,3 +1,4 @@
+import asyncio
 import difflib
 import hashlib
 import importlib.resources
@@ -893,23 +894,33 @@ class Model(ModelSettings):
                 return self.extra_params["extra_body"]["reasoning_effort"]
         return None
 
-    def is_deepseek_r1(self):
+    def is_deepseek(self):
         name = self.name.lower()
         if "deepseek" not in name:
             return
-        return "r1" in name or "reasoner" in name
+        return True
 
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
-    def send_completion(
+    async def send_completion(
         self, messages, functions, stream, temperature=None, tools=None, max_tokens=None
     ):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
-        if self.is_deepseek_r1():
-            messages = ensure_alternating_roles(messages)
+        messages = ensure_alternating_roles(messages)
+
+        if self.verbose:
+            for message in messages:
+                msg_role = message.get("role")
+                msg_content = message.get("content") if message.get("content") else ""
+                msg_trunc = ""
+
+                if message.get("content"):
+                    msg_trunc = message.get("content")[:30]
+
+                print(f"{msg_role} ({len(msg_content)}): {msg_trunc}")
 
         kwargs = dict(model=self.name, stream=stream)
 
@@ -923,26 +934,22 @@ class Model(ModelSettings):
             kwargs["temperature"] = temperature
 
         # `tools` is for modern tool usage. `functions` is for legacy/forced calls.
-        # If `tools` is provided, it's the canonical list. If not, use `functions`.
         # This handles `base_coder` sending both with same content for `navigator_coder`.
-        effective_tools = tools if tools is not None else functions
+        effective_tools = tools
+
+        if effective_tools is None and functions:
+            # Convert legacy `functions` to `tools` format if `tools` isn't provided.
+            effective_tools = [dict(type="function", function=f) for f in functions]
 
         if effective_tools:
-            # Check if we have legacy format functions (which lack a 'type' key) and convert them.
-            # This is a simplifying assumption that works for aider's use cases.
-            is_legacy = any("type" not in tool for tool in effective_tools)
-            if is_legacy:
-                kwargs["tools"] = [dict(type="function", function=tool) for tool in effective_tools]
-            else:
-                kwargs["tools"] = effective_tools
+            kwargs["tools"] = effective_tools
 
         # Forcing a function call is for legacy style `functions` with a single function.
         # This is used by ArchitectCoder and not intended for NavigatorCoder's tools.
         if functions and len(functions) == 1:
             function = functions[0]
-            is_legacy = "type" not in function
 
-            if is_legacy and "name" in function:
+            if "name" in function:
                 tool_name = function.get("name")
                 if tool_name:
                     kwargs["tool_choice"] = {"type": "function", "function": {"name": tool_name}}
@@ -978,16 +985,18 @@ class Model(ModelSettings):
                 }
 
         try:
-            res = litellm.completion(**kwargs)
+            res = await litellm.acompletion(**kwargs)
         except Exception as err:
-            res = "Model API Response Error. Please retry the previous request"
+            print(f"LiteLLM API Error: {str(err)}")
+            res = self.model_error_response()
 
             if self.verbose:
                 print(f"LiteLLM API Error: {str(err)}")
+                raise
 
         return hash_object, res
 
-    def simple_send_with_retries(self, messages, max_tokens=None):
+    async def simple_send_with_retries(self, messages, max_tokens=None):
         from aider.exceptions import LiteLLMExceptions
 
         litellm_ex = LiteLLMExceptions()
@@ -1000,7 +1009,7 @@ class Model(ModelSettings):
 
         while True:
             try:
-                _hash, response = self.send_completion(
+                _hash, response = await self.send_completion(
                     messages=messages,
                     functions=None,
                     stream=False,
@@ -1030,6 +1039,22 @@ class Model(ModelSettings):
                 continue
             except AttributeError:
                 return None
+
+    async def model_error_response(self):
+        for i in range(1):
+            await asyncio.sleep(0.1)
+            yield litellm.ModelResponse(
+                choices=[
+                    litellm.Choices(
+                        finish_reason="stop",
+                        index=0,
+                        message=litellm.Message(
+                            content="Model API Response Error. Please retry the previous request"
+                        ),  # Provide an empty message object
+                    )
+                ],
+                model=self.name,
+            )
 
 
 def register_models(model_settings_fnames):

@@ -1,6 +1,24 @@
 # Import necessary functions
 from aider.run_cmd import run_cmd_subprocess
 
+command_schema = {
+    "type": "function",
+    "function": {
+        "name": "Command",
+        "description": "Execute a shell command.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "command_string": {
+                    "type": "string",
+                    "description": "The shell command to execute.",
+                },
+            },
+            "required": ["command_string"],
+        },
+    },
+}
+
 
 def _execute_command(coder, command_string):
     """

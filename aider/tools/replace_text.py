@@ -7,6 +7,27 @@ from .tool_utils import (
     validate_file_for_edit,
 )
 
+replace_text_schema = {
+    "type": "function",
+    "function": {
+        "name": "ReplaceText",
+        "description": "Replace text in a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "find_text": {"type": "string"},
+                "replace_text": {"type": "string"},
+                "near_context": {"type": "string"},
+                "occurrence": {"type": "integer", "default": 1},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "find_text", "replace_text"],
+        },
+    },
+}
+
 
 def _execute_replace_text(
     coder,
@@ -111,6 +132,7 @@ def _execute_replace_text(
             change_id,
         )
 
+        coder.files_edited_by_tools.add(rel_path)
         # 8. Format and return result
         success_message = f"Replaced {occurrence_str} in {file_path}"
         return format_tool_result(

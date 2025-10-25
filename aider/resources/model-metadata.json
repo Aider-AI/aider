@@ -88,7 +88,7 @@
         "litellm_provider": "fireworks_ai",
         "input_cost_per_token": 0.000008,
         "output_cost_per_token": 0.000008,
-        "mode": "chat",
+        "mode": "chat"
     },
     "fireworks_ai/accounts/fireworks/models/deepseek-v3-0324": {
         "max_tokens": 160000,
@@ -97,7 +97,7 @@
         "litellm_provider": "fireworks_ai",
         "input_cost_per_token": 0.0000009,
         "output_cost_per_token": 0.0000009,
-        "mode": "chat",
+        "mode": "chat"
     },
     "openrouter/openrouter/quasar-alpha": {
         "max_input_tokens": 1000000,
@@ -552,7 +552,7 @@
         "supported_output_modalities": [
             "text"
         ],
-        "source": "https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash-preview"
+        "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro"
     },
     "gemini-2.5-pro-preview-06-05": {
         "max_tokens": 65536,
@@ -592,7 +592,7 @@
         "supported_output_modalities": [
             "text"
         ],
-        "source": "https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash-preview"
+        "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro"
     },
     "gemini/gemini-2.5-pro-preview-05-06": {
         "max_tokens": 65536,
@@ -628,7 +628,7 @@
         "supported_output_modalities": [
             "text"
         ],
-        "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro-preview"
+        "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro"
     },
     "gemini/gemini-2.5-pro-preview-06-05": {
         "max_tokens": 65536,
@@ -664,7 +664,7 @@
         "supported_output_modalities": [
             "text"
         ],
-        "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro-preview"
+        "source": "https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-pro"
     },
     "gemini/gemini-2.5-pro": {
         "max_tokens": 65536,
@@ -771,6 +771,6 @@
     },
     "together_ai/Qwen/Qwen3-235B-A22B-fp8-tput": {
         "input_cost_per_token": 0.0000002,
-        "output_cost_per_token": 0.0000006,
+        "output_cost_per_token": 0.0000006
     }
 }

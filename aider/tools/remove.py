@@ -1,5 +1,27 @@
 import time
 
+remove_schema = {
+    "type": "function",
+    "function": {
+        "name": "Remove",
+        "description": (
+            "Remove a file from the chat context. Should be used proactively to keep con"
+            "Should be used after editing a file when all edits are done "
+            "and the file is no longer necessary in context."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {
+                    "type": "string",
+                    "description": "The path to the file to remove.",
+                },
+            },
+            "required": ["file_path"],
+        },
+    },
+}
+
 
 def _execute_remove(coder, file_path):
     """

@@ -4,7 +4,7 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import git
 
@@ -128,8 +128,8 @@ class TestRepo(unittest.TestCase):
             diffs = git_repo.diff_commits(False, "HEAD~1", "HEAD")
             self.assertIn("two", diffs)
 
-    @patch("aider.models.Model.simple_send_with_retries")
-    def test_get_commit_message(self, mock_send):
+    @patch("aider.models.Model.simple_send_with_retries", new_callable=AsyncMock)
+    async def test_get_commit_message(self, mock_send):
         mock_send.side_effect = ["", "a good commit message"]
 
         model1 = Model("gpt-3.5-turbo")
@@ -152,8 +152,8 @@ class TestRepo(unittest.TestCase):
         second_call_messages = mock_send.call_args_list[1][0][0]  # Get messages from second call
         self.assertEqual(first_call_messages, second_call_messages)
 
-    @patch("aider.models.Model.simple_send_with_retries")
-    def test_get_commit_message_strip_quotes(self, mock_send):
+    @patch("aider.models.Model.simple_send_with_retries", new_callable=AsyncMock)
+    async def test_get_commit_message_strip_quotes(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
         repo = GitRepo(InputOutput(), None, None, models=[self.GPT35])
@@ -163,8 +163,8 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, "a good commit message")
 
-    @patch("aider.models.Model.simple_send_with_retries")
-    def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
+    @patch("aider.models.Model.simple_send_with_retries", new_callable=AsyncMock)
+    async def test_get_commit_message_no_strip_unmatched_quotes(self, mock_send):
         mock_send.return_value = 'a good "commit message"'
 
         repo = GitRepo(InputOutput(), None, None, models=[self.GPT35])
@@ -174,8 +174,8 @@ class TestRepo(unittest.TestCase):
         # Assert that the returned message is the expected one
         self.assertEqual(result, 'a good "commit message"')
 
-    @patch("aider.models.Model.simple_send_with_retries")
-    def test_get_commit_message_with_custom_prompt(self, mock_send):
+    @patch("aider.models.Model.simple_send_with_retries", new_callable=AsyncMock)
+    async def test_get_commit_message_with_custom_prompt(self, mock_send):
         mock_send.return_value = "Custom commit message"
         custom_prompt = "Generate a commit message in the style of Shakespeare"
 
@@ -189,7 +189,7 @@ class TestRepo(unittest.TestCase):
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     @patch("aider.repo.GitRepo.get_commit_message")
-    def test_commit_with_custom_committer_name(self, mock_send):
+    async def test_commit_with_custom_committer_name(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
         with GitTemporaryDirectory():
@@ -209,7 +209,7 @@ class TestRepo(unittest.TestCase):
 
             # commit a change with aider_edits=True (using default attributes)
             fname.write_text("new content")
-            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=True)
+            commit_result = await git_repo.commit(fnames=[str(fname)], aider_edits=True)
             self.assertIsNotNone(commit_result)
 
             # check the committer name (defaults interpreted as True)
@@ -219,7 +219,7 @@ class TestRepo(unittest.TestCase):
 
             # commit a change without aider_edits (using default attributes)
             fname.write_text("new content again!")
-            commit_result = git_repo.commit(fnames=[str(fname)], aider_edits=False)
+            commit_result = await git_repo.commit(fnames=[str(fname)], aider_edits=False)
             self.assertIsNotNone(commit_result)
 
             # check the committer name (author not modified, committer still modified by default)
@@ -232,7 +232,9 @@ class TestRepo(unittest.TestCase):
                 io, None, None, attribute_author=False, attribute_committer=False
             )
             fname.write_text("explicit false content")
-            commit_result = git_repo_explicit_false.commit(fnames=[str(fname)], aider_edits=True)
+            commit_result = await git_repo_explicit_false.commit(
+                fnames=[str(fname)], aider_edits=True
+            )
             self.assertIsNotNone(commit_result)
             commit = raw_repo.head.commit
             self.assertEqual(commit.author.name, "Test User")  # Explicit False
@@ -247,7 +249,7 @@ class TestRepo(unittest.TestCase):
             # Test user commit with explicit no-committer attribution
             git_repo_user_no_committer = GitRepo(io, None, None, attribute_committer=False)
             fname.write_text("user no committer content")
-            commit_result = git_repo_user_no_committer.commit(
+            commit_result = await git_repo_user_no_committer.commit(
                 fnames=[str(fname)], aider_edits=False
             )
             self.assertIsNotNone(commit_result)
@@ -264,7 +266,7 @@ class TestRepo(unittest.TestCase):
             )
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
-    def test_commit_with_co_authored_by(self):
+    async def test_commit_with_co_authored_by(self):
         with GitTemporaryDirectory():
             # new repo
             raw_repo = git.Repo()
@@ -293,7 +295,7 @@ class TestRepo(unittest.TestCase):
 
             # commit a change with aider_edits=True and co-authored-by flag
             fname.write_text("new content")
-            commit_result = git_repo.commit(
+            commit_result = await git_repo.commit(
                 fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider edit"
             )
             self.assertIsNotNone(commit_result)
@@ -315,7 +317,7 @@ class TestRepo(unittest.TestCase):
             )
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
-    def test_commit_co_authored_by_with_explicit_name_modification(self):
+    async def test_commit_co_authored_by_with_explicit_name_modification(self):
         # Test scenario where Co-authored-by is true AND
         # author/committer modification are explicitly True
         with GitTemporaryDirectory():
@@ -347,7 +349,7 @@ class TestRepo(unittest.TestCase):
 
             # commit a change with aider_edits=True and combo flags
             fname.write_text("new content combo")
-            commit_result = git_repo.commit(
+            commit_result = await git_repo.commit(
                 fnames=[str(fname)], aider_edits=True, coder=mock_coder, message="Aider combo edit"
             )
             self.assertIsNotNone(commit_result)
@@ -372,7 +374,7 @@ class TestRepo(unittest.TestCase):
             )
 
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
-    def test_commit_ai_edits_no_coauthor_explicit_false(self):
+    async def test_commit_ai_edits_no_coauthor_explicit_false(self):
         # Test AI edits (aider_edits=True) when co-authored-by is False,
         # but author or committer attribution is explicitly disabled.
         with GitTemporaryDirectory():
@@ -399,7 +401,7 @@ class TestRepo(unittest.TestCase):
 
             git_repo_no_author = GitRepo(io, None, None)
             fname.write_text("no author content")
-            commit_result = git_repo_no_author.commit(
+            commit_result = await git_repo_no_author.commit(
                 fnames=[str(fname)],
                 aider_edits=True,
                 coder=mock_coder_no_author,
@@ -423,7 +425,7 @@ class TestRepo(unittest.TestCase):
 
             git_repo_no_committer = GitRepo(io, None, None)
             fname.write_text("no committer content")
-            commit_result = git_repo_no_committer.commit(
+            commit_result = await git_repo_no_committer.commit(
                 fnames=[str(fname)],
                 aider_edits=True,
                 coder=mock_coder_no_committer,
@@ -621,7 +623,7 @@ class TestRepo(unittest.TestCase):
             self.assertNotIn(str(another_subdir_file), tracked_files)
 
     @patch("aider.models.Model.simple_send_with_retries")
-    def test_noop_commit(self, mock_send):
+    async def test_noop_commit(self, mock_send):
         mock_send.return_value = '"a good commit message"'
 
         with GitTemporaryDirectory():
@@ -636,11 +638,11 @@ class TestRepo(unittest.TestCase):
 
             git_repo = GitRepo(InputOutput(), None, None)
 
-            commit_result = git_repo.commit(fnames=[str(fname)])
+            commit_result = await git_repo.commit(fnames=[str(fname)])
             self.assertIsNone(commit_result)
 
     @unittest.skipIf(platform.system() == "Windows", "Git hook execution differs on Windows")
-    def test_git_commit_verify(self):
+    async def test_git_commit_verify(self):
         """Test that git_commit_verify controls whether --no-verify is passed to git commit"""
         with GitTemporaryDirectory():
             # Create a new repo
@@ -670,22 +672,24 @@ class TestRepo(unittest.TestCase):
             git_repo_verify = GitRepo(io, None, None, git_commit_verify=True)
 
             # Attempt to commit - should fail due to pre-commit hook
-            commit_result = git_repo_verify.commit(fnames=[str(fname)], message="Should fail")
+            commit_result = await git_repo_verify.commit(fnames=[str(fname)], message="Should fail")
             self.assertIsNone(commit_result)
 
             # Create GitRepo with verify=False
             git_repo_no_verify = GitRepo(io, None, None, git_commit_verify=False)
 
             # Attempt to commit - should succeed by bypassing the hook
-            commit_result = git_repo_no_verify.commit(fnames=[str(fname)], message="Should succeed")
+            commit_result = await git_repo_no_verify.commit(
+                fnames=[str(fname)], message="Should succeed"
+            )
             self.assertIsNotNone(commit_result)
 
             # Verify the commit was actually made
             latest_commit_msg = raw_repo.head.commit.message
             self.assertEqual(latest_commit_msg.strip(), "Should succeed")
 
-    @patch("aider.models.Model.simple_send_with_retries")
-    def test_get_commit_message_uses_system_prompt_prefix(self, mock_send):
+    @patch("aider.models.Model.simple_send_with_retries", new_callable=AsyncMock)
+    async def test_get_commit_message_uses_system_prompt_prefix(self, mock_send):
         """
         Verify that GitRepo.get_commit_message() prepends the model.system_prompt_prefix
         to the system prompt sent to the LLM.

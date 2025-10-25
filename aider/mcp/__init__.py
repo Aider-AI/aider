@@ -1,6 +1,7 @@
 import json
+from pathlib import Path
 
-from aider.mcp.server import HttpStreamingServer, McpServer
+from aider.mcp.server import HttpStreamingServer, McpServer, SseServer
 
 
 def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_transport="stdio"):
@@ -24,6 +25,8 @@ def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_tran
                     servers.append(McpServer(server_config))
                 elif transport == "http":
                     servers.append(HttpStreamingServer(server_config))
+                elif transport == "sse":
+                    servers.append(SseServer(server_config))
 
             if verbose:
                 io.tool_output(f"Loaded {len(servers)} MCP servers from JSON string")
@@ -38,12 +41,72 @@ def _parse_mcp_servers_from_json_string(json_string, io, verbose=False, mcp_tran
     return servers
 
 
+def _resolve_mcp_config_path(file_path, io, verbose=False):
+    """Resolve MCP config file path relative to closest aider.conf.yml, git directory, or CWD."""
+    if not file_path:
+        return None
+
+    # If the path is absolute or already exists, use it as-is
+    path = Path(file_path)
+    if path.is_absolute() or path.exists():
+        return str(path.resolve())
+
+    # Search for the closest aider.conf.yml in parent directories
+    current_dir = Path.cwd()
+    aider_conf_path = None
+
+    for parent in [current_dir] + list(current_dir.parents):
+        conf_file = parent / ".aider.conf.yml"
+        if conf_file.exists():
+            aider_conf_path = parent
+            break
+
+    # If aider.conf.yml found, try relative to that directory
+    if aider_conf_path:
+        resolved_path = aider_conf_path / file_path
+        if resolved_path.exists():
+            if verbose:
+                io.tool_output(f"Resolved MCP config relative to aider.conf.yml: {resolved_path}")
+            return str(resolved_path.resolve())
+
+    # Try to find git root directory
+    git_root = None
+    try:
+        import git
+
+        repo = git.Repo(search_parent_directories=True)
+        git_root = Path(repo.working_tree_dir)
+    except (ImportError, git.InvalidGitRepositoryError, FileNotFoundError):
+        pass
+
+    # If git root found, try relative to that directory
+    if git_root:
+        resolved_path = git_root / file_path
+        if resolved_path.exists():
+            if verbose:
+                io.tool_output(f"Resolved MCP config relative to git root: {resolved_path}")
+            return str(resolved_path.resolve())
+
+    # Finally, try relative to current working directory
+    resolved_path = current_dir / file_path
+    if resolved_path.exists():
+        if verbose:
+            io.tool_output(f"Resolved MCP config relative to CWD: {resolved_path}")
+        return str(resolved_path.resolve())
+
+    # If none found, return the original path (will trigger FileNotFoundError)
+    return str(path.resolve())
+
+
 def _parse_mcp_servers_from_file(file_path, io, verbose=False, mcp_transport="stdio"):
     """Parse MCP servers from a JSON file."""
     servers = []
 
+    # Resolve the file path relative to closest aider.conf.yml, git directory, or CWD
+    resolved_file_path = _resolve_mcp_config_path(file_path, io, verbose)
+
     try:
-        with open(file_path, "r") as f:
+        with open(resolved_file_path, "r") as f:
             config = json.load(f)
 
         if verbose:

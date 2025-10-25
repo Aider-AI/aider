@@ -12,6 +12,30 @@ from .tool_utils import (
     validate_file_for_edit,
 )
 
+insert_block_schema = {
+    "type": "function",
+    "function": {
+        "name": "InsertBlock",
+        "description": "Insert a block of content into a file.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "file_path": {"type": "string"},
+                "content": {"type": "string"},
+                "after_pattern": {"type": "string"},
+                "before_pattern": {"type": "string"},
+                "occurrence": {"type": "integer", "default": 1},
+                "change_id": {"type": "string"},
+                "dry_run": {"type": "boolean", "default": False},
+                "position": {"type": "string", "enum": ["top", "bottom"]},
+                "auto_indent": {"type": "boolean", "default": True},
+                "use_regex": {"type": "boolean", "default": False},
+            },
+            "required": ["file_path", "content"],
+        },
+    },
+}
+
 
 def _execute_insert_block(
     coder,
@@ -186,6 +210,8 @@ def _execute_insert_block(
             metadata,
             change_id,
         )
+
+        coder.files_edited_by_tools.add(rel_path)
 
         # 9. Format and return result
         if position:

@@ -1,5 +1,20 @@
 import traceback
 
+undo_change_schema = {
+    "type": "function",
+    "function": {
+        "name": "UndoChange",
+        "description": "Undo a previously applied change.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "change_id": {"type": "string"},
+                "file_path": {"type": "string"},
+            },
+        },
+    },
+}
+
 
 def _execute_undo_change(coder, change_id=None, file_path=None):
     """

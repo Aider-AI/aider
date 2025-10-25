@@ -40,7 +40,7 @@ class TestScrape(unittest.TestCase):
 
     @patch("aider.commands.install_playwright")
     @patch("aider.commands.Scraper")
-    def test_cmd_web_imports_playwright(self, mock_scraper_class, mock_install_playwright):
+    async def test_cmd_web_imports_playwright(self, mock_scraper_class, mock_install_playwright):
         # Since install_playwright is mocked, we need to simulate its side effect
         # of making the playwright module importable.
         def mock_install(*args, **kwargs):
@@ -58,7 +58,7 @@ class TestScrape(unittest.TestCase):
 
         try:
             # Run the cmd_web command
-            result = self.commands.cmd_web("https://example.com", return_content=True)
+            result = await self.commands.cmd_web("https://example.com", return_content=True)
 
             # Assert that the result contains some content
             self.assertIsNotNone(result)

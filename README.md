@@ -23,7 +23,7 @@ The current priorities are to improve core capabilities and user experience of t
 
 5. **TUI Experience** - [Discussion](https://github.com/dwash96/aider-ce/issues/48)
   * [ ] Add a full TUI (probably using textual) to have a visual interface competitive with the other coding agent terminal programs
-  * [ ] Re-integrate pretty output formatting
+  * [x] Re-integrate pretty output formatting
   * [ ] Implement a response area, a prompt area with current auto completion capabilities, and a helper area for management utility commands
 
 ## Fork Additions
@@ -36,6 +36,7 @@ This project aims to be compatible with upstream Aider, but with priority commit
     * [MCP Multi Tool Response](https://github.com/quinlanjager/aider/pull/1)
 * [Navigator Mode: #3781](https://github.com/Aider-AI/aider/pull/3781)
     * [Navigator Mode Large File Count](https://github.com/Aider-AI/aider/commit/b88a7bda649931798209945d9687718316c7427f)
+    * [Fix navigator mode auto commit](https://github.com/dwash96/aider-ce/issues/38)
 * [Qwen 3: #4383](https://github.com/Aider-AI/aider/pull/4383)
 * [Fuzzy Search: #4366](https://github.com/Aider-AI/aider/pull/4366)
 * [Map Cache Location Config: #2911](https://github.com/Aider-AI/aider/pull/2911)
@@ -66,19 +67,33 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
 
 ### Installation Instructions
-This project should be installable using the commands
+This project can be installed using several methods:
 
-```
+### Package Installation
+```bash
 pip install aider-ce
 ```
 
 or
 
-```
+```bash
 uv pip install aider-ce
 ```
 
 The package exports an `aider-ce` command that accepts all of Aider's configuration options
+
+### Tool Installation
+```bash
+uv tool install --python python3.12 aider-ce
+```
+
+Use the tool installation so aider doesn't interfere with your development environment
+
+### All Contributors (Both Aider Main and Aider-CE)
+
+<a href="https://github.com/dwash96/aider-ce/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=dwash96/aider-ce" />
+</a>
 
 <p align="center">
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>

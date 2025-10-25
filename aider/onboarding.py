@@ -76,7 +76,7 @@ def try_to_select_default_model():
     return None
 
 
-def offer_openrouter_oauth(io, analytics):
+async def offer_openrouter_oauth(io, analytics):
     """
     Offers OpenRouter OAuth flow to the user if no API keys are found.
 
@@ -90,7 +90,7 @@ def offer_openrouter_oauth(io, analytics):
     # No API keys found - Offer OpenRouter OAuth
     io.tool_output("OpenRouter provides free and paid access to many LLMs.")
     # Use confirm_ask which handles non-interactive cases
-    if io.confirm_ask(
+    if await io.confirm_ask(
         "Login to OpenRouter or create a free account?",
         default="y",
     ):
@@ -113,7 +113,7 @@ def offer_openrouter_oauth(io, analytics):
     return False
 
 
-def select_default_model(args, io, analytics):
+async def select_default_model(args, io, analytics):
     """
     Selects a default model based on available API keys if no model is specified.
     Offers OAuth flow for OpenRouter if no keys are found.
@@ -139,7 +139,7 @@ def select_default_model(args, io, analytics):
     io.tool_warning(no_model_msg)
 
     # Try OAuth if no model was detected
-    offer_openrouter_oauth(io, analytics)
+    await offer_openrouter_oauth(io, analytics)
 
     # Check again after potential OAuth success
     model = try_to_select_default_model()

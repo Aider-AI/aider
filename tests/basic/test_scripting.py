@@ -1,6 +1,6 @@
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import AsyncMock, patch
 
 from aider.coders import Coder
 from aider.models import Model
@@ -8,8 +8,8 @@ from aider.utils import GitTemporaryDirectory
 
 
 class TestScriptingAPI(unittest.TestCase):
-    @patch("aider.coders.base_coder.Coder.send")
-    def test_basic_scripting(self, mock_send):
+    @patch("aider.coders.base_coder.Coder.send", new_callable=AsyncMock)
+    async def test_basic_scripting(self, mock_send):
         with GitTemporaryDirectory():
             # Setup
             def mock_send_side_effect(messages, functions=None):
@@ -24,10 +24,10 @@ class TestScriptingAPI(unittest.TestCase):
             fname.touch()
             fnames = [str(fname)]
             model = Model("gpt-4-turbo")
-            coder = Coder.create(main_model=model, fnames=fnames)
+            coder = await Coder.create(main_model=model, fnames=fnames)
 
-            result1 = coder.run("make a script that prints hello world")
-            result2 = coder.run("make it say goodbye")
+            result1 = await coder.run("make a script that prints hello world")
+            result2 = await coder.run("make it say goodbye")
 
             # Assertions
             self.assertEqual(mock_send.call_count, 2)

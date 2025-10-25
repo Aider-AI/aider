@@ -30,13 +30,13 @@ class ChatSummary:
             sized.append((tokens, msg))
         return sized
 
-    def summarize(self, messages, depth=0):
-        messages = self.summarize_real(messages)
+    async def summarize(self, messages, depth=0):
+        messages = await self.summarize_real(messages)
         if messages and messages[-1]["role"] != "assistant":
             messages.append(dict(role="assistant", content="Ok."))
         return messages
 
-    def summarize_real(self, messages, depth=0):
+    async def summarize_real(self, messages, depth=0):
         if not self.models:
             raise ValueError("No models available for summarization")
 
@@ -48,11 +48,11 @@ class ChatSummary:
                 # All fit, no summarization needed
                 return messages
             # This is a chunk that's small enough to summarize in one go
-            return self.summarize_all(messages)
+            return await self.summarize_all(messages)
 
         min_split = 4
         if len(messages) <= min_split or depth > 4:
-            return self.summarize_all(messages)
+            return await self.summarize_all(messages)
 
         tail_tokens = 0
         split_index = len(messages)
@@ -78,13 +78,13 @@ class ChatSummary:
             split_index -= 1
 
         if split_index <= min_split:
-            return self.summarize_all(messages)
+            return await self.summarize_all(messages)
 
         # Split head and tail
         head = messages[:split_index]
         tail = messages[split_index:]
 
-        summary = self.summarize_real(head, depth + 1)
+        summary = await self.summarize_real(head, depth + 1)
 
         # If the combined summary and tail still fits, return directly
         new_messages = summary + tail
@@ -96,9 +96,9 @@ class ChatSummary:
             return new_messages
 
         # Otherwise recurse with increased depth
-        return self.summarize_real(new_messages, depth + 1)
+        return await self.summarize_real(new_messages, depth + 1)
 
-    def summarize_all(self, messages):
+    async def summarize_all(self, messages):
         content = ""
         for msg in messages:
             role = msg["role"].upper()
@@ -118,7 +118,7 @@ class ChatSummary:
 
         for model in self.models:
             try:
-                summary = model.simple_send_with_retries(summarize_messages)
+                summary = await model.simple_send_with_retries(summarize_messages)
                 if summary is not None:
                     summary = prompts.summary_prefix + summary
                     return [dict(role="user", content=summary)]
@@ -129,7 +129,7 @@ class ChatSummary:
         print(err)
         raise ValueError(err)
 
-    def summarize_all_as_text(self, messages, prompt, max_tokens=None):
+    async def summarize_all_as_text(self, messages, prompt, max_tokens=None):
         content = ""
         for msg in messages:
             role = msg["role"].upper()
@@ -149,7 +149,9 @@ class ChatSummary:
 
         for model in self.models:
             try:
-                summary = model.simple_send_with_retries(summarize_messages, max_tokens=max_tokens)
+                summary = await model.simple_send_with_retries(
+                    summarize_messages, max_tokens=max_tokens
+                )
                 if summary is not None:
                     return summary
             except Exception as e:
