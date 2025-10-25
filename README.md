@@ -23,7 +23,7 @@ The current priorities are to improve core capabilities and user experience of t
 
 5. **TUI Experience** - [Discussion](https://github.com/dwash96/aider-ce/issues/48)
   * [ ] Add a full TUI (probably using textual) to have a visual interface competitive with the other coding agent terminal programs
-  * [ ] Re-integrate pretty output formatting
+  * [x] Re-integrate pretty output formatting
   * [ ] Implement a response area, a prompt area with current auto completion capabilities, and a helper area for management utility commands
 
 ## Fork Additions
@@ -88,6 +88,12 @@ uv tool install --python python3.12 aider-ce
 ```
 
 Use the tool installation so aider doesn't interfere with your development environment
+
+### All Contributors (Both Aider Main and Aider-CE)
+
+<a href="https://github.com/dwash96/aider-ce/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=dwash96/aider-ce" />
+</a>
 
 <p align="center">
     <a href="https://aider.chat/"><img src="https://aider.chat/assets/logo.svg" alt="Aider Logo" width="300"></a>
