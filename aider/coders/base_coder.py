@@ -1248,7 +1248,7 @@ class Coder:
             else:
                 message = self.reflected_message
 
-    def check_and_open_urls(self, exc, friendly_msg=None):
+    async def check_and_open_urls(self, exc, friendly_msg=None):
         """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
         text = str(exc)
 
@@ -1264,7 +1264,7 @@ class Coder:
         urls = list(set(url_pattern.findall(text)))
         for url in urls:
             url = url.rstrip(".',\"}")  # Added } to the characters to strip
-            self.io.offer_url(url)
+            await self.io.offer_url(url)
         return urls
 
     async def check_for_urls(self, inp: str) -> List[str]:
@@ -1841,7 +1841,7 @@ class Coder:
 
                     if not should_retry:
                         self.mdstream = None
-                        self.check_and_open_urls(err, ex_info.description)
+                        await self.check_and_open_urls(err, ex_info.description)
                         break
 
                     err_msg = str(err)
@@ -1906,7 +1906,7 @@ class Coder:
                     ),
                 ]
 
-            self.show_exhausted_error()
+            await self.show_exhausted_error()
             self.num_exhausted_context_windows += 1
             return
 
@@ -2402,7 +2402,7 @@ class Coder:
     async def reply_completed(self):
         pass
 
-    def show_exhausted_error(self):
+    async def show_exhausted_error(self):
         output_tokens = 0
         if self.partial_response_content:
             output_tokens = self.main_model.token_count(self.partial_response_content)
@@ -2453,7 +2453,7 @@ class Coder:
 
         res = "".join([line + "\n" for line in res])
         self.io.tool_error(res)
-        self.io.offer_url(urls.token_limits)
+        await self.io.offer_url(urls.token_limits)
 
     def lint_edited(self, fnames):
         res = ""

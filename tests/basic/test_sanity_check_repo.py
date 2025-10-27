@@ -1,3 +1,4 @@
+import asyncio
 import os
 import shutil
 import struct
@@ -81,7 +82,7 @@ def mock_repo_wrapper(repo_obj, git_repo_error=None):
     return mock_repo
 
 
-def test_detached_head_state(create_repo, mock_io):
+async def test_detached_head_state(create_repo, mock_io):
     repo_path, repo = create_repo
     # Detach the HEAD
     detach_head(repo)
@@ -90,7 +91,7 @@ def test_detached_head_state(create_repo, mock_io):
     mock_repo_obj = mock_repo_wrapper(repo)
 
     # Call the function
-    result = sanity_check_repo(mock_repo_obj, mock_io)
+    result = await sanity_check_repo(mock_repo_obj, mock_io)
 
     # Assert that the function returns True
     assert result is True
@@ -101,7 +102,7 @@ def test_detached_head_state(create_repo, mock_io):
 
 
 @mock.patch("webbrowser.open")
-def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_io):
+async def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_io):
     repo_path, repo = create_repo
     # Set the git index version to 3
     set_git_index_version(str(repo_path), 3)
@@ -110,8 +111,12 @@ def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_io):
     git_error = GitError("index version in (1, 2) is required")
     mock_repo_obj = mock_repo_wrapper(repo, git_repo_error=git_error)
 
+    # Configure the mock to return an async mock for offer_url
+    mock_io.offer_url.return_value = asyncio.Future()
+    mock_io.offer_url.return_value.set_result(False)
+
     # Call the function
-    result = sanity_check_repo(mock_repo_obj, mock_io)
+    result = await sanity_check_repo(mock_repo_obj, mock_io)
 
     # Assert that the function returns False
     assert result is False
@@ -133,7 +138,7 @@ def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_io):
     )
 
 
-def test_bare_repository(create_repo, mock_io, tmp_path):
+async def test_bare_repository(create_repo, mock_io, tmp_path):
     # Initialize a bare repository
     bare_repo_path = tmp_path / "bare_repo.git"
     bare_repo = Repo.init(bare_repo_path, bare=True)
@@ -142,7 +147,7 @@ def test_bare_repository(create_repo, mock_io, tmp_path):
     mock_repo_obj = mock_repo_wrapper(bare_repo)
 
     # Call the function
-    result = sanity_check_repo(mock_repo_obj, mock_io)
+    result = await sanity_check_repo(mock_repo_obj, mock_io)
 
     # Assert that the function returns False
     assert result is False
@@ -152,7 +157,7 @@ def test_bare_repository(create_repo, mock_io, tmp_path):
     mock_io.tool_output.assert_not_called()
 
 
-def test_sanity_check_repo_with_corrupt_repo(create_repo, mock_io):
+async def test_sanity_check_repo_with_corrupt_repo(create_repo, mock_io):
     repo_path, repo = create_repo
     # Simulate a corrupt repository by removing the .git directory
     shutil.rmtree(os.path.join(repo_path, ".git"))
@@ -162,7 +167,7 @@ def test_sanity_check_repo_with_corrupt_repo(create_repo, mock_io):
     mock_repo_obj = mock_repo_wrapper(repo, git_repo_error=git_error)
 
     # Call the function
-    result = sanity_check_repo(mock_repo_obj, mock_io)
+    result = await sanity_check_repo(mock_repo_obj, mock_io)
 
     # Assert that the function returns False
     assert result is False
@@ -172,9 +177,9 @@ def test_sanity_check_repo_with_corrupt_repo(create_repo, mock_io):
     mock_io.tool_output.assert_called_with(str(git_error))
 
 
-def test_sanity_check_repo_with_no_repo(mock_io):
+async def test_sanity_check_repo_with_no_repo(mock_io):
     # Call the function with repo=None
-    result = sanity_check_repo(None, mock_io)
+    result = await sanity_check_repo(None, mock_io)
 
     # Assert that the function returns True
     assert result is True
