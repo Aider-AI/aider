@@ -1,6 +1,6 @@
 from packaging import version
 
-__version__ = "0.88.0.dev"
+__version__ = "0.88.1.dev"
 safe_version = __version__
 
 try:

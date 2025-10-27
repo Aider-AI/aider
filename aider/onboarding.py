@@ -146,7 +146,7 @@ async def select_default_model(args, io, analytics):
     if model:
         return model
 
-    io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
+    await io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
 
 
 # Helper function to find an available port

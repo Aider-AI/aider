@@ -412,7 +412,7 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
         return 1
 
 
-def sanity_check_repo(repo, io):
+async def sanity_check_repo(repo, io):
     if not repo:
         return True
 
@@ -443,7 +443,7 @@ def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        io.offer_url(urls.git_index_version, "Open documentation url for more info?")
+        await io.offer_url(urls.git_index_version, "Open documentation url for more info?")
         return False
 
     io.tool_error("Unable to read git repository, it may be corrupt?")
@@ -783,7 +783,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
     io.tool_output(cmd_line, log_only=True)
 
     is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
-    check_and_load_imports(io, is_first_run, verbose=args.verbose)
+    await check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
@@ -844,7 +844,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             io.tool_error(
                 f"Unable to proceed without an OpenRouter API key for model '{args.model}'."
             )
-            io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
+            await io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
             analytics.event(
                 "exit",
                 reason="OpenRouter key missing for specified model and OAuth failed/declined",
@@ -926,7 +926,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             io.tool_output("You can skip this check with --no-show-model-warnings")
 
             try:
-                io.offer_url(urls.model_warnings, "Open documentation url for more info?")
+                await io.offer_url(urls.model_warnings, "Open documentation url for more info?")
                 io.tool_output()
             except KeyboardInterrupt:
                 analytics.event("exit", reason="Keyboard interrupt during model warnings")
@@ -954,7 +954,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             pass
 
     if not args.skip_sanity_check_repo:
-        if not sanity_check_repo(repo, io):
+        if not await sanity_check_repo(repo, io):
             analytics.event("exit", reason="Repository sanity check failed")
             return 1
 
@@ -1059,7 +1059,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
-        io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
+        await io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
         analytics.event("exit", reason="Unknown edit format")
         return 1
     except ValueError as err:
@@ -1152,7 +1152,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         webbrowser.open(urls.release_notes)
     elif args.show_release_notes is None and is_first_run:
         io.tool_output()
-        io.offer_url(
+        await io.offer_url(
             urls.release_notes,
             "Would you like to see what's new in this version?",
             allow_never=False,
@@ -1276,7 +1276,7 @@ def is_first_run_of_new_version(io, verbose=False):
         return True  # Safer to assume it's a first run if we hit an error
 
 
-def check_and_load_imports(io, is_first_run, verbose=False):
+async def check_and_load_imports(io, is_first_run, verbose=False):
     try:
         if is_first_run:
             if verbose:
@@ -1288,7 +1288,7 @@ def check_and_load_imports(io, is_first_run, verbose=False):
             except Exception as err:
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
-                io.offer_url(urls.install_properly, "Open documentation url for more info?")
+                await io.offer_url(urls.install_properly, "Open documentation url for more info?")
                 sys.exit(1)
 
             if verbose:
