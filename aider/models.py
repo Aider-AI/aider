@@ -101,7 +101,12 @@ MODEL_ALIASES = {
     "gemini": "gemini/gemini-2.5-pro",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
-    "optimus": "openrouter/openrouter/optimus-alpha",
+    # Ollama Cloud Models
+    "kimi-cloud": "ollama_chat/kimi-k2:1t-cloud",
+    "deepseek-cloud": "ollama_chat/deepseek-v3.1:671b-cloud",
+    "qwen-coder-cloud": "ollama_chat/qwen3-coder:480b-cloud",
+    "gpt-oss-cloud": "ollama_chat/gpt-oss:120b-cloud",
+    "qwen-vl-cloud": "ollama_chat/qwen3-vl:235b-cloud",
 }
 # Model metadata loaded from resources and user's files.
 

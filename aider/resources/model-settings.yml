@@ -2066,3 +2066,89 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+# Ollama Cloud Models
+- name: ollama_chat/kimi-k2:1t-cloud
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    num_ctx: 128000
+    temperature: 0.6
+
+- name: ollama/kimi-k2:1t-cloud
+  edit_format: diff
+  use_repo_map: true
+  examples_as_sys_msg: true
+  extra_params:
+    num_ctx: 128000
+    temperature: 0.6
+
+- name: ollama_chat/deepseek-v3.1:671b-cloud
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    num_ctx: 128000
+    max_tokens: 8192
+
+- name: ollama/deepseek-v3.1:671b-cloud
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    num_ctx: 128000
+    max_tokens: 8192
+
+- name: ollama_chat/qwen3-coder:480b-cloud
+  edit_format: diff
+  use_repo_map: true
+  editor_edit_format: editor-diff
+  extra_params:
+    num_ctx: 128000
+
+- name: ollama/qwen3-coder:480b-cloud
+  edit_format: diff
+  use_repo_map: true
+  editor_edit_format: editor-diff
+  extra_params:
+    num_ctx: 128000
+
+- name: ollama_chat/gpt-oss:120b-cloud
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    num_ctx: 128000
+
+- name: ollama/gpt-oss:120b-cloud
+  edit_format: diff
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    num_ctx: 128000
+
+- name: ollama_chat/qwen3-vl:235b-cloud
+  edit_format: diff
+  use_repo_map: true
+  system_prompt_prefix: "/no_think"
+  use_temperature: 0.7
+  extra_params:
+    num_ctx: 128000
+    top_p: 0.8
+    top_k: 20
+    min_p: 0.0
+
+- name: ollama/qwen3-vl:235b-cloud
+  edit_format: diff
+  use_repo_map: true
+  system_prompt_prefix: "/no_think"
+  use_temperature: 0.7
+  extra_params:
+    num_ctx: 128000
+    top_p: 0.8
+    top_k: 20
+    min_p: 0.0
