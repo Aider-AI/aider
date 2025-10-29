@@ -1752,7 +1752,7 @@ class Coder:
 
         return chunks
 
-    def check_tokens(self, messages):
+    async def check_tokens(self, messages):
         """Check if the messages will fit within the model's token limits."""
         input_tokens = self.main_model.token_count(messages)
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
@@ -1771,7 +1771,7 @@ class Coder:
                 " the context limit is exceeded."
             )
 
-            if not self.io.confirm_ask("Try to proceed anyway?"):
+            if not await self.io.confirm_ask("Try to proceed anyway?"):
                 return False
         return True
 
@@ -1789,7 +1789,7 @@ class Coder:
         chunks = self.format_messages()
         messages = chunks.all_messages()
 
-        if not self.check_tokens(messages):
+        if not await self.check_tokens(messages):
             return
         self.warm_cache(chunks)
 
@@ -3094,7 +3094,7 @@ class Coder:
             return
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask("Create new file?", subject=path):
+            if not await self.io.confirm_ask("Create new file?", subject=path):
                 self.io.tool_output(f"Skipping edits to {path}")
                 return
 
