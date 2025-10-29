@@ -2602,7 +2602,7 @@ class Coder:
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
-            if self.stream:
+            if not isinstance(completion, ModelResponse):
                 async for chunk in self.show_send_output_stream(completion):
                     yield chunk
             else:
@@ -2637,6 +2637,10 @@ class Coder:
     def show_send_output(self, completion):
         if self.verbose:
             print(completion)
+
+        if not isinstance(completion, ModelResponse):
+            self.io.tool_error(str(completion))
+            return
 
         if not completion.choices:
             self.io.tool_error(str(completion))
