@@ -1301,7 +1301,7 @@ class InputOutput:
         else:
             show_resp = Text(message or "(empty response)")
 
-        self.stream_print(show_resp)
+        self.console.print(show_resp)
 
     def render_markdown(self, text):
         output = StringIO()

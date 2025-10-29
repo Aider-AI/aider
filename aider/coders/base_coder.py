@@ -616,9 +616,6 @@ class Coder:
                 except Exception as e:
                     self.io.tool_warning(f"Could not remove todo list file {todo_file_path}: {e}")
 
-        # Instantiate MCP tools
-        if self.mcp_servers:
-            pass
         # validate the functions jsonschema
         if self.functions:
             from jsonschema import Draft7Validator
@@ -1755,7 +1752,7 @@ class Coder:
 
         return chunks
 
-    def check_tokens(self, messages):
+    async def check_tokens(self, messages):
         """Check if the messages will fit within the model's token limits."""
         input_tokens = self.main_model.token_count(messages)
         max_input_tokens = self.main_model.info.get("max_input_tokens") or 0
@@ -1774,7 +1771,7 @@ class Coder:
                 " the context limit is exceeded."
             )
 
-            if not self.io.confirm_ask("Try to proceed anyway?"):
+            if not await self.io.confirm_ask("Try to proceed anyway?"):
                 return False
         return True
 
@@ -1792,7 +1789,7 @@ class Coder:
         chunks = self.format_messages()
         messages = chunks.all_messages()
 
-        if not self.check_tokens(messages):
+        if not await self.check_tokens(messages):
             return
         self.warm_cache(chunks)
 
@@ -2352,7 +2349,8 @@ class Coder:
                 )
                 return (server.name, server_tools)
             except Exception as e:
-                self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
+                if server.name != "unnamed-server":
+                    self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
                 return None
 
         async def get_all_server_tools():
@@ -2604,7 +2602,7 @@ class Coder:
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
 
-            if self.stream:
+            if not isinstance(completion, ModelResponse):
                 async for chunk in self.show_send_output_stream(completion):
                     yield chunk
             else:
@@ -2639,6 +2637,10 @@ class Coder:
     def show_send_output(self, completion):
         if self.verbose:
             print(completion)
+
+        if not isinstance(completion, ModelResponse):
+            self.io.tool_error(str(completion))
+            return
 
         if not completion.choices:
             self.io.tool_error(str(completion))
@@ -3092,7 +3094,7 @@ class Coder:
             return
 
         if not Path(full_path).exists():
-            if not self.io.confirm_ask("Create new file?", subject=path):
+            if not await self.io.confirm_ask("Create new file?", subject=path):
                 self.io.tool_output(f"Skipping edits to {path}")
                 return
 
