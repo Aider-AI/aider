@@ -154,4 +154,21 @@ def load_mcp_servers(mcp_servers, mcp_servers_file, io, verbose=False, mcp_trans
     if mcp_servers_file:
         servers = _parse_mcp_servers_from_file(mcp_servers_file, io, verbose, mcp_transport)
 
+    if not servers:
+        # A default MCP server is actually now necessary for the overall agentic loop
+        # and a dummy server does suffice for the job
+        # because I am not smart enough to figure out why
+        # on coder switch, the agent actually initializes the prompt area twice
+        # once immediately after input for the old coder
+        # and immediately again for the new target coder
+        # which causes a race condition where we are awaiting a coroutine
+        # that can no longer yield control (somehow?)
+        # but somehow having to run through the MCP server checks
+        # allows control to be yielded again somehow
+        # and I cannot figure out just how that is happening
+        # and maybe it is actually prompt_toolkit's fault
+        # but this hack works swimmingly because ???
+        # so sure! why not
+        servers = [McpServer(json.loads('{"aider_default": {}}'))]
+
     return servers

@@ -616,9 +616,6 @@ class Coder:
                 except Exception as e:
                     self.io.tool_warning(f"Could not remove todo list file {todo_file_path}: {e}")
 
-        # Instantiate MCP tools
-        if self.mcp_servers:
-            pass
         # validate the functions jsonschema
         if self.functions:
             from jsonschema import Draft7Validator
@@ -2352,7 +2349,8 @@ class Coder:
                 )
                 return (server.name, server_tools)
             except Exception as e:
-                self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
+                if server.name != "unnamed-server":
+                    self.io.tool_warning(f"Error initializing MCP server {server.name}:\n{e}")
                 return None
 
         async def get_all_server_tools():
