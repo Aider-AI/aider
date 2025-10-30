@@ -418,13 +418,14 @@ class InputOutput:
             self.pretty = False
             fancy_input = False
 
+        # Spinner state
+        self.spinner_running = False
+        self.spinner_text = ""
+        self.spinner_frame_index = 0
+        self.spinner_last_frame_index = 0
+        self.unicode_palette = "░█"
+
         if fancy_input:
-            # Spinner state
-            self.spinner_running = False
-            self.spinner_text = ""
-            self.spinner_frame_index = 0
-            self.spinner_last_frame_index = 0
-            self.unicode_palette = "░█"
             # If unicode is supported, use the rich 'dots2' spinner, otherwise an ascii fallback
             if self._spinner_supports_unicode():
                 self.spinner_frames = SPINNERS["dots2"]["frames"]
