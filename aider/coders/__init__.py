@@ -10,6 +10,7 @@ from .editor_whole_coder import EditorWholeFileCoder
 from .help_coder import HelpCoder
 from .patch_coder import PatchCoder
 from .udiff_coder import UnifiedDiffCoder
+from .udiff_simple import UnifiedDiffSimpleCoder
 from .wholefile_coder import WholeFileCoder
 
 # from .single_wholefile_func_coder import SingleWholeFileFunctionCoder
@@ -23,6 +24,7 @@ __all__ = [
     WholeFileCoder,
     PatchCoder,
     UnifiedDiffCoder,
+    UnifiedDiffSimpleCoder,
     #    SingleWholeFileFunctionCoder,
     ArchitectCoder,
     EditorEditBlockCoder,

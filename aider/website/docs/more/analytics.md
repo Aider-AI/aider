@@ -52,10 +52,9 @@ will confirm you wish to opt-in to analytics.
 - `--no-analytics` will turn off analytics for the current session.
 - By default, if you don't provide `--analytics` or `--no-analytics`,
 aider will enable analytics for a random subset of users.
+Such randomly selected users will be asked if they wish to opt-in to analytics.
 This will never happen if you have permanently disabled analytics 
 with `--analytics-disable`.
-Randomly selected users will be asked if they wish to opt-in to analytics.
-
 
 ## Opting in
 
@@ -106,6 +105,12 @@ If you want to just log analytics without reporting them, you can do:
 aider --analytics-log filename.jsonl --no-analytics
 ```
 
+### Sending analytics to custom PostHog project or installation
+
+Aider uses PostHog for analytics collection. You can configure aider to send analytics to your own PostHog project or a custom PostHog installation using these parameters:
+
+- `--analytics-posthog-project-api-key KEY` - Set a custom PostHog project API key
+- `--analytics-posthog-host HOST` - Set a custom PostHog host (default is app.posthog.com)
 
 ## Reporting issues
 

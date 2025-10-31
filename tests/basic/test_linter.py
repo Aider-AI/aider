@@ -1,3 +1,4 @@
+import os
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -36,6 +37,16 @@ class TestLinter(unittest.TestCase):
         result = self.linter.run_cmd("test_cmd", "test_file.py", "code")
         self.assertIsNone(result)
 
+    def test_run_cmd_win(self):
+        if os.name != "nt":
+            self.skipTest("This test only runs on Windows")
+        from pathlib import Path
+
+        root = Path(__file__).parent.parent.parent.absolute().as_posix()
+        linter = Linter(encoding="utf-8", root=root)
+        result = linter.run_cmd("dir", "tests\\basic", "code")
+        self.assertIsNone(result)
+
     @patch("subprocess.Popen")
     def test_run_cmd_with_errors(self, mock_popen):
         mock_process = MagicMock()
@@ -46,6 +57,27 @@ class TestLinter(unittest.TestCase):
         result = self.linter.run_cmd("test_cmd", "test_file.py", "code")
         self.assertIsNotNone(result)
         self.assertIn("Error message", result.text)
+
+    def test_run_cmd_with_special_chars(self):
+        with patch("subprocess.Popen") as mock_popen:
+            mock_process = MagicMock()
+            mock_process.returncode = 1
+            mock_process.stdout.read.side_effect = ("Error message", None)
+            mock_popen.return_value = mock_process
+
+            # Test with a file path containing special characters
+            special_path = "src/(main)/product/[id]/page.tsx"
+            result = self.linter.run_cmd("eslint", special_path, "code")
+
+            # Verify that the command was constructed correctly
+            mock_popen.assert_called_once()
+            call_args = mock_popen.call_args[0][0]
+
+            self.assertIn(special_path, call_args)
+
+            # The result should contain the error message
+            self.assertIsNotNone(result)
+            self.assertIn("Error message", result.text)
 
 
 if __name__ == "__main__":

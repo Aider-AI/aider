@@ -15,7 +15,9 @@ You always COMPLETELY IMPLEMENT the needed code!
 """
 
     overeager_prompt = """Pay careful attention to the scope of the user's request.
-Do what they ask, but no more."""
+Do what they ask, but no more.
+Do not improve, comment, fix or modify unrelated parts of the code in any way!
+"""
 
     example_messages = []
 

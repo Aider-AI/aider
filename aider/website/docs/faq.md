@@ -264,15 +264,19 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro-exp-03-25</td><td class='right'>2,756,387</td><td class='right'>83.5%</td></tr>
-<tr><td>openrouter/anthropic/claude-3.7-sonnet</td><td class='right'>475,106</td><td class='right'>14.4%</td></tr>
-<tr><td>gemini/gemini-2.5-pro-preview-03-25</td><td class='right'>16,524</td><td class='right'>0.5%</td></tr>
-<tr><td>o4-mini</td><td class='right'>16,499</td><td class='right'>0.5%</td></tr>
-<tr><td>gpt-4.1-mini</td><td class='right'>11,775</td><td class='right'>0.4%</td></tr>
-<tr><td>gpt-4.1</td><td class='right'>10,687</td><td class='right'>0.3%</td></tr>
-<tr><td>None</td><td class='right'>8,001</td><td class='right'>0.2%</td></tr>
-<tr><td>o3</td><td class='right'>4,962</td><td class='right'>0.2%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>281,824</td><td class='right'>38.5%</td></tr>
+<tr><td>gpt-5</td><td class='right'>211,072</td><td class='right'>28.9%</td></tr>
+<tr><td>None</td><td class='right'>168,988</td><td class='right'>23.1%</td></tr>
+<tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>5.0%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite</td><td class='right'>15,470</td><td class='right'>2.1%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite-preview-06-17</td><td class='right'>11,371</td><td class='right'>1.6%</td></tr>
+<tr><td>o3</td><td class='right'>3,915</td><td class='right'>0.5%</td></tr>
+<tr><td>openai/REDACTED</td><td class='right'>1,970</td><td class='right'>0.3%</td></tr>
 </table>
+
+{: .note :}
+Some models show as REDACTED, because they are new or unpopular models.
+Aider's analytics only records the names of "well known" LLMs.
 <!--[[[end]]]-->
 
 ## How are the "aider wrote xx% of code" stats computed?
@@ -370,6 +374,10 @@ Aider is
 [open source and available on GitHub](https://github.com/Aider-AI/aider)
 under an 
 [Apache 2.0 license](https://github.com/Aider-AI/aider/blob/main/LICENSE.txt).
+
+## Can I Script Aider?
+
+Yes. You can script aider via the command line or python. See more from here: [Scripting aider](https://aider.chat/docs/scripting.html)
 
 
 <div style="height:80vh"></div>

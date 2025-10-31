@@ -2,7 +2,7 @@ If you need more help, please check our
 [GitHub issues](https://github.com/Aider-AI/aider/issues)
 and file a new issue if your problem isn't discussed.
 Or drop into our
-[Discord](https://discord.gg/Tv2uQnR88V)
+[Discord](https://discord.gg/Y7X7bhMQFV)
 to chat with us.
 
 When reporting problems, it is very helpful if you can provide:

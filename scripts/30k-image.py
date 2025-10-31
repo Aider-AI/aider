@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# flake8: noqa: E501
 """
 Generate a celebratory SVG image for Aider reaching 30,000 GitHub stars.
 This creates a shareable social media graphic with confetti animation.
@@ -7,7 +8,6 @@ This creates a shareable social media graphic with confetti animation.
 import argparse
 import base64
 import math
-import os
 import random
 from pathlib import Path
 

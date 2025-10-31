@@ -10,27 +10,34 @@ To work with OpenAI's models, you need to provide your
 either in the `OPENAI_API_KEY` environment variable or
 via the `--api-key openai=<key>` command line switch.
 
-Aider has some built in shortcuts for the most popular OpenAI models and
-has been tested and benchmarked to work well with them:
+First, install aider:
+
+{% include install.md %}
+
+Then configure your API keys:
 
 ```
-python -m pip install -U aider-chat
+export OPENAI_API_KEY=<key> # Mac/Linux
+setx   OPENAI_API_KEY <key> # Windows, restart shell after setx
+```
+
+Start working with aider and OpenAI on your codebase:
+
+```bash
+# Change directory into your codebase
+cd /to/your/project
 
 # o3-mini
-aider --model o3-mini --api-key openai=<key>
+aider --model o3-mini
 
 # o1-mini
-aider --model o1-mini --api-key openai=<key>
+aider --model o1-mini
 
 # GPT-4o
-aider --model gpt-4o --api-key openai=<key>
+aider --model gpt-4o
 
 # List models available from OpenAI
 aider --list-models openai/
-
-# You can also store you API key in environment variables (or .env)
-export OPENAI_API_KEY=<key> # Mac/Linux
-setx   OPENAI_API_KEY <key> # Windows, restart shell after setx
 ```
 
 You can use `aider --model <model-name>` to use any other OpenAI model.

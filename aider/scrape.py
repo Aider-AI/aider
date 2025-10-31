@@ -14,7 +14,7 @@ aider_user_agent = f"Aider/{__version__} +{urls.website}"
 # platforms.
 
 
-def install_playwright(io):
+def check_env():
     try:
         from playwright.sync_api import sync_playwright
 
@@ -29,6 +29,16 @@ def install_playwright(io):
     except Exception:
         has_chromium = False
 
+    return has_pip, has_chromium
+
+
+def has_playwright():
+    has_pip, has_chromium = check_env()
+    return has_pip and has_chromium
+
+
+def install_playwright(io):
+    has_pip, has_chromium = check_env()
     if has_pip and has_chromium:
         return True
 
@@ -262,7 +272,7 @@ def slimdown_html(soup):
 
 
 def main(url):
-    scraper = Scraper()
+    scraper = Scraper(playwright_available=has_playwright())
     content = scraper.scrape(url)
     print(content)
 

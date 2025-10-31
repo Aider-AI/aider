@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
         labels: labels,
         datasets: [{
             label: 'Aider\'s percent of new code by release',
-            data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_percentage }}, lines: {{ row.aider_total }} },{% endfor %}],
+            data: [{% for row in site.data.blame %}{ x: '{{ row.end_tag }}', y: {{ row.aider_percentage }}, lines: {{ row.aider_total }}, end_date: '{{ row.end_date }}' },{% endfor %}],
             backgroundColor: 'rgba(54, 162, 235, 0.8)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
@@ -88,6 +88,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             var value = context.parsed.y || 0;
                             var lines = context.raw.lines || 0;
                             return `${label}: ${Math.round(value)}% (${lines} lines)`;
+                        },
+                        afterLabel: function(context) {
+                            let date = context.raw.end_date || 'n/a';
+                            return `Date: ` + date;
                         }
                     }
                 },

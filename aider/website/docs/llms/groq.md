@@ -10,13 +10,22 @@ The Llama 3 70B model works
 well with aider and is comparable to GPT-3.5 in code editing performance.
 You'll need a [Groq API key](https://console.groq.com/keys).
 
-To use **Llama3 70B**:
+First, install aider:
+
+{% include install.md %}
+
+Then configure your API keys:
 
 ```
-python -m pip install -U aider-chat
-
 export GROQ_API_KEY=<key> # Mac/Linux
 setx   GROQ_API_KEY <key> # Windows, restart shell after setx
+```
+
+Start working with aider and Groq on your codebase:
+
+```bash
+# Change directory into your codebase
+cd /to/your/project
 
 aider --model groq/llama3-70b-8192
 

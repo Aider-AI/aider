@@ -5,7 +5,7 @@ FROM bretfisher/jekyll-serve
 WORKDIR /site
 
 # Copy the current directory contents into the container at /srv/jekyll
-COPY website /site
+COPY aider/website /site
 
 RUN apt-get update && apt-get install libcurl4
 

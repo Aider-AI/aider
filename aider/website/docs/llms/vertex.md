@@ -13,6 +13,10 @@ or service account with permission to use the Vertex AI API.
 With your chosen login method, the gcloud CLI should automatically set the
 `GOOGLE_APPLICATION_CREDENTIALS` environment variable which points to the credentials file.
 
+First, install aider:
+
+{% include install.md %}
+
 To configure Aider to use the Vertex AI API, you need to set `VERTEXAI_PROJECT` (the GCP project ID)
 and `VERTEXAI_LOCATION` (the GCP region) [environment variables for Aider](/docs/config/dotenv.html).
 
@@ -27,13 +31,16 @@ VERTEXAI_PROJECT=my-project
 VERTEXAI_LOCATION=us-east5
 ```
 
-Then you can run aider with the `--model` command line switch, like this:
+Start working with aider and Vertex AI on your codebase:
 
 ```
+# Change directory into your codebase
+cd /to/your/project
+
 aider --model vertex_ai/claude-3-5-sonnet@20240620
 ```
 
-Or you can use the [yaml config](/docs/config/aider_conf.html) to set the model to any of the 
+Or you can use the [YAML config](/docs/config/aider_conf.html) to set the model to any of the 
 models supported by Vertex AI.
 
 Example `.aider.conf.yml` file:
