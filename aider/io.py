@@ -462,6 +462,11 @@ class InputOutput:
         self.outstanding_confirmations = []
         self.coder = None
 
+        # State tracking for confirmation input
+        self.confirmation_input_active = False
+        self.saved_input_text = ""
+        self.confirmation_future = None
+
         # Validate color settings after console is initialized
         self._validate_color_settings()
 
@@ -1241,17 +1246,22 @@ class InputOutput:
 
         if not isinstance(message, Text):
             message = Text(message)
-        color = ensure_hash_prefix(color) if color else None
-        style = dict(style=color) if self.pretty and color else dict()
+
+        style = dict()
+
+        if self.pretty:
+            color = ensure_hash_prefix(color) if color else None
+            if color:
+                style["color"] = color
 
         try:
-            self.stream_print(message, **style)
+            self.stream_print(message, style=RichStyle(**style))
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
             if isinstance(message, Text):
                 message = message.plain
             message = str(message).encode("ascii", errors="replace").decode("ascii")
-            self.stream_print(message, **style)
+            self.stream_print(message, style=RichStyle(**style))
 
         if self.prompt_session and self.prompt_session.app:
             self.prompt_session.app.invalidate()
