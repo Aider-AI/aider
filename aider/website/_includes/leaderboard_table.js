@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   let currentMode = 'view'; // 'view', 'select', 'detail'
   let selectedRows = new Set(); // Store indices of selected rows
-  const MAX_DISPLAY_COST_CAP = 75; // Define the constant here
+  const MAX_DISPLAY_COST_CAP = 200; // Define the constant here
 
   const allMainRows = document.querySelectorAll('tr[id^="main-row-"]');
   const allDetailsRows = document.querySelectorAll('tr[id^="details-"]');
@@ -188,10 +188,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update the leaderboard title based on mode and selection
     if (leaderboardTitle) {
-      if (currentMode === 'view' && selectedRows.size > 0) {
-        leaderboardTitle.textContent = filteredTitle;
+      // Check if a custom title is provided globally
+      if (typeof LEADERBOARD_CUSTOM_TITLE !== 'undefined' && LEADERBOARD_CUSTOM_TITLE) {
+        leaderboardTitle.textContent = LEADERBOARD_CUSTOM_TITLE;
       } else {
-        leaderboardTitle.textContent = defaultTitle;
+        if (currentMode === 'view' && selectedRows.size > 0) {
+          leaderboardTitle.textContent = filteredTitle;
+        } else {
+          leaderboardTitle.textContent = defaultTitle;
+        }
       }
     }
 

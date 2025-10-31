@@ -77,10 +77,10 @@ cog.out(get_supported_languages_md())
 | capnp                | .capnp               |          |   ✓    |
 | chatito              | .chatito             |    ✓     |   ✓    |
 | clarity              | .clar                |          |   ✓    |
-| clojure              | .clj                 |          |   ✓    |
-| clojure              | .cljc                |          |   ✓    |
-| clojure              | .cljs                |          |   ✓    |
-| clojure              | .edn                 |          |   ✓    |
+| clojure              | .clj                 |    ✓     |   ✓    |
+| clojure              | .cljc                |    ✓     |   ✓    |
+| clojure              | .cljs                |    ✓     |   ✓    |
+| clojure              | .edn                 |    ✓     |   ✓    |
 | cmake                | .cmake               |          |   ✓    |
 | cmake                | CMakeLists.txt       |          |   ✓    |
 | commonlisp           | .cl                  |    ✓     |   ✓    |
@@ -110,11 +110,11 @@ cog.out(get_supported_languages_md())
 | fennel               | .fnl                 |          |   ✓    |
 | firrtl               | .fir                 |          |   ✓    |
 | fish                 | .fish                |          |   ✓    |
-| fortran              | .f                   |          |   ✓    |
-| fortran              | .f03                 |          |   ✓    |
-| fortran              | .f08                 |          |   ✓    |
-| fortran              | .f90                 |          |   ✓    |
-| fortran              | .f95                 |          |   ✓    |
+| fortran              | .f                   |    ✓     |   ✓    |
+| fortran              | .f03                 |    ✓     |   ✓    |
+| fortran              | .f08                 |    ✓     |   ✓    |
+| fortran              | .f90                 |    ✓     |   ✓    |
+| fortran              | .f95                 |    ✓     |   ✓    |
 | func                 | .fc                  |          |   ✓    |
 | gdscript             | .gd                  |          |   ✓    |
 | gitattributes        | .gitattributes       |          |   ✓    |
@@ -153,7 +153,7 @@ cog.out(get_supported_languages_md())
 | json                 | .json                |          |   ✓    |
 | jsonnet              | .jsonnet             |          |   ✓    |
 | jsonnet              | .libsonnet           |          |   ✓    |
-| julia                | .jl                  |          |   ✓    |
+| julia                | .jl                  |    ✓     |   ✓    |
 | kconfig              | Kconfig              |          |   ✓    |
 | kdl                  | .kdl                 |          |   ✓    |
 | kotlin               | .kt                  |    ✓     |   ✓    |
@@ -172,14 +172,16 @@ cog.out(get_supported_languages_md())
 | make                 | Makefile             |          |   ✓    |
 | markdown             | .markdown            |          |   ✓    |
 | markdown             | .md                  |          |   ✓    |
-| matlab               | .m                   |          |   ✓    |
-| matlab               | .mat                 |          |   ✓    |
+| matlab               | .m                   |    ✓     |   ✓    |
+| matlab               | .mat                 |    ✓     |   ✓    |
 | mermaid              | .mermaid             |          |   ✓    |
 | meson                | meson.build          |          |   ✓    |
 | ninja                | .ninja               |          |   ✓    |
 | nix                  | .nix                 |          |   ✓    |
 | nqc                  | .nqc                 |          |   ✓    |
 | objc                 | .mm                  |          |   ✓    |
+| ocaml                | .ml                  |    ✓     |   ✓    |
+| ocaml_interface      | .mli                 |    ✓     |   ✓    |
 | odin                 | .odin                |          |   ✓    |
 | org                  | .org                 |          |   ✓    |
 | pascal               | .pas                 |          |   ✓    |

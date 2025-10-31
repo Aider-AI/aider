@@ -32,7 +32,7 @@ aux_links:
   "GitHub":
     - "https://github.com/Aider-AI/aider"
   "Discord":
-    - "https://discord.gg/Tv2uQnR88V"
+    - "https://discord.gg/Y7X7bhMQFV"
   "Blog":
     - "/blog/"
 
@@ -40,7 +40,7 @@ nav_external_links:
   - title: "GitHub"
     url: "https://github.com/Aider-AI/aider"
   - title: "Discord"
-    url: "https://discord.gg/Tv2uQnR88V"
+    url: "https://discord.gg/Y7X7bhMQFV"
 
 repository: Aider-AI/aider
 

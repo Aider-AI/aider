@@ -32,6 +32,11 @@
   .side-bar { 
     background: linear-gradient(135deg, #ffffff 0%, rgba(20, 176, 20, 0.01) 25%, rgba(20, 176, 20, 0.04) 40%, rgba(220, 230, 255, 0.4) 60%, rgba(205, 218, 255, 0.4) 80%, #F5F6FA 100%);
   }
+
+  @media (max-width: 50em) {
+    .ea-ad--sidebar { display: none; }
+    .ea-ad--mobile { display: block; }
+  }
 </style>
 <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="{{ site.url }}/feed.xml">
 <link rel="preconnect" href="https://fonts.gstatic.com">

@@ -63,37 +63,37 @@ class ChatSummary:
         if split_index <= min_split:
             return self.summarize_all(messages)
 
-        head = messages[:split_index]
+        # Split head and tail
         tail = messages[split_index:]
 
-        sized = sized[:split_index]
-        head.reverse()
-        sized.reverse()
+        # Only size the head once
+        sized_head = sized[:split_index]
+
+        # Precompute token limit (fallback to 4096 if undefined)
+        model_max_input_tokens = self.models[0].info.get("max_input_tokens") or 4096
+        model_max_input_tokens -= 512  # reserve buffer for safety
+
         keep = []
         total = 0
 
-        # These sometimes come set with value = None
-        model_max_input_tokens = self.models[0].info.get("max_input_tokens") or 4096
-        model_max_input_tokens -= 512
-
-        for i in range(split_index):
-            total += sized[i][0]
+        # Iterate in original order, summing tokens until limit
+        for tokens, msg in sized_head:
+            total += tokens
             if total > model_max_input_tokens:
                 break
-            keep.append(head[i])
-
-        keep.reverse()
+            keep.append(msg)
+        # No need to reverse lists back and forth
 
         summary = self.summarize_all(keep)
 
-        tail_tokens = sum(tokens for tokens, msg in sized[split_index:])
+        # If the combined summary and tail still fits, return directly
         summary_tokens = self.token_count(summary)
-
-        result = summary + tail
+        tail_tokens = sum(tokens for tokens, _ in sized[split_index:])
         if summary_tokens + tail_tokens < self.max_tokens:
-            return result
+            return summary + tail
 
-        return self.summarize_real(result, depth + 1)
+        # Otherwise recurse with increased depth
+        return self.summarize_real(summary + tail, depth + 1)
 
     def summarize_all(self, messages):
         content = ""

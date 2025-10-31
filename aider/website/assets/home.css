@@ -446,7 +446,7 @@ code, pre, .code-block {
 }
 
 .testimonial-text::before {
-    content: "\201C"; /* Opening fancy quote */
+    content: "\201C\00A0"; /* Opening fancy quote */
     color: var(--primary);
     margin-right: 4px;
     vertical-align: -0.3em;

@@ -49,13 +49,16 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--completion-menu-current-color]
              [--completion-menu-current-bg-color] [--code-theme]
              [--show-diffs] [--git | --no-git]
-             [--gitignore | --no-gitignore] [--aiderignore]
-             [--subtree-only] [--auto-commits | --no-auto-commits]
+             [--gitignore | --no-gitignore]
+             [--add-gitignore-files | --no-add-gitignore-files]
+             [--aiderignore] [--subtree-only]
+             [--auto-commits | --no-auto-commits]
              [--dirty-commits | --no-dirty-commits]
              [--attribute-author | --no-attribute-author]
              [--attribute-committer | --no-attribute-committer]
              [--attribute-commit-message-author | --no-attribute-commit-message-author]
              [--attribute-commit-message-committer | --no-attribute-commit-message-committer]
+             [--attribute-co-authored-by | --no-attribute-co-authored-by]
              [--git-commit-verify | --no-git-commit-verify]
              [--commit] [--commit-prompt] [--dry-run | --no-dry-run]
              [--skip-sanity-check-repo]
@@ -63,7 +66,9 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--lint-cmd] [--auto-lint | --no-auto-lint]
              [--test-cmd] [--auto-test | --no-auto-test] [--test]
              [--analytics | --no-analytics] [--analytics-log]
-             [--analytics-disable] [--just-check-update]
+             [--analytics-disable] [--analytics-posthog-host]
+             [--analytics-posthog-project-api-key]
+             [--just-check-update]
              [--check-update | --no-check-update]
              [--show-release-notes | --no-show-release-notes]
              [--install-main-branch] [--upgrade] [--version]
@@ -72,17 +77,19 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--copy-paste | --no-copy-paste] [--apply]
              [--apply-clipboard-edits] [--exit] [--show-repo-map]
              [--show-prompts] [--voice-format] [--voice-language]
-             [--voice-input-device] [--file] [--read] [--vim]
-             [--chat-language] [--yes-always] [-v] [--load]
-             [--encoding] [--line-endings] [-c] [--env-file]
+             [--voice-input-device] [--disable-playwright] [--file]
+             [--read] [--vim] [--chat-language] [--commit-language]
+             [--yes-always] [-v] [--load] [--encoding]
+             [--line-endings] [-c] [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
              [--notifications | --no-notifications]
              [--notifications-command]
-             [--detect-urls | --no-detect-urls] [--editor] [--opus]
-             [--sonnet] [--haiku] [--4] [--4o] [--mini] [--4-turbo]
-             [--35turbo] [--deepseek] [--o1-mini] [--o1-preview]
+             [--detect-urls | --no-detect-urls] [--editor]
+             [--shell-completions] [--opus] [--sonnet] [--haiku]
+             [--4] [--4o] [--mini] [--4-turbo] [--35turbo]
+             [--deepseek] [--o1-mini] [--o1-preview]
 
 ```
 
@@ -168,7 +175,7 @@ Set the reasoning_effort API parameter (default: not set)
 Environment variable: `AIDER_REASONING_EFFORT`  
 
 ### `--thinking-tokens VALUE`
-Set the thinking token budget for models that support it (default: not set)  
+Set the thinking token budget for models that support it. Use 0 to disable. (default: not set)  
 Environment variable: `AIDER_THINKING_TOKENS`  
 
 ### `--verify-ssl`
@@ -385,6 +392,14 @@ Aliases:
   - `--gitignore`
   - `--no-gitignore`
 
+### `--add-gitignore-files`
+Enable/disable the addition of files listed in .gitignore to Aider's editing scope.  
+Default: False  
+Environment variable: `AIDER_ADD_GITIGNORE_FILES`  
+Aliases:
+  - `--add-gitignore-files`
+  - `--no-add-gitignore-files`
+
 ### `--aiderignore AIDERIGNORE`
 Specify the aider ignore file (default: .aiderignore in git root)  
 Default: .aiderignore  
@@ -412,16 +427,14 @@ Aliases:
   - `--no-dirty-commits`
 
 ### `--attribute-author`
-Attribute aider code changes in the git author name (default: True)  
-Default: True  
+Attribute aider code changes in the git author name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence.  
 Environment variable: `AIDER_ATTRIBUTE_AUTHOR`  
 Aliases:
   - `--attribute-author`
   - `--no-attribute-author`
 
 ### `--attribute-committer`
-Attribute aider commits in the git committer name (default: True)  
-Default: True  
+Attribute aider commits in the git committer name (default: True). If explicitly set to True, overrides --attribute-co-authored-by precedence for aider edits.  
 Environment variable: `AIDER_ATTRIBUTE_COMMITTER`  
 Aliases:
   - `--attribute-committer`
@@ -442,6 +455,14 @@ Environment variable: `AIDER_ATTRIBUTE_COMMIT_MESSAGE_COMMITTER`
 Aliases:
   - `--attribute-commit-message-committer`
   - `--no-attribute-commit-message-committer`
+
+### `--attribute-co-authored-by`
+Attribute aider edits using the Co-authored-by trailer in the commit message (default: True). If True, this takes precedence over default --attribute-author and --attribute-committer behavior unless they are explicitly set to True.  
+Default: True  
+Environment variable: `AIDER_ATTRIBUTE_CO_AUTHORED_BY`  
+Aliases:
+  - `--attribute-co-authored-by`
+  - `--no-attribute-co-authored-by`
 
 ### `--git-commit-verify`
 Enable/disable git pre-commit hooks with --no-verify (default: False)  
@@ -536,6 +557,14 @@ Environment variable: `AIDER_ANALYTICS_LOG`
 Permanently disable analytics  
 Default: False  
 Environment variable: `AIDER_ANALYTICS_DISABLE`  
+
+### `--analytics-posthog-host ANALYTICS_POSTHOG_HOST`
+Send analytics to custom PostHog instance  
+Environment variable: `AIDER_ANALYTICS_POSTHOG_HOST`  
+
+### `--analytics-posthog-project-api-key ANALYTICS_POSTHOG_PROJECT_API_KEY`
+Send analytics to custom PostHog project  
+Environment variable: `AIDER_ANALYTICS_POSTHOG_PROJECT_API_KEY`  
 
 ## Upgrading:
 
@@ -652,6 +681,11 @@ Environment variable: `AIDER_VOICE_INPUT_DEVICE`
 
 ## Other settings:
 
+### `--disable-playwright`
+Never prompt for or attempt to install Playwright for web scraping (default: False).  
+Default: False  
+Environment variable: `AIDER_DISABLE_PLAYWRIGHT`  
+
 ### `--file FILE`
 specify a file to edit (can be used multiple times)  
 Environment variable: `AIDER_FILE`  
@@ -668,6 +702,10 @@ Environment variable: `AIDER_VIM`
 ### `--chat-language CHAT_LANGUAGE`
 Specify the language to use in the chat (default: None, uses system settings)  
 Environment variable: `AIDER_CHAT_LANGUAGE`  
+
+### `--commit-language COMMIT_LANGUAGE`
+Specify the language to use in the commit message (default: None, user language)  
+Environment variable: `AIDER_COMMIT_LANGUAGE`  
 
 ### `--yes-always`
 Always say yes to every confirmation  
@@ -753,6 +791,10 @@ Aliases:
 ### `--editor VALUE`
 Specify which editor to use for the /editor command  
 Environment variable: `AIDER_EDITOR`  
+
+### `--shell-completions SHELL`
+Print shell completion script for the specified SHELL and exit. Supported shells: bash, tcsh, zsh. Example: aider --shell-completions bash  
+Environment variable: `AIDER_SHELL_COMPLETIONS`  
 
 ## Deprecated model settings:
 

@@ -10,20 +10,25 @@ To work with Anthropic's models, you need to provide your
 either in the `ANTHROPIC_API_KEY` environment variable or
 via the `--anthropic-api-key` command line switch.
 
-Aider has some built in shortcuts for the most popular Anthropic models and
-has been tested and benchmarked to work well with them:
+First, install aider:
+
+{% include install.md %}
+
+Then configure your API keys:
 
 ```
-python -m pip install -U aider-chat
-
 export ANTHROPIC_API_KEY=<key> # Mac/Linux
 setx   ANTHROPIC_API_KEY <key> # Windows, restart shell after setx
+```
+
+Start working with aider and Anthropic on your codebase:
+
+```bash
+# Change directory into your codebase
+cd /to/your/project
 
 # Aider uses Claude 3.7 Sonnet by default
 aider
-
-# Claude 3 Opus
-aider --model claude-3-opus-20240229
 
 # List models available from Anthropic
 aider --list-models anthropic/

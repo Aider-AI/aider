@@ -348,8 +348,8 @@ def process_fenced_block(lines, start_line_num):
         a_fname = block[0][4:].strip()
         b_fname = block[1][4:].strip()
 
-        # Check if standard git diff prefixes are present and strip them
-        if a_fname.startswith("a/") and b_fname.startswith("b/"):
+        # Check if standard git diff prefixes are present (or /dev/null) and strip them
+        if (a_fname.startswith("a/") or a_fname == "/dev/null") and b_fname.startswith("b/"):
             fname = b_fname[2:]
         else:
             # Otherwise, assume the path is as intended

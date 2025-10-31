@@ -3,7 +3,6 @@
 Download Material Design Icons SVGs used in the README and save to local assets.
 """
 
-import os
 from pathlib import Path
 
 import requests

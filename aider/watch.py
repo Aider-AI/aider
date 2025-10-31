@@ -34,6 +34,8 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
         "__pycache__/",  # Python cache dir
         ".DS_Store",  # macOS metadata
         "Thumbs.db",  # Windows thumbnail cache
+        "*.svg",
+        "*.pdf",
         # IDE files
         ".idea/",  # JetBrains IDEs
         ".vscode/",  # VS Code
@@ -64,7 +66,9 @@ class FileWatcher:
     """Watches source files for changes and AI comments"""
 
     # Compiled regex pattern for AI comments
-    ai_comment_pattern = re.compile(r"(?:#|//|--|;+) *(ai\b.*|ai\b.*|.*\bai[?!]?) *$", re.IGNORECASE)
+    ai_comment_pattern = re.compile(
+        r"(?:#|//|--|;+) *(ai\b.*|ai\b.*|.*\bai[?!]?) *$", re.IGNORECASE
+    )
 
     def __init__(self, coder, gitignores=None, verbose=False, analytics=None, root=None):
         self.coder = coder
@@ -93,15 +97,19 @@ class FileWatcher:
 
         rel_path = path_abs.relative_to(self.root)
         if self.verbose:
-            dump(rel_path)
+            print("Changed", rel_path)
 
         if self.gitignore_spec and self.gitignore_spec.match_file(
             rel_path.as_posix() + ("/" if path_abs.is_dir() else "")
         ):
             return False
 
+        # Check file size before reading content
+        if path_abs.is_file() and path_abs.stat().st_size > 1 * 1024 * 1024:  # 1MB limit
+            return False
+
         if self.verbose:
-            dump("ok", rel_path)
+            print("Checking", rel_path)
 
         # Check if file contains AI markers
         try:

@@ -17,6 +17,8 @@ First, aider will check which
 [keys you have provided via the environment, config files, or command line arguments](https://aider.chat/docs/config/api-keys.html).
 Based on the available keys, aider will select the best model to use.
 
+## OpenRouter
+
 If you have not provided any keys, aider will offer to help you connect to 
 [OpenRouter](http://openrouter.ai)
 which provides both free and paid access to most popular LLMs.

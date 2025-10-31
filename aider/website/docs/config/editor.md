@@ -12,7 +12,7 @@ Aider allows you to configure your preferred text editor for use with the `/edit
 
 You can specify the text editor with the `--editor` switch or using
 `editor:` in aider's
-[yaml config file](https://aider.chat/docs/config/aider_conf.html).
+[YAML config file](https://aider.chat/docs/config/aider_conf.html).
 
 ## Environment variables
 
