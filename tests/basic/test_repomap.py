@@ -302,6 +302,9 @@ class TestRepoMapAllLanguages(unittest.TestCase):
     def test_language_gleam(self):
         self._test_language_repo_map("gleam", "gleam", "greet")
 
+    def test_language_haskell(self):
+        self._test_language_repo_map("haskell", "hs", "add")
+
     def test_language_java(self):
         self._test_language_repo_map("java", "java", "Greeting")
 
