@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
 
+from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import AutoCompleter, ConfirmGroup, InputOutput
 from aider.utils import ChdirTemporaryDirectory
@@ -389,10 +390,11 @@ class TestInputOutputMultilineMode(unittest.TestCase):
             # The invalid Unicode should be replaced with '?'
             self.assertEqual(converted_message, "Hello ?World")
 
-    def test_multiline_mode_restored_after_interrupt(self):
+    async def test_multiline_mode_restored_after_interrupt(self):
         """Test that multiline mode is restored after KeyboardInterrupt"""
         io = InputOutput(fancy_input=True)
         io.prompt_session = MagicMock()
+        await Coder.create(self.GPT35, None, io)
 
         # Use AsyncMock for prompt_async (for confirm_ask)
         io.prompt_session.prompt_async = AsyncMock(side_effect=KeyboardInterrupt)
@@ -413,10 +415,11 @@ class TestInputOutputMultilineMode(unittest.TestCase):
             io.prompt_ask("Test prompt?")
         self.assertTrue(io.multiline_mode)  # Should be restored
 
-    def test_multiline_mode_restored_after_normal_exit(self):
+    async def test_multiline_mode_restored_after_normal_exit(self):
         """Test that multiline mode is restored after normal exit"""
         io = InputOutput(fancy_input=True)
         io.prompt_session = MagicMock()
+        await Coder.create(self.GPT35, None, io)
 
         # Use AsyncMock for prompt_async that returns "y"
         io.prompt_session.prompt_async = AsyncMock(return_value="y")

@@ -601,6 +601,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             multiline_mode=args.multiline,
             notifications=args.notifications,
             notifications_command=args.notifications_command,
+            verbose=args.verbose,
         )
 
     io = get_io(args.pretty)
