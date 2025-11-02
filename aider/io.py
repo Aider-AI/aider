@@ -320,6 +320,7 @@ class InputOutput:
         root=".",
         notifications=False,
         notifications_command=None,
+        verbose=False,
     ):
         self.console = Console()
         self.pretty = pretty
@@ -337,6 +338,8 @@ class InputOutput:
         self.multiline_mode = multiline_mode
         self.bell_on_next_input = False
         self.notifications = notifications
+        self.verbose = verbose
+
         if notifications and notifications_command is None:
             self.notifications_command = self.get_default_notification_command()
         else:
@@ -363,7 +366,7 @@ class InputOutput:
         )
 
         self.fzf_available = shutil.which("fzf")
-        if not self.fzf_available:
+        if not self.fzf_available and self.verbose:
             self.tool_warning(
                 "fzf not found, fuzzy finder features will be disabled. Install it for enhanced"
                 " file/history search."
@@ -460,7 +463,18 @@ class InputOutput:
         self.file_watcher = file_watcher
         self.root = root
         self.outstanding_confirmations = []
+
+        # Variables used to interface with base_coder
         self.coder = None
+        self.input_task = None
+        self.processing_task = None
+        self.confirmation_in_progress = False
+        self.confirmation_acknowledgement = False
+
+        # State tracking for confirmation input
+        self.confirmation_input_active = False
+        self.saved_input_text = ""
+        self.confirmation_future = None
 
         # Validate color settings after console is initialized
         self._validate_color_settings()
@@ -657,16 +671,8 @@ class InputOutput:
             print()
 
     def interrupt_input(self):
-        coder = self.coder() if self.coder else None
-        # interrupted_for_confirmation = False
-
-        if (
-            coder
-            and hasattr(coder, "input_task")
-            and coder.input_task
-            and not coder.input_task.done()
-        ):
-            coder.input_task.cancel()
+        if self.input_task and not self.input_task.done():
+            self.input_task.cancel()
 
         if self.prompt_session and self.prompt_session.app:
             # Store any partial input before interrupting
@@ -697,9 +703,6 @@ class InputOutput:
     ):
         self.reject_outstanding_confirmations()
         self.rule()
-
-        # Ring the bell if needed
-        self.ring_bell()
 
         rel_fnames = list(rel_fnames)
         show = ""
@@ -879,6 +882,11 @@ class InputOutput:
                 self.tool_error(str(err))
                 return ""
             except Exception as err:
+                try:
+                    self.prompt_session.app.exit()
+                except Exception:
+                    pass
+
                 import traceback
 
                 self.tool_error(str(err))
@@ -930,6 +938,26 @@ class InputOutput:
 
         self.user_input(inp)
         return inp
+
+    async def cancel_input_task(self):
+        if self.input_task:
+            input_task = self.input_task
+            self.input_task = None
+            try:
+                input_task.cancel()
+                await input_task
+            except asyncio.CancelledError:
+                pass
+
+    async def cancel_processing_task(self):
+        if self.processing_task:
+            processing_task = self.processing_task
+            self.processing_task = None
+            try:
+                processing_task.cancel()
+                await processing_task
+            except asyncio.CancelledError:
+                pass
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:
@@ -1001,32 +1029,33 @@ class InputOutput:
             return True
         return False
 
+    def set_confirmation_acknowledgement(self):
+        self.confirmation_acknowledgement = True
+
+    def get_confirmation_acknowledgement(self):
+        return self.confirmation_acknowledgement
+
+    def acknowledge_confirmation(self):
+        outstanding_confirmation = self.confirmation_acknowledgement
+        self.confirmation_acknowledgement = False
+        return outstanding_confirmation
+
     @restore_multiline_async
     async def confirm_ask(
         self,
         *args,
         **kwargs,
     ):
-        coder = self.coder() if self.coder else None
-        interrupted_for_confirmation = False
-        if (
-            coder
-            and hasattr(coder, "input_task")
-            and coder.input_task
-            and not coder.input_task.done()
-        ):
-            coder.confirmation_in_progress = True
-            interrupted_for_confirmation = True
-            # self.interrupt_input()
+        self.confirmation_in_progress = True
 
         try:
+            self.set_confirmation_acknowledgement()
             return await asyncio.create_task(self._confirm_ask(*args, **kwargs))
         except KeyboardInterrupt:
             # Re-raise KeyboardInterrupt to allow it to propagate
             raise
         finally:
-            if interrupted_for_confirmation:
-                coder.confirmation_in_progress = False
+            self.confirmation_in_progress = False
 
     async def _confirm_ask(
         self,
@@ -1038,9 +1067,6 @@ class InputOutput:
         allow_never=False,
     ):
         self.num_user_asks += 1
-
-        # Ring the bell if needed
-        self.ring_bell()
 
         question_id = (question, subject)
 
@@ -1086,47 +1112,45 @@ class InputOutput:
                 else:
                     self.tool_output(subject, bold=True)
 
-            style = self._get_style()
-
             if self.yes is True:
                 res = "n" if explicit_yes_required else "y"
+                self.acknowledge_confirmation()
             elif self.yes is False:
                 res = "n"
+                self.acknowledge_confirmation()
             elif group and group.preference:
                 res = group.preference
                 self.user_input(f"{question}{res}", log_only=False)
+                self.acknowledge_confirmation()
             else:
+                # Ring the bell if needed
+                self.ring_bell()
+
                 while True:
                     try:
                         if self.prompt_session:
-                            coder = self.coder() if self.coder else None
                             if (
-                                coder
-                                and hasattr(coder, "input_task")
-                                and coder.input_task
-                                and not coder.input_task.done()
+                                not self.input_task
+                                or self.input_task.done()
+                                or self.input_task.cancelled()
+                            ):
+                                coder = self.coder() if self.coder else None
+
+                                if coder:
+                                    self.input_task = asyncio.create_task(coder.get_input())
+                                    await asyncio.sleep(0)
+
+                            if (
+                                self.input_task
+                                and not self.input_task.done()
+                                and not self.input_task.cancelled()
                             ):
                                 self.prompt_session.message = question
                                 self.prompt_session.app.invalidate()
-                                res = await coder.input_task
                             else:
-                                prompt_task = asyncio.create_task(
-                                    self.prompt_session.prompt_async(
-                                        question,
-                                        style=style,
-                                        complete_while_typing=False,
-                                    )
-                                )
-                                done, pending = await asyncio.wait(
-                                    {prompt_task, confirmation_future},
-                                    return_when=asyncio.FIRST_COMPLETED,
-                                )
+                                continue
 
-                                if confirmation_future in done:
-                                    prompt_task.cancel()
-                                    return await confirmation_future
-
-                                res = await prompt_task
+                            res = await self.input_task
                         else:
                             res = await asyncio.get_event_loop().run_in_executor(
                                 None, input, question
@@ -1241,17 +1265,22 @@ class InputOutput:
 
         if not isinstance(message, Text):
             message = Text(message)
-        color = ensure_hash_prefix(color) if color else None
-        style = dict(style=color) if self.pretty and color else dict()
+
+        style = dict()
+
+        if self.pretty:
+            color = ensure_hash_prefix(color) if color else None
+            if color:
+                style["color"] = color
 
         try:
-            self.stream_print(message, **style)
+            self.stream_print(message, style=RichStyle(**style))
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
             if isinstance(message, Text):
                 message = message.plain
             message = str(message).encode("ascii", errors="replace").decode("ascii")
-            self.stream_print(message, **style)
+            self.stream_print(message, style=RichStyle(**style))
 
         if self.prompt_session and self.prompt_session.app:
             self.prompt_session.app.invalidate()

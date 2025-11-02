@@ -42,7 +42,7 @@ from rich.console import Console
 
 from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
-from aider.commands import Commands
+from aider.commands import Commands, SwitchCoder
 from aider.exceptions import LiteLLMExceptions
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
@@ -585,8 +585,6 @@ class Coder:
         self.summarizer_thread = None
         self.summarized_done_messages = []
         self.summarizing_messages = None
-        self.input_task = None
-        self.confirmation_in_progress = False
 
         self.files_edited_by_tools = set()
 
@@ -1057,7 +1055,7 @@ class Coder:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
 
     async def run(self, with_message=None, preproc=True):
-        while self.confirmation_in_progress:
+        while self.io.confirmation_in_progress:
             await asyncio.sleep(0.1)  # Yield control and wait briefly
 
         if self.io.prompt_session:
@@ -1067,8 +1065,6 @@ class Coder:
             return await self._run_patched(with_message, preproc)
 
     async def _run_patched(self, with_message=None, preproc=True):
-        input_task = None
-        processing_task = None
         try:
             if with_message:
                 self.io.user_input(with_message)
@@ -1076,91 +1072,134 @@ class Coder:
                 return self.partial_response_content
 
             user_message = None
+            await self.io.cancel_input_task()
+            await self.io.cancel_processing_task()
 
             while True:
                 try:
                     if (
-                        not self.confirmation_in_progress
-                        and not input_task
+                        not self.io.confirmation_in_progress
                         and not user_message
-                        and (not processing_task or not self.io.placeholder)
+                        and (
+                            not self.io.input_task
+                            or self.io.input_task.done()
+                            or self.io.input_task.cancelled()
+                        )
+                        and (not self.io.processing_task or not self.io.placeholder)
                     ):
                         if not self.suppress_announcements_for_next_prompt:
                             self.show_announcements()
-                        self.suppress_announcements_for_next_prompt = False
+                        self.suppress_announcements_for_next_prompt = True
 
                         # Stop spinner before showing announcements or getting input
                         self.io.stop_spinner()
-
                         self.copy_context()
-                        self.input_task = asyncio.create_task(self.get_input())
-                        input_task = self.input_task
+                        self.io.input_task = asyncio.create_task(self.get_input())
+
+                        # Yield Control so input can actually get properly set up
+                        await asyncio.sleep(0)
 
                     tasks = set()
-                    if processing_task:
-                        tasks.add(processing_task)
-                    if input_task:
-                        tasks.add(input_task)
+
+                    if self.io.processing_task:
+                        if self.io.processing_task.done():
+                            exception = self.io.processing_task.exception()
+                            if exception:
+                                if isinstance(exception, SwitchCoder):
+                                    await self.io.processing_task
+                        elif (
+                            not self.io.processing_task.done()
+                            and not self.io.processing_task.cancelled()
+                        ):
+                            tasks.add(self.io.processing_task)
+
+                    if (
+                        self.io.input_task
+                        and not self.io.input_task.done()
+                        and not self.io.input_task.cancelled()
+                    ):
+                        tasks.add(self.io.input_task)
 
                     if tasks:
                         done, pending = await asyncio.wait(
                             tasks, return_when=asyncio.FIRST_COMPLETED
                         )
 
-                        if input_task and input_task in done:
-                            if processing_task:
-                                if not self.confirmation_in_progress:
-                                    processing_task.cancel()
-                                    try:
-                                        await processing_task
-                                    except asyncio.CancelledError:
-                                        pass
+                        if self.io.input_task and self.io.input_task in done:
+                            if self.io.processing_task:
+                                if not self.io.confirmation_in_progress:
+                                    await self.io.cancel_processing_task()
                                     self.io.stop_spinner()
-                                    processing_task = None
 
                             try:
-                                user_message = input_task.result()
+                                user_message = self.io.input_task.result()
+                                await self.io.cancel_input_task()
                             except (asyncio.CancelledError, KeyboardInterrupt):
                                 user_message = None
-                            input_task = None
-                            self.input_task = None
-                            if user_message is None:
+
+                            if not user_message:
+                                await self.io.cancel_input_task()
                                 continue
 
-                        if processing_task and processing_task in done:
+                        if self.io.processing_task and self.io.processing_task in pending:
                             try:
-                                await processing_task
+                                tasks = set()
+                                tasks.add(self.io.processing_task)
+
+                                # We just did a confirmation so add a new input task
+                                if (
+                                    not self.io.input_task
+                                    and self.io.get_confirmation_acknowledgement()
+                                ):
+                                    self.io.input_task = asyncio.create_task(self.get_input())
+                                    tasks.add(self.io.input_task)
+
+                                done, pending = await asyncio.wait(
+                                    tasks, return_when=asyncio.FIRST_COMPLETED
+                                )
+
+                                if self.io.input_task and self.io.input_task in done:
+                                    await self.io.cancel_processing_task()
+                                    self.io.stop_spinner()
+                                    self.io.acknowledge_confirmation()
+
+                                    try:
+                                        user_message = self.io.input_task.result()
+                                        await self.io.cancel_input_task()
+                                    except (asyncio.CancelledError, KeyboardInterrupt):
+                                        user_message = None
+
                             except (asyncio.CancelledError, KeyboardInterrupt):
+                                print("error of some sort")
                                 pass
-                            processing_task = None
+
                             # Stop spinner when processing task completes
                             self.io.stop_spinner()
 
-                    if user_message and self.run_one_completed and self.compact_context_completed:
-                        processing_task = asyncio.create_task(
+                    if user_message and not self.io.acknowledge_confirmation():
+                        self.io.processing_task = asyncio.create_task(
                             self._processing_logic(user_message, preproc)
                         )
                         # Start spinner for processing task
                         self.io.start_spinner("Processing...")
-                        user_message = None  # Clear message after starting task
+
+                    self.io.ring_bell()
+                    user_message = None
                 except KeyboardInterrupt:
-                    if processing_task:
-                        processing_task.cancel()
-                        processing_task = None
-                        # Stop spinner when processing task is cancelled
-                        self.io.stop_spinner()
-                    if input_task:
+                    if self.io.input_task:
                         self.io.set_placeholder("")
-                        input_task.cancel()
-                        input_task = None
+                        await self.io.cancel_input_task()
+
+                    if self.io.processing_task:
+                        await self.io.cancel_processing_task()
+                        self.io.stop_spinner()
+
                     self.keyboard_interrupt()
         except EOFError:
             return
         finally:
-            if input_task:
-                input_task.cancel()
-            if processing_task:
-                processing_task.cancel()
+            await self.io.cancel_input_task()
+            await self.io.cancel_processing_task()
 
     async def _processing_logic(self, user_message, preproc):
         try:
@@ -1188,6 +1227,7 @@ class Coder:
         all_read_only_files = [self.get_rel_fname(fname) for fname in all_read_only_fnames]
         all_files = sorted(set(inchat_files + all_read_only_files))
         edit_format = "" if self.edit_format == self.main_model.edit_format else self.edit_format
+
         return await self.io.get_input(
             self.root,
             all_files,
@@ -1214,6 +1254,8 @@ class Coder:
         self.init_before_message()
 
         if preproc:
+            if user_message[0] in "!":
+                user_message = f"/run {user_message[1:]}"
             message = await self.preproc_user_input(user_message)
         else:
             message = user_message
@@ -2704,7 +2746,7 @@ class Coder:
 
         async for chunk in completion:
             # Check if confirmation is in progress and wait if needed
-            while self.confirmation_in_progress:
+            while self.io.confirmation_in_progress:
                 await asyncio.sleep(0.1)  # Yield control and wait briefly
 
             if isinstance(chunk, str):
