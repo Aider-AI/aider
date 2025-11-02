@@ -77,10 +77,11 @@ usage: aider [-h] [--model] [--openai-api-key] [--anthropic-api-key]
              [--copy-paste | --no-copy-paste] [--apply]
              [--apply-clipboard-edits] [--exit] [--show-repo-map]
              [--show-prompts] [--voice-format] [--voice-language]
-             [--voice-input-device] [--disable-playwright] [--file]
-             [--read] [--vim] [--chat-language] [--commit-language]
-             [--yes-always] [-v] [--load] [--encoding]
-             [--line-endings] [-c] [--env-file]
+             [--voice-input-device] [--disable-playwright]
+             [--playwright-ws-endpoint] [--file] [--read] [--vim]
+             [--chat-language] [--commit-language] [--yes-always]
+             [-v] [--load] [--encoding] [--line-endings] [-c]
+             [--env-file]
              [--suggest-shell-commands | --no-suggest-shell-commands]
              [--fancy-input | --no-fancy-input]
              [--multiline | --no-multiline]
@@ -679,12 +680,21 @@ Environment variable: `AIDER_VOICE_LANGUAGE`
 Specify the input device name for voice recording  
 Environment variable: `AIDER_VOICE_INPUT_DEVICE`  
 
-## Other settings:
+## Playwright settings:
 
 ### `--disable-playwright`
 Never prompt for or attempt to install Playwright for web scraping (default: False).  
 Default: False  
 Environment variable: `AIDER_DISABLE_PLAYWRIGHT`  
+Aliases:
+  - `--disable-playwright`
+  - `--playwright-disable`
+
+### `--playwright-ws-endpoint URL`
+Specify the WebSocket endpoint for a Playwright browser server to connect to (default: None, use the locally installed Playwright).  
+Environment variable: `AIDER_PLAYWRIGHT_WS_ENDPOINT`  
+
+## Other settings:
 
 ### `--file FILE`
 specify a file to edit (can be used multiple times)  
