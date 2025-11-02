@@ -97,6 +97,7 @@ class Commands:
             model_name,
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=self.coder.main_model.weak_model.name,
+            ask_model=self.coder.main_model.ask_model.name,
         )
         models.sanity_check_models(self.io, model)
 
@@ -131,6 +132,19 @@ class Commands:
             self.coder.main_model.name,
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=model_name,
+        )
+        models.sanity_check_models(self.io, model)
+        raise SwitchCoder(main_model=model)
+
+    def cmd_ask_model(self, args):
+        "Switch the Ask Model to a new LLM"
+
+        model_name = args.strip()
+        model = models.Model(
+            self.coder.main_model.name,
+            editor_model=self.coder.main_model.editor_model.name,
+            weak_model=self.coder.main_model.weak_model.name,
+            ask_model=model_name,
         )
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
@@ -203,6 +217,14 @@ class Commands:
         )
 
     def completions_model(self):
+        models = litellm.model_cost.keys()
+        return models
+
+    def completions_ask_model(self):
+        models = litellm.model_cost.keys()
+        return models
+
+    def completions_editor_model(self):
         models = litellm.model_cost.keys()
         return models
 
@@ -1422,6 +1444,7 @@ class Commands:
             ("Main model", self.coder.main_model),
             ("Editor model", getattr(self.coder.main_model, "editor_model", None)),
             ("Weak model", getattr(self.coder.main_model, "weak_model", None)),
+            ("Ask model", getattr(self.coder.main_model, "ask_model", None)),
         ]
         for label, model in active_models:
             if not model:
