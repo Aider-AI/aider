@@ -84,6 +84,7 @@ class Commands:
 
         # Store the original read-only filenames provided via args.read
         self.original_read_only_fnames = set(original_read_only_fnames or [])
+        self.cmd_running = False
 
     def cmd_model(self, args):
         "Switch the Main Model to a new LLM"
@@ -255,6 +256,9 @@ class Commands:
 
     def is_command(self, inp):
         return inp[0] in "/!"
+
+    def is_run_command(self, inp):
+        return inp and (inp[0] in "!" or inp[:5] == "/test" or inp[:4] == "/run")
 
     def get_raw_completions(self, cmd):
         assert cmd.startswith("/")
@@ -1151,51 +1155,61 @@ class Commands:
 
     async def cmd_run(self, args, add_on_nonzero_exit=False):
         "Run a shell command and optionally add the output to the chat (alias: !)"
-        exit_status, combined_output = await asyncio.to_thread(
-            run_cmd,
-            args,
-            verbose=self.verbose,
-            error_print=self.io.tool_error,
-            cwd=self.coder.root,
-        )
-
-        if combined_output is None:
-            return
-
-        # Calculate token count of output
-        token_count = self.coder.main_model.token_count(combined_output)
-        k_tokens = token_count / 1000
-
-        if add_on_nonzero_exit:
-            add = exit_status != 0
-        else:
-            add = await self.io.confirm_ask(
-                f"Add {k_tokens:.1f}k tokens of command output to the chat?"
+        try:
+            self.cmd_running = True
+            exit_status, combined_output = await asyncio.to_thread(
+                run_cmd,
+                args,
+                verbose=self.verbose,
+                error_print=self.io.tool_error,
+                cwd=self.coder.root,
             )
+            self.cmd_running = False
 
-        if add:
-            num_lines = len(combined_output.strip().splitlines())
-            line_plural = "line" if num_lines == 1 else "lines"
-            self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
+            # This print statement, for whatever reason,
+            # allows the thread to properly yield control of the terminal
+            # to the main program
+            print("")
 
-            msg = prompts.run_output.format(
-                command=args,
-                output=combined_output,
-            )
+            if combined_output is None:
+                return
 
-            self.coder.cur_messages += [
-                dict(role="user", content=msg),
-                dict(role="assistant", content="Ok."),
-            ]
+            # Calculate token count of output
+            token_count = self.coder.main_model.token_count(combined_output)
+            k_tokens = token_count / 1000
 
-            if add_on_nonzero_exit and exit_status != 0:
-                # Return the formatted output message for test failures
-                return msg
-            elif add and exit_status != 0:
-                self.io.placeholder = "What's wrong? Fix"
+            if add_on_nonzero_exit:
+                add = exit_status != 0
+            else:
+                add = await self.io.confirm_ask(
+                    f"Add {k_tokens:.1f}k tokens of command output to the chat?"
+                )
 
-        # Return None if output wasn't added or command succeeded
-        return None
+            if add:
+                num_lines = len(combined_output.strip().splitlines())
+                line_plural = "line" if num_lines == 1 else "lines"
+                self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
+
+                msg = prompts.run_output.format(
+                    command=args,
+                    output=combined_output,
+                )
+
+                self.coder.cur_messages += [
+                    dict(role="user", content=msg),
+                    dict(role="assistant", content="Ok."),
+                ]
+
+                if add_on_nonzero_exit and exit_status != 0:
+                    # Return the formatted output message for test failures
+                    return msg
+                elif add and exit_status != 0:
+                    self.io.placeholder = "What's wrong? Fix"
+
+            # Return None if output wasn't added or command succeeded
+            return None
+        finally:
+            self.cmd_running = False
 
     def cmd_exit(self, args):
         "Exit the application"

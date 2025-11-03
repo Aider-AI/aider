@@ -315,7 +315,12 @@ def get_parser(default_config_files, git_root):
             " (default: current directory)"
         ),
     )
-
+    group.add_argument(
+        "--map-memory-cache",
+        action="store_true",
+        help="Store repo map in memory (default: False)",
+        default=False,
+    )
     ##########
     group = parser.add_argument_group("History Files")
     default_input_history_file = (
@@ -745,7 +750,14 @@ def get_parser(default_config_files, git_root):
         help="Print the system prompts and exit (debug)",
         default=False,
     )
-
+    group.add_argument(
+        "--linear-output",
+        action="store_true",
+        help=(
+            "Run input and output sequentially instead of us simultaneous streams (default: False)"
+        ),
+        default=False,
+    )
     ##########
     group = parser.add_argument_group("Voice settings")
     group.add_argument(
