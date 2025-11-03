@@ -2055,17 +2055,20 @@ class Coder:
             else:
                 return f"{value:.{max(2, 2 - int(math.log10(magnitude)))}f}"
 
-        cost_report = (
-            f"Cost: ${format_cost(self.message_cost)} message,"
-            f" ${format_cost(self.total_cost)} session."
-        )
+        if cost:
+            cost_report = (
+                f"Cost: ${format_cost(self.message_cost)} message,"
+                f" ${format_cost(self.total_cost)} session."
+            )
 
-        if cache_hit_tokens and cache_write_tokens:
-            sep = "\n"
+            if cache_hit_tokens and cache_write_tokens:
+                sep = "\n"
+            else:
+                sep = " "
+
+            self.usage_report = tokens_report + sep + cost_report
         else:
-            sep = " "
-
-        self.usage_report = tokens_report + sep + cost_report
+            self.usage_report = tokens_report
 
     def compute_costs_from_tokens(
         self, prompt_tokens, completion_tokens, cache_write_tokens, cache_hit_tokens
