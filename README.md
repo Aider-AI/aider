@@ -65,6 +65,8 @@ This project aims to be compatible with upstream Aider, but with priority commit
 
 ### Other Notes
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
+* [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
+
 
 ### Installation Instructions
 This project can be installed using several methods:
