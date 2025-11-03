@@ -941,7 +941,7 @@ class InputOutput:
             try:
                 input_task.cancel()
                 await input_task
-            except asyncio.CancelledError:
+            except (asyncio.CancelledError, IndexError):
                 pass
 
     async def cancel_processing_task(self):
@@ -951,7 +951,7 @@ class InputOutput:
             try:
                 processing_task.cancel()
                 await processing_task
-            except asyncio.CancelledError:
+            except (asyncio.CancelledError, IndexError):
                 pass
 
     def add_to_input_history(self, inp):

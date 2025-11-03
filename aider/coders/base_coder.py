@@ -381,6 +381,7 @@ class Coder:
         map_cache_dir=".",
         repomap_in_memory=False,
         preserve_todo_list=False,
+        linear_output=False,
     ):
         # initialize from args.map_cache_dir
         self.map_cache_dir = map_cache_dir
@@ -469,6 +470,7 @@ class Coder:
 
         self.dry_run = dry_run
         self.pretty = self.io.pretty
+        self.linear_output = linear_output
 
         self.main_model = main_model
 
@@ -1058,11 +1060,66 @@ class Coder:
         while self.io.confirmation_in_progress:
             await asyncio.sleep(0.1)  # Yield control and wait briefly
 
+        if self.linear_output:
+            return await self._run_linear(with_message, preproc)
+
         if self.io.prompt_session:
             with patch_stdout(raw=True):
                 return await self._run_patched(with_message, preproc)
         else:
             return await self._run_patched(with_message, preproc)
+
+    async def _run_linear(self, with_message=None, preproc=True):
+        try:
+            if with_message:
+                self.io.user_input(with_message)
+                await self.run_one(with_message, preproc)
+                return self.partial_response_content
+
+            user_message = None
+            await self.io.cancel_input_task()
+            await self.io.cancel_processing_task()
+
+            while True:
+                try:
+                    if self.commands.cmd_running:
+                        await asyncio.sleep(0.1)
+                        continue
+
+                    if not self.suppress_announcements_for_next_prompt:
+                        self.show_announcements()
+                    self.suppress_announcements_for_next_prompt = True
+
+                    self.io.input_task = asyncio.create_task(self.get_input())
+                    await asyncio.sleep(0)
+                    await self.io.input_task
+                    user_message = self.io.input_task.result()
+
+                    self.io.processing_task = asyncio.create_task(
+                        self._processing_logic(user_message, preproc)
+                    )
+
+                    await self.io.processing_task
+
+                    self.io.ring_bell()
+                    user_message = None
+                except KeyboardInterrupt:
+                    if self.io.input_task:
+                        self.io.set_placeholder("")
+                        await self.io.cancel_input_task()
+
+                    if self.io.processing_task:
+                        await self.io.cancel_processing_task()
+                        self.io.stop_spinner()
+
+                    self.keyboard_interrupt()
+                except (asyncio.CancelledError, IndexError):
+                    pass
+        except EOFError:
+            return
+        finally:
+            await self.io.cancel_input_task()
+            await self.io.cancel_processing_task()
 
     async def _run_patched(self, with_message=None, preproc=True):
         try:

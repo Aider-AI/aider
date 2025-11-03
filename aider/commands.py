@@ -258,7 +258,7 @@ class Commands:
         return inp[0] in "/!"
 
     def is_run_command(self, inp):
-        return inp[0] in "!" or inp[:5] == "/test" or inp[:4] == "/run"
+        return inp and (inp[0] in "!" or inp[:5] == "/test" or inp[:4] == "/run")
 
     def get_raw_completions(self, cmd):
         assert cmd.startswith("/")
