@@ -248,6 +248,51 @@ class TestInputOutput(unittest.TestCase):
         mock_input.reset_mock()
 
     @patch("builtins.input")
+    def test_confirm_ask_read_only_option(self, mock_input):
+        io = InputOutput(pretty=False, fancy_input=False)
+
+        # Test case 1: User selects 'Read-only' option
+        mock_input.return_value = "r"
+        result = io.confirm_ask(
+            "Add file to the chat?", subject="test_file.py", show_readonly=True, return_string=True
+        )
+        self.assertEqual(result, "readonly")
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 2: show_readonly=False should not offer read-only option
+        mock_input.side_effect = ["r", "n"]  # First 'r' will be invalid, then 'n' to exit the loop
+        result = io.confirm_ask(
+            "Add file to the chat?", subject="test_file.py", show_readonly=False, return_string=True
+        )
+        self.assertEqual(result, "no")
+        self.assertEqual(mock_input.call_count, 2)
+        mock_input.reset_mock()
+
+        # Test case 3: Return boolean with show_readonly=True and 'r' response
+        mock_input.side_effect = None  # Clear any side_effect
+        mock_input.return_value = "r"
+        result = io.confirm_ask(
+            "Add file to the chat?", subject="test_file.py", show_readonly=True, return_string=False
+        )
+        self.assertTrue(result)  # Should return True for backward compatibility
+        mock_input.assert_called_once()
+        mock_input.reset_mock()
+
+        # Test case 4: Verify prompt includes read-only option
+        mock_input.return_value = "y"
+        io.confirm_ask("Add file to the chat?", subject="test_file.py", show_readonly=True)
+        call_args = mock_input.call_args[0][0]
+        self.assertIn("(R)ead-only", call_args)
+        mock_input.reset_mock()
+
+        # Test case 5: Verify prompt doesn't include read-only option when show_readonly=False
+        mock_input.return_value = "y"
+        io.confirm_ask("Add file to the chat?", subject="test_file.py", show_readonly=False)
+        call_args = mock_input.call_args[0][0]
+        self.assertNotIn("(R)ead-only", call_args)
+
+    @patch("builtins.input")
     def test_confirm_ask_yes_no(self, mock_input):
         io = InputOutput(pretty=False, fancy_input=False)
 
