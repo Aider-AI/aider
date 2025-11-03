@@ -462,7 +462,6 @@ class InputOutput:
 
         self.file_watcher = file_watcher
         self.root = root
-        self.outstanding_confirmations = []
 
         # Variables used to interface with base_coder
         self.coder = None
@@ -474,7 +473,6 @@ class InputOutput:
         # State tracking for confirmation input
         self.confirmation_input_active = False
         self.saved_input_text = ""
-        self.confirmation_future = None
 
         # Validate color settings after console is initialized
         self._validate_color_settings()
@@ -686,10 +684,8 @@ class InputOutput:
 
     def reject_outstanding_confirmations(self):
         """Reject all outstanding confirmation dialogs."""
-        for future in self.outstanding_confirmations:
-            if not future.done():
-                future.set_result(False)
-        self.outstanding_confirmations = []
+        # This method is now a no-op since we removed the confirmation_future logic
+        pass
 
     async def get_input(
         self,
@@ -701,7 +697,6 @@ class InputOutput:
         abs_read_only_stubs_fnames=None,
         edit_format=None,
     ):
-        self.reject_outstanding_confirmations()
         self.rule()
 
         rel_fnames = list(rel_fnames)
@@ -1070,14 +1065,9 @@ class InputOutput:
 
         question_id = (question, subject)
 
-        confirmation_future = asyncio.get_running_loop().create_future()
-        self.outstanding_confirmations.append(confirmation_future)
-
         try:
             if question_id in self.never_prompts:
-                if not confirmation_future.done():
-                    confirmation_future.set_result(False)
-                return await confirmation_future
+                return False
 
             if group and not group.show_group:
                 group = None
@@ -1160,9 +1150,7 @@ class InputOutput:
                         res = default
                         break
                     except asyncio.CancelledError:
-                        if not confirmation_future.done():
-                            confirmation_future.set_result(False)
-                        raise
+                        return False
 
                     if not res:
                         res = default
@@ -1181,9 +1169,7 @@ class InputOutput:
                 self.never_prompts.add(question_id)
                 hist = f"{question.strip()} {res}"
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
-                if not confirmation_future.done():
-                    confirmation_future.set_result(False)
-                return await confirmation_future
+                return False
 
             if explicit_yes_required:
                 is_yes = res == "y"
@@ -1201,19 +1187,11 @@ class InputOutput:
 
             hist = f"{question.strip()} {res}"
             self.append_chat_history(hist, linebreak=True, blockquote=True)
-
-            if not confirmation_future.done():
-                confirmation_future.set_result(is_yes)
-
         except asyncio.CancelledError:
-            if not confirmation_future.done():
-                confirmation_future.set_result(False)
-            raise
+            return False
         finally:
-            if confirmation_future in self.outstanding_confirmations:
-                self.outstanding_confirmations.remove(confirmation_future)
-
-        return await confirmation_future
+            pass
+        return is_yes
 
     @restore_multiline
     def prompt_ask(self, question, default="", subject=None):
