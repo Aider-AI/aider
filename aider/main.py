@@ -140,14 +140,25 @@ def setup_git(git_root, io):
 
     if user_name and user_email:
         return repo.working_tree_dir
-
-    with repo.config_writer() as git_config:
-        if not user_name:
-            git_config.set_value("user", "name", "Your Name")
-            io.tool_warning('Update git name with: git config user.name "Your Name"')
-        if not user_email:
-            git_config.set_value("user", "email", "you@example.com")
-            io.tool_warning('Update git email with: git config user.email "you@example.com"')
+    
+    try:
+        with repo.config_writer() as git_config:
+            if not user_name:
+                git_config.set_value("user", "name", "Your Name")
+                io.tool_warning('Update git name with: git config user.name "Your Name"')
+            if not user_email:
+                git_config.set_value("user", "email", "you@example.com")
+                io.tool_warning('Update git email with: git config user.email "you@example.com"')
+    except (OSError, PermissionError) as e:
+        io.tool_warning(
+            f"Warning: Could not write to git config: {e}\n"
+            f"This may be due to network drive permissions or file locking issues.\n"
+            f"You may need to manually set git config values using:\n"
+            f"git config user.name \"Your Name\"\n"
+            f"git config user.email \"you@example.com\""
+        )
+        # Continue without modifying config, in read-only mode
+        pass
 
     return repo.working_tree_dir
 
@@ -542,6 +553,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         args.tool_warning_color = "#FFA500"
         args.assistant_output_color = "blue"
         args.code_theme = "default"
+        # Clear background colors for light mode
+        args.completion_menu_bg_color = None
+        args.completion_menu_current_bg_color = None
+        # Override Pygments theme to disable backgrounds
+        args.code_theme_no_background = True
 
     if return_coder and args.yes_always is None:
         args.yes_always = True
@@ -566,6 +582,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             completion_menu_current_bg_color=args.completion_menu_current_bg_color,
             assistant_output_color=args.assistant_output_color,
             code_theme=args.code_theme,
+            code_theme_no_background=args.code_theme_no_background,
             dry_run=args.dry_run,
             encoding=args.encoding,
             line_endings=args.line_endings,
