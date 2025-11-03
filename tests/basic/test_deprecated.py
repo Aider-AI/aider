@@ -23,7 +23,7 @@ class TestDeprecated(TestCase):
 
     @patch("aider.io.InputOutput.tool_warning")
     @patch("aider.io.InputOutput.offer_url")
-    def test_deprecated_args_show_warnings(self, mock_offer_url, mock_tool_warning):
+    async def test_deprecated_args_show_warnings(self, mock_offer_url, mock_tool_warning):
         # Prevent URL launches during tests
         mock_offer_url.return_value = False
         # Test all deprecated flags to ensure they show warnings
@@ -73,7 +73,7 @@ class TestDeprecated(TestCase):
 
     @patch("aider.io.InputOutput.tool_warning")
     @patch("aider.io.InputOutput.offer_url")
-    def test_model_alias_in_warning(self, mock_offer_url, mock_tool_warning):
+    async def test_model_alias_in_warning(self, mock_offer_url, mock_tool_warning):
         # Prevent URL launches during tests
         mock_offer_url.return_value = False
         # Test that the warning uses the model alias if available

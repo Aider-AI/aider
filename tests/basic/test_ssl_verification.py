@@ -1,6 +1,6 @@
 import os
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from prompt_toolkit.input import DummyInput
 from prompt_toolkit.output import DummyOutput
@@ -25,7 +25,7 @@ class TestSSLVerification(TestCase):
     @patch("httpx.Client")
     @patch("httpx.AsyncClient")
     @patch("aider.models.fuzzy_match_models", return_value=[])
-    def test_no_verify_ssl_flag_sets_model_info_manager(
+    async def test_no_verify_ssl_flag_sets_model_info_manager(
         self,
         mock_fuzzy_match,
         mock_async_client,
@@ -52,7 +52,7 @@ class TestSSLVerification(TestCase):
             with patch("aider.llm.litellm._lazy_module", mock_module):
                 # Run main with --no-verify-ssl flag
                 main(
-                    ["--no-verify-ssl", "--exit", "--yes"],
+                    ["--no-verify-ssl", "--exit", "--yes", "--map-tokens", "1024"],
                     input=DummyInput(),
                     output=DummyOutput(),
                 )
@@ -67,9 +67,9 @@ class TestSSLVerification(TestCase):
                 # Verify SSL_VERIFY environment variable was set to empty string
                 self.assertEqual(os.environ.get("SSL_VERIFY"), "")
 
-    @patch("aider.io.InputOutput.offer_url")
+    @patch("aider.io.InputOutput.offer_url", new=AsyncMock)
     @patch("aider.models.model_info_manager.set_verify_ssl")
-    def test_default_ssl_verification(self, mock_set_verify_ssl, mock_offer_url):
+    async def test_default_ssl_verification(self, mock_set_verify_ssl, mock_offer_url):
         # Prevent actual URL opening
         mock_offer_url.return_value = False
         # Run main without --no-verify-ssl flag

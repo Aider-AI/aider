@@ -1077,6 +1077,10 @@ class Coder:
 
             while True:
                 try:
+                    if self.commands.cmd_running:
+                        await asyncio.sleep(0.1)
+                        continue
+
                     if (
                         not self.io.confirmation_in_progress
                         and not user_message
@@ -1134,6 +1138,10 @@ class Coder:
                             try:
                                 user_message = self.io.input_task.result()
                                 await self.io.cancel_input_task()
+
+                                if self.commands.is_run_command(user_message):
+                                    self.commands.cmd_running = True
+
                             except (asyncio.CancelledError, KeyboardInterrupt):
                                 user_message = None
 
@@ -1170,7 +1178,6 @@ class Coder:
                                         user_message = None
 
                             except (asyncio.CancelledError, KeyboardInterrupt):
-                                print("error of some sort")
                                 pass
 
                             # Stop spinner when processing task completes
@@ -1180,6 +1187,7 @@ class Coder:
                         self.io.processing_task = asyncio.create_task(
                             self._processing_logic(user_message, preproc)
                         )
+
                         # Start spinner for processing task
                         self.io.start_spinner("Processing...")
 
@@ -1243,6 +1251,12 @@ class Coder:
             return
 
         if self.commands.is_command(inp):
+            if inp[0] in "!":
+                inp = f"/run {inp[1:]}"
+
+            if self.commands.is_run_command(inp):
+                self.commands.cmd_running = True
+
             return await self.commands.run(inp)
 
         await self.check_for_file_mentions(inp)
@@ -1254,8 +1268,6 @@ class Coder:
         self.init_before_message()
 
         if preproc:
-            if user_message[0] in "!":
-                user_message = f"/run {user_message[1:]}"
             message = await self.preproc_user_input(user_message)
         else:
             message = user_message
