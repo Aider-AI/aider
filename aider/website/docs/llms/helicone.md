@@ -3,7 +3,7 @@ parent: Connecting to LLMs
 nav_order: 505
 ---
 
-# Helicone
+# Helicone AI Gateway
 
 Aider can connect to models via the Helicone gateway and public model registry.
 You'll need a `HELICONE_API_KEY`.
