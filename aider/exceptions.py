@@ -92,6 +92,16 @@ class LiteLLMExceptions:
                         " limiting your requests."
                     ),
                 )
+            # Heavily similar to OpenRouter handling: detect Helicone gateway issues
+            if "helicone" in str(ex).lower():
+                return ExInfo(
+                    "APIConnectionError",
+                    True,
+                    (
+                        "Helicone or the upstream API provider is down, overloaded or rate"
+                        " limiting your requests."
+                    ),
+                )
 
         # Check for specific non-retryable APIError cases like insufficient credits
         if ex.__class__ is litellm.APIError:
