@@ -71,6 +71,9 @@ class LiteLLMExceptions:
             ex = getattr(litellm, var, "default")
 
             if ex != "default":
+                if not issubclass(ex, BaseException):
+                    continue
+
                 self.exceptions[ex] = self.exception_info[var]
 
     def exceptions_tuple(self):

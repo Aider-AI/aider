@@ -1928,6 +1928,7 @@ class Coder:
         self.usage_report = None
         exhausted = False
         interrupted = False
+
         try:
             while True:
                 try:
