@@ -991,7 +991,7 @@ class InputOutput:
         else:
             style = dict()
 
-        self.console.print(Text(inp), **style)
+        self.stream_print(Text(inp), **style)
 
     def user_input(self, inp, log_only=True):
         if not log_only:
@@ -1245,23 +1245,23 @@ class InputOutput:
             message = Text(message)
 
         style = dict()
-
         if self.pretty:
-            color = ensure_hash_prefix(color) if color else None
             if color:
-                style["color"] = color
+                style["color"] = ensure_hash_prefix(color)
+
+        style = RichStyle(**style)
 
         try:
-            self.stream_print(message, style=RichStyle(**style))
+            self.stream_print(message, style=style)
         except UnicodeEncodeError:
             # Fallback to ASCII-safe output
             if isinstance(message, Text):
                 message = message.plain
             message = str(message).encode("ascii", errors="replace").decode("ascii")
-            self.stream_print(message, style=RichStyle(**style))
+            self.stream_print(message, style=style)
 
-        if self.prompt_session and self.prompt_session.app:
-            self.prompt_session.app.invalidate()
+    def tool_success(self, message="", strip=True):
+        self._tool_message(message, strip, self.user_input_color)
 
     def tool_error(self, message="", strip=True):
         self.num_error_outputs += 1
@@ -1309,7 +1309,7 @@ class InputOutput:
         else:
             show_resp = Text(message or "(empty response)")
 
-        self.console.print(show_resp)
+        self.stream_print(show_resp)
 
     def render_markdown(self, text):
         output = StringIO()
@@ -1352,11 +1352,17 @@ class InputOutput:
 
         if not final:
             if len(lines) > 1:
-                self.console.print(output)
+                self.console.print(
+                    Text.from_ansi(output) if self.has_ansi_codes(output) else output
+                )
         else:
             # Ensure any remaining buffered content is printed using the full response
-            self.console.print(output)
+            self.console.print(Text.from_ansi(output) if self.has_ansi_codes(output) else output)
             self.reset_streaming_response()
+
+    def has_ansi_codes(self, s: str) -> bool:
+        """Check if a string contains the ANSI escape character."""
+        return "\x1b" in s
 
     def reset_streaming_response(self):
         self._stream_buffer = ""

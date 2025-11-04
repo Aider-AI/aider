@@ -1,11 +1,14 @@
 import asyncio
 import glob
+import json
 import os
 import re
 import subprocess
 import sys
 import tempfile
+import time
 from collections import OrderedDict
+from datetime import datetime
 from os.path import expanduser
 from pathlib import Path
 
@@ -1490,19 +1493,12 @@ class Commands:
             edit_format=edit_format,
             summarize_from_coder=False,
             num_cache_warming_pings=0,
+            aider_commit_hashes=self.coder.aider_commit_hashes,
         )
 
         user_msg = args
-        await coder.run(user_msg)
-
-        # Use the provided placeholder if any
-        raise SwitchCoder(
-            edit_format=self.coder.edit_format,
-            summarize_from_coder=False,
-            from_coder=coder,
-            show_announcements=False,
-            placeholder=placeholder,
-        )
+        await coder.run(user_msg, False)
+        self.coder.aider_commit_hashes = coder.aider_commit_hashes
 
     def get_help_md(self):
         "Show help about all commands in markdown"
@@ -2034,6 +2030,197 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+
+    def _get_session_directory(self):
+        """Get the session storage directory, creating it if needed"""
+        session_dir = Path(self.coder.root) / ".aider" / "sessions"
+        session_dir.mkdir(parents=True, exist_ok=True)
+        return session_dir
+
+    def _get_session_file_path(self, session_name):
+        """Get the full path for a session file"""
+        session_dir = self._get_session_directory()
+        # Sanitize the session name to be filesystem-safe
+        safe_name = re.sub(r"[^a-zA-Z0-9_.-]", "_", session_name)
+        return session_dir / f"{safe_name}.json"
+
+    def _find_session_file(self, session_name):
+        """Find a session file by name, checking both name-based and full path"""
+        # First check if it's a full path
+        if Path(session_name).exists():
+            return Path(session_name)
+
+        # Then check in the sessions directory
+        session_file = self._get_session_file_path(session_name)
+        if session_file.exists():
+            return session_file
+
+        return None
+
+    def cmd_save_session(self, args):
+        """Save the current chat session to a named file in .aider/sessions/"""
+        if not args.strip():
+            self.io.tool_error("Please provide a session name.")
+            return
+
+        session_name = args.strip()
+        session_file = self._get_session_file_path(session_name)
+
+        # Collect session data
+        session_data = {
+            "version": "1.0",
+            "timestamp": time.time(),
+            "session_name": session_name,
+            "model": self.coder.main_model.name,
+            "edit_format": self.coder.edit_format,
+            "chat_history": {
+                "done_messages": self.coder.done_messages,
+                "cur_messages": self.coder.cur_messages,
+            },
+            "files": {
+                "editable": [self.coder.get_rel_fname(f) for f in self.coder.abs_fnames],
+                "read_only": [self.coder.get_rel_fname(f) for f in self.coder.abs_read_only_fnames],
+                "read_only_stubs": [
+                    self.coder.get_rel_fname(f) for f in self.coder.abs_read_only_stubs_fnames
+                ],
+            },
+            "settings": {
+                "root": self.coder.root,
+                "auto_commits": self.coder.auto_commits,
+                "auto_lint": self.coder.auto_lint,
+                "auto_test": self.coder.auto_test,
+            },
+        }
+
+        try:
+            with open(session_file, "w", encoding="utf-8") as f:
+                json.dump(session_data, f, indent=2, ensure_ascii=False)
+            self.io.tool_output(f"Session saved to: {session_file}")
+        except Exception as e:
+            self.io.tool_error(f"Error saving session: {e}")
+
+    def cmd_list_sessions(self, args):
+        """List all saved sessions in .aider/sessions/"""
+        session_dir = self._get_session_directory()
+        session_files = list(session_dir.glob("*.json"))
+
+        if not session_files:
+            self.io.tool_output("No saved sessions found.")
+            return
+
+        self.io.tool_output("Saved sessions:")
+        for session_file in sorted(session_files):
+            try:
+                with open(session_file, "r", encoding="utf-8") as f:
+                    session_data = json.load(f)
+                session_name = session_data.get("session_name", session_file.stem)
+                timestamp = session_data.get("timestamp", 0)
+                model = session_data.get("model", "unknown")
+                edit_format = session_data.get("edit_format", "unknown")
+
+                # Format timestamp
+                if timestamp:
+                    date_str = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M")
+                else:
+                    date_str = "unknown date"
+
+                self.io.tool_output(
+                    f"  {session_name} (model: {model}, format: {edit_format}, {date_str})"
+                )
+            except Exception as e:
+                self.io.tool_output(f"  {session_file.stem} [error reading: {e}]")
+
+    def cmd_load_session(self, args):
+        """Load a saved session by name or file path"""
+        if not args.strip():
+            self.io.tool_error("Please provide a session name or file path.")
+            return
+
+        session_name = args.strip()
+        session_file = self._find_session_file(session_name)
+
+        if not session_file:
+            self.io.tool_error(f"Session not found: {session_name}")
+            self.io.tool_output("Use /list-sessions to see available sessions.")
+            return
+
+        try:
+            with open(session_file, "r", encoding="utf-8") as f:
+                session_data = json.load(f)
+        except Exception as e:
+            self.io.tool_error(f"Error loading session: {e}")
+            return
+
+        # Verify session format
+        if not isinstance(session_data, dict) or "version" not in session_data:
+            self.io.tool_error("Invalid session format.")
+            return
+
+        # Load session data
+        try:
+            # Clear current state
+            self.coder.abs_fnames = set()
+            self.coder.abs_read_only_fnames = set()
+            self.coder.abs_read_only_stubs_fnames = set()
+            self.coder.done_messages = []
+            self.coder.cur_messages = []
+
+            # Load chat history
+            chat_history = session_data.get("chat_history", {})
+            self.coder.done_messages = chat_history.get("done_messages", [])
+            self.coder.cur_messages = chat_history.get("cur_messages", [])
+
+            # Load files
+            files = session_data.get("files", {})
+            for rel_fname in files.get("editable", []):
+                abs_fname = self.coder.abs_root_path(rel_fname)
+                if os.path.exists(abs_fname):
+                    self.coder.abs_fnames.add(abs_fname)
+                else:
+                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
+
+            for rel_fname in files.get("read_only", []):
+                abs_fname = self.coder.abs_root_path(rel_fname)
+                if os.path.exists(abs_fname):
+                    self.coder.abs_read_only_fnames.add(abs_fname)
+                else:
+                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
+
+            for rel_fname in files.get("read_only_stubs", []):
+                abs_fname = self.coder.abs_root_path(rel_fname)
+                if os.path.exists(abs_fname):
+                    self.coder.abs_read_only_stubs_fnames.add(abs_fname)
+                else:
+                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
+
+            # Load settings
+            settings = session_data.get("settings", {})
+            if "auto_commits" in settings:
+                self.coder.auto_commits = settings["auto_commits"]
+            if "auto_lint" in settings:
+                self.coder.auto_lint = settings["auto_lint"]
+            if "auto_test" in settings:
+                self.coder.auto_test = settings["auto_test"]
+
+            self.io.tool_output(
+                f"Session loaded: {session_data.get('session_name', session_file.stem)}"
+            )
+            self.io.tool_output(
+                f"Model: {session_data.get('model', 'unknown')}, Edit format:"
+                f" {session_data.get('edit_format', 'unknown')}"
+            )
+
+            # Show summary
+            num_messages = len(self.coder.done_messages) + len(self.coder.cur_messages)
+            num_files = (
+                len(self.coder.abs_fnames)
+                + len(self.coder.abs_read_only_fnames)
+                + len(self.coder.abs_read_only_stubs_fnames)
+            )
+            self.io.tool_output(f"Loaded {num_messages} messages and {num_files} files")
+
+        except Exception as e:
+            self.io.tool_error(f"Error applying session data: {e}")
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""

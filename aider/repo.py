@@ -310,7 +310,7 @@ class GitRepo:
                 # Perform the commit
                 self.repo.git.commit(cmd)
                 commit_hash = self.get_head_commit_sha(short=True)
-                self.io.tool_output(f"Commit {commit_hash} {commit_message}", bold=True)
+                self.io.tool_success(f"Commit {commit_hash} {commit_message}")
                 return commit_hash, commit_message
 
         except ANY_GIT_ERROR as err:
