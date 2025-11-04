@@ -48,6 +48,7 @@ Example:
 aider --model xai/grok-3-mini-beta --reasoning-effort high
 ```
 
-
-
+{: .tip }
+You can also access xAI Grok models via the
+[Helicone](helicone.md) gateway using the model id, for example `helicone/grok-4`.
 

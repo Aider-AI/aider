@@ -37,7 +37,7 @@ aider --list-models anthropic/
 {: .tip }
 Anthropic has very low rate limits. 
 You can access all the Anthropic models via
-[OpenRouter](openrouter.md)
+[OpenRouter](openrouter.md) or [Helicone](helicone.md)
 or [Google Vertex AI](vertex.md)
 with more generous rate limits.
 
