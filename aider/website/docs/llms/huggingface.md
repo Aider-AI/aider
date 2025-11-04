@@ -18,13 +18,15 @@ Then configure your API key and base URL:
 ```
 # Mac/Linux:
 export OPENAI_API_BASE=https://router.huggingface.co/v1
-export OPENAI_API_KEY=<your-hf-token>
+export HUGGINGFACE_API_KEY=<your-hf-token>
 
 # Windows:
 setx OPENAI_API_BASE https://router.huggingface.co/v1
-setx OPENAI_API_KEY <your-hf-token>
+setx HUGGINGFACE_API_KEY <your-hf-token>
 # ... restart shell after setx commands
 ```
+
+**Note:** `OPENAI_API_BASE` is required because Hugging Face Inference Providers uses an OpenAI-compatible endpoint. You can also use `HF_TOKEN` instead of `HUGGINGFACE_API_KEY`.
 
 Start working with aider on your codebase:
 
@@ -33,11 +35,11 @@ Start working with aider on your codebase:
 cd /to/your/project
 
 # Use any model from Inference Providers
-# Prefix the model name with openai/
-aider --model openai/<model-name>
+# Prefix the model name with huggingface/
+aider --model huggingface/<model-name>
 
 # Using MiniMaxAI/MiniMax-M2:
-aider --model openai/MiniMaxAI/MiniMax-M2
+aider --model huggingface/MiniMaxAI/MiniMax-M2
 ```
 
 ## Selecting a specific provider
@@ -45,10 +47,20 @@ aider --model openai/MiniMaxAI/MiniMax-M2
 By default, Inference Providers automatically routes requests to the best available provider. If you want to use a specific provider you can append the provider name to the model:
 
 ```bash
-aider --model openai/<model-name>:<provider>
+aider --model huggingface/<model-name>:<provider>
 
 # Using GLM-4.6 via zai-org provider:
-aider --model openai/zai-org/GLM-4.6:zai-org
+aider --model huggingface/zai-org/GLM-4.6:zai-org
+```
+
+You can also use `:cheapest` or `:fastest` to automatically select based on cost or throughput:
+
+```bash
+# Use the cheapest available provider:
+aider --model huggingface/MiniMaxAI/MiniMax-M2:cheapest
+
+# Use the fastest available provider:
+aider --model huggingface/MiniMaxAI/MiniMax-M2:fastest
 ```
 
 You can find the provider-specific syntax on any model card's "Use this model" → "Inference Providers" section.
