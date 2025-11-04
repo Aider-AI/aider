@@ -1260,6 +1260,9 @@ class InputOutput:
             message = str(message).encode("ascii", errors="replace").decode("ascii")
             self.stream_print(message, style=style)
 
+    def tool_success(self, message="", strip=True):
+        self._tool_message(message, strip, self.user_input_color)
+
     def tool_error(self, message="", strip=True):
         self.num_error_outputs += 1
         self._tool_message(message, strip, self.tool_error_color)

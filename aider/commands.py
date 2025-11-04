@@ -1493,19 +1493,12 @@ class Commands:
             edit_format=edit_format,
             summarize_from_coder=False,
             num_cache_warming_pings=0,
+            aider_commit_hashes=self.coder.aider_commit_hashes,
         )
 
         user_msg = args
-        await coder.run(user_msg)
-
-        # Use the provided placeholder if any
-        raise SwitchCoder(
-            edit_format=self.coder.edit_format,
-            summarize_from_coder=False,
-            from_coder=coder,
-            show_announcements=False,
-            placeholder=placeholder,
-        )
+        await coder.run(user_msg, False)
+        self.coder.aider_commit_hashes = coder.aider_commit_hashes
 
     def get_help_md(self):
         "Show help about all commands in markdown"
