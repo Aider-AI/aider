@@ -424,6 +424,7 @@ class InputOutput:
         # Spinner state
         self.spinner_running = False
         self.spinner_text = ""
+        self.last_spinner_text = ""
         self.spinner_frame_index = 0
         self.spinner_last_frame_index = 0
         self.unicode_palette = "░█"
@@ -493,7 +494,7 @@ class InputOutput:
         except Exception:
             return False
 
-    def start_spinner(self, text):
+    def start_spinner(self, text, update_last_text=True):
         """Start the spinner."""
         self.stop_spinner()
 
@@ -501,6 +502,9 @@ class InputOutput:
             self.spinner_running = True
             self.spinner_text = text
             self.spinner_frame_index = self.spinner_last_frame_index
+
+            if update_last_text:
+                self.last_spinner_text = text
         else:
             self.fallback_spinner = Spinner(text)
             self.fallback_spinner.step()
@@ -1115,6 +1119,7 @@ class InputOutput:
             else:
                 # Ring the bell if needed
                 self.ring_bell()
+                self.start_spinner("Awaiting Confirmation...", False)
 
                 while True:
                     try:
@@ -1157,7 +1162,9 @@ class InputOutput:
                         break
                     res = res.lower()
                     good = any(valid_response.startswith(res) for valid_response in valid_responses)
+
                     if good:
+                        self.start_spinner(self.last_spinner_text)
                         break
 
                     error_message = f"Please answer with one of: {', '.join(valid_responses)}"
