@@ -672,10 +672,6 @@ class Coder:
 
         return True
 
-    def _stop_waiting_spinner(self):
-        """Stop and clear the waiting spinner if it is running."""
-        self.io.stop_spinner()
-
     def get_abs_fnames_content(self):
         for fname in list(self.abs_fnames):
             content = self.io.read_text(fname)
@@ -1281,6 +1277,7 @@ class Coder:
         finally:
             self.run_one_completed = True
             self.compact_context_completed = True
+            self.io.stop_spinner()
 
     def copy_context(self):
         if self.auto_copy_context:
@@ -1994,7 +1991,7 @@ class Coder:
             self.mdstream = None
 
             # Ensure any waiting spinner is stopped
-            self._stop_waiting_spinner()
+            self.io.start_spinner("Processing Answer...")
 
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
             self.remove_reasoning_content()
@@ -2064,7 +2061,13 @@ class Coder:
             try:
                 if self.partial_response_tool_calls:
                     tool_calls = []
+                    tool_id_set = set()
+
                     for tool_call_dict in self.partial_response_tool_calls:
+                        # LLM APIs sometimes return duplicates and that's annoying
+                        if tool_call_dict.get("id") in tool_id_set:
+                            continue
+
                         tool_calls.append(
                             ChatCompletionMessageToolCall(
                                 id=tool_call_dict.get("id"),
