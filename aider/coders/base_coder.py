@@ -607,32 +607,34 @@ class Coder:
                 yield fname, content
 
     def choose_fence(self):
-        all_content = ""
+        def line_has_fence(line):
+            for fence_open, fence_close in self.fences:
+                if line.startswith(fence_open) or line.startswith(fence_close):
+                    return (fence_open, fence_close)
+            return None
+
+        found_fences = set()
         for _fname, content in self.get_abs_fnames_content():
-            all_content += content + "\n"
+            for line in content.splitlines():
+                found = line_has_fence(line)
+                if found is not None:
+                    found_fences.add(found)
         for _fname in self.abs_read_only_fnames:
             content = self.io.read_text(_fname)
             if content is not None:
-                all_content += content + "\n"
+                for line in content.splitlines():
+                    found = line_has_fence(line)
+                    if found is not None:
+                        found_fences.add(found)
 
-        lines = all_content.splitlines()
-        good = False
-        for fence_open, fence_close in self.fences:
-            if any(line.startswith(fence_open) or line.startswith(fence_close) for line in lines):
-                continue
-            good = True
-            break
-
-        if good:
-            self.fence = (fence_open, fence_close)
-        else:
+        try:
+            self.fence = next(f for f in self.fences if f not in found_fences)
+        except StopIteration:
             self.fence = self.fences[0]
             self.io.tool_warning(
                 "Unable to find a fencing strategy! Falling back to:"
                 f" {self.fence[0]}...{self.fence[1]}"
             )
-
-        return
 
     def get_files_content(self, fnames=None):
         if not fnames:
