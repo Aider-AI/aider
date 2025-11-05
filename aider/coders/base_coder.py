@@ -2068,6 +2068,8 @@ class Coder:
                         if tool_call_dict.get("id") in tool_id_set:
                             continue
 
+                        tool_id_set.add(tool_call_dict.get("id"))
+
                         tool_calls.append(
                             ChatCompletionMessageToolCall(
                                 id=tool_call_dict.get("id"),
