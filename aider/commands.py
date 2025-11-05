@@ -2042,7 +2042,9 @@ class Commands:
         session_dir = self._get_session_directory()
         # Sanitize the session name to be filesystem-safe
         safe_name = re.sub(r"[^a-zA-Z0-9_.-]", "_", session_name)
-        return session_dir / f"{safe_name}.json"
+        ext = "" if safe_name[-5:] == ".json" else ".json"
+
+        return session_dir / f"{safe_name}{ext}"
 
     def _find_session_file(self, session_name):
         """Find a session file by name, checking both name-based and full path"""
