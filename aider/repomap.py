@@ -1,7 +1,5 @@
-import colorsys
 import math
 import os
-import random
 import shutil
 import sqlite3
 import sys
@@ -54,6 +52,7 @@ class RepoMap:
         max_context_window=None,
         map_mul_no_files=8,
         refresh="auto",
+        max_code_line_length=100,
     ):
         self.io = io
         self.verbose = verbose
@@ -69,6 +68,8 @@ class RepoMap:
         self.max_map_tokens = map_tokens
         self.map_mul_no_files = map_mul_no_files
         self.max_context_window = max_context_window
+
+        self.max_code_line_length = max_code_line_length
 
         self.repo_content_prefix = repo_content_prefix
 
@@ -747,7 +748,12 @@ class RepoMap:
                 if lois is not None:
                     output += "\n"
                     output += cur_fname + ":\n"
-                    output += self.render_tree(cur_abs_fname, cur_fname, lois)
+
+                    # truncate long lines, in case we get minified js or something else crazy
+                    output += truncate_long_lines(
+                        self.render_tree(cur_abs_fname, cur_fname, lois), self.max_code_line_length
+                    )
+
                     lois = None
                 elif cur_fname:
                     output += "\n" + cur_fname + "\n"
@@ -759,10 +765,11 @@ class RepoMap:
             if lois is not None:
                 lois.append(tag.line)
 
-        # truncate long lines, in case we get minified js or something else crazy
-        output = "\n".join([line[:100] for line in output.splitlines()]) + "\n"
-
         return output
+
+
+def truncate_long_lines(text, max_length):
+    return "\n".join([line[:max_length] for line in text.splitlines()]) + "\n"
 
 
 def find_src_files(directory):
@@ -774,13 +781,6 @@ def find_src_files(directory):
         for file in files:
             src_files.append(os.path.join(root, file))
     return src_files
-
-
-def get_random_color():
-    hue = random.random()
-    r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(hue, 1, 0.75)]
-    res = f"#{r:02x}{g:02x}{b:02x}"
-    return res
 
 
 def get_scm_fname(lang):

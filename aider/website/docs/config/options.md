@@ -270,7 +270,12 @@ Environment variable: `AIDER_MAP_REFRESH`
 ### `--map-multiplier-no-files VALUE`
 Multiplier for map tokens when no files are specified (default: 2)  
 Default: 2  
-Environment variable: `AIDER_MAP_MULTIPLIER_NO_FILES`  
+Environment variable: `AIDER_MAP_MULTIPLIER_NO_FILES`
+
+### `--map-max-line-length VALUE`
+Maximum line length for the repo map code. Prevents sending crazy long lines of minified JS files etc. (default: 100)
+Default: 100
+Environment variable: `AIDER_MAP_MAX_LINE_LENGTH`
 
 ## History Files:
 
