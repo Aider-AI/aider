@@ -87,6 +87,40 @@ class ConfirmGroup:
         if items is not None:
             self.show_group = len(items) > 1
 
+import re
+
+class AbbreviationMatcher:
+    def __init__(self, input_str):
+        self.input_parts = self._split_input(input_str)
+
+    @staticmethod
+    def _split_input(input_str):
+        if input_str.islower():
+            input_str = input_str.upper()
+        elif input_str[0].islower():
+            input_str = input_str.capitalize()
+
+        return re.findall(r'[A-Z][a-z]*|[0-9]+', input_str)
+
+    @staticmethod
+    def _split_target(target):
+        # Handle path-like strings
+        target = target.split('/')[-1]
+        
+        # Split on camelCase, snake_case, kebab-case, and PascalCase
+        return re.findall(r'[A-Z]?[a-z]+|[A-Z]+(?=[A-Z][a-z]|\d|\W|$)|\d+', target)
+
+    def matches(self, target):
+        target_parts = self._split_target(target)
+        
+        if len(self.input_parts) > len(target_parts):
+            return False
+
+        return all(
+            target_part.lower().startswith(input_part.lower())
+            for input_part, target_part in zip(self.input_parts, target_parts)
+        )
+
 
 class AutoCompleter(Completer):
     def __init__(
@@ -179,7 +213,8 @@ class AutoCompleter(Completer):
         if candidates is None:
             return
 
-        candidates = [word for word in candidates if partial in word.lower()]
+        abbrev_matcher = AbbreviationMatcher(partial)
+        candidates = [word for word in candidates if partial in word.lower() or abbrev_matcher.matches(word)]
         for candidate in sorted(candidates):
             yield Completion(candidate, start_position=-len(words[-1]))
 
@@ -214,8 +249,9 @@ class AutoCompleter(Completer):
             return
 
         completions = []
+        abbrev_matcher = AbbreviationMatcher(last_word)
         for word_match, word_insert in candidates:
-            if word_match.lower().startswith(last_word.lower()):
+            if word_match.lower().startswith(last_word.lower()) or abbrev_matcher.matches(word_match):
                 completions.append((word_insert, -len(last_word), word_match))
 
                 rel_fnames = self.fname_to_rel_fnames.get(word_match, [])
