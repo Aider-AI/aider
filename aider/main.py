@@ -1,12 +1,14 @@
 import json
 import os
 import re
+import ssl
 import sys
 import threading
 import traceback
 import webbrowser
 from dataclasses import fields
 from pathlib import Path
+import httpx
 
 try:
     import git
@@ -516,16 +518,38 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics = Analytics(permanently_disable=True)
         print("Analytics have been permanently disabled.")
 
+    litellm._load_litellm()
+    http_client = httpx.Client()
+    async_client = httpx.AsyncClient()
+    
     if not args.verify_ssl:
-        import httpx
-
         os.environ["SSL_VERIFY"] = ""
-        litellm._load_litellm()
-        litellm._lazy_module.client_session = httpx.Client(verify=False)
-        litellm._lazy_module.aclient_session = httpx.AsyncClient(verify=False)
+        http_client = httpx.Client(verify=False)
+        async_client = httpx.AsyncClient(verify=False)
         # Set verify_ssl on the model_info_manager
         models.model_info_manager.set_verify_ssl(False)
 
+    if args.client_cert:
+        if not args.client_cert_key:
+            print("Expected both --client-cert and --client-cert-key.")
+            return False
+        context = ssl.create_default_context()
+        context.load_cert_chain(certfile=args.client_cert, keyfile=args.client_cert_key)
+
+        http_client = httpx.Client(verify=context)
+        async_client = httpx.AsyncClient(verify=context)
+
+    if args.auth_cookie:
+        try:
+            cookie_name, cookie_value = args.auth_cookie.split("=", 1)
+            http_client.cookies = httpx.Cookies({cookie_name: cookie_value})
+        except ValueError:
+            print("Invalid format for --auth-cookie. Expected format: name=value")
+            return False
+
+    litellm._lazy_module.client_session = http_client
+    litellm._lazy_module.aclient_session = async_client
+    
     if args.timeout:
         models.request_timeout = args.timeout
 
