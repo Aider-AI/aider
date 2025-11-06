@@ -448,6 +448,20 @@ def sanity_check_repo(repo, io):
     return False
 
 
+def get_config_file(prefix=None):
+    conf_files = [
+        prefix / name if prefix else Path(name)
+        for name in [".aider.conf.yml", ".aider.conf.yaml"]
+        if (prefix / name if prefix else Path(name)).exists()
+    ]
+    if len(conf_files) > 1:
+        print(
+            f"Warning: Both .aider.conf.yml and .aider.conf.yaml are present at {prefix}."
+            f" Defaulting to {prefix}/.aider.conf.yml."
+        )
+    return conf_files[0] if conf_files else None
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
@@ -461,19 +475,22 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         git_root = get_git_root()
 
-    conf_fname = Path(".aider.conf.yml")
+    conf_fname = get_config_file()
 
     default_config_files = []
-    try:
-        default_config_files += [conf_fname.resolve()]  # CWD
-    except OSError:
-        pass
+    if conf_fname:
+        try:
+            default_config_files += [conf_fname.resolve()]  # CWD
+        except OSError:
+            pass
 
     if git_root:
-        git_conf = Path(git_root) / conf_fname  # git root
-        if git_conf not in default_config_files:
-            default_config_files.append(git_conf)
-    default_config_files.append(Path.home() / conf_fname)  # homedir
+        git_conf = get_config_file(Path(git_root))  # git root
+        if git_conf and git_conf not in default_config_files:
+            default_config_files.append(git_conf.resolve())
+    home_conf = get_config_file(Path.home())  # home dir
+    if home_conf and home_conf not in default_config_files:
+        default_config_files.append(home_conf.resolve())
     default_config_files = list(map(str, default_config_files))
 
     parser = get_parser(default_config_files, git_root)
