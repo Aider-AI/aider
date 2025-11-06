@@ -133,7 +133,7 @@ class TestSendChat(unittest.TestCase):
         ]
         expected = [
             {"role": "user", "content": "Hello"},
-            {"role": "assistant", "content": ""},
+            {"role": "assistant", "content": "(empty response)"},
             {"role": "user", "content": "Are you there?"},
         ]
         result = ensure_alternating_roles(messages)
@@ -148,7 +148,7 @@ class TestSendChat(unittest.TestCase):
         ]
         expected = [
             {"role": "assistant", "content": "Hi there"},
-            {"role": "user", "content": ""},
+            {"role": "user", "content": "(empty request)"},
             {"role": "assistant", "content": "How can I help?"},
         ]
         result = ensure_alternating_roles(messages)
@@ -166,10 +166,10 @@ class TestSendChat(unittest.TestCase):
         ]
         expected = [
             {"role": "user", "content": "Hello"},
-            {"role": "assistant", "content": ""},
+            {"role": "assistant", "content": "(empty response)"},
             {"role": "user", "content": "Are you there?"},
             {"role": "assistant", "content": "Yes"},
-            {"role": "user", "content": ""},
+            {"role": "user", "content": "(empty request)"},
             {"role": "assistant", "content": "How can I help?"},
             {"role": "user", "content": "Write code"},
         ]

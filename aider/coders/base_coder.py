@@ -2743,6 +2743,8 @@ class Coder:
                 format_content("ASSISTANT", self.partial_response_content),
             )
 
+            self.preprocess_response()
+
             if self.partial_response_content:
                 self.io.ai_output(self.partial_response_content)
             elif self.partial_response_function_call:
@@ -2985,6 +2987,21 @@ class Coder:
     def render_incremental_response(self, final):
         # Just return the current content - the streaming logic will handle incremental updates
         return self.get_multi_response_content_in_progress()
+
+    def preprocess_response(self):
+        if len(self.partial_response_tool_calls):
+            tool_list = []
+            tool_id_set = set()
+
+            for tool_call_dict in self.partial_response_tool_calls:
+                # LLM APIs sometimes return duplicates and that's annoying part 2
+                if tool_call_dict.get("id") in tool_id_set:
+                    continue
+
+                tool_id_set.add(tool_call_dict.get("id"))
+                tool_list.append(tool_call_dict)
+
+            self.partial_response_tool_calls = tool_list
 
     def remove_reasoning_content(self):
         """Remove reasoning content from the model's response."""
