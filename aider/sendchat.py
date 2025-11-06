@@ -179,7 +179,9 @@ def ensure_alternating_roles(messages):
 
             # Add missing tool responses as empty
             for tool_id in expected_ids:
-                tool_sequence.append({"role": "tool", "tool_call_id": tool_id, "content": ""})
+                tool_sequence.append(
+                    {"role": "tool", "tool_call_id": tool_id, "content": "(empty response)"}
+                )
 
             # Add the complete tool sequence to result
             for tool_msg in tool_sequence:
@@ -194,7 +196,16 @@ def ensure_alternating_roles(messages):
             if role == prev_role:
                 # Insert empty message of opposite role
                 opposite_role = "user" if role == "assistant" else "assistant"
-                result.append({"role": opposite_role, "content": ""})
+                result.append(
+                    {
+                        "role": opposite_role,
+                        "content": (
+                            "(empty response)"
+                            if opposite_role == "assistant"
+                            else "(empty request)"
+                        ),
+                    }
+                )
                 prev_role = opposite_role
 
             result.append(msg)
@@ -221,8 +232,8 @@ def ensure_alternating_roles(messages):
             current_role in ("user", "assistant")
             and last_role in ("user", "assistant")
             and current_role == last_role
-            and msg.get("content") == ""
-            and last_msg.get("content") == ""
+            and msg.get("content") in ["", "(empty response)", "(empty request)"]
+            and last_msg.get("content") in ["", "(empty response)", "(empty request)"]
         ):
             continue
 
