@@ -59,7 +59,7 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
-from aider.utils import format_content, format_messages, format_tokens, is_image_file
+from aider.utils import format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
@@ -870,6 +870,8 @@ class Coder:
         if not self.repo_map:
             return
 
+        self.io.update_spinner("Updating repo map")
+
         cur_msg_text = self.get_cur_message_text()
         mentioned_fnames = self.get_file_mentions(cur_msg_text)
         mentioned_idents = self.get_ident_mentions(cur_msg_text)
@@ -886,6 +888,10 @@ class Coder:
                 rel = str(abs_path)
             parts = Path(rel).parts
             if ".meta" in parts or ".docs" in parts:
+                return False
+            if ".min." in parts[-1]:
+                return False
+            if self.repo.git_ignored_file(abs_path):
                 return False
             return True
 
@@ -921,6 +927,7 @@ class Coder:
                 all_abs_files,
             )
 
+        self.io.update_spinner(self.io.last_spinner_text)
         return repo_content
 
     def get_repo_messages(self):
@@ -970,7 +977,7 @@ class Coder:
             files_content = self.gpt_prompts.files_content_prefix
             files_content += self.get_files_content()
             files_reply = self.gpt_prompts.files_content_assistant_reply
-        elif self.get_repo_map() and self.gpt_prompts.files_no_full_files_with_repo_map:
+        elif self.gpt_prompts.files_no_full_files_with_repo_map:
             files_content = self.gpt_prompts.files_no_full_files_with_repo_map
             files_reply = self.gpt_prompts.files_no_full_files_with_repo_map_reply
         else:
@@ -1125,15 +1132,12 @@ class Coder:
                 return self.partial_response_content
 
             user_message = None
+            self.user_message = ""
             await self.io.cancel_input_task()
             await self.io.cancel_processing_task()
 
             while True:
                 try:
-                    if self.commands.cmd_running:
-                        await asyncio.sleep(0.1)
-                        continue
-
                     if (
                         not self.io.confirmation_in_progress
                         and not user_message
@@ -1155,6 +1159,19 @@ class Coder:
 
                         # Yield Control so input can actually get properly set up
                         await asyncio.sleep(0)
+
+                    if self.user_message:
+                        self.io.processing_task = asyncio.create_task(
+                            self._processing_logic(self.user_message, preproc)
+                        )
+
+                        self.user_message = ""
+                        # Start spinner for processing task
+                        self.io.start_spinner("Processing...")
+
+                    if self.commands.cmd_running:
+                        await asyncio.sleep(0.1)
+                        continue
 
                     tasks = set()
 
@@ -1189,8 +1206,9 @@ class Coder:
                                     self.io.stop_spinner()
 
                             try:
-                                user_message = self.io.input_task.result()
-                                await self.io.cancel_input_task()
+                                if self.io.input_task:
+                                    user_message = self.io.input_task.result()
+                                    await self.io.cancel_input_task()
 
                                 if self.commands.is_run_command(user_message):
                                     self.commands.cmd_running = True
@@ -1237,12 +1255,7 @@ class Coder:
                             self.io.stop_spinner()
 
                     if user_message and not self.io.acknowledge_confirmation():
-                        self.io.processing_task = asyncio.create_task(
-                            self._processing_logic(user_message, preproc)
-                        )
-
-                        # Start spinner for processing task
-                        self.io.start_spinner("Processing...")
+                        self.user_message = user_message
 
                     self.io.ring_bell()
                     user_message = None
@@ -1263,6 +1276,8 @@ class Coder:
             await self.io.cancel_processing_task()
 
     async def _processing_logic(self, user_message, preproc):
+        await asyncio.sleep(0.1)
+
         try:
             self.compact_context_completed = False
             await self.compact_context_if_needed()
@@ -1894,7 +1909,8 @@ class Coder:
                 dict(role="user", content=inp),
             ]
 
-        chunks = self.format_messages()
+        loop = asyncio.get_running_loop()
+        chunks = await loop.run_in_executor(None, self.format_messages)
         messages = chunks.all_messages()
 
         if not await self.check_tokens(messages):
@@ -2704,8 +2720,6 @@ class Coder:
         self.partial_response_function_call = dict()
         self.partial_response_tool_calls = []
 
-        self.io.log_llm_history("TO LLM", format_messages(messages))
-
         completion = None
 
         try:
@@ -2738,11 +2752,6 @@ class Coder:
             self.keyboard_interrupt()
             raise kbi
         finally:
-            self.io.log_llm_history(
-                "LLM RESPONSE",
-                format_content("ASSISTANT", self.partial_response_content),
-            )
-
             self.preprocess_response()
 
             if self.partial_response_content:
@@ -3127,6 +3136,7 @@ class Coder:
         self.total_tokens_received += self.message_tokens_received
 
         self.io.tool_output(self.usage_report)
+        self.io.rule()
 
         prompt_tokens = self.message_tokens_sent
         completion_tokens = self.message_tokens_received

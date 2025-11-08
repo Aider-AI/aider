@@ -51,12 +51,15 @@ class McpServer:
         )
 
         try:
-            stdio_transport = await self.exit_stack.enter_async_context(stdio_client(server_params))
-            read, write = stdio_transport
-            session = await self.exit_stack.enter_async_context(ClientSession(read, write))
-            await session.initialize()
-            self.session = session
-            return session
+            with open(".aider-mcp-errors.log", "w") as err_file:
+                stdio_transport = await self.exit_stack.enter_async_context(
+                    stdio_client(server_params, errlog=err_file)
+                )
+                read, write = stdio_transport
+                session = await self.exit_stack.enter_async_context(ClientSession(read, write))
+                await session.initialize()
+                self.session = session
+                return session
         except Exception as e:
             logging.error(f"Error initializing server {self.name}: {e}")
             await self.disconnect()

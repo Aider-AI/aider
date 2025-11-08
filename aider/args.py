@@ -758,6 +758,12 @@ def get_parser(default_config_files, git_root):
         ),
         default=False,
     )
+    group.add_argument(
+        "--debug",
+        action="store_true",
+        help="Turn on verbose debugging (default: False)",
+        default=False,
+    )
     ##########
     group = parser.add_argument_group("Voice settings")
     group.add_argument(

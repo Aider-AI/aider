@@ -470,6 +470,37 @@ def expand_glob_patterns(patterns, root="."):
     return expanded_files
 
 
+PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+log_file = None
+file_blacklist = ["get_bottom_toolbar", "<genexpr>"]
+
+
+def custom_tracer(frame, event, arg):
+    # Get the absolute path of the file where the code is executing
+    filename = os.path.abspath(frame.f_code.co_filename)
+
+    # --- THE FILTERING LOGIC ---
+    # Only proceed if the file path is INSIDE the project root
+    if not filename.startswith(PROJECT_ROOT):
+        return None  # Returning None means no local trace function for this scope
+
+    if filename.endswith("repo.py"):
+        return None
+
+    # If it's your code, trace the call
+    if event == "call":
+        func_name = frame.f_code.co_name
+        line_no = frame.f_lineno
+
+        if func_name not in file_blacklist:
+            log_file.write(
+                f"-> CALL (My Code): {func_name}() in {os.path.basename(filename)}:{line_no}\n"
+            )
+
+    # Must return the trace function (or a local one) for subsequent events
+    return custom_tracer
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     return asyncio.run(main_async(argv, input, output, force_git_root, return_coder))
 
@@ -528,6 +559,11 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+
+    if args.debug:
+        global log_file
+        log_file = open(".aider-debug.log", "w", buffering=1)
+        sys.settrace(custom_tracer)
 
     if args.shell_completions:
         # Ensure parser.prog is set for shtab, though it should be by default
@@ -1182,7 +1218,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         io.tool_output()
         try:
             await coder.run(with_message=args.message)
-        except (SwitchCoder, KeyboardInterrupt):
+        except (SwitchCoder, KeyboardInterrupt, SystemExit):
             pass
         analytics.event("exit", reason="Completed --message")
         return
@@ -1192,6 +1228,8 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             message_from_file = io.read_text(args.message_file)
             io.tool_output()
             await coder.run(with_message=message_from_file)
+        except (SwitchCoder, KeyboardInterrupt, SystemExit):
+            pass
         except FileNotFoundError:
             io.tool_error(f"Message file not found: {args.message_file}")
             analytics.event("exit", reason="Message file not found")
@@ -1235,6 +1273,9 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
             if switch.kwargs.get("show_announcements") is False:
                 coder.suppress_announcements_for_next_prompt = True
+        except SystemExit:
+            analytics.event("exit", reason="/exit command")
+            return
 
 
 def is_first_run_of_new_version(io, verbose=False):

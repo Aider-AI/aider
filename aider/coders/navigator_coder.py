@@ -2298,15 +2298,15 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                         current = current[part]
 
             # Function to recursively print the tree
-            def print_tree(node, prefix="- ", indent="  ", path=""):
+            def print_tree(node, prefix="- ", indent="  ", current_path=""):
                 lines = []
                 # First print all directories
                 dirs = sorted([k for k in node.keys() if k != "."])
                 for i, dir_name in enumerate(dirs):
-                    full_path = f"{path}/{dir_name}" if path else dir_name
-                    lines.append(f"{prefix}{full_path}/")
+                    # Only print the current directory name, not the full path
+                    lines.append(f"{prefix}{dir_name}/")
                     sub_lines = print_tree(
-                        node[dir_name], prefix=prefix, indent=indent, path=full_path
+                        node[dir_name], prefix=prefix, indent=indent, current_path=dir_name
                     )
                     for sub_line in sub_lines:
                         lines.append(f"{indent}{sub_line}")
@@ -2314,9 +2314,8 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                 # Then print all files
                 if "." in node:
                     for file_name in sorted(node["."]):
-                        lines.append(
-                            f"{prefix}{path}/{file_name}" if path else f"{prefix}{file_name}"
-                        )
+                        # Only print the current file name, not the full path
+                        lines.append(f"{prefix}{file_name}")
 
                 return lines
 
