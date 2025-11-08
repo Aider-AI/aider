@@ -19,7 +19,6 @@ from tqdm import tqdm
 from aider.dump import dump
 from aider.special import filter_important_files
 from aider.tools.tool_utils import ToolError
-from aider.waiting import Spinner
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -82,6 +81,10 @@ class RepoMap:
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     warned_files = set()
+
+    # Class variable to store initial ranked tags results
+    _initial_ranked_tags = None
+    _initial_ident_to_files = None
 
     # Define kinds that typically represent definitions across languages
     # Used by NavigatorCoder to filter tags for the symbol outline
@@ -430,6 +433,27 @@ class RepoMap:
         return definition_tag.start_line, definition_tag.end_line
         # Check if the file is in the cache and if the modification time has not changed
 
+    def shared_path_components(self, path1_str, path2_str):
+        """
+        Calculates distance based on how many parent components are shared.
+        Distance = Total parts - (2 * Shared parts). Lower is closer.
+        """
+        p1 = Path(path1_str).parts
+        p2 = Path(path2_str).parts
+
+        # Count the number of common leading parts
+        common_count = 0
+        for comp1, comp2 in zip(p1, p2):
+            if comp1 == comp2:
+                common_count += 1
+            else:
+                break
+
+        # A simple metric of difference:
+        # (Total parts in P1 + Total parts in P2) - (2 * Common parts)
+        distance = len(p1) + len(p2) - (2 * common_count)
+        return distance
+
     def get_tags_raw(self, fname, rel_fname):
         lang = filename_to_lang(fname)
         if not lang:
@@ -530,7 +554,7 @@ class RepoMap:
             )
 
     def get_ranked_tags(
-        self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, progress=None
+        self, chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, progress=True
     ):
         import networkx as nx
 
@@ -568,7 +592,7 @@ class RepoMap:
             if self.verbose:
                 self.io.tool_output(f"Processing {fname}")
             if progress and not showing_bar:
-                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {fname}")
+                self.io.update_spinner(f"{UPDATING_REPO_MAP_MESSAGE}: {fname}")
 
             try:
                 file_ok = Path(fname).is_file()
@@ -644,11 +668,11 @@ class RepoMap:
             if ident in references:
                 continue
             for definer in defines[ident]:
-                G.add_edge(definer, definer, weight=0.01, ident=ident)
+                G.add_edge(definer, definer, weight=0.000001, ident=ident)
 
         for ident in idents:
             if progress:
-                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {ident}")
+                self.io.update_spinner(f"{UPDATING_REPO_MAP_MESSAGE}: {ident}")
 
             definers = defines[ident]
 
@@ -658,7 +682,7 @@ class RepoMap:
             is_kebab = ("-" in ident) and any(c.isalpha() for c in ident)
             is_camel = any(c.isupper() for c in ident) and any(c.islower() for c in ident)
             if ident in mentioned_idents:
-                mul *= 10
+                mul *= 16
 
             # Prioritize function-like identifiers
             if (
@@ -666,13 +690,14 @@ class RepoMap:
                 and len(ident) >= 8
                 and "test" not in ident.lower()
             ):
-                mul *= 10
+                mul *= 16
 
             # Downplay repetitive definitions in case of common boiler plate
             # Scale down logarithmically given the increasing number of references in a codebase
             # Ideally, this will help downweight boiler plate in frameworks, interfaces, and abstract classes
-            if len(defines[ident]) > 5:
-                mul *= math.log((5 / (len(defines[ident]) ** 2)) + 1)
+            if len(defines[ident]) > 4:
+                exp = min(len(defines[ident]), 32)
+                mul *= math.log((4 / (2**exp)) + 1)
 
             # Calculate multiplier: log(number of unique file references * total references ^ 2)
             # Used to balance the number of times an identifier appears with its number of refs per file
@@ -684,13 +709,11 @@ class RepoMap:
             # With absolute number of references throughout a codebase
             unique_file_refs = len(set(references[ident]))
             total_refs = len(references[ident])
-            ext_mul = math.log(unique_file_refs * total_refs**2 + 1)
+            ext_mul = round(math.log(unique_file_refs * total_refs**2 + 1))
 
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
                     # dump(referencer, definer, num_refs, mul)
-                    # if referencer == definer:
-                    #    continue
 
                     # Only add edge if file extensions match
                     referencer_ext = Path(referencer).suffix
@@ -699,13 +722,17 @@ class RepoMap:
                         continue
 
                     use_mul = mul * ext_mul
+
                     if referencer in chat_rel_fnames:
-                        use_mul *= 50
+                        use_mul *= 64
+                    elif referencer == definer:
+                        use_mul *= 1 / 128
 
                     # scale down so high freq (low value) mentions don't dominate
-                    num_refs = math.sqrt(num_refs)
-
-                    G.add_edge(referencer, definer, weight=use_mul * num_refs, ident=ident)
+                    # num_refs = math.sqrt(num_refs)
+                    path_distance = self.shared_path_components(referencer, definer)
+                    weight = num_refs * use_mul * 2 ** (-1 * path_distance)
+                    G.add_edge(referencer, definer, weight=weight, ident=ident)
 
         if not references:
             pass
@@ -728,7 +755,7 @@ class RepoMap:
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
             if progress:
-                progress(f"{UPDATING_REPO_MAP_MESSAGE}: {src}")
+                self.io.update_spinner(f"{UPDATING_REPO_MAP_MESSAGE}: {src}")
 
             src_rank = ranked[src]
             total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
@@ -744,6 +771,10 @@ class RepoMap:
         )
 
         # dump(ranked_definitions)
+        # with open('defs.txt', 'w') as out_file:
+        #     import pprint
+        #     printer = pprint.PrettyPrinter(indent=2, stream=out_file)
+        #     printer.pprint(ranked_definitions)
 
         for (fname, ident), rank in ranked_definitions:
             # print(f"{rank:.03f} {fname} {ident}")
@@ -837,14 +868,10 @@ class RepoMap:
         if not mentioned_idents:
             mentioned_idents = set()
 
-        spin = Spinner(UPDATING_REPO_MAP_MESSAGE)
+        self.io.update_spinner(UPDATING_REPO_MAP_MESSAGE)
 
         ranked_tags = self.get_ranked_tags(
-            chat_fnames,
-            other_fnames,
-            mentioned_fnames,
-            mentioned_idents,
-            progress=spin.step,
+            chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, True
         )
 
         other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
@@ -854,8 +881,6 @@ class RepoMap:
         special_fnames = [(fn,) for fn in special_fnames]
 
         ranked_tags = special_fnames + ranked_tags
-
-        spin.step()
 
         num_tags = len(ranked_tags)
         lower_bound = 0
@@ -875,7 +900,8 @@ class RepoMap:
                 show_tokens = f"{middle / 1000.0:.1f}K"
             else:
                 show_tokens = str(middle)
-            spin.step(f"{UPDATING_REPO_MAP_MESSAGE}: {show_tokens} tokens")
+
+            self.io.update_spinner(f"{UPDATING_REPO_MAP_MESSAGE}: {show_tokens} tokens")
 
             tree = self.to_tree(ranked_tags[:middle], chat_rel_fnames)
             num_tokens = self.token_count(tree)
@@ -896,7 +922,6 @@ class RepoMap:
 
             middle = int((lower_bound + upper_bound) // 2)
 
-        spin.end()
         return best_tree
 
     tree_cache = dict()

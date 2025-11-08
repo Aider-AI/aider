@@ -509,6 +509,9 @@ class InputOutput:
             self.fallback_spinner = Spinner(text)
             self.fallback_spinner.step()
 
+    def update_spinner(self, text):
+        self.spinner_text = text
+
     def stop_spinner(self):
         """Stop the spinner."""
         self.spinner_running = False
