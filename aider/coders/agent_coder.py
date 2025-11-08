@@ -23,90 +23,42 @@ from aider.change_tracker import ChangeTracker
 from aider.mcp.server import LocalServer
 from aider.repo import ANY_GIT_ERROR
 
-# Import run_cmd for potentially interactive execution and run_cmd_subprocess for guaranteed non-interactive
+# Import tool modules for registry
 from aider.tools import (
-    command_interactive_schema,
-    command_schema,
-    delete_block_schema,
-    delete_line_schema,
-    delete_lines_schema,
-    extract_lines_schema,
-    grep_schema,
-    indent_lines_schema,
-    insert_block_schema,
-    list_changes_schema,
-    ls_schema,
-    make_editable_schema,
-    make_readonly_schema,
-    remove_schema,
-    replace_all_schema,
-    replace_line_schema,
-    replace_lines_schema,
-    replace_text_schema,
-    show_numbered_context_schema,
-    undo_change_schema,
-    update_todo_list_schema,
-    view_files_matching_schema,
-    view_files_with_symbol_schema,
-    view_schema,
+    command,
+    command_interactive,
+    delete_block,
+    delete_line,
+    delete_lines,
+    extract_lines,
+    finished,
+    git_diff,
+    git_log,
+    git_show,
+    git_status,
+    grep,
+    indent_lines,
+    insert_block,
+    list_changes,
+    ls,
+    make_editable,
+    make_readonly,
+    remove,
+    replace_all,
+    replace_line,
+    replace_lines,
+    replace_text,
+    show_numbered_context,
+    undo_change,
+    update_todo_list,
+    view,
+    view_files_matching,
+    view_files_with_symbol,
 )
-from aider.tools.command import _execute_command
-from aider.tools.command_interactive import _execute_command_interactive
-from aider.tools.delete_block import _execute_delete_block
-from aider.tools.delete_line import _execute_delete_line
-from aider.tools.delete_lines import _execute_delete_lines
-from aider.tools.extract_lines import _execute_extract_lines
-from aider.tools.git import (
-    _execute_git_diff,
-    _execute_git_log,
-    _execute_git_show,
-    _execute_git_status,
-    git_diff_schema,
-    git_log_schema,
-    git_show_schema,
-    git_status_schema,
-)
-from aider.tools.grep import _execute_grep
-from aider.tools.indent_lines import _execute_indent_lines
-from aider.tools.insert_block import _execute_insert_block
-from aider.tools.list_changes import _execute_list_changes
-from aider.tools.ls import execute_ls
-from aider.tools.make_editable import _execute_make_editable
-from aider.tools.make_readonly import _execute_make_readonly
-from aider.tools.remove import _execute_remove
-from aider.tools.replace_all import _execute_replace_all
-from aider.tools.replace_line import _execute_replace_line
-from aider.tools.replace_lines import _execute_replace_lines
-from aider.tools.replace_text import _execute_replace_text
-from aider.tools.show_numbered_context import execute_show_numbered_context
-from aider.tools.undo_change import _execute_undo_change
-from aider.tools.update_todo_list import _execute_update_todo_list
-from aider.tools.view import execute_view
 
-# Import tool functions
-from aider.tools.view_files_matching import execute_view_files_matching
-from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol
-
-from .agent_legacy_prompts import AgentLegacyPrompts
 from .agent_prompts import AgentPrompts
 from .base_coder import ChatChunks, Coder
 from .editblock_coder import do_replace, find_original_update_blocks, find_similar_lines
-
-# UNUSED TOOL SCHEMAS
-# view_files_matching_schema,
-# grep_schema,
-# replace_all_schema,
-# insert_block_schema,
-# delete_block_schema,
-# replace_line_schema,
-# replace_lines_schema,
-# indent_lines_schema,
-# delete_line_schema,
-# delete_lines_schema,
-# undo_change_schema,
-# list_changes_schema,
-# extract_lines_schema,
-# show_numbered_context_schema,
 
 
 class AgentCoder(Coder):
@@ -114,13 +66,10 @@ class AgentCoder(Coder):
 
     edit_format = "agent"
 
-    # TODO: We'll turn on granular editing by default once those tools stabilize
-    use_granular_editing = False
-
     def __init__(self, *args, **kwargs):
         # Initialize appropriate prompt set before calling parent constructor
         # This needs to happen before super().__init__ so the parent class has access to gpt_prompts
-        self.gpt_prompts = AgentPrompts() if self.use_granular_editing else AgentLegacyPrompts()
+        self.gpt_prompts = AgentPrompts()
 
         # Dictionary to track recently removed files
         self.recently_removed = {}
@@ -163,6 +112,9 @@ class AgentCoder(Coder):
         # Initialize change tracker for granular editing
         self.change_tracker = ChangeTracker()
 
+        # Initialize tool registry
+        self._tool_registry = self._build_tool_registry()
+
         # Track files added during current exploration
         self.files_added_in_exploration = set()
 
@@ -184,38 +136,70 @@ class AgentCoder(Coder):
 
         super().__init__(*args, **kwargs)
 
-    def get_local_tool_schemas(self):
-        """Returns the JSON schemas for all local tools."""
-        return [
-            view_files_matching_schema,
-            ls_schema,
-            view_schema,
-            remove_schema,
-            make_editable_schema,
-            make_readonly_schema,
-            view_files_with_symbol_schema,
-            command_schema,
-            command_interactive_schema,
-            grep_schema,
-            replace_text_schema,
-            replace_all_schema,
-            insert_block_schema,
-            delete_block_schema,
-            replace_line_schema,
-            replace_lines_schema,
-            indent_lines_schema,
-            delete_line_schema,
-            delete_lines_schema,
-            undo_change_schema,
-            list_changes_schema,
-            extract_lines_schema,
-            show_numbered_context_schema,
-            update_todo_list_schema,
-            git_diff_schema,
-            git_log_schema,
-            git_show_schema,
-            git_status_schema,
+    def _build_tool_registry(self):
+        """
+        Build a registry of available tools with their normalized names and process_response functions.
+
+        Returns:
+            dict: Mapping of normalized tool names to tool modules
+        """
+        registry = {}
+
+        # Add tools that have been imported
+        tool_modules = [
+            command,
+            command_interactive,
+            delete_block,
+            delete_line,
+            delete_lines,
+            extract_lines,
+            finished,
+            git_diff,
+            git_log,
+            git_show,
+            git_status,
+            grep,
+            indent_lines,
+            insert_block,
+            list_changes,
+            ls,
+            make_editable,
+            make_readonly,
+            remove,
+            replace_all,
+            replace_line,
+            replace_lines,
+            replace_text,
+            show_numbered_context,
+            undo_change,
+            update_todo_list,
+            view,
+            view_files_matching,
+            view_files_with_symbol,
         ]
+
+        for module in tool_modules:
+            if hasattr(module, "NORM_NAME") and hasattr(module, "process_response"):
+                registry[module.NORM_NAME] = module
+
+        return registry
+
+    def get_local_tool_schemas(self):
+        """Returns the JSON schemas for all local tools using the tool registry."""
+        schemas = []
+
+        # Get schemas from the tool registry
+        for tool_module in self._tool_registry.values():
+            if hasattr(tool_module, "schema"):
+                schemas.append(tool_module.schema)
+
+        # Add git schemas from the tool registry
+        git_tools = [git_diff, git_log, git_show, git_status]
+        for git_tool in git_tools:
+            if hasattr(git_tool, "schema"):
+                schemas.append(git_tool.schema)
+
+        return schemas
 
     async def initialize_mcp_tools(self):
         await super().initialize_mcp_tools()
@@ -266,47 +250,39 @@ class AgentCoder(Coder):
                 norm_tool_name = tool_name.lower()
 
                 tasks = []
-                tool_functions = {
-                    "viewfilesmatching": execute_view_files_matching,
-                    "ls": execute_ls,
-                    "view": execute_view,
-                    "remove": _execute_remove,
-                    "makeeditable": _execute_make_editable,
-                    "makereadonly": _execute_make_readonly,
-                    "viewfileswithsymbol": _execute_view_files_with_symbol,
-                    "command": _execute_command,
-                    "commandinteractive": _execute_command_interactive,
-                    "grep": _execute_grep,
-                    "replacetext": _execute_replace_text,
-                    "replaceall": _execute_replace_all,
-                    "insertblock": _execute_insert_block,
-                    "deleteblock": _execute_delete_block,
-                    "replaceline": _execute_replace_line,
-                    "replacelines": _execute_replace_lines,
-                    "indentlines": _execute_indent_lines,
-                    "deleteline": _execute_delete_line,
-                    "deletelines": _execute_delete_lines,
-                    "undochange": _execute_undo_change,
-                    "listchanges": _execute_list_changes,
-                    "extractlines": _execute_extract_lines,
-                    "shownumberedcontext": execute_show_numbered_context,
-                    "updatetodolist": _execute_update_todo_list,
-                    "git_diff": _execute_git_diff,
-                    "git_log": _execute_git_log,
-                    "git_show": _execute_git_show,
-                    "git_status": _execute_git_status,
-                }
 
-                func = tool_functions.get(norm_tool_name)
-
-                if func:
+                # Use the tool registry for execution
+                if norm_tool_name in self._tool_registry:
+                    tool_module = self._tool_registry[norm_tool_name]
                     for params in parsed_args_list:
-                        if asyncio.iscoroutinefunction(func):
-                            tasks.append(func(self, **params))
+                        # Use the process_response function from the tool module
+                        result = tool_module.process_response(self, params)
+                        # Handle async functions
+                        if asyncio.iscoroutine(result):
+                            tasks.append(result)
                         else:
-                            tasks.append(asyncio.to_thread(func, self, **params))
+                            tasks.append(asyncio.to_thread(lambda: result))
                 else:
-                    all_results_content.append(f"Error: Unknown local tool name '{tool_name}'")
+                    # Handle MCP tools for tools not in registry
+                    if self.mcp_tools:
+                        for server_name, server_tools in self.mcp_tools:
+                            if any(
+                                t.get("function", {}).get("name") == norm_tool_name
+                                for t in server_tools
+                            ):
+                                server = next(
+                                    (s for s in self.mcp_servers if s.name == server_name), None
+                                )
+                                if server:
+                                    for params in parsed_args_list:
+                                        tasks.append(
+                                            self._execute_mcp_tool(server, norm_tool_name, params)
+                                        )
+                                    break
+                        else:
+                            all_results_content.append(f"Error: Unknown tool name '{tool_name}'")
+                    else:
+                        all_results_content.append(f"Error: Unknown tool name '{tool_name}'")
 
                 if tasks:
                     task_results = await asyncio.gather(*tasks)
@@ -473,16 +449,6 @@ class AgentCoder(Coder):
 
         # Otherwise generate and cache the block
         return self._generate_context_block(block_name)
-
-    def set_granular_editing(self, enabled):
-        """
-        Switch between granular editing tools and legacy search/replace.
-
-        Args:
-            enabled (bool): True to use granular editing tools, False to use legacy search/replace
-        """
-        self.use_granular_editing = enabled
-        self.gpt_prompts = AgentPrompts() if enabled else AgentLegacyPrompts()
 
     def get_context_symbol_outline(self):
         """
@@ -929,35 +895,8 @@ class AgentCoder(Coder):
         iteratively discover and analyze relevant files before providing
         a final answer to the user's question.
         """
-        # In granular editing mode, tool calls are handled by BaseCoder's process_tool_calls,
-        # which is overridden in this class to track tool usage. This method is now only for
-        # legacy tool call format and search/replace blocks.
-        if self.use_granular_editing:
-            # Handle SEARCH/REPLACE blocks
-            content = self.partial_response_content
-            if not content or not content.strip():
-                return True
-
-            # Check for search/replace blocks
-            has_search = "<<<<<<< SEARCH" in content
-            has_divider = "=======" in content
-            has_replace = ">>>>>>> REPLACE" in content
-            if has_search and has_divider and has_replace:
-                self.io.tool_output("Detected edit blocks, applying changes...")
-                edited_files = await self._apply_edits_from_response()
-                if self.reflected_message:
-                    return False  # Trigger reflection if edits failed
-
-                # If edits were successful, we might want to reflect.
-                # For now, let's consider the turn complete.
-
-            # Since tool calls are handled earlier, we finalize the turn.
-            self.tool_call_count = 0
-            self.files_added_in_exploration = set()
-            self.move_back_cur_messages(None)
-            return True
-
         # Legacy tool call processing for use_granular_editing=False
+        self.agent_finished = False
         content = self.partial_response_content
         if not content or not content.strip():
             if len(self.tool_usage_history) > self.tool_usage_retries:
@@ -973,6 +912,9 @@ class AgentCoder(Coder):
             content_before_last_separator,
             tool_names_this_turn,
         ) = await self._process_tool_commands(content)
+
+        if self.agent_finished:
+            return True
 
         # Since we are no longer suppressing, the partial_response_content IS the final content.
         # We might want to update it to the processed_content (without tool calls) if we don't
@@ -1106,7 +1048,47 @@ class AgentCoder(Coder):
         self.move_back_cur_messages(
             None
         )  # Pass None as we handled commit message earlier if needed
-        return True  # Indicate exploration is finished for this round
+
+        return False  # Always Loop Until the Finished Tool is Called
+
+    async def _execute_tool_with_registry(self, norm_tool_name, params):
+        """
+        Execute a tool using the tool registry.
+
+        Args:
+            norm_tool_name: Normalized tool name (lowercase)
+            params: Dictionary of parameters
+
+        Returns:
+            str: Result message
+        """
+        # Check if tool exists in registry
+        if norm_tool_name in self._tool_registry:
+            tool_module = self._tool_registry[norm_tool_name]
+            try:
+                # Use the process_response function from the tool module
+                result = tool_module.process_response(self, params)
+                # Handle async functions
+                if asyncio.iscoroutine(result):
+                    result = await result
+                return result
+            except Exception as e:
+                self.io.tool_error(
+                    f"Error during {norm_tool_name} execution: {e}\n{traceback.format_exc()}"
+                )
+                return f"Error executing {norm_tool_name}: {str(e)}"
+
+        # Handle MCP tools for tools not in registry
+        if self.mcp_tools:
+            for server_name, server_tools in self.mcp_tools:
+                if any(t.get("function", {}).get("name") == norm_tool_name for t in server_tools):
+                    server = next((s for s in self.mcp_servers if s.name == server_name), None)
+                    if server:
+                        return await self._execute_mcp_tool(server, norm_tool_name, params)
+                    else:
+                        return f"Error: Could not find server instance for {server_name}"
+
+        return f"Error: Unknown tool name '{norm_tool_name}'"
 
     async def _process_tool_commands(self, content):
         """
@@ -1402,412 +1384,13 @@ class AgentCoder(Coder):
                 result_messages.append(f"[Result (Parse Error): {result_message}]")
                 continue
 
-            # Execute the tool based on its name
+            # Execute the tool using the registry
             try:
                 # Normalize tool name for case-insensitive matching
                 norm_tool_name = tool_name.lower()
 
-                if norm_tool_name == "viewfilesmatching":
-                    pattern = params.get("pattern")
-                    file_pattern = params.get("file_pattern")  # Optional
-                    regex = params.get("regex", False)  # Default to False if not provided
-                    if pattern is not None:
-                        result_message = execute_view_files_matching(
-                            self, pattern=pattern, file_pattern=file_pattern, regex=regex
-                        )
-                    else:
-                        result_message = "Error: Missing 'pattern' parameter for ViewFilesMatching"
-                elif norm_tool_name == "ls":
-                    directory = params.get("directory")
-                    if directory is not None:
-                        result_message = execute_ls(self, directory)
-                    else:
-                        result_message = "Error: Missing 'directory' parameter for Ls"
-                elif norm_tool_name == "view":
-                    file_path = params.get("file_path")
-                    if file_path is not None:
-                        result_message = execute_view(self, file_path)
-                    else:
-                        result_message = "Error: Missing 'file_path' parameter for View"
-                elif norm_tool_name == "remove":
-                    file_path = params.get("file_path")
-                    if file_path is not None:
-                        result_message = _execute_remove(self, file_path)
-                    else:
-                        result_message = "Error: Missing 'file_path' parameter for Remove"
-                elif norm_tool_name == "makeeditable":
-                    file_path = params.get("file_path")
-                    if file_path is not None:
-                        result_message = _execute_make_editable(self, file_path)
-                    else:
-                        result_message = "Error: Missing 'file_path' parameter for MakeEditable"
-                elif norm_tool_name == "makereadonly":
-                    file_path = params.get("file_path")
-                    if file_path is not None:
-                        result_message = _execute_make_readonly(self, file_path)
-                    else:
-                        result_message = "Error: Missing 'file_path' parameter for MakeReadonly"
-                elif norm_tool_name == "viewfileswithsymbol":
-                    symbol = params.get("symbol")
-                    if symbol is not None:
-                        # Call the imported function from the tools directory
-                        result_message = _execute_view_files_with_symbol(self, symbol)
-                    else:
-                        result_message = "Error: Missing 'symbol' parameter for ViewFilesWithSymbol"
-
-                # Command tools
-                elif norm_tool_name == "command":
-                    command_string = params.get("command_string")
-                    if command_string is not None:
-                        result_message = await _execute_command(self, command_string)
-                    else:
-                        result_message = "Error: Missing 'command_string' parameter for Command"
-                elif norm_tool_name == "commandinteractive":
-                    command_string = params.get("command_string")
-                    if command_string is not None:
-                        result_message = await _execute_command_interactive(self, command_string)
-                    else:
-                        result_message = (
-                            "Error: Missing 'command_string' parameter for CommandInteractive"
-                        )
-
-                # Grep tool
-                elif norm_tool_name == "grep":
-                    pattern = params.get("pattern")
-                    file_pattern = params.get("file_pattern", "*")  # Default to all files
-                    directory = params.get("directory", ".")  # Default to current directory
-                    use_regex = params.get("use_regex", False)  # Default to literal search
-                    case_insensitive = params.get(
-                        "case_insensitive", False
-                    )  # Default to case-sensitive
-                    context_before = params.get("context_before", 5)
-                    context_after = params.get("context_after", 5)
-
-                    if pattern is not None:
-                        result_message = await asyncio.to_thread(
-                            _execute_grep,
-                            self,
-                            pattern,
-                            file_pattern,
-                            directory,
-                            use_regex,
-                            case_insensitive,
-                            context_before,
-                            context_after,
-                        )
-                    else:
-                        result_message = "Error: Missing required 'pattern' parameter for Grep"
-
-                # Granular editing tools
-                elif norm_tool_name == "replacetext":
-                    file_path = params.get("file_path")
-                    find_text = params.get("find_text")
-                    replace_text = params.get("replace_text")
-                    near_context = params.get("near_context")
-                    occurrence = params.get("occurrence", 1)  # Default to first occurrence
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)  # Default to False
-
-                    if file_path is not None and find_text is not None and replace_text is not None:
-                        result_message = _execute_replace_text(
-                            self,
-                            file_path,
-                            find_text,
-                            replace_text,
-                            near_context,
-                            occurrence,
-                            change_id,
-                            dry_run,
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for ReplaceText (file_path,"
-                            " find_text, replace_text)"
-                        )
-
-                elif norm_tool_name == "replaceall":
-                    file_path = params.get("file_path")
-                    find_text = params.get("find_text")
-                    replace_text = params.get("replace_text")
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)  # Default to False
-
-                    if file_path is not None and find_text is not None and replace_text is not None:
-                        result_message = _execute_replace_all(
-                            self, file_path, find_text, replace_text, change_id, dry_run
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for ReplaceAll (file_path,"
-                            " find_text, replace_text)"
-                        )
-
-                elif norm_tool_name == "insertblock":
-                    file_path = params.get("file_path")
-                    content = params.get("content")
-                    after_pattern = params.get("after_pattern")
-                    before_pattern = params.get("before_pattern")
-                    occurrence = params.get("occurrence", 1)  # Default 1
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)  # Default False
-                    position = params.get("position")
-                    auto_indent = params.get("auto_indent", True)  # Default True
-                    use_regex = params.get("use_regex", False)  # Default False
-
-                    if (
-                        file_path is not None
-                        and content is not None
-                        and (
-                            after_pattern is not None
-                            or before_pattern is not None
-                            or position is not None
-                        )
-                    ):
-                        result_message = _execute_insert_block(
-                            self,
-                            file_path,
-                            content,
-                            after_pattern,
-                            before_pattern,
-                            occurrence,
-                            change_id,
-                            dry_run,
-                            position,
-                            auto_indent,
-                            use_regex,
-                        )
-
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for InsertBlock (file_path,"
-                            " content, and either after_pattern or before_pattern)"
-                        )
-
-                elif norm_tool_name == "deleteblock":
-                    file_path = params.get("file_path")
-                    start_pattern = params.get("start_pattern")
-                    end_pattern = params.get("end_pattern")
-                    line_count = params.get("line_count")
-                    near_context = params.get("near_context")  # New
-                    occurrence = params.get("occurrence", 1)  # New, default 1
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)  # New, default False
-
-                    if file_path is not None and start_pattern is not None:
-                        result_message = _execute_delete_block(
-                            self,
-                            file_path,
-                            start_pattern,
-                            end_pattern,
-                            line_count,
-                            near_context,
-                            occurrence,
-                            change_id,
-                            dry_run,
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for DeleteBlock (file_path,"
-                            " start_pattern)"
-                        )
-
-                elif norm_tool_name == "replaceline":
-                    file_path = params.get("file_path")
-                    line_number = params.get("line_number")
-                    new_content = params.get("new_content")
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)  # New, default False
-
-                    if (
-                        file_path is not None
-                        and line_number is not None
-                        and new_content is not None
-                    ):
-                        result_message = _execute_replace_line(
-                            self, file_path, line_number, new_content, change_id, dry_run
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for ReplaceLine (file_path,"
-                            " line_number, new_content)"
-                        )
-
-                elif norm_tool_name == "replacelines":
-                    file_path = params.get("file_path")
-                    start_line = params.get("start_line")
-                    end_line = params.get("end_line")
-                    new_content = params.get("new_content")
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)  # New, default False
-
-                    if (
-                        file_path is not None
-                        and start_line is not None
-                        and end_line is not None
-                        and new_content is not None
-                    ):
-                        result_message = _execute_replace_lines(
-                            self, file_path, start_line, end_line, new_content, change_id, dry_run
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for ReplaceLines (file_path,"
-                            " start_line, end_line, new_content)"
-                        )
-
-                elif norm_tool_name == "indentlines":
-                    file_path = params.get("file_path")
-                    start_pattern = params.get("start_pattern")
-                    end_pattern = params.get("end_pattern")
-                    line_count = params.get("line_count")
-                    indent_levels = params.get("indent_levels", 1)  # Default to indent 1 level
-                    near_context = params.get("near_context")  # New
-                    occurrence = params.get("occurrence", 1)  # New, default 1
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)  # New, default False
-
-                    if file_path is not None and start_pattern is not None:
-                        result_message = _execute_indent_lines(
-                            self,
-                            file_path,
-                            start_pattern,
-                            end_pattern,
-                            line_count,
-                            indent_levels,
-                            near_context,
-                            occurrence,
-                            change_id,
-                            dry_run,
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for IndentLines (file_path,"
-                            " start_pattern)"
-                        )
-
-                elif norm_tool_name == "deleteline":
-                    file_path = params.get("file_path")
-                    line_number = params.get("line_number")
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)
-
-                    if file_path is not None and line_number is not None:
-                        result_message = _execute_delete_line(
-                            self, file_path, line_number, change_id, dry_run
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for DeleteLine (file_path,"
-                            " line_number)"
-                        )
-
-                elif norm_tool_name == "deletelines":
-                    file_path = params.get("file_path")
-                    start_line = params.get("start_line")
-                    end_line = params.get("end_line")
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)
-
-                    if file_path is not None and start_line is not None and end_line is not None:
-                        result_message = _execute_delete_lines(
-                            self, file_path, start_line, end_line, change_id, dry_run
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for DeleteLines (file_path,"
-                            " start_line, end_line)"
-                        )
-
-                elif norm_tool_name == "undochange":
-                    change_id = params.get("change_id")
-                    file_path = params.get("file_path")
-
-                    result_message = _execute_undo_change(self, change_id, file_path)
-
-                elif norm_tool_name == "listchanges":
-                    file_path = params.get("file_path")
-                    limit = params.get("limit", 10)
-
-                    result_message = _execute_list_changes(self, file_path, limit)
-
-                elif norm_tool_name == "extractlines":
-                    source_file_path = params.get("source_file_path")
-                    target_file_path = params.get("target_file_path")
-                    start_pattern = params.get("start_pattern")
-                    end_pattern = params.get("end_pattern")
-                    line_count = params.get("line_count")
-                    near_context = params.get("near_context")
-                    occurrence = params.get("occurrence", 1)
-                    dry_run = params.get("dry_run", False)
-
-                    if source_file_path and target_file_path and start_pattern:
-                        result_message = _execute_extract_lines(
-                            self,
-                            source_file_path,
-                            target_file_path,
-                            start_pattern,
-                            end_pattern,
-                            line_count,
-                            near_context,
-                            occurrence,
-                            dry_run,
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for ExtractLines (source_file_path,"
-                            " target_file_path, start_pattern)"
-                        )
-
-                elif norm_tool_name == "shownumberedcontext":
-                    file_path = params.get("file_path")
-                    pattern = params.get("pattern")
-                    line_number = params.get("line_number")
-                    context_lines = params.get("context_lines", 3)  # Default context
-
-                    if file_path is not None and (pattern is not None or line_number is not None):
-                        result_message = execute_show_numbered_context(
-                            self, file_path, pattern, line_number, context_lines
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required parameters for ViewNumberedContext (file_path"
-                            " and either pattern or line_number)"
-                        )
-
-                elif norm_tool_name == "updatetodolist":
-                    content = params.get("content")
-                    append = params.get("append", False)
-                    change_id = params.get("change_id")
-                    dry_run = params.get("dry_run", False)
-
-                    if content is not None:
-                        result_message = _execute_update_todo_list(
-                            self, content, append, change_id, dry_run
-                        )
-                    else:
-                        result_message = (
-                            "Error: Missing required 'content' parameter for UpdateTodoList"
-                        )
-
-                else:
-                    result_message = f"Error: Unknown tool name '{tool_name}'"
-                    if self.mcp_tools:
-                        for server_name, server_tools in self.mcp_tools:
-                            if any(
-                                t.get("function", {}).get("name") == tool_name for t in server_tools
-                            ):
-                                server = next(
-                                    (s for s in self.mcp_servers if s.name == server_name), None
-                                )
-                                if server:
-                                    result_message = await self._execute_mcp_tool(
-                                        server, tool_name, params
-                                    )
-                                else:
-                                    result_message = (
-                                        f"Error: Could not find server instance for {server_name}"
-                                    )
-                                break
+                # Use the tool registry for execution
+                result_message = await self._execute_tool_with_registry(norm_tool_name, params)
 
             except Exception as e:
                 result_message = f"Error executing {tool_name}: {str(e)}"

@@ -1,6 +1,6 @@
 import os
 
-ls_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "Ls",
@@ -17,6 +17,9 @@ ls_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "ls"
 
 
 def execute_ls(coder, dir_path=None, directory=None):
@@ -70,3 +73,21 @@ def execute_ls(coder, dir_path=None, directory=None):
     except Exception as e:
         coder.io.tool_error(f"Error in ls: {str(e)}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the Ls tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    directory = params.get("directory")
+    if directory is not None:
+        return execute_ls(coder, directory)
+    else:
+        return "Error: Missing 'directory' parameter for Ls"

@@ -1,7 +1,7 @@
 import traceback
 from datetime import datetime
 
-list_changes_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "ListChanges",
@@ -15,6 +15,9 @@ list_changes_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "listchanges"
 
 
 def _execute_list_changes(coder, file_path=None, limit=10):
@@ -64,3 +67,20 @@ def _execute_list_changes(coder, file_path=None, limit=10):
             f"Error in ListChanges: {str(e)}\n{traceback.format_exc()}"
         )  # Add traceback
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the ListChanges tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    file_path = params.get("file_path")
+    limit = params.get("limit", 10)
+
+    return _execute_list_changes(coder, file_path, limit)

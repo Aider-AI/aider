@@ -1298,33 +1298,6 @@ class Commands:
                 " be included."
             )
 
-    def cmd_granular_editing(self, args=""):
-        "Toggle granular editing tools in agent mode"
-        if not hasattr(self.coder, "use_granular_editing"):
-            self.io.tool_error("Granular editing toggle is only available in agent mode.")
-            return
-
-        # Toggle the setting using the agent's method if available
-        new_state = not self.coder.use_granular_editing
-
-        if hasattr(self.coder, "set_granular_editing"):
-            self.coder.set_granular_editing(new_state)
-        else:
-            # Fallback if method doesn't exist
-            self.coder.use_granular_editing = new_state
-
-        # Report the new state
-        if self.coder.use_granular_editing:
-            self.io.tool_output(
-                "Granular editing tools are now ON - agent will use specific editing tools"
-                " instead of search/replace."
-            )
-        else:
-            self.io.tool_output(
-                "Granular editing tools are now OFF - agent will use search/replace blocks for"
-                " editing."
-            )
-
     def cmd_ls(self, args):
         "List all known files and indicate which are included in the chat session"
 

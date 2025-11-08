@@ -1,7 +1,7 @@
 # Import necessary functions
 from aider.run_cmd import run_cmd
 
-command_interactive_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "CommandInteractive",
@@ -18,6 +18,9 @@ command_interactive_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "commandinteractive"
 
 
 def _execute_command_interactive(coder, command_string):
@@ -69,3 +72,21 @@ def _execute_command_interactive(coder, command_string):
         # if coder.verbose:
         #     coder.io.tool_error(traceback.format_exc())
         return f"Error executing interactive command: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the CommandInteractive tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    command_string = params.get("command_string")
+    if command_string is not None:
+        return _execute_command_interactive(coder, command_string)
+    else:
+        return "Error: Missing 'command_string' parameter for CommandInteractive"

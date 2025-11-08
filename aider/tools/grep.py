@@ -5,7 +5,7 @@ import oslex
 
 from aider.run_cmd import run_cmd_subprocess
 
-grep_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "Grep",
@@ -48,6 +48,9 @@ grep_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "grep"
 
 
 def _find_search_tool():
@@ -214,3 +217,37 @@ def _execute_grep(
         cmd_str_info = f"'{command_string}' " if "command_string" in locals() else ""
         coder.io.tool_error(f"Error executing {tool_name} command {cmd_str_info}: {str(e)}")
         return f"Error executing {tool_name}: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the Grep tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    pattern = params.get("pattern")
+    file_pattern = params.get("file_pattern", "*")  # Default to all files
+    directory = params.get("directory", ".")  # Default to current directory
+    use_regex = params.get("use_regex", False)  # Default to literal search
+    case_insensitive = params.get("case_insensitive", False)  # Default to case-sensitive
+    context_before = params.get("context_before", 5)
+    context_after = params.get("context_after", 5)
+
+    if pattern is not None:
+        return _execute_grep(
+            coder,
+            pattern,
+            file_pattern,
+            directory,
+            use_regex,
+            case_insensitive,
+            context_before,
+            context_after,
+        )
+    else:
+        return "Error: Missing required 'pattern' parameter for Grep"

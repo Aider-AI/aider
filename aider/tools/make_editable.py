@@ -1,6 +1,6 @@
 import os
 
-make_editable_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "MakeEditable",
@@ -17,6 +17,9 @@ make_editable_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "makeeditable"
 
 
 # Keep the underscore prefix as this function is primarily for internal coder use
@@ -62,3 +65,21 @@ def _execute_make_editable(coder, file_path):
     except Exception as e:
         coder.io.tool_error(f"Error in MakeEditable for '{file_path}': {str(e)}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the MakeEditable tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    file_path = params.get("file_path")
+    if file_path is not None:
+        return _execute_make_editable(coder, file_path)
+    else:
+        return "Error: Missing 'file_path' parameter for MakeEditable"

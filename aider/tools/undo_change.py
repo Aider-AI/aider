@@ -1,6 +1,6 @@
 import traceback
 
-undo_change_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "UndoChange",
@@ -14,6 +14,9 @@ undo_change_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "undochange"
 
 
 def _execute_undo_change(coder, change_id=None, file_path=None):
@@ -73,3 +76,20 @@ def _execute_undo_change(coder, change_id=None, file_path=None):
     except Exception as e:
         coder.io.tool_error(f"Error in UndoChange: {str(e)}\n{traceback.format_exc()}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the UndoChange tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    change_id = params.get("change_id")
+    file_path = params.get("file_path")
+
+    return _execute_undo_change(coder, change_id, file_path)

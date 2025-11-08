@@ -1,6 +1,6 @@
 import time
 
-remove_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "Remove",
@@ -21,6 +21,9 @@ remove_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "remove"
 
 
 def _execute_remove(coder, file_path):
@@ -68,3 +71,21 @@ def _execute_remove(coder, file_path):
     except Exception as e:
         coder.io.tool_error(f"Error removing file: {str(e)}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the Remove tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    file_path = params.get("file_path")
+    if file_path is not None:
+        return _execute_remove(coder, file_path)
+    else:
+        return "Error: Missing 'file_path' parameter for Remove"

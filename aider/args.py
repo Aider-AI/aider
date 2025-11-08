@@ -888,6 +888,12 @@ def get_parser(default_config_files, git_root):
             " or home directory)"
         ),
     ).complete = shtab.FILE
+    group.add_argument(
+        "--agent-config",
+        metavar="AGENT_CONFIG_JSON",
+        help="Specify Agent Mode configuration as a JSON string",
+        default=None,
+    )
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
     # argument parsing, but it's here so that the help is displayed as expected.
     group.add_argument(

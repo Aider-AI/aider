@@ -2,7 +2,7 @@ import os
 
 from .tool_utils import ToolError, handle_tool_error, resolve_paths
 
-show_numbered_context_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "ShowNumberedContext",
@@ -19,6 +19,9 @@ show_numbered_context_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "shownumberedcontext"
 
 
 def execute_show_numbered_context(
@@ -117,3 +120,28 @@ def execute_show_numbered_context(
     except Exception as e:
         # Handle unexpected errors during processing
         return handle_tool_error(coder, tool_name, e)
+
+
+def process_response(coder, params):
+    """
+    Process the ShowNumberedContext tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    file_path = params.get("file_path")
+    pattern = params.get("pattern")
+    line_number = params.get("line_number")
+    context_lines = params.get("context_lines", 3)
+
+    if file_path is not None and (pattern is not None or line_number is not None):
+        return execute_show_numbered_context(coder, file_path, pattern, line_number, context_lines)
+    else:
+        return (
+            "Error: Missing required parameters for ViewNumberedContext (file_path"
+            " and either pattern or line_number)"
+        )

@@ -8,7 +8,7 @@ from .tool_utils import (
     handle_tool_error,
 )
 
-delete_line_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "DeleteLine",
@@ -25,6 +25,9 @@ delete_line_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "deleteline"
 
 
 def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=False):
@@ -128,3 +131,25 @@ def _execute_delete_line(coder, file_path, line_number, change_id=None, dry_run=
     except Exception as e:
         # Handle unexpected errors
         return handle_tool_error(coder, tool_name, e)
+
+
+def process_response(coder, params):
+    """
+    Process the DeleteLine tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    file_path = params.get("file_path")
+    line_number = params.get("line_number")
+    change_id = params.get("change_id")
+    dry_run = params.get("dry_run", False)
+
+    if file_path is not None and line_number is not None:
+        return _execute_delete_line(coder, file_path, line_number, change_id, dry_run)
+    else:
+        return "Error: Missing required parameters for DeleteLine (file_path, line_number)"

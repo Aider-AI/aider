@@ -1,7 +1,7 @@
 # Import necessary functions
 from aider.run_cmd import run_cmd_subprocess
 
-command_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "Command",
@@ -18,6 +18,9 @@ command_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "command"
 
 
 def _execute_command(coder, command_string):
@@ -74,3 +77,21 @@ def _execute_command(coder, command_string):
         # if coder.verbose:
         #     coder.io.tool_error(traceback.format_exc())
         return f"Error executing command: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the Command tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    command_string = params.get("command_string")
+    if command_string is not None:
+        return _execute_command(coder, command_string)
+    else:
+        return "Error: Missing 'command_string' parameter for Command"

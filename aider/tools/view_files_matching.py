@@ -1,7 +1,7 @@
 import fnmatch
 import re
 
-view_files_matching_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "ViewFilesMatching",
@@ -28,6 +28,9 @@ view_files_matching_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "viewfilesmatching"
 
 
 def execute_view_files_matching(coder, pattern, file_pattern=None, regex=False):
@@ -115,3 +118,24 @@ def execute_view_files_matching(coder, pattern, file_pattern=None, regex=False):
     except Exception as e:
         coder.io.tool_error(f"Error in ViewFilesMatching: {str(e)}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the ViewFilesMatching tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    pattern = params.get("pattern")
+    file_pattern = params.get("file_pattern")
+    regex = params.get("regex", False)
+
+    if pattern is not None:
+        return execute_view_files_matching(coder, pattern, file_pattern, regex)
+    else:
+        return "Error: Missing 'pattern' parameter for ViewFilesMatching"
