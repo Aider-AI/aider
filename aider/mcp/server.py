@@ -51,7 +51,8 @@ class McpServer:
         )
 
         try:
-            with open(".aider-mcp-errors.log", "w") as err_file:
+            os.makedirs(".aider/logs/", exist_ok=True)
+            with open(".aider/logs/mcp-errors.log", "w") as err_file:
                 stdio_transport = await self.exit_stack.enter_async_context(
                     stdio_client(server_params, errlog=err_file)
                 )
