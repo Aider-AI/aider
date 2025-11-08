@@ -494,7 +494,7 @@ class Commands:
                 tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
-        # Enhanced context blocks (only for navigator mode)
+        # Enhanced context blocks (only for agent mode)
         if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
             # Force token calculation if it hasn't been done yet
             if hasattr(self.coder, "_calculate_context_block_tokens"):
@@ -989,7 +989,7 @@ class Commands:
                     self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
 
-                    # Recalculate context block tokens if using navigator mode
+                    # Recalculate context block tokens if using agent mode
                     if (
                         hasattr(self.coder, "use_enhanced_context")
                         and self.coder.use_enhanced_context
@@ -1101,7 +1101,7 @@ class Commands:
                     self.io.tool_output(f"Removed {matched_file} from the chat")
                     files_changed = True
 
-        # Recalculate context block tokens if any files were changed and using navigator mode
+        # Recalculate context block tokens if any files were changed and using agent mode
         if (
             files_changed
             and hasattr(self.coder, "use_enhanced_context")
@@ -1226,7 +1226,7 @@ class Commands:
     def cmd_context_management(self, args=""):
         "Toggle context management for large files"
         if not hasattr(self.coder, "context_management_enabled"):
-            self.io.tool_error("Context management is only available in navigator mode.")
+            self.io.tool_error("Context management is only available in agent mode.")
             return
 
         # Toggle the setting
@@ -1241,7 +1241,7 @@ class Commands:
     def cmd_context_blocks(self, args=""):
         "Toggle enhanced context blocks or print a specific block"
         if not hasattr(self.coder, "use_enhanced_context"):
-            self.io.tool_error("Enhanced context blocks are only available in navigator mode.")
+            self.io.tool_error("Enhanced context blocks are only available in agent mode.")
             return
 
         # If an argument is provided, try to print that specific context block
@@ -1299,12 +1299,12 @@ class Commands:
             )
 
     def cmd_granular_editing(self, args=""):
-        "Toggle granular editing tools in navigator mode"
+        "Toggle granular editing tools in agent mode"
         if not hasattr(self.coder, "use_granular_editing"):
-            self.io.tool_error("Granular editing toggle is only available in navigator mode.")
+            self.io.tool_error("Granular editing toggle is only available in agent mode.")
             return
 
-        # Toggle the setting using the navigator's method if available
+        # Toggle the setting using the agent's method if available
         new_state = not self.coder.use_granular_editing
 
         if hasattr(self.coder, "set_granular_editing"):
@@ -1316,12 +1316,12 @@ class Commands:
         # Report the new state
         if self.coder.use_granular_editing:
             self.io.tool_output(
-                "Granular editing tools are now ON - navigator will use specific editing tools"
+                "Granular editing tools are now ON - agent will use specific editing tools"
                 " instead of search/replace."
             )
         else:
             self.io.tool_output(
-                "Granular editing tools are now OFF - navigator will use search/replace blocks for"
+                "Granular editing tools are now OFF - agent will use search/replace blocks for"
                 " editing."
             )
 
@@ -1452,7 +1452,7 @@ class Commands:
     def completions_context(self):
         raise CommandCompletionException()
 
-    def completions_navigator(self):
+    def completions_agent(self):
         raise CommandCompletionException()
 
     async def cmd_ask(self, args):
@@ -1471,14 +1471,14 @@ class Commands:
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return await self._generic_chat_command(args, "context", placeholder=args.strip() or None)
 
-    async def cmd_navigator(self, args):
-        """Enter navigator mode to autonomously discover and manage relevant files. If no prompt provided, switches to navigator mode."""  # noqa
-        # Enable context management when entering navigator mode
+    async def cmd_agent(self, args):
+        """Enter agent mode to autonomously discover and manage relevant files. If no prompt provided, switches to agent mode."""  # noqa
+        # Enable context management when entering agent mode
         if hasattr(self.coder, "context_management_enabled"):
             self.coder.context_management_enabled = True
             self.io.tool_output("Context management enabled for large files")
 
-        return await self._generic_chat_command(args, "navigator", placeholder=args.strip() or None)
+        return await self._generic_chat_command(args, "agent", placeholder=args.strip() or None)
 
     async def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():

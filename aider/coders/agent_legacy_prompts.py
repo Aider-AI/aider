@@ -3,11 +3,11 @@
 from .base_prompts import CoderPrompts
 
 
-class NavigatorPrompts(CoderPrompts):
+class AgentLegacyPrompts(CoderPrompts):
     """
-    Prompt templates for the Navigator mode, which enables autonomous codebase exploration.
+    Prompt templates for the Agent mode, which enables autonomous codebase exploration.
 
-    The NavigatorCoder uses these prompts to guide its behavior when exploring and modifying
+    The AgentCoder uses these prompts to guide its behavior when exploring and modifying
     a codebase using special tool commands like Glob, Grep, Add, etc. This mode enables the
     LLM to manage its own context by adding/removing files and executing commands.
     """
@@ -24,7 +24,7 @@ class NavigatorPrompts(CoderPrompts):
 
 <context name="workflow_and_tool_usage">
 ## Core Workflow
-1.  **Plan**: Determine the necessary changes. Use the `UpdateTodoList` tool to manage your plan. Always begin by creating the todo list.
+1.  **Plan**: Determine the necessary changes. Use the `UpdateTodoList` tool to manage your plan. Always begin by the todo list.
 2.  **Explore**: Use discovery tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `Ls`, `Grep`) to find relevant files. These tools add files to context as read-only. Use `Grep` first for broad searches to avoid context clutter.
 3.  **Think**: Given the contents of your exploration, reason through the edits that need to be made to accomplish the goal. For complex edits, briefly outline your plan for the user.
 4.  **Execute**: Use the appropriate editing tool. Remember to use `MakeEditable` on a file before modifying it.

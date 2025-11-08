@@ -87,7 +87,7 @@ class RepoMap:
     _initial_ident_to_files = None
 
     # Define kinds that typically represent definitions across languages
-    # Used by NavigatorCoder to filter tags for the symbol outline
+    # Used by AgentCoder to filter tags for the symbol outline
     definition_kinds = {
         "class",
         "struct",

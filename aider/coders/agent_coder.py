@@ -87,10 +87,10 @@ from aider.tools.view import execute_view
 from aider.tools.view_files_matching import execute_view_files_matching
 from aider.tools.view_files_with_symbol import _execute_view_files_with_symbol
 
+from .agent_legacy_prompts import AgentLegacyPrompts
+from .agent_prompts import AgentPrompts
 from .base_coder import ChatChunks, Coder
 from .editblock_coder import do_replace, find_original_update_blocks, find_similar_lines
-from .navigator_legacy_prompts import NavigatorLegacyPrompts
-from .navigator_prompts import NavigatorPrompts
 
 # UNUSED TOOL SCHEMAS
 # view_files_matching_schema,
@@ -109,10 +109,10 @@ from .navigator_prompts import NavigatorPrompts
 # show_numbered_context_schema,
 
 
-class NavigatorCoder(Coder):
+class AgentCoder(Coder):
     """Mode where the LLM autonomously manages which files are in context."""
 
-    edit_format = "navigator"
+    edit_format = "agent"
 
     # TODO: We'll turn on granular editing by default once those tools stabilize
     use_granular_editing = False
@@ -120,9 +120,7 @@ class NavigatorCoder(Coder):
     def __init__(self, *args, **kwargs):
         # Initialize appropriate prompt set before calling parent constructor
         # This needs to happen before super().__init__ so the parent class has access to gpt_prompts
-        self.gpt_prompts = (
-            NavigatorPrompts() if self.use_granular_editing else NavigatorLegacyPrompts()
-        )
+        self.gpt_prompts = AgentPrompts() if self.use_granular_editing else AgentLegacyPrompts()
 
         # Dictionary to track recently removed files
         self.recently_removed = {}
@@ -159,8 +157,8 @@ class NavigatorCoder(Coder):
         )
         self.max_files_per_glob = 50  # Maximum number of files to add at once via glob/grep
 
-        # Enable context management by default only in navigator mode
-        self.context_management_enabled = True  # Enabled by default for navigator mode
+        # Enable context management by default only in agent mode
+        self.context_management_enabled = True  # Enabled by default for agent mode
 
         # Initialize change tracker for granular editing
         self.change_tracker = ChangeTracker()
@@ -484,7 +482,7 @@ class NavigatorCoder(Coder):
             enabled (bool): True to use granular editing tools, False to use legacy search/replace
         """
         self.use_granular_editing = enabled
-        self.gpt_prompts = NavigatorPrompts() if enabled else NavigatorLegacyPrompts()
+        self.gpt_prompts = AgentPrompts() if enabled else AgentLegacyPrompts()
 
     def get_context_symbol_outline(self):
         """
@@ -1001,7 +999,7 @@ class NavigatorCoder(Coder):
             edit_match = has_search_before and has_divider_before and has_replace_before
 
         if edit_match:
-            self.io.tool_output("Detected edit blocks, applying changes within Navigator...")
+            self.io.tool_output("Detected edit blocks, applying changes within Agent...")
             edited_files = await self._apply_edits_from_response()
             # If _apply_edits_from_response set a reflected_message (due to errors),
             # return False to trigger a reflection loop.
@@ -2197,7 +2195,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         # Get new files to add (not already in context)
         mentioned_files - current_files
 
-        # In navigator mode, we *only* add files via explicit tool commands (`View`, `ViewFilesAtGlob`, etc.).
+        # In agent mode, we *only* add files via explicit tool commands (`View`, `ViewFilesAtGlob`, etc.).
         # Do nothing here for implicit mentions.
         pass
 
@@ -2205,11 +2203,11 @@ Just reply with fixed versions of the {blocks} above that failed to match.
         """
         Override parent's method to use our own file processing logic.
 
-        Override parent's method to disable implicit file mention handling in navigator mode.
+        Override parent's method to disable implicit file mention handling in agent mode.
         Files should only be added via explicit tool commands
         (`View`, `ViewFilesAtGlob`, `ViewFilesMatching`, `ViewFilesWithSymbol`).
         """
-        # Do nothing - disable implicit file adds in navigator mode.
+        # Do nothing - disable implicit file adds in agent mode.
         pass
 
     async def preproc_user_input(self, inp):

@@ -144,7 +144,7 @@ class Coder:
     tool_reflection = False
 
     # Context management settings (for all modes)
-    context_management_enabled = False  # Disabled by default except for navigator mode
+    context_management_enabled = False  # Disabled by default except for agent mode
     large_file_token_threshold = (
         25000  # Files larger than this will be truncated when context management is enabled
     )
