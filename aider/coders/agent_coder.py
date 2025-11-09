@@ -101,10 +101,10 @@ class AgentCoder(Coder):
         self.max_tool_calls = 100  # Maximum number of tool calls per response
 
         # Context management parameters
+        # Will be overridden by agent_config if provided
         self.large_file_token_threshold = (
             25000  # Files larger than this in tokens are considered large
         )
-        self.max_files_per_glob = 50  # Maximum number of files to add at once via glob/grep
 
         # Enable context management by default only in agent mode
         self.context_management_enabled = True  # Enabled by default for agent mode
@@ -113,6 +113,7 @@ class AgentCoder(Coder):
         self.change_tracker = ChangeTracker()
 
         # Initialize tool registry
+        self.args = kwargs.get("args")
         self._tool_registry = self._build_tool_registry()
 
         # Track files added during current exploration
@@ -139,6 +140,7 @@ class AgentCoder(Coder):
     def _build_tool_registry(self):
         """
         Build a registry of available tools with their normalized names and process_response functions.
+        Handles agent configuration with whitelist/blacklist functionality.
 
         Returns:
             dict: Mapping of normalized tool names to tool modules
@@ -178,11 +180,71 @@ class AgentCoder(Coder):
             view_files_with_symbol,
         ]
 
+        # Process agent configuration if provided
+        agent_config = self._get_agent_config()
+        tools_whitelist = agent_config.get("tools_whitelist", [])
+        tools_blacklist = agent_config.get("tools_blacklist", [])
+
+        # Always include essential tools regardless of whitelist/blacklist
+        essential_tools = {"makeeditable", "replacetext", "view", "finished"}
         for module in tool_modules:
             if hasattr(module, "NORM_NAME") and hasattr(module, "process_response"):
-                registry[module.NORM_NAME] = module
+                tool_name = module.NORM_NAME
+
+                # Check if tool should be included based on configuration
+                should_include = True
+
+                # If whitelist is specified, only include tools in whitelist
+                if tools_whitelist:
+                    should_include = tool_name in tools_whitelist
+
+                # Always include essential tools
+                if tool_name in essential_tools:
+                    should_include = True
+
+                # Exclude tools in blacklist (unless they're essential)
+                if tool_name in tools_blacklist and tool_name not in essential_tools:
+                    should_include = False
+
+                if should_include:
+                    registry[tool_name] = module
 
         return registry
+
+    def _get_agent_config(self):
+        """
+        Parse and return agent configuration from args.agent_config.
+
+        Returns:
+            dict: Agent configuration with defaults for missing values
+        """
+        config = {}
+
+        # Check if agent_config is provided via args
+        if (
+            hasattr(self, "args")
+            and self.args
+            and hasattr(self.args, "agent_config")
+            and self.args.agent_config
+        ):
+            try:
+                config = json.loads(self.args.agent_config)
+            except (json.JSONDecodeError, TypeError) as e:
+                self.io.tool_warning(f"Failed to parse agent-config JSON: {e}")
+                return {}
+
+        # Set defaults for missing values
+        if "large_file_token_threshold" not in config:
+            config["large_file_token_threshold"] = 25000
+        if "tools_whitelist" not in config:
+            config["tools_whitelist"] = []
+        if "tools_blacklist" not in config:
+            config["tools_blacklist"] = []
+
+        # Apply configuration to instance
+        self.large_file_token_threshold = config["large_file_token_threshold"]
+
+        return config
 
     def get_local_tool_schemas(self):
         """Returns the JSON schemas for all local tools using the tool registry."""

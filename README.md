@@ -28,10 +28,12 @@ The current priorities are to improve core capabilities and user experience of t
 
 6. **Agent Mode** - [Discussion](https://github.com/dwash96/aider-ce/issues/111)
   * [x] Renaming "navigator mode" to "agent mode" for simplicity
-  * [ ] Add an explicit "finished" internal tool
-  * [ ] Add a configuration json setting for agent mode to specify allowed local tools to use, tool call limits, etc.
+  * [x] Add an explicit "finished" internal tool
+  * [x] Add a configuration json setting for agent mode to specify allowed local tools to use, tool call limits, etc.
   * [ ] Add a RAG tool for the model to ask questions about the codebase
   * [ ] Make the system prompts more aggressive about removing unneeded files/content from the context
+  * [ ] Add a plugin-like system for allowing agent mode to use user-defined tools in simple python files
+  * [ ] Add a dynamic tool discovery tool to allow the system to have only the tools it needs in context
 
 ## Fork Additions
 
@@ -70,7 +72,8 @@ This project aims to be compatible with upstream Aider, but with priority commit
 * [Allow Benchmarks to Use Repo Map For Better Accuracy](https://github.com/dwash96/aider-ce/pull/25)
 * [Read File Globbing](https://github.com/Aider-AI/aider/pull/3395)
 
-### Other Notes
+### Documentation and Other Notes
+* [Agent Mode](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/agent-mode.md)
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
 * [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
 

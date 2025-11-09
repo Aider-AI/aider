@@ -1062,6 +1062,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
+            args=args,
             repo=repo,
             fnames=fnames,
             read_only_fnames=read_only_fnames,

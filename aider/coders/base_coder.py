@@ -157,6 +157,7 @@ class Coder:
         io=None,
         from_coder=None,
         summarize_from_coder=True,
+        args=None,
         **kwargs,
     ):
         import aider.coders as coders
@@ -220,7 +221,7 @@ class Coder:
 
         for coder in coders.__all__:
             if hasattr(coder, "edit_format") and coder.edit_format == edit_format:
-                res = coder(main_model, io, **kwargs)
+                res = coder(main_model, io, args=args, **kwargs)
                 await res.initialize_mcp_tools()
                 res.original_kwargs = dict(kwargs)
                 return res
@@ -334,6 +335,7 @@ class Coder:
         self,
         main_model,
         io,
+        args=None,
         repo=None,
         fnames=None,
         add_gitignore_files=False,
@@ -411,6 +413,7 @@ class Coder:
 
         self.suggest_shell_commands = suggest_shell_commands
         self.detect_urls = detect_urls
+        self.args = args
 
         self.num_cache_warming_pings = num_cache_warming_pings
         self.mcp_servers = mcp_servers
