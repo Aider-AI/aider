@@ -140,7 +140,7 @@ class AgentCoder(Coder):
     def _build_tool_registry(self):
         """
         Build a registry of available tools with their normalized names and process_response functions.
-        Handles agent configuration with whitelist/blacklist functionality.
+        Handles agent configuration with includelist/excludelist functionality.
 
         Returns:
             dict: Mapping of normalized tool names to tool modules
@@ -182,10 +182,10 @@ class AgentCoder(Coder):
 
         # Process agent configuration if provided
         agent_config = self._get_agent_config()
-        tools_whitelist = agent_config.get("tools_whitelist", [])
-        tools_blacklist = agent_config.get("tools_blacklist", [])
+        tools_includelist = agent_config.get("tools_includelist", [])
+        tools_excludelist = agent_config.get("tools_excludelist", [])
 
-        # Always include essential tools regardless of whitelist/blacklist
+        # Always include essential tools regardless of includelist/excludelist
         essential_tools = {"makeeditable", "replacetext", "view", "finished"}
         for module in tool_modules:
             if hasattr(module, "NORM_NAME") and hasattr(module, "process_response"):
@@ -194,16 +194,16 @@ class AgentCoder(Coder):
                 # Check if tool should be included based on configuration
                 should_include = True
 
-                # If whitelist is specified, only include tools in whitelist
-                if tools_whitelist:
-                    should_include = tool_name in tools_whitelist
+                # If includelist is specified, only include tools in includelist
+                if tools_includelist:
+                    should_include = tool_name in tools_includelist
 
                 # Always include essential tools
                 if tool_name in essential_tools:
                     should_include = True
 
-                # Exclude tools in blacklist (unless they're essential)
-                if tool_name in tools_blacklist and tool_name not in essential_tools:
+                # Exclude tools in excludelist (unless they're essential)
+                if tool_name in tools_excludelist and tool_name not in essential_tools:
                     should_include = False
 
                 if should_include:
@@ -236,10 +236,10 @@ class AgentCoder(Coder):
         # Set defaults for missing values
         if "large_file_token_threshold" not in config:
             config["large_file_token_threshold"] = 25000
-        if "tools_whitelist" not in config:
-            config["tools_whitelist"] = []
-        if "tools_blacklist" not in config:
-            config["tools_blacklist"] = []
+        if "tools_includelist" not in config:
+            config["tools_includelist"] = []
+        if "tools_excludelist" not in config:
+            config["tools_excludelist"] = []
 
         # Apply configuration to instance
         self.large_file_token_threshold = config["large_file_token_threshold"]

@@ -473,7 +473,7 @@ def expand_glob_patterns(patterns, root="."):
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 log_file = None
-file_blacklist = ["get_bottom_toolbar", "<genexpr>"]
+file_excludelist = ["get_bottom_toolbar", "<genexpr>"]
 
 
 def custom_tracer(frame, event, arg):
@@ -493,7 +493,7 @@ def custom_tracer(frame, event, arg):
         func_name = frame.f_code.co_name
         line_no = frame.f_lineno
 
-        if func_name not in file_blacklist:
+        if func_name not in file_excludelist:
             log_file.write(
                 f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no} -"
                 f" {time.time()}\n"
@@ -503,7 +503,7 @@ def custom_tracer(frame, event, arg):
         func_name = frame.f_code.co_name
         line_no = frame.f_lineno
 
-        if func_name not in file_blacklist:
+        if func_name not in file_excludelist:
             log_file.write(
                 f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no} -"
                 f" {time.time()}\n"
