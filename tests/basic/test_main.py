@@ -118,9 +118,9 @@ class TestMain(TestCase):
         # Because aider will try and `git add` a file that's already in the repo.
         await main(["--yes", str(fname), "--exit"], input=DummyInput(), output=DummyOutput())
 
-    def test_setup_git(self):
+    async def test_setup_git(self):
         io = InputOutput(pretty=False, yes=True)
-        git_root = setup_git(None, io)
+        git_root = await setup_git(None, io)
         git_root = Path(git_root).resolve()
         self.assertEqual(git_root, Path(self.tempdir).resolve())
 
@@ -130,7 +130,7 @@ class TestMain(TestCase):
         self.assertTrue(gitignore.exists())
         self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
-    def test_check_gitignore(self):
+    async def test_check_gitignore(self):
         with GitTemporaryDirectory():
             os.environ["GIT_CONFIG_GLOBAL"] = "globalgitconfig"
 
@@ -139,20 +139,20 @@ class TestMain(TestCase):
             gitignore = cwd / ".gitignore"
 
             self.assertFalse(gitignore.exists())
-            check_gitignore(cwd, io)
+            await check_gitignore(cwd, io)
             self.assertTrue(gitignore.exists())
 
             self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
             # Test without .env file present
             gitignore.write_text("one\ntwo\n")
-            check_gitignore(cwd, io)
+            await check_gitignore(cwd, io)
             self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
 
             # Test with .env file present
             env_file = cwd / ".env"
             env_file.touch()
-            check_gitignore(cwd, io)
+            await check_gitignore(cwd, io)
             self.assertEqual("one\ntwo\n.aider*\n.env\n", gitignore.read_text())
             del os.environ["GIT_CONFIG_GLOBAL"]
 

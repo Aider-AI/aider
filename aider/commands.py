@@ -86,7 +86,7 @@ class Commands:
         self.original_read_only_fnames = set(original_read_only_fnames or [])
         self.cmd_running = False
 
-    def cmd_model(self, args):
+    async def cmd_model(self, args):
         "Switch the Main Model to a new LLM"
 
         model_name = args.strip()
@@ -100,7 +100,7 @@ class Commands:
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=self.coder.main_model.weak_model.name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
 
         # Check if the current edit format is the default for the old model
         old_model_edit_format = self.coder.main_model.edit_format
@@ -113,7 +113,7 @@ class Commands:
 
         raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
-    def cmd_editor_model(self, args):
+    async def cmd_editor_model(self, args):
         "Switch the Editor Model to a new LLM"
 
         model_name = args.strip()
@@ -122,10 +122,10 @@ class Commands:
             editor_model=model_name,
             weak_model=self.coder.main_model.weak_model.name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
-    def cmd_weak_model(self, args):
+    async def cmd_weak_model(self, args):
         "Switch the Weak Model to a new LLM"
 
         model_name = args.strip()
@@ -134,7 +134,7 @@ class Commands:
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=model_name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
     def cmd_chat_mode(self, args):
@@ -1370,7 +1370,7 @@ class Commands:
         from aider.coders.base_coder import Coder
 
         if not self.help:
-            res = install_help_extra(self.io)
+            res = await install_help_extra(self.io)
             if not res:
                 self.io.tool_error("Unable to initialize interactive help.")
                 return
