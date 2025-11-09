@@ -80,7 +80,6 @@ Agent Mode prioritizes granular tools over SEARCH/REPLACE:
 - **Line number verification**: Two-step process for line-based edits to prevents errors
 - **Tool usage monitoring**: Prevents infinite loops by tracking repetitive patterns
 
-
 ### Workflow Process
 
 #### 1. Exploration Phase
@@ -151,13 +150,14 @@ Agent Mode can be configured using the `--agent-config` command line argument, w
 
 #### Configuration Options
 
-- **`tools_whitelist`**: Array of tool names to allow (only these tools will be available)
-- **`tools_blacklist`**: Array of tool names to exclude (these tools will be disabled)
+- **`tools_includelist`**: Array of tool names to allow (only these tools will be available)
+- **`tools_excludelist`**: Array of tool names to exclude (these tools will be disabled)
 - **`large_file_token_threshold`**: Maximum token threshold for large file warnings (default: 25000)
 
 #### Essential Tools
 
-Certain tools are always available regardless of whitelist/blacklist settings:
+Certain tools are always available regardless of includelist/excludelist settings:
+
 - `makeeditable` - Make files editable
 - `replacetext` - Basic text replacement
 - `view` - View files
@@ -167,16 +167,16 @@ Certain tools are always available regardless of whitelist/blacklist settings:
 
 ```bash
 # Only allow specific tools
-aider --agent --agent-config '{"tools_whitelist": ["view", "makeeditable", "replacetext", "finished"]}'
+aider-ce --agent --agent-config '{"tools_includelist": ["view", "makeeditable", "replacetext", "finished"]}'
 
-# Exclude specific tools  
-aider --agent --agent-config '{"tools_blacklist": ["command", "commandinteractive"]}'
+# Exclude specific tools
+aider-ce --agent --agent-config '{"tools_excludelist": ["command", "commandinteractive"]}'
 
 # Custom large file threshold
-aider --agent --agent-config '{"large_file_token_threshold": 10000}'
+aider-ce --agent --agent-config '{"large_file_token_threshold": 10000}'
 
 # Combined configuration
-aider --agent --agent-config '{"large_file_token_threshold": 10000, "tools_whitelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"]}'
+aider-ce --agent --agent-config '{"large_file_token_threshold": 10000, "tools_includelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"]}'
 ```
 
 This configuration system allows for fine-grained control over which tools are available in Agent Mode, enabling security-conscious deployments and specialized workflows while maintaining essential functionality.
@@ -190,3 +190,4 @@ This configuration system allows for fine-grained control over which tools are a
 - **Recovery mechanisms**: Built-in undo and safety features
 
 Agent Mode represents a significant evolution in aider's capabilities, enabling more sophisticated and autonomous codebase manipulation while maintaining safety and control through the tool-based architecture.
+
