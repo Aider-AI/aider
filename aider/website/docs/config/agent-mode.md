@@ -170,13 +170,13 @@ Certain tools are always available regardless of whitelist/blacklist settings:
 aider --agent --agent-config '{"tools_whitelist": ["view", "makeeditable", "replacetext", "finished"]}'
 
 # Exclude specific tools  
-aider --agent --agent-config '{"tools_blacklist": ["command", "command_interactive"]}'
+aider --agent --agent-config '{"tools_blacklist": ["command", "commandinteractive"]}'
 
 # Custom large file threshold
 aider --agent --agent-config '{"large_file_token_threshold": 10000}'
 
 # Combined configuration
-aider --agent --agent-config '{"large_file_token_threshold": 10000, "tools_whitelist": ["view", "makeeditable", "replacetext", "finished", "git_diff"]}'
+aider --agent --agent-config '{"large_file_token_threshold": 10000, "tools_whitelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"]}'
 ```
 
 This configuration system allows for fine-grained control over which tools are available in Agent Mode, enabling security-conscious deployments and specialized workflows while maintaining essential functionality.
