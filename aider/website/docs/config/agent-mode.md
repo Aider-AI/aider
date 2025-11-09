@@ -158,8 +158,8 @@ Agent Mode can be configured using the `--agent-config` command line argument, w
 #### Essential Tools
 
 Certain tools are always available regardless of whitelist/blacklist settings:
-- `make_editable` - Make files editable
-- `replace_text` - Basic text replacement
+- `makeeditable` - Make files editable
+- `replacetext` - Basic text replacement
 - `view` - View files
 - `finished` - Complete the task
 
@@ -167,7 +167,7 @@ Certain tools are always available regardless of whitelist/blacklist settings:
 
 ```bash
 # Only allow specific tools
-aider --agent --agent-config '{"tools_whitelist": ["view", "make_editable", "replace_text", "finished"]}'
+aider --agent --agent-config '{"tools_whitelist": ["view", "makeeditable", "replacetext", "finished"]}'
 
 # Exclude specific tools  
 aider --agent --agent-config '{"tools_blacklist": ["command", "command_interactive"]}'
@@ -176,7 +176,7 @@ aider --agent --agent-config '{"tools_blacklist": ["command", "command_interacti
 aider --agent --agent-config '{"large_file_token_threshold": 10000}'
 
 # Combined configuration
-aider --agent --agent-config '{"large_file_token_threshold": 10000, "tools_whitelist": ["view", "make_editable", "replace_text", "finished", "git_diff"]}'
+aider --agent --agent-config '{"large_file_token_threshold": 10000, "tools_whitelist": ["view", "makeeditable", "replacetext", "finished", "git_diff"]}'
 ```
 
 This configuration system allows for fine-grained control over which tools are available in Agent Mode, enabling security-conscious deployments and specialized workflows while maintaining essential functionality.
