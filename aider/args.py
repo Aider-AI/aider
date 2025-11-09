@@ -145,7 +145,7 @@ def get_parser(default_config_files, git_root):
         type=str,
         help=(
             "Set the thinking token budget for models that support it. Use 0 to disable. (default:"
-            " not set)"
+            " not set). For Anthropic models, this enables thinking tokens."
         ),
     )
     group.add_argument(

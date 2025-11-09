@@ -513,6 +513,11 @@ class Model(ModelSettings):
             self.reminder = "user"
             if "thinking_tokens" not in self.accepts_settings:
                 self.accepts_settings.append("thinking_tokens")
+            # Enable thinking tokens by default for Claude 3.7 Sonnet
+            if not self.extra_params:
+                self.extra_params = {}
+            if "thinking" not in self.extra_params:
+                self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": 32000}
             return  # <--
 
         if "3.5-sonnet" in model or "3-5-sonnet" in model:
@@ -831,9 +836,31 @@ class Model(ModelSettings):
             else:
                 if num_tokens > 0:
                     self.extra_params["thinking"] = {"type": "enabled", "budget_tokens": num_tokens}
+                    # Add required beta headers for Anthropic thinking tokens
+                    if "anthropic" in self.name.lower() or "claude" in self.name.lower():
+                        if "extra_headers" not in self.extra_params:
+                            self.extra_params["extra_headers"] = {}
+                        # Add the thinking tokens beta header
+                        current_beta = self.extra_params["extra_headers"].get("anthropic-beta", "")
+                        beta_features = set()
+                        if current_beta:
+                            beta_features.update(current_beta.split(","))
+                        beta_features.add("thinking-2025-10-22")
+                        self.extra_params["extra_headers"]["anthropic-beta"] = ",".join(sorted(beta_features))
                 else:
                     if "thinking" in self.extra_params:
                         del self.extra_params["thinking"]
+                    # Remove thinking beta header if thinking is disabled
+                    if "extra_headers" in self.extra_params and "anthropic-beta" in self.extra_params["extra_headers"]:
+                        current_beta = self.extra_params["extra_headers"]["anthropic-beta"]
+                        beta_features = set(current_beta.split(","))
+                        beta_features.discard("thinking-2025-10-22")
+                        if beta_features:
+                            self.extra_params["extra_headers"]["anthropic-beta"] = ",".join(sorted(beta_features))
+                        else:
+                            del self.extra_params["extra_headers"]["anthropic-beta"]
+                            if not self.extra_params["extra_headers"]:
+                                del self.extra_params["extra_headers"]
 
     def get_raw_thinking_tokens(self):
         """Get formatted thinking token budget if available"""
