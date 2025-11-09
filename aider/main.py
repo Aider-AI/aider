@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import threading
+import time
 import traceback
 import webbrowser
 from dataclasses import fields
@@ -88,10 +89,10 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     return str(check_repo)
 
 
-def make_new_repo(git_root, io):
+async def make_new_repo(git_root, io):
     try:
         repo = git.Repo.init(git_root)
-        check_gitignore(git_root, io, False)
+        await check_gitignore(git_root, io, False)
     except ANY_GIT_ERROR as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_output(str(err))
@@ -101,7 +102,7 @@ def make_new_repo(git_root, io):
     return repo
 
 
-def setup_git(git_root, io):
+async def setup_git(git_root, io):
     if git is None:
         return
 
@@ -122,11 +123,11 @@ def setup_git(git_root, io):
             "You should probably run aider in your project's directory, not your home dir."
         )
         return
-    elif cwd and io.confirm_ask(
+    elif cwd and await io.confirm_ask(
         "No git repo found, create one to track aider's changes (recommended)?"
     ):
         git_root = str(cwd.resolve())
-        repo = make_new_repo(git_root, io)
+        repo = await make_new_repo(git_root, io)
 
     if not repo:
         return
@@ -155,7 +156,7 @@ def setup_git(git_root, io):
     return repo.working_tree_dir
 
 
-def check_gitignore(git_root, io, ask=True):
+async def check_gitignore(git_root, io, ask=True):
     if not git_root:
         return
 
@@ -191,7 +192,9 @@ def check_gitignore(git_root, io, ask=True):
 
     if ask:
         io.tool_output("You can skip this check with --no-gitignore")
-        if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
+        if not await io.confirm_ask(
+            f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"
+        ):
             return
 
     content += "\n".join(patterns_to_add) + "\n"
@@ -208,8 +211,8 @@ def check_gitignore(git_root, io, ask=True):
             io.tool_output(f"  {pattern}")
 
 
-def check_streamlit_install(io):
-    return utils.check_pip_install_extra(
+async def check_streamlit_install(io):
+    return await utils.check_pip_install_extra(
         io,
         "streamlit",
         "You need to install the aider browser feature",
@@ -217,7 +220,7 @@ def check_streamlit_install(io):
     )
 
 
-def write_streamlit_credentials():
+async def write_streamlit_credentials():
     from streamlit.file_util import get_streamlit_file_path
 
     # See https://github.com/Aider-AI/aider/issues/772
@@ -472,7 +475,7 @@ def expand_glob_patterns(patterns, root="."):
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 log_file = None
-file_blacklist = ["get_bottom_toolbar", "<genexpr>"]
+file_excludelist = ["get_bottom_toolbar", "<genexpr>"]
 
 
 def custom_tracer(frame, event, arg):
@@ -492,15 +495,21 @@ def custom_tracer(frame, event, arg):
         func_name = frame.f_code.co_name
         line_no = frame.f_lineno
 
-        if func_name not in file_blacklist:
-            log_file.write(f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
+        if func_name not in file_excludelist:
+            log_file.write(
+                f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
+            )
 
     if event == "return":
         func_name = frame.f_code.co_name
         line_no = frame.f_lineno
 
-        if func_name not in file_blacklist:
-            log_file.write(f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
+        if func_name not in file_excludelist:
+            log_file.write(
+                f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
+            )
 
     # Must return the trace function (or a local one) for subsequent events
     return custom_tracer
@@ -715,7 +724,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                 " personal info."
             )
             io.tool_output(f"For more info: {urls.analytics}")
-            disable = not io.confirm_ask(
+            disable = not await io.confirm_ask(
                 "Allow collection of anonymous analytics to help improve aider?"
             )
 
@@ -733,7 +742,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
     analytics.event("launched")
 
     if args.gui and not return_coder:
-        if not check_streamlit_install(io):
+        if not await check_streamlit_install(io):
             analytics.event("exit", reason="Streamlit not installed")
             return
         analytics.event("gui session")
@@ -800,12 +809,12 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         return 0 if not update_available else 1
 
     if args.install_main_branch:
-        success = install_from_main_branch(io)
+        success = await install_from_main_branch(io)
         analytics.event("exit", reason="Installed main branch")
         return 0 if success else 1
 
     if args.upgrade:
-        success = install_upgrade(io)
+        success = await install_upgrade(io)
         analytics.event("exit", reason="Upgrade completed")
         return 0 if success else 1
 
@@ -813,9 +822,9 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         check_version(io, verbose=args.verbose)
 
     if args.git:
-        git_root = setup_git(git_root, io)
+        git_root = await setup_git(git_root, io)
         if args.gitignore:
-            check_gitignore(git_root, io)
+            await check_gitignore(git_root, io)
 
     if args.verbose:
         show = format_settings(parser, args)
@@ -963,7 +972,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         return 1
 
     if args.show_model_warnings:
-        problem = models.sanity_check_models(io, main_model)
+        problem = await models.sanity_check_models(io, main_model)
         if problem:
             analytics.event("model warning", main_model=main_model)
             io.tool_output("You can skip this check with --no-show-model-warnings")
@@ -1254,6 +1263,17 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         return
 
     analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
+
+    # Auto-load session if enabled
+    if args.auto_load:
+        try:
+            from aider.sessions import SessionManager
+
+            session_manager = SessionManager(coder, io)
+            session_manager.load_session("auto-save")
+        except Exception:
+            # Don't show errors for auto-load to avoid interrupting the user experience
+            pass
 
     while True:
         try:

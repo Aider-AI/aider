@@ -1118,12 +1118,12 @@ def validate_variables(vars):
     return dict(keys_in_environment=True, missing_keys=missing)
 
 
-def sanity_check_models(io, main_model):
-    problem_main = sanity_check_model(io, main_model)
+async def sanity_check_models(io, main_model):
+    problem_main = await sanity_check_model(io, main_model)
 
     problem_weak = None
     if main_model.weak_model and main_model.weak_model is not main_model:
-        problem_weak = sanity_check_model(io, main_model.weak_model)
+        problem_weak = await sanity_check_model(io, main_model.weak_model)
 
     problem_editor = None
     if (
@@ -1131,12 +1131,12 @@ def sanity_check_models(io, main_model):
         and main_model.editor_model is not main_model
         and main_model.editor_model is not main_model.weak_model
     ):
-        problem_editor = sanity_check_model(io, main_model.editor_model)
+        problem_editor = await sanity_check_model(io, main_model.editor_model)
 
     return problem_main or problem_weak or problem_editor
 
 
-def sanity_check_model(io, model):
+async def sanity_check_model(io, model):
     show = False
 
     if model.missing_keys:
@@ -1158,7 +1158,7 @@ def sanity_check_model(io, model):
         io.tool_warning(f"Warning for {model}: Unknown which environment variables are required.")
 
     # Check for model-specific dependencies
-    check_for_dependencies(io, model.name)
+    await check_for_dependencies(io, model.name)
 
     if not model.info:
         show = True
@@ -1175,7 +1175,7 @@ def sanity_check_model(io, model):
     return show
 
 
-def check_for_dependencies(io, model_name):
+async def check_for_dependencies(io, model_name):
     """
     Check for model-specific dependencies and install them if needed.
 
@@ -1185,13 +1185,13 @@ def check_for_dependencies(io, model_name):
     """
     # Check if this is a Bedrock model and ensure boto3 is installed
     if model_name.startswith("bedrock/"):
-        check_pip_install_extra(
+        await check_pip_install_extra(
             io, "boto3", "AWS Bedrock models require the boto3 package.", ["boto3"]
         )
 
     # Check if this is a Vertex AI model and ensure google-cloud-aiplatform is installed
     elif model_name.startswith("vertex_ai/"):
-        check_pip_install_extra(
+        await check_pip_install_extra(
             io,
             "google.cloud.aiplatform",
             "Google Vertex AI models require the google-cloud-aiplatform package.",

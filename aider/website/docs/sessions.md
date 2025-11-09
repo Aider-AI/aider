@@ -11,6 +11,27 @@ Aider provides session management commands that allow you to save, load, and man
 ### `/save-session <name>`
 Save the current chat session to a named file in `.aider/sessions/`.
 
+### Auto-Save and Auto-Load
+Aider can automatically save and load sessions using command line options:
+
+**Auto-save:**
+```bash
+aider --auto-save
+```
+
+**Auto-load:**
+```bash
+aider --auto-load
+```
+
+**In configuration files:**
+```yaml
+auto-save: true
+auto-load: true
+```
+
+When `--auto-save` is enabled, aider will automatically save your session as 'auto-save' when you exit. When `--auto-load` is enabled, aider will automatically load the 'auto-save' session on startup if it exists.
+
 **Usage:**
 ```
 /save-session my-project-session
@@ -173,10 +194,10 @@ If a session fails to load:
 ### Multiple Model Sessions
 ```
 # Save session with specific model
-/model gpt-4
+/model gpt-5
 /save-session gpt4-session
 
 # Try different model
-/model claude-3
+/model claude-sonnet-4.5
 /save-session claude-session
 ```

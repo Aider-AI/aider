@@ -12,12 +12,12 @@ from aider.dump import dump  # noqa: F401
 VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
 
 
-def install_from_main_branch(io):
+async def install_from_main_branch(io):
     """
     Install the latest version of aider from the main branch of the GitHub repository.
     """
 
-    return utils.check_pip_install_extra(
+    return await utils.check_pip_install_extra(
         io,
         None,
         "Install the development version of aider from the main branch?",
@@ -26,7 +26,7 @@ def install_from_main_branch(io):
     )
 
 
-def install_upgrade(io, latest_version=None):
+async def install_upgrade(io, latest_version=None):
     """
     Install the latest version of aider from PyPI.
     """
@@ -46,7 +46,7 @@ def install_upgrade(io, latest_version=None):
         io.tool_warning(text)
         return True
 
-    success = utils.check_pip_install_extra(
+    success = await utils.check_pip_install_extra(
         io,
         None,
         new_ver_text,
@@ -75,7 +75,7 @@ def check_version(io, just_check=False, verbose=False):
     import requests
 
     try:
-        response = requests.get("https://pypi.org/pypi/aider-chat/json")
+        response = requests.get("https://pypi.org/pypi/aider-ce/json")
         data = response.json()
         latest_version = data["info"]["version"]
         current_version = aider.__version__

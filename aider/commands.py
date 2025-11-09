@@ -1,14 +1,11 @@
 import asyncio
 import glob
-import json
 import os
 import re
 import subprocess
 import sys
 import tempfile
-import time
 from collections import OrderedDict
-from datetime import datetime
 from os.path import expanduser
 from pathlib import Path
 
@@ -17,7 +14,7 @@ from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
-from aider import models, prompts, voice
+from aider import models, prompts, sessions, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
@@ -89,7 +86,7 @@ class Commands:
         self.original_read_only_fnames = set(original_read_only_fnames or [])
         self.cmd_running = False
 
-    def cmd_model(self, args):
+    async def cmd_model(self, args):
         "Switch the Main Model to a new LLM"
 
         model_name = args.strip()
@@ -103,7 +100,7 @@ class Commands:
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=self.coder.main_model.weak_model.name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
 
         # Check if the current edit format is the default for the old model
         old_model_edit_format = self.coder.main_model.edit_format
@@ -116,7 +113,7 @@ class Commands:
 
         raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
-    def cmd_editor_model(self, args):
+    async def cmd_editor_model(self, args):
         "Switch the Editor Model to a new LLM"
 
         model_name = args.strip()
@@ -125,10 +122,10 @@ class Commands:
             editor_model=model_name,
             weak_model=self.coder.main_model.weak_model.name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
-    def cmd_weak_model(self, args):
+    async def cmd_weak_model(self, args):
         "Switch the Weak Model to a new LLM"
 
         model_name = args.strip()
@@ -137,7 +134,7 @@ class Commands:
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=model_name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
     def cmd_chat_mode(self, args):
@@ -235,9 +232,13 @@ class Commands:
             if disable_playwright:
                 res = False
             else:
-                res = await install_playwright(self.io)
-                if not res:
+                try:
+                    res = await install_playwright(self.io)
+                    if not res:
+                        self.io.tool_warning("Unable to initialize playwright.")
+                except Exception:
                     self.io.tool_warning("Unable to initialize playwright.")
+                    res = False
 
             self.scraper = Scraper(
                 print_error=self.io.tool_error,
@@ -245,7 +246,7 @@ class Commands:
                 verify_ssl=self.verify_ssl,
             )
 
-        content = self.scraper.scrape(url) or ""
+        content = await self.scraper.scrape(url) or ""
         content = f"Here is the content of {url}:\n\n" + content
         if return_content:
             return content
@@ -1373,7 +1374,7 @@ class Commands:
         from aider.coders.base_coder import Coder
 
         if not self.help:
-            res = install_help_extra(self.io)
+            res = await install_help_extra(self.io)
             if not res:
                 self.io.tool_error("Unable to initialize interactive help.")
                 return
@@ -2034,168 +2035,29 @@ class Commands:
 
     def cmd_save_session(self, args):
         """Save the current chat session to a named file in .aider/sessions/"""
-        if not args.strip():
-            self.io.tool_error("Please provide a session name.")
-            return
-
-        session_name = args.strip()
-        session_file = self._get_session_file_path(session_name)
-
-        # Collect session data
-        session_data = {
-            "version": "1.0",
-            "timestamp": time.time(),
-            "session_name": session_name,
-            "model": self.coder.main_model.name,
-            "edit_format": self.coder.edit_format,
-            "chat_history": {
-                "done_messages": self.coder.done_messages,
-                "cur_messages": self.coder.cur_messages,
-            },
-            "files": {
-                "editable": [self.coder.get_rel_fname(f) for f in self.coder.abs_fnames],
-                "read_only": [self.coder.get_rel_fname(f) for f in self.coder.abs_read_only_fnames],
-                "read_only_stubs": [
-                    self.coder.get_rel_fname(f) for f in self.coder.abs_read_only_stubs_fnames
-                ],
-            },
-            "settings": {
-                "root": self.coder.root,
-                "auto_commits": self.coder.auto_commits,
-                "auto_lint": self.coder.auto_lint,
-                "auto_test": self.coder.auto_test,
-            },
-        }
-
-        try:
-            with open(session_file, "w", encoding="utf-8") as f:
-                json.dump(session_data, f, indent=2, ensure_ascii=False)
-            self.io.tool_output(f"Session saved to: {session_file}")
-        except Exception as e:
-            self.io.tool_error(f"Error saving session: {e}")
+        session_manager = sessions.SessionManager(self.coder, self.io)
+        session_manager.save_session(args.strip())
 
     def cmd_list_sessions(self, args):
         """List all saved sessions in .aider/sessions/"""
-        session_dir = self._get_session_directory()
-        session_files = list(session_dir.glob("*.json"))
+        session_manager = sessions.SessionManager(self.coder, self.io)
+        sessions_list = session_manager.list_sessions()
 
-        if not session_files:
-            self.io.tool_output("No saved sessions found.")
+        if not sessions_list:
             return
 
         self.io.tool_output("Saved sessions:")
-        for session_file in sorted(session_files):
-            try:
-                with open(session_file, "r", encoding="utf-8") as f:
-                    session_data = json.load(f)
-                session_name = session_data.get("session_name", session_file.stem)
-                timestamp = session_data.get("timestamp", 0)
-                model = session_data.get("model", "unknown")
-                edit_format = session_data.get("edit_format", "unknown")
-
-                # Format timestamp
-                if timestamp:
-                    date_str = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M")
-                else:
-                    date_str = "unknown date"
-
-                self.io.tool_output(
-                    f"  {session_name} (model: {model}, format: {edit_format}, {date_str})"
-                )
-            except Exception as e:
-                self.io.tool_output(f"  {session_file.stem} [error reading: {e}]")
+        for session_info in sessions_list:
+            self.io.tool_output(
+                f"  {session_info['name']} (model: {session_info['model']}, "
+                f"format: {session_info['edit_format']}, "
+                f"{session_info['num_messages']} messages, {session_info['num_files']} files)"
+            )
 
     def cmd_load_session(self, args):
         """Load a saved session by name or file path"""
-        if not args.strip():
-            self.io.tool_error("Please provide a session name or file path.")
-            return
-
-        session_name = args.strip()
-        session_file = self._find_session_file(session_name)
-
-        if not session_file:
-            self.io.tool_error(f"Session not found: {session_name}")
-            self.io.tool_output("Use /list-sessions to see available sessions.")
-            return
-
-        try:
-            with open(session_file, "r", encoding="utf-8") as f:
-                session_data = json.load(f)
-        except Exception as e:
-            self.io.tool_error(f"Error loading session: {e}")
-            return
-
-        # Verify session format
-        if not isinstance(session_data, dict) or "version" not in session_data:
-            self.io.tool_error("Invalid session format.")
-            return
-
-        # Load session data
-        try:
-            # Clear current state
-            self.coder.abs_fnames = set()
-            self.coder.abs_read_only_fnames = set()
-            self.coder.abs_read_only_stubs_fnames = set()
-            self.coder.done_messages = []
-            self.coder.cur_messages = []
-
-            # Load chat history
-            chat_history = session_data.get("chat_history", {})
-            self.coder.done_messages = chat_history.get("done_messages", [])
-            self.coder.cur_messages = chat_history.get("cur_messages", [])
-
-            # Load files
-            files = session_data.get("files", {})
-            for rel_fname in files.get("editable", []):
-                abs_fname = self.coder.abs_root_path(rel_fname)
-                if os.path.exists(abs_fname):
-                    self.coder.abs_fnames.add(abs_fname)
-                else:
-                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
-
-            for rel_fname in files.get("read_only", []):
-                abs_fname = self.coder.abs_root_path(rel_fname)
-                if os.path.exists(abs_fname):
-                    self.coder.abs_read_only_fnames.add(abs_fname)
-                else:
-                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
-
-            for rel_fname in files.get("read_only_stubs", []):
-                abs_fname = self.coder.abs_root_path(rel_fname)
-                if os.path.exists(abs_fname):
-                    self.coder.abs_read_only_stubs_fnames.add(abs_fname)
-                else:
-                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
-
-            # Load settings
-            settings = session_data.get("settings", {})
-            if "auto_commits" in settings:
-                self.coder.auto_commits = settings["auto_commits"]
-            if "auto_lint" in settings:
-                self.coder.auto_lint = settings["auto_lint"]
-            if "auto_test" in settings:
-                self.coder.auto_test = settings["auto_test"]
-
-            self.io.tool_output(
-                f"Session loaded: {session_data.get('session_name', session_file.stem)}"
-            )
-            self.io.tool_output(
-                f"Model: {session_data.get('model', 'unknown')}, Edit format:"
-                f" {session_data.get('edit_format', 'unknown')}"
-            )
-
-            # Show summary
-            num_messages = len(self.coder.done_messages) + len(self.coder.cur_messages)
-            num_files = (
-                len(self.coder.abs_fnames)
-                + len(self.coder.abs_read_only_fnames)
-                + len(self.coder.abs_read_only_stubs_fnames)
-            )
-            self.io.tool_output(f"Loaded {num_messages} messages and {num_files} files")
-
-        except Exception as e:
-            self.io.tool_error(f"Error applying session data: {e}")
+        session_manager = sessions.SessionManager(self.coder, self.io)
+        session_manager.load_session(args.strip())
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
