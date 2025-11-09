@@ -232,9 +232,13 @@ class Commands:
             if disable_playwright:
                 res = False
             else:
-                res = await install_playwright(self.io)
-                if not res:
+                try:
+                    res = await install_playwright(self.io)
+                    if not res:
+                        self.io.tool_warning("Unable to initialize playwright.")
+                except Exception:
                     self.io.tool_warning("Unable to initialize playwright.")
+                    res = False
 
             self.scraper = Scraper(
                 print_error=self.io.tool_error,
@@ -242,7 +246,7 @@ class Commands:
                 verify_ssl=self.verify_ssl,
             )
 
-        content = self.scraper.scrape(url) or ""
+        content = await self.scraper.scrape(url) or ""
         content = f"Here is the content of {url}:\n\n" + content
         if return_content:
             return content

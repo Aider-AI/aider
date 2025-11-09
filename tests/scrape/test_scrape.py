@@ -10,14 +10,14 @@ from aider.scrape import Scraper
 class TestScrape(unittest.TestCase):
     @patch("aider.scrape.Scraper.scrape_with_httpx")
     @patch("aider.scrape.Scraper.scrape_with_playwright")
-    def test_scrape_self_signed_ssl(self, mock_scrape_playwright, mock_scrape_httpx):
+    async def test_scrape_self_signed_ssl(self, mock_scrape_playwright, mock_scrape_httpx):
         # Test with SSL verification - playwright fails
         mock_scrape_playwright.return_value = (None, None)
 
         scraper_verify = Scraper(
             print_error=MagicMock(), playwright_available=True, verify_ssl=True
         )
-        result_verify = scraper_verify.scrape("https://self-signed.badssl.com")
+        result_verify = await scraper_verify.scrape("https://self-signed.badssl.com")
         self.assertIsNone(result_verify)
         scraper_verify.print_error.assert_called()
 
@@ -29,7 +29,7 @@ class TestScrape(unittest.TestCase):
         scraper_no_verify = Scraper(
             print_error=MagicMock(), playwright_available=True, verify_ssl=False
         )
-        result_no_verify = scraper_no_verify.scrape("https://self-signed.badssl.com")
+        result_no_verify = await scraper_no_verify.scrape("https://self-signed.badssl.com")
         self.assertIsNotNone(result_no_verify)
         self.assertIn("self-signed", result_no_verify)
         scraper_no_verify.print_error.assert_not_called()
@@ -85,7 +85,7 @@ class TestScrape(unittest.TestCase):
                 del sys.modules["playwright"]
 
     @patch("aider.scrape.Scraper.scrape_with_playwright")
-    def test_scrape_actual_url_with_playwright(self, mock_scrape_playwright):
+    async def test_scrape_actual_url_with_playwright(self, mock_scrape_playwright):
         # Create a Scraper instance with a mock print_error function
         mock_print_error = MagicMock()
         scraper = Scraper(print_error=mock_print_error, playwright_available=True)
@@ -97,7 +97,7 @@ class TestScrape(unittest.TestCase):
         )
 
         # Scrape a mocked URL
-        result = scraper.scrape("https://example.com")
+        result = await scraper.scrape("https://example.com")
 
         # Assert that the result contains expected content
         self.assertIsNotNone(result)
@@ -119,7 +119,7 @@ class TestScrape(unittest.TestCase):
         # Assert that print_error was never called
         mock_print_error.assert_not_called()
 
-    def test_scrape_with_playwright_error_handling(self):
+    async def test_scrape_with_playwright_error_handling(self):
         # Create a Scraper instance with a mock print_error function
         mock_print_error = MagicMock()
         scraper = Scraper(print_error=mock_print_error, playwright_available=True)
@@ -129,7 +129,7 @@ class TestScrape(unittest.TestCase):
         scraper.scrape_with_playwright.return_value = (None, None)
 
         # Call the scrape method
-        result = scraper.scrape("https://example.com")
+        result = await scraper.scrape("https://example.com")
 
         # Assert that the result is None
         self.assertIsNone(result)
@@ -144,7 +144,7 @@ class TestScrape(unittest.TestCase):
 
         # Test with a different return value
         scraper.scrape_with_playwright.return_value = ("Some content", "text/html")
-        result = scraper.scrape("https://example.com")
+        result = await scraper.scrape("https://example.com")
 
         # Assert that the result is not None
         self.assertIsNotNone(result)
@@ -152,7 +152,7 @@ class TestScrape(unittest.TestCase):
         # Assert that print_error was not called
         mock_print_error.assert_not_called()
 
-    def test_scrape_text_plain(self):
+    async def test_scrape_text_plain(self):
         # Create a Scraper instance
         scraper = Scraper(print_error=MagicMock(), playwright_available=True)
 
@@ -161,12 +161,12 @@ class TestScrape(unittest.TestCase):
         scraper.scrape_with_playwright = MagicMock(return_value=(plain_text, "text/plain"))
 
         # Call the scrape method
-        result = scraper.scrape("https://example.com")
+        result = await scraper.scrape("https://example.com")
 
         # Assert that the result is the same as the input plain text
         self.assertEqual(result, plain_text)
 
-    def test_scrape_text_html(self):
+    async def test_scrape_text_html(self):
         # Create a Scraper instance
         scraper = Scraper(print_error=MagicMock(), playwright_available=True)
 
@@ -179,7 +179,7 @@ class TestScrape(unittest.TestCase):
         scraper.html_to_markdown = MagicMock(return_value=expected_markdown)
 
         # Call the scrape method
-        result = scraper.scrape("https://example.com")
+        result = await scraper.scrape("https://example.com")
 
         # Assert that the result is the expected markdown
         self.assertEqual(result, expected_markdown)

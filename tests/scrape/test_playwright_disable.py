@@ -17,7 +17,7 @@ class DummyIO:
         self.outputs.append(f"error: {msg}")
 
 
-def test_scraper_disable_playwright_flag(monkeypatch):
+async def test_scraper_disable_playwright_flag(monkeypatch):
     io = DummyIO()
     # Simulate that playwright is not available
     # (disable_playwright just means playwright_available=False)
@@ -30,24 +30,24 @@ def test_scraper_disable_playwright_flag(monkeypatch):
         return "plain text", "text/plain"
 
     scraper.scrape_with_httpx = fake_httpx
-    content = scraper.scrape("http://example.com")
+    content = await scraper.scrape("http://example.com")
     assert content == "plain text"
     assert called["called"]
 
 
-def test_scraper_enable_playwright(monkeypatch):
+async def test_scraper_enable_playwright(monkeypatch):
     io = DummyIO()
     # Simulate that playwright is available and should be used
     scraper = Scraper(print_error=io.tool_error, playwright_available=True)
     # Patch scrape_with_playwright to check it is called
     called = {}
 
-    def fake_playwright(url):
+    async def fake_playwright(url):
         called["called"] = True
         return "<html>hi</html>", "text/html"
 
     scraper.scrape_with_playwright = fake_playwright
-    content = scraper.scrape("http://example.com")
+    content = await scraper.scrape("http://example.com")
     assert content.startswith("hi") or "<html>" in content
     assert called["called"]
 
@@ -111,15 +111,13 @@ async def test_commands_web_disable_playwright(monkeypatch):
             pass
 
     # Patch install_playwright to always return False (simulate not available)
-    monkeypatch.setattr("aider.scrape.install_playwright", lambda io: False)
 
     # Patch Scraper to always use scrape_with_httpx and never warn
     class DummyScraper:
         def __init__(self, **kwargs):
             self.called = False
 
-        def scrape(self, url):
-            self.called = True
+        async def scrape(self, url):
             return "dummy content"
 
     monkeypatch.setattr("aider.commands.Scraper", DummyScraper)
