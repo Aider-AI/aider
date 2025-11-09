@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import threading
+import time
 import traceback
 import webbrowser
 from dataclasses import fields
@@ -493,14 +494,20 @@ def custom_tracer(frame, event, arg):
         line_no = frame.f_lineno
 
         if func_name not in file_blacklist:
-            log_file.write(f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
+            log_file.write(
+                f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
+            )
 
     if event == "return":
         func_name = frame.f_code.co_name
         line_no = frame.f_lineno
 
         if func_name not in file_blacklist:
-            log_file.write(f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
+            log_file.write(
+                f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
+            )
 
     # Must return the trace function (or a local one) for subsequent events
     return custom_tracer
