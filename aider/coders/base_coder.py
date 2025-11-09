@@ -2295,7 +2295,15 @@ class Coder:
             return None
 
         server_tool_calls = {}
+        tool_id_set = set()
+
         for tool_call in tool_calls:
+            # LLM APIs sometimes return duplicates and that's annoying part 3
+            if tool_call.get("id") in tool_id_set:
+                continue
+
+            tool_id_set.add(tool_call.get("id"))
+
             # Check if this tool_call matches any MCP tool
             for server_name, server_tools in self.mcp_tools:
                 for tool in server_tools:
@@ -2343,8 +2351,16 @@ class Coder:
             try:
                 # Connect to the server once
                 session = await server.connect()
+                tool_id_set = set()
+
                 # Execute all tool calls for this server
                 for tool_call in tool_calls_list:
+                    # LLM APIs sometimes return duplicates and that's annoying part 4
+                    if tool_call.id in tool_id_set:
+                        continue
+
+                    tool_id_set.add(tool_call.id)
+
                     try:
                         # Arguments can be a stream of JSON objects.
                         # We need to parse them and run a tool call for each.

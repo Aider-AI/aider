@@ -976,6 +976,7 @@ class AgentCoder(Coder):
         ) = await self._process_tool_commands(content)
 
         if self.agent_finished:
+            self.tool_usage_history = []
             return True
 
         # Since we are no longer suppressing, the partial_response_content IS the final content.
