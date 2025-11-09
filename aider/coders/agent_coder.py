@@ -259,12 +259,6 @@ class AgentCoder(Coder):
             if hasattr(tool_module, "schema"):
                 schemas.append(tool_module.schema)
 
-        # Add git schemas from the tool registry
-        git_tools = [git_diff, git_log, git_show, git_status]
-        for git_tool in git_tools:
-            if hasattr(git_tool, "schema"):
-                schemas.append(git_tool.schema)
-
         return schemas
 
     async def initialize_mcp_tools(self):
