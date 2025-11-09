@@ -176,11 +176,11 @@ def get_parser(default_config_files, git_root):
         help="Use architect edit format for the main chat",
     )
     group.add_argument(
-        "--navigator",
+        "--agent",
         action="store_const",
         dest="edit_format",
-        const="navigator",
-        help="Use navigator edit format for the main chat (autonomous file management)",
+        const="agent",
+        help="Use agent edit format for the main chat (autonomous file management)",
     )
     group.add_argument(
         "--auto-accept-architect",
@@ -888,6 +888,12 @@ def get_parser(default_config_files, git_root):
             " or home directory)"
         ),
     ).complete = shtab.FILE
+    group.add_argument(
+        "--agent-config",
+        metavar="AGENT_CONFIG_JSON",
+        help="Specify Agent Mode configuration as a JSON string",
+        default=None,
+    )
     # This is a duplicate of the argument in the preparser and is a no-op by this time of
     # argument parsing, but it's here so that the help is displayed as expected.
     group.add_argument(

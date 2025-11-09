@@ -3,7 +3,7 @@ import traceback
 
 from .tool_utils import generate_unified_diff_snippet
 
-extract_lines_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "ExtractLines",
@@ -24,6 +24,9 @@ extract_lines_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "extractlines"
 
 
 def _execute_extract_lines(
@@ -297,3 +300,42 @@ def _execute_extract_lines(
     except Exception as e:
         coder.io.tool_error(f"Error in ExtractLines: {str(e)}\n{traceback.format_exc()}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the ExtractLines tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    source_file_path = params.get("source_file_path")
+    target_file_path = params.get("target_file_path")
+    start_pattern = params.get("start_pattern")
+    end_pattern = params.get("end_pattern")
+    line_count = params.get("line_count")
+    near_context = params.get("near_context")
+    occurrence = params.get("occurrence", 1)
+    dry_run = params.get("dry_run", False)
+
+    if source_file_path and target_file_path and start_pattern:
+        return _execute_extract_lines(
+            coder,
+            source_file_path,
+            target_file_path,
+            start_pattern,
+            end_pattern,
+            line_count,
+            near_context,
+            occurrence,
+            dry_run,
+        )
+    else:
+        return (
+            "Error: Missing required parameters for ExtractLines (source_file_path,"
+            " target_file_path, start_pattern)"
+        )

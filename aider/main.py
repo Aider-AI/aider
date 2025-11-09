@@ -493,9 +493,14 @@ def custom_tracer(frame, event, arg):
         line_no = frame.f_lineno
 
         if func_name not in file_blacklist:
-            log_file.write(
-                f"-> CALL (My Code): {func_name}() in {os.path.basename(filename)}:{line_no}\n"
-            )
+            log_file.write(f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
+
+    if event == "return":
+        func_name = frame.f_code.co_name
+        line_no = frame.f_lineno
+
+        if func_name not in file_blacklist:
+            log_file.write(f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
 
     # Must return the trace function (or a local one) for subsequent events
     return custom_tracer
@@ -562,7 +567,8 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
     if args.debug:
         global log_file
-        log_file = open(".aider-debug.log", "w", buffering=1)
+        os.makedirs(".aider/logs/", exist_ok=True)
+        log_file = open(".aider/logs/debug.log", "w", buffering=1)
         sys.settrace(custom_tracer)
 
     if args.shell_completions:
@@ -1056,6 +1062,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
+            args=args,
             repo=repo,
             fnames=fnames,
             read_only_fnames=read_only_fnames,

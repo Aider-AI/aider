@@ -5,7 +5,7 @@ from .tool_utils import (
     handle_tool_error,
 )
 
-update_todo_list_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "UpdateTodoList",
@@ -40,6 +40,9 @@ update_todo_list_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "updatetodolist"
 
 
 def _execute_update_todo_list(coder, content, append=False, change_id=None, dry_run=False):
@@ -129,3 +132,25 @@ def _execute_update_todo_list(coder, content, append=False, change_id=None, dry_
         return handle_tool_error(coder, tool_name, e, add_traceback=False)
     except Exception as e:
         return handle_tool_error(coder, tool_name, e)
+
+
+def process_response(coder, params):
+    """
+    Process the UpdateTodoList tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    content = params.get("content")
+    append = params.get("append", False)
+    change_id = params.get("change_id")
+    dry_run = params.get("dry_run", False)
+
+    if content is not None:
+        return _execute_update_todo_list(coder, content, append, change_id, dry_run)
+    else:
+        return "Error: Missing required 'content' parameter for UpdateTodoList"

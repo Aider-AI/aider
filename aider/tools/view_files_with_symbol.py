@@ -1,4 +1,4 @@
-view_files_with_symbol_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "ViewFilesWithSymbol",
@@ -15,6 +15,9 @@ view_files_with_symbol_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "viewfileswithsymbol"
 
 
 def _execute_view_files_with_symbol(coder, symbol):
@@ -106,3 +109,21 @@ def _execute_view_files_with_symbol(coder, symbol):
     except Exception as e:
         coder.io.tool_error(f"Error in ViewFilesWithSymbol: {str(e)}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the ViewFilesWithSymbol tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    symbol = params.get("symbol")
+    if symbol is not None:
+        return _execute_view_files_with_symbol(coder, symbol)
+    else:
+        return "Error: Missing 'symbol' parameter for ViewFilesWithSymbol"

@@ -1,4 +1,4 @@
-view_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "View",
@@ -20,6 +20,9 @@ view_schema = {
     },
 }
 
+# Normalized tool name for lookup
+NORM_NAME = "view"
+
 
 def execute_view(coder, file_path):
     """
@@ -34,3 +37,21 @@ def execute_view(coder, file_path):
     except Exception as e:
         coder.io.tool_error(f"Error viewing file: {str(e)}")
         return f"Error: {str(e)}"
+
+
+def process_response(coder, params):
+    """
+    Process the View tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    file_path = params.get("file_path")
+    if file_path is not None:
+        return execute_view(coder, file_path)
+    else:
+        return "Error: Missing 'file_path' parameter for View"

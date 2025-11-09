@@ -7,7 +7,7 @@ from .tool_utils import (
     validate_file_for_edit,
 )
 
-replace_text_schema = {
+schema = {
     "type": "function",
     "function": {
         "name": "ReplaceText",
@@ -27,6 +27,9 @@ replace_text_schema = {
         },
     },
 }
+
+# Normalized tool name for lookup
+NORM_NAME = "replacetext"
 
 
 def _execute_replace_text(
@@ -145,3 +148,40 @@ def _execute_replace_text(
     except Exception as e:
         # Handle unexpected errors
         return handle_tool_error(coder, tool_name, e)
+
+
+def process_response(coder, params):
+    """
+    Process the ReplaceText tool response.
+
+    Args:
+        coder: The Coder instance
+        params: Dictionary of parameters
+
+    Returns:
+        str: Result message
+    """
+    file_path = params.get("file_path")
+    find_text = params.get("find_text")
+    replace_text = params.get("replace_text")
+    near_context = params.get("near_context")
+    occurrence = params.get("occurrence", 1)
+    change_id = params.get("change_id")
+    dry_run = params.get("dry_run", False)
+
+    if file_path is not None and find_text is not None and replace_text is not None:
+        return _execute_replace_text(
+            coder,
+            file_path,
+            find_text,
+            replace_text,
+            near_context,
+            occurrence,
+            change_id,
+            dry_run,
+        )
+    else:
+        return (
+            "Error: Missing required parameters for ReplaceText (file_path,"
+            " find_text, replace_text)"
+        )

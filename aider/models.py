@@ -934,7 +934,7 @@ class Model(ModelSettings):
             kwargs["temperature"] = temperature
 
         # `tools` is for modern tool usage. `functions` is for legacy/forced calls.
-        # This handles `base_coder` sending both with same content for `navigator_coder`.
+        # This handles `base_coder` sending both with same content for `agent_coder`.
         effective_tools = tools
 
         if effective_tools is None and functions:
@@ -945,7 +945,7 @@ class Model(ModelSettings):
             kwargs["tools"] = effective_tools
 
         # Forcing a function call is for legacy style `functions` with a single function.
-        # This is used by ArchitectCoder and not intended for NavigatorCoder's tools.
+        # This is used by ArchitectCoder and not intended for AgentCoder's tools.
         if functions and len(functions) == 1:
             function = functions[0]
 
