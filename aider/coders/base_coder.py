@@ -59,6 +59,7 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
+from aider.sessions import SessionManager
 from aider.utils import format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
@@ -1121,6 +1122,8 @@ class Coder:
                     self.keyboard_interrupt()
                 except (asyncio.CancelledError, IndexError):
                     pass
+
+            self.auto_save_session()
         except EOFError:
             return
         finally:
@@ -1272,6 +1275,8 @@ class Coder:
                         self.io.stop_spinner()
 
                     self.keyboard_interrupt()
+
+                self.auto_save_session()
         except EOFError:
             return
         finally:
@@ -3506,6 +3511,17 @@ class Coder:
 
     def apply_edits_dry_run(self, edits):
         return edits
+
+    def auto_save_session(self):
+        """Automatically save the current session as 'auto-save'."""
+        if not getattr(self.args, "auto_save", False):
+            return
+        try:
+            session_manager = SessionManager(self, self.io)
+            session_manager.save_session("auto-save", False)
+        except Exception:
+            # Don't show errors for auto-save to avoid interrupting the user experience
+            pass
 
     async def run_shell_commands(self):
         if not self.suggest_shell_commands:

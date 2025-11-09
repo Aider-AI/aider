@@ -1262,6 +1262,17 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
     analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
 
+    # Auto-load session if enabled
+    if args.auto_load:
+        try:
+            from aider.sessions import SessionManager
+
+            session_manager = SessionManager(coder, io)
+            session_manager.load_session("auto-save")
+        except Exception:
+            # Don't show errors for auto-load to avoid interrupting the user experience
+            pass
+
     while True:
         try:
             coder.ok_to_warm_cache = bool(args.cache_keepalive_pings)
