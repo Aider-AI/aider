@@ -182,8 +182,12 @@ class AgentCoder(Coder):
 
         # Process agent configuration if provided
         agent_config = self._get_agent_config()
-        tools_includelist = agent_config.get("tools_includelist", [])
-        tools_excludelist = agent_config.get("tools_excludelist", [])
+        tools_includelist = agent_config.get(
+            "tools_includelist", agent_config.get("tools_whitelist", [])
+        )
+        tools_excludelist = agent_config.get(
+            "tools_excludelist", agent_config.get("tools_blacklist", [])
+        )
 
         # Always include essential tools regardless of includelist/excludelist
         essential_tools = {"makeeditable", "replacetext", "view", "finished"}
