@@ -59,6 +59,7 @@ from aider.reasoning_tags import (
 from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
+from aider.sessions import SessionManager
 from aider.utils import format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
@@ -1121,6 +1122,8 @@ class Coder:
                     self.keyboard_interrupt()
                 except (asyncio.CancelledError, IndexError):
                     pass
+
+            self.auto_save_session()
         except EOFError:
             return
         finally:
@@ -1272,6 +1275,8 @@ class Coder:
                         self.io.stop_spinner()
 
                     self.keyboard_interrupt()
+
+                self.auto_save_session()
         except EOFError:
             return
         finally:
@@ -2295,7 +2300,15 @@ class Coder:
             return None
 
         server_tool_calls = {}
+        tool_id_set = set()
+
         for tool_call in tool_calls:
+            # LLM APIs sometimes return duplicates and that's annoying part 3
+            if tool_call.get("id") in tool_id_set:
+                continue
+
+            tool_id_set.add(tool_call.get("id"))
+
             # Check if this tool_call matches any MCP tool
             for server_name, server_tools in self.mcp_tools:
                 for tool in server_tools:
@@ -2343,8 +2356,16 @@ class Coder:
             try:
                 # Connect to the server once
                 session = await server.connect()
+                tool_id_set = set()
+
                 # Execute all tool calls for this server
                 for tool_call in tool_calls_list:
+                    # LLM APIs sometimes return duplicates and that's annoying part 4
+                    if tool_call.id in tool_id_set:
+                        continue
+
+                    tool_id_set.add(tool_call.id)
+
                     try:
                         # Arguments can be a stream of JSON objects.
                         # We need to parse them and run a tool call for each.
@@ -3490,6 +3511,17 @@ class Coder:
 
     def apply_edits_dry_run(self, edits):
         return edits
+
+    def auto_save_session(self):
+        """Automatically save the current session as 'auto-save'."""
+        if not getattr(self.args, "auto_save", False):
+            return
+        try:
+            session_manager = SessionManager(self, self.io)
+            session_manager.save_session("auto-save", False)
+        except Exception:
+            # Don't show errors for auto-save to avoid interrupting the user experience
+            pass
 
     async def run_shell_commands(self):
         if not self.suggest_shell_commands:

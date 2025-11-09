@@ -935,6 +935,7 @@ class AgentCoder(Coder):
         """
         Track tool usage before calling the base implementation.
         """
+        self.auto_save_session()
 
         if self.partial_response_tool_calls:
             for tool_call in self.partial_response_tool_calls:
@@ -976,6 +977,7 @@ class AgentCoder(Coder):
         ) = await self._process_tool_commands(content)
 
         if self.agent_finished:
+            self.tool_usage_history = []
             return True
 
         # Since we are no longer suppressing, the partial_response_content IS the final content.

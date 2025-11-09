@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import threading
+import time
 import traceback
 import webbrowser
 from dataclasses import fields
@@ -493,14 +494,20 @@ def custom_tracer(frame, event, arg):
         line_no = frame.f_lineno
 
         if func_name not in file_excludelist:
-            log_file.write(f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
+            log_file.write(
+                f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
+            )
 
     if event == "return":
         func_name = frame.f_code.co_name
         line_no = frame.f_lineno
 
         if func_name not in file_excludelist:
-            log_file.write(f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no}\n")
+            log_file.write(
+                f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
+            )
 
     # Must return the trace function (or a local one) for subsequent events
     return custom_tracer
@@ -1254,6 +1261,17 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         return
 
     analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
+
+    # Auto-load session if enabled
+    if args.auto_load:
+        try:
+            from aider.sessions import SessionManager
+
+            session_manager = SessionManager(coder, io)
+            session_manager.load_session("auto-save")
+        except Exception:
+            # Don't show errors for auto-load to avoid interrupting the user experience
+            pass
 
     while True:
         try:

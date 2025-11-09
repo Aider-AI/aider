@@ -795,6 +795,18 @@ def get_parser(default_config_files, git_root):
         default=False,
     )
     group.add_argument(
+        "--auto-save",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable automatic saving of sessions as 'auto-save' (default: False)",
+    )
+    group.add_argument(
+        "--auto-load",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable automatic loading of 'auto-save' session on startup (default: False)",
+    )
+    group.add_argument(
         "--disable-playwright",
         action="store_true",
         help="Never prompt for or attempt to install Playwright for web scraping (default: False).",

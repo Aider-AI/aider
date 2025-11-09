@@ -697,7 +697,7 @@ class RepoMap:
             # Ideally, this will help downweight boiler plate in frameworks, interfaces, and abstract classes
             if len(defines[ident]) > 4:
                 exp = min(len(defines[ident]), 32)
-                mul *= math.log((4 / (2**exp)) + 1)
+                mul *= math.log2((4 / (2**exp)) + 1)
 
             # Calculate multiplier: log(number of unique file references * total references ^ 2)
             # Used to balance the number of times an identifier appears with its number of refs per file
@@ -709,7 +709,7 @@ class RepoMap:
             # With absolute number of references throughout a codebase
             unique_file_refs = len(set(references[ident]))
             total_refs = len(references[ident])
-            ext_mul = round(math.log(unique_file_refs * total_refs**2 + 1))
+            ext_mul = round(math.log2(unique_file_refs * total_refs**2 + 1))
 
             for referencer, num_refs in Counter(references[ident]).items():
                 for definer in definers:
