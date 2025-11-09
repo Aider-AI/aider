@@ -2245,12 +2245,20 @@ class Coder:
 
         for server, tool_calls in server_tool_calls.items():
             for tool_call in tool_calls:
-                self.io.tool_output(f"Tool Call: {tool_call.function.name}")
+                color_start = "[blue]" if self.pretty else ""
+                color_end = "[/blue]" if self.pretty else ""
 
+                self.io.tool_output(
+                    f"{color_start}Tool Call:{color_end} {server.name} • {tool_call.function.name}"
+                )
                 # Parse and format arguments as headers with values
                 if tool_call.function.arguments:
                     # Only do JSON unwrapping for tools containing "replace" in their name
-                    if "replace" in tool_call.function.name.lower():
+                    if (
+                        "replace" in tool_call.function.name.lower()
+                        or "insert" in tool_call.function.name.lower()
+                        or "update" in tool_call.function.name.lower()
+                    ):
                         try:
                             args_dict = json.loads(tool_call.function.arguments)
                             first_key = True
@@ -2263,7 +2271,7 @@ class Coder:
                                 if first_key:
                                     self.io.tool_output("\n")
                                     first_key = False
-                                self.io.tool_output(f"{key}:")
+                                self.io.tool_output(f"{color_start}{key}:{color_end}")
                                 # Split the value by newlines and output each line separately
                                 if isinstance(value, str):
                                     for line in value.split("\n"):
@@ -2274,13 +2282,11 @@ class Coder:
                         except json.JSONDecodeError:
                             # If JSON parsing fails, show raw arguments
                             raw_args = tool_call.function.arguments
-                            self.io.tool_output(f"Arguments: {raw_args}")
+                            self.io.tool_output(f"{color_start}Arguments:{color_end} {raw_args}")
                     else:
                         # For non-replace tools, show raw arguments
                         raw_args = tool_call.function.arguments
-                        self.io.tool_output(f"Arguments: {raw_args}")
-
-                self.io.tool_output(f"MCP Server: {server.name}")
+                        self.io.tool_output(f"{color_start}Arguments:{color_end} {raw_args}")
 
                 if self.verbose:
                     self.io.tool_output(f"Tool ID: {tool_call.id}")
