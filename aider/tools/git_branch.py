@@ -74,7 +74,7 @@ def _execute_git_branch(coder, params=None):
 
     try:
         # Build git command arguments
-        args = ["branch"]
+        args = []
 
         # Handle boolean flags
         if params:
