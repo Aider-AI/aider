@@ -55,7 +55,9 @@ class FolderCoder(Coder):
             prompt_folder_path: Traversable, coder_name: str
     ) -> Type[CoderPrompts]:
         """Creates a folder-based subclass of CoderPrompts"""
-        coder_prompts_subclass: Type[CoderPrompts] = create_named_subclass(CoderPrompts, coder_name)
+        # Sanitize coder_name to create a valid PascalCase class name
+        class_name = f"{coder_name.replace('-', '_').title().replace('_', '')}Prompts"
+        coder_prompts_subclass: Type[CoderPrompts] = create_named_subclass(CoderPrompts, class_name)
         coder_path: Traversable = prompt_folder_path / coder_name
         load_class_attrs_from_folder(coder_path, coder_prompts_subclass)
         return coder_prompts_subclass
