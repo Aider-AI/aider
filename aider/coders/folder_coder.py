@@ -13,7 +13,7 @@ def create_named_subclass(base_class: Type, name: str) -> Type:
 
 def load_class_attrs_from_folder(folder_path: Traversable, target_class: Type) -> None:
     """Load class attributes from text files in a folder.
-    
+
     For each .txt file in the folder, its content will be set as a class attribute on
     the target_class. The attribute name is derived by removing the .txt extension
     from the filename.
@@ -21,7 +21,7 @@ def load_class_attrs_from_folder(folder_path: Traversable, target_class: Type) -
     if not hasattr(folder_path, "iterdir"):
         # If folder_path doesn't exist or is not a directory, return silently
         return
-    
+
     try:
         for item in folder_path.iterdir():
             if item.is_file() and item.name.endswith(".txt"):
@@ -43,7 +43,7 @@ class FolderCoder(Coder):
         # If edit_format was passed in kwargs, use it. Otherwise use class attribute
         if edit_format is None:
             edit_format = getattr(self, 'edit_format', None)
-        
+
         # Create the prompts subclass before calling super().__init__
         self.gpt_prompts = self._create_coder_prompts_subclass(prompt_folder_path, edit_format)
         
@@ -52,7 +52,7 @@ class FolderCoder(Coder):
 
     @staticmethod
     def _create_coder_prompts_subclass(
-            prompt_folder_path: Traversable, coder_name: str
+        prompt_folder_path: Traversable, coder_name: str
     ) -> Type[CoderPrompts]:
         """Creates a folder-based subclass of CoderPrompts"""
         # Sanitize coder_name to create a valid PascalCase class name
