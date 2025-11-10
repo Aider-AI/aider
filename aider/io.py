@@ -385,6 +385,7 @@ class InputOutput:
             self.pretty = False
 
         self.yes = yes
+        self.group_responses = dict()
 
         self.input_history_file = input_history_file
         if self.input_history_file:
@@ -1051,7 +1052,6 @@ class InputOutput:
         self.confirmation_in_progress = True
 
         try:
-            self.set_confirmation_acknowledgement()
             return await asyncio.create_task(self._confirm_ask(*args, **kwargs))
         except KeyboardInterrupt:
             # Re-raise KeyboardInterrupt to allow it to propagate
@@ -1066,6 +1066,7 @@ class InputOutput:
         subject=None,
         explicit_yes_required=False,
         group=None,
+        group_response=None,
         allow_never=False,
     ):
         self.num_user_asks += 1
@@ -1083,8 +1084,9 @@ class InputOutput:
 
             valid_responses = ["yes", "no", "skip", "all"]
             options = " (Y)es/(N)o"
-            if group:
-                if not explicit_yes_required:
+
+            if group or group_response:
+                if not explicit_yes_required or group_response:
                     options += "/(A)ll"
                 options += "/(S)kip all"
             if allow_never:
@@ -1109,16 +1111,13 @@ class InputOutput:
                 else:
                     self.tool_output(subject, bold=True)
 
-            if self.yes is True:
-                res = "n" if explicit_yes_required else "y"
-                self.acknowledge_confirmation()
-            elif self.yes is False:
-                res = "n"
-                self.acknowledge_confirmation()
+            if self.yes is True and not explicit_yes_required:
+                res = "y"
             elif group and group.preference:
                 res = group.preference
-                self.user_input(f"{question}{res}", log_only=False)
-                self.acknowledge_confirmation()
+                self.user_input(f"{question} - {res}", log_only=False)
+            elif group_response and group_response in self.group_responses:
+                return self.group_responses[group_response]
             else:
                 # Ring the bell if needed
                 self.ring_bell()
@@ -1146,13 +1145,15 @@ class InputOutput:
                                 self.prompt_session.message = question
                                 self.prompt_session.app.invalidate()
                             else:
-                                continue
+                                await asyncio.sleep(0)
 
                             res = await self.input_task
+                            await asyncio.sleep(0)
                         else:
                             res = await asyncio.get_event_loop().run_in_executor(
                                 None, input, question
                             )
+
                     except EOFError:
                         # Treat EOF (Ctrl+D) as if the user pressed Enter
                         res = default
@@ -1167,6 +1168,7 @@ class InputOutput:
                     good = any(valid_response.startswith(res) for valid_response in valid_responses)
 
                     if good:
+                        self.set_confirmation_acknowledgement()
                         self.start_spinner(self.last_spinner_text)
                         break
 
@@ -1181,13 +1183,15 @@ class InputOutput:
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
                 return False
 
-            if explicit_yes_required:
+            if explicit_yes_required and not group_response:
                 is_yes = res == "y"
             else:
                 is_yes = res in ("y", "a")
 
-            is_all = res == "a" and group is not None and not explicit_yes_required
-            is_skip = res == "s" and group is not None
+            is_all = res == "a" and (
+                (group is not None and not explicit_yes_required) or group_response
+            )
+            is_skip = res == "s" and (group is not None or group_response)
 
             if group:
                 if is_all and not explicit_yes_required:
@@ -1201,6 +1205,10 @@ class InputOutput:
             return False
         finally:
             pass
+
+        if group_response and (is_all or is_skip):
+            self.group_responses[group_response] = is_yes
+
         return is_yes
 
     @restore_multiline

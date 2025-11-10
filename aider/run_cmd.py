@@ -65,6 +65,7 @@ def run_cmd_subprocess(command, verbose=False, cwd=None, encoding=sys.stdout.enc
             stderr=subprocess.STDOUT,
             text=True,
             shell=True,
+            executable=shell if platform.system() != "Windows" else None,
             encoding=encoding,
             errors="replace",
             bufsize=0,  # Set bufsize to 0 for unbuffered output
