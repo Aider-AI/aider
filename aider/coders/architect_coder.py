@@ -7,6 +7,7 @@ class ArchitectCoder(AskCoder):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, edit_format=self.edit_format, **kwargs)
+
     auto_accept_architect = False
 
     def reply_completed(self):

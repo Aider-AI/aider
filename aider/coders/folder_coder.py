@@ -42,11 +42,11 @@ class FolderCoder(Coder):
     def __init__(self, *args, prompt_folder_path: Traversable, edit_format: str = None, **kwargs):
         # If edit_format was passed in kwargs, use it. Otherwise use class attribute
         if edit_format is None:
-            edit_format = getattr(self, 'edit_format', None)
+            edit_format = getattr(self, "edit_format", None)
 
         # Create the prompts subclass before calling super().__init__
         self.gpt_prompts = self._create_coder_prompts_subclass(prompt_folder_path, edit_format)
-        
+
         # Now call parent init without edit_format (since it's not a parameter of Coder.__init__)
         super().__init__(*args, **kwargs)
 
@@ -65,5 +65,6 @@ class FolderCoder(Coder):
 
 class AiderFolderCoder(FolderCoder):
     """A FolderCoder that loads Aider's built-in Coders"""
+
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, prompt_folder_path = files('aider.resources.folder-coders'), **kwargs)
+        super().__init__(*args, prompt_folder_path=files("aider.resources.folder-coders"), **kwargs)
