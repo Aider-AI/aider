@@ -7,4 +7,4 @@ class AskFurtherCoder(AiderFolderCoder):
     edit_format = "ask-further"
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, edit_format = self.edit_format, **kwargs)
+        super().__init__(*args, edit_format=self.edit_format, **kwargs)
