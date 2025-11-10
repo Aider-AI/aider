@@ -10,4 +10,4 @@ class AskCoder(AiderFolderCoder):
         """
         :param edit_format: Allows subclasses to specify their own edit_format
         """
-        super().__init__(*args, edit_format = edit_format, **kwargs)
+        super().__init__(*args, edit_format=edit_format, **kwargs)

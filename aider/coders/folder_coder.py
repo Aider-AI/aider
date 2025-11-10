@@ -2,8 +2,8 @@ from importlib.abc import Traversable
 from importlib.resources import files
 from typing import Type
 
-from .base_prompts import CoderPrompts
 from .base_coder import Coder
+from .base_prompts import CoderPrompts
 
 
 def create_named_subclass(base_class: Type, name: str) -> Type:
@@ -18,17 +18,17 @@ def load_class_attrs_from_folder(folder_path: Traversable, target_class: Type) -
     the target_class. The attribute name is derived by removing the .txt extension
     from the filename.
     """
-    if not hasattr(folder_path, 'iterdir'):
+    if not hasattr(folder_path, "iterdir"):
         # If folder_path doesn't exist or is not a directory, return silently
         return
     
     try:
         for item in folder_path.iterdir():
-            if item.is_file() and item.name.endswith('.txt'):
+            if item.is_file() and item.name.endswith(".txt"):
                 # Get attribute name by removing .txt extension
                 attr_name = item.name[:-4]
                 # Read file content
-                content = item.read_text(encoding='utf-8')
+                content = item.read_text(encoding="utf-8")
                 # Set as class attribute
                 setattr(target_class, attr_name, content)
     except (OSError, IOError):
@@ -51,7 +51,9 @@ class FolderCoder(Coder):
         super().__init__(*args, **kwargs)
 
     @staticmethod
-    def _create_coder_prompts_subclass(prompt_folder_path: Traversable, coder_name: str) -> Type[CoderPrompts]:
+    def _create_coder_prompts_subclass(
+            prompt_folder_path: Traversable, coder_name: str
+    ) -> Type[CoderPrompts]:
         """Creates a folder-based subclass of CoderPrompts"""
         coder_prompts_subclass: Type[CoderPrompts] = create_named_subclass(CoderPrompts, coder_name)
         coder_path: Traversable = prompt_folder_path / coder_name
@@ -62,8 +64,4 @@ class FolderCoder(Coder):
 class AiderFolderCoder(FolderCoder):
     """A FolderCoder that loads Aider's built-in Coders"""
     def __init__(self, *args, **kwargs):
-        super().__init__(
-            *args,
-            prompt_folder_path = files('aider.resources.folder-coders'),
-            **kwargs
-        )
+        super().__init__(*args, prompt_folder_path = files('aider.resources.folder-coders'), **kwargs)
