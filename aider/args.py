@@ -187,7 +187,7 @@ def get_parser(default_config_files, git_root):
         default=None,
         help=(
             "Specify the model to use for commit messages and chat history summarization (default"
-            " depends on --model)"
+            " depends on --model). Used for non-critical tasks to save costs."
         ),
     )
     group.add_argument(
