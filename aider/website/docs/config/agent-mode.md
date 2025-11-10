@@ -150,9 +150,10 @@ Agent Mode can be configured using the `--agent-config` command line argument, w
 
 #### Configuration Options
 
+- **`large_file_token_threshold`**: Maximum token threshold for large file warnings (default: 25000)
+- **`skip_cli_confirmations`**: YOLO mode, be brave and let the LLM cook, can also use the option `yolo` (default: False)
 - **`tools_includelist`**: Array of tool names to allow (only these tools will be available)
 - **`tools_excludelist`**: Array of tool names to exclude (these tools will be disabled)
-- **`large_file_token_threshold`**: Maximum token threshold for large file warnings (default: 25000)
 
 #### Essential Tools
 

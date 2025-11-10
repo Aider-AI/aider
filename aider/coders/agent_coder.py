@@ -135,6 +135,9 @@ class AgentCoder(Coder):
         self.context_blocks_cache = {}
         self.tokens_calculated = False
 
+        self.skip_cli_confirmations = False
+
+        self._get_agent_config()
         super().__init__(*args, **kwargs)
 
     def _build_tool_registry(self):
@@ -247,6 +250,9 @@ class AgentCoder(Coder):
 
         # Apply configuration to instance
         self.large_file_token_threshold = config["large_file_token_threshold"]
+        self.skip_cli_confirmations = config.get(
+            "skip_cli_confirmations", config.get("yolo", False)
+        )
 
         return config
 

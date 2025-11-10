@@ -1,4 +1,6 @@
 # Import necessary functions
+import asyncio
+
 from aider.run_cmd import run_cmd_subprocess
 
 schema = {
@@ -23,7 +25,7 @@ schema = {
 NORM_NAME = "command"
 
 
-def _execute_command(coder, command_string):
+async def _execute_command(coder, command_string):
     """
     Execute a non-interactive shell command after user confirmation.
     """
@@ -31,12 +33,23 @@ def _execute_command(coder, command_string):
         # Ask for confirmation before executing.
         # allow_never=True enables the 'Always' option.
         # confirm_ask handles remembering the 'Always' choice based on the subject.
-        confirmed = coder.io.confirm_ask(
-            "Allow execution of this command?",
-            subject=command_string,
-            explicit_yes_required=True,  # Require explicit 'yes' or 'always'
-            allow_never=True,  # Enable the 'Always' option
+
+        confirmed = (
+            True
+            if coder.skip_cli_confirmations
+            else await coder.io.confirm_ask(
+                "Allow execution of this command?",
+                subject=command_string,
+                explicit_yes_required=True,  # Require explicit 'yes' or 'always'
+                allow_never=True,  # Enable the 'Always' option
+                group_response="Command Tool",
+            )
         )
+
+        if not coder.io.input_task or coder.io.input_task.done() or coder.io.input_task.cancelled():
+            coder.io.input_task = asyncio.create_task(coder.get_input())
+
+        await asyncio.sleep(0)
 
         if not confirmed:
             # This happens if the user explicitly says 'no' this time.
@@ -79,7 +92,7 @@ def _execute_command(coder, command_string):
         return f"Error executing command: {str(e)}"
 
 
-def process_response(coder, params):
+async def process_response(coder, params):
     """
     Process the Command tool response.
 
@@ -92,6 +105,6 @@ def process_response(coder, params):
     """
     command_string = params.get("command_string")
     if command_string is not None:
-        return _execute_command(coder, command_string)
+        return await _execute_command(coder, command_string)
     else:
         return "Error: Missing 'command_string' parameter for Command"

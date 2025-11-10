@@ -1243,7 +1243,11 @@ class Coder:
                                     tasks, return_when=asyncio.FIRST_COMPLETED
                                 )
 
-                                if self.io.input_task and self.io.input_task in done:
+                                if (
+                                    self.io.input_task
+                                    and self.io.input_task in done
+                                    and not self.io.confirmation_in_progress
+                                ):
                                     await self.io.cancel_processing_task()
                                     self.io.stop_spinner()
                                     self.io.acknowledge_confirmation()
@@ -2226,7 +2230,7 @@ class Coder:
         if server_tool_calls and self.num_tool_calls < self.max_tool_calls:
             self._print_tool_call_info(server_tool_calls)
 
-            if await self.io.confirm_ask("Run tools?"):
+            if await self.io.confirm_ask("Run tools?", group_response="Run MCP Tools"):
                 tool_responses = await self._execute_tool_calls(server_tool_calls)
 
                 # Add all tool responses

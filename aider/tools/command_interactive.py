@@ -1,4 +1,6 @@
 # Import necessary functions
+import asyncio
+
 from aider.run_cmd import run_cmd
 
 schema = {
@@ -23,13 +25,35 @@ schema = {
 NORM_NAME = "commandinteractive"
 
 
-def _execute_command_interactive(coder, command_string):
+async def _execute_command_interactive(coder, command_string):
     """
     Execute an interactive shell command using run_cmd (which uses pexpect/PTY).
     """
     try:
+        confirmed = (
+            True
+            if coder.skip_cli_confirmations
+            else await coder.io.confirm_ask(
+                "Allow execution of this command?",
+                subject=command_string,
+                explicit_yes_required=True,  # Require explicit 'yes' or 'always'
+                allow_never=True,  # Enable the 'Always' option
+                group_response="Command Interactive Tool",
+            )
+        )
+
+        if not confirmed:
+            # This happens if the user explicitly says 'no' this time.
+            # If 'Always' was chosen previously, confirm_ask returns True directly.
+            coder.io.tool_output(f"Skipped execution of shell command: {command_string}")
+            return "Shell command execution skipped by user."
+
         coder.io.tool_output(f"⚙️ Starting interactive shell command: {command_string}")
         coder.io.tool_output(">>> You may need to interact with the command below <<<")
+        coder.io.tool_output(" \n")
+
+        await coder.io.cancel_input_task()
+        await asyncio.sleep(1)
 
         # Use run_cmd which handles PTY logic
         exit_status, combined_output = run_cmd(
@@ -39,7 +63,16 @@ def _execute_command_interactive(coder, command_string):
             cwd=coder.root,  # Execute in the project root
         )
 
+        await asyncio.sleep(1)
+
+        coder.io.tool_output(" \n")
+        coder.io.tool_output(" \n")
         coder.io.tool_output(">>> Interactive command finished <<<")
+
+        if not coder.io.input_task or coder.io.input_task.done() or coder.io.input_task.cancelled():
+            coder.io.input_task = asyncio.create_task(coder.get_input())
+
+        await asyncio.sleep(0)
 
         # Format the output for the result message, include more content
         output_content = combined_output or ""
@@ -74,7 +107,7 @@ def _execute_command_interactive(coder, command_string):
         return f"Error executing interactive command: {str(e)}"
 
 
-def process_response(coder, params):
+async def process_response(coder, params):
     """
     Process the CommandInteractive tool response.
 
@@ -87,6 +120,6 @@ def process_response(coder, params):
     """
     command_string = params.get("command_string")
     if command_string is not None:
-        return _execute_command_interactive(coder, command_string)
+        return await _execute_command_interactive(coder, command_string)
     else:
         return "Error: Missing 'command_string' parameter for CommandInteractive"
