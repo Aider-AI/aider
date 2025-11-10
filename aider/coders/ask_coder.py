@@ -6,7 +6,7 @@ class AskCoder(AiderFolderCoder):
 
     edit_format = "ask"
 
-    def __init__(self, *args, edit_format: str = edit_format, **kwargs):
+    def __init__(self, *args, edit_format: str = "ask", **kwargs):
         """
         :param edit_format: Allows subclasses to specify their own edit_format
         """
