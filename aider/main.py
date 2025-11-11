@@ -971,19 +971,6 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         analytics.event("exit", reason="Invalid lint command format")
         return 1
 
-    if args.show_model_warnings:
-        problem = await models.sanity_check_models(io, main_model)
-        if problem:
-            analytics.event("model warning", main_model=main_model)
-            io.tool_output("You can skip this check with --no-show-model-warnings")
-
-            try:
-                await io.offer_url(urls.model_warnings, "Open documentation url for more info?")
-                io.tool_output()
-            except KeyboardInterrupt:
-                analytics.event("exit", reason="Keyboard interrupt during model warnings")
-                return 1
-
     repo = None
     if args.git:
         try:
@@ -1113,6 +1100,24 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             preserve_todo_list=args.preserve_todo_list,
             linear_output=args.linear_output,
         )
+
+        if args.show_model_warnings:
+            problem = await models.sanity_check_models(io, main_model)
+            if problem:
+                analytics.event("model warning", main_model=main_model)
+                io.tool_output("You can skip this check with --no-show-model-warnings")
+
+                try:
+                    await io.offer_url(
+                        urls.model_warnings,
+                        "Open documentation url for more info?",
+                        acknowledge=True,
+                    )
+                    io.tool_output()
+                except KeyboardInterrupt:
+                    analytics.event("exit", reason="Keyboard interrupt during model warnings")
+                    return 1
+
     except UnknownEditFormat as err:
         io.tool_error(str(err))
         await io.offer_url(urls.edit_formats, "Open documentation about edit formats?")

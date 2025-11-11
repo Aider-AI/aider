@@ -69,10 +69,7 @@ async def _execute_command_interactive(coder, command_string):
         coder.io.tool_output(" \n")
         coder.io.tool_output(">>> Interactive command finished <<<")
 
-        if not coder.io.input_task or coder.io.input_task.done() or coder.io.input_task.cancelled():
-            coder.io.input_task = asyncio.create_task(coder.get_input())
-
-        await asyncio.sleep(0)
+        await coder.io.recreate_input()
 
         # Format the output for the result message, include more content
         output_content = combined_output or ""

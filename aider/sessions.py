@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
+from aider import models
+
 
 class SessionManager:
     """Manages chat session saving, listing, and loading."""
@@ -128,6 +130,9 @@ class SessionManager:
             "version": 1,
             "session_name": session_name,
             "model": self.coder.main_model.name,
+            "weak_model": self.coder.main_model.weak_model.name,
+            "editor_model": self.coder.main_model.editor_model.name,
+            "editor_edit_format": self.coder.main_model.editor_edit_format,
             "edit_format": self.coder.edit_format,
             "chat_history": {
                 "done_messages": self.coder.done_messages,
@@ -206,6 +211,17 @@ class SessionManager:
                     self.coder.abs_read_only_stubs_fnames.add(abs_fname)
                 else:
                     self.io.tool_warning(f"File not found, skipping: {rel_fname}")
+
+            if session_data.get("model"):
+                self.coder.main_model = models.Model(
+                    session_data.get("model", self.coder.args.model),
+                    weak_model=session_data.get("weak_model", self.coder.args.weak_model),
+                    editor_model=session_data.get("editor_model", self.coder.args.editor_model),
+                    editor_edit_format=session_data.get(
+                        "editor_edit_format", self.coder.args.editor_edit_format
+                    ),
+                    verbose=self.coder.args.verbose,
+                )
 
             # Load settings
             settings = session_data.get("settings", {})

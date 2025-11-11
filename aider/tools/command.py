@@ -1,6 +1,4 @@
 # Import necessary functions
-import asyncio
-
 from aider.run_cmd import run_cmd_subprocess
 
 schema = {
@@ -46,10 +44,7 @@ async def _execute_command(coder, command_string):
             )
         )
 
-        if not coder.io.input_task or coder.io.input_task.done() or coder.io.input_task.cancelled():
-            coder.io.input_task = asyncio.create_task(coder.get_input())
-
-        await asyncio.sleep(0)
+        await coder.io.recreate_input()
 
         if not confirmed:
             # This happens if the user explicitly says 'no' this time.
