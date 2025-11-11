@@ -1097,8 +1097,7 @@ class Coder:
                         self.show_announcements()
                     self.suppress_announcements_for_next_prompt = True
 
-                    self.io.input_task = asyncio.create_task(self.get_input())
-                    await asyncio.sleep(0)
+                    await self.io.recreate_input()
                     await self.io.input_task
                     user_message = self.io.input_task.result()
 
@@ -1161,10 +1160,7 @@ class Coder:
                         # Stop spinner before showing announcements or getting input
                         self.io.stop_spinner()
                         self.copy_context()
-                        self.io.input_task = asyncio.create_task(self.get_input())
-
-                        # Yield Control so input can actually get properly set up
-                        await asyncio.sleep(0)
+                        await self.io.recreate_input()
 
                     if self.user_message:
                         self.io.processing_task = asyncio.create_task(
@@ -1232,11 +1228,8 @@ class Coder:
                                 tasks.add(self.io.processing_task)
 
                                 # We just did a confirmation so add a new input task
-                                if (
-                                    not self.io.input_task
-                                    and self.io.get_confirmation_acknowledgement()
-                                ):
-                                    self.io.input_task = asyncio.create_task(self.get_input())
+                                if self.io.get_confirmation_acknowledgement():
+                                    await self.io.recreate_input()
                                     tasks.add(self.io.input_task)
 
                                 done, pending = await asyncio.wait(

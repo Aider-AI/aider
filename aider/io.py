@@ -695,6 +695,14 @@ class InputOutput:
         # This method is now a no-op since we removed the confirmation_future logic
         pass
 
+    async def recreate_input(self, future=None):
+        if not self.input_task or self.input_task.done() or self.input_task.cancelled():
+            coder = self.coder() if self.coder else None
+
+            if coder:
+                self.input_task = asyncio.create_task(coder.get_input())
+                await asyncio.sleep(0)
+
     async def get_input(
         self,
         root,
@@ -1126,16 +1134,7 @@ class InputOutput:
                 while True:
                     try:
                         if self.prompt_session:
-                            if (
-                                not self.input_task
-                                or self.input_task.done()
-                                or self.input_task.cancelled()
-                            ):
-                                coder = self.coder() if self.coder else None
-
-                                if coder:
-                                    self.input_task = asyncio.create_task(coder.get_input())
-                                    await asyncio.sleep(0)
+                            await self.recreate_input()
 
                             if (
                                 self.input_task
