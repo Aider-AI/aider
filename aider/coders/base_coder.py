@@ -1331,6 +1331,9 @@ class Coder:
         if not inp:
             return
 
+        # Strip whitespace from beginning and end
+        inp = inp.strip()
+
         if self.commands.is_command(inp):
             if inp[0] in "!":
                 inp = f"/run {inp[1:]}"
