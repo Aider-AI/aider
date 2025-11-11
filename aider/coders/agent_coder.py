@@ -24,6 +24,7 @@ from aider.mcp.server import LocalServer
 from aider.repo import ANY_GIT_ERROR
 
 # Import tool modules for registry
+# Import tool modules for registry
 from aider.tools import (
     command,
     command_interactive,
@@ -32,8 +33,10 @@ from aider.tools import (
     delete_lines,
     extract_lines,
     finished,
+    git_branch,
     git_diff,
     git_log,
+    git_remote,
     git_show,
     git_status,
     grep,
@@ -159,8 +162,10 @@ class AgentCoder(Coder):
             delete_lines,
             extract_lines,
             finished,
+            git_branch,
             git_diff,
             git_log,
+            git_remote,
             git_show,
             git_status,
             grep,
