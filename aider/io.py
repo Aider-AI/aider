@@ -1361,13 +1361,18 @@ class InputOutput:
         incomplete_line = ""
         output = ""
 
+        lines = self.remove_consecutive_empty_strings(lines)
+        needs_new_line = False if len(lines) == 2 and lines[0] and not lines[-1] else True
+
         if len(lines) > 1 or final:
             # All lines except the last one are complete
             complete_lines = lines[:-1] if not final else lines
             incomplete_line = lines[-1] if not final else ""
+            last_index = len(complete_lines) - 1
 
-            for complete_line in complete_lines:
+            for index, complete_line in enumerate(complete_lines):
                 output += complete_line
+                output += "\n" if needs_new_line and index != last_index else ""
                 self._stream_line_count += 1
 
             self._stream_buffer = incomplete_line
@@ -1381,6 +1386,17 @@ class InputOutput:
             # Ensure any remaining buffered content is printed using the full response
             self.console.print(Text.from_ansi(output) if self.has_ansi_codes(output) else output)
             self.reset_streaming_response()
+
+    def remove_consecutive_empty_strings(self, string_list):
+        new_list = []
+        first_item = True
+
+        for item in string_list:
+            if first_item or item != "" or (new_list and new_list[-1] != ""):
+                first_item = False
+                new_list.append(item)
+
+        return new_list
 
     def has_ansi_codes(self, s: str) -> bool:
         """Check if a string contains the ANSI escape character."""

@@ -414,7 +414,8 @@ class Commands:
                 )
 
             lint_coder.add_rel_fname(fname)
-            await lint_coder.run(errors)
+            await self.coder.io.recreate_input()
+            await lint_coder.run_one(errors, preproc=False)
             lint_coder.abs_fnames = set()
 
         if lint_coder and self.coder.repo.is_dirty() and self.coder.auto_commits:
@@ -536,7 +537,7 @@ class Commands:
                     tokens = self.coder.main_model.token_count_for_image(fname)
                 else:
                     # approximate
-                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    content = f"{relative_fname}\n{fence}\n" + content + f"{fence}\n"
                     tokens = self.coder.main_model.token_count(content)
                 file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
 
@@ -556,7 +557,7 @@ class Commands:
                 content = self.io.read_text(fname)
                 if content is not None and not is_image_file(relative_fname):
                     # approximate
-                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    content = f"{relative_fname}\n{fence}\n" + content + f"{fence}\n"
                     tokens = self.coder.main_model.token_count(content)
                     file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
 
