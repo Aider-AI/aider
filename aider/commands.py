@@ -1215,9 +1215,17 @@ class Commands:
         finally:
             self.cmd_running = False
 
-    def cmd_exit(self, args):
+    async def cmd_exit(self, args):
         "Exit the application"
         self.coder.event("exit", reason="/exit")
+
+        for server in self.coder.mcp_servers:
+            try:
+                await server.exit_stack.aclose()
+            except Exception:
+                pass
+
+        await asyncio.sleep(0)
         sys.exit()
 
     def cmd_quit(self, args):
