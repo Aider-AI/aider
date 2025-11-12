@@ -124,7 +124,7 @@ async def setup_git(git_root, io):
         )
         return
     elif cwd and await io.confirm_ask(
-        "No git repo found, create one to track aider's changes (recommended)?"
+        "No git repo found, create one to track aider's changes (recommended)?", acknowledge=True
     ):
         git_root = str(cwd.resolve())
         repo = await make_new_repo(git_root, io)
@@ -193,7 +193,8 @@ async def check_gitignore(git_root, io, ask=True):
     if ask:
         io.tool_output("You can skip this check with --no-gitignore")
         if not await io.confirm_ask(
-            f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"
+            f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?",
+            acknowledge=True,
         ):
             return
 
@@ -717,28 +718,27 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         posthog_host=args.analytics_posthog_host,
         posthog_project_api_key=args.analytics_posthog_project_api_key,
     )
-    if args.analytics is not False:
-        if analytics.need_to_ask(args.analytics):
-            io.tool_output(
-                "Aider respects your privacy and never collects your code, chat messages, keys or"
-                " personal info."
-            )
-            io.tool_output(f"For more info: {urls.analytics}")
-            disable = not await io.confirm_ask(
-                "Allow collection of anonymous analytics to help improve aider?"
-            )
 
-            analytics.asked_opt_in = True
-            if disable:
-                analytics.disable(permanently=True)
-                io.tool_output("Analytics have been permanently disabled.")
+    # if args.analytics is not False:
+    #     if analytics.need_to_ask(args.analytics):
+    #         io.tool_output(
+    #             "Aider respects your privacy and never collects your code, chat messages, keys or"
+    #             " personal info."
+    #         )
+    #         io.tool_output(f"For more info: {urls.analytics}")
+    #         disable = not await io.confirm_ask(
+    #             "Allow collection of anonymous analytics to help improve aider?"
+    #         )
+    #         analytics.asked_opt_in = True
+    #         if disable:
+    #             analytics.disable(permanently=True)
+    #             io.tool_output("Analytics have been permanently disabled.")
+    #         analytics.save_data()
+    #         io.tool_output()
+    #     # This is a no-op if the user has opted out
+    #     analytics.enable()
 
-            analytics.save_data()
-            io.tool_output()
-
-        # This is a no-op if the user has opted out
-        analytics.enable()
-
+    analytics.disable(permanently=True)
     analytics.event("launched")
 
     if args.gui and not return_coder:
@@ -820,11 +820,6 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
     if args.check_update:
         check_version(io, verbose=args.verbose)
-
-    if args.git:
-        git_root = await setup_git(git_root, io)
-        if args.gitignore:
-            await check_gitignore(git_root, io)
 
     if args.verbose:
         show = format_settings(parser, args)
@@ -1117,6 +1112,11 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                 except KeyboardInterrupt:
                     analytics.event("exit", reason="Keyboard interrupt during model warnings")
                     return 1
+
+        if args.git:
+            git_root = await setup_git(git_root, io)
+            if args.gitignore:
+                await check_gitignore(git_root, io)
 
     except UnknownEditFormat as err:
         io.tool_error(str(err))

@@ -699,6 +699,8 @@ class InputOutput:
             if coder:
                 self.input_task = asyncio.create_task(coder.get_input())
                 await asyncio.sleep(0)
+            else:
+                self.input_task = asyncio.create_task(self.get_input(None, [], [], []))
 
     async def get_input(
         self,
