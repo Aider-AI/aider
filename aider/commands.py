@@ -1051,66 +1051,87 @@ class Commands:
             file_set.remove(matched_file)
             self.io.tool_output(f"Removed {description} file {matched_file} from the chat")
 
-    def cmd_drop(self, args=""):
+    async def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
 
-        if not args.strip():
-            if self.original_read_only_fnames:
-                self.io.tool_output(
-                    "Dropping all files from the chat session except originally read-only files."
-                )
-            else:
-                self.io.tool_output("Dropping all files from the chat session.")
-            self._drop_all_files()
+        try:
+            if not args.strip():
+                if self.original_read_only_fnames:
+                    self.io.tool_output(
+                        "Dropping all files from the chat session except originally read-only"
+                        " files."
+                    )
+                else:
+                    self.io.tool_output("Dropping all files from the chat session.")
+                self._drop_all_files()
 
-            # Recalculate context block tokens after dropping all files
-            if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
+                # Recalculate context block tokens after dropping all files
+                if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
+                    if hasattr(self.coder, "_calculate_context_block_tokens"):
+                        self.coder._calculate_context_block_tokens()
+
+                return
+
+            filenames = parse_quoted_filenames(args)
+            files_changed = False
+
+            for word in filenames:
+                # Expand tilde in the path
+                expanded_word = os.path.expanduser(word)
+
+                # Handle read-only files
+                self._handle_read_only_files(
+                    expanded_word, self.coder.abs_read_only_fnames, "read-only"
+                )
+                self._handle_read_only_files(
+                    expanded_word, self.coder.abs_read_only_stubs_fnames, "read-only (stub)"
+                )
+
+                # For editable files, use glob if word contains glob chars, otherwise use substring
+                if any(c in expanded_word for c in "*?[]"):
+                    matched_files = self.glob_filtered_to_repo(expanded_word)
+                else:
+                    # Use substring matching like we do for read-only files
+                    matched_files = [
+                        self.coder.get_rel_fname(f)
+                        for f in self.coder.abs_fnames
+                        if expanded_word in f
+                    ]
+
+                if not matched_files:
+                    matched_files.append(expanded_word)
+
+                for matched_file in matched_files:
+                    abs_fname = self.coder.abs_root_path(matched_file)
+                    if abs_fname in self.coder.abs_fnames:
+                        self.coder.abs_fnames.remove(abs_fname)
+                        self.io.tool_output(f"Removed {matched_file} from the chat")
+                        files_changed = True
+
+            # Recalculate context block tokens if any files were changed and using agent mode
+            if (
+                files_changed
+                and hasattr(self.coder, "use_enhanced_context")
+                and self.coder.use_enhanced_context
+            ):
                 if hasattr(self.coder, "_calculate_context_block_tokens"):
                     self.coder._calculate_context_block_tokens()
-            return
-
-        filenames = parse_quoted_filenames(args)
-        files_changed = False
-
-        for word in filenames:
-            # Expand tilde in the path
-            expanded_word = os.path.expanduser(word)
-
-            # Handle read-only files
-            self._handle_read_only_files(
-                expanded_word, self.coder.abs_read_only_fnames, "read-only"
-            )
-            self._handle_read_only_files(
-                expanded_word, self.coder.abs_read_only_stubs_fnames, "read-only (stub)"
-            )
-
-            # For editable files, use glob if word contains glob chars, otherwise use substring
-            if any(c in expanded_word for c in "*?[]"):
-                matched_files = self.glob_filtered_to_repo(expanded_word)
+        finally:
+            if self.coder.repo_map:
+                map_tokens = self.coder.repo_map.max_map_tokens
+                map_mul_no_files = self.coder.repo_map.map_mul_no_files
             else:
-                # Use substring matching like we do for read-only files
-                matched_files = [
-                    self.coder.get_rel_fname(f) for f in self.coder.abs_fnames if expanded_word in f
-                ]
+                map_tokens = 0
+                map_mul_no_files = 1
 
-            if not matched_files:
-                matched_files.append(expanded_word)
-
-            for matched_file in matched_files:
-                abs_fname = self.coder.abs_root_path(matched_file)
-                if abs_fname in self.coder.abs_fnames:
-                    self.coder.abs_fnames.remove(abs_fname)
-                    self.io.tool_output(f"Removed {matched_file} from the chat")
-                    files_changed = True
-
-        # Recalculate context block tokens if any files were changed and using agent mode
-        if (
-            files_changed
-            and hasattr(self.coder, "use_enhanced_context")
-            and self.coder.use_enhanced_context
-        ):
-            if hasattr(self.coder, "_calculate_context_block_tokens"):
-                self.coder._calculate_context_block_tokens()
+            raise SwitchCoder(
+                edit_format=self.coder.edit_format,
+                summarize_from_coder=False,
+                from_coder=self.coder,
+                map_tokens=map_tokens,
+                map_mul_no_files=map_mul_no_files,
+                show_announcements=False,
+            )
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"

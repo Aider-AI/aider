@@ -94,7 +94,7 @@ def without_input_history(func):
     """Decorator to temporarily disable history saving for the prompt session buffer."""
 
     @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
+    async def wrapper(self, *args, **kwargs):
         orig_buf_append = None
         try:
             orig_buf_append = self.prompt_session.default_buffer.append_to_history
@@ -105,7 +105,7 @@ def without_input_history(func):
             pass
 
         try:
-            return func(self, *args, **kwargs)
+            return await func(self, *args, **kwargs)
         except Exception:
             raise
         finally:
@@ -340,6 +340,17 @@ class InputOutput:
         self.notifications = notifications
         self.verbose = verbose
 
+        # Variables used to interface with base_coder
+        self.coder = None
+        self.input_task = None
+        self.processing_task = None
+
+        # State tracking for confirmation input
+        self.confirmation_in_progress = False
+        self.confirmation_acknowledgement = False
+        self.confirmation_input_active = False
+        self.saved_input_text = ""
+
         if notifications and notifications_command is None:
             self.notifications_command = self.get_default_notification_command()
         else:
@@ -413,7 +424,6 @@ class InputOutput:
         self.dry_run = dry_run
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.is_dumb_terminal = is_dumb_terminal()
         self.is_tty = sys.stdout.isatty()
@@ -465,19 +475,9 @@ class InputOutput:
         self.file_watcher = file_watcher
         self.root = root
 
-        # Variables used to interface with base_coder
-        self.coder = None
-        self.input_task = None
-        self.processing_task = None
-        self.confirmation_in_progress = False
-        self.confirmation_acknowledgement = False
-
-        # State tracking for confirmation input
-        self.confirmation_input_active = False
-        self.saved_input_text = ""
-
         # Validate color settings after console is initialized
         self._validate_color_settings()
+        self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
     def _spinner_supports_unicode(self) -> bool:
         if not self.is_tty:
@@ -908,6 +908,8 @@ class InputOutput:
                 if self.clipboard_watcher:
                     self.clipboard_watcher.stop()
 
+            line = line or ""
+
             if line.strip("\r\n") and not multiline_input:
                 stripped = line.strip("\r\n")
                 if stripped == "{":
@@ -1012,6 +1014,13 @@ class InputOutput:
         if not log_only:
             self.display_user_input(inp)
 
+        if (
+            len(inp) <= 1
+            or self.confirmation_in_progress
+            or self.get_confirmation_acknowledgement()
+        ):
+            return
+
         prefix = "####"
         if inp:
             hist = inp.splitlines()
@@ -1055,6 +1064,7 @@ class InputOutput:
         return outstanding_confirmation
 
     @restore_multiline_async
+    @without_input_history
     async def confirm_ask(
         self,
         *args,
@@ -1324,12 +1334,7 @@ class InputOutput:
         if pretty is None:
             pretty = self.pretty
 
-        if pretty:
-            show_resp = Markdown(
-                message, style=self.assistant_output_color, code_theme=self.code_theme
-            )
-        else:
-            show_resp = Text(message or "(empty response)")
+        show_resp = Text(message or "(empty response)")
 
         self.stream_print(show_resp)
 
@@ -1487,6 +1492,9 @@ class InputOutput:
             )
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
+        if self.confirmation_in_progress or self.get_confirmation_acknowledgement():
+            return
+
         if blockquote:
             if strip:
                 text = text.strip()

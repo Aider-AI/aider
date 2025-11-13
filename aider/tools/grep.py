@@ -116,6 +116,9 @@ def _execute_grep(
             cmd_args.append("-n")  # Line numbers for rg and grep
         # ag includes line numbers by default
 
+        if tool_name in ["rg"]:
+            cmd_args.append("--heading")  # Filename above output for ripgrep
+
         # Context lines (Before and After)
         if context_before > 0:
             # All tools use -B for lines before
