@@ -1324,12 +1324,7 @@ class InputOutput:
         if pretty is None:
             pretty = self.pretty
 
-        if pretty:
-            show_resp = Markdown(
-                message, style=self.assistant_output_color, code_theme=self.code_theme
-            )
-        else:
-            show_resp = Text(message or "(empty response)")
+        show_resp = Text(message or "(empty response)")
 
         self.stream_print(show_resp)
 
