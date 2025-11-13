@@ -94,7 +94,7 @@ def without_input_history(func):
     """Decorator to temporarily disable history saving for the prompt session buffer."""
 
     @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
+    async def wrapper(self, *args, **kwargs):
         orig_buf_append = None
         try:
             orig_buf_append = self.prompt_session.default_buffer.append_to_history
@@ -105,7 +105,7 @@ def without_input_history(func):
             pass
 
         try:
-            return func(self, *args, **kwargs)
+            return await func(self, *args, **kwargs)
         except Exception:
             raise
         finally:
@@ -413,7 +413,6 @@ class InputOutput:
         self.dry_run = dry_run
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.is_dumb_terminal = is_dumb_terminal()
         self.is_tty = sys.stdout.isatty()
@@ -478,6 +477,7 @@ class InputOutput:
 
         # Validate color settings after console is initialized
         self._validate_color_settings()
+        self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
     def _spinner_supports_unicode(self) -> bool:
         if not self.is_tty:
@@ -1012,6 +1012,13 @@ class InputOutput:
         if not log_only:
             self.display_user_input(inp)
 
+        if (
+            len(inp) <= 1
+            or self.confirmation_in_progress
+            or self.get_confirmation_acknowledgement()
+        ):
+            return
+
         prefix = "####"
         if inp:
             hist = inp.splitlines()
@@ -1055,6 +1062,7 @@ class InputOutput:
         return outstanding_confirmation
 
     @restore_multiline_async
+    @without_input_history
     async def confirm_ask(
         self,
         *args,
@@ -1482,6 +1490,9 @@ class InputOutput:
             )
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
+        if self.confirmation_in_progress or self.get_confirmation_acknowledgement():
+            return
+
         if blockquote:
             if strip:
                 text = text.strip()
