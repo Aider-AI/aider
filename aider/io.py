@@ -340,6 +340,17 @@ class InputOutput:
         self.notifications = notifications
         self.verbose = verbose
 
+        # Variables used to interface with base_coder
+        self.coder = None
+        self.input_task = None
+        self.processing_task = None
+
+        # State tracking for confirmation input
+        self.confirmation_in_progress = False
+        self.confirmation_acknowledgement = False
+        self.confirmation_input_active = False
+        self.saved_input_text = ""
+
         if notifications and notifications_command is None:
             self.notifications_command = self.get_default_notification_command()
         else:
@@ -463,17 +474,6 @@ class InputOutput:
 
         self.file_watcher = file_watcher
         self.root = root
-
-        # Variables used to interface with base_coder
-        self.coder = None
-        self.input_task = None
-        self.processing_task = None
-        self.confirmation_in_progress = False
-        self.confirmation_acknowledgement = False
-
-        # State tracking for confirmation input
-        self.confirmation_input_active = False
-        self.saved_input_text = ""
 
         # Validate color settings after console is initialized
         self._validate_color_settings()
