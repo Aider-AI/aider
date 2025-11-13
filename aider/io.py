@@ -1021,17 +1021,19 @@ class InputOutput:
         return mdStream
 
     def assistant_output(self, message, pretty=None):
-        """Always render assistant output as Markdown."""
+        """Always render assistant output as Markdown and flush output immediately."""
         if not message:
             self.tool_warning("Empty response received from LLM. Check your provider account?")
             return
 
         show_resp = Markdown(
-            message,
+            str(message),
             style=self.assistant_output_color,
             code_theme=self.code_theme,
         )
-        self.console.print(show_resp)
+        # Force a visible re-render and flush, in case the console was buffering output
+        self.console.print(show_resp, flush=True)
+        self.console.file.flush()
 
     def set_placeholder(self, placeholder):
         """Set a one-time placeholder text for the next input prompt."""
