@@ -2227,6 +2227,7 @@ class Coder:
             self._print_tool_call_info(server_tool_calls)
 
             if await self.io.confirm_ask("Run tools?", group_response="Run MCP Tools"):
+                await self.io.recreate_input()
                 tool_responses = await self._execute_tool_calls(server_tool_calls)
 
                 # Add all tool responses
