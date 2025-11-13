@@ -1021,24 +1021,16 @@ class InputOutput:
         return mdStream
 
     def assistant_output(self, message, pretty=None):
+        """Always render assistant output as Markdown."""
         if not message:
             self.tool_warning("Empty response received from LLM. Check your provider account?")
             return
 
-        show_resp = message
-        pretty = True
-
-        # Coder will force pretty off if fence is not triple-backticks
-        if pretty is None:
-            pretty = self.pretty
-
-        if pretty:
-            show_resp = Markdown(
-                message, style=self.assistant_output_color, code_theme=self.code_theme
-            )
-        else:
-            show_resp = Text(message or "(empty response)")
-
+        show_resp = Markdown(
+            message,
+            style=self.assistant_output_color,
+            code_theme=self.code_theme,
+        )
         self.console.print(show_resp)
 
     def set_placeholder(self, placeholder):
