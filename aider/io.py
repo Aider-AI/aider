@@ -908,6 +908,8 @@ class InputOutput:
                 if self.clipboard_watcher:
                     self.clipboard_watcher.stop()
 
+            line = line or ""
+
             if line.strip("\r\n") and not multiline_input:
                 stripped = line.strip("\r\n")
                 if stripped == "{":
