@@ -1026,6 +1026,7 @@ class InputOutput:
             return
 
         show_resp = message
+        pretty = True
 
         # Coder will force pretty off if fence is not triple-backticks
         if pretty is None:
