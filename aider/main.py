@@ -321,7 +321,7 @@ def generate_search_path_list(default_file, git_root, command_line_file):
     resolved_files = []
     for fn in files:
         try:
-            resolved_files.append(Path(fn).resolve())
+            resolved_files.append(Path(fn).expanduser().resolve())
         except OSError:
             pass
 
