@@ -1101,9 +1101,7 @@ class Coder:
                     await self.io.input_task
                     user_message = self.io.input_task.result()
 
-                    self.io.output_task = asyncio.create_task(
-                        self._processing_logic(user_message, preproc)
-                    )
+                    self.io.output_task = asyncio.create_task(self._generate(user_message, preproc))
 
                     await self.io.output_task
 
@@ -1164,7 +1162,7 @@ class Coder:
 
                     if self.user_message:
                         self.io.output_task = asyncio.create_task(
-                            self._processing_logic(self.user_message, preproc)
+                            self._generate(self.user_message, preproc)
                         )
 
                         self.user_message = ""
@@ -1275,7 +1273,7 @@ class Coder:
             await self.io.cancel_input_task()
             await self.io.cancel_output_task()
 
-    async def _processing_logic(self, user_message, preproc):
+    async def _generate(self, user_message, preproc):
         await asyncio.sleep(0.1)
 
         try:
