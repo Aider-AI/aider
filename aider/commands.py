@@ -1248,7 +1248,14 @@ class Commands:
                 pass
 
         await asyncio.sleep(0)
-        sys.exit()
+
+        try:
+            if self.coder.args.linear_output:
+                os._exit(0)
+            else:
+                sys.exit()
+        except Exception:
+            sys.exit()
 
     def cmd_quit(self, args):
         "Exit the application"
