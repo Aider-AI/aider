@@ -886,8 +886,8 @@ class InputOutput:
             except EOFError:
                 raise
             except KeyboardInterrupt:
-                self.console.print()
                 await self.cancel_output_task()
+                self.console.print()
                 return ""
             except UnicodeEncodeError as err:
                 self.tool_error(str(err))
