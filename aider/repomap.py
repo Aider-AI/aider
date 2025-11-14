@@ -810,7 +810,7 @@ class RepoMap:
         # Create a cache key
         cache_key = [
             tuple(sorted(chat_fnames)) if chat_fnames else None,
-            tuple(sorted(other_fnames)) if other_fnames else None,
+            len(other_fnames) if other_fnames else None,
             max_map_tokens,
         ]
 
@@ -819,7 +819,8 @@ class RepoMap:
                 tuple(sorted(mentioned_fnames)) if mentioned_fnames else None,
                 tuple(sorted(mentioned_idents)) if mentioned_idents else None,
             ]
-        cache_key = tuple(cache_key)
+
+        cache_key = hash(str(tuple(cache_key)))
 
         use_cache = False
         if not force_refresh:
