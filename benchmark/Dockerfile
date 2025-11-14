@@ -29,7 +29,7 @@ RUN ARCH=$(uname -m) && \
     else \
         false; \
     fi && \
-    curl -L "https://golang.org/dl/go1.21.5.linux-$GOARCH.tar.gz" -o go.tar.gz && \
+    curl -kL "https://golang.org/dl/go1.21.5.linux-$GOARCH.tar.gz" -o go.tar.gz && \
     tar -C /usr/local -xzf go.tar.gz && \
     rm go.tar.gz
 ENV PATH="/usr/local/go/bin:${PATH}"
@@ -40,7 +40,7 @@ RUN chmod +x /tmp/rustup.sh && /tmp/rustup.sh -y && rm /tmp/rustup.sh
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Install Node.js and dependencies
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+RUN curl -kfsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /npm-install && \
