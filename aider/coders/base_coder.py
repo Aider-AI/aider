@@ -1085,7 +1085,7 @@ class Coder:
 
             user_message = None
             await self.io.cancel_input_task()
-            await self.io.cancel_processing_task()
+            await self.io.cancel_output_task()
 
             while True:
                 try:
@@ -1101,11 +1101,11 @@ class Coder:
                     await self.io.input_task
                     user_message = self.io.input_task.result()
 
-                    self.io.processing_task = asyncio.create_task(
+                    self.io.output_task = asyncio.create_task(
                         self._processing_logic(user_message, preproc)
                     )
 
-                    await self.io.processing_task
+                    await self.io.output_task
 
                     self.io.ring_bell()
                     user_message = None
@@ -1114,8 +1114,8 @@ class Coder:
                         self.io.set_placeholder("")
                         await self.io.cancel_input_task()
 
-                    if self.io.processing_task:
-                        await self.io.cancel_processing_task()
+                    if self.io.output_task:
+                        await self.io.cancel_output_task()
                         self.io.stop_spinner()
 
                     self.keyboard_interrupt()
@@ -1127,7 +1127,7 @@ class Coder:
             return
         finally:
             await self.io.cancel_input_task()
-            await self.io.cancel_processing_task()
+            await self.io.cancel_output_task()
 
     async def _run_patched(self, with_message=None, preproc=True):
         try:
@@ -1139,7 +1139,7 @@ class Coder:
             user_message = None
             self.user_message = ""
             await self.io.cancel_input_task()
-            await self.io.cancel_processing_task()
+            await self.io.cancel_output_task()
 
             while True:
                 try:
@@ -1151,7 +1151,7 @@ class Coder:
                             or self.io.input_task.done()
                             or self.io.input_task.cancelled()
                         )
-                        and (not self.io.processing_task or not self.io.placeholder)
+                        and (not self.io.output_task or not self.io.placeholder)
                     ):
                         if not self.suppress_announcements_for_next_prompt:
                             self.show_announcements()
@@ -1163,7 +1163,7 @@ class Coder:
                         await self.io.recreate_input()
 
                     if self.user_message:
-                        self.io.processing_task = asyncio.create_task(
+                        self.io.output_task = asyncio.create_task(
                             self._processing_logic(self.user_message, preproc)
                         )
 
@@ -1177,17 +1177,14 @@ class Coder:
 
                     tasks = set()
 
-                    if self.io.processing_task:
-                        if self.io.processing_task.done():
-                            exception = self.io.processing_task.exception()
+                    if self.io.output_task:
+                        if self.io.output_task.done():
+                            exception = self.io.output_task.exception()
                             if exception:
                                 if isinstance(exception, SwitchCoder):
-                                    await self.io.processing_task
-                        elif (
-                            not self.io.processing_task.done()
-                            and not self.io.processing_task.cancelled()
-                        ):
-                            tasks.add(self.io.processing_task)
+                                    await self.io.output_task
+                        elif not self.io.output_task.done() and not self.io.output_task.cancelled():
+                            tasks.add(self.io.output_task)
 
                     if (
                         self.io.input_task
@@ -1202,9 +1199,9 @@ class Coder:
                         )
 
                         if self.io.input_task and self.io.input_task in done:
-                            if self.io.processing_task:
+                            if self.io.output_task:
                                 if not self.io.confirmation_in_progress:
-                                    await self.io.cancel_processing_task()
+                                    await self.io.cancel_output_task()
                                     self.io.stop_spinner()
 
                             try:
@@ -1222,10 +1219,10 @@ class Coder:
                                 await self.io.cancel_input_task()
                                 continue
 
-                        if self.io.processing_task and self.io.processing_task in pending:
+                        if self.io.output_task and self.io.output_task in pending:
                             try:
                                 tasks = set()
-                                tasks.add(self.io.processing_task)
+                                tasks.add(self.io.output_task)
 
                                 # We just did a confirmation so add a new input task
                                 if self.io.get_confirmation_acknowledgement():
@@ -1241,7 +1238,7 @@ class Coder:
                                     and self.io.input_task in done
                                     and not self.io.confirmation_in_progress
                                 ):
-                                    await self.io.cancel_processing_task()
+                                    await self.io.cancel_output_task()
                                     self.io.stop_spinner()
                                     self.io.acknowledge_confirmation()
 
@@ -1263,14 +1260,12 @@ class Coder:
                     self.io.ring_bell()
                     user_message = None
                 except KeyboardInterrupt:
-                    if self.io.input_task:
-                        self.io.set_placeholder("")
-                        await self.io.cancel_input_task()
+                    self.io.set_placeholder("")
 
-                    if self.io.processing_task:
-                        await self.io.cancel_processing_task()
-                        self.io.stop_spinner()
+                    await self.io.cancel_input_task()
+                    await self.io.cancel_output_task()
 
+                    self.io.stop_spinner()
                     self.keyboard_interrupt()
 
                 self.auto_save_session()
@@ -1278,7 +1273,7 @@ class Coder:
             return
         finally:
             await self.io.cancel_input_task()
-            await self.io.cancel_processing_task()
+            await self.io.cancel_output_task()
 
     async def _processing_logic(self, user_message, preproc):
         await asyncio.sleep(0.1)
@@ -2729,6 +2724,7 @@ class Coder:
             if await self.io.confirm_ask(
                 "Add file to the chat?", subject=rel_fname, group=group, allow_never=True
             ):
+                await self.io.recreate_input()
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
             else:

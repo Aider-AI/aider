@@ -343,7 +343,7 @@ class InputOutput:
         # Variables used to interface with base_coder
         self.coder = None
         self.input_task = None
-        self.processing_task = None
+        self.output_task = None
 
         # State tracking for confirmation input
         self.confirmation_in_progress = False
@@ -961,13 +961,13 @@ class InputOutput:
             except (asyncio.CancelledError, EOFError, IndexError):
                 pass
 
-    async def cancel_processing_task(self):
-        if self.processing_task:
-            processing_task = self.processing_task
-            self.processing_task = None
+    async def cancel_output_task(self):
+        if self.output_task:
+            output_task = self.output_task
+            self.output_task = None
             try:
-                processing_task.cancel()
-                await processing_task
+                output_task.cancel()
+                await output_task
             except (asyncio.CancelledError, EOFError, IndexError):
                 pass
 
