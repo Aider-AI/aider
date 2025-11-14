@@ -8,3 +8,5 @@ OLD*
 .venv
 .aider.*
 build
+benchmarks
+model-settings
