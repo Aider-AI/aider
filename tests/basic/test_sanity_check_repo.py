@@ -135,6 +135,7 @@ async def test_git_index_version_greater_than_2(mock_browser, create_repo, mock_
     mock_io.offer_url.assert_any_call(
         urls.git_index_version,
         "Open documentation url for more info?",
+        acknowledge=True,
     )
 
 
