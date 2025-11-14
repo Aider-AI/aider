@@ -320,6 +320,12 @@ def get_parser(default_config_files, git_root):
         help="Enable/disable pretty, colorized output (default: True)",
     )
     group.add_argument(
+        "--pretty-assistant",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Enable/disable pretty output for assistant responses (default: follows --pretty)",
+    )
+    group.add_argument(
         "--quiet",
         action="store_true",
         help="Reduce output verbosity to minimum",

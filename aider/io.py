@@ -263,6 +263,7 @@ class InputOutput:
         root=".",
         notifications=False,
         notifications_command=None,
+        pretty_assistant=None,
     ):
         self.placeholder = None
         self.interrupted = False
@@ -304,6 +305,8 @@ class InputOutput:
         self.pretty = pretty
         if self.output:
             self.pretty = False
+
+        self.pretty_assistant = pretty_assistant
 
         self.yes = yes
 
@@ -633,6 +636,8 @@ class InputOutput:
                 # In normal mode, Alt+Enter adds a newline
                 event.current_buffer.insert_text("\n")
 
+        if self.pretty_assistant:
+            print("==Expect user input===")
         while True:
             if multiline_input:
                 show = self.prompt_prefix
@@ -880,6 +885,8 @@ class InputOutput:
                             complete_while_typing=False,
                         )
                     else:
+                        if self.pretty_assistant:
+                            print("==Expect user input===")
                         res = input(question)
                 except EOFError:
                     # Treat EOF (Ctrl+D) as if the user pressed Enter
@@ -951,6 +958,8 @@ class InputOutput:
                         complete_while_typing=True,
                     )
                 else:
+                    if self.pretty_assistant:
+                        print("==Expect user input===")
                     res = input(question + " ")
             except EOFError:
                 # Treat EOF (Ctrl+D) as if the user pressed Enter
@@ -1021,16 +1030,25 @@ class InputOutput:
         return mdStream
 
     def assistant_output(self, message, pretty=None):
-        """Always render assistant output as Markdown and flush output immediately."""
+        """Render assistant output as Markdown (if pretty) or plain text, and flush output immediately."""
         if not message:
             self.tool_warning("Empty response received from LLM. Check your provider account?")
             return
 
-        show_resp = Markdown(
-            str(message),
-            style=self.assistant_output_color,
-            code_theme=self.code_theme,
-        )
+        # Determine whether to use pretty output
+        if pretty is None:
+            pretty = self.pretty_assistant if self.pretty_assistant is not None else self.pretty
+
+        # Render as Markdown if pretty, otherwise as plain Text
+        if pretty:
+            show_resp = Markdown(
+                str(message),
+                style=self.assistant_output_color,
+                code_theme=self.code_theme,
+            )
+        else:
+            show_resp = Text(str(message) or "(empty response)")
+
         # Force a visible re-render and flush, in case the console was buffering output
         self.console.print(show_resp, flush=True)
         self.console.file.flush()
