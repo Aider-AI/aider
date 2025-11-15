@@ -841,55 +841,8 @@ class RepoMap:
             ]
 
             # Handle mentioned_idents with similarity check
-            if mentioned_idents:
-                current_mentioned_idents = tuple(mentioned_idents)
-
-                # Check if we have a previous cached value to compare against
-                if self._has_last_mentioned_idents:
-                    # Create vector for current mentioned_idents
-                    current_vector = create_bigram_vector(current_mentioned_idents)
-                    current_vector_norm = normalize_vector(current_vector)
-
-                    # Calculate cosine similarity
-                    similarity = cosine_similarity(
-                        self._last_mentioned_idents_vector, current_vector_norm
-                    )
-                    # If similarity is high enough, use the previous cache key component
-                    if similarity >= self._mentioned_ident_similarity:
-                        # Use the previous mentioned_idents for cache key to maintain cache hit
-                        cache_key.append(self._last_mentioned_idents)
-
-                        # Make similarity more strict the more consecutive cache hits
-                        self._mentioned_ident_similarity = min(
-                            0.9, self._mentioned_ident_similarity + 0.025
-                        )
-                    else:
-                        # Similarity is too low, use current mentioned_idents
-                        cache_key.append(current_mentioned_idents)
-
-                        # Update stored values
-                        self._last_mentioned_idents = current_mentioned_idents
-                        self._last_mentioned_idents_vector = current_vector_norm
-
-                        # Make similarity less strict the more consecutive cache misses
-                        self._mentioned_ident_similarity = max(
-                            0.5, self._mentioned_ident_similarity - 0.025
-                        )
-                else:
-                    # First time or no previous value, use current mentioned_idents
-                    cache_key.append(current_mentioned_idents)
-                    current_vector = create_bigram_vector(current_mentioned_idents)
-
-                    # Store for future comparisons
-                    self._last_mentioned_idents = current_mentioned_idents
-                    self._last_mentioned_idents_vector = normalize_vector(current_vector)
-
-                self._has_last_mentioned_idents = True
-            else:
-                cache_key.append(None)
-                self._last_mentioned_idents = None
-                self._last_mentioned_idents_vector = None
-                self._has_last_mentioned_idents = False
+            cache_key_component = self._get_mentioned_idents_cache_component(mentioned_idents)
+            cache_key.append(cache_key_component)
 
         cache_key = hash(str(tuple(cache_key)))
 
@@ -1075,6 +1028,70 @@ class RepoMap:
                 lois.append(tag.line)
 
         return output
+
+    def _get_mentioned_idents_cache_component(self, mentioned_idents):
+        """
+        Determine the cache key component for mentioned_idents using similarity comparison.
+
+        This method compares the current mentioned_idents with the previous ones using
+        cosine similarity. If the similarity is high enough, it returns the previous
+        cache key component to maintain cache hits. Otherwise, it updates the stored
+        values and returns the current mentioned_idents.
+
+        Args:
+            mentioned_idents (set): Current set of mentioned identifiers
+
+        Returns:
+            tuple or None: Cache key component for mentioned_idents
+        """
+        if not mentioned_idents:
+            self._last_mentioned_idents = None
+            self._last_mentioned_idents_vector = None
+            self._has_last_mentioned_idents = False
+            return None
+
+        current_mentioned_idents = tuple(mentioned_idents)
+
+        # Check if we have a previous cached value to compare against
+        if self._has_last_mentioned_idents:
+            # Create vector for current mentioned_idents
+            current_vector = create_bigram_vector(current_mentioned_idents)
+            current_vector_norm = normalize_vector(current_vector)
+
+            # Calculate cosine similarity
+            similarity = cosine_similarity(self._last_mentioned_idents_vector, current_vector_norm)
+            # If similarity is high enough, use the previous cache key component
+            if similarity >= self._mentioned_ident_similarity:
+                # Use the previous mentioned_idents for cache key to maintain cache hit
+                cache_key_component = self._last_mentioned_idents
+
+                # Make similarity more strict the more consecutive cache hits
+                self._mentioned_ident_similarity = min(
+                    0.9, self._mentioned_ident_similarity + 0.025
+                )
+            else:
+                # Similarity is too low, use current mentioned_idents
+                cache_key_component = current_mentioned_idents
+
+                # Update stored values
+                self._last_mentioned_idents = current_mentioned_idents
+                self._last_mentioned_idents_vector = current_vector_norm
+
+                # Make similarity less strict the more consecutive cache misses
+                self._mentioned_ident_similarity = max(
+                    0.5, self._mentioned_ident_similarity - 0.025
+                )
+        else:
+            # First time or no previous value, use current mentioned_idents
+            cache_key_component = current_mentioned_idents
+            current_vector = create_bigram_vector(current_mentioned_idents)
+
+            # Store for future comparisons
+            self._last_mentioned_idents = current_mentioned_idents
+            self._last_mentioned_idents_vector = normalize_vector(current_vector)
+
+        self._has_last_mentioned_idents = True
+        return cache_key_component
 
 
 def truncate_long_lines(text, max_length):
