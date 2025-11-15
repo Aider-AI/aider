@@ -806,7 +806,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             return await main_async(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
-        update_available = check_version(io, just_check=True, verbose=args.verbose)
+        update_available = await check_version(io, just_check=True, verbose=args.verbose)
         analytics.event("exit", reason="Just checking update")
         return 0 if not update_available else 1
 
@@ -821,7 +821,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         return 0 if success else 1
 
     if args.check_update:
-        check_version(io, verbose=args.verbose)
+        await check_version(io, verbose=args.verbose)
 
     if args.verbose:
         show = format_settings(parser, args)

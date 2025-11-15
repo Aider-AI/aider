@@ -61,7 +61,7 @@ async def install_upgrade(io, latest_version=None):
     return
 
 
-def check_version(io, just_check=False, verbose=False):
+async def check_version(io, just_check=False, verbose=False):
     if not just_check and VERSION_CHECK_FNAME.exists():
         day = 60 * 60 * 24
         since = time.time() - os.path.getmtime(VERSION_CHECK_FNAME)
@@ -109,5 +109,5 @@ def check_version(io, just_check=False, verbose=False):
     if not is_update_available:
         return False
 
-    install_upgrade(io, latest_version)
+    await install_upgrade(io, latest_version)
     return True
