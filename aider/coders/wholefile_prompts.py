@@ -7,9 +7,6 @@ class WholeFilePrompts(CoderPrompts):
     main_system = """Act as an expert software developer.
 Take requests for changes to the supplied code.
 If the request is ambiguous, ask questions.
-
-Always reply to the user in {language}.
-
 {final_reminders}
 Once you understand the request you MUST:
 1. Determine if any code changes are needed.
