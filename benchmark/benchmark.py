@@ -215,7 +215,7 @@ def main(
     exercises_dir: str = typer.Option(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
-    timeout: Optional[int] = typer.Option(                                                                  ### ADDED THIS LINE
+    timeout: Optional[int] = typer.Option(                                                                 
         None, "--timeout", help="Per-request API timeout in seconds (passed to litellm)."
     ),
 ):
@@ -354,9 +354,9 @@ def main(
     base_coder.RETRY_TIMEOUT = LONG_TIMEOUT
     models.RETRY_TIMEOUT = LONG_TIMEOUT
 
-    # Request timeout - default is 600, increase to avoid request timed out             ### ADDED THIS LINE
-    if timeout:                                                                         ### ADDED THIS LINE
-        models.request_timeout = timeout                                                ### ADDED THIS LINE
+    # Request timeout - default is 600, increase to avoid request timed out             
+    if timeout:                                                                         
+        models.request_timeout = timeout                                               
 
     if threads == 1:
         all_results = []
