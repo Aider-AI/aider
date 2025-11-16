@@ -872,7 +872,7 @@ class Coder:
         return matches
 
     def get_repo_map(self, force_refresh=False):
-        if not self.repo_map:
+        if not self.repo_map or not self.repo:
             return
 
         self.io.update_spinner("Updating repo map")
