@@ -40,6 +40,7 @@ The current priorities are to improve core capabilities and user experience of t
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
 * [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
 * [Aider Original Documentation (still mostly applies)](https://aider.chat/)
+* [Discord Community](https://discord.gg/McwdCRuqkJ)
 
 ### Installation Instructions
 This project can be installed using several methods:
