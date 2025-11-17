@@ -154,6 +154,8 @@ class AutoCompleter(Completer):
         self.command_completions = dict()
         if commands:
             self.command_names = self.commands.get_commands()
+        else:
+            self.command_names = []
 
         for rel_fname in addable_rel_fnames:
             self.words.add(rel_fname)
