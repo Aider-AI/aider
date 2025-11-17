@@ -79,7 +79,7 @@ def create_bigram_vector(texts):
         chars = np.array(list(text_lower))
 
         # Create bigrams by combining consecutive characters
-        bigrams = np.core.defchararray.add(chars[:-1], chars[1:])
+        bigrams = np.char.add(chars[:-1], chars[1:])
 
         # Filter only alphabetic bigrams
         mask = np.array([bg.isalpha() for bg in bigrams])
