@@ -37,7 +37,7 @@ from aider.mcp import load_mcp_servers
 from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
-from aider.report import report_uncaught_exceptions
+from aider.report import report_uncaught_exceptions, set_args_error_data
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
 
@@ -576,6 +576,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+    set_args_error_data(args)
 
     if args.debug:
         global log_file
