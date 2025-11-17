@@ -1257,9 +1257,9 @@ class Commands:
         except Exception:
             sys.exit()
 
-    def cmd_quit(self, args):
+    async def cmd_quit(self, args):
         "Exit the application"
-        self.cmd_exit(args)
+        await self.cmd_exit(args)
 
     def cmd_context_management(self, args=""):
         "Toggle context management for large files"
