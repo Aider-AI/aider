@@ -3267,12 +3267,15 @@ class Coder:
             return
 
     def get_all_relative_files(self):
-        staged_files_hash = hash(str([item.a_path for item in self.repo.repo.index.diff("HEAD")]))
-        if (
-            staged_files_hash == self.data_cache["repo"]["last_key"]
-            and self.data_cache["relative_files"]
-        ):
-            return self.data_cache["relative_files"]
+        if self.repo_map and self.repo:
+            staged_files_hash = hash(
+                str([item.a_path for item in self.repo.repo.index.diff("HEAD")])
+            )
+            if (
+                staged_files_hash == self.data_cache["repo"]["last_key"]
+                and self.data_cache["relative_files"]
+            ):
+                return self.data_cache["relative_files"]
 
         if self.repo:
             files = self.repo.get_tracked_files()
