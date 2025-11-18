@@ -44,6 +44,7 @@ from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands, SwitchCoder
 from aider.exceptions import LiteLLMExceptions
+from aider.helpers import coroutines
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
@@ -492,7 +493,10 @@ class Coder:
         self.commands = commands or Commands(self.io, self)
         self.commands.coder = self
 
-        self.data_cache = {"repo": {"last_key": ""}, "relative_files": None}
+        self.data_cache = {
+            "repo": {"last_key": "", "read_only_count": None},
+            "relative_files": None,
+        }
 
         self.repo = repo
         if use_git and self.repo is None:
@@ -1096,9 +1100,9 @@ class Coder:
 
         if self.io.prompt_session:
             with patch_stdout(raw=True):
-                return await self._run_patched(with_message, preproc)
+                return await self._run_parallel(with_message, preproc)
         else:
-            return await self._run_patched(with_message, preproc)
+            return await self._run_parallel(with_message, preproc)
 
     async def _run_linear(self, with_message=None, preproc=True):
         try:
@@ -1108,8 +1112,7 @@ class Coder:
                 return self.partial_response_content
 
             user_message = None
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
+            await self.io.cancel_task_streams()
 
             while True:
                 try:
@@ -1148,10 +1151,9 @@ class Coder:
         except EOFError:
             return
         finally:
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
+            await self.io.cancel_task_streams()
 
-    async def _run_patched(self, with_message=None, preproc=True):
+    async def _run_parallel(self, with_message=None, preproc=True):
         try:
             if with_message:
                 self.io.user_input(with_message)
@@ -1160,20 +1162,17 @@ class Coder:
 
             user_message = None
             self.user_message = ""
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
+            await self.io.cancel_task_streams()
 
             while True:
                 try:
                     if (
                         not self.io.confirmation_in_progress
                         and not user_message
+                        and not coroutines.is_active(self.io.input_task)
                         and (
-                            not self.io.input_task
-                            or self.io.input_task.done()
-                            or self.io.input_task.cancelled()
+                            not coroutines.is_active(self.io.output_task) or not self.io.placeholder
                         )
-                        and (not self.io.output_task or not self.io.placeholder)
                     ):
                         if not self.suppress_announcements_for_next_prompt:
                             self.show_announcements()
@@ -1205,14 +1204,10 @@ class Coder:
                             if exception:
                                 if isinstance(exception, SwitchCoder):
                                     await self.io.output_task
-                        elif not self.io.output_task.done() and not self.io.output_task.cancelled():
+                        elif coroutines.is_active(self.io.output_task):
                             tasks.add(self.io.output_task)
 
-                    if (
-                        self.io.input_task
-                        and not self.io.input_task.done()
-                        and not self.io.input_task.cancelled()
-                    ):
+                    if coroutines.is_active(self.io.input_task):
                         tasks.add(self.io.input_task)
 
                     if tasks:
@@ -1283,19 +1278,15 @@ class Coder:
                     user_message = None
                 except KeyboardInterrupt:
                     self.io.set_placeholder("")
-
-                    await self.io.cancel_input_task()
-                    await self.io.cancel_output_task()
-
                     self.io.stop_spinner()
                     self.keyboard_interrupt()
+                    await self.io.cancel_task_streams()
 
                 self.auto_save_session()
         except EOFError:
             return
         finally:
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
+            await self.io.cancel_task_streams()
 
     async def _generate(self, user_message, preproc):
         await asyncio.sleep(0.1)

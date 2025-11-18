@@ -36,6 +36,8 @@ from rich.spinner import SPINNERS
 from rich.style import Style as RichStyle
 from rich.text import Text
 
+from aider.helpers import coroutines
+
 from .dump import dump  # noqa: F401
 from .editor import pipe_editor
 from .utils import is_image_file, run_fzf
@@ -695,7 +697,7 @@ class InputOutput:
         pass
 
     async def recreate_input(self, future=None):
-        if not self.input_task or self.input_task.done() or self.input_task.cancelled():
+        if not coroutines.is_active(self.input_task):
             coder = self.coder() if self.coder else None
 
             if coder:
@@ -974,6 +976,13 @@ class InputOutput:
             except (asyncio.CancelledError, EOFError, IndexError):
                 pass
 
+    async def cancel_task_streams(self):
+        input_task = asyncio.create_task(self.cancel_input_task())
+        output_task = asyncio.create_task(self.cancel_output_task())
+
+        # Await all tasks and gather their results
+        await asyncio.gather(input_task, output_task)
+
     def add_to_input_history(self, inp):
         if not self.input_history_file:
             return
@@ -1153,11 +1162,7 @@ class InputOutput:
                         if self.prompt_session:
                             await self.recreate_input()
 
-                            if (
-                                self.input_task
-                                and not self.input_task.done()
-                                and not self.input_task.cancelled()
-                            ):
+                            if coroutines.is_active(self.input_task):
                                 self.prompt_session.message = question
                                 self.prompt_session.app.invalidate()
                             else:
