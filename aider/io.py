@@ -962,7 +962,14 @@ class InputOutput:
             try:
                 input_task.cancel()
                 await input_task
-            except (asyncio.CancelledError, EOFError, IndexError):
+            except (
+                asyncio.CancelledError,
+                Exception,
+                EOFError,
+                IndexError,
+                RuntimeError,
+                SystemExit,
+            ):
                 pass
 
     async def cancel_output_task(self):
@@ -972,15 +979,21 @@ class InputOutput:
             try:
                 output_task.cancel()
                 await output_task
-            except (asyncio.CancelledError, EOFError, IndexError):
+            except (
+                asyncio.CancelledError,
+                Exception,
+                EOFError,
+                IndexError,
+                RuntimeError,
+                SystemExit,
+            ):
                 pass
 
     async def cancel_task_streams(self):
         input_task = asyncio.create_task(self.cancel_input_task())
         output_task = asyncio.create_task(self.cancel_output_task())
 
-        # Await all tasks and gather their results
-        await asyncio.gather(input_task, output_task)
+        await asyncio.wait([input_task, output_task], return_when=asyncio.ALL_COMPLETED)
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:

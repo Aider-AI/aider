@@ -144,6 +144,9 @@ class Coder:
     compact_context_completed = True
     suppress_announcements_for_next_prompt = False
     tool_reflection = False
+    # Task coordination state variables
+    input_running = False
+    output_running = False
 
     # Context management settings (for all modes)
     context_management_enabled = False  # Disabled by default except for agent mode
@@ -1128,12 +1131,14 @@ class Coder:
                     await self.io.input_task
                     user_message = self.io.input_task.result()
 
-                    self.io.output_task = asyncio.create_task(self._generate(user_message, preproc))
+                    self.io.output_task = asyncio.create_task(self.generate(user_message, preproc))
 
                     await self.io.output_task
 
                     self.io.ring_bell()
                     user_message = None
+                    self.auto_save_session()
+
                 except KeyboardInterrupt:
                     if self.io.input_task:
                         self.io.set_placeholder("")
@@ -1147,7 +1152,6 @@ class Coder:
                 except (asyncio.CancelledError, IndexError):
                     pass
 
-            self.auto_save_session()
         except EOFError:
             return
         finally:
@@ -1160,135 +1164,174 @@ class Coder:
                 await self.run_one(with_message, preproc)
                 return self.partial_response_content
 
-            user_message = None
+            # Initialize state for task coordination
+            self.input_running = True
+            self.output_running = True
             self.user_message = ""
+
+            # Cancel any existing tasks
             await self.io.cancel_task_streams()
 
-            while True:
+            # Start the input and output tasks
+            input_task = asyncio.create_task(self.input_task(preproc))
+            output_task = asyncio.create_task(self.output_task(preproc))
+
+            try:
+                # Wait for both tasks to complete or for one to raise an exception
+                done, pending = await asyncio.wait(
+                    [input_task, output_task], return_when=asyncio.FIRST_EXCEPTION
+                )
+
+                # Check for exceptions
+                for task in done:
+                    if task.exception():
+                        raise task.exception()
+
+            except (SwitchCoder, SystemExit):
+                # Re-raise SwitchCoder to be handled by outer try block
+                raise
+            except KeyboardInterrupt:
+                # Handle keyboard interrupt gracefully
+                self.io.set_placeholder("")
+                self.io.stop_spinner()
+                self.keyboard_interrupt()
+            finally:
+                # Signal tasks to stop
+                self.input_running = False
+                self.output_running = False
+
+                # Cancel tasks
+                input_task.cancel()
+                output_task.cancel()
+
+                # Wait for tasks to finish
                 try:
-                    if (
-                        not self.io.confirmation_in_progress
-                        and not user_message
-                        and not coroutines.is_active(self.io.input_task)
-                        and (
-                            not coroutines.is_active(self.io.output_task) or not self.io.placeholder
-                        )
-                    ):
-                        if not self.suppress_announcements_for_next_prompt:
-                            self.show_announcements()
-                        self.suppress_announcements_for_next_prompt = True
+                    await asyncio.gather(input_task, output_task, return_exceptions=True)
+                except (asyncio.CancelledError, KeyboardInterrupt):
+                    pass
 
-                        # Stop spinner before showing announcements or getting input
-                        self.io.stop_spinner()
-                        self.copy_context()
-                        await self.io.recreate_input()
+                # Ensure IO tasks are properly cancelled
+                await self.io.cancel_task_streams()
 
-                    if self.user_message:
-                        self.io.output_task = asyncio.create_task(
-                            self._generate(self.user_message, preproc)
-                        )
-
-                        self.user_message = ""
-                        # Start spinner for processing task
-                        self.io.start_spinner("Processing...")
-
-                    if self.commands.cmd_running:
-                        await asyncio.sleep(0.1)
-                        continue
-
-                    tasks = set()
-
-                    if self.io.output_task:
-                        if self.io.output_task.done():
-                            exception = self.io.output_task.exception()
-                            if exception:
-                                if isinstance(exception, SwitchCoder):
-                                    await self.io.output_task
-                        elif coroutines.is_active(self.io.output_task):
-                            tasks.add(self.io.output_task)
-
-                    if coroutines.is_active(self.io.input_task):
-                        tasks.add(self.io.input_task)
-
-                    if tasks:
-                        done, pending = await asyncio.wait(
-                            tasks, return_when=asyncio.FIRST_COMPLETED
-                        )
-
-                        if self.io.input_task and self.io.input_task in done:
-                            if self.io.output_task:
-                                if not self.io.confirmation_in_progress:
-                                    await self.io.cancel_output_task()
-                                    self.io.stop_spinner()
-
-                            try:
-                                if self.io.input_task:
-                                    user_message = self.io.input_task.result()
-                                    await self.io.cancel_input_task()
-
-                                if self.commands.is_run_command(user_message):
-                                    self.commands.cmd_running = True
-
-                            except (asyncio.CancelledError, KeyboardInterrupt):
-                                user_message = None
-
-                            if not user_message:
-                                await self.io.cancel_input_task()
-                                continue
-
-                        if self.io.output_task and self.io.output_task in pending:
-                            try:
-                                tasks = set()
-                                tasks.add(self.io.output_task)
-
-                                # We just did a confirmation so add a new input task
-                                if self.io.get_confirmation_acknowledgement():
-                                    await self.io.recreate_input()
-                                    tasks.add(self.io.input_task)
-
-                                done, pending = await asyncio.wait(
-                                    tasks, return_when=asyncio.FIRST_COMPLETED
-                                )
-
-                                if (
-                                    self.io.input_task
-                                    and self.io.input_task in done
-                                    and not self.io.confirmation_in_progress
-                                ):
-                                    await self.io.cancel_output_task()
-                                    self.io.stop_spinner()
-                                    self.io.acknowledge_confirmation()
-
-                                    try:
-                                        user_message = self.io.input_task.result()
-                                        await self.io.cancel_input_task()
-                                    except (asyncio.CancelledError, KeyboardInterrupt):
-                                        user_message = None
-
-                            except (asyncio.CancelledError, KeyboardInterrupt):
-                                pass
-
-                            # Stop spinner when processing task completes
-                            self.io.stop_spinner()
-
-                    if user_message and not self.io.acknowledge_confirmation():
-                        self.user_message = user_message
-
-                    self.io.ring_bell()
-                    user_message = None
-                except KeyboardInterrupt:
-                    self.io.set_placeholder("")
-                    self.io.stop_spinner()
-                    self.keyboard_interrupt()
-                    await self.io.cancel_task_streams()
-
-                self.auto_save_session()
+            self.auto_save_session()
         except EOFError:
             return
         finally:
             await self.io.cancel_task_streams()
 
-    async def _generate(self, user_message, preproc):
+    async def input_task(self, preproc):
+        """
+        Handles input creation/recreation and user message processing.
+        This task manages the input loop and coordinates with output_task.
+        """
+        while self.input_running:
+            try:
+                # Wait for commands to finish
+                if self.commands.cmd_running:
+                    await asyncio.sleep(0.1)
+                    continue
+
+                # Wait for input task completion
+                if self.io.input_task and self.io.input_task.done():
+                    try:
+                        user_message = self.io.input_task.result()
+
+                        # Set user message for output task
+                        if not self.io.acknowledge_confirmation():
+                            if user_message:
+                                self.user_message = user_message
+                                self.auto_save_session()
+                            else:
+                                self.user_message = ""
+                                await self.io.cancel_task_streams()
+
+                    except (asyncio.CancelledError, KeyboardInterrupt):
+                        self.user_message = ""
+                        await self.io.cancel_task_streams()
+
+                # Check if we should show announcements
+                if (
+                    not self.io.confirmation_in_progress
+                    and not self.user_message
+                    and not coroutines.is_active(self.io.input_task)
+                    and (not coroutines.is_active(self.io.output_task) or not self.io.placeholder)
+                ):
+                    if not self.suppress_announcements_for_next_prompt:
+                        self.show_announcements()
+                    self.suppress_announcements_for_next_prompt = True
+
+                    # Stop spinner before showing announcements or getting input
+                    self.io.stop_spinner()
+                    self.copy_context()
+
+                # Check if we should recreate input
+                if not coroutines.is_active(self.io.input_task):
+                    self.io.ring_bell()
+                    await self.io.recreate_input()
+
+                await asyncio.sleep(0.01)  # Small yield to prevent tight loop
+
+            except KeyboardInterrupt:
+                self.io.set_placeholder("")
+                self.keyboard_interrupt()
+                await self.io.cancel_task_streams()
+            except (SwitchCoder, SystemExit):
+                raise
+            except Exception as e:
+                if self.verbose or self.args.debug:
+                    print(e)
+
+    async def output_task(self, preproc):
+        """
+        Handles output task generation and monitoring.
+        This task manages the output loop and coordinates with input_task.
+        """
+        while self.output_running:
+            try:
+                # Wait for commands to finish
+                if self.commands.cmd_running:
+                    await asyncio.sleep(0.1)
+                    continue
+
+                # Check if we have a user message to process
+                if self.user_message and not self.io.get_confirmation_acknowledgement():
+                    user_message = self.user_message
+                    self.user_message = ""
+
+                    # Create output task for processing
+                    self.io.output_task = asyncio.create_task(self.generate(user_message, preproc))
+
+                    # Start spinner for output task
+                    self.io.start_spinner("Processing...")
+                    await self.io.recreate_input()
+
+                # Monitor output task
+                if self.io.output_task:
+                    if self.io.output_task.done():
+                        self.auto_save_session()
+
+                        exception = self.io.output_task.exception()
+                        if exception:
+                            if isinstance(exception, SwitchCoder):
+                                await self.io.output_task
+                                raise exception
+
+                        # Stop spinner when processing task completes
+                        self.io.stop_spinner()
+
+                await asyncio.sleep(0.01)  # Small yield to prevent tight loop
+
+            except KeyboardInterrupt:
+                self.io.stop_spinner()
+                self.keyboard_interrupt()
+                await self.io.cancel_task_streams()
+            except (SwitchCoder, SystemExit):
+                raise
+            except Exception as e:
+                if self.verbose or self.args.debug:
+                    print(e)
+
+    async def generate(self, user_message, preproc):
         await asyncio.sleep(0.1)
 
         try:
