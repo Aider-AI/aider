@@ -2138,6 +2138,9 @@ class Coder:
                     tool_id_set = set()
 
                     for tool_call_dict in self.partial_response_tool_calls:
+                        # Ensure tool_call_dict is a dict
+                        if hasattr(tool_call_dict, "model_dump"):
+                            tool_call_dict = tool_call_dict.model_dump()
                         # LLM APIs sometimes return duplicates and that's annoying
                         if tool_call_dict.get("id") in tool_id_set:
                             continue
@@ -2860,6 +2863,17 @@ class Coder:
         show_content_err = None
         try:
             if completion.choices[0].message.tool_calls:
+                self.partial_response_tool_calls = []
+                for tool_call in completion.choices[0].message.tool_calls:
+                    tool_call_dict = tool_call.model_dump()
+                    if hasattr(tool_call, "provider_specific_fields"):
+                        tool_call_dict["provider_specific_fields"] = (
+                            tool_call.provider_specific_fields
+                        )
+                    if hasattr(tool_call, "extra_content"):
+                        tool_call_dict["extra_content"] = tool_call.extra_content
+                    self.partial_response_tool_calls.append(tool_call_dict)
+
                 self.partial_response_function_call = (
                     completion.choices[0].message.tool_calls[0].function
                 )
@@ -2911,6 +2925,7 @@ class Coder:
 
     async def show_send_output_stream(self, completion):
         received_content = False
+        id_index_dict = dict()
 
         async for chunk in completion:
             # Check if confirmation is in progress and wait if needed
@@ -2937,10 +2952,20 @@ class Coder:
                             self.tool_reflection = True
 
                             index = tool_call_chunk.index
-                            if len(self.partial_response_tool_calls) <= index:
-                                self.partial_response_tool_calls.extend(
-                                    [{}] * (index - len(self.partial_response_tool_calls) + 1)
+                            # Some models return unique ids, others, indexes for tool calls
+                            if tool_call_chunk.id and tool_call_chunk.id not in id_index_dict:
+                                self.partial_response_tool_calls.extend([{}])
+                                id_index_dict[tool_call_chunk.id] = (
+                                    len(self.partial_response_tool_calls) - 1
                                 )
+                            elif tool_call_chunk.id is None:
+                                if len(self.partial_response_tool_calls) <= index:
+                                    self.partial_response_tool_calls.extend(
+                                        [{}] * (index - len(self.partial_response_tool_calls) + 1)
+                                    )
+
+                            if tool_call_chunk.id is not None:
+                                index = id_index_dict[tool_call_chunk.id]
 
                             if tool_call_chunk.id:
                                 self.partial_response_tool_calls[index]["id"] = tool_call_chunk.id
@@ -2948,6 +2973,32 @@ class Coder:
                                 self.partial_response_tool_calls[index][
                                     "type"
                                 ] = tool_call_chunk.type
+
+                            if (
+                                hasattr(tool_call_chunk, "provider_specific_fields")
+                                and tool_call_chunk.provider_specific_fields
+                            ):
+                                if (
+                                    "provider_specific_fields"
+                                    not in self.partial_response_tool_calls[index]
+                                ):
+                                    self.partial_response_tool_calls[index][
+                                        "provider_specific_fields"
+                                    ] = {}
+                                self.partial_response_tool_calls[index][
+                                    "provider_specific_fields"
+                                ].update(tool_call_chunk.provider_specific_fields)
+
+                            if (
+                                hasattr(tool_call_chunk, "extra_content")
+                                and tool_call_chunk.extra_content
+                            ):
+                                if "extra_content" not in self.partial_response_tool_calls[index]:
+                                    self.partial_response_tool_calls[index]["extra_content"] = {}
+                                self.partial_response_tool_calls[index]["extra_content"].update(
+                                    tool_call_chunk.extra_content
+                                )
+
                             if tool_call_chunk.function:
                                 if "function" not in self.partial_response_tool_calls[index]:
                                     self.partial_response_tool_calls[index]["function"] = {}
