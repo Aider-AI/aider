@@ -1308,8 +1308,6 @@ class Coder:
                 # Monitor output task
                 if self.io.output_task:
                     if self.io.output_task.done():
-                        self.auto_save_session()
-
                         exception = self.io.output_task.exception()
                         if exception:
                             if isinstance(exception, SwitchCoder):
@@ -1319,6 +1317,7 @@ class Coder:
                         # Stop spinner when processing task completes
                         self.io.stop_spinner()
 
+                self.auto_save_session()
                 await asyncio.sleep(0.01)  # Small yield to prevent tight loop
 
             except KeyboardInterrupt:
@@ -3587,12 +3586,21 @@ class Coder:
         """Automatically save the current session as 'auto-save'."""
         if not getattr(self.args, "auto_save", False):
             return
-        try:
-            session_manager = SessionManager(self, self.io)
-            session_manager.save_session("auto-save", False)
-        except Exception:
-            # Don't show errors for auto-save to avoid interrupting the user experience
-            pass
+
+        # Initialize last autosave time if not exists
+        if not hasattr(self, "_last_autosave_time"):
+            self._last_autosave_time = 0
+
+        # Throttle autosave to run at most once per second
+        current_time = time.time()
+        if current_time - self._last_autosave_time >= 1.0:
+            try:
+                session_manager = SessionManager(self, self.io)
+                session_manager.save_session("auto-save", False)
+                self._last_autosave_time = current_time
+            except Exception:
+                # Don't show errors for auto-save to avoid interrupting the user experience
+                pass
 
     async def run_shell_commands(self):
         if not self.suggest_shell_commands:
