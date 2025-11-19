@@ -44,6 +44,7 @@ from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands, SwitchCoder
 from aider.exceptions import LiteLLMExceptions
+from aider.helpers import coroutines
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
@@ -143,6 +144,9 @@ class Coder:
     compact_context_completed = True
     suppress_announcements_for_next_prompt = False
     tool_reflection = False
+    # Task coordination state variables
+    input_running = False
+    output_running = False
 
     # Context management settings (for all modes)
     context_management_enabled = False  # Disabled by default except for agent mode
@@ -492,7 +496,10 @@ class Coder:
         self.commands = commands or Commands(self.io, self)
         self.commands.coder = self
 
-        self.data_cache = {"repo": {"last_key": ""}, "relative_files": None}
+        self.data_cache = {
+            "repo": {"last_key": "", "read_only_count": None},
+            "relative_files": None,
+        }
 
         self.repo = repo
         if use_git and self.repo is None:
@@ -1096,9 +1103,9 @@ class Coder:
 
         if self.io.prompt_session:
             with patch_stdout(raw=True):
-                return await self._run_patched(with_message, preproc)
+                return await self._run_parallel(with_message, preproc)
         else:
-            return await self._run_patched(with_message, preproc)
+            return await self._run_parallel(with_message, preproc)
 
     async def _run_linear(self, with_message=None, preproc=True):
         try:
@@ -1108,8 +1115,7 @@ class Coder:
                 return self.partial_response_content
 
             user_message = None
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
+            await self.io.cancel_task_streams()
 
             while True:
                 try:
@@ -1125,12 +1131,14 @@ class Coder:
                     await self.io.input_task
                     user_message = self.io.input_task.result()
 
-                    self.io.output_task = asyncio.create_task(self._generate(user_message, preproc))
+                    self.io.output_task = asyncio.create_task(self.generate(user_message, preproc))
 
                     await self.io.output_task
 
                     self.io.ring_bell()
                     user_message = None
+                    self.auto_save_session()
+
                 except KeyboardInterrupt:
                     if self.io.input_task:
                         self.io.set_placeholder("")
@@ -1144,160 +1152,185 @@ class Coder:
                 except (asyncio.CancelledError, IndexError):
                     pass
 
-            self.auto_save_session()
         except EOFError:
             return
         finally:
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
+            await self.io.cancel_task_streams()
 
-    async def _run_patched(self, with_message=None, preproc=True):
+    async def _run_parallel(self, with_message=None, preproc=True):
         try:
             if with_message:
                 self.io.user_input(with_message)
                 await self.run_one(with_message, preproc)
                 return self.partial_response_content
 
-            user_message = None
+            # Initialize state for task coordination
+            self.input_running = True
+            self.output_running = True
             self.user_message = ""
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
 
-            while True:
+            # Cancel any existing tasks
+            await self.io.cancel_task_streams()
+
+            # Start the input and output tasks
+            input_task = asyncio.create_task(self.input_task(preproc))
+            output_task = asyncio.create_task(self.output_task(preproc))
+
+            try:
+                # Wait for both tasks to complete or for one to raise an exception
+                done, pending = await asyncio.wait(
+                    [input_task, output_task], return_when=asyncio.FIRST_EXCEPTION
+                )
+
+                # Check for exceptions
+                for task in done:
+                    if task.exception():
+                        raise task.exception()
+
+            except (SwitchCoder, SystemExit):
+                # Re-raise SwitchCoder to be handled by outer try block
+                raise
+            except KeyboardInterrupt:
+                # Handle keyboard interrupt gracefully
+                self.io.set_placeholder("")
+                self.io.stop_spinner()
+                self.keyboard_interrupt()
+            finally:
+                # Signal tasks to stop
+                self.input_running = False
+                self.output_running = False
+
+                # Cancel tasks
+                input_task.cancel()
+                output_task.cancel()
+
+                # Wait for tasks to finish
                 try:
-                    if (
-                        not self.io.confirmation_in_progress
-                        and not user_message
-                        and (
-                            not self.io.input_task
-                            or self.io.input_task.done()
-                            or self.io.input_task.cancelled()
-                        )
-                        and (not self.io.output_task or not self.io.placeholder)
-                    ):
-                        if not self.suppress_announcements_for_next_prompt:
-                            self.show_announcements()
-                        self.suppress_announcements_for_next_prompt = True
+                    await asyncio.gather(input_task, output_task, return_exceptions=True)
+                except (asyncio.CancelledError, KeyboardInterrupt):
+                    pass
 
-                        # Stop spinner before showing announcements or getting input
-                        self.io.stop_spinner()
-                        self.copy_context()
-                        await self.io.recreate_input()
+                # Ensure IO tasks are properly cancelled
+                await self.io.cancel_task_streams()
 
-                    if self.user_message:
-                        self.io.output_task = asyncio.create_task(
-                            self._generate(self.user_message, preproc)
-                        )
-
-                        self.user_message = ""
-                        # Start spinner for processing task
-                        self.io.start_spinner("Processing...")
-
-                    if self.commands.cmd_running:
-                        await asyncio.sleep(0.1)
-                        continue
-
-                    tasks = set()
-
-                    if self.io.output_task:
-                        if self.io.output_task.done():
-                            exception = self.io.output_task.exception()
-                            if exception:
-                                if isinstance(exception, SwitchCoder):
-                                    await self.io.output_task
-                        elif not self.io.output_task.done() and not self.io.output_task.cancelled():
-                            tasks.add(self.io.output_task)
-
-                    if (
-                        self.io.input_task
-                        and not self.io.input_task.done()
-                        and not self.io.input_task.cancelled()
-                    ):
-                        tasks.add(self.io.input_task)
-
-                    if tasks:
-                        done, pending = await asyncio.wait(
-                            tasks, return_when=asyncio.FIRST_COMPLETED
-                        )
-
-                        if self.io.input_task and self.io.input_task in done:
-                            if self.io.output_task:
-                                if not self.io.confirmation_in_progress:
-                                    await self.io.cancel_output_task()
-                                    self.io.stop_spinner()
-
-                            try:
-                                if self.io.input_task:
-                                    user_message = self.io.input_task.result()
-                                    await self.io.cancel_input_task()
-
-                                if self.commands.is_run_command(user_message):
-                                    self.commands.cmd_running = True
-
-                            except (asyncio.CancelledError, KeyboardInterrupt):
-                                user_message = None
-
-                            if not user_message:
-                                await self.io.cancel_input_task()
-                                continue
-
-                        if self.io.output_task and self.io.output_task in pending:
-                            try:
-                                tasks = set()
-                                tasks.add(self.io.output_task)
-
-                                # We just did a confirmation so add a new input task
-                                if self.io.get_confirmation_acknowledgement():
-                                    await self.io.recreate_input()
-                                    tasks.add(self.io.input_task)
-
-                                done, pending = await asyncio.wait(
-                                    tasks, return_when=asyncio.FIRST_COMPLETED
-                                )
-
-                                if (
-                                    self.io.input_task
-                                    and self.io.input_task in done
-                                    and not self.io.confirmation_in_progress
-                                ):
-                                    await self.io.cancel_output_task()
-                                    self.io.stop_spinner()
-                                    self.io.acknowledge_confirmation()
-
-                                    try:
-                                        user_message = self.io.input_task.result()
-                                        await self.io.cancel_input_task()
-                                    except (asyncio.CancelledError, KeyboardInterrupt):
-                                        user_message = None
-
-                            except (asyncio.CancelledError, KeyboardInterrupt):
-                                pass
-
-                            # Stop spinner when processing task completes
-                            self.io.stop_spinner()
-
-                    if user_message and not self.io.acknowledge_confirmation():
-                        self.user_message = user_message
-
-                    self.io.ring_bell()
-                    user_message = None
-                except KeyboardInterrupt:
-                    self.io.set_placeholder("")
-
-                    await self.io.cancel_input_task()
-                    await self.io.cancel_output_task()
-
-                    self.io.stop_spinner()
-                    self.keyboard_interrupt()
-
-                self.auto_save_session()
+            self.auto_save_session()
         except EOFError:
             return
         finally:
-            await self.io.cancel_input_task()
-            await self.io.cancel_output_task()
+            await self.io.cancel_task_streams()
 
-    async def _generate(self, user_message, preproc):
+    async def input_task(self, preproc):
+        """
+        Handles input creation/recreation and user message processing.
+        This task manages the input loop and coordinates with output_task.
+        """
+        while self.input_running:
+            try:
+                # Wait for commands to finish
+                if self.commands.cmd_running:
+                    await asyncio.sleep(0.1)
+                    continue
+
+                # Wait for input task completion
+                if self.io.input_task and self.io.input_task.done():
+                    try:
+                        user_message = self.io.input_task.result()
+
+                        # Set user message for output task
+                        if not self.io.acknowledge_confirmation():
+                            if user_message:
+                                self.user_message = user_message
+                                self.auto_save_session()
+                            else:
+                                self.user_message = ""
+                                await self.io.cancel_task_streams()
+
+                    except (asyncio.CancelledError, KeyboardInterrupt):
+                        self.user_message = ""
+                        await self.io.cancel_task_streams()
+
+                # Check if we should show announcements
+                if (
+                    not self.io.confirmation_in_progress
+                    and not self.user_message
+                    and not coroutines.is_active(self.io.input_task)
+                    and (not coroutines.is_active(self.io.output_task) or not self.io.placeholder)
+                ):
+                    if not self.suppress_announcements_for_next_prompt:
+                        self.show_announcements()
+                    self.suppress_announcements_for_next_prompt = True
+
+                    # Stop spinner before showing announcements or getting input
+                    self.io.stop_spinner()
+                    self.copy_context()
+
+                # Check if we should recreate input
+                if not coroutines.is_active(self.io.input_task):
+                    self.io.ring_bell()
+                    await self.io.recreate_input()
+
+                await asyncio.sleep(0.01)  # Small yield to prevent tight loop
+
+            except KeyboardInterrupt:
+                self.io.set_placeholder("")
+                self.keyboard_interrupt()
+                await self.io.cancel_task_streams()
+            except (SwitchCoder, SystemExit):
+                raise
+            except Exception as e:
+                if self.verbose or self.args.debug:
+                    print(e)
+
+    async def output_task(self, preproc):
+        """
+        Handles output task generation and monitoring.
+        This task manages the output loop and coordinates with input_task.
+        """
+        while self.output_running:
+            try:
+                # Wait for commands to finish
+                if self.commands.cmd_running:
+                    await asyncio.sleep(0.1)
+                    continue
+
+                # Check if we have a user message to process
+                if self.user_message and not self.io.get_confirmation_acknowledgement():
+                    user_message = self.user_message
+                    self.user_message = ""
+
+                    # Create output task for processing
+                    self.io.output_task = asyncio.create_task(self.generate(user_message, preproc))
+
+                    # Start spinner for output task
+                    self.io.start_spinner("Processing...")
+                    await self.io.recreate_input()
+
+                # Monitor output task
+                if self.io.output_task:
+                    if self.io.output_task.done():
+                        exception = self.io.output_task.exception()
+                        if exception:
+                            if isinstance(exception, SwitchCoder):
+                                await self.io.output_task
+                                raise exception
+
+                        # Stop spinner when processing task completes
+                        self.io.stop_spinner()
+
+                self.auto_save_session()
+                await asyncio.sleep(0.01)  # Small yield to prevent tight loop
+
+            except KeyboardInterrupt:
+                self.io.stop_spinner()
+                self.keyboard_interrupt()
+                await self.io.cancel_task_streams()
+            except (SwitchCoder, SystemExit):
+                raise
+            except Exception as e:
+                if self.verbose or self.args.debug:
+                    print(e)
+
+    async def generate(self, user_message, preproc):
         await asyncio.sleep(0.1)
 
         try:
@@ -2105,6 +2138,9 @@ class Coder:
                     tool_id_set = set()
 
                     for tool_call_dict in self.partial_response_tool_calls:
+                        # Ensure tool_call_dict is a dict
+                        if hasattr(tool_call_dict, "model_dump"):
+                            tool_call_dict = tool_call_dict.model_dump()
                         # LLM APIs sometimes return duplicates and that's annoying
                         if tool_call_dict.get("id") in tool_id_set:
                             continue
@@ -2827,6 +2863,17 @@ class Coder:
         show_content_err = None
         try:
             if completion.choices[0].message.tool_calls:
+                self.partial_response_tool_calls = []
+                for tool_call in completion.choices[0].message.tool_calls:
+                    tool_call_dict = tool_call.model_dump()
+                    if hasattr(tool_call, "provider_specific_fields"):
+                        tool_call_dict["provider_specific_fields"] = (
+                            tool_call.provider_specific_fields
+                        )
+                    if hasattr(tool_call, "extra_content"):
+                        tool_call_dict["extra_content"] = tool_call.extra_content
+                    self.partial_response_tool_calls.append(tool_call_dict)
+
                 self.partial_response_function_call = (
                     completion.choices[0].message.tool_calls[0].function
                 )
@@ -2878,6 +2925,7 @@ class Coder:
 
     async def show_send_output_stream(self, completion):
         received_content = False
+        id_index_dict = dict()
 
         async for chunk in completion:
             # Check if confirmation is in progress and wait if needed
@@ -2904,10 +2952,20 @@ class Coder:
                             self.tool_reflection = True
 
                             index = tool_call_chunk.index
-                            if len(self.partial_response_tool_calls) <= index:
-                                self.partial_response_tool_calls.extend(
-                                    [{}] * (index - len(self.partial_response_tool_calls) + 1)
+                            # Some models return unique ids, others, indexes for tool calls
+                            if tool_call_chunk.id and tool_call_chunk.id not in id_index_dict:
+                                self.partial_response_tool_calls.extend([{}])
+                                id_index_dict[tool_call_chunk.id] = (
+                                    len(self.partial_response_tool_calls) - 1
                                 )
+                            elif tool_call_chunk.id is None:
+                                if len(self.partial_response_tool_calls) <= index:
+                                    self.partial_response_tool_calls.extend(
+                                        [{}] * (index - len(self.partial_response_tool_calls) + 1)
+                                    )
+
+                            if tool_call_chunk.id is not None:
+                                index = id_index_dict[tool_call_chunk.id]
 
                             if tool_call_chunk.id:
                                 self.partial_response_tool_calls[index]["id"] = tool_call_chunk.id
@@ -2915,6 +2973,32 @@ class Coder:
                                 self.partial_response_tool_calls[index][
                                     "type"
                                 ] = tool_call_chunk.type
+
+                            if (
+                                hasattr(tool_call_chunk, "provider_specific_fields")
+                                and tool_call_chunk.provider_specific_fields
+                            ):
+                                if (
+                                    "provider_specific_fields"
+                                    not in self.partial_response_tool_calls[index]
+                                ):
+                                    self.partial_response_tool_calls[index][
+                                        "provider_specific_fields"
+                                    ] = {}
+                                self.partial_response_tool_calls[index][
+                                    "provider_specific_fields"
+                                ].update(tool_call_chunk.provider_specific_fields)
+
+                            if (
+                                hasattr(tool_call_chunk, "extra_content")
+                                and tool_call_chunk.extra_content
+                            ):
+                                if "extra_content" not in self.partial_response_tool_calls[index]:
+                                    self.partial_response_tool_calls[index]["extra_content"] = {}
+                                self.partial_response_tool_calls[index]["extra_content"].update(
+                                    tool_call_chunk.extra_content
+                                )
+
                             if tool_call_chunk.function:
                                 if "function" not in self.partial_response_tool_calls[index]:
                                     self.partial_response_tool_calls[index]["function"] = {}
@@ -3233,12 +3317,15 @@ class Coder:
             return
 
     def get_all_relative_files(self):
-        staged_files_hash = hash(str([item.a_path for item in self.repo.repo.index.diff("HEAD")]))
-        if (
-            staged_files_hash == self.data_cache["repo"]["last_key"]
-            and self.data_cache["relative_files"]
-        ):
-            return self.data_cache["relative_files"]
+        if self.repo_map and self.repo:
+            staged_files_hash = hash(
+                str([item.a_path for item in self.repo.repo.index.diff("HEAD")])
+            )
+            if (
+                staged_files_hash == self.data_cache["repo"]["last_key"]
+                and self.data_cache["relative_files"]
+            ):
+                return self.data_cache["relative_files"]
 
         if self.repo:
             files = self.repo.get_tracked_files()
@@ -3550,12 +3637,21 @@ class Coder:
         """Automatically save the current session as 'auto-save'."""
         if not getattr(self.args, "auto_save", False):
             return
-        try:
-            session_manager = SessionManager(self, self.io)
-            session_manager.save_session("auto-save", False)
-        except Exception:
-            # Don't show errors for auto-save to avoid interrupting the user experience
-            pass
+
+        # Initialize last autosave time if not exists
+        if not hasattr(self, "_last_autosave_time"):
+            self._last_autosave_time = 0
+
+        # Throttle autosave to run at most once per second
+        current_time = time.time()
+        if current_time - self._last_autosave_time >= 1.0:
+            try:
+                session_manager = SessionManager(self, self.io)
+                session_manager.save_session("auto-save", False)
+                self._last_autosave_time = current_time
+            except Exception:
+                # Don't show errors for auto-save to avoid interrupting the user experience
+                pass
 
     async def run_shell_commands(self):
         if not self.suggest_shell_commands:

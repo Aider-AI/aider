@@ -1,3 +1,4 @@
+from ..commands import SwitchCoder
 from .architect_prompts import ArchitectPrompts
 from .ask_coder import AskCoder
 from .base_coder import Coder
@@ -41,8 +42,12 @@ class ArchitectCoder(AskCoder):
         if self.verbose:
             editor_coder.show_announcements()
 
-        await editor_coder.run(with_message=content, preproc=False)
+        try:
+            await editor_coder.generate(user_message=content, preproc=False)
+            self.move_back_cur_messages("I made those changes to the files.")
+            self.total_cost = editor_coder.total_cost
+            self.aider_commit_hashes = editor_coder.aider_commit_hashes
+        except Exception as e:
+            self.io.tool_error(e)
 
-        self.move_back_cur_messages("I made those changes to the files.")
-        self.total_cost = editor_coder.total_cost
-        self.aider_commit_hashes = editor_coder.aider_commit_hashes
+        raise SwitchCoder(main_model=self.main_model, edit_format="architect")

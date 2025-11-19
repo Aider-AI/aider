@@ -18,9 +18,10 @@ from PIL import Image
 
 from aider import __version__
 from aider.dump import dump  # noqa: F401
+from aider.helpers.requests import model_request_parser
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
-from aider.sendchat import ensure_alternating_roles, sanity_check_messages
+from aider.sendchat import sanity_check_messages
 from aider.utils import check_pip_install_extra
 
 RETRY_TIMEOUT = 60
@@ -438,7 +439,7 @@ class Model(ModelSettings):
             return  # <--
 
         last_segment = model.split("/")[-1]
-        if last_segment in ("gpt-5", "gpt-5-2025-08-07"):
+        if last_segment in ("gpt-5", "gpt-5-2025-08-07") or "gpt-5.1" in model:
             self.use_temperature = False
             self.edit_format = "diff"
             if "reasoning_effort" not in self.accepts_settings:
@@ -909,7 +910,7 @@ class Model(ModelSettings):
         if os.environ.get("AIDER_SANITY_CHECK_TURNS"):
             sanity_check_messages(messages)
 
-        messages = ensure_alternating_roles(messages)
+        messages = model_request_parser(self, messages)
 
         if self.verbose:
             for message in messages:
@@ -1000,8 +1001,7 @@ class Model(ModelSettings):
         from aider.exceptions import LiteLLMExceptions
 
         litellm_ex = LiteLLMExceptions()
-        if "deepseek-reasoner" in self.name:
-            messages = ensure_alternating_roles(messages)
+        messages = model_request_parser(self, messages)
         retry_delay = 0.125
 
         if self.verbose:

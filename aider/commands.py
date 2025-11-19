@@ -1498,6 +1498,9 @@ class Commands:
 
         from aider.coders.base_coder import Coder
 
+        main_model = self.coder.main_model
+        edit_format = self.coder.edit_format
+
         coder = await Coder.create(
             io=self.io,
             from_coder=self.coder,
@@ -1508,8 +1511,15 @@ class Commands:
         )
 
         user_msg = args
-        await coder.run(user_msg, False)
+        await coder.generate(user_message=user_msg, preproc=False)
         self.coder.aider_commit_hashes = coder.aider_commit_hashes
+
+        raise SwitchCoder(
+            main_model=main_model,
+            edit_format=edit_format,
+            done_messages=coder.done_messages,
+            cur_messages=coder.cur_messages,
+        )
 
     def get_help_md(self):
         "Show help about all commands in markdown"

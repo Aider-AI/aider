@@ -482,6 +482,13 @@ file_excludelist = ["get_bottom_toolbar", "<genexpr>"]
 
 
 def custom_tracer(frame, event, arg):
+    import os
+
+    global log_file
+    if not log_file:
+        os.makedirs(".aider/logs/", exist_ok=True)
+        log_file = open(".aider/logs/debug.log", "w", buffering=1)
+
     # Get the absolute path of the file where the code is executing
     filename = os.path.abspath(frame.f_code.co_filename)
 

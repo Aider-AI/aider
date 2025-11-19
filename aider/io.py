@@ -36,6 +36,8 @@ from rich.spinner import SPINNERS
 from rich.style import Style as RichStyle
 from rich.text import Text
 
+from aider.helpers import coroutines
+
 from .dump import dump  # noqa: F401
 from .editor import pipe_editor
 from .utils import is_image_file, run_fzf
@@ -695,7 +697,7 @@ class InputOutput:
         pass
 
     async def recreate_input(self, future=None):
-        if not self.input_task or self.input_task.done() or self.input_task.cancelled():
+        if not coroutines.is_active(self.input_task):
             coder = self.coder() if self.coder else None
 
             if coder:
@@ -888,7 +890,6 @@ class InputOutput:
             except EOFError:
                 raise
             except KeyboardInterrupt:
-                await self.cancel_output_task()
                 self.console.print()
                 return ""
             except UnicodeEncodeError as err:
@@ -961,7 +962,14 @@ class InputOutput:
             try:
                 input_task.cancel()
                 await input_task
-            except (asyncio.CancelledError, EOFError, IndexError):
+            except (
+                asyncio.CancelledError,
+                Exception,
+                EOFError,
+                IndexError,
+                RuntimeError,
+                SystemExit,
+            ):
                 pass
 
     async def cancel_output_task(self):
@@ -971,8 +979,21 @@ class InputOutput:
             try:
                 output_task.cancel()
                 await output_task
-            except (asyncio.CancelledError, EOFError, IndexError):
+            except (
+                asyncio.CancelledError,
+                Exception,
+                EOFError,
+                IndexError,
+                RuntimeError,
+                SystemExit,
+            ):
                 pass
+
+    async def cancel_task_streams(self):
+        input_task = asyncio.create_task(self.cancel_input_task())
+        output_task = asyncio.create_task(self.cancel_output_task())
+
+        await asyncio.wait([input_task, output_task], return_when=asyncio.ALL_COMPLETED)
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:
@@ -1153,11 +1174,7 @@ class InputOutput:
                         if self.prompt_session:
                             await self.recreate_input()
 
-                            if (
-                                self.input_task
-                                and not self.input_task.done()
-                                and not self.input_task.cancelled()
-                            ):
+                            if coroutines.is_active(self.input_task):
                                 self.prompt_session.message = question
                                 self.prompt_session.app.invalidate()
                             else:
