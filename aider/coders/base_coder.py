@@ -2308,7 +2308,7 @@ class Coder:
                 # Parse and format arguments as headers with values
                 if tool_call.function.arguments:
                     # Only do JSON unwrapping for tools containing "replace" in their name
-                    if (
+                    if tool_call.get("function", {}).get("name") is not None and (
                         "replace" in tool_call.function.name.lower()
                         or "insert" in tool_call.function.name.lower()
                         or "update" in tool_call.function.name.lower()
@@ -2926,6 +2926,7 @@ class Coder:
     async def show_send_output_stream(self, completion):
         received_content = False
         id_index_dict = dict()
+        self._last_known_tool_index = 0
 
         async for chunk in completion:
             # Check if confirmation is in progress and wait if needed
@@ -2959,13 +2960,12 @@ class Coder:
                                     len(self.partial_response_tool_calls) - 1
                                 )
                             elif tool_call_chunk.id is None:
-                                if len(self.partial_response_tool_calls) <= index:
-                                    self.partial_response_tool_calls.extend(
-                                        [{}] * (index - len(self.partial_response_tool_calls) + 1)
-                                    )
+                                index = self._last_known_tool_index
 
                             if tool_call_chunk.id is not None:
                                 index = id_index_dict[tool_call_chunk.id]
+
+                            self._last_known_tool_index = index
 
                             if tool_call_chunk.id:
                                 self.partial_response_tool_calls[index]["id"] = tool_call_chunk.id
