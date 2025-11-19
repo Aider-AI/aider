@@ -2308,7 +2308,7 @@ class Coder:
                 # Parse and format arguments as headers with values
                 if tool_call.function.arguments:
                     # Only do JSON unwrapping for tools containing "replace" in their name
-                    if (
+                    if tool_call.get("function", {}).get("name") is not None and (
                         "replace" in tool_call.function.name.lower()
                         or "insert" in tool_call.function.name.lower()
                         or "update" in tool_call.function.name.lower()
