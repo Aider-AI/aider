@@ -77,11 +77,14 @@ The user is going to provide you with a conversation.
 This conversation is getting too long to fit in the context window of a language model.
 You need to summarize the conversation to reduce its length, while retaining all the important information.
 
-The summary should contain three parts:
+The summary should contain four parts:
 - Overall Goal: What is the user trying to achieve with this conversation?
 - Next Steps: What are the next steps for the language model to take to help the user?
-  Create a checklist of what has been done and what is left to do.
-- Active files: What files are currently in the context window?
+  Describe the current investigation path and intention.
+- Key Findings: Keep information most important to prevent having to search for it again
+  This should be quite specific (e/g. relevant files, method names, relevant lines of code, and code structure)
+- Active files: What files are currently most relevant to the discussion?
+  Be confident in proceeding with any in progress edits.
 
 Here is the conversation so far:
 """

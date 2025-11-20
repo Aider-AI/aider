@@ -1334,9 +1334,10 @@ class Coder:
         await asyncio.sleep(0.1)
 
         try:
-            self.compact_context_completed = False
-            await self.compact_context_if_needed()
-            self.compact_context_completed = True
+            if not self.enable_context_compaction:
+                self.compact_context_completed = False
+                await self.compact_context_if_needed()
+                self.compact_context_completed = True
 
             self.run_one_completed = False
             await self.run_one(user_message, preproc)
@@ -1425,6 +1426,9 @@ class Coder:
                 message = None
             else:
                 message = self.reflected_message
+
+            if self.enable_context_compaction:
+                await self.compact_context_if_needed()
 
     async def check_and_open_urls(self, exc, friendly_msg=None):
         """Check exception for URLs, offer to open in a browser, with user-friendly error msgs."""
@@ -1518,38 +1522,81 @@ class Coder:
             self.summarize_start()
             return
 
-        if not self.summarizer.check_max_tokens(
-            self.done_messages, max_tokens=self.context_compaction_max_tokens
-        ):
+        # Check if combined messages exceed the token limit,
+        # Exclude first cur_message since that's the user's initial input
+        done_tokens = self.summarizer.count_tokens(self.done_messages)
+        cur_tokens = self.summarizer.count_tokens(self.cur_messages[1:])
+        combined_tokens = done_tokens + cur_tokens
+
+        if combined_tokens < self.context_compaction_max_tokens:
             return
 
         self.io.tool_output("Compacting chat history to make room for new messages...")
+        self.io.update_spinner("Compacting...")
 
         try:
-            # Create a summary of the conversation
-            summary_text = await self.summarizer.summarize_all_as_text(
-                self.done_messages,
-                self.gpt_prompts.compaction_prompt,
-                self.context_compaction_summary_tokens,
-            )
-            if not summary_text:
-                raise ValueError("Summarization returned an empty result.")
+            # Check if done_messages alone exceed the limit
+            if done_tokens > self.context_compaction_max_tokens or done_tokens > cur_tokens:
+                # Create a summary of the done_messages
+                summary_text = await self.summarizer.summarize_all_as_text(
+                    self.done_messages,
+                    self.gpt_prompts.compaction_prompt,
+                    self.context_compaction_summary_tokens,
+                )
 
-            # Replace old messages with the summary
-            self.done_messages = [
-                {
-                    "role": "user",
-                    "content": summary_text,
-                },
-                {
-                    "role": "assistant",
-                    "content": (
-                        "Ok, I will use this summary as the context for our conversation going"
-                        " forward."
-                    ),
-                },
-            ]
+                if not summary_text:
+                    raise ValueError("Summarization returned an empty result.")
+
+                # Replace old messages with the summary
+                self.done_messages = [
+                    {
+                        "role": "user",
+                        "content": summary_text,
+                    },
+                    {
+                        "role": "assistant",
+                        "content": (
+                            "Ok, I will use this summary as the context for our conversation going"
+                            " forward."
+                        ),
+                    },
+                ]
+
+            # Check if cur_messages alone exceed the limit (after potentially compacting done_messages)
+            if cur_tokens > self.context_compaction_max_tokens or cur_tokens > done_tokens:
+                # Create a summary of the cur_messages
+                cur_summary_text = await self.summarizer.summarize_all_as_text(
+                    self.cur_messages,
+                    self.gpt_prompts.compaction_prompt,
+                    self.context_compaction_summary_tokens,
+                )
+
+                if not cur_summary_text:
+                    raise ValueError("Summarization of current messages returned an empty result.")
+
+                # Replace current messages with the summary
+                self.cur_messages = [
+                    self.cur_messages[0],
+                    {
+                        "role": "assistant",
+                        "content": "Ok. I am awaiting your summary of our goals to proceed.",
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Here is a summary of our current goals:\n{cur_summary_text}",
+                    },
+                    {
+                        "role": "assistant",
+                        "content": (
+                            "Ok, I will use this summary and proceed with our task."
+                            " I will first apply any changes in the summary and then"
+                            " continue exploration as necessary."
+                        ),
+                    },
+                ]
+
             self.io.tool_output("...chat history compacted.")
+            self.io.update_spinner(self.io.last_spinner_text)
         except Exception as e:
             self.io.tool_warning(f"Context compaction failed: {e}")
             self.io.tool_warning("Proceeding with full history for now.")

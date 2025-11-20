@@ -248,7 +248,7 @@ def get_parser(default_config_files, git_root):
         default=None,
         help=(
             "The maximum number of tokens in the conversation before context compaction is"
-            " triggered. (default: 80%% of model's context window)"
+            " triggered. (default: 80% of model's context window)"
         ),
     )
     group.add_argument(
