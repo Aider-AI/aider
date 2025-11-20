@@ -885,7 +885,15 @@ class Coder:
         self.io.update_spinner("Updating repo map")
 
         cur_msg_text = self.get_cur_message_text()
-        staged_files_hash = hash(str([item.a_path for item in self.repo.repo.index.diff("HEAD")]))
+        try:
+            staged_files_hash = hash(
+                str([item.a_path for item in self.repo.repo.index.diff("HEAD")])
+            )
+        except ANY_GIT_ERROR as err:
+            # Handle git errors gracefully - use a fallback hash
+            self.io.tool_warning(f"Git error while checking staged files for repo map: {err}")
+            staged_files_hash = hash(str(time.time()))  # Use timestamp as fallback
+
         read_only_count = len(set(self.abs_read_only_fnames)) + len(
             set(self.abs_read_only_stubs_fnames)
         )
@@ -896,7 +904,6 @@ class Coder:
             or read_only_count != self.data_cache["repo"]["read_only_count"]
         ):
             self.data_cache["repo"]["last_key"] = staged_files_hash
-
             mentioned_idents = self.data_cache["repo"]["mentioned_idents"]
             mentioned_fnames = self.get_file_mentions(cur_msg_text)
             mentioned_fnames.update(self.get_ident_filename_matches(mentioned_idents))
@@ -3365,14 +3372,19 @@ class Coder:
 
     def get_all_relative_files(self):
         if self.repo_map and self.repo:
-            staged_files_hash = hash(
-                str([item.a_path for item in self.repo.repo.index.diff("HEAD")])
-            )
-            if (
-                staged_files_hash == self.data_cache["repo"]["last_key"]
-                and self.data_cache["relative_files"]
-            ):
-                return self.data_cache["relative_files"]
+            try:
+                staged_files_hash = hash(
+                    str([item.a_path for item in self.repo.repo.index.diff("HEAD")])
+                )
+                if (
+                    staged_files_hash == self.data_cache["repo"]["last_key"]
+                    and self.data_cache["relative_files"]
+                ):
+                    return self.data_cache["relative_files"]
+            except ANY_GIT_ERROR as err:
+                # Handle git errors gracefully - fall back to getting tracked files
+                self.io.tool_warning(f"Git error while checking staged files: {err}")
+                # Continue to get tracked files normally
 
         if self.repo:
             files = self.repo.get_tracked_files()
