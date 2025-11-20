@@ -140,6 +140,7 @@ class AgentCoder(Coder):
 
         self.skip_cli_confirmations = False
 
+        self.agent_finished = False
         self._get_agent_config()
         super().__init__(*args, **kwargs)
 
@@ -944,6 +945,7 @@ class AgentCoder(Coder):
         """
         Track tool usage before calling the base implementation.
         """
+        self.agent_finished = False
         self.auto_save_session()
 
         if self.partial_response_tool_calls:
@@ -968,7 +970,6 @@ class AgentCoder(Coder):
         a final answer to the user's question.
         """
         # Legacy tool call processing for use_granular_editing=False
-        self.agent_finished = False
         content = self.partial_response_content
         if not content or not content.strip():
             if len(self.tool_usage_history) > self.tool_usage_retries:
@@ -2000,7 +2001,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             if not os.path.isfile(abs_path):
                 return (
                     '<context name="todo_list">\n'
-                    "Todo list does not exist. Please update it."
+                    "Todo list does not exist. Please update it with the `UpdataTodoList` tool."
                     "</context>"
                 )
 
@@ -2012,7 +2013,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
             # Format the todo list context block
             result = '<context name="todo_list">\n'
             result += "## Current Todo List\n\n"
-            result += "Below is the current todo list managed via `UpdateTodoList` tool:\n\n"
+            result += "Below is the current todo list managed via the `UpdateTodoList` tool:\n\n"
             result += f"```\n{content}\n```\n"
             result += "</context>"
 

@@ -1498,8 +1498,8 @@ class Commands:
 
         from aider.coders.base_coder import Coder
 
-        main_model = self.coder.main_model
-        edit_format = self.coder.edit_format
+        original_main_model = self.coder.main_model
+        original_edit_format = self.coder.edit_format
 
         coder = await Coder.create(
             io=self.io,
@@ -1515,8 +1515,8 @@ class Commands:
         self.coder.aider_commit_hashes = coder.aider_commit_hashes
 
         raise SwitchCoder(
-            main_model=main_model,
-            edit_format=edit_format,
+            main_model=original_main_model,
+            edit_format=original_edit_format,
             done_messages=coder.done_messages,
             cur_messages=coder.cur_messages,
         )
