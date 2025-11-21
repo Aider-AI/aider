@@ -100,7 +100,33 @@ Use the tool installation so aider doesn't interfere with your development envir
 
 ### All Contributors (Both Aider Main and Aider-CE)
 
-<a href="https://github.com/dwash96/aider-ce/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=dwash96/aider-ce" />
-</a>
-
+<a href="https://api.github.com/users/paul-gauthier">@paul-gauthier</a>
+<a href="https://api.github.com/users/dwash96">@dwash96</a>
+<a href="https://api.github.com/users/tekacs">@tekacs</a>
+<a href="https://api.github.com/users/ei-grad">@ei-grad</a>
+<a href="https://api.github.com/users/joshuavial">@joshuavial</a>
+<a href="https://api.github.com/users/chr15m">@chr15m</a>
+<a href="https://api.github.com/users/fry69">@fry69</a>
+<a href="https://api.github.com/users/quinlanjager">@quinlanjager</a>
+<a href="https://api.github.com/users/caseymcc">@caseymcc</a>
+<a href="https://api.github.com/users/shladnik">@shladnik</a>
+<a href="https://api.github.com/users/itlackey">@itlackey</a>
+<a href="https://api.github.com/users/tomjuggler">@tomjuggler</a>
+<a href="https://api.github.com/users/vk4s">@vk4s</a>
+<a href="https://api.github.com/users/titusz">@titusz</a>
+<a href="https://api.github.com/users/daniel-vainsencher">@daniel-vainsencher</a>
+<a href="https://api.github.com/users/bphd">@bphd</a>
+<a href="https://api.github.com/users/akaihola">@akaihola</a>
+<a href="https://api.github.com/users/jalammar">@jalammar</a>
+<a href="https://api.github.com/users/schpet">@schpet</a>
+<a href="https://api.github.com/users/iamFIREcracker">@iamFIREcracker</a>
+<a href="https://api.github.com/users/KennyDizi">@KennyDizi</a>
+<a href="https://api.github.com/users/ivanfioravanti">@ivanfioravanti</a>
+<a href="https://api.github.com/users/mdeweerd">@mdeweerd</a>
+<a href="https://api.github.com/users/fahmad91">@fahmad91</a>
+<a href="https://api.github.com/users/itsmeknt">@itsmeknt</a>
+<a href="https://api.github.com/users/cheahjs">@cheahjs</a>
+<a href="https://api.github.com/users/youknow04">@youknow04</a>
+<a href="https://api.github.com/users/pcamp">@pcamp</a>
+<a href="https://api.github.com/users/miradnanali">@miradnanali</a>
+<a href="https://api.github.com/users/o-nix">@o-nix</a>
