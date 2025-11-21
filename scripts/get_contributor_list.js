@@ -6,7 +6,7 @@
     let output = [];
 
     data.forEach((item) => {
-        output.push(`<a href="${item.url}">@${item.login}</a>`)
+        output.push(`<a href="https://github.com/${item.login}">@${item.login}</a>`)
     });
 
     console.log(output.join("\n"))
