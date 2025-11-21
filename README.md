@@ -1,3 +1,33 @@
+### Documentation and Other Notes
+* [Agent Mode](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/agent-mode.md)
+* [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
+* [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
+* [Aider Original Documentation (still mostly applies)](https://aider.chat/)
+* [Discord Community](https://discord.gg/McwdCRuqkJ)
+
+### Installation Instructions
+This project can be installed using several methods:
+
+### Package Installation
+```bash
+pip install aider-ce
+```
+
+or
+
+```bash
+uv pip install aider-ce
+```
+
+The package exports an `aider-ce` command that accepts all of Aider's configuration options
+
+### Tool Installation
+```bash
+uv tool install --python python3.12 aider-ce
+```
+
+Use the tool installation so aider doesn't interfere with your development environment
+
 ## Project Roadmap/Goals
 
 The current priorities are to improve core capabilities and user experience of the Aider project
@@ -34,36 +64,6 @@ The current priorities are to improve core capabilities and user experience of t
   * [ ] Make the system prompts more aggressive about removing unneeded files/content from the context
   * [ ] Add a plugin-like system for allowing agent mode to use user-defined tools in simple python files
   * [ ] Add a dynamic tool discovery tool to allow the system to have only the tools it needs in context
-
-### Documentation and Other Notes
-* [Agent Mode](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/agent-mode.md)
-* [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
-* [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
-* [Aider Original Documentation (still mostly applies)](https://aider.chat/)
-* [Discord Community](https://discord.gg/McwdCRuqkJ)
-
-### Installation Instructions
-This project can be installed using several methods:
-
-### Package Installation
-```bash
-pip install aider-ce
-```
-
-or
-
-```bash
-uv pip install aider-ce
-```
-
-The package exports an `aider-ce` command that accepts all of Aider's configuration options
-
-### Tool Installation
-```bash
-uv tool install --python python3.12 aider-ce
-```
-
-Use the tool installation so aider doesn't interfere with your development environment
 
 ### Merged PRs
 
