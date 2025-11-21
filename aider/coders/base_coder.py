@@ -479,6 +479,7 @@ class Coder:
         self.dry_run = dry_run
         self.pretty = self.io.pretty
         self.linear_output = linear_output
+        self.io.linear = linear_output
         self.main_model = main_model
 
         # Set the reasoning tag name based on model settings or default
@@ -1137,11 +1138,11 @@ class Coder:
                     await self.io.recreate_input()
                     await self.io.input_task
                     user_message = self.io.input_task.result()
-
+                    self.io.tool_output("Processing...\n")
                     self.io.output_task = asyncio.create_task(self.generate(user_message, preproc))
 
                     await self.io.output_task
-
+                    self.io.tool_output("Finished.")
                     self.io.ring_bell()
                     user_message = None
                     self.auto_save_session()
@@ -2334,7 +2335,6 @@ class Coder:
             self._print_tool_call_info(server_tool_calls)
 
             if await self.io.confirm_ask("Run tools?", group_response="Run MCP Tools"):
-                await self.io.recreate_input()
                 tool_responses = await self._execute_tool_calls(server_tool_calls)
 
                 # Add all tool responses
@@ -2836,7 +2836,6 @@ class Coder:
             if await self.io.confirm_ask(
                 "Add file to the chat?", subject=rel_fname, group=group, allow_never=True
             ):
-                await self.io.recreate_input()
                 self.add_rel_fname(rel_fname)
                 added_fnames.append(rel_fname)
             else:

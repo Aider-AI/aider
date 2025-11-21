@@ -67,9 +67,19 @@ def execute_view_files_matching(coder, pattern, file_pattern=None, regex=False):
 
         # Search for pattern in files
         matches = {}
+        num_matches = 0
+        inspecific_search_flag = False
+
         for file in files_to_search:
             abs_path = coder.abs_root_path(file)
+
+            if num_matches >= 25:
+                inspecific_search_flag = True
+
             try:
+                if coder.repo.ignored_file(abs_path):
+                    continue
+
                 with open(abs_path, "r", encoding="utf-8") as f:
                     content = f.read()
                     match_count = 0
@@ -88,6 +98,7 @@ def execute_view_files_matching(coder, pattern, file_pattern=None, regex=False):
 
                     if match_count > 0:
                         matches[file] = match_count
+                        num_matches += 1
             except Exception:
                 # Skip files that can't be read (binary, etc.)
                 pass
@@ -102,6 +113,9 @@ def execute_view_files_matching(coder, pattern, file_pattern=None, regex=False):
                 result = (
                     f"Found '{pattern}' in {len(matches)} files: {', '.join(match_list[:10])} and"
                     f" {len(matches) - 10} more"
+                    "\nTry more specific search terms going forward"
+                    if inspecific_search_flag
+                    else ""
                 )
                 coder.io.tool_output(f"🔍 Found '{pattern}' in {len(matches)} files")
             else:

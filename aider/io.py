@@ -348,6 +348,7 @@ class InputOutput:
         self.coder = None
         self.input_task = None
         self.output_task = None
+        self.linear = False
 
         # State tracking for confirmation input
         self.confirmation_in_progress = False
@@ -529,7 +530,7 @@ class InputOutput:
 
     def get_bottom_toolbar(self):
         """Get the current spinner frame and text for the bottom toolbar."""
-        if not self.spinner_running or not self.spinner_frames:
+        if not self.spinner_running or not self.spinner_frames or self.linear:
             return None
 
         frame = self.spinner_frames[self.spinner_frame_index]
@@ -1402,14 +1403,32 @@ class InputOutput:
 
             self._stream_buffer = incomplete_line
 
+        should_print = False
+        should_reset = False
+
         if not final:
             if len(lines) > 1:
+                should_print = True
+        else:
+            # Ensure any remaining buffered content is printed using the full response
+            should_print = True
+            should_reset = True
+
+        if should_print:
+            try:
                 self.console.print(
                     Text.from_ansi(output) if self.has_ansi_codes(output) else output
                 )
-        else:
-            # Ensure any remaining buffered content is printed using the full response
-            self.console.print(Text.from_ansi(output) if self.has_ansi_codes(output) else output)
+            except Exception as e:
+                if self.verbose:
+                    print(e)
+
+                self.console.print(
+                    (Text.from_ansi(output)) if self.has_ansi_codes(output) else output,
+                    markup=False,
+                )
+
+        if should_reset:
             self.reset_streaming_response()
 
     def remove_consecutive_empty_strings(self, string_list):
