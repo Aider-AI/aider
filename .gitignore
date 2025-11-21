@@ -18,6 +18,7 @@
 !/.flake8
 !/.gitignore
 !/.pre-commit-config.yaml
+!/CHANGELOG.md
 !/CNAME
 !/CONTRIBUTING.metadata
 !/HISTORY.md
