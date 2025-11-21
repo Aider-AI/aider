@@ -15,18 +15,18 @@ Aider lets you specify API keys in a few ways:
 
 ---
 
-## OpenAI and Anthropic
+## OpenAI, Anthropic, and Vercel AI Gateway
 
 Aider has special support for providing
-OpenAI and Anthropic API keys
+OpenAI, Anthropic, and Vercel AI Gateway API keys
 via dedicated switches and configuration options.
 Settings keys for other providers works a bit differently, see below.
 
 #### Command line
 
-You can set OpenAI and Anthropic API keys via
+You can set OpenAI, Anthropic, and Vercel AI Gateway API keys via
 [command line switches](/docs/config/options.html#api-keys-and-settings)
-`--openai-api-key` and `--anthropic-api-key`.
+`--openai-api-key`, `--anthropic-api-key`, and `--vercel-ai-gateway-api-key`.
 
 
 #### Environment variables or .env file
@@ -38,6 +38,7 @@ for every API provider:
 ```
 OPENAI_API_KEY=<key>
 ANTHROPIC_API_KEY=<key>
+VERCEL_AI_GATEWAY_API_KEY=<key>
 ```
 
 #### YAML config file
@@ -47,6 +48,7 @@ You can also set those API keys via special entries in the
 ```yaml
 openai-api-key: <key>
 anthropic-api-key: <key>
+vercel-ai-gateway-api-key: <key>
 ```
 
 

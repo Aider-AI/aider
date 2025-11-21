@@ -11,6 +11,8 @@ AIDER_APP_NAME = "Aider"
 
 os.environ["OR_SITE_URL"] = AIDER_SITE_URL
 os.environ["OR_APP_NAME"] = AIDER_APP_NAME
+os.environ["VERCEL_SITE_URL"] = AIDER_SITE_URL
+os.environ["VERCEL_APP_NAME"] = AIDER_APP_NAME
 os.environ["LITELLM_MODE"] = "PRODUCTION"
 
 # `import litellm` takes 1.5 seconds, defer it!
