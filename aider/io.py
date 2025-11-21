@@ -1402,14 +1402,31 @@ class InputOutput:
 
             self._stream_buffer = incomplete_line
 
+        should_print = False
+        should_reset = False
+
         if not final:
             if len(lines) > 1:
+                should_print = True
+        else:
+            # Ensure any remaining buffered content is printed using the full response
+            should_print = True
+            should_reset = True
+
+        if should_print:
+            try:
                 self.console.print(
                     Text.from_ansi(output) if self.has_ansi_codes(output) else output
                 )
-        else:
-            # Ensure any remaining buffered content is printed using the full response
-            self.console.print(Text.from_ansi(output) if self.has_ansi_codes(output) else output)
+            except Exception as e:
+                if self.verbose:
+                    print(e)
+
+                self.console.print(
+                    (Text.from_ansi(output)).plain if self.has_ansi_codes(output) else output
+                )
+
+        if should_reset:
             self.reset_streaming_response()
 
     def remove_consecutive_empty_strings(self, string_list):
