@@ -595,7 +595,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         # Ensure parser.prog is set for shtab, though it should be by default
         parser.prog = "aider"
         print(shtab.complete(parser, shell=args.shell_completions))
-        sys.exit(0)
+        return await graceful_exit(None, 0)
 
     if git is None:
         args.git = False
