@@ -1189,6 +1189,19 @@ def check_for_dependencies(io, model_name):
         )
 
 
+def get_openrouter_models(verify_ssl=True):
+    import requests
+
+    response = requests.get(
+        "https://openrouter.ai/api/v1/models",
+        timeout=5,
+        verify=verify_ssl,
+    )
+    response.raise_for_status()
+    data = response.json()
+    return [m["id"] for m in data.get("data", [])]
+
+
 def fuzzy_match_models(name):
     name = name.lower()
 
@@ -1212,6 +1225,13 @@ def fuzzy_match_models(name):
 
         chat_models.add(fq_model)
         chat_models.add(orig_model)
+
+    try:
+        openrouter_models = get_openrouter_models(model_info_manager.verify_ssl)
+        for model in openrouter_models:
+            chat_models.add(f"openrouter/{model}")
+    except Exception:
+        pass
 
     chat_models = sorted(chat_models)
     # exactly matching model
