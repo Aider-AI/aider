@@ -69,8 +69,6 @@ async def _execute_command_interactive(coder, command_string):
         coder.io.tool_output(" \n")
         coder.io.tool_output(">>> Interactive command finished <<<")
 
-        await coder.io.recreate_input()
-
         # Format the output for the result message, include more content
         output_content = combined_output or ""
         # Use the existing token threshold constant as the character limit for truncation

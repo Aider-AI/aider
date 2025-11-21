@@ -414,7 +414,6 @@ class Commands:
                 )
 
             lint_coder.add_rel_fname(fname)
-            await self.coder.io.recreate_input()
             await lint_coder.run_one(errors, preproc=False)
             lint_coder.abs_fnames = set()
 

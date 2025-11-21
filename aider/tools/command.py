@@ -44,8 +44,6 @@ async def _execute_command(coder, command_string):
             )
         )
 
-        await coder.io.recreate_input()
-
         if not confirmed:
             # This happens if the user explicitly says 'no' this time.
             # If 'Always' was chosen previously, confirm_ask returns True directly.
