@@ -1423,7 +1423,8 @@ class InputOutput:
                     print(e)
 
                 self.console.print(
-                    (Text.from_ansi(output)).plain if self.has_ansi_codes(output) else output
+                    (Text.from_ansi(output)) if self.has_ansi_codes(output) else output,
+                    markup=False,
                 )
 
         if should_reset:
