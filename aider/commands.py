@@ -917,42 +917,55 @@ class Commands:
             # Expand tilde in the path
             expanded_word = os.path.expanduser(word)
 
-            # Handle read-only files with substring matching and samefile check
-            read_only_matched = []
-            for f in self.coder.abs_read_only_fnames:
-                if expanded_word in f:
-                    read_only_matched.append(f)
-                    continue
-
-                # Try samefile comparison for relative paths
-                try:
-                    abs_word = os.path.abspath(expanded_word)
-                    if os.path.samefile(abs_word, f):
-                        read_only_matched.append(f)
-                except (FileNotFoundError, OSError):
-                    continue
-
-            for matched_file in read_only_matched:
-                self.coder.abs_read_only_fnames.remove(matched_file)
-                self.io.tool_output(f"Removed read-only file {matched_file} from the chat")
-
-            # For editable files, use glob if word contains glob chars, otherwise use substring
+            matched_abs = set()
             if any(c in expanded_word for c in "*?[]"):
-                matched_files = self.glob_filtered_to_repo(expanded_word)
+                if os.path.isabs(expanded_word):
+                    matches = glob.glob(expanded_word, recursive=True)
+                    matches = [Path(m) for m in matches]
+                else:
+                    try:
+                        matches = list(Path(self.coder.root).glob(expanded_word))
+                    except Exception:
+                        matches = []
+
+                for m in matches:
+                    matched_abs.add(str(m.resolve()))
             else:
-                # Use substring matching like we do for read-only files
-                matched_files = [
-                    self.coder.get_rel_fname(f) for f in self.coder.abs_fnames if expanded_word in f
-                ]
+                all_chat_files = self.coder.abs_fnames | self.coder.abs_read_only_fnames
+                for f in all_chat_files:
+                    if expanded_word in f:
+                        matched_abs.add(f)
+                        continue
 
-            if not matched_files:
-                matched_files.append(expanded_word)
+                    try:
+                        abs_word = os.path.abspath(expanded_word)
+                        if os.path.samefile(abs_word, f):
+                            matched_abs.add(f)
+                    except (FileNotFoundError, OSError):
+                        continue
 
-            for matched_file in matched_files:
-                abs_fname = self.coder.abs_root_path(matched_file)
+            matched_in_chat = []
+            for abs_fname in matched_abs:
+                if (
+                    abs_fname in self.coder.abs_fnames
+                    or abs_fname in self.coder.abs_read_only_fnames
+                ):
+                    matched_in_chat.append(abs_fname)
+
+            if not matched_in_chat:
+                self.io.tool_error(f"No files matched '{word}' in the chat")
+                continue
+
+            for abs_fname in matched_in_chat:
                 if abs_fname in self.coder.abs_fnames:
                     self.coder.abs_fnames.remove(abs_fname)
-                    self.io.tool_output(f"Removed {matched_file} from the chat")
+                    rel_fname = self.coder.get_rel_fname(abs_fname)
+                    self.io.tool_output(f"Removed {rel_fname} from the chat")
+
+                if abs_fname in self.coder.abs_read_only_fnames:
+                    self.coder.abs_read_only_fnames.remove(abs_fname)
+                    rel_fname = self.coder.get_rel_fname(abs_fname)
+                    self.io.tool_output(f"Removed read-only file {rel_fname} from the chat")
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"
