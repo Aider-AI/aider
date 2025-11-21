@@ -12,7 +12,6 @@ from dataclasses import dataclass, fields
 from pathlib import Path
 from typing import Optional, Union
 
-import json5
 import yaml
 from PIL import Image
 
@@ -1095,7 +1094,7 @@ def register_litellm_models(model_fnames):
             data = Path(model_fname).read_text()
             if not data.strip():
                 continue
-            model_def = json5.loads(data)
+            model_def = json.loads(data)
             if not model_def:
                 continue
 
