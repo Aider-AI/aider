@@ -1,4 +1,4 @@
-### Documentation and Other Notes
+## Documentation and Other Notes
 * [Agent Mode](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/agent-mode.md)
 * [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
 * [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
@@ -6,7 +6,7 @@
 * [Changelog](https://github.com/dwash96/aider-ce/blob/main/CHANGELOG.md)
 * [Discord Community](https://discord.gg/McwdCRuqkJ)
 
-### Installation Instructions
+## Installation Instructions
 This project can be installed using several methods:
 
 ### Package Installation
@@ -28,6 +28,43 @@ uv tool install --python python3.12 aider-ce
 ```
 
 Use the tool installation so aider doesn't interfere with your development environment
+
+## Configuration
+
+The documentation above contains the full set of allowed configuration options
+but I highly recommend using an `.aider.conf.yml` file. A good place to get started is:
+
+```yaml
+model: <model of your choice>
+agent: true
+analytics: false
+auto-commits: true
+auto-save: true
+auto-load: true
+check-update: true
+debug: false
+enable-context-compaction: true
+env-file: .aider.env
+multiline: true
+preserve-todo-list: true
+show-model-warnings: true
+watch-files: true
+agent-config: |
+  {
+    "large_file_token_threshold": 12500,
+    "skip_cli_confirmations": false
+  }
+mcp-servers: |
+  {
+    "mcpServers":
+      {
+        "context7":{
+          "transport":"http",
+          "url":"https://mcp.context7.com/mcp"
+        }      
+      }   
+  }
+```
 
 ## Project Roadmap/Goals
 
