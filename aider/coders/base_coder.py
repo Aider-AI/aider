@@ -479,6 +479,7 @@ class Coder:
         self.dry_run = dry_run
         self.pretty = self.io.pretty
         self.linear_output = linear_output
+        self.io.linear = True
         self.main_model = main_model
 
         # Set the reasoning tag name based on model settings or default

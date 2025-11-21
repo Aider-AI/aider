@@ -348,6 +348,7 @@ class InputOutput:
         self.coder = None
         self.input_task = None
         self.output_task = None
+        self.linear = False
 
         # State tracking for confirmation input
         self.confirmation_in_progress = False
@@ -529,7 +530,7 @@ class InputOutput:
 
     def get_bottom_toolbar(self):
         """Get the current spinner frame and text for the bottom toolbar."""
-        if not self.spinner_running or not self.spinner_frames:
+        if not self.spinner_running or not self.spinner_frames or self.linear:
             return None
 
         frame = self.spinner_frames[self.spinner_frame_index]
