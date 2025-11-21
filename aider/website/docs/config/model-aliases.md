@@ -81,8 +81,9 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `deepseek`: deepseek/deepseek-chat
 - `flash`: gemini/gemini-2.5-flash
 - `flash-lite`: gemini/gemini-2.5-flash-lite
-- `gemini`: gemini/gemini-2.5-pro
+- `gemini`: gemini/gemini-3-pro-preview
 - `gemini-2.5-pro`: gemini/gemini-2.5-pro
+- `gemini-3-pro-preview`: gemini/gemini-3-pro-preview
 - `gemini-exp`: gemini/gemini-2.5-pro-exp-03-25
 - `grok3`: xai/grok-3-beta
 - `haiku`: claude-3-5-haiku-20241022
