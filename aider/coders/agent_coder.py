@@ -1915,7 +1915,7 @@ Just reply with fixed versions of the {blocks} above that failed to match.
                         if line.startswith("??"):
                             # Extract the filename (remove the '?? ' prefix)
                             untracked_file = line[3:]
-                            if not self.repo.git_ignored_file(untracked_file):
+                            if not self.repo.ignored_file(untracked_file):
                                 untracked_files.append(untracked_file)
                 except Exception as e:
                     self.io.tool_warning(f"Error getting untracked files: {str(e)}")

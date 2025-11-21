@@ -63,17 +63,18 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
     if last_non_deleted is None:
         return ""
 
-    if num_orig_lines:
-        pct = last_non_deleted * 100 / num_orig_lines
-    else:
-        pct = 50
-    bar = create_progress_bar(pct)
-    bar = f" {last_non_deleted:3d} / {num_orig_lines:3d} lines [{bar}] {pct:3.0f}%\n"
+    # if num_orig_lines:
+    #     pct = last_non_deleted * 100 / num_orig_lines
+    # else:
+    #     pct = 50
+    # bar = create_progress_bar(pct)
+    # bar = f" {last_non_deleted:3d} / {num_orig_lines:3d} lines [{bar}] {pct:3.0f}%\n"
 
     lines_orig = lines_orig[:last_non_deleted]
 
     if not final:
-        lines_updated = lines_updated[:-1] + [bar]
+        # lines_updated = lines_updated[:-1] + [bar]
+        lines_updated = lines_updated[:-1]
 
     diff = difflib.unified_diff(lines_orig, lines_updated, n=5)
 
@@ -88,14 +89,14 @@ def diff_partial_update(lines_orig, lines_updated, final=False, fname=None):
         if backticks not in diff:
             break
 
-    show = f"{backticks}diff\n"
+    show = "diff\n"
     if fname:
         show += f"--- {fname} original\n"
         show += f"+++ {fname} updated\n"
 
     show += diff
 
-    show += f"{backticks}\n\n"
+    show += "\n\n"
 
     # print(diff)
 

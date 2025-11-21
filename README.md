@@ -1,3 +1,34 @@
+### Documentation and Other Notes
+* [Agent Mode](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/agent-mode.md)
+* [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
+* [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
+* [Aider Original Documentation (still mostly applies)](https://aider.chat/)
+* [Changelog](https://github.com/dwash96/aider-ce/blob/main/CHANGELOG.md)
+* [Discord Community](https://discord.gg/McwdCRuqkJ)
+
+### Installation Instructions
+This project can be installed using several methods:
+
+### Package Installation
+```bash
+pip install aider-ce
+```
+
+or
+
+```bash
+uv pip install aider-ce
+```
+
+The package exports an `aider-ce` command that accepts all of Aider's configuration options
+
+### Tool Installation
+```bash
+uv tool install --python python3.12 aider-ce
+```
+
+Use the tool installation so aider doesn't interfere with your development environment
+
 ## Project Roadmap/Goals
 
 The current priorities are to improve core capabilities and user experience of the Aider project
@@ -35,72 +66,35 @@ The current priorities are to improve core capabilities and user experience of t
   * [ ] Add a plugin-like system for allowing agent mode to use user-defined tools in simple python files
   * [ ] Add a dynamic tool discovery tool to allow the system to have only the tools it needs in context
 
-### Documentation and Other Notes
-* [Agent Mode](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/agent-mode.md)
-* [MCP Configuration](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/config/mcp.md)
-* [Session Management](https://github.com/dwash96/aider-ce/blob/main/aider/website/docs/sessions.md)
-* [Aider Original Documentation (still mostly applies)](https://aider.chat/)
-* [Discord Community](https://discord.gg/McwdCRuqkJ)
-
-### Installation Instructions
-This project can be installed using several methods:
-
-### Package Installation
-```bash
-pip install aider-ce
-```
-
-or
-
-```bash
-uv pip install aider-ce
-```
-
-The package exports an `aider-ce` command that accepts all of Aider's configuration options
-
-### Tool Installation
-```bash
-uv tool install --python python3.12 aider-ce
-```
-
-Use the tool installation so aider doesn't interfere with your development environment
-
-### Merged PRs
-
-* [MCP: #3937](https://github.com/Aider-AI/aider/pull/3937)
-    * [MCP Multi Tool Response](https://github.com/quinlanjager/aider/pull/1)
-* [Navigator Mode: #3781](https://github.com/Aider-AI/aider/pull/3781)
-    * [Navigator Mode Large File Count](https://github.com/Aider-AI/aider/commit/b88a7bda649931798209945d9687718316c7427f)
-    * [Fix navigator mode auto commit](https://github.com/dwash96/aider-ce/issues/38)
-* [Qwen 3: #4383](https://github.com/Aider-AI/aider/pull/4383)
-* [Fuzzy Search: #4366](https://github.com/Aider-AI/aider/pull/4366)
-* [Map Cache Location Config: #2911](https://github.com/Aider-AI/aider/pull/2911)
-* [Enhanced System Prompts: #3804](https://github.com/Aider-AI/aider/pull/3804)
-* [Repo Map File Name Truncation Fix: #4320](https://github.com/Aider-AI/aider/pull/4320)
-* [Read Only Stub Files For Context Window Management : #3056](https://github.com/Aider-AI/aider/pull/3056)
-
-### Other Updates
-
-* [Added Remote MCP Tool Calls With HTTP Streaming](https://github.com/Aider-AI/aider/commit/a86039f73579df7c32fee910967827c9fccdec0d)
-    * [Enforce single tool call at a time](https://github.com/Aider-AI/aider/commit/3346c3e6194096cef64b1899b017bde36a65f794)
-    * [Upgraded MCP dep to 1.12.3 for Remote MCP Tool Calls](https://github.com/dwash96/aider-ce/commit/a91ee1c03627a31093364fd2a09e654781b1b879)
-    * [Updated base Python version to 3.12 to better support navigator mode (might consider undoing this, if dependency list supports it)](https://github.com/dwash96/aider-ce/commit/9ed416d523c11362a3ba9fc4c02134e0e79d41fc)
-* [Suppress LiteLLM asyncio errors that clutter output](https://github.com/Aider-AI/aider/issues/6)
-* [Updated Docker File Build Process](https://github.com/Aider-AI/aider/commit/cbab01458d0a35c03b30ac2f6347a74fc2b9f662)
-    * [Manually install necessary ubuntu dependencies](https://github.com/dwash96/aider-ce/issues/14)
-* [.gitignore updates](https://github.com/dwash96/aider-ce/commit/7c7e803fa63d1acd860eef1423e5a03220df6017)
-* [Experimental Context Compaction For Longer Running Generation Tasks](https://github.com/Aider-AI/aider/issues/6)
-* [Edit Before Adding Files and Reflecting](https://github.com/dwash96/aider-ce/pull/22)
-* [Fix Deepseek model configurations](https://github.com/Aider-AI/aider/commit/c839a6dd8964d702172cae007375e299732d3823)
-* [Relax Version Pinning For Easier Distribution](https://github.com/dwash96/aider-ce/issues/18)
-* [Remove Confirm Responses from History](https://github.com/Aider-AI/aider/pull/3958)
-* [Benchmark Results By Language](https://github.com/dwash96/aider-ce/pull/27)
-* [Allow Benchmarks to Use Repo Map For Better Accuracy](https://github.com/dwash96/aider-ce/pull/25)
-* [Read File Globbing](https://github.com/Aider-AI/aider/pull/3395)
-
 ### All Contributors (Both Aider Main and Aider-CE)
 
-<a href="https://github.com/dwash96/aider-ce/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=dwash96/aider-ce" />
-</a>
-
+<a href="https://api.github.com/users/paul-gauthier">@paul-gauthier</a>
+<a href="https://api.github.com/users/dwash96">@dwash96</a>
+<a href="https://api.github.com/users/tekacs">@tekacs</a>
+<a href="https://api.github.com/users/ei-grad">@ei-grad</a>
+<a href="https://api.github.com/users/joshuavial">@joshuavial</a>
+<a href="https://api.github.com/users/chr15m">@chr15m</a>
+<a href="https://api.github.com/users/fry69">@fry69</a>
+<a href="https://api.github.com/users/quinlanjager">@quinlanjager</a>
+<a href="https://api.github.com/users/caseymcc">@caseymcc</a>
+<a href="https://api.github.com/users/shladnik">@shladnik</a>
+<a href="https://api.github.com/users/itlackey">@itlackey</a>
+<a href="https://api.github.com/users/tomjuggler">@tomjuggler</a>
+<a href="https://api.github.com/users/vk4s">@vk4s</a>
+<a href="https://api.github.com/users/titusz">@titusz</a>
+<a href="https://api.github.com/users/daniel-vainsencher">@daniel-vainsencher</a>
+<a href="https://api.github.com/users/bphd">@bphd</a>
+<a href="https://api.github.com/users/akaihola">@akaihola</a>
+<a href="https://api.github.com/users/jalammar">@jalammar</a>
+<a href="https://api.github.com/users/schpet">@schpet</a>
+<a href="https://api.github.com/users/iamFIREcracker">@iamFIREcracker</a>
+<a href="https://api.github.com/users/KennyDizi">@KennyDizi</a>
+<a href="https://api.github.com/users/ivanfioravanti">@ivanfioravanti</a>
+<a href="https://api.github.com/users/mdeweerd">@mdeweerd</a>
+<a href="https://api.github.com/users/fahmad91">@fahmad91</a>
+<a href="https://api.github.com/users/itsmeknt">@itsmeknt</a>
+<a href="https://api.github.com/users/cheahjs">@cheahjs</a>
+<a href="https://api.github.com/users/youknow04">@youknow04</a>
+<a href="https://api.github.com/users/pcamp">@pcamp</a>
+<a href="https://api.github.com/users/miradnanali">@miradnanali</a>
+<a href="https://api.github.com/users/o-nix">@o-nix</a>

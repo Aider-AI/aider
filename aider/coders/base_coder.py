@@ -921,7 +921,7 @@ class Coder:
                     return False
                 if ".min." in parts[-1]:
                     return False
-                if self.repo.git_ignored_file(abs_path):
+                if self.repo.ignored_file(abs_path):
                     return False
                 return True
 
