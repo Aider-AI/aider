@@ -1203,7 +1203,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         if repo_map:
             io.tool_output(repo_map)
         analytics.event("exit", reason="Showed repo map")
-        return
+        return await graceful_exit(coder)
 
     if args.apply:
         content = io.read_text(args.apply)
