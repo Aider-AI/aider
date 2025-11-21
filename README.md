@@ -66,6 +66,16 @@ mcp-servers: |
   }
 ```
 
+Use the adjacent .aider.env file to store model api keys as environment variables, e.g:
+
+```
+ANTHROPIC_API_KEY="..."
+GEMINI_API_KEY="..."
+OPENAI_API_KEY="..."
+OPENROUTER_API_KEY="..."
+DEEPSEEK_API_KEY="..."
+```
+
 ## Project Roadmap/Goals
 
 The current priorities are to improve core capabilities and user experience of the Aider project
