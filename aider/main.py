@@ -1420,6 +1420,9 @@ def load_slow_imports(swallow=True):
 
 async def graceful_exit(coder=None, exit_code=0):
     if coder:
+        if hasattr(coder, "_autosave_future"):
+            await coder._autosave_future
+
         for server in coder.mcp_servers:
             try:
                 await server.exit_stack.aclose()

@@ -1146,7 +1146,7 @@ class Coder:
                     self.io.tool_output("Finished.")
                     self.io.ring_bell()
                     user_message = None
-                    self.auto_save_session()
+                    await self.auto_save_session()
 
                 except KeyboardInterrupt:
                     if self.io.input_task:
@@ -1222,7 +1222,7 @@ class Coder:
                 # Ensure IO tasks are properly cancelled
                 await self.io.cancel_task_streams()
 
-            self.auto_save_session()
+            await self.auto_save_session()
         except EOFError:
             return
         finally:
@@ -1249,7 +1249,7 @@ class Coder:
                         if not self.io.acknowledge_confirmation():
                             if user_message:
                                 self.user_message = user_message
-                                self.auto_save_session()
+                                await self.auto_save_session()
                             else:
                                 self.user_message = ""
                                 await self.io.cancel_task_streams()
@@ -1326,7 +1326,7 @@ class Coder:
                         # Stop spinner when processing task completes
                         self.io.stop_spinner()
 
-                self.auto_save_session()
+                await self.auto_save_session()
                 await asyncio.sleep(0.01)  # Small yield to prevent tight loop
 
             except KeyboardInterrupt:
@@ -2008,7 +2008,7 @@ class Coder:
                 " the context limit is exceeded."
             )
 
-            if not await self.io.confirm_ask("Try to proceed anyway?"):
+            if not await self.io.confirm_ask("Try to proceed anyway?", explicit_yes_required=True):
                 return False
         return True
 
@@ -3693,7 +3693,7 @@ class Coder:
     def apply_edits_dry_run(self, edits):
         return edits
 
-    def auto_save_session(self):
+    async def auto_save_session(self):
         """Automatically save the current session as 'auto-save'."""
         if not getattr(self.args, "auto_save", False):
             return
@@ -3702,13 +3702,22 @@ class Coder:
         if not hasattr(self, "_last_autosave_time"):
             self._last_autosave_time = 0
 
-        # Throttle autosave to run at most once per second
+        if not hasattr(self, "_autosave_future"):
+            self._autosave_future = None
+
+        if self._autosave_future and self._autosave_future.done():
+            return
+
+        # Throttle autosave to run at most once every 15 seconds
         current_time = time.time()
-        if current_time - self._last_autosave_time >= 1.0:
+        if current_time - self._last_autosave_time >= 15.0:
             try:
-                session_manager = SessionManager(self, self.io)
-                session_manager.save_session("auto-save", False)
                 self._last_autosave_time = current_time
+                session_manager = SessionManager(self, self.io)
+                loop = asyncio.get_running_loop()
+                self._autosave_future = loop.run_in_executor(
+                    None, session_manager.save_session, "auto-save", False
+                )
             except Exception:
                 # Don't show errors for auto-save to avoid interrupting the user experience
                 pass
