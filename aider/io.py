@@ -697,9 +697,13 @@ class InputOutput:
         # This method is now a no-op since we removed the confirmation_future logic
         pass
 
+    def get_coder(self):
+        coder = self.coder() if self.coder else None
+        return coder
+
     async def recreate_input(self, future=None):
         if not coroutines.is_active(self.input_task):
-            coder = self.coder() if self.coder else None
+            coder = self.get_coder()
 
             if coder:
                 self.input_task = asyncio.create_task(coder.get_input())
@@ -889,7 +893,13 @@ class InputOutput:
                         return cmd
 
             except EOFError:
-                raise
+                coder = self.get_coder()
+
+                if coder:
+                    await coder.commands.cmd_exit(None)
+                else:
+                    raise SystemExit
+
             except KeyboardInterrupt:
                 self.console.print()
                 return ""
