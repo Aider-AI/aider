@@ -892,7 +892,8 @@ class Coder:
             )
         except ANY_GIT_ERROR as err:
             # Handle git errors gracefully - use a fallback hash
-            self.io.tool_warning(f"Git error while checking staged files for repo map: {err}")
+            if self.verbose:
+                self.io.tool_warning(f"Git error while checking staged files for repo map: {err}")
             staged_files_hash = hash(str(time.time()))  # Use timestamp as fallback
 
         read_only_count = len(set(self.abs_read_only_fnames)) + len(
@@ -3382,7 +3383,8 @@ class Coder:
                     return self.data_cache["relative_files"]
             except ANY_GIT_ERROR as err:
                 # Handle git errors gracefully - fall back to getting tracked files
-                self.io.tool_warning(f"Git error while checking staged files: {err}")
+                if self.verbose:
+                    self.io.tool_warning(f"Git error while checking staged files: {err}")
                 # Continue to get tracked files normally
 
         if self.repo:
