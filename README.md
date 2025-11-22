@@ -41,6 +41,7 @@ analytics: false
 auto-commits: true
 auto-save: true
 auto-load: true
+cache-prompts: true
 check-update: true
 debug: false
 enable-context-compaction: true

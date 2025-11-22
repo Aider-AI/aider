@@ -977,6 +977,14 @@ class Model(ModelSettings):
             dump(kwargs)
         kwargs["messages"] = messages
 
+        # Cache System Prompts When Possible
+        kwargs["cache_control_injection_points"] = [
+            {
+                "location": "message",
+                "role": "system",
+            }
+        ]
+
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ or self.name.startswith("github_copilot/"):
             if "extra_headers" not in kwargs:
