@@ -1875,6 +1875,7 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
+  use_temperature: false
 
 - name: gpt-5-2025-08-07
   edit_format: diff
@@ -1985,6 +1986,7 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
+  use_temperature: false
 
 - name: azure/gpt-5-2025-08-07
   edit_format: diff
@@ -2080,6 +2082,7 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
+  use_temperature: false
 
 - name: openai/gpt-5-2025-08-07
   edit_format: diff
@@ -2175,6 +2178,7 @@
   system_prompt_prefix: "Formatting re-enabled. "
   accepts_settings: ["reasoning_effort"]
   examples_as_sys_msg: true
+  use_temperature: false
 
 - name: openrouter/openai/gpt-5-2025-08-07
   edit_format: diff
