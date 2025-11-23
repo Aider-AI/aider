@@ -201,8 +201,9 @@ class AgentCoder(Coder):
         # Always include essential tools regardless of includelist/excludelist
         essential_tools = {"makeeditable", "replacetext", "view", "finished"}
         for module in tool_modules:
-            if hasattr(module, "NORM_NAME") and hasattr(module, "process_response"):
-                tool_name = module.NORM_NAME
+            if hasattr(module, "Tool"):
+                tool_class = module.Tool
+                tool_name = tool_class.NORM_NAME
 
                 # Check if tool should be included based on configuration
                 should_include = True
@@ -220,7 +221,7 @@ class AgentCoder(Coder):
                     should_include = False
 
                 if should_include:
-                    registry[tool_name] = module
+                    registry[tool_name] = tool_class
 
         return registry
 
@@ -268,8 +269,8 @@ class AgentCoder(Coder):
 
         # Get schemas from the tool registry
         for tool_module in self._tool_registry.values():
-            if hasattr(tool_module, "schema"):
-                schemas.append(tool_module.schema)
+            if hasattr(tool_module, "SCHEMA"):
+                schemas.append(tool_module.SCHEMA)
 
         return schemas
 

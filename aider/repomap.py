@@ -24,7 +24,7 @@ from aider.helpers.similarity import (
     normalize_vector,
 )
 from aider.special import filter_important_files
-from aider.tools.tool_utils import ToolError
+from aider.tools.utils.helpers import ToolError
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)

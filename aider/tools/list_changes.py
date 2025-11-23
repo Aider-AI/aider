@@ -1,86 +1,70 @@
 import traceback
 from datetime import datetime
 
-schema = {
-    "type": "function",
-    "function": {
-        "name": "ListChanges",
-        "description": "List recent changes made.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "file_path": {"type": "string"},
-                "limit": {"type": "integer", "default": 10},
+from aider.tools.utils.base_tool import BaseTool
+
+
+class Tool(BaseTool):
+    NORM_NAME = "listchanges"
+    SCHEMA = {
+        "type": "function",
+        "function": {
+            "name": "ListChanges",
+            "description": "List recent changes made.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_path": {"type": "string"},
+                    "limit": {"type": "integer", "default": 10},
+                },
             },
         },
-    },
-}
+    }
 
-# Normalized tool name for lookup
-NORM_NAME = "listchanges"
+    def execute(self, coder, file_path=None, limit=10):
+        """
+        List recent changes made to files.
 
+        Parameters:
+        - coder: The Coder instance
+        - file_path: Optional path to filter changes by file
+        - limit: Maximum number of changes to list
 
-def _execute_list_changes(coder, file_path=None, limit=10):
-    """
-    List recent changes made to files.
-
-    Parameters:
-    - coder: The Coder instance
-    - file_path: Optional path to filter changes by file
-    - limit: Maximum number of changes to list
-
-    Returns a formatted list of changes.
-    """
-    try:
-        # If file_path is specified, get the absolute path
-        rel_file_path = None
-        if file_path:
-            abs_path = coder.abs_root_path(file_path)
-            rel_file_path = coder.get_rel_fname(abs_path)
-
-        # Get the list of changes
-        changes = coder.change_tracker.list_changes(rel_file_path, limit)
-
-        if not changes:
+        Returns a formatted list of changes.
+        """
+        try:
+            # If file_path is specified, get the absolute path
+            rel_file_path = None
             if file_path:
-                return f"No changes found for file '{file_path}'"
-            else:
-                return "No changes have been made yet"
+                abs_path = coder.abs_root_path(file_path)
+                rel_file_path = coder.get_rel_fname(abs_path)
 
-        # Format the changes into a readable list
-        result = "Recent changes:\n"
-        for i, change in enumerate(changes):
-            change_time = datetime.fromtimestamp(change["timestamp"]).strftime("%H:%M:%S")
-            change_type = change["type"]
-            file_path = change["file_path"]
-            change_id = change["id"]
+            # Get the list of changes
+            changes = coder.change_tracker.list_changes(rel_file_path, limit)
 
-            result += (
-                f"{i + 1}. [{change_id}] {change_time} - {change_type.upper()} on {file_path}\n"
-            )
+            if not changes:
+                if file_path:
+                    return f"No changes found for file '{file_path}'"
+                else:
+                    return "No changes have been made yet"
 
-        coder.io.tool_output(result)  # Also print to console for user
-        return result
+            # Format the changes into a readable list
+            result = "Recent changes:\n"
+            for i, change in enumerate(changes):
+                change_time = datetime.fromtimestamp(change["timestamp"]).strftime("%H:%M:%S")
+                change_type = change["type"]
+                file_path = change["file_path"]
+                change_id = change["id"]
 
-    except Exception as e:
-        coder.io.tool_error(
-            f"Error in ListChanges: {str(e)}\n{traceback.format_exc()}"
-        )  # Add traceback
-        return f"Error: {str(e)}"
+                result += (
+                    f"{i + 1}. [{change_id}] {change_time} - {change_type.upper()} on {file_path}\n"
+                )
 
+            coder.io.tool_output(result)  # Also print to console for user
+            return result
 
-def process_response(coder, params):
-    """
-    Process the ListChanges tool response.
-
-    Args:
-        coder: The Coder instance
-        params: Dictionary of parameters
-
-    Returns:
-        str: Result message
-    """
-    file_path = params.get("file_path")
-    limit = params.get("limit", 10)
-
-    return _execute_list_changes(coder, file_path, limit)
+        except Exception as e:
+            coder.io.tool_error(
+                f"Error in ListChanges: {str(e)}\n{traceback.format_exc()}"
+            )  # Add traceback
+            return f"Error: {str(e)}"
