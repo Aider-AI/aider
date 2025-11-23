@@ -1125,7 +1125,7 @@ class Coder:
                 return self.partial_response_content
 
             user_message = None
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
             while True:
                 try:
@@ -1150,22 +1150,17 @@ class Coder:
                     await self.auto_save_session()
 
                 except KeyboardInterrupt:
-                    if self.io.input_task:
-                        self.io.set_placeholder("")
-                        await self.io.cancel_input_task()
-
-                    if self.io.output_task:
-                        await self.io.cancel_output_task()
-                        self.io.stop_spinner()
-
+                    self.io.set_placeholder("")
+                    self.io.stop_spinner()
                     self.keyboard_interrupt()
+                    await self.io.stop_task_streams()
                 except (asyncio.CancelledError, IndexError):
                     pass
 
         except EOFError:
             return
         finally:
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
     async def _run_parallel(self, with_message=None, preproc=True):
         try:
@@ -1180,7 +1175,7 @@ class Coder:
             self.user_message = ""
 
             # Cancel any existing tasks
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
             # Start the input and output tasks
             input_task = asyncio.create_task(self.input_task(preproc))
@@ -1221,13 +1216,13 @@ class Coder:
                     pass
 
                 # Ensure IO tasks are properly cancelled
-                await self.io.cancel_task_streams()
+                await self.io.stop_task_streams()
 
             await self.auto_save_session()
         except EOFError:
             return
         finally:
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
     async def input_task(self, preproc):
         """
@@ -1253,11 +1248,11 @@ class Coder:
                                 await self.auto_save_session()
                             else:
                                 self.user_message = ""
-                                await self.io.cancel_task_streams()
+                                await self.io.stop_task_streams()
 
                     except (asyncio.CancelledError, KeyboardInterrupt):
                         self.user_message = ""
-                        await self.io.cancel_task_streams()
+                        await self.io.stop_task_streams()
 
                 # Check if we should show announcements
                 if (
@@ -1284,7 +1279,7 @@ class Coder:
             except KeyboardInterrupt:
                 self.io.set_placeholder("")
                 self.keyboard_interrupt()
-                await self.io.cancel_task_streams()
+                await self.io.stop_task_streams()
             except (SwitchCoder, SystemExit):
                 raise
             except Exception as e:
@@ -1324,8 +1319,17 @@ class Coder:
                                 await self.io.output_task
                                 raise exception
 
+                            self.io.tool_error(f"Error during generation: {exception}")
+                            if self.verbose:
+                                traceback.print_exception(
+                                    type(exception), exception, exception.__traceback__
+                                )
+
                         # Stop spinner when processing task completes
                         self.io.stop_spinner()
+
+                        # And stop monitoring the output task
+                        await self.io.stop_output_task()
 
                 await self.auto_save_session()
                 await asyncio.sleep(0.01)  # Small yield to prevent tight loop
@@ -1333,7 +1337,7 @@ class Coder:
             except KeyboardInterrupt:
                 self.io.stop_spinner()
                 self.keyboard_interrupt()
-                await self.io.cancel_task_streams()
+                await self.io.stop_task_streams()
             except (SwitchCoder, SystemExit):
                 raise
             except Exception as e:

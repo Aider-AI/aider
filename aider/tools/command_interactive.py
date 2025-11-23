@@ -52,7 +52,7 @@ class Tool(BaseTool):
             coder.io.tool_output(">>> You may need to interact with the command below <<<")
             coder.io.tool_output(" \n")
 
-            await coder.io.cancel_input_task()
+            await coder.io.stop_input_task()
             await asyncio.sleep(1)
 
             # Use run_cmd which handles PTY logic

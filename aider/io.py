@@ -966,7 +966,7 @@ class InputOutput:
         self.user_input(inp)
         return inp
 
-    async def cancel_input_task(self):
+    async def stop_input_task(self):
         if self.input_task:
             input_task = self.input_task
             self.input_task = None
@@ -983,7 +983,7 @@ class InputOutput:
             ):
                 pass
 
-    async def cancel_output_task(self):
+    async def stop_output_task(self):
         if self.output_task:
             output_task = self.output_task
             self.output_task = None
@@ -1000,9 +1000,9 @@ class InputOutput:
             ):
                 pass
 
-    async def cancel_task_streams(self):
-        input_task = asyncio.create_task(self.cancel_input_task())
-        output_task = asyncio.create_task(self.cancel_output_task())
+    async def stop_task_streams(self):
+        input_task = asyncio.create_task(self.stop_input_task())
+        output_task = asyncio.create_task(self.stop_output_task())
 
         await asyncio.wait([input_task, output_task], return_when=asyncio.ALL_COMPLETED)
 
