@@ -1018,6 +1018,60 @@ seventy three
 
         self.assertEqual(content, "\n".join(changed_lines))
 
+    @patch("litellm.completion")
+    def test_no_merge_chaneges(self, mock_completion: MagicMock):
+        _, file1 = tempfile.mkstemp()
+
+        with open(file1, "w", encoding="utf-8") as f:
+            f.write("line one\nline two\nline three\n")
+
+        files = [file1]
+
+        coder = Coder.create(self.GPT4, "between", io=InputOutput(), fnames=files, stream=False)
+
+        mock_completion.side_effect = [
+            MagicMock(
+                choices=[
+                    MagicMock(
+                        message=MagicMock(
+                            role="assistant",
+                            content=f"""Do this:
+
+{Path(file1).name}
+```
+@BETWEEN@ "line one" AND "line three"
+line two
+```
+""",
+                            tool_calls=list(),
+                        )
+                    )
+                ],
+                usage=None,
+            ),
+            MagicMock(
+                choices=[
+                    MagicMock(
+                        message=MagicMock(
+                            role="assistant",
+                            content="<no-changes />",
+                            tool_calls=list(),
+                        )
+                    )
+                ],
+                usage=None,
+            ),
+        ]
+
+        # Call the run method with a message
+        coder.run(with_message="hi")
+
+        content = Path(file1).read_text(encoding="utf-8")
+
+        self.assertEqual(mock_completion.call_count, 2)
+
+        self.assertEqual(content, "line one\nline two\nline three\n")
+
     def test_find_existing_line(self):
         coder = BetweenBlockCoder(main_model=self.GPT4, io=InputOutput(), fnames=[])
         content_lines = [

@@ -133,8 +133,8 @@ Break large code blocks into a series of smaller blocks that each change a small
 - <update> snippet can contain instructions like "keep some function" or "remove some section of code". Carefully follow these instructions when merging the changes and do not write them to output.
 - Adjust the code style in <update> snippet to be the same as in the existing code.
 - Output only the updated code, enclosed within <updated-code> and </updated-code> tags.
+- Check if the <update> snippet is already merged. If so, write an empty tag "<no-changes />" instead of <updated-code> block.
 - Do not include any additional text, explanations, placeholders, ellipses, or code fences.
-- Check if <update> snippet already merged. In such case output <code> block unchanged.
 
 <code>
 {existing_code}</code>
@@ -147,3 +147,4 @@ Provide the complete updated code."""
     skipped_lines_placeholder = "... {lines_count} more lines ..."
     merge_between_request = 'Merge this code between "{lines[0]}" and "{lines[1]}":'
     merge_result_regexp = "<updated-code>\n(.*)</updated-code>"
+    merge_no_changes_regexp = "<no-changes />"

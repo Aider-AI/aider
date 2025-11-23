@@ -339,6 +339,9 @@ class BetweenBlockCoder(Coder):
         merge_result_pattern = re.compile(
             self.gpt_prompts.merge_result_regexp, re.MULTILINE | re.DOTALL
         )
+        merge_no_changes_pattern = re.compile(
+            self.gpt_prompts.merge_no_changes_regexp, re.MULTILINE | re.DOTALL
+        )
 
         main_model_error = None
 
@@ -405,7 +408,19 @@ class BetweenBlockCoder(Coder):
                     main_model_error = cannot_insert_between_err.format(lines=edit.tag.lines)
                 else:
                     # response is ok
+                    updated_lines = updated_lines[
+                        placeholder_lines_at_begin : len(updated_lines) - placeholder_lines_at_end
+                    ]
+
+                    content_lines[edit_range[0] : edit_range[1]] = updated_lines
                     break
+            elif merge_no_changes_pattern.match(updated_responce):
+                # when user have already written a part of the code, which he requests from the LLM (for example have added declaration and request LLM to write rest of the code),
+                # most of LLMs tend to repeat this part of the code in their answer
+                #
+                # so we need to skip this code block and best way is to add a special variant of answer for merge model
+                # and here it is handled
+                break
             else:
                 retry_prompt = bad_merge_response_err
                 main_model_error = merge_model_failed_err
@@ -416,11 +431,6 @@ class BetweenBlockCoder(Coder):
             # merge model failed to merge this snippet
             return False, None, main_model_error
 
-        updated_lines = updated_lines[
-            placeholder_lines_at_begin : len(updated_lines) - placeholder_lines_at_end
-        ]
-
-        content_lines[edit_range[0] : edit_range[1]] = updated_lines
         return True, content_lines, None
 
     def apply_edits(self, edits: list[BetweenCoderEdit]):
