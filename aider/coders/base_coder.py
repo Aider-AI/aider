@@ -590,7 +590,7 @@ class Coder:
                 max_code_line_length=map_max_line_length,
                 repo_root=self.root,
                 use_memory_cache=repomap_in_memory,
-                use_enhanced_map=self.args.use_enhanced_map,
+                use_enhanced_map=False if not self.args or self.args.use_enhanced_map else True,
             )
 
         self.summarizer = summarizer or ChatSummary(
