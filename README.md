@@ -41,6 +41,7 @@ analytics: false
 auto-commits: true
 auto-save: true
 auto-load: true
+cache-prompts: true
 check-update: true
 debug: false
 enable-context-compaction: true
@@ -86,8 +87,8 @@ The current priorities are to improve core capabilities and user experience of t
 
 2. **Repo Map Accuracy** - [Discussion](https://github.com/dwash96/aider-ce/issues/45)
   * [x] [Bias page ranking toward active/editable files in repo map parsing](https://github.com/Aider-AI/aider/issues/2405)
-  * [ ] [Include import information in repo map for richer context](https://github.com/Aider-AI/aider/issues/2688)  
-  * [ ] [Handle non-unique symbols that break down in large codebases](https://github.com/Aider-AI/aider/issues/2341)
+  * [x] [Include import information in repo map for richer context](https://github.com/Aider-AI/aider/issues/2688)  
+  * [x] [Handle non-unique symbols that break down in large codebases](https://github.com/Aider-AI/aider/issues/2341)
 
 3. **Context Discovery** - [Discussion](https://github.com/dwash96/aider-ce/issues/46)
   * [ ] Develop AST-based search capabilities

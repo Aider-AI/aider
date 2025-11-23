@@ -19,3 +19,9 @@
         rhs: (identifier) @name.reference.call
     )
 ) @reference.call
+
+(call
+    function: (identifier) @import_call
+    arguments: (arguments (identifier) @name.reference.import)
+    (#match? @import_call "^(library|require)$")
+) @reference.import

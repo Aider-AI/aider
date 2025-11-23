@@ -90,3 +90,8 @@
 		(arguments
 		  (argument)*))?)?) @reference.call
 
+(import_or_export
+  (library_import
+    (import_specification
+      (configurable_uri
+        (uri (string_literal) @name.reference.import))))) @reference.import

@@ -946,7 +946,7 @@ class AgentCoder(Coder):
         Track tool usage before calling the base implementation.
         """
         self.agent_finished = False
-        self.auto_save_session()
+        await self.auto_save_session()
 
         if self.partial_response_tool_calls:
             for tool_call in self.partial_response_tool_calls:

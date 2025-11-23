@@ -7,3 +7,6 @@
 (type_definition declarator: (type_identifier) @name.definition.type) @definition.type
 
 (enum_specifier name: (type_identifier) @name.definition.type) @definition.type
+
+(preproc_include
+  path: (_) @name.reference.import) @reference.import

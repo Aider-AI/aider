@@ -78,6 +78,11 @@
 ;; first element
 (list_lit . [(sym_lit) (package_lit)] @name.reference.call) @reference.call
 
+(list_lit
+  . (sym_lit) @import_call
+  . (sym_lit) @name.reference.import
+  (#match? @import_call "^(require|load)$")) @reference.import
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; classes
 

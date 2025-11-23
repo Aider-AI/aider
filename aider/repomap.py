@@ -1,5 +1,6 @@
 import math
 import os
+import re
 import shutil
 import sqlite3
 import sys
@@ -75,9 +76,9 @@ Tag = TagBase
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
-CACHE_VERSION = 5
+CACHE_VERSION = 6
 if USING_TSL_PACK:
-    CACHE_VERSION = 7
+    CACHE_VERSION = 8
 
 UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
@@ -156,10 +157,12 @@ class RepoMap:
         max_code_line_length=100,
         repo_root=None,
         use_memory_cache=False,
+        use_enhanced_map=False,
     ):
         self.io = io
         self.verbose = verbose
         self.refresh = refresh
+        self.use_enhanced_map = use_enhanced_map
 
         self.map_cache_dir = map_cache_dir
         # Prefer an explicit repo root (eg per-test repo), fallback to CWD
@@ -465,6 +468,33 @@ class RepoMap:
         distance = len(p1) + len(p2) - (2 * common_count)
         return distance
 
+    def check_import_match(self, definer, imports):
+        definer_path = Path(definer)
+        definer_parts = list(definer_path.parts)
+        if not definer_parts:
+            return False
+
+        # Remove extension from last part
+        definer_parts[-1] = os.path.splitext(definer_parts[-1])[0]
+
+        for imp in imports:
+            imp_parts = [p for p in re.split(r"[.\\/]", imp) if p]
+            if len(imp_parts) > len(definer_parts):
+                continue
+
+            # Check for sub-sequence match
+            # Check for sub-sequence match
+            for i in range(len(definer_parts) - len(imp_parts) + 1):
+                if definer_parts[i : i + len(imp_parts)] == imp_parts:
+                    # Allow if it's a suffix match (standard aliasing)
+                    if i + len(imp_parts) == len(definer_parts):
+                        return True
+
+                    # Allow partial/middle match if enough specificity (>= 2 parts)
+                    if len(imp_parts) >= 2:
+                        return True
+        return False
+
     def get_tags_raw(self, fname, rel_fname):
         lang = filename_to_lang(fname)
         if not lang:
@@ -474,7 +504,8 @@ class RepoMap:
             language = get_language(lang)
             parser = get_parser(lang)
         except Exception as err:
-            print(f"Skipping file {fname}: {err}")
+            if self.verbose:
+                print(f"Skipping file {fname}: {err}")
             return
 
         query_scm = get_scm_fname(lang)
@@ -572,6 +603,8 @@ class RepoMap:
         defines = defaultdict(set)
         references = defaultdict(list)
         definitions = defaultdict(set)
+        file_imports = defaultdict(set)
+        import_ast_mode = False
 
         personalization = dict()
 
@@ -660,10 +693,11 @@ class RepoMap:
                 elif tag.kind == "ref":
                     references[tag.name].append(rel_fname)
 
-        ##
-        # dump(defines)
-        # dump(references)
-        # dump(personalization)
+                if tag.specific_kind == "import":
+                    file_imports[rel_fname].add(tag.name)
+
+        if self.use_enhanced_map and len(file_imports) > 0:
+            import_ast_mode = True
 
         if not references:
             references = dict((k, list(v)) for k, v in defines.items())
@@ -723,7 +757,19 @@ class RepoMap:
             ext_mul = round(math.log2(unique_file_refs * total_refs**2 + 1))
 
             for referencer, num_refs in Counter(references[ident]).items():
-                for definer in definers:
+                relevant_definers = [] if import_ast_mode else definers
+
+                if import_ast_mode:
+                    if referencer in file_imports:
+                        matches = [
+                            d
+                            for d in definers
+                            if self.check_import_match(d, file_imports[referencer])
+                        ]
+                        if matches:
+                            relevant_definers = matches
+
+                for definer in relevant_definers:
                     # dump(referencer, definer, num_refs, mul)
 
                     # Only add edge if file extensions match
@@ -743,7 +789,7 @@ class RepoMap:
                     # num_refs = math.sqrt(num_refs)
                     path_distance = self.shared_path_components(referencer, definer)
                     weight = num_refs * use_mul * 2 ** (-1 * path_distance)
-                    G.add_edge(referencer, definer, weight=weight, ident=ident)
+                    G.add_edge(referencer, definer, weight=weight, key=ident, ident=ident)
 
         if not references:
             pass
@@ -781,7 +827,6 @@ class RepoMap:
             ranked_definitions.items(), reverse=True, key=lambda x: (x[1], x[0])
         )
 
-        # dump(ranked_definitions)
         # with open('defs.txt', 'w') as out_file:
         #     import pprint
         #     printer = pprint.PrettyPrinter(indent=2, stream=out_file)

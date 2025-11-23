@@ -88,4 +88,5 @@
 		(arguments
 		  (argument)*))?)?) @reference.call
 
-
+(import_or_export
+  (string_literal) @name.reference.import) @reference.import

@@ -86,3 +86,11 @@
 
 (new_expression
   constructor: (_) @name.reference.class) @reference.class
+
+(import_statement
+  source: (string (string_fragment) @name.reference.import)) @reference.import
+
+(call_expression
+  function: (identifier) @import_func
+  arguments: (arguments (string (string_fragment) @name.reference.import))
+  (#eq? @import_func "require")) @reference.import
