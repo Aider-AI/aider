@@ -54,7 +54,7 @@
   (identifier) @name.reference.export) @reference.export
 
 (using_statement
-  (identifier) @name.reference.module) @reference.module
+  (identifier) @name.reference.import) @reference.import
 
 (import_statement
-  (identifier) @name.reference.module) @reference.module
+  (identifier) @name.reference.import) @reference.import

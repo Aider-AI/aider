@@ -24,3 +24,9 @@
 (namespace_declaration name: (identifier) @name.definition.module) @definition.module
 
 (namespace_declaration name: (identifier) @name.definition.module) @module
+
+(using_directive
+  (qualified_name) @name.reference.import) @reference.import
+
+(using_directive
+  (identifier) @name.reference.import) @reference.import

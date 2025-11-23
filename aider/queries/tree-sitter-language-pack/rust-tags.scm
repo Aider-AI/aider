@@ -58,3 +58,6 @@
 (impl_item
     type: (type_identifier) @name.reference.implementation
     !trait) @reference.implementation
+
+(use_declaration
+    argument: (_) @name.reference.import) @reference.import

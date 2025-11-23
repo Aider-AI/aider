@@ -25,3 +25,6 @@
     (constructor_invocation
       (user_type) @name.reference.type)
   ]) @reference.type
+
+(import_header
+  (identifier) @name.reference.import) @reference.import

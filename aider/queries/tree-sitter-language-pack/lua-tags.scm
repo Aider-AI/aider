@@ -32,3 +32,8 @@
     (method_index_expression
       method: (identifier) @name.reference.method)
   ]) @reference.call
+
+(function_call
+  name: (identifier) @import_func
+  arguments: (arguments (string (string_content) @name.reference.import))
+  (#eq? @import_func "require")) @reference.import

@@ -12,4 +12,7 @@
 
 (module_procedure_statement
   name: (name) @name.definition.function) @definition.function
+
+(use_statement
+  (name) @name.reference.import) @reference.import
    

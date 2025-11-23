@@ -13,3 +13,6 @@
 (enum_specifier name: (type_identifier) @name.definition.type) @definition.type
 
 (class_specifier name: (type_identifier) @name.definition.class) @definition.class
+
+(preproc_include
+  path: (_) @name.reference.import) @reference.import

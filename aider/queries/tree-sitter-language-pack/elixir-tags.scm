@@ -52,3 +52,8 @@
 
 ; * modules
 (alias) @name.reference.module @reference.module
+
+(call
+  target: (identifier) @import_call
+  (arguments (alias) @name.reference.import)
+  (#any-of? @import_call "alias" "import" "require" "use")) @reference.import

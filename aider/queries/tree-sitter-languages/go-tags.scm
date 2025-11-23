@@ -28,3 +28,9 @@
   name: (type_identifier) @name.definition.type) @definition.type
 
 (type_identifier) @name.reference.type @reference.type
+
+(import_spec
+  path: [
+    (interpreted_string_literal)
+    (raw_string_literal)
+  ] @name.reference.import) @reference.import

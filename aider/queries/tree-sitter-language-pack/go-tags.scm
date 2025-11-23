@@ -40,3 +40,10 @@
 (var_declaration (var_spec name: (identifier) @name.definition.variable))
 
 (const_declaration (const_spec name: (identifier) @name.definition.constant))
+
+(import_spec
+  path: [
+    (interpreted_string_literal)
+    (raw_string_literal)
+  ] @name.reference.import) @reference.import
+

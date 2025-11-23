@@ -279,6 +279,12 @@ def get_parser(default_config_files, git_root):
         help="Preserve the existing .aider.todo.txt file on startup (default: False)",
         default=False,
     )
+    group.add_argument(
+        "--use-enhanced-map",
+        action="store_true",
+        help="Use enhanced Repo Map that takes into account imports (default: False)",
+        default=False,
+    )
 
     ##########
     group = parser.add_argument_group("Context Compaction")

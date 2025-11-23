@@ -60,6 +60,5 @@
 (extends_clause
   (type_identifier) @name.reference.class) @reference.class
 
-(extends_clause
-  (generic_type
-    (type_identifier) @name.reference.class)) @reference.class
+(import_declaration
+  (identifier) @name.reference.import) @reference.import
