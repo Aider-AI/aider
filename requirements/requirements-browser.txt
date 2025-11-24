@@ -50,7 +50,7 @@ jsonschema==4.25.1
     # via
     #   -c requirements/common-constraints.txt
     #   altair
-jsonschema-specifications==2025.4.1
+jsonschema-specifications==2025.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
@@ -62,7 +62,7 @@ narwhals==2.12.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
-numpy==1.26.4
+numpy==2.3.5
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
