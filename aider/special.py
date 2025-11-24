@@ -108,7 +108,7 @@ ROOT_IMPORTANT_FILES = [
     "bitbucket-pipelines.yml",
     "appveyor.yml",
     "circle.yml",
-    ".circleci/config.yml",
+    ".circleci/.aider\config.yml",
     ".github/dependabot.yml",
     "codecov.yml",
     ".coveragerc",
@@ -156,7 +156,7 @@ ROOT_IMPORTANT_FILES = [
     "codecov.yml",
     # Documentation
     "mkdocs.yml",
-    "_config.yml",
+    "_.aider\config.yml",
     "book.toml",
     "readthedocs.yml",
     ".readthedocs.yaml",
