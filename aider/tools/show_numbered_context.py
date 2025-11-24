@@ -1,147 +1,121 @@
 import os
 
-from .tool_utils import ToolError, handle_tool_error, resolve_paths
+from aider.tools.utils.base_tool import BaseTool
+from aider.tools.utils.helpers import ToolError, handle_tool_error, resolve_paths
 
-schema = {
-    "type": "function",
-    "function": {
-        "name": "ShowNumberedContext",
-        "description": "Show numbered lines of context around a pattern or line number.",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "file_path": {"type": "string"},
-                "pattern": {"type": "string"},
-                "line_number": {"type": "integer"},
-                "context_lines": {"type": "integer", "default": 3},
+
+class Tool(BaseTool):
+    NORM_NAME = "shownumberedcontext"
+    SCHEMA = {
+        "type": "function",
+        "function": {
+            "name": "ShowNumberedContext",
+            "description": "Show numbered lines of context around a pattern or line number.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_path": {"type": "string"},
+                    "pattern": {"type": "string"},
+                    "line_number": {"type": "integer"},
+                    "context_lines": {"type": "integer", "default": 3},
+                },
+                "required": ["file_path"],
             },
-            "required": ["file_path"],
         },
-    },
-}
+    }
 
-# Normalized tool name for lookup
-NORM_NAME = "shownumberedcontext"
-
-
-def execute_show_numbered_context(
-    coder, file_path, pattern=None, line_number=None, context_lines=3
-):
-    """
-    Displays numbered lines from file_path centered around a target location
-    (pattern or line_number), without adding the file to context.
-    Uses utility functions for path resolution and error handling.
-    """
-    tool_name = "ShowNumberedContext"
-    try:
-        # 1. Validate arguments
-        if not (pattern is None) ^ (line_number is None):
-            raise ToolError("Provide exactly one of 'pattern' or 'line_number'.")
-
-        # 2. Resolve path
-        abs_path, rel_path = resolve_paths(coder, file_path)
-        if not os.path.exists(abs_path):
-            # Check existence after resolving, as resolve_paths doesn't guarantee existence
-            raise ToolError(f"File not found: {file_path}")
-
-        # 3. Read file content
-        content = coder.io.read_text(abs_path)
-        if content is None:
-            raise ToolError(f"Could not read file: {file_path}")
-        lines = content.splitlines()
-        num_lines = len(lines)
-
-        # 4. Determine center line index
-        center_line_idx = -1
-        found_by = ""
-
-        if line_number is not None:
-            try:
-                line_number_int = int(line_number)
-                if 1 <= line_number_int <= num_lines:
-                    center_line_idx = line_number_int - 1  # Convert to 0-based index
-                    found_by = f"line {line_number_int}"
-                else:
-                    raise ToolError(
-                        f"Line number {line_number_int} is out of range (1-{num_lines}) for"
-                        f" {file_path}."
-                    )
-            except ValueError:
-                raise ToolError(f"Invalid line number '{line_number}'. Must be an integer.")
-
-        elif pattern is not None:
-            # TODO: Update this section for multiline pattern support later
-            first_match_line_idx = -1
-            for i, line in enumerate(lines):
-                if pattern in line:
-                    first_match_line_idx = i
-                    break
-
-            if first_match_line_idx != -1:
-                center_line_idx = first_match_line_idx
-                found_by = f"pattern '{pattern}' on line {center_line_idx + 1}"
-            else:
-                raise ToolError(f"Pattern '{pattern}' not found in {file_path}.")
-
-        if center_line_idx == -1:
-            # Should not happen if logic above is correct, but as a safeguard
-            raise ToolError("Internal error: Could not determine center line.")
-
-        # 5. Calculate context window
+    @classmethod
+    def execute(cls, coder, file_path, pattern=None, line_number=None, context_lines=3):
+        """
+        Displays numbered lines from file_path centered around a target location
+        (pattern or line_number), without adding the file to context.
+        Uses utility functions for path resolution and error handling.
+        """
+        tool_name = "ShowNumberedContext"
         try:
-            context_lines_int = int(context_lines)
-            if context_lines_int < 0:
-                raise ValueError("Context lines must be non-negative")
-        except ValueError:
-            coder.io.tool_warning(
-                f"Invalid context_lines value '{context_lines}', using default 3."
-            )
-            context_lines_int = 3
+            # 1. Validate arguments
+            if not (pattern is None) ^ (line_number is None):
+                raise ToolError("Provide exactly one of 'pattern' or 'line_number'.")
 
-        start_line_idx = max(0, center_line_idx - context_lines_int)
-        end_line_idx = min(num_lines - 1, center_line_idx + context_lines_int)
+            # 2. Resolve path
+            abs_path, rel_path = resolve_paths(coder, file_path)
+            if not os.path.exists(abs_path):
+                # Check existence after resolving, as resolve_paths doesn't guarantee existence
+                raise ToolError(f"File not found: {file_path}")
 
-        # 6. Format output
-        # Use rel_path for user-facing messages
-        output_lines = [f"Displaying context around {found_by} in {rel_path}:"]
-        max_line_num_width = len(str(end_line_idx + 1))  # Width for padding
+            # 3. Read file content
+            content = coder.io.read_text(abs_path)
+            if content is None:
+                raise ToolError(f"Could not read file: {file_path}")
+            lines = content.splitlines()
+            num_lines = len(lines)
 
-        for i in range(start_line_idx, end_line_idx + 1):
-            line_num_str = str(i + 1).rjust(max_line_num_width)
-            output_lines.append(f"{line_num_str} | {lines[i]}")
+            # 4. Determine center line index
+            center_line_idx = -1
+            found_by = ""
 
-        # Log success and return the formatted context directly
-        coder.io.tool_output(f"Successfully retrieved context for {rel_path}")
-        return "\n".join(output_lines)
+            if line_number is not None:
+                try:
+                    line_number_int = int(line_number)
+                    if 1 <= line_number_int <= num_lines:
+                        center_line_idx = line_number_int - 1  # Convert to 0-based index
+                        found_by = f"line {line_number_int}"
+                    else:
+                        raise ToolError(
+                            f"Line number {line_number_int} is out of range (1-{num_lines}) for"
+                            f" {file_path}."
+                        )
+                except ValueError:
+                    raise ToolError(f"Invalid line number '{line_number}'. Must be an integer.")
 
-    except ToolError as e:
-        # Handle expected errors raised by utility functions or validation
-        return handle_tool_error(coder, tool_name, e, add_traceback=False)
-    except Exception as e:
-        # Handle unexpected errors during processing
-        return handle_tool_error(coder, tool_name, e)
+            elif pattern is not None:
+                # TODO: Update this section for multiline pattern support later
+                first_match_line_idx = -1
+                for i, line in enumerate(lines):
+                    if pattern in line:
+                        first_match_line_idx = i
+                        break
 
+                if first_match_line_idx != -1:
+                    center_line_idx = first_match_line_idx
+                    found_by = f"pattern '{pattern}' on line {center_line_idx + 1}"
+                else:
+                    raise ToolError(f"Pattern '{pattern}' not found in {file_path}.")
 
-def process_response(coder, params):
-    """
-    Process the ShowNumberedContext tool response.
+            if center_line_idx == -1:
+                # Should not happen if logic above is correct, but as a safeguard
+                raise ToolError("Internal error: Could not determine center line.")
 
-    Args:
-        coder: The Coder instance
-        params: Dictionary of parameters
+            # 5. Calculate context window
+            try:
+                context_lines_int = int(context_lines)
+                if context_lines_int < 0:
+                    raise ValueError("Context lines must be non-negative")
+            except ValueError:
+                coder.io.tool_warning(
+                    f"Invalid context_lines value '{context_lines}', using default 3."
+                )
+                context_lines_int = 3
 
-    Returns:
-        str: Result message
-    """
-    file_path = params.get("file_path")
-    pattern = params.get("pattern")
-    line_number = params.get("line_number")
-    context_lines = params.get("context_lines", 3)
+            start_line_idx = max(0, center_line_idx - context_lines_int)
+            end_line_idx = min(num_lines - 1, center_line_idx + context_lines_int)
 
-    if file_path is not None and (pattern is not None or line_number is not None):
-        return execute_show_numbered_context(coder, file_path, pattern, line_number, context_lines)
-    else:
-        return (
-            "Error: Missing required parameters for ViewNumberedContext (file_path"
-            " and either pattern or line_number)"
-        )
+            # 6. Format output
+            # Use rel_path for user-facing messages
+            output_lines = [f"Displaying context around {found_by} in {rel_path}:"]
+            max_line_num_width = len(str(end_line_idx + 1))  # Width for padding
+
+            for i in range(start_line_idx, end_line_idx + 1):
+                line_num_str = str(i + 1).rjust(max_line_num_width)
+                output_lines.append(f"{line_num_str} | {lines[i]}")
+
+            # Log success and return the formatted context directly
+            coder.io.tool_output(f"Successfully retrieved context for {rel_path}")
+            return "\n".join(output_lines)
+
+        except ToolError as e:
+            # Handle expected errors raised by utility functions or validation
+            return handle_tool_error(coder, tool_name, e, add_traceback=False)
+        except Exception as e:
+            # Handle unexpected errors during processing
+            return handle_tool_error(coder, tool_name, e)

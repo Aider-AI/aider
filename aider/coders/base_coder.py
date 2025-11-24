@@ -61,6 +61,7 @@ from aider.repo import ANY_GIT_ERROR, GitRepo
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.sessions import SessionManager
+from aider.tools.utils.output import print_tool_response
 from aider.utils import format_tokens, is_image_file
 
 from ..dump import dump  # noqa: F401
@@ -1125,7 +1126,7 @@ class Coder:
                 return self.partial_response_content
 
             user_message = None
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
             while True:
                 try:
@@ -1150,22 +1151,17 @@ class Coder:
                     await self.auto_save_session()
 
                 except KeyboardInterrupt:
-                    if self.io.input_task:
-                        self.io.set_placeholder("")
-                        await self.io.cancel_input_task()
-
-                    if self.io.output_task:
-                        await self.io.cancel_output_task()
-                        self.io.stop_spinner()
-
+                    self.io.set_placeholder("")
+                    self.io.stop_spinner()
                     self.keyboard_interrupt()
+                    await self.io.stop_task_streams()
                 except (asyncio.CancelledError, IndexError):
                     pass
 
         except EOFError:
             return
         finally:
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
     async def _run_parallel(self, with_message=None, preproc=True):
         try:
@@ -1180,7 +1176,7 @@ class Coder:
             self.user_message = ""
 
             # Cancel any existing tasks
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
             # Start the input and output tasks
             input_task = asyncio.create_task(self.input_task(preproc))
@@ -1221,13 +1217,13 @@ class Coder:
                     pass
 
                 # Ensure IO tasks are properly cancelled
-                await self.io.cancel_task_streams()
+                await self.io.stop_task_streams()
 
             await self.auto_save_session()
         except EOFError:
             return
         finally:
-            await self.io.cancel_task_streams()
+            await self.io.stop_task_streams()
 
     async def input_task(self, preproc):
         """
@@ -1253,11 +1249,11 @@ class Coder:
                                 await self.auto_save_session()
                             else:
                                 self.user_message = ""
-                                await self.io.cancel_task_streams()
+                                await self.io.stop_task_streams()
 
                     except (asyncio.CancelledError, KeyboardInterrupt):
                         self.user_message = ""
-                        await self.io.cancel_task_streams()
+                        await self.io.stop_task_streams()
 
                 # Check if we should show announcements
                 if (
@@ -1284,7 +1280,7 @@ class Coder:
             except KeyboardInterrupt:
                 self.io.set_placeholder("")
                 self.keyboard_interrupt()
-                await self.io.cancel_task_streams()
+                await self.io.stop_task_streams()
             except (SwitchCoder, SystemExit):
                 raise
             except Exception as e:
@@ -1324,8 +1320,17 @@ class Coder:
                                 await self.io.output_task
                                 raise exception
 
+                            self.io.tool_error(f"Error during generation: {exception}")
+                            if self.verbose:
+                                traceback.print_exception(
+                                    type(exception), exception, exception.__traceback__
+                                )
+
                         # Stop spinner when processing task completes
                         self.io.stop_spinner()
+
+                        # And stop monitoring the output task
+                        await self.io.stop_output_task()
 
                 await self.auto_save_session()
                 await asyncio.sleep(0.01)  # Small yield to prevent tight loop
@@ -1333,7 +1338,7 @@ class Coder:
             except KeyboardInterrupt:
                 self.io.stop_spinner()
                 self.keyboard_interrupt()
-                await self.io.cancel_task_streams()
+                await self.io.stop_task_streams()
             except (SwitchCoder, SystemExit):
                 raise
             except Exception as e:
@@ -2355,54 +2360,14 @@ class Coder:
 
         for server, tool_calls in server_tool_calls.items():
             for tool_call in tool_calls:
-                color_start = "[blue]" if self.pretty else ""
-                color_end = "[/blue]" if self.pretty else ""
-
-                self.io.tool_output(
-                    f"{color_start}Tool Call:{color_end} {server.name} • {tool_call.function.name}"
-                )
-                # Parse and format arguments as headers with values
-                if tool_call.function.arguments:
-                    # Only do JSON unwrapping for tools containing "replace" in their name
-                    if tool_call.get("function", {}).get("name") is not None and (
-                        "replace" in tool_call.function.name.lower()
-                        or "insert" in tool_call.function.name.lower()
-                        or "update" in tool_call.function.name.lower()
-                    ):
-                        try:
-                            args_dict = json.loads(tool_call.function.arguments)
-                            first_key = True
-                            for key, value in args_dict.items():
-                                # Convert explicit \\n sequences to actual newlines using regex
-                                # Only match \\n that is not preceded by any other backslashes
-                                if isinstance(value, str):
-                                    value = re.sub(r"(?<!\\)\\n", "\n", value)
-                                # Add extra newline before first key/header
-                                if first_key:
-                                    self.io.tool_output("\n")
-                                    first_key = False
-                                self.io.tool_output(f"{color_start}{key}:{color_end}")
-                                # Split the value by newlines and output each line separately
-                                if isinstance(value, str):
-                                    for line in value.split("\n"):
-                                        self.io.tool_output(f"{line}")
-                                else:
-                                    self.io.tool_output(f"{str(value)}")
-                                self.io.tool_output("")
-                        except json.JSONDecodeError:
-                            # If JSON parsing fails, show raw arguments
-                            raw_args = tool_call.function.arguments
-                            self.io.tool_output(f"{color_start}Arguments:{color_end} {raw_args}")
-                    else:
-                        # For non-replace tools, show raw arguments
-                        raw_args = tool_call.function.arguments
-                        self.io.tool_output(f"{color_start}Arguments:{color_end} {raw_args}")
-
-                if self.verbose:
-                    self.io.tool_output(f"Tool ID: {tool_call.id}")
-                    self.io.tool_output(f"Tool type: {tool_call.type}")
-
-                self.io.tool_output("\n")
+                if hasattr(self, "tool_registry") and self.tool_registry.get(
+                    tool_call.function.name.lower(), None
+                ):
+                    self.tool_registry.get(tool_call.function.name.lower()).format_output(
+                        coder=self, mcp_server=server, tool_response=tool_call
+                    )
+                else:
+                    print_tool_response(coder=self, mcp_server=server, tool_response=tool_call)
 
     def _gather_server_tool_calls(self, tool_calls):
         """Collect all tool calls grouped by server.

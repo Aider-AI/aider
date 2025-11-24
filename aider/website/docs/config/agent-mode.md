@@ -164,6 +164,17 @@ Certain tools are always available regardless of includelist/excludelist setting
 - `view` - View files
 - `finished` - Complete the task
 
+#### Other Aider-CE CLI/Config Options for Agent Mode
+
+- `preserve-todo-list` - Preserve todo list across sessions
+- `use-enhanced-map` - Use enhanced repo map that takes into account import relationships between files
+
+```yaml
+preserve-todo-list: true
+use-enhanced-map: true
+```
+
+
 #### Usage Examples
 
 ```bash
@@ -178,6 +189,9 @@ aider-ce --agent --agent-config '{"large_file_token_threshold": 10000}'
 
 # Combined configuration
 aider-ce --agent --agent-config '{"large_file_token_threshold": 10000, "tools_includelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"]}'
+
+# Command Line Options
+aider-ce --agent --agent-config '{"large_file_token_threshold": 10000, "tools_includelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"]}' --preserve-todo-list --use-enhanced-map
 ```
 
 This configuration system allows for fine-grained control over which tools are available in Agent Mode, enabling security-conscious deployments and specialized workflows while maintaining essential functionality.

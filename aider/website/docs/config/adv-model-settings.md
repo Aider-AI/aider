@@ -383,6 +383,7 @@ cog.out("```\n")
   weak_model_name: azure/gpt-5-mini
   use_repo_map: true
   examples_as_sys_msg: true
+  use_temperature: false
   streaming: false
   editor_model_name: azure/gpt-5
   editor_edit_format: editor-diff
@@ -1305,6 +1306,7 @@ cog.out("```\n")
   weak_model_name: gpt-5-mini
   use_repo_map: true
   examples_as_sys_msg: true
+  use_temperature: false
   streaming: false
   editor_model_name: gpt-5
   editor_edit_format: editor-diff
@@ -1567,6 +1569,7 @@ cog.out("```\n")
   weak_model_name: openai/gpt-5-mini
   use_repo_map: true
   examples_as_sys_msg: true
+  use_temperature: false
   streaming: false
   editor_model_name: openai/gpt-5
   editor_edit_format: editor-diff
@@ -2046,6 +2049,7 @@ cog.out("```\n")
   weak_model_name: openrouter/openai/gpt-5-mini
   use_repo_map: true
   examples_as_sys_msg: true
+  use_temperature: false
   streaming: false
   editor_model_name: openrouter/openai/gpt-5
   editor_edit_format: editor-diff
