@@ -29,8 +29,9 @@ class Tool(BaseTool):
         },
     }
 
+    @classmethod
     def execute(
-        self,
+        cls,
         coder,
         source_file_path,
         target_file_path,

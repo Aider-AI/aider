@@ -53,6 +53,7 @@ class Tool(BaseTool):
         },
     }
 
+    @classmethod
     def _find_search_tool(self):
         """Find the best available command-line search tool (rg, ag, grep)."""
         if shutil.which("rg"):
@@ -64,8 +65,9 @@ class Tool(BaseTool):
         else:
             return None, None
 
+    @classmethod
     def execute(
-        self,
+        cls,
         coder,
         pattern,
         file_pattern="*",
@@ -97,7 +99,7 @@ class Tool(BaseTool):
             coder.io.tool_error("Not in a git repository.")
             return "Error: Not in a git repository."
 
-        tool_name, tool_path = self._find_search_tool()
+        tool_name, tool_path = cls._find_search_tool()
         if not tool_path:
             coder.io.tool_error("No search tool (rg, ag, grep) found in PATH.")
             return "Error: No search tool (rg, ag, grep) found."

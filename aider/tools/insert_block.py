@@ -12,6 +12,7 @@ from aider.tools.utils.helpers import (
     select_occurrence_index,
     validate_file_for_edit,
 )
+from aider.tools.utils.output import tool_body_unwrapped, tool_footer, tool_header
 
 
 class Tool(BaseTool):
@@ -40,8 +41,9 @@ class Tool(BaseTool):
         },
     }
 
+    @classmethod
     def execute(
-        self,
+        cls,
         coder,
         file_path,
         content,
@@ -245,3 +247,9 @@ class Tool(BaseTool):
                 f"Error in InsertBlock: {str(e)}\n{traceback.format_exc()}"
             )  # Add traceback
             return f"Error: {str(e)}"
+
+    @classmethod
+    def format_output(cls, coder, mcp_server, tool_response):
+        tool_header(coder=coder, mcp_server=mcp_server, tool_response=tool_response)
+        tool_body_unwrapped(coder=coder, tool_response=tool_response)
+        tool_footer(coder=coder, tool_response=tool_response)

@@ -37,8 +37,9 @@ class Tool(BaseTool):
         },
     }
 
+    @classmethod
     def execute(
-        self,
+        cls,
         coder,
         file_path,
         start_pattern,

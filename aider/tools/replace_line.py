@@ -2,6 +2,7 @@ import traceback
 
 from aider.tools.utils.base_tool import BaseTool
 from aider.tools.utils.helpers import ToolError, validate_file_for_edit
+from aider.tools.utils.output import tool_body_unwrapped, tool_footer, tool_header
 
 
 class Tool(BaseTool):
@@ -25,7 +26,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, file_path, line_number, new_content, change_id=None, dry_run=False):
+    @classmethod
+    def execute(cls, coder, file_path, line_number, new_content, change_id=None, dry_run=False):
         """
         Replace a specific line identified by line number.
         Useful for fixing errors identified by error messages or linters.
@@ -125,3 +127,9 @@ class Tool(BaseTool):
         except Exception as e:
             coder.io.tool_error(f"Error in ReplaceLine: {str(e)}\n{traceback.format_exc()}")
             return f"Error: {str(e)}"
+
+    @classmethod
+    def format_output(cls, coder, mcp_server, tool_response):
+        tool_header(coder=coder, mcp_server=mcp_server, tool_response=tool_response)
+        tool_body_unwrapped(coder=coder, tool_response=tool_response)
+        tool_footer(coder=coder, tool_response=tool_response)

@@ -65,8 +65,9 @@ class Tool(BaseTool):
         },
     }
 
+    @classmethod
     def execute(
-        self,
+        cls,
         coder,
         remotes=False,
         all=False,

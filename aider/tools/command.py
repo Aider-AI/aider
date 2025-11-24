@@ -23,7 +23,8 @@ class Tool(BaseTool):
         },
     }
 
-    async def execute(self, coder, command_string):
+    @classmethod
+    async def execute(cls, coder, command_string):
         """
         Execute a non-interactive shell command after user confirmation.
         """

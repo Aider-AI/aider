@@ -21,7 +21,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, symbol):
+    @classmethod
+    def execute(cls, coder, symbol):
         """
         Find files containing a symbol using RepoMap and return them as text.
         Checks files already in context first.

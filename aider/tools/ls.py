@@ -23,7 +23,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, dir_path=None, directory=None):
+    @classmethod
+    def execute(cls, coder, dir_path=None, directory=None):
         # Handle both positional and keyword arguments for backward compatibility
         if dir_path is None and directory is not None:
             dir_path = directory

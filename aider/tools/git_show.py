@@ -22,7 +22,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, object="HEAD"):
+    @classmethod
+    def execute(cls, coder, object="HEAD"):
         """
         Show various types of objects (blobs, trees, tags, and commits).
         """

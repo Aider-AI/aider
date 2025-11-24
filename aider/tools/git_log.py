@@ -22,7 +22,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, limit=10):
+    @classmethod
+    def execute(cls, coder, limit=10):
         """
         Show the git log.
         """

@@ -18,7 +18,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder):
+    @classmethod
+    def execute(cls, coder):
         """
         Mark that the current generation task needs no further effort.
 

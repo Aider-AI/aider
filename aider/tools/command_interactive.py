@@ -25,7 +25,8 @@ class Tool(BaseTool):
         },
     }
 
-    async def execute(self, coder, command_string):
+    @classmethod
+    async def execute(cls, coder, command_string):
         """
         Execute an interactive shell command using run_cmd (which uses pexpect/PTY).
         """

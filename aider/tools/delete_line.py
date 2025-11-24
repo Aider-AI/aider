@@ -29,7 +29,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, file_path, line_number, change_id=None, dry_run=False):
+    @classmethod
+    def execute(cls, coder, file_path, line_number, change_id=None, dry_run=False):
         """
         Delete a specific line number (1-based).
 

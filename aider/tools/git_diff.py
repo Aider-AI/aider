@@ -26,7 +26,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, branch=None):
+    @classmethod
+    def execute(cls, coder, branch=None):
         """
         Show the diff between the current working directory and a git branch or commit.
         """

@@ -1,3 +1,6 @@
+import difflib
+import json
+
 from aider.tools.utils.base_tool import BaseTool
 from aider.tools.utils.helpers import (
     ToolError,
@@ -7,6 +10,7 @@ from aider.tools.utils.helpers import (
     handle_tool_error,
     validate_file_for_edit,
 )
+from aider.tools.utils.output import color_markers, tool_footer, tool_header
 
 
 class Tool(BaseTool):
@@ -32,8 +36,9 @@ class Tool(BaseTool):
         },
     }
 
+    @classmethod
     def execute(
-        self,
+        cls,
         coder,
         file_path,
         find_text,
@@ -155,3 +160,27 @@ class Tool(BaseTool):
         except Exception as e:
             # Handle unexpected errors
             return handle_tool_error(coder, tool_name, e)
+
+    @classmethod
+    def format_output(cls, coder, mcp_server, tool_response):
+        color_start, color_end = color_markers(coder)
+        params = json.loads(tool_response.function.arguments)
+        diff = difflib.unified_diff(
+            params["find_text"].splitlines(),
+            params["replace_text"].splitlines(),
+            lineterm="",
+            n=float("inf"),
+        )
+
+        tool_header(coder=coder, mcp_server=mcp_server, tool_response=tool_response)
+
+        coder.io.tool_output("")
+        coder.io.tool_output(f"{color_start}file_path:{color_end}")
+        coder.io.tool_output(params["file_path"])
+        coder.io.tool_output("")
+
+        coder.io.tool_output(f"{color_start}diff:{color_end}")
+        coder.io.tool_output("\n".join(list(diff)[2:]))
+        coder.io.tool_output("")
+
+        tool_footer(coder=coder, tool_response=tool_response)

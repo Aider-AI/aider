@@ -5,6 +5,7 @@ from aider.tools.utils.helpers import (
     generate_unified_diff_snippet,
     handle_tool_error,
 )
+from aider.tools.utils.output import tool_body_unwrapped, tool_footer, tool_header
 
 
 class Tool(BaseTool):
@@ -45,7 +46,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, content, append=False, change_id=None, dry_run=False):
+    @classmethod
+    def execute(cls, coder, content, append=False, change_id=None, dry_run=False):
         """
         Update the todo list file (.aider.todo.txt) with new content.
         Can either replace the entire content or append to it.
@@ -138,3 +140,9 @@ class Tool(BaseTool):
             return handle_tool_error(coder, tool_name, e, add_traceback=False)
         except Exception as e:
             return handle_tool_error(coder, tool_name, e)
+
+    @classmethod
+    def format_output(cls, coder, mcp_server, tool_response):
+        tool_header(coder=coder, mcp_server=mcp_server, tool_response=tool_response)
+        tool_body_unwrapped(coder=coder, tool_response=tool_response)
+        tool_footer(coder=coder, tool_response=tool_response)

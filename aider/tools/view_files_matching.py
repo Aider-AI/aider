@@ -36,7 +36,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, pattern, file_pattern=None, regex=False):
+    @classmethod
+    def execute(cls, coder, pattern, file_pattern=None, regex=False):
         """
         Search for pattern (literal string or regex) in files and return matching files as text.
 

@@ -20,7 +20,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, change_id=None, file_path=None):
+    @classmethod
+    def execute(cls, coder, change_id=None, file_path=None):
         """
         Undo a specific change by ID, or the last change to a file.
 

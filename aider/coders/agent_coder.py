@@ -117,7 +117,7 @@ class AgentCoder(Coder):
 
         # Initialize tool registry
         self.args = kwargs.get("args")
-        self._tool_registry = self._build_tool_registry()
+        self.tool_registry = self._build_tool_registry()
 
         # Track files added during current exploration
         self.files_added_in_exploration = set()
@@ -268,7 +268,7 @@ class AgentCoder(Coder):
         schemas = []
 
         # Get schemas from the tool registry
-        for tool_module in self._tool_registry.values():
+        for tool_module in self.tool_registry.values():
             if hasattr(tool_module, "SCHEMA"):
                 schemas.append(tool_module.SCHEMA)
 
@@ -325,8 +325,8 @@ class AgentCoder(Coder):
                 tasks = []
 
                 # Use the tool registry for execution
-                if norm_tool_name in self._tool_registry:
-                    tool_module = self._tool_registry[norm_tool_name]
+                if norm_tool_name in self.tool_registry:
+                    tool_module = self.tool_registry[norm_tool_name]
                     for params in parsed_args_list:
                         # Use the process_response function from the tool module
                         result = tool_module.process_response(self, params)
@@ -1138,8 +1138,8 @@ class AgentCoder(Coder):
             str: Result message
         """
         # Check if tool exists in registry
-        if norm_tool_name in self._tool_registry:
-            tool_module = self._tool_registry[norm_tool_name]
+        if norm_tool_name in self.tool_registry:
+            tool_module = self.tool_registry[norm_tool_name]
             try:
                 # Use the process_response function from the tool module
                 result = tool_module.process_response(self, params)

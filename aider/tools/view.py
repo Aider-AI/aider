@@ -25,7 +25,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, file_path):
+    @classmethod
+    def execute(cls, coder, file_path):
         """
         Explicitly add a file to context as read-only.
 

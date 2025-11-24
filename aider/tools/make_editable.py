@@ -24,7 +24,8 @@ class Tool(BaseTool):
     }
 
     # Keep the underscore prefix as this function is primarily for internal coder use
-    def execute(self, coder, file_path):
+    @classmethod
+    def execute(cls, coder, file_path):
         """
         Convert a read-only file to an editable file.
 

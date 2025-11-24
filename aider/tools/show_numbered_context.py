@@ -24,7 +24,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, file_path, pattern=None, line_number=None, context_lines=3):
+    @classmethod
+    def execute(cls, coder, file_path, pattern=None, line_number=None, context_lines=3):
         """
         Displays numbered lines from file_path centered around a target location
         (pattern or line_number), without adding the file to context.

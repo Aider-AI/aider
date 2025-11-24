@@ -21,7 +21,8 @@ class Tool(BaseTool):
         },
     }
 
-    def execute(self, coder, file_path=None, limit=10):
+    @classmethod
+    def execute(cls, coder, file_path=None, limit=10):
         """
         List recent changes made to files.
 
