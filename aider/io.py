@@ -417,14 +417,15 @@ class InputOutput:
             self.chat_history_file = None
 
         self.encoding = encoding
-        valid_line_endings = {"platform", "lf", "crlf"}
+        valid_line_endings = {"platform", "lf", "crlf", "preserve"}
         if line_endings not in valid_line_endings:
             raise ValueError(
                 f"Invalid line_endings value: {line_endings}. "
                 f"Must be one of: {', '.join(valid_line_endings)}"
             )
+        self.line_endings = line_endings
         self.newline = (
-            None if line_endings == "platform" else "\n" if line_endings == "lf" else "\r\n"
+            None if line_endings in ("platform", "preserve") else "\n" if line_endings == "lf" else "\r\n"
         )
         self.dry_run = dry_run
 
@@ -643,6 +644,18 @@ class InputOutput:
                 self.tool_error("Use --encoding to set the unicode encoding.")
             return
 
+    def _detect_newline(self, filename):
+        try:
+            with open(filename, "rb") as f:
+                chunk = f.read(1024)
+                if b"\r\n" in chunk:
+                    return "\r\n"
+                elif b"\n" in chunk:
+                    return "\n"
+        except (FileNotFoundError, IsADirectoryError):
+            pass  # File doesn't exist or is a directory, will use default
+        return None
+
     def write_text(self, filename, content, max_retries=5, initial_delay=0.1):
         """
         Writes content to a file, retrying with progressive backoff if the file is locked.
@@ -655,10 +668,14 @@ class InputOutput:
         if self.dry_run:
             return
 
+        newline = self.newline
+        if self.line_endings == "preserve":
+            newline = self._detect_newline(filename) or self.newline
+
         delay = initial_delay
         for attempt in range(max_retries):
             try:
-                with open(str(filename), "w", encoding=self.encoding, newline=self.newline) as f:
+                with open(str(filename), "w", encoding=self.encoding, newline=newline) as f:
                     f.write(content)
                 return  # Successfully wrote the file
             except PermissionError as err:
