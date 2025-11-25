@@ -1389,7 +1389,9 @@ class InputOutput:
         else:
             total_elapsed = now - self.profile_start_time
             last_elapsed = now - self.profile_last_time
-            output_message = f"PROFILE: [+{last_elapsed:6.2f}s] {message_str} (total {total_elapsed:.2f}s)"
+            output_message = (
+                f"PROFILE: [+{last_elapsed:6.2f}s] {message_str} (total {total_elapsed:.2f}s)"
+            )
             self.stream_print(output_message)
 
         self.profile_last_time = now

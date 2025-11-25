@@ -198,9 +198,7 @@ class RepoMap:
         self._mentioned_ident_similarity = 0.8
 
         if self.verbose:
-            self.io.tool_output(
-                f"RepoMap loaded entries from tags cache: {len(self.TAGS_CACHE)}"
-            )
+            self.io.tool_output(f"RepoMap loaded entries from tags cache: {len(self.TAGS_CACHE)}")
             self.io.tool_output(
                 f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}"
             )
@@ -699,7 +697,7 @@ class RepoMap:
                 if tag.specific_kind == "import":
                     file_imports[rel_fname].add(tag.name)
 
-        self.io.profile("process files")
+        self.io.profile("Process Files")
 
         if self.use_enhanced_map and len(file_imports) > 0:
             import_ast_mode = True
@@ -796,7 +794,7 @@ class RepoMap:
                     weight = num_refs * use_mul * 2 ** (-1 * path_distance)
                     G.add_edge(referencer, definer, weight=weight, key=ident, ident=ident)
 
-        self.io.profile("build graph")
+        self.io.profile("Build Graph")
 
         if not references:
             pass
@@ -815,7 +813,7 @@ class RepoMap:
             except ZeroDivisionError:
                 return []
 
-        self.io.profile("pagerank")
+        self.io.profile("PageRank")
 
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
@@ -831,7 +829,7 @@ class RepoMap:
                 ident = data["ident"]
                 ranked_definitions[(dst, ident)] += data["rank"]
 
-        self.io.profile("distribute rank")
+        self.io.profile("Distribute Rank")
 
         ranked_tags = []
         ranked_definitions = sorted(
@@ -916,11 +914,9 @@ class RepoMap:
 
             # Check if the result is in the cache
             if use_cache and cache_key in self.map_cache:
-                self.io.tool_output("DEBUG: get_ranked_tags_map cache hit")
                 return self.map_cache[cache_key]
 
         # If not in cache or force_refresh is True, generate the map
-        self.io.tool_output("DEBUG: get_ranked_tags_map cache miss, generating map")
         start_time = time.time()
         result = self.get_ranked_tags_map_uncached(
             chat_fnames, other_fnames, max_map_tokens, mentioned_fnames, mentioned_idents
@@ -942,7 +938,7 @@ class RepoMap:
         mentioned_fnames=None,
         mentioned_idents=None,
     ):
-        self.io.profile("get_ranked_tags_map_uncached", start=True)
+        self.io.profile("Start Rank Tags Map Uncached", start=True)
         if not other_fnames:
             other_fnames = list()
         if not max_map_tokens:
@@ -957,7 +953,7 @@ class RepoMap:
         ranked_tags = self.get_ranked_tags(
             chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, True
         )
-        self.io.profile("get_ranked_tags")
+        self.io.profile("Finish Getting Ranked Tags")
 
         other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
         special_fnames = filter_important_files(other_rel_fnames)
@@ -1007,7 +1003,7 @@ class RepoMap:
 
             middle = int((lower_bound + upper_bound) // 2)
 
-        self.io.profile("binary search and to_tree")
+        self.io.profile("Calculate Best Tree")
         return best_tree
 
     tree_cache = dict()
