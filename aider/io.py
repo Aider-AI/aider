@@ -425,7 +425,9 @@ class InputOutput:
             )
         self.line_endings = line_endings
         self.newline = (
-            None if line_endings in ("platform", "preserve") else "\n" if line_endings == "lf" else "\r\n"
+            None
+            if line_endings in ("platform", "preserve")
+            else "\n" if line_endings == "lf" else "\r\n"
         )
         self.dry_run = dry_run
 
@@ -744,10 +746,10 @@ class InputOutput:
         show = ""
         if rel_fnames:
             rel_read_only_fnames = [
-                get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
+                get_rel_fname(fname, root) for fname in abs_read_only_fnames or []
             ]
             rel_read_only_stubs_fnames = [
-                get_rel_fname(fname, root) for fname in (abs_read_only_stubs_fnames or [])
+                get_rel_fname(fname, root) for fname in abs_read_only_stubs_fnames or []
             ]
             show = self.format_files_for_input(
                 rel_fnames, rel_read_only_fnames, rel_read_only_stubs_fnames
