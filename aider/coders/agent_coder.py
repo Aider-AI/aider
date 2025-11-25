@@ -52,6 +52,7 @@ from aider.tools import (
     replace_lines,
     replace_text,
     show_numbered_context,
+    thinking,
     undo_change,
     update_todo_list,
     view,
@@ -182,6 +183,7 @@ class AgentCoder(Coder):
             replace_lines,
             replace_text,
             show_numbered_context,
+            thinking,
             undo_change,
             update_todo_list,
             view,
@@ -1165,6 +1167,73 @@ class AgentCoder(Coder):
 
         return f"Error: Unknown tool name '{norm_tool_name}'"
 
+    def _convert_concatenated_json_to_tool_calls(self, content):
+        """
+        Check if content contains concatenated JSON objects and convert them to tool call format.
+
+        Args:
+            content (str): Content to check for concatenated JSON
+
+        Returns:
+            str: Content with concatenated JSON converted to tool call format, or original content if no JSON found
+        """
+        try:
+            # Use split_concatenated_json to detect and split concatenated JSON objects
+            json_chunks = utils.split_concatenated_json(content)
+
+            # If we found multiple JSON objects, convert them to tool call format
+            if len(json_chunks) >= 1:
+                tool_calls = []
+                for chunk in json_chunks:
+                    try:
+                        json_obj = json.loads(chunk)
+                        # Check if this looks like a tool call JSON object
+                        if (
+                            isinstance(json_obj, dict)
+                            and "name" in json_obj
+                            and "arguments" in json_obj
+                        ):
+                            tool_name = json_obj["name"]
+                            arguments = json_obj["arguments"]
+
+                            # Convert arguments dictionary to keyword arguments string
+                            kw_args = []
+                            for key, value in arguments.items():
+                                if isinstance(value, str):
+                                    # Escape quotes and wrap in quotes
+                                    escaped_value = value.replace('"', '\\"')
+                                    kw_args.append(f'{key}="{escaped_value}"')
+                                elif isinstance(value, bool):
+                                    kw_args.append(f"{key}={str(value).lower()}")
+                                elif value is None:
+                                    kw_args.append(f"{key}=None")
+                                else:
+                                    # For numbers and other types, use repr for safe representation
+                                    kw_args.append(f"{key}={repr(value)}")
+
+                            # Join keyword arguments
+                            kw_args_str = ", ".join(kw_args)
+
+                            # Convert to [tool_call(ToolName, key1="value1", key2="value2")] format
+                            tool_call = f"[tool_call({tool_name}, {kw_args_str})]"
+                            tool_calls.append(tool_call)
+                        else:
+                            # Not a tool call JSON, keep as is
+                            tool_calls.append(chunk)
+                    except json.JSONDecodeError:
+                        # Invalid JSON, keep as is
+                        tool_calls.append(chunk)
+
+                # If we found any tool calls, replace the content
+                if any(call.startswith("[tool_") for call in tool_calls):
+                    return "".join(tool_calls)
+
+        except Exception as e:
+            # If anything goes wrong, return original content
+            self.io.tool_warning(f"Error converting concatenated JSON to tool calls: {str(e)}")
+
+        return content
+
     async def _process_tool_commands(self, content):
         """
         Process tool commands in the `[tool_call(name, param=value)]` format within the content.
@@ -1184,20 +1253,31 @@ class AgentCoder(Coder):
         max_calls = self.max_tool_calls
         tool_names = []
 
+        # Check if content contains concatenated JSON and convert to tool call format
+        content = self._convert_concatenated_json_to_tool_calls(content)
+
         # Check if there's a '---' separator and only process tool calls after the LAST one
         separator_marker = "---"
         content_parts = content.split(separator_marker)
 
         # If there's no separator, treat the entire content as before the separator
+        # But only return immediately if no tool calls were found in the JSON conversion
         if len(content_parts) == 1:
-            # Return the original content with no tool calls processed, and the content itself as before_separator
-            return content, result_messages, False, content, tool_names
+            # Check if we have any tool calls in the content after JSON conversion
+            # If we have tool calls, we should process them even without a separator
+            tool_call_pattern = r"\[tool_call\([^\]]+\)\]"
+            if re.search(tool_call_pattern, content):
+                # We have tool calls, so continue processing
+                content_before_separator = ""
+                content_after_separator = content
+            else:
+                # No tool calls found, return the original content
+                return content, result_messages, False, content, tool_names
 
         # Take everything before the last separator (including intermediate separators)
         content_before_separator = separator_marker.join(content_parts[:-1])
         # Take only what comes after the last separator
         content_after_separator = content_parts[-1]
-
         # Find tool calls using a more robust method, but only in the content after separator
         processed_content = content_before_separator + separator_marker
         last_index = 0
