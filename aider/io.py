@@ -343,6 +343,8 @@ class InputOutput:
         self.bell_on_next_input = False
         self.notifications = notifications
         self.verbose = verbose
+        self.profile_start_time = None
+        self.profile_last_time = None
 
         # Variables used to interface with base_coder
         self.coder = None
@@ -1372,6 +1374,25 @@ class InputOutput:
         style = RichStyle(**style)
 
         self.stream_print(*messages, style=style)
+
+    def profile(self, *messages, start=False):
+        if not self.verbose:
+            return
+
+        now = time.time()
+        message_str = " ".join(map(str, messages))
+
+        # Treat uninitialized as an implicit start.
+        if start or self.profile_start_time is None:
+            self.profile_start_time = now
+            self.stream_print(f"PROFILE: {message_str}")
+        else:
+            total_elapsed = now - self.profile_start_time
+            last_elapsed = now - self.profile_last_time
+            output_message = f"PROFILE: [+{last_elapsed:6.2f}s] {message_str} (total {total_elapsed:.2f}s)"
+            self.stream_print(output_message)
+
+        self.profile_last_time = now
 
     def assistant_output(self, message, pretty=None):
         if not message:
