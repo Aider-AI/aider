@@ -22,8 +22,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
-from aider.utils import is_image_file
-
+from aider.utils import is_image_file, run_fzf
 from .dump import dump  # noqa: F401
 
 
@@ -799,6 +798,18 @@ class Commands:
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
 
+        if not args.strip():
+            all_files = self.coder.get_all_relative_files()
+            files_in_chat = self.coder.get_inchat_relative_files()
+            addable_files = sorted(set(all_files) - set(files_in_chat))
+            if not addable_files:
+                self.io.tool_output("No files available to add.")
+                return
+            selected_files = run_fzf(addable_files, multi=True)
+            if not selected_files:
+                return
+            args = " ".join([self.quote_fname(f) for f in selected_files])
+
         all_matched_files = set()
 
         filenames = parse_quoted_filenames(args)
@@ -1308,15 +1319,37 @@ class Commands:
             self.io.tool_error(f"Error processing clipboard content: {e}")
 
     def cmd_read_only(self, args):
-        "Add files to the chat that are for reference only, or turn added files to read-only"
+        """Add files to the chat that are for reference only, or turn added files to read-only.
+        With no args, opens a fuzzy finder to select files from the repo.
+        If no files are selected, converts all editable files in chat to read-only.
+        """
         if not args.strip():
-            # Convert all files in chat to read-only
-            for fname in list(self.coder.abs_fnames):
-                self.coder.abs_fnames.remove(fname)
-                self.coder.abs_read_only_fnames.add(fname)
-                rel_fname = self.coder.get_rel_fname(fname)
-                self.io.tool_output(f"Converted {rel_fname} to read-only")
-            return
+            if self.coder.repo:
+                all_files = self.coder.repo.get_tracked_files()
+            else:
+                all_files = self.coder.get_all_relative_files()
+
+            if not all_files and not self.coder.abs_fnames:
+                self.io.tool_output("No files in the repo or chat to make read-only.")
+                return
+
+            selected_files = []
+            if all_files:
+                selected_files = run_fzf(all_files, multi=True)
+
+            if not selected_files:
+                # Fallback behavior: convert all editable files to read-only
+                if self.coder.abs_fnames:
+                    for fname in list(self.coder.abs_fnames):
+                        self.coder.abs_fnames.remove(fname)
+                        self.coder.abs_read_only_fnames.add(fname)
+                        rel_fname = self.coder.get_rel_fname(fname)
+                        self.io.tool_output(f"Converted {rel_fname} to read-only")
+                else:
+                    self.io.tool_output("No files selected.")
+                return
+
+            args = " ".join([self.quote_fname(f) for f in selected_files])
 
         filenames = parse_quoted_filenames(args)
         all_paths = []
@@ -1558,6 +1591,13 @@ class Commands:
     def cmd_edit(self, args=""):
         "Alias for /editor: Open an editor to write a prompt"
         return self.cmd_editor(args)
+
+    def cmd_history_search(self, args):
+        "Fuzzy search in history and paste it in the prompt"
+        history_lines = self.io.get_input_history()
+        selected_lines = run_fzf(history_lines)
+        if selected_lines:
+            self.io.set_placeholder("".join(selected_lines))
 
     def cmd_think_tokens(self, args):
         """Set the thinking token budget, eg: 8096, 8k, 10.5k, 0.5M, or 0 to disable."""
