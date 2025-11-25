@@ -98,7 +98,7 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.1.7
+hf-xet==1.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -110,7 +110,7 @@ httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-huggingface-hub[inference]==0.34.4
+huggingface-hub[inference]==0.36.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -146,7 +146,7 @@ llama-index-instrumentation==0.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-workflows
-llama-index-workflows==2.11.4
+llama-index-workflows==2.11.5
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -175,7 +175,7 @@ nest-asyncio==1.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-networkx==3.4.2
+networkx==3.6
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -184,7 +184,7 @@ nltk==3.9.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-numpy==1.26.4
+numpy==2.3.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -317,7 +317,7 @@ scikit-learn==1.7.2
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
-scipy==1.15.3
+scipy==1.16.3
     # via
     #   -c requirements/common-constraints.txt
     #   scikit-learn
@@ -371,7 +371,7 @@ tqdm==4.67.1
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==4.57.1
+transformers==4.57.2
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers

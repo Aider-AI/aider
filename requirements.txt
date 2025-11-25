@@ -57,6 +57,7 @@ certifi==2025.11.12
 cffi==2.0.0
     # via
     #   -c requirements/common-constraints.txt
+    #   cryptography
     #   sounddevice
     #   soundfile
 charset-normalizer==3.4.4
@@ -72,6 +73,10 @@ configargparse==1.7.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+cryptography==46.0.3
+    # via
+    #   -c requirements/common-constraints.txt
+    #   pyjwt
 diff-match-patch==20241021
     # via
     #   -c requirements/common-constraints.txt
@@ -167,7 +172,7 @@ h11==0.16.0
     #   -c requirements/common-constraints.txt
     #   httpcore
     #   uvicorn
-hf-xet==1.1.7
+hf-xet==1.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -187,11 +192,11 @@ httpx==0.28.1
     #   mcp
     #   mixpanel
     #   openai
-httpx-sse==0.4.0
+httpx-sse==0.4.3
     # via
     #   -c requirements/common-constraints.txt
     #   mcp
-huggingface-hub==0.34.4
+huggingface-hub==0.36.0
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -202,7 +207,7 @@ idna==3.11
     #   httpx
     #   requests
     #   yarl
-importlib-metadata==7.2.1
+importlib-metadata==8.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -229,11 +234,11 @@ jsonschema==4.25.1
     #   -r requirements/requirements.in
     #   litellm
     #   mcp
-jsonschema-specifications==2025.4.1
+jsonschema-specifications==2025.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.80.0
+litellm==1.80.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -249,7 +254,7 @@ mccabe==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
-mcp==1.12.3
+mcp==1.22.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -270,16 +275,16 @@ multidict==6.7.0
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-networkx==3.4.2
+networkx==3.6
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-numpy==1.26.4
+numpy==2.3.5
     # via
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==1.99.9
+openai==2.8.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -370,7 +375,7 @@ pydantic-core==2.41.5
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
-pydantic-settings==2.9.1
+pydantic-settings==2.12.0
     # via
     #   -c requirements/common-constraints.txt
     #   mcp
@@ -386,6 +391,10 @@ pygments==2.19.2
     # via
     #   -c requirements/common-constraints.txt
     #   rich
+pyjwt[crypto]==2.10.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   mcp
 pypandoc==1.16.2
     # via
     #   -c requirements/common-constraints.txt
@@ -402,7 +411,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c requirements/common-constraints.txt
     #   posthog
-python-dotenv==1.1.1
+python-dotenv==1.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -446,7 +455,7 @@ rsa==4.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-auth
-scipy==1.15.3
+scipy==1.16.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -484,15 +493,14 @@ soupsieve==2.8
     # via
     #   -c requirements/common-constraints.txt
     #   beautifulsoup4
-sse-starlette==2.3.3
+sse-starlette==3.0.3
     # via
     #   -c requirements/common-constraints.txt
     #   mcp
-starlette==0.46.2
+starlette==0.50.0
     # via
     #   -c requirements/common-constraints.txt
     #   mcp
-    #   sse-starlette
 tiktoken==0.12.0
     # via
     #   -c requirements/common-constraints.txt
@@ -519,7 +527,7 @@ tree-sitter-embedded-template==0.25.0
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
-tree-sitter-language-pack==0.9.0
+tree-sitter-language-pack==0.11.0
     # via
     #   -c requirements/common-constraints.txt
     #   grep-ast
@@ -536,15 +544,18 @@ typing-extensions==4.15.0
     #   google-generativeai
     #   grpcio
     #   huggingface-hub
+    #   mcp
     #   openai
     #   posthog
     #   pydantic
     #   pydantic-core
     #   referencing
+    #   starlette
     #   typing-inspection
 typing-inspection==0.4.2
     # via
     #   -c requirements/common-constraints.txt
+    #   mcp
     #   pydantic
     #   pydantic-settings
 uritemplate==4.2.0
@@ -555,11 +566,11 @@ urllib3==2.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-uvicorn==0.34.2
+uvicorn==0.38.0
     # via
     #   -c requirements/common-constraints.txt
     #   mcp
-watchfiles==1.1.0
+watchfiles==1.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in

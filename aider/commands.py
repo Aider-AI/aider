@@ -998,6 +998,22 @@ class Commands:
                         if hasattr(self.coder, "_calculate_context_block_tokens"):
                             self.coder._calculate_context_block_tokens()
 
+        if self.coder.repo_map:
+            map_tokens = self.coder.repo_map.max_map_tokens
+            map_mul_no_files = self.coder.repo_map.map_mul_no_files
+        else:
+            map_tokens = 0
+            map_mul_no_files = 1
+
+        raise SwitchCoder(
+            edit_format=self.coder.edit_format,
+            summarize_from_coder=False,
+            from_coder=self.coder,
+            map_tokens=map_tokens,
+            map_mul_no_files=map_mul_no_files,
+            show_announcements=False,
+        )
+
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
         read_only_files = [
