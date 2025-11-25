@@ -939,6 +939,7 @@ class RepoMap:
         mentioned_idents=None,
     ):
         self.io.profile("Start Rank Tags Map Uncached", start=True)
+
         if not other_fnames:
             other_fnames = list()
         if not max_map_tokens:
@@ -953,6 +954,7 @@ class RepoMap:
         ranked_tags = self.get_ranked_tags(
             chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, True
         )
+
         self.io.profile("Finish Getting Ranked Tags")
 
         other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
@@ -1004,6 +1006,7 @@ class RepoMap:
             middle = int((lower_bound + upper_bound) // 2)
 
         self.io.profile("Calculate Best Tree")
+
         return best_tree
 
     tree_cache = dict()
