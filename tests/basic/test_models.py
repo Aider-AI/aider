@@ -472,16 +472,60 @@ class TestModels(unittest.TestCase):
         model = Model("gpt-4")
         messages = [{"role": "user", "content": "Hello"}]
 
-        await model.send_completion(messages, functions=["test"], stream=False)
+        await model.send_completion(messages, functions=[{"name": "test"}], stream=False)
 
         mock_completion.assert_called_with(
             model=model.name,
             messages=messages,
             stream=False,
-            tools=[dict(type="function", function="test")],
+            tools=[dict(type="function", function={"name": "test"})],
+            tool_choice={"type": "function", "function": {"name": "test"}},
             temperature=0,
             timeout=600,
         )
+
+    @patch("aider.models.litellm.acompletion")
+    async def test_send_completion_deduplicates_tools(self, mock_completion):
+        # Test that send_completion correctly deduplicates tools and functions
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+
+        # Define tools and functions with duplicates
+        fetch_tool = {
+            "type": "function",
+            "function": {"name": "fetch", "description": "fetch url"},
+        }
+        other_tool = {
+            "type": "function",
+            "function": {"name": "other", "description": "other tool"},
+        }
+
+        tools = [fetch_tool, other_tool, fetch_tool]  # Duplicate 'fetch'
+        functions = [
+            {"name": "fetch", "description": "fetch url"},  # Duplicate 'fetch'
+            {"name": "another", "description": "another tool"},
+        ]
+
+        await model.send_completion(messages, functions=functions, stream=False, tools=tools)
+
+        # Verify that acompletion was called
+        mock_completion.assert_called_once()
+
+        # Get the keyword arguments passed to acompletion
+        _, kwargs = mock_completion.call_args
+
+        # Check that 'tools' is in the arguments
+        self.assertIn("tools", kwargs)
+
+        # Check that the tools are deduplicated
+        final_tools = kwargs["tools"]
+        self.assertEqual(len(final_tools), 3)
+
+        tool_names = {tool.get("function", {}).get("name") for tool in final_tools}
+        self.assertEqual(len(tool_names), 3)
+        self.assertIn("fetch", tool_names)
+        self.assertIn("other", tool_names)
+        self.assertIn("another", tool_names)
 
     @patch("aider.models.litellm.acompletion")
     async def test_ollama_uses_existing_num_ctx(self, mock_completion):
