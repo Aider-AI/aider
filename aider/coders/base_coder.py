@@ -2989,10 +2989,12 @@ class Coder:
 
                             if tool_call_chunk.id:
                                 self.partial_response_tool_calls[index]["id"] = tool_call_chunk.id
+
                             if tool_call_chunk.type:
                                 self.partial_response_tool_calls[index][
                                     "type"
                                 ] = tool_call_chunk.type
+                                self.io.update_spinner_suffix(tool_call_chunk.type)
 
                             if (
                                 hasattr(tool_call_chunk, "provider_specific_fields")
@@ -3022,6 +3024,7 @@ class Coder:
                             if tool_call_chunk.function:
                                 if "function" not in self.partial_response_tool_calls[index]:
                                     self.partial_response_tool_calls[index]["function"] = {}
+
                                 if tool_call_chunk.function.name:
                                     if (
                                         "name"
@@ -3033,6 +3036,8 @@ class Coder:
                                     self.partial_response_tool_calls[index]["function"][
                                         "name"
                                     ] += tool_call_chunk.function.name
+                                    self.io.update_spinner_suffix(tool_call_chunk.function.name)
+
                                 if tool_call_chunk.function.arguments:
                                     if (
                                         "arguments"
@@ -3044,6 +3049,10 @@ class Coder:
                                     self.partial_response_tool_calls[index]["function"][
                                         "arguments"
                                     ] += tool_call_chunk.function.arguments
+                                    self.io.update_spinner_suffix(
+                                        tool_call_chunk.function.arguments
+                                    )
+
                 except (AttributeError, IndexError):
                     # Handle cases where the response structure doesn't match expectations
                     pass
@@ -3058,6 +3067,8 @@ class Coder:
                             self.partial_response_function_call[k] += v
                         else:
                             self.partial_response_function_call[k] = v
+
+                        self.io.update_spinner_suffix(v)
 
                     received_content = True
                 except AttributeError:
@@ -3079,6 +3090,7 @@ class Coder:
                     text += reasoning_content
                     self.got_reasoning_content = True
                     received_content = True
+                    self.io.update_spinner_suffix(reasoning_content)
 
                 try:
                     content = chunk.choices[0].delta.content
@@ -3089,6 +3101,7 @@ class Coder:
 
                         text += content
                         received_content = True
+                        self.io.update_spinner_suffix(content)
                 except AttributeError:
                     pass
 
