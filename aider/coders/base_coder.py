@@ -3684,7 +3684,7 @@ class Coder:
         if not hasattr(self, "_autosave_future"):
             self._autosave_future = None
 
-        if self._autosave_future and self._autosave_future.done():
+        if self._autosave_future and not self._autosave_future.done():
             return
 
         # Throttle autosave to run at most once every 15 seconds
