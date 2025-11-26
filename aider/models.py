@@ -981,8 +981,8 @@ class Model(ModelSettings):
         kwargs["cache_control_injection_points"] = [
             {
                 "location": "message",
-                "index": -1,
-            }
+                "role": "system",
+            },
         ]
 
         # Are we using github copilot?
