@@ -12,12 +12,12 @@ from aider.dump import dump  # noqa: F401
 VERSION_CHECK_FNAME = Path.home() / ".aider" / "caches" / "versioncheck"
 
 
-def install_from_main_branch(io):
+async def install_from_main_branch(io):
     """
     Install the latest version of aider from the main branch of the GitHub repository.
     """
 
-    return utils.check_pip_install_extra(
+    return await utils.check_pip_install_extra(
         io,
         None,
         "Install the development version of aider from the main branch?",
@@ -26,13 +26,13 @@ def install_from_main_branch(io):
     )
 
 
-def install_upgrade(io, latest_version=None):
+async def install_upgrade(io, latest_version=None):
     """
     Install the latest version of aider from PyPI.
     """
 
     if latest_version:
-        new_ver_text = f"Newer aider version v{latest_version} is available."
+        new_ver_text = f"Newer aider-ce version v{latest_version} is available."
     else:
         new_ver_text = "Install latest version of aider?"
 
@@ -46,11 +46,11 @@ def install_upgrade(io, latest_version=None):
         io.tool_warning(text)
         return True
 
-    success = utils.check_pip_install_extra(
+    success = await utils.check_pip_install_extra(
         io,
         None,
         new_ver_text,
-        ["aider-chat"],
+        ["aider-ce"],
         self_update=True,
     )
 
@@ -61,7 +61,7 @@ def install_upgrade(io, latest_version=None):
     return
 
 
-def check_version(io, just_check=False, verbose=False):
+async def check_version(io, just_check=False, verbose=False):
     if not just_check and VERSION_CHECK_FNAME.exists():
         day = 60 * 60 * 24
         since = time.time() - os.path.getmtime(VERSION_CHECK_FNAME)
@@ -75,7 +75,7 @@ def check_version(io, just_check=False, verbose=False):
     import requests
 
     try:
-        response = requests.get("https://pypi.org/pypi/aider-chat/json")
+        response = requests.get("https://pypi.org/pypi/aider-ce/json")
         data = response.json()
         latest_version = data["info"]["version"]
         current_version = aider.__version__
@@ -109,5 +109,5 @@ def check_version(io, just_check=False, verbose=False):
     if not is_update_available:
         return False
 
-    install_upgrade(io, latest_version)
+    await install_upgrade(io, latest_version)
     return True

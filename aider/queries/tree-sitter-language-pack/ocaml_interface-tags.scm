@@ -96,3 +96,6 @@
   ) @definition.function
   (#strip! @doc "^\\(\\*+\\s*|\\s*\\*+\\)$")
 )
+
+(open_module
+  (module_path) @name.reference.import) @reference.import

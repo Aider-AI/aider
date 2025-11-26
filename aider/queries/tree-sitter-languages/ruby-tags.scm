@@ -62,3 +62,8 @@
   (#is-not? local)
   (#not-match? @name.reference.call "^(lambda|load|require|require_relative|__FILE__|__LINE__)$")
 )
+
+(call
+  method: (identifier) @import_method
+  arguments: (argument_list (string (string_content) @name.reference.import))
+  (#match? @import_method "^(require|require_relative|load)$")) @reference.import

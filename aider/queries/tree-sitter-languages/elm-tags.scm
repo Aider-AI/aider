@@ -17,3 +17,6 @@
 (module_declaration
     (upper_case_qid (upper_case_identifier)) @name.definition.module
 ) @definition.module
+
+(import_clause
+  (upper_case_qid) @name.reference.import) @reference.import

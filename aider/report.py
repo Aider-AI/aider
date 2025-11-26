@@ -10,6 +10,9 @@ from aider import __version__
 from aider.urls import github_issues
 from aider.versioncheck import VERSION_CHECK_FNAME
 
+# Global variable to store resolved args data for error reporting
+resolved_args_data = None
+
 FENCE = "`" * 3
 
 
@@ -34,6 +37,54 @@ def get_git_info():
         return "Git information unavailable"
 
 
+def format_args_for_reporting(args):
+    """
+    Format args data for error reporting, removing sensitive keys and collapsing MCP servers.
+    """
+    if not args:
+        return "No args data available"
+
+    # Create a copy of the args namespace as a dictionary
+    args_dict = vars(args).copy()
+
+    # Remove any keys containing "key" (case insensitive)
+    keys_to_remove = [key for key in args_dict.keys() if "key" in key.lower()]
+    for key in keys_to_remove:
+        args_dict.pop(key, None)
+
+    # Handle mcp_servers - collapse into just a list of server names
+    if "mcp_servers" in args_dict:
+        mcp_servers = args_dict["mcp_servers"]
+        if isinstance(mcp_servers, str):
+            try:
+                import json
+
+                config = json.loads(mcp_servers)
+                if "mcpServers" in config:
+                    server_names = list(config["mcpServers"].keys())
+                    args_dict["mcp_servers"] = server_names
+            except (json.JSONDecodeError, AttributeError):
+                # If parsing fails, keep the original value
+                pass
+
+    # Format the output line by line
+    lines = ["Configuration:"]
+    for key, value in sorted(args_dict.items()):
+        lines.append(f"{key}: {value}")
+
+    return "\n".join(lines)
+
+
+def get_args_error_data():
+    global resolved_args_data
+    return resolved_args_data
+
+
+def set_args_error_data(args):
+    global resolved_args_data
+    resolved_args_data = args
+
+
 def report_github_issue(issue_text, title=None, confirm=True):
     """
     Compose a URL to open a new GitHub issue with the given text prefilled,
@@ -50,9 +101,18 @@ def report_github_issue(issue_text, title=None, confirm=True):
     python_info = get_python_info() + "\n"
     os_info = get_os_info() + "\n"
     git_info = get_git_info() + "\n"
+    args_info = format_args_for_reporting(get_args_error_data()) + "\n"
 
     system_info = (
-        version_info + python_version + platform_info + python_info + os_info + git_info + "\n"
+        version_info
+        + python_version
+        + platform_info
+        + python_info
+        + os_info
+        + git_info
+        + "\n"
+        + args_info
+        + "\n"
     )
 
     issue_text = system_info + issue_text

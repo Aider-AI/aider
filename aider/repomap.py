@@ -1,5 +1,6 @@
 import math
 import os
+import re
 import shutil
 import sqlite3
 import sys
@@ -17,8 +18,13 @@ from pygments.token import Token
 from tqdm import tqdm
 
 from aider.dump import dump
+from aider.helpers.similarity import (
+    cosine_similarity,
+    create_bigram_vector,
+    normalize_vector,
+)
 from aider.special import filter_important_files
-from aider.tools.tool_utils import ToolError
+from aider.tools.utils.helpers import ToolError
 
 # tree_sitter is throwing a FutureWarning
 warnings.simplefilter("ignore", category=FutureWarning)
@@ -70,9 +76,9 @@ Tag = TagBase
 SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
 
 
-CACHE_VERSION = 5
+CACHE_VERSION = 6
 if USING_TSL_PACK:
-    CACHE_VERSION = 7
+    CACHE_VERSION = 8
 
 UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
@@ -87,7 +93,7 @@ class RepoMap:
     _initial_ident_to_files = None
 
     # Define kinds that typically represent definitions across languages
-    # Used by NavigatorCoder to filter tags for the symbol outline
+    # Used by AgentCoder to filter tags for the symbol outline
     definition_kinds = {
         "class",
         "struct",
@@ -151,10 +157,12 @@ class RepoMap:
         max_code_line_length=100,
         repo_root=None,
         use_memory_cache=False,
+        use_enhanced_map=False,
     ):
         self.io = io
         self.verbose = verbose
         self.refresh = refresh
+        self.use_enhanced_map = use_enhanced_map
 
         self.map_cache_dir = map_cache_dir
         # Prefer an explicit repo root (eg per-test repo), fallback to CWD
@@ -183,7 +191,14 @@ class RepoMap:
         self.map_processing_time = 0
         self.last_map = None
 
+        # Initialize cache for mentioned identifiers similarity
+        self._last_mentioned_idents = None
+        self._last_mentioned_idents_vector = None
+        self._has_last_mentioned_idents = False
+        self._mentioned_ident_similarity = 0.8
+
         if self.verbose:
+            self.io.tool_output(f"RepoMap loaded entries from tags cache: {len(self.TAGS_CACHE)}")
             self.io.tool_output(
                 f"RepoMap initialized with map_mul_no_files: {self.map_mul_no_files}"
             )
@@ -454,6 +469,33 @@ class RepoMap:
         distance = len(p1) + len(p2) - (2 * common_count)
         return distance
 
+    def check_import_match(self, definer, imports):
+        definer_path = Path(definer)
+        definer_parts = list(definer_path.parts)
+        if not definer_parts:
+            return False
+
+        # Remove extension from last part
+        definer_parts[-1] = os.path.splitext(definer_parts[-1])[0]
+
+        for imp in imports:
+            imp_parts = [p for p in re.split(r"[.\\/]", imp) if p]
+            if len(imp_parts) > len(definer_parts):
+                continue
+
+            # Check for sub-sequence match
+            # Check for sub-sequence match
+            for i in range(len(definer_parts) - len(imp_parts) + 1):
+                if definer_parts[i : i + len(imp_parts)] == imp_parts:
+                    # Allow if it's a suffix match (standard aliasing)
+                    if i + len(imp_parts) == len(definer_parts):
+                        return True
+
+                    # Allow partial/middle match if enough specificity (>= 2 parts)
+                    if len(imp_parts) >= 2:
+                        return True
+        return False
+
     def get_tags_raw(self, fname, rel_fname):
         lang = filename_to_lang(fname)
         if not lang:
@@ -463,7 +505,8 @@ class RepoMap:
             language = get_language(lang)
             parser = get_parser(lang)
         except Exception as err:
-            print(f"Skipping file {fname}: {err}")
+            if self.verbose:
+                print(f"Skipping file {fname}: {err}")
             return
 
         query_scm = get_scm_fname(lang)
@@ -561,6 +604,8 @@ class RepoMap:
         defines = defaultdict(set)
         references = defaultdict(list)
         definitions = defaultdict(set)
+        file_imports = defaultdict(set)
+        import_ast_mode = False
 
         personalization = dict()
 
@@ -649,10 +694,13 @@ class RepoMap:
                 elif tag.kind == "ref":
                     references[tag.name].append(rel_fname)
 
-        ##
-        # dump(defines)
-        # dump(references)
-        # dump(personalization)
+                if tag.specific_kind == "import":
+                    file_imports[rel_fname].add(tag.name)
+
+        self.io.profile("Process Files")
+
+        if self.use_enhanced_map and len(file_imports) > 0:
+            import_ast_mode = True
 
         if not references:
             references = dict((k, list(v)) for k, v in defines.items())
@@ -697,7 +745,7 @@ class RepoMap:
             # Ideally, this will help downweight boiler plate in frameworks, interfaces, and abstract classes
             if len(defines[ident]) > 4:
                 exp = min(len(defines[ident]), 32)
-                mul *= math.log((4 / (2**exp)) + 1)
+                mul *= math.log2((4 / (2**exp)) + 1)
 
             # Calculate multiplier: log(number of unique file references * total references ^ 2)
             # Used to balance the number of times an identifier appears with its number of refs per file
@@ -709,10 +757,22 @@ class RepoMap:
             # With absolute number of references throughout a codebase
             unique_file_refs = len(set(references[ident]))
             total_refs = len(references[ident])
-            ext_mul = round(math.log(unique_file_refs * total_refs**2 + 1))
+            ext_mul = round(math.log2(unique_file_refs * total_refs**2 + 1))
 
             for referencer, num_refs in Counter(references[ident]).items():
-                for definer in definers:
+                relevant_definers = [] if import_ast_mode else definers
+
+                if import_ast_mode:
+                    if referencer in file_imports:
+                        matches = [
+                            d
+                            for d in definers
+                            if self.check_import_match(d, file_imports[referencer])
+                        ]
+                        if matches:
+                            relevant_definers = matches
+
+                for definer in relevant_definers:
                     # dump(referencer, definer, num_refs, mul)
 
                     # Only add edge if file extensions match
@@ -732,7 +792,9 @@ class RepoMap:
                     # num_refs = math.sqrt(num_refs)
                     path_distance = self.shared_path_components(referencer, definer)
                     weight = num_refs * use_mul * 2 ** (-1 * path_distance)
-                    G.add_edge(referencer, definer, weight=weight, ident=ident)
+                    G.add_edge(referencer, definer, weight=weight, key=ident, ident=ident)
+
+        self.io.profile("Build Graph")
 
         if not references:
             pass
@@ -751,6 +813,8 @@ class RepoMap:
             except ZeroDivisionError:
                 return []
 
+        self.io.profile("PageRank")
+
         # distribute the rank from each source node, across all of its out edges
         ranked_definitions = defaultdict(float)
         for src in G.nodes:
@@ -765,12 +829,13 @@ class RepoMap:
                 ident = data["ident"]
                 ranked_definitions[(dst, ident)] += data["rank"]
 
+        self.io.profile("Distribute Rank")
+
         ranked_tags = []
         ranked_definitions = sorted(
             ranked_definitions.items(), reverse=True, key=lambda x: (x[1], x[0])
         )
 
-        # dump(ranked_definitions)
         # with open('defs.txt', 'w') as out_file:
         #     import pprint
         #     printer = pprint.PrettyPrinter(indent=2, stream=out_file)
@@ -807,19 +872,33 @@ class RepoMap:
         mentioned_idents=None,
         force_refresh=False,
     ):
+        if not other_fnames:
+            other_fnames = list()
+        if not max_map_tokens:
+            max_map_tokens = self.max_map_tokens
+        if not mentioned_fnames:
+            mentioned_fnames = set()
+        if not mentioned_idents:
+            mentioned_idents = set()
+
         # Create a cache key
         cache_key = [
             tuple(sorted(chat_fnames)) if chat_fnames else None,
-            tuple(sorted(other_fnames)) if other_fnames else None,
+            len(other_fnames) if other_fnames else None,
             max_map_tokens,
         ]
 
         if self.refresh == "auto":
+            # Handle mentioned_fnames normally
             cache_key += [
                 tuple(sorted(mentioned_fnames)) if mentioned_fnames else None,
-                tuple(sorted(mentioned_idents)) if mentioned_idents else None,
             ]
-        cache_key = tuple(cache_key)
+
+            # Handle mentioned_idents with similarity check
+            cache_key_component = self._get_mentioned_idents_cache_component(mentioned_idents)
+            cache_key.append(cache_key_component)
+
+        cache_key = hash(str(tuple(cache_key)))
 
         use_cache = False
         if not force_refresh:
@@ -859,6 +938,8 @@ class RepoMap:
         mentioned_fnames=None,
         mentioned_idents=None,
     ):
+        self.io.profile("Start Rank Tags Map Uncached", start=True)
+
         if not other_fnames:
             other_fnames = list()
         if not max_map_tokens:
@@ -873,6 +954,8 @@ class RepoMap:
         ranked_tags = self.get_ranked_tags(
             chat_fnames, other_fnames, mentioned_fnames, mentioned_idents, True
         )
+
+        self.io.profile("Finish Getting Ranked Tags")
 
         other_rel_fnames = sorted(set(self.get_rel_fname(fname) for fname in other_fnames))
         special_fnames = filter_important_files(other_rel_fnames)
@@ -921,6 +1004,8 @@ class RepoMap:
                 upper_bound = middle - 1
 
             middle = int((lower_bound + upper_bound) // 2)
+
+        self.io.profile("Calculate Best Tree")
 
         return best_tree
 
@@ -1003,6 +1088,70 @@ class RepoMap:
                 lois.append(tag.line)
 
         return output
+
+    def _get_mentioned_idents_cache_component(self, mentioned_idents):
+        """
+        Determine the cache key component for mentioned_idents using similarity comparison.
+
+        This method compares the current mentioned_idents with the previous ones using
+        cosine similarity. If the similarity is high enough, it returns the previous
+        cache key component to maintain cache hits. Otherwise, it updates the stored
+        values and returns the current mentioned_idents.
+
+        Args:
+            mentioned_idents (set): Current set of mentioned identifiers
+
+        Returns:
+            tuple or None: Cache key component for mentioned_idents
+        """
+        if not mentioned_idents:
+            self._last_mentioned_idents = None
+            self._last_mentioned_idents_vector = None
+            self._has_last_mentioned_idents = False
+            return None
+
+        current_mentioned_idents = tuple(mentioned_idents)
+
+        # Check if we have a previous cached value to compare against
+        if self._has_last_mentioned_idents:
+            # Create vector for current mentioned_idents
+            current_vector = create_bigram_vector(current_mentioned_idents)
+            current_vector_norm = normalize_vector(current_vector)
+
+            # Calculate cosine similarity
+            similarity = cosine_similarity(self._last_mentioned_idents_vector, current_vector_norm)
+            # If similarity is high enough, use the previous cache key component
+            if similarity >= self._mentioned_ident_similarity:
+                # Use the previous mentioned_idents for cache key to maintain cache hit
+                cache_key_component = self._last_mentioned_idents
+
+                # Make similarity more strict the more consecutive cache hits
+                self._mentioned_ident_similarity = min(
+                    0.9, self._mentioned_ident_similarity + 0.025
+                )
+            else:
+                # Similarity is too low, use current mentioned_idents
+                cache_key_component = current_mentioned_idents
+
+                # Update stored values
+                self._last_mentioned_idents = current_mentioned_idents
+                self._last_mentioned_idents_vector = current_vector_norm
+
+                # Make similarity less strict the more consecutive cache misses
+                self._mentioned_ident_similarity = max(
+                    0.5, self._mentioned_ident_similarity - 0.025
+                )
+        else:
+            # First time or no previous value, use current mentioned_idents
+            cache_key_component = current_mentioned_idents
+            current_vector = create_bigram_vector(current_mentioned_idents)
+
+            # Store for future comparisons
+            self._last_mentioned_idents = current_mentioned_idents
+            self._last_mentioned_idents_vector = normalize_vector(current_vector)
+
+        self._has_last_mentioned_idents = True
+        return cache_key_component
 
 
 def truncate_long_lines(text, max_length):

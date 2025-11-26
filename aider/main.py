@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import threading
+import time
 import traceback
 import webbrowser
 from dataclasses import fields
@@ -36,7 +37,7 @@ from aider.mcp import load_mcp_servers
 from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
 from aider.repo import ANY_GIT_ERROR, GitRepo
-from aider.report import report_uncaught_exceptions
+from aider.report import report_uncaught_exceptions, set_args_error_data
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
 
@@ -88,10 +89,10 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
     return str(check_repo)
 
 
-def make_new_repo(git_root, io):
+async def make_new_repo(git_root, io):
     try:
         repo = git.Repo.init(git_root)
-        check_gitignore(git_root, io, False)
+        await check_gitignore(git_root, io, False)
     except ANY_GIT_ERROR as err:  # issue #1233
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_output(str(err))
@@ -101,7 +102,7 @@ def make_new_repo(git_root, io):
     return repo
 
 
-def setup_git(git_root, io):
+async def setup_git(git_root, io):
     if git is None:
         return
 
@@ -122,11 +123,11 @@ def setup_git(git_root, io):
             "You should probably run aider in your project's directory, not your home dir."
         )
         return
-    elif cwd and io.confirm_ask(
-        "No git repo found, create one to track aider's changes (recommended)?"
+    elif cwd and await io.confirm_ask(
+        "No git repo found, create one to track aider's changes (recommended)?", acknowledge=True
     ):
         git_root = str(cwd.resolve())
-        repo = make_new_repo(git_root, io)
+        repo = await make_new_repo(git_root, io)
 
     if not repo:
         return
@@ -155,7 +156,7 @@ def setup_git(git_root, io):
     return repo.working_tree_dir
 
 
-def check_gitignore(git_root, io, ask=True):
+async def check_gitignore(git_root, io, ask=True):
     if not git_root:
         return
 
@@ -191,7 +192,10 @@ def check_gitignore(git_root, io, ask=True):
 
     if ask:
         io.tool_output("You can skip this check with --no-gitignore")
-        if not io.confirm_ask(f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?"):
+        if not await io.confirm_ask(
+            f"Add {', '.join(patterns_to_add)} to .gitignore (recommended)?",
+            acknowledge=True,
+        ):
             return
 
     content += "\n".join(patterns_to_add) + "\n"
@@ -208,8 +212,8 @@ def check_gitignore(git_root, io, ask=True):
             io.tool_output(f"  {pattern}")
 
 
-def check_streamlit_install(io):
-    return utils.check_pip_install_extra(
+async def check_streamlit_install(io):
+    return await utils.check_pip_install_extra(
         io,
         "streamlit",
         "You need to install the aider browser feature",
@@ -217,7 +221,7 @@ def check_streamlit_install(io):
     )
 
 
-def write_streamlit_credentials():
+async def write_streamlit_credentials():
     from streamlit.file_util import get_streamlit_file_path
 
     # See https://github.com/Aider-AI/aider/issues/772
@@ -317,7 +321,7 @@ def generate_search_path_list(default_file, git_root, command_line_file):
     resolved_files = []
     for fn in files:
         try:
-            resolved_files.append(Path(fn).resolve())
+            resolved_files.append(Path(fn).expanduser().resolve())
         except OSError:
             pass
 
@@ -443,7 +447,9 @@ async def sanity_check_repo(repo, io):
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
         io.tool_output("You may be able to convert your repo: git update-index --index-version=2")
         io.tool_output("Or run aider --no-git to proceed without using git.")
-        await io.offer_url(urls.git_index_version, "Open documentation url for more info?")
+        await io.offer_url(
+            urls.git_index_version, "Open documentation url for more info?", acknowledge=True
+        )
         return False
 
     io.tool_error("Unable to read git repository, it may be corrupt?")
@@ -472,10 +478,17 @@ def expand_glob_patterns(patterns, root="."):
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 log_file = None
-file_blacklist = ["get_bottom_toolbar", "<genexpr>"]
+file_excludelist = ["get_bottom_toolbar", "<genexpr>"]
 
 
 def custom_tracer(frame, event, arg):
+    import os
+
+    global log_file
+    if not log_file:
+        os.makedirs(".aider/logs/", exist_ok=True)
+        log_file = open(".aider/logs/debug.log", "w", buffering=1)
+
     # Get the absolute path of the file where the code is executing
     filename = os.path.abspath(frame.f_code.co_filename)
 
@@ -492,9 +505,20 @@ def custom_tracer(frame, event, arg):
         func_name = frame.f_code.co_name
         line_no = frame.f_lineno
 
-        if func_name not in file_blacklist:
+        if func_name not in file_excludelist:
             log_file.write(
-                f"-> CALL (My Code): {func_name}() in {os.path.basename(filename)}:{line_no}\n"
+                f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
+            )
+
+    if event == "return":
+        func_name = frame.f_code.co_name
+        line_no = frame.f_lineno
+
+        if func_name not in file_excludelist:
+            log_file.write(
+                f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                f" {time.time()}\n"
             )
 
     # Must return the trace function (or a local one) for subsequent events
@@ -539,7 +563,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
     except AttributeError as e:
         if all(word in str(e) for word in ["bool", "object", "has", "no", "attribute", "strip"]):
             if check_config_files_for_yes(default_config_files):
-                return 1
+                return await graceful_exit(None, 1)
         raise e
 
     if args.verbose:
@@ -559,17 +583,19 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+    set_args_error_data(args)
 
     if args.debug:
         global log_file
-        log_file = open(".aider-debug.log", "w", buffering=1)
+        os.makedirs(".aider/logs/", exist_ok=True)
+        log_file = open(".aider/logs/debug.log", "w", buffering=1)
         sys.settrace(custom_tracer)
 
     if args.shell_completions:
         # Ensure parser.prog is set for shtab, though it should be by default
         parser.prog = "aider"
         print(shtab.complete(parser, shell=args.shell_completions))
-        sys.exit(0)
+        return await graceful_exit(None, 0)
 
     if git is None:
         args.git = False
@@ -658,7 +684,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             except ValueError:
                 io.tool_error(f"Invalid --set-env format: {env_setting}")
                 io.tool_output("Format should be: ENV_VAR_NAME=value")
-                return 1
+                return await graceful_exit(None, 1)
 
     # Process any API keys set via --api-key
     if args.api_key:
@@ -670,7 +696,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             except ValueError:
                 io.tool_error(f"Invalid --api-key format: {api_setting}")
                 io.tool_output("Format should be: provider=key")
-                return 1
+                return await graceful_exit(None, 1)
 
     if args.anthropic_api_key:
         os.environ["ANTHROPIC_API_KEY"] = args.anthropic_api_key
@@ -702,38 +728,37 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         posthog_host=args.analytics_posthog_host,
         posthog_project_api_key=args.analytics_posthog_project_api_key,
     )
-    if args.analytics is not False:
-        if analytics.need_to_ask(args.analytics):
-            io.tool_output(
-                "Aider respects your privacy and never collects your code, chat messages, keys or"
-                " personal info."
-            )
-            io.tool_output(f"For more info: {urls.analytics}")
-            disable = not io.confirm_ask(
-                "Allow collection of anonymous analytics to help improve aider?"
-            )
 
-            analytics.asked_opt_in = True
-            if disable:
-                analytics.disable(permanently=True)
-                io.tool_output("Analytics have been permanently disabled.")
+    # if args.analytics is not False:
+    #     if analytics.need_to_ask(args.analytics):
+    #         io.tool_output(
+    #             "Aider respects your privacy and never collects your code, chat messages, keys or"
+    #             " personal info."
+    #         )
+    #         io.tool_output(f"For more info: {urls.analytics}")
+    #         disable = not await io.confirm_ask(
+    #             "Allow collection of anonymous analytics to help improve aider?"
+    #         )
+    #         analytics.asked_opt_in = True
+    #         if disable:
+    #             analytics.disable(permanently=True)
+    #             io.tool_output("Analytics have been permanently disabled.")
+    #         analytics.save_data()
+    #         io.tool_output()
+    #     # This is a no-op if the user has opted out
+    #     analytics.enable()
 
-            analytics.save_data()
-            io.tool_output()
-
-        # This is a no-op if the user has opted out
-        analytics.enable()
-
+    analytics.disable(permanently=True)
     analytics.event("launched")
 
     if args.gui and not return_coder:
-        if not check_streamlit_install(io):
+        if not await check_streamlit_install(io):
             analytics.event("exit", reason="Streamlit not installed")
-            return
+            return await graceful_exit(None)
         analytics.event("gui session")
         launch_gui(argv)
         analytics.event("exit", reason="GUI session ended")
-        return
+        return await graceful_exit(None)
 
     if args.verbose:
         for fname in loaded_dotenvs:
@@ -766,7 +791,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                 "Provide either a single directory of a git repo, or a list of one or more files."
             )
             analytics.event("exit", reason="Invalid directory input")
-            return 1
+            return await graceful_exit(None, 1)
 
     git_dname = None
     if len(all_files) == 1:
@@ -777,7 +802,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             else:
                 io.tool_error(f"{all_files[0]} is a directory, but --no-git selected.")
                 analytics.event("exit", reason="Directory with --no-git")
-                return 1
+                return await graceful_exit(None, 1)
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
@@ -789,27 +814,22 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             return await main_async(argv, input, output, right_repo_root, return_coder=return_coder)
 
     if args.just_check_update:
-        update_available = check_version(io, just_check=True, verbose=args.verbose)
+        update_available = await check_version(io, just_check=True, verbose=args.verbose)
         analytics.event("exit", reason="Just checking update")
-        return 0 if not update_available else 1
+        return await graceful_exit(None, 0 if not update_available else 1)
 
     if args.install_main_branch:
-        success = install_from_main_branch(io)
+        success = await install_from_main_branch(io)
         analytics.event("exit", reason="Installed main branch")
-        return 0 if success else 1
+        return await graceful_exit(None, 0 if success else 1)
 
     if args.upgrade:
-        success = install_upgrade(io)
+        success = await install_upgrade(io)
         analytics.event("exit", reason="Upgrade completed")
-        return 0 if success else 1
+        return await graceful_exit(None, 0 if success else 1)
 
     if args.check_update:
-        check_version(io, verbose=args.verbose)
-
-    if args.git:
-        git_root = setup_git(git_root, io)
-        if args.gitignore:
-            check_gitignore(git_root, io)
+        await check_version(io, verbose=args.verbose)
 
     if args.verbose:
         show = format_settings(parser, args)
@@ -828,7 +848,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
     if args.list_models:
         models.print_matching_models(io, args.list_models)
         analytics.event("exit", reason="Listed models")
-        return 0
+        return await graceful_exit(None)
 
     # Process any command line aliases
     if args.alias:
@@ -839,7 +859,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                 io.tool_error(f"Invalid alias format: {alias_def}")
                 io.tool_output("Format should be: alias:model-name")
                 analytics.event("exit", reason="Invalid alias format error")
-                return 1
+                return await graceful_exit(None, 1)
             alias, model = parts
             models.MODEL_ALIASES[alias.strip()] = model.strip()
 
@@ -848,7 +868,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         # Error message and analytics event are handled within select_default_model
         # It might have already offered OAuth if no model/keys were found.
         # If it failed here, we exit.
-        return 1
+        return await graceful_exit(None, 1)
     args.model = selected_model_name  # Update args with the selected model
 
     # Check if an OpenRouter model was selected/specified but the key is missing
@@ -875,18 +895,20 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                     "exit",
                     reason="OpenRouter key missing after successful OAuth for specified model",
                 )
-                return 1
+                return await graceful_exit(None, 1)
         else:
             # OAuth failed or was declined by the user
             io.tool_error(
                 f"Unable to proceed without an OpenRouter API key for model '{args.model}'."
             )
-            await io.offer_url(urls.models_and_keys, "Open documentation URL for more info?")
+            await io.offer_url(
+                urls.models_and_keys, "Open documentation URL for more info?", acknowledge=True
+            )
             analytics.event(
                 "exit",
                 reason="OpenRouter key missing for specified model and OAuth failed/declined",
             )
-            return 1
+            return await graceful_exit(None, 1)
 
     main_model = models.Model(
         args.model,
@@ -954,20 +976,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:
         analytics.event("exit", reason="Invalid lint command format")
-        return 1
-
-    if args.show_model_warnings:
-        problem = models.sanity_check_models(io, main_model)
-        if problem:
-            analytics.event("model warning", main_model=main_model)
-            io.tool_output("You can skip this check with --no-show-model-warnings")
-
-            try:
-                await io.offer_url(urls.model_warnings, "Open documentation url for more info?")
-                io.tool_output()
-            except KeyboardInterrupt:
-                analytics.event("exit", reason="Keyboard interrupt during model warnings")
-                return 1
+        return await graceful_exit(None, 1)
 
     repo = None
     if args.git:
@@ -993,7 +1002,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
     if not args.skip_sanity_check_repo:
         if not await sanity_check_repo(repo, io):
             analytics.event("exit", reason="Repository sanity check failed")
-            return 1
+            return await graceful_exit(None, 1)
 
     if repo and not args.skip_sanity_check_repo:
         num_files = len(repo.get_tracked_files())
@@ -1056,6 +1065,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             main_model=main_model,
             edit_format=args.edit_format,
             io=io,
+            args=args,
             repo=repo,
             fnames=fnames,
             read_only_fnames=read_only_fnames,
@@ -1097,15 +1107,41 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             preserve_todo_list=args.preserve_todo_list,
             linear_output=args.linear_output,
         )
+
+        if args.show_model_warnings:
+            problem = await models.sanity_check_models(io, main_model)
+            if problem:
+                analytics.event("model warning", main_model=main_model)
+                io.tool_output("You can skip this check with --no-show-model-warnings")
+
+                try:
+                    await io.offer_url(
+                        urls.model_warnings,
+                        "Open documentation url for more info?",
+                        acknowledge=True,
+                    )
+                    io.tool_output()
+                except KeyboardInterrupt:
+                    analytics.event("exit", reason="Keyboard interrupt during model warnings")
+                    return await graceful_exit(coder, 1)
+
+        if args.git:
+            git_root = await setup_git(git_root, io)
+            if args.gitignore:
+                await check_gitignore(git_root, io)
+
     except UnknownEditFormat as err:
         io.tool_error(str(err))
-        await io.offer_url(urls.edit_formats, "Open documentation about edit formats?")
+        await io.offer_url(
+            urls.edit_formats, "Open documentation about edit formats?", acknowledge=True
+        )
         analytics.event("exit", reason="Unknown edit format")
-        return 1
+        return await graceful_exit(None, 1)
+
     except ValueError as err:
         io.tool_error(str(err))
         analytics.event("exit", reason="ValueError during coder creation")
-        return 1
+        return await graceful_exit(None, 1)
 
     if return_coder:
         analytics.event("exit", reason="Returning coder object")
@@ -1138,7 +1174,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         messages = coder.format_messages().all_messages()
         utils.show_messages(messages)
         analytics.event("exit", reason="Showed prompts")
-        return
+        return await graceful_exit(coder)
 
     if args.lint:
         await coder.commands.cmd_lint(fnames=fnames)
@@ -1147,7 +1183,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         if not args.test_cmd:
             io.tool_error("No --test-cmd provided.")
             analytics.event("exit", reason="No test command provided")
-            return 1
+            return await graceful_exit(coder, 1)
         await coder.commands.cmd_test(args.test_cmd)
         if io.placeholder:
             await coder.run(io.placeholder)
@@ -1160,27 +1196,27 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
     if args.lint or args.test or args.commit:
         analytics.event("exit", reason="Completed lint/test/commit")
-        return
+        return await graceful_exit(coder)
 
     if args.show_repo_map:
         repo_map = coder.get_repo_map()
         if repo_map:
             io.tool_output(repo_map)
         analytics.event("exit", reason="Showed repo map")
-        return
+        return await graceful_exit(coder)
 
     if args.apply:
         content = io.read_text(args.apply)
         if content is None:
             analytics.event("exit", reason="Failed to read apply content")
-            return
+            return await graceful_exit(coder)
         coder.partial_response_content = content
         # For testing #2879
         # from aider.coders.base_coder import all_fences
         # coder.fence = all_fences[1]
         await coder.apply_updates()
         analytics.event("exit", reason="Applied updates")
-        return
+        return await graceful_exit(coder)
 
     if args.apply_clipboard_edits:
         args.edit_format = main_model.editor_edit_format
@@ -1196,6 +1232,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
             urls.release_notes,
             "Would you like to see what's new in this version?",
             allow_never=False,
+            acknowledge=True,
         )
 
     if git_root and Path.cwd().resolve() != Path(git_root).resolve():
@@ -1221,7 +1258,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         except (SwitchCoder, KeyboardInterrupt, SystemExit):
             pass
         analytics.event("exit", reason="Completed --message")
-        return
+        return await graceful_exit(coder)
 
     if args.message_file:
         try:
@@ -1233,27 +1270,38 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
         except FileNotFoundError:
             io.tool_error(f"Message file not found: {args.message_file}")
             analytics.event("exit", reason="Message file not found")
-            return 1
+            return await graceful_exit(coder, 1)
         except IOError as e:
             io.tool_error(f"Error reading message file: {e}")
             analytics.event("exit", reason="Message file IO error")
-            return 1
+            return await graceful_exit(coder, 1)
 
         analytics.event("exit", reason="Completed --message-file")
-        return
+        return await graceful_exit(coder)
 
     if args.exit:
         analytics.event("exit", reason="Exit flag set")
-        return
+        return await graceful_exit(coder)
 
     analytics.event("cli session", main_model=main_model, edit_format=main_model.edit_format)
+
+    # Auto-load session if enabled
+    if args.auto_load:
+        try:
+            from aider.sessions import SessionManager
+
+            session_manager = SessionManager(coder, io)
+            session_manager.load_session("auto-save")
+        except Exception:
+            # Don't show errors for auto-load to avoid interrupting the user experience
+            pass
 
     while True:
         try:
             coder.ok_to_warm_cache = bool(args.cache_keepalive_pings)
             await coder.run()
             analytics.event("exit", reason="Completed main CLI coder.run")
-            return
+            return await graceful_exit(coder)
         except SwitchCoder as switch:
             coder.ok_to_warm_cache = False
 
@@ -1268,6 +1316,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
 
             # Disable cache warming for the new coder
             kwargs["num_cache_warming_pings"] = 0
+            kwargs["args"] = coder.args
 
             coder = await Coder.create(**kwargs)
 
@@ -1275,7 +1324,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                 coder.suppress_announcements_for_next_prompt = True
         except SystemExit:
             analytics.event("exit", reason="/exit command")
-            return
+            return await graceful_exit(coder)
 
 
 def is_first_run_of_new_version(io, verbose=False):
@@ -1333,7 +1382,9 @@ async def check_and_load_imports(io, is_first_run, verbose=False):
             except Exception as err:
                 io.tool_error(str(err))
                 io.tool_output("Error loading required imports. Did you install aider properly?")
-                await io.offer_url(urls.install_properly, "Open documentation url for more info?")
+                await io.offer_url(
+                    urls.install_properly, "Open documentation url for more info?", acknowledge=True
+                )
                 sys.exit(1)
 
             if verbose:
@@ -1365,6 +1416,20 @@ def load_slow_imports(swallow=True):
     except Exception as e:
         if not swallow:
             raise e
+
+
+async def graceful_exit(coder=None, exit_code=0):
+    if coder:
+        if hasattr(coder, "_autosave_future"):
+            await coder._autosave_future
+
+        for server in coder.mcp_servers:
+            try:
+                await server.exit_stack.aclose()
+            except Exception:
+                pass
+
+    return exit_code
 
 
 if __name__ == "__main__":

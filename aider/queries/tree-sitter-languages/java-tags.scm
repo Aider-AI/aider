@@ -18,3 +18,9 @@
   type: (type_identifier) @name.reference.class) @reference.class
 
 (superclass (type_identifier) @name.reference.class) @reference.class
+
+(import_declaration
+  (scoped_identifier) @name.reference.import) @reference.import
+
+(import_declaration
+  (identifier) @name.reference.import) @reference.import

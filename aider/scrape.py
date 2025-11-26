@@ -14,32 +14,41 @@ aider_user_agent = f"Aider/{__version__} +{urls.website}"
 # platforms.
 
 
-def check_env():
+def check_playwright():
     try:
-        from playwright.sync_api import sync_playwright
+        from playwright.async_api import async_playwright  # noqa: F401
+        from playwright.sync_api import sync_playwright  # noqa: F401
 
-        has_pip = True
+        has_playwright = True
     except ImportError:
-        has_pip = False
+        has_playwright = False
 
-    try:
-        with sync_playwright() as p:
-            p.chromium.launch()
-            has_chromium = True
-    except Exception:
-        has_chromium = False
-
-    return has_pip, has_chromium
+    return has_playwright
 
 
-def has_playwright():
-    has_pip, has_chromium = check_env()
-    return has_pip and has_chromium
+async def check_chromium():
+    has_chromium = False
+
+    if check_playwright():
+        from playwright.async_api import async_playwright
+
+        try:
+            async with async_playwright() as p:
+                browser = await p.chromium.launch()
+                await browser.close()
+                has_chromium = True
+        except Exception as e:
+            has_chromium = False
+            print(f"chromium errors {e}")
+
+    return has_chromium
 
 
 async def install_playwright(io):
-    has_pip, has_chromium = check_env()
-    if has_pip and has_chromium:
+    has_playwright = check_playwright()
+    has_chromium = await check_chromium()
+
+    if has_playwright and has_chromium:
         return True
 
     pip_cmd = utils.get_pip_install(["aider-ce[playwright]"])
@@ -47,7 +56,7 @@ async def install_playwright(io):
     chromium_cmd = [sys.executable] + chromium_cmd.split()
 
     cmds = ""
-    if not has_pip:
+    if not has_playwright:
         cmds += " ".join(pip_cmd) + "\n"
     if not has_chromium:
         cmds += " ".join(chromium_cmd) + "\n"
@@ -62,7 +71,7 @@ See {urls.enable_playwright} for more info.
     if not await io.confirm_ask("Install playwright?", default="y"):
         return
 
-    if not has_pip:
+    if not has_playwright:
         success, output = utils.run_install(pip_cmd)
         if not success:
             io.tool_error(output)
@@ -95,7 +104,7 @@ class Scraper:
         self.playwright_available = playwright_available
         self.verify_ssl = verify_ssl
 
-    def scrape(self, url):
+    async def scrape(self, url):
         """
         Scrape a url and turn it into readable markdown if it's HTML.
         If it's plain text or non-HTML, return it as-is.
@@ -104,7 +113,7 @@ class Scraper:
         """
 
         if self.playwright_available:
-            content, mime_type = self.scrape_with_playwright(url)
+            content, mime_type = await self.scrape_with_playwright(url)
         else:
             content, mime_type = self.scrape_with_httpx(url)
 
@@ -140,34 +149,34 @@ class Scraper:
         return False
 
     # Internals...
-    def scrape_with_playwright(self, url):
+    async def scrape_with_playwright(self, url):
         import playwright  # noqa: F401
-        from playwright.sync_api import Error as PlaywrightError
-        from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
-        from playwright.sync_api import sync_playwright
+        from playwright.async_api import Error as PlaywrightError
+        from playwright.async_api import TimeoutError as PlaywrightTimeoutError
+        from playwright.async_api import async_playwright
 
-        with sync_playwright() as p:
+        async with async_playwright() as p:
             try:
-                browser = p.chromium.launch()
+                browser = await p.chromium.launch()
             except Exception as e:
                 self.playwright_available = False
                 self.print_error(str(e))
                 return None, None
 
             try:
-                context = browser.new_context(ignore_https_errors=not self.verify_ssl)
-                page = context.new_page()
+                context = await browser.new_context(ignore_https_errors=not self.verify_ssl)
+                page = await context.new_page()
 
-                user_agent = page.evaluate("navigator.userAgent")
+                user_agent = await page.evaluate("navigator.userAgent")
                 user_agent = user_agent.replace("Headless", "")
                 user_agent = user_agent.replace("headless", "")
                 user_agent += " " + aider_user_agent
 
-                page.set_extra_http_headers({"User-Agent": user_agent})
+                await page.set_extra_http_headers({"User-Agent": user_agent})
 
                 response = None
                 try:
-                    response = page.goto(url, wait_until="networkidle", timeout=5000)
+                    response = await page.goto(url, wait_until="networkidle", timeout=5000)
                 except PlaywrightTimeoutError:
                     self.print_error(f"Page didn't quiesce, scraping content anyway: {url}")
                     response = None
@@ -176,10 +185,10 @@ class Scraper:
                     return None, None
 
                 try:
-                    content = page.content()
+                    content = await page.content()
                     mime_type = None
                     if response:
-                        content_type = response.header_value("content-type")
+                        content_type = await response.header_value("content-type")
                         if content_type:
                             mime_type = content_type.split(";")[0]
                 except PlaywrightError as e:
@@ -187,7 +196,7 @@ class Scraper:
                     content = None
                     mime_type = None
             finally:
-                browser.close()
+                await browser.close()
 
         return content, mime_type
 
@@ -271,9 +280,9 @@ def slimdown_html(soup):
     return soup
 
 
-def main(url):
-    scraper = Scraper(playwright_available=has_playwright())
-    content = scraper.scrape(url)
+async def main(url):
+    scraper = Scraper(playwright_available=check_playwright())
+    content = await scraper.scrape(url)
     print(content)
 
 

@@ -30,6 +30,11 @@ class ChatSummary:
             sized.append((tokens, msg))
         return sized
 
+    def count_tokens(self, messages):
+        sized = self.tokenize(messages)
+        total = sum(tokens for tokens, _msg in sized)
+        return total
+
     async def summarize(self, messages, depth=0):
         messages = await self.summarize_real(messages)
         if messages and messages[-1]["role"] != "assistant":

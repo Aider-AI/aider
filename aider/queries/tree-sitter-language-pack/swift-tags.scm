@@ -48,4 +48,7 @@
 ) @definition.property
 
 (function_declaration
-    name: (simple_identifier) @name.definition.function) @definition.function
+  name: (simple_identifier) @name.definition.function) @definition.function
+
+(import_declaration
+    "import" @name.reference.import) @reference.import

@@ -36,6 +36,8 @@ from rich.spinner import SPINNERS
 from rich.style import Style as RichStyle
 from rich.text import Text
 
+from aider.helpers import coroutines
+
 from .dump import dump  # noqa: F401
 from .editor import pipe_editor
 from .utils import is_image_file, run_fzf
@@ -94,7 +96,7 @@ def without_input_history(func):
     """Decorator to temporarily disable history saving for the prompt session buffer."""
 
     @functools.wraps(func)
-    def wrapper(self, *args, **kwargs):
+    async def wrapper(self, *args, **kwargs):
         orig_buf_append = None
         try:
             orig_buf_append = self.prompt_session.default_buffer.append_to_history
@@ -105,7 +107,7 @@ def without_input_history(func):
             pass
 
         try:
-            return func(self, *args, **kwargs)
+            return await func(self, *args, **kwargs)
         except Exception:
             raise
         finally:
@@ -154,6 +156,8 @@ class AutoCompleter(Completer):
         self.command_completions = dict()
         if commands:
             self.command_names = self.commands.get_commands()
+        else:
+            self.command_names = []
 
         for rel_fname in addable_rel_fnames:
             self.words.add(rel_fname)
@@ -339,6 +343,20 @@ class InputOutput:
         self.bell_on_next_input = False
         self.notifications = notifications
         self.verbose = verbose
+        self.profile_start_time = None
+        self.profile_last_time = None
+
+        # Variables used to interface with base_coder
+        self.coder = None
+        self.input_task = None
+        self.output_task = None
+        self.linear = False
+
+        # State tracking for confirmation input
+        self.confirmation_in_progress = False
+        self.confirmation_acknowledgement = False
+        self.confirmation_input_active = False
+        self.saved_input_text = ""
 
         if notifications and notifications_command is None:
             self.notifications_command = self.get_default_notification_command()
@@ -385,6 +403,7 @@ class InputOutput:
             self.pretty = False
 
         self.yes = yes
+        self.group_responses = dict()
 
         self.input_history_file = input_history_file
         if self.input_history_file:
@@ -400,19 +419,21 @@ class InputOutput:
             self.chat_history_file = None
 
         self.encoding = encoding
-        valid_line_endings = {"platform", "lf", "crlf"}
+        valid_line_endings = {"platform", "lf", "crlf", "preserve"}
         if line_endings not in valid_line_endings:
             raise ValueError(
                 f"Invalid line_endings value: {line_endings}. "
                 f"Must be one of: {', '.join(valid_line_endings)}"
             )
+        self.line_endings = line_endings
         self.newline = (
-            None if line_endings == "platform" else "\n" if line_endings == "lf" else "\r\n"
+            None
+            if line_endings in ("platform", "preserve")
+            else "\n" if line_endings == "lf" else "\r\n"
         )
         self.dry_run = dry_run
 
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
         self.is_dumb_terminal = is_dumb_terminal()
         self.is_tty = sys.stdout.isatty()
@@ -425,6 +446,7 @@ class InputOutput:
         self.spinner_running = False
         self.spinner_text = ""
         self.last_spinner_text = ""
+        self.spinner_suffix = ""
         self.spinner_frame_index = 0
         self.spinner_last_frame_index = 0
         self.unicode_palette = "░█"
@@ -464,19 +486,9 @@ class InputOutput:
         self.file_watcher = file_watcher
         self.root = root
 
-        # Variables used to interface with base_coder
-        self.coder = None
-        self.input_task = None
-        self.processing_task = None
-        self.confirmation_in_progress = False
-        self.confirmation_acknowledgement = False
-
-        # State tracking for confirmation input
-        self.confirmation_input_active = False
-        self.saved_input_text = ""
-
         # Validate color settings after console is initialized
         self._validate_color_settings()
+        self.append_chat_history(f"\n# aider chat started at {current_time}\n\n")
 
     def _spinner_supports_unicode(self) -> bool:
         if not self.is_tty:
@@ -502,6 +514,7 @@ class InputOutput:
             self.spinner_running = True
             self.spinner_text = text
             self.spinner_frame_index = self.spinner_last_frame_index
+            self.spinner_suffix = ""
 
             if update_last_text:
                 self.last_spinner_text = text
@@ -512,10 +525,18 @@ class InputOutput:
     def update_spinner(self, text):
         self.spinner_text = text
 
+    def update_spinner_suffix(self, text=None):
+        if text:
+            self.spinner_suffix = f" • {text[:16].strip()}"
+        else:
+            self.spinner_suffix = ""
+
     def stop_spinner(self):
         """Stop the spinner."""
         self.spinner_running = False
         self.spinner_text = ""
+        self.spinner_suffix = ""
+
         # Keep last frame index to avoid spinner "jumping" on restart
         self.spinner_last_frame_index = self.spinner_frame_index
         if self.fallback_spinner:
@@ -524,13 +545,13 @@ class InputOutput:
 
     def get_bottom_toolbar(self):
         """Get the current spinner frame and text for the bottom toolbar."""
-        if not self.spinner_running or not self.spinner_frames:
+        if not self.spinner_running or not self.spinner_frames or self.linear:
             return None
 
         frame = self.spinner_frames[self.spinner_frame_index]
         self.spinner_frame_index = (self.spinner_frame_index + 1) % len(self.spinner_frames)
 
-        return f"{frame} {self.spinner_text}"
+        return f"{frame} {self.spinner_text}{self.spinner_suffix}"
 
     def _validate_color_settings(self):
         """Validate configured color strings and reset invalid ones."""
@@ -637,6 +658,18 @@ class InputOutput:
                 self.tool_error("Use --encoding to set the unicode encoding.")
             return
 
+    def _detect_newline(self, filename):
+        try:
+            with open(filename, "rb") as f:
+                chunk = f.read(1024)
+                if b"\r\n" in chunk:
+                    return "\r\n"
+                elif b"\n" in chunk:
+                    return "\n"
+        except (FileNotFoundError, IsADirectoryError):
+            pass  # File doesn't exist or is a directory, will use default
+        return None
+
     def write_text(self, filename, content, max_retries=5, initial_delay=0.1):
         """
         Writes content to a file, retrying with progressive backoff if the file is locked.
@@ -649,10 +682,14 @@ class InputOutput:
         if self.dry_run:
             return
 
+        newline = self.newline
+        if self.line_endings == "preserve":
+            newline = self._detect_newline(filename) or self.newline
+
         delay = initial_delay
         for attempt in range(max_retries):
             try:
-                with open(str(filename), "w", encoding=self.encoding, newline=self.newline) as f:
+                with open(str(filename), "w", encoding=self.encoding, newline=newline) as f:
                     f.write(content)
                 return  # Successfully wrote the file
             except PermissionError as err:
@@ -676,9 +713,6 @@ class InputOutput:
             print()
 
     def interrupt_input(self):
-        if self.input_task and not self.input_task.done():
-            self.input_task.cancel()
-
         if self.prompt_session and self.prompt_session.app:
             # Store any partial input before interrupting
             self.placeholder = self.prompt_session.app.current_buffer.text
@@ -693,6 +727,20 @@ class InputOutput:
         """Reject all outstanding confirmation dialogs."""
         # This method is now a no-op since we removed the confirmation_future logic
         pass
+
+    def get_coder(self):
+        coder = self.coder() if self.coder else None
+        return coder
+
+    async def recreate_input(self, future=None):
+        if not coroutines.is_active(self.input_task):
+            coder = self.get_coder()
+
+            if coder:
+                self.input_task = asyncio.create_task(coder.get_input())
+                await asyncio.sleep(0)
+            else:
+                self.input_task = asyncio.create_task(self.get_input(None, [], [], []))
 
     async def get_input(
         self,
@@ -710,10 +758,10 @@ class InputOutput:
         show = ""
         if rel_fnames:
             rel_read_only_fnames = [
-                get_rel_fname(fname, root) for fname in (abs_read_only_fnames or [])
+                get_rel_fname(fname, root) for fname in abs_read_only_fnames or []
             ]
             rel_read_only_stubs_fnames = [
-                get_rel_fname(fname, root) for fname in (abs_read_only_stubs_fnames or [])
+                get_rel_fname(fname, root) for fname in abs_read_only_stubs_fnames or []
             ]
             show = self.format_files_for_input(
                 rel_fnames, rel_read_only_fnames, rel_read_only_stubs_fnames
@@ -876,7 +924,13 @@ class InputOutput:
                         return cmd
 
             except EOFError:
-                raise
+                coder = self.get_coder()
+
+                if coder:
+                    await coder.commands.cmd_exit(None)
+                else:
+                    raise SystemExit
+
             except KeyboardInterrupt:
                 self.console.print()
                 return ""
@@ -899,6 +953,8 @@ class InputOutput:
                     self.file_watcher.stop()
                 if self.clipboard_watcher:
                     self.clipboard_watcher.stop()
+
+            line = line or ""
 
             if line.strip("\r\n") and not multiline_input:
                 stripped = line.strip("\r\n")
@@ -941,25 +997,45 @@ class InputOutput:
         self.user_input(inp)
         return inp
 
-    async def cancel_input_task(self):
+    async def stop_input_task(self):
         if self.input_task:
             input_task = self.input_task
             self.input_task = None
             try:
                 input_task.cancel()
                 await input_task
-            except (asyncio.CancelledError, EOFError, IndexError):
+            except (
+                asyncio.CancelledError,
+                Exception,
+                EOFError,
+                IndexError,
+                RuntimeError,
+                SystemExit,
+            ):
                 pass
 
-    async def cancel_processing_task(self):
-        if self.processing_task:
-            processing_task = self.processing_task
-            self.processing_task = None
+    async def stop_output_task(self):
+        if self.output_task:
+            output_task = self.output_task
+            self.output_task = None
             try:
-                processing_task.cancel()
-                await processing_task
-            except (asyncio.CancelledError, EOFError, IndexError):
+                output_task.cancel()
+                await output_task
+            except (
+                asyncio.CancelledError,
+                Exception,
+                EOFError,
+                IndexError,
+                RuntimeError,
+                SystemExit,
+            ):
                 pass
+
+    async def stop_task_streams(self):
+        input_task = asyncio.create_task(self.stop_input_task())
+        output_task = asyncio.create_task(self.stop_output_task())
+
+        await asyncio.wait([input_task, output_task], return_when=asyncio.ALL_COMPLETED)
 
     def add_to_input_history(self, inp):
         if not self.input_history_file:
@@ -1004,6 +1080,13 @@ class InputOutput:
         if not log_only:
             self.display_user_input(inp)
 
+        if (
+            len(inp) <= 1
+            or self.confirmation_in_progress
+            or self.get_confirmation_acknowledgement()
+        ):
+            return
+
         prefix = "####"
         if inp:
             hist = inp.splitlines()
@@ -1022,11 +1105,15 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
-    async def offer_url(self, url, prompt="Open URL for more info?", allow_never=True):
+    async def offer_url(
+        self, url, prompt="Open URL for more info?", allow_never=True, acknowledge=False
+    ):
         """Offer to open a URL in the browser, returns True if opened."""
         if url in self.never_prompts:
             return False
-        if await self.confirm_ask(prompt, subject=url, allow_never=allow_never):
+        if await self.confirm_ask(
+            prompt, subject=url, allow_never=allow_never, acknowledge=acknowledge
+        ):
             webbrowser.open(url)
             return True
         return False
@@ -1043,6 +1130,7 @@ class InputOutput:
         return outstanding_confirmation
 
     @restore_multiline_async
+    @without_input_history
     async def confirm_ask(
         self,
         *args,
@@ -1051,7 +1139,6 @@ class InputOutput:
         self.confirmation_in_progress = True
 
         try:
-            self.set_confirmation_acknowledgement()
             return await asyncio.create_task(self._confirm_ask(*args, **kwargs))
         except KeyboardInterrupt:
             # Re-raise KeyboardInterrupt to allow it to propagate
@@ -1066,7 +1153,9 @@ class InputOutput:
         subject=None,
         explicit_yes_required=False,
         group=None,
+        group_response=None,
         allow_never=False,
+        acknowledge=False,
     ):
         self.num_user_asks += 1
 
@@ -1083,8 +1172,9 @@ class InputOutput:
 
             valid_responses = ["yes", "no", "skip", "all"]
             options = " (Y)es/(N)o"
-            if group:
-                if not explicit_yes_required:
+
+            if group or group_response:
+                if not explicit_yes_required or group_response:
                     options += "/(A)ll"
                 options += "/(S)kip all"
             if allow_never:
@@ -1109,16 +1199,13 @@ class InputOutput:
                 else:
                     self.tool_output(subject, bold=True)
 
-            if self.yes is True:
-                res = "n" if explicit_yes_required else "y"
-                self.acknowledge_confirmation()
-            elif self.yes is False:
-                res = "n"
-                self.acknowledge_confirmation()
+            if self.yes is True and not explicit_yes_required:
+                res = "y"
             elif group and group.preference:
                 res = group.preference
-                self.user_input(f"{question}{res}", log_only=False)
-                self.acknowledge_confirmation()
+                self.user_input(f"{question} - {res}", log_only=False)
+            elif group_response and group_response in self.group_responses:
+                return self.group_responses[group_response]
             else:
                 # Ring the bell if needed
                 self.ring_bell()
@@ -1127,32 +1214,21 @@ class InputOutput:
                 while True:
                     try:
                         if self.prompt_session:
-                            if (
-                                not self.input_task
-                                or self.input_task.done()
-                                or self.input_task.cancelled()
-                            ):
-                                coder = self.coder() if self.coder else None
+                            await self.recreate_input()
 
-                                if coder:
-                                    self.input_task = asyncio.create_task(coder.get_input())
-                                    await asyncio.sleep(0)
-
-                            if (
-                                self.input_task
-                                and not self.input_task.done()
-                                and not self.input_task.cancelled()
-                            ):
+                            if coroutines.is_active(self.input_task):
                                 self.prompt_session.message = question
                                 self.prompt_session.app.invalidate()
                             else:
-                                continue
+                                await asyncio.sleep(0)
 
                             res = await self.input_task
+                            await asyncio.sleep(0)
                         else:
                             res = await asyncio.get_event_loop().run_in_executor(
                                 None, input, question
                             )
+
                     except EOFError:
                         # Treat EOF (Ctrl+D) as if the user pressed Enter
                         res = default
@@ -1167,6 +1243,8 @@ class InputOutput:
                     good = any(valid_response.startswith(res) for valid_response in valid_responses)
 
                     if good:
+                        if not acknowledge:
+                            self.set_confirmation_acknowledgement()
                         self.start_spinner(self.last_spinner_text)
                         break
 
@@ -1181,13 +1259,15 @@ class InputOutput:
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
                 return False
 
-            if explicit_yes_required:
+            if explicit_yes_required and not group_response:
                 is_yes = res == "y"
             else:
                 is_yes = res in ("y", "a")
 
-            is_all = res == "a" and group is not None and not explicit_yes_required
-            is_skip = res == "s" and group is not None
+            is_all = res == "a" and (
+                (group is not None and not explicit_yes_required) or group_response
+            )
+            is_skip = res == "s" and (group is not None or group_response)
 
             if group:
                 if is_all and not explicit_yes_required:
@@ -1201,6 +1281,10 @@ class InputOutput:
             return False
         finally:
             pass
+
+        if group_response and (is_all or is_skip):
+            self.group_responses[group_response] = is_yes
+
         return is_yes
 
     @restore_multiline
@@ -1301,6 +1385,27 @@ class InputOutput:
 
         self.stream_print(*messages, style=style)
 
+    def profile(self, *messages, start=False):
+        if not self.verbose:
+            return
+
+        now = time.time()
+        message_str = " ".join(map(str, messages))
+
+        # Treat uninitialized as an implicit start.
+        if start or self.profile_start_time is None:
+            self.profile_start_time = now
+            self.stream_print(f"PROFILE: {message_str}")
+        else:
+            total_elapsed = now - self.profile_start_time
+            last_elapsed = now - self.profile_last_time
+            output_message = (
+                f"PROFILE: [+{last_elapsed:6.2f}s] {message_str} (total {total_elapsed:.2f}s)"
+            )
+            self.stream_print(output_message)
+
+        self.profile_last_time = now
+
     def assistant_output(self, message, pretty=None):
         if not message:
             self.tool_warning("Empty response received from LLM. Check your provider account?")
@@ -1312,12 +1417,7 @@ class InputOutput:
         if pretty is None:
             pretty = self.pretty
 
-        if pretty:
-            show_resp = Markdown(
-                message, style=self.assistant_output_color, code_theme=self.code_theme
-            )
-        else:
-            show_resp = Text(message or "(empty response)")
+        show_resp = Text(message or "(empty response)")
 
         self.stream_print(show_resp)
 
@@ -1349,26 +1449,60 @@ class InputOutput:
         incomplete_line = ""
         output = ""
 
+        lines = self.remove_consecutive_empty_strings(lines)
+        needs_new_line = False if len(lines) == 2 and lines[0] and not lines[-1] else True
+
         if len(lines) > 1 or final:
             # All lines except the last one are complete
             complete_lines = lines[:-1] if not final else lines
             incomplete_line = lines[-1] if not final else ""
+            last_index = len(complete_lines) - 1
 
-            for complete_line in complete_lines:
+            for index, complete_line in enumerate(complete_lines):
                 output += complete_line
+                output += "\n" if needs_new_line and index != last_index else ""
                 self._stream_line_count += 1
 
             self._stream_buffer = incomplete_line
 
+        should_print = False
+        should_reset = False
+
         if not final:
             if len(lines) > 1:
+                should_print = True
+        else:
+            # Ensure any remaining buffered content is printed using the full response
+            should_print = True
+            should_reset = True
+
+        if should_print:
+            try:
                 self.console.print(
                     Text.from_ansi(output) if self.has_ansi_codes(output) else output
                 )
-        else:
-            # Ensure any remaining buffered content is printed using the full response
-            self.console.print(Text.from_ansi(output) if self.has_ansi_codes(output) else output)
+            except Exception as e:
+                if self.verbose:
+                    print(e)
+
+                self.console.print(
+                    (Text.from_ansi(output)) if self.has_ansi_codes(output) else output,
+                    markup=False,
+                )
+
+        if should_reset:
             self.reset_streaming_response()
+
+    def remove_consecutive_empty_strings(self, string_list):
+        new_list = []
+        first_item = True
+
+        for item in string_list:
+            if first_item or item != "" or (new_list and new_list[-1] != ""):
+                first_item = False
+                new_list.append(item)
+
+        return new_list
 
     def has_ansi_codes(self, s: str) -> bool:
         """Check if a string contains the ANSI escape character."""
@@ -1459,6 +1593,9 @@ class InputOutput:
             )
 
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
+        if self.confirmation_in_progress or self.get_confirmation_acknowledgement():
+            return
+
         if blockquote:
             if strip:
                 text = text.strip()

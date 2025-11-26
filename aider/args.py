@@ -176,11 +176,11 @@ def get_parser(default_config_files, git_root):
         help="Use architect edit format for the main chat",
     )
     group.add_argument(
-        "--navigator",
+        "--agent",
         action="store_const",
         dest="edit_format",
-        const="navigator",
-        help="Use navigator edit format for the main chat (autonomous file management)",
+        const="agent",
+        help="Use agent edit format for the main chat (autonomous file management)",
     )
     group.add_argument(
         "--auto-accept-architect",
@@ -232,6 +232,58 @@ def get_parser(default_config_files, git_root):
             "Soft limit on tokens for chat history, after which summarization begins."
             " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
+    )
+
+    #########
+    group = parser.add_argument_group("Agent settings")
+    group.add_argument(
+        "--agent-config",
+        metavar="AGENT_CONFIG_JSON",
+        help="Specify Agent Mode configuration as a JSON string",
+        default=None,
+    )
+    group.add_argument(
+        "--auto-save",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable automatic saving of sessions as 'auto-save' (default: False)",
+    )
+    group.add_argument(
+        "--auto-load",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable/disable automatic loading of 'auto-save' session on startup (default: False)",
+    )
+    group.add_argument(
+        "--mcp-servers",
+        metavar="MCP_CONFIG_JSON",
+        help="Specify MCP server configurations as a JSON string",
+        default=None,
+    )
+    group.add_argument(
+        "--mcp-servers-file",
+        metavar="MCP_CONFIG_FILE",
+        help="Specify a file path with MCP server configurations",
+        default=None,
+    )
+    group.add_argument(
+        "--mcp-transport",
+        metavar="MCP_TRANSPORT",
+        help="Specify the transport for MCP servers (default: stdio)",
+        default="stdio",
+        choices=["stdio", "http", "sse"],
+    )
+    group.add_argument(
+        "--preserve-todo-list",
+        action="store_true",
+        help="Preserve the existing .aider.todo.txt file on startup (default: False)",
+        default=False,
+    )
+    group.add_argument(
+        "--use-enhanced-map",
+        action="store_true",
+        help="Use enhanced Repo Map that takes into account imports (default: False)",
+        default=False,
     )
 
     ##########
@@ -789,10 +841,10 @@ def get_parser(default_config_files, git_root):
     ######
     group = parser.add_argument_group("Other settings")
     group.add_argument(
-        "--preserve-todo-list",
+        "--yes-always",
         action="store_true",
-        help="Preserve the existing .aider.todo.txt file on startup (default: False)",
-        default=False,
+        help="Always say yes to every confirmation",
+        default=None,
     )
     group.add_argument(
         "--disable-playwright",
@@ -831,12 +883,6 @@ def get_parser(default_config_files, git_root):
         help="Specify the language to use in the commit message (default: None, user language)",
     )
     group.add_argument(
-        "--yes-always",
-        action="store_true",
-        help="Always say yes to every confirmation",
-        default=None,
-    )
-    group.add_argument(
         "-v",
         "--verbose",
         action="store_true",
@@ -858,25 +904,6 @@ def get_parser(default_config_files, git_root):
         choices=["platform", "lf", "crlf"],
         default="platform",
         help="Line endings to use when writing files (default: platform)",
-    )
-    group.add_argument(
-        "--mcp-servers",
-        metavar="MCP_CONFIG_JSON",
-        help="Specify MCP server configurations as a JSON string",
-        default=None,
-    )
-    group.add_argument(
-        "--mcp-servers-file",
-        metavar="MCP_CONFIG_FILE",
-        help="Specify a file path with MCP server configurations",
-        default=None,
-    )
-    group.add_argument(
-        "--mcp-transport",
-        metavar="MCP_TRANSPORT",
-        help="Specify the transport for MCP servers (default: stdio)",
-        default="stdio",
-        choices=["stdio", "http"],
     )
     group.add_argument(
         "-c",

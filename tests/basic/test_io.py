@@ -16,10 +16,11 @@ from aider.utils import ChdirTemporaryDirectory
 class TestInputOutput(unittest.TestCase):
     def test_line_endings_validation(self):
         # Test valid line endings
-        for ending in ["platform", "lf", "crlf"]:
+        for ending in ["platform", "lf", "crlf", "preserve"]:
             io = InputOutput(line_endings=ending)
             self.assertEqual(
-                io.newline, None if ending == "platform" else "\n" if ending == "lf" else "\r\n"
+                io.newline,
+                None if ending in ("platform", "preserve") else "\n" if ending == "lf" else "\r\n",
             )
 
         # Test invalid line endings
@@ -30,6 +31,7 @@ class TestInputOutput(unittest.TestCase):
         self.assertIn("platform", str(cm.exception))
         self.assertIn("crlf", str(cm.exception))
         self.assertIn("lf", str(cm.exception))
+        self.assertIn("preserve", str(cm.exception))
 
     def test_no_color_environment_variable(self):
         with patch.dict(os.environ, {"NO_COLOR": "1"}):
@@ -180,28 +182,31 @@ class TestInputOutput(unittest.TestCase):
 
         # Test case 1: explicit_yes_required=True, self.yes=True
         io.yes = True
+        mock_input.return_value = "n"
         result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=True))
         self.assertFalse(result)
-        mock_input.assert_not_called()
+        mock_input.assert_called()
+        mock_input.reset_mock()
 
         # Test case 2: explicit_yes_required=True, self.yes=False
         io.yes = False
+        mock_input.return_value = "n"
         result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=True))
         self.assertFalse(result)
-        mock_input.assert_not_called()
+        mock_input.assert_called()
+        mock_input.reset_mock()
 
         # Test case 3: explicit_yes_required=True, user input required
         io.yes = None
         mock_input.return_value = "y"
         result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=True))
         self.assertTrue(result)
-        mock_input.assert_called_once()
-
-        # Reset mock_input
+        mock_input.assert_called()
         mock_input.reset_mock()
 
         # Test case 4: explicit_yes_required=False, self.yes=True
         io.yes = True
+        mock_input.return_value = "y"
         result = asyncio.run(io.confirm_ask("Are you sure?", explicit_yes_required=False))
         self.assertTrue(result)
         mock_input.assert_not_called()

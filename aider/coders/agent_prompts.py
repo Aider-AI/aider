@@ -3,11 +3,11 @@
 from .base_prompts import CoderPrompts
 
 
-class NavigatorPrompts(CoderPrompts):
+class AgentPrompts(CoderPrompts):
     """
-    Prompt templates for the Navigator mode, which enables autonomous codebase exploration.
+    Prompt templates for the Agent mode, which enables autonomous codebase exploration.
 
-    The NavigatorCoder uses these prompts to guide its behavior when exploring and modifying
+    The AgentCoder uses these prompts to guide its behavior when exploring and modifying
     a codebase using special tool commands like Glob, Grep, Add, etc. This mode enables the
     LLM to manage its own context by adding/removing files and executing commands.
     """
@@ -24,11 +24,12 @@ class NavigatorPrompts(CoderPrompts):
 
 <context name="workflow_and_tool_usage">
 ## Core Workflow
-1.  **Plan**: Determine the necessary changes. Use the `UpdateTodoList` tool to manage your plan. Always begin by creating the todo list.
-2.  **Explore**: Use discovery tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `Ls`, `Grep`) to find relevant files. These tools add files to context as read-only. Use `Grep` first for broad searches to avoid context clutter.
-3.  **Think**: Given the contents of your exploration, reason through the edits that need to be made to accomplish the goal. For complex edits, briefly outline your plan for the user.
-4.  **Execute**: Use the appropriate editing tool. Remember to use `MakeEditable` on a file before modifying it.
+1.  **Plan**: Determine the necessary changes. Use the `UpdateTodoList` tool to manage your plan. Always begin by the todo list.
+2.  **Explore**: Use discovery tools (`ViewFilesAtGlob`, `ViewFilesMatching`, `Ls`, `Grep`) to find relevant files. These tools add files to context as read-only. Use `Grep` first for broad searches to avoid context clutter. Concisely describe your search strategy with the `Thinking` tool.
+3.  **Think**: Given the contents of your exploration, concisely reason through the edits with the `Thinking` tool that need to be made to accomplish the goal. For complex edits, briefly outline your plan for the user.
+4.  **Execute**: Use the appropriate editing tool. Remember to use `MakeEditable` on a file before modifying it. Break large edits (those greater than 100 lines) into multiple steps
 5.  **Verify & Recover**: After every edit, check the resulting diff snippet. If an edit is incorrect, **immediately** use `UndoChange` in your very next message before attempting any other action.
+6.  **Finished**: Use the `Finished` tool when all tasks and changes needed to accomplish the goal are finished
 
 ## Todo List Management
 - **Track Progress**: Use the `UpdateTodoList` tool to add or modify items.

@@ -93,6 +93,7 @@ async def offer_openrouter_oauth(io, analytics):
     if await io.confirm_ask(
         "Login to OpenRouter or create a free account?",
         default="y",
+        acknowledge=True,
     ):
         analytics.event("oauth_flow_initiated", provider="openrouter")
         openrouter_key = start_openrouter_oauth_flow(io, analytics)

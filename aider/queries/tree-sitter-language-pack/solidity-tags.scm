@@ -40,4 +40,4 @@
 
 ;; Imports ( note that unknown is not standardised )
 (import_directive
-  import_name: (_) @name.reference.module ) @reference.unknown
+  import_name: (_) @name.reference.import ) @reference.import

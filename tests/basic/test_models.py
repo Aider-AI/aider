@@ -50,7 +50,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.info["max_input_tokens"], 8 * 1024)
 
     @patch("os.environ")
-    def test_sanity_check_model_all_set(self, mock_environ):
+    async def test_sanity_check_model_all_set(self, mock_environ):
         mock_environ.get.return_value = "dummy_value"
         mock_io = MagicMock()
         model = MagicMock()
@@ -59,7 +59,7 @@ class TestModels(unittest.TestCase):
         model.keys_in_environment = True
         model.info = {"some": "info"}
 
-        sanity_check_model(mock_io, model)
+        await sanity_check_model(mock_io, model)
 
         mock_io.tool_output.assert_called()
         calls = mock_io.tool_output.call_args_list
@@ -67,7 +67,7 @@ class TestModels(unittest.TestCase):
         self.assertIn("- API_KEY2: Set", str(calls))
 
     @patch("os.environ")
-    def test_sanity_check_model_not_set(self, mock_environ):
+    async def test_sanity_check_model_not_set(self, mock_environ):
         mock_environ.get.return_value = ""
         mock_io = MagicMock()
         model = MagicMock()
@@ -76,19 +76,19 @@ class TestModels(unittest.TestCase):
         model.keys_in_environment = True
         model.info = {"some": "info"}
 
-        sanity_check_model(mock_io, model)
+        await sanity_check_model(mock_io, model)
 
         mock_io.tool_output.assert_called()
         calls = mock_io.tool_output.call_args_list
         self.assertIn("- API_KEY1: Not set", str(calls))
         self.assertIn("- API_KEY2: Not set", str(calls))
 
-    def test_sanity_check_models_bogus_editor(self):
+    async def test_sanity_check_models_bogus_editor(self):
         mock_io = MagicMock()
         main_model = Model("gpt-4")
         main_model.editor_model = Model("bogus-model")
 
-        result = sanity_check_models(mock_io, main_model)
+        result = await sanity_check_models(mock_io, main_model)
 
         self.assertTrue(
             result
@@ -106,7 +106,7 @@ class TestModels(unittest.TestCase):
         )  # Check that one of the warnings mentions the bogus model
 
     @patch("aider.models.check_for_dependencies")
-    def test_sanity_check_model_calls_check_dependencies(self, mock_check_deps):
+    async def test_sanity_check_model_calls_check_dependencies(self, mock_check_deps):
         """Test that sanity_check_model calls check_for_dependencies"""
         mock_io = MagicMock()
         model = MagicMock()
@@ -115,7 +115,7 @@ class TestModels(unittest.TestCase):
         model.keys_in_environment = True
         model.info = {"some": "info"}
 
-        sanity_check_model(mock_io, model)
+        await sanity_check_model(mock_io, model)
 
         # Verify check_for_dependencies was called with the model name
         mock_check_deps.assert_called_once_with(mock_io, "test-model")
@@ -206,7 +206,7 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.extra_params["thinking"]["budget_tokens"], 0.5 * 1024 * 1024)
 
     @patch("aider.models.check_pip_install_extra")
-    def test_check_for_dependencies_bedrock(self, mock_check_pip):
+    async def test_check_for_dependencies_bedrock(self, mock_check_pip):
         """Test that check_for_dependencies calls check_pip_install_extra for Bedrock models"""
         from aider.io import InputOutput
 
@@ -215,7 +215,7 @@ class TestModels(unittest.TestCase):
         # Test with a Bedrock model
         from aider.models import check_for_dependencies
 
-        check_for_dependencies(io, "bedrock/anthropic.claude-3-sonnet-20240229-v1:0")
+        await check_for_dependencies(io, "bedrock/anthropic.claude-3-sonnet-20240229-v1:0")
 
         # Verify check_pip_install_extra was called with correct arguments
         mock_check_pip.assert_called_once_with(
@@ -223,7 +223,7 @@ class TestModels(unittest.TestCase):
         )
 
     @patch("aider.models.check_pip_install_extra")
-    def test_check_for_dependencies_vertex_ai(self, mock_check_pip):
+    async def test_check_for_dependencies_vertex_ai(self, mock_check_pip):
         """Test that check_for_dependencies calls check_pip_install_extra for Vertex AI models"""
         from aider.io import InputOutput
 
@@ -232,7 +232,7 @@ class TestModels(unittest.TestCase):
         # Test with a Vertex AI model
         from aider.models import check_for_dependencies
 
-        check_for_dependencies(io, "vertex_ai/gemini-1.5-pro")
+        await check_for_dependencies(io, "vertex_ai/gemini-1.5-pro")
 
         # Verify check_pip_install_extra was called with correct arguments
         mock_check_pip.assert_called_once_with(
@@ -243,7 +243,7 @@ class TestModels(unittest.TestCase):
         )
 
     @patch("aider.models.check_pip_install_extra")
-    def test_check_for_dependencies_other_model(self, mock_check_pip):
+    async def test_check_for_dependencies_other_model(self, mock_check_pip):
         """Test that check_for_dependencies doesn't call check_pip_install_extra for other models"""
         from aider.io import InputOutput
 
@@ -252,7 +252,7 @@ class TestModels(unittest.TestCase):
         # Test with a non-Bedrock, non-Vertex AI model
         from aider.models import check_for_dependencies
 
-        check_for_dependencies(io, "gpt-4")
+        await check_for_dependencies(io, "gpt-4")
 
         # Verify check_pip_install_extra was not called
         mock_check_pip.assert_not_called()
@@ -440,11 +440,12 @@ class TestModels(unittest.TestCase):
         expected_ctx = int(1000 * 1.25) + 8192  # 9442
         mock_completion.assert_called_once_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             num_ctx=expected_ctx,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -459,11 +460,12 @@ class TestModels(unittest.TestCase):
 
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             tools=[dict(type="function", function="test")],
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -476,11 +478,13 @@ class TestModels(unittest.TestCase):
 
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             tools=[dict(type="function", function="test")],
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
+            tool_choice=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -494,11 +498,12 @@ class TestModels(unittest.TestCase):
         # Should use provided num_ctx from extra_params
         mock_completion.assert_called_once_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             num_ctx=4096,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -512,10 +517,11 @@ class TestModels(unittest.TestCase):
         # Regular models shouldn't get num_ctx
         mock_completion.assert_called_once_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
         self.assertNotIn("num_ctx", mock_completion.call_args.kwargs)
 
@@ -543,10 +549,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=600,  # Default timeout
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -558,10 +565,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=300,  # From extra_params
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -573,10 +581,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
         # Test use_temperature=False doesn't send temperature
@@ -593,10 +602,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0.7,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
 

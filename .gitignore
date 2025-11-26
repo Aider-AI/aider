@@ -18,6 +18,7 @@
 !/.flake8
 !/.gitignore
 !/.pre-commit-config.yaml
+!/CHANGELOG.md
 !/CNAME
 !/CONTRIBUTING.metadata
 !/HISTORY.md
@@ -33,3 +34,4 @@ aider/__version__.py
 aider/_version.py
 *.pyc
 .aider*
+env/

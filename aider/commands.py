@@ -1,14 +1,11 @@
 import asyncio
 import glob
-import json
 import os
 import re
 import subprocess
 import sys
 import tempfile
-import time
 from collections import OrderedDict
-from datetime import datetime
 from os.path import expanduser
 from pathlib import Path
 
@@ -17,7 +14,7 @@ from PIL import Image, ImageGrab
 from prompt_toolkit.completion import Completion, PathCompleter
 from prompt_toolkit.document import Document
 
-from aider import models, prompts, voice
+from aider import models, prompts, sessions, voice
 from aider.editor import pipe_editor
 from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
@@ -89,7 +86,7 @@ class Commands:
         self.original_read_only_fnames = set(original_read_only_fnames or [])
         self.cmd_running = False
 
-    def cmd_model(self, args):
+    async def cmd_model(self, args):
         "Switch the Main Model to a new LLM"
 
         model_name = args.strip()
@@ -103,7 +100,7 @@ class Commands:
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=self.coder.main_model.weak_model.name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
 
         # Check if the current edit format is the default for the old model
         old_model_edit_format = self.coder.main_model.edit_format
@@ -116,7 +113,7 @@ class Commands:
 
         raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
-    def cmd_editor_model(self, args):
+    async def cmd_editor_model(self, args):
         "Switch the Editor Model to a new LLM"
 
         model_name = args.strip()
@@ -125,10 +122,10 @@ class Commands:
             editor_model=model_name,
             weak_model=self.coder.main_model.weak_model.name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
-    def cmd_weak_model(self, args):
+    async def cmd_weak_model(self, args):
         "Switch the Weak Model to a new LLM"
 
         model_name = args.strip()
@@ -137,7 +134,7 @@ class Commands:
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=model_name,
         )
-        models.sanity_check_models(self.io, model)
+        await models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
 
     def cmd_chat_mode(self, args):
@@ -235,9 +232,13 @@ class Commands:
             if disable_playwright:
                 res = False
             else:
-                res = await install_playwright(self.io)
-                if not res:
+                try:
+                    res = await install_playwright(self.io)
+                    if not res:
+                        self.io.tool_warning("Unable to initialize playwright.")
+                except Exception:
                     self.io.tool_warning("Unable to initialize playwright.")
+                    res = False
 
             self.scraper = Scraper(
                 print_error=self.io.tool_error,
@@ -245,7 +246,7 @@ class Commands:
                 verify_ssl=self.verify_ssl,
             )
 
-        content = self.scraper.scrape(url) or ""
+        content = await self.scraper.scrape(url) or ""
         content = f"Here is the content of {url}:\n\n" + content
         if return_content:
             return content
@@ -413,7 +414,7 @@ class Commands:
                 )
 
             lint_coder.add_rel_fname(fname)
-            await lint_coder.run(errors)
+            await lint_coder.run_one(errors, preproc=False)
             lint_coder.abs_fnames = set()
 
         if lint_coder and self.coder.repo.is_dirty() and self.coder.auto_commits:
@@ -494,7 +495,7 @@ class Commands:
                 tokens = self.coder.main_model.token_count(repo_content)
                 res.append((tokens, "repository map", "use --map-tokens to resize"))
 
-        # Enhanced context blocks (only for navigator mode)
+        # Enhanced context blocks (only for agent mode)
         if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
             # Force token calculation if it hasn't been done yet
             if hasattr(self.coder, "_calculate_context_block_tokens"):
@@ -535,7 +536,7 @@ class Commands:
                     tokens = self.coder.main_model.token_count_for_image(fname)
                 else:
                     # approximate
-                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    content = f"{relative_fname}\n{fence}\n" + content + f"{fence}\n"
                     tokens = self.coder.main_model.token_count(content)
                 file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
 
@@ -555,7 +556,7 @@ class Commands:
                 content = self.io.read_text(fname)
                 if content is not None and not is_image_file(relative_fname):
                     # approximate
-                    content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                    content = f"{relative_fname}\n{fence}\n" + content + f"{fence}\n"
                     tokens = self.coder.main_model.token_count(content)
                     file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
 
@@ -989,13 +990,29 @@ class Commands:
                     self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
 
-                    # Recalculate context block tokens if using navigator mode
+                    # Recalculate context block tokens if using agent mode
                     if (
                         hasattr(self.coder, "use_enhanced_context")
                         and self.coder.use_enhanced_context
                     ):
                         if hasattr(self.coder, "_calculate_context_block_tokens"):
                             self.coder._calculate_context_block_tokens()
+
+        if self.coder.repo_map:
+            map_tokens = self.coder.repo_map.max_map_tokens
+            map_mul_no_files = self.coder.repo_map.map_mul_no_files
+        else:
+            map_tokens = 0
+            map_mul_no_files = 1
+
+        raise SwitchCoder(
+            edit_format=self.coder.edit_format,
+            summarize_from_coder=False,
+            from_coder=self.coder,
+            map_tokens=map_tokens,
+            map_mul_no_files=map_mul_no_files,
+            show_announcements=False,
+        )
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
@@ -1049,66 +1066,87 @@ class Commands:
             file_set.remove(matched_file)
             self.io.tool_output(f"Removed {description} file {matched_file} from the chat")
 
-    def cmd_drop(self, args=""):
+    async def cmd_drop(self, args=""):
         "Remove files from the chat session to free up context space"
 
-        if not args.strip():
-            if self.original_read_only_fnames:
-                self.io.tool_output(
-                    "Dropping all files from the chat session except originally read-only files."
-                )
-            else:
-                self.io.tool_output("Dropping all files from the chat session.")
-            self._drop_all_files()
+        try:
+            if not args.strip():
+                if self.original_read_only_fnames:
+                    self.io.tool_output(
+                        "Dropping all files from the chat session except originally read-only"
+                        " files."
+                    )
+                else:
+                    self.io.tool_output("Dropping all files from the chat session.")
+                self._drop_all_files()
 
-            # Recalculate context block tokens after dropping all files
-            if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
+                # Recalculate context block tokens after dropping all files
+                if hasattr(self.coder, "use_enhanced_context") and self.coder.use_enhanced_context:
+                    if hasattr(self.coder, "_calculate_context_block_tokens"):
+                        self.coder._calculate_context_block_tokens()
+
+                return
+
+            filenames = parse_quoted_filenames(args)
+            files_changed = False
+
+            for word in filenames:
+                # Expand tilde in the path
+                expanded_word = os.path.expanduser(word)
+
+                # Handle read-only files
+                self._handle_read_only_files(
+                    expanded_word, self.coder.abs_read_only_fnames, "read-only"
+                )
+                self._handle_read_only_files(
+                    expanded_word, self.coder.abs_read_only_stubs_fnames, "read-only (stub)"
+                )
+
+                # For editable files, use glob if word contains glob chars, otherwise use substring
+                if any(c in expanded_word for c in "*?[]"):
+                    matched_files = self.glob_filtered_to_repo(expanded_word)
+                else:
+                    # Use substring matching like we do for read-only files
+                    matched_files = [
+                        self.coder.get_rel_fname(f)
+                        for f in self.coder.abs_fnames
+                        if expanded_word in f
+                    ]
+
+                if not matched_files:
+                    matched_files.append(expanded_word)
+
+                for matched_file in matched_files:
+                    abs_fname = self.coder.abs_root_path(matched_file)
+                    if abs_fname in self.coder.abs_fnames:
+                        self.coder.abs_fnames.remove(abs_fname)
+                        self.io.tool_output(f"Removed {matched_file} from the chat")
+                        files_changed = True
+
+            # Recalculate context block tokens if any files were changed and using agent mode
+            if (
+                files_changed
+                and hasattr(self.coder, "use_enhanced_context")
+                and self.coder.use_enhanced_context
+            ):
                 if hasattr(self.coder, "_calculate_context_block_tokens"):
                     self.coder._calculate_context_block_tokens()
-            return
-
-        filenames = parse_quoted_filenames(args)
-        files_changed = False
-
-        for word in filenames:
-            # Expand tilde in the path
-            expanded_word = os.path.expanduser(word)
-
-            # Handle read-only files
-            self._handle_read_only_files(
-                expanded_word, self.coder.abs_read_only_fnames, "read-only"
-            )
-            self._handle_read_only_files(
-                expanded_word, self.coder.abs_read_only_stubs_fnames, "read-only (stub)"
-            )
-
-            # For editable files, use glob if word contains glob chars, otherwise use substring
-            if any(c in expanded_word for c in "*?[]"):
-                matched_files = self.glob_filtered_to_repo(expanded_word)
+        finally:
+            if self.coder.repo_map:
+                map_tokens = self.coder.repo_map.max_map_tokens
+                map_mul_no_files = self.coder.repo_map.map_mul_no_files
             else:
-                # Use substring matching like we do for read-only files
-                matched_files = [
-                    self.coder.get_rel_fname(f) for f in self.coder.abs_fnames if expanded_word in f
-                ]
+                map_tokens = 0
+                map_mul_no_files = 1
 
-            if not matched_files:
-                matched_files.append(expanded_word)
-
-            for matched_file in matched_files:
-                abs_fname = self.coder.abs_root_path(matched_file)
-                if abs_fname in self.coder.abs_fnames:
-                    self.coder.abs_fnames.remove(abs_fname)
-                    self.io.tool_output(f"Removed {matched_file} from the chat")
-                    files_changed = True
-
-        # Recalculate context block tokens if any files were changed and using navigator mode
-        if (
-            files_changed
-            and hasattr(self.coder, "use_enhanced_context")
-            and self.coder.use_enhanced_context
-        ):
-            if hasattr(self.coder, "_calculate_context_block_tokens"):
-                self.coder._calculate_context_block_tokens()
+            raise SwitchCoder(
+                edit_format=self.coder.edit_format,
+                summarize_from_coder=False,
+                from_coder=self.coder,
+                map_tokens=map_tokens,
+                map_mul_no_files=map_mul_no_files,
+                show_announcements=False,
+            )
 
     def cmd_git(self, args):
         "Run a git command (output excluded from chat)"
@@ -1214,19 +1252,34 @@ class Commands:
         finally:
             self.cmd_running = False
 
-    def cmd_exit(self, args):
+    async def cmd_exit(self, args):
         "Exit the application"
         self.coder.event("exit", reason="/exit")
-        sys.exit()
 
-    def cmd_quit(self, args):
+        for server in self.coder.mcp_servers:
+            try:
+                await server.exit_stack.aclose()
+            except Exception:
+                pass
+
+        await asyncio.sleep(0)
+
+        try:
+            if self.coder.args.linear_output:
+                os._exit(0)
+            else:
+                sys.exit()
+        except Exception:
+            sys.exit()
+
+    async def cmd_quit(self, args):
         "Exit the application"
-        self.cmd_exit(args)
+        await self.cmd_exit(args)
 
     def cmd_context_management(self, args=""):
         "Toggle context management for large files"
         if not hasattr(self.coder, "context_management_enabled"):
-            self.io.tool_error("Context management is only available in navigator mode.")
+            self.io.tool_error("Context management is only available in agent mode.")
             return
 
         # Toggle the setting
@@ -1241,7 +1294,7 @@ class Commands:
     def cmd_context_blocks(self, args=""):
         "Toggle enhanced context blocks or print a specific block"
         if not hasattr(self.coder, "use_enhanced_context"):
-            self.io.tool_error("Enhanced context blocks are only available in navigator mode.")
+            self.io.tool_error("Enhanced context blocks are only available in agent mode.")
             return
 
         # If an argument is provided, try to print that specific context block
@@ -1296,33 +1349,6 @@ class Commands:
             self.io.tool_output(
                 "Enhanced context blocks are now OFF - directory structure and git status will not"
                 " be included."
-            )
-
-    def cmd_granular_editing(self, args=""):
-        "Toggle granular editing tools in navigator mode"
-        if not hasattr(self.coder, "use_granular_editing"):
-            self.io.tool_error("Granular editing toggle is only available in navigator mode.")
-            return
-
-        # Toggle the setting using the navigator's method if available
-        new_state = not self.coder.use_granular_editing
-
-        if hasattr(self.coder, "set_granular_editing"):
-            self.coder.set_granular_editing(new_state)
-        else:
-            # Fallback if method doesn't exist
-            self.coder.use_granular_editing = new_state
-
-        # Report the new state
-        if self.coder.use_granular_editing:
-            self.io.tool_output(
-                "Granular editing tools are now ON - navigator will use specific editing tools"
-                " instead of search/replace."
-            )
-        else:
-            self.io.tool_output(
-                "Granular editing tools are now OFF - navigator will use search/replace blocks for"
-                " editing."
             )
 
     def cmd_ls(self, args):
@@ -1400,7 +1426,7 @@ class Commands:
         from aider.coders.base_coder import Coder
 
         if not self.help:
-            res = install_help_extra(self.io)
+            res = await install_help_extra(self.io)
             if not res:
                 self.io.tool_error("Unable to initialize interactive help.")
                 return
@@ -1452,7 +1478,7 @@ class Commands:
     def completions_context(self):
         raise CommandCompletionException()
 
-    def completions_navigator(self):
+    def completions_agent(self):
         raise CommandCompletionException()
 
     async def cmd_ask(self, args):
@@ -1471,14 +1497,14 @@ class Commands:
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return await self._generic_chat_command(args, "context", placeholder=args.strip() or None)
 
-    async def cmd_navigator(self, args):
-        """Enter navigator mode to autonomously discover and manage relevant files. If no prompt provided, switches to navigator mode."""  # noqa
-        # Enable context management when entering navigator mode
+    async def cmd_agent(self, args):
+        """Enter agent mode to autonomously discover and manage relevant files. If no prompt provided, switches to agent mode."""  # noqa
+        # Enable context management when entering agent mode
         if hasattr(self.coder, "context_management_enabled"):
             self.coder.context_management_enabled = True
             self.io.tool_output("Context management enabled for large files")
 
-        return await self._generic_chat_command(args, "navigator", placeholder=args.strip() or None)
+        return await self._generic_chat_command(args, "agent", placeholder=args.strip() or None)
 
     async def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
@@ -1486,6 +1512,9 @@ class Commands:
             return self.cmd_chat_mode(edit_format)
 
         from aider.coders.base_coder import Coder
+
+        original_main_model = self.coder.main_model
+        original_edit_format = self.coder.edit_format
 
         coder = await Coder.create(
             io=self.io,
@@ -1497,8 +1526,15 @@ class Commands:
         )
 
         user_msg = args
-        await coder.run(user_msg, False)
+        await coder.generate(user_message=user_msg, preproc=False)
         self.coder.aider_commit_hashes = coder.aider_commit_hashes
+
+        raise SwitchCoder(
+            main_model=original_main_model,
+            edit_format=original_edit_format,
+            done_messages=coder.done_messages,
+            cur_messages=coder.cur_messages,
+        )
 
     def get_help_md(self):
         "Show help about all commands in markdown"
@@ -2061,168 +2097,29 @@ class Commands:
 
     def cmd_save_session(self, args):
         """Save the current chat session to a named file in .aider/sessions/"""
-        if not args.strip():
-            self.io.tool_error("Please provide a session name.")
-            return
-
-        session_name = args.strip()
-        session_file = self._get_session_file_path(session_name)
-
-        # Collect session data
-        session_data = {
-            "version": "1.0",
-            "timestamp": time.time(),
-            "session_name": session_name,
-            "model": self.coder.main_model.name,
-            "edit_format": self.coder.edit_format,
-            "chat_history": {
-                "done_messages": self.coder.done_messages,
-                "cur_messages": self.coder.cur_messages,
-            },
-            "files": {
-                "editable": [self.coder.get_rel_fname(f) for f in self.coder.abs_fnames],
-                "read_only": [self.coder.get_rel_fname(f) for f in self.coder.abs_read_only_fnames],
-                "read_only_stubs": [
-                    self.coder.get_rel_fname(f) for f in self.coder.abs_read_only_stubs_fnames
-                ],
-            },
-            "settings": {
-                "root": self.coder.root,
-                "auto_commits": self.coder.auto_commits,
-                "auto_lint": self.coder.auto_lint,
-                "auto_test": self.coder.auto_test,
-            },
-        }
-
-        try:
-            with open(session_file, "w", encoding="utf-8") as f:
-                json.dump(session_data, f, indent=2, ensure_ascii=False)
-            self.io.tool_output(f"Session saved to: {session_file}")
-        except Exception as e:
-            self.io.tool_error(f"Error saving session: {e}")
+        session_manager = sessions.SessionManager(self.coder, self.io)
+        session_manager.save_session(args.strip())
 
     def cmd_list_sessions(self, args):
         """List all saved sessions in .aider/sessions/"""
-        session_dir = self._get_session_directory()
-        session_files = list(session_dir.glob("*.json"))
+        session_manager = sessions.SessionManager(self.coder, self.io)
+        sessions_list = session_manager.list_sessions()
 
-        if not session_files:
-            self.io.tool_output("No saved sessions found.")
+        if not sessions_list:
             return
 
         self.io.tool_output("Saved sessions:")
-        for session_file in sorted(session_files):
-            try:
-                with open(session_file, "r", encoding="utf-8") as f:
-                    session_data = json.load(f)
-                session_name = session_data.get("session_name", session_file.stem)
-                timestamp = session_data.get("timestamp", 0)
-                model = session_data.get("model", "unknown")
-                edit_format = session_data.get("edit_format", "unknown")
-
-                # Format timestamp
-                if timestamp:
-                    date_str = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M")
-                else:
-                    date_str = "unknown date"
-
-                self.io.tool_output(
-                    f"  {session_name} (model: {model}, format: {edit_format}, {date_str})"
-                )
-            except Exception as e:
-                self.io.tool_output(f"  {session_file.stem} [error reading: {e}]")
+        for session_info in sessions_list:
+            self.io.tool_output(
+                f"  {session_info['name']} (model: {session_info['model']}, "
+                f"format: {session_info['edit_format']}, "
+                f"{session_info['num_messages']} messages, {session_info['num_files']} files)"
+            )
 
     def cmd_load_session(self, args):
         """Load a saved session by name or file path"""
-        if not args.strip():
-            self.io.tool_error("Please provide a session name or file path.")
-            return
-
-        session_name = args.strip()
-        session_file = self._find_session_file(session_name)
-
-        if not session_file:
-            self.io.tool_error(f"Session not found: {session_name}")
-            self.io.tool_output("Use /list-sessions to see available sessions.")
-            return
-
-        try:
-            with open(session_file, "r", encoding="utf-8") as f:
-                session_data = json.load(f)
-        except Exception as e:
-            self.io.tool_error(f"Error loading session: {e}")
-            return
-
-        # Verify session format
-        if not isinstance(session_data, dict) or "version" not in session_data:
-            self.io.tool_error("Invalid session format.")
-            return
-
-        # Load session data
-        try:
-            # Clear current state
-            self.coder.abs_fnames = set()
-            self.coder.abs_read_only_fnames = set()
-            self.coder.abs_read_only_stubs_fnames = set()
-            self.coder.done_messages = []
-            self.coder.cur_messages = []
-
-            # Load chat history
-            chat_history = session_data.get("chat_history", {})
-            self.coder.done_messages = chat_history.get("done_messages", [])
-            self.coder.cur_messages = chat_history.get("cur_messages", [])
-
-            # Load files
-            files = session_data.get("files", {})
-            for rel_fname in files.get("editable", []):
-                abs_fname = self.coder.abs_root_path(rel_fname)
-                if os.path.exists(abs_fname):
-                    self.coder.abs_fnames.add(abs_fname)
-                else:
-                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
-
-            for rel_fname in files.get("read_only", []):
-                abs_fname = self.coder.abs_root_path(rel_fname)
-                if os.path.exists(abs_fname):
-                    self.coder.abs_read_only_fnames.add(abs_fname)
-                else:
-                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
-
-            for rel_fname in files.get("read_only_stubs", []):
-                abs_fname = self.coder.abs_root_path(rel_fname)
-                if os.path.exists(abs_fname):
-                    self.coder.abs_read_only_stubs_fnames.add(abs_fname)
-                else:
-                    self.io.tool_warning(f"File not found, skipping: {rel_fname}")
-
-            # Load settings
-            settings = session_data.get("settings", {})
-            if "auto_commits" in settings:
-                self.coder.auto_commits = settings["auto_commits"]
-            if "auto_lint" in settings:
-                self.coder.auto_lint = settings["auto_lint"]
-            if "auto_test" in settings:
-                self.coder.auto_test = settings["auto_test"]
-
-            self.io.tool_output(
-                f"Session loaded: {session_data.get('session_name', session_file.stem)}"
-            )
-            self.io.tool_output(
-                f"Model: {session_data.get('model', 'unknown')}, Edit format:"
-                f" {session_data.get('edit_format', 'unknown')}"
-            )
-
-            # Show summary
-            num_messages = len(self.coder.done_messages) + len(self.coder.cur_messages)
-            num_files = (
-                len(self.coder.abs_fnames)
-                + len(self.coder.abs_read_only_fnames)
-                + len(self.coder.abs_read_only_stubs_fnames)
-            )
-            self.io.tool_output(f"Loaded {num_messages} messages and {num_files} files")
-
-        except Exception as e:
-            self.io.tool_error(f"Error applying session data: {e}")
+        session_manager = sessions.SessionManager(self.coder, self.io)
+        session_manager.load_session(args.strip())
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""

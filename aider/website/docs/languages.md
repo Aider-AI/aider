@@ -133,7 +133,7 @@ cog.out(get_supported_languages_md())
 | gstlaunch            | .launch              |          |   ✓    |
 | hack                 | .hack                |          |   ✓    |
 | hare                 | .ha                  |          |   ✓    |
-| haskell              | .hs                  |          |   ✓    |
+| haskell              | .hs                  |    ✓     |   ✓    |
 | haxe                 | .hx                  |          |   ✓    |
 | hcl                  | .hcl                 |    ✓     |   ✓    |
 | hcl                  | .tf                  |    ✓     |   ✓    |
@@ -257,7 +257,7 @@ cog.out(get_supported_languages_md())
 | xml                  | .xml                 |          |   ✓    |
 | xml                  | .xsl                 |          |   ✓    |
 | yuck                 | .yuck                |          |   ✓    |
-| zig                  | .zig                 |          |   ✓    |
+| zig                  | .zig                 |    ✓     |   ✓    |
 
 <!--[[[end]]]-->
 

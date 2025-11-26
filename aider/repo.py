@@ -216,7 +216,7 @@ class GitRepo:
             commit_message = await self.get_commit_message(diffs, context, user_language)
 
         # Retrieve attribute settings, prioritizing coder.args if available
-        if coder and hasattr(coder, "args"):
+        if coder and hasattr(coder, "args") and coder.args:
             attribute_author = coder.args.attribute_author
             attribute_committer = coder.args.attribute_committer
             attribute_commit_message_author = coder.args.attribute_commit_message_author

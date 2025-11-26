@@ -39,3 +39,6 @@
 
 (enum_declaration
   name: (identifier) @name.definition.enum) @definition.enum
+
+(import_statement
+  source: (string (string_fragment) @name.reference.import)) @reference.import
