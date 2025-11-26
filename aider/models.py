@@ -981,7 +981,7 @@ class Model(ModelSettings):
         kwargs["cache_control_injection_points"] = [
             {
                 "location": "message",
-                "role": "system",
+                "index": -1,
             }
         ]
 
