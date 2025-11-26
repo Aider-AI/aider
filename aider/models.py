@@ -982,7 +982,7 @@ class Model(ModelSettings):
             {
                 "location": "message",
                 "role": "system",
-            }
+            },
         ]
 
         # Are we using github copilot?

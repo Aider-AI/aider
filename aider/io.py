@@ -446,6 +446,7 @@ class InputOutput:
         self.spinner_running = False
         self.spinner_text = ""
         self.last_spinner_text = ""
+        self.spinner_suffix = ""
         self.spinner_frame_index = 0
         self.spinner_last_frame_index = 0
         self.unicode_palette = "░█"
@@ -513,6 +514,7 @@ class InputOutput:
             self.spinner_running = True
             self.spinner_text = text
             self.spinner_frame_index = self.spinner_last_frame_index
+            self.spinner_suffix = ""
 
             if update_last_text:
                 self.last_spinner_text = text
@@ -523,10 +525,18 @@ class InputOutput:
     def update_spinner(self, text):
         self.spinner_text = text
 
+    def update_spinner_suffix(self, text=None):
+        if text:
+            self.spinner_suffix = f" • {text[:16].strip()}"
+        else:
+            self.spinner_suffix = ""
+
     def stop_spinner(self):
         """Stop the spinner."""
         self.spinner_running = False
         self.spinner_text = ""
+        self.spinner_suffix = ""
+
         # Keep last frame index to avoid spinner "jumping" on restart
         self.spinner_last_frame_index = self.spinner_frame_index
         if self.fallback_spinner:
@@ -541,7 +551,7 @@ class InputOutput:
         frame = self.spinner_frames[self.spinner_frame_index]
         self.spinner_frame_index = (self.spinner_frame_index + 1) % len(self.spinner_frames)
 
-        return f"{frame} {self.spinner_text}"
+        return f"{frame} {self.spinner_text}{self.spinner_suffix}"
 
     def _validate_color_settings(self):
         """Validate configured color strings and reset invalid ones."""
