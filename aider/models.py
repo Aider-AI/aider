@@ -935,13 +935,24 @@ class Model(ModelSettings):
 
         # `tools` is for modern tool usage. `functions` is for legacy/forced calls.
         # This handles `base_coder` sending both with same content for `navigator_coder`.
-        effective_tools = tools
+        effective_tools = []
+        if tools:
+            effective_tools.extend(tools)
 
-        if effective_tools is None and functions:
-            # Convert legacy `functions` to `tools` format if `tools` isn't provided.
-            effective_tools = [dict(type="function", function=f) for f in functions]
+        if functions:
+            # Convert legacy `functions` to `tools` format and add them
+            effective_tools.extend([dict(type="function", function=f) for f in functions])
 
         if effective_tools:
+            # Deduplicate tools based on function name
+            seen_tool_names = set()
+            deduped_tools = []
+            for tool in effective_tools:
+                tool_name = tool.get("function", {}).get("name")
+                if tool_name and tool_name not in seen_tool_names:
+                    deduped_tools.append(tool)
+                    seen_tool_names.add(tool_name)
+            effective_tools = deduped_tools
             kwargs["tools"] = effective_tools
 
         # Forcing a function call is for legacy style `functions` with a single function.
