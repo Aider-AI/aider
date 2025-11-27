@@ -154,6 +154,8 @@ Agent Mode can be configured using the `--agent-config` command line argument, w
 - **`skip_cli_confirmations`**: YOLO mode, be brave and let the LLM cook, can also use the option `yolo` (default: False)
 - **`tools_includelist`**: Array of tool names to allow (only these tools will be available)
 - **`tools_excludelist`**: Array of tool names to exclude (these tools will be disabled)
+- **`include_context_blocks`**: Array of context block names to include (overrides default set)
+- **`exclude_context_blocks`**: Array of context block names to exclude from default set
 
 #### Essential Tools
 
@@ -163,6 +165,18 @@ Certain tools are always available regardless of includelist/excludelist setting
 - `replacetext` - Basic text replacement
 - `view` - View files
 - `finished` - Complete the task
+
+#### Context Blocks
+
+The following context blocks are available by default and can be customized using `include_context_blocks` and `exclude_context_blocks`:
+
+- **`context_summary`**: Shows current context usage and token limits
+- **`directory_structure`**: Displays the project's file structure
+- **`git_status`**: Shows current git branch, status, and recent commits
+- **`symbol_outline`**: Lists classes, functions, and methods in current context
+- **`todo_list`**: Shows the current todo list managed via `UpdateTodoList` tool
+
+When `include_context_blocks` is specified, only the listed blocks will be included. When `exclude_context_blocks` is specified, the listed blocks will be removed from the default set.
 
 #### Other Aider-CE CLI/Config Options for Agent Mode
 
@@ -187,8 +201,14 @@ aider-ce --agent --agent-config '{"tools_excludelist": ["command", "commandinter
 # Custom large file threshold
 aider-ce --agent --agent-config '{"large_file_token_threshold": 10000}'
 
+# Custom context blocks configuration
+aider-ce --agent --agent-config '{"include_context_blocks": ["directory_structure", "git_status"]}'
+
+# Exclude specific context blocks
+aider-ce --agent --agent-config '{"exclude_context_blocks": ["symbol_outline", "todo_list"]}'
+
 # Combined configuration
-aider-ce --agent --agent-config '{"large_file_token_threshold": 10000, "tools_includelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"]}'
+aider-ce --agent --agent-config '{"large_file_token_threshold": 10000, "tools_includelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"], "include_context_blocks": ["directory_structure", "git_status"]}'
 
 # Command Line Options
 aider-ce --agent --agent-config '{"large_file_token_threshold": 10000, "tools_includelist": ["view", "makeeditable", "replacetext", "finished", "gitdiff"]}' --preserve-todo-list --use-enhanced-map
@@ -205,4 +225,3 @@ This configuration system allows for fine-grained control over which tools are a
 - **Recovery mechanisms**: Built-in undo and safety features
 
 Agent Mode represents a significant evolution in aider's capabilities, enabling more sophisticated and autonomous codebase manipulation while maintaining safety and control through the tool-based architecture.
-

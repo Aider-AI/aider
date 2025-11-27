@@ -135,6 +135,7 @@ class AgentCoder(Coder):
 
         # Initialize empty token tracking dictionary and cache structures
         # but don't populate yet to avoid startup delay
+        self.allowed_context_blocks = set()
         self.context_block_tokens = {}
         self.context_blocks_cache = {}
         self.tokens_calculated = False
@@ -256,6 +257,25 @@ class AgentCoder(Coder):
             config["tools_includelist"] = []
         if "tools_excludelist" not in config:
             config["tools_excludelist"] = []
+
+        if "include_context_blocks" in config:
+            self.allowed_context_blocks = set(config["context_blocks"])
+        else:
+            self.allowed_context_blocks = {
+                "context_summary",
+                "directory_structure",
+                "environment_info",
+                "git_status",
+                "symbol_outline",
+                "todo_list",
+            }
+
+        if "exclude_context_blocks" in config:
+            for context_block in config["exclude_context_blocks"]:
+                try:
+                    self.allowed_context_blocks.remove(context_block)
+                except KeyError:
+                    pass
 
         # Apply configuration to instance
         self.large_file_token_threshold = config["large_file_token_threshold"]
@@ -468,11 +488,12 @@ class AgentCoder(Coder):
             ]
 
             for block_type in block_types:
-                block_content = self._generate_context_block(block_type)
-                if block_content:
-                    self.context_block_tokens[block_type] = self.main_model.token_count(
-                        block_content
-                    )
+                if block_type in self.allowed_context_blocks:
+                    block_content = self._generate_context_block(block_type)
+                    if block_content:
+                        self.context_block_tokens[block_type] = self.main_model.token_count(
+                            block_content
+                        )
 
             # Mark as calculated
             self.tokens_calculated = True
@@ -670,11 +691,24 @@ class AgentCoder(Coder):
         chunks.examples = example_messages
 
         self.summarize_end()
-        chunks.done = list(self.done_messages)
 
-        chunks.repo = self.get_repo_messages()
         chunks.readonly_files = self.get_readonly_files_messages()
+        chunks.repo = self.get_repo_messages()
+        chunks.done = list(self.done_messages)
         chunks.chat_files = self.get_chat_files_messages()
+
+        # Add reminder if needed
+        if self.gpt_prompts.system_reminder:
+            reminder_message = [
+                dict(
+                    role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                ),
+            ]
+        else:
+            reminder_message = []
+
+        chunks.cur = list(self.cur_messages)
+        chunks.reminder = []
 
         # Make sure token counts are updated - using centralized method
         # This also populates the context block cache
@@ -693,9 +727,9 @@ class AgentCoder(Coder):
         # 1. Add relatively static blocks BEFORE done_messages
         # These blocks change less frequently and can be part of the cacheable prefix
         static_blocks = []
-        if dir_structure:
+        if dir_structure and "directory_structure" in self.allowed_context_blocks:
             static_blocks.append(dir_structure)
-        if env_context:
+        if env_context and "environment_info" in self.allowed_context_blocks:
             static_blocks.append(env_context)
 
         if static_blocks:
@@ -706,13 +740,13 @@ class AgentCoder(Coder):
         # 2. Add dynamic blocks AFTER chat_files
         # These blocks change with the current files in context
         dynamic_blocks = []
-        if todo_list:
+        if todo_list and "todo_list" in self.allowed_context_blocks:
             dynamic_blocks.append(todo_list)
-        if context_summary:
+        if context_summary and "context_summary" in self.allowed_context_blocks:
             dynamic_blocks.append(context_summary)
-        if symbol_outline:
+        if symbol_outline and "symbol_outline" in self.allowed_context_blocks:
             dynamic_blocks.append(symbol_outline)
-        if git_status:
+        if git_status and "git_status" in self.allowed_context_blocks:
             dynamic_blocks.append(git_status)
 
         # Add tool usage context if there are repetitive tools
@@ -725,21 +759,8 @@ class AgentCoder(Coder):
 
         if dynamic_blocks:
             dynamic_message = "\n\n".join(dynamic_blocks)
-            # Append as a system message after chat_files
-            chunks.chat_files.append(dict(role="system", content=dynamic_message))
-
-        # Add reminder if needed
-        if self.gpt_prompts.system_reminder:
-            reminder_message = [
-                dict(
-                    role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
-                ),
-            ]
-        else:
-            reminder_message = []
-
-        chunks.cur = list(self.cur_messages)
-        chunks.reminder = []
+            # Append as a system message on reminders
+            reminder_message.insert(0, dict(role="system", content=dynamic_message))
 
         # Use accurate token counting method that considers enhanced context blocks
         base_messages = chunks.all_messages()
@@ -1654,7 +1675,9 @@ class AgentCoder(Coder):
             for tool in repetitive_tools:
                 context_parts.append(f"- `{tool}`")
             context_parts.append(
-                "Your exploration appears to be stuck in a loop. Please try a different approach:"
+                "Your exploration appears to be stuck in a loop. Please try a different approach."
+                " Use the `Thinking` tool to clarify your intentions and new approach to"
+                " what you are currently attempting to accomplish."
             )
             context_parts.append("\n")
             context_parts.append("**Suggestions for alternative approaches:**")
