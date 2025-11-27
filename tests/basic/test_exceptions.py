@@ -58,9 +58,7 @@ def test_bad_gateway_error():
     ex = LiteLLMExceptions()
     from litellm import BadGatewayError
 
-    bad_gateway_error = BadGatewayError(
-        message="Bad Gateway", llm_provider="openai", model="gpt-4"
-    )
+    bad_gateway_error = BadGatewayError(message="Bad Gateway", llm_provider="openai", model="gpt-4")
     ex_info = ex.get_ex_info(bad_gateway_error)
     assert ex_info.retry is True
     assert ex_info.name == "BadGatewayError"
