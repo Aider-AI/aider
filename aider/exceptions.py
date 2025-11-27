@@ -20,6 +20,7 @@ EXCEPTIONS = [
         "The API provider is not able to authenticate you. Check your API key.",
     ),
     ExInfo("AzureOpenAIError", True, None),
+    ExInfo("BadGatewayError", True, None),
     ExInfo("BadRequestError", False, None),
     ExInfo("BudgetExceededError", True, None),
     ExInfo(
@@ -28,6 +29,7 @@ EXCEPTIONS = [
         "The API provider has refused the request due to a safety policy about the content.",
     ),
     ExInfo("ContextWindowExceededError", False, None),  # special case handled in base_coder
+    ExInfo("ImageFetchError", False, None),
     ExInfo("InternalServerError", True, "The API provider's servers are down or overloaded."),
     ExInfo("InvalidRequestError", True, None),
     ExInfo("JSONSchemaValidationError", True, None),
@@ -62,7 +64,7 @@ class LiteLLMExceptions:
 
         for var in dir(litellm):
             if var.endswith("Error"):
-                if var not in self.exception_info:
+                if var not in self.exception_info and var not in [ "ErrorEventError" ]:
                     raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
 
         for var in self.exception_info:
