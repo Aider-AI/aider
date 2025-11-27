@@ -12,18 +12,31 @@ class ChatChunks:
     chat_files: List = field(default_factory=list)
     cur: List = field(default_factory=list)
     reminder: List = field(default_factory=list)
+    chunk_ordering: List = field(default_factory=list)
+
+    def __init__(self, chunk_ordering=None):
+        if chunk_ordering is not None:
+            self.chunk_ordering = chunk_ordering
 
     def all_messages(self):
-        return (
-            self.system
-            + self.examples
-            + self.readonly_files
-            + self.chat_files
-            + self.repo
-            + self.done
-            + self.cur
-            + self.reminder
-        )
+        if self.chunk_ordering:
+            messages = []
+            for chunk_name in self.chunk_ordering:
+                chunk = getattr(self, chunk_name, [])
+                if chunk:
+                    messages.extend(chunk)
+            return messages
+        else:
+            return (
+                self.system
+                + self.examples
+                + self.readonly_files
+                + self.chat_files
+                + self.repo
+                + self.done
+                + self.cur
+                + self.reminder
+            )
 
     def add_cache_control_headers(self):
         if self.examples:

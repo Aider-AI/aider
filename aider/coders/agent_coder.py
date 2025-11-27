@@ -690,7 +690,18 @@ class AgentCoder(Coder):
         if self.gpt_prompts.system_reminder:
             main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
-        chunks = ChatChunks()
+        chunks = ChatChunks(
+            chunk_ordering=[
+                "system",
+                "examples",
+                "readonly_files",
+                "repo",
+                "done",
+                "chat_files",
+                "cur",
+                "reminder",
+            ]
+        )
 
         if self.main_model.use_system_prompt:
             chunks.system = [
@@ -705,11 +716,21 @@ class AgentCoder(Coder):
         chunks.examples = example_messages
 
         self.summarize_end()
+        cur_messages_list = list(self.cur_messages)
+        cur_messages_pre = []
+        cur_messages_post = cur_messages_list
+
+        if len(cur_messages_list) > 32:
+            divider = len(cur_messages_list) % 32
+            if divider:
+                divider = -1 * divider
+                cur_messages_pre = cur_messages_list[:divider]
+                cur_messages_post = cur_messages_list[divider:]
 
         chunks.readonly_files = self.get_readonly_files_messages()
         chunks.chat_files = self.get_chat_files_messages()
         chunks.repo = self.get_repo_messages()
-        chunks.done = list(self.done_messages)
+        chunks.done = list(self.done_messages) + cur_messages_pre
 
         # Add reminder if needed
         if self.gpt_prompts.system_reminder:
@@ -721,7 +742,7 @@ class AgentCoder(Coder):
         else:
             reminder_message = []
 
-        chunks.cur = list(self.cur_messages)
+        chunks.cur = cur_messages_post
         chunks.reminder = []
 
         # Make sure token counts are updated - using centralized method
@@ -763,14 +784,14 @@ class AgentCoder(Coder):
             pre_dynamic_blocks.append(git_status)
 
         if todo_list and "todo_list" in self.allowed_context_blocks:
-            post_dynamic_blocks.append(todo_list)
+            pre_dynamic_blocks.append(todo_list)
         # Add tool usage context if there are repetitive tools
         if hasattr(self, "tool_usage_history") and self.tool_usage_history:
             repetitive_tools = self._get_repetitive_tools()
             if repetitive_tools:
                 tool_context = self._generate_tool_context(repetitive_tools)
                 if tool_context:
-                    post_dynamic_blocks.append(tool_context)
+                    pre_dynamic_blocks.append(tool_context)
 
         if pre_dynamic_blocks:
             dynamic_message = "\n\n".join(pre_dynamic_blocks)

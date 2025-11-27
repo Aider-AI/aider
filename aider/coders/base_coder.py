@@ -688,7 +688,10 @@ class Coder:
         return True
 
     def get_abs_fnames_content(self):
-        for fname in list(self.abs_fnames):
+        # Sort files by last modified time (earliest first, latest last)
+        sorted_fnames = sorted(self.abs_fnames, key=lambda fname: os.path.getmtime(fname))
+
+        for fname in sorted_fnames:
             content = self.io.read_text(fname)
 
             if content is None:
@@ -783,8 +786,11 @@ class Coder:
 
     def get_read_only_files_content(self):
         prompt = ""
+        # Sort read-only files by last modified time (earliest first, latest last)
+        sorted_fnames = sorted(self.abs_read_only_fnames, key=lambda fname: os.path.getmtime(fname))
+
         # Handle regular read-only files
-        for fname in self.abs_read_only_fnames:
+        for fname in sorted_fnames:
             content = self.io.read_text(fname)
             if content is not None and not is_image_file(fname):
                 relative_fname = self.get_rel_fname(fname)
@@ -829,8 +835,13 @@ class Coder:
 
                 prompt += f"{self.fence[1]}\n"
 
+        # Sort stub files by last modified time (earliest first, latest last)
+        sorted_stub_fnames = sorted(
+            self.abs_read_only_stubs_fnames, key=lambda fname: os.path.getmtime(fname)
+        )
+
         # Handle stub files
-        for fname in self.abs_read_only_stubs_fnames:
+        for fname in sorted_stub_fnames:
             if not is_image_file(fname):
                 relative_fname = self.get_rel_fname(fname)
                 prompt += "\n"
