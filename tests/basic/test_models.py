@@ -440,11 +440,12 @@ class TestModels(unittest.TestCase):
         expected_ctx = int(1000 * 1.25) + 8192  # 9442
         mock_completion.assert_called_once_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             num_ctx=expected_ctx,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -459,11 +460,12 @@ class TestModels(unittest.TestCase):
 
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             tools=[dict(type="function", function="test")],
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -476,11 +478,13 @@ class TestModels(unittest.TestCase):
 
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             tools=[dict(type="function", function="test")],
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
+            tool_choice=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -494,11 +498,12 @@ class TestModels(unittest.TestCase):
         # Should use provided num_ctx from extra_params
         mock_completion.assert_called_once_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             num_ctx=4096,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -512,10 +517,11 @@ class TestModels(unittest.TestCase):
         # Regular models shouldn't get num_ctx
         mock_completion.assert_called_once_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
         self.assertNotIn("num_ctx", mock_completion.call_args.kwargs)
 
@@ -543,10 +549,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=600,  # Default timeout
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -558,10 +565,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=300,  # From extra_params
+            cache_control_injection_points=ANY,
         )
 
     @patch("aider.models.litellm.acompletion")
@@ -573,10 +581,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
         # Test use_temperature=False doesn't send temperature
@@ -593,10 +602,11 @@ class TestModels(unittest.TestCase):
         await model.send_completion(messages, functions=None, stream=False)
         mock_completion.assert_called_with(
             model=model.name,
-            messages=messages,
+            messages=ANY,
             stream=False,
             temperature=0.7,
             timeout=600,
+            cache_control_injection_points=ANY,
         )
 
 

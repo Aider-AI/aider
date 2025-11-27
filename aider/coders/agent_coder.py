@@ -20,6 +20,13 @@ from aider import urls, utils
 
 # Import the change tracker
 from aider.change_tracker import ChangeTracker
+
+# Import similarity functions for tool usage analysis
+from aider.helpers.similarity import (
+    cosine_similarity,
+    create_bigram_vector,
+    normalize_vector,
+)
 from aider.mcp.server import LocalServer
 from aider.repo import ANY_GIT_ERROR
 
@@ -79,8 +86,15 @@ class AgentCoder(Coder):
         self.recently_removed = {}
 
         # Tool usage history
-        self.tool_usage_history = []
+        self.tool_usage_history = []  # Stores lists of tools used in each round
         self.tool_usage_retries = 10
+        self.last_round_tools = []  # Tools used in the current round
+
+        # Similarity tracking for tool usage
+        self.tool_call_vectors = []  # Store vectors for individual tool calls
+        self.tool_similarity_threshold = 0.99  # High threshold for exact matches
+        self.max_tool_vector_history = 10  # Keep history of 10 rounds
+
         self.read_tools = {
             "viewfilesatglob",
             "viewfilesmatching",
@@ -102,7 +116,7 @@ class AgentCoder(Coder):
         }
 
         # Configuration parameters
-        self.max_tool_calls = 100  # Maximum number of tool calls per response
+        self.max_tool_calls = 10000  # Maximum number of tool calls per response
 
         # Context management parameters
         # Will be overridden by agent_config if provided
@@ -135,6 +149,7 @@ class AgentCoder(Coder):
 
         # Initialize empty token tracking dictionary and cache structures
         # but don't populate yet to avoid startup delay
+        self.allowed_context_blocks = set()
         self.context_block_tokens = {}
         self.context_blocks_cache = {}
         self.tokens_calculated = False
@@ -256,6 +271,25 @@ class AgentCoder(Coder):
             config["tools_includelist"] = []
         if "tools_excludelist" not in config:
             config["tools_excludelist"] = []
+
+        if "include_context_blocks" in config:
+            self.allowed_context_blocks = set(config["context_blocks"])
+        else:
+            self.allowed_context_blocks = {
+                "context_summary",
+                "directory_structure",
+                "environment_info",
+                "git_status",
+                "symbol_outline",
+                "todo_list",
+            }
+
+        if "exclude_context_blocks" in config:
+            for context_block in config["exclude_context_blocks"]:
+                try:
+                    self.allowed_context_blocks.remove(context_block)
+                except KeyError:
+                    pass
 
         # Apply configuration to instance
         self.large_file_token_threshold = config["large_file_token_threshold"]
@@ -468,11 +502,12 @@ class AgentCoder(Coder):
             ]
 
             for block_type in block_types:
-                block_content = self._generate_context_block(block_type)
-                if block_content:
-                    self.context_block_tokens[block_type] = self.main_model.token_count(
-                        block_content
-                    )
+                if block_type in self.allowed_context_blocks:
+                    block_content = self._generate_context_block(block_type)
+                    if block_content:
+                        self.context_block_tokens[block_type] = self.main_model.token_count(
+                            block_content
+                        )
 
             # Mark as calculated
             self.tokens_calculated = True
@@ -655,7 +690,18 @@ class AgentCoder(Coder):
         if self.gpt_prompts.system_reminder:
             main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
 
-        chunks = ChatChunks()
+        chunks = ChatChunks(
+            chunk_ordering=[
+                "system",
+                "examples",
+                "readonly_files",
+                "repo",
+                "done",
+                "chat_files",
+                "cur",
+                "reminder",
+            ]
+        )
 
         if self.main_model.use_system_prompt:
             chunks.system = [
@@ -670,11 +716,34 @@ class AgentCoder(Coder):
         chunks.examples = example_messages
 
         self.summarize_end()
-        chunks.done = list(self.done_messages)
+        cur_messages_list = list(self.cur_messages)
+        cur_messages_pre = []
+        cur_messages_post = cur_messages_list
 
-        chunks.repo = self.get_repo_messages()
+        if len(cur_messages_list) > 32:
+            divider = len(cur_messages_list) % 32
+            if divider:
+                divider = -1 * divider
+                cur_messages_pre = cur_messages_list[:divider]
+                cur_messages_post = cur_messages_list[divider:]
+
         chunks.readonly_files = self.get_readonly_files_messages()
         chunks.chat_files = self.get_chat_files_messages()
+        chunks.repo = self.get_repo_messages()
+        chunks.done = list(self.done_messages) + cur_messages_pre
+
+        # Add reminder if needed
+        if self.gpt_prompts.system_reminder:
+            reminder_message = [
+                dict(
+                    role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+                ),
+            ]
+        else:
+            reminder_message = []
+
+        chunks.cur = cur_messages_post
+        chunks.reminder = []
 
         # Make sure token counts are updated - using centralized method
         # This also populates the context block cache
@@ -693,53 +762,46 @@ class AgentCoder(Coder):
         # 1. Add relatively static blocks BEFORE done_messages
         # These blocks change less frequently and can be part of the cacheable prefix
         static_blocks = []
-        if dir_structure:
-            static_blocks.append(dir_structure)
-        if env_context:
+        if env_context and "environment_info" in self.allowed_context_blocks:
             static_blocks.append(env_context)
+        if dir_structure and "directory_structure" in self.allowed_context_blocks:
+            static_blocks.append(dir_structure)
 
         if static_blocks:
             static_message = "\n\n".join(static_blocks)
             # Insert as a system message right before done_messages
-            chunks.done.insert(0, dict(role="system", content=static_message))
+            chunks.system.append(dict(role="system", content=static_message))
 
         # 2. Add dynamic blocks AFTER chat_files
         # These blocks change with the current files in context
-        dynamic_blocks = []
-        if todo_list:
-            dynamic_blocks.append(todo_list)
-        if context_summary:
-            dynamic_blocks.append(context_summary)
-        if symbol_outline:
-            dynamic_blocks.append(symbol_outline)
-        if git_status:
-            dynamic_blocks.append(git_status)
+        pre_dynamic_blocks = []
+        post_dynamic_blocks = []
+        if context_summary and "context_summary" in self.allowed_context_blocks:
+            pre_dynamic_blocks.append(context_summary)
+        if symbol_outline and "symbol_outline" in self.allowed_context_blocks:
+            pre_dynamic_blocks.append(symbol_outline)
+        if git_status and "git_status" in self.allowed_context_blocks:
+            pre_dynamic_blocks.append(git_status)
 
+        if todo_list and "todo_list" in self.allowed_context_blocks:
+            pre_dynamic_blocks.append(todo_list)
         # Add tool usage context if there are repetitive tools
         if hasattr(self, "tool_usage_history") and self.tool_usage_history:
             repetitive_tools = self._get_repetitive_tools()
             if repetitive_tools:
                 tool_context = self._generate_tool_context(repetitive_tools)
                 if tool_context:
-                    dynamic_blocks.append(tool_context)
+                    pre_dynamic_blocks.append(tool_context)
 
-        if dynamic_blocks:
-            dynamic_message = "\n\n".join(dynamic_blocks)
-            # Append as a system message after chat_files
-            chunks.chat_files.append(dict(role="system", content=dynamic_message))
+        if pre_dynamic_blocks:
+            dynamic_message = "\n\n".join(pre_dynamic_blocks)
+            # Append as a system message on reminders
+            chunks.done.insert(0, dict(role="system", content=dynamic_message))
 
-        # Add reminder if needed
-        if self.gpt_prompts.system_reminder:
-            reminder_message = [
-                dict(
-                    role="system", content=self.fmt_system_prompt(self.gpt_prompts.system_reminder)
-                ),
-            ]
-        else:
-            reminder_message = []
-
-        chunks.cur = list(self.cur_messages)
-        chunks.reminder = []
+        if post_dynamic_blocks:
+            dynamic_message = "\n\n".join(post_dynamic_blocks)
+            # Append as a system message on reminders
+            reminder_message.insert(0, dict(role="system", content=dynamic_message))
 
         # Use accurate token counting method that considers enhanced context blocks
         base_messages = chunks.all_messages()
@@ -951,12 +1013,33 @@ class AgentCoder(Coder):
         self.agent_finished = False
         await self.auto_save_session()
 
+        # Clear last round tools and start tracking new round
+        self.last_round_tools = []
+
         if self.partial_response_tool_calls:
             for tool_call in self.partial_response_tool_calls:
-                self.tool_usage_history.append(tool_call.get("function", {}).get("name"))
+                tool_name = tool_call.get("function", {}).get("name")
+                self.last_round_tools.append(tool_name)
+
+                # Create and store vector for this tool call
+                # Remove id property if present before stringifying
+                tool_call_copy = tool_call.copy()
+                if "id" in tool_call_copy:
+                    del tool_call_copy["id"]
+                tool_call_str = str(tool_call_copy)  # Convert entire tool call to string
+                tool_vector = create_bigram_vector((tool_call_str,))
+                tool_vector_norm = normalize_vector(tool_vector)
+                self.tool_call_vectors.append(tool_vector_norm)
+
+        # Add the completed round to history
+        if self.last_round_tools:
+            self.tool_usage_history += self.last_round_tools
 
         if len(self.tool_usage_history) > self.tool_usage_retries:
             self.tool_usage_history.pop(0)
+
+        if len(self.tool_call_vectors) > self.max_tool_vector_history:
+            self.tool_call_vectors.pop(0)
 
         return await super().process_tool_calls(tool_call_response)
 
@@ -1574,13 +1657,14 @@ class AgentCoder(Coder):
 
     def _get_repetitive_tools(self):
         """
-        Identifies repetitive tool usage patterns from a flat list of tool calls.
+        Identifies repetitive tool usage patterns from rounds of tool calls.
 
-        This method checks for the following patterns in order:
-        1. If the last tool used was a write tool, it assumes progress and returns no repetitive tools.
-        2. It checks for any read tool that has been used 2 or more times in the history.
+        This method combines count-based and similarity-based detection:
+        1. If the last round contained a write tool, it assumes progress and returns no repetitive tools.
+        2. It checks for any read tool that has been used 2 or more times across rounds.
         3. If no tools are repeated, but all tools in the history are read tools,
            it flags all of them as potentially repetitive.
+        4. It checks for similarity-based repetition using cosine similarity on tool call strings.
 
         It avoids flagging repetition if a "write" tool was used recently,
         as that suggests progress is being made.
@@ -1591,28 +1675,68 @@ class AgentCoder(Coder):
         if history_len < 2:
             return set()
 
-        # If the last tool was a write tool, we're likely making progress.
-        if isinstance(self.tool_usage_history[-1], str):
-            last_tool_lower = self.tool_usage_history[-1].lower()
+        # Check for similarity-based repetition
+        similarity_repetitive_tools = self._get_repetitive_tools_by_similarity()
 
-            if last_tool_lower in self.write_tools:
+        # Flatten the tool usage history for count-based analysis
+        all_tools = []
+        for round_tools in self.tool_usage_history:
+            all_tools.extend(round_tools)
+
+        # If the last round contained a write tool, we're likely making progress.
+        if self.last_round_tools:
+            last_round_has_write = any(
+                tool.lower() in self.write_tools for tool in self.last_round_tools
+            )
+            if last_round_has_write:
                 self.tool_usage_history = []
-                return set()
+                return similarity_repetitive_tools if len(similarity_repetitive_tools) else set()
 
         # If all tools in history are read tools, return all of them
-        if all(tool.lower() in self.read_tools for tool in self.tool_usage_history):
-            return set(tool for tool in self.tool_usage_history)
+        if all(tool.lower() in self.read_tools for tool in all_tools):
+            return set(all_tools)
 
-        # Check for any read tool used more than once
-        tool_counts = Counter(tool for tool in self.tool_usage_history)
-        repetitive_tools = {
+        # Check for any read tool used more than once across rounds
+        tool_counts = Counter(all_tools)
+        count_repetitive_tools = {
             tool
             for tool, count in tool_counts.items()
             if count >= 2 and tool.lower() in self.read_tools
         }
 
+        # Combine both detection methods
+        repetitive_tools = count_repetitive_tools.union(similarity_repetitive_tools)
+
         if repetitive_tools:
             return repetitive_tools
+
+        return set()
+
+    def _get_repetitive_tools_by_similarity(self):
+        """
+        Identifies repetitive tool usage patterns using cosine similarity on tool call strings.
+
+        This method checks if the latest tool calls are highly similar (>0.99 threshold)
+        to historical tool calls using bigram vector similarity.
+
+        Returns:
+            set: Set of tool names that are repetitive based on similarity
+        """
+        if not self.tool_usage_history or len(self.tool_call_vectors) < 2:
+            return set()
+
+        # Get the latest tool call vector
+        latest_vector = self.tool_call_vectors[-1]
+
+        # Check similarity against historical vectors (excluding the latest)
+        for i, historical_vector in enumerate(self.tool_call_vectors[:-1]):
+            similarity = cosine_similarity(latest_vector, historical_vector)
+
+            # If similarity is high enough, flag as repetitive
+            if similarity >= self.tool_similarity_threshold:
+                # Return the tool name from the corresponding position in history
+                if i < len(self.tool_usage_history):
+                    return {self.tool_usage_history[i]}
 
         return set()
 
@@ -1628,8 +1752,7 @@ class AgentCoder(Coder):
         # Add turn and tool call statistics
         context_parts.append("## Turn and Tool Call Statistics")
         context_parts.append(f"- Current turn: {self.num_reflections + 1}")
-        context_parts.append(f"- Tool calls this turn: {self.tool_call_count}")
-        context_parts.append(f"- Total tool calls in session: {self.num_tool_calls}")
+        context_parts.append(f"- Total tool calls this turn: {self.num_tool_calls}")
         context_parts.append("\n\n")
 
         # Add recent tool usage history
@@ -1654,7 +1777,9 @@ class AgentCoder(Coder):
             for tool in repetitive_tools:
                 context_parts.append(f"- `{tool}`")
             context_parts.append(
-                "Your exploration appears to be stuck in a loop. Please try a different approach:"
+                "Your exploration appears to be stuck in a loop. Please try a different approach."
+                " Use the `Thinking` tool to clarify your intentions and new approach to"
+                " what you are currently attempting to accomplish."
             )
             context_parts.append("\n")
             context_parts.append("**Suggestions for alternative approaches:**")

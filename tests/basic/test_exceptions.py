@@ -53,6 +53,17 @@ def test_rate_limit_error():
     assert "rate limited" in ex_info.description.lower()
 
 
+def test_bad_gateway_error():
+    """Test specific handling of BadGatewayError"""
+    ex = LiteLLMExceptions()
+    from litellm import BadGatewayError
+
+    bad_gateway_error = BadGatewayError(message="Bad Gateway", llm_provider="openai", model="gpt-4")
+    ex_info = ex.get_ex_info(bad_gateway_error)
+    assert ex_info.retry is True
+    assert ex_info.name == "BadGatewayError"
+
+
 def test_context_window_error():
     """Test specific handling of ContextWindowExceededError"""
     ex = LiteLLMExceptions()
