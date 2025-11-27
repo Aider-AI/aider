@@ -55,7 +55,7 @@ async def install_upgrade(io, latest_version=None):
     )
 
     if success:
-        io.tool_output("Re-run aider to use new version.")
+        io.tool_output("Re-run aider-ce to use new version.")
         sys.exit()
 
     return
