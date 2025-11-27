@@ -16,6 +16,7 @@
 # Specific Files
 !/.dockerignore
 !/.flake8
+!/.gitattributes
 !/.gitignore
 !/.pre-commit-config.yaml
 !/CHANGELOG.md
