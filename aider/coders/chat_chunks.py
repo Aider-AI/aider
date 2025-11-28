@@ -15,8 +15,7 @@ class ChatChunks:
     chunk_ordering: List = field(default_factory=list)
 
     def __init__(self, chunk_ordering=None):
-        if chunk_ordering is not None:
-            self.chunk_ordering = chunk_ordering
+        self.chunk_ordering = chunk_ordering
 
     def all_messages(self):
         if self.chunk_ordering:
