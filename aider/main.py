@@ -353,6 +353,9 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
                     io.tool_output(f"  - {file_loaded}")  # noqa: E221
         elif verbose:
             io.tool_output("No model settings files loaded")
+
+        if model_settings_fname and model_settings_fname not in files_loaded:
+            io.tool_warning(f"Model Settings File Not Found: {model_settings_fname}")
     except Exception as e:
         io.tool_error(f"Error loading aider model settings: {e}")
         return 1
@@ -411,6 +414,9 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
             io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
                 io.tool_output(f"  - {model_metadata_file}")  # noqa: E221
+
+        if model_metadata_fname and model_metadata_fname not in model_metadata_files_loaded:
+            io.tool_warning(f"Model Metadata File Not Found: {model_metadata_fname}")
     except Exception as e:
         io.tool_error(f"Error loading model metadata models: {e}")
         return 1
