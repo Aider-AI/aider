@@ -19,7 +19,7 @@ from aider.format_settings import format_settings
 from aider.help import Help, install_help_extra
 from aider.io import CommandCompletionException
 from aider.llm import litellm
-from aider.repo import ANY_GIT_ERROR
+from aider.vcs.git import ANY_GIT_ERROR, GitVCS
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
@@ -553,105 +553,21 @@ class Commands:
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         try:
-            self.raw_cmd_undo(args)
+            return self.raw_cmd_undo(args)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to complete undo: {err}")
 
     def raw_cmd_undo(self, args):
-        if not self.coder.repo:
-            self.io.tool_error("No git repository found.")
+        if not self.coder.repo or not self.coder.repo.vcs:
+            self.io.tool_error("No repository found.")
             return
 
-        last_commit = self.coder.repo.get_head_commit()
-        if not last_commit or not last_commit.parents:
-            self.io.tool_error("This is the first commit in the repository. Cannot undo.")
+        if not hasattr(self.coder.repo.vcs, "undo_last_commit"):
+            self.io.tool_error(f"{self.coder.repo.vcs.name} does not support undo.")
             return
 
-        last_commit_hash = self.coder.repo.get_head_commit_sha(short=True)
-        last_commit_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
-        last_commit_message = (last_commit_message.splitlines() or [""])[0]
-        if last_commit_hash not in self.coder.aider_commit_hashes:
-            self.io.tool_error("The last commit was not made by aider in this chat session.")
-            self.io.tool_output(
-                "You could try `/git reset --hard HEAD^` but be aware that this is a destructive"
-                " command!"
-            )
-            return
-
-        if len(last_commit.parents) > 1:
-            self.io.tool_error(
-                f"The last commit {last_commit.hexsha} has more than 1 parent, can't undo."
-            )
-            return
-
-        prev_commit = last_commit.parents[0]
-        changed_files_last_commit = [item.a_path for item in last_commit.diff(prev_commit)]
-
-        for fname in changed_files_last_commit:
-            if self.coder.repo.repo.is_dirty(path=fname):
-                self.io.tool_error(
-                    f"The file {fname} has uncommitted changes. Please stash them before undoing."
-                )
-                return
-
-            # Check if the file was in the repo in the previous commit
-            try:
-                prev_commit.tree[fname]
-            except KeyError:
-                self.io.tool_error(
-                    f"The file {fname} was not in the repository in the previous commit. Cannot"
-                    " undo safely."
-                )
-                return
-
-        local_head = self.coder.repo.repo.git.rev_parse("HEAD")
-        current_branch = self.coder.repo.repo.active_branch.name
-        try:
-            remote_head = self.coder.repo.repo.git.rev_parse(f"origin/{current_branch}")
-            has_origin = True
-        except ANY_GIT_ERROR:
-            has_origin = False
-
-        if has_origin:
-            if local_head == remote_head:
-                self.io.tool_error(
-                    "The last commit has already been pushed to the origin. Undoing is not"
-                    " possible."
-                )
-                return
-
-        # Reset only the files which are part of `last_commit`
-        restored = set()
-        unrestored = set()
-        for file_path in changed_files_last_commit:
-            try:
-                self.coder.repo.repo.git.checkout("HEAD~1", file_path)
-                restored.add(file_path)
-            except ANY_GIT_ERROR:
-                unrestored.add(file_path)
-
-        if unrestored:
-            self.io.tool_error(f"Error restoring {file_path}, aborting undo.")
-            self.io.tool_output("Restored files:")
-            for file in restored:
-                self.io.tool_output(f"  {file}")
-            self.io.tool_output("Unable to restore files:")
-            for file in unrestored:
-                self.io.tool_output(f"  {file}")
-            return
-
-        # Move the HEAD back before the latest commit
-        self.coder.repo.repo.git.reset("--soft", "HEAD~1")
-
-        self.io.tool_output(f"Removed: {last_commit_hash} {last_commit_message}")
-
-        # Get the current HEAD after undo
-        current_head_hash = self.coder.repo.get_head_commit_sha(short=True)
-        current_head_message = self.coder.repo.get_head_commit_message("(unknown)").strip()
-        current_head_message = (current_head_message.splitlines() or [""])[0]
-        self.io.tool_output(f"Now at:  {current_head_hash} {current_head_message}")
-
-        if self.coder.main_model.send_undo_reply:
+        res = self.coder.repo.vcs.undo_last_commit(self.coder.aider_commit_hashes)
+        if res and self.coder.main_model.send_undo_reply:
             return prompts.undo_command_reply
 
     def cmd_diff(self, args=""):
@@ -854,7 +770,7 @@ class Commands:
 
             if (
                 self.coder.repo
-                and self.coder.repo.git_ignored_file(matched_file)
+                and self.coder.repo.vcs_ignored_file(matched_file)
                 and not self.coder.add_gitignore_files
             ):
                 self.io.tool_error(f"Can't add {matched_file} which is in gitignore")
