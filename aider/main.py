@@ -353,6 +353,13 @@ def register_models(git_root, model_settings_fname, io, verbose=False):
                     io.tool_output(f"  - {file_loaded}")  # noqa: E221
         elif verbose:
             io.tool_output("No model settings files loaded")
+
+        if (
+            model_settings_fname
+            and model_settings_fname not in files_loaded
+            and model_settings_fname != ".aider.model.settings.yml"
+        ):
+            io.tool_warning(f"Model Settings File Not Found: {model_settings_fname}")
     except Exception as e:
         io.tool_error(f"Error loading aider model settings: {e}")
         return 1
@@ -411,6 +418,13 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
             io.tool_output("Loaded model metadata from:")
             for model_metadata_file in model_metadata_files_loaded:
                 io.tool_output(f"  - {model_metadata_file}")  # noqa: E221
+
+        if (
+            model_metadata_fname
+            and model_metadata_fname not in model_metadata_files_loaded
+            and model_metadata_fname != ".aider.model.metadata.json"
+        ):
+            io.tool_warning(f"Model Metadata File Not Found: {model_metadata_fname}")
     except Exception as e:
         io.tool_error(f"Error loading model metadata models: {e}")
         return 1
@@ -1324,6 +1338,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                 coder.suppress_announcements_for_next_prompt = True
         except SystemExit:
             analytics.event("exit", reason="/exit command")
+            sys.settrace(None)
             return await graceful_exit(coder)
 
 
@@ -1419,6 +1434,8 @@ def load_slow_imports(swallow=True):
 
 
 async def graceful_exit(coder=None, exit_code=0):
+    sys.settrace(None)
+
     if coder:
         if hasattr(coder, "_autosave_future"):
             await coder._autosave_future
