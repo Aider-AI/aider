@@ -1324,6 +1324,7 @@ async def main_async(argv=None, input=None, output=None, force_git_root=None, re
                 coder.suppress_announcements_for_next_prompt = True
         except SystemExit:
             analytics.event("exit", reason="/exit command")
+            sys.settrace(None)
             return await graceful_exit(coder)
 
 
@@ -1419,6 +1420,8 @@ def load_slow_imports(swallow=True):
 
 
 async def graceful_exit(coder=None, exit_code=0):
+    sys.settrace(None)
+
     if coder:
         if hasattr(coder, "_autosave_future"):
             await coder._autosave_future
