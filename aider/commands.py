@@ -89,7 +89,8 @@ class Commands:
     async def cmd_model(self, args):
         "Switch the Main Model to a new LLM"
 
-        model_name = args.strip()
+        arg_split = args.split(" ", 1)
+        model_name = arg_split[0].strip()
         if not model_name:
             announcements = "\n".join(self.coder.get_announcements())
             self.io.tool_output(announcements)
@@ -111,19 +112,57 @@ class Commands:
             # If the user was using the old model's default, switch to the new model's default
             new_edit_format = model.edit_format
 
-        raise SwitchCoder(main_model=model, edit_format=new_edit_format)
+        if len(arg_split) > 1:
+            # implement architect coder-like generation call for model
+            message = arg_split[1].strip()
 
-    async def cmd_editor_model(self, args):
-        "Switch the Editor Model to a new LLM"
+            # Store the original model configuration
+            original_main_model = self.coder.main_model
+            original_edit_format = self.coder.edit_format
 
-        model_name = args.strip()
-        model = models.Model(
-            self.coder.main_model.name,
-            editor_model=model_name,
-            weak_model=self.coder.main_model.weak_model.name,
-        )
-        await models.sanity_check_models(self.io, model)
-        raise SwitchCoder(main_model=model)
+            # Create a temporary coder with the new model
+            from aider.coders import Coder
+
+            kwargs = dict()
+            kwargs["main_model"] = model
+            kwargs["edit_format"] = new_edit_format
+            kwargs["suggest_shell_commands"] = False
+            kwargs["total_cost"] = self.coder.total_cost
+            kwargs["num_cache_warming_pings"] = 0
+            kwargs["summarize_from_coder"] = False
+
+            new_kwargs = dict(io=self.io, from_coder=self.coder)
+            new_kwargs.update(kwargs)
+
+            temp_coder = await Coder.create(**new_kwargs)
+            temp_coder.cur_messages = []
+            temp_coder.done_messages = []
+
+            if self.verbose:
+                temp_coder.show_announcements()
+
+            try:
+                await temp_coder.generate(user_message=message, preproc=False)
+                self.coder.move_back_cur_messages(
+                    f"Model {model_name} made those changes to the files."
+                )
+                self.coder.total_cost = temp_coder.total_cost
+                self.coder.aider_commit_hashes = temp_coder.aider_commit_hashes
+
+                # Restore the original model configuration
+                raise SwitchCoder(main_model=original_main_model, edit_format=original_edit_format)
+            except Exception as e:
+                # If there's an error, still restore the original model
+                if not isinstance(e, SwitchCoder):
+                    self.io.tool_error(e)
+                    raise SwitchCoder(
+                        main_model=original_main_model, edit_format=original_edit_format
+                    )
+                else:
+                    # Re-raise SwitchCoder if that's what was thrown
+                    raise
+        else:
+            raise SwitchCoder(main_model=model, edit_format=new_edit_format)
 
     async def cmd_weak_model(self, args):
         "Switch the Weak Model to a new LLM"
