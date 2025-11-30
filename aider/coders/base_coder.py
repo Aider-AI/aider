@@ -3719,14 +3719,21 @@ class Coder:
         done = set()
         group = ConfirmGroup(set(self.shell_commands))
         accumulated_output = ""
-        for command in self.shell_commands:
-            if command in done:
-                continue
-            done.add(command)
-            output = await self.handle_shell_commands(command, group)
-            if output:
-                accumulated_output += output + "\n\n"
-        return accumulated_output
+
+        try:
+            self.commands.cmd_running = True
+
+            for command in self.shell_commands:
+                if command in done:
+                    continue
+                done.add(command)
+                output = await self.handle_shell_commands(command, group)
+                if output:
+                    accumulated_output += output + "\n\n"
+
+            return accumulated_output
+        finally:
+            self.commands.cmd_running = False
 
     async def handle_shell_commands(self, commands_str, group):
         commands = commands_str.strip().splitlines()
