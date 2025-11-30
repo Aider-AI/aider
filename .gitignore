@@ -31,8 +31,8 @@
 !/requirements.txt
 
 # Ignore specific files
+.aider*
 aider/__version__.py
 aider/_version.py
 *.pyc
-.aider*
 env/
