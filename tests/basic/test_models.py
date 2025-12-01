@@ -5,6 +5,7 @@ from aider.models import (
     ANTHROPIC_BETA_HEADER,
     Model,
     ModelInfoManager,
+    parse_context_window_suffix,
     register_models,
     sanity_check_model,
     sanity_check_models,
@@ -557,6 +558,84 @@ class TestModels(unittest.TestCase):
             temperature=0.7,
             timeout=600,
         )
+
+    def test_parse_context_window_suffix(self):
+        # Test with no suffix
+        base, tokens = parse_context_window_suffix("gpt-4")
+        self.assertEqual(base, "gpt-4")
+        self.assertIsNone(tokens)
+
+        # Test with [1m] suffix (1 million)
+        base, tokens = parse_context_window_suffix("us.anthropic.claude-sonnet-4-20250514-v1:0[1m]")
+        self.assertEqual(base, "us.anthropic.claude-sonnet-4-20250514-v1:0")
+        self.assertEqual(tokens, 1000000)
+
+        # Test with bedrock/ prefix and [1m] suffix
+        base, tokens = parse_context_window_suffix("bedrock/model-name[1m]")
+        self.assertEqual(base, "bedrock/model-name")
+        self.assertEqual(tokens, 1000000)
+
+        # Test that [1M] (uppercase) is NOT supported
+        base, tokens = parse_context_window_suffix("model[1M]")
+        self.assertEqual(base, "model[1M]")  # Unchanged
+        self.assertIsNone(tokens)
+
+        # Test that other suffixes are NOT supported
+        base, tokens = parse_context_window_suffix("model[500k]")
+        self.assertEqual(base, "model[500k]")  # Unchanged
+        self.assertIsNone(tokens)
+
+    def test_bedrock_claude_1m_context_header(self):
+        # Test that [1m] suffix adds the context-1m beta header for Bedrock Claude models
+        model = Model("us.anthropic.claude-sonnet-4-20250514-v1:0[1m]")
+
+        # Check that the base model name is used
+        self.assertEqual(model.name, "us.anthropic.claude-sonnet-4-20250514-v1:0")
+
+        # Check that original name with suffix is preserved
+        self.assertEqual(model.original_name, "us.anthropic.claude-sonnet-4-20250514-v1:0[1m]")
+
+        # Check that context window tokens is set
+        self.assertEqual(model.context_window_tokens, 1000000)
+
+        # Check that the anthropic-beta header includes context-1m-2025-08-07
+        self.assertIn("extra_headers", model.extra_params)
+        self.assertIn("anthropic-beta", model.extra_params["extra_headers"])
+        self.assertIn("context-1m-2025-08-07", model.extra_params["extra_headers"]["anthropic-beta"])
+
+    def test_bedrock_claude_1m_context_header_with_prefix(self):
+        # Test with bedrock/ prefix
+        model = Model("bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0[1m]")
+
+        self.assertEqual(model.name, "bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0")
+        self.assertEqual(model.context_window_tokens, 1000000)
+        self.assertIn("context-1m-2025-08-07", model.extra_params["extra_headers"]["anthropic-beta"])
+
+    def test_non_bedrock_model_no_context_header(self):
+        # Test that non-Bedrock models with [1m] suffix don't get the beta header
+        model = Model("gpt-4[1m]")
+
+        self.assertEqual(model.name, "gpt-4")
+        self.assertEqual(model.context_window_tokens, 1000000)
+
+        # GPT-4 shouldn't have the anthropic-beta header
+        if model.extra_params and "extra_headers" in model.extra_params:
+            self.assertNotIn(
+                "context-1m-2025-08-07",
+                model.extra_params["extra_headers"].get("anthropic-beta", ""),
+            )
+
+    def test_bedrock_claude_existing_beta_header_preserved(self):
+        # Test that existing anthropic-beta headers are preserved when adding context-1m
+        model = Model("bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0[1m]")
+
+        # The model settings for Bedrock Claude include prompt-caching and pdfs headers
+        beta_header = model.extra_params["extra_headers"]["anthropic-beta"]
+
+        # Should contain both the context-1m and existing headers
+        self.assertIn("context-1m-2025-08-07", beta_header)
+        # Check that other beta features are preserved (if they were in model settings)
+        # The model should have both the original headers and the new one
 
 
 if __name__ == "__main__":
