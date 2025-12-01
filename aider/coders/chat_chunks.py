@@ -79,7 +79,7 @@ class ChatChunks:
                 return messages[: len(messages) - i]
         return messages
 
-    def format_list(chunk):
+    def format_list(self, chunk):
         if type(chunk) is not list:
             return []
 
