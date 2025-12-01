@@ -496,47 +496,51 @@ file_excludelist = ["get_bottom_toolbar", "<genexpr>"]
 
 
 def custom_tracer(frame, event, arg):
-    import os
+    try:
+        import os
 
-    global log_file
-    if not log_file:
-        os.makedirs(".aider/logs/", exist_ok=True)
-        log_file = open(".aider/logs/debug.log", "w", buffering=1)
+        global log_file
+        if not log_file:
+            os.makedirs(".aider/logs/", exist_ok=True)
+            log_file = open(".aider/logs/debug.log", "w", buffering=1)
 
-    # Get the absolute path of the file where the code is executing
-    filename = os.path.abspath(frame.f_code.co_filename)
+        # Get the absolute path of the file where the code is executing
+        filename = os.path.abspath(frame.f_code.co_filename)
 
-    # --- THE FILTERING LOGIC ---
-    # Only proceed if the file path is INSIDE the project root
-    if not filename.startswith(PROJECT_ROOT):
-        return None  # Returning None means no local trace function for this scope
+        # --- THE FILTERING LOGIC ---
+        # Only proceed if the file path is INSIDE the project root
+        if not filename.startswith(PROJECT_ROOT):
+            return None  # Returning None means no local trace function for this scope
 
-    if filename.endswith("repo.py"):
-        return None
+        if filename.endswith("repo.py"):
+            return None
 
-    # If it's your code, trace the call
-    if event == "call":
-        func_name = frame.f_code.co_name
-        line_no = frame.f_lineno
+        # If it's your code, trace the call
+        if event == "call":
+            func_name = frame.f_code.co_name
+            line_no = frame.f_lineno
 
-        if func_name not in file_excludelist:
-            log_file.write(
-                f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no} -"
-                f" {time.time()}\n"
-            )
+            if func_name not in file_excludelist:
+                log_file.write(
+                    f"-> CALL: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                    f" {time.time()}\n"
+                )
 
-    if event == "return":
-        func_name = frame.f_code.co_name
-        line_no = frame.f_lineno
+        if event == "return":
+            func_name = frame.f_code.co_name
+            line_no = frame.f_lineno
 
-        if func_name not in file_excludelist:
-            log_file.write(
-                f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no} -"
-                f" {time.time()}\n"
-            )
+            if func_name not in file_excludelist:
+                log_file.write(
+                    f"<- RETURN: {func_name}() in {os.path.basename(filename)}:{line_no} -"
+                    f" {time.time()}\n"
+                )
 
-    # Must return the trace function (or a local one) for subsequent events
-    return custom_tracer
+    except Exception:
+        pass
+    finally:
+        # Must return the trace function (or a local one) for subsequent events
+        return custom_tracer
 
 
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
@@ -1446,6 +1450,7 @@ async def graceful_exit(coder=None, exit_code=0):
             except Exception:
                 pass
 
+    await asyncio.sleep(0.5)
     return exit_code
 
 

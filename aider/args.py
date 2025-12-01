@@ -841,6 +841,12 @@ def get_parser(default_config_files, git_root):
     ######
     group = parser.add_argument_group("Other settings")
     group.add_argument(
+        "--tweak-responses",
+        action="store_true",
+        help="Allow manual edits to model responses (default: False)",
+        default=False,
+    )
+    group.add_argument(
         "--yes-always",
         action="store_true",
         help="Always say yes to every confirmation",

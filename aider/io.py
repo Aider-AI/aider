@@ -1114,6 +1114,24 @@ class InputOutput:
         hist = "\n" + content.strip() + "\n\n"
         self.append_chat_history(hist)
 
+    def edit_in_editor(self, content):
+        import subprocess
+        import tempfile
+
+        with tempfile.NamedTemporaryFile(
+            suffix=".md", mode="w", delete=False, encoding=self.encoding
+        ) as tmpfile:
+            tmpfile.write(content)
+            tmpfile.flush()
+            editor = os.environ.get("EDITOR", "vi")
+            subprocess.call([editor, tmpfile.name])
+
+        with open(tmpfile.name, "r", encoding=self.encoding) as f:
+            edited = f.read()
+
+        os.unlink(tmpfile.name)
+        return edited
+
     async def offer_url(
         self, url, prompt="Open URL for more info?", allow_never=True, acknowledge=False
     ):
@@ -1164,6 +1182,7 @@ class InputOutput:
         group=None,
         group_response=None,
         allow_never=False,
+        allow_tweak=False,
         acknowledge=False,
     ):
         self.num_user_asks += 1
@@ -1182,6 +1201,9 @@ class InputOutput:
             valid_responses = ["yes", "no", "skip", "all"]
             options = " (Y)es/(N)o"
 
+            if allow_tweak:
+                valid_responses.append("tweak")
+                options += "/(T)weak"
             if group or group_response:
                 if not explicit_yes_required or group_response:
                     options += "/(A)ll"
@@ -1267,6 +1289,9 @@ class InputOutput:
                 hist = f"{question.strip()} {res}"
                 self.append_chat_history(hist, linebreak=True, blockquote=True)
                 return False
+
+            if res == "t":
+                return "tweak"
 
             if explicit_yes_required and not group_response:
                 is_yes = res == "y"

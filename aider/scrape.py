@@ -127,6 +127,8 @@ class Scraper:
         ):
             self.try_pandoc()
             content = self.html_to_markdown(content)
+        elif mime_type and mime_type.startswith("image/"):
+            content = "(Response is an image, not HTML)"
 
         return content
 

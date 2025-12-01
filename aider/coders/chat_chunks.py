@@ -10,6 +10,7 @@ class ChatChunks:
     repo: List = field(default_factory=list)
     readonly_files: List = field(default_factory=list)
     chat_files: List = field(default_factory=list)
+    edit_files: List = field(default_factory=list)
     cur: List = field(default_factory=list)
     reminder: List = field(default_factory=list)
     chunk_ordering: List = field(default_factory=list)
@@ -27,14 +28,15 @@ class ChatChunks:
             return messages
         else:
             return (
-                self.system
-                + self.examples
-                + self.readonly_files
-                + self.chat_files
-                + self.repo
-                + self.done
-                + self.cur
-                + self.reminder
+                self.format_list(self.system)
+                + self.format_list(self.examples)
+                + self.format_list(self.readonly_files)
+                + self.format_list(self.chat_files)
+                + self.format_list(self.repo)
+                + self.format_list(self.done)
+                + self.format_list(self.edit_files)
+                + self.format_list(self.cur)
+                + self.format_list(self.reminder)
             )
 
     def add_cache_control_headers(self):
@@ -76,3 +78,9 @@ class ChatChunks:
             ):
                 return messages[: len(messages) - i]
         return messages
+
+    def format_list(chunk):
+        if type(chunk) is not list:
+            return []
+
+        return chunk

@@ -40,7 +40,7 @@ agent: true
 analytics: false
 auto-commits: true
 auto-save: true
-auto-load: true
+auto-load: false
 cache-prompts: true
 check-update: true
 debug: false
@@ -49,7 +49,7 @@ env-file: .aider.env
 multiline: true
 preserve-todo-list: true
 show-model-warnings: true
-watch-files: true
+watch-files: false
 agent-config: |
   {
     "large_file_token_threshold": 12500,
