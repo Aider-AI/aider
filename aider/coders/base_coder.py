@@ -737,52 +737,109 @@ class Coder:
         if not fnames:
             fnames = self.abs_fnames
 
-        prompt = ""
-        for fname, content in self.get_abs_fnames_content():
-            if not is_image_file(fname):
-                relative_fname = self.get_rel_fname(fname)
-                prompt += "\n"
-                prompt += relative_fname
-                prompt += f"\n{self.fence[0]}\n"
+        # If there are files, return a dictionary with chat_files and edit_files
+        if fnames:
+            # Get current time for comparison
+            current_time = time.time()
+            lookback = current_time - 30
 
-                # Apply context management if enabled for large files
-                if self.context_management_enabled:
-                    # Calculate tokens for this file
-                    file_tokens = self.main_model.token_count(content)
+            # Get file modification times and sort by most recent first
+            file_times = []
+            for fname in fnames:
+                try:
+                    mtime = os.path.getmtime(fname)
+                    file_times.append((fname, mtime))
+                except OSError:
+                    # Skip files that can't be accessed
+                    continue
 
-                    if file_tokens > self.large_file_token_threshold:
-                        # Truncate the file content
-                        lines = content.splitlines()
+            # Sort by modification time (most recent first)
+            file_times.sort(key=lambda x: x[1], reverse=True)
 
-                        # Keep the first and last parts of the file with a marker in between
-                        keep_lines = (
-                            self.large_file_token_threshold // 40
-                        )  # Rough estimate of tokens per line
-                        first_chunk = lines[: keep_lines // 2]
-                        last_chunk = lines[-(keep_lines // 2) :]
+            # Determine which files go to edit_files
+            edit_files = set()
+            if file_times:
+                # Always include the most recently edited file
+                most_recent_file, most_recent_time = file_times[0]
+                edit_files.add(most_recent_file)
 
-                        truncated_content = "\n".join(first_chunk)
-                        truncated_content += (
-                            f"\n\n... [File truncated due to size ({file_tokens} tokens). Use"
-                            " /context-management to toggle truncation off] ...\n\n"
-                        )
-                        truncated_content += "\n".join(last_chunk)
+                # Include any files edited within the last minute
+                for fname, mtime in file_times:
+                    if mtime >= lookback:
+                        edit_files.add(fname)
 
-                        # Add message about truncation
-                        self.io.tool_output(
-                            f"⚠️ '{relative_fname}' is very large ({file_tokens} tokens). "
-                            "Use /context-management to toggle truncation off if needed."
-                        )
+            # Build content for chat_files and edit_files
+            chat_files_prompt = ""
+            edit_files_prompt = ""
+            chat_file_names = set()
+            edit_file_names = set()
 
-                        prompt += truncated_content
+            for fname, content in self.get_abs_fnames_content():
+                if not is_image_file(fname):
+                    relative_fname = self.get_rel_fname(fname)
+                    file_prompt = "\n"
+                    file_prompt += relative_fname
+                    file_prompt += f"\n{self.fence[0]}\n"
+
+                    # Apply context management if enabled for large files
+                    if self.context_management_enabled:
+                        # Calculate tokens for this file
+                        file_tokens = self.main_model.token_count(content)
+
+                        if file_tokens > self.large_file_token_threshold:
+                            # Truncate the file content
+                            lines = content.splitlines()
+
+                            # Keep the first and last parts of the file with a marker in between
+                            keep_lines = (
+                                self.large_file_token_threshold // 40
+                            )  # Rough estimate of tokens per line
+                            first_chunk = lines[: keep_lines // 2]
+                            last_chunk = lines[-(keep_lines // 2) :]
+
+                            truncated_content = "\n".join(first_chunk)
+                            truncated_content += (
+                                f"\n\n... [File truncated due to size ({file_tokens} tokens). Use"
+                                " /context-management to toggle truncation off] ...\n\n"
+                            )
+                            truncated_content += "\n".join(last_chunk)
+
+                            # Add message about truncation
+                            self.io.tool_output(
+                                f"⚠️ '{relative_fname}' is very large ({file_tokens} tokens). "
+                                "Use /context-management to toggle truncation off if needed."
+                            )
+
+                            file_prompt += truncated_content
+                        else:
+                            file_prompt += content
                     else:
-                        prompt += content
-                else:
-                    prompt += content
+                        file_prompt += content
 
-                prompt += f"{self.fence[1]}\n"
+                    file_prompt += f"{self.fence[1]}\n"
 
-        return prompt
+                    # Add to appropriate prompt based on edit time
+                    if fname in edit_files:
+                        edit_files_prompt += file_prompt
+                        edit_file_names.add(relative_fname)
+                    else:
+                        chat_files_prompt += file_prompt
+                        chat_file_names.add(relative_fname)
+
+            return {
+                "chat_files": chat_files_prompt,
+                "edit_files": edit_files_prompt,
+                "chat_file_names": chat_file_names,
+                "edit_file_names": edit_file_names,
+            }
+        else:
+            # Return empty dictionary when no files
+            return {
+                "chat_files": "",
+                "edit_files": "",
+                "chat_file_names": set(),
+                "edit_file_names": set(),
+            }
 
     def get_read_only_files_content(self):
         prompt = ""
@@ -1030,22 +1087,56 @@ class Coder:
 
     def get_chat_files_messages(self):
         chat_files_messages = []
+        edit_files_messages = []
+        chat_file_names = set()
+        edit_file_names = set()
+
         if self.abs_fnames:
-            files_content = self.gpt_prompts.files_content_prefix
-            files_content += self.get_files_content()
+            files_content_result = self.get_files_content()
+
+            # Get content and file names from dictionary
+            chat_files_content = files_content_result.get("chat_files", "")
+            edit_files_content = files_content_result.get("edit_files", "")
+            chat_file_names = files_content_result.get("chat_file_names", set())
+            edit_file_names = files_content_result.get("edit_file_names", set())
+
             files_reply = self.gpt_prompts.files_content_assistant_reply
+
+            if chat_files_content:
+                chat_files_messages += [
+                    dict(
+                        role="user",
+                        content=self.gpt_prompts.files_content_prefix + chat_files_content,
+                    ),
+                    dict(role="assistant", content=files_reply),
+                ]
+
+            if edit_files_content:
+                edit_files_messages += [
+                    dict(
+                        role="user",
+                        content=self.gpt_prompts.files_content_prefix + edit_files_content,
+                    ),
+                    dict(role="assistant", content=files_reply),
+                ]
         elif self.gpt_prompts.files_no_full_files_with_repo_map:
             files_content = self.gpt_prompts.files_no_full_files_with_repo_map
             files_reply = self.gpt_prompts.files_no_full_files_with_repo_map_reply
+
+            if files_content:
+                chat_files_messages += [
+                    dict(role="user", content=files_content),
+                    dict(role="assistant", content=files_reply),
+                ]
         else:
             files_content = self.gpt_prompts.files_no_full_files
             files_reply = "Ok."
 
-        if files_content:
-            chat_files_messages += [
-                dict(role="user", content=files_content),
-                dict(role="assistant", content=files_reply),
-            ]
+            if files_content:
+                chat_files_messages += [
+                    dict(role="user", content=files_content),
+                    dict(role="assistant", content=files_reply),
+                ]
 
         images_message = self.get_images_message(self.abs_fnames)
         if images_message is not None:
@@ -1054,7 +1145,12 @@ class Coder:
                 dict(role="assistant", content="Ok."),
             ]
 
-        return chat_files_messages
+        return {
+            "chat_files": chat_files_messages,
+            "edit_files": edit_files_messages,
+            "chat_file_names": chat_file_names,
+            "edit_file_names": edit_file_names,
+        }
 
     def get_images_message(self, fnames):
         supports_images = self.main_model.info.get("supports_vision")
@@ -1887,7 +1983,11 @@ class Coder:
 
         chunks.repo = self.get_repo_messages()
         chunks.readonly_files = self.get_readonly_files_messages()
-        chunks.chat_files = self.get_chat_files_messages()
+
+        # Handle the dictionary structure from get_chat_files_messages()
+        chat_files_result = self.get_chat_files_messages()
+        chunks.chat_files = chat_files_result.get("chat_files", [])
+        chunks.edit_files = chat_files_result.get("edit_files", [])
 
         if self.gpt_prompts.system_reminder:
             reminder_message = [

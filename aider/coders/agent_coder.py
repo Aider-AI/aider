@@ -147,6 +147,10 @@ class AgentCoder(Coder):
         # Enable enhanced context blocks by default
         self.use_enhanced_context = True
 
+        # Caching efficiency attributes
+        self._last_edited_file = None
+        self._cur_message_divider = None
+
         # Initialize empty token tracking dictionary and cache structures
         # but don't populate yet to avoid startup delay
         self.allowed_context_blocks = set()
@@ -696,8 +700,9 @@ class AgentCoder(Coder):
                 "examples",
                 "readonly_files",
                 "repo",
-                "done",
                 "chat_files",
+                "done",
+                "edit_files",
                 "cur",
                 "reminder",
             ]
@@ -719,16 +724,22 @@ class AgentCoder(Coder):
         cur_messages_list = list(self.cur_messages)
         cur_messages_pre = []
         cur_messages_post = cur_messages_list
+        chunks.readonly_files = self.get_readonly_files_messages()
 
-        if len(cur_messages_list) > 32:
-            divider = len(cur_messages_list) % 32
-            if divider:
-                divider = -1 * divider
+        # Handle the dictionary structure from get_chat_files_messages()
+        chat_files_result = self.get_chat_files_messages()
+        chunks.chat_files = chat_files_result.get("chat_files", [])
+        chunks.edit_files = chat_files_result.get("edit_files", [])
+        edit_file_names = chat_files_result.get("edit_file_names", set())
+
+        # Update edit file tracking for caching efficiency
+        divider = self._update_edit_file_tracking(edit_file_names)
+        if divider is not None:
+            # Split cur_messages using the divider
+            if divider > 0 and divider < len(cur_messages_list):
                 cur_messages_pre = cur_messages_list[:divider]
                 cur_messages_post = cur_messages_list[divider:]
 
-        chunks.readonly_files = self.get_readonly_files_messages()
-        chunks.chat_files = self.get_chat_files_messages()
         chunks.repo = self.get_repo_messages()
         chunks.done = list(self.done_messages) + cur_messages_pre
 
@@ -845,6 +856,37 @@ class AgentCoder(Coder):
                 chunks.cur[-1] = dict(role=final["role"], content=new_content)
 
         return chunks
+
+    def _update_edit_file_tracking(self, edit_file_names):
+        """
+        Update tracking for last edited file and message divider for caching efficiency.
+
+        When the last edited file changes, we store the current message index minus 4
+        as a divider to split cur_messages, moving older messages to done_messages
+        for better caching.
+        """
+        kept_messages = 8
+        if not edit_file_names:
+            self._cur_message_divider = 0
+
+        # Get the most recently edited file from the edit_file_names set
+        # We assume the first file in the sorted set is the most recent
+        sorted_edit_files = sorted(edit_file_names)
+        current_edited_file = sorted_edit_files[0] if sorted_edit_files else None
+
+        # Check if the last edited file has changed
+        if current_edited_file != self._last_edited_file:
+            # Store the new last edited file
+            self._last_edited_file = current_edited_file
+
+            # Calculate divider: current index minus last n messages
+            cur_messages_list = list(self.cur_messages)
+            if len(cur_messages_list) > kept_messages:
+                self._cur_message_divider = len(cur_messages_list) - kept_messages
+            else:
+                self._cur_message_divider = 0
+
+        return self._cur_message_divider
 
     def get_context_summary(self):
         """
