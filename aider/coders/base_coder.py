@@ -3525,6 +3525,16 @@ class Coder:
     async def apply_updates(self):
         edited = set()
         try:
+            if getattr(self.args, "tweak_responses", False):
+                confirmation = await self.io.confirm_ask("Tweak Response?", allow_tweak=True)
+
+                if confirmation or confirmation == "tweak":
+                    self.partial_response_content = self.io.edit_in_editor(
+                        self.partial_response_content
+                    )
+
+            await asyncio.sleep(0.1)
+
             edits = self.get_edits()
             edits = self.apply_edits_dry_run(edits)
             edits = await self.prepare_to_edit(edits)
