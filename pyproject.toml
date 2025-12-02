@@ -23,7 +23,10 @@ Homepage = "https://github.com/dwash96/aider-ce"
 
 [project.scripts]
 aider-ce = "aider.main:main"
-cecli = "aider.main:main"
+"ce" = "aider.main:main"
+"cecli" = "aider.main:main"
+"ce-cli" = "aider.main:main"
+"ce.cli" = "aider.main:main"
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements/requirements.in" }

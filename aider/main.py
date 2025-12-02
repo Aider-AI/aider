@@ -492,11 +492,21 @@ def expand_glob_patterns(patterns, root="."):
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 log_file = None
-file_excludelist = ["get_bottom_toolbar", "<genexpr>"]
+file_excludelist = {
+    "get_bottom_toolbar": True,
+    "<genexpr>": True,
+    "is_active": True,
+    "auto_save_session": True,
+    "input_task": True,
+    "output_task": True,
+}
 
 
 def custom_tracer(frame, event, arg):
-    import os
+    try:
+        import os
+    except Exception:
+        return None
 
     global log_file
     if not log_file:
@@ -1446,7 +1456,8 @@ async def graceful_exit(coder=None, exit_code=0):
             except Exception:
                 pass
 
-    await asyncio.sleep(0.5)
+    # Commenting since this can sometimes case hanging
+    # await asyncio.sleep(0.5)
     return exit_code
 
 
