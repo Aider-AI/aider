@@ -1061,21 +1061,24 @@ class AgentCoder(Coder):
         if self.partial_response_tool_calls:
             for tool_call in self.partial_response_tool_calls:
                 tool_name = tool_call.get("function", {}).get("name")
-                self.last_round_tools.append(tool_name)
 
-                # Create and store vector for this tool call
-                # Remove id property if present before stringifying
-                tool_call_copy = tool_call.copy()
-                if "id" in tool_call_copy:
-                    del tool_call_copy["id"]
-                tool_call_str = str(tool_call_copy)  # Convert entire tool call to string
-                tool_vector = create_bigram_vector((tool_call_str,))
-                tool_vector_norm = normalize_vector(tool_vector)
-                self.tool_call_vectors.append(tool_vector_norm)
+                if tool_name:
+                    self.last_round_tools.append(tool_name)
+
+                    # Create and store vector for this tool call
+                    # Remove id property if present before stringifying
+                    tool_call_copy = tool_call.copy()
+                    if "id" in tool_call_copy:
+                        del tool_call_copy["id"]
+                    tool_call_str = str(tool_call_copy)  # Convert entire tool call to string
+                    tool_vector = create_bigram_vector((tool_call_str,))
+                    tool_vector_norm = normalize_vector(tool_vector)
+                    self.tool_call_vectors.append(tool_vector_norm)
 
         # Add the completed round to history
         if self.last_round_tools:
             self.tool_usage_history += self.last_round_tools
+            self.tool_usage_history = list(filter(None, self.tool_usage_history))
 
         if len(self.tool_usage_history) > self.tool_usage_retries:
             self.tool_usage_history.pop(0)
