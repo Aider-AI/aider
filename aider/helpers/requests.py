@@ -8,6 +8,9 @@ def thought_signature(model, messages):
             if "tool_calls" in msg:
                 tool_calls = msg["tool_calls"]
                 for call in tool_calls:
+                    if not call:
+                        continue
+
                     # Check if thought signature is missing in extra_content.google.thought_signature
                     if "provider_specific_fields" not in call:
                         call["provider_specific_fields"] = {}
@@ -18,6 +21,10 @@ def thought_signature(model, messages):
 
             if "function_call" in msg:
                 call = msg["function_call"]
+
+                if not call:
+                    continue
+
                 # Check if thought signature is missing in extra_content.google.thought_signature
                 if "provider_specific_fields" not in call:
                     call["provider_specific_fields"] = {}

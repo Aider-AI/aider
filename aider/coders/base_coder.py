@@ -30,13 +30,7 @@ from typing import List
 
 import httpx
 from litellm import experimental_mcp_client
-from litellm.types.utils import (
-    ChatCompletionMessageToolCall,
-    Choices,
-    Function,
-    Message,
-    ModelResponse,
-)
+from litellm.types.utils import ModelResponse
 from prompt_toolkit.patch_stdout import patch_stdout
 from rich.console import Console
 
@@ -127,6 +121,8 @@ class Coder:
     test_outcome = None
     multi_response_content = ""
     partial_response_content = ""
+    partial_response_reasoning_content = ""
+    partial_response_chunks = []
     partial_response_tool_calls = []
     commit_before_message = []
     message_cost = 0.0
@@ -2245,9 +2241,7 @@ class Coder:
             self.multi_response_content = ""
 
         self.io.tool_output()
-
         self.show_usage_report()
-
         self.add_assistant_reply_to_cur_messages()
 
         if exhausted:
@@ -2307,46 +2301,7 @@ class Coder:
             # Process any tools using MCP servers
             try:
                 if self.partial_response_tool_calls:
-                    tool_calls = []
-                    tool_id_set = set()
-
-                    for tool_call_dict in self.partial_response_tool_calls:
-                        # Ensure tool_call_dict is a dict
-                        if hasattr(tool_call_dict, "model_dump"):
-                            tool_call_dict = tool_call_dict.model_dump()
-                        # LLM APIs sometimes return duplicates and that's annoying
-                        if tool_call_dict.get("id") in tool_id_set:
-                            continue
-
-                        tool_id_set.add(tool_call_dict.get("id"))
-
-                        tool_calls.append(
-                            ChatCompletionMessageToolCall(
-                                id=tool_call_dict.get("id"),
-                                function=Function(
-                                    name=tool_call_dict.get("function", {}).get("name"),
-                                    arguments=tool_call_dict.get("function", {}).get(
-                                        "arguments", ""
-                                    ),
-                                ),
-                                type=tool_call_dict.get("type"),
-                            )
-                        )
-
-                    tool_call_response = ModelResponse(
-                        choices=[
-                            Choices(
-                                finish_reason="tool_calls",
-                                index=0,
-                                message=Message(
-                                    content=None,
-                                    role="assistant",
-                                    tool_calls=tool_calls,
-                                ),
-                            )
-                        ]
-                    )
-
+                    tool_call_response, a, b = self.consolidate_chunks()
                     if await self.process_tool_calls(tool_call_response):
                         self.num_tool_calls += 1
                         self.reflected_message = True
@@ -2830,18 +2785,26 @@ class Coder:
         to be `None` when `tool_calls` are present.
         """
         msg = dict(role="assistant")
-        has_tool_calls = self.partial_response_tool_calls or self.partial_response_function_call
+        response = (
+            self.partial_response_chunks[0]
+            if not self.stream
+            else litellm.stream_chunk_builder(self.partial_response_chunks)
+        )
 
-        # If we have tool calls and we're using a Deepseek model, force content to be None.
-        if has_tool_calls and self.main_model.is_deepseek():
-            msg["content"] = None
-        else:
-            # Otherwise, use logic similar to the base implementation.
-            content = self.partial_response_content
-            if content:
-                msg["content"] = content
-            elif has_tool_calls:
-                msg["content"] = None
+        try:
+            # Use response_dict as a regular dictionary
+            response_dict = response.model_dump()
+        except AttributeError:
+            # Option 2: Fall back to dict() or response.dict() (Pydantic V1 style)
+            try:
+                # Note: calling dict(response) works in both V1 and V2 for raw fields,
+                # but response.dict() is the Pydantic V1 method name.
+                response_dict = dict(response)
+            except TypeError:
+                print("Neither model_dump() nor dict() worked as expected.")
+                raise
+
+        msg = response_dict["choices"][0]["message"]
 
         if self.partial_response_tool_calls:
             msg["tool_calls"] = self.partial_response_tool_calls
@@ -2849,7 +2812,7 @@ class Coder:
             msg["function_call"] = self.partial_response_function_call
 
         # Only add a message if it's not empty.
-        if msg.get("content") is not None or msg.get("tool_calls") or msg.get("function_call"):
+        if msg is not None:
             self.cur_messages.append(msg)
 
     def get_file_mentions(self, content, ignore_current=False):
@@ -2933,8 +2896,10 @@ class Coder:
             model = self.main_model
 
         self.partial_response_content = ""
-        self.partial_response_function_call = dict()
+        self.partial_response_reasoning_content = ""
+        self.partial_response_chunks = []
         self.partial_response_tool_calls = []
+        self.partial_response_function_call = dict()
 
         completion = None
 
@@ -2990,39 +2955,9 @@ class Coder:
             self.io.tool_error(str(completion))
             return
 
-        show_func_err = None
-        show_content_err = None
-        try:
-            if completion.choices[0].message.tool_calls:
-                self.partial_response_tool_calls = []
-                for tool_call in completion.choices[0].message.tool_calls:
-                    tool_call_dict = tool_call.model_dump()
-                    if hasattr(tool_call, "provider_specific_fields"):
-                        tool_call_dict["provider_specific_fields"] = (
-                            tool_call.provider_specific_fields
-                        )
-                    if hasattr(tool_call, "extra_content"):
-                        tool_call_dict["extra_content"] = tool_call.extra_content
-                    self.partial_response_tool_calls.append(tool_call_dict)
+        self.partial_response_chunks.append(completion)
 
-                self.partial_response_function_call = (
-                    completion.choices[0].message.tool_calls[0].function
-                )
-        except AttributeError as func_err:
-            show_func_err = func_err
-
-        try:
-            reasoning_content = completion.choices[0].message.reasoning_content
-        except AttributeError:
-            try:
-                reasoning_content = completion.choices[0].message.reasoning
-            except AttributeError:
-                reasoning_content = None
-
-        try:
-            self.partial_response_content = completion.choices[0].message.content or ""
-        except AttributeError as content_err:
-            show_content_err = content_err
+        response, func_err, content_err = self.consolidate_chunks()
 
         resp_hash = dict(
             function_call=str(self.partial_response_function_call),
@@ -3031,16 +2966,16 @@ class Coder:
         resp_hash = hashlib.sha1(json.dumps(resp_hash, sort_keys=True).encode())
         self.chat_completion_response_hashes.append(resp_hash.hexdigest())
 
-        if show_func_err and show_content_err:
-            self.io.tool_error(show_func_err)
-            self.io.tool_error(show_content_err)
+        if func_err and content_err:
+            self.io.tool_error(func_err)
+            self.io.tool_error(content_err)
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
 
-        if reasoning_content:
+        if self.partial_response_reasoning_content:
             formatted_reasoning = format_reasoning_content(
-                reasoning_content, self.reasoning_tag_name
+                self.partial_response_reasoning_content, self.reasoning_tag_name
             )
             show_resp = formatted_reasoning + show_resp
 
@@ -3056,8 +2991,6 @@ class Coder:
 
     async def show_send_output_stream(self, completion):
         received_content = False
-        id_index_dict = dict()
-        self._last_known_tool_index = 0
 
         async for chunk in completion:
             # Check if confirmation is in progress and wait if needed
@@ -3083,83 +3016,14 @@ class Coder:
                         for tool_call_chunk in chunk.choices[0].delta.tool_calls:
                             self.tool_reflection = True
 
-                            index = tool_call_chunk.index
-                            # Some models return unique ids, others, indexes for tool calls
-                            if tool_call_chunk.id and tool_call_chunk.id not in id_index_dict:
-                                self.partial_response_tool_calls.extend([{}])
-                                id_index_dict[tool_call_chunk.id] = (
-                                    len(self.partial_response_tool_calls) - 1
-                                )
-                            elif tool_call_chunk.id is None:
-                                index = self._last_known_tool_index
-
-                            if tool_call_chunk.id is not None:
-                                index = id_index_dict[tool_call_chunk.id]
-
-                            self._last_known_tool_index = index
-
-                            if tool_call_chunk.id:
-                                self.partial_response_tool_calls[index]["id"] = tool_call_chunk.id
-
                             if tool_call_chunk.type:
-                                self.partial_response_tool_calls[index][
-                                    "type"
-                                ] = tool_call_chunk.type
                                 self.io.update_spinner_suffix(tool_call_chunk.type)
 
-                            if (
-                                hasattr(tool_call_chunk, "provider_specific_fields")
-                                and tool_call_chunk.provider_specific_fields
-                            ):
-                                if (
-                                    "provider_specific_fields"
-                                    not in self.partial_response_tool_calls[index]
-                                ):
-                                    self.partial_response_tool_calls[index][
-                                        "provider_specific_fields"
-                                    ] = {}
-                                self.partial_response_tool_calls[index][
-                                    "provider_specific_fields"
-                                ].update(tool_call_chunk.provider_specific_fields)
-
-                            if (
-                                hasattr(tool_call_chunk, "extra_content")
-                                and tool_call_chunk.extra_content
-                            ):
-                                if "extra_content" not in self.partial_response_tool_calls[index]:
-                                    self.partial_response_tool_calls[index]["extra_content"] = {}
-                                self.partial_response_tool_calls[index]["extra_content"].update(
-                                    tool_call_chunk.extra_content
-                                )
-
                             if tool_call_chunk.function:
-                                if "function" not in self.partial_response_tool_calls[index]:
-                                    self.partial_response_tool_calls[index]["function"] = {}
-
                                 if tool_call_chunk.function.name:
-                                    if (
-                                        "name"
-                                        not in self.partial_response_tool_calls[index]["function"]
-                                    ):
-                                        self.partial_response_tool_calls[index]["function"][
-                                            "name"
-                                        ] = ""
-                                    self.partial_response_tool_calls[index]["function"][
-                                        "name"
-                                    ] += tool_call_chunk.function.name
                                     self.io.update_spinner_suffix(tool_call_chunk.function.name)
 
                                 if tool_call_chunk.function.arguments:
-                                    if (
-                                        "arguments"
-                                        not in self.partial_response_tool_calls[index]["function"]
-                                    ):
-                                        self.partial_response_tool_calls[index]["function"][
-                                            "arguments"
-                                        ] = ""
-                                    self.partial_response_tool_calls[index]["function"][
-                                        "arguments"
-                                    ] += tool_call_chunk.function.arguments
                                     self.io.update_spinner_suffix(
                                         tool_call_chunk.function.arguments
                                     )
@@ -3173,12 +3037,6 @@ class Coder:
                     # dump(func)
                     for k, v in func.items():
                         self.tool_reflection = True
-
-                        if k in self.partial_response_function_call:
-                            self.partial_response_function_call[k] += v
-                        else:
-                            self.partial_response_function_call[k] = v
-
                         self.io.update_spinner_suffix(v)
 
                     received_content = True
@@ -3202,6 +3060,7 @@ class Coder:
                     self.got_reasoning_content = True
                     received_content = True
                     self.io.update_spinner_suffix(reasoning_content)
+                    self.partial_response_reasoning_content += reasoning_content
 
                 try:
                     content = chunk.choices[0].delta.content
@@ -3217,6 +3076,9 @@ class Coder:
                     pass
 
             self.partial_response_content += text
+
+            self.partial_response_chunks.append(chunk)
+
             if self.show_pretty():
                 # Use simplified streaming - just call the method with full content
                 content_to_show = self.live_incremental_response(False)
@@ -3234,8 +3096,110 @@ class Coder:
                     self.stream_wrapper(safe_text, final=False)
                 yield text
 
+        # The Part Doing the Heavy Lifting Now
+        self.consolidate_chunks()
+
         if not received_content and len(self.partial_response_tool_calls) == 0:
             self.io.tool_warning("Empty response received from LLM. Check your provider account?")
+
+    def consolidate_chunks(self):
+        response = (
+            self.partial_response_chunks[0]
+            if not self.stream
+            else litellm.stream_chunk_builder(self.partial_response_chunks)
+        )
+        func_err = None
+        content_err = None
+
+        # Collect provider-specific fields from chunks to preserve them
+        # We need to track both by ID (primary) and index (fallback) since
+        # early chunks might not have IDs established yet
+        provider_specific_fields_by_id = {}
+        provider_specific_fields_by_index = {}
+
+        for chunk in self.partial_response_chunks:
+            try:
+                if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.tool_calls:
+                    for tool_call in chunk.choices[0].delta.tool_calls:
+                        if (
+                            hasattr(tool_call, "provider_specific_fields")
+                            and tool_call.provider_specific_fields
+                        ):
+                            # Ensure provider_specific_fields is a dictionary
+                            psf = tool_call.provider_specific_fields
+                            if not isinstance(psf, dict):
+                                continue
+
+                            # Try to use ID first
+                            if hasattr(tool_call, "id") and tool_call.id:
+                                tool_id = tool_call.id
+                                if tool_id not in provider_specific_fields_by_id:
+                                    provider_specific_fields_by_id[tool_id] = {}
+                                # Merge provider-specific fields for this tool ID
+                                provider_specific_fields_by_id[tool_id].update(psf)
+                            # Also track by index as fallback
+                            elif hasattr(tool_call, "index"):
+                                tool_index = tool_call.index
+                                if tool_index not in provider_specific_fields_by_index:
+                                    provider_specific_fields_by_index[tool_index] = {}
+                                provider_specific_fields_by_index[tool_index].update(psf)
+            except (AttributeError, IndexError):
+                continue
+
+        try:
+            if response.choices[0].message.tool_calls:
+                for i, tool_call in enumerate(response.choices[0].message.tool_calls):
+                    # Add provider-specific fields if we collected any for this tool
+                    tool_id = tool_call.id
+
+                    # Try ID first
+                    if tool_id in provider_specific_fields_by_id:
+                        # Add provider-specific fields directly to the tool call object
+                        tool_call.provider_specific_fields = provider_specific_fields_by_id[tool_id]
+                    # Fall back to index
+                    elif i in provider_specific_fields_by_index:
+                        # Add provider-specific fields directly to the tool call object
+                        tool_call.provider_specific_fields = provider_specific_fields_by_index[i]
+
+                    # Create dictionary version with provider-specific fields
+                    tool_call_dict = tool_call.model_dump()
+
+                    # Add provider-specific fields to the dictionary too (in case model_dump() doesn't include them)
+                    if tool_id in provider_specific_fields_by_id:
+                        tool_call_dict["provider_specific_fields"] = provider_specific_fields_by_id[
+                            tool_id
+                        ]
+                    elif i in provider_specific_fields_by_index:
+                        tool_call_dict["provider_specific_fields"] = (
+                            provider_specific_fields_by_index[i]
+                        )
+
+                    # Only append to partial_response_tool_calls if it's empty
+                    if len(self.partial_response_tool_calls) == 0:
+                        self.partial_response_tool_calls.append(tool_call_dict)
+
+                self.partial_response_function_call = (
+                    response.choices[0].message.tool_calls[0].function
+                )
+        except AttributeError as e:
+            func_err = e
+
+        try:
+            reasoning_content = response.choices[0].message.reasoning_content
+        except AttributeError:
+            try:
+                reasoning_content = response.choices[0].message.reasoning
+            except AttributeError:
+                reasoning_content = None
+
+        self.partial_response_reasoning_content = reasoning_content or ""
+
+        try:
+            self.partial_response_content = response.choices[0].message.content or ""
+        except AttributeError as e:
+            content_err = e
+
+        return response, func_err, content_err
 
     def stream_wrapper(self, content, final):
         if not hasattr(self, "_streaming_buffer_length"):
