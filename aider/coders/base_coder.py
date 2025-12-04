@@ -685,7 +685,9 @@ class Coder:
 
     def get_abs_fnames_content(self):
         # Sort files by last modified time (earliest first, latest last)
-        sorted_fnames = sorted(self.abs_fnames, key=lambda fname: os.path.getmtime(fname))
+        sorted_fnames = sorted(
+            self.abs_fnames, key=lambda fname: os.path.exists(fname) and os.path.getmtime(fname)
+        )
 
         for fname in sorted_fnames:
             content = self.io.read_text(fname)
@@ -743,8 +745,9 @@ class Coder:
             file_times = []
             for fname in fnames:
                 try:
-                    mtime = os.path.getmtime(fname)
-                    file_times.append((fname, mtime))
+                    if os.path.exists(fname):
+                        mtime = os.path.getmtime(fname)
+                        file_times.append((fname, mtime))
                 except OSError:
                     # Skip files that can't be accessed
                     continue
@@ -840,7 +843,10 @@ class Coder:
     def get_read_only_files_content(self):
         prompt = ""
         # Sort read-only files by last modified time (earliest first, latest last)
-        sorted_fnames = sorted(self.abs_read_only_fnames, key=lambda fname: os.path.getmtime(fname))
+        sorted_fnames = sorted(
+            self.abs_read_only_fnames,
+            key=lambda fname: os.path.exists(fname) and os.path.getmtime(fname),
+        )
 
         # Handle regular read-only files
         for fname in sorted_fnames:
@@ -890,7 +896,8 @@ class Coder:
 
         # Sort stub files by last modified time (earliest first, latest last)
         sorted_stub_fnames = sorted(
-            self.abs_read_only_stubs_fnames, key=lambda fname: os.path.getmtime(fname)
+            self.abs_read_only_stubs_fnames,
+            key=lambda fname: os.path.exists(fname) and os.path.getmtime(fname),
         )
 
         # Handle stub files
