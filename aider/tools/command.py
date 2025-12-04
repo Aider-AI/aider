@@ -32,6 +32,9 @@ class Tool(BaseTool):
             # Ask for confirmation before executing.
             # allow_never=True enables the 'Always' option.
             # confirm_ask handles remembering the 'Always' choice based on the subject.
+            if command_string and getattr(coder.args, "command_prefix", None):
+                command_prefix = getattr(coder.args, "command_prefix", None)
+                command_string = f"{command_prefix} {command_string}"
 
             confirmed = (
                 True

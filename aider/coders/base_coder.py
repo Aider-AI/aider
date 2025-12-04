@@ -3837,6 +3837,10 @@ class Coder:
             if not command or command.startswith("#"):
                 continue
 
+            if command and getattr(self.args, "command_prefix", None):
+                command_prefix = getattr(self.args, "command_prefix", None)
+                command = f"{command_prefix} {command}"
+
             self.io.tool_output()
             self.io.tool_output(f"Running {command}")
             # Add the command to input history

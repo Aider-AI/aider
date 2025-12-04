@@ -966,6 +966,11 @@ def get_parser(default_config_files, git_root):
         ),
     )
     group.add_argument(
+        "--command-prefix",
+        default=None,
+        help="Specify a command prefix for all commands (useful for sandboxing)",
+    )
+    group.add_argument(
         "--detect-urls",
         action=argparse.BooleanOptionalAction,
         default=True,
