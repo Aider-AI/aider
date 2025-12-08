@@ -54,12 +54,18 @@ aider [files...]
 
 Running in Docker:
 
+
+```
+docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e GEMINI_API_KEY=$GEMINI_API_KEY -e OPENROUTER_API_KEY=$OPENROUTER_API_KEY paulgauthier/aider-full --model gemini-2.5-pro --weak-model gemini/gemini-2.0-flash
+```
+
+
 ```
 docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e OPENROUTER_API_KEY=$OPENROUTER_API_KEY paulgauthier/aider-full --model openrouter/deepseek/deepseek-chat-v3-0324:free --weak-model openrouter/google/gemini-2.0-flash-exp:free
 ```
 
 ```
-docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e GEMINI_API_KEY=$GEMINI_API_KEY paulgauthier/aider-full
+docker run -it --user $(id -u):$(id -g) --volume $(pwd):/app -e GEMINI_API_KEY=$GEMINI_API_KEY -e OPENROUTER_API_KEY=$OPENROUTER_API_KEY paulgauthier/aider-full --model gemini-2.5-pro --weak-model openrouter/deepseek/deepseek-chat-v3-0324:free
 ```
 
 ### Deployment Notes

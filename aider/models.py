@@ -989,6 +989,7 @@ class Model(ModelSettings):
         if self.verbose:
             dump(kwargs)
         kwargs["messages"] = messages
+        kwargs["api_key"] = 'xxxx'
 
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ:
