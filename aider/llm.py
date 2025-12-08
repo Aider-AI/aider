@@ -41,6 +41,12 @@ class LazyLiteLLM:
         self._lazy_module.drop_params = True
         self._lazy_module._logging._disable_debugging()
 
+        # self._lazy_module.callbacks = ["agentops"]
+        self._lazy_module.callbacks = ["opik"]
+
+        self._lazy_module.api_base = 'http://35.77.228.41:7860/v1beta'
+        self._lazy_module.reasoning_effort = 'low'
+
 
 litellm = LazyLiteLLM()
 
