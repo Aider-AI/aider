@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  aider-dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile-dev
+    container_name: aider-dev
+    volumes:
+      - .:/app
+      - aider-cache:/home/appuser/.cache
+      - aider-pw-browsers:/home/appuser/pw-browsers
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    environment:
+      - PLAYWRIGHT_BROWSERS_PATH=/home/appuser/pw-browsers
+      - AIDER_DOCKER_DEV=1
+
+volumes:
+  aider-cache:
+  aider-pw-browsers:

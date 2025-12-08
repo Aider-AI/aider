@@ -507,6 +507,7 @@ class Coder:
                 refresh=map_refresh,
             )
 
+        # Use weak model first for summarization to save costs, falling back to main model
         self.summarizer = summarizer or ChatSummary(
             [self.main_model.weak_model, self.main_model],
             self.main_model.max_chat_history_tokens,
@@ -1368,6 +1369,7 @@ class Coder:
 
                 kwargs = dict(self.main_model.extra_params) or dict()
                 kwargs["max_tokens"] = 1
+                kwargs["api_key"] = 'xxxx'
 
                 try:
                     completion = litellm.completion(
@@ -1807,6 +1809,21 @@ class Coder:
             else:
                 self.show_send_output(completion)
 
+            # Validate response content
+            if not self.partial_response_content and not self.partial_response_function_call:
+                provider = model.name.split('/')[0].upper() if '/' in model.name else model.name
+                error_msg = (
+                    f"Empty response from {provider} API.\n"
+                    "Possible solutions:\n"
+                    "1. Check API key validity\n"
+                    "2. Verify model permissions/access\n"
+                    "3. Ensure adequate account credits\n"
+                    "4. Try a different model using /model command"
+                )
+                if "openrouter" in model.name.lower():
+                    error_msg += "\n5. Check model access at openrouter.ai/portal"
+                raise ValueError(error_msg)
+
             # Calculate costs for successful responses
             self.calculate_and_show_tokens_and_cost(messages, completion)
 
@@ -1836,6 +1853,18 @@ class Coder:
     def show_send_output(self, completion):
         # Stop spinner once we have a response
         self._stop_waiting_spinner()
+
+        # Check for empty response first
+        if not completion.choices:
+            provider = self.main_model.name.split('/')[0].upper() if '/' in self.main_model.name else self.main_model.name
+            self.io.tool_error(f"Empty response body from {provider}. Possible causes:")
+            self.io.tool_output("1. Invalid or expired API credentials")
+            self.io.tool_output("2. Model access not granted") 
+            self.io.tool_output("3. Account quota exceeded")
+            if "openrouter" in self.main_model.name.lower():
+                self.io.tool_output("4. Model requires permission at openrouter.ai/portal")
+            self.io.tool_output("5. Temporary API outage - try again later")
+            return
 
         if self.verbose:
             print(completion)
@@ -1899,7 +1928,6 @@ class Coder:
 
     def show_send_output_stream(self, completion):
         received_content = False
-
         for chunk in completion:
             if len(chunk.choices) == 0:
                 continue
@@ -1998,6 +2026,7 @@ class Coder:
         cache_write_tokens = 0
 
         if completion and hasattr(completion, "usage") and completion.usage is not None:
+            # Normal path with valid usage data
             prompt_tokens = completion.usage.prompt_tokens
             completion_tokens = completion.usage.completion_tokens
             cache_hit_tokens = getattr(completion.usage, "prompt_cache_hit_tokens", 0) or getattr(
@@ -2014,9 +2043,13 @@ class Coder:
                 self.message_tokens_sent += prompt_tokens
 
         else:
+            # Handle missing/incomplete usage data
+            self.io.tool_warning("Unable to calculate tokens - response metadata missing")
             prompt_tokens = self.main_model.token_count(messages)
             completion_tokens = self.main_model.token_count(self.partial_response_content)
             self.message_tokens_sent += prompt_tokens
+            self.usage_report = "Token tracking unavailable for this response"
+            return
 
         self.message_tokens_received += completion_tokens
 

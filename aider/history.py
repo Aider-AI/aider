@@ -5,7 +5,18 @@ from aider.dump import dump  # noqa: F401
 
 
 class ChatSummary:
+    """Summarizes chat history using a hierarchy of models to reduce token usage.
+    
+    The summarization process:
+    1. Attempts with cheaper/faster "weak" models first to save costs
+    2. Falls back to stronger models if needed
+    3. Maintains key context while reducing overall token count
+    4. Preserves the most recent messages intact when possible
+    
+    Uses a divide-and-conquer strategy recursively splitting long histories
+    when they exceed token limits."""
     def __init__(self, models=None, max_tokens=1024):
+        """Initialize with hierarchy of models (weakest first) and max token limit"""
         if not models:
             raise ValueError("At least one model must be provided")
         self.models = models if isinstance(models, list) else [models]
@@ -96,6 +107,10 @@ class ChatSummary:
         return self.summarize_real(summary + tail, depth + 1)
 
     def summarize_all(self, messages):
+        """Condense chat history by asking LLM to extract key points.
+        
+        Tries models in order (weakest first) until successful.
+        Preserves system messages and file content references."""
         content = ""
         for msg in messages:
             role = msg["role"].upper()
@@ -111,6 +126,7 @@ class ChatSummary:
             dict(role="user", content=content),
         ]
 
+        # Try each model in order - weak models first to save costs
         for model in self.models:
             try:
                 summary = model.simple_send_with_retries(summarize_messages)

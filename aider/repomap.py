@@ -39,6 +39,12 @@ UPDATING_REPO_MAP_MESSAGE = "Updating repo map"
 
 
 class RepoMap:
+    """Generates and maintains a semantic map of the code repository.
+    
+    Uses static analysis to track definitions/references and PageRank algorithm
+    to identify important files/identifiers. Provides context about the codebase
+    structure to the AI assistant during chat interactions."""
+    
     TAGS_CACHE_DIR = f".aider.tags.cache.v{CACHE_VERSION}"
 
     warned_files = set()
@@ -86,13 +92,19 @@ class RepoMap:
             )
 
     def token_count(self, text):
+        """Estimate token count using sampling for large texts"""
+        if not text:
+            return 0
+            
         len_text = len(text)
         if len_text < 200:
             return self.main_model.token_count(text)
 
+        # Ensure we sample at least 1% of text but no more than 1000 lines
         lines = text.splitlines(keepends=True)
         num_lines = len(lines)
-        step = num_lines // 100 or 1
+        step = max(1, num_lines // 100)  # Ensure step is at least 1
+        step = min(step, 1000)  # Don't sample more than 1000 lines
         lines = lines[::step]
         sample_text = "".join(lines)
         sample_tokens = self.main_model.token_count(sample_text)
@@ -175,9 +187,13 @@ class RepoMap:
 
     def tags_cache_error(self, original_error=None):
         """Handle SQLite errors by trying to recreate cache, falling back to dict if needed"""
-
-        if self.verbose and original_error:
-            self.io.tool_warning(f"Tags cache error: {str(original_error)}")
+        
+        if original_error:
+            error_msg = f"Tags cache error ({original_error.__class__.__name__}): {str(original_error)}"
+            if self.verbose:
+                self.io.tool_error(error_msg)
+            else:
+                self.io.tool_warning("Repository map cache issue detected - resetting cache")
 
         if isinstance(getattr(self, "TAGS_CACHE", None), dict):
             return
