@@ -1,5 +1,3 @@
-FROM golang:1.21.5 AS go-base
-
 FROM buildpack-deps:jammy
 
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
@@ -29,7 +27,7 @@ RUN apt-get update && apt-get install -y \
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
 # Install Go
-COPY --from=go-base /usr/local/go /usr/local/go
+COPY --from golang:1.21.5 /usr/local/go /usr/local/go
 ENV PATH="/usr/local/go/bin:${PATH}"
 ENV GOPATH="/go"
 ENV PATH="${GOPATH}/bin:${PATH}"
