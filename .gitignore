@@ -17,3 +17,9 @@ aider/_version.py
 .gitattributes
 tmp.benchmarks/
 .docker_bash_history
+benchmarks/*
+!benchmarks/.gitkeep
+certs/*
+!certs/.gitkeep
+model-settings/*
+!model-settings/.gitkeep

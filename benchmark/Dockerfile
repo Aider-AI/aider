@@ -1,5 +1,11 @@
 FROM buildpack-deps:jammy
 
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+
+COPY certs /usr/local/share/ca-certificates
+RUN update-ca-certificates
+ENV NODE_EXTRA_CA_CERTS=/etc/ssl/certs/ca-certificates.crt
+
 # Install Python 3.11
 RUN apt-get update && apt-get install -y \
     software-properties-common \
@@ -20,19 +26,11 @@ RUN apt-get update && apt-get install -y \
 # Make python3.11 the default python3
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.11 1
 
-# Install Go with architecture detection
-RUN ARCH=$(uname -m) && \
-    if [ "$ARCH" = "x86_64" ]; then \
-        GOARCH="amd64"; \
-    elif [ "$ARCH" = "aarch64" ]; then \
-        GOARCH="arm64"; \
-    else \
-        false; \
-    fi && \
-    curl -L "https://golang.org/dl/go1.21.5.linux-$GOARCH.tar.gz" -o go.tar.gz && \
-    tar -C /usr/local -xzf go.tar.gz && \
-    rm go.tar.gz
+# Install Go
+COPY --from golang:1.21.5 /usr/local/go /usr/local/go
 ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOPATH="/go"
+ENV PATH="${GOPATH}/bin:${PATH}"
 
 # Install Rust
 ADD https://sh.rustup.rs /tmp/rustup.sh
@@ -40,7 +38,7 @@ RUN chmod +x /tmp/rustup.sh && /tmp/rustup.sh -y && rm /tmp/rustup.sh
 ENV PATH="/root/.cargo/bin:${PATH}"
 
 # Install Node.js and dependencies
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+RUN curl -kfsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/* && \
     mkdir -p /npm-install && \
