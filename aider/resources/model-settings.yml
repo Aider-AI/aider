@@ -1899,6 +1899,33 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+- name: gpt-5.2-pro
+  streaming: false
+  edit_format: diff
+  weak_model_name: gpt-5-mini
+  use_repo_map: true
+  editor_model_name: gpt-5.2
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  use_temperature: false
+
+- name: gpt-5.2
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+  overeager: true
+
+- name: gpt-5.2-2025-12-11
+  edit_format: diff
+  weak_model_name: gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
 - name: gpt-5-mini
   edit_format: diff
   weak_model_name: gpt-5-nano
@@ -1955,6 +1982,13 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+- name: gpt-5.2-chat-latest
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
 - name: gpt-5-codex
   edit_format: diff
   weak_model_name: gpt-5-nano
@@ -2003,6 +2037,20 @@
   accepts_settings: ["reasoning_effort"]
 
 - name: azure/gpt-5.1-2025-11-13
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: azure/gpt-5.2
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: azure/gpt-5.2-2025-12-11
   edit_format: diff
   weak_model_name: azure/gpt-5-nano-2025-08-07
   use_repo_map: true
@@ -2065,6 +2113,13 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+- name: azure/gpt-5.2-chat-latest
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
 - name: openai/gpt-5
   edit_format: diff
   weak_model_name: openai/gpt-5-nano
@@ -2099,6 +2154,32 @@
   accepts_settings: ["reasoning_effort"]
 
 - name: openai/gpt-5.1-2025-11-13
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openai/gpt-5.2-pro
+  streaming: false
+  edit_format: diff
+  weak_model_name: openai/gpt-5-mini
+  use_repo_map: true
+  editor_model_name: openai/gpt-5.2
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  use_temperature: false
+
+- name: openai/gpt-5.2
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openai/gpt-5.2-2025-12-11
   edit_format: diff
   weak_model_name: openai/gpt-5-nano-2025-08-07
   use_repo_map: true
@@ -2161,6 +2242,13 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+- name: openai/gpt-5.2-chat-latest
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
 - name: openrouter/openai/gpt-5
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-5-nano
@@ -2195,6 +2283,32 @@
   accepts_settings: ["reasoning_effort"]
 
 - name: openrouter/openai/gpt-5.1-2025-11-13
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openrouter/openai/gpt-5.2-pro
+  streaming: false
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-mini
+  use_repo_map: true
+  editor_model_name: openrouter/openai/gpt-5.2
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+  use_temperature: false
+
+- name: openrouter/openai/gpt-5.2
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openrouter/openai/gpt-5.2-2025-12-11
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-5-nano-2025-08-07
   use_repo_map: true
@@ -2251,6 +2365,13 @@
   accepts_settings: ["reasoning_effort"]
 
 - name: openrouter/openai/gpt-5.1-chat-latest
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openrouter/openai/gpt-5.2-chat-latest
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-5-nano
   use_repo_map: true
