@@ -82,3 +82,21 @@ def test_openrouter_error():
     assert "OpenRouter" in ex_info.description
     assert "overloaded" in ex_info.description
     assert "rate" in ex_info.description
+
+
+def test_helicone_error():
+    """Test handling of Helicone (gateway) API errors"""
+    ex = LiteLLMExceptions()
+    from litellm import APIConnectionError
+
+    helicone_error = APIConnectionError(
+        message="APIConnectionError: Helicone gateway error - upstream timeout",
+        model="openai/gpt-4.1",
+        llm_provider="helicone",
+    )
+
+    ex_info = ex.get_ex_info(helicone_error)
+    assert ex_info.retry is True
+    assert "Helicone" in ex_info.description
+    assert "overloaded" in ex_info.description
+    assert "rate" in ex_info.description
