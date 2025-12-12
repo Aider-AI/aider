@@ -6,14 +6,15 @@ description: How to configure aider with a YAML config file.
 
 # YAML config file
 
-Most of aider's options can be set in an `.aider.conf.yml` file.
-Aider will look for a this file in these locations:
+Most of aider's options can be set in a YAML config file.
+Aider will look for config files in these locations:
 
-- Your home directory.
-- The root of your git repo.
-- The current directory.
+- Your home directory (`~/.aider.conf.yml`).
+- Your XDG config home in `$XDG_CONFIG_HOME/aider/`. Aider will look for `conf.yml` and `.aider.conf.yml`. If `$XDG_CONFIG_HOME` is not set, it defaults to `~/.config`.
+- The root of your git repo (`.aider.conf.yml`).
+- The current directory (`.aider.conf.yml`).
 
-If the files above exist, they will be loaded in that order. Files loaded last will take priority.
+If the files above exist, they will be loaded in that order. Settings from files loaded later take priority.
 
 You can also specify the `--config <filename>` parameter, which will only load the one config file.
 
