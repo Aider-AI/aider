@@ -264,13 +264,14 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>gemini/gemini-2.5-pro</td><td class='right'>222,047</td><td class='right'>29.7%</td></tr>
-<tr><td>gpt-5</td><td class='right'>211,072</td><td class='right'>28.2%</td></tr>
-<tr><td>None</td><td class='right'>168,988</td><td class='right'>22.6%</td></tr>
-<tr><td>gemini/gemini-3-pro-preview</td><td class='right'>81,851</td><td class='right'>11.0%</td></tr>
-<tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>4.9%</td></tr>
-<tr><td>gemini/gemini-2.5-flash-lite</td><td class='right'>15,470</td><td class='right'>2.1%</td></tr>
-<tr><td>gemini/gemini-2.5-flash-lite-preview-06-17</td><td class='right'>11,371</td><td class='right'>1.5%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>222,047</td><td class='right'>23.7%</td></tr>
+<tr><td>gpt-5</td><td class='right'>211,072</td><td class='right'>22.6%</td></tr>
+<tr><td>gemini/gemini-3-flash-preview</td><td class='right'>187,836</td><td class='right'>20.1%</td></tr>
+<tr><td>None</td><td class='right'>168,988</td><td class='right'>18.1%</td></tr>
+<tr><td>gemini/gemini-3-pro-preview</td><td class='right'>81,851</td><td class='right'>8.8%</td></tr>
+<tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>3.9%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite</td><td class='right'>15,470</td><td class='right'>1.7%</td></tr>
+<tr><td>gemini/gemini-2.5-flash-lite-preview-06-17</td><td class='right'>11,371</td><td class='right'>1.2%</td></tr>
 </table>
 <!--[[[end]]]-->
 
