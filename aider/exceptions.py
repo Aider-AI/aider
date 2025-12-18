@@ -29,6 +29,7 @@ EXCEPTIONS = [
         "The API provider has refused the request due to a safety policy about the content.",
     ),
     ExInfo("ContextWindowExceededError", False, None),  # special case handled in base_coder
+    ExInfo("ErrorEventError", True, None),
     ExInfo("InternalServerError", True, "The API provider's servers are down or overloaded."),
     ExInfo("InvalidRequestError", True, None),
     ExInfo("JSONSchemaValidationError", True, None),
