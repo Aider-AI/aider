@@ -1488,6 +1488,25 @@
   weak_model_name: openrouter/google/gemini-2.5-flash
   accepts_settings: ["thinking_tokens"]
 
+- name: gemini/gemini-3-flash-preview
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: vertex_ai/gemini-3-flash-preview
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
+
+- name: openrouter/google/gemini-3-flash-preview
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  accepts_settings: ["thinking_tokens"]
+
 #- name: openrouter/qwen/qwen3-235b-a22b
 #  system_prompt_prefix: "/no_think"
 #  use_temperature: 0.7
