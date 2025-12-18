@@ -20,6 +20,7 @@ EXCEPTIONS = [
         "The API provider is not able to authenticate you. Check your API key.",
     ),
     ExInfo("AzureOpenAIError", True, None),
+    ExInfo("BadGatewayError", True, "The API provider's servers are down or overloaded."),
     ExInfo("BadRequestError", False, None),
     ExInfo("BudgetExceededError", True, None),
     ExInfo(
