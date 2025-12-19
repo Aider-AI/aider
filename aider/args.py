@@ -78,6 +78,14 @@ def get_parser(default_config_files, git_root):
         help="Specify the api base url",
     )
     group.add_argument(
+        "--litellm-api-base",
+        help="Specify the litellm api base url",
+    )
+    group.add_argument(
+        "--litellm-api-key",
+        help="Specify the litellm api key",
+    )
+    group.add_argument(
         "--openai-api-type",
         help="(deprecated, use --set-env OPENAI_API_TYPE=<value>)",
     )
