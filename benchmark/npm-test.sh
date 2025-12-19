@@ -9,5 +9,6 @@ set -e
 
 
 sed -i 's/\bxtest(/test(/g' *.spec.js
+sed -i 's/\bxit(/it(/g' *.spec.js
 npm run test
 
