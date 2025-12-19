@@ -2216,7 +2216,7 @@ class Coder:
                 # Seems unlikely that we needed to create the file, but it was
                 # actually already part of the repo.
                 # But let's only add if we need to, just to be safe.
-                if need_to_add:
+                if need_to_add and self.auto_commits:
                     self.repo.repo.git.add(full_path)
 
             self.abs_fnames.add(full_path)
@@ -2230,7 +2230,7 @@ class Coder:
             self.io.tool_output(f"Skipping edits to {path}")
             return
 
-        if need_to_add:
+        if need_to_add and self.auto_commits:
             self.repo.repo.git.add(full_path)
 
         self.abs_fnames.add(full_path)
