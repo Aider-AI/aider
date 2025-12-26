@@ -320,8 +320,13 @@ def main(
 
     test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
 
+    # Load built‑in metadata first, then any optional local overrides
     resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
-    model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
+    meta_files = [str(resource_metadata)]
+    local_meta = Path(".aider.model.metadata.json")
+    if local_meta.exists():
+        meta_files.append(str(local_meta))
+    model_metadata_files_loaded = models.register_litellm_models(meta_files)
     dump(model_metadata_files_loaded)
 
     if read_model_settings:
