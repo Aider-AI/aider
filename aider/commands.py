@@ -1534,6 +1534,51 @@ class Commands:
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
 
+    def cmd_md(self, args):
+        "Save the last assistant message to a specified file and directory"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to save the message to.")
+            return
+
+        try:
+            # Parse the filename from the arguments
+            filename = args.strip()
+            default_dir = Path(self.coder.root) / "notes"
+
+            # Ensure the default directory exists
+            default_dir.mkdir(parents=True, exist_ok=True)
+
+            # Set the filepath to the default directory if only a filename is provided
+            if not Path(filename).parent or Path(filename).parent == Path('.'):
+                filepath = default_dir / filename
+            else:
+                filepath = Path(expanduser(filename))
+
+            # Get the last assistant message
+            all_messages = self.coder.done_messages + self.coder.cur_messages
+            assistant_messages = [msg for msg in reversed(all_messages) if msg["role"] == "assistant"]
+
+            if not assistant_messages:
+                self.io.tool_error("No assistant messages found to save.")
+                return
+
+            last_assistant_message = assistant_messages[0]["content"]
+
+            # Save the message to the specified file
+            with open(filepath, "w", encoding=self.io.encoding) as f:
+                f.write(last_assistant_message)
+
+            self.io.tool_output(f"Saved last assistant message to {filepath}")
+
+        except PermissionError as e:
+            self.io.tool_error(f"Permission denied: {e}")
+            self.io.tool_output("Please ensure you have write permissions for the specified directory.")
+        except ValueError:
+            self.io.tool_error("Please provide a valid filename.")
+        except Exception as e:
+            self.io.tool_error(f"An unexpected error occurred while saving the message: {str(e)}")
+
+
     def cmd_report(self, args):
         "Report a problem by opening a GitHub Issue"
         from aider.report import report_github_issue
