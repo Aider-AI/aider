@@ -365,6 +365,9 @@ class InputOutput:
             if self.is_dumb_terminal:
                 self.tool_output("Detected dumb terminal, disabling fancy input and pretty output.")
 
+        # Forcing utf-8 encoding can fix UnicodeEncodeError on Windows
+        self.console.encoding = "utf-8"
+
         self.file_watcher = file_watcher
         self.root = root
 
