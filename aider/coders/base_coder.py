@@ -870,7 +870,7 @@ class Coder:
         self.shell_commands = []
         self.message_cost = 0
 
-        if self.repo:
+        if isinstance(self.repo, GitRepo):
             self.commit_before_message.append(self.repo.get_head_commit_sha())
 
     def run(self, with_message=None, preproc=True):
@@ -2173,7 +2173,7 @@ class Coder:
         return all_files - inchat_files - read_only_files
 
     def check_for_dirty_commit(self, path):
-        if not self.repo:
+        if not isinstance(self.repo, GitRepo):
             return
         if not self.dirty_commits:
             return
@@ -2373,7 +2373,7 @@ class Coder:
         return context
 
     def auto_commit(self, edited, context=None):
-        if not self.repo or not self.auto_commits or self.dry_run:
+        if not isinstance(self.repo, GitRepo) or not self.auto_commits or self.dry_run:
             return
 
         if not context:
@@ -2413,7 +2413,7 @@ class Coder:
             return
         if not self.dirty_commits:
             return
-        if not self.repo:
+        if not isinstance(self.repo, GitRepo):
             return
 
         self.repo.commit(fnames=self.need_commit_before_edits, coder=self)
