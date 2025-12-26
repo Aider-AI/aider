@@ -132,8 +132,13 @@ def get_index():
 
 class Help:
     def __init__(self):
-        from llama_index.core import Settings
-        from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+        try:
+            from llama_index.core import Settings
+            from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+        except ImportError as e:
+            raise ImportError(
+                "Required packages for Help are not installed. Please install 'llama_index'."
+            ) from e
 
         os.environ["TOKENIZERS_PARALLELISM"] = "true"
         Settings.embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5")
