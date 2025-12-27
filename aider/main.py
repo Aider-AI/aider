@@ -494,6 +494,29 @@ parser.add_argument(
 )
 # ============ END SAFETY FLAGS ============
 
+
+# ============ OBSERVABILITY FLAGS (NEW) ============
+parser.add_argument(
+    "--enable-observability",
+    action="store_true",
+    default=True,
+    help="Enable observability metrics (default: enabled)"
+)
+
+parser.add_argument(
+    "--disable-observability",
+    action="store_true",
+    help="Disable observability metrics"
+)
+
+parser.add_argument(
+    "--langsmith-project",
+    type=str,
+    default="aider-observability",
+    help="LangSmith project name (requires LANGSMITH_API_KEY env var)"
+)
+# ============ END OBSERVABILITY FLAGS ============
+
     except AttributeError as e:
         if all(word in str(e) for word in ["bool", "object", "has", "no", "attribute", "strip"]):
             if check_config_files_for_yes(default_config_files):
@@ -1020,6 +1043,8 @@ parser.add_argument(
             auto_accept_architect=args.auto_accept_architect,
             add_gitignore_files=args.add_gitignore_files,
             enable_safety=args.enable_safety and not args.disable_safety,
+            enable_observability=args.enable_observability and not args.disable_observability,
+            langsmith_project=args.langsmith_project,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
