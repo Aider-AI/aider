@@ -1158,6 +1158,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     cmd_line = scrub_sensitive_info(args, cmd_line)
     io.tool_output(cmd_line, log_only=True)
 
+    
     is_first_run = is_first_run_of_new_version(io, verbose=args.verbose)
     check_and_load_imports(io, is_first_run, verbose=args.verbose)
 
