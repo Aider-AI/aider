@@ -1147,6 +1147,27 @@ class TestCommands(TestCase):
                 any(expected_output_fragment in msg["content"] for msg in coder.cur_messages)
             )
 
+    def test_cmd_run_truncates_long_output(self):
+        with ChdirTemporaryDirectory():
+            io = InputOutput(pretty=False, fancy_input=False, yes=False)
+            from aider.coders import Coder
+
+            coder = Coder.create(self.GPT35, None, io)
+            commands = Commands(io, coder)
+
+            long_output = "\n".join(f"line {i}" for i in range(500))
+
+            with mock.patch("aider.commands.run_cmd", return_value=(0, long_output)):
+                io.yes = None
+                io.prompt_ask = lambda *args, **kwargs: "t"
+                commands.cmd_run("dummy command")
+
+            user_msg = coder.cur_messages[-2]["content"]
+            self.assertIn("[truncated: total 500 lines", user_msg)
+            self.assertIn("line 0", user_msg)
+            self.assertIn("line 499", user_msg)
+            self.assertNotIn("line 250", user_msg)
+
     def test_cmd_add_drop_untracked_files(self):
         with GitTemporaryDirectory():
             repo = git.Repo()
