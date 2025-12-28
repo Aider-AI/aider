@@ -448,7 +448,357 @@ def sanity_check_repo(repo, io):
     return False
 
 
+def get_model_size_category(model_info):
+    """
+    Determine model size category based on parameter count
+    Returns: 'small', 'medium', 'large', 'xlarge'
+    """
+    # Get model parameter count
+    parameters = model_info.get("parameters", 0)
+    
+    # If no parameter info, try to infer from model name
+    if parameters == 0:
+        model_name = model_info.get("model_name", "").lower()
+        if "7b" in model_name or "8b" in model_name or "small" in model_name:
+            return "small"
+        elif "13b" in model_name or "medium" in model_name:
+            return "medium"
+        elif "70b" in model_name or "large" in model_name:
+            return "large"
+        elif "400b" in model_name or "xlarge" in model_name:
+            return "xlarge"
+        else:
+            # Default to medium size
+            return "medium"
+    
+    # Categorize based on parameter count
+    if parameters <= 10_000_000_000:  # <= 10B
+        return "small"
+    elif parameters <= 30_000_000_000:  # 10B-30B
+        return "medium"
+    elif parameters <= 100_000_000_000:  # 30B-100B
+        return "large"
+    else:  # > 100B
+        return "xlarge"
+
+
+def get_cot_prompt_template(model_size_category, chain_of_thought_enabled):
+    """
+    Return different prompt templates based on model size and chain-of-thought setting
+    
+    Args:
+        model_size_category: 'small', 'medium', 'large', 'xlarge'
+        chain_of_thought_enabled: bool, whether chain-of-thought is enabled
+    
+    Returns:
+        dict: Contains cot_prompt, system_prompt_addition, user_prompt_addition, etc.
+    """
+    if not chain_of_thought_enabled:
+        return {
+            "cot_prompt": None,
+            "system_prompt_addition": "",
+            "user_prompt_addition": "",
+            "cot_enabled": False
+        }
+    
+    # Return different prompt templates based on model size
+    if model_size_category == "small":
+        # Small models need simpler prompts
+        return {
+            "cot_prompt": "Please think step by step, then provide the answer.",
+            "system_prompt_addition": "When answering questions, think briefly first then provide the final answer.",
+            "user_prompt_addition": "Please think briefly step by step, then provide the final answer.",
+            "cot_enabled": True,
+            "cot_style": "simple"  # Simple style
+        }
+    elif model_size_category == "medium":
+        # Medium models can handle moderate complexity
+        return {
+            "cot_prompt": "Please think through the following steps:\n1. Analyze the problem\n2. List key points\n3. Reason step by step\n4. Provide final answer",
+            "system_prompt_addition": "For complex problems, show your thinking process step by step.",
+            "user_prompt_addition": "Please show your thinking process step by step.",
+            "cot_enabled": True,
+            "cot_style": "structured"  # Structured style
+        }
+    elif model_size_category == "large":
+        # Large models can handle complex reasoning
+        return {
+            "cot_prompt": """Please show your detailed reasoning process:
+Step 1: Problem decomposition
+Step 2: Key information extraction
+Step 3: Logical reasoning
+Step 4: Verification check
+Step 5: Final conclusion""",
+            "system_prompt_addition": "Please show detailed reasoning process, ensuring each step is clear and explicit.",
+            "user_prompt_addition": "Please show your detailed reasoning process and thinking steps.",
+            "cot_enabled": True,
+            "cot_style": "detailed"  # Detailed style
+        }
+    else:  # xlarge
+        # Extra large models can handle very complex reasoning
+        return {
+            "cot_prompt": """Please engage in deep reasoning, showing complete thought chains:
+
+**Thinking Framework:**
+1. Problem Understanding & Analysis
+   - Identify core problem
+   - Extract constraints
+   - Clarify objectives
+
+2. Solution Conceptualization
+   - Consider multiple possibilities
+   - Evaluate pros/cons of each approach
+   - Select optimal path
+
+3. Step-by-step Reasoning
+   - Show detailed reasoning steps
+   - Use logical deduction
+   - Verify intermediate results
+
+4. Comprehensive Evaluation
+   - Check consistency
+   - Consider edge cases
+   - Ensure answer validity
+
+5. Final Answer
+   - Clear and definitive conclusion
+   - Necessary explanations""",
+            "system_prompt_addition": "Please use deep reasoning framework to show complete thought chains and logical deduction process.",
+            "user_prompt_addition": "Please use deep reasoning framework to show your complete thinking process and logical deduction.",
+            "cot_enabled": True,
+            "cot_style": "deep"  # Deep reasoning style
+        }
+
+
+def get_self_evolve_prompt_template(model_size_category, self_evolve_enabled):
+    """
+    Return self-evolve prompt template based on model size
+    
+    Args:
+        model_size_category: 'small', 'medium', 'large', 'xlarge'
+        self_evolve_enabled: bool, whether self-evolve is enabled
+    
+    Returns:
+        dict: Contains self_evolve_prompt, reflection_steps, etc.
+    """
+    if not self_evolve_enabled:
+        return {
+            "self_evolve_prompt": None,
+            "reflection_steps": 0,
+            "self_evolve_enabled": False,
+            "self_evolve_style": "none"
+        }
+    
+    # Determine reflection steps based on model size
+    if model_size_category == "small":
+        # Small models: no self-evolve (too computationally expensive)
+        return {
+            "self_evolve_prompt": None,
+            "reflection_steps": 0,
+            "self_evolve_enabled": False,
+            "self_evolve_style": "none"
+        }
+    elif model_size_category == "medium":
+        # Medium models: 1 reflection step
+        reflection_steps = 1
+        return {
+            "self_evolve_prompt": """**Self-Evolve Process (1-step reflection):**
+
+After providing your initial response, reflect once to identify and correct any errors or limitations:
+
+**Step 1 - Initial Response:**
+Provide your initial answer/solution.
+
+**Step 2 - Reflection & Correction:**
+Review your initial response and:
+1. Identify any errors, inconsistencies, or limitations
+2. Explain what was wrong or could be improved
+3. Provide corrected/improved response
+
+Focus on the most critical issues in this single reflection step.""",
+            "reflection_steps": reflection_steps,
+            "self_evolve_enabled": True,
+            "self_evolve_style": "single-reflection",
+            "system_addition": "After providing initial answers, reflect once to identify and correct errors.",
+            "user_addition": "Please use the self-evolve process: provide initial response, then reflect once to identify and correct issues."
+        }
+    else:  # large or xlarge models: 3 reflection steps
+        reflection_steps = 3
+        return {
+            "self_evolve_prompt": """**Self-Evolve Process (3-step iterative reflection):**
+
+Engage in an iterative process of generation, reflection, and improvement:
+
+**Phase 1 - Initial Generation:**
+Provide your first attempt at solving the problem.
+
+**Phase 2 - Multi-step Reflection & Evolution:**
+Complete 3 rounds of reflection and improvement:
+
+**Round 1 Reflection:**
+1. Critically analyze the initial response
+2. Identify logical errors, missing elements, or assumptions
+3. List specific improvements needed
+
+**Round 1 Improvement:**
+Provide revised response incorporating Round 1 insights.
+
+**Round 2 Reflection:**
+1. Analyze the revised response from Round 1
+2. Identify remaining issues or new problems introduced
+3. Consider edge cases and alternative perspectives
+
+**Round 2 Improvement:**
+Provide further refined response.
+
+**Round 3 Reflection:**
+1. Perform comprehensive final review
+2. Ensure solution is robust, complete, and optimal
+3. Verify all requirements are met
+
+**Round 3 Improvement:**
+Provide final optimized response.
+
+**Key Principles:**
+- Each reflection should be substantive and critical
+- Each improvement should clearly address identified issues
+- Maintain coherence throughout all iterations
+- Final answer should be significantly better than initial attempt""",
+            "reflection_steps": reflection_steps,
+            "self_evolve_enabled": True,
+            "self_evolve_style": "multi-reflection",
+            "system_addition": "Use iterative self-evolution: generate initial response, then engage in 3 rounds of reflection and improvement to progressively refine the solution.",
+            "user_addition": "Please use the 3-step self-evolve process: provide initial response, then complete 3 rounds of reflection and improvement."
+        }
+
+
+def apply_cot_settings_to_model(main_model, chain_of_thought_enabled, io):
+    """
+    Apply chain-of-thought settings to model
+    
+    Args:
+        main_model: Model object
+        chain_of_thought_enabled: Whether chain-of-thought is enabled
+        io: InputOutput object
+    """
+    if not chain_of_thought_enabled:
+        return
+    
+    # Get model info
+    model_info = getattr(main_model, 'info', {})
+    
+    # Determine model size category
+    model_size_category = get_model_size_category(model_info)
+    
+    # Get corresponding COT prompt template
+    cot_template = get_cot_prompt_template(model_size_category, chain_of_thought_enabled)
+    
+    if not cot_template["cot_enabled"]:
+        return
+    
+    # Save COT settings to model
+    main_model.cot_settings = cot_template
+    
+    # Adjust reasoning parameters based on model size
+    if hasattr(main_model, 'set_reasoning_effort'):
+        # Set different reasoning effort based on model size
+        reasoning_effort_map = {
+            "small": "medium",  # Small models use medium reasoning effort
+            "medium": "high",   # Medium models use high reasoning effort
+            "large": "max",     # Large models use maximum reasoning effort
+            "xlarge": "max"     # Extra large models use maximum reasoning effort
+        }
+        effort = reasoning_effort_map.get(model_size_category, "high")
+        main_model.set_reasoning_effort(effort)
+    
+    if hasattr(main_model, 'set_thinking_tokens'):
+        # Set different thinking token counts based on model size
+        thinking_tokens_map = {
+            "small": 512,    # Small models use fewer thinking tokens
+            "medium": 1024,  # Medium models use medium thinking tokens
+            "large": 2048,   # Large models use more thinking tokens
+            "xlarge": 4096   # Extra large models use many thinking tokens
+        }
+        tokens = thinking_tokens_map.get(model_size_category, 1024)
+        main_model.set_thinking_tokens(tokens)
+    
+    # Log COT settings
+    io.tool_output(f"Chain-of-thought enabled for {model_size_category} model")
+    io.tool_output(f"COT style: {cot_template['cot_style']}")
+    
+    return cot_template
+
+
+def apply_self_evolve_settings_to_model(main_model, self_evolve_enabled, io):
+    """
+    Apply self-evolve settings to model
+    
+    Args:
+        main_model: Model object
+        self_evolve_enabled: Whether self-evolve is enabled
+        io: InputOutput object
+    """
+    if not self_evolve_enabled:
+        return
+    
+    # Get model info
+    model_info = getattr(main_model, 'info', {})
+    
+    # Determine model size category
+    model_size_category = get_model_size_category(model_info)
+    
+    # Get self-evolve prompt template
+    self_evolve_template = get_self_evolve_prompt_template(model_size_category, self_evolve_enabled)
+    
+    if not self_evolve_template["self_evolve_enabled"]:
+        io.tool_output(f"Self-evolve disabled for {model_size_category} model (insufficient capacity)")
+        return self_evolve_template
+    
+    # Save self-evolve settings to model
+    main_model.self_evolve_settings = self_evolve_template
+    
+    # Adjust model parameters for self-evolve
+    if hasattr(main_model, 'set_reasoning_effort'):
+        # Increase reasoning effort for self-evolve
+        reasoning_effort_map = {
+            "medium": "high",   # Medium models: high reasoning effort
+            "large": "max",     # Large models: maximum reasoning effort
+            "xlarge": "max"     # Extra large models: maximum reasoning effort
+        }
+        effort = reasoning_effort_map.get(model_size_category, "max")
+        main_model.set_reasoning_effort(effort)
+    
+    if hasattr(main_model, 'set_thinking_tokens'):
+        # Increase thinking tokens for self-evolve
+        thinking_tokens_map = {
+            "medium": 2048,   # Medium models: increased thinking tokens
+            "large": 4096,    # Large models: significantly increased thinking tokens
+            "xlarge": 8192    # Extra large models: very high thinking tokens
+        }
+        tokens = thinking_tokens_map.get(model_size_category, 4096)
+        main_model.set_thinking_tokens(tokens)
+    
+    # Adjust max_tokens if needed (for longer multi-step responses)
+    if hasattr(main_model, 'max_total_tokens'):
+        # Increase token limit for self-evolve processes
+        reflection_steps = self_evolve_template.get("reflection_steps", 0)
+        if reflection_steps > 0:
+            current_max = getattr(main_model, 'max_total_tokens', 4000)
+            # Add buffer for reflections (approximately 500 tokens per reflection step)
+            additional_tokens = reflection_steps * 500
+            new_max = min(current_max + additional_tokens, 16000)  # Cap at 16k
+            main_model.max_total_tokens = new_max
+    
+    # Log self-evolve settings
+    io.tool_output(f"Self-evolve enabled for {model_size_category} model")
+    io.tool_output(f"Reflection steps: {self_evolve_template['reflection_steps']}")
+    io.tool_output(f"Self-evolve style: {self_evolve_template['self_evolve_style']}")
+    
+    return self_evolve_template
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
+    """Main entry point for aider."""
     report_uncaught_exceptions()
 
     if argv is None:
@@ -477,6 +827,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files = list(map(str, default_config_files))
 
     parser = get_parser(default_config_files, git_root)
+    # Add chain-of-thought argument
+    parser.add_argument(
+        "--chain-of-thought",
+        action="store_true",
+        default=None,
+        help="Enable explicit chain of thought reasoning in the model's responses",
+    )
+    # Add self-evolve argument
+    parser.add_argument(
+        "--self-evolve",
+        action="store_true",
+        default=None,
+        help="Enable self-evolve process: iterative reflection and improvement of responses",
+    )
     try:
         args, unknown = parser.parse_known_args(argv)
     except AttributeError as e:
@@ -484,6 +848,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             if check_config_files_for_yes(default_config_files):
                 return 1
         raise e
+    
 
     if args.verbose:
         print("Config files search order, if no --config:")
@@ -494,6 +859,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     default_config_files.reverse()
 
     parser = get_parser(default_config_files, git_root)
+    # Add chain-of-thought argument
+    parser.add_argument(
+        "--chain-of-thought",
+        action="store_true",
+        default=None,
+        help="Enable explicit chain of thought reasoning in the model's responses",
+    )
+    # Add self-evolve argument
+    parser.add_argument(
+        "--self-evolve",
+        action="store_true",
+        default=None,
+        help="Enable self-evolve process: iterative reflection and improvement of responses",
+    )
 
     args, unknown = parser.parse_known_args(argv)
 
@@ -502,6 +881,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # Parse again to include any arguments that might have been defined in .env
     args = parser.parse_args(argv)
+    
 
     if args.shell_completions:
         # Ensure parser.prog is set for shtab, though it should be by default
@@ -743,7 +1123,35 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             check_gitignore(git_root, io)
 
     if args.verbose:
+        # Add chain_of_thought to the displayed settings if it exists
         show = format_settings(parser, args)
+        if hasattr(args, 'chain_of_thought') and args.chain_of_thought is not None:
+            # Insert chain_of_thought into the settings display
+            lines = show.split('\n')
+            # Find a good place to insert it
+            for i, line in enumerate(lines):
+                if 'reasoning_effort' in line:
+                    # Insert after this line
+                    lines.insert(i + 1, f"chain_of_thought: {args.chain_of_thought}")
+                    break
+            else:
+                # If not found, append at the end
+                lines.append(f"chain_of_thought: {args.chain_of_thought}")
+            show = '\n'.join(lines)
+        # Add self_evolve to the displayed settings if it exists
+        if hasattr(args, 'self_evolve') and args.self_evolve is not None:
+            # Insert self_evolve into the settings display
+            lines = show.split('\n')
+            # Find a good place to insert it
+            for i, line in enumerate(lines):
+                if 'chain_of_thought' in line:
+                    # Insert after chain_of_thought
+                    lines.insert(i + 1, f"self_evolve: {args.self_evolve}")
+                    break
+            else:
+                # If not found, append at the end
+                lines.append(f"self_evolve: {args.self_evolve}")
+            show = '\n'.join(lines)
         io.tool_output(show)
 
     cmd_line = " ".join(sys.argv)
@@ -848,12 +1256,44 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         ):
             main_model.set_thinking_tokens(args.thinking_tokens)
 
+    # Enable chain of thought if specified
+    chain_of_thought_enabled = False
+    if args.chain_of_thought is not None:
+        chain_of_thought_enabled = args.chain_of_thought
+        # Apply chain-of-thought settings, adjusting based on model size
+        cot_template = apply_cot_settings_to_model(main_model, chain_of_thought_enabled, io)
+        
+        # Save COT settings to model
+        if cot_template and hasattr(main_model, 'cot_settings'):
+            main_model.cot_settings = cot_template
+            io.tool_output(f"Chain-of-thought enabled with style: {cot_template.get('cot_style', 'standard')}")
+
+    # Enable self-evolve if specified
+    self_evolve_enabled = False
+    if args.self_evolve is not None:
+        self_evolve_enabled = args.self_evolve
+        # Apply self-evolve settings, adjusting based on model size
+        self_evolve_template = apply_self_evolve_settings_to_model(main_model, self_evolve_enabled, io)
+        
+        # Save self-evolve settings to model
+        if self_evolve_template and hasattr(main_model, 'self_evolve_settings'):
+            main_model.self_evolve_settings = self_evolve_template
+            if self_evolve_template['self_evolve_enabled']:
+                io.tool_output(f"Self-evolve enabled with {self_evolve_template.get('reflection_steps', 0)} reflection steps")
+                io.tool_output(f"Self-evolve style: {self_evolve_template.get('self_evolve_style', 'none')}")
+
     # Show warnings about unsupported settings that are being ignored
     if args.check_model_accepts_settings:
         settings_to_check = [
             {"arg": args.reasoning_effort, "name": "reasoning_effort"},
             {"arg": args.thinking_tokens, "name": "thinking_tokens"},
         ]
+        # Add chain_of_thought if it's set
+        if hasattr(args, 'chain_of_thought') and args.chain_of_thought is not None:
+            settings_to_check.append({"arg": args.chain_of_thought, "name": "chain_of_thought"})
+        # Add self_evolve if it's set
+        if hasattr(args, 'self_evolve') and args.self_evolve is not None:
+            settings_to_check.append({"arg": args.self_evolve, "name": "self_evolve"})
 
         for setting in settings_to_check:
             if setting["arg"] is not None and (
@@ -876,11 +1316,31 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         io.tool_output("Model metadata:")
         io.tool_output(json.dumps(main_model.info, indent=4))
 
+        # Display model size information
+        model_size_category = get_model_size_category(main_model.info)
+        io.tool_output(f"Model size category: {model_size_category}")
+        
         io.tool_output("Model settings:")
         for attr in sorted(fields(ModelSettings), key=lambda x: x.name):
             val = getattr(main_model, attr.name)
             val = json.dumps(val, indent=4)
             io.tool_output(f"{attr.name}: {val}")
+        # Also show chain_of_thought if it's set
+        if hasattr(args, 'chain_of_thought') and args.chain_of_thought is not None:
+            io.tool_output(f"chain_of_thought: {args.chain_of_thought}")
+        # Also show self_evolve if it's set
+        if hasattr(args, 'self_evolve') and args.self_evolve is not None:
+            io.tool_output(f"self_evolve: {args.self_evolve}")
+        
+        # Display COT settings
+        if hasattr(main_model, 'cot_settings') and main_model.cot_settings:
+            io.tool_output("Chain-of-thought settings:")
+            io.tool_output(json.dumps(main_model.cot_settings, indent=4, ensure_ascii=False))
+        
+        # Display self-evolve settings
+        if hasattr(main_model, 'self_evolve_settings') and main_model.self_evolve_settings:
+            io.tool_output("Self-evolve settings:")
+            io.tool_output(json.dumps(main_model.self_evolve_settings, indent=4, ensure_ascii=False))
 
     lint_cmds = parse_lint_cmds(args.lint_cmd, io)
     if lint_cmds is None:
@@ -1004,6 +1464,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             auto_copy_context=args.copy_paste,
             auto_accept_architect=args.auto_accept_architect,
             add_gitignore_files=args.add_gitignore_files,
+            # Pass chain-of-thought settings
+            chain_of_thought_enabled=chain_of_thought_enabled,
+            # Pass self-evolve settings
+            self_evolve_enabled=self_evolve_enabled,
         )
     except UnknownEditFormat as err:
         io.tool_error(str(err))
