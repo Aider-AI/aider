@@ -20,6 +20,7 @@ from aider.help import Help, install_help_extra
 from aider.io import CommandCompletionException
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
+from aider.output_filter import filter_output
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
@@ -1009,23 +1010,43 @@ class Commands:
         if combined_output is None:
             return
 
-        # Calculate token count of output
-        token_count = self.coder.main_model.token_count(combined_output)
+        # Filter/truncate output if it's too long
+        filter_result = filter_output(combined_output, max_lines=200)
+        filtered_output = filter_result["output"]
+        was_truncated = filter_result["truncated"]
+
+        # Calculate token count of filtered output
+        token_count = self.coder.main_model.token_count(filtered_output)
         k_tokens = token_count / 1000
 
         if add_on_nonzero_exit:
             add = exit_status != 0
         else:
-            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
+            if was_truncated:
+                original_lines = filter_result["original_lines"]
+                final_lines = filter_result["final_lines"]
+                add = self.io.confirm_ask(
+                    f"Add {k_tokens:.1f}k tokens of command output to the chat?"
+                    f" (truncated from {original_lines} to {final_lines} lines)"
+                )
+            else:
+                add = self.io.confirm_ask(
+                    f"Add {k_tokens:.1f}k tokens of command output to the chat?"
+                )
 
         if add:
-            num_lines = len(combined_output.strip().splitlines())
+            num_lines = len(filtered_output.strip().splitlines())
             line_plural = "line" if num_lines == 1 else "lines"
-            self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
+            if was_truncated:
+                self.io.tool_output(
+                    f"Added {num_lines} {line_plural} of output to the chat (truncated)."
+                )
+            else:
+                self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
 
             msg = prompts.run_output.format(
                 command=args,
-                output=combined_output,
+                output=filtered_output,
             )
 
             self.coder.cur_messages += [
