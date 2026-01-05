@@ -29,7 +29,6 @@ EXCEPTIONS = [
         "The API provider has refused the request due to a safety policy about the content.",
     ),
     ExInfo("ContextWindowExceededError", False, None),  # special case handled in base_coder
-    ExInfo("ErrorEventError", True, None),
     ExInfo("ImageFetchError", False, "The API provider was unable to fetch one or more images."),
     ExInfo("InternalServerError", True, "The API provider's servers are down or overloaded."),
     ExInfo("InvalidRequestError", True, None),
@@ -64,7 +63,10 @@ class LiteLLMExceptions:
         import litellm
 
         for var in dir(litellm):
-            if var.endswith("Error"):
+            # Filter by BaseException because instances of non-exception classes cannot be caught.
+            # `litellm.ErrorEventError` is an example of a regular class which just happens to end
+            # with `Error`.
+            if var.endswith("Error") and issubclass(getattr(litellm, var), BaseException):
                 if var not in self.exception_info:
                     raise ValueError(f"{var} is in litellm but not in aider's exceptions list")
 
