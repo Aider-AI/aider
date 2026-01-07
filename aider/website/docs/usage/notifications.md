@@ -76,7 +76,7 @@ You can add these settings to your configuration file:
 notifications: true
 
 # Optional custom notification command
-notifications_command: "your-custom-command"
+notifications-command: "your-custom-command"
 ```
 
 Or in your `.env` file:
