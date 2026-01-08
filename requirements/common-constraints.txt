@@ -210,8 +210,6 @@ importlib-metadata==7.2.1
     # via
     #   -r requirements/requirements.in
     #   litellm
-importlib-resources==6.5.2
-    # via -r requirements/requirements.in
 iniconfig==2.3.0
     # via pytest
 jinja2==3.1.6

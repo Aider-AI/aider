@@ -198,10 +198,6 @@ importlib-metadata==7.2.1
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   litellm
-importlib-resources==6.5.2
-    # via
-    #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
 jinja2==3.1.6
     # via
     #   -c requirements/common-constraints.txt
