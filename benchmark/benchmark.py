@@ -16,7 +16,7 @@ from types import SimpleNamespace
 from typing import List, Optional
 
 import git
-import importlib_resources
+import importlib.resources
 import lox
 import pandas as pd
 import prompts
@@ -320,7 +320,7 @@ def main(
 
     test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
 
-    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    resource_metadata = importlib.resources.files("aider.resources").joinpath("model-metadata.json")
     model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
     dump(model_metadata_files_loaded)
 
