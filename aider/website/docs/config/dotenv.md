@@ -139,6 +139,9 @@ cog.outl("```")
 ## Specify the edit format for the editor model (default: depends on editor model)
 #AIDER_EDITOR_EDIT_FORMAT=
 
+## Specify the model to use for merge code in "between" edit format (default depends on --model)
+#AIDER_MERGE_MODEL=
+
 ## Only work with models that have meta-data available (default: True)
 #AIDER_SHOW_MODEL_WARNINGS=true
 
