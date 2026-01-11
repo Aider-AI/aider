@@ -630,27 +630,34 @@ class InputOutput:
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             """
-            Smart Enter Key:
-            1. If input is a short confirmation (y/n/a/d), send immediately.
-            2. If input is a command starting with '/' (e.g., /add), send immediately.
-            3. Otherwise, insert a newline to prevent accidental sending.
+            Smart Enter Key Logic:
+            1. Semicolon-to-Send: If input ends with ';', strip it and send.
+            2. Auto-Confirm: Send immediately for y/n or /commands.
+            3. Default: Insert newline for multi-line editing.
             """
-            text = event.current_buffer.text.strip().lower()
+            full_text = event.current_buffer.text.rstrip()
+            text_lower = full_text.lower()
             
-            # Check if the input is a confirmation or an Aider command
-            is_confirm = text in ("y", "n", "a", "d", "yes", "no")
-            is_cmd = text.startswith("/")
+            is_confirm = text_lower in ("y", "n", "a", "d", "yes", "no")
+            is_cmd = text_lower.startswith("/")
+            ends_with_semicolon = full_text.endswith(";")
             
-            if is_confirm or is_cmd:
-                # Trigger immediate submission for these cases
+            if ends_with_semicolon:
+                # Strip semicolon and submit
+                event.current_buffer.text = full_text[:-1]
+                event.current_buffer.validate_and_handle()
+            elif is_confirm or is_cmd:
+                # Submit direct commands
                 event.current_buffer.validate_and_handle()
             else:
-                # Default to newline for normal message composition
+                # Just a newline
                 event.current_buffer.insert_text("\n")
 
+        # Keep Ctrl+G as a "Force Send" backup for any situation
         @kb.add("c-g", eager=True, filter=~is_searching)
+        @kb.add("escape", "enter", eager=True, filter=~is_searching) # Also support Alt+Enter
         def _(event):
-            """Use Ctrl+G as the dedicated submission key."""
+            """Force submission regardless of buffer content."""
             event.current_buffer.validate_and_handle()
 
         while True:
@@ -681,7 +688,7 @@ class InputOutput:
 
                     # Toolbar for status
                     mode_str = "MULTI" if self.multiline_mode else "SINGLE"
-                    toolbar_text = HTML(f' <b>[Tab]</b> Complete | <b>[Ctrl+G]</b> Send Message')
+                    toolbar_text = HTML(f' <b>[Tab]</b> Complete | <b>[;] + [Enter]</b> Send | <b>[Ctrl+G]</b> Force Send')
                     line = self.prompt_session.prompt(
                         prompt_elements,
                         default=default,
