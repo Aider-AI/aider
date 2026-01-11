@@ -630,27 +630,35 @@ class InputOutput:
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
             """
-            Smart Enter Key Logic:
-            1. Semicolon-to-Send: If input ends with ';', strip it and send.
-            2. Auto-Confirm: Send immediately for y/n or /commands.
-            3. Default: Insert newline for multi-line editing.
+            Structural Smart Enter Logic:
+            1. Verifies that all {}, [], and () are balanced.
+            2. Triggers submission if input ends with ';' AND delimiters are balanced.
+            3. Triggers immediate submission for commands (/) and confirmations (y/n).
+            4. Otherwise, inserts a newline for safe multi-line editing.
             """
             full_text = event.current_buffer.text.rstrip()
             text_lower = full_text.lower()
             
+            # Structural balance check for various languages (Java, Python, JS, etc.)
+            is_balanced = (
+                full_text.count('{') == full_text.count('}') and
+                full_text.count('[') == full_text.count(']') and
+                full_text.count('(') == full_text.count(')')
+            )
+            
+            # Identify immediate execution triggers
             is_confirm = text_lower in ("y", "n", "a", "d", "yes", "no")
             is_cmd = text_lower.startswith("/")
-            ends_with_semicolon = full_text.endswith(";")
+            # Only allow semicolon execution if the structural integrity is valid
+            is_ready_semicolon = full_text.endswith(";") and is_balanced
             
-            if ends_with_semicolon:
-                # Strip semicolon and submit
-                event.current_buffer.text = full_text[:-1]
-                event.current_buffer.validate_and_handle()
-            elif is_confirm or is_cmd:
-                # Submit direct commands
+            if is_ready_semicolon or is_confirm or is_cmd:
+                if is_ready_semicolon:
+                    # Strip the terminator before sending to the LLM
+                    event.current_buffer.text = full_text[:-1]
                 event.current_buffer.validate_and_handle()
             else:
-                # Just a newline
+                # Default behavior: Newline for safety and multi-line formatting
                 event.current_buffer.insert_text("\n")
 
         # Keep Ctrl+G as a "Force Send" backup for any situation
