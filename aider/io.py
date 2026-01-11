@@ -629,9 +629,24 @@ class InputOutput:
 
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
-            """Always insert a newline on Enter to prevent accidental 
-            sending when pasting from a browser."""
-            event.current_buffer.insert_text("\n")
+            """
+            Smart Enter Key:
+            1. If input is a short confirmation (y/n/a/d), send immediately.
+            2. If input is a command starting with '/' (e.g., /add), send immediately.
+            3. Otherwise, insert a newline to prevent accidental sending.
+            """
+            text = event.current_buffer.text.strip().lower()
+            
+            # Check if the input is a confirmation or an Aider command
+            is_confirm = text in ("y", "n", "a", "d", "yes", "no")
+            is_cmd = text.startswith("/")
+            
+            if is_confirm or is_cmd:
+                # Trigger immediate submission for these cases
+                event.current_buffer.validate_and_handle()
+            else:
+                # Default to newline for normal message composition
+                event.current_buffer.insert_text("\n")
 
         @kb.add("c-g", eager=True, filter=~is_searching)
         def _(event):
