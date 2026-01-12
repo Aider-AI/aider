@@ -284,16 +284,34 @@ class RepoMap:
             return
         tree = parser.parse(bytes(code, "utf-8"))
 
-        # Run the tags queries
-        query = language.query(query_scm)
-        captures = query.captures(tree.root_node)
+       # --- Updated Query Logic ---
+        # 1. Adapt Query object creation
+        if hasattr(language, "query"):
+            query = language.query(query_scm)
+        else:
+            import tree_sitter
+            query = tree_sitter.Query(language, query_scm)
+
+        # 2. Adapt how captures are executed
+        if hasattr(query, "captures"):
+            captures = query.captures(tree.root_node)
+        else:
+            import tree_sitter
+            # 0.22+ versions must use QueryCursor to execute the query
+            captures = tree_sitter.QueryCursor().captures(query, tree.root_node)
 
         saw = set()
-        if USING_TSL_PACK:
+        
+        # 3. Adapt result parsing
+        # Note: Newer APIs return an iterator of tuples, not a dictionary.
+        # If 'captures' has an '.items()' method, it's the old TSL_PACK format.
+        if hasattr(captures, "items") and USING_TSL_PACK:
             all_nodes = []
             for tag, nodes in captures.items():
                 all_nodes += [(node, tag) for node in nodes]
         else:
+            # For the new API (0.22+) or standard cases, 
+            # captures is already a sequence of (node, tag) tuples.
             all_nodes = list(captures)
 
         for node, tag in all_nodes:
