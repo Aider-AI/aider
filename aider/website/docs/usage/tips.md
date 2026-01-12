@@ -52,12 +52,12 @@ on the existing information in their contexts.
 
 If your code is throwing an error, 
 use the [`/run` command](commands.html)
-to share the error output with the aider.
-Or just paste the errors into the chat. Let the aider figure out how to fix the bug.
+to share the error output with aider.
+Or just paste the errors into the chat. Let aider figure out how to fix the bug.
 
 If test are failing, use the [`/test` command](lint-test.html)
 to run tests and
-share the error output with the aider.
+share the error output with aider.
 
 ## Providing docs
 
