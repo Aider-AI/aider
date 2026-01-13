@@ -291,14 +291,13 @@ class RepoMap:
         else:
             import tree_sitter
             query = tree_sitter.Query(language, query_scm)
-
-        # 2. Adapt how captures are executed
-        if hasattr(query, "captures"):
-            captures = query.captures(tree.root_node)
-        else:
-            import tree_sitter
-            # 0.22+ versions must use QueryCursor to execute the query
+        import tree_sitter
+        try:
+            captures = tree_sitter.QueryCursor(query).captures(tree.root_node)
+        except TypeError:
             captures = tree_sitter.QueryCursor().captures(query, tree.root_node)
+        except AttributeError:
+            captures = query.captures(tree.root_node)
 
         saw = set()
         
