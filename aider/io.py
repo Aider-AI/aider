@@ -24,6 +24,7 @@ from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.output.vt100 import is_dumb_terminal
 from prompt_toolkit.shortcuts import CompleteStyle, PromptSession
 from prompt_toolkit.styles import Style
+from prompt_toolkit.formatted_text import HTML, FormattedText
 from pygments.lexers import MarkdownLexer, guess_lexer_for_filename
 from pygments.token import Token
 from rich.color import ColorParseError
@@ -410,7 +411,7 @@ class InputOutput:
                 }
             )
 
-        # Conditionally add 'completion-menu' style
+        # Handle completion-menu style
         completion_menu_style = []
         if self.completion_menu_bg_color:
             completion_menu_style.append(f"bg:{self.completion_menu_bg_color}")
@@ -419,7 +420,7 @@ class InputOutput:
         if completion_menu_style:
             style_dict["completion-menu"] = " ".join(completion_menu_style)
 
-        # Conditionally add 'completion-menu.completion.current' style
+        # Handle completion-menu.completion.current style
         completion_menu_current_style = []
         if self.completion_menu_current_bg_color:
             completion_menu_current_style.append(self.completion_menu_current_bg_color)
@@ -429,6 +430,22 @@ class InputOutput:
             style_dict["completion-menu.completion.current"] = " ".join(
                 completion_menu_current_style
             )
+
+        # Inject Web Search Box Theme
+        style_dict.update({
+            "search_icon": "bg:#4b5263 #61afef bold",
+            "search_label": "bg:#4b5263 #ffffff bold",
+            "input_area": "bg:#282c34 #abb2bf",
+            "placeholder": "#5c6370 italic",
+            "bottom-toolbar": "bg:#1e2227 #5c6370 italic",
+            "bottom-toolbar.key": "#61afef bold",
+        })
+        
+        # Default web-like menu colors if not overridden
+        if "completion-menu" not in style_dict:
+            style_dict["completion-menu"] = "bg:#3e4452 #abb2bf"
+        if "completion-menu.completion.current" not in style_dict:
+            style_dict["completion-menu.completion.current"] = "bg:#61afef #282c34 bold"
 
         return Style.from_dict(style_dict)
 
@@ -508,7 +525,8 @@ class InputOutput:
 
     def rule(self):
         if self.pretty:
-            style = dict(style=self.user_input_color) if self.user_input_color else dict()
+            # Use subtle gray for rule
+            style = dict(style="#3e4452")
             self.console.rule(**style)
         else:
             print()
@@ -611,27 +629,44 @@ class InputOutput:
 
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
-            "Handle Enter key press"
-            if self.multiline_mode and not (
-                self.editingmode == EditingMode.VI
-                and event.app.vi_state.input_mode == InputMode.NAVIGATION
-            ):
-                # In multiline mode and if not in vi-mode or vi navigation/normal mode,
-                # Enter adds a newline
-                event.current_buffer.insert_text("\n")
-            else:
-                # In normal mode, Enter submits
+            """
+            Structural Smart Enter Logic:
+            1. Verifies that all {}, [], and () are balanced.
+            2. Triggers submission if input ends with ';' AND delimiters are balanced.
+            3. Triggers immediate submission for commands (/) and confirmations (y/n).
+            4. Otherwise, inserts a newline for safe multi-line editing.
+            """
+            full_text = event.current_buffer.text.rstrip()
+            text_lower = full_text.lower()
+            
+            # Structural balance check for various languages (Java, Python, JS, etc.)
+            is_balanced = (
+                full_text.count('{') == full_text.count('}') and
+                full_text.count('[') == full_text.count(']') and
+                full_text.count('(') == full_text.count(')')
+            )
+            
+            # Identify immediate execution triggers
+            is_confirm = text_lower in ("y", "n", "a", "d", "yes", "no")
+            is_cmd = text_lower.startswith("/")
+            # Only allow semicolon execution if the structural integrity is valid
+            is_ready_semicolon = full_text.endswith(";") and is_balanced
+            
+            if is_ready_semicolon or is_confirm or is_cmd:
+                if is_ready_semicolon:
+                    # Strip the terminator before sending to the LLM
+                    event.current_buffer.text = full_text[:-1]
                 event.current_buffer.validate_and_handle()
+            else:
+                # Default behavior: Newline for safety and multi-line formatting
+                event.current_buffer.insert_text("\n")
 
-        @kb.add("escape", "enter", eager=True, filter=~is_searching)  # This is Alt+Enter
+        # Keep Ctrl+G as a "Force Send" backup for any situation
+        @kb.add("c-g", eager=True, filter=~is_searching)
+        @kb.add("escape", "enter", eager=True, filter=~is_searching) # Also support Alt+Enter
         def _(event):
-            "Handle Alt+Enter key press"
-            if self.multiline_mode:
-                # In multiline mode, Alt+Enter submits
-                event.current_buffer.validate_and_handle()
-            else:
-                # In normal mode, Alt+Enter adds a newline
-                event.current_buffer.insert_text("\n")
+            """Force submission regardless of buffer content."""
+            event.current_buffer.validate_and_handle()
 
         while True:
             if multiline_input:
@@ -639,11 +674,17 @@ class InputOutput:
 
             try:
                 if self.prompt_session:
-                    # Use placeholder if set, then clear it
+                    # Construct search-box style UI
+                    prompt_elements = FormattedText([
+                        ("", "\n" + show.replace(self.prompt_prefix, "")), 
+                        ("class:search_label", "  AIDER "),
+                        ("class:input_area", " "),
+                    ])
+
                     default = self.placeholder or ""
                     self.placeholder = None
-
                     self.interrupted = False
+
                     if not multiline_input:
                         if self.file_watcher:
                             self.file_watcher.start()
@@ -653,14 +694,18 @@ class InputOutput:
                     def get_continuation(width, line_number, is_soft_wrap):
                         return self.prompt_prefix
 
+                    # Toolbar for status
+                    mode_str = "MULTI" if self.multiline_mode else "SINGLE"
+                    toolbar_text = HTML(f' <b>[Tab]</b> Complete | <b>[;] + [Enter]</b> Send | <b>[Ctrl+G]</b> Force Send')
                     line = self.prompt_session.prompt(
-                        show,
+                        prompt_elements,
                         default=default,
                         completer=completer_instance,
-                        reserve_space_for_menu=4,
-                        complete_style=CompleteStyle.MULTI_COLUMN,
-                        style=style,
+                        reserve_space_for_menu=8,
+                        style=self._get_style(),
                         key_bindings=kb,
+                        placeholder="Describe your changes or type / for commands...",
+                        bottom_toolbar=toolbar_text,
                         complete_while_typing=True,
                         prompt_continuation=get_continuation,
                     )
@@ -990,6 +1035,7 @@ class InputOutput:
         self._tool_message(message, strip, self.tool_error_color)
 
     def tool_warning(self, message="", strip=True):
+        self.num_error_outputs += 1 # Or similar tracking if available
         self._tool_message(message, strip, self.tool_warning_color)
 
     def tool_output(self, *messages, log_only=False, bold=False):
