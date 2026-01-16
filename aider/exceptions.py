@@ -82,10 +82,6 @@ class LiteLLMExceptions:
         import litellm
 
         if ex.__class__ is litellm.APIConnectionError:
-            if "google.auth" in str(ex):
-                return ExInfo(
-                    "APIConnectionError", False, "You need to: pip install google-generativeai"
-                )
             if "boto3" in str(ex):
                 return ExInfo("APIConnectionError", False, "You need to: pip install boto3")
             if "OpenrouterException" in str(ex) and "'choices'" in str(ex):
