@@ -35,15 +35,3 @@ aider --model gemini-exp
 aider --list-models gemini/
 ```
 
-You may need to install the `google-generativeai` package. 
-
-```bash
-# If you installed with aider-install or `uv tool`
-uv tool run --from aider-chat pip install google-generativeai
-
-# Or with pipx...
-pipx inject aider-chat google-generativeai
-
-# Or with pip
-pip install -U google-generativeai
-```
