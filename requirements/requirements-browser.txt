@@ -81,7 +81,7 @@ pillow==12.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-protobuf==5.29.5
+protobuf==6.33.4
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -143,7 +143,6 @@ typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
-    #   referencing
     #   streamlit
 tzdata==2025.3
     # via
@@ -153,3 +152,7 @@ urllib3==2.6.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
+watchdog==6.0.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   streamlit

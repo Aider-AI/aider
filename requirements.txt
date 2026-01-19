@@ -41,10 +41,6 @@ beautifulsoup4==4.14.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-cachetools==6.2.4
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-auth
 certifi==2025.11.12
     # via
     #   -c requirements/common-constraints.txt
@@ -110,55 +106,14 @@ gitpython==3.1.45
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-google-ai-generativelanguage==0.6.15
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-generativeai
-google-api-core[grpc]==2.28.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-ai-generativelanguage
-    #   google-api-python-client
-    #   google-generativeai
-google-api-python-client==2.187.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-generativeai
-google-auth==2.45.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-ai-generativelanguage
-    #   google-api-core
-    #   google-api-python-client
-    #   google-auth-httplib2
-    #   google-generativeai
-google-auth-httplib2==0.3.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-api-python-client
-google-generativeai==0.8.6
-    # via
-    #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
-googleapis-common-protos==1.72.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-api-core
-    #   grpcio-status
 grep-ast==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-grpcio==1.67.1
+grpcio==1.76.0
     # via
     #   -c requirements/common-constraints.txt
-    #   google-api-core
-    #   grpcio-status
     #   litellm
-grpcio-status==1.67.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-api-core
 h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
@@ -171,11 +126,6 @@ httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
-httplib2==0.31.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-api-python-client
-    #   google-auth-httplib2
 httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
@@ -304,20 +254,6 @@ propcache==0.4.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-proto-plus==1.27.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-ai-generativelanguage
-    #   google-api-core
-protobuf==5.29.5
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-ai-generativelanguage
-    #   google-api-core
-    #   google-generativeai
-    #   googleapis-common-protos
-    #   grpcio-status
-    #   proto-plus
 psutil==7.1.3
     # via
     #   -c requirements/common-constraints.txt
@@ -326,15 +262,6 @@ ptyprocess==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   pexpect
-pyasn1==0.6.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   pyasn1-modules
-    #   rsa
-pyasn1-modules==0.4.2
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-auth
 pycodestyle==2.14.0
     # via
     #   -c requirements/common-constraints.txt
@@ -346,7 +273,6 @@ pycparser==2.23
 pydantic==2.12.5
     # via
     #   -c requirements/common-constraints.txt
-    #   google-generativeai
     #   litellm
     #   mixpanel
     #   openai
@@ -370,10 +296,6 @@ pypandoc==1.16.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pyparsing==3.2.5
-    # via
-    #   -c requirements/common-constraints.txt
-    #   httplib2
 pyperclip==1.11.0
     # via
     #   -c requirements/common-constraints.txt
@@ -403,7 +325,6 @@ regex==2025.11.3
 requests==2.32.5
     # via
     #   -c requirements/common-constraints.txt
-    #   google-api-core
     #   huggingface-hub
     #   mixpanel
     #   posthog
@@ -417,10 +338,6 @@ rpds-py==0.30.0
     #   -c requirements/common-constraints.txt
     #   jsonschema
     #   referencing
-rsa==4.9.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-auth
 scipy==1.15.3
     # via
     #   -c requirements/common-constraints.txt
@@ -469,7 +386,6 @@ tokenizers==0.22.1
 tqdm==4.67.1
     # via
     #   -c requirements/common-constraints.txt
-    #   google-generativeai
     #   huggingface-hub
     #   openai
     # via
@@ -494,25 +410,18 @@ tree-sitter-yaml==0.7.2
 typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
-    #   aiosignal
-    #   anyio
     #   beautifulsoup4
-    #   google-generativeai
+    #   grpcio
     #   huggingface-hub
     #   openai
     #   posthog
     #   pydantic
     #   pydantic-core
-    #   referencing
     #   typing-inspection
 typing-inspection==0.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
-uritemplate==4.2.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   google-api-python-client
 urllib3==2.6.2
     # via
     #   -c requirements/common-constraints.txt
