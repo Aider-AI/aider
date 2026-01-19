@@ -1570,14 +1570,12 @@ class Commands:
             file_instruction = f"Save this summary into `{filename}`."
         else:
             file_instruction = (
-                f"Save this summary into a new Markdown file named "
+                "Save this summary into a new Markdown file named "
                 f"`SUMMARY-{today}-description.md`, replacing 'description' "
                 "with a 3-5 word slug representing our task."
             )
 
-        prompt = prompts.summarize_command_prompt.format(
-            file_instruction=file_instruction
-        ).strip()
+        prompt = prompts.summarize_command_prompt.format(file_instruction=file_instruction).strip()
 
         return self._generic_chat_command(prompt, self.coder.main_model.edit_format)
 
