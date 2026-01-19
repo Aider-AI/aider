@@ -1559,6 +1559,28 @@ class Commands:
         "Alias for /editor: Open an editor to write a prompt"
         return self.cmd_editor(args)
 
+    def cmd_summarize(self, args):
+        "Create a technical summary of the chat and work done so far"
+        from datetime import datetime
+
+        filename = args.strip()
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        if filename:
+            file_instruction = f"Save this summary into `{filename}`."
+        else:
+            file_instruction = (
+                f"Save this summary into a new Markdown file named "
+                f"`SUMMARY-{today}-description.md`, replacing 'description' "
+                "with a 3-5 word slug representing our task."
+            )
+
+        prompt = prompts.summarize_command_prompt.format(
+            file_instruction=file_instruction
+        ).strip()
+
+        return self._generic_chat_command(prompt, self.coder.main_model.edit_format)
+
     def cmd_think_tokens(self, args):
         """Set the thinking token budget, eg: 8096, 8k, 10.5k, 0.5M, or 0 to disable."""
         model = self.coder.main_model
