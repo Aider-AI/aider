@@ -79,6 +79,7 @@ class RepoMap:
         self.map_cache = {}
         self.map_processing_time = 0
         self.last_map = None
+        self.fit_percentage = None
 
         if self.verbose:
             self.io.tool_output(
@@ -651,6 +652,8 @@ class RepoMap:
         best_tree_tokens = 0
 
         chat_rel_fnames = set(self.get_rel_fname(fname) for fname in chat_fnames)
+        full_tree = self.to_tree(ranked_tags, chat_rel_fnames)
+        total_tokens = self.token_count(full_tree)
 
         self.tree_cache = dict()
 
@@ -684,6 +687,12 @@ class RepoMap:
             middle = int((lower_bound + upper_bound) // 2)
 
         spin.end()
+
+        # Calculate and store the fit percentage
+        self.fit_percentage = (best_tree_tokens / total_tokens) * 100
+        if self.verbose:
+            self.io.tool_output(f"Repo-map fit: {self.fit_percentage:.1f}% of raw map")
+
         return best_tree
 
     tree_cache = dict()
