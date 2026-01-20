@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+PACKAGE_NAME=$(\
+    pip install --dry-run --quiet --no-deps --report=- . \
+    | jq --raw-output '.install[0].metadata.name' \
+    2> /dev/null \
+)
+if [ "${PACKAGE_NAME}" != "aider-chat" ]; then
+    echo
+    echo ERROR: `nix run '.#install'` and `aider-install` and must be run
+    echo        from the root of the aider-chat source tree
+    exit 1
+fi
+
+EDITABLE=
+if [ -n "$AIDER_EDITABLE" ] && [ "$AIDER_EDITABLE" != "0" ]; then
+    EDITABLE="--editable"
+fi
+uv pip install --upgrade ${EDITABLE} .
+uv pip install --upgrade ${EDITABLE} ".[help]"
+uv pip install --upgrade ${EDITABLE} ".[browser]"
+echo Ensuring playwright==1.46.0 which is compatible with
+echo playwright-driver.browsers from NixOS unstable as of 2024-09-14
+uv pip install playwright==1.46.0
+
+echo Installing Node.js modules for Eslint
+npm install -g --no-audit --progress=false eslint@9.x globals @eslint/js
+
+echo Now either symlink global Node modules or install them locally:
+echo   ln -s $NPM_CONFIG_PREFIX/lib/node_modules
+echo   npm install globals @eslint/js

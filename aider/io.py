@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import base64
 import functools
 import os
@@ -80,7 +82,7 @@ class CommandCompletionException(Exception):
 
 @dataclass
 class ConfirmGroup:
-    preference: str = None
+    preference: str | None = None
     show_group: bool = True
 
     def __init__(self, items=None):
