@@ -152,12 +152,12 @@ grep-ast==0.9.0
     # via -r requirements/requirements.in
 griffe==1.15.0
     # via banks
-grpcio==1.76.0
+grpcio==1.67.1
     # via
     #   google-api-core
     #   grpcio-status
     #   litellm
-grpcio-status==1.76.0
+grpcio-status==1.67.1
     # via google-api-core
 h11==0.16.0
     # via httpcore
@@ -377,7 +377,7 @@ propcache==0.4.1
     #   yarl
 proto-plus==1.27.0
     # via google-api-core
-protobuf==6.33.4
+protobuf==5.29.5
     # via
     #   google-api-core
     #   googleapis-common-protos

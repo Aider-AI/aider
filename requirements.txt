@@ -110,7 +110,7 @@ grep-ast==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-grpcio==1.76.0
+grpcio==1.67.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
