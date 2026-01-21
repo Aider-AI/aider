@@ -1617,22 +1617,15 @@ class Commands:
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
 
-    def cmd_restore_session(self, args):
-        "Restore the chat context from a previous session"
+    def _get_sessions(self):
         if not self.io.chat_history_file or not self.io.chat_history_file.exists():
             self.io.tool_error("No chat history file found.")
-            return
-
-        try:
-            n = int(args.strip()) if args.strip() else 0
-        except ValueError:
-            self.io.tool_error("Session index must be an integer.")
-            return
+            return None
 
         history_md = self.io.read_text(self.io.chat_history_file)
         if not history_md:
             self.io.tool_error("Chat history file is empty.")
-            return
+            return None
 
         from aider.utils import split_chat_history_markdown
         sessions = split_chat_history_markdown(history_md, include_tool=True, return_sessions=True)
@@ -1662,13 +1655,60 @@ class Commands:
         if sessions:
             sessions.pop()
 
+        return sessions
+
+    def _display_session(self, session, index=None, limit=1024):
+        timestamp = session["timestamp"]
+        messages = session["messages"]
+        prefix = f"[{index}] " if index is not None else ""
+        self.io.tool_output(f"{prefix}Session from {timestamp} ({len(messages)} messages).")
+
+        user_msgs = [m["content"] for m in messages if m["role"] == "user"]
+        if user_msgs:
+            def get_snippet(text):
+                line = text.strip().splitlines()[0]
+                if len(line) > limit:
+                    return line[:limit] + "..."
+                return line
+
+            first_snippet = get_snippet(user_msgs[0])
+            last_snippet = get_snippet(user_msgs[-1])
+            self.io.tool_output(f"  First user message: {first_snippet}")
+            if len(user_msgs) > 1:
+                self.io.tool_output(f"  Last user message:  {last_snippet}")
+
+    def cmd_list_sessions(self, args):
+        "List previous chat sessions"
+        sessions = self._get_sessions()
+        if not sessions:
+            return
+
+        for i, session in enumerate(reversed(sessions)):
+            if i > 0:
+                self.io.tool_output()
+            self._display_session(session, index=i)
+
+    def cmd_restore_session(self, args):
+        "Restore the chat context from a previous session"
+        sessions = self._get_sessions()
+        if not sessions:
+            return
+
+        try:
+            n = int(args.strip()) if args.strip() else 0
+        except ValueError:
+            self.io.tool_error("Session index must be an integer.")
+            return
+
         if not sessions:
             self.io.tool_error("No sessions found in chat history.")
             return
 
         idx = -(n + 1)
         if abs(idx) > len(sessions):
-            self.io.tool_error(f"Session index {n} is out of bounds. Only {len(sessions)} sessions available.")
+            self.io.tool_error(
+                f"Session index {n} is out of bounds. Only {len(sessions)} sessions available."
+            )
             return
 
         target_session = sessions[idx]
@@ -1686,15 +1726,7 @@ class Commands:
         self.coder.summarize_start()
 
         # Feedback
-        self.io.tool_output(f"Restored session from {timestamp} ({len(messages)} messages).")
-
-        user_msgs = [m["content"] for m in messages if m["role"] == "user"]
-        if user_msgs:
-            first_snippet = user_msgs[0].strip().splitlines()[0][:250]
-            last_snippet = user_msgs[-1].strip().splitlines()[0][:250]
-            self.io.tool_output(f"First user message: {first_snippet}...")
-            if len(user_msgs) > 1:
-                self.io.tool_output(f"Last user message:  {last_snippet}...")
+        self._display_session(target_session, limit=250)
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
