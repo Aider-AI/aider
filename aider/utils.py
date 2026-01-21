@@ -160,6 +160,7 @@ def split_chat_history_markdown(text, include_tool=False, return_sessions=False)
     session_start_re = re.compile(r"^# aider chat (?:started at|restore session from) (.*)$")
     current_timestamp = None
 
+    slurp_next = 0
     for line in lines:
         match = session_start_re.match(line.strip())
         if match:
@@ -179,6 +180,11 @@ def split_chat_history_markdown(text, include_tool=False, return_sessions=False)
             continue
 
         if line.startswith("# "):
+            continue
+
+        if slurp_next > 0 and line.startswith("> "):
+            slurp_next -= 1
+            user.append(line[2:])
             continue
 
         if line.startswith("> "):
@@ -203,6 +209,8 @@ def split_chat_history_markdown(text, include_tool=False, return_sessions=False)
             tool = []
 
             content = line[5:]
+            if content.startswith("/run "):
+                slurp_next = 2
             user.append(content)
             continue
 
