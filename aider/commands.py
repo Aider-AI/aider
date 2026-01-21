@@ -1028,6 +1028,9 @@ class Commands:
                 output=combined_output,
             )
 
+            history_msg = "\n".join([f">>> {line}" for line in msg.splitlines()])
+            self.io.append_chat_history(f"\n{history_msg}\n\nOk.\n\n")
+
             self.coder.cur_messages += [
                 dict(role="user", content=msg),
                 dict(role="assistant", content="Ok."),

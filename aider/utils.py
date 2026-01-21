@@ -183,6 +183,16 @@ def split_chat_history_markdown(text, include_tool=False, return_sessions=False)
 
         if line.startswith("> "):
             continue
+
+        if line.startswith(">>> "):
+            append_msg("assistant", assistant)
+            assistant = []
+            append_msg("user", user)
+            user = []
+
+            content = line[4:]
+            user.append(content)
+            continue
         # if line.startswith("#### /"):
         #    continue
 
