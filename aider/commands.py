@@ -1637,19 +1637,30 @@ class Commands:
         from aider.utils import split_chat_history_markdown
         sessions = split_chat_history_markdown(history_md, include_tool=True, return_sessions=True)
 
+        # Filter out sessions that are just a "Restored session from..." notification
+        # or only contain a /restore-session command.
+        # We do this BEFORE popping the current session to ensure we catch all of them.
+        filtered_sessions = []
+        for s in sessions:
+            msgs = s["messages"]
+            matched = False
+            if len(msgs) == 1:
+                content = msgs[0]["content"].strip()
+                if content.startswith("Restored session from"):
+                    matched = True
+            elif len(msgs) == 2:
+                c1 = msgs[1]["content"].strip()
+                if c1.startswith("/restore-session"):
+                    matched = True
+
+            if not matched:
+                filtered_sessions.append(s)
+
+        sessions = filtered_sessions
+
         # The last session in the file is the current one containing this command
         if sessions:
             sessions.pop()
-
-        # Filter out sessions that only contain a /restore-session command
-        sessions = [
-            s
-            for s in sessions
-            if not (
-                len(s["messages"]) == 1
-                and s["messages"][0]["content"].strip().startswith("/restore-session")
-            )
-        ]
 
         if not sessions:
             self.io.tool_error("No sessions found in chat history.")
