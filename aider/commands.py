@@ -1631,6 +1631,7 @@ class Commands:
             return None
 
         from aider.utils import split_chat_history_markdown
+
         sessions = split_chat_history_markdown(history_md, include_tool=True, return_sessions=True)
 
         # Filter out sessions that are just a "Restored session from..." notification,
@@ -1678,6 +1679,7 @@ class Commands:
 
         user_msgs = [m["content"] for m in messages if m["role"] == "user"]
         if user_msgs:
+
             def get_snippet(text):
                 line = text.strip().splitlines()[0]
                 if len(line) > limit:
