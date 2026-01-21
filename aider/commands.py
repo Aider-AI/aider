@@ -1617,6 +1617,74 @@ class Commands:
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
 
+    def cmd_restore_session(self, args):
+        "Restore the chat context from a previous session"
+        if not self.io.chat_history_file or not self.io.chat_history_file.exists():
+            self.io.tool_error("No chat history file found.")
+            return
+
+        try:
+            n = int(args.strip()) if args.strip() else 0
+        except ValueError:
+            self.io.tool_error("Session index must be an integer.")
+            return
+
+        history_md = self.io.read_text(self.io.chat_history_file)
+        if not history_md:
+            self.io.tool_error("Chat history file is empty.")
+            return
+
+        from aider.utils import split_chat_history_markdown
+        sessions = split_chat_history_markdown(history_md, include_tool=True, return_sessions=True)
+
+        # The last session in the file is the current one containing this command
+        if sessions:
+            sessions.pop()
+
+        # Filter out sessions that only contain a /restore-session command
+        sessions = [
+            s
+            for s in sessions
+            if not (
+                len(s["messages"]) == 1
+                and s["messages"][0]["content"].strip().startswith("/restore-session")
+            )
+        ]
+
+        if not sessions:
+            self.io.tool_error("No sessions found in chat history.")
+            return
+
+        idx = -(n + 1)
+        if abs(idx) > len(sessions):
+            self.io.tool_error(f"Session index {n} is out of bounds. Only {len(sessions)} sessions available.")
+            return
+
+        target_session = sessions[idx]
+        timestamp = target_session["timestamp"]
+        messages = target_session["messages"]
+
+        # Replace context
+        self.coder.cur_messages = []
+        self.coder.done_messages = messages
+
+        # Persistence
+        self.io.append_chat_history(f"\n# aider chat restore session from {timestamp}\n\n")
+
+        # Maintenance
+        self.coder.summarize_start()
+
+        # Feedback
+        self.io.tool_output(f"Restored session from {timestamp} ({len(messages)} messages).")
+
+        user_msgs = [m["content"] for m in messages if m["role"] == "user"]
+        if user_msgs:
+            first_snippet = user_msgs[0].strip().splitlines()[0][:250]
+            last_snippet = user_msgs[-1].strip().splitlines()[0][:250]
+            self.io.tool_output(f"First user message: {first_snippet}...")
+            if len(user_msgs) > 1:
+                self.io.tool_output(f"Last user message:  {last_snippet}...")
+
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
 

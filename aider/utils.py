@@ -142,7 +142,10 @@ def show_messages(messages, title=None, functions=None):
         dump(functions)
 
 
-def split_chat_history_markdown(text, include_tool=False):
+def split_chat_history_markdown(text, include_tool=False, return_sessions=False):
+    import re
+
+    sessions = []
     messages = []
     user = []
     assistant = []
@@ -154,9 +157,30 @@ def split_chat_history_markdown(text, include_tool=False):
         if lines.strip():
             messages.append(dict(role=role, content=lines))
 
+    session_start_re = re.compile(r"^# aider chat (?:started at|restore session from) (.*)$")
+    current_timestamp = None
+
     for line in lines:
+        match = session_start_re.match(line.strip())
+        if match:
+            if return_sessions and (messages or user or assistant or tool):
+                append_msg("assistant", assistant)
+                assistant = []
+                append_msg("user", user)
+                user = []
+                append_msg("tool", tool)
+                tool = []
+                if not include_tool:
+                    messages = [m for m in messages if m["role"] != "tool"]
+                sessions.append(dict(timestamp=current_timestamp, messages=messages))
+                messages = []
+
+            current_timestamp = match.group(1)
+            continue
+
         if line.startswith("# "):
             continue
+
         if line.startswith("> "):
             append_msg("assistant", assistant)
             assistant = []
@@ -189,6 +213,11 @@ def split_chat_history_markdown(text, include_tool=False):
 
     if not include_tool:
         messages = [m for m in messages if m["role"] != "tool"]
+
+    if return_sessions:
+        if messages:
+            sessions.append(dict(timestamp=current_timestamp, messages=messages))
+        return sessions
 
     return messages
 
