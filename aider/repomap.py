@@ -25,6 +25,9 @@ from aider.waiting import Spinner
 warnings.simplefilter("ignore", category=FutureWarning)
 from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 
+# this should probably come in via grep_ast.tsl as well
+from tree_sitter import QueryError  # noqa: E402
+
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
@@ -285,8 +288,12 @@ class RepoMap:
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
-        query = language.query(query_scm)
-        captures = query.captures(tree.root_node)
+        try:
+            query = language.query(query_scm)
+            captures = query.captures(tree.root_node)
+        except QueryError as err:
+            self.io.tool_warning(f"Query error for {fname}: {err}")
+            return
 
         saw = set()
         if USING_TSL_PACK:
