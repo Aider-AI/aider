@@ -39,8 +39,6 @@ class ResponsesAPIWrapper:
 
     def _convert_to_chat_format(self):
         """Convert responses API output to chat completions choices format"""
-        if not hasattr(self._responses, "output"):
-            return
 
         # Create a mock choices structure
         class MockChoice:
@@ -49,18 +47,8 @@ class ResponsesAPIWrapper:
                     "obj",
                     (object,),
                     {
-                        "content": None,
+                        "content": "",
                         "tool_calls": None,
-                        "reasoning_content": None,
-                        "reasoning": None,
-                    },
-                )()
-                self.delta = type(
-                    "obj",
-                    (object,),
-                    {
-                        "content": None,
-                        "function_call": None,
                         "reasoning_content": None,
                         "reasoning": None,
                     },
@@ -69,31 +57,31 @@ class ResponsesAPIWrapper:
 
         choice = MockChoice()
 
-        # Extract content from output items
-        for item in self._responses.output:
-            # Handle ResponseOutputMessage type
-            if hasattr(item, "type") and item.type == "message":
-                if hasattr(item, "content") and item.content:
-                    # Extract text from content items
-                    for content_item in item.content:
-                        if hasattr(content_item, "text") and content_item.text:
-                            choice.message.content = content_item.text
-                            choice.delta.content = content_item.text
+        # Extract content from output items if available
+        if hasattr(self._responses, "output") and self._responses.output:
+            for item in self._responses.output:
+                # Handle ResponseOutputMessage type
+                if hasattr(item, "type") and item.type == "message":
+                    if hasattr(item, "content") and item.content:
+                        # Concatenate all text items to avoid losing content
+                        text_parts = []
+                        for content_item in item.content:
+                            if hasattr(content_item, "text") and content_item.text:
+                                text_parts.append(content_item.text)
+                        if text_parts:
+                            choice.message.content = "\n".join(text_parts)
                             break
-                    if choice.message.content:
-                        break
-            # Fallback: direct text attribute
-            elif hasattr(item, "text") and item.text:
-                choice.message.content = item.text
-                choice.delta.content = item.text
-                break
-            # Fallback: dict format
-            elif isinstance(item, dict):
-                if "text" in item:
-                    choice.message.content = item["text"]
-                    choice.delta.content = item["text"]
+                # Fallback: direct text attribute
+                elif hasattr(item, "text") and item.text:
+                    choice.message.content = item.text
                     break
+                # Fallback: dict format
+                elif isinstance(item, dict):
+                    if "text" in item:
+                        choice.message.content = item["text"]
+                        break
 
+        # Always initialize self.choices for consistent interface
         self.choices = [choice]
 
         # Copy other attributes
@@ -117,6 +105,7 @@ class StreamingResponsesAPIWrapper:
         return self
 
     def __next__(self):
+        # This will properly propagate StopIteration when the stream ends
         event = next(self._stream)
 
         # Wrap each event to look like chat completions format
@@ -139,6 +128,21 @@ class StreamingResponsesAPIWrapper:
                 self.choices = [MockChoice()]
 
         mock_chunk = MockChunk()
+
+        # Extract finish_reason if available
+        finish_reason = None
+        if hasattr(event, "finish_reason"):
+            finish_reason = event.finish_reason
+        elif hasattr(event, "output"):
+            for item in event.output:
+                if hasattr(item, "finish_reason"):
+                    finish_reason = item.finish_reason
+                    break
+                if isinstance(item, dict) and "finish_reason" in item:
+                    finish_reason = item["finish_reason"]
+                    break
+
+        mock_chunk.choices[0].finish_reason = finish_reason
 
         # Handle Responses API event stream format
         # Check for OUTPUT_TEXT_DELTA events (have delta attribute with text)
@@ -1138,17 +1142,31 @@ class Model(ModelSettings):
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
         # Use responses API or chat completions API based on wire_api setting
+        # Validate wire_api value
+        if wire_api and wire_api not in ("chat", "responses"):
+            self.io.tool_warning(
+                f"Warning: Unrecognized wire_api value '{wire_api}'. "
+                "Valid values are 'chat' or 'responses'. Falling back to chat completions API."
+            )
+            wire_api = "chat"
+
         if wire_api == "responses":
             # Convert messages format for responses API
             # Extract system messages as instructions, rest as input
             system_messages = [msg for msg in messages if msg.get("role") == "system"]
             other_messages = [msg for msg in messages if msg.get("role") != "system"]
 
+            # Combine all system messages into a single instructions string
             if system_messages:
-                kwargs["instructions"] = system_messages[0].get("content", "")
+                combined_instructions = "\n\n".join(
+                    str(msg.get("content", "")) for msg in system_messages if msg.get("content")
+                )
+                if combined_instructions:
+                    kwargs["instructions"] = combined_instructions
 
-            # For responses API, input can be a list of messages
-            kwargs["input"] = other_messages if other_messages else messages
+            # For responses API, input should only contain non-system messages
+            # Avoid sending system messages twice
+            kwargs["input"] = other_messages
 
             res = litellm.responses(**kwargs)
 
@@ -1187,28 +1205,10 @@ class Model(ModelSettings):
                 if not response:
                     return None
 
-                # Handle both chat completions and responses API formats
-                wire_api = os.environ.get("AIDER_WIRE_API", getattr(self, "wire_api", "chat"))
-
-                if wire_api == "responses":
-                    # Responses API format: has 'output' instead of 'choices'
-                    if not hasattr(response, "output") or not response.output:
-                        return None
-                    # Extract text content from output items
-                    for item in response.output:
-                        if hasattr(item, "text") and item.text:
-                            res = item.text
-                            break
-                        elif isinstance(item, dict) and "text" in item:
-                            res = item["text"]
-                            break
-                    else:
-                        return None
-                else:
-                    # Chat completions API format: has 'choices'
-                    if not hasattr(response, "choices") or not response.choices:
-                        return None
-                    res = response.choices[0].message.content
+                # Use unified choices interface (provided by ResponsesAPIWrapper)
+                if not hasattr(response, "choices") or not response.choices:
+                    return None
+                res = response.choices[0].message.content
 
                 from aider.reasoning_tags import remove_reasoning_content
 

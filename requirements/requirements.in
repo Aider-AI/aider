@@ -17,7 +17,7 @@ diff-match-patch
 pypandoc
 litellm
 fastapi  # Required by litellm.responses() API
-orjson   # Required by litellm for fast JSON serialization
+orjson   # Required by litellm for Responses API support
 flake8
 importlib_resources
 pyperclip
