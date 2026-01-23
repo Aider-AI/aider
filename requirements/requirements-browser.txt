@@ -152,7 +152,3 @@ urllib3==2.6.2
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-watchdog==6.0.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   streamlit
