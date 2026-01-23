@@ -117,9 +117,9 @@ class StreamingResponsesAPIWrapper:
         return self
 
     def __next__(self):
-        chunk = next(self._stream)
+        event = next(self._stream)
 
-        # Wrap each chunk to look like chat completions format
+        # Wrap each event to look like chat completions format
         class MockChoice:
             def __init__(self):
                 self.delta = type(
@@ -140,11 +140,13 @@ class StreamingResponsesAPIWrapper:
 
         mock_chunk = MockChunk()
 
-        # Extract delta content if available
-        if hasattr(chunk, "delta") and hasattr(chunk.delta, "text"):
-            mock_chunk.choices[0].delta.content = chunk.delta.text
-        elif hasattr(chunk, "output"):
-            for item in chunk.output:
+        # Handle Responses API event stream format
+        # Check for OUTPUT_TEXT_DELTA events (have delta attribute with text)
+        if hasattr(event, "delta") and event.delta:
+            mock_chunk.choices[0].delta.content = event.delta
+        # Fallback for other formats
+        elif hasattr(event, "output"):
+            for item in event.output:
                 # Handle ResponseOutputMessage type
                 if hasattr(item, "type") and item.type == "message":
                     if hasattr(item, "content") and item.content:
