@@ -71,10 +71,23 @@ class ResponsesAPIWrapper:
 
         # Extract content from output items
         for item in self._responses.output:
-            if hasattr(item, "text") and item.text:
+            # Handle ResponseOutputMessage type
+            if hasattr(item, "type") and item.type == "message":
+                if hasattr(item, "content") and item.content:
+                    # Extract text from content items
+                    for content_item in item.content:
+                        if hasattr(content_item, "text") and content_item.text:
+                            choice.message.content = content_item.text
+                            choice.delta.content = content_item.text
+                            break
+                    if choice.message.content:
+                        break
+            # Fallback: direct text attribute
+            elif hasattr(item, "text") and item.text:
                 choice.message.content = item.text
                 choice.delta.content = item.text
                 break
+            # Fallback: dict format
             elif isinstance(item, dict):
                 if "text" in item:
                     choice.message.content = item["text"]
@@ -132,7 +145,17 @@ class StreamingResponsesAPIWrapper:
             mock_chunk.choices[0].delta.content = chunk.delta.text
         elif hasattr(chunk, "output"):
             for item in chunk.output:
-                if hasattr(item, "text"):
+                # Handle ResponseOutputMessage type
+                if hasattr(item, "type") and item.type == "message":
+                    if hasattr(item, "content") and item.content:
+                        for content_item in item.content:
+                            if hasattr(content_item, "text") and content_item.text:
+                                mock_chunk.choices[0].delta.content = content_item.text
+                                break
+                        if mock_chunk.choices[0].delta.content:
+                            break
+                # Fallback: direct text attribute
+                elif hasattr(item, "text"):
                     mock_chunk.choices[0].delta.content = item.text
                     break
 
