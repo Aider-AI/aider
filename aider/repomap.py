@@ -286,7 +286,13 @@ class RepoMap:
 
         # Run the tags queries
         query = language.query(query_scm)
-        captures = query.captures(tree.root_node)
+
+        # Use iter_captures for newer tree-sitter versions (0.22.0+)
+        # which removed the captures() method
+        if hasattr(query, "captures"):
+            captures = query.captures(tree.root_node)
+        else:
+            captures = query.iter_captures(tree.root_node)
 
         saw = set()
         if USING_TSL_PACK:
