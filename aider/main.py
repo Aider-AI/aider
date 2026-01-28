@@ -708,9 +708,18 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     for fn in read_expanded:
         path = Path(fn).expanduser().resolve()
         if path.is_dir():
-            read_only_fnames.extend(
-                str(f) for f in path.rglob("*") if f.is_file() and ".git" not in f.parts
-            )
+            for f in path.rglob("*"):
+                if not f.is_file():
+                    continue
+                # Get parts relative to the directory we are expanding
+                try:
+                    rel_parts = f.relative_to(path).parts
+                except ValueError:
+                    continue
+                # Ignore if any part of the relative path starts with a dot
+                if any(p.startswith(".") for p in rel_parts):
+                    continue
+                read_only_fnames.append(str(f))
         else:
             read_only_fnames.append(str(path))
 
