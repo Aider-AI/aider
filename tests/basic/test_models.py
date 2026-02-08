@@ -444,6 +444,7 @@ class TestModels(unittest.TestCase):
             temperature=0,
             num_ctx=expected_ctx,
             timeout=600,
+            extra_headers=ANY,
         )
 
     @patch("aider.models.litellm.completion")
@@ -462,6 +463,7 @@ class TestModels(unittest.TestCase):
             temperature=0,
             num_ctx=4096,
             timeout=600,
+            extra_headers=ANY,
         )
 
     @patch("aider.models.litellm.completion")
@@ -478,6 +480,7 @@ class TestModels(unittest.TestCase):
             stream=False,
             temperature=0,
             timeout=600,
+            extra_headers=ANY,
         )
         self.assertNotIn("num_ctx", mock_completion.call_args.kwargs)
 
@@ -508,6 +511,7 @@ class TestModels(unittest.TestCase):
             stream=False,
             temperature=0,
             timeout=600,  # Default timeout
+            extra_headers=ANY,
         )
 
     @patch("aider.models.litellm.completion")
@@ -523,6 +527,7 @@ class TestModels(unittest.TestCase):
             stream=False,
             temperature=0,
             timeout=300,  # From extra_params
+            extra_headers=ANY,
         )
 
     @patch("aider.models.litellm.completion")
@@ -537,6 +542,7 @@ class TestModels(unittest.TestCase):
             stream=False,
             temperature=0,
             timeout=600,
+            extra_headers=ANY,
         )
 
         # Test use_temperature=False doesn't send temperature
@@ -556,7 +562,50 @@ class TestModels(unittest.TestCase):
             stream=False,
             temperature=0.7,
             timeout=600,
+            extra_headers=ANY,
         )
+
+    @patch("aider.models.litellm.completion")
+    def test_user_agent_header_set(self, mock_completion):
+        """Test that User-Agent header is set in extra_headers for API calls"""
+        from aider import __version__
+
+        model = Model("gpt-4")
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+
+        # Verify extra_headers contains User-Agent with correct value
+        call_kwargs = mock_completion.call_args.kwargs
+        self.assertIn("extra_headers", call_kwargs)
+        self.assertIn("User-Agent", call_kwargs["extra_headers"])
+        self.assertEqual(call_kwargs["extra_headers"]["User-Agent"], f"aider/{__version__}")
+
+    @patch("aider.models.litellm.completion")
+    def test_user_agent_header_not_overwritten(self, mock_completion):
+        """Test that a pre-existing User-Agent header is not overwritten"""
+        model = Model("gpt-4")
+        model.extra_params = {"extra_headers": {"User-Agent": "custom-agent/1.0"}}
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+
+        # Verify the custom User-Agent was preserved
+        call_kwargs = mock_completion.call_args.kwargs
+        self.assertEqual(call_kwargs["extra_headers"]["User-Agent"], "custom-agent/1.0")
+
+    @patch("aider.models.litellm.completion")
+    def test_user_agent_header_with_existing_extra_headers(self, mock_completion):
+        """Test that User-Agent is added alongside existing extra_headers"""
+        from aider import __version__
+
+        model = Model("gpt-4")
+        model.extra_params = {"extra_headers": {"X-Custom": "value"}}
+        messages = [{"role": "user", "content": "Hello"}]
+        model.send_completion(messages, functions=None, stream=False)
+
+        # Verify both headers are present
+        call_kwargs = mock_completion.call_args.kwargs
+        self.assertEqual(call_kwargs["extra_headers"]["X-Custom"], "value")
+        self.assertEqual(call_kwargs["extra_headers"]["User-Agent"], f"aider/{__version__}")
 
 
 if __name__ == "__main__":
