@@ -303,7 +303,7 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]) :].strip()
+        rest_inp = inp[len(words[0]):].strip()
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
@@ -1044,6 +1044,10 @@ class Commands:
 
     def cmd_exit(self, args):
         "Exit the application"
+        # Check and rotate chat history before exiting
+        # self.io.tool_output("Exiting, checking chat history rotation...")
+        if hasattr(self.io, 'cleanup') and callable(self.io.cleanup):
+            self.io.cleanup()
         self.coder.event("exit", reason="/exit")
         sys.exit()
 
