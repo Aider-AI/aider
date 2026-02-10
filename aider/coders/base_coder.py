@@ -1223,12 +1223,6 @@ class Coder:
             language=language,
         )
 
-        # Add extra system prompt content from file if specified
-        if self.system_prompt_extras_file:
-            extras_content = self.io.read_text(self.system_prompt_extras_file)
-            if extras_content:
-                prompt = prompt + "\n\n" + extras_content.strip()
-
         return prompt
 
     def format_chat_chunks(self):
@@ -1268,6 +1262,12 @@ class Coder:
 
         if self.gpt_prompts.system_reminder:
             main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+
+        # Append extra system prompt content from file (read once per request)
+        if self.system_prompt_extras_file:
+            extras_content = self.io.read_text(self.system_prompt_extras_file)
+            if extras_content:
+                main_sys += "\n\n" + extras_content.strip()
 
         chunks = ChatChunks()
 
