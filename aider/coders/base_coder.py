@@ -338,6 +338,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        system_prompt_extras_file=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -352,6 +353,7 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+        self.system_prompt_extras_file = system_prompt_extras_file
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -1220,6 +1222,12 @@ class Coder:
             go_ahead_tip=self.gpt_prompts.go_ahead_tip,
             language=language,
         )
+
+        # Add extra system prompt content from file if specified
+        if self.system_prompt_extras_file:
+            extras_content = self.io.read_text(self.system_prompt_extras_file)
+            if extras_content:
+                prompt = prompt + "\n\n" + extras_content.strip()
 
         return prompt
 
