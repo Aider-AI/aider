@@ -1267,7 +1267,10 @@ class Coder:
         if self.system_prompt_extras_file:
             extras_content = self.io.read_text(self.system_prompt_extras_file)
             if extras_content:
-                main_sys += "\n\n" + extras_content.strip()
+                # Preserve extras content formatting; at most remove a single trailing newline
+                if extras_content.endswith("\n"):
+                    extras_content = extras_content[:-1]
+                main_sys += "\n\n" + extras_content
 
         chunks = ChatChunks()
 
