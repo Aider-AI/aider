@@ -191,6 +191,7 @@ def main(
     stats_only: bool = typer.Option(
         False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
     ),
+    stream: bool = typer.Option(False, "--stream", help="Stream model responses"),
     stats_languages: str = typer.Option(
         None,
         "--stats-languages",
@@ -216,10 +217,14 @@ def main(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
 ):
-    repo = git.Repo(search_parent_directories=True)
-    commit_hash = repo.head.object.hexsha[:7]
-    if repo.is_dirty():
-        commit_hash += "-dirty"
+    
+    commit_hash = "UNKNOWN"
+    git_dir = Path.cwd() / '.git'
+    if git_dir.is_dir(): # Exists and is a dir
+        repo = git.Repo(search_parent_directories=True)
+        commit_hash = repo.head.object.hexsha[:7]
+        if repo.is_dirty():
+            commit_hash += "-dirty"
 
     if stats_only and not dirnames:
         latest_dir = find_latest_benchmark_dir()
@@ -370,6 +375,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                stream,
             )
 
             all_results.append(results)
@@ -396,6 +402,7 @@ def main(
                 sleep,
                 reasoning_effort,
                 thinking_tokens,
+                stream,
             )
         all_results = run_test_threaded.gather(tqdm=True)
 
@@ -694,6 +701,7 @@ def run_test_real(
     reasoning_effort: Optional[str] = None,
     thinking_tokens: Optional[int] = None,
     read_model_settings=None,
+    stream=False,
 ):
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
@@ -702,6 +710,7 @@ def run_test_real(
     testdir = Path(testdir)
 
     history_fname = testdir / ".aider.chat.history.md"
+    llm_history_fname = testdir / ".aider.llm.history.log"
 
     results_fname = testdir / ".aider.results.json"
     if results_fname.exists():
@@ -787,6 +796,7 @@ def run_test_real(
         pretty=False,
         yes=True,
         chat_history_file=history_fname,
+        llm_history_file=llm_history_fname,
     )
 
     # weak_model_name = model_name
@@ -825,7 +835,7 @@ def run_test_real(
         io,
         fnames=fnames,
         use_git=False,
-        stream=False,
+        stream=stream,
         verbose=verbose,
         # auto_lint=False,  # disabled for code-in-json experiments
         cache_prompts=True,

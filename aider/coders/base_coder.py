@@ -1867,6 +1867,13 @@ class Coder:
         except AttributeError as content_err:
             show_content_err = content_err
 
+        # Add reasoning to partial_response_content for logging
+        if reasoning_content:
+            formatted_reasoning = format_reasoning_content(
+                reasoning_content, self.reasoning_tag_name
+            )
+            self.partial_response_content = formatted_reasoning + self.partial_response_content
+
         resp_hash = dict(
             function_call=str(self.partial_response_function_call),
             content=self.partial_response_content,
@@ -1880,12 +1887,6 @@ class Coder:
             raise Exception("No data found in LLM response!")
 
         show_resp = self.render_incremental_response(True)
-
-        if reasoning_content:
-            formatted_reasoning = format_reasoning_content(
-                reasoning_content, self.reasoning_tag_name
-            )
-            show_resp = formatted_reasoning + show_resp
 
         show_resp = replace_reasoning_tags(show_resp, self.reasoning_tag_name)
 
