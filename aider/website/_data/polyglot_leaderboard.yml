@@ -1711,3 +1711,146 @@
   versions: 0.85.3.dev
   seconds_per_case: 35.5
   total_cost: 0.7406
+
+- dirname: 2025-08-23-15-47-21--gpt-5-high
+  test_cases: 225
+  model: gpt-5 (high)
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: high
+  pass_rate_1: 52.0
+  pass_rate_2: 88.0
+  pass_num_1: 117
+  pass_num_2: 198
+  percent_cases_well_formed: 91.6
+  error_outputs: 23
+  num_malformed_responses: 22
+  num_with_malformed_responses: 19
+  user_asks: 96
+  lazy_comments: 3
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2675561
+  completion_tokens: 2623429
+  test_timeouts: 3
+  total_tests: 225
+  command: aider --model openai/gpt-5
+  date: 2025-08-23
+  versions: 0.86.2.dev
+  seconds_per_case: 194.0
+  total_cost: 29.0829
+
+- dirname: 2025-08-25-13-23-27--gpt-5-medium
+  test_cases: 225
+  model: gpt-5 (medium)
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: medium
+  pass_rate_1: 49.8
+  pass_rate_2: 86.7
+  pass_num_1: 112
+  pass_num_2: 195
+  percent_cases_well_formed: 88.4
+  error_outputs: 40
+  num_malformed_responses: 40
+  num_with_malformed_responses: 26
+  user_asks: 102
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2827261
+  completion_tokens: 1468799
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model openai/gpt-5
+  date: 2025-08-25
+  versions: 0.86.2.dev
+  seconds_per_case: 118.7
+  total_cost: 17.6930
+
+- dirname: 2025-08-25-14-16-37--gpt-5-low
+  test_cases: 225
+  model: gpt-5 (low)
+  edit_format: diff
+  commit_hash: 32faf82
+  reasoning_effort: low
+  pass_rate_1: 43.1
+  pass_rate_2: 81.3
+  pass_num_1: 97
+  pass_num_2: 183
+  percent_cases_well_formed: 86.7
+  error_outputs: 46
+  num_malformed_responses: 46
+  num_with_malformed_responses: 30
+  user_asks: 113
+  lazy_comments: 1
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 2534059
+  completion_tokens: 779568
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model openai/gpt-5
+  date: 2025-08-25
+  versions: 0.86.2.dev
+  seconds_per_case: 62.4
+  total_cost: 10.3713
+
+- dirname: 2025-10-03-09-45-34--deepseek-v3.2-reasoner
+  test_cases: 225
+  model: DeepSeek-V3.2-Exp (Reasoner)
+  edit_format: diff
+  commit_hash: cbb5376
+  pass_rate_1: 39.6
+  pass_rate_2: 74.2
+  pass_num_1: 89
+  pass_num_2: 167
+  percent_cases_well_formed: 97.3
+  error_outputs: 8
+  num_malformed_responses: 6
+  num_with_malformed_responses: 6
+  user_asks: 67
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 2191446
+  completion_tokens: 1645129
+  test_timeouts: 1
+  total_tests: 225
+  command: aider --model deepseek/deepseek-reasoner
+  date: 2025-10-03
+  versions: 0.86.2.dev
+  seconds_per_case: 291.2
+  total_cost: 1.3045
+
+- dirname: 2025-10-03-09-21-36--deepseek-v3.2-chat
+  test_cases: 225
+  model: DeepSeek-V3.2-Exp (Chat)
+  edit_format: diff
+  commit_hash: cbb5376
+  pass_rate_1: 38.7
+  pass_rate_2: 70.2
+  pass_num_1: 87
+  pass_num_2: 158
+  percent_cases_well_formed: 98.2
+  error_outputs: 6
+  num_malformed_responses: 4
+  num_with_malformed_responses: 4
+  user_asks: 60
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 1
+  prompt_tokens: 2266868
+  completion_tokens: 573477
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model deepseek/deepseek-chat
+  date: 2025-10-03
+  versions: 0.86.2.dev
+  seconds_per_case: 104.0
+  total_cost: 0.8756
