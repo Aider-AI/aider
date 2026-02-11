@@ -33,7 +33,10 @@ cog.out(text)
 - Fixed exception mapping to only include real exception classes, avoiding runtime errors, by Claudia Pellegrino.
 - Repo map now tags Fortran, Haskell, Julia, and Zig and is compatible with newer tree-sitter Python APIs, by Varchas Gopalaswamy, Tim Put, and Mubashir Osmani.
 - Removed deprecated google-generativeai dependency to eliminate import warnings, by Mark McDonald.
-- Aider wrote 58% of the code in this release.
+- Added settings for new OpenAI GPT‑5.1/5.2 and GPT‑5‑pro models across OpenAI, Azure, and OpenRouter, including chat and codex variants, by Bill Dengler.
+- Changed the gemini alias to point to gemini/gemini-3-pro-preview.
+- Added support for OpenAI o1-pro model.
+- Aider wrote 57% of the code in this release.
 
 ### Aider v0.86.1
 
