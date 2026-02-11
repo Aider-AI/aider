@@ -28,6 +28,146 @@ RETRY_TIMEOUT = 60
 request_timeout = 600
 
 DEFAULT_MODEL_NAME = "gpt-4o"
+
+
+class ResponsesAPIWrapper:
+    """Wrapper to convert Responses API format to Chat Completions format"""
+
+    def __init__(self, responses_obj):
+        self._responses = responses_obj
+        self._convert_to_chat_format()
+
+    def _convert_to_chat_format(self):
+        """Convert responses API output to chat completions choices format"""
+
+        # Create a mock choices structure
+        class MockChoice:
+            def __init__(self):
+                self.message = type(
+                    "obj",
+                    (object,),
+                    {
+                        "content": "",
+                        "tool_calls": None,
+                        "reasoning_content": None,
+                        "reasoning": None,
+                    },
+                )()
+                self.finish_reason = None
+
+        choice = MockChoice()
+
+        # Extract content from output items if available
+        if hasattr(self._responses, "output") and self._responses.output:
+            for item in self._responses.output:
+                # Handle ResponseOutputMessage type
+                if hasattr(item, "type") and item.type == "message":
+                    if hasattr(item, "content") and item.content:
+                        # Concatenate all text items to avoid losing content
+                        text_parts = []
+                        for content_item in item.content:
+                            if hasattr(content_item, "text") and content_item.text:
+                                text_parts.append(content_item.text)
+                        if text_parts:
+                            choice.message.content = "\n".join(text_parts)
+                            break
+                # Fallback: direct text attribute
+                elif hasattr(item, "text") and item.text:
+                    choice.message.content = item.text
+                    break
+                # Fallback: dict format
+                elif isinstance(item, dict):
+                    if "text" in item:
+                        choice.message.content = item["text"]
+                        break
+
+        # Always initialize self.choices for consistent interface
+        self.choices = [choice]
+
+        # Copy other attributes
+        if hasattr(self._responses, "id"):
+            self.id = self._responses.id
+        if hasattr(self._responses, "usage"):
+            self.usage = self._responses.usage
+
+    def __getattr__(self, name):
+        """Fallback to original responses object for other attributes"""
+        return getattr(self._responses, name)
+
+
+class StreamingResponsesAPIWrapper:
+    """Wrapper for streaming responses API to mimic chat completions stream"""
+
+    def __init__(self, responses_stream):
+        self._stream = responses_stream
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        # This will properly propagate StopIteration when the stream ends
+        event = next(self._stream)
+
+        # Wrap each event to look like chat completions format
+        class MockChoice:
+            def __init__(self):
+                self.delta = type(
+                    "obj",
+                    (object,),
+                    {
+                        "content": None,
+                        "function_call": None,
+                        "reasoning_content": None,
+                        "reasoning": None,
+                    },
+                )()
+                self.finish_reason = None
+
+        class MockChunk:
+            def __init__(self):
+                self.choices = [MockChoice()]
+
+        mock_chunk = MockChunk()
+
+        # Extract finish_reason if available
+        finish_reason = None
+        if hasattr(event, "finish_reason"):
+            finish_reason = event.finish_reason
+        elif hasattr(event, "output"):
+            for item in event.output:
+                if hasattr(item, "finish_reason"):
+                    finish_reason = item.finish_reason
+                    break
+                if isinstance(item, dict) and "finish_reason" in item:
+                    finish_reason = item["finish_reason"]
+                    break
+
+        mock_chunk.choices[0].finish_reason = finish_reason
+
+        # Handle Responses API event stream format
+        # Check for OUTPUT_TEXT_DELTA events (have delta attribute with text)
+        if hasattr(event, "delta") and event.delta:
+            mock_chunk.choices[0].delta.content = event.delta
+        # Fallback for other formats
+        elif hasattr(event, "output"):
+            for item in event.output:
+                # Handle ResponseOutputMessage type
+                if hasattr(item, "type") and item.type == "message":
+                    if hasattr(item, "content") and item.content:
+                        for content_item in item.content:
+                            if hasattr(content_item, "text") and content_item.text:
+                                mock_chunk.choices[0].delta.content = content_item.text
+                                break
+                        if mock_chunk.choices[0].delta.content:
+                            break
+                # Fallback: direct text attribute
+                elif hasattr(item, "text"):
+                    mock_chunk.choices[0].delta.content = item.text
+                    break
+
+        return mock_chunk
+
+
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
 
 OPENAI_MODELS = """
@@ -131,6 +271,7 @@ class ModelSettings:
     remove_reasoning: Optional[str] = None  # Deprecated alias for reasoning_tag
     system_prompt_prefix: Optional[str] = None
     accepts_settings: Optional[list] = None
+    wire_api: str = "chat"  # "chat" for Chat Completions API, "responses" for Responses API
 
 
 # Load model settings from package resource
@@ -954,6 +1095,9 @@ class Model(ModelSettings):
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
+        # Check wire_api configuration (environment variable overrides model setting)
+        wire_api = os.environ.get("AIDER_WIRE_API", getattr(self, "wire_api", "chat"))
+
         kwargs = dict(
             model=self.name,
             stream=stream,
@@ -986,7 +1130,6 @@ class Model(ModelSettings):
             kwargs["timeout"] = request_timeout
         if self.verbose:
             dump(kwargs)
-        kwargs["messages"] = messages
 
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ:
@@ -998,7 +1141,45 @@ class Model(ModelSettings):
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
-        res = litellm.completion(**kwargs)
+        # Use responses API or chat completions API based on wire_api setting
+        # Validate wire_api value
+        if wire_api and wire_api not in ("chat", "responses"):
+            self.io.tool_warning(
+                f"Warning: Unrecognized wire_api value '{wire_api}'. "
+                "Valid values are 'chat' or 'responses'. Falling back to chat completions API."
+            )
+            wire_api = "chat"
+
+        if wire_api == "responses":
+            # Convert messages format for responses API
+            # Extract system messages as instructions, rest as input
+            system_messages = [msg for msg in messages if msg.get("role") == "system"]
+            other_messages = [msg for msg in messages if msg.get("role") != "system"]
+
+            # Combine all system messages into a single instructions string
+            if system_messages:
+                combined_instructions = "\n\n".join(
+                    str(msg.get("content", "")) for msg in system_messages if msg.get("content")
+                )
+                if combined_instructions:
+                    kwargs["instructions"] = combined_instructions
+
+            # For responses API, input should only contain non-system messages
+            # Avoid sending system messages twice
+            kwargs["input"] = other_messages
+
+            res = litellm.responses(**kwargs)
+
+            # Wrap the response to match chat completions format
+            if stream:
+                res = StreamingResponsesAPIWrapper(res)
+            else:
+                res = ResponsesAPIWrapper(res)
+        else:
+            # Default: use chat completions API
+            kwargs["messages"] = messages
+            res = litellm.completion(**kwargs)
+
         return hash_object, res
 
     def simple_send_with_retries(self, messages):
@@ -1021,9 +1202,14 @@ class Model(ModelSettings):
                 }
 
                 _hash, response = self.send_completion(**kwargs)
-                if not response or not hasattr(response, "choices") or not response.choices:
+                if not response:
+                    return None
+
+                # Use unified choices interface (provided by ResponsesAPIWrapper)
+                if not hasattr(response, "choices") or not response.choices:
                     return None
                 res = response.choices[0].message.content
+
                 from aider.reasoning_tags import remove_reasoning_content
 
                 return remove_reasoning_content(res, self.reasoning_tag)
