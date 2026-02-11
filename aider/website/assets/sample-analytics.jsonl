@@ -1,80 +1,3 @@
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596422}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596423}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596423}
-{"event": "cli session", "properties": {"main_model": "None", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "None", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596423}
-{"event": "command_edit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596535}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596591}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596608}
-{"event": "command_edit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596613}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596675}
-{"event": "message_send", "properties": {"main_model": "None", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "None", "edit_format": "diff", "prompt_tokens": 17302, "completion_tokens": 87, "total_tokens": 17389, "cost": 0.0224975, "total_cost": 0.0224975}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596723}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596986}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596986}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596986}
-{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754596990}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597081}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597081}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597081}
-{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597084}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597461}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597462}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597463}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
 {"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
 {"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
 {"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754597464}
@@ -998,3 +921,80 @@
 {"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083019}
 {"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083019}
 {"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083022}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083097}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083098}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083098}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083098}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083150}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083153}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083153}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083153}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083199}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083199}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083199}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083199}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083212}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083212}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083212}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083212}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083233}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083233}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083233}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083233}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-3-flash-preview", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-3-flash-preview", "edit_format": "ask", "prompt_tokens": 7059, "completion_tokens": 105, "total_tokens": 7164, "cost": 0.0038445, "total_cost": 0.0038445}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083237}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083237}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083241}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083241}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083241}
+{"event": "cli session", "properties": {"main_model": "gemini/gemini-3-flash-preview", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-3-flash-preview", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083241}
+{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083243}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083244}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-3-flash-preview", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-3-flash-preview", "edit_format": "ask", "prompt_tokens": 7958, "completion_tokens": 117, "total_tokens": 8075, "cost": 0.00433, "total_cost": 0.00433}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083251}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083252}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-3-flash-preview", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-3-flash-preview", "edit_format": "ask", "prompt_tokens": 10915, "completion_tokens": 432, "total_tokens": 11347, "cost": 0.0067535, "total_cost": 0.0110835}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083322}
+{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083419}
+{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083422}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083424}
+{"event": "message_send", "properties": {"main_model": "gpt-5.2", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-3-flash-preview", "edit_format": "ask", "prompt_tokens": 10765, "completion_tokens": 590, "total_tokens": 11355, "cost": 0.02709875, "total_cost": 0.03818225}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083438}
+{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083459}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083547}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083550}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083550}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083550}
+{"event": "message_send", "properties": {"main_model": "gpt-5.2", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5.2", "edit_format": "ask", "prompt_tokens": 7116, "completion_tokens": 2, "total_tokens": 7118, "cost": 0.012481, "total_cost": 0.012481}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083559}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083559}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083622}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083626}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083626}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083626}
+{"event": "message_send", "properties": {"main_model": "gpt-5.2", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5.2", "edit_format": "ask", "prompt_tokens": 8942, "completion_tokens": 12, "total_tokens": 8954, "cost": 0.0158165, "total_cost": 0.0158165}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083634}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083634}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083940}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083940}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083940}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083940}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-3-flash-preview", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-3-flash-preview", "edit_format": "ask", "prompt_tokens": 8981, "completion_tokens": 36, "total_tokens": 9017, "cost": 0.004598499999999999, "total_cost": 0.004598499999999999}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083944}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083944}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083967}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083967}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083967}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083968}
+{"event": "message_send", "properties": {"main_model": "gemini/gemini-3-flash-preview", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-3-flash-preview", "edit_format": "ask", "prompt_tokens": 8970, "completion_tokens": 41, "total_tokens": 9011, "cost": 0.004607999999999999, "total_cost": 0.004607999999999999}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083978}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766083978}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085858}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085859}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085859}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085860}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085880}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085881}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085881}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085882}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085907}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085908}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085908}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085916}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085960}
+{"event": "repo", "properties": {"num_files": 635}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085961}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085961}
+{"event": "exit", "properties": {"reason": "Showed repo map"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1766085969}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1770777981}

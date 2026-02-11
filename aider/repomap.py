@@ -16,6 +16,7 @@ from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from tqdm import tqdm
+from tree_sitter import Query
 
 from aider.dump import dump
 from aider.special import filter_important_files
@@ -262,6 +263,19 @@ class RepoMap:
 
         return data
 
+    def _run_captures(self, query: Query, node):
+        # tree-sitter 0.23.2's python bindings had captures directly on the Query object
+        # but 0.24.0 moved it to a separate QueryCursor class. Support both.
+        if hasattr(query, "captures"):
+            # Old API
+            return query.captures(node)
+
+        # New API
+        from tree_sitter import QueryCursor
+
+        cursor = QueryCursor(query)
+        return cursor.captures(node)
+
     def get_tags_raw(self, fname, rel_fname):
         lang = filename_to_lang(fname)
         if not lang:
@@ -285,17 +299,22 @@ class RepoMap:
         tree = parser.parse(bytes(code, "utf-8"))
 
         # Run the tags queries
-        query = language.query(query_scm)
-        captures = query.captures(tree.root_node)
+        captures = self._run_captures(Query(language, query_scm), tree.root_node)
+
+        captures_by_tag = defaultdict(list)
+        matches = []
+        for tag, nodes in captures.items():
+            for node in nodes:
+                captures_by_tag[tag].append(node)
+            captures_by_tag[tag].append(node)
+            matches.append((node, tag))
+
+        if USING_TSL_PACK:
+            all_nodes = [(node, tag) for tag, nodes in captures_by_tag.items() for node in nodes]
+        else:
+            all_nodes = matches
 
         saw = set()
-        if USING_TSL_PACK:
-            all_nodes = []
-            for tag, nodes in captures.items():
-                all_nodes += [(node, tag) for node in nodes]
-        else:
-            all_nodes = list(captures)
-
         for node, tag in all_nodes:
             if tag.startswith("name.definition."):
                 kind = "def"
