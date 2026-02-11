@@ -2008,17 +2008,6 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
-- name: openrouter/anthropic/claude-sonnet-4.5-20250929
-  edit_format: diff
-  weak_model_name: openrouter/anthropic/claude-haiku-4-5
-  use_repo_map: true
-  examples_as_sys_msg: false
-  extra_params:
-    max_tokens: 64000
-  cache_control: true
-  editor_model_name: openrouter/anthropic/claude-sonnet-4-5
-  editor_edit_format: editor-diff
-  accepts_settings: ["thinking_tokens"]
 
 - name: openrouter/anthropic/claude-sonnet-4.5
   edit_format: diff
@@ -2032,14 +2021,6 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
-- name: openrouter/anthropic/claude-haiku-4.5-20251001
-  edit_format: diff
-  weak_model_name: openrouter/anthropic/claude-haiku-4-5
-  use_repo_map: true
-  examples_as_sys_msg: false
-  extra_params:
-    max_tokens: 64000
-  cache_control: true
 
 - name: openrouter/anthropic/claude-haiku-4.5
   edit_format: diff
