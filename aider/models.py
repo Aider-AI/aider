@@ -98,7 +98,7 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
-    "flash": "gemini/gemini-2.5-flash",
+    "flash": "gemini/gemini-flash-latest",
     "flash-lite": "gemini/gemini-2.5-flash-lite",
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
