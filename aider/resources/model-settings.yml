@@ -1996,7 +1996,7 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
-- name: openrouter/anthropic/claude-opus-4-6
+- name: openrouter/anthropic/claude-opus-4.6
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-haiku-4-5
   use_repo_map: true
@@ -2008,7 +2008,7 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
-- name: openrouter/anthropic/claude-sonnet-4-5-20250929
+- name: openrouter/anthropic/claude-sonnet-4.5-20250929
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-haiku-4-5
   use_repo_map: true
@@ -2020,7 +2020,7 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
-- name: openrouter/anthropic/claude-sonnet-4-5
+- name: openrouter/anthropic/claude-sonnet-4.5
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-haiku-4-5
   use_repo_map: true
@@ -2032,7 +2032,7 @@
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
 
-- name: openrouter/anthropic/claude-haiku-4-5-20251001
+- name: openrouter/anthropic/claude-haiku-4.5-20251001
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-haiku-4-5
   use_repo_map: true
@@ -2041,7 +2041,7 @@
     max_tokens: 64000
   cache_control: true
 
-- name: openrouter/anthropic/claude-haiku-4-5
+- name: openrouter/anthropic/claude-haiku-4.5
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-haiku-4-5
   use_repo_map: true
