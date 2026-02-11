@@ -73,6 +73,7 @@ cog.out(model_list)
 - au.anthropic.claude-sonnet-4-5-20250929-v1:0
 - azure_ai/claude-haiku-4-5
 - azure_ai/claude-opus-4-1
+- azure_ai/claude-opus-4-5
 - azure_ai/claude-sonnet-4-5
 - azure_ai/deepseek-v3.2
 - azure_ai/deepseek-v3.2-speciale
@@ -114,6 +115,7 @@ cog.out(model_list)
 - databricks/databricks-claude-sonnet-4
 - databricks/databricks-claude-sonnet-4-1
 - databricks/databricks-claude-sonnet-4-5
+- deepseek-v3-2-251201
 - deepseek/deepseek-chat
 - deepseek/deepseek-coder
 - deepseek/deepseek-r1
@@ -129,12 +131,14 @@ cog.out(model_list)
 - eu.anthropic.claude-opus-4-5-20251101-v1:0
 - eu.anthropic.claude-sonnet-4-20250514-v1:0
 - eu.anthropic.claude-sonnet-4-5-20250929-v1:0
+- glm-4-7-251222
 - global.anthropic.claude-haiku-4-5-20251001-v1:0
 - global.anthropic.claude-opus-4-5-20251101-v1:0
 - global.anthropic.claude-sonnet-4-20250514-v1:0
 - global.anthropic.claude-sonnet-4-5-20250929-v1:0
 - jp.anthropic.claude-haiku-4-5-20251001-v1:0
 - jp.anthropic.claude-sonnet-4-5-20250929-v1:0
+- kimi-k2-thinking-251104
 - mistral/codestral-2405
 - mistral/codestral-2508
 - mistral/codestral-latest
@@ -183,6 +187,7 @@ cog.out(model_list)
 - openrouter/deepseek/deepseek-r1-0528
 - openrouter/deepseek/deepseek-v3.2
 - openrouter/deepseek/deepseek-v3.2-exp
+- openrouter/z-ai/glm-4.7
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
 - us.anthropic.claude-3-7-sonnet-20250219-v1:0
@@ -192,6 +197,16 @@ cog.out(model_list)
 - us.anthropic.claude-opus-4-5-20251101-v1:0
 - us.anthropic.claude-sonnet-4-20250514-v1:0
 - us.anthropic.claude-sonnet-4-5-20250929-v1:0
+- vercel_ai_gateway/anthropic/claude-3-5-sonnet
+- vercel_ai_gateway/anthropic/claude-3-5-sonnet-20241022
+- vercel_ai_gateway/anthropic/claude-3-7-sonnet
+- vercel_ai_gateway/anthropic/claude-haiku-4.5
+- vercel_ai_gateway/anthropic/claude-opus-4
+- vercel_ai_gateway/anthropic/claude-opus-4.1
+- vercel_ai_gateway/anthropic/claude-opus-4.5
+- vercel_ai_gateway/anthropic/claude-opus-4.6
+- vercel_ai_gateway/anthropic/claude-sonnet-4
+- vercel_ai_gateway/anthropic/claude-sonnet-4.5
 - vertex_ai/claude-3-5-haiku
 - vertex_ai/claude-3-5-haiku@20241022
 - vertex_ai/claude-3-5-sonnet
