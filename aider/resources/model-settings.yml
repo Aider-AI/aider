@@ -1401,6 +1401,62 @@
   use_temperature: false
   accepts_settings: ["thinking_tokens"]
 
+- name: gemini/gemini-2.5-flash-preview-09-2025
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini-2.5-flash-preview-09-2025
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini/gemini-2.5-flash-lite
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini-2.5-flash-lite
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini/gemini-2.5-flash-lite-preview-09-2025
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini-2.5-flash-lite-preview-09-2025
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini/gemini-flash-latest
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
+- name: gemini-flash-latest
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
 - name: gemini/gemini-2.5-pro
   overeager: true
   edit_format: diff-fenced
