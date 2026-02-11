@@ -246,7 +246,7 @@ safetensors==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   transformers
-scikit-learn==1.8.0
+scikit-learn==1.7.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
