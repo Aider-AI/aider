@@ -2552,3 +2552,83 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+
+- name: gpt-4.1-nano
+  edit_format: diff
+  weak_model_name: gpt-4.1-nano
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+
+- name: openai/gpt-4.1-nano
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-nano
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: false
+
+- name: o1-pro
+  edit_format: diff
+  weak_model_name: gpt-4o-mini
+  use_repo_map: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+
+- name: openai/o1-pro
+  edit_format: diff
+  weak_model_name: openai/gpt-4o-mini
+  use_repo_map: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: openai/gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: "Formatting re-enabled. "
+  accepts_settings: ["reasoning_effort"]
+  examples_as_sys_msg: true
+
+- name: gpt-5.2-codex
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openai/gpt-5.2-codex
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: gpt-5.1-codex-mini
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openai/gpt-5.1-codex-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: gpt-5.1-codex-max
+  edit_format: diff
+  weak_model_name: gpt-5.1-codex-mini
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openai/gpt-5.1-codex-max
+  edit_format: diff
+  weak_model_name: openai/gpt-5.1-codex-mini
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
