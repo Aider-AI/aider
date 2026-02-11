@@ -36,7 +36,12 @@ cogapp==3.6.0
 contourpy==1.3.3
     # via
     #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements-dev.in
     #   matplotlib
+coverage[toml]==7.13.4
+    # via
+    #   -c requirements/common-constraints.txt
+    #   pytest-cov
 cycler==0.12.1
     # via
     #   -c requirements/common-constraints.txt
@@ -85,12 +90,12 @@ googleapis-common-protos==1.72.0
     #   -c requirements/common-constraints.txt
     #   google-api-core
     #   grpcio-status
-grpcio==1.76.0
+grpcio==1.67.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
     #   grpcio-status
-grpcio-status==1.76.0
+grpcio-status==1.67.1
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -171,6 +176,7 @@ pluggy==1.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   pytest
+    #   pytest-cov
 pre-commit==4.5.1
     # via
     #   -c requirements/common-constraints.txt
@@ -179,7 +185,7 @@ proto-plus==1.27.0
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
-protobuf==6.33.4
+protobuf==5.29.6
     # via
     #   -c requirements/common-constraints.txt
     #   google-api-core
@@ -213,7 +219,12 @@ pytest==9.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-dev.in
+    #   pytest-cov
     #   pytest-env
+pytest-cov==7.0.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements-dev.in
 pytest-env==1.2.0
     # via
     #   -c requirements/common-constraints.txt
@@ -268,7 +279,6 @@ typer==0.20.0
 typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
-    #   grpcio
     #   typer
 tzdata==2025.3
     # via

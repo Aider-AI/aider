@@ -12,6 +12,10 @@ aiosignal==1.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
+annotated-doc==0.0.4
+    # via
+    #   -c requirements/common-constraints.txt
+    #   fastapi
 annotated-types==0.7.0
     # via
     #   -c requirements/common-constraints.txt
@@ -21,6 +25,7 @@ anyio==4.12.0
     #   -c requirements/common-constraints.txt
     #   httpx
     #   openai
+    #   starlette
     #   watchfiles
 asgiref==3.11.0
     # via
@@ -77,6 +82,10 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
+fastapi==0.128.7
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 fastuuid==0.14.0
     # via
     #   -c requirements/common-constraints.txt
@@ -110,7 +119,7 @@ grep-ast==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-grpcio==1.76.0
+grpcio==1.67.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -219,6 +228,10 @@ openai==2.13.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+orjson==3.11.7
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 oslex==0.1.3
     # via
     #   -c requirements/common-constraints.txt
@@ -273,6 +286,7 @@ pycparser==2.23
 pydantic==2.12.5
     # via
     #   -c requirements/common-constraints.txt
+    #   fastapi
     #   litellm
     #   mixpanel
     #   openai
@@ -375,6 +389,10 @@ soupsieve==2.8.1
     # via
     #   -c requirements/common-constraints.txt
     #   beautifulsoup4
+starlette==0.52.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   fastapi
 tiktoken==0.12.0
     # via
     #   -c requirements/common-constraints.txt
@@ -410,17 +428,22 @@ tree-sitter-yaml==0.7.2
 typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
+    #   aiosignal
+    #   anyio
     #   beautifulsoup4
-    #   grpcio
+    #   fastapi
     #   huggingface-hub
     #   openai
     #   posthog
     #   pydantic
     #   pydantic-core
+    #   referencing
+    #   starlette
     #   typing-inspection
 typing-inspection==0.4.2
     # via
     #   -c requirements/common-constraints.txt
+    #   fastapi
     #   pydantic
 urllib3==2.6.2
     # via
