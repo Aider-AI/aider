@@ -466,7 +466,7 @@ rsa==4.9.1
     # via google-auth
 safetensors==0.7.0
     # via transformers
-scikit-learn==1.7.2
+scikit-learn==1.8.0
     # via
     #   -r requirements/requirements-help.in
     #   sentence-transformers
