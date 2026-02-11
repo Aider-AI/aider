@@ -608,6 +608,26 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: bedrock/anthropic.claude-haiku-4-5-20251001-v1:0
+  edit_format: diff
+  weak_model_name: bedrock/anthropic.claude-haiku-4-5-20251001-v1:0
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+
+- name: bedrock/anthropic.claude-opus-4-6-v1
+  edit_format: diff
+  weak_model_name: bedrock/anthropic.claude-haiku-4-5-20251001-v1:0
+  use_repo_map: true
+  extra_params:
+    max_tokens: 128000
+  cache_control: true
+  editor_model_name: bedrock/global.anthropic.claude-sonnet-4-5-20250929-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: bedrock/anthropic.claude-sonnet-4-20250514-v1:0
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-3-5-haiku-20241022-v1:0
@@ -618,6 +638,18 @@ cog.out("```\n")
     max_tokens: 64000
   cache_control: true
   editor_model_name: bedrock/anthropic.claude-sonnet-4-20250514-v1:0
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: bedrock/anthropic.claude-sonnet-4-5-20250929-v1:0
+  edit_format: diff
+  weak_model_name: bedrock/anthropic.claude-haiku-4-5-20251001-v1:0
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: bedrock/global.anthropic.claude-sonnet-4-5-20250929-v1:0
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
@@ -865,6 +897,22 @@ cog.out("```\n")
 - name: claude-3-sonnet-20240229
   weak_model_name: claude-3-5-haiku-20241022
 
+- name: claude-haiku-4-5
+  edit_format: diff
+  weak_model_name: claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+
+- name: claude-haiku-4-5-20251001
+  edit_format: diff
+  weak_model_name: claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+
 - name: claude-opus-4-20250514
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
@@ -879,6 +927,18 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: claude-opus-4-6
+  edit_format: diff
+  weak_model_name: claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 128000
+  cache_control: true
+  editor_model_name: claude-sonnet-4-5
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: claude-sonnet-4-20250514
   edit_format: diff
   weak_model_name: claude-3-5-haiku-20241022
@@ -889,6 +949,30 @@ cog.out("```\n")
     max_tokens: 64000
   cache_control: true
   editor_model_name: claude-sonnet-4-20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: claude-sonnet-4-5
+  edit_format: diff
+  weak_model_name: claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: claude-sonnet-4-5
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: claude-sonnet-4-5-20250929
+  edit_format: diff
+  weak_model_name: claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: claude-sonnet-4-5
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
@@ -1023,11 +1107,43 @@ cog.out("```\n")
   editor_edit_format: editor-diff
   reasoning_tag: think
 
+- name: gemini-2.5-flash-lite
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
+
+- name: gemini-2.5-flash-lite-preview-09-2025
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
+
 - name: gemini-2.5-flash-preview-04-17
   edit_format: diff
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
+  - thinking_tokens
+
+- name: gemini-2.5-flash-preview-09-2025
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
+
+- name: gemini-flash-latest
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
   - thinking_tokens
 
 - name: gemini/gemini-1.5-flash-002
@@ -1060,7 +1176,23 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: gemini/gemini-2.5-flash-lite
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
+
 - name: gemini/gemini-2.5-flash-lite-preview-06-17
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
+
+- name: gemini/gemini-2.5-flash-lite-preview-09-2025
   edit_format: diff-fenced
   use_repo_map: true
   overeager: true
@@ -1073,6 +1205,14 @@ cog.out("```\n")
   use_repo_map: true
   accepts_settings:
   - reasoning_effort
+  - thinking_tokens
+
+- name: gemini/gemini-2.5-flash-preview-09-2025
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
   - thinking_tokens
 
 - name: gemini/gemini-2.5-pro
@@ -1130,6 +1270,14 @@ cog.out("```\n")
 - name: gemini/gemini-exp-1206
   edit_format: diff
   use_repo_map: true
+
+- name: gemini/gemini-flash-latest
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
 
 - name: gemini/gemma-3-27b-it
   use_system_prompt: false
@@ -1217,6 +1365,12 @@ cog.out("```\n")
 
 - name: gpt-4.1-mini
   edit_format: diff
+  use_repo_map: true
+  reminder: sys
+
+- name: gpt-4.1-nano
+  edit_format: diff
+  weak_model_name: gpt-4.1-nano
   use_repo_map: true
   reminder: sys
 
@@ -1387,6 +1541,22 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: gpt-5.1-codex-max
+  edit_format: diff
+  weak_model_name: gpt-5.1-codex-mini
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.1-codex-mini
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
 - name: gpt-5.2
   edit_format: diff
   weak_model_name: gpt-5-nano
@@ -1405,6 +1575,14 @@ cog.out("```\n")
   - reasoning_effort
 
 - name: gpt-5.2-chat-latest
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.2-codex
   edit_format: diff
   weak_model_name: gpt-5-nano
   use_repo_map: true
@@ -1471,6 +1649,19 @@ cog.out("```\n")
   editor_model_name: gpt-4o
   editor_edit_format: editor-diff
 
+- name: o1-pro
+  edit_format: diff
+  weak_model_name: gpt-4o-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
 - name: o3
   edit_format: diff
   weak_model_name: gpt-4.1-mini
@@ -1527,6 +1718,12 @@ cog.out("```\n")
 
 - name: openai/gpt-4.1-mini
   edit_format: diff
+  use_repo_map: true
+  reminder: sys
+
+- name: openai/gpt-4.1-nano
+  edit_format: diff
+  weak_model_name: openai/gpt-4.1-nano
   use_repo_map: true
   reminder: sys
 
@@ -1679,6 +1876,22 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: openai/gpt-5.1-codex-max
+  edit_format: diff
+  weak_model_name: openai/gpt-5.1-codex-mini
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.1-codex-mini
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
 - name: openai/gpt-5.2
   edit_format: diff
   weak_model_name: openai/gpt-5-nano
@@ -1696,6 +1909,14 @@ cog.out("```\n")
   - reasoning_effort
 
 - name: openai/gpt-5.2-chat-latest
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.2-codex
   edit_format: diff
   weak_model_name: openai/gpt-5-nano
   use_repo_map: true
@@ -1744,6 +1965,19 @@ cog.out("```\n")
   use_temperature: false
   editor_model_name: openai/gpt-4o
   editor_edit_format: editor-diff
+
+- name: openai/o1-pro
+  edit_format: diff
+  weak_model_name: openai/gpt-4o-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: openai/gpt-4o
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
 
 - name: openai/o3
   edit_format: diff
@@ -1899,6 +2133,14 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: openrouter/anthropic/claude-haiku-4.5
+  edit_format: diff
+  weak_model_name: openrouter/anthropic/claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+
 - name: openrouter/anthropic/claude-opus-4
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
@@ -1913,6 +2155,18 @@ cog.out("```\n")
   accepts_settings:
   - thinking_tokens
 
+- name: openrouter/anthropic/claude-opus-4.6
+  edit_format: diff
+  weak_model_name: openrouter/anthropic/claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 128000
+  cache_control: true
+  editor_model_name: openrouter/anthropic/claude-sonnet-4-5
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: openrouter/anthropic/claude-sonnet-4
   edit_format: diff
   weak_model_name: openrouter/anthropic/claude-3-5-haiku
@@ -1923,6 +2177,18 @@ cog.out("```\n")
     max_tokens: 64000
   cache_control: true
   editor_model_name: openrouter/anthropic/claude-sonnet-4
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: openrouter/anthropic/claude-sonnet-4.5
+  edit_format: diff
+  weak_model_name: openrouter/anthropic/claude-haiku-4-5
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: openrouter/anthropic/claude-sonnet-4-5
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
@@ -2005,6 +2271,14 @@ cog.out("```\n")
   extra_params:
     max_tokens: 8192
   caches_by_default: true
+
+- name: openrouter/google/gemini-2.5-flash
+  edit_format: diff-fenced
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - thinking_tokens
 
 - name: openrouter/google/gemini-2.5-pro
   edit_format: diff-fenced
@@ -2203,6 +2477,22 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: openrouter/openai/gpt-5.1-codex-max
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5.1-codex-mini
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.1-codex-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
 - name: openrouter/openai/gpt-5.2
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-5-nano
@@ -2220,6 +2510,14 @@ cog.out("```\n")
   - reasoning_effort
 
 - name: openrouter/openai/gpt-5.2-chat-latest
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.2-codex
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-5-nano
   use_repo_map: true
@@ -2507,6 +2805,26 @@ cog.out("```\n")
 - name: vertex_ai/claude-3-sonnet@20240229
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
 
+- name: vertex_ai/claude-haiku-4-5@20251001
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-haiku-4-5@20251001
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+
+- name: vertex_ai/claude-opus-4-6
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-haiku-4-5@20251001
+  use_repo_map: true
+  extra_params:
+    max_tokens: 128000
+  cache_control: true
+  editor_model_name: vertex_ai/claude-sonnet-4-5@20250929
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
 - name: vertex_ai/claude-opus-4@20250514
   edit_format: diff
   weak_model_name: vertex_ai/claude-3-5-haiku@20241022
@@ -2525,6 +2843,18 @@ cog.out("```\n")
   extra_params:
     max_tokens: 32000
   editor_model_name: vertex_ai/claude-sonnet-4@20250514
+  editor_edit_format: editor-diff
+  accepts_settings:
+  - thinking_tokens
+
+- name: vertex_ai/claude-sonnet-4-5@20250929
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-haiku-4-5@20251001
+  use_repo_map: true
+  extra_params:
+    max_tokens: 64000
+  cache_control: true
+  editor_model_name: vertex_ai/claude-sonnet-4-5@20250929
   editor_edit_format: editor-diff
   accepts_settings:
   - thinking_tokens
