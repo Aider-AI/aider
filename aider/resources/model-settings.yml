@@ -1521,6 +1521,13 @@
   weak_model_name: openrouter/google/gemini-2.5-flash
   accepts_settings: ["thinking_tokens"]
 
+- name: openrouter/google/gemini-2.5-flash
+  overeager: true
+  edit_format: diff-fenced
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["thinking_tokens"]
+
 - name: gemini/gemini-3-pro-preview
   overeager: true
   edit_format: diff-fenced
@@ -2685,6 +2692,27 @@
 - name: openai/gpt-5.1-codex-max
   edit_format: diff
   weak_model_name: openai/gpt-5.1-codex-mini
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openrouter/openai/gpt-5.2-codex
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openrouter/openai/gpt-5.1-codex-mini
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: openrouter/openai/gpt-5.1-codex-max
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5.1-codex-mini
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
