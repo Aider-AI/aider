@@ -4,7 +4,7 @@ aiohappyeyeballs==2.6.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-aiohttp==3.13.2
+aiohttp==3.13.3
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -16,18 +16,19 @@ annotated-doc==0.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   fastapi
+    #   typer
 annotated-types==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   pydantic
-anyio==4.12.0
+anyio==4.12.1
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
     #   openai
     #   starlette
     #   watchfiles
-asgiref==3.11.0
+asgiref==3.11.1
     # via
     #   -c requirements/common-constraints.txt
     #   mixpanel
@@ -46,7 +47,7 @@ beautifulsoup4==4.14.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-certifi==2025.11.12
+certifi==2026.1.4
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
@@ -65,6 +66,7 @@ click==8.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+    #   typer
 configargparse==1.7.1
     # via
     #   -c requirements/common-constraints.txt
@@ -82,7 +84,7 @@ distro==1.9.0
     #   -c requirements/common-constraints.txt
     #   openai
     #   posthog
-fastapi==0.128.7
+fastapi==0.128.8
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -90,7 +92,7 @@ fastuuid==0.14.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-filelock==3.20.1
+filelock==3.20.3
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -103,7 +105,7 @@ frozenlist==1.8.0
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   aiosignal
-fsspec==2025.12.0
+fsspec==2026.2.0
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -111,7 +113,7 @@ gitdb==4.0.12
     # via
     #   -c requirements/common-constraints.txt
     #   gitpython
-gitpython==3.1.45
+gitpython==3.1.46
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -119,10 +121,6 @@ grep-ast==0.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-grpcio==1.67.1
-    # via
-    #   -c requirements/common-constraints.txt
-    #   litellm
 h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
@@ -138,10 +136,11 @@ httpcore==1.0.9
 httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
+    #   huggingface-hub
     #   litellm
     #   mixpanel
     #   openai
-huggingface-hub==0.36.0
+huggingface-hub==1.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   tokenizers
@@ -165,15 +164,15 @@ jinja2==3.1.6
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-jiter==0.12.0
+jiter==0.13.0
     # via
     #   -c requirements/common-constraints.txt
     #   openai
-json5==0.12.1
+json5==0.13.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-jsonschema==4.25.1
+jsonschema==4.26.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -182,7 +181,7 @@ jsonschema-specifications==2025.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.80.10
+litellm==1.81.10
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -210,7 +209,7 @@ mslex==1.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   oslex
-multidict==6.7.0
+multidict==6.7.1
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
@@ -224,7 +223,7 @@ numpy==1.26.4
     #   -c requirements/common-constraints.txt
     #   scipy
     #   soundfile
-openai==2.13.0
+openai==2.20.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
@@ -236,12 +235,12 @@ oslex==0.1.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-packaging==25.0
+packaging==26.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   huggingface-hub
-pathspec==0.12.1
+pathspec==1.0.4
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -250,11 +249,11 @@ pexpect==4.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-pillow==12.0.0
+pillow==12.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-posthog==7.4.0
+posthog==7.8.6
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -267,7 +266,7 @@ propcache==0.4.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
-psutil==7.1.3
+psutil==7.2.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -279,7 +278,7 @@ pycodestyle==2.14.0
     # via
     #   -c requirements/common-constraints.txt
     #   flake8
-pycparser==2.23
+pycparser==3.0
     # via
     #   -c requirements/common-constraints.txt
     #   cffi
@@ -332,21 +331,21 @@ referencing==0.37.0
     #   -c requirements/common-constraints.txt
     #   jsonschema
     #   jsonschema-specifications
-regex==2025.11.3
+regex==2026.1.15
     # via
     #   -c requirements/common-constraints.txt
     #   tiktoken
 requests==2.32.5
     # via
     #   -c requirements/common-constraints.txt
-    #   huggingface-hub
     #   mixpanel
     #   posthog
     #   tiktoken
-rich==14.2.0
+rich==14.3.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   typer
 rpds-py==0.30.0
     # via
     #   -c requirements/common-constraints.txt
@@ -356,6 +355,11 @@ scipy==1.15.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+shellingham==1.5.4
+    # via
+    #   -c requirements/common-constraints.txt
+    #   huggingface-hub
+    #   typer
 shtab==1.8.0
     # via
     #   -c requirements/common-constraints.txt
@@ -377,7 +381,7 @@ socksio==1.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-sounddevice==0.5.3
+sounddevice==0.5.5
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
@@ -385,7 +389,7 @@ soundfile==0.13.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-soupsieve==2.8.1
+soupsieve==2.8.3
     # via
     #   -c requirements/common-constraints.txt
     #   beautifulsoup4
@@ -397,11 +401,11 @@ tiktoken==0.12.0
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-tokenizers==0.22.1
+tokenizers==0.22.2
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
-tqdm==4.67.1
+tqdm==4.67.3
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -425,6 +429,14 @@ tree-sitter-yaml==0.7.2
     # via
     #   -c requirements/common-constraints.txt
     #   tree-sitter-language-pack
+typer==0.23.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   typer-slim
+typer-slim==0.23.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   huggingface-hub
 typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
@@ -445,7 +457,7 @@ typing-inspection==0.4.2
     #   -c requirements/common-constraints.txt
     #   fastapi
     #   pydantic
-urllib3==2.6.2
+urllib3==2.6.3
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -453,7 +465,7 @@ watchfiles==1.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-wcwidth==0.2.14
+wcwidth==0.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   prompt-toolkit

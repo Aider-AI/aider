@@ -13,11 +13,11 @@ blinker==1.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-cachetools==6.2.4
+cachetools==6.2.6
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-certifi==2025.11.12
+certifi==2026.1.4
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -33,7 +33,7 @@ gitdb==4.0.12
     # via
     #   -c requirements/common-constraints.txt
     #   gitpython
-gitpython==3.1.45
+gitpython==3.1.46
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -46,7 +46,7 @@ jinja2==3.1.6
     #   -c requirements/common-constraints.txt
     #   altair
     #   pydeck
-jsonschema==4.25.1
+jsonschema==4.26.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -58,7 +58,7 @@ markupsafe==3.0.3
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==2.14.0
+narwhals==2.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -68,7 +68,7 @@ numpy==1.26.4
     #   pandas
     #   pydeck
     #   streamlit
-packaging==25.0
+packaging==26.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -77,15 +77,15 @@ pandas==2.3.3
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-pillow==12.0.0
+pillow==12.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-protobuf==5.29.6
+protobuf==6.33.5
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-pyarrow==22.0.0
+pyarrow==23.0.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -123,11 +123,11 @@ smmap==5.0.2
     # via
     #   -c requirements/common-constraints.txt
     #   gitdb
-streamlit==1.52.2
+streamlit==1.54.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-browser.in
-tenacity==9.1.2
+tenacity==9.1.4
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -149,7 +149,7 @@ tzdata==2025.3
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-urllib3==2.6.2
+urllib3==2.6.3
     # via
     #   -c requirements/common-constraints.txt
     #   requests
