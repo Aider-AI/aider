@@ -264,12 +264,12 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>openai/gpt-5.2</td><td class='right'>960,134</td><td class='right'>49.0%</td></tr>
-<tr><td>gemini/gemini-3-flash-preview</td><td class='right'>241,516</td><td class='right'>12.3%</td></tr>
-<tr><td>gemini/gemini-2.5-pro</td><td class='right'>222,047</td><td class='right'>11.3%</td></tr>
-<tr><td>gpt-5</td><td class='right'>211,072</td><td class='right'>10.8%</td></tr>
+<tr><td>openai/gpt-5.2</td><td class='right'>960,134</td><td class='right'>48.5%</td></tr>
+<tr><td>gemini/gemini-3-flash-preview</td><td class='right'>241,516</td><td class='right'>12.2%</td></tr>
+<tr><td>gpt-5</td><td class='right'>231,258</td><td class='right'>11.7%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>222,047</td><td class='right'>11.2%</td></tr>
 <tr><td>None</td><td class='right'>151,599</td><td class='right'>7.7%</td></tr>
-<tr><td>gemini/gemini-3-pro-preview</td><td class='right'>81,851</td><td class='right'>4.2%</td></tr>
+<tr><td>gemini/gemini-3-pro-preview</td><td class='right'>81,851</td><td class='right'>4.1%</td></tr>
 <tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>1.9%</td></tr>
 <tr><td>gpt-5.2</td><td class='right'>27,427</td><td class='right'>1.4%</td></tr>
 <tr><td>gemini/gemini-2.5-flash-lite</td><td class='right'>15,470</td><td class='right'>0.8%</td></tr>
