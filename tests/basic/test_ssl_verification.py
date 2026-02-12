@@ -48,6 +48,7 @@ class TestSSLVerification(TestCase):
                 "missing_keys": [],
                 "keys_in_environment": [],
             }
+            mock_model.return_value.get_repo_map_tokens.return_value = 0
 
             with patch("aider.llm.litellm._lazy_module", mock_module):
                 # Run main with --no-verify-ssl flag
