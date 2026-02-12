@@ -398,10 +398,6 @@ def get_badges_html():
     <span class="badge-label">📈 Tokens/week</span>
     <span class="badge-value">{TOKENS_PER_WEEK}</span>
 </div>
-<a href="https://openrouter.ai/#options-menu" class="github-badge badge-router" title="{OPENROUTER_TOOLTIP}">
-    <span class="badge-label">🏆 OpenRouter</span>
-    <span class="badge-value">Top 20</span>
-</a>
 <a href="/HISTORY.html" class="github-badge badge-coded" title="{SINGULARITY_TOOLTIP}">
     <span class="badge-label">🔄 Singularity</span>
     <span class="badge-value">{aider_percent_rounded}%</span>

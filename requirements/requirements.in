@@ -49,3 +49,8 @@ scipy<1.16
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
 # Uses importlib-metadata
 importlib-metadata<8.0.0
+
+# The proper dependency is litellm[proxy], but it installs
+# mcp which is a pywin32 dependency that fails on linux CI.
+fastapi
+orjson

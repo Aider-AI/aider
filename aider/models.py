@@ -74,6 +74,11 @@ claude-3-5-sonnet-20240620
 claude-3-5-sonnet-20241022
 claude-sonnet-4-20250514
 claude-opus-4-20250514
+claude-opus-4-6
+claude-sonnet-4-5
+claude-sonnet-4-5-20250929
+claude-haiku-4-5
+claude-haiku-4-5-20251001
 """
 
 ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.strip()]
@@ -81,9 +86,9 @@ ANTHROPIC_MODELS = [ln.strip() for ln in ANTHROPIC_MODELS.splitlines() if ln.str
 # Mapping of model aliases to their canonical names
 MODEL_ALIASES = {
     # Claude models
-    "sonnet": "anthropic/claude-sonnet-4-20250514",
-    "haiku": "claude-3-5-haiku-20241022",
-    "opus": "claude-opus-4-20250514",
+    "sonnet": "claude-sonnet-4-5",
+    "haiku": "claude-haiku-4-5",
+    "opus": "claude-opus-4-6",
     # GPT models
     "4": "gpt-4-0613",
     "4o": "gpt-4o",
@@ -93,7 +98,7 @@ MODEL_ALIASES = {
     "3": "gpt-3.5-turbo",
     # Other models
     "deepseek": "deepseek/deepseek-chat",
-    "flash": "gemini/gemini-2.5-flash",
+    "flash": "gemini/gemini-flash-latest",
     "flash-lite": "gemini/gemini-2.5-flash-lite",
     "quasar": "openrouter/openrouter/quasar-alpha",
     "r1": "deepseek/deepseek-reasoner",
@@ -505,6 +510,21 @@ class Model(ModelSettings):
 
         if "gpt-3.5" in model or "gpt-4" in model:
             self.reminder = "sys"
+            return  # <--
+
+        if (
+            "sonnet-4-5" in model
+            or "opus-4-6" in model
+            or "haiku-4-5" in model
+            or "claude-sonnet-4-5" in model
+            or "claude-opus-4-6" in model
+            or "claude-haiku-4-5" in model
+        ):
+            self.edit_format = "diff"
+            self.use_repo_map = True
+            self.examples_as_sys_msg = False
+            if "thinking_tokens" not in self.accepts_settings:
+                self.accepts_settings.append("thinking_tokens")
             return  # <--
 
         if "3-7-sonnet" in model:

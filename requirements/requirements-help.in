@@ -8,4 +8,6 @@ numpy<2
 # torch==2.2.2
 
 # Later versions break test_help in GitHub Actions on Windows and Ubuntu
-# llama-index-core==0.12.26
+# due to llama-index-core==0.12.26
+scikit-learn==1.7.2 ; python_version < "3.11"
+scikit-learn==1.8.0 ; python_version >= "3.11"

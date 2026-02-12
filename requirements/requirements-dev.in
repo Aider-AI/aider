@@ -1,4 +1,5 @@
 pytest
+pytest-cov
 pytest-env
 pip-tools
 lox
@@ -12,3 +13,7 @@ semver
 codespell
 uv
 google-cloud-bigquery
+
+# matplotlib 3.7.2 requires contourpy 1.3.2, but contourpy 1.3.2 does not support Python 3.11.
+contourpy==1.3.2 ; python_version < "3.11"
+contourpy==1.3.3 ; python_version >= "3.11"
