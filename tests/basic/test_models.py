@@ -138,13 +138,13 @@ class TestModels(unittest.TestCase):
         self.assertEqual(model.name, "gpt-3.5-turbo")
 
         model = Model("sonnet")
-        self.assertEqual(model.name, "anthropic/claude-sonnet-4-20250514")
+        self.assertEqual(model.name, "claude-sonnet-4-5")
 
         model = Model("haiku")
-        self.assertEqual(model.name, "claude-3-5-haiku-20241022")
+        self.assertEqual(model.name, "claude-haiku-4-5")
 
         model = Model("opus")
-        self.assertEqual(model.name, "claude-opus-4-20250514")
+        self.assertEqual(model.name, "claude-opus-4-6")
 
         # Test non-alias passes through unchanged
         model = Model("gpt-4")

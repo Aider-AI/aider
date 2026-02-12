@@ -79,19 +79,19 @@ for alias, model in sorted(MODEL_ALIASES.items()):
 - `4-turbo`: gpt-4-1106-preview
 - `4o`: gpt-4o
 - `deepseek`: deepseek/deepseek-chat
-- `flash`: gemini/gemini-2.5-flash
+- `flash`: gemini/gemini-flash-latest
 - `flash-lite`: gemini/gemini-2.5-flash-lite
 - `gemini`: gemini/gemini-3-pro-preview
 - `gemini-2.5-pro`: gemini/gemini-2.5-pro
 - `gemini-3-pro-preview`: gemini/gemini-3-pro-preview
 - `gemini-exp`: gemini/gemini-2.5-pro-exp-03-25
 - `grok3`: xai/grok-3-beta
-- `haiku`: claude-3-5-haiku-20241022
+- `haiku`: claude-haiku-4-5
 - `optimus`: openrouter/openrouter/optimus-alpha
-- `opus`: claude-opus-4-20250514
+- `opus`: claude-opus-4-6
 - `quasar`: openrouter/openrouter/quasar-alpha
 - `r1`: deepseek/deepseek-reasoner
-- `sonnet`: anthropic/claude-sonnet-4-20250514
+- `sonnet`: claude-sonnet-4-5
 <!--[[[end]]]-->
 
 ## Priority

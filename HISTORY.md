@@ -1,5 +1,23 @@
 # Release history
 
+### main branch
+
+- Added support for Claude 4.5/4.6 models and updated model aliases (sonnet/haiku/opus).
+- Expanded Gemini model support with 2.5 Flash and Flash‑Lite, added Gemini 3 preview models, and updated the flash alias to gemini/gemini-flash-latest.
+- Added DeepSeek Reasoner model and updated DeepSeek model metadata with costs and prompt caching.
+- Added BadGatewayError and ImageFetchError to handled exceptions.
+- Fixed exception mapping to only include real exception classes, avoiding runtime errors, by Claudia Pellegrino.
+- Repo map now tags Fortran, Haskell, Julia, and Zig and is compatible with newer tree-sitter Python APIs, by Varchas Gopalaswamy, Tim Put, and Mubashir Osmani.
+- Removed deprecated google-generativeai dependency to eliminate import warnings, by Mark McDonald.
+- Added settings for new OpenAI GPT‑5.1/5.2 and GPT‑5‑pro models across OpenAI, Azure, and OpenRouter, including chat and codex variants.
+- Changed the gemini alias to point to gemini/gemini-3-pro-preview.
+- Added support for OpenAI o1-pro model.
+- Aider wrote 57% of the code in this release.
+
+### Aider v0.86.1
+
+- Added a reasoning_effort setting for GPT-5 models and disabled temperature by default for the GPT-5 family.
+
 ### Aider v0.86.0
 
 - Expanded GPT-5 model support across family variants and providers (OpenAI, Azure, OpenRouter), including dated and chat/mini/nano variants.
