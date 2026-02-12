@@ -488,7 +488,15 @@ class Coder:
             use_repo_map = main_model.use_repo_map
             map_tokens = 1024
         else:
-            use_repo_map = map_tokens > 0
+            try:
+                use_repo_map = map_tokens > 0
+            except TypeError:
+                try:
+                    map_tokens = int(map_tokens)
+                    use_repo_map = map_tokens > 0
+                except (TypeError, ValueError):
+                    map_tokens = 0
+                    use_repo_map = False
 
         max_inp_tokens = self.main_model.info.get("max_input_tokens") or 0
 
