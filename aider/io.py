@@ -691,6 +691,7 @@ class InputOutput:
                 if self.clipboard_watcher:
                     self.clipboard_watcher.stop()
 
+            line = line.strip()
             if line.strip("\r\n") and not multiline_input:
                 stripped = line.strip("\r\n")
                 if stripped == "{":
@@ -711,7 +712,7 @@ class InputOutput:
                     inp = line
                     break
                 continue
-            elif multiline_input and line.strip():
+            elif multiline_input and line:
                 if multiline_tag:
                     # Check if line is exactly "tag}"
                     if line.strip("\r\n") == f"{multiline_tag}}}":
@@ -886,7 +887,9 @@ class InputOutput:
                     res = default
                     break
 
-                if not res:
+                if res and res.strip():
+                    res = res.strip()
+                else:
                     res = default
                     break
                 res = res.lower()
