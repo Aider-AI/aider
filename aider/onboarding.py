@@ -228,7 +228,7 @@ def start_openrouter_oauth_flow(io, analytics):
 
     class OAuthCallbackHandler(http.server.SimpleHTTPRequestHandler):
         def do_GET(self):
-            nonlocal auth_code, server_error
+            nonlocal auth_code
             parsed_path = urlparse(self.path)
             if parsed_path.path == "/callback/aider":
                 query_params = parse_qs(parsed_path.query)
