@@ -65,6 +65,27 @@ def test_context_window_error():
     assert ex_info.retry is False
 
 
+def test_permission_denied_error():
+    """Test specific handling of PermissionDeniedError"""
+    ex = LiteLLMExceptions()
+    from litellm import PermissionDeniedError
+
+    import httpx
+
+    mock_request = httpx.Request("GET", "https://api.openai.com/v1/chat/completions")
+    mock_response = httpx.Response(status_code=403, request=mock_request)
+    perm_error = PermissionDeniedError(
+        message="Permission denied",
+        llm_provider="openai",
+        model="gpt-4",
+        response=mock_response,
+    )
+    ex_info = ex.get_ex_info(perm_error)
+    assert ex_info.name == "PermissionDeniedError"
+    assert ex_info.retry is False
+    assert "denied" in ex_info.description.lower()
+
+
 def test_openrouter_error():
     """Test specific handling of OpenRouter API errors"""
     ex = LiteLLMExceptions()
