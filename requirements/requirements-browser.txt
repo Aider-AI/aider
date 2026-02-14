@@ -29,6 +29,10 @@ click==8.3.1
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
+colorama==0.4.6
+    # via
+    #   -c requirements/common-constraints.txt
+    #   click
 gitdb==4.0.12
     # via
     #   -c requirements/common-constraints.txt
@@ -153,3 +157,7 @@ urllib3==2.6.3
     # via
     #   -c requirements/common-constraints.txt
     #   requests
+watchdog==6.0.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   streamlit

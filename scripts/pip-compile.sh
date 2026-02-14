@@ -15,6 +15,7 @@ uv pip compile \
     requirements/requirements.in \
     requirements/requirements-*.in \
     $1
+sed -i 's/$/\r/' requirements/common-constraints.txt
 
 # Compile the base requirements
 uv pip compile \
@@ -28,6 +29,7 @@ uv pip compile \
 grep -v ^tree-sitter= tmp.requirements.txt \
     | cat - requirements/tree-sitter.in \
     > requirements.txt
+sed -i 's/$/\r/' requirements.txt
 
 # Compile additional requirements files
 SUFFIXES=(dev help browser playwright)
@@ -40,4 +42,8 @@ for SUFFIX in "${SUFFIXES[@]}"; do
         --output-file=requirements/requirements-${SUFFIX}.txt \
         requirements/requirements-${SUFFIX}.in \
         $1
+    sed -i 's/$/\r/' requirements/requirements-${SUFFIX}.txt
 done
+
+# Clean up temporary file
+rm tmp.requirements.txt

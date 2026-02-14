@@ -67,6 +67,11 @@ click==8.3.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   typer
+colorama==0.4.6
+    # via
+    #   -c requirements/common-constraints.txt
+    #   click
+    #   tqdm
 configargparse==1.7.1
     # via
     #   -c requirements/common-constraints.txt

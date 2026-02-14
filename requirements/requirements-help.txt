@@ -54,7 +54,9 @@ click==8.3.1
 colorama==0.4.6
     # via
     #   -c requirements/common-constraints.txt
+    #   click
     #   griffecli
+    #   tqdm
 dataclasses-json==0.6.7
     # via
     #   -c requirements/common-constraints.txt
