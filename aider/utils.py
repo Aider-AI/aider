@@ -95,7 +95,10 @@ def is_image_file(file_name):
 
 def safe_abs_path(res):
     "Gives an abs path, which safely returns a full (not 8.3) windows path"
-    res = Path(res).resolve()
+    try:
+        res = Path(res).resolve()
+    except (RuntimeError, OSError):
+        res = Path(res).absolute()
     return str(res)
 
 
