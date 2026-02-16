@@ -204,7 +204,13 @@ class MarkdownStream:
             show = lines[num_printed:num_lines]
             show = "".join(show)
             show = Text.from_ansi(show)
-            self.live.console.print(show)  # to the console above the live area
+            try:
+                self.live.console.print(show)  # to the console above the live area
+            except UnicodeEncodeError:
+                # Fallback for Windows consoles with non-UTF8 encoding (e.g., gbk)
+                # Replace problematic characters with ASCII equivalents
+                safe_text = str(show).encode("ascii", errors="replace").decode("ascii")
+                self.live.console.print(safe_text)
 
             # Update our record of printed lines
             self.printed = lines[:num_lines]
