@@ -606,5 +606,28 @@ class TestInputOutputFormatFiles(unittest.TestCase):
         )
 
 
+class TestDisplayUserInput(unittest.TestCase):
+    def test_invalid_color_ansigray(self):
+        """Test that an invalid color like 'ansigray' doesn't crash."""
+        io = InputOutput(user_input_color="ansigray", pretty=True)
+        # Should not raise MissingStyle
+        io.display_user_input("hello")
+
+    def test_hex_color(self):
+        """Test that a hex color works fine."""
+        io = InputOutput(user_input_color="#bcbdbf", pretty=True)
+        io.display_user_input("hello")
+
+    def test_valid_named_color(self):
+        """Test that a valid named color works."""
+        io = InputOutput(user_input_color="red", pretty=True)
+        io.display_user_input("hello")
+
+    def test_no_color(self):
+        """Test that None color works (no style)."""
+        io = InputOutput(user_input_color=None, pretty=True)
+        io.display_user_input("hello")
+
+
 if __name__ == "__main__":
     unittest.main()
