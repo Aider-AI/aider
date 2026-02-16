@@ -84,7 +84,7 @@ class TestScrape(unittest.TestCase):
     def test_scraper_print_error_not_called(self):
         # Create a Scraper instance with a mock print_error function
         mock_print_error = MagicMock()
-        scraper = Scraper(print_error=mock_print_error)
+        scraper = Scraper(print_error=mock_print_error, verify_ssl=False)
 
         # Test various methods of the Scraper class
         scraper.scrape_with_httpx("https://example.com")
