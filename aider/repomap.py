@@ -722,19 +722,23 @@ class RepoMap:
             if not code.endswith("\n"):
                 code += "\n"
 
-            context = TreeContext(
-                rel_fname,
-                code,
-                color=False,
-                line_number=False,
-                child_context=False,
-                last_line=False,
-                margin=0,
-                mark_lois=False,
-                loi_pad=0,
-                # header_max=30,
-                show_top_of_file_parent_scope=False,
-            )
+            try:
+                context = TreeContext(
+                    rel_fname,
+                    code,
+                    color=False,
+                    line_number=False,
+                    child_context=False,
+                    last_line=False,
+                    margin=0,
+                    mark_lois=False,
+                    loi_pad=0,
+                    # header_max=30,
+                    show_top_of_file_parent_scope=False,
+                )
+            except ValueError:
+                self.tree_cache[key] = ""
+                return ""
             self.tree_context_cache[rel_fname] = {"context": context, "mtime": mtime}
 
         context = self.tree_context_cache[rel_fname]["context"]

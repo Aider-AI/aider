@@ -503,5 +503,49 @@ class TestRepoMapAllLanguages(unittest.TestCase):
         self.assertEqual(generated_map_str, expected_map, "Generated map matches expected map")
 
 
+class TestRenderTreeValueError(unittest.TestCase):
+    def setUp(self):
+        self.GPT35 = Model("gpt-3.5-turbo")
+
+    def test_render_tree_language_version_error(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            test_file = os.path.join(temp_dir, "test.py")
+            with open(test_file, "w") as f:
+                f.write("def hello():\n    pass\n")
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            from unittest.mock import patch
+
+            with patch("aider.repomap.TreeContext", side_effect=ValueError("Incompatible Language version")):
+                result = repo_map.render_tree(test_file, "test.py", [0])
+                self.assertEqual(result, "")
+
+            del repo_map
+
+    def test_get_repo_map_with_incompatible_language(self):
+        with GitTemporaryDirectory() as temp_dir:
+            test_file = os.path.join(temp_dir, "test.py")
+            with open(test_file, "w") as f:
+                f.write("def hello():\n    pass\n")
+
+            repo = git.Repo(temp_dir)
+            repo.index.add(["test.py"])
+            repo.index.commit("init")
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            from unittest.mock import patch
+
+            other_files = [test_file]
+            with patch("aider.repomap.TreeContext", side_effect=ValueError("Incompatible Language version")):
+                result = repo_map.get_repo_map([], other_files)
+                self.assertIsInstance(result, str)
+
+            del repo_map
+
+
 if __name__ == "__main__":
     unittest.main()
