@@ -6,10 +6,12 @@ import time
 from rich import box
 from rich.console import Console
 from rich.live import Live
-from rich.markdown import CodeBlock, Heading, Markdown
+from rich.markdown import CodeBlock, Heading
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
+
+from .md_renderer import CustomMarkdown
 
 from aider.dump import dump  # noqa: F401
 
@@ -131,7 +133,7 @@ class MarkdownStream:
         # Render the markdown to a string buffer
         string_io = io.StringIO()
         console = Console(file=string_io, force_terminal=True)
-        markdown = NoInsetMarkdown(text, **self.mdargs)
+        markdown = CustomMarkdown(text, **self.mdargs)
         console.print(markdown)
         output = string_io.getvalue()
 
