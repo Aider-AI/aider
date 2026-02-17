@@ -32,7 +32,8 @@ from aider.io import InputOutput
 from aider.llm import litellm  # noqa: F401; properly init litellm on launch
 from aider.models import ModelSettings
 from aider.onboarding import offer_openrouter_oauth, select_default_model
-from aider.repo import ANY_GIT_ERROR, GitRepo
+from aider.repo import Repo, VCS_CLASSES
+from aider.vcs.git import ANY_GIT_ERROR
 from aider.report import report_uncaught_exceptions
 from aider.versioncheck import check_version, install_from_main_branch, install_upgrade
 from aider.watch import FileWatcher
@@ -57,20 +58,21 @@ def check_config_files_for_yes(config_files):
     return found
 
 
-def get_git_root():
-    """Try and guess the git repo, since the conf.yml can be at the repo root"""
-    try:
-        repo = git.Repo(search_parent_directories=True)
-        return repo.working_tree_dir
-    except (git.InvalidGitRepositoryError, FileNotFoundError):
-        return None
+def get_vcs_root():
+    for vcs_class in VCS_CLASSES:
+        try:
+            root = vcs_class.is_repo(".")
+            if root:
+                return root
+        except Exception:
+            pass
 
 
 def guessed_wrong_repo(io, git_root, fnames, git_dname):
     """After we parse the args, we can determine the real repo. Did we guess wrong?"""
 
     try:
-        check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
+        check_repo = Path(Repo(io, fnames, git_dname).root).resolve()
     except (OSError,) + ANY_GIT_ERROR:
         return
 
@@ -88,8 +90,8 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 def make_new_repo(git_root, io):
     try:
         repo = git.Repo.init(git_root)
-        check_gitignore(git_root, io, False)
-    except ANY_GIT_ERROR as err:  # issue #1233
+        check_vcs_ignore(git_root, io, False)
+    except ANY_GIT_ERROR as err:
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_output(str(err))
         return
@@ -152,7 +154,7 @@ def setup_git(git_root, io):
     return repo.working_tree_dir
 
 
-def check_gitignore(git_root, io, ask=True):
+def check_vcs_ignore(git_root, io, ask=True):
     if not git_root:
         return
 
@@ -413,8 +415,8 @@ def sanity_check_repo(repo, io):
     if not repo:
         return True
 
-    if not repo.repo.working_tree_dir:
-        io.tool_error("The git repo does not seem to have a working tree?")
+    if not repo.root:
+        io.tool_error("The repo does not seem to have a working tree?")
         return False
 
     bad_ver = False
@@ -459,7 +461,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     elif force_git_root:
         git_root = force_git_root
     else:
-        git_root = get_git_root()
+        git_root = get_vcs_root()
 
     conf_fname = Path(".aider.conf.yml")
 
@@ -737,10 +739,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if args.check_update:
         check_version(io, verbose=args.verbose)
 
-    if args.git:
+    if not args.git:
+        args.vcs = "none"
+
+    if args.vcs != "none":
         git_root = setup_git(git_root, io)
         if args.gitignore:
-            check_gitignore(git_root, io)
+            check_vcs_ignore(git_root, io)
 
     if args.verbose:
         show = format_settings(parser, args)
@@ -901,9 +906,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 return 1
 
     repo = None
-    if args.git:
+    if args.vcs != "none":
         try:
-            repo = GitRepo(
+            repo = Repo(
                 io,
                 fnames,
                 git_dname,
@@ -917,6 +922,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
                 subtree_only=args.subtree_only,
                 git_commit_verify=args.git_commit_verify,
                 attribute_co_authored_by=args.attribute_co_authored_by,  # Pass the arg
+                vcs=args.vcs,
             )
         except FileNotFoundError:
             pass

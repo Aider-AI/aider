@@ -43,7 +43,8 @@ from aider.reasoning_tags import (
     remove_reasoning_content,
     replace_reasoning_tags,
 )
-from aider.repo import ANY_GIT_ERROR, GitRepo
+from aider.repo import Repo
+from aider.vcs.git import ANY_GIT_ERROR
 from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
@@ -249,17 +250,18 @@ class Coder:
 
         # Repo
         if self.repo:
+            vcs_name = self.repo.vcs.name
             rel_repo_dir = self.repo.get_rel_repo_dir()
             num_files = len(self.repo.get_tracked_files())
 
-            lines.append(f"Git repo: {rel_repo_dir} with {num_files:,} files")
+            lines.append(f"{vcs_name} repo: {rel_repo_dir} with {num_files:,} files")
             if num_files > 1000:
                 lines.append(
                     "Warning: For large repos, consider using --subtree-only and .aiderignore"
                 )
                 lines.append(f"See: {urls.large_repos}")
         else:
-            lines.append("Git repo: none")
+            lines.append("Repo: none")
 
         # Repo-map
         if self.repo_map:
@@ -434,7 +436,7 @@ class Coder:
         self.repo = repo
         if use_git and self.repo is None:
             try:
-                self.repo = GitRepo(
+                self.repo = Repo(
                     self.io,
                     fnames,
                     None,
@@ -448,7 +450,7 @@ class Coder:
 
         for fname in fnames:
             fname = Path(fname)
-            if self.repo and self.repo.git_ignored_file(fname) and not self.add_gitignore_files:
+            if self.repo and self.repo.vcs_ignored_file(fname) and not self.add_gitignore_files:
                 self.io.tool_warning(f"Skipping {fname} that matches gitignore spec.")
                 continue
 
@@ -2199,7 +2201,7 @@ class Coder:
             self.check_for_dirty_commit(path)
             return True
 
-        if self.repo and self.repo.git_ignored_file(path):
+        if self.repo and self.repo.vcs_ignored_file(path):
             self.io.tool_warning(f"Skipping edits to {path} that matches gitignore spec.")
             return
 
@@ -2217,7 +2219,7 @@ class Coder:
                 # actually already part of the repo.
                 # But let's only add if we need to, just to be safe.
                 if need_to_add:
-                    self.repo.repo.git.add(full_path)
+                    self.repo.add(path)
 
             self.abs_fnames.add(full_path)
             self.check_added_files()
@@ -2231,7 +2233,7 @@ class Coder:
             return
 
         if need_to_add:
-            self.repo.repo.git.add(full_path)
+            self.repo.add(path)
 
         self.abs_fnames.add(full_path)
         self.check_added_files()

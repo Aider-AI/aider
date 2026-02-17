@@ -14,7 +14,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, load_dotenv_files, main, setup_git
+from aider.main import check_vcs_ignore, load_dotenv_files, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
@@ -52,13 +52,13 @@ class TestMain(TestCase):
         main(["foo.txt", "--yes", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
-    @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
+    @patch("aider.vcs.git.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_file(self, _):
         make_repo()
         main(["--yes", "foo.txt", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
-    @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
+    @patch("aider.vcs.git.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_files(self, _):
         make_repo()
         main(["--yes", "foo.txt", "bar.txt", "--exit"], input=DummyInput(), output=DummyOutput())
@@ -72,7 +72,7 @@ class TestMain(TestCase):
         res = main(["subdir", "foo.txt"], input=DummyInput(), output=DummyOutput())
         self.assertNotEqual(res, None)
 
-    @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
+    @patch("aider.vcs.git.get_commit_message", return_value="mock commit message")
     def test_main_with_subdir_repo_fnames(self, _):
         subdir = Path("subdir")
         subdir.mkdir()
@@ -126,7 +126,7 @@ class TestMain(TestCase):
         self.assertTrue(gitignore.exists())
         self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
-    def test_check_gitignore(self):
+    def test_check_vcs_ignore(self):
         with GitTemporaryDirectory():
             os.environ["GIT_CONFIG_GLOBAL"] = "globalgitconfig"
 
@@ -135,20 +135,20 @@ class TestMain(TestCase):
             gitignore = cwd / ".gitignore"
 
             self.assertFalse(gitignore.exists())
-            check_gitignore(cwd, io)
+            check_vcs_ignore(cwd, io)
             self.assertTrue(gitignore.exists())
 
             self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
             # Test without .env file present
             gitignore.write_text("one\ntwo\n")
-            check_gitignore(cwd, io)
+            check_vcs_ignore(cwd, io)
             self.assertEqual("one\ntwo\n.aider*\n", gitignore.read_text())
 
             # Test with .env file present
             env_file = cwd / ".env"
             env_file.touch()
-            check_gitignore(cwd, io)
+            check_vcs_ignore(cwd, io)
             self.assertEqual("one\ntwo\n.aider*\n.env\n", gitignore.read_text())
             del os.environ["GIT_CONFIG_GLOBAL"]
 

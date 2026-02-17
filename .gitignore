@@ -1,5 +1,6 @@
 .DS_Store
 .vscode/
+.zed/
 aider.code-workspace
 *.pyc
 .aider*

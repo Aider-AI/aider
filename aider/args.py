@@ -400,7 +400,14 @@ def get_parser(default_config_files, git_root):
     )
 
     ##########
-    group = parser.add_argument_group("Git settings")
+    group = parser.add_argument_group("VCS settings")
+    group.add_argument(
+        "--vcs",
+        metavar="VCS",
+        choices=["git", "jj", "none", "auto"],
+        default="auto",
+        help="Specify the version control system to use (git, jj, none, auto) (default: auto)",
+    )
     group.add_argument(
         "--git",
         action=argparse.BooleanOptionalAction,
