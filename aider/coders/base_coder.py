@@ -1426,6 +1426,8 @@ class Coder:
             dict(role="user", content=inp),
         ]
 
+        self.response_was_truncated = False  # reset truncation flag
+
         chunks = self.format_messages()
         messages = chunks.all_messages()
         if not self.check_tokens(messages):
@@ -1492,9 +1494,11 @@ class Coder:
                 except FinishReasonLength:
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
+                        self.response_was_truncated = True
                         exhausted = True
                         break
 
+                    # prefill models continue via multi-response; final check happens later
                     self.multi_response_content = self.get_multi_response_content_in_progress()
 
                     if messages[-1]["role"] == "assistant":
@@ -1545,6 +1549,21 @@ class Coder:
             self.show_exhausted_error()
             self.num_exhausted_context_windows += 1
             return
+
+        # Detect silent truncation for non-prefill models:
+        # provider may not return finish_reason=="length" but output is near limit.
+        # Skip for prefill models — they accumulate content across continuations.
+        if not self.main_model.info.get("supports_assistant_prefill"):
+            max_output = self.main_model.info.get("max_output_tokens") or 0
+            if max_output > 0 and self.partial_response_content:
+                output_tokens = self.main_model.token_count(self.partial_response_content)
+                if output_tokens >= max_output * 0.92:
+                    self.response_was_truncated = True
+                    self.io.tool_warning(
+                        f"Detected possible silent truncation: output ~{output_tokens:,}"
+                        f" tokens near model limit {max_output:,}."
+                        " Auto-commit skipped for safety."
+                    )
 
         if self.partial_response_function_call:
             args = self.parse_partial_args()
@@ -2373,6 +2392,15 @@ class Coder:
         return context
 
     def auto_commit(self, edited, context=None):
+        if getattr(self, "response_was_truncated", False):
+            msg = (
+                "LLM response was truncated. "
+                "Auto-commit skipped so you can review the changes. "
+                "Use /commit if good, or /undo to revert."
+            )
+            self.io.tool_warning(msg)
+            return msg
+
         if not self.repo or not self.auto_commits or self.dry_run:
             return
 
