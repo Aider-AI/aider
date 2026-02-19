@@ -868,7 +868,13 @@ class Commands:
                 self.io.tool_error(f"{matched_file} is already in the chat as an editable file")
                 continue
             elif abs_file_path in self.coder.abs_read_only_fnames:
-                if self.coder.repo and self.coder.repo.path_in_repo(matched_file):
+                # Determine if file can be promoted to editable
+                if self.coder.repo:
+                    can_edit = self.coder.repo.path_in_repo(matched_file)
+                else:
+                    can_edit = abs_file_path.startswith(self.coder.root)
+
+                if can_edit:
                     self.coder.abs_read_only_fnames.remove(abs_file_path)
                     self.coder.abs_fnames.add(abs_file_path)
                     self.io.tool_output(
