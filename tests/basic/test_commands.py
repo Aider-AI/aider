@@ -145,6 +145,36 @@ class TestCommands(TestCase):
             # Assert that tool_error was called with the clipboard error message
             mock_tool_error.assert_called_once_with("Failed to copy to clipboard: Clipboard error")
 
+    def test_cmd_md(self):
+        # Initialize InputOutput and Coder instances
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Add some assistant messages to the chat history
+        coder.done_messages = [
+            {"role": "assistant", "content": "First assistant message"},
+            {"role": "user", "content": "User message"},
+            {"role": "assistant", "content": "Second assistant message"},
+        ]
+
+        # Create a temporary directory for the notes
+        notes_dir = Path(self.tempdir) / "notes"
+        notes_dir.mkdir()
+
+        # Define the filename to save the message
+        filename = "test_note.md"
+        filepath = notes_dir / filename
+
+        # Invoke the /md command
+        commands.cmd_md(filename)
+
+        # Check if the file was created and contains the last assistant message
+        self.assertTrue(filepath.exists())
+        with open(filepath, "r", encoding=io.encoding) as f:
+            content = f.read()
+            self.assertEqual(content, "Second assistant message")
+
     def test_cmd_add_bad_glob(self):
         # https://github.com/Aider-AI/aider/issues/293
 
