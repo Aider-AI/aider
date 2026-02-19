@@ -291,6 +291,8 @@ def parse_lint_cmds(lint_cmds, io):
         cmd = cmd.strip()
 
         if cmd:
+            # Add --bind 127.0.0.1 to the command
+            cmd += " --bind 127.0.0.1"
             res[lang] = cmd
         else:
             io.tool_error(f'Unable to parse --lint-cmd "{lint_cmd}"')
