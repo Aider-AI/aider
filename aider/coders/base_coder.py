@@ -338,6 +338,7 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        system_prompt_extras_file=None,
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -352,6 +353,7 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+        self.system_prompt_extras_file = system_prompt_extras_file
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -1260,6 +1262,15 @@ class Coder:
 
         if self.gpt_prompts.system_reminder:
             main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+
+        # Append extra system prompt content from file (read once per request)
+        if self.system_prompt_extras_file:
+            extras_content = self.io.read_text(self.system_prompt_extras_file)
+            if extras_content:
+                # Preserve extras content formatting; at most remove a single trailing newline
+                if extras_content.endswith("\n"):
+                    extras_content = extras_content[:-1]
+                main_sys += "\n\n" + extras_content
 
         chunks = ChatChunks()
 
