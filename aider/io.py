@@ -242,11 +242,11 @@ class InputOutput:
         chat_history_file=None,
         input=None,
         output=None,
-        user_input_color="blue",
+        user_input_color=None,
         tool_output_color=None,
-        tool_error_color="red",
-        tool_warning_color="#FFA500",
-        assistant_output_color="blue",
+        tool_error_color=None,
+        tool_warning_color=None,
+        assistant_output_color=None,
         completion_menu_color=None,
         completion_menu_bg_color=None,
         completion_menu_current_color=None,
@@ -264,6 +264,33 @@ class InputOutput:
         notifications=False,
         notifications_command=None,
     ):
+        # Prompt user for color choices at every run
+
+        from rich.console import Console
+        color_options = ["blue", "green", "red", "yellow", "magenta", "cyan", "white", "orange", "purple", "lime"]
+        preview_console = Console()
+
+        def ask_color(role, default):
+            while True:
+                preview_console.print(f"Select a color for [bold]{role}[/bold] (default: {default}):")
+                for color in color_options:
+                    preview_console.print(f"  [bold {color}]{color}[/bold {color}]", end="  ")
+                preview_console.print("\nOr enter any valid color name or hex code (e.g., #ff8800):")
+                choice = input(f"{role} color: ").strip()
+                if not choice:
+                    choice = default
+                # Try to preview the color
+                try:
+                    preview_console.print(f"Preview: [bold {choice}]{choice}[/bold {choice}]\n")
+                    return choice
+                except Exception:
+                    preview_console.print(f"[red]Invalid color:[/red] {choice}. Please try again.\n")
+
+        user_input_color = ask_color("user input", "blue")
+        assistant_output_color = ask_color("assistant output", "green")
+        tool_error_color = ask_color("error messages", "red")
+        tool_warning_color = ask_color("warning messages", "yellow")
+
         self.placeholder = None
         self.interrupted = False
         self.never_prompts = set()
@@ -284,7 +311,7 @@ class InputOutput:
         self.tool_output_color = ensure_hash_prefix(tool_output_color) if pretty else None
         self.tool_error_color = ensure_hash_prefix(tool_error_color) if pretty else None
         self.tool_warning_color = ensure_hash_prefix(tool_warning_color) if pretty else None
-        self.assistant_output_color = ensure_hash_prefix(assistant_output_color)
+        self.assistant_output_color = ensure_hash_prefix(assistant_output_color) if pretty else None
         self.completion_menu_color = ensure_hash_prefix(completion_menu_color) if pretty else None
         self.completion_menu_bg_color = (
             ensure_hash_prefix(completion_menu_bg_color) if pretty else None
