@@ -71,7 +71,8 @@ is a great place to store your API keys and other provider API environment varia
 ```bash
 GEMINI_API_KEY=foo
 OPENROUTER_API_KEY=bar
-DEEPSEEK_API_KEY=baz
+EUROUTER_API_KEY=baz
+DEEPSEEK_API_KEY=qux
 ```
 
 #### YAML config file
@@ -85,6 +86,7 @@ via the `api-key` entry:
 api-key:
 - gemini=foo      # Sets env var GEMINI_API_KEY=foo
 - openrouter=bar  # Sets env var OPENROUTER_API_KEY=bar
-- deepseek=baz    # Sets env var DEEPSEEK_API_KEY=baz
+- eurouter=baz    # Sets env var EUROUTER_API_KEY=baz
+- deepseek=qux    # Sets env var DEEPSEEK_API_KEY=qux
 ```
 
