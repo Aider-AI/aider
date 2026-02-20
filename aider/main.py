@@ -305,6 +305,17 @@ def parse_lint_cmds(lint_cmds, io):
 def generate_search_path_list(default_file, git_root, command_line_file):
     files = []
     files.append(Path.home() / default_file)  # homedir
+
+    xdg_config_home = os.environ.get("XDG_CONFIG_HOME")
+    if not xdg_config_home:
+        xdg_config_home = Path.home() / ".config"
+    else:
+        xdg_config_home = Path(xdg_config_home)
+    xdg_aider_dir = xdg_config_home / "aider"
+    files.append(xdg_aider_dir / default_file)
+    if default_file.startswith("."):
+        files.append(xdg_aider_dir / default_file[1:])
+
     if git_root:
         files.append(Path(git_root) / default_file)  # git root
     files.append(default_file)
@@ -465,7 +476,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     default_config_files = []
     try:
-        default_config_files += [conf_fname.resolve()]  # CWD
+        default_config_files.append(conf_fname.resolve())  # CWD
     except OSError:
         pass
 
@@ -473,7 +484,27 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         git_conf = Path(git_root) / conf_fname  # git root
         if git_conf not in default_config_files:
             default_config_files.append(git_conf)
-    default_config_files.append(Path.home() / conf_fname)  # homedir
+
+    xdg_config_home = os.environ.get("XDG_CONFIG_HOME")
+    if not xdg_config_home:
+        xdg_config_home = Path.home() / ".config"
+    else:
+        xdg_config_home = Path(xdg_config_home)
+    xdg_aider_dir = xdg_config_home / "aider"
+
+    # Non-dotted version, higher precedence
+    xdg_conf_no_dot = xdg_aider_dir / "conf.yml"
+    if xdg_conf_no_dot not in default_config_files:
+        default_config_files.append(xdg_conf_no_dot)
+
+    # Dotted version
+    xdg_conf_dot = xdg_aider_dir / conf_fname
+    if xdg_conf_dot not in default_config_files:
+        default_config_files.append(xdg_conf_dot)
+
+    home_conf = Path.home() / conf_fname
+    if home_conf not in default_config_files:
+        default_config_files.append(home_conf)  # homedir
     default_config_files = list(map(str, default_config_files))
 
     parser = get_parser(default_config_files, git_root)
