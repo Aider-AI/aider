@@ -1,3 +1,7 @@
+from unittest.mock import patch
+
+import pytest
+
 from aider.exceptions import ExInfo, LiteLLMExceptions
 
 
@@ -82,3 +86,76 @@ def test_openrouter_error():
     assert "OpenRouter" in ex_info.description
     assert "overloaded" in ex_info.description
     assert "rate" in ex_info.description
+
+
+def test_missing_litellm_exception_skipped():
+    """Test that _load() skips exceptions not present in litellm (non-strict mode)"""
+    import litellm
+
+    original = getattr(litellm, "BadGatewayError", None)
+    with patch.object(litellm, "BadGatewayError", create=False):
+        delattr(litellm, "BadGatewayError")
+        try:
+            # Use a fresh instance with its own exceptions dict
+            lex = LiteLLMExceptions.__new__(LiteLLMExceptions)
+            lex.exceptions = dict()
+            lex._load()
+
+            # Should initialize without error
+            assert len(lex.exceptions) > 0
+
+            # exceptions_tuple should return a valid tuple without BadGatewayError
+            tup = lex.exceptions_tuple()
+            assert isinstance(tup, tuple)
+            assert len(tup) > 0
+
+            # BadGatewayError's class should not be in the exceptions dict
+            for cls in tup:
+                assert cls.__name__ != "BadGatewayError"
+
+            # get_ex_info should return default ExInfo for unknown exception
+            class FakeError(Exception):
+                pass
+
+            info = lex.get_ex_info(FakeError())
+            assert info.name is None
+            assert info.retry is None
+            assert info.description is None
+        finally:
+            if original is not None:
+                litellm.BadGatewayError = original
+
+
+def test_strict_mode_raises_for_missing_exception():
+    """Test that _load(strict=True) raises ValueError for missing litellm exceptions"""
+    import litellm
+
+    original = getattr(litellm, "BadGatewayError", None)
+    with patch.object(litellm, "BadGatewayError", create=False):
+        delattr(litellm, "BadGatewayError")
+        try:
+            lex = LiteLLMExceptions.__new__(LiteLLMExceptions)
+            lex.exceptions = dict()
+            with pytest.raises(ValueError, match="not found in litellm"):
+                lex._load(strict=True)
+        finally:
+            if original is not None:
+                litellm.BadGatewayError = original
+
+
+def test_strict_mode_raises_for_unknown_litellm_exception():
+    """Test that _load(strict=True) raises when litellm has an Error not in EXCEPTIONS"""
+    import litellm
+
+    # Add a fake exception class to litellm
+    class FakeNewError(BaseException):
+        pass
+
+    litellm.FakeNewError = FakeNewError
+    try:
+        lex = LiteLLMExceptions.__new__(LiteLLMExceptions)
+        lex.exceptions = dict()
+        with pytest.raises(ValueError, match="FakeNewError is in litellm"):
+            lex._load(strict=True)
+    finally:
+        delattr(litellm, "FakeNewError")
