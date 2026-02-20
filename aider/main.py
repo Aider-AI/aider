@@ -701,7 +701,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     git_dname = None
     if len(all_files) == 1:
-        if Path(all_files[0]).is_dir():
+        try:
+            is_dir = Path(all_files[0]).is_dir()
+        except OSError:
+            is_dir = False
+        if is_dir:
             if args.git:
                 git_dname = str(Path(all_files[0]).resolve())
                 fnames = []
