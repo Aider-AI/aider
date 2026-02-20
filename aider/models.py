@@ -19,6 +19,7 @@ from PIL import Image
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.eurouter import EURouterModelManager
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
@@ -164,10 +165,15 @@ class ModelInfoManager:
         # Manager for the cached OpenRouter model database
         self.openrouter_manager = OpenRouterModelManager()
 
+        # Manager for the cached EUrouter model database
+        self.eurouter_manager = EURouterModelManager()
+
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
         if hasattr(self, "openrouter_manager"):
             self.openrouter_manager.set_verify_ssl(verify_ssl)
+        if hasattr(self, "eurouter_manager"):
+            self.eurouter_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -258,6 +264,11 @@ class ModelInfoManager:
             openrouter_info = self.fetch_openrouter_model_info(model)
             if openrouter_info:
                 return openrouter_info
+
+        if not cached_info and model.startswith("eurouter/"):
+            eurouter_info = self.eurouter_manager.get_model_info(model)
+            if eurouter_info:
+                return eurouter_info
 
         return cached_info
 
@@ -409,8 +420,8 @@ class Model(ModelSettings):
                     # For non-dict values, simply update
                     self.extra_params[key] = value
 
-        # Ensure OpenRouter models accept thinking_tokens and reasoning_effort
-        if self.name.startswith("openrouter/"):
+        # Ensure OpenRouter/EUrouter models accept thinking_tokens and reasoning_effort
+        if self.is_openrouter_compatible():
             if self.accepts_settings is None:
                 self.accepts_settings = []
             if "thinking_tokens" not in self.accepts_settings:
@@ -706,6 +717,7 @@ class Model(ModelSettings):
             provider = None
 
         keymap = dict(
+            eurouter="EUROUTER_API_KEY",
             openrouter="OPENROUTER_API_KEY",
             openai="OPENAI_API_KEY",
             deepseek="DEEPSEEK_API_KEY",
@@ -776,7 +788,7 @@ class Model(ModelSettings):
     def set_reasoning_effort(self, effort):
         """Set the reasoning effort parameter for models that support it"""
         if effort is not None:
-            if self.name.startswith("openrouter/"):
+            if self.is_openrouter_compatible():
                 if not self.extra_params:
                     self.extra_params = {}
                 if "extra_body" not in self.extra_params:
@@ -832,8 +844,8 @@ class Model(ModelSettings):
             if not self.extra_params:
                 self.extra_params = {}
 
-            # OpenRouter models use 'reasoning' instead of 'thinking'
-            if self.name.startswith("openrouter/"):
+            # OpenRouter/EUrouter models use 'reasoning' instead of 'thinking'
+            if self.is_openrouter_compatible():
                 if "extra_body" not in self.extra_params:
                     self.extra_params["extra_body"] = {}
                 if num_tokens > 0:
@@ -853,8 +865,8 @@ class Model(ModelSettings):
         budget = None
 
         if self.extra_params:
-            # Check for OpenRouter reasoning format
-            if self.name.startswith("openrouter/"):
+            # Check for OpenRouter/EUrouter reasoning format
+            if self.is_openrouter_compatible():
                 if (
                     "extra_body" in self.extra_params
                     and "reasoning" in self.extra_params["extra_body"]
@@ -891,8 +903,8 @@ class Model(ModelSettings):
     def get_reasoning_effort(self):
         """Get reasoning effort value if available"""
         if self.extra_params:
-            # Check for OpenRouter reasoning format
-            if self.name.startswith("openrouter/"):
+            # Check for OpenRouter/EUrouter reasoning format
+            if self.is_openrouter_compatible():
                 if (
                     "extra_body" in self.extra_params
                     and "reasoning" in self.extra_params["extra_body"]
@@ -906,6 +918,10 @@ class Model(ModelSettings):
             ):
                 return self.extra_params["extra_body"]["reasoning_effort"]
         return None
+
+    def is_openrouter_compatible(self):
+        """Return True for providers using OpenRouter-compatible reasoning format."""
+        return self.name.startswith("openrouter/") or self.name.startswith("eurouter/")
 
     def is_deepseek_r1(self):
         name = self.name.lower()
@@ -1017,6 +1033,12 @@ class Model(ModelSettings):
                 }
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
+
+        # EUrouter: rewrite to openai-compatible provider for litellm
+        if self.name.startswith("eurouter/"):
+            kwargs["model"] = "openai/" + self.name[len("eurouter/"):]
+            kwargs["api_base"] = "https://api.eurouter.ai/api/v1"
+            kwargs["api_key"] = os.environ.get("EUROUTER_API_KEY")
 
         res = litellm.completion(**kwargs)
         return hash_object, res
