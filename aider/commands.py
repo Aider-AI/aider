@@ -165,6 +165,10 @@ class Commands:
                     ),
                 ),
                 (
+                    "agent",
+                    "Autonomous agent mode that automatically edits files and runs tests.",
+                ),
+                (
                     "context",
                     "Automatically identify which files will need to be edited.",
                 ),
@@ -1194,6 +1198,10 @@ class Commands:
     def cmd_context(self, args):
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
+
+    def cmd_agent(self, args):
+        """Enter autonomous agent mode that automatically edits files and runs tests. If no prompt provided, switches to agent mode."""  # noqa
+        return self._generic_chat_command(args, "agent")
 
     def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
