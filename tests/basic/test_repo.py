@@ -187,6 +187,24 @@ class TestRepo(unittest.TestCase):
         args = mock_send.call_args[0]  # Get positional args
         self.assertEqual(args[0][0]["content"], custom_prompt)  # Check first message content
 
+    @patch("aider.models.Model.simple_send_with_retries")
+    def test_get_commit_message_custom_prompt_with_extra_braces(self, mock_send):
+        mock_send.return_value = "Custom commit message"
+        # A custom prompt that has both {language_instruction} and another {placeholder}
+        custom_prompt = "Commit {message} for changes{language_instruction}"
+
+        repo = GitRepo(InputOutput(), None, None, models=[self.GPT35], commit_prompt=custom_prompt)
+        result = repo.get_commit_message("dummy diff", "dummy context")
+
+        self.assertEqual(result, "Custom commit message")
+        mock_send.assert_called_once()
+        args = mock_send.call_args[0]
+        system_content = args[0][0]["content"]
+        # {language_instruction} should be substituted (empty string when no user_language)
+        self.assertNotIn("{language_instruction}", system_content)
+        # {message} should remain as a literal — not cause a KeyError
+        self.assertIn("{message}", system_content)
+
     @unittest.skipIf(platform.system() == "Windows", "Git env var behavior differs on Windows")
     @patch("aider.repo.GitRepo.get_commit_message")
     def test_commit_with_custom_committer_name(self, mock_send):
