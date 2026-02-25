@@ -1038,6 +1038,9 @@ class Commands:
                 output=combined_output,
             )
 
+            history_msg = "\n".join([f">>> {line}" for line in msg.splitlines()])
+            self.io.append_chat_history(f"\n{history_msg}\n\nOk.\n\n")
+
             self.coder.cur_messages += [
                 dict(role="user", content=msg),
                 dict(role="assistant", content="Ok."),
@@ -1630,6 +1633,142 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+
+    def _get_sessions(self):
+        if not self.io.chat_history_file or not self.io.chat_history_file.exists():
+            self.io.tool_error("No chat history file found.")
+            return None
+
+        history_md = self.io.read_text(self.io.chat_history_file)
+        if not history_md:
+            self.io.tool_error("Chat history file is empty.")
+            return None
+
+        from aider.utils import split_chat_history_markdown
+
+        sessions = split_chat_history_markdown(history_md, include_tool=True, return_sessions=True)
+
+        # Filter out sessions that are just a "Restored session from..." notification,
+        # have no messages, have no user messages, or only contain /restore-session
+        # or /list-sessions commands.
+        # We do this BEFORE popping the current session to ensure we catch all of them.
+        filtered_sessions = []
+        for s in sessions:
+            msgs = s["messages"]
+            if not msgs:
+                continue
+
+            # Check if all user messages are just session management commands
+            user_msgs = [m["content"].strip() for m in msgs if m["role"] == "user"]
+            if not user_msgs:
+                continue
+
+            if all(
+                c.startswith("/restore-session") or c.startswith("/list-sessions")
+                for c in user_msgs
+            ):
+                continue
+
+            # Filter out single-message "Restored session from..." notifications
+            if len(msgs) == 1:
+                content = msgs[0]["content"].strip()
+                if content.startswith("Restored session from"):
+                    continue
+
+            filtered_sessions.append(s)
+
+        sessions = filtered_sessions
+
+        # The last session in the file is the current one containing this command
+        if sessions:
+            sessions.pop()
+
+        return sessions
+
+    def _display_session(self, session, index=None, limit=1024):
+        timestamp = session["timestamp"]
+        messages = session["messages"]
+        prefix = f"[{index}] " if index is not None else ""
+        self.io.tool_output(f"{prefix}Session from {timestamp} ({len(messages)} messages).")
+
+        user_msgs = [m["content"] for m in messages if m["role"] == "user"]
+        if user_msgs:
+
+            def get_snippet(text):
+                line = text.strip().splitlines()[0]
+                if len(line) > limit:
+                    return line[:limit] + "..."
+                return line
+
+            first_snippet = get_snippet(user_msgs[0])
+            last_snippet = get_snippet(user_msgs[-1])
+            self.io.tool_output(f"  First user message: {first_snippet}")
+            if len(user_msgs) > 1:
+                self.io.tool_output(f"  Last user message:  {last_snippet}")
+
+    def cmd_list_sessions(self, args):
+        "List previous chat sessions"
+        sessions = self._get_sessions()
+        if not sessions:
+            return
+
+        # sessions are chronological.
+        # We want to display them such that the most recent is at the bottom.
+        # The index i is stable and chronological (0 is the oldest).
+        for i, session in enumerate(sessions):
+            if i > 0:
+                self.io.tool_output()
+            self._display_session(session, index=i)
+
+    def cmd_restore_session(self, args):
+        "Restore the chat context from a previous session"
+        sessions = self._get_sessions()
+        if not sessions:
+            return
+
+        # sessions are in chronological order.
+        # /list-sessions shows them in chronological order (oldest first) starting at index 0.
+        # So index 0 in /list-sessions is sessions[0].
+        # /restore-session with no args restores the last session (sessions[-1]).
+
+        try:
+            raw_args = args.strip()
+            if not raw_args:
+                idx = -1
+            else:
+                n = int(raw_args)
+                if n >= 0:
+                    # Positive index: chronological index from /list-sessions
+                    idx = n
+                else:
+                    # Negative index: -1 is the most recent session (sessions[-1])
+                    idx = n
+        except ValueError:
+            self.io.tool_error("Session index must be an integer.")
+            return
+
+        if (idx >= 0 and idx >= len(sessions)) or (idx < 0 and abs(idx) > len(sessions)):
+            self.io.tool_error(
+                f"Session index {n} is out of bounds. Only {len(sessions)} sessions available."
+            )
+            return
+
+        target_session = sessions[idx]
+        timestamp = target_session["timestamp"]
+        messages = target_session["messages"]
+
+        # Replace context
+        self.coder.cur_messages = []
+        self.coder.done_messages = messages
+
+        # Persistence
+        self.io.append_chat_history(f"\n# aider chat restore session from {timestamp}\n\n")
+
+        # Maintenance
+        self.coder.summarize_start()
+
+        # Feedback
+        self._display_session(target_session, limit=250)
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
