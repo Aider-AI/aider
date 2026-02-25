@@ -36,6 +36,11 @@ EXCEPTIONS = [
     ExInfo("NotFoundError", False, None),
     ExInfo("OpenAIError", True, None),
     ExInfo(
+        "PermissionDeniedError",
+        False,
+        "The API provider denied access. Check your API key permissions.",
+    ),
+    ExInfo(
         "RateLimitError",
         True,
         "The API provider has rate limited you. Try again later or check your quotas.",
