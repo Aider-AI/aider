@@ -17,6 +17,8 @@ from aider.io import InputOutput
 from aider.main import check_gitignore, load_dotenv_files, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
+_original_is_dir = Path.is_dir
+
 
 class TestMain(TestCase):
     def setUp(self):
@@ -1481,3 +1483,21 @@ class TestMain(TestCase):
             )
         for call in mock_io_instance.tool_warning.call_args_list:
             self.assertNotIn("Cost estimates may be inaccurate", call[0][0])
+
+    def test_main_oserror_on_is_dir(self):
+        """Test that OSError from Path.is_dir() doesn't crash when a value is treated as a file."""
+        bogus = "bogus_oserror_file"
+
+        def mock_is_dir(path_self):
+            if str(path_self).endswith(bogus):
+                raise OSError("File name too long")
+            return _original_is_dir(path_self)
+
+        with GitTemporaryDirectory():
+            with patch.object(Path, "is_dir", mock_is_dir):
+                # Should not raise OSError; the bogus name is treated as a (non-existent) file
+                main(
+                    [bogus, "--yes", "--exit"],
+                    input=DummyInput(),
+                    output=DummyOutput(),
+                )
