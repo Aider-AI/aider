@@ -56,7 +56,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     ]  # Always ignore
     for path in gitignore_paths:
         if path.exists():
-            with open(path) as f:
+            with open(path, encoding="utf-8", errors="replace") as f:
                 patterns.extend(f.readlines())
 
     return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
