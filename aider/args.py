@@ -730,13 +730,13 @@ def get_parser(default_config_files, git_root):
         "--file",
         action="append",
         metavar="FILE",
-        help="specify a file to edit (can be used multiple times)",
+        help="specify a file to edit (can be used multiple times, glob patterns supported)",
     ).complete = shtab.FILE
     group.add_argument(
         "--read",
         action="append",
         metavar="FILE",
-        help="specify a read-only file (can be used multiple times)",
+        help="specify a read-only file (can be used multiple times, glob patterns supported)",
     ).complete = shtab.FILE
     group.add_argument(
         "--vim",
