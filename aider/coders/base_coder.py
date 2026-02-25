@@ -32,6 +32,7 @@ from aider import __version__, models, prompts, urls, utils
 from aider.analytics import Analytics
 from aider.commands import Commands
 from aider.exceptions import LiteLLMExceptions
+from aider.double_buffer import DoubleBufferManager
 from aider.history import ChatSummary
 from aider.io import ConfirmGroup, InputOutput
 from aider.linter import Linter
@@ -515,6 +516,14 @@ class Coder:
         self.summarizer_thread = None
         self.summarized_done_messages = []
         self.summarizing_messages = None
+
+        # Double-buffer context management (opt-in)
+        self.double_buffer = None
+        if getattr(self.args, "double_buffer", False):
+            self.double_buffer = DoubleBufferManager(
+                checkpoint_threshold=getattr(self.args, "checkpoint_threshold", 0.60),
+                swap_threshold=getattr(self.args, "swap_threshold", 0.85),
+            )
 
         if not self.done_messages and restore_chat_history:
             history_md = self.io.read_text(self.io.chat_history_file)
@@ -1000,6 +1009,10 @@ class Coder:
         self.last_keyboard_interrupt = now
 
     def summarize_start(self):
+        if self.double_buffer is not None:
+            self._double_buffer_check()
+            return
+
         if not self.summarizer.too_big(self.done_messages):
             return
 
@@ -1010,6 +1023,46 @@ class Coder:
 
         self.summarizer_thread = threading.Thread(target=self.summarize_worker)
         self.summarizer_thread.start()
+
+    def _double_buffer_check(self):
+        """Check double-buffer thresholds and trigger checkpoint or swap."""
+        sized = self.summarizer.tokenize(self.done_messages)
+        current_tokens = sum(tokens for tokens, _msg in sized)
+        max_tokens = self.summarizer.max_tokens
+
+        # Check for swap first (higher priority)
+        if self.double_buffer.should_swap(current_tokens, max_tokens):
+            # Wait for checkpoint if still pending
+            if self.double_buffer.phase.value == "checkpoint_pending":
+                if self.verbose:
+                    self.io.tool_output("Waiting for background checkpoint to complete...")
+                self.double_buffer.wait_for_checkpoint()
+
+            if self.double_buffer.phase.value == "concurrent":
+                if self.verbose:
+                    self.io.tool_output(
+                        f"Double-buffer swap: using pre-computed summary "
+                        f"(generation {self.double_buffer.generation})"
+                    )
+                swapped = self.double_buffer.complete_swap()
+                if swapped:
+                    self.done_messages = swapped
+                    return
+
+        # Check for checkpoint
+        if self.double_buffer.should_checkpoint(current_tokens, max_tokens):
+            if self.verbose:
+                self.io.tool_output("Starting background checkpoint...")
+            self.double_buffer.begin_checkpoint(self.done_messages, self.summarizer)
+            return
+
+        # Fallback: if too big and no double-buffer action, use standard summarization
+        if self.summarizer.too_big(self.done_messages):
+            self.summarize_end()
+            if self.verbose:
+                self.io.tool_output("Starting to summarize chat history.")
+            self.summarizer_thread = threading.Thread(target=self.summarize_worker)
+            self.summarizer_thread.start()
 
     def summarize_worker(self):
         self.summarizing_messages = list(self.done_messages)
