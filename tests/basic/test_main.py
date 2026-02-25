@@ -1303,7 +1303,7 @@ class TestMain(TestCase):
             mock_files = MagicMock()
             mock_files.joinpath.return_value = mock_resource_path
 
-            with patch("aider.main.importlib_resources.files", return_value=mock_files):
+            with patch("aider.main.importlib.resources.files", return_value=mock_files):
                 # Capture stdout to check the output
                 with patch("sys.stdout", new_callable=StringIO) as mock_stdout:
                     main(
