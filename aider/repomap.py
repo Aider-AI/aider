@@ -1,6 +1,7 @@
 import colorsys
 import math
 import os
+import pickle
 import random
 import shutil
 import sqlite3
@@ -29,7 +30,14 @@ from grep_ast.tsl import USING_TSL_PACK, get_language, get_parser  # noqa: E402
 Tag = namedtuple("Tag", "rel_fname fname line name kind".split())
 
 
-SQLITE_ERRORS = (sqlite3.OperationalError, sqlite3.DatabaseError, OSError)
+SQLITE_ERRORS = (
+    sqlite3.OperationalError,
+    sqlite3.DatabaseError,
+    OSError,
+    UnicodeDecodeError,
+    pickle.UnpicklingError,
+    ValueError,
+)
 
 
 CACHE_VERSION = 3

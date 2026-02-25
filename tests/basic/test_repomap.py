@@ -1,9 +1,11 @@
 import difflib
 import os
+import pickle
 import re
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import PropertyMock, patch
 
 import git
 
@@ -501,6 +503,101 @@ class TestRepoMapAllLanguages(unittest.TestCase):
 
         # If we reach here, the maps are identical
         self.assertEqual(generated_map_str, expected_map, "Generated map matches expected map")
+
+
+class TestTagsCacheErrorRecovery(unittest.TestCase):
+    """Tests for cache error recovery when diskcache raises deserialization errors (#4729)"""
+
+    def setUp(self):
+        self.GPT35 = Model("gpt-3.5-turbo")
+
+    def _make_repo_map(self, temp_dir):
+        io = InputOutput()
+        repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+        return repo_map
+
+    def test_unicode_decode_error_in_cache_get(self):
+        """TAGS_CACHE.get() raising UnicodeDecodeError should recover via tags_cache_error"""
+        with IgnorantTemporaryDirectory() as temp_dir:
+            fname = os.path.join(temp_dir, "test.py")
+            with open(fname, "w") as f:
+                f.write("def hello():\n    pass\n")
+
+            repo_map = self._make_repo_map(temp_dir)
+
+            # Poison the cache.get to raise UnicodeDecodeError on first call
+            original_get = repo_map.TAGS_CACHE.get
+            call_count = [0]
+
+            def poisoned_get(key, *args, **kwargs):
+                call_count[0] += 1
+                if call_count[0] == 1:
+                    raise UnicodeDecodeError("utf-8", b"", 0, 1, "mock error")
+                return original_get(key, *args, **kwargs)
+
+            with patch.object(repo_map.TAGS_CACHE, "get", side_effect=poisoned_get):
+                # Should not raise — tags_cache_error recovers
+                tags = repo_map.get_tags(fname, "test.py")
+
+            # Should return valid tags (may be empty list for simple file)
+            self.assertIsInstance(tags, list)
+            del repo_map
+
+    def test_unpickling_error_in_cache_get(self):
+        """TAGS_CACHE.get() raising UnpicklingError should recover via tags_cache_error"""
+        with IgnorantTemporaryDirectory() as temp_dir:
+            fname = os.path.join(temp_dir, "test.py")
+            with open(fname, "w") as f:
+                f.write("def hello():\n    pass\n")
+
+            repo_map = self._make_repo_map(temp_dir)
+
+            original_get = repo_map.TAGS_CACHE.get
+            call_count = [0]
+
+            def poisoned_get(key, *args, **kwargs):
+                call_count[0] += 1
+                if call_count[0] == 1:
+                    raise pickle.UnpicklingError("corrupted cache entry")
+                return original_get(key, *args, **kwargs)
+
+            with patch.object(repo_map.TAGS_CACHE, "get", side_effect=poisoned_get):
+                tags = repo_map.get_tags(fname, "test.py")
+
+            self.assertIsInstance(tags, list)
+            del repo_map
+
+    def test_value_error_in_cache_get(self):
+        """TAGS_CACHE.get() raising ValueError should recover via tags_cache_error"""
+        with IgnorantTemporaryDirectory() as temp_dir:
+            fname = os.path.join(temp_dir, "test.py")
+            with open(fname, "w") as f:
+                f.write("def hello():\n    pass\n")
+
+            repo_map = self._make_repo_map(temp_dir)
+
+            original_get = repo_map.TAGS_CACHE.get
+            call_count = [0]
+
+            def poisoned_get(key, *args, **kwargs):
+                call_count[0] += 1
+                if call_count[0] == 1:
+                    raise ValueError("bad cached value")
+                return original_get(key, *args, **kwargs)
+
+            with patch.object(repo_map.TAGS_CACHE, "get", side_effect=poisoned_get):
+                tags = repo_map.get_tags(fname, "test.py")
+
+            self.assertIsInstance(tags, list)
+            del repo_map
+
+    def test_cache_errors_in_sqlite_errors_tuple(self):
+        """Verify SQLITE_ERRORS includes deserialization error types"""
+        from aider.repomap import SQLITE_ERRORS
+
+        self.assertIn(UnicodeDecodeError, SQLITE_ERRORS)
+        self.assertIn(pickle.UnpicklingError, SQLITE_ERRORS)
+        self.assertIn(ValueError, SQLITE_ERRORS)
 
 
 if __name__ == "__main__":
