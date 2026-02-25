@@ -748,7 +748,6 @@ class Commands:
                         display=completion,
                     )
                 )
-
         # Sort all completions based on their text
         sorted_completions = sorted(all_completions, key=lambda c: c.text)
 
@@ -1450,6 +1449,12 @@ class Commands:
 
         model_metadata = "\n".join(model_sections)
 
+        # Add temperature setting if available
+        if hasattr(self.coder.main_model, 'get_temperature'):
+            temp = self.coder.main_model.get_temperature()
+            if temp is not None:
+                model_metadata += f"Temperature: {temp}\n"
+
         output = f"{announcements}\n{settings}"
         if model_metadata:
             output += "\n" + model_metadata
@@ -1674,6 +1679,47 @@ Just show me the edits I need to make.
             )
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
+
+    def cmd_temperature(self, args):
+        """Set the temperature for the model (0.0 to 2.0). Use without arguments to show current temperature."""
+        if not args.strip():
+            # Show current temperature
+            if hasattr(self.coder.main_model, 'get_temperature'):
+                temp = self.coder.main_model.get_temperature()
+                if temp is None:
+                    self.io.tool_output("Temperature is not supported for this model.")
+                else:
+                    self.io.tool_output(f"Current temperature: {temp}")
+            else:
+                self.io.tool_output("Temperature setting is not available.")
+            return
+
+        try:
+            temp = float(args.strip())
+        except ValueError:
+            self.io.tool_error("Temperature must be a number between 0.0 and 2.0.")
+            return
+
+        if temp < 0.0 or temp > 2.0:
+            self.io.tool_error("Temperature must be between 0.0 and 2.0.")
+            return
+
+        # Check if the model supports temperature
+        if self.coder.main_model.use_temperature is False:
+            self.io.tool_error(f"This model ({self.coder.main_model.name}) does not support temperature.")
+            return
+
+        # Set the temperature in the model
+        if not hasattr(self.coder.main_model, 'set_temperature'):
+            self.io.tool_error("Temperature setting is not available for this model.")
+            return
+
+        self.coder.main_model.set_temperature(temp)
+        self.io.tool_output(f"Temperature set to {temp}.")
+
+        # Output announcements
+        announcements = "\n".join(self.coder.get_announcements())
+        self.io.tool_output(announcements)
 
 
 def expand_subdir(file_path):
