@@ -15,6 +15,17 @@ import time
 import traceback
 from collections import defaultdict
 from datetime import datetime
+from aider.safety import check_code_safety, get_audit_logger
+from aider.io import ConfirmFunctionCall
+
+
+try:
+    from aider.observability import get_tracer
+    OBSERVABILITY_AVAILABLE = True
+except ImportError:
+    OBSERVABILITY_AVAILABLE = False
+    get_tracer = None
+
 
 # Optional dependency: used to convert locale codes (eg ``en_US``)
 # into human-readable language names (eg ``English``).
@@ -338,6 +349,10 @@ class Coder:
         file_watcher=None,
         auto_copy_context=False,
         auto_accept_architect=True,
+        enable_safety=True,
+        enable_safety=True,
+        enable_observability=True,  
+        langsmith_project="aider-observability", 
     ):
         # Fill in a dummy Analytics if needed, but it is never .enable()'d
         self.analytics = analytics if analytics is not None else Analytics()
@@ -352,6 +367,13 @@ class Coder:
 
         self.auto_copy_context = auto_copy_context
         self.auto_accept_architect = auto_accept_architect
+        self.enable_safety = enable_safety
+
+        self.enable_observability = enable_observability
+        if enable_observability and OBSERVABILITY_AVAILABLE:
+            self.tracer = get_tracer()
+        else:
+            self.tracer = None
 
         self.ignore_mentions = ignore_mentions
         if not self.ignore_mentions:
@@ -1794,6 +1816,13 @@ class Coder:
 
         completion = None
         try:
+    # ============ ADD OBSERVABILITY (NEW) ============
+    if self.enable_observability and self.tracer:
+        with self.tracer.trace_llm_call(
+            model=model.name,
+            prompt_type="code_generation",
+            metadata={"stream": self.stream, "temperature": self.temperature}
+        ) as trace:
             hash_object, completion = model.send_completion(
                 messages,
                 functions,
@@ -1801,6 +1830,20 @@ class Coder:
                 self.temperature,
             )
             self.chat_completion_call_hashes.append(hash_object.hexdigest())
+            
+            # Store trace for later logging
+            self._current_trace = trace
+    else:
+        # Observability disabled
+        hash_object, completion = model.send_completion(
+            messages,
+            functions,
+            self.stream,
+            self.temperature,
+        )
+        self.chat_completion_call_hashes.append(hash_object.hexdigest())
+        self._current_trace = None
+    # ============ END OBSERVABILITY ============
 
             if self.stream:
                 yield from self.show_send_output_stream(completion)
@@ -2067,6 +2110,15 @@ class Coder:
 
         self.usage_report = tokens_report + sep + cost_report
 
+        # ============ LOG TO OBSERVABILITY (NEW) ============
+        if self.enable_observability and self.tracer and hasattr(self, '_current_trace') and self._current_trace:
+         self._current_trace.log_result(
+            input_tokens=prompt_tokens,
+            output_tokens=completion_tokens,
+            success=True
+        )
+         # ============ END OBSERVABILITY ============
+
     def compute_costs_from_tokens(
         self, prompt_tokens, completion_tokens, cache_write_tokens, cache_hit_tokens
     ):
@@ -2293,47 +2345,123 @@ class Coder:
 
         return res
 
-    def apply_updates(self):
-        edited = set()
-        try:
-            edits = self.get_edits()
-            edits = self.apply_edits_dry_run(edits)
-            edits = self.prepare_to_edit(edits)
-            edited = set(edit[0] for edit in edits)
+    def apply_updates(self, edits):
+    """
+    Apply code updates with safety checks.
 
-            self.apply_edits(edits)
-        except ValueError as err:
-            self.num_malformed_responses += 1
+    MODIFIED: Added safety guardrails before applying changes.
+    """
+    edited = set()
 
-            err = err.args[0]
+    try:
+        edits = self.get_edits()
+        edits = self.apply_edits_dry_run(edits)
+        edits = self.prepare_to_edit(edits)
 
-            self.io.tool_error("The LLM did not conform to the edit format.")
-            self.io.tool_output(urls.edit_errors)
-            self.io.tool_output()
-            self.io.tool_output(str(err))
+        edited = set(edit[0] for edit in edits)
 
-            self.reflected_message = str(err)
-            return edited
+        # Initialize audit logger once
+        audit_logger = get_audit_logger()
 
-        except ANY_GIT_ERROR as err:
-            self.io.tool_error(str(err))
-            return edited
-        except Exception as err:
-            self.io.tool_error("Exception while updating files:")
-            self.io.tool_error(str(err), strip=False)
+        # ==========================================================
+        # SAFETY CHECKS (NEW – runs BEFORE applying edits)
+        # ==========================================================
+        for path, new_content in edits:
+            safety_result = check_code_safety(new_content, filename=path)
 
-            traceback.print_exc()
+            if self.enable_safety:
+            safety_result = check_code_safety(new_content, filename=path)
 
-            self.reflected_message = str(err)
-            return edited
+            if safety_result.requires_confirmation:
+                # High-risk change → explicit user confirmation
+                self.io.tool_output(safety_result.message)
+                self.io.tool_output()
 
-        for path in edited:
-            if self.dry_run:
-                self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
+                if not self.io.confirm_ask(
+                    "Apply these changes anyway?",
+                    default="n"
+                ):
+                    # User rejected the change
+                    audit_logger.log_safety_check(
+                        safety_result,
+                        filename=path,
+                        code_snippet=new_content,
+                        user_approved=False
+                    )
+                    self.io.tool_error(f"Skipped {path} due to safety concerns")
+                    return edited
+
+                # User approved the change
+                audit_logger.log_safety_check(
+                    safety_result,
+                    filename=path,
+                    code_snippet=new_content,
+                    user_approved=True
+                )
+                self.io.tool_output("User approved – applying changes")
+                self.io.tool_output()
+
+            elif safety_result.violations:
+                # Low / medium risk → warn but proceed
+                self.io.tool_warning(f"Safety warning for {path}:")
+                self.io.tool_warning(safety_result.message)
+                self.io.tool_output()
+
+                audit_logger.log_safety_check(
+                    safety_result,
+                    filename=path,
+                    code_snippet=new_content,
+                    user_approved=None
+                )
             else:
-                self.io.tool_output(f"Applied edit to {path}")
+                # Clean code → silent log
+                audit_logger.log_safety_check(
+                    safety_result,
+                    filename=path,
+                    code_snippet=new_content,
+                    user_approved=None
+                )
+        # ==========================================================
+        # END SAFETY CHECKS
+        # ==========================================================
 
+        # Apply edits only after all safety checks pass
+        self.apply_edits(edits)
+
+    except ValueError as err:
+        self.num_malformed_responses += 1
+
+        err = err.args[0]
+
+        self.io.tool_error("The LLM did not conform to the edit format.")
+        self.io.tool_output(urls.edit_errors)
+        self.io.tool_output()
+        self.io.tool_output(str(err))
+
+        self.reflected_message = str(err)
         return edited
+
+    except ANY_GIT_ERROR as err:
+        self.io.tool_error(str(err))
+        return edited
+
+    except Exception as err:
+        self.io.tool_error("Exception while updating files:")
+        self.io.tool_error(str(err), strip=False)
+
+        traceback.print_exc()
+
+        self.reflected_message = str(err)
+        return edited
+
+    # Final output reporting (unchanged)
+    for path in edited:
+        if self.dry_run:
+            self.io.tool_output(f"Did not apply edit to {path} (--dry-run)")
+        else:
+            self.io.tool_output(f"Applied edit to {path}")
+
+    return edited
 
     def parse_partial_args(self):
         # dump(self.partial_response_function_call)
