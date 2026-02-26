@@ -7,6 +7,7 @@ from prompt_toolkit.completion import CompleteEvent
 from prompt_toolkit.document import Document
 from rich.text import Text
 
+from aider.commands import Commands
 from aider.dump import dump  # noqa: F401
 from aider.io import AutoCompleter, ConfirmGroup, InputOutput
 from aider.utils import ChdirTemporaryDirectory
@@ -126,6 +127,62 @@ class TestInputOutput(unittest.TestCase):
 
             # Assert that the completions match expected results
             self.assertEqual(set(completion_texts), set(expected_completions))
+
+    def test_autocompleter_fuzzy_add_drop(self):
+        # Mock commands
+        commands = MagicMock()
+        repo_files = [".github/issues.md", "other/file.py"]
+        commands.get_commands.return_value = ["/add", "/drop"]
+        commands.matching_commands.side_effect = lambda inp: (
+            [cmd for cmd in commands.get_commands() if cmd.startswith(inp.strip().split()[0])],
+            inp.strip().split()[0],
+            " ".join(inp.strip().split()[1:]),
+        )
+        commands.get_completions.side_effect = (
+            lambda cmd: repo_files if cmd in ["/add", "/drop"] else []
+        )
+        commands.get_raw_completions.return_value = None
+
+        autocompleter = AutoCompleter(
+            root="",
+            rel_fnames=repo_files,
+            addable_rel_fnames=repo_files,
+            commands=commands,
+            encoding="utf-8",
+        )
+
+        document = Document(text="/add .gitiss")
+        complete_event = CompleteEvent()
+        completions = list(autocompleter.get_completions(document, complete_event))
+        completion_texts = [comp.text for comp in completions]
+        self.assertIn(".github/issues.md", completion_texts)
+
+        # Test /drop
+        document = Document(text="/drop .gitiss")
+        completions = list(autocompleter.get_completions(document, complete_event))
+        completion_texts = [comp.text for comp in completions]
+        self.assertIn(".github/issues.md", completion_texts)
+
+    @patch("aider.commands.PathCompleter")
+    def test_commands_fuzzy_read_only(self, mock_path_completer):
+        mock_path_completer.return_value.get_completions.return_value = []
+
+        coder = MagicMock()
+        coder.root = "/mock/repo"
+        repo_files = [".github/issues.md", "other/file.py"]
+        coder.get_all_relative_files.return_value = repo_files
+        coder.get_inchat_relative_files.return_value = []  # for completions_add
+
+        io = MagicMock()
+
+        commands = Commands(io=io, coder=coder)
+
+        document = Document(text="/read-only .gitiss")
+        complete_event = CompleteEvent()
+        completions = list(commands.completions_raw_read_only(document, complete_event))
+        completion_texts = [comp.text for comp in completions]
+
+        self.assertIn(".github/issues.md", completion_texts)
 
     def test_autocompleter_with_non_existent_file(self):
         root = ""
