@@ -237,7 +237,7 @@ class InputOutput:
     def __init__(
         self,
         pretty=True,
-        yes=None,
+        yes_always=None,
         input_history_file=None,
         chat_history_file=None,
         input=None,
@@ -305,7 +305,7 @@ class InputOutput:
         if self.output:
             self.pretty = False
 
-        self.yes = yes
+        self.yes_always = yes_always
 
         self.input_history_file = input_history_file
         if self.input_history_file:
@@ -863,9 +863,9 @@ class InputOutput:
                 return True
             return text.lower() in valid_responses
 
-        if self.yes is True:
+        if self.yes_always is True:
             res = "n" if explicit_yes_required else "y"
-        elif self.yes is False:
+        elif self.yes_always is False:
             res = "n"
         elif group and group.preference:
             res = group.preference
@@ -937,9 +937,9 @@ class InputOutput:
 
         style = self._get_style()
 
-        if self.yes is True:
+        if self.yes_always is True:
             res = "yes"
-        elif self.yes is False:
+        elif self.yes_always is False:
             res = "no"
         else:
             try:
@@ -958,7 +958,7 @@ class InputOutput:
 
         hist = f"{question.strip()} {res.strip()}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
-        if self.yes in (True, False):
+        if self.yes_always in (True, False):
             self.tool_output(hist)
 
         return res
