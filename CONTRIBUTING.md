@@ -184,6 +184,13 @@ pytest tests/basic/test_coder.py
 pytest tests/basic/test_coder.py::TestCoder::test_specific_case
 ```
 
+If you are running Playwright remotely, specify the endpoint URL using the
+`--playwright-ws-endpoint` command line option when running `pytest`:
+
+```
+pytest --playwright-ws-endpoint ws://127.0.0.1:3000
+```
+
 #### Continuous Integration
 
 The project uses GitHub Actions for continuous integration. The testing workflows are defined in the following files:

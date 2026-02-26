@@ -421,11 +421,17 @@ cog.outl("```")
 ## Specify the input device name for voice recording
 #voice-input-device: xxx
 
-#################
-# Other settings:
+######################
+# Playwright settings:
 
 ## Never prompt for or attempt to install Playwright for web scraping (default: False).
 #disable-playwright: false
+
+## Specify the WebSocket endpoint for a Playwright browser server to connect to (default: None, use the locally installed Playwright).
+#playwright-ws-endpoint: xxx
+
+#################
+# Other settings:
 
 ## specify a file to edit (can be used multiple times)
 #file: xxx

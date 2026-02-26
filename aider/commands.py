@@ -21,7 +21,7 @@ from aider.io import CommandCompletionException
 from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
-from aider.scrape import Scraper, install_playwright
+from aider.scrape import Scraper, has_playwright, install_playwright
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
@@ -227,8 +227,13 @@ class Commands:
         self.io.tool_output(f"Scraping {url}...")
         if not self.scraper:
             disable_playwright = getattr(self.args, "disable_playwright", False)
+            playwright_ws_endpoint = getattr(self.args, "playwright_ws_endpoint", None)
             if disable_playwright:
                 res = False
+            elif playwright_ws_endpoint:
+                res = has_playwright(playwright_ws_endpoint)
+                if not res:
+                    self.io.tool_warning("Unable to connect to the playwright server.")
             else:
                 res = install_playwright(self.io)
                 if not res:
@@ -237,6 +242,7 @@ class Commands:
             self.scraper = Scraper(
                 print_error=self.io.tool_error,
                 playwright_available=res,
+                playwright_ws_endpoint=playwright_ws_endpoint,
                 verify_ssl=self.verify_ssl,
             )
 

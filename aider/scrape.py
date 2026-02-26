@@ -14,7 +14,7 @@ aider_user_agent = f"Aider/{__version__} +{urls.website}"
 # platforms.
 
 
-def check_env():
+def check_env(playwright_ws_endpoint=None):
     try:
         from playwright.sync_api import sync_playwright
 
@@ -24,7 +24,10 @@ def check_env():
 
     try:
         with sync_playwright() as p:
-            p.chromium.launch()
+            if playwright_ws_endpoint:
+                p.chromium.connect(playwright_ws_endpoint)
+            else:
+                p.chromium.launch()
             has_chromium = True
     except Exception:
         has_chromium = False
@@ -32,8 +35,8 @@ def check_env():
     return has_pip, has_chromium
 
 
-def has_playwright():
-    has_pip, has_chromium = check_env()
+def has_playwright(playwright_ws_endpoint=None):
+    has_pip, has_chromium = check_env(playwright_ws_endpoint)
     return has_pip and has_chromium
 
 
@@ -79,10 +82,17 @@ See {urls.enable_playwright} for more info.
 class Scraper:
     pandoc_available = None
     playwright_available = None
+    playwright_ws_endpoint = None
     playwright_instructions_shown = False
 
     # Public API...
-    def __init__(self, print_error=None, playwright_available=None, verify_ssl=True):
+    def __init__(
+        self,
+        print_error=None,
+        playwright_available=None,
+        playwright_ws_endpoint=None,
+        verify_ssl=True,
+    ):
         """
         `print_error` - a function to call to print error/debug info.
         `verify_ssl` - if False, disable SSL certificate verification when scraping.
@@ -93,6 +103,7 @@ class Scraper:
             self.print_error = print
 
         self.playwright_available = playwright_available
+        self.playwright_ws_endpoint = playwright_ws_endpoint
         self.verify_ssl = verify_ssl
 
     def scrape(self, url):
@@ -148,7 +159,10 @@ class Scraper:
 
         with sync_playwright() as p:
             try:
-                browser = p.chromium.launch()
+                if self.playwright_ws_endpoint:
+                    browser = p.chromium.connect(self.playwright_ws_endpoint)
+                else:
+                    browser = p.chromium.launch()
             except Exception as e:
                 self.playwright_available = False
                 self.print_error(str(e))
@@ -271,14 +285,19 @@ def slimdown_html(soup):
     return soup
 
 
-def main(url):
-    scraper = Scraper(playwright_available=has_playwright())
+def main(url, playwright_ws_endpoint=None):
+    scraper = Scraper(
+        playwright_available=has_playwright(playwright_ws_endpoint),
+        playwright_ws_endpoint=playwright_ws_endpoint,
+    )
     content = scraper.scrape(url)
     print(content)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python playw.py <URL>")
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        print("Usage: python scrape.py <URL> [playwright_ws_endpoint]")
         sys.exit(1)
-    main(sys.argv[1])
+    url = sys.argv[1]
+    playwright_ws_endpoint = sys.argv[2] if len(sys.argv) == 3 else None
+    main(url, playwright_ws_endpoint)
