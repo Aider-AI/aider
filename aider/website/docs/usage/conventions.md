@@ -23,7 +23,7 @@ We would simply create a file like `CONVENTIONS.md` with those lines
 and then we can add it to the aider chat, along with the file(s)
 that we want to edit.
 
-It's best to load the conventions file with `/read CONVENTIONS.md` 
+It's best to load the conventions file with `/read-only CONVENTIONS.md` 
 or `aider --read CONVENTIONS.md`. 
 This way it is marked as read-only, and cached if prompt caching
 is enabled.
