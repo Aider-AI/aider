@@ -341,6 +341,11 @@ class TestInputOutput(unittest.TestCase):
         self.assertEqual(mock_input.call_count, 2)
         self.assertNotIn(("Do you want to proceed?", None), io.never_prompts)
 
+    def test_is_interrupted_default(self):
+        """Test that is_interrupted returns False by default."""
+        io = InputOutput()
+        self.assertFalse(io.is_interrupted())
+
 
 class TestInputOutputMultilineMode(unittest.TestCase):
     def setUp(self):
