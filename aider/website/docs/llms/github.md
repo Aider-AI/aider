@@ -105,7 +105,7 @@ show-model-warnings: false
 
 * Calls made through aider are billed through your Copilot subscription  
   (aider will still print *estimated* costs).
-* The Copilot docs explicitly allow third-party “agents” that hit this API – aider is playing by
+* [The Copilot docs explicitly allow third-party “agents”](https://docs.github.com/en/copilot/building-copilot-extensions/building-a-copilot-agent-for-your-copilot-extension/using-copilots-llm-for-your-agent) that hit this API – aider is playing by
   the rules.
 * Aider talks directly to the REST endpoint—no web-UI scraping or browser automation.
 
