@@ -859,7 +859,14 @@ class Coder:
     def run_stream(self, user_message):
         self.io.user_input(user_message)
         self.init_before_message()
-        yield from self.send_message(user_message)
+        while True:
+            yield from self.send_message(user_message)
+            if not self.reflected_message:
+                break
+            if self.num_reflections >= self.max_reflections:
+                self.io.tool_warning(f"Only {self.max_reflections} reflections allowed, stopping.")
+                break
+            self.num_reflections += 1
 
     def init_before_message(self):
         self.aider_edited_files = set()
