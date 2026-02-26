@@ -126,6 +126,7 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 ### Documentation
 - [Installation Guide](https://aider.chat/docs/install.html)
 - [Usage Guide](https://aider.chat/docs/usage.html)
+- [Architecture Overview](https://aider.chat/docs/architecture.html)
 - [Tutorial Videos](https://aider.chat/docs/usage/tutorials.html)
 - [Connecting to LLMs](https://aider.chat/docs/llms.html)
 - [Configuration Options](https://aider.chat/docs/config.html)
