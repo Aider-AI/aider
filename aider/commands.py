@@ -1054,6 +1054,10 @@ class Commands:
 
     def cmd_exit(self, args):
         "Exit the application"
+        # Check and rotate chat history before exiting
+        # self.io.tool_output("Exiting, checking chat history rotation...")
+        if hasattr(self.io, 'cleanup') and callable(self.io.cleanup):
+            self.io.cleanup()
         self.coder.event("exit", reason="/exit")
         sys.exit()
 
