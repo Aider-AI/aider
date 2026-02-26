@@ -1481,3 +1481,18 @@ class TestMain(TestCase):
             )
         for call in mock_io_instance.tool_warning.call_args_list:
             self.assertNotIn("Cost estimates may be inaccurate", call[0][0])
+
+    def test_argv_file_respects_git(self):
+        with GitTemporaryDirectory():
+            fname = Path("not_in_git.txt")
+            fname.touch()
+            with open(".gitignore", "w+") as f:
+                f.write("not_in_git.txt")
+            coder = main(
+                argv=["--file", "not_in_git.txt"],
+                input=DummyInput(),
+                output=DummyOutput(),
+                return_coder=True,
+            )
+            self.assertNotIn("not_in_git.txt", str(coder.abs_fnames))
+            self.assertFalse(coder.allowed_to_edit("not_in_git.txt"))
