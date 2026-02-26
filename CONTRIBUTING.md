@@ -135,6 +135,28 @@ docker build -t aider -f docker/Dockerfile .
 The project's documentation is built using Jekyll and hosted on GitHub Pages. To build the documentation locally, follow these steps:
 
 1. Install Ruby and Bundler (if not already installed).
+   
+   For Ubuntu/Debian:
+   ```bash
+   sudo apt update
+   sudo apt install ruby ruby-dev
+   gem install bundler
+   ```
+   
+   For macOS:
+   ```bash
+   # Using Homebrew
+   brew install ruby
+   gem install bundler
+   ```
+   
+   For Windows:
+   1. Download the Ruby installer from https://rubyinstaller.org/
+   2. Run the installer
+   3. Open a new terminal and run: `gem install bundler`
+   
+   You can verify your installation with: `ruby --version` and `bundler --version`
+
 2. Navigate to the `aider/website` directory.
 3. Install the required gems:
    ```
