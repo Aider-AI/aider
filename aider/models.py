@@ -112,6 +112,24 @@ MODEL_ALIASES = {
 # Model metadata loaded from resources and user's files.
 
 
+def parse_context_window_suffix(model_name):
+    """
+    Parse a model name that may have a context window suffix [1m] for 1 million tokens.
+
+    Args:
+        model_name: The model name, possibly with a suffix like "model-name[1m]"
+
+    Returns:
+        tuple: (base_model_name, context_tokens) where context_tokens is None if no suffix
+               Example: ("us.anthropic.claude-sonnet-4-20250514-v1:0", 1000000)
+    """
+    # Only support [1m] suffix for 1 million context tokens
+    if model_name.endswith("[1m]"):
+        return model_name[:-4], 1000000
+
+    return model_name, None
+
+
 @dataclass
 class ModelSettings:
     # Model class needs to have each of these as well
@@ -321,7 +339,13 @@ class Model(ModelSettings):
         # Map any alias to its canonical name
         model = MODEL_ALIASES.get(model, model)
 
-        self.name = model
+        # Parse context window suffix like [1m] or [1M]
+        base_model, context_tokens = parse_context_window_suffix(model)
+        self.context_window_tokens = context_tokens
+
+        # Use base model name for API calls, but keep original for display/settings lookup
+        self.name = base_model
+        self.original_name = model  # Keep original with suffix for reference
         self.verbose = verbose
 
         self.max_chat_history_tokens = 1024
@@ -333,19 +357,28 @@ class Model(ModelSettings):
             (ms for ms in MODEL_SETTINGS if ms.name == "aider/extra_params"), None
         )
 
-        self.info = self.get_model_info(model)
+        self.info = self.get_model_info(base_model)
 
         # Are all needed keys/params available?
         res = self.validate_environment()
         self.missing_keys = res.get("missing_keys")
         self.keys_in_environment = res.get("keys_in_environment")
 
-        max_input_tokens = self.info.get("max_input_tokens") or 0
+        # Use context window from suffix if specified, otherwise use model info
+        if context_tokens:
+            max_input_tokens = context_tokens
+        else:
+            max_input_tokens = self.info.get("max_input_tokens") or 0
         # Calculate max_chat_history_tokens as 1/16th of max_input_tokens,
         # with minimum 1k and maximum 8k
         self.max_chat_history_tokens = min(max(max_input_tokens / 16, 1024), 8192)
 
-        self.configure_model_settings(model)
+        self.configure_model_settings(base_model)
+
+        # Apply extended context beta header for Bedrock Claude models with [Xm] suffix
+        if context_tokens and self._is_bedrock_claude_model(base_model):
+            self._apply_extended_context_header(context_tokens)
+
         if weak_model is False:
             self.weak_model_name = None
         else:
@@ -355,6 +388,43 @@ class Model(ModelSettings):
             self.editor_model_name = None
         else:
             self.get_editor_model(editor_model, editor_edit_format)
+
+    def _is_bedrock_claude_model(self, model):
+        """Check if model is a Bedrock Claude model that supports extended context."""
+        model_lower = model.lower()
+        # Check for Bedrock Claude Sonnet 4 models
+        if "anthropic" in model_lower and "claude" in model_lower:
+            if model.startswith("bedrock/") or model.startswith("bedrock_converse/"):
+                return True
+            # Direct Bedrock model IDs like us.anthropic.claude-sonnet-4-...
+            if model_lower.startswith(("us.anthropic.", "eu.anthropic.", "anthropic.")):
+                return True
+        return False
+
+    def _apply_extended_context_header(self, context_tokens):
+        """Apply the anthropic-beta header for extended context window."""
+        # Only apply for 1M context (context_tokens >= 1000000)
+        if context_tokens < 1000000:
+            return
+
+        if not self.extra_params:
+            self.extra_params = {}
+
+        if "extra_headers" not in self.extra_params:
+            self.extra_params["extra_headers"] = {}
+
+        # Get existing anthropic-beta header value
+        existing_beta = self.extra_params["extra_headers"].get("anthropic-beta", "")
+
+        # Add context-1m beta flag if not already present
+        context_1m_beta = "context-1m-2025-08-07"
+        if context_1m_beta not in existing_beta:
+            if existing_beta:
+                self.extra_params["extra_headers"]["anthropic-beta"] = (
+                    f"{existing_beta},{context_1m_beta}"
+                )
+            else:
+                self.extra_params["extra_headers"]["anthropic-beta"] = context_1m_beta
 
     def get_model_info(self, model):
         return model_info_manager.get_model_info(model)
