@@ -47,6 +47,7 @@ cog.out(get_help_md())
 | **/model** | Switch the Main Model to a new LLM |
 | **/models** | Search the list of available models |
 | **/multiline-mode** | Toggle multiline mode (swaps behavior of Enter and Meta+Enter) |
+| **/ok** | Alias for `/code Ok, please go ahead and make those changes.` |
 | **/paste** | Paste image/text from the clipboard into the chat.        Optionally provide a name for the image. |
 | **/quit** | Exit the application |
 | **/read-only** | Add files to the chat that are for reference only, or turn added files to read-only |
