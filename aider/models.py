@@ -18,6 +18,7 @@ from PIL import Image
 
 from aider import __version__
 from aider.dump import dump  # noqa: F401
+from aider.helicone import HeliconeModelManager
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
@@ -163,11 +164,15 @@ class ModelInfoManager:
 
         # Manager for the cached OpenRouter model database
         self.openrouter_manager = OpenRouterModelManager()
+        # Manager for the cached Helicone public registry
+        self.helicone_manager = HeliconeModelManager()
 
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
         if hasattr(self, "openrouter_manager"):
             self.openrouter_manager.set_verify_ssl(verify_ssl)
+        if hasattr(self, "helicone_manager"):
+            self.helicone_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -247,6 +252,12 @@ class ModelInfoManager:
 
         if litellm_info:
             return litellm_info
+
+        # Helicone models: consult the local Helicone registry cache
+        if model.startswith("helicone/"):
+            helicone_info = self.helicone_manager.get_model_info(model)
+            if helicone_info:
+                return helicone_info
 
         if not cached_info and model.startswith("openrouter/"):
             # First try using the locally cached OpenRouter model database
@@ -419,6 +430,10 @@ class Model(ModelSettings):
                 self.accepts_settings.append("reasoning_effort")
 
     def apply_generic_model_settings(self, model):
+        # Normalize helicone models to underlying provider/model for rule matching
+        if model.startswith("helicone/"):
+            model = model[len("helicone/") :]
+
         if "/o3-mini" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
@@ -699,6 +714,13 @@ class Model(ModelSettings):
 
         model = self.name
 
+        # Special handling: helicone/<provider>/<model>
+        # Require HELICONE_API_KEY for Helicone gateway routing
+        if model.startswith("helicone/"):
+            if os.environ.get("HELICONE_API_KEY"):
+                return dict(keys_in_environment=["HELICONE_API_KEY"], missing_keys=[])
+            return dict(keys_in_environment=False, missing_keys=["HELICONE_API_KEY"])
+
         pieces = model.split("/")
         if len(pieces) > 1:
             provider = pieces[0]
@@ -974,10 +996,27 @@ class Model(ModelSettings):
         if self.is_deepseek_r1():
             messages = ensure_alternating_roles(messages)
 
-        kwargs = dict(
-            model=self.name,
-            stream=stream,
-        )
+        effective_model = self.name
+        if effective_model.startswith("helicone/"):
+            # For Helicone, pass the OpenAI model id (last segment of the registry id)
+            underlying_id = effective_model[len("helicone/") :]
+            openai_model_id = underlying_id.split("/")[-1]
+            kwargs = dict(
+                model=openai_model_id,
+                stream=stream,
+            )
+            # Route via Helicone gateway and key
+            kwargs["api_base"] = "https://ai-gateway.helicone.ai"
+            helicone_key = os.environ.get("HELICONE_API_KEY")
+            if helicone_key:
+                kwargs["api_key"] = helicone_key
+            # Force OpenAI-compatible provider for litellm
+            kwargs["custom_llm_provider"] = "openai"
+        else:
+            kwargs = dict(
+                model=effective_model,
+                stream=stream,
+            )
 
         if self.use_temperature is not False:
             if temperature is None:
@@ -1232,6 +1271,15 @@ def fuzzy_match_models(name):
 
         chat_models.add(fq_model)
         chat_models.add(orig_model)
+
+    # Include Helicone registry models if available
+    try:
+        helicone_ids = model_info_manager.helicone_manager.get_all_model_ids()
+        for hid in helicone_ids:
+            chat_models.add(f"helicone/{hid}")
+    except Exception:
+        # Be resilient if the cache/network fails
+        pass
 
     chat_models = sorted(chat_models)
     # exactly matching model

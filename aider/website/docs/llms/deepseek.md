@@ -30,3 +30,6 @@ cd /to/your/project
 aider --model deepseek/deepseek-chat
 ```
 
+{: .tip }
+You can also access DeepSeek models via the
+[Helicone](helicone.md) gateway. Use the Helicone route, for example: `helicone/deepseek-v3`.
