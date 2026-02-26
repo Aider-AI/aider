@@ -15,6 +15,7 @@ except ImportError:
 
 import importlib_resources
 import shtab
+import yaml
 from dotenv import load_dotenv
 from prompt_toolkit.enums import EditingMode
 
@@ -332,6 +333,16 @@ def generate_search_path_list(default_file, git_root, command_line_file):
     return files
 
 
+def load_profiles_from_config_files(config_files):
+    profiles = {}
+    for config_file in config_files:
+        if Path(config_file).exists():
+            with open(config_file, "r") as f:
+                config = yaml.safe_load(f) or {}
+            profiles.update(config.get("profiles", {}))
+    return profiles
+
+
 def register_models(git_root, model_settings_fname, io, verbose=False):
     model_settings_files = generate_search_path_list(
         ".aider.model.settings.yml", git_root, model_settings_fname
@@ -496,6 +507,31 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     parser = get_parser(default_config_files, git_root)
 
     args, unknown = parser.parse_known_args(argv)
+
+    # Include config from --profile
+    #   - Do this early so profiles can contain settings like --env-file, and cli args override
+    #     profile settings
+    if args.profile is not None:
+        profiles = load_profiles_from_config_files(default_config_files)
+        profile = profiles.get(args.profile)
+        if not profile:
+            print(f"Profile not found: {args.profile}", file=sys.stderr)
+            print(f"Available profiles: {", ".join(profiles.keys())}", file=sys.stderr)
+            return 1
+        if args.verbose:
+            print(f"Using profile: {args.profile}")
+        profile_argv = []
+        for k, v in profile.items():
+            if v is None:
+                v = ""
+            if isinstance(v, bool):
+                profile_argv.append(f"--{k if v else f'no-{k}'}")
+            else:
+                profile_argv.append(f"--{k}={v}")
+        # Inject profile settings into argv (used here and below)
+        argv = profile_argv + argv
+        # Parse again with settings from profile
+        args, unknown = parser.parse_known_args(argv)
 
     # Load the .env file specified in the arguments
     loaded_dotenvs = load_dotenv_files(git_root, args.env_file, args.encoding)
