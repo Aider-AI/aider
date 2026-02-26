@@ -1675,6 +1675,46 @@ Just show me the edits I need to make.
         except Exception as e:
             self.io.tool_error(f"An unexpected error occurred while copying to clipboard: {str(e)}")
 
+    def completions_raw_save_response(self, document, complete_event):
+        return self.completions_raw_read_only(document, complete_event)
+
+    def cmd_save_response(self, args):
+        "Save the last assistant message to a file"
+        if not args.strip():
+            self.io.tool_error("Please provide a filename to save the response to.")
+            return
+
+        all_messages = self.coder.done_messages + self.coder.cur_messages
+        assistant_messages = [msg for msg in reversed(all_messages) if msg["role"] == "assistant"]
+
+        if not assistant_messages:
+            self.io.tool_error("No assistant messages found to save.")
+            return
+
+        last_assistant_message = assistant_messages[0]["content"]
+
+        filename = args.strip()
+        # Expand user home directory if present
+        filename = os.path.expanduser(filename)
+
+        # Make path absolute relative to coder root if not already absolute
+        if not os.path.isabs(filename):
+            filename = os.path.join(self.coder.root, filename)
+
+        # Check if file exists and prompt for confirmation
+        if os.path.exists(filename):
+            if not self.io.confirm_ask(f"File {args.strip()} already exists. Overwrite?"):
+                self.io.tool_output("Save cancelled.")
+                return
+
+        try:
+            # Create parent directories if they don't exist
+            Path(filename).parent.mkdir(parents=True, exist_ok=True)
+            self.io.write_text(filename, last_assistant_message)
+            self.io.tool_output(f"Saved assistant response to {args.strip()}")
+        except Exception as e:
+            self.io.tool_error(f"Error saving response to file: {e}")
+
 
 def expand_subdir(file_path):
     if file_path.is_file():
