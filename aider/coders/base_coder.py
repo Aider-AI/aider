@@ -1376,9 +1376,12 @@ class Coder:
                         stream=False,
                         **kwargs,
                     )
+                except KeyboardInterrupt:
+                    self.io.tool_output("\nRequest cancelled by user.")
+                    return
                 except Exception as err:
                     self.io.tool_warning(f"Cache warming error: {str(err)}")
-                    continue
+                    return
 
                 cache_hit_tokens = getattr(
                     completion.usage, "prompt_cache_hit_tokens", 0
