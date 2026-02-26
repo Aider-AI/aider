@@ -590,19 +590,23 @@ class Model(ModelSettings):
         if provided_weak_model_name:
             self.weak_model_name = provided_weak_model_name
 
-        if not self.weak_model_name:
-            self.weak_model = self
-            return
+        if not self.weak_model_name or self.weak_model_name == self.name:
+           self.weak_model = self
+           return self.weak_model
 
-        if self.weak_model_name == self.name:
-            self.weak_model = self
-            return
-
-        self.weak_model = Model(
-            self.weak_model_name,
-            weak_model=False,
+        try:
+            self.weak_model = Model(
+               self.weak_model_name,
+               weak_model=False,
         )
+        except Exception as e:
+            # If the model is not found (404 error), fall back gracefully
+            print(f"Warning: Could not load weak model '{self.weak_model_name}'. Falling back to main model. Error: {e}")
+            self.weak_model = self
+
         return self.weak_model
+
+
 
     def commit_message_models(self):
         return [self.weak_model, self]
