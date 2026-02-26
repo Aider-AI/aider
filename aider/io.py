@@ -252,6 +252,7 @@ class InputOutput:
         completion_menu_current_color=None,
         completion_menu_current_bg_color=None,
         code_theme="default",
+        code_theme_no_background=False,
         encoding="utf-8",
         line_endings="platform",
         dry_run=False,
@@ -297,6 +298,7 @@ class InputOutput:
         )
 
         self.code_theme = code_theme
+        self.code_theme_no_background = code_theme_no_background
 
         self.input = input
         self.output = output
@@ -1015,6 +1017,7 @@ class InputOutput:
         mdargs = dict(
             style=self.assistant_output_color,
             code_theme=self.code_theme,
+            code_theme_no_background=self.code_theme_no_background,
             inline_code_lexer="text",
         )
         mdStream = MarkdownStream(mdargs=mdargs)
