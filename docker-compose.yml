@@ -1,0 +1,21 @@
+services:
+  # Run this using `docker compose run --rm aider-base` on the CLI
+  # To run with forced build: `docker compose run --build --rm aider-base` on the CLI
+  aider-base:
+    build:
+      context: .
+      args: [--rm]
+      dockerfile: docker/Dockerfile
+    container_name: aider
+    #volumes:
+    #  - .:/app
+    #working_dir: /app
+    command: /bin/bash
+
+  # Run this using `docker compose run --rm aider` on the CLI
+  # You can add arguments: `docker compose run --rm aider --architect -m "Do this task"`
+  # And you can request to update the build: `docker compose run --build --rm aider` on the CLI
+  aider:
+    extends: aider-base
+    command: aider
+
