@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="my-test-package">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/.venv/lib/python3.12/site-packages/pkg_resources/tests/data/my-test-package-zip/my-test-package.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
