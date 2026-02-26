@@ -3,10 +3,12 @@
 import os
 import random
 import sys
+import asyncio
 
 import streamlit as st
 
 from aider import urls
+from streamlit.runtime.scriptrunner import add_script_run_ctx
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
@@ -185,10 +187,16 @@ class GUI:
         self.do_add_web_page()
 
     def do_add_files(self):
+        if 'files_being_added' not in st.session_state:
+            st.session_state.files_being_added = set()
+
+        all_files = self.coder.get_all_relative_files()
+        current_files = self.coder.get_inchat_relative_files()
+        
         fnames = st.multiselect(
             "Add files to the chat",
-            self.coder.get_all_relative_files(),
-            default=self.state.initial_inchat_files,
+            all_files,
+            default=list(current_files),
             placeholder="Files to edit",
             disabled=self.prompt_pending(),
             help=(
@@ -198,14 +206,22 @@ class GUI:
         )
 
         for fname in fnames:
-            if fname not in self.coder.get_inchat_relative_files():
-                self.coder.add_rel_fname(fname)
-                self.info(f"Added {fname} to the chat")
+            if fname not in current_files and fname not in st.session_state.files_being_added:
+                st.session_state.files_being_added.add(fname)
+                asyncio.run(self.add_file_async(fname))
 
-        for fname in self.coder.get_inchat_relative_files():
+        for fname in current_files:
             if fname not in fnames:
                 self.coder.drop_rel_fname(fname)
                 self.info(f"Removed {fname} from the chat")
+
+    async def add_file_async(self, fname):
+        try:
+            self.coder.add_rel_fname(fname)
+            self.info(f"Added {fname} to the chat")
+        finally:
+            st.session_state.files_being_added.remove(fname)
+        st.rerun()
 
     def do_add_web_page(self):
         with st.popover("Add a web page to the chat"):
