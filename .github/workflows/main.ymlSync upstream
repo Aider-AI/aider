@@ -1,0 +1,43 @@
+name: Sync upstream
+
+on:
+  schedule:
+    - cron: '*/10 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/Aider-AI/aider.git
+
+      - name: Fetch upstream
+        run: git fetch upstream
+
+      - name: Check if merge is needed
+        id: check
+        run: |
+          current=$(git rev-parse HEAD)
+          upstream=$(git rev-parse upstream/main)
+          if [ "$current" != "$upstream" ]; then
+            echo "need_sync=true" >> $GITHUB_OUTPUT
+          else
+            echo "need_sync=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Merge upstream
+        if: steps.check.outputs.need_sync == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git merge upstream/main --no-edit
+          git push
