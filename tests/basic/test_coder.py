@@ -135,6 +135,9 @@ class TestCoder(unittest.TestCase):
             repo.git.add(str(fname2))
             repo.git.commit("-m", "new")
 
+            # Make confirm_ask return "yes" by default
+            mock_io.confirm_ask.return_value = "yes"
+
             # Initialize the Coder object with the mocked IO and mocked repo
             coder = Coder.create(self.GPT35, None, mock_io)
 
@@ -238,8 +241,8 @@ class TestCoder(unittest.TestCase):
             # Mock get_file_mentions to return two file names
             coder.get_file_mentions = MagicMock(return_value=set(["file1.txt", "file2.txt"]))
 
-            # Mock confirm_ask to return False for the first call and True for the second
-            io.confirm_ask = MagicMock(side_effect=[False, True, True])
+            # Mock confirm_ask to return "no" for the first call and "yes" for the second
+            io.confirm_ask = MagicMock(side_effect=["no", "yes", "yes"])
 
             # First call to check_for_file_mentions
             coder.check_for_file_mentions("Please check file1.txt for the info")
