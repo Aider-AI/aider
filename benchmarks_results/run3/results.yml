@@ -1,0 +1,29 @@
+model: gpt-5-nano
+dirname: 2025-10-18-03-46-49--run3
+date: 2025-10-18
+version: 0.86.2.dev
+command: aider --model gpt-5-nano
+test_cases: 225
+total_tests: 225
+pass_rate_1: 16.4
+pass_rate_2: 47.6
+pass_num_1: 37
+pass_num_2: 107
+percent_cases_well_formed: 100.0
+error_outputs: 0
+num_malformed_responses: 0
+num_with_malformed_responses: 0
+user_asks: 145
+lazy_comments: 2
+syntax_errors: 0
+indentation_errors: 0
+exhausted_context_windows: 0
+prompt_tokens: 2742259
+completion_tokens: 2641657
+test_timeouts: 2
+seconds_per_case: 87.9
+total_cost: 1.1920
+costs:
+  per_test_case_usd: 0.0053
+  total_usd: 1.19
+  projected_usd: 1.19
