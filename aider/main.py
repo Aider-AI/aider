@@ -557,6 +557,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             input=input,
             output=output,
             user_input_color=args.user_input_color,
+            user_input_submitted_color=args.user_input_submitted_color,
             tool_output_color=args.tool_output_color,
             tool_warning_color=args.tool_warning_color,
             tool_error_color=args.tool_error_color,
