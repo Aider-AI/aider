@@ -1,6 +1,5 @@
 import threading
 import time
-
 import pyperclip
 
 
@@ -30,12 +29,10 @@ class ClipboardWatcher:
                         self.io.placeholder = current
                         if len(current.splitlines()) > 1:
                             self.io.placeholder = "\n" + self.io.placeholder + "\n"
-
                     time.sleep(0.5)
                 except Exception as e:
                     if self.verbose:
                         from aider.dump import dump
-
                         dump(f"Clipboard watcher error: {e}")
                     continue
 
