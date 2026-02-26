@@ -197,6 +197,12 @@ def get_parser(default_config_files, git_root):
         help="Specify the model to use for editor tasks (default depends on --model)",
     )
     group.add_argument(
+        "--ask-model",
+        metavar="ASK_MODEL",
+        default=None,
+        help="Specify the model to use for /ask questions (default depends on --model)",
+    )
+    group.add_argument(
         "--editor-edit-format",
         metavar="EDITOR_EDIT_FORMAT",
         choices=edit_format_choices,
