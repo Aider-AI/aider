@@ -37,7 +37,7 @@ from aider.mdstream import MarkdownStream
 
 from .dump import dump  # noqa: F401
 from .editor import pipe_editor
-from .utils import is_image_file
+from .utils import is_image_file, run_fzf
 
 # Constants
 NOTIFICATION_MESSAGE = "Aider is waiting for your input"
@@ -264,6 +264,13 @@ class InputOutput:
         notifications=False,
         notifications_command=None,
     ):
+        self.console = Console()
+        self.pretty = pretty
+        if chat_history_file is not None:
+            self.chat_history_file = Path(chat_history_file)
+        else:
+            self.chat_history_file = None
+
         self.placeholder = None
         self.interrupted = False
         self.never_prompts = set()
@@ -295,6 +302,13 @@ class InputOutput:
         self.completion_menu_current_bg_color = (
             ensure_hash_prefix(completion_menu_current_bg_color) if pretty else None
         )
+
+        self.fzf_available = shutil.which("fzf")
+        if not self.fzf_available:
+            self.tool_warning(
+                "fzf not found, fuzzy finder features will be disabled. Install it for enhanced"
+                " file/history search."
+            )
 
         self.code_theme = code_theme
 
@@ -608,6 +622,28 @@ class InputOutput:
 
             # Move cursor to the end of the text
             buffer.cursor_position = len(buffer.text)
+
+        @kb.add("c-t", filter=Condition(lambda: self.fzf_available))
+        def _(event):
+            "Fuzzy find files to add to the chat"
+            buffer = event.current_buffer
+            if not buffer.text.strip().startswith("/add "):
+                return
+
+            files = run_fzf(addable_rel_fnames, multi=True)
+            if files:
+                buffer.text = "/add " + " ".join(files)
+                buffer.cursor_position = len(buffer.text)
+
+        @kb.add("c-r", filter=Condition(lambda: self.fzf_available))
+        def _(event):
+            "Fuzzy search in history and paste it in the prompt"
+            buffer = event.current_buffer
+            history_lines = self.get_input_history()
+            selected_lines = run_fzf(history_lines)
+            if selected_lines:
+                buffer.text = "".join(selected_lines)
+                buffer.cursor_position = len(buffer.text)
 
         @kb.add("enter", eager=True, filter=~is_searching)
         def _(event):
