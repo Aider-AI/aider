@@ -495,6 +495,9 @@ def summarize_results(dirname, stats_languages=None):
     res.prompt_tokens = 0
     res.completion_tokens = 0
 
+    # Per language stats
+    res.language_stats = defaultdict(lambda: defaultdict(int))
+
     res.reasoning_effort = None
     res.thinking_tokens = None
     variants = defaultdict(set)
@@ -506,6 +509,13 @@ def summarize_results(dirname, stats_languages=None):
         res.completed_tests += 1
         tests_outcomes = results.get("tests_outcomes", [])
         passed = tests_outcomes and tests_outcomes[-1]
+
+        language = results.get("language")
+        if language:
+            res.language_stats[language]["total"] += 1
+            if passed:
+                res.language_stats[language]["passed"] += 1
+
         if passed:
             for i in range(len(tests_outcomes) - 1, tries):
                 passed_tests[i] += 1
@@ -623,6 +633,13 @@ def summarize_results(dirname, stats_languages=None):
         f" ${projected_cost:.2f} projected"
     )
 
+    console.rule(title="Per Language Pass Rates")
+    for lang, stats in sorted(res.language_stats.items()):
+        total = stats["total"]
+        passed = stats["passed"]
+        pass_rate = 100 * passed / total if total > 0 else 0
+        print(f"  {lang}: {pass_rate:.1f}% ({passed}/{total})")
+
     console.rule()
 
     # print(json.dumps(vars(res), indent=4, sort_keys=True))
@@ -695,6 +712,7 @@ def run_test_real(
     thinking_tokens: Optional[int] = None,
     read_model_settings=None,
 ):
+    language = testdir.parts[-4]
     if not os.path.isdir(testdir):
         print("Not a dir:", testdir)
         return
@@ -942,6 +960,7 @@ def run_test_real(
     results = dict(
         testdir=str(testdir),
         testcase=testdir.name,
+        language=language,
         model=main_model.name,
         edit_format=edit_format,
         tests_outcomes=test_outcomes,
@@ -957,8 +976,8 @@ def run_test_real(
         indentation_errors=indentation_errors,
         lazy_comments=lazy_comments,  # Add the count of pattern matches to the results
         reasoning_effort=reasoning_effort,
-        prompt_tokens=coder.total_tokens_sent,
-        completion_tokens=coder.total_tokens_received,
+        prompt_tokens=getattr(coder, "total_tokens_sent", 0),
+        completion_tokens=getattr(coder, "total_tokens_received", 0),
         thinking_tokens=thinking_tokens,
         chat_hashes=list(
             zip(
