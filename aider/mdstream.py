@@ -102,7 +102,7 @@ class MarkdownStream:
     min_delay = 1.0 / 20  # Minimum time between updates (20fps)
     live_window = 6  # Number of lines to keep visible at bottom during streaming
 
-    def __init__(self, mdargs=None):
+    def __init__(self, mdargs=None, console_theme=None):
         """Initialize the markdown stream.
 
         Args:
@@ -114,6 +114,7 @@ class MarkdownStream:
             self.mdargs = mdargs
         else:
             self.mdargs = dict()
+        self.console_theme = console_theme
 
         # Defer Live creation until the first update.
         self.live = None
@@ -130,7 +131,7 @@ class MarkdownStream:
         """
         # Render the markdown to a string buffer
         string_io = io.StringIO()
-        console = Console(file=string_io, force_terminal=True)
+        console = Console(file=string_io, force_terminal=True, theme=self.console_theme)
         markdown = NoInsetMarkdown(text, **self.mdargs)
         console.print(markdown)
         output = string_io.getvalue()
