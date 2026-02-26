@@ -89,6 +89,18 @@ class TestUtils(unittest.TestCase):
         result = eb.strip_quoted_wrapping(input_text)
         self.assertEqual(result, expected_output)
 
+    def test_strip_quoted_wrapping_filename_only(self):
+        input_text = "filename.ext\n"
+        expected_output = "filename.ext\n"
+        result = eb.strip_quoted_wrapping(input_text, "filename.ext")
+        self.assertEqual(result, expected_output)
+
+    def test_strip_quoted_wrapping_filename_ending(self):
+        input_text = "Line that ends with filename.ext\nA second line"
+        expected_output = "Line that ends with filename.ext\nA second line"
+        result = eb.strip_quoted_wrapping(input_text, "filename.ext")
+        self.assertEqual(result, expected_output)
+
     def test_find_original_update_blocks(self):
         edit = """
 Here's the change:
