@@ -103,6 +103,7 @@ class TestInputOutput(unittest.TestCase):
             ("/", ["/help", "/add", "/drop"]),
             ("/a", ["/add"]),
             ("/add f", ["file1.txt", "file2.txt"]),
+            ("/add file1.txt f", ["file2.txt"]),
         ]
 
         # Step 6: Iterate through test cases
