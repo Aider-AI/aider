@@ -139,7 +139,7 @@ cog.out("```\n")
 - name: (default values)
   edit_format: whole
   weak_model_name: null
-  use_repo_map: false
+  use_repo_map: null
   send_undo_reply: false
   lazy: false
   overeager: false
