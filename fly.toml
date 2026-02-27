@@ -1,31 +1,23 @@
-app = "your-slm-aider-app"
-primary_region = "iad"
+# fly.toml app configuration file generated for aider-t2qfzw on 2026-02-27T12:04:23Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'aider-t2qfzw'
+primary_region = 'iad'
 
 [build]
-  dockerfile = "Dockerfile"
 
-[env]
-  PORT = "8080"
-  HOST = "0.0.0.0"
-
-[[services]]
-  internal_port = 8080
-  protocol = "tcp"
-
-  [[services.ports]]
-    port = 80
-    handlers = ["http"]
-
-  [[services.ports]]
-    port = 443
-    handlers = ["tls", "http"]
-
-  [[services.http_checks]]
-    interval = "15s"
-    timeout = "2s"
-    method = "GET"
-    path = "/healthz"
+[http_service]
+  internal_port = 8181
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
 
 [[vm]]
-  memory = "2gb"
-  cpus = 2
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 2048
