@@ -1,0 +1,31 @@
+app = "your-slm-aider-app"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  HOST = "0.0.0.0"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [[services.http_checks]]
+    interval = "15s"
+    timeout = "2s"
+    method = "GET"
+    path = "/healthz"
+
+[[vm]]
+  memory = "2gb"
+  cpus = 2
