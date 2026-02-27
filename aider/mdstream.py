@@ -2,6 +2,10 @@
 
 import io
 import time
+import base64
+import json
+import zlib
+import re
 
 from rich import box
 from rich.console import Console
@@ -114,10 +118,39 @@ class MarkdownStream:
             self.mdargs = mdargs
         else:
             self.mdargs = dict()
+            
+        self.mermaid_pattern = re.compile(r'```mermaid\n(.*?)\n```', re.DOTALL)
 
         # Defer Live creation until the first update.
         self.live = None
         self._live_started = False
+
+    def _generate_mermaid_link(self, graph_markdown):
+        """Generate a mermaid.live link for the given graph markdown"""
+        def js_string_to_byte(data):
+            return bytes(data, 'ascii')
+
+        def js_bytes_to_string(data):
+            return data.decode('ascii')
+
+        def js_btoa(data):
+            return base64.b64encode(data)
+
+        def pako_deflate(data):
+            compress = zlib.compressobj(9, zlib.DEFLATED, 15, 8, zlib.Z_DEFAULT_STRATEGY)
+            compressed_data = compress.compress(data)
+            compressed_data += compress.flush()
+            return compressed_data
+
+        j_graph = {
+            "code": graph_markdown,
+            "mermaid": {"theme": "default"}
+        }
+        byte_str = js_string_to_byte(json.dumps(j_graph))
+        deflated = pako_deflate(byte_str)
+        d_encode = js_btoa(deflated)
+        link = 'http://mermaid.live/view#pako:' + js_bytes_to_string(d_encode)
+        return link
 
     def _render_markdown_to_lines(self, text):
         """Render markdown text to a list of lines.
@@ -182,6 +215,24 @@ class MarkdownStream:
 
         # Set min_delay to render time plus a small buffer
         self.min_delay = min(max(render_time * 10, 1.0 / 20), 2)
+
+        # Process mermaid diagrams
+        processed_text = text
+        for match in self.mermaid_pattern.finditer(text):
+            mermaid_code = match.group(1)
+            link = self._generate_mermaid_link(mermaid_code)
+            # Add the link after the mermaid block
+            diagram_end = match.end()
+            processed_text = (
+                processed_text[:diagram_end] + 
+                f"\n\n[View diagram]({link})\n" +
+                processed_text[diagram_end:]
+            )
+
+        string_io = io.StringIO()
+        console = Console(file=string_io, force_terminal=True)
+
+        markdown = Markdown(processed_text, **self.mdargs)
 
         num_lines = len(lines)
 
