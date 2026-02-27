@@ -121,6 +121,39 @@ aider --model o3-mini --api-key openai=<key>
 
 See the [installation instructions](https://aider.chat/docs/install.html) and [usage documentation](https://aider.chat/docs/usage.html) for more details.
 
+## SLM (Strategic Liquidity Manager) service
+
+This repo includes an optional FastAPI service under `aider/slm/` intended to run on Fly.io.
+It can:
+- subscribe to Fly log streams via NATS,
+- translate certain log patterns into Aider `/code ...` instructions,
+- run Aider in a local checkout,
+- and (optionally) wait for operator approval before pushing.
+
+### Run locally
+
+```bash
+export SLM_REPO_PATH=/path/to/checked-out/repo
+export SLM_GITHUB_TOKEN=...             # optional, used for pushing
+# Note: SLM always requires explicit approval before pushing.
+
+uvicorn aider.slm:app --host 0.0.0.0 --port 8080
+```
+
+### Submit prompts
+
+```bash
+./slm_cmd "Fix the failing tests"
+# or: curl -X POST localhost:8080/prompt -H 'content-type: application/json' -d '{"prompt":"..."}'
+```
+
+### Approve/deny
+
+Use:
+- `GET /pending`
+- `POST /approve/{id}`
+- `POST /deny/{id}`
+
 ## More Information
 
 ### Documentation

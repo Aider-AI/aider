@@ -67,6 +67,7 @@ click==8.3.1
     #   -c requirements/common-constraints.txt
     #   litellm
     #   typer
+    #   uvicorn
 configargparse==1.7.1
     # via
     #   -c requirements/common-constraints.txt
@@ -125,6 +126,7 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
+    #   uvicorn
 hf-xet==1.2.0
     # via
     #   -c requirements/common-constraints.txt
@@ -133,6 +135,10 @@ httpcore==1.0.9
     # via
     #   -c requirements/common-constraints.txt
     #   httpx
+httptools==0.7.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   uvicorn
 httpx==0.28.1
     # via
     #   -c requirements/common-constraints.txt
@@ -214,6 +220,10 @@ multidict==6.7.1
     #   -c requirements/common-constraints.txt
     #   aiohttp
     #   yarl
+nats-py==2.14.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
 networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
@@ -321,11 +331,13 @@ python-dotenv==1.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   litellm
+    #   uvicorn
 pyyaml==6.0.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
     #   huggingface-hub
+    #   uvicorn
 referencing==0.37.0
     # via
     #   -c requirements/common-constraints.txt
@@ -461,14 +473,27 @@ urllib3==2.6.3
     # via
     #   -c requirements/common-constraints.txt
     #   requests
+uvicorn[standard]==0.41.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements.in
+uvloop==0.22.1
+    # via
+    #   -c requirements/common-constraints.txt
+    #   uvicorn
 watchfiles==1.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
+    #   uvicorn
 wcwidth==0.6.0
     # via
     #   -c requirements/common-constraints.txt
     #   prompt-toolkit
+websockets==16.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   uvicorn
 yarl==1.22.0
     # via
     #   -c requirements/common-constraints.txt

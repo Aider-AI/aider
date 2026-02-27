@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 \"prompt text...\"" >&2
+  exit 2
+fi
+
+PROMPT="$*"
+PORT="${PORT:-8080}"
+URL="http://127.0.0.1:${PORT}/prompt"
+
+# Use python to JSON-escape the string (python is guaranteed to exist in the image).
+JSON_PROMPT=$(python - <<'PY'
+import json,sys
+print(json.dumps(sys.argv[1]))
+PY
+"$PROMPT")
+
+curl -sS -X POST "$URL" \
+  -H 'Content-Type: application/json' \
+  -d "{\"prompt\": ${JSON_PROMPT}}"
+
+echo
