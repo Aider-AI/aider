@@ -2716,3 +2716,43 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+
+# Avian
+# https://avian.io
+# Models served via Avian's OpenAI-compatible API.
+
+- name: avian/deepseek-v3.2
+  edit_format: diff
+  weak_model_name: avian/deepseek-v3.2
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 65536
+
+- name: avian/kimi-k2.5
+  edit_format: diff
+  weak_model_name: avian/deepseek-v3.2
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 8192
+
+- name: avian/glm-5
+  edit_format: diff
+  weak_model_name: avian/deepseek-v3.2
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 16384
+
+- name: avian/minimax-m2.5
+  edit_format: diff
+  weak_model_name: avian/deepseek-v3.2
+  use_repo_map: true
+  reminder: sys
+  examples_as_sys_msg: true
+  extra_params:
+    max_tokens: 1000000
