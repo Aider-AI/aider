@@ -139,7 +139,15 @@ def format_messages(messages, title=None):
 
 def show_messages(messages, title=None, functions=None):
     formatted_output = format_messages(messages, title)
-    print(formatted_output)
+    try:
+        print(formatted_output)
+    except UnicodeEncodeError:
+        # Handle surrogate characters (e.g., from emoji on Windows)
+        # First encode with surrogatepass to handle lone surrogates, then decode as ascii with replace
+        safe_output = formatted_output.encode("utf-8", errors="surrogatepass").decode(
+            "utf-8", errors="replace"
+        )
+        print(safe_output)
 
     if functions:
         dump(functions)
