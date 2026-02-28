@@ -50,6 +50,13 @@ git config user.email "you@example.com"
 git config user.name "Your Name"
 ```
 
+## Docker client in the aider-full image
+
+The aider-full image includes the Docker CLI. To use Docker from inside the container you must provide access to a Docker daemon — the simplest approach is to mount the host Docker socket:
+
+    docker run --rm --volume /var/run/docker.sock:/var/run/docker.sock paulgauthier/aider-full docker ps
+
+Note: mounting /var/run/docker.sock grants the container control of the host Docker daemon; only do this in trusted environments.
 
 ## Limitations
 
