@@ -221,6 +221,10 @@ Environment variable: `AIDER_EDITOR_MODEL`
 Specify the edit format for the editor model (default: depends on editor model)  
 Environment variable: `AIDER_EDITOR_EDIT_FORMAT`  
 
+### `--merge-model MERGE_MODEL`
+Specify the model to use for merge code in "between" edit format (default depends on --model)
+Environment variable: `AIDER_MERGE_MODEL`
+
 ### `--show-model-warnings`
 Only work with models that have meta-data available (default: True)  
 Default: True  
