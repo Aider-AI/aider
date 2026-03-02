@@ -475,7 +475,8 @@ class Commands:
             repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
             if repo_content:
                 tokens = self.coder.main_model.token_count(repo_content)
-                res.append((tokens, "repository map", "use --map-tokens to resize"))
+                fit = self.coder.repo_map.fit_percentage
+                res.append((tokens, f"repository map ({fit:.1f}%)", "use --map-tokens to resize"))
 
         fence = "`" * 3
 
