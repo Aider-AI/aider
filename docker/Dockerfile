@@ -34,6 +34,11 @@ ENV HOME=/app
 #########################
 FROM base AS aider-full
 
+ARG DOCKER_VERSION=29.2.1
+ADD https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz /tmp/docker.tgz
+RUN tar --strip-components=1 -xvzf /tmp/docker.tgz -C /usr/local/bin docker/docker && \
+    rm -f /tmp/docker.tgz
+
 ENV AIDER_DOCKER_IMAGE=paulgauthier/aider-full
 
 COPY . /tmp/aider
