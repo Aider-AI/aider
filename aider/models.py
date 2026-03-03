@@ -108,6 +108,7 @@ MODEL_ALIASES = {
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
     "optimus": "openrouter/openrouter/optimus-alpha",
+    "avian": "avian/deepseek-v3.2",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -418,6 +419,25 @@ class Model(ModelSettings):
             if "reasoning_effort" not in self.accepts_settings:
                 self.accepts_settings.append("reasoning_effort")
 
+        # Configure Avian models to route through OpenAI-compatible endpoint
+        if self.name.startswith("avian/"):
+            avian_model_map = {
+                "avian/deepseek-v3.2": "openai/deepseek/deepseek-v3.2",
+                "avian/kimi-k2.5": "openai/moonshotai/kimi-k2.5",
+                "avian/glm-5": "openai/z-ai/glm-5",
+                "avian/minimax-m2.5": "openai/minimax/minimax-m2.5",
+            }
+            if not self.extra_params:
+                self.extra_params = {}
+            litellm_model = avian_model_map.get(
+                self.name, "openai/" + self.name[len("avian/") :]
+            )
+            self.extra_params["model"] = litellm_model
+            self.extra_params["api_base"] = "https://api.avian.io/v1"
+            api_key = os.environ.get("AVIAN_API_KEY")
+            if api_key:
+                self.extra_params["api_key"] = api_key
+
     def apply_generic_model_settings(self, model):
         if "/o3-mini" in model:
             self.edit_format = "diff"
@@ -713,6 +733,7 @@ class Model(ModelSettings):
             anthropic="ANTHROPIC_API_KEY",
             groq="GROQ_API_KEY",
             fireworks_ai="FIREWORKS_API_KEY",
+            avian="AVIAN_API_KEY",
         )
         var = None
         if model in OPENAI_MODELS:
