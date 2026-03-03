@@ -2660,6 +2660,7 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+  overeager: true
 
 - name: openai/gpt-5.2-codex
   edit_format: diff
