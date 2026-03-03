@@ -11,6 +11,12 @@ Always reply to the user in {language}.
 If you need to describe code changes, do so *briefly*.
 """
 
+    overeager_prompt = """Do not return fully detailed code or full diffs.
+Describe the needed changes or give a plan.
+Providing code snippets or pseudo-code is fine,
+if it helps explain the plan or the needed changes.
+"""
+
     example_messages = []
 
     files_content_prefix = """I have *added these files to the chat* so you see all of their contents.
