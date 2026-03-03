@@ -164,6 +164,9 @@ cog.outl("```")
 ## Specify the edit format for the editor model (default: depends on editor model)
 #editor-edit-format: xxx
 
+## Specify the model to use for merge code in "between" edit format (default depends on --model)
+#merge-model: xxx
+
 ## Only work with models that have meta-data available (default: True)
 #show-model-warnings: true
 
