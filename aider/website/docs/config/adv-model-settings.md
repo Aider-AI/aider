@@ -1586,6 +1586,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: gpt-5-nano
   use_repo_map: true
+  overeager: true
   use_temperature: false
   accepts_settings:
   - reasoning_effort
@@ -1920,6 +1921,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: openai/gpt-5-nano
   use_repo_map: true
+  overeager: true
   use_temperature: false
   accepts_settings:
   - reasoning_effort
@@ -2521,6 +2523,7 @@ cog.out("```\n")
   edit_format: diff
   weak_model_name: openrouter/openai/gpt-5-nano
   use_repo_map: true
+  overeager: true
   use_temperature: false
   accepts_settings:
   - reasoning_effort
