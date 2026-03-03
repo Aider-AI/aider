@@ -2668,6 +2668,7 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+  overeager: true
 
 - name: gpt-5.1-codex-mini
   edit_format: diff
@@ -2703,6 +2704,7 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+  overeager: true
 
 - name: openrouter/openai/gpt-5.1-codex-mini
   edit_format: diff
