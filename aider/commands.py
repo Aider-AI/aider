@@ -253,7 +253,8 @@ class Commands:
         ]
 
     def is_command(self, inp):
-        return inp[0] in "/!"
+        inp = inp.lstrip()
+        return len(inp) > 0 and inp[0] in "/!"
 
     def get_raw_completions(self, cmd):
         assert cmd.startswith("/")
@@ -303,13 +304,17 @@ class Commands:
             return
 
         first_word = words[0]
-        rest_inp = inp[len(words[0]) :].strip()
+        rest_inp = inp[len(words[0]):].strip()
 
         all_commands = self.get_commands()
         matching_commands = [cmd for cmd in all_commands if cmd.startswith(first_word)]
         return matching_commands, first_word, rest_inp
 
     def run(self, inp):
+        inp = inp.strip()
+        if not inp:
+            return
+        
         if inp.startswith("!"):
             self.coder.event("command_run")
             return self.do_run("run", inp[1:])
