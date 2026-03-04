@@ -72,6 +72,25 @@ def test_gitignore_patterns():
     tmp_gitignore.unlink()
 
 
+def test_gitignore_unicode_handling(tmp_path):
+    """Test that load_gitignores handles non-UTF-8 bytes without crashing"""
+    from aider.watch import load_gitignores
+
+    # Test with valid UTF-8 non-ASCII content
+    utf8_gitignore = tmp_path / ".gitignore_utf8"
+    utf8_gitignore.write_text("# Ünïcödé comment\n*.log\n", encoding="utf-8")
+    spec = load_gitignores([utf8_gitignore])
+    assert spec is not None
+    assert spec.match_file("debug.log")
+
+    # Test with invalid byte sequences (would crash before the fix)
+    bad_gitignore = tmp_path / ".gitignore_bad"
+    bad_gitignore.write_bytes(b"# invalid \xff\xfe bytes\n*.tmp\n")
+    spec = load_gitignores([bad_gitignore])
+    assert spec is not None
+    assert spec.match_file("file.tmp")
+
+
 def test_get_roots_to_watch(tmp_path):
     # Create a test directory structure
     (tmp_path / "included").mkdir()
