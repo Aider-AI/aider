@@ -907,6 +907,25 @@ class Model(ModelSettings):
                 return self.extra_params["extra_body"]["reasoning_effort"]
         return None
 
+    def set_temperature(self, temperature):
+        """Set the temperature for the model (0.0 to 2.0)"""
+        if temperature is not None:
+            if not self.extra_params:
+                self.extra_params = {}
+            self.extra_params["temperature"] = float(temperature)
+
+    def get_temperature(self):
+        """Get the current temperature setting, or None if not set"""
+        if self.extra_params and "temperature" in self.extra_params:
+            return self.extra_params["temperature"]
+        elif self.use_temperature is not False:
+            if isinstance(self.use_temperature, bool):
+                return 0.0  # Default temperature when use_temperature is True
+            else:
+                return float(self.use_temperature)
+        else:
+            return None
+
     def is_deepseek_r1(self):
         name = self.name.lower()
         if "deepseek" not in name:
@@ -981,10 +1000,14 @@ class Model(ModelSettings):
 
         if self.use_temperature is not False:
             if temperature is None:
-                if isinstance(self.use_temperature, bool):
-                    temperature = 0
+                # Check if there's a temperature set in extra_params
+                if self.extra_params and 'temperature' in self.extra_params:
+                    temperature = self.extra_params['temperature']
                 else:
-                    temperature = float(self.use_temperature)
+                    if isinstance(self.use_temperature, bool):
+                        temperature = 0
+                    else:
+                        temperature = float(self.use_temperature)
 
             kwargs["temperature"] = temperature
 
@@ -993,7 +1016,11 @@ class Model(ModelSettings):
             kwargs["tools"] = [dict(type="function", function=function)]
             kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
         if self.extra_params:
-            kwargs.update(self.extra_params)
+            # Don't include temperature in extra_params if we already set it above
+            extra_params_copy = self.extra_params.copy()
+            if 'temperature' in extra_params_copy:
+                del extra_params_copy['temperature']
+            kwargs.update(extra_params_copy)
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
