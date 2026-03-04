@@ -31,7 +31,7 @@ Any other messages in the chat may contain outdated versions of the files' conte
 
     files_no_full_files = "I am not sharing any files that you can edit yet."
 
-    files_no_full_files_with_repo_map = """Don't try and edit any existing code without asking me to add the files to the chat!
+    files_no_full_files_with_repo_map = """Don't try to edit any existing code without asking me to add the files to the chat!
 Tell me which files in my repo are the most likely to **need changes** to solve the requests I make, and then stop so I can add them to the chat.
 Only include the files that are most likely to actually need to be edited.
 Don't include files that might contain relevant context, just files that will need to be changed.
