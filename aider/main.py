@@ -448,6 +448,27 @@ def sanity_check_repo(repo, io):
     return False
 
 
+def find_config_files(start_dir=None, fname=".aider.conf.yml"):
+    config_files = []
+
+    if start_dir is None:
+        start_dir = Path.cwd()
+
+    current = Path(start_dir).resolve()
+    while True:
+        config_path = current / fname
+        if config_path.exists():
+            config_files.append(str(config_path))
+
+        # we have reached root FS directory
+        if current.parent == current:
+            break
+
+        current = current.parent
+
+    return config_files
+
+
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
@@ -461,19 +482,8 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     else:
         git_root = get_git_root()
 
-    conf_fname = Path(".aider.conf.yml")
-
-    default_config_files = []
-    try:
-        default_config_files += [conf_fname.resolve()]  # CWD
-    except OSError:
-        pass
-
-    if git_root:
-        git_conf = Path(git_root) / conf_fname  # git root
-        if git_conf not in default_config_files:
-            default_config_files.append(git_conf)
-    default_config_files.append(Path.home() / conf_fname)  # homedir
+    default_config_files = find_config_files() # CWD
+    default_config_files += find_config_files(Path.home())  # homedir
     default_config_files = list(map(str, default_config_files))
 
     parser = get_parser(default_config_files, git_root)
