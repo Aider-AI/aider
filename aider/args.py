@@ -721,6 +721,12 @@ def get_parser(default_config_files, git_root):
     ######
     group = parser.add_argument_group("Other settings")
     group.add_argument(
+        "--system-prompt-extras",
+        metavar="SYSTEM_PROMPT_EXTRAS_FILE",
+        help="Specify a file with extra content to append to the system prompt on each request",
+        default=None,
+    ).complete = shtab.FILE
+    group.add_argument(
         "--disable-playwright",
         action="store_true",
         help="Never prompt for or attempt to install Playwright for web scraping (default: False).",
