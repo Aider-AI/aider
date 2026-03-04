@@ -409,6 +409,60 @@ def register_litellm_models(git_root, model_metadata_fname, io, verbose=False):
         return 1
 
 
+def discover_litellm_models(io, verbose=False):
+    litellm_api_base = os.environ.get("LITELLM_API_BASE")
+    if not litellm_api_base:
+        return
+
+    try:
+        import requests
+
+        headers = {}
+        api_key = os.environ.get("LITELLM_API_KEY")
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+
+        # First, get the models and their owners
+        url = litellm_api_base.rstrip("/") + "/models"
+
+        response = requests.get(
+            url, headers=headers, timeout=5, verify=models.model_info_manager.verify_ssl
+        )
+        if response.status_code != 200:
+            io.tool_warning(f"Error fetching models from {url}: {response.status_code}")
+            return
+
+        models_data = response.json()
+        model_owners = {
+            model_info.get("id"): model_info.get("owned_by")
+            for model_info in models_data.get("data", [])
+        }
+
+        # Now, get the model group info
+        url = litellm_api_base.rstrip("/") + "/model_group/info"
+        response = requests.get(
+            url, headers=headers, timeout=5, verify=models.model_info_manager.verify_ssl
+        )
+        if response.status_code == 200:
+            model_group_data = response.json()
+            for model_info in model_group_data.get("data", []):
+                model_group = model_info.get("model_group")
+                if model_group:
+                    models.model_info_manager.local_model_metadata[f"litellm/{model_group}"] = {
+                        "litellm_provider": "litellm",
+                        "mode": "chat",
+                        "owned_by": model_owners.get(model_group),
+                        "input_cost_per_token": model_info.get("input_cost_per_token"),
+                        "output_cost_per_token": model_info.get("output_cost_per_token"),
+                        "max_input_tokens": model_info.get("max_input_tokens"),
+                        "max_output_tokens": model_info.get("max_output_tokens"),
+                    }
+            if verbose:
+                io.tool_output(f"Discovered model info from {url}")
+    except Exception as e:
+        io.tool_warning(f"Error fetching model info from litellm: {e}")
+
+
 def sanity_check_repo(repo, io):
     if not repo:
         return True
@@ -619,6 +673,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     handle_deprecated_model_args(args, io)
     if args.openai_api_base:
         os.environ["OPENAI_API_BASE"] = args.openai_api_base
+    if args.litellm_api_base:
+        os.environ["LITELLM_API_BASE"] = args.litellm_api_base
+    if args.litellm_api_key:
+        os.environ["LITELLM_API_KEY"] = args.litellm_api_key
     if args.openai_api_version:
         io.tool_warning(
             "--openai-api-version is deprecated, use --set-env OPENAI_API_VERSION=<value>"
@@ -755,6 +813,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     register_models(git_root, args.model_settings_file, io, verbose=args.verbose)
     register_litellm_models(git_root, args.model_metadata_file, io, verbose=args.verbose)
+    discover_litellm_models(io, verbose=args.verbose)
 
     if args.list_models:
         models.print_matching_models(io, args.list_models)
