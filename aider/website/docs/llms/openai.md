@@ -44,6 +44,11 @@ You can use `aider --model <model-name>` to use any other OpenAI model.
 For example, if you want to use a specific version of GPT-4 Turbo
 you could do `aider --model gpt-4-0125-preview`.
 
+{: .tip }
+You can also access OpenAI models via the
+[Helicone](helicone.md) gateway. This can simplify multi‑provider setup and may
+offer different rate limits.
+
 ## Reasoning models from other providers
 
 Many of OpenAI's 
