@@ -1196,8 +1196,12 @@ class Commands:
         return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
 
     def cmd_ok(self, args):
-        "Alias for `/code Ok, please go ahead and make those changes.`"
-        return self.cmd_code("Ok, please go ahead and make those changes.")
+        "Alias for `/code Ok, please go ahead and make those changes.` (any args are appended)"
+        msg = "Ok, please go ahead and make those changes."
+        extra = (args or "").strip()
+        if extra:
+            msg = f"{msg} {extra}"
+        return self.cmd_code(msg)
 
     def _generic_chat_command(self, args, edit_format, placeholder=None):
         if not args.strip():
