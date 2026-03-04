@@ -226,6 +226,24 @@ def get_parser(default_config_files, git_root):
             " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
     )
+    group.add_argument(
+        "--double-buffer",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Enable double-buffer context management (checkpoint at 60%%, swap at 85%%)",
+    )
+    group.add_argument(
+        "--checkpoint-threshold",
+        type=float,
+        default=0.60,
+        help="Token threshold for background checkpoint as fraction of max (default: 0.60)",
+    )
+    group.add_argument(
+        "--swap-threshold",
+        type=float,
+        default=0.85,
+        help="Token threshold for buffer swap as fraction of max (default: 0.85)",
+    )
 
     ##########
     group = parser.add_argument_group("Cache settings")
