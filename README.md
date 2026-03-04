@@ -6,6 +6,17 @@
 AI Pair Programming in Your Terminal
 </h1>
 
+<p align="center">
+    <!-- Keep these links. Translations will automatically update with the README. -->
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=de">Deutsch</a> | 
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=es">Español</a> | 
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=fr">français</a> | 
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=ja">日本語</a> | 
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=ko">한국어</a> | 
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=pt">Português</a> | 
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=ru">Русский</a> | 
+    <a href="https://www.readme-i18n.com/Aider-AI/aider?lang=zh">中文</a>
+</p>
 
 <p align="center">
 Aider lets you pair program with LLMs to start a new project or build on your existing codebase. 
