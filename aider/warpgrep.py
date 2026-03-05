@@ -80,10 +80,28 @@ class WarpGrepClient:
         return []
 
     def _build_repo_structure(self, files):
-        lines = []
+        # Build a tree-like structure from flat file paths
+        tree = {}
         for f in sorted(files):
-            lines.append(f)
+            parts = f.split(os.sep)
+            node = tree
+            for part in parts:
+                if part not in node:
+                    node[part] = {}
+                node = node[part]
+
+        lines = []
+        self._format_tree(tree, "", lines)
         return "\n".join(lines)
+
+    def _format_tree(self, tree, prefix, lines):
+        for name in sorted(tree.keys()):
+            subtree = tree[name]
+            if subtree:
+                lines.append(f"{prefix}{name}/")
+                self._format_tree(subtree, prefix + "  ", lines)
+            else:
+                lines.append(f"{prefix}{name}")
 
     def _call_api(self, messages):
         headers = {
@@ -202,20 +220,47 @@ class WarpGrepClient:
     def _exec_read(self, params):
         file_path = params.get("path", "")
         abs_path = os.path.join(self.root, file_path)
+        lines_param = params.get("lines", "")
 
         try:
             with open(abs_path, "r", errors="ignore") as f:
-                lines = f.readlines()
+                all_lines = f.readlines()
         except OSError as e:
             return f"<tool_response>\nError reading {file_path}: {e}\n</tool_response>"
 
-        if len(lines) > self.MAX_READ_LINES:
-            lines = lines[: self.MAX_READ_LINES]
-            lines.append(f"... truncated at {self.MAX_READ_LINES} lines\n")
+        if lines_param:
+            # Parse line ranges like "1-50" or "1-20,45-80"
+            selected = []
+            for part in lines_param.split(","):
+                part = part.strip()
+                if "-" in part:
+                    try:
+                        start_s, end_s = part.split("-", 1)
+                        start = int(start_s.strip())
+                        end = int(end_s.strip())
+                    except ValueError:
+                        continue
+                    start = max(1, start)
+                    end = min(len(all_lines), end)
+                    for i in range(start, end + 1):
+                        selected.append((i, all_lines[i - 1]))
+                else:
+                    try:
+                        line_num = int(part.strip())
+                    except ValueError:
+                        continue
+                    if 1 <= line_num <= len(all_lines):
+                        selected.append((line_num, all_lines[line_num - 1]))
+        else:
+            selected = [(i + 1, line) for i, line in enumerate(all_lines)]
+
+        if len(selected) > self.MAX_READ_LINES:
+            selected = selected[: self.MAX_READ_LINES]
+            selected.append((0, f"... truncated at {self.MAX_READ_LINES} lines\n"))
 
         numbered = []
-        for i, line in enumerate(lines, 1):
-            numbered.append(f"{i}|{line.rstrip()}")
+        for line_num, line in selected:
+            numbered.append(f"{line_num}|{line.rstrip()}")
 
         output = "\n".join(numbered)
         return f"<tool_response>\n{output}\n</tool_response>"
@@ -237,6 +282,13 @@ class WarpGrepClient:
         output = "\n".join(lines)
         return f"<tool_response>\n{output}\n</tool_response>"
 
+    EXCLUDE_DIRS = {
+        "node_modules", "__pycache__", ".venv", "venv", ".git", ".svn",
+        ".hg", "dist", "build", ".next", ".nuxt", "target", ".output",
+        ".tox", ".eggs", ".mypy_cache", ".pytest_cache", ".ruff_cache",
+        "vendor", "Pods", ".bundle",
+    }
+
     def _tree(self, dirpath, prefix, lines, depth=0):
         if depth > 5:
             return
@@ -246,7 +298,9 @@ class WarpGrepClient:
             return
 
         for entry in entries:
-            if entry.startswith("."):
+            if entry.startswith(".") and entry not in (".env",):
+                continue
+            if entry in self.EXCLUDE_DIRS:
                 continue
             full = os.path.join(dirpath, entry)
             lines.append(f"{prefix}{entry}")
