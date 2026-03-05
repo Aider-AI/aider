@@ -36,6 +36,7 @@ class SwitchCoder(Exception):
 class Commands:
     voice = None
     scraper = None
+    warpgrep = None
 
     def clone(self):
         return Commands(
@@ -251,6 +252,72 @@ class Commands:
             dict(role="user", content=content),
             dict(role="assistant", content="Ok."),
         ]
+
+    def cmd_search(self, args):
+        "Search the codebase using WarpGrep AI-powered code search (requires MORPH_API_KEY)"
+
+        query = args.strip()
+        if not query:
+            self.io.tool_error("Please provide a search query.")
+            return
+
+        if not self.warpgrep:
+            api_key = (
+                getattr(self.args, "warpgrep_api_key", None)
+                or os.environ.get("WARPGREP_API_KEY")
+                or os.environ.get("MORPH_API_KEY")
+            )
+            if not api_key:
+                self.io.tool_error(
+                    "Set WARPGREP_API_KEY or MORPH_API_KEY environment variable, "
+                    "or use --warpgrep-api-key to use /search"
+                )
+                return
+
+            from aider.warpgrep import WarpGrepClient
+
+            self.warpgrep = WarpGrepClient(
+                api_key=api_key,
+                root=self.coder.root,
+                get_tracked_files_fn=self.coder.get_all_relative_files,
+                io=self.io,
+            )
+
+        self.io.tool_output(f"Searching: {query}...")
+        try:
+            results = self.warpgrep.search(query)
+        except Exception as e:
+            self.io.tool_error(f"WarpGrep search failed: {e}")
+            return
+
+        if not results:
+            self.io.tool_output("No relevant code found.")
+            return
+
+        content = f"# WarpGrep search results for: {query}\n\n"
+        for r in results:
+            content += f"## {r.rel_path} (lines {r.start_line}-{r.end_line})\n"
+            content += f"```\n{r.content}\n```\n\n"
+
+        self.coder.cur_messages += [
+            dict(role="user", content=content),
+            dict(role="assistant", content="Ok, I see those search results."),
+        ]
+
+        self.io.tool_output(f"Found {len(results)} relevant code spans, added to chat context.")
+
+        added = set()
+        for r in results:
+            if r.rel_path in added:
+                continue
+            abs_path = self.coder.abs_root_path(r.rel_path)
+            if (
+                abs_path not in self.coder.abs_fnames
+                and abs_path not in self.coder.abs_read_only_fnames
+            ):
+                if self.io.confirm_ask("Add file to chat?", subject=r.rel_path):
+                    self.coder.abs_fnames.add(abs_path)
+                    added.add(r.rel_path)
 
     def is_command(self, inp):
         return inp[0] in "/!"
