@@ -13,6 +13,24 @@ from aider.waiting import Spinner
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
 
 
+def sanitize_surrogates(text):
+    """Replace unpaired UTF-16 surrogates with the Unicode replacement character.
+
+    On Windows, clipboard paste of emoji characters through some input methods
+    can introduce lone surrogates (U+D800-U+DFFF) into Python strings. These are
+    invalid in UTF-8 and cause UnicodeEncodeError when printed. This function
+    encodes with 'surrogatepass' to allow surrogates through as bytes, then
+    decodes with 'replace' to turn those invalid byte sequences into U+FFFD.
+    """
+    if not isinstance(text, str):
+        return text
+    try:
+        text.encode("utf-8")
+        return text
+    except UnicodeEncodeError:
+        return text.encode("utf-8", errors="surrogatepass").decode("utf-8", errors="replace")
+
+
 class IgnorantTemporaryDirectory:
     def __init__(self):
         if sys.version_info >= (3, 10):
@@ -139,7 +157,10 @@ def format_messages(messages, title=None):
 
 def show_messages(messages, title=None, functions=None):
     formatted_output = format_messages(messages, title)
-    print(formatted_output)
+    try:
+        print(formatted_output)
+    except UnicodeEncodeError:
+        print(sanitize_surrogates(formatted_output))
 
     if functions:
         dump(functions)
