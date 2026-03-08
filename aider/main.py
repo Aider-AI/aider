@@ -451,6 +451,15 @@ def sanity_check_repo(repo, io):
 def main(argv=None, input=None, output=None, force_git_root=None, return_coder=False):
     report_uncaught_exceptions()
 
+    # Ensure stdout/stderr use UTF-8 encoding on Windows to avoid
+    # UnicodeEncodeError when outputting Unicode characters (e.g., ⋮ in repo maps)
+    # through cp1252 when output is redirected to a file or pipe.
+    if sys.platform == "win32":
+        if hasattr(sys.stdout, "reconfigure"):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        if hasattr(sys.stderr, "reconfigure"):
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
     if argv is None:
         argv = sys.argv[1:]
 
