@@ -206,7 +206,7 @@ nltk==3.9.2
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-numpy==1.26.4
+numpy==2.4.3
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
@@ -280,7 +280,7 @@ scikit-learn==1.8.0
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
     #   sentence-transformers
-scipy==1.15.3
+scipy==1.17.1
     # via
     #   -c requirements/common-constraints.txt
     #   scikit-learn
@@ -326,6 +326,7 @@ tokenizers==0.22.2
 torch==2.10.0
     # via
     #   -c requirements/common-constraints.txt
+    #   -r requirements/requirements-help.in
     #   sentence-transformers
 tqdm==4.67.3
     # via
@@ -351,8 +352,6 @@ typer-slim==0.23.0
 typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
-    #   aiosignal
-    #   anyio
     #   huggingface-hub
     #   llama-index-core
     #   llama-index-workflows

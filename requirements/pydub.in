@@ -1,0 +1,2 @@
+# Remove if Python 3.13+ support lands in pydub upstream.
+audioop-lts>=0.2.2; python_version >= "3.13"

@@ -25,8 +25,8 @@ uv pip compile \
     requirements/requirements.in \
     $1
 
-grep -v ^tree-sitter= tmp.requirements.txt \
-    | cat - requirements/tree-sitter.in \
+grep -Ev '^(tree-sitter|numpy|scipy)=' tmp.requirements.txt \
+    | cat - requirements/tree-sitter.in requirements/python-compat.in requirements/pydub.in \
     > requirements.txt
 
 # Compile additional requirements files

@@ -1,0 +1,11 @@
+# NumPy 2.x adds Python 3.14 wheels, but dropped Python 3.10.
+numpy<2; python_version < "3.11"
+numpy>=2.3,<2.5; python_version >= "3.11"
+
+# This is the one networkx dependency that we need.
+# Including it here explicitly because we
+# didn't specify networkx[default] above.
+#
+# SciPy 1.16+ adds Python 3.14 wheels, but dropped Python 3.10.
+scipy<1.16; python_version < "3.11"
+scipy>=1.16.1,<1.18; python_version >= "3.11"

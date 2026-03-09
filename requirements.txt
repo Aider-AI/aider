@@ -218,9 +218,9 @@ networkx==3.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
-numpy==1.26.4
     # via
     #   -c requirements/common-constraints.txt
+    #   -r requirements/python-compat.in
     #   scipy
     #   soundfile
 openai==2.20.0
@@ -351,10 +351,9 @@ rpds-py==0.30.0
     #   -c requirements/common-constraints.txt
     #   jsonschema
     #   referencing
-scipy==1.15.3
     # via
     #   -c requirements/common-constraints.txt
-    #   -r requirements/requirements.in
+    #   -r requirements/python-compat.in
 shellingham==1.5.4
     # via
     #   -c requirements/common-constraints.txt
@@ -440,8 +439,6 @@ typer-slim==0.23.0
 typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
-    #   aiosignal
-    #   anyio
     #   beautifulsoup4
     #   fastapi
     #   huggingface-hub
@@ -449,8 +446,6 @@ typing-extensions==4.15.0
     #   posthog
     #   pydantic
     #   pydantic-core
-    #   referencing
-    #   starlette
     #   typing-inspection
 typing-inspection==0.4.2
     # via
@@ -480,3 +475,16 @@ zipp==3.23.0
     
 tree-sitter==0.23.2; python_version < "3.10"
 tree-sitter==0.25.2; python_version >= "3.10"
+# NumPy 2.x adds Python 3.14 wheels, but dropped Python 3.10.
+numpy<2; python_version < "3.11"
+numpy>=2.3,<2.5; python_version >= "3.11"
+
+# This is the one networkx dependency that we need.
+# Including it here explicitly because we
+# didn't specify networkx[default] above.
+#
+# SciPy 1.16+ adds Python 3.14 wheels, but dropped Python 3.10.
+scipy<1.16; python_version < "3.11"
+scipy>=1.16.1,<1.18; python_version >= "3.11"
+# Remove if Python 3.13+ support lands in pydub upstream.
+audioop-lts>=0.2.2; python_version >= "3.13"

@@ -286,8 +286,9 @@ nltk==3.9.2
     # via llama-index-core
 nodeenv==1.10.0
     # via pre-commit
-numpy==1.26.4
+numpy==2.4.3
     # via
+    #   -r requirements/python-compat.in
     #   -r requirements/requirements-help.in
     #   contourpy
     #   llama-index-core
@@ -479,9 +480,9 @@ scikit-learn==1.8.0
     # via
     #   -r requirements/requirements-help.in
     #   sentence-transformers
-scipy==1.15.3
+scipy==1.17.1
     # via
-    #   -r requirements/requirements.in
+    #   -r requirements/python-compat.in
     #   scikit-learn
     #   sentence-transformers
 semver==3.0.4
@@ -540,7 +541,9 @@ tokenizers==0.22.2
 toml==0.10.2
     # via streamlit
 torch==2.10.0
-    # via sentence-transformers
+    # via
+    #   -r requirements/requirements-help.in
+    #   sentence-transformers
 tornado==6.5.4
     # via streamlit
 tqdm==4.67.3
@@ -573,9 +576,7 @@ typer-slim==0.23.0
     #   transformers
 typing-extensions==4.15.0
     # via
-    #   aiosignal
     #   altair
-    #   anyio
     #   beautifulsoup4
     #   fastapi
     #   grpcio
@@ -587,10 +588,8 @@ typing-extensions==4.15.0
     #   pydantic
     #   pydantic-core
     #   pyee
-    #   referencing
     #   sentence-transformers
     #   sqlalchemy
-    #   starlette
     #   streamlit
     #   torch
     #   typing-inspect
