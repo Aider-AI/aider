@@ -29,6 +29,7 @@ socksio
 pillow
 shtab
 oslex
+-r python-compat.in
 
 # The proper dependency is networkx[default], but this brings
 # in matplotlib and a bunch of other deps
@@ -37,13 +38,6 @@ oslex
 #
 # >3.5 seems to not be available for py3.10
 networkx<3.5
-
-# This is the one networkx dependency that we need.
-# Including it here explicitly because we
-# didn't specify networkx[default] above.
-#
-# 1.16 onwards only supports python3.11+
-scipy<1.16
 
 # GitHub Release action failing on "KeyError: 'home-page'"
 # https://github.com/pypa/twine/blob/6fbf880ee60915cf1666348c4bdd78a10415f2ac/twine/__init__.py#L40
