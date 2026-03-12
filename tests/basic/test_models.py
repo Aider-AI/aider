@@ -5,6 +5,8 @@ from aider.models import (
     ANTHROPIC_BETA_HEADER,
     Model,
     ModelInfoManager,
+    fuzzy_match_models,
+    get_known_models,
     register_models,
     sanity_check_model,
     sanity_check_models,
@@ -256,6 +258,28 @@ class TestModels(unittest.TestCase):
 
         # Verify check_pip_install_extra was not called
         mock_check_pip.assert_not_called()
+
+    @patch("aider.models.litellm._load_litellm", side_effect=ImportError("broken litellm"))
+    def test_fuzzy_match_models_falls_back_to_local_metadata_when_litellm_import_fails(
+        self, _mock_load
+    ):
+        with patch.dict(
+            "aider.models.model_info_manager.local_model_metadata",
+            {"gpt-4o": {"mode": "chat", "litellm_provider": "openai"}},
+            clear=True,
+        ):
+            self.assertEqual(fuzzy_match_models("gpt-4"), ["gpt-4o", "openai/gpt-4o"])
+
+    @patch("aider.models.litellm._load_litellm", side_effect=ImportError("broken litellm"))
+    def test_get_known_models_falls_back_to_local_metadata_when_litellm_import_fails(
+        self, _mock_load
+    ):
+        with patch.dict(
+            "aider.models.model_info_manager.local_model_metadata",
+            {"gpt-4o": {"mode": "chat", "litellm_provider": "openai"}},
+            clear=True,
+        ):
+            self.assertEqual(get_known_models(), ["gpt-4o"])
 
     def test_get_repo_map_tokens(self):
         # Test default case (no max_input_tokens in info)
