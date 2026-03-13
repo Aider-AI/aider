@@ -909,17 +909,17 @@ class Coder:
             edit_format=edit_format,
         )
 
-    def preproc_user_input(self, inp):
-        if not inp:
+    def preproc_user_input(self, user_input):
+        if not user_input:
             return
 
-        if self.commands.is_command(inp):
-            return self.commands.run(inp)
+        if self.commands.is_command(user_input):
+            return self.commands.run(user_input)
 
-        self.check_for_file_mentions(inp)
-        inp = self.check_for_urls(inp)
+        self.check_for_file_mentions(user_input)
+        user_input = self.check_for_urls(user_input)
 
-        return inp
+        return user_input
 
     def run_one(self, user_message, preproc):
         self.init_before_message()
@@ -961,14 +961,13 @@ class Coder:
             self.io.offer_url(url)
         return urls
 
-    def check_for_urls(self, inp: str) -> List[str]:
+    def check_for_urls(self, user_input: str) -> List[str]:
         """Check input for URLs and offer to add them to the chat."""
         if not self.detect_urls:
-            return inp
+            return user_input
 
-        # Exclude double quotes from the matched URL characters
         url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*[^\s,.])')
-        urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
+        urls = list(set(url_pattern.findall(user_input)))
         group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
@@ -976,12 +975,12 @@ class Coder:
                 if self.io.confirm_ask(
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
-                    inp += "\n\n"
-                    inp += self.commands.cmd_web(url, return_content=True)
+                    user_input += "\n\n"
+                    user_input += self.commands.cmd_web(url, return_content=True)
                 else:
                     self.rejected_urls.add(url)
 
-        return inp
+        return user_input
 
     def keyboard_interrupt(self):
         # Ensure cursor is visible on exit
@@ -1468,14 +1467,14 @@ class Coder:
                     self.reflected_message = test_errors
                     return
 
-    def send_message(self, inp):
+    def send_message(self, user_input):
         self.event("message_send_starting")
 
         # Notify IO that LLM processing is starting
         self.io.llm_started()
 
         self.cur_messages += [
-            dict(role="user", content=inp),
+            dict(role="user", content=user_input),
         ]
 
         chunks = self.format_messages()
