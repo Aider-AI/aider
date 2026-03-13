@@ -48,7 +48,7 @@ from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 from aider.waiting import WaitingSpinner
-
+from aider.coders.usage_tracker import UsageTracker
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
@@ -110,7 +110,6 @@ class Coder:
     multi_response_content = ""
     partial_response_content = ""
     commit_before_message = []
-    message_cost = 0.0
     add_cache_headers = False
     cache_warming_thread = None
     num_cache_warming_pings = 0
@@ -381,11 +380,10 @@ class Coder:
         self.chat_completion_response_hashes = []
         self.need_commit_before_edits = set()
 
-        self.total_cost = total_cost
-        self.total_tokens_sent = total_tokens_sent
-        self.total_tokens_received = total_tokens_received
-        self.message_tokens_sent = 0
-        self.message_tokens_received = 0
+        self.usage_tracker = UsageTracker(main_model, io)
+        self.usage_tracker.total_cost = total_cost
+        self.usage_tracker.total_tokens_sent = total_tokens_sent
+        self.usage_tracker.total_tokens_received = total_tokens_received
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -540,6 +538,98 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+    # === Delegate properties to UsageTracker ===
+    @property
+    def total_cost(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.total_cost if tracker else 0.0
+
+    @total_cost.setter
+    def total_cost(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.total_cost = value
+        else:
+            self.__dict__["total_cost"] = value
+
+    @property
+    def message_cost(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.message_cost if tracker else 0.0
+
+    @message_cost.setter
+    def message_cost(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.message_cost = value
+        else:
+            self.__dict__["message_cost"] = value
+
+    @property
+    def message_tokens_sent(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.message_tokens_sent if tracker else 0
+
+    @message_tokens_sent.setter
+    def message_tokens_sent(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.message_tokens_sent = value
+        else:
+            self.__dict__["message_tokens_sent"] = value
+
+    @property
+    def message_tokens_received(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.message_tokens_received if tracker else 0
+
+    @message_tokens_received.setter
+    def message_tokens_received(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.message_tokens_received = value
+        else:
+            self.__dict__["message_tokens_received"] = value
+
+    @property
+    def total_tokens_sent(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.total_tokens_sent if tracker else 0
+
+    @total_tokens_sent.setter
+    def total_tokens_sent(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.total_tokens_sent = value
+        else:
+            self.__dict__["total_tokens_sent"] = value
+
+    @property
+    def total_tokens_received(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.total_tokens_received if tracker else 0
+
+    @total_tokens_received.setter
+    def total_tokens_received(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.total_tokens_received = value
+        else:
+            self.__dict__["total_tokens_received"] = value
+
+    @property
+    def usage_report(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.usage_report if tracker else None
+
+    @usage_report.setter
+    def usage_report(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.usage_report = value
+        else:
+            self.__dict__["usage_report"] = value
+
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
