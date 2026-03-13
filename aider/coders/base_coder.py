@@ -1415,6 +1415,58 @@ class Coder:
             if not self.io.confirm_ask("Try to proceed anyway?"):
                 return False
         return True
+    def _initialize_streaming(self):
+        """Set up the spinner and markdown stream for response display."""
+        self.multi_response_content = ""
+        if self.show_pretty():
+            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
+            self.waiting_spinner.start()
+            if self.stream:
+                self.mdstream = self.io.get_assistant_mdstream()
+            else:
+                self.mdstream = None
+        else:
+            self.mdstream = None    
+    
+    def _apply_edits_and_run_checks(self, edited):
+        """Apply file edits, run linting, shell commands, and tests."""
+        if edited:
+            self.aider_edited_files.update(edited)
+            saved_message = self.auto_commit(edited)
+
+            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
+
+            self.move_back_cur_messages(saved_message)
+
+        if self.reflected_message:
+            return
+
+        if edited and self.auto_lint:
+            lint_errors = self.lint_edited(edited)
+            self.auto_commit(edited, context="Ran the linter")
+            self.lint_outcome = not lint_errors
+            if lint_errors:
+                ok = self.io.confirm_ask("Attempt to fix lint errors?")
+                if ok:
+                    self.reflected_message = lint_errors
+                    return
+
+        shared_output = self.run_shell_commands()
+        if shared_output:
+            self.cur_messages += [
+                dict(role="user", content=shared_output),
+                dict(role="assistant", content="Ok"),
+            ]
+
+        if edited and self.auto_test:
+            test_errors = self.commands.cmd_test(self.test_cmd)
+            self.test_outcome = not test_errors
+            if test_errors:
+                ok = self.io.confirm_ask("Attempt to fix test errors?")
+                if ok:
+                    self.reflected_message = test_errors
+                    return
 
     def send_message(self, inp):
         self.event("message_send_starting")
@@ -1435,16 +1487,7 @@ class Coder:
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
 
-        self.multi_response_content = ""
-        if self.show_pretty():
-            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
-            self.waiting_spinner.start()
-            if self.stream:
-                self.mdstream = self.io.get_assistant_mdstream()
-            else:
-                self.mdstream = None
-        else:
-            self.mdstream = None
+        self._initialize_streaming()
 
         retry_delay = 0.125
 
@@ -1583,44 +1626,8 @@ class Coder:
             return
 
         edited = self.apply_updates()
-
-        if edited:
-            self.aider_edited_files.update(edited)
-            saved_message = self.auto_commit(edited)
-
-            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
-                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
-
-            self.move_back_cur_messages(saved_message)
-
-        if self.reflected_message:
-            return
-
-        if edited and self.auto_lint:
-            lint_errors = self.lint_edited(edited)
-            self.auto_commit(edited, context="Ran the linter")
-            self.lint_outcome = not lint_errors
-            if lint_errors:
-                ok = self.io.confirm_ask("Attempt to fix lint errors?")
-                if ok:
-                    self.reflected_message = lint_errors
-                    return
-
-        shared_output = self.run_shell_commands()
-        if shared_output:
-            self.cur_messages += [
-                dict(role="user", content=shared_output),
-                dict(role="assistant", content="Ok"),
-            ]
-
-        if edited and self.auto_test:
-            test_errors = self.commands.cmd_test(self.test_cmd)
-            self.test_outcome = not test_errors
-            if test_errors:
-                ok = self.io.confirm_ask("Attempt to fix test errors?")
-                if ok:
-                    self.reflected_message = test_errors
-                    return
+        self._apply_edits_and_run_checks(edited)
+        
 
     def reply_completed(self):
         pass
