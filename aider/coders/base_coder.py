@@ -538,6 +538,66 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+    def calculate_context_tokens(self):
+        """Calculate and display token usage for the current chat context."""
+        from aider.utils import is_image_file
+
+        res = []
+
+        self.choose_fence()
+
+        # system messages
+        main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
+        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+        msgs = [
+            dict(role="system", content=main_sys),
+            dict(
+                role="system",
+                content=self.fmt_system_prompt(self.gpt_prompts.system_reminder),
+            ),
+        ]
+        tokens = self.main_model.token_count(msgs)
+        res.append((tokens, "system messages", ""))
+
+        # chat history
+        msgs = self.done_messages + self.cur_messages
+        if msgs:
+            tokens = self.main_model.token_count(msgs)
+            res.append((tokens, "chat history", "use /clear to clear"))
+
+        # repo map
+        other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
+        if self.repo_map:
+            repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
+            if repo_content:
+                tokens = self.main_model.token_count(repo_content)
+                res.append((tokens, "repository map", "use --map-tokens to resize"))
+
+        fence = "`" * 3
+
+        file_res = []
+        for fname in self.abs_fnames:
+            relative_fname = self.get_rel_fname(fname)
+            content = self.io.read_text(fname)
+            if is_image_file(relative_fname):
+                tokens = self.main_model.token_count_for_image(fname)
+            else:
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                tokens = self.main_model.token_count(content)
+            file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
+
+        for fname in self.abs_read_only_fnames:
+            relative_fname = self.get_rel_fname(fname)
+            content = self.io.read_text(fname)
+            if content is not None and not is_image_file(relative_fname):
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                tokens = self.main_model.token_count(content)
+                file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
+
+        file_res.sort()
+        res.extend(file_res)
+
+        return res
     # === Delegate properties to UsageTracker ===
     @property
     def total_cost(self):
