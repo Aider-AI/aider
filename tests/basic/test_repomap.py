@@ -4,8 +4,10 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import git
+import networkx as nx
 
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
@@ -271,6 +273,45 @@ print(my_function(3, 4))
             self.assertIn("test_file4.json", result)
 
             # close the open cache files, so Windows won't error
+            del repo_map
+
+    def test_get_repo_map_handles_keyed_out_edges(self):
+        original_multidigraph = nx.MultiDiGraph
+
+        class KeyedOutEdgesMultiDiGraph(original_multidigraph):
+            @property
+            def out_edges(self):
+                base_view = original_multidigraph.out_edges.__get__(self, type(self))
+
+                def keyed_out_edges(nbunch=None, data=False, default=None):
+                    return base_view(
+                        nbunch=nbunch,
+                        data=data,
+                        default=default,
+                        keys=True if data else False,
+                    )
+
+                return keyed_out_edges
+
+        with GitTemporaryDirectory() as temp_dir:
+            with open(os.path.join(temp_dir, "defs.py"), "w", encoding="utf-8") as f:
+                f.write("def shared_name():\n    return 1\n")
+
+            with open(os.path.join(temp_dir, "refs.py"), "w", encoding="utf-8") as f:
+                f.write("from defs import shared_name\n\nshared_name()\nshared_name()\n")
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+            other_files = [
+                os.path.join(temp_dir, "defs.py"),
+                os.path.join(temp_dir, "refs.py"),
+            ]
+
+            with patch("networkx.MultiDiGraph", KeyedOutEdgesMultiDiGraph):
+                result = repo_map.get_repo_map([], other_files)
+
+            self.assertIn("shared_name", result)
+
             del repo_map
 
 

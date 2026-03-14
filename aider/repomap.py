@@ -537,9 +537,12 @@ class RepoMap:
                 progress(f"{UPDATING_REPO_MAP_MESSAGE}: {src}")
 
             src_rank = ranked[src]
-            total_weight = sum(data["weight"] for _src, _dst, data in G.out_edges(src, data=True))
+            out_edges = list(G.out_edges(src, data=True))
+            total_weight = sum(edge[-1]["weight"] for edge in out_edges)
             # dump(src, src_rank, total_weight)
-            for _src, dst, data in G.out_edges(src, data=True):
+            for edge in out_edges:
+                dst = edge[1]
+                data = edge[-1]
                 data["rank"] = src_rank * data["weight"] / total_weight
                 ident = data["ident"]
                 ranked_definitions[(dst, ident)] += data["rank"]
