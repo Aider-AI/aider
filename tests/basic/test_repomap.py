@@ -4,8 +4,10 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import git
+from tree_sitter import QueryError
 
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
@@ -271,6 +273,28 @@ print(my_function(3, 4))
             self.assertIn("test_file4.json", result)
 
             # close the open cache files, so Windows won't error
+            del repo_map
+
+    def test_get_repo_map_skips_query_compile_failures(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            broken_file = os.path.join(temp_dir, "broken.py")
+            healthy_file = os.path.join(temp_dir, "healthy.md")
+
+            with open(broken_file, "w", encoding="utf-8") as f:
+                f.write("def broken():\n    return 1\n")
+
+            with open(healthy_file, "w", encoding="utf-8") as f:
+                f.write("# healthy\n")
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            with patch("aider.repomap.Query", side_effect=QueryError("boom")):
+                result = repo_map.get_repo_map([], [broken_file, healthy_file])
+
+            self.assertIn("broken.py", result)
+            self.assertIn("healthy.md", result)
+
             del repo_map
 
 

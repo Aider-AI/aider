@@ -16,7 +16,7 @@ from grep_ast import TreeContext, filename_to_lang
 from pygments.lexers import guess_lexer_for_filename
 from pygments.token import Token
 from tqdm import tqdm
-from tree_sitter import Query
+from tree_sitter import Query, QueryError
 
 from aider.dump import dump
 from aider.special import filter_important_files
@@ -298,8 +298,12 @@ class RepoMap:
             return
         tree = parser.parse(bytes(code, "utf-8"))
 
-        # Run the tags queries
-        captures = self._run_captures(Query(language, query_scm), tree.root_node)
+        # Skip files whose installed parser and scm query are out of sync.
+        try:
+            captures = self._run_captures(Query(language, query_scm), tree.root_node)
+        except QueryError as err:
+            print(f"Skipping file {fname}: {err}")
+            return
 
         captures_by_tag = defaultdict(list)
         matches = []
