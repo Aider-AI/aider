@@ -14,7 +14,7 @@ from prompt_toolkit.output import DummyOutput
 from aider.coders import Coder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.main import check_gitignore, load_dotenv_files, main, setup_git
+from aider.main import check_gitignore, get_git_root, load_dotenv_files, main, setup_git
 from aider.utils import GitTemporaryDirectory, IgnorantTemporaryDirectory, make_repo
 
 
@@ -1163,6 +1163,20 @@ class TestMain(TestCase):
             self.fail(f"main() raised an unexpected exception: {e}")
 
         self.assertIsNone(result, "main() should return None when called with --exit")
+
+    @patch("aider.main.git.Repo")
+    def test_get_git_root_no_such_path_error(self, mock_repo):
+        """get_git_root should return None when NoSuchPathError is raised (issue #2957)."""
+        mock_repo.side_effect = git.exc.NoSuchPathError("/nonexistent/path")
+        result = get_git_root()
+        self.assertIsNone(result)
+
+    @patch("aider.main.git.Repo")
+    def test_get_git_root_invalid_repo(self, mock_repo):
+        """get_git_root should return None when InvalidGitRepositoryError is raised."""
+        mock_repo.side_effect = git.InvalidGitRepositoryError("/some/path")
+        result = get_git_root()
+        self.assertIsNone(result)
 
     def test_reasoning_effort_option(self):
         coder = main(
