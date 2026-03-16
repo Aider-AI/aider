@@ -536,7 +536,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(Model("claude-3-5-sonnet-20240620"), None, io)
+            coder = Coder.create(Model("claude-sonnet-4-6"), None, io)
             print(coder.get_announcements())
             commands = Commands(io, coder)
 
@@ -924,7 +924,7 @@ class TestCommands(TestCase):
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
             # Test with vision model
-            vision_model = Model("gpt-4-vision-preview")
+            vision_model = Model("gpt-4o")
             vision_coder = Coder.create(vision_model, None, io)
             vision_commands = Commands(io, vision_coder)
 
