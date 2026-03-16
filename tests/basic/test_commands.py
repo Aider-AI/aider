@@ -536,7 +536,7 @@ class TestCommands(TestCase):
             io = InputOutput(pretty=False, fancy_input=False, yes=False)
             from aider.coders import Coder
 
-            coder = Coder.create(Model("claude-3-5-sonnet-20240620"), None, io)
+            coder = Coder.create(Model("claude-sonnet-4-6"), None, io)
             print(coder.get_announcements())
             commands = Commands(io, coder)
 
