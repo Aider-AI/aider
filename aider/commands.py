@@ -799,7 +799,10 @@ class Commands:
     def cmd_add(self, args):
         "Add files to the chat so aider can edit them or review them in detail"
 
+        from aider import prompts
+
         all_matched_files = set()
+        added_fnames = []
 
         filenames = parse_quoted_filenames(args)
         for word in filenames:
@@ -880,6 +883,7 @@ class Commands:
                     self.io.tool_output(
                         f"Moved {matched_file} from read-only to editable files in the chat"
                     )
+                    added_fnames.append(matched_file)
                 else:
                     self.io.tool_error(
                         f"Cannot add {matched_file} as it's not part of the repository"
@@ -901,6 +905,10 @@ class Commands:
                     fname = self.coder.get_rel_fname(abs_file_path)
                     self.io.tool_output(f"Added {fname} to the chat")
                     self.coder.check_added_files()
+                    added_fnames.append(fname)
+
+        if added_fnames:
+            return prompts.added_files.format(fnames=", ".join(added_fnames))
 
     def completions_drop(self):
         files = self.coder.get_inchat_relative_files()
