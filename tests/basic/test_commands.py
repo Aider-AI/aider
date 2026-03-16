@@ -924,7 +924,7 @@ class TestCommands(TestCase):
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
 
             # Test with vision model
-            vision_model = Model("gpt-4-vision-preview")
+            vision_model = Model("gpt-4o")
             vision_coder = Coder.create(vision_model, None, io)
             vision_commands = Commands(io, vision_coder)
 
