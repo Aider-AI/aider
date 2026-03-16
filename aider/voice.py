@@ -146,7 +146,7 @@ class Voice:
         # Check file size and offer to convert to mp3 if too large
         file_size = os.path.getsize(temp_wav)
         if file_size > 24.9 * 1024 * 1024 and self.audio_format == "wav":
-            print("\nWarning: {temp_wav} is too large, switching to mp3 format.")
+            print(f"\nWarning: {temp_wav} is too large, switching to mp3 format.")
             use_audio_format = "mp3"
 
         filename = temp_wav
