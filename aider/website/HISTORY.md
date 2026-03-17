@@ -36,7 +36,11 @@ cog.out(text)
 - Added settings for new OpenAI GPT‑5.1/5.2 and GPT‑5‑pro models across OpenAI, Azure, and OpenRouter, including chat and codex variants.
 - Changed the gemini alias to point to gemini/gemini-3-pro-preview.
 - Added support for OpenAI o1-pro model.
-- Aider wrote 57% of the code in this release.
+- Added support for GPT‑5.3/5.4 model variants across OpenAI, Azure, and OpenRouter, plus GPT‑4.1‑nano.
+- Added `/ok` as a shortcut for asking aider to go ahead with the proposed changes, with optional extra instructions.
+- When auto-commits are disabled, aider can add files outside the git repo and promote read-only files to editable, by Chris McCormick.
+- Fixed crashes caused by circular symlink loops when resolving paths, by coder_3.
+- Aider wrote 62% of the code in this release.
 
 ### Aider v0.86.1
 

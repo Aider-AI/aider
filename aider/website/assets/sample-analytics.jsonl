@@ -1,9 +1,3 @@
-{"event": "exit", "properties": {"reason": "Exit flag set"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753875}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753875}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753875}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753875}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753875}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753875}
 {"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753991}
 {"event": "gui session", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753991}
 {"event": "exit", "properties": {"reason": "GUI session ended"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754753991}
@@ -998,3 +992,9 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710038}
 {"event": "message_send", "properties": {"main_model": "gpt-5.3-codex", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5.2", "edit_format": "diff", "prompt_tokens": 32191, "completion_tokens": 2345, "total_tokens": 34536, "cost": 0.08916425, "total_cost": 0.14828975}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710110}
 {"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710139}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710216}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710217}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710217}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710217}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5.4", "edit_format": "diff", "prompt_tokens": 23729, "completion_tokens": 297, "total_tokens": 24026, "cost": 0.0637775, "total_cost": 0.0637775}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710306}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1773710306}
