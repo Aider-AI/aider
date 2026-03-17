@@ -70,9 +70,9 @@ cog.out(model_list)
 - apac.anthropic.claude-3-5-sonnet-20241022-v2:0
 - apac.anthropic.claude-haiku-4-5-20251001-v1:0
 - apac.anthropic.claude-sonnet-4-20250514-v1:0
-- apac.anthropic.claude-sonnet-4-6
 - au.anthropic.claude-haiku-4-5-20251001-v1:0
 - au.anthropic.claude-sonnet-4-5-20250929-v1:0
+- au.anthropic.claude-sonnet-4-6
 - azure_ai/claude-haiku-4-5
 - azure_ai/claude-opus-4-1
 - azure_ai/claude-opus-4-5
@@ -85,16 +85,9 @@ cog.out(model_list)
 - bedrock/us-gov-west-1/anthropic.claude-3-7-sonnet-20250219-v1:0
 - bedrock/us-gov-west-1/claude-sonnet-4-5-20250929-v1:0
 - bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
-- claude-3-5-haiku-20241022
-- claude-3-5-haiku-latest
-- claude-3-5-sonnet-20240620
-- claude-3-5-sonnet-20241022
-- claude-3-5-sonnet-latest
 - claude-3-7-sonnet-20250219
-- claude-3-7-sonnet-latest
 - claude-3-haiku-20240307
 - claude-3-opus-20240229
-- claude-3-opus-latest
 - claude-4-opus-20250514
 - claude-4-sonnet-20250514
 - claude-haiku-4-5
@@ -230,8 +223,6 @@ cog.out(model_list)
 - vertex_ai/claude-3-5-haiku
 - vertex_ai/claude-3-5-haiku@20241022
 - vertex_ai/claude-3-5-sonnet
-- vertex_ai/claude-3-5-sonnet-v2
-- vertex_ai/claude-3-5-sonnet-v2@20241022
 - vertex_ai/claude-3-5-sonnet@20240620
 - vertex_ai/claude-3-7-sonnet@20250219
 - vertex_ai/claude-3-haiku

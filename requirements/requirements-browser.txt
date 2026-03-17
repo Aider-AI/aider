@@ -13,15 +13,15 @@ blinker==1.9.0
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-cachetools==6.2.6
+cachetools==7.0.5
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-certifi==2026.1.4
+certifi==2026.2.25
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.6
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -58,7 +58,7 @@ markupsafe==3.0.3
     # via
     #   -c requirements/common-constraints.txt
     #   jinja2
-narwhals==2.16.0
+narwhals==2.18.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
@@ -85,7 +85,7 @@ protobuf==6.33.5
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-pyarrow==23.0.0
+pyarrow==23.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -97,7 +97,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
-pytz==2025.2
+pytz==2026.1.post1
     # via
     #   -c requirements/common-constraints.txt
     #   pandas
@@ -119,11 +119,11 @@ six==1.17.0
     # via
     #   -c requirements/common-constraints.txt
     #   python-dateutil
-smmap==5.0.2
+smmap==5.0.3
     # via
     #   -c requirements/common-constraints.txt
     #   gitdb
-streamlit==1.54.0
+streamlit==1.55.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-browser.in
@@ -135,7 +135,7 @@ toml==0.10.2
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
-tornado==6.5.4
+tornado==6.5.5
     # via
     #   -c requirements/common-constraints.txt
     #   streamlit
@@ -143,6 +143,7 @@ typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
     #   altair
+    #   referencing
     #   streamlit
 tzdata==2025.3
     # via
