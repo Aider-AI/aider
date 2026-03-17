@@ -42,6 +42,20 @@ def test_get_ex_info():
     assert ex_info.description is None
 
 
+def test_permission_denied_error():
+    """Test specific handling of PermissionDeniedError"""
+    ex = LiteLLMExceptions()
+    from litellm import PermissionDeniedError
+
+    perm_error = PermissionDeniedError(
+        message="Permission denied", llm_provider="openai", model="gpt-4"
+    )
+    ex_info = ex.get_ex_info(perm_error)
+    assert ex_info.retry is False
+    assert "permission was denied" in ex_info.description.lower()
+    assert "api key" in ex_info.description.lower()
+
+
 def test_rate_limit_error():
     """Test specific handling of RateLimitError"""
     ex = LiteLLMExceptions()
