@@ -45,8 +45,9 @@ def test_get_ex_info():
 def test_permission_denied_error():
     """Test specific handling of PermissionDeniedError"""
     ex = LiteLLMExceptions()
-    from litellm import PermissionDeniedError
     from types import SimpleNamespace
+
+    from litellm import PermissionDeniedError
 
     response = SimpleNamespace(status_code=403, text="")
     perm_error = PermissionDeniedError(
