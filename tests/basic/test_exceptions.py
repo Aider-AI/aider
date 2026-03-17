@@ -46,7 +46,6 @@ def test_permission_denied_error():
     """Test specific handling of PermissionDeniedError"""
     ex = LiteLLMExceptions()
     import httpx
-
     from litellm import PermissionDeniedError
 
     request = httpx.Request("GET", "https://example.com")
