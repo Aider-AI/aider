@@ -34,6 +34,7 @@ from rich.style import Style as RichStyle
 from rich.text import Text
 
 from aider.mdstream import MarkdownStream
+from aider.utils import sanitize_surrogates
 
 from .dump import dump  # noqa: F401
 from .editor import pipe_editor
@@ -676,14 +677,14 @@ class InputOutput:
 
             except EOFError:
                 raise
+            except UnicodeEncodeError as err:
+                self.tool_error(str(err))
+                return ""
             except Exception as err:
                 import traceback
 
                 self.tool_error(str(err))
                 self.tool_error(traceback.format_exc())
-                return ""
-            except UnicodeEncodeError as err:
-                self.tool_error(str(err))
                 return ""
             finally:
                 if self.file_watcher:
@@ -730,6 +731,7 @@ class InputOutput:
                 break
 
         print()
+        inp = sanitize_surrogates(inp)
         self.user_input(inp)
         return inp
 
