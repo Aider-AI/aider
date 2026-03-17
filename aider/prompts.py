@@ -33,11 +33,7 @@ added_files = (
 )
 
 
-run_output = """I ran this command:
-
-{command}
-
-And got this output:
+run_output = """{command}
 
 {output}
 """
