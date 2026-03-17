@@ -45,11 +45,12 @@ def test_get_ex_info():
 def test_permission_denied_error():
     """Test specific handling of PermissionDeniedError"""
     ex = LiteLLMExceptions()
-    from types import SimpleNamespace
+    import httpx
 
     from litellm import PermissionDeniedError
 
-    response = SimpleNamespace(status_code=403, text="")
+    request = httpx.Request("GET", "https://example.com")
+    response = httpx.Response(403, request=request)
     perm_error = PermissionDeniedError(
         message="Permission denied",
         llm_provider="openai",
