@@ -447,6 +447,64 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: azure/gpt-5.3
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5.3-chat-latest
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5.3-pro
+  edit_format: diff
+  weak_model_name: azure/gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: azure/gpt-5.3
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5.4
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5.4-chat-latest
+  edit_format: diff
+  weak_model_name: azure/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: azure/gpt-5.4-pro
+  edit_format: diff
+  weak_model_name: azure/gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: azure/gpt-5.4
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
 - name: azure/o1
   edit_format: diff
   weak_model_name: azure/gpt-4o-mini
@@ -1604,6 +1662,75 @@ cog.out("```\n")
   accepts_settings:
   - reasoning_effort
 
+- name: gpt-5.3
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.3-chat-latest
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.3-codex
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.3-pro
+  edit_format: diff
+  weak_model_name: gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: gpt-5.3
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.4
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.4-chat-latest
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: gpt-5.4-pro
+  edit_format: diff
+  weak_model_name: gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: gpt-5.4
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
 - name: groq/llama3-70b-8192
   edit_format: diff
   weak_model_name: groq/llama3-8b-8192
@@ -1934,6 +2061,73 @@ cog.out("```\n")
   use_temperature: false
   streaming: false
   editor_model_name: openai/gpt-5.2
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.3
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.3-chat-latest
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.3-codex
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.3-pro
+  edit_format: diff
+  weak_model_name: openai/gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: openai/gpt-5.3
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.4
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.4-chat-latest
+  edit_format: diff
+  weak_model_name: openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openai/gpt-5.4-pro
+  edit_format: diff
+  weak_model_name: openai/gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: openai/gpt-5.4
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
   accepts_settings:
@@ -2536,6 +2730,73 @@ cog.out("```\n")
   use_temperature: false
   streaming: false
   editor_model_name: openrouter/openai/gpt-5.2
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.3
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.3-chat-latest
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.3-codex
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  overeager: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.3-pro
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: openrouter/openai/gpt-5.3
+  editor_edit_format: editor-diff
+  system_prompt_prefix: 'Formatting re-enabled. '
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.4
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.4-chat-latest
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings:
+  - reasoning_effort
+
+- name: openrouter/openai/gpt-5.4-pro
+  edit_format: diff
+  weak_model_name: openrouter/openai/gpt-5-mini
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  streaming: false
+  editor_model_name: openrouter/openai/gpt-5.4
   editor_edit_format: editor-diff
   system_prompt_prefix: 'Formatting re-enabled. '
   accepts_settings:
