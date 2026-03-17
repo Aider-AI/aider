@@ -46,9 +46,14 @@ def test_permission_denied_error():
     """Test specific handling of PermissionDeniedError"""
     ex = LiteLLMExceptions()
     from litellm import PermissionDeniedError
+    from types import SimpleNamespace
 
+    response = SimpleNamespace(status_code=403, text="")
     perm_error = PermissionDeniedError(
-        message="Permission denied", llm_provider="openai", model="gpt-4"
+        message="Permission denied",
+        llm_provider="openai",
+        model="gpt-4",
+        response=response,
     )
     ex_info = ex.get_ex_info(perm_error)
     assert ex_info.retry is False
