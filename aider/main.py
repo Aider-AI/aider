@@ -712,7 +712,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     # We can't know the git repo for sure until after parsing the args.
     # If we guessed wrong, reparse because that changes things like
-    # the location of the config.yml and history files.
+    # the location of the .aider\config.yml and history files.
     if args.git and not force_git_root and git is not None:
         right_repo_root = guessed_wrong_repo(io, git_root, fnames, git_dname)
         if right_repo_root:
