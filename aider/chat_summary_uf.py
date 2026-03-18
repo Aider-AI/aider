@@ -1,0 +1,85 @@
+"""ChatSummaryUF — drop-in replacement for aider's ChatSummary.
+
+Uses union-find context compaction instead of recursive summarization.
+Falls back to recursive when union-find can't improve on the input.
+"""
+
+from aider.history import ChatSummary
+from aider import prompts
+
+from aider.context_window import ContextWindow
+from aider.embedding_service import TFIDFEmbedder
+from aider.cluster_summarizer import ClusterSummarizer
+
+
+class ChatSummaryUF(ChatSummary):
+    """Union-find context compaction, subclassing aider's ChatSummary."""
+
+    def __init__(self, models=None, max_tokens=1024):
+        super().__init__(models, max_tokens)
+        self._fed_count = 0
+        self._init_context_window()
+
+    def _init_context_window(self):
+        self.context_window = ContextWindow(
+            embedder=TFIDFEmbedder(),
+            summarizer=ClusterSummarizer(self.models),
+            graduate_at=26,
+            evict_at=30,
+            max_cold_clusters=10,
+            merge_threshold=0.15,
+        )
+        self._fed_count = 0
+
+    def summarize(self, messages, depth=0):
+        if not self.too_big(messages):
+            return messages
+
+        # Stale detection: messages shrank → previous result applied → rebuild
+        if self._fed_count > len(messages):
+            self._init_context_window()
+
+        # Feed only new user/assistant messages
+        for msg in messages[self._fed_count:]:
+            role = msg.get("role", "").upper()
+            if role not in ("USER", "ASSISTANT"):
+                continue
+            content = msg.get("content", "")
+            if content:
+                self.context_window.append(f"# {role}\n{content}")
+        self._fed_count = len(messages)
+
+        # Resolve dirty clusters, then render fresh summaries
+        self.context_window.resolve_dirty()
+        rendered = self.context_window.render()
+
+        # Format output
+        hot_count = self.context_window.hot_count
+        if hot_count > 0 and hot_count < len(rendered):
+            cold_parts = rendered[:-hot_count]
+            summary_text = prompts.summary_prefix + "\n\n".join(cold_parts)
+            hot_messages = messages[-hot_count:]
+            result = [
+                {"role": "user", "content": summary_text},
+                {"role": "assistant", "content": "Ok."},
+                *hot_messages,
+            ]
+        else:
+            # Not enough messages to form cold clusters.
+            # Fall back to recursive — don't return unchanged.
+            return super().summarize(messages, depth)
+
+        # Budget safety: must fit max_tokens AND be smaller than input
+        result_tokens = sum(self.token_count(m) for m in result)
+        if result_tokens > self.max_tokens:
+            return super().summarize(messages, depth)
+        input_tokens = sum(self.token_count(m) for m in messages)
+        if result_tokens >= input_tokens:
+            return super().summarize(messages, depth)
+
+        if result and result[-1]["role"] != "assistant":
+            result.append({"role": "assistant", "content": "Ok."})
+        return result
+
+    def summarize_all(self, messages):
+        return super().summarize_all(messages)

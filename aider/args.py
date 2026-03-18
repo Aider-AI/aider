@@ -226,6 +226,17 @@ def get_parser(default_config_files, git_root):
             " If unspecified, defaults to the model's max_chat_history_tokens."
         ),
     )
+    group.add_argument(
+        "--chat-history-summarizer",
+        default="recursive",
+        choices=["recursive", "union-find"],
+        help=(
+            "Chat history summarization backend."
+            " 'recursive' (default) uses the existing recursive summarizer."
+            " 'union-find' groups messages into topic clusters by TF-IDF similarity"
+            " and summarizes each cluster independently."
+        ),
+    )
 
     ##########
     group = parser.add_argument_group("Cache settings")

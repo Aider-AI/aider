@@ -946,10 +946,15 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         original_read_only_fnames=read_only_fnames,
     )
 
-    summarizer = ChatSummary(
-        [main_model.weak_model, main_model],
-        args.max_chat_history_tokens or main_model.max_chat_history_tokens,
-    )
+    summarizer_models = [main_model.weak_model, main_model]
+    summarizer_tokens = args.max_chat_history_tokens or main_model.max_chat_history_tokens
+
+    if getattr(args, "chat_history_summarizer", None) == "union-find":
+        from aider.chat_summary_uf import ChatSummaryUF
+
+        summarizer = ChatSummaryUF(summarizer_models, summarizer_tokens)
+    else:
+        summarizer = ChatSummary(summarizer_models, summarizer_tokens)
 
     if args.cache_prompts and args.map_refresh == "auto":
         args.map_refresh = "files"
