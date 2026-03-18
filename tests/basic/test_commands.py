@@ -124,6 +124,25 @@ class TestCommands(TestCase):
             # Assert tool_error was called indicating no assistant messages
             mock_tool_error.assert_called_once_with("No assistant messages found to copy.")
 
+    def test_cmd_help_reports_initialization_errors(self):
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        with (
+            mock.patch("aider.commands.install_help_extra", return_value=True),
+            mock.patch(
+                "aider.commands.Help",
+                side_effect=RuntimeError("Cannot send a request, as the client has been closed."),
+            ),
+            mock.patch.object(io, "tool_error") as mock_tool_error,
+        ):
+            commands.cmd_help("hi")
+
+        self.assertIsNone(commands.help)
+        mock_tool_error.assert_any_call("Unable to initialize interactive help.")
+        mock_tool_error.assert_any_call("Cannot send a request, as the client has been closed.")
+
     def test_cmd_copy_pyperclip_exception(self):
         io = InputOutput(pretty=False, fancy_input=False, yes=True)
         coder = Coder.create(self.GPT35, None, io)
