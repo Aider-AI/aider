@@ -1076,6 +1076,77 @@ This command will print 'Hello, World!' to the console."""
         system_message = next(msg for msg in messages if msg["role"] == "system")
         self.assertTrue(system_message["content"].startswith(test_prefix))
 
+    def test_system_prompt_extras_file(self):
+        # Test that extras file content is appended to the system prompt
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("Extra instructions for the model.\nSecond line.")
+            extras_path = f.name
+
+        try:
+            io = InputOutput(yes=True)
+            coder = Coder.create(
+                self.GPT35, None, io=io,
+                system_prompt_extras_file=extras_path,
+                map_tokens=0,
+            )
+
+            chunks = coder.format_messages()
+            messages = chunks.all_messages()
+
+            system_message = next(msg for msg in messages if msg["role"] == "system")
+            self.assertIn("Extra instructions for the model.", system_message["content"])
+            self.assertIn("Second line.", system_message["content"])
+        finally:
+            os.unlink(extras_path)
+
+    def test_system_prompt_extras_file_missing(self):
+        # Test that a missing extras file produces a warning but doesn't crash
+        io = InputOutput(yes=True)
+        coder = Coder.create(
+            self.GPT35, None, io=io,
+            system_prompt_extras_file="/nonexistent/extras.txt",
+            map_tokens=0,
+        )
+
+        # Should not raise — just warn and continue
+        chunks = coder.format_messages()
+        messages = chunks.all_messages()
+
+        # System message should still exist, just without extras
+        system_message = next(msg for msg in messages if msg["role"] == "system")
+        self.assertTrue(len(system_message["content"]) > 0)
+
+    def test_system_prompt_extras_file_reread_each_request(self):
+        # Test that the extras file is re-read on each request (not cached)
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
+            f.write("Version 1")
+            extras_path = f.name
+
+        try:
+            io = InputOutput(yes=True)
+            coder = Coder.create(
+                self.GPT35, None, io=io,
+                system_prompt_extras_file=extras_path,
+                map_tokens=0,
+            )
+
+            chunks = coder.format_messages()
+            messages = chunks.all_messages()
+            system_message = next(msg for msg in messages if msg["role"] == "system")
+            self.assertIn("Version 1", system_message["content"])
+
+            # Update the file
+            with open(extras_path, "w") as f:
+                f.write("Version 2")
+
+            chunks = coder.format_messages()
+            messages = chunks.all_messages()
+            system_message = next(msg for msg in messages if msg["role"] == "system")
+            self.assertIn("Version 2", system_message["content"])
+            self.assertNotIn("Version 1", system_message["content"])
+        finally:
+            os.unlink(extras_path)
+
     def test_coder_create_with_new_file_oserror(self):
         with GitTemporaryDirectory():
             io = InputOutput(yes=True)
