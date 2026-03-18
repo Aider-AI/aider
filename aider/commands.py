@@ -1101,20 +1101,67 @@ class Commands:
             self.io.tool_output(f"  {file}")
 
     def basic_help(self):
-        commands = sorted(self.get_commands())
-        pad = max(len(cmd) for cmd in commands)
+        self.io.tool_output("\n=== Aider Help ===\n")
+        
+        # Display common commands first
+        common_commands = {
+            "/help": "Get help about using aider",
+            "/add": "Add files to edit",
+            "/ls": "List files in chat session",
+            "/drop": "Remove files from chat",
+            "/run": "Run shell commands",
+            "/clear": "Clear chat history",
+            "/exit": "Exit aider"
+        }
+        
+        self.io.tool_output("Common Commands:")
+        pad = max(len(cmd) for cmd in common_commands)
         pad = "{cmd:" + str(pad) + "}"
+        for cmd, desc in common_commands.items():
+            formatted_cmd = pad.format(cmd=cmd)
+            self.io.tool_output(f"  {formatted_cmd} : {desc}")
+
+        # Display chat modes
+        self.io.tool_output("\nChat Modes:")
+        chat_modes = {
+            "/ask": "Ask questions about code without making changes",
+            "/code": "Request code changes (default mode)",
+            "/architect": "Work with an architect to design and implement changes",
+            "/context": "View and navigate code context"
+        }
+        for cmd, desc in chat_modes.items():
+            formatted_cmd = pad.format(cmd=cmd)
+            self.io.tool_output(f"  {formatted_cmd} : {desc}")
+
+        # Display file management
+        self.io.tool_output("\nFile Management:")
+        file_commands = {
+            "/add": "Add files to edit",
+            "/drop": "Remove files from chat",
+            "/ls": "List all files",
+            "/read-only": "Add files in read-only mode"
+        }
+        for cmd, desc in file_commands.items():
+            formatted_cmd = pad.format(cmd=cmd)
+            self.io.tool_output(f"  {formatted_cmd} : {desc}")
+
+        # Display all other commands
+        self.io.tool_output("\nAll Available Commands:")
+        commands = sorted(self.get_commands())
         for cmd in commands:
-            cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
-            cmd_method = getattr(self, cmd_method_name, None)
-            cmd = pad.format(cmd=cmd)
-            if cmd_method:
-                description = cmd_method.__doc__
-                self.io.tool_output(f"{cmd} {description}")
-            else:
-                self.io.tool_output(f"{cmd} No description available.")
-        self.io.tool_output()
-        self.io.tool_output("Use `/help <question>` to ask questions about how to use aider.")
+            if cmd not in common_commands and cmd not in chat_modes and cmd not in file_commands:
+                cmd_method_name = f"cmd_{cmd[1:]}".replace("-", "_")
+                cmd_method = getattr(self, cmd_method_name, None)
+                formatted_cmd = pad.format(cmd=cmd)
+                if cmd_method and cmd_method.__doc__:
+                    self.io.tool_output(f"  {formatted_cmd} : {cmd_method.__doc__}")
+
+        # Display help tips
+        self.io.tool_output("\nTips:")
+        self.io.tool_output("  - Use `/help <question>` to ask specific questions about using aider")
+        self.io.tool_output("  - Use /chat-mode to switch between different chat modes")
+        self.io.tool_output("  - Most commands can be used with arguments or without them")
+        self.io.tool_output("  - Type a command followed by --help to see its options\n")
 
     def cmd_help(self, args):
         "Ask questions about aider"
@@ -1134,6 +1181,7 @@ class Commands:
 
             self.help = Help()
 
+        # Create a fresh help coder instance
         coder = Coder.create(
             io=self.io,
             from_coder=self.coder,
@@ -1142,6 +1190,8 @@ class Commands:
             map_tokens=512,
             map_mul_no_files=1,
         )
+
+        # Get help response
         user_msg = self.help.ask(args)
         user_msg += """
 # Announcement lines from when this session of aider was launched:
@@ -1149,7 +1199,11 @@ class Commands:
 """
         user_msg += "\n".join(self.coder.get_announcements()) + "\n"
 
+        # Run the help request - HelpCoder will clear its own context after
         coder.run(user_msg, preproc=False)
+        
+        # Clear help instance to free up resources
+        self.help = None
 
         if self.coder.repo_map:
             map_tokens = self.coder.repo_map.max_map_tokens
