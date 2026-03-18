@@ -445,65 +445,7 @@ class Commands:
     def cmd_tokens(self, args):
         "Report on the number of tokens used by the current chat context"
 
-        res = []
-
-        self.coder.choose_fence()
-
-        # system messages
-        main_sys = self.coder.fmt_system_prompt(self.coder.gpt_prompts.main_system)
-        main_sys += "\n" + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
-        msgs = [
-            dict(role="system", content=main_sys),
-            dict(
-                role="system",
-                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder),
-            ),
-        ]
-
-        tokens = self.coder.main_model.token_count(msgs)
-        res.append((tokens, "system messages", ""))
-
-        # chat history
-        msgs = self.coder.done_messages + self.coder.cur_messages
-        if msgs:
-            tokens = self.coder.main_model.token_count(msgs)
-            res.append((tokens, "chat history", "use /clear to clear"))
-
-        # repo map
-        other_files = set(self.coder.get_all_abs_files()) - set(self.coder.abs_fnames)
-        if self.coder.repo_map:
-            repo_content = self.coder.repo_map.get_repo_map(self.coder.abs_fnames, other_files)
-            if repo_content:
-                tokens = self.coder.main_model.token_count(repo_content)
-                res.append((tokens, "repository map", "use --map-tokens to resize"))
-
-        fence = "`" * 3
-
-        file_res = []
-        # files
-        for fname in self.coder.abs_fnames:
-            relative_fname = self.coder.get_rel_fname(fname)
-            content = self.io.read_text(fname)
-            if is_image_file(relative_fname):
-                tokens = self.coder.main_model.token_count_for_image(fname)
-            else:
-                # approximate
-                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
-                tokens = self.coder.main_model.token_count(content)
-            file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
-
-        # read-only files
-        for fname in self.coder.abs_read_only_fnames:
-            relative_fname = self.coder.get_rel_fname(fname)
-            content = self.io.read_text(fname)
-            if content is not None and not is_image_file(relative_fname):
-                # approximate
-                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
-                tokens = self.coder.main_model.token_count(content)
-                file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
-
-        file_res.sort()
-        res.extend(file_res)
+        res = self.coder.calculate_context_tokens()
 
         self.io.tool_output(
             f"Approximate context window usage for {self.coder.main_model.name}, in tokens:"

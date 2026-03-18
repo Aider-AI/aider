@@ -48,7 +48,7 @@ from aider.repomap import RepoMap
 from aider.run_cmd import run_cmd
 from aider.utils import format_content, format_messages, format_tokens, is_image_file
 from aider.waiting import WaitingSpinner
-
+from aider.coders.usage_tracker import UsageTracker
 from ..dump import dump  # noqa: F401
 from .chat_chunks import ChatChunks
 
@@ -110,7 +110,6 @@ class Coder:
     multi_response_content = ""
     partial_response_content = ""
     commit_before_message = []
-    message_cost = 0.0
     add_cache_headers = False
     cache_warming_thread = None
     num_cache_warming_pings = 0
@@ -381,11 +380,10 @@ class Coder:
         self.chat_completion_response_hashes = []
         self.need_commit_before_edits = set()
 
-        self.total_cost = total_cost
-        self.total_tokens_sent = total_tokens_sent
-        self.total_tokens_received = total_tokens_received
-        self.message_tokens_sent = 0
-        self.message_tokens_received = 0
+        self.usage_tracker = UsageTracker(main_model, io)
+        self.usage_tracker.total_cost = total_cost
+        self.usage_tracker.total_tokens_sent = total_tokens_sent
+        self.usage_tracker.total_tokens_received = total_tokens_received
 
         self.verbose = verbose
         self.abs_fnames = set()
@@ -540,6 +538,158 @@ class Coder:
             if self.verbose:
                 self.io.tool_output("JSON Schema:")
                 self.io.tool_output(json.dumps(self.functions, indent=4))
+    def calculate_context_tokens(self):
+        """Calculate and display token usage for the current chat context."""
+        from aider.utils import is_image_file
+
+        res = []
+
+        self.choose_fence()
+
+        # system messages
+        main_sys = self.fmt_system_prompt(self.gpt_prompts.main_system)
+        main_sys += "\n" + self.fmt_system_prompt(self.gpt_prompts.system_reminder)
+        msgs = [
+            dict(role="system", content=main_sys),
+            dict(
+                role="system",
+                content=self.fmt_system_prompt(self.gpt_prompts.system_reminder),
+            ),
+        ]
+        tokens = self.main_model.token_count(msgs)
+        res.append((tokens, "system messages", ""))
+
+        # chat history
+        msgs = self.done_messages + self.cur_messages
+        if msgs:
+            tokens = self.main_model.token_count(msgs)
+            res.append((tokens, "chat history", "use /clear to clear"))
+
+        # repo map
+        other_files = set(self.get_all_abs_files()) - set(self.abs_fnames)
+        if self.repo_map:
+            repo_content = self.repo_map.get_repo_map(self.abs_fnames, other_files)
+            if repo_content:
+                tokens = self.main_model.token_count(repo_content)
+                res.append((tokens, "repository map", "use --map-tokens to resize"))
+
+        fence = "`" * 3
+
+        file_res = []
+        for fname in self.abs_fnames:
+            relative_fname = self.get_rel_fname(fname)
+            content = self.io.read_text(fname)
+            if is_image_file(relative_fname):
+                tokens = self.main_model.token_count_for_image(fname)
+            else:
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                tokens = self.main_model.token_count(content)
+            file_res.append((tokens, f"{relative_fname}", "/drop to remove"))
+
+        for fname in self.abs_read_only_fnames:
+            relative_fname = self.get_rel_fname(fname)
+            content = self.io.read_text(fname)
+            if content is not None and not is_image_file(relative_fname):
+                content = f"{relative_fname}\n{fence}\n" + content + "{fence}\n"
+                tokens = self.main_model.token_count(content)
+                file_res.append((tokens, f"{relative_fname} (read-only)", "/drop to remove"))
+
+        file_res.sort()
+        res.extend(file_res)
+
+        return res
+    # === Delegate properties to UsageTracker ===
+    @property
+    def total_cost(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.total_cost if tracker else 0.0
+
+    @total_cost.setter
+    def total_cost(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.total_cost = value
+        else:
+            self.__dict__["total_cost"] = value
+
+    @property
+    def message_cost(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.message_cost if tracker else 0.0
+
+    @message_cost.setter
+    def message_cost(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.message_cost = value
+        else:
+            self.__dict__["message_cost"] = value
+
+    @property
+    def message_tokens_sent(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.message_tokens_sent if tracker else 0
+
+    @message_tokens_sent.setter
+    def message_tokens_sent(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.message_tokens_sent = value
+        else:
+            self.__dict__["message_tokens_sent"] = value
+
+    @property
+    def message_tokens_received(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.message_tokens_received if tracker else 0
+
+    @message_tokens_received.setter
+    def message_tokens_received(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.message_tokens_received = value
+        else:
+            self.__dict__["message_tokens_received"] = value
+
+    @property
+    def total_tokens_sent(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.total_tokens_sent if tracker else 0
+
+    @total_tokens_sent.setter
+    def total_tokens_sent(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.total_tokens_sent = value
+        else:
+            self.__dict__["total_tokens_sent"] = value
+
+    @property
+    def total_tokens_received(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.total_tokens_received if tracker else 0
+
+    @total_tokens_received.setter
+    def total_tokens_received(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.total_tokens_received = value
+        else:
+            self.__dict__["total_tokens_received"] = value
+
+    @property
+    def usage_report(self):
+        tracker = getattr(self, "usage_tracker", None)
+        return tracker.usage_report if tracker else None
+
+    @usage_report.setter
+    def usage_report(self, value):
+        tracker = getattr(self, "usage_tracker", None)
+        if tracker:
+            tracker.usage_report = value
+        else:
+            self.__dict__["usage_report"] = value
+
 
     def setup_lint_cmds(self, lint_cmds):
         if not lint_cmds:
@@ -909,17 +1059,17 @@ class Coder:
             edit_format=edit_format,
         )
 
-    def preproc_user_input(self, inp):
-        if not inp:
+    def preproc_user_input(self, user_input):
+        if not user_input:
             return
 
-        if self.commands.is_command(inp):
-            return self.commands.run(inp)
+        if self.commands.is_command(user_input):
+            return self.commands.run(user_input)
 
-        self.check_for_file_mentions(inp)
-        inp = self.check_for_urls(inp)
+        self.check_for_file_mentions(user_input)
+        user_input = self.check_for_urls(user_input)
 
-        return inp
+        return user_input
 
     def run_one(self, user_message, preproc):
         self.init_before_message()
@@ -961,14 +1111,13 @@ class Coder:
             self.io.offer_url(url)
         return urls
 
-    def check_for_urls(self, inp: str) -> List[str]:
+    def check_for_urls(self, user_input: str) -> List[str]:
         """Check input for URLs and offer to add them to the chat."""
         if not self.detect_urls:
-            return inp
+            return user_input
 
-        # Exclude double quotes from the matched URL characters
         url_pattern = re.compile(r'(https?://[^\s/$.?#].[^\s"]*[^\s,.])')
-        urls = list(set(url_pattern.findall(inp)))  # Use set to remove duplicates
+        urls = list(set(url_pattern.findall(user_input)))
         group = ConfirmGroup(urls)
         for url in urls:
             if url not in self.rejected_urls:
@@ -976,12 +1125,12 @@ class Coder:
                 if self.io.confirm_ask(
                     "Add URL to the chat?", subject=url, group=group, allow_never=True
                 ):
-                    inp += "\n\n"
-                    inp += self.commands.cmd_web(url, return_content=True)
+                    user_input += "\n\n"
+                    user_input += self.commands.cmd_web(url, return_content=True)
                 else:
                     self.rejected_urls.add(url)
 
-        return inp
+        return user_input
 
     def keyboard_interrupt(self):
         # Ensure cursor is visible on exit
@@ -1415,15 +1564,67 @@ class Coder:
             if not self.io.confirm_ask("Try to proceed anyway?"):
                 return False
         return True
+    def _initialize_streaming(self):
+        """Set up the spinner and markdown stream for response display."""
+        self.multi_response_content = ""
+        if self.show_pretty():
+            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
+            self.waiting_spinner.start()
+            if self.stream:
+                self.mdstream = self.io.get_assistant_mdstream()
+            else:
+                self.mdstream = None
+        else:
+            self.mdstream = None    
+    
+    def _apply_edits_and_run_checks(self, edited):
+        """Apply file edits, run linting, shell commands, and tests."""
+        if edited:
+            self.aider_edited_files.update(edited)
+            saved_message = self.auto_commit(edited)
 
-    def send_message(self, inp):
+            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
+                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
+
+            self.move_back_cur_messages(saved_message)
+
+        if self.reflected_message:
+            return
+
+        if edited and self.auto_lint:
+            lint_errors = self.lint_edited(edited)
+            self.auto_commit(edited, context="Ran the linter")
+            self.lint_outcome = not lint_errors
+            if lint_errors:
+                ok = self.io.confirm_ask("Attempt to fix lint errors?")
+                if ok:
+                    self.reflected_message = lint_errors
+                    return
+
+        shared_output = self.run_shell_commands()
+        if shared_output:
+            self.cur_messages += [
+                dict(role="user", content=shared_output),
+                dict(role="assistant", content="Ok"),
+            ]
+
+        if edited and self.auto_test:
+            test_errors = self.commands.cmd_test(self.test_cmd)
+            self.test_outcome = not test_errors
+            if test_errors:
+                ok = self.io.confirm_ask("Attempt to fix test errors?")
+                if ok:
+                    self.reflected_message = test_errors
+                    return
+
+    def send_message(self, user_input):
         self.event("message_send_starting")
 
         # Notify IO that LLM processing is starting
         self.io.llm_started()
 
         self.cur_messages += [
-            dict(role="user", content=inp),
+            dict(role="user", content=user_input),
         ]
 
         chunks = self.format_messages()
@@ -1435,16 +1636,7 @@ class Coder:
         if self.verbose:
             utils.show_messages(messages, functions=self.functions)
 
-        self.multi_response_content = ""
-        if self.show_pretty():
-            self.waiting_spinner = WaitingSpinner("Waiting for " + self.main_model.name)
-            self.waiting_spinner.start()
-            if self.stream:
-                self.mdstream = self.io.get_assistant_mdstream()
-            else:
-                self.mdstream = None
-        else:
-            self.mdstream = None
+        self._initialize_streaming()
 
         retry_delay = 0.125
 
@@ -1583,44 +1775,8 @@ class Coder:
             return
 
         edited = self.apply_updates()
-
-        if edited:
-            self.aider_edited_files.update(edited)
-            saved_message = self.auto_commit(edited)
-
-            if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
-                saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
-
-            self.move_back_cur_messages(saved_message)
-
-        if self.reflected_message:
-            return
-
-        if edited and self.auto_lint:
-            lint_errors = self.lint_edited(edited)
-            self.auto_commit(edited, context="Ran the linter")
-            self.lint_outcome = not lint_errors
-            if lint_errors:
-                ok = self.io.confirm_ask("Attempt to fix lint errors?")
-                if ok:
-                    self.reflected_message = lint_errors
-                    return
-
-        shared_output = self.run_shell_commands()
-        if shared_output:
-            self.cur_messages += [
-                dict(role="user", content=shared_output),
-                dict(role="assistant", content="Ok"),
-            ]
-
-        if edited and self.auto_test:
-            test_errors = self.commands.cmd_test(self.test_cmd)
-            self.test_outcome = not test_errors
-            if test_errors:
-                ok = self.io.confirm_ask("Attempt to fix test errors?")
-                if ok:
-                    self.reflected_message = test_errors
-                    return
+        self._apply_edits_and_run_checks(edited)
+        
 
     def reply_completed(self):
         pass
