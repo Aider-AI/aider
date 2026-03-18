@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pyperclip
 from PIL import Image, ImageGrab
-from prompt_toolkit.completion import Completion, PathCompleter
+from prompt_toolkit.completion import Completion, PathCompleter, FuzzyWordCompleter
 from prompt_toolkit.document import Document
 
 from aider import models, prompts, voice
@@ -738,16 +738,19 @@ class Commands:
             )
 
         # Add completions from the 'add' command
-        add_completions = self.completions_add()
-        for completion in add_completions:
-            if after_command in completion:
-                all_completions.append(
-                    Completion(
-                        text=completion,
-                        start_position=adjusted_start_position,
-                        display=completion,
-                    )
+        add_candidates = self.completions_add()
+        fuzzy_completer = FuzzyWordCompleter(add_candidates)
+        fuzzy_doc = Document(after_command, cursor_position=len(after_command))
+        for comp in fuzzy_completer.get_completions(fuzzy_doc, complete_event):
+            all_completions.append(
+                Completion(
+                    text=comp.text,
+                    start_position=adjusted_start_position,
+                    display=comp.display or comp.text,
+                    style=comp.style,
+                    selected_style=comp.selected_style,
                 )
+            )
 
         # Sort all completions based on their text
         sorted_completions = sorted(all_completions, key=lambda c: c.text)
