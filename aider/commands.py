@@ -26,6 +26,17 @@ from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
 
+OUTPUT_LINE_THRESHOLD = 400
+OUTPUT_CHAR_THRESHOLD = 32_768
+TRUNCATED_HEAD_LINES = 40
+TRUNCATED_TAIL_LINES = 100
+TRUNCATED_MAX_BLOCKS = 3
+TRUNCATED_WINDOW = 20
+TRUNCATED_REGEX = re.compile(
+    r"(error|exception|traceback|panic|assert|fail(ed)?|warning|stack trace|fatal|abort|segfault)",
+    re.IGNORECASE,
+)
+
 
 class SwitchCoder(Exception):
     def __init__(self, placeholder=None, **kwargs):
@@ -1019,23 +1030,110 @@ class Commands:
         if combined_output is None:
             return
 
-        # Calculate token count of output
-        token_count = self.coder.main_model.token_count(combined_output)
-        k_tokens = token_count / 1000
+        lines = combined_output.splitlines()
+        total_lines = len(lines)
+        total_chars = len(combined_output)
+
+        should_truncate = total_lines > OUTPUT_LINE_THRESHOLD or total_chars > OUTPUT_CHAR_THRESHOLD
+        truncated_output = None
+
+        if should_truncate:
+            head = (0, min(TRUNCATED_HEAD_LINES, total_lines))
+            tail_start = max(total_lines - TRUNCATED_TAIL_LINES, head[1])
+            tail = (tail_start, total_lines)
+
+            blocks = []
+            for idx, line in enumerate(lines[head[1] : tail[0]], start=head[1]):
+                if TRUNCATED_REGEX.search(line):
+                    start = max(head[1], idx - TRUNCATED_WINDOW)
+                    end = min(tail[0], idx + TRUNCATED_WINDOW + 1)
+                    blocks.append((start, end))
+                    if len(blocks) >= TRUNCATED_MAX_BLOCKS:
+                        break
+
+            intervals = [head]
+            intervals.extend(blocks)
+            intervals.append(tail)
+            intervals = sorted(intervals, key=lambda x: x[0])
+
+            merged = []
+            for start, end in intervals:
+                if not merged:
+                    merged.append([start, end])
+                    continue
+                prev_start, prev_end = merged[-1]
+                if start <= prev_end:
+                    merged[-1][1] = max(prev_end, end)
+                else:
+                    merged.append([start, end])
+
+            parts = []
+            last_end = 0
+            for start, end in merged:
+                if start > last_end:
+                    omitted = start - last_end
+                    parts.append(f"... [truncated {omitted} lines]")
+                parts.extend(lines[start:end])
+                last_end = end
+            if last_end < total_lines:
+                omitted = total_lines - last_end
+                parts.append(f"... [truncated {omitted} lines]")
+
+            body = "\n".join(parts)
+            kept_lines = sum(end - start for start, end in merged)
+            truncated_note = f"[truncated: total {total_lines} lines, kept {kept_lines}]"
+            truncated_output = f"{truncated_note}\n{body}"
 
         if add_on_nonzero_exit:
             add = exit_status != 0
+            choice = "t" if add and should_truncate else "f"
         else:
-            add = self.io.confirm_ask(f"Add {k_tokens:.1f}k tokens of command output to the chat?")
+            if not should_truncate:
+                token_count = self.coder.main_model.token_count(combined_output)
+                k_tokens = token_count / 1000
+                add = self.io.confirm_ask(
+                    f"Add {k_tokens:.1f}k tokens of command output to the chat?"
+                )
+                choice = "f" if add else "n"
+            else:
+                if truncated_output is None:
+                    add = False
+                    choice = "n"
+                else:
+                    k_tokens_full = self.coder.main_model.token_count(combined_output) / 1000
+                    k_tokens_trunc = self.coder.main_model.token_count(truncated_output) / 1000
+                    default_choice = "t"
+
+                    if self.io.yes is True:
+                        choice = default_choice
+                    elif self.io.yes is False:
+                        choice = "n"
+                    else:
+                        question = (
+                            f"Command output is large ({total_lines} lines,"
+                            f" {total_chars/1024:.1f} KB). Add truncated (~{k_tokens_trunc:.1f}k"
+                            f" tokens), full (~{k_tokens_full:.1f}k tokens), or none?"
+                            " [T]runcated/[F]ull/[N]o"
+                        )
+                        res = self.io.prompt_ask(question, default=default_choice)
+                        res = (res or default_choice).strip().lower()
+                        choice = res[0] if res and res[0] in ("t", "f", "n") else default_choice
+
+                    add = choice in ("t", "f")
 
         if add:
-            num_lines = len(combined_output.strip().splitlines())
+            output_for_chat = (
+                truncated_output if should_truncate and choice == "t" else combined_output
+            )
+
+            num_lines = len(output_for_chat.strip().splitlines())
             line_plural = "line" if num_lines == 1 else "lines"
-            self.io.tool_output(f"Added {num_lines} {line_plural} of output to the chat.")
+            prefix = "truncated " if should_truncate and choice == "t" else ""
+            self.io.tool_output(f"Added {num_lines} {prefix}{line_plural} of output to the chat.")
 
             msg = prompts.run_output.format(
                 command=args,
-                output=combined_output,
+                output=output_for_chat,
             )
 
             self.coder.cur_messages += [
