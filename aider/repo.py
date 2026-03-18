@@ -456,7 +456,9 @@ class GitRepo:
                         try:
                             blob = next(iterator)
                             if blob.type == "blob":  # blob is a file
-                                files.add(blob.path)
+                                full_path = Path(self.root) / blob.path
+                                if not full_path.is_symlink() or full_path.is_file():
+                                    files.add(blob.path)
                         except IndexError:
                             # Handle potential index error during tree traversal
                             # without relying on potentially unassigned 'blob'
@@ -479,7 +481,10 @@ class GitRepo:
         index = self.repo.index
         try:
             staged_files = [path for path, _ in index.entries.keys()]
-            files.update(self.normalize_path(path) for path in staged_files)
+            for path in staged_files:
+                full_path = Path(self.root) / path
+                if not full_path.is_symlink() or full_path.is_file():
+                    files.add(self.normalize_path(path))
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to read staged files: {err}")
 
