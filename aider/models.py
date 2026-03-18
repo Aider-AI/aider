@@ -1213,8 +1213,11 @@ def fuzzy_match_models(name):
     name = name.lower()
 
     chat_models = set()
-    model_metadata = list(litellm.model_cost.items())
-    model_metadata += list(model_info_manager.local_model_metadata.items())
+    model_metadata = list(model_info_manager.local_model_metadata.items())
+    try:
+        model_metadata = list(litellm.model_cost.items()) + model_metadata
+    except Exception:
+        pass
 
     for orig_model, attrs in model_metadata:
         model = orig_model.lower()
@@ -1252,6 +1255,16 @@ def fuzzy_match_models(name):
     matching_models = difflib.get_close_matches(name, models, n=3, cutoff=0.8)
 
     return sorted(set(matching_models))
+
+
+def get_known_models():
+    model_metadata = list(model_info_manager.local_model_metadata.items())
+    try:
+        model_metadata = list(litellm.model_cost.items()) + model_metadata
+    except Exception:
+        pass
+
+    return sorted({name for name, _attrs in model_metadata})
 
 
 def print_matching_models(io, search):
