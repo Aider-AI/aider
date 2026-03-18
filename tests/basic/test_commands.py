@@ -15,7 +15,7 @@ from aider.coders import Coder
 from aider.commands import Commands, SwitchCoder
 from aider.dump import dump  # noqa: F401
 from aider.io import InputOutput
-from aider.models import Model
+from aider.models import MODEL_SETTINGS, Model, model_info_manager
 from aider.repo import GitRepo
 from aider.utils import ChdirTemporaryDirectory, GitTemporaryDirectory, make_repo
 
@@ -2102,6 +2102,70 @@ class TestCommands(TestCase):
             # Verify that all files are dropped
             self.assertEqual(len(coder.abs_fnames), 0)
             self.assertEqual(len(coder.abs_read_only_fnames), 0)
+
+    def test_completions_model_includes_all_sources(self):
+        """Test that model completions include models from all sources: litellm, settings, local metadata, and aliases"""
+        import json
+        import tempfile
+
+        from aider.models import ModelSettings, register_litellm_models
+
+        io = InputOutput(pretty=False, fancy_input=False, yes=True)
+        coder = Coder.create(self.GPT35, None, io)
+        commands = Commands(io, coder)
+
+        # Store original state
+        original_metadata = model_info_manager.local_model_metadata.copy()
+        original_settings_count = len(MODEL_SETTINGS)
+
+        # Add custom model to MODEL_SETTINGS
+        custom_settings = ModelSettings(name="test/yaml-model", edit_format="diff")
+        MODEL_SETTINGS.append(custom_settings)
+
+        # Add custom model to local metadata via JSON
+        test_model_info = {"test/json-model": {"max_input_tokens": 8192, "mode": "chat"}}
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
+            json.dump(test_model_info, f)
+            json_file = f.name
+
+        try:
+            # Register JSON model
+            register_litellm_models([json_file])
+
+            # Get completions
+            completions = set(commands.completions_model())
+
+            # Should include models from MODEL_SETTINGS
+            self.assertIn("test/yaml-model", completions)
+
+            # Should include models from local model metadata
+            self.assertIn("test/json-model", completions)
+
+            # Should include model aliases
+            self.assertIn("sonnet", completions)
+            self.assertIn("4o", completions)
+            self.assertIn("deepseek", completions)
+
+            # Should include litellm models
+            self.assertIn("gpt-4o", completions)
+            self.assertIn("claude-3-5-sonnet-20241022", completions)
+
+            # Should exclude the special "(default values)" entry
+            self.assertNotIn("(default values)", completions)
+
+            # Should return sorted list without duplicates
+            completions_list = commands.completions_model()
+            self.assertEqual(completions_list, sorted(completions_list))
+            self.assertEqual(len(completions_list), len(set(completions_list)))
+
+        finally:
+            # Clean up
+            import os
+
+            os.unlink(json_file)
+            MODEL_SETTINGS[:] = MODEL_SETTINGS[:original_settings_count]
+            model_info_manager.local_model_metadata = original_metadata
 
     def test_cmd_load_with_switch_coder(self):
         with GitTemporaryDirectory() as repo_dir:
