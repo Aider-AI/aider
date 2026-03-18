@@ -240,6 +240,8 @@ class InputOutput:
         yes=None,
         input_history_file=None,
         chat_history_file=None,
+        chat_history_max_size=1024 * 1024,
+        chat_history_max_files=10,
         input=None,
         output=None,
         user_input_color="blue",
@@ -319,6 +321,12 @@ class InputOutput:
             self.chat_history_file = Path(chat_history_file)
         else:
             self.chat_history_file = None
+
+        # Chat history rotation settings
+        self.chat_history_max_size = max(1024 * 1024, chat_history_max_size)  # Minimum 1MB
+        self.chat_history_max_files = max(1, chat_history_max_files)  # Minimum 1 file
+        # Performance optimization: only check rotation every N writes or when size is close
+        self._last_rotation_check_size = 0
 
         self.encoding = encoding
         valid_line_endings = {"platform", "lf", "crlf"}
@@ -1114,6 +1122,109 @@ class InputOutput:
                 "Multiline mode: Disabled. Alt-Enter inserts newline, Enter submits text"
             )
 
+    def _rotate_chat_history(self):
+        """Rotate chat history files if current file exceeds max size.
+
+        Simple rotation scheme:
+        - Current file: .aider.chat.history.md
+        - First rotation: rename to .aider.chat.history.md.1
+        - Second rotation: rename to .aider.chat.history.md.2
+        - etc.
+        Smaller number suffix means older file.
+        """
+        if self.chat_history_file is None:
+            return
+
+        try:
+            # Check current file size
+            if not self.chat_history_file.exists():
+                return
+
+            file_size = self.chat_history_file.stat().st_size
+            if file_size < self.chat_history_max_size:
+                return
+
+            parent_dir = self.chat_history_file.parent
+
+            # Find all existing backup files
+            backup_files = []
+            # Pattern to match files like .aider.chat.history.md.1, .aider.chat.history.md.2, etc.
+            pattern = f"{self.chat_history_file.name}.*"
+            for f in parent_dir.glob(pattern):
+                if f == self.chat_history_file:
+                    continue
+                # Extract the number suffix
+                suffix = f.name[len(self.chat_history_file.name) + 1:]  # +1 for the dot
+                if suffix.isdigit():
+                    num = int(suffix)
+                    backup_files.append((num, f))
+
+            # Sort by number (smaller number = older)
+            backup_files.sort(key=lambda x: x[0])
+
+            # Delete oldest files if we have too many
+            # We keep at most (chat_history_max_files - 1) backup files
+            # because we're about to create a new backup
+            max_backups = self.chat_history_max_files - 1
+            while len(backup_files) >= max_backups and backup_files:
+                # Delete the oldest (smallest number)
+                num, f = backup_files[0]
+                try:
+                    f.unlink()
+                    backup_files.pop(0)
+                except (PermissionError, OSError) as e:
+                    self.tool_warning(f"Failed to delete old history file {f}: {e}")
+                    # Skip this file and try the next one
+                    backup_files.pop(0)
+
+            # Find the next available number for the new backup
+            # Start from 1 and find the first available number
+            existing_numbers = {num for num, _ in backup_files}
+            next_num = 1
+            while next_num in existing_numbers:
+                next_num += 1
+
+            # Rename current file to the new backup
+            new_name = f"{self.chat_history_file.name}.{next_num}"
+            new_path = parent_dir / new_name
+            try:
+                self.chat_history_file.rename(new_path)
+            except (PermissionError, OSError) as e:
+                self.tool_warning(f"Failed to rotate chat history file to {new_name}: {e}")
+                # If rotation fails, disable history for this session
+                self.chat_history_file = None
+                return
+
+        except (PermissionError, OSError) as e:
+            # Log warning but don't disrupt chat
+            self.tool_warning(f"Chat history rotation failed: {e}")
+        except Exception as e:
+            # Catch any other unexpected errors
+            self.tool_warning(f"Unexpected error during chat history rotation: {e}")
+
+    def check_and_rotate_chat_history(self):
+        """Check if chat history needs rotation and perform it if needed.
+
+        This should be called when exiting to ensure any pending rotation is performed.
+        """
+        if self.chat_history_file is None:
+            return
+
+        try:
+            # Check if file exists and its size
+            if not self.chat_history_file.exists():
+                return
+
+            file_size = self.chat_history_file.stat().st_size
+            if file_size >= self.chat_history_max_size:
+                self._rotate_chat_history()
+        except (PermissionError, OSError) as e:
+            # Log warning but don't disrupt exit
+            self.tool_warning(f"Chat history rotation check failed during exit: {e}")
+        except Exception as e:
+            # Catch any other unexpected errors
+            self.tool_warning(f"Unexpected error during chat history rotation check: {e}")
+
     def append_chat_history(self, text, linebreak=False, blockquote=False, strip=True):
         if blockquote:
             if strip:
@@ -1128,12 +1239,41 @@ class InputOutput:
         if self.chat_history_file is not None:
             try:
                 self.chat_history_file.parent.mkdir(parents=True, exist_ok=True)
+
+                # Performance optimization: only check rotation when file might be near limit
+                # We check if we've written at least 1KB since last check, or if file doesn't exist
+                check_rotation = False
+                if not self.chat_history_file.exists():
+                    check_rotation = True
+                else:
+                    # Only check if we haven't checked recently or if file size is close to limit
+                    # Use a more efficient threshold: check every 32KB or when near limit
+                    current_size = self.chat_history_file.stat().st_size
+                    if (current_size >= self.chat_history_max_size * 0.9 or
+                            current_size - self._last_rotation_check_size > 32768):  # 32KB
+                        check_rotation = True
+                        self._last_rotation_check_size = current_size
+
+                if check_rotation:
+                    self._rotate_chat_history()
+
                 with self.chat_history_file.open("a", encoding=self.encoding, errors="ignore") as f:
                     f.write(text)
             except (PermissionError, OSError) as err:
-                print(f"Warning: Unable to write to chat history file {self.chat_history_file}.")
-                print(err)
+                # Use tool_warning for consistent messaging
+                self.tool_warning(f"Unable to write to chat history file {self.chat_history_file}: {err}")
                 self.chat_history_file = None  # Disable further attempts to write
+
+    def cleanup(self):
+        """Cleanup resources, including checking for chat history rotation.
+
+        This should be called when the application is exiting.
+        """
+        try:
+            self.check_and_rotate_chat_history()
+        except Exception as e:
+            # Log any errors but don't prevent exit
+            self.tool_warning(f"Error during cleanup: {e}")
 
     def format_files_for_input(self, rel_fnames, rel_read_only_fnames):
         if not self.pretty:
