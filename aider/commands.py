@@ -762,6 +762,70 @@ class Commands:
         files = [self.quote_fname(fn) for fn in files]
         return files
 
+    def completions_raw_add(self, document, complete_event):
+        # Get the text before the cursor
+        text = document.text_before_cursor
+
+        # Skip the first word and the space after it
+        after_command = text.split()[-1] if text.split() else ""
+
+        # Create a new Document object with the text after the command
+        new_document = Document(after_command, cursor_position=len(after_command))
+
+        # Get all files not in the chat
+        all_files = set(self.coder.get_all_relative_files())
+        all_files = all_files - set(self.coder.get_inchat_relative_files())
+
+        # Adjusted start position to replace all of 'after_command'
+        adjusted_start_position = -len(after_command)
+
+        # Find matches using the pattern
+        matched_files = []
+        if after_command:
+            # Convert the partial path with * into a flexible pattern
+            pattern = after_command.lower().replace("*", ".*")
+            try:
+                pattern_re = re.compile(pattern, re.IGNORECASE)
+                for file_path in all_files:
+                    if pattern_re.search(file_path):
+                        matched_files.append(
+                            Completion(
+                                text=self.quote_fname(file_path),
+                                start_position=adjusted_start_position,
+                                display=file_path,
+                            )
+                        )
+            except re.error:
+                # If the pattern is not a valid regex, fall back to standard completion
+                pass
+
+        # If we have regular path completions, add those too
+        path_completions = []
+        if self.coder.root:
+            path_completer = PathCompleter(
+                get_paths=lambda: [self.coder.root],
+                only_directories=False,
+                expanduser=True,
+            )
+
+            for completion in path_completer.get_completions(new_document, complete_event):
+                quoted_text = self.quote_fname(after_command + completion.text)
+                path_completions.append(
+                    Completion(
+                        text=quoted_text,
+                        start_position=adjusted_start_position,
+                        display=completion.display,
+                    )
+                )
+
+        # Combine and sort all completions
+        all_completions = matched_files + path_completions
+        sorted_completions = sorted(all_completions, key=lambda c: c.display)
+
+        # Yield the sorted completions
+        for completion in sorted_completions:
+            yield completion
+
     def glob_filtered_to_repo(self, pattern):
         if not pattern.strip():
             return []
