@@ -50,6 +50,11 @@ class ChatSummaryUF(ChatSummary):
                 fed_indices.append(i)
         self._fed_count = len(messages)
 
+        # If no cold clusters yet, force-graduate the oldest half of hot zone.
+        # This breaks the deadlock where too_big fires before graduate_at is reached.
+        if self.context_window.cold_count == 0 and self.context_window.hot_count > 4:
+            self.context_window.force_graduate(keep_hot=max(4, self.context_window.hot_count // 2))
+
         # Resolve dirty clusters, then render fresh summaries
         try:
             self.context_window.resolve_dirty()
