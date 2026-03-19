@@ -231,7 +231,10 @@ class ContextWindow:
     """Hot zone + cold forest. Manages graduation and eviction."""
 
     def __init__(self, embedder, summarizer, graduate_at=26,
-                 max_cold_clusters=10, merge_threshold=0.15):
+                 max_cold_clusters=10,
+                 # Cosine similarity threshold for auto-merging clusters (0.15 = ~81° angle)
+                 # Range: -1 (opposite) to 1 (identical). 0.15 allows moderately related content to merge.
+                 merge_threshold=0.15):
         self._embedder = embedder
         self._forest = Forest(summarizer=summarizer)
         self._hot = []  # list of (content, embedding) tuples
