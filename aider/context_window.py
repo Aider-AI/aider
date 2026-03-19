@@ -291,13 +291,28 @@ class ContextWindow:
             self._force_merge_if_needed()
 
     def _force_merge_if_needed(self):
-        """Force merge closest pair when cluster count exceeds max."""
+        """Force merge closest pair when cluster count exceeds max.
+        
+        Unlike normal graduation (which only merges if similarity >= merge_threshold),
+        this method performs FORCED merges to enforce the max_cold_clusters limit.
+        
+        Algorithm:
+        1. Find all pairs of cluster roots
+        2. Compute cosine similarity for each pair
+        3. Merge the pair with highest similarity (even if below merge_threshold)
+        4. Repeat until cluster_count <= max_cold_clusters
+        
+        This is a greedy approach that may merge semantically unrelated clusters
+        when the cold forest is full. The alternative would be evicting old clusters,
+        but merging preserves all information (albeit with potential quality loss).
+        """
         while self._forest.cluster_count() > self._max_cold_clusters:
             roots = self._forest.roots()
             if len(roots) < 2:
                 break
 
-            # Find closest pair
+            # Find closest pair via exhaustive O(n²) search
+            # For n=10 clusters, this is only 45 comparisons - acceptable overhead
             best_sim = -1.0
             best_pair = None
             for i in range(len(roots)):
@@ -311,8 +326,10 @@ class ContextWindow:
                             best_pair = (roots[i], roots[j])
 
             if best_pair:
+                # Merge the closest pair (ignoring merge_threshold)
                 self._forest.union(best_pair[0], best_pair[1])
             else:
+                # No valid pairs found (shouldn't happen unless embeddings are missing)
                 break
 
     def force_graduate(self, keep_hot=4):
