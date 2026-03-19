@@ -1934,7 +1934,7 @@ class Coder:
 
             if reasoning_content:
                 if not self.got_reasoning_content:
-                    text += f"<{REASONING_TAG}>\n\n"
+                    text += f"<{self.reasoning_tag_name}>\n\n"
                 text += reasoning_content
                 self.got_reasoning_content = True
                 received_content = True
