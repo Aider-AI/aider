@@ -21,7 +21,7 @@ class ChatSummaryUF(ChatSummary):
         self._init_context_window()
 
     def _init_context_window(self):
-        self.context_window = ContextWindow(
+        self._context_window = ContextWindow(
             embedder=TFIDFEmbedder(),
             summarizer=ClusterSummarizer(self.models),
             graduate_at=26,
@@ -29,6 +29,10 @@ class ChatSummaryUF(ChatSummary):
             merge_threshold=0.15,
         )
         self._fed_count = 0
+
+    @property
+    def context_window(self):
+        return self._context_window
 
     def summarize(self, messages, depth=0):
         if not self.too_big(messages):

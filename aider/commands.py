@@ -550,6 +550,105 @@ class Commands:
             )
         self.io.tool_output(f"{cost_pad}{fmt(limit)} tokens max context window size")
 
+    def cmd_topics(self, args):
+        "Show topic clusters in compressed chat history."
+        from aider.chat_summary_uf import ChatSummaryUF
+
+        summarizer = self.coder.summarizer
+        if not isinstance(summarizer, ChatSummaryUF):
+            self.io.tool_output("Topic view requires --chat-history-summarizer union-find.")
+            return
+
+        if self.coder.summarizer_thread is not None:
+            self.io.tool_output("Summarization is running. Try again in a moment.")
+            return
+
+        cw = summarizer.context_window
+        forest = cw._forest
+        roots = forest.roots()
+
+        if not roots:
+            self.io.tool_output("No topics yet (history not compressed).")
+            return
+
+        self.io.tool_output("\nChat history topics:\n")
+        for i, root in enumerate(roots, 1):
+            summary = forest.compact(root)
+            tokens = summarizer.token_count({"role": "user", "content": summary})
+            preview = summary.split("\n")[0][:80]
+            self.io.tool_output(f'  {i}. {tokens:>5} tokens - "{preview}"')
+
+        hot_count = cw.hot_count
+        hot_tokens = 0
+        if hot_count > 0:
+            hot_tokens = sum(
+                summarizer.token_count({"role": "user", "content": content})
+                for content in cw.hot_messages()
+            )
+            self.io.tool_output(
+                f"  + {hot_tokens} tokens - {hot_count} recent messages (not yet compressed)"
+            )
+
+        total = sum(
+            summarizer.token_count({"role": "user", "content": forest.compact(root)})
+            for root in roots
+        )
+        total += hot_tokens
+        self.io.tool_output(f"\nTotal: {total:,} tokens")
+
+    def cmd_drop_topic(self, args):
+        "Drop a topic cluster from compressed chat history."
+        from aider.chat_summary_uf import ChatSummaryUF
+
+        summarizer = self.coder.summarizer
+        if not isinstance(summarizer, ChatSummaryUF):
+            self.io.tool_output("Topic dropping requires --chat-history-summarizer union-find.")
+            return
+
+        if self.coder.summarizer_thread is not None:
+            self.io.tool_output(
+                "Can't drop topics while summarization is running. Try again in a moment."
+            )
+            return
+
+        try:
+            index = int(args.strip())
+        except (AttributeError, ValueError):
+            self.io.tool_error("Usage: /drop-topic N (where N is the topic number from /topics)")
+            return
+
+        cw = summarizer.context_window
+        forest = cw._forest
+        roots = forest.roots()
+
+        if index < 1 or index > len(roots):
+            self.io.tool_error(
+                f"Invalid topic number. Use /topics to see available topics (1-{len(roots)})."
+            )
+            return
+
+        root = roots[index - 1]
+        summary = forest.compact(root)
+        tokens = summarizer.token_count({"role": "user", "content": summary})
+
+        forest.remove_cluster(root)
+
+        rendered = cw.render()
+        if rendered:
+            hot_count = cw.hot_count
+            cold_parts = rendered[:-hot_count] if hot_count > 0 else rendered
+            summary_text = prompts.summary_prefix + "\n\n".join(cold_parts)
+            hot_messages = list(self.coder.done_messages[-hot_count:]) if hot_count > 0 else []
+            self.coder.done_messages = [
+                {"role": "user", "content": summary_text},
+                {"role": "assistant", "content": "Ok."},
+                *hot_messages,
+            ]
+        else:
+            self.coder.done_messages = []
+
+        self.io.tool_output(f"Dropped topic {index} ({tokens:,} tokens freed).")
+
     def cmd_undo(self, args):
         "Undo the last git commit if it was done by aider"
         try:

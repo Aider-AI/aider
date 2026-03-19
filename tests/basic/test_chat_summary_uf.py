@@ -2,8 +2,10 @@
 
 from unittest import TestCase, mock
 
+from aider import prompts
 from aider.chat_summary_uf import ChatSummaryUF
 from aider.cluster_summarizer import ClusterSummarizer
+from aider.commands import Commands
 from aider.context_window import Forest, ContextWindow, _cosine_similarity
 from aider.embedding_service import TFIDFEmbedder
 from aider.history import ChatSummary
@@ -26,12 +28,48 @@ def make_mock_model(name="gpt-3.5-turbo", summary_text="This is a summary"):
     return model
 
 
+def make_dynamic_summary_model(name="gpt-3.5-turbo"):
+    model = make_mock_model(name=name)
+
+    def summarize(messages):
+        content = messages[-1]["content"]
+        lines = [
+            line.strip()
+            for line in content.splitlines()
+            if line.strip() and not line.startswith("# ")
+        ]
+        head = lines[0] if lines else content.strip()
+        return f"Summary: {head[:60]}"
+
+    model.simple_send_with_retries.side_effect = summarize
+    return model
+
+
 def make_messages(n):
     """Create n alternating user/assistant message pairs (2n messages total)."""
     messages = []
     for i in range(n):
         messages.append({"role": "user", "content": f"User message number {i} about topic {i % 5}"})
         messages.append({"role": "assistant", "content": f"Assistant response number {i} about topic {i % 5}"})
+    return messages
+
+
+def build_topic_messages(topic_names, rounds=8):
+    messages = []
+    for i in range(rounds):
+        for topic in topic_names:
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"{topic} user message {i} with {topic} implementation details",
+                }
+            )
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": f"{topic} assistant reply {i} covering {topic} follow-up work",
+                }
+            )
     return messages
 
 
@@ -131,6 +169,38 @@ class TestForest(TestCase):
         self.assertEqual(len(inputs), 2)
         self.assertIn("hello", inputs)
         self.assertIn("world", inputs)
+
+    def test_remove_cluster(self):
+        embedder = TFIDFEmbedder()
+        cw = ContextWindow(embedder, self.mock_summarizer, graduate_at=5, max_cold_clusters=10)
+        forest = cw._forest
+
+        forest.insert("root1", "alpha root content", {"alpha": 1.0})
+        forest.insert("child1", "alpha child content", {"alpha": 0.8})
+        root1 = forest.union("root1", "child1")
+        forest._summary[root1] = "alpha summary"
+        forest._dirty.add(root1)
+        forest._dirty_inputs[root1] = ["alpha root content", "alpha child content"]
+
+        forest.insert("root2", "beta root content", {"beta": 1.0})
+        cw._hot = [("recent hot message", {})]
+
+        removed = forest.remove_cluster(root1)
+
+        self.assertCountEqual(removed, ["root1", "child1"])
+        self.assertNotIn("root1", forest._parent)
+        self.assertNotIn("child1", forest._parent)
+        self.assertNotIn("root1", forest._content)
+        self.assertNotIn("child1", forest._content)
+        self.assertNotIn(root1, forest._summary)
+        self.assertNotIn(root1, forest._dirty)
+        self.assertNotIn(root1, forest._dirty_inputs)
+        self.assertNotIn(root1, forest._children)
+        self.assertEqual(forest._root_order, ["root2"])
+        self.assertEqual(forest.cluster_count(), 1)
+        rendered = " ".join(cw.render())
+        self.assertNotIn("alpha", rendered)
+        self.assertIn("beta root content", rendered)
 
 
 # ────────────────────────────────────────────────────────────
@@ -757,6 +827,15 @@ class TestContextWindow(TestCase):
         # Should include both cold summaries/content and hot content
         self.assertGreater(len(rendered), 0)
 
+    def test_hot_messages_returns_current_hot_zone(self):
+        cw = ContextWindow(
+            self.embedder, self.mock_summarizer,
+            graduate_at=3, max_cold_clusters=10
+        )
+        cw.append("msg one")
+        cw.append("msg two")
+        self.assertEqual(cw.hot_messages(), ["msg one", "msg two"])
+
     def test_resolve_dirty_produces_summaries(self):
         cw = ContextWindow(
             self.embedder, self.mock_summarizer,
@@ -773,3 +852,235 @@ class TestContextWindow(TestCase):
             rendered = cw.render()
             # Cold part should contain the summary
             self.assertGreater(len(rendered), 0)
+
+
+class TestTopicCommands(TestCase):
+    def make_topic_fixture(self):
+        model = make_mock_model()
+        summarizer = ChatSummaryUF(model, max_tokens=20)
+        cw = ContextWindow(TFIDFEmbedder(), mock.Mock(), graduate_at=26, max_cold_clusters=10)
+        summarizer._context_window = cw
+
+        forest = cw._forest
+        forest.insert("alpha_root", "# USER\nAlpha raw content", {"alpha": 1.0})
+        forest.insert("alpha_child", "# ASSISTANT\nAlpha follow-up", {"alpha": 0.9})
+        alpha_root = forest.union("alpha_root", "alpha_child")
+        forest._summary[alpha_root] = "Alpha topic summary\nDetails"
+        forest._dirty.discard(alpha_root)
+        forest._dirty_inputs[alpha_root] = []
+
+        forest.insert("beta_root", "# USER\nBeta raw content", {"beta": 1.0})
+        forest.insert("beta_child", "# ASSISTANT\nBeta follow-up", {"beta": 0.9})
+        beta_root = forest.union("beta_root", "beta_child")
+        forest._summary[beta_root] = "Beta topic summary\nDetails"
+        forest._dirty.discard(beta_root)
+        forest._dirty_inputs[beta_root] = []
+
+        cw._hot = [("# USER\nRecent question", {}), ("# ASSISTANT\nRecent answer", {})]
+
+        rendered = cw.render()
+        summary_text = prompts.summary_prefix + "\n\n".join(rendered[:-cw.hot_count])
+        done_messages = [
+            {"role": "user", "content": summary_text},
+            {"role": "assistant", "content": "Ok."},
+            {"role": "user", "content": "Recent question"},
+            {"role": "assistant", "content": "Recent answer"},
+        ]
+
+        coder = mock.Mock()
+        coder.summarizer = summarizer
+        coder.summarizer_thread = None
+        coder.done_messages = list(done_messages)
+        coder.main_model = model
+
+        io = mock.Mock()
+        commands = Commands(io, coder)
+        return commands, summarizer, coder, io
+
+    def test_cmd_topics(self):
+        commands, summarizer, _coder, io = self.make_topic_fixture()
+
+        commands.cmd_topics("")
+
+        outputs = [call.args[0] for call in io.tool_output.call_args_list]
+        self.assertIn("\nChat history topics:\n", outputs)
+        self.assertTrue(any('1.' in output and 'Alpha topic summary' in output for output in outputs))
+        self.assertTrue(any('2.' in output and 'Beta topic summary' in output for output in outputs))
+        self.assertTrue(any("recent messages (not yet compressed)" in output for output in outputs))
+        expected_total = sum(
+            summarizer.token_count({"role": "user", "content": text})
+            for text in ["Alpha topic summary\nDetails", "Beta topic summary\nDetails"]
+        ) + sum(
+            summarizer.token_count({"role": "user", "content": text})
+            for text in summarizer.context_window.hot_messages()
+        )
+        self.assertIn(f"\nTotal: {expected_total:,} tokens", outputs)
+
+    def test_cmd_topics_empty_history(self):
+        model = make_mock_model()
+        summarizer = ChatSummaryUF(model, max_tokens=20)
+        coder = mock.Mock(summarizer=summarizer, summarizer_thread=None, done_messages=[], main_model=model)
+        io = mock.Mock()
+        commands = Commands(io, coder)
+
+        commands.cmd_topics("")
+
+        io.tool_output.assert_called_once_with("No topics yet (history not compressed).")
+
+    def test_cmd_topics_guidance_for_recursive_summarizer(self):
+        model = make_mock_model()
+        coder = mock.Mock(
+            summarizer=ChatSummary(model, max_tokens=20),
+            summarizer_thread=None,
+            done_messages=[],
+            main_model=model,
+        )
+        io = mock.Mock()
+        commands = Commands(io, coder)
+
+        commands.cmd_topics("")
+
+        io.tool_output.assert_called_once_with(
+            "Topic view requires --chat-history-summarizer union-find."
+        )
+
+    def test_cmd_topics_refused_while_summarizing(self):
+        commands, _summarizer, coder, io = self.make_topic_fixture()
+        coder.summarizer_thread = object()
+
+        commands.cmd_topics("")
+
+        io.tool_output.assert_called_once_with("Summarization is running. Try again in a moment.")
+
+    def test_cmd_drop_topic(self):
+        commands, _summarizer, coder, io = self.make_topic_fixture()
+
+        commands.cmd_drop_topic("1")
+
+        self.assertEqual(len(commands.coder.summarizer.context_window._forest.roots()), 1)
+        self.assertIn("Beta topic summary", coder.done_messages[0]["content"])
+        self.assertNotIn("Alpha topic summary", coder.done_messages[0]["content"])
+        self.assertEqual(coder.done_messages[-2]["content"], "Recent question")
+        self.assertEqual(coder.done_messages[-1]["content"], "Recent answer")
+        io.tool_output.assert_called_with("Dropped topic 1 (4 tokens freed).")
+
+    def test_cmd_drop_topic_invalid_index_keeps_done_messages(self):
+        commands, _summarizer, coder, io = self.make_topic_fixture()
+        before = list(coder.done_messages)
+
+        commands.cmd_drop_topic("3")
+
+        self.assertEqual(coder.done_messages, before)
+        io.tool_error.assert_called_once_with(
+            "Invalid topic number. Use /topics to see available topics (1-2)."
+        )
+
+    def test_cmd_drop_topic_non_integer_keeps_done_messages(self):
+        commands, _summarizer, coder, io = self.make_topic_fixture()
+        before = list(coder.done_messages)
+
+        commands.cmd_drop_topic("abc")
+
+        self.assertEqual(coder.done_messages, before)
+        io.tool_error.assert_called_once_with(
+            "Usage: /drop-topic N (where N is the topic number from /topics)"
+        )
+
+    def test_cmd_drop_topic_refused_while_summarizing(self):
+        commands, summarizer, coder, io = self.make_topic_fixture()
+        before = list(coder.done_messages)
+        roots_before = list(summarizer.context_window._forest.roots())
+        coder.summarizer_thread = object()
+
+        commands.cmd_drop_topic("1")
+
+        self.assertEqual(coder.done_messages, before)
+        self.assertEqual(summarizer.context_window._forest.roots(), roots_before)
+        io.tool_output.assert_called_once_with(
+            "Can't drop topics while summarization is running. Try again in a moment."
+        )
+
+    def test_cmd_drop_topic_succeeds_after_thread_completes(self):
+        commands, summarizer, coder, io = self.make_topic_fixture()
+        coder.summarizer_thread = object()
+        commands.cmd_drop_topic("1")
+        self.assertEqual(summarizer.context_window._forest.cluster_count(), 2)
+
+        io.reset_mock()
+        coder.summarizer_thread = None
+        commands.cmd_drop_topic("1")
+
+        self.assertEqual(summarizer.context_window._forest.cluster_count(), 1)
+        io.tool_output.assert_called_with("Dropped topic 1 (4 tokens freed).")
+
+    def test_cmd_drop_topic_updates_topics_view(self):
+        commands, _summarizer, _coder, io = self.make_topic_fixture()
+
+        commands.run("/drop-topic 1")
+        io.reset_mock()
+        commands.cmd_topics("")
+
+        outputs = [call.args[0] for call in io.tool_output.call_args_list]
+        self.assertTrue(any("Beta topic summary" in output for output in outputs))
+        self.assertFalse(any("Alpha topic summary" in output for output in outputs))
+
+    def test_cmd_drop_topic_clears_done_messages_when_all_topics_removed(self):
+        commands, summarizer, coder, io = self.make_topic_fixture()
+        summarizer.context_window._hot = []
+        coder.done_messages = [
+            {"role": "user", "content": prompts.summary_prefix + "Alpha topic summary\n\nBeta topic summary"},
+            {"role": "assistant", "content": "Ok."},
+        ]
+
+        commands.cmd_drop_topic("1")
+        commands.cmd_drop_topic("1")
+
+        self.assertEqual(coder.done_messages, [])
+        self.assertEqual(summarizer.context_window._forest.cluster_count(), 0)
+
+
+class TestDropTopicDoneMessagesSync(TestCase):
+    def test_drop_topic_done_messages_sync(self):
+        model = make_dynamic_summary_model()
+        summarizer = ChatSummaryUF(model, max_tokens=220)
+        messages = build_topic_messages(["Alpha", "Beta", "Gamma"], rounds=8)
+
+        result = summarizer.summarize(messages)
+        self.assertNotEqual(result, messages)
+
+        coder = mock.Mock()
+        coder.summarizer = summarizer
+        coder.summarizer_thread = None
+        coder.done_messages = list(result)
+        coder.main_model = model
+        io = mock.Mock()
+        commands = Commands(io, coder)
+
+        roots_before = list(summarizer.context_window._forest.roots())
+        dropped_summary = summarizer.context_window._forest.compact(roots_before[0])
+
+        commands.cmd_drop_topic("1")
+
+        self.assertNotIn(dropped_summary, coder.done_messages[0]["content"])
+        rendered = summarizer.context_window.render()
+        hot_count = summarizer.context_window.hot_count
+        cold_parts = rendered[:-hot_count] if hot_count > 0 else rendered
+        hot_tail = result[-hot_count:] if hot_count > 0 else []
+        expected_done_messages = [
+            {"role": "user", "content": prompts.summary_prefix + "\n\n".join(cold_parts)},
+            {"role": "assistant", "content": "Ok."},
+            *hot_tail,
+        ]
+        self.assertEqual(coder.done_messages, expected_done_messages)
+
+        summarizer.max_tokens = 1
+        with mock.patch.object(
+            summarizer, "_init_context_window", wraps=summarizer._init_context_window
+        ) as mock_init:
+            rebuilt = summarizer.summarize(coder.done_messages)
+            mock_init.assert_called_once()
+
+        self.assertNotIn(dropped_summary, "\n".join(summarizer.context_window.render()))
+        assembled_prompt = "\n".join(msg["content"] for msg in coder.done_messages)
+        self.assertNotIn(dropped_summary, assembled_prompt)
+        self.assertIsInstance(rebuilt, list)

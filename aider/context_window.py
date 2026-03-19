@@ -184,6 +184,24 @@ class Forest:
     def cluster_count(self):
         return len(self.roots())
 
+    def remove_cluster(self, root_id):
+        """Remove a cluster by root id. Returns list of removed node ids."""
+        root = self._find(root_id)
+        members = list(self._children.get(root, {root}))
+
+        for node_id in members:
+            self._parent.pop(node_id, None)
+            self._content.pop(node_id, None)
+            self._embedding.pop(node_id, None)
+
+        self._summary.pop(root, None)
+        self._dirty.discard(root)
+        self._dirty_inputs.pop(root, None)
+        self._children.pop(root, None)
+        self._root_order = [node_id for node_id in self._root_order if node_id not in members]
+
+        return members
+
 
 class ContextWindow:
     """Hot zone + cold forest. Manages graduation and eviction."""
@@ -273,6 +291,10 @@ class ContextWindow:
         """Number of clusters in the cold forest."""
         return self._forest.cluster_count()
 
+    def hot_messages(self):
+        """Return the current hot-zone messages in order."""
+        return [content for content, _embedding in self._hot[self._graduated_index:]]
+
     def render(self):
         """Return cold summaries + hot contents as a flat list of strings."""
         if not self._hot and self._forest.cluster_count() == 0:
@@ -287,8 +309,7 @@ class ContextWindow:
                 parts.append(summary)
 
         # Hot zone contents (in order)
-        for content, _embedding in self._hot[self._graduated_index:]:
-            parts.append(content)
+        parts.extend(self.hot_messages())
 
         return parts
 
