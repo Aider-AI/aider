@@ -39,14 +39,16 @@ class ChatSummaryUF(ChatSummary):
         if self._fed_count > len(messages):
             self._init_context_window()
 
-        # Feed only new user/assistant messages
-        for msg in messages[self._fed_count:]:
+        # Feed only new user/assistant messages, tracking their indices
+        fed_indices = []
+        for i, msg in enumerate(messages[self._fed_count:], start=self._fed_count):
             role = msg.get("role", "").upper()
             if role not in ("USER", "ASSISTANT"):
                 continue
             content = msg.get("content", "")
             if content:
                 self.context_window.append(f"# {role}\n{content}")
+                fed_indices.append(i)
         self._fed_count = len(messages)
 
         # Resolve dirty clusters, then render fresh summaries
@@ -54,11 +56,19 @@ class ChatSummaryUF(ChatSummary):
         rendered = self.context_window.render()
 
         # Format output
+        # hot_count is based on fed user/assistant messages, not all messages.
+        # Map back to original message indices to get the right tail.
         hot_count = self.context_window.hot_count
         if hot_count > 0 and hot_count < len(rendered):
             cold_parts = rendered[:-hot_count]
             summary_text = prompts.summary_prefix + "\n\n".join(cold_parts)
-            hot_messages = messages[-hot_count:]
+            # Find the original message index where hot zone starts
+            all_fed = self._get_fed_indices(messages)
+            if hot_count <= len(all_fed):
+                hot_start = all_fed[-hot_count]
+                hot_messages = messages[hot_start:]
+            else:
+                hot_messages = messages[-hot_count:]
             result = [
                 {"role": "user", "content": summary_text},
                 {"role": "assistant", "content": "Ok."},
@@ -80,6 +90,15 @@ class ChatSummaryUF(ChatSummary):
         if result and result[-1]["role"] != "assistant":
             result.append({"role": "assistant", "content": "Ok."})
         return result
+
+    @staticmethod
+    def _get_fed_indices(messages):
+        """Return indices of user/assistant messages with non-empty content."""
+        return [
+            i for i, msg in enumerate(messages)
+            if msg.get("role", "").upper() in ("USER", "ASSISTANT")
+            and msg.get("content", "")
+        ]
 
     def summarize_all(self, messages):
         return super().summarize_all(messages)

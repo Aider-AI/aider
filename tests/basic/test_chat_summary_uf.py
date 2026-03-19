@@ -72,11 +72,11 @@ class TestForest(TestCase):
     def test_union_marks_dirty(self):
         self.forest.insert("m1", "hello", {"hello": 1.0})
         self.forest.insert("m2", "world", {"world": 1.0})
-        self.assertFalse(self.forest.is_dirty("m1"))
-        self.assertFalse(self.forest.is_dirty("m2"))
+        self.assertNotIn("m1", self.forest._dirty)
+        self.assertNotIn("m2", self.forest._dirty)
         self.forest.union("m1", "m2")
         root = self.forest.roots()[0]
-        self.assertTrue(self.forest.is_dirty(root))
+        self.assertIn(root, self.forest._dirty)
 
     def test_resolve_dirty_calls_summarizer(self):
         self.forest.insert("m1", "hello", {"hello": 1.0})
@@ -127,7 +127,7 @@ class TestForest(TestCase):
         self.forest.insert("m2", "world", {"world": 1.0})
         self.forest.union("m1", "m2")
         root = self.forest.roots()[0]
-        inputs = self.forest.dirty_inputs(root)
+        inputs = list(self.forest._dirty_inputs.get(root, []))
         self.assertEqual(len(inputs), 2)
         self.assertIn("hello", inputs)
         self.assertIn("world", inputs)
@@ -537,6 +537,92 @@ class TestLowTokenBudget(TestCase):
             result = summarizer.summarize(messages)
             self.assertIsInstance(result, list)
             self.assertGreater(len(result), 0)
+
+
+# ────────────────────────────────────────────────────────────
+# Mixed-role message handling
+# ────────────────────────────────────────────────────────────
+
+
+class TestMixedRoleHandling(TestCase):
+    def test_system_messages_in_tail_preserved(self):
+        """System messages interspersed with user/assistant are preserved in hot tail."""
+        model = make_mock_model(summary_text="cluster summary")
+        summarizer = ChatSummaryUF(model, max_tokens=400)
+
+        messages = []
+        for i in range(30):
+            messages.append({"role": "user", "content": f"User message {i} about topic {i % 3}"})
+            messages.append({"role": "assistant", "content": f"Assistant response {i} about topic {i % 3}"})
+        # Insert system messages near the end
+        messages.insert(-2, {"role": "system", "content": "System reminder"})
+        messages.insert(-1, {"role": "tool", "content": "Tool output"})
+
+        result = summarizer.summarize(messages)
+        if result != messages:  # Only check if summarization happened
+            result_contents = [m.get("content", "") for m in result]
+            # System and tool messages from the tail should be preserved
+            self.assertIn("System reminder", result_contents)
+            self.assertIn("Tool output", result_contents)
+
+    def test_hot_tail_maps_to_correct_original_messages(self):
+        """hot_count user/assistant messages map back to correct original indices."""
+        model = make_mock_model(summary_text="cluster summary")
+        summarizer = ChatSummaryUF(model, max_tokens=400)
+
+        messages = make_messages(30)  # 60 messages
+        # Insert 3 system messages in the last 10 messages
+        messages.insert(55, {"role": "system", "content": "reminder 1"})
+        messages.insert(58, {"role": "system", "content": "reminder 2"})
+        messages.insert(61, {"role": "system", "content": "reminder 3"})
+
+        result = summarizer.summarize(messages)
+        if result != messages:
+            # All 3 system messages should appear in the result
+            system_msgs = [m for m in result if m.get("role") == "system"]
+            self.assertEqual(len(system_msgs), 3)
+
+
+# ────────────────────────────────────────────────────────────
+# Memory bounds
+# ────────────────────────────────────────────────────────────
+
+
+class TestMemoryBounds(TestCase):
+    def test_hot_list_trimmed_after_graduation(self):
+        """_hot list is trimmed after messages graduate, bounding memory."""
+        embedder = TFIDFEmbedder()
+        mock_summarizer = mock.Mock()
+        mock_summarizer.summarize = mock.Mock(return_value="summary")
+
+        cw = ContextWindow(
+            embedder, mock_summarizer,
+            graduate_at=5, evict_at=10, max_cold_clusters=10,
+        )
+        # Append many messages — should graduate and trim
+        for i in range(20):
+            cw.append(f"message {i} about topic {i % 3}")
+
+        # _hot should only contain ungraduated messages (at most evict_at)
+        self.assertLessEqual(len(cw._hot), cw._evict_at)
+        # _graduated_index should be 0 (trimmed)
+        self.assertEqual(cw._graduated_index, 0)
+
+    def test_hot_stays_bounded_over_long_session(self):
+        """Memory stays bounded even after many appends."""
+        embedder = TFIDFEmbedder()
+        mock_summarizer = mock.Mock()
+        mock_summarizer.summarize = mock.Mock(return_value="summary")
+
+        cw = ContextWindow(
+            embedder, mock_summarizer,
+            graduate_at=5, evict_at=10, max_cold_clusters=10,
+        )
+        for i in range(200):
+            cw.append(f"message {i}")
+
+        # _hot should never exceed evict_at
+        self.assertLessEqual(len(cw._hot), cw._evict_at)
 
 
 # ────────────────────────────────────────────────────────────

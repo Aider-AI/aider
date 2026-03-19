@@ -7,16 +7,11 @@ import math
 
 
 def _cosine_similarity(a, b):
-    """Cosine similarity between two vectors (list or sparse dict). Returns 0.0 if either is zero."""
-    if isinstance(a, dict) and isinstance(b, dict):
-        keys = set(a.keys()) & set(b.keys())
-        dot = sum(a[k] * b[k] for k in keys)
-        norm_a = math.sqrt(sum(v * v for v in a.values()))
-        norm_b = math.sqrt(sum(v * v for v in b.values()))
-    else:
-        dot = sum(x * y for x, y in zip(a, b))
-        norm_a = math.sqrt(sum(x * x for x in a))
-        norm_b = math.sqrt(sum(x * x for x in b))
+    """Cosine similarity between two sparse dict vectors. Returns 0.0 if either is zero."""
+    keys = set(a.keys()) & set(b.keys())
+    dot = sum(a[k] * b[k] for k in keys)
+    norm_a = math.sqrt(sum(v * v for v in a.values()))
+    norm_b = math.sqrt(sum(v * v for v in b.values()))
     if norm_a == 0 or norm_b == 0:
         return 0.0
     return dot / (norm_a * norm_b)
@@ -121,17 +116,14 @@ class Forest:
         emb_a = self._embedding.get(new_root, {})
         emb_b = self._embedding.get(old_root, {})
         if emb_a and emb_b:
-            if isinstance(emb_a, dict) and isinstance(emb_b, dict):
-                all_keys = set(emb_a.keys()) | set(emb_b.keys())
-                self._embedding[new_root] = {
-                    k: (emb_a.get(k, 0.0) * size_new + emb_b.get(k, 0.0) * size_old) / total
-                    for k in all_keys
-                }
-            else:
-                self._embedding[new_root] = [
-                    (a * size_new + b * size_old) / total
-                    for a, b in zip(emb_a, emb_b)
-                ]
+            all_keys = set(emb_a.keys()) | set(emb_b.keys())
+            self._embedding[new_root] = {
+                k: (emb_a.get(k, 0.0) * size_new + emb_b.get(k, 0.0) * size_old) / total
+                for k in all_keys
+            }
+        elif emb_b:
+            # Preserve the non-empty embedding
+            self._embedding[new_root] = emb_b
 
         # Update root order: remove old_root, keep new_root's position
         if old_root in self._root_order:
@@ -189,14 +181,6 @@ class Forest:
                 ordered.append(root)
         return ordered
 
-    def is_dirty(self, node_id):
-        root = self._find(node_id)
-        return root in self._dirty
-
-    def dirty_inputs(self, node_id):
-        root = self._find(node_id)
-        return list(self._dirty_inputs.get(root, []))
-
     def cluster_count(self):
         return len(self.roots())
 
@@ -227,6 +211,7 @@ class ContextWindow:
         self._hot.append((content, embedding))
         self._maybe_graduate()
         self._maybe_evict()
+        self._trim_graduated()
 
     def _maybe_graduate(self):
         """Graduate oldest hot messages to cold forest when hot zone overflows."""
@@ -293,6 +278,12 @@ class ContextWindow:
                         self._forest.union(msg_id, nearest_root)
 
                 self._force_merge_if_needed()
+
+    def _trim_graduated(self):
+        """Release graduated entries from _hot to bound memory."""
+        if self._graduated_index > 0:
+            self._hot = self._hot[self._graduated_index:]
+            self._graduated_index = 0
 
     @property
     def hot_count(self):
