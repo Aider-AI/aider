@@ -302,6 +302,29 @@ class ContextWindow:
             else:
                 break
 
+    def force_graduate(self, keep_hot=4):
+        """Force-graduate hot messages until only keep_hot remain.
+
+        Used when too_big fires before graduate_at is reached — breaks the
+        deadlock between token-based summarization and count-based graduation.
+        """
+        while self.hot_count > keep_hot:
+            content, embedding = self._hot[self._graduated_index]
+            self._graduated_index += 1
+
+            merge_target = self._forest.nearest_root(embedding)
+
+            msg_id = self._next_msg_id()
+            self._forest.insert(msg_id, content, embedding)
+
+            if merge_target is not None:
+                nearest_root, similarity = merge_target
+                if similarity >= self._merge_threshold:
+                    self._forest.union(msg_id, nearest_root)
+
+            self._force_merge_if_needed()
+        self._trim_graduated()
+
     def _trim_graduated(self):
         """Release graduated entries from _hot to bound memory."""
         if self._graduated_index > 0:
