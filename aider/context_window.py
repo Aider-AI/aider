@@ -3,6 +3,8 @@
 Ported from gemini-cli's contextWindow.ts, adapted for aider's message model.
 """
 
+# TODO: refactor needed
+
 import math
 
 
