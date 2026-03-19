@@ -70,9 +70,9 @@ class TFIDFEmbedder:
         result = {}
         for term, count in tf.items():
             tf_val = count / doc_len
-            # IDF: log(N / df) where N = total docs, df = docs containing term
-            df = self._doc_freq.get(term, 1)
-            idf = math.log(1.0 + self._doc_count / df) if df > 0 else 0.0
+            # IDF: log((N + 1) / (df + 1)) - smoothed to avoid division by zero
+            df = self._doc_freq.get(term, 0)
+            idf = math.log((self._doc_count + 1) / (df + 1))
             weight = tf_val * idf
             if weight > 0:
                 result[term] = weight

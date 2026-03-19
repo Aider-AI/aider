@@ -115,15 +115,12 @@ class Forest:
         total = size_new + size_old
         emb_a = self._embedding.get(new_root, {})
         emb_b = self._embedding.get(old_root, {})
-        if emb_a and emb_b:
+        if emb_a or emb_b:
             all_keys = set(emb_a.keys()) | set(emb_b.keys())
             self._embedding[new_root] = {
                 k: (emb_a.get(k, 0.0) * size_new + emb_b.get(k, 0.0) * size_old) / total
                 for k in all_keys
             }
-        elif emb_b:
-            # Preserve the non-empty embedding
-            self._embedding[new_root] = emb_b
 
         # Update root order: remove old_root, keep new_root's position
         if old_root in self._root_order:
@@ -165,7 +162,7 @@ class Forest:
         best_sim = -1.0
 
         for root in current_roots:
-            root_emb = self._embedding.get(root, [])
+            root_emb = self._embedding.get(root, {})
             if not root_emb:
                 continue
             sim = _cosine_similarity(embedding, root_emb)
@@ -216,13 +213,14 @@ class ContextWindow:
         embedding = self._embedder.embed(content)
         self._hot.append((content, embedding))
         self._maybe_graduate()
-        self._trim_graduated()
 
     def _maybe_graduate(self):
         """Graduate oldest hot messages to cold forest when hot zone overflows."""
+        graduated_count = 0
         while len(self._hot) - self._graduated_index > self._graduate_at:
             content, embedding = self._hot[self._graduated_index]
             self._graduated_index += 1
+            graduated_count += 1
 
             # Find nearest BEFORE inserting so we don't match self
             merge_target = self._forest.nearest_root(embedding)
@@ -238,6 +236,10 @@ class ContextWindow:
 
             # Force merge closest pair if too many clusters
             self._force_merge_if_needed()
+        
+        # Trim graduated entries after the loop completes
+        if graduated_count > 0:
+            self._trim_graduated()
 
     def _force_merge_if_needed(self):
         """Force merge closest pair when cluster count exceeds max."""
@@ -251,8 +253,8 @@ class ContextWindow:
             best_pair = None
             for i in range(len(roots)):
                 for j in range(i + 1, len(roots)):
-                    emb_i = self._forest._embedding.get(roots[i], [])
-                    emb_j = self._forest._embedding.get(roots[j], [])
+                    emb_i = self._forest._embedding.get(roots[i], {})
+                    emb_j = self._forest._embedding.get(roots[j], {})
                     if emb_i and emb_j:
                         sim = _cosine_similarity(emb_i, emb_j)
                         if sim > best_sim:
