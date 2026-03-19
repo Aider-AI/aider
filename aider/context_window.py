@@ -149,6 +149,11 @@ class Forest:
         #
         # This is analogous to computing the center of mass in physics, where each cluster's
         # centroid acts as a point mass with weight equal to its member count.
+        #
+        # Implementation note:
+        # The code below iterates over all_keys (union of both embedding dicts) and uses
+        # .get(k, 0.0) to handle sparse vectors where a dimension may be missing from one
+        # or both embeddings. Missing dimensions are treated as 0.0.
         total = size_new + size_old
         emb_a = self._embedding.get(new_root, {})
         emb_b = self._embedding.get(old_root, {})
