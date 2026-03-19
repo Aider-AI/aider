@@ -129,6 +129,19 @@ class Forest:
         self._dirty_inputs.pop(old_root, None)
 
         # Weighted centroid averaging (weight by cluster size)
+        # When merging two clusters, we compute a new centroid embedding that represents
+        # the combined cluster. Each cluster's centroid is weighted by its size (member count).
+        #
+        # Formula for each dimension k:
+        #   new_centroid[k] = (centroid_A[k] * size_A + centroid_B[k] * size_B) / (size_A + size_B)
+        #
+        # Example: Merging cluster A (5 members, centroid=[0.8, 0.2]) with 
+        #          cluster B (3 members, centroid=[0.2, 0.6]):
+        #   new_centroid[0] = (0.8 * 5 + 0.2 * 3) / 8 = 4.6 / 8 = 0.575
+        #   new_centroid[1] = (0.2 * 5 + 0.6 * 3) / 8 = 2.8 / 8 = 0.350
+        #
+        # This ensures larger clusters have proportionally more influence on the merged
+        # embedding, preventing small outlier clusters from skewing the result.
         total = size_new + size_old
         emb_a = self._embedding.get(new_root, {})
         emb_b = self._embedding.get(old_root, {})
