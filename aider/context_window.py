@@ -241,7 +241,7 @@ class ContextWindow:
         self._merge_threshold = merge_threshold
         self._next_id = 0
 
-    def _gen_id(self):
+    def _next_msg_id(self):
         mid = f"msg_{self._next_id}"
         self._next_id += 1
         return mid
@@ -262,7 +262,7 @@ class ContextWindow:
             # Find nearest BEFORE inserting so we don't match self
             merge_target = self._forest.nearest_root(embedding)
 
-            msg_id = self._gen_id()
+            msg_id = self._next_msg_id()
             self._forest.insert(msg_id, content, embedding)
 
             # Merge with nearest cluster if above threshold
