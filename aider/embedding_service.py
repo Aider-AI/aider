@@ -7,7 +7,12 @@ Vocabulary grows incrementally as new documents are embedded.
 import math
 import re
 
-# Common English stopwords to filter out
+# Common English stopwords to filter out during tokenization.
+# These high-frequency words (articles, prepositions, pronouns, etc.) carry little
+# semantic meaning and would dominate TF-IDF scores if included. Removing them:
+# - Reduces vocabulary size and memory usage
+# - Improves embedding quality by focusing on content-bearing terms
+# - Prevents common words from overwhelming similarity calculations
 _STOPWORDS = frozenset({
     "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
     "of", "with", "by", "from", "is", "it", "as", "be", "was", "are",
@@ -26,7 +31,17 @@ _TOKEN_RE = re.compile(r"[a-z0-9]+")
 
 
 def _tokenize(text):
-    """Lowercase, split on non-alphanumeric, filter stopwords."""
+    """Lowercase, split on non-alphanumeric, filter stopwords.
+    
+    Processing pipeline:
+    1. Lowercase the entire text
+    2. Extract alphanumeric tokens using regex (splits on punctuation/whitespace)
+    3. Filter out stopwords using set membership test (O(1) lookup in frozenset)
+    
+    Example: "The quick brown fox jumps over the lazy dog"
+             → ["quick", "brown", "fox", "jumps", "lazy", "dog"]
+             (removed: "the", "over")
+    """
     tokens = _TOKEN_RE.findall(text.lower())
     return [t for t in tokens if t not in _STOPWORDS]
 
