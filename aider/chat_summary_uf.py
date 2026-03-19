@@ -43,7 +43,6 @@ class ChatSummaryUF(ChatSummary):
             self._init_context_window()
 
         # Feed only new user/assistant messages, tracking their indices
-        fed_indices = []
         for i, msg in enumerate(messages[self._fed_count:], start=self._fed_count):
             role = msg.get("role", "").upper()
             if role not in ("USER", "ASSISTANT"):
@@ -51,19 +50,27 @@ class ChatSummaryUF(ChatSummary):
             content = msg.get("content", "")
             if content:
                 self.context_window.append(f"# {role}\n{content}")
-                fed_indices.append(i)
         self._fed_count = len(messages)
 
-        # If no cold clusters yet, force-graduate the oldest half of hot zone.
-        # This breaks the deadlock where too_big fires before graduate_at is reached.
-        if self.context_window.cold_count == 0 and self.context_window.hot_count > 4:
-            self.context_window.force_graduate(keep_hot=max(4, self.context_window.hot_count // 2))
+        # Token-aware graduation: keep only as many hot messages as fit
+        # in 25% of the token budget. Graduate the rest to cold clusters.
+        if self.context_window.hot_count > 2:
+            hot_budget = self.max_tokens // 4
+            keep = 0
+            for content in reversed(self.context_window.hot_messages()):
+                cost = self.token_count({"role": "user", "content": content})
+                if hot_budget - cost < 0 and keep >= 2:
+                    break
+                hot_budget -= cost
+                keep += 1
+            keep = max(2, keep)
+            if keep < self.context_window.hot_count:
+                self.context_window.force_graduate(keep_hot=keep)
 
         # Resolve dirty clusters, then render fresh summaries
         try:
             self.context_window.resolve_dirty()
         except (ValueError, Exception):
-            # Cluster summarization failed — fall back to recursive
             return super().summarize(messages, depth)
         rendered = self.context_window.render()
 
@@ -74,7 +81,6 @@ class ChatSummaryUF(ChatSummary):
         if hot_count > 0 and hot_count < len(rendered):
             cold_parts = rendered[:-hot_count]
             summary_text = prompts.summary_prefix + "\n\n".join(cold_parts)
-            # Find the original message index where hot zone starts
             all_fed = self._get_fed_indices(messages)
             if hot_count <= len(all_fed):
                 hot_start = all_fed[-hot_count]
@@ -87,8 +93,6 @@ class ChatSummaryUF(ChatSummary):
                 *hot_messages,
             ]
         else:
-            # Not enough messages to form cold clusters.
-            # Fall back to recursive — don't return unchanged.
             return super().summarize(messages, depth)
 
         # Budget safety: must fit max_tokens AND be smaller than input
