@@ -129,6 +129,7 @@ class Forest:
         self._dirty_inputs.pop(old_root, None)
 
         # Weighted centroid averaging (weight by cluster size)
+        # 
         # When merging two clusters, we compute a new centroid embedding that represents
         # the combined cluster. Each cluster's centroid is weighted by its size (member count).
         #
@@ -140,8 +141,14 @@ class Forest:
         #   new_centroid[0] = (0.8 * 5 + 0.2 * 3) / 8 = 4.6 / 8 = 0.575
         #   new_centroid[1] = (0.2 * 5 + 0.6 * 3) / 8 = 2.8 / 8 = 0.350
         #
-        # This ensures larger clusters have proportionally more influence on the merged
-        # embedding, preventing small outlier clusters from skewing the result.
+        # Why weight by size?
+        # - Larger clusters represent more messages, so they should have more influence
+        # - Prevents a single outlier message from drastically shifting a large cluster's centroid
+        # - Maintains semantic coherence: the merged centroid stays closer to the "center of mass"
+        #   of all individual messages across both clusters
+        #
+        # This is analogous to computing the center of mass in physics, where each cluster's
+        # centroid acts as a point mass with weight equal to its member count.
         total = size_new + size_old
         emb_a = self._embedding.get(new_root, {})
         emb_b = self._embedding.get(old_root, {})
