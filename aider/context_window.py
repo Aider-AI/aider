@@ -252,9 +252,31 @@ class ContextWindow:
 
     def __init__(self, embedder, summarizer, graduate_at=26,
                  max_cold_clusters=10,
-                 # Cosine similarity threshold for auto-merging clusters (0.15 = ~81° angle)
-                 # Range: -1 (opposite) to 1 (identical). 0.15 allows moderately related content to merge.
                  merge_threshold=0.15):
+        """Initialize ContextWindow with hot zone and cold forest.
+        
+        Args:
+            embedder: Embeds text into vector representations
+            summarizer: Summarizes clusters of related messages
+            graduate_at: Max messages in hot zone before graduating to cold forest
+            max_cold_clusters: Max clusters in cold forest before forced merging
+            merge_threshold: Cosine similarity threshold for auto-merging clusters.
+                Range: -1 (opposite direction) to 1 (identical direction)
+                
+                Value of 0.15 means:
+                - Angle between vectors: ~81° (arccos(0.15) ≈ 81.37°)
+                - Allows moderately related content to merge automatically
+                - Conservative enough to avoid merging unrelated topics
+                - Aggressive enough to consolidate similar discussions
+                
+                Why 0.15?
+                - Below 0.1: Too conservative, creates too many small clusters
+                - Above 0.3: Too aggressive, merges loosely related content
+                - 0.15 balances cluster consolidation with semantic coherence
+                
+                Note: When max_cold_clusters is exceeded, forced merging ignores
+                this threshold and merges the closest pair regardless of similarity.
+        """
         self._embedder = embedder
         self._forest = Forest(summarizer=summarizer)
         self._hot = []  # list of (content, embedding) tuples
