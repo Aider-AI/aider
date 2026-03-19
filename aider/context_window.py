@@ -9,7 +9,22 @@ import math
 
 
 def _cosine_similarity(a, b):
-    """Cosine similarity between two sparse dict vectors. Returns 0.0 if either is zero."""
+    """Cosine similarity between two sparse dict vectors. Returns 0.0 if either is zero.
+    
+    Computes the cosine of the angle between two vectors using the formula:
+        similarity = (a · b) / (||a|| * ||b||)
+    
+    Where:
+        - a · b is the dot product: sum of (a[i] * b[i]) for all dimensions
+        - ||a|| is the L2 norm (magnitude) of vector a: sqrt(sum of a[i]²)
+        - ||b|| is the L2 norm (magnitude) of vector b: sqrt(sum of b[i]²)
+    
+    The result ranges from -1 (opposite) to 1 (identical direction), with 0 meaning
+    orthogonal (no similarity). For sparse vectors represented as dicts, only the
+    intersection of keys contributes to the dot product.
+    
+    Returns 0.0 if either vector has zero magnitude (avoiding division by zero).
+    """
     keys = set(a.keys()) & set(b.keys())
     dot = sum(a[k] * b[k] for k in keys)
     norm_a = math.sqrt(sum(v * v for v in a.values()))
