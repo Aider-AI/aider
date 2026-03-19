@@ -597,14 +597,14 @@ class TestMemoryBounds(TestCase):
 
         cw = ContextWindow(
             embedder, mock_summarizer,
-            graduate_at=5, evict_at=10, max_cold_clusters=10,
+            graduate_at=5, max_cold_clusters=10,
         )
         # Append many messages — should graduate and trim
         for i in range(20):
             cw.append(f"message {i} about topic {i % 3}")
 
-        # _hot should only contain ungraduated messages (at most evict_at)
-        self.assertLessEqual(len(cw._hot), cw._evict_at)
+        # _hot should only contain ungraduated messages (at most graduate_at)
+        self.assertLessEqual(len(cw._hot), cw._graduate_at)
         # _graduated_index should be 0 (trimmed)
         self.assertEqual(cw._graduated_index, 0)
 
@@ -616,13 +616,13 @@ class TestMemoryBounds(TestCase):
 
         cw = ContextWindow(
             embedder, mock_summarizer,
-            graduate_at=5, evict_at=10, max_cold_clusters=10,
+            graduate_at=5, max_cold_clusters=10,
         )
         for i in range(200):
             cw.append(f"message {i}")
 
-        # _hot should never exceed evict_at
-        self.assertLessEqual(len(cw._hot), cw._evict_at)
+        # _hot should never exceed graduate_at
+        self.assertLessEqual(len(cw._hot), cw._graduate_at)
 
 
 # ────────────────────────────────────────────────────────────
@@ -697,7 +697,7 @@ class TestContextWindow(TestCase):
     def test_append_and_render(self):
         cw = ContextWindow(
             self.embedder, self.mock_summarizer,
-            graduate_at=3, evict_at=5, max_cold_clusters=10
+            graduate_at=3, max_cold_clusters=10
         )
         for i in range(5):
             cw.append(f"message {i} about topic {i}")
@@ -707,7 +707,7 @@ class TestContextWindow(TestCase):
     def test_hot_count_tracks_correctly(self):
         cw = ContextWindow(
             self.embedder, self.mock_summarizer,
-            graduate_at=3, evict_at=5, max_cold_clusters=10
+            graduate_at=3, max_cold_clusters=10
         )
         self.assertEqual(cw.hot_count, 0)
         cw.append("msg1")
@@ -724,7 +724,7 @@ class TestContextWindow(TestCase):
     def test_graduation_sends_to_forest(self):
         cw = ContextWindow(
             self.embedder, self.mock_summarizer,
-            graduate_at=2, evict_at=4, max_cold_clusters=10
+            graduate_at=2, max_cold_clusters=10
         )
         cw.append("message alpha about python")
         cw.append("message beta about java")
@@ -736,7 +736,7 @@ class TestContextWindow(TestCase):
     def test_force_merge_when_too_many_clusters(self):
         cw = ContextWindow(
             self.embedder, self.mock_summarizer,
-            graduate_at=1, evict_at=3, max_cold_clusters=2
+            graduate_at=1, max_cold_clusters=2
         )
         # Each append with graduate_at=1 means hot keeps only 1
         # After 4 appends: 3 graduated, 1 hot. 3 clusters > max 2, force merge
@@ -747,7 +747,7 @@ class TestContextWindow(TestCase):
     def test_render_includes_cold_and_hot(self):
         cw = ContextWindow(
             self.embedder, self.mock_summarizer,
-            graduate_at=2, evict_at=4, max_cold_clusters=10
+            graduate_at=2, max_cold_clusters=10
         )
         cw.append("cold message about python")
         cw.append("cold message about java")
@@ -760,7 +760,7 @@ class TestContextWindow(TestCase):
     def test_resolve_dirty_produces_summaries(self):
         cw = ContextWindow(
             self.embedder, self.mock_summarizer,
-            graduate_at=1, evict_at=3, max_cold_clusters=1,
+            graduate_at=1, max_cold_clusters=1,
             merge_threshold=0.0  # force merges
         )
         cw.append("python code review")

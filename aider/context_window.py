@@ -188,14 +188,13 @@ class Forest:
 class ContextWindow:
     """Hot zone + cold forest. Manages graduation and eviction."""
 
-    def __init__(self, embedder, summarizer, graduate_at=26, evict_at=30,
+    def __init__(self, embedder, summarizer, graduate_at=26,
                  max_cold_clusters=10, merge_threshold=0.15):
         self._embedder = embedder
         self._forest = Forest(summarizer=summarizer)
         self._hot = []  # list of (content, embedding) tuples
         self._graduated_index = 0  # index into _hot: items before this have graduated
         self._graduate_at = graduate_at
-        self._evict_at = evict_at
         self._max_cold_clusters = max_cold_clusters
         self._merge_threshold = merge_threshold
         self._next_id = 0
@@ -206,11 +205,10 @@ class ContextWindow:
         return mid
 
     def append(self, content):
-        """Embed and push to hot zone. Graduate/evict as needed."""
+        """Embed and push to hot zone. Graduate as needed."""
         embedding = self._embedder.embed(content)
         self._hot.append((content, embedding))
         self._maybe_graduate()
-        self._maybe_evict()
         self._trim_graduated()
 
     def _maybe_graduate(self):
@@ -258,26 +256,6 @@ class ContextWindow:
                 self._forest.union(best_pair[0], best_pair[1])
             else:
                 break
-
-    def _maybe_evict(self):
-        """Evict oldest hot messages when hot zone exceeds evict threshold."""
-        while len(self._hot) - self._graduated_index > self._evict_at:
-            # Graduate the oldest remaining before evicting
-            if self._graduated_index < len(self._hot):
-                content, embedding = self._hot[self._graduated_index]
-                self._graduated_index += 1
-
-                merge_target = self._forest.nearest_root(embedding)
-
-                msg_id = self._gen_id()
-                self._forest.insert(msg_id, content, embedding)
-
-                if merge_target is not None:
-                    nearest_root, similarity = merge_target
-                    if similarity >= self._merge_threshold:
-                        self._forest.union(msg_id, nearest_root)
-
-                self._force_merge_if_needed()
 
     def _trim_graduated(self):
         """Release graduated entries from _hot to bound memory."""

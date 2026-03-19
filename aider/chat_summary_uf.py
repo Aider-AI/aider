@@ -25,7 +25,6 @@ class ChatSummaryUF(ChatSummary):
             embedder=TFIDFEmbedder(),
             summarizer=ClusterSummarizer(self.models),
             graduate_at=26,
-            evict_at=30,
             max_cold_clusters=10,
             merge_threshold=0.15,
         )
@@ -52,7 +51,11 @@ class ChatSummaryUF(ChatSummary):
         self._fed_count = len(messages)
 
         # Resolve dirty clusters, then render fresh summaries
-        self.context_window.resolve_dirty()
+        try:
+            self.context_window.resolve_dirty()
+        except (ValueError, Exception):
+            # Cluster summarization failed — fall back to recursive
+            return super().summarize(messages, depth)
         rendered = self.context_window.render()
 
         # Format output
