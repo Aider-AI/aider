@@ -129,6 +129,13 @@ class Forest:
         if old_root in self._root_order:
             self._root_order.remove(old_root)
 
+        # Release raw content and embeddings for non-root members.
+        # After merge, only the root's centroid and summary matter.
+        for member in self._children.get(new_root, set()):
+            if member != new_root:
+                self._content.pop(member, None)
+                self._embedding.pop(member, None)
+
         return new_root
 
     def resolve_dirty(self):
