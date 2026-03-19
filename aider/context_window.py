@@ -194,7 +194,7 @@ class Forest:
             return None
         return (best_root, best_sim)
 
-    def roots(self):
+    def roots(self) -> list[str]:
         """Return roots in stable insertion order."""
         seen = set()
         ordered = []
