@@ -1,4 +1,5 @@
 import contextlib
+import logging
 import os
 import time
 from pathlib import Path, PurePosixPath
@@ -34,6 +35,8 @@ ANY_GIT_ERROR += [
     TimeoutError,
 ]
 ANY_GIT_ERROR = tuple(ANY_GIT_ERROR)
+
+logger = logging.getLogger(__name__)
 
 
 @contextlib.contextmanager
@@ -110,8 +113,8 @@ class GitRepo:
                 repo_path = git.Repo(fname, search_parent_directories=True).working_dir
                 repo_path = utils.safe_abs_path(repo_path)
                 repo_paths.append(repo_path)
-            except ANY_GIT_ERROR:
-                pass
+            except ANY_GIT_ERROR as e:
+                logger.debug("Caught %s in __init__: %s", type(e).__name__, e, exc_info=True)
 
         num_repos = len(set(repo_paths))
 
@@ -283,6 +286,7 @@ class GitRepo:
                 try:
                     self.repo.git.add(fname)
                 except ANY_GIT_ERROR as err:
+                    logger.debug("Caught %s in commit: %s", type(err).__name__, err, exc_info=True)
                     self.io.tool_error(f"Unable to add {fname}: {err}")
             cmd += ["--"] + fnames
         else:
@@ -314,6 +318,7 @@ class GitRepo:
                 return commit_hash, commit_message
 
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in commit: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to commit: {err}")
             # No return here, implicitly returns None
 
@@ -381,10 +386,10 @@ class GitRepo:
             try:
                 commits = self.repo.iter_commits(active_branch)
                 current_branch_has_commits = any(commits)
-            except ANY_GIT_ERROR:
-                pass
-        except (TypeError,) + ANY_GIT_ERROR:
-            pass
+            except ANY_GIT_ERROR as e:
+                logger.debug("Caught %s in get_diffs: %s", type(e).__name__, e, exc_info=True)
+        except ANY_GIT_ERROR as e:
+            logger.debug("Caught %s in get_diffs: %s", type(e).__name__, e, exc_info=True)
 
         if not fnames:
             fnames = []
@@ -414,6 +419,7 @@ class GitRepo:
 
             return diffs
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in get_diffs: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to diff: {err}")
 
     def diff_commits(self, pretty, from_commit, to_commit):
@@ -439,6 +445,7 @@ class GitRepo:
         except ValueError:
             commit = None
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in get_tracked_files: %s", type(err).__name__, err, exc_info=True)
             self.git_repo_error = err
             self.io.tool_error(f"Unable to list files in git repo: {err}")
             self.io.tool_output("Is your git repo corrupted?")
@@ -468,6 +475,7 @@ class GitRepo:
                         except StopIteration:
                             break
                 except ANY_GIT_ERROR as err:
+                    logger.debug("Caught %s in get_tracked_files: %s", type(err).__name__, err, exc_info=True)
                     self.git_repo_error = err
                     self.io.tool_error(f"Unable to list files in git repo: {err}")
                     self.io.tool_output("Is your git repo corrupted?")
@@ -481,6 +489,7 @@ class GitRepo:
             staged_files = [path for path, _ in index.entries.keys()]
             files.update(self.normalize_path(path) for path in staged_files)
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in get_tracked_files: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to read staged files: {err}")
 
         res = [fname for fname in files if not self.ignored_file(fname)]
@@ -526,7 +535,8 @@ class GitRepo:
         try:
             if self.repo.ignored(path):
                 return True
-        except ANY_GIT_ERROR:
+        except ANY_GIT_ERROR as e:
+            logger.debug("Caught %s in git_ignored_file: %s", type(e).__name__, e, exc_info=True)
             return False
 
     def ignored_file(self, fname):
@@ -604,7 +614,8 @@ class GitRepo:
     def get_head_commit(self):
         try:
             return self.repo.head.commit
-        except (ValueError,) + ANY_GIT_ERROR:
+        except ANY_GIT_ERROR as e:
+            logger.debug("Caught %s in get_head_commit: %s", type(e).__name__, e, exc_info=True)
             return None
 
     def get_head_commit_sha(self, short=False):

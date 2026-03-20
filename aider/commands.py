@@ -1,4 +1,5 @@
 import glob
+import logging
 import os
 import re
 import subprocess
@@ -25,6 +26,8 @@ from aider.scrape import Scraper, install_playwright
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
+
+logger = logging.getLogger(__name__)
 
 
 class SwitchCoder(Exception):
@@ -295,6 +298,7 @@ class Commands:
         try:
             return cmd_method(args)
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in do_run: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to complete {cmd_name}: {err}")
 
     def matching_commands(self, inp):
@@ -339,6 +343,7 @@ class Commands:
         try:
             self.raw_cmd_commit(args)
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in cmd_commit: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to complete commit: {err}")
 
     def raw_cmd_commit(self, args=None):
@@ -555,6 +560,7 @@ class Commands:
         try:
             self.raw_cmd_undo(args)
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in cmd_undo: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to complete undo: {err}")
 
     def raw_cmd_undo(self, args):
@@ -609,7 +615,8 @@ class Commands:
         try:
             remote_head = self.coder.repo.repo.git.rev_parse(f"origin/{current_branch}")
             has_origin = True
-        except ANY_GIT_ERROR:
+        except ANY_GIT_ERROR as e:
+            logger.debug("Caught %s in raw_cmd_undo: %s", type(e).__name__, e, exc_info=True)
             has_origin = False
 
         if has_origin:
@@ -627,7 +634,8 @@ class Commands:
             try:
                 self.coder.repo.repo.git.checkout("HEAD~1", file_path)
                 restored.add(file_path)
-            except ANY_GIT_ERROR:
+            except ANY_GIT_ERROR as e:
+                logger.debug("Caught %s in raw_cmd_undo: %s", type(e).__name__, e, exc_info=True)
                 unrestored.add(file_path)
 
         if unrestored:
@@ -659,6 +667,7 @@ class Commands:
         try:
             self.raw_cmd_diff(args)
         except ANY_GIT_ERROR as err:
+            logger.debug("Caught %s in cmd_diff: %s", type(err).__name__, err, exc_info=True)
             self.io.tool_error(f"Unable to complete diff: {err}")
 
     def raw_cmd_diff(self, args=""):

@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 import re
 import sys
@@ -39,6 +40,8 @@ from aider.watch import FileWatcher
 
 from .dump import dump  # noqa: F401
 
+logger = logging.getLogger(__name__)
+
 
 def check_config_files_for_yes(config_files):
     found = False
@@ -71,7 +74,8 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 
     try:
         check_repo = Path(GitRepo(io, fnames, git_dname).root).resolve()
-    except (OSError,) + ANY_GIT_ERROR:
+    except ANY_GIT_ERROR as e:
+        logger.debug("Caught %s in guessed_wrong_repo: %s", type(e).__name__, e, exc_info=True)
         return
 
     # we had no guess, rely on the "true" repo result
@@ -90,6 +94,7 @@ def make_new_repo(git_root, io):
         repo = git.Repo.init(git_root)
         check_gitignore(git_root, io, False)
     except ANY_GIT_ERROR as err:  # issue #1233
+        logger.debug("Caught %s in make_new_repo: %s", type(err).__name__, err, exc_info=True)
         io.tool_error(f"Unable to create git repo in {git_root}")
         io.tool_output(str(err))
         return
@@ -112,8 +117,8 @@ def setup_git(git_root, io):
     if git_root:
         try:
             repo = git.Repo(git_root)
-        except ANY_GIT_ERROR:
-            pass
+        except ANY_GIT_ERROR as e:
+            logger.debug("Caught %s in setup_git: %s", type(e).__name__, e, exc_info=True)
     elif cwd == Path.home():
         io.tool_warning(
             "You should probably run aider in your project's directory, not your home dir."
@@ -183,7 +188,8 @@ def check_gitignore(git_root, io, ask=True):
                 return
         else:
             content = ""
-    except ANY_GIT_ERROR:
+    except ANY_GIT_ERROR as e:
+        logger.debug("Caught %s in check_gitignore: %s", type(e).__name__, e, exc_info=True)
         return
 
     if ask:
@@ -430,6 +436,7 @@ def sanity_check_repo(repo, io):
             f"Internal error: {str(exc)}"
         )
     except ANY_GIT_ERROR as exc:
+        logger.debug("Caught %s in main: %s", type(exc).__name__, exc, exc_info=True)
         error_msg = str(exc)
         bad_ver = "version in (1, 2)" in error_msg
     except AssertionError as exc:
