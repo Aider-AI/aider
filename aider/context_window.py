@@ -276,7 +276,7 @@ class ContextWindow:
 
             merge_target = self._forest.nearest_root(embedding)
 
-            msg_id = self._next_msg_id()
+            msg_id = self._gen_id()
             self._forest.insert(msg_id, content, embedding)
 
             if merge_target is not None:
@@ -302,6 +302,10 @@ class ContextWindow:
     def cold_count(self):
         """Number of clusters in the cold forest."""
         return self._forest.cluster_count()
+
+    def hot_messages(self):
+        """Return hot zone contents as a list of strings."""
+        return [content for content, _embedding in self._hot[self._graduated_index:]]
 
     def render(self):
         """Return cold summaries + hot contents as a flat list of strings."""

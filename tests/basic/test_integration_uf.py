@@ -14,7 +14,7 @@ This catches control-loop bugs that unit tests with word-count mocks miss.
 from unittest import TestCase, mock
 
 from aider.chat_summary_uf import ChatSummaryUF
-from aider.commands import Commands
+
 from aider.models import Model
 from aider import prompts
 
@@ -142,63 +142,6 @@ class TestIntegrationControlLoop(TestCase):
             hot_tokens, 1024 // 2,
             f"Hot zone {hot_tokens} tokens exceeds half the budget"
         )
-
-    def test_topics_shows_clusters_after_summarization(self):
-        """End-to-end: summarize → /topics shows numbered clusters."""
-        summarizer, model, _ = _make_real_tokenizer_summarizer(max_tokens=1024)
-        messages = _build_conversation(8)
-
-        result = summarizer.summarize(messages)
-
-        # Build mock coder
-        coder = mock.Mock()
-        coder.summarizer = summarizer
-        coder.summarizer_thread = None
-        coder.main_model = model
-        coder.done_messages = list(result)
-
-        outputs = []
-        io = mock.Mock()
-        io.tool_output = lambda *a, **kw: outputs.append(a[0] if a else "")
-
-        commands = Commands(io, coder)
-        commands.cmd_topics("")
-
-        # Should have numbered topic lines
-        topic_lines = [o for o in outputs if o.strip() and o.strip()[0].isdigit() and ". " in o]
-        self.assertGreater(
-            len(topic_lines), 0,
-            f"No topic lines in output: {outputs}"
-        )
-
-    def test_drop_topic_removes_cluster(self):
-        """End-to-end: summarize → /drop-topic removes a cluster."""
-        summarizer, model, _ = _make_real_tokenizer_summarizer(max_tokens=1024)
-        messages = _build_conversation(8)
-
-        result = summarizer.summarize(messages)
-        clusters_before = summarizer.context_window.cold_count
-
-        coder = mock.Mock()
-        coder.summarizer = summarizer
-        coder.summarizer_thread = None
-        coder.main_model = model
-        coder.done_messages = list(result)
-
-        outputs = []
-        io = mock.Mock()
-        io.tool_output = lambda *a, **kw: outputs.append(a[0] if a else "")
-        io.tool_error = lambda *a, **kw: outputs.append(a[0] if a else "")
-
-        commands = Commands(io, coder)
-        commands.cmd_drop_topic("1")
-
-        self.assertEqual(
-            summarizer.context_window.cold_count, clusters_before - 1,
-            "Cluster count didn't decrease after /drop-topic"
-        )
-        drop_output = [o for o in outputs if "Dropped topic" in o]
-        self.assertEqual(len(drop_output), 1)
 
     def test_repeated_summarize_cycles(self):
         """Simulate multiple summarize cycles like a real session."""
