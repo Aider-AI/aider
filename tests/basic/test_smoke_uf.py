@@ -247,40 +247,21 @@ class TestSmokeUFFoundation(TestCase):
         self.assertGreater(len(result), 0)
 
     def test_stale_rebuild_after_done_messages_shrink(self):
-        """When done_messages shrinks and then grows past budget, forest rebuilds."""
+        """When done_messages shrinks, prefix mismatch triggers rebuild."""
         summarizer, model = _make_summarizer()
         padded = _padded_conversation()
 
         # First summarization
         result = summarizer.summarize(padded)
-        fed_after_first = summarizer._fed_count
-        self.assertEqual(fed_after_first, len(padded))
+        self.assertGreater(len(summarizer._fed_messages), 0)
 
         # Simulate summarize_end applying the result (done_messages = result, shorter).
-        # Then more messages arrive, growing past too_big again.
-        grown = list(result)
-        for i in range(30):
-            grown.append({"role": "user", "content": f"New message {i} about a completely different topic"})
-            grown.append({"role": "assistant", "content": f"New response {i} about the different topic"})
-
-        # _fed_count (62) > len(result) was (28), but now grown is 88.
-        # The key: _fed_count (62) < len(grown) (88), BUT the forest has stale data.
-        # Actually: _fed_count (62) < len(grown) (88), so it tries incremental feed.
-        # The correct trigger is when result was applied: _fed_count stays at 62,
-        # then next call with the short result + growth detects stale via content mismatch.
-        # The real stale detection: _fed_count > len(messages) only fires if messages shrunk.
-        # Let's test the actual shrink case:
-        result2 = summarizer.summarize(result)
-        # result is 28 messages, _fed_count was 62 > 28 → too_big check first.
-        # But result (28 msgs) may not be too_big at max_tokens=400.
-        # If not too_big, summarize returns early — _fed_count unchanged.
-        # This is correct behavior: no need to rebuild if history fits in budget.
-        if not summarizer.too_big(result):
-            # Short enough to fit — no summarization needed, no rebuild
-            self.assertEqual(summarizer._fed_count, fed_after_first)
-        else:
-            # Would rebuild: _fed_count resets
-            self.assertLessEqual(summarizer._fed_count, len(result))
+        # The result has different content (summaries), so prefix check fails → rebuild.
+        with mock.patch.object(summarizer, "_rebuild", wraps=summarizer._rebuild) as mock_rebuild:
+            result2 = summarizer.summarize(result)
+            if summarizer.too_big(result):
+                mock_rebuild.assert_called_once()
+            # If result fits budget, summarize returns early — no rebuild needed
 
     def test_incremental_feeding_skips_system_messages(self):
         """System messages are not fed into the forest."""

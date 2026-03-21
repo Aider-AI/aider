@@ -425,41 +425,53 @@ class TestSummarizeAllParity(TestCase):
 
 
 class TestStaleDiscardAndRebuild(TestCase):
-    def test_fed_count_shrink_triggers_rebuild(self):
+    def test_shrink_triggers_rebuild(self):
         """When messages shrink (previous result applied), forest rebuilds."""
         model = make_mock_model(summary_text="cluster summary")
         summarizer = ChatSummaryUF(model, max_tokens=30)
 
-        # First call with many messages
         messages_large = make_messages(30)
         summarizer.summarize(messages_large)
-        old_fed_count = summarizer._fed_count
-        self.assertEqual(old_fed_count, 60)
+        self.assertGreater(len(summarizer._fed_messages), 0)
 
         # Simulate summarize_end applying the result: done_messages shrinks
         messages_small = make_messages(5)
 
-        # _init_context_window should be called since _fed_count (60) > len(messages_small) (10)
-        with mock.patch.object(summarizer, "_init_context_window", wraps=summarizer._init_context_window) as mock_init:
+        with mock.patch.object(summarizer, "_rebuild", wraps=summarizer._rebuild) as mock_rebuild:
             summarizer.summarize(messages_small)
-            mock_init.assert_called_once()
+            mock_rebuild.assert_called_once()
 
-    def test_fed_count_tracks_incremental_feeding(self):
-        """_fed_count increases with each call, feeding only new messages."""
+    def test_same_length_replacement_triggers_rebuild(self):
+        """When messages are replaced (same length, different content), rebuild."""
         model = make_mock_model(summary_text="cluster summary")
         summarizer = ChatSummaryUF(model, max_tokens=30)
 
-        messages = make_messages(15)  # 30 messages
+        messages_a = make_messages(15)
+        summarizer.summarize(messages_a)
+
+        # Same length but different content
+        messages_b = [
+            {"role": r, "content": f"REPLACED msg {i}"}
+            for i, r in enumerate(["user", "assistant"] * 15)
+        ]
+        with mock.patch.object(summarizer, "_rebuild", wraps=summarizer._rebuild) as mock_rebuild:
+            summarizer.summarize(messages_b)
+            mock_rebuild.assert_called_once()
+
+    def test_incremental_feeding(self):
+        """Appending new messages feeds only the new ones, not all."""
+        model = make_mock_model(summary_text="cluster summary")
+        summarizer = ChatSummaryUF(model, max_tokens=30)
+
+        messages = make_messages(15)
         summarizer.summarize(messages)
-        self.assertEqual(summarizer._fed_count, 30)
+        self.assertEqual(len(summarizer._fed_messages), 30)
 
         # Add more messages
-        messages_more = messages + make_messages(5)  # 40 messages
-        # Context window should only receive the 10 new messages
+        messages_more = messages + make_messages(5)
         with mock.patch.object(summarizer.context_window, "append", wraps=summarizer.context_window.append) as mock_append:
             summarizer.summarize(messages_more)
             # Only the new user/assistant messages should be appended
-            # 10 new messages, all have content, so 10 appends
             self.assertEqual(mock_append.call_count, 10)
 
 

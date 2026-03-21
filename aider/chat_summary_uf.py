@@ -17,7 +17,7 @@ class ChatSummaryUF(ChatSummary):
 
     def __init__(self, models=None, max_tokens=1024):
         super().__init__(models, max_tokens)
-        self._fed_count = 0
+        self._fed_messages = []
         self._init_context_window()
 
     def _init_context_window(self):
@@ -28,25 +28,51 @@ class ChatSummaryUF(ChatSummary):
             max_cold_clusters=10,
             merge_threshold=0.15,
         )
-        self._fed_count = 0
+        self._fed_messages = []
+
+    @staticmethod
+    def _chat_messages(messages):
+        """Extract user/assistant messages with non-empty content."""
+        return [
+            msg for msg in messages
+            if msg.get("role", "").upper() in ("USER", "ASSISTANT")
+            and msg.get("content", "")
+        ]
+
+    def _starts_with_fed(self, chat_msgs):
+        """Check if chat_msgs starts with our previously fed messages."""
+        if len(chat_msgs) < len(self._fed_messages):
+            return False
+        for i, msg in enumerate(self._fed_messages):
+            if chat_msgs[i] != msg:
+                return False
+        return True
+
+    def _rebuild(self, chat_msgs):
+        """Rebuild context window from scratch when state is stale."""
+        self._init_context_window()
+        for msg in chat_msgs:
+            role = msg.get("role", "").upper()
+            content = msg.get("content", "")
+            self.context_window.append(f"# {role}\n{content}")
+        self._fed_messages = list(chat_msgs)
 
     def summarize(self, messages, depth=0):
         if not self.too_big(messages):
             return messages
 
-        # Stale detection: messages shrank → previous result applied → rebuild
-        if self._fed_count > len(messages):
-            self._init_context_window()
+        chat_msgs = self._chat_messages(messages)
 
-        # Feed only new user/assistant messages, tracking their indices
-        for i, msg in enumerate(messages[self._fed_count:], start=self._fed_count):
-            role = msg.get("role", "").upper()
-            if role not in ("USER", "ASSISTANT"):
-                continue
-            content = msg.get("content", "")
-            if content:
+        # Prefix-based stale detection: rebuild if messages changed
+        if not self._starts_with_fed(chat_msgs):
+            self._rebuild(chat_msgs)
+        else:
+            # Feed only new messages
+            for msg in chat_msgs[len(self._fed_messages):]:
+                role = msg.get("role", "").upper()
+                content = msg.get("content", "")
                 self.context_window.append(f"# {role}\n{content}")
-        self._fed_count = len(messages)
+            self._fed_messages = list(chat_msgs)
 
         # Token-aware graduation: keep only as many hot messages as fit
         # in 25% of the token budget. Graduate the rest to cold clusters.
