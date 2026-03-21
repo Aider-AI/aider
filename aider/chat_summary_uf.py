@@ -59,7 +59,7 @@ class ChatSummaryUF(ChatSummary):
 
     def summarize(self, messages, depth=0):
         if not self.too_big(messages):
-            return messages
+            return super().summarize(messages, depth)
 
         chat_msgs = self._chat_messages(messages)
 
@@ -103,12 +103,8 @@ class ChatSummaryUF(ChatSummary):
         if hot_count > 0 and hot_count < len(rendered):
             cold_parts = rendered[:-hot_count]
             summary_text = prompts.summary_prefix + "\n\n".join(cold_parts)
-            all_fed = self._get_fed_indices(messages)
-            if hot_count <= len(all_fed):
-                hot_start = all_fed[-hot_count]
-                hot_messages = messages[hot_start:]
-            else:
-                hot_messages = messages[-hot_count:]
+            hot_start = self._get_hot_start(messages, hot_count)
+            hot_messages = messages[hot_start:]
             result = [
                 {"role": "user", "content": summary_text},
                 {"role": "assistant", "content": "Ok."},
@@ -137,6 +133,28 @@ class ChatSummaryUF(ChatSummary):
             if msg.get("role", "").upper() in ("USER", "ASSISTANT")
             and msg.get("content", "")
         ]
+
+    @classmethod
+    def _get_hot_start(cls, messages, hot_count):
+        """Map the hot user/assistant boundary back to the original message list."""
+        all_fed = cls._get_fed_indices(messages)
+        if hot_count <= 0 or hot_count > len(all_fed):
+            return max(0, len(messages) - hot_count)
+
+        hot_start = all_fed[-hot_count]
+
+        # Include boundary system/tool messages immediately before the first hot turn.
+        while hot_start > 0:
+            role = messages[hot_start - 1].get("role", "").upper()
+            if role in ("USER", "ASSISTANT"):
+                break
+            hot_start -= 1
+
+        # Match the base summarizer behavior: hot tail should begin on a user turn.
+        while hot_start > 0 and messages[hot_start].get("role", "").upper() != "USER":
+            hot_start -= 1
+
+        return hot_start
 
     def summarize_all(self, messages):
         return super().summarize_all(messages)

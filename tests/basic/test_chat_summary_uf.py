@@ -350,6 +350,52 @@ class TestOutputFormat(TestCase):
         # Last message should be assistant (trailing Ok.)
         self.assertEqual(result[-1]["role"], "assistant")
 
+    def test_hot_tail_starts_with_user_message(self):
+        model = make_mock_model(summary_text="cluster summary")
+        summarizer = ChatSummaryUF(model, max_tokens=20)
+        summarizer._fed_messages = [
+            {"role": "user", "content": "old question"},
+            {"role": "assistant", "content": "old answer"},
+            {"role": "user", "content": "new question"},
+            {"role": "assistant", "content": "new answer"},
+        ]
+        summarizer.token_count = lambda _msg: 1
+
+        messages = [
+            {"role": "user", "content": "old question"},
+            {"role": "assistant", "content": "old answer"},
+            {"role": "user", "content": "new question"},
+            {"role": "assistant", "content": "new answer"},
+        ]
+
+        with mock.patch.object(
+            summarizer, "too_big", return_value=True
+        ), mock.patch.object(
+            type(summarizer.context_window), "hot_count", new_callable=mock.PropertyMock
+        ) as mock_hot_count, mock.patch.object(
+            summarizer.context_window, "render", return_value=["cold summary", "new answer"]
+        ), mock.patch.object(
+            summarizer.context_window, "resolve_dirty"
+        ):
+            mock_hot_count.return_value = 1
+            result = summarizer.summarize(messages)
+
+        self.assertEqual(result[2]["role"], "user")
+        self.assertEqual(result[2]["content"], "new question")
+        self.assertEqual(result[3]["role"], "assistant")
+        self.assertEqual(result[3]["content"], "new answer")
+
+    def test_under_budget_appends_trailing_ok_when_needed(self):
+        messages = [{"role": "user", "content": "short request"}]
+        result = self.summarizer.summarize(messages)
+        self.assertEqual(
+            result,
+            [
+                {"role": "user", "content": "short request"},
+                {"role": "assistant", "content": "Ok."},
+            ],
+        )
+
 
 # ────────────────────────────────────────────────────────────
 # Area 4: Fallback to recursive
@@ -557,6 +603,42 @@ class TestLowTokenBudget(TestCase):
 
 
 class TestMixedRoleHandling(TestCase):
+    def test_system_messages_at_boundary_preserved(self):
+        model = make_mock_model(summary_text="cluster summary")
+        summarizer = ChatSummaryUF(model, max_tokens=20)
+        summarizer._fed_messages = [
+            {"role": "user", "content": "old question"},
+            {"role": "assistant", "content": "old answer"},
+            {"role": "user", "content": "new question"},
+            {"role": "assistant", "content": "new answer"},
+        ]
+        summarizer.token_count = lambda _msg: 1
+
+        messages = [
+            {"role": "user", "content": "old question"},
+            {"role": "assistant", "content": "old answer"},
+            {"role": "system", "content": "boundary system"},
+            {"role": "tool", "content": "boundary tool"},
+            {"role": "user", "content": "new question"},
+            {"role": "assistant", "content": "new answer"},
+        ]
+
+        with mock.patch.object(
+            summarizer, "too_big", return_value=True
+        ), mock.patch.object(
+            type(summarizer.context_window), "hot_count", new_callable=mock.PropertyMock
+        ) as mock_hot_count, mock.patch.object(
+            summarizer.context_window, "render", return_value=["cold summary", "new question", "new answer"]
+        ), mock.patch.object(
+            summarizer.context_window, "resolve_dirty"
+        ):
+            mock_hot_count.return_value = 2
+            result = summarizer.summarize(messages)
+
+        result_contents = [msg["content"] for msg in result]
+        self.assertIn("boundary system", result_contents)
+        self.assertIn("boundary tool", result_contents)
+
     def test_system_messages_in_tail_preserved(self):
         """System messages interspersed with user/assistant are preserved in hot tail."""
         model = make_mock_model(summary_text="cluster summary")
