@@ -102,3 +102,31 @@ def test_openrouter_error():
     assert "OpenRouter" in ex_info.description
     assert "overloaded" in ex_info.description
     assert "rate" in ex_info.description
+
+
+def test_missing_litellm_exception_does_not_crash():
+    """Regression test for issue #4957.
+
+    When a litellm version removes or renames an exception class,
+    LiteLLMExceptions() should not raise AttributeError.
+    """
+    import litellm
+
+    # Temporarily remove an exception class to simulate a litellm upgrade
+    # that drops or renames it
+    # Save and clear shared class state so previous tests don't interfere
+    saved_exceptions = LiteLLMExceptions.exceptions
+    LiteLLMExceptions.exceptions = {}
+
+    original = litellm.APIConnectionError
+    delattr(litellm, "APIConnectionError")
+    try:
+        # Should not raise — this is the core regression assertion
+        exc = LiteLLMExceptions()
+        # APIConnectionError should be skipped, others loaded
+        loaded_names = {info.name for info in exc.exceptions.values()}
+        assert "APIConnectionError" not in loaded_names
+        assert len(exc.exceptions) > 0
+    finally:
+        litellm.APIConnectionError = original
+        LiteLLMExceptions.exceptions = saved_exceptions
