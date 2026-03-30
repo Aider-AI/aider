@@ -104,7 +104,12 @@ class Scraper:
         """
 
         if self.playwright_available:
-            content, mime_type = self.scrape_with_playwright(url)
+            try:
+                content, mime_type = self.scrape_with_playwright(url)
+            except ModuleNotFoundError as err:
+                self.playwright_available = False
+                self.print_error(f"Playwright unavailable, falling back to httpx: {err}")
+                content, mime_type = self.scrape_with_httpx(url)
         else:
             content, mime_type = self.scrape_with_httpx(url)
 
