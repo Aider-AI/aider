@@ -34,6 +34,11 @@ EXCEPTIONS = [
     ExInfo("InvalidRequestError", True, None),
     ExInfo("JSONSchemaValidationError", True, None),
     ExInfo("NotFoundError", False, None),
+    ExInfo(
+        "PermissionDeniedError",
+        False,
+        "Permission was denied. Check your API key and/or credentials.",
+    ),
     ExInfo("OpenAIError", True, None),
     ExInfo(
         "RateLimitError",

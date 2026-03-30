@@ -32,17 +32,17 @@ attrs==25.4.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
-banks==2.4.0
+banks==2.4.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-certifi==2026.1.4
+certifi==2026.2.25
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
     #   httpx
     #   requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.6
     # via
     #   -c requirements/common-constraints.txt
     #   requests
@@ -69,7 +69,7 @@ dirtyjson==1.0.8
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-filelock==3.20.3
+filelock==3.25.2
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -90,7 +90,7 @@ fsspec==2026.2.0
     #   huggingface-hub
     #   llama-index-core
     #   torch
-greenlet==3.3.1
+greenlet==3.3.2
     # via
     #   -c requirements/common-constraints.txt
     #   sqlalchemy
@@ -111,7 +111,7 @@ h11==0.16.0
     # via
     #   -c requirements/common-constraints.txt
     #   httpcore
-hf-xet==1.2.0
+hf-xet==1.4.2
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -124,7 +124,7 @@ httpx==0.28.1
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
     #   llama-index-core
-huggingface-hub[inference]==1.4.1
+huggingface-hub[inference]==1.7.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
@@ -148,19 +148,19 @@ joblib==1.5.3
     #   -c requirements/common-constraints.txt
     #   nltk
     #   scikit-learn
-llama-index-core==0.14.14
+llama-index-core==0.14.18
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
-llama-index-embeddings-huggingface==0.6.1
+llama-index-embeddings-huggingface==0.7.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements-help.in
-llama-index-instrumentation==0.4.2
+llama-index-instrumentation==0.5.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-workflows
-llama-index-workflows==2.14.1
+llama-index-workflows==2.16.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -202,7 +202,7 @@ networkx==3.4.2
     #   -c requirements/common-constraints.txt
     #   llama-index-core
     #   torch
-nltk==3.9.2
+nltk==3.9.3
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -225,7 +225,7 @@ pillow==12.1.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
-platformdirs==4.5.1
+platformdirs==4.9.4
     # via
     #   -c requirements/common-constraints.txt
     #   banks
@@ -256,7 +256,7 @@ pyyaml==6.0.3
     #   huggingface-hub
     #   llama-index-core
     #   transformers
-regex==2026.1.15
+regex==2026.2.28
     # via
     #   -c requirements/common-constraints.txt
     #   nltk
@@ -267,7 +267,7 @@ requests==2.32.5
     #   -c requirements/common-constraints.txt
     #   llama-index-core
     #   tiktoken
-rich==14.3.2
+rich==14.3.3
     # via
     #   -c requirements/common-constraints.txt
     #   typer
@@ -285,11 +285,11 @@ scipy==1.17.1
     #   -c requirements/common-constraints.txt
     #   scikit-learn
     #   sentence-transformers
-sentence-transformers==5.2.2
+sentence-transformers==5.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-embeddings-huggingface
-setuptools==82.0.0
+setuptools==82.0.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -297,9 +297,8 @@ setuptools==82.0.0
 shellingham==1.5.4
     # via
     #   -c requirements/common-constraints.txt
-    #   huggingface-hub
     #   typer
-sqlalchemy[asyncio]==2.0.46
+sqlalchemy[asyncio]==2.0.48
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -316,6 +315,10 @@ threadpoolctl==3.6.0
     #   -c requirements/common-constraints.txt
     #   scikit-learn
 tiktoken==0.12.0
+    # via
+    #   -c requirements/common-constraints.txt
+    #   llama-index-core
+tinytag==2.2.1
     # via
     #   -c requirements/common-constraints.txt
     #   llama-index-core
@@ -336,15 +339,11 @@ tqdm==4.67.3
     #   nltk
     #   sentence-transformers
     #   transformers
-transformers==5.1.0
+transformers==5.3.0
     # via
     #   -c requirements/common-constraints.txt
     #   sentence-transformers
-typer==0.23.0
-    # via
-    #   -c requirements/common-constraints.txt
-    #   typer-slim
-typer-slim==0.23.0
+typer==0.24.1
     # via
     #   -c requirements/common-constraints.txt
     #   huggingface-hub
@@ -352,6 +351,8 @@ typer-slim==0.23.0
 typing-extensions==4.15.0
     # via
     #   -c requirements/common-constraints.txt
+    #   aiosignal
+    #   anyio
     #   huggingface-hub
     #   llama-index-core
     #   llama-index-workflows
@@ -375,12 +376,12 @@ urllib3==2.6.3
     # via
     #   -c requirements/common-constraints.txt
     #   requests
-wrapt==2.1.1
+wrapt==2.1.2
     # via
     #   -c requirements/common-constraints.txt
     #   deprecated
     #   llama-index-core
-yarl==1.22.0
+yarl==1.23.0
     # via
     #   -c requirements/common-constraints.txt
     #   aiohttp
