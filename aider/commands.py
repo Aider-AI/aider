@@ -1191,6 +1191,74 @@ class Commands:
         """Enter architect/editor mode using 2 different models. If no prompt provided, switches to architect/editor mode."""  # noqa
         return self._generic_chat_command(args, "architect")
 
+
+    def cmd_learn(self, args):
+        """Recursive loop reasoning for learning. Explores a topic by having the primary model generate an answer and a secondary model review it."""
+        if not args.strip():
+            self.io.tool_error("Please provide a topic to learn about. Example: /learn python decorators")
+            return
+
+        from aider.coders.base_coder import Coder
+
+        self.io.tool_output(f"Learning about: {args}")
+
+        # Initialize learner and reviewer
+        learner = Coder.create(
+            io=self.io,
+            from_coder=self.coder,
+            edit_format="ask",
+            summarize_from_coder=False,
+        )
+
+        reviewer = Coder.create(
+            io=self.io,
+            from_coder=self.coder,
+            edit_format="ask",
+            summarize_from_coder=False,
+        )
+
+        topic = args
+        current_prompt = f"Please explain or solve the following topic: {topic}"
+
+        learner_response = ""
+        reviewer_response = ""
+
+        max_iterations = 3
+        for i in range(max_iterations):
+            self.io.tool_output(f"\n--- Learning Iteration {i+1}/{max_iterations} ---")
+
+            # Learner generates answer
+            learner.run(with_message=current_prompt)
+            learner_response = learner.partial_response_content or ""
+
+            # Reviewer critiques
+            review_prompt = (
+                f"Review this answer to the topic: '{topic}'\n\n"
+                f"Answer:\n{learner_response}\n\n"
+                "Provide a critique to improve it. If it is already perfect, output exactly 'LGTM' (and nothing else)."
+            )
+            reviewer.run(with_message=review_prompt)
+            reviewer_response = reviewer.partial_response_content or ""
+
+            if "LGTM" in reviewer_response:
+                self.io.tool_output("\nReviewer accepted the answer (LGTM)!")
+                break
+
+            current_prompt = (
+                f"Here is a critique of your previous answer for '{topic}'. Please improve it:\n\n"
+                f"{reviewer_response}"
+            )
+
+        # Log to file
+        log_file = ".aider.learning.md"
+        with open(log_file, "a") as f:
+            f.write(f"\n\n# Learning Topic: {topic}\n\n")
+            f.write(f"## Final Answer\n{learner_response}\n\n")
+            f.write(f"## Final Review\n{reviewer_response}\n\n")
+            f.write("-" * 40 + "\n")
+
+        self.io.tool_output(f"\nLearning session complete. Results saved to {log_file}")
+
     def cmd_context(self, args):
         """Enter context mode to see surrounding code context. If no prompt provided, switches to context mode."""  # noqa
         return self._generic_chat_command(args, "context", placeholder=args.strip() or None)
