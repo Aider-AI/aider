@@ -212,7 +212,13 @@ class Commands:
         args = args.strip()
 
         if args:
-            models.print_matching_models(self.io, args)
+            try:
+                models.print_matching_models(self.io, args)
+            except (ImportError, ModuleNotFoundError) as err:
+                self.io.tool_error(
+                    f"Unable to load model metadata for /models: {err}. "
+                    "Please upgrade or reinstall your LLM dependencies."
+                )
         else:
             self.io.tool_output("Please provide a partial model name to search for.")
 
