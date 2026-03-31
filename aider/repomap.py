@@ -523,6 +523,10 @@ class RepoMap:
 
         try:
             ranked = nx.pagerank(G, weight="weight", **pers_args)
+        except ModuleNotFoundError:
+            from networkx.algorithms.link_analysis.pagerank_alg import _pagerank_python
+
+            ranked = _pagerank_python(G, weight="weight", **pers_args)
         except ZeroDivisionError:
             # Issue #1536
             try:
