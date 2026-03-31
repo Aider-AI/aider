@@ -10,7 +10,11 @@ import psutil
 
 def run_cmd(command, verbose=False, error_print=None, cwd=None):
     try:
-        if sys.stdin.isatty() and hasattr(pexpect, "spawn") and platform.system() != "Windows":
+        if (
+            sys.stdin.isatty()
+            and hasattr(pexpect, "spawn")
+            and platform.system() != "Windows"
+        ):
             return run_cmd_pexpect(command, verbose, cwd)
 
         return run_cmd_subprocess(command, verbose, cwd)
@@ -47,11 +51,8 @@ def run_cmd_subprocess(command, verbose=False, cwd=None, encoding=sys.stdout.enc
         shell = os.environ.get("SHELL", "/bin/sh")
         parent_process = None
 
-        # Determine the appropriate shell
         if platform.system() == "Windows":
             parent_process = get_windows_parent_process_name()
-            if parent_process == "powershell.exe":
-                command = f"powershell -Command {command}"
 
         if verbose:
             print("Running command:", command)
@@ -73,6 +74,7 @@ def run_cmd_subprocess(command, verbose=False, cwd=None, encoding=sys.stdout.enc
         )
 
         output = []
+        assert process.stdout is not None
         while True:
             chunk = process.stdout.read(1)
             if not chunk:
@@ -113,7 +115,9 @@ def run_cmd_pexpect(command, verbose=False, cwd=None):
             # Use the shell from SHELL environment variable
             if verbose:
                 print("Running pexpect.spawn with shell:", shell)
-            child = pexpect.spawn(shell, args=["-i", "-c", command], encoding="utf-8", cwd=cwd)
+            child = pexpect.spawn(
+                shell, args=["-i", "-c", command], encoding="utf-8", cwd=cwd
+            )
         else:
             # Fall back to spawning the command directly
             if verbose:
