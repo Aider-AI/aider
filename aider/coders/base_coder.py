@@ -914,7 +914,11 @@ class Coder:
             return
 
         if self.commands.is_command(inp):
-            return self.commands.run(inp)
+            try:
+                return self.commands.run(inp)
+            except RuntimeError as err:
+                self.io.tool_error(f"Error running command: {err}")
+                return
 
         self.check_for_file_mentions(inp)
         inp = self.check_for_urls(inp)
