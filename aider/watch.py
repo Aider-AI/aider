@@ -1,1 +1,1 @@
-python aider/watch.py .
+aider
