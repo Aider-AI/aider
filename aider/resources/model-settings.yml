@@ -1867,6 +1867,7 @@
   editor_model_name: claude-sonnet-4-5
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
+  overeager: true
 
 - name: claude-sonnet-4-5-20250929
   edit_format: diff
@@ -1921,6 +1922,7 @@
   editor_model_name: bedrock/global.anthropic.claude-sonnet-4-5-20250929-v1:0
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
+  overeager: true
 
 - name: bedrock/anthropic.claude-sonnet-4-5-20250929-v1:0
   edit_format: diff
@@ -1954,6 +1956,7 @@
   editor_model_name: vertex_ai/claude-sonnet-4-5@20250929
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
+  overeager: true
 
 - name: vertex_ai/claude-sonnet-4-5@20250929
   edit_format: diff
@@ -2070,6 +2073,7 @@
   editor_model_name: openrouter/anthropic/claude-sonnet-4-5
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
+  overeager: true
 
 
 - name: openrouter/anthropic/claude-sonnet-4.5
