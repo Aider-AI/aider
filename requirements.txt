@@ -335,7 +335,7 @@ regex==2026.2.28
     # via
     #   -c requirements/common-constraints.txt
     #   tiktoken
-requests==2.32.5
+requests==2.33.0
     # via
     #   -c requirements/common-constraints.txt
     #   mixpanel
