@@ -181,7 +181,7 @@ jsonschema-specifications==2025.9.1
     # via
     #   -c requirements/common-constraints.txt
     #   jsonschema
-litellm==1.82.3
+litellm==1.83.0
     # via
     #   -c requirements/common-constraints.txt
     #   -r requirements/requirements.in
