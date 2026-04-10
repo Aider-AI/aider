@@ -112,6 +112,196 @@ MODEL_ALIASES = {
 # Model metadata loaded from resources and user's files.
 
 
+# Registry of model-specific settings.
+# Each entry maps a match function to a dict of settings to apply.
+# Checked in order; first match wins.
+GENERIC_MODEL_SETTINGS = [
+    {
+        "match": lambda model: "/o3-mini" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "use_temperature": False,
+            "system_prompt_prefix": "Formatting re-enabled. ",
+        },
+        "add_accepts": ["reasoning_effort"],
+    },
+    {
+        "match": lambda model: "gpt-4.1-mini" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "reminder": "sys",
+            "examples_as_sys_msg": False,
+        },
+    },
+    {
+        "match": lambda model: "gpt-4.1" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "reminder": "sys",
+            "examples_as_sys_msg": False,
+        },
+    },
+    {
+        "match": lambda model: model.split("/")[-1] in ("gpt-5", "gpt-5-2025-08-07"),
+        "settings": {
+            "use_temperature": False,
+            "edit_format": "diff",
+        },
+        "add_accepts": ["reasoning_effort"],
+    },
+    {
+        "match": lambda model: "/o1-mini" in model,
+        "settings": {
+            "use_repo_map": True,
+            "use_temperature": False,
+            "use_system_prompt": False,
+        },
+    },
+    {
+        "match": lambda model: "/o1-preview" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "use_temperature": False,
+            "use_system_prompt": False,
+        },
+    },
+    {
+        "match": lambda model: "/o1" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "use_temperature": False,
+            "streaming": False,
+            "system_prompt_prefix": "Formatting re-enabled. ",
+        },
+        "add_accepts": ["reasoning_effort"],
+    },
+    {
+        "match": lambda model: "deepseek" in model and "v3" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "reminder": "sys",
+            "examples_as_sys_msg": True,
+        },
+    },
+    {
+        "match": lambda model: "deepseek" in model and ("r1" in model or "reasoning" in model),
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "examples_as_sys_msg": True,
+            "use_temperature": False,
+            "reasoning_tag": "think",
+        },
+    },
+    {
+        "match": lambda model: ("llama3" in model or "llama-3" in model) and "70b" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "send_undo_reply": True,
+            "examples_as_sys_msg": True,
+        },
+    },
+    {
+        "match": lambda model: "gpt-4-turbo" in model or ("gpt-4-" in model and "-preview" in model),
+        "settings": {
+            "edit_format": "udiff",
+            "use_repo_map": True,
+            "send_undo_reply": True,
+        },
+    },
+    {
+        "match": lambda model: "gpt-4" in model or "claude-3-opus" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "send_undo_reply": True,
+        },
+    },
+    {
+        "match": lambda model: "gpt-3.5" in model or "gpt-4" in model,
+        "settings": {
+            "reminder": "sys",
+        },
+    },
+    {
+        "match": lambda model: any(
+            s in model for s in (
+                "sonnet-4-5", "opus-4-6", "haiku-4-5",
+                "claude-sonnet-4-5", "claude-opus-4-6", "claude-haiku-4-5",
+            )
+        ),
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "examples_as_sys_msg": False,
+        },
+        "add_accepts": ["thinking_tokens"],
+    },
+    {
+        "match": lambda model: "3-7-sonnet" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "examples_as_sys_msg": True,
+            "reminder": "user",
+        },
+        "add_accepts": ["thinking_tokens"],
+    },
+    {
+        "match": lambda model: "3.5-sonnet" in model or "3-5-sonnet" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "examples_as_sys_msg": True,
+            "reminder": "user",
+        },
+    },
+    {
+        "match": lambda model: model.startswith("o1-") or "/o1-" in model,
+        "settings": {
+            "use_system_prompt": False,
+            "use_temperature": False,
+        },
+    },
+    {
+        "match": lambda model: "qwen" in model and "coder" in model and ("2.5" in model or "2-5" in model) and "32b" in model,
+        "settings": {
+            "edit_format": "diff",
+            "editor_edit_format": "editor-diff",
+            "use_repo_map": True,
+        },
+    },
+    {
+        "match": lambda model: "qwq" in model and "32b" in model and "preview" not in model,
+        "settings": {
+            "edit_format": "diff",
+            "editor_edit_format": "editor-diff",
+            "use_repo_map": True,
+            "reasoning_tag": "think",
+            "examples_as_sys_msg": True,
+            "use_temperature": 0.6,
+        },
+        "extra_params": {"top_p": 0.95},
+    },
+    {
+        "match": lambda model: "qwen3" in model and "235b" in model,
+        "settings": {
+            "edit_format": "diff",
+            "use_repo_map": True,
+            "system_prompt_prefix": "/no_think",
+            "use_temperature": 0.7,
+        },
+        "extra_params": {"top_p": 0.8, "top_k": 20, "min_p": 0.0},
+    },
+]
+
 @dataclass
 class ModelSettings:
     # Model class needs to have each of these as well
@@ -419,168 +609,20 @@ class Model(ModelSettings):
                 self.accepts_settings.append("reasoning_effort")
 
     def apply_generic_model_settings(self, model):
-        if "/o3-mini" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.use_temperature = False
-            self.system_prompt_prefix = "Formatting re-enabled. "
-            self.system_prompt_prefix = "Formatting re-enabled. "
-            if "reasoning_effort" not in self.accepts_settings:
-                self.accepts_settings.append("reasoning_effort")
-            return  # <--
+        for profile in GENERIC_MODEL_SETTINGS:
+            if profile["match"](model):
+                for key, value in profile.get("settings", {}).items():
+                    setattr(self, key, value)
+                for setting_name in profile.get("add_accepts", []):
+                    if setting_name not in self.accepts_settings:
+                        self.accepts_settings.append(setting_name)
+                if "extra_params" in profile:
+                    self.extra_params = profile["extra_params"]
+                return
 
-        if "gpt-4.1-mini" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.reminder = "sys"
-            self.examples_as_sys_msg = False
-            return  # <--
-
-        if "gpt-4.1" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.reminder = "sys"
-            self.examples_as_sys_msg = False
-            return  # <--
-
-        last_segment = model.split("/")[-1]
-        if last_segment in ("gpt-5", "gpt-5-2025-08-07"):
-            self.use_temperature = False
-            self.edit_format = "diff"
-            if "reasoning_effort" not in self.accepts_settings:
-                self.accepts_settings.append("reasoning_effort")
-            return  # <--
-
-        if "/o1-mini" in model:
-            self.use_repo_map = True
-            self.use_temperature = False
-            self.use_system_prompt = False
-            return  # <--
-
-        if "/o1-preview" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.use_temperature = False
-            self.use_system_prompt = False
-            return  # <--
-
-        if "/o1" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.use_temperature = False
-            self.streaming = False
-            self.system_prompt_prefix = "Formatting re-enabled. "
-            if "reasoning_effort" not in self.accepts_settings:
-                self.accepts_settings.append("reasoning_effort")
-            return  # <--
-
-        if "deepseek" in model and "v3" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.reminder = "sys"
-            self.examples_as_sys_msg = True
-            return  # <--
-
-        if "deepseek" in model and ("r1" in model or "reasoning" in model):
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.examples_as_sys_msg = True
-            self.use_temperature = False
-            self.reasoning_tag = "think"
-            return  # <--
-
-        if ("llama3" in model or "llama-3" in model) and "70b" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.send_undo_reply = True
-            self.examples_as_sys_msg = True
-            return  # <--
-
-        if "gpt-4-turbo" in model or ("gpt-4-" in model and "-preview" in model):
-            self.edit_format = "udiff"
-            self.use_repo_map = True
-            self.send_undo_reply = True
-            return  # <--
-
-        if "gpt-4" in model or "claude-3-opus" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.send_undo_reply = True
-            return  # <--
-
-        if "gpt-3.5" in model or "gpt-4" in model:
-            self.reminder = "sys"
-            return  # <--
-
-        if (
-            "sonnet-4-5" in model
-            or "opus-4-6" in model
-            or "haiku-4-5" in model
-            or "claude-sonnet-4-5" in model
-            or "claude-opus-4-6" in model
-            or "claude-haiku-4-5" in model
-        ):
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.examples_as_sys_msg = False
-            if "thinking_tokens" not in self.accepts_settings:
-                self.accepts_settings.append("thinking_tokens")
-            return  # <--
-
-        if "3-7-sonnet" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.examples_as_sys_msg = True
-            self.reminder = "user"
-            if "thinking_tokens" not in self.accepts_settings:
-                self.accepts_settings.append("thinking_tokens")
-            return  # <--
-
-        if "3.5-sonnet" in model or "3-5-sonnet" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.examples_as_sys_msg = True
-            self.reminder = "user"
-            return  # <--
-
-        if model.startswith("o1-") or "/o1-" in model:
-            self.use_system_prompt = False
-            self.use_temperature = False
-            return  # <--
-
-        if (
-            "qwen" in model
-            and "coder" in model
-            and ("2.5" in model or "2-5" in model)
-            and "32b" in model
-        ):
-            self.edit_format = "diff"
-            self.editor_edit_format = "editor-diff"
-            self.use_repo_map = True
-            return  # <--
-
-        if "qwq" in model and "32b" in model and "preview" not in model:
-            self.edit_format = "diff"
-            self.editor_edit_format = "editor-diff"
-            self.use_repo_map = True
-            self.reasoning_tag = "think"
-            self.examples_as_sys_msg = True
-            self.use_temperature = 0.6
-            self.extra_params = dict(top_p=0.95)
-            return  # <--
-
-        if "qwen3" in model and "235b" in model:
-            self.edit_format = "diff"
-            self.use_repo_map = True
-            self.system_prompt_prefix = "/no_think"
-            self.use_temperature = 0.7
-            self.extra_params = {"top_p": 0.8, "top_k": 20, "min_p": 0.0}
-            return  # <--
-
-        # use the defaults
+        # Fallback: if edit_format is already "diff", enable repo map
         if self.edit_format == "diff":
             self.use_repo_map = True
-            return  # <--
 
     def __str__(self):
         return self.name

@@ -255,15 +255,21 @@ class GitRepo:
         # Author modification applies only to aider edits.
         # It's used if effective_author is True AND
         # (co-authored-by is False OR author was explicitly set).
-        use_attribute_author = (
-            aider_edits and effective_author and (not attribute_co_authored_by or author_explicit)
+        # Determine if author name should be modified
+        # Author is attributed when: it's an AI edit, author attribution is enabled,
+        # AND either co-authored-by is off or author was explicitly requested
+        is_aider_edit_without_coauthor = aider_edits and not attribute_co_authored_by
+        is_explicit_author_override = aider_edits and author_explicit
+        use_attribute_author = effective_author and (
+            is_aider_edit_without_coauthor or is_explicit_author_override
         )
 
-        # Committer modification applies regardless of aider_edits (based on tests).
-        # It's used if effective_committer is True AND
-        # (it's not an aider edit with co-authored-by OR committer was explicitly set).
+        # Determine if committer name should be modified
+        # Committer is attributed when: committer attribution is enabled,
+        # AND either there's no co-authored-by for AI edits or committer was explicitly requested
+        has_coauthor_for_aider_edit = aider_edits and attribute_co_authored_by
         use_attribute_committer = effective_committer and (
-            not (aider_edits and attribute_co_authored_by) or committer_explicit
+            not has_coauthor_for_aider_edit or committer_explicit
         )
 
         if not commit_message:
