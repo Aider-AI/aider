@@ -711,5 +711,102 @@
   "together_ai/Qwen/Qwen3-235B-A22B-fp8-tput": {
         "input_cost_per_token": 0.0000002,
         "output_cost_per_token": 0.0000006,
-  }
+  },
+    "openai/qwen-3.6-plus": {
+        "max_tokens": 8192,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000000439,
+        "output_cost_per_token": 0.000002633,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_tool_choice": true,
+        "supports_system_messages": true
+    },
+    "openai/deepseek-v3": {
+        "max_tokens": 8192,
+        "max_input_tokens": 160000,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000000810,
+        "output_cost_per_token": 0.000002295,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_tool_choice": true,
+        "supports_system_messages": true
+    },
+    "openai/deepseek-r1": {
+        "max_tokens": 8192,
+        "max_input_tokens": 64000,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000000675,
+        "output_cost_per_token": 0.000002903,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": false,
+        "supports_tool_choice": false,
+        "supports_system_messages": true
+    },
+    "openai/kimi-k2.5": {
+        "max_tokens": 8192,
+        "max_input_tokens": 262144,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000000675,
+        "output_cost_per_token": 0.000003780,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_tool_choice": true,
+        "supports_system_messages": true
+    },
+    "openai/gemma-4-31b": {
+        "max_tokens": 8192,
+        "max_input_tokens": 128000,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000000189,
+        "output_cost_per_token": 0.000000540,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_tool_choice": true,
+        "supports_vision": true,
+        "supports_system_messages": true
+    },
+    "openai/qwen-3-32b": {
+        "max_tokens": 8192,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000000392,
+        "output_cost_per_token": 0.000000810,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_tool_choice": true,
+        "supports_system_messages": true
+    },
+    "openai/llama-3.3-70b": {
+        "max_tokens": 8192,
+        "max_input_tokens": 131072,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000001188,
+        "output_cost_per_token": 0.000001188,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_tool_choice": true,
+        "supports_system_messages": true
+    },
+    "openai/minimax-m2.5": {
+        "max_tokens": 8192,
+        "max_input_tokens": 196608,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.000000405,
+        "output_cost_per_token": 0.000001620,
+        "litellm_provider": "openai",
+        "mode": "chat",
+        "supports_function_calling": true,
+        "supports_tool_choice": true,
+        "supports_system_messages": true
+    }
 }
