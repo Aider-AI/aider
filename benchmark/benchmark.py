@@ -167,39 +167,65 @@ def main(
         0, "--sleep", help="Sleep seconds between tests when single threaded"
     ),
     languages: str = typer.Option(
-        None, "--languages", "-l", help="Only run tests for specific languages (comma separated)"
+        None,
+        "--languages",
+        "-l",
+        help="Only run tests for specific languages (comma separated)",
     ),
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     editor_model: str = typer.Option(None, "--editor-model", help="Editor model name"),
-    editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Editor edit format"),
+    editor_edit_format: str = typer.Option(
+        None, "--editor-edit-format", help="Editor edit format"
+    ),
     replay: str = typer.Option(
         None,
         "--replay",
         help="Replay previous .aider.chat.history.md responses from previous benchmark run",
     ),
     keywords: str = typer.Option(
-        None, "--keywords", "-k", help="Only run tests that contain keywords (comma sep)"
+        None,
+        "--keywords",
+        "-k",
+        help="Only run tests that contain keywords (comma sep)",
     ),
     clean: bool = typer.Option(
-        False, "--clean", "-c", help="Discard the existing testdir and make a clean copy"
+        False,
+        "--clean",
+        "-c",
+        help="Discard the existing testdir and make a clean copy",
     ),
-    cont: bool = typer.Option(False, "--cont", help="Continue the (single) matching testdir"),
+    cont: bool = typer.Option(
+        False, "--cont", help="Continue the (single) matching testdir"
+    ),
     make_new: bool = typer.Option(False, "--new", help="Make a new dated testdir"),
-    no_unit_tests: bool = typer.Option(False, "--no-unit-tests", help="Do not run unit tests"),
+    no_unit_tests: bool = typer.Option(
+        False, "--no-unit-tests", help="Do not run unit tests"
+    ),
     no_aider: bool = typer.Option(False, "--no-aider", help="Do not run aider"),
     verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
     stats_only: bool = typer.Option(
-        False, "--stats", "-s", help="Do not run tests, just collect stats on completed tests"
+        False,
+        "--stats",
+        "-s",
+        help="Do not run tests, just collect stats on completed tests",
     ),
     stats_languages: str = typer.Option(
         None,
         "--stats-languages",
         help="Only include stats for specific languages (comma separated)",
     ),
-    diffs_only: bool = typer.Option(False, "--diffs", help="Just diff the provided stats dirs"),
-    tries: int = typer.Option(2, "--tries", "-r", help="Number of tries for running tests"),
-    threads: int = typer.Option(1, "--threads", "-t", help="Number of threads to run in parallel"),
-    num_tests: int = typer.Option(-1, "--num-tests", "-n", help="Number of tests to run"),
+    diffs_only: bool = typer.Option(
+        False, "--diffs", help="Just diff the provided stats dirs"
+    ),
+    tries: int = typer.Option(
+        2, "--tries", "-r", help="Number of tries for running tests"
+    ),
+    threads: int = typer.Option(
+        1, "--threads", "-t", help="Number of threads to run in parallel"
+    ),
+    num_tests: int = typer.Option(
+        -1, "--num-tests", "-n", help="Number of tests to run"
+    ),
     num_ctx: Optional[int] = typer.Option(
         None, "--num-ctx", help="Override model context window size"
     ),
@@ -207,7 +233,9 @@ def main(
         None, "--read-model-settings", help="Load aider model settings from YAML file"
     ),
     reasoning_effort: Optional[str] = typer.Option(
-        None, "--reasoning-effort", help="Set reasoning effort for models that support it"
+        None,
+        "--reasoning-effort",
+        help="Set reasoning effort for models that support it",
     ),
     thinking_tokens: Optional[int] = typer.Option(
         None, "--thinking-tokens", help="Set thinking tokens for models that support it"
@@ -216,10 +244,13 @@ def main(
         EXERCISES_DIR_DEFAULT, "--exercises-dir", help="Directory with exercise files"
     ),
 ):
-    repo = git.Repo(search_parent_directories=True)
-    commit_hash = repo.head.object.hexsha[:7]
-    if repo.is_dirty():
-        commit_hash += "-dirty"
+    try:
+        repo = git.Repo(search_parent_directories=True)
+        commit_hash = repo.head.object.hexsha[:7]
+        if repo.is_dirty():
+            commit_hash += "-dirty"
+    except BaseException:
+        commit_hash = "no-git"
 
     if stats_only and not dirnames:
         latest_dir = find_latest_benchmark_dir()
@@ -250,7 +281,9 @@ def main(
     dirname = updated_dirnames[0]
 
     if "AIDER_DOCKER" not in os.environ:
-        print("Warning: benchmarking runs unvetted code from GPT, run in a docker container")
+        print(
+            "Warning: benchmarking runs unvetted code from GPT, run in a docker container"
+        )
         return
 
     assert BENCHMARK_DNAME.exists() and BENCHMARK_DNAME.is_dir(), BENCHMARK_DNAME
@@ -294,7 +327,10 @@ def main(
         dir_files = set(fn.name for fn in dirname.glob("*"))
         original_files = set(fn.name for fn in original_dname.glob("*"))
         if dir_files != original_files:
-            print("ERROR: will not delete dir that does not look like original tests", dirname)
+            print(
+                "ERROR: will not delete dir that does not look like original tests",
+                dirname,
+            )
             return
 
         dest = dirname.parent / "OLD" / dirname.name
@@ -320,7 +356,9 @@ def main(
 
     test_dnames = sorted(str(d.relative_to(original_dname)) for d in exercise_dirs)
 
-    resource_metadata = importlib_resources.files("aider.resources").joinpath("model-metadata.json")
+    resource_metadata = importlib_resources.files("aider.resources").joinpath(
+        "model-metadata.json"
+    )
     model_metadata_files_loaded = models.register_litellm_models([resource_metadata])
     dump(model_metadata_files_loaded)
 
@@ -338,7 +376,9 @@ def main(
 
     if keywords:
         keywords = keywords.split(",")
-        test_dnames = [dn for dn in test_dnames for keyword in keywords if keyword in dn]
+        test_dnames = [
+            dn for dn in test_dnames for keyword in keywords if keyword in dn
+        ]
 
     random.shuffle(test_dnames)
     if num_tests > 0:
@@ -450,7 +490,9 @@ def load_results(dirname, stats_languages=None):
 
     if stats_languages:
         languages = [lang.strip().lower() for lang in stats_languages.split(",")]
-        glob_patterns = [f"{lang}/exercises/practice/*/.aider.results.json" for lang in languages]
+        glob_patterns = [
+            f"{lang}/exercises/practice/*/.aider.results.json" for lang in languages
+        ]
     else:
         glob_patterns = ["*/exercises/practice/*/.aider.results.json"]
 
@@ -472,7 +514,9 @@ def summarize_results(dirname, stats_languages=None):
     res.total_tests = len(list(Path(dirname).glob("*/exercises/practice/*")))
 
     try:
-        tries = max(len(results.get("tests_outcomes", [])) for results in all_results if results)
+        tries = max(
+            len(results.get("tests_outcomes", [])) for results in all_results if results
+        )
     except ValueError:
         tries = 0
 
@@ -531,7 +575,9 @@ def summarize_results(dirname, stats_languages=None):
         res.reasoning_effort = results.get("reasoning_effort")
         res.thinking_tokens = results.get("thinking_tokens")
 
-        for key in "model edit_format commit_hash editor_model editor_edit_format".split():
+        for (
+            key
+        ) in "model edit_format commit_hash editor_model editor_edit_format".split():
             val = results.get(key)
             if val:
                 variants[key].add(val)
@@ -637,11 +683,13 @@ def get_versions(commit_hashes):
         hsh = hsh.split("-")[0]
         try:
             version = subprocess.check_output(
-                ["git", "show", f"{hsh}:aider/__init__.py"], universal_newlines=True
+                ["git", "show", f"{hsh}:aider/__init__.py"],
+                universal_newlines=True,
+                stderr=subprocess.DEVNULL,
             )
             version = re.search(r'__version__ = "(.*)"', version).group(1)
             versions.add(version)
-        except subprocess.CalledProcessError:
+        except Exception:
             pass
     return versions
 
@@ -659,7 +707,11 @@ def get_replayed_content(replay_dname, test_dname):
     return res
 
     res = res.splitlines(keepends=True)
-    res = [line for line in res if not line.startswith("> ") and not line.startswith("#### ")]
+    res = [
+        line
+        for line in res
+        if not line.startswith("> ") and not line.startswith("#### ")
+    ]
     return "".join(res)
 
 
@@ -898,7 +950,9 @@ def run_test_real(
         errors = errors.splitlines()
 
         syntax_errors += sum(1 for line in errors if line.startswith("SyntaxError"))
-        indentation_errors += sum(1 for line in errors if line.startswith("IndentationError"))
+        indentation_errors += sum(
+            1 for line in errors if line.startswith("IndentationError")
+        )
 
         print(errors[-1])
         errors = "\n".join(errors)
@@ -969,7 +1023,9 @@ def run_test_real(
     )
 
     if edit_format == "architect":
-        results["editor_model"] = main_model.editor_model.name if main_model.editor_model else None
+        results["editor_model"] = (
+            main_model.editor_model.name if main_model.editor_model else None
+        )
         results["editor_edit_format"] = main_model.editor_edit_format
     dump(results)
 
@@ -1002,7 +1058,9 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
             break
 
     if not command:
-        raise ValueError(f"No test command found for files with extensions: {extensions}")
+        raise ValueError(
+            f"No test command found for files with extensions: {extensions}"
+        )
 
     # Copy test files from original directory
     for file_path in test_files:
@@ -1024,6 +1082,10 @@ def run_unit_tests(original_dname, testdir, history_fname, test_files):
 
     print(" ".join(command))
 
+    if command and command[0].startswith("./"):
+        gradlew_path = os.path.join(testdir, command[0].lstrip("./"))
+        if os.path.exists(gradlew_path):
+            os.chmod(gradlew_path, 0o755)
     result = subprocess.run(
         command,
         stdout=subprocess.PIPE,
