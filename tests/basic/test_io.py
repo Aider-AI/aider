@@ -383,6 +383,23 @@ class TestInputOutputMultilineMode(unittest.TestCase):
             # The invalid Unicode should be replaced with '?'
             self.assertEqual(converted_message, "Hello ?World")
 
+    def test_tool_output_unicode_fallback(self):
+        """Test that tool_output falls back to ASCII-safe output on encoding errors"""
+        io = InputOutput(pretty=False, fancy_input=False)
+
+        with patch.object(io.console, "print") as mock_print:
+            mock_print.side_effect = [
+                UnicodeEncodeError("cp1251", "⋮ repo map line", 0, 1, "invalid"),
+                None,
+            ]
+
+            io.tool_output("⋮ repo map line")
+
+            self.assertEqual(mock_print.call_count, 2)
+            args, kwargs = mock_print.call_args
+            converted_message = args[0]
+            self.assertEqual(converted_message, "? repo map line")
+
     def test_multiline_mode_restored_after_interrupt(self):
         """Test that multiline mode is restored after KeyboardInterrupt"""
         io = InputOutput(fancy_input=True)

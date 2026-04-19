@@ -1009,7 +1009,15 @@ class InputOutput:
             style["reverse"] = bold
 
         style = RichStyle(**style)
-        self.console.print(*messages, style=style)
+        try:
+            self.console.print(*messages, style=style)
+        except UnicodeEncodeError:
+            safe_messages = []
+            for message in messages:
+                if isinstance(message, Text):
+                    message = message.plain
+                safe_messages.append(str(message).encode("ascii", errors="replace").decode("ascii"))
+            self.console.print(*safe_messages, style=style)
 
     def get_assistant_mdstream(self):
         mdargs = dict(
