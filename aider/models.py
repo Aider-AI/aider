@@ -517,6 +517,7 @@ class Model(ModelSettings):
         if "sonnet-4-" in model or "opus-4-" in model or "haiku-4-" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
+            self.use_temperature = False
             self.examples_as_sys_msg = False
             if "thinking_tokens" not in self.accepts_settings:
                 self.accepts_settings.append("thinking_tokens")

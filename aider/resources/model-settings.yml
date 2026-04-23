@@ -1878,6 +1878,7 @@
   cache_control: true
   editor_model_name: claude-sonnet-4-6
   editor_edit_format: editor-diff
+  use_temperature: false
   accepts_settings: ["thinking_tokens"]
   overeager: true
 
