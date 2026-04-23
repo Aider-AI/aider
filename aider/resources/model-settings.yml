@@ -1879,7 +1879,6 @@
   editor_model_name: claude-sonnet-4-6
   editor_edit_format: editor-diff
   use_temperature: false
-  accepts_settings: ["thinking_tokens"]
   overeager: true
 
 - name: claude-opus-4-6
@@ -1950,6 +1949,19 @@
   accepts_settings: ["thinking_tokens"]
   overeager: true
 
+- name: bedrock/anthropic.claude-opus-4-7-v1
+  edit_format: diff
+  weak_model_name: bedrock/anthropic.claude-haiku-4-5-20251001-v1:0
+  use_repo_map: true
+  examples_as_sys_msg: false
+  extra_params:
+    max_tokens: 128000
+  cache_control: true
+  editor_model_name: bedrock/global.anthropic.claude-sonnet-4-5-20250929-v1:0
+  editor_edit_format: editor-diff
+  use_temperature: false
+  overeager: true
+
 - name: bedrock/anthropic.claude-sonnet-4-5-20250929-v1:0
   edit_format: diff
   weak_model_name: bedrock/anthropic.claude-haiku-4-5-20251001-v1:0
@@ -1982,6 +1994,19 @@
   editor_model_name: vertex_ai/claude-sonnet-4-5@20250929
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
+  overeager: true
+
+- name: vertex_ai/claude-opus-4-7
+  edit_format: diff
+  weak_model_name: vertex_ai/claude-haiku-4-5@20251001
+  use_repo_map: true
+  examples_as_sys_msg: false
+  extra_params:
+    max_tokens: 128000
+  cache_control: true
+  editor_model_name: vertex_ai/claude-sonnet-4-5@20250929
+  editor_edit_format: editor-diff
+  use_temperature: false
   overeager: true
 
 - name: vertex_ai/claude-sonnet-4-5@20250929
@@ -2099,6 +2124,19 @@
   editor_model_name: openrouter/anthropic/claude-sonnet-4-5
   editor_edit_format: editor-diff
   accepts_settings: ["thinking_tokens"]
+  overeager: true
+
+- name: openrouter/anthropic/claude-opus-4.7
+  edit_format: diff
+  weak_model_name: openrouter/anthropic/claude-haiku-4-5
+  use_repo_map: true
+  examples_as_sys_msg: false
+  extra_params:
+    max_tokens: 128000
+  cache_control: true
+  editor_model_name: openrouter/anthropic/claude-sonnet-4-5
+  editor_edit_format: editor-diff
+  use_temperature: false
   overeager: true
 
 

@@ -415,7 +415,11 @@ class Model(ModelSettings):
         if self.name.startswith("openrouter/"):
             if self.accepts_settings is None:
                 self.accepts_settings = []
-            if "thinking_tokens" not in self.accepts_settings:
+            if (
+                "thinking_tokens" not in self.accepts_settings
+                and "claude-opus-4.7" not in self.name
+                and "claude-opus-4-7" not in self.name
+            ):
                 self.accepts_settings.append("thinking_tokens")
             if "reasoning_effort" not in self.accepts_settings:
                 self.accepts_settings.append("reasoning_effort")
