@@ -524,7 +524,11 @@ class Model(ModelSettings):
             self.examples_as_sys_msg = False
             if "opus-4-" in model:
                 self.use_temperature = False
-            if "thinking_tokens" not in self.accepts_settings and "4.7" not in model and "4-7" not in model:
+            if (
+                "thinking_tokens" not in self.accepts_settings
+                and "4.7" not in model
+                and "4-7" not in model
+            ):
                 self.accepts_settings.append("thinking_tokens")
             return  # <--
 
