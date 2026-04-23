@@ -75,8 +75,10 @@ claude-3-5-sonnet-20241022
 claude-sonnet-4-20250514
 claude-opus-4-20250514
 claude-opus-4-6
+claude-opus-4-7
 claude-sonnet-4-5
 claude-sonnet-4-5-20250929
+claude-sonnet-4-6
 claude-haiku-4-5
 claude-haiku-4-5-20251001
 """
@@ -513,12 +515,9 @@ class Model(ModelSettings):
             return  # <--
 
         if (
-            "sonnet-4-5" in model
-            or "opus-4-6" in model
-            or "haiku-4-5" in model
-            or "claude-sonnet-4-5" in model
-            or "claude-opus-4-6" in model
-            or "claude-haiku-4-5" in model
+            "sonnet-4-" in model
+            or "opus-4-" in model
+            or "haiku-4-" in model
         ):
             self.edit_format = "diff"
             self.use_repo_map = True
