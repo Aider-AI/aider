@@ -1,131 +1,3 @@
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754236}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754236}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754236}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754236}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754236}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754237}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "model warning", "properties": {"main_model": "None", "weak_model": "None", "editor_model": "None"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "exit", "properties": {"reason": "Unknown edit format"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754754238}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754755056}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754755056}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754755056}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "gemini/gemini-2.5-pro", "edit_format": "diff-fenced"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754755056}
-{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754755058}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761389}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761389}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761389}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761389}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-flash-lite-preview-06-17", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "gemini/gemini-2.5-flash-lite-preview-06-17", "edit_format": "diff-fenced", "prompt_tokens": 11364, "completion_tokens": 7, "total_tokens": 11371, "cost": 0.00011644, "total_cost": 0.00011644}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761392}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761392}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761396}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761397}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761397}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761397}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-flash-lite", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "gemini/gemini-2.5-flash-lite", "edit_format": "whole", "prompt_tokens": 7744, "completion_tokens": 10, "total_tokens": 7754, "cost": 0.0007784, "total_cost": 0.0007784}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761399}
-{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761399}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761448}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761448}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761448}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-flash-lite", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "gemini/gemini-2.5-flash-lite", "edit_format": "whole"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761449}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761451}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-flash-lite", "weak_model": "gemini/gemini-2.5-flash", "editor_model": "gemini/gemini-2.5-flash-lite", "edit_format": "whole", "prompt_tokens": 7706, "completion_tokens": 10, "total_tokens": 7716, "cost": 0.0007746, "total_cost": 0.0007746}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761452}
-{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761453}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761465}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761465}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761465}
-{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754761467}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754930718}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754930719}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754930719}
-{"event": "exit", "properties": {"reason": "Completed lint/test/commit"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754930720}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933180}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933180}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933180}
-{"event": "cli session", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gemini/gemini-2.5-pro", "edit_format": "diff-fenced"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933180}
-{"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933182}
-{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933186}
-{"event": "repo", "properties": {"num_files": 630}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933186}
-{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933186}
-{"event": "cli session", "properties": {"main_model": "gpt-5", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933186}
-{"event": "command_ask", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933194}
-{"event": "command_edit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933195}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933238}
-{"event": "message_send", "properties": {"main_model": "gpt-5", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 9039, "completion_tokens": 480, "total_tokens": 9519, "cost": 0.016098750000000002, "total_cost": 0.016098750000000002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933277}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933429}
-{"event": "message_send", "properties": {"main_model": "gpt-5", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 10555, "completion_tokens": 614, "total_tokens": 11169, "cost": 0.01933375, "total_cost": 0.035432500000000006}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933466}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933484}
-{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933511}
-{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933518}
-{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933520}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933531}
-{"event": "message_send", "properties": {"main_model": "gpt-5", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 11213, "completion_tokens": 402, "total_tokens": 11615, "cost": 0.01803625, "total_cost": 0.05346875000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754933553}
-{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754934338}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754934346}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 10367, "completion_tokens": 152, "total_tokens": 10519, "cost": 0.014478750000000002, "total_cost": 0.06794750000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754934374}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935784}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 14048, "completion_tokens": 99, "total_tokens": 14147, "cost": 0.018550000000000004, "total_cost": 0.0864975}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935804}
-{"event": "command_add", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935822}
-{"event": "command_paste", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935845}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935845}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 14345, "completion_tokens": 191, "total_tokens": 14536, "cost": 0.019841250000000005, "total_cost": 0.10633875000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935865}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935868}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 16341, "completion_tokens": 329, "total_tokens": 16670, "cost": 0.02371625, "total_cost": 0.130055}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935893}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935909}
-{"event": "command_edit", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935947}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754935985}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 13105, "completion_tokens": 305, "total_tokens": 13410, "cost": 0.01943125, "total_cost": 0.14948625000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754936015}
-{"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754936019}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754936019}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "diff-fenced", "prompt_tokens": 15838, "completion_tokens": 219, "total_tokens": 16057, "cost": 0.021987500000000004, "total_cost": 0.17147375}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754936041}
-{"event": "command_paste", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938389}
-{"event": "command_paste", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938401}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938425}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 15599, "completion_tokens": 419, "total_tokens": 16018, "cost": 0.02368875, "total_cost": 0.19516250000000002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938476}
-{"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938512}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938512}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "diff-fenced", "prompt_tokens": 16555, "completion_tokens": 442, "total_tokens": 16997, "cost": 0.02511375, "total_cost": 0.22027625}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938570}
-{"event": "command_paste", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938670}
-{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938672}
-{"event": "message_send", "properties": {"main_model": "gemini/gemini-2.5-pro", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 15547, "completion_tokens": 236, "total_tokens": 15783, "cost": 0.021793750000000004, "total_cost": 0.24207}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938709}
-{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938928}
-{"event": "command_model", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938931}
-{"event": "command_reasoning-effort", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938934}
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938947}
 {"event": "message_send", "properties": {"main_model": "gpt-5", "weak_model": "gemini/gemini-2.5-flash-lite", "editor_model": "gpt-5", "edit_format": "ask", "prompt_tokens": 13076, "completion_tokens": 242, "total_tokens": 13318, "cost": 0.018765000000000004, "total_cost": 0.26083500000000004}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754938998}
 {"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1754939180}
@@ -998,3 +870,131 @@
 {"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1775711332}
 {"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "diff", "prompt_tokens": 33369, "completion_tokens": 124, "total_tokens": 33493, "cost": 0.08528250000000001, "total_cost": 0.167225}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1775711352}
 {"event": "exit", "properties": {"reason": "Completed main CLI coder.run"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1775711383}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952176}
+{"event": "repo", "properties": {"num_files": 638}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952177}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952177}
+{"event": "cli session", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "diff"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952177}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952201}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "ask", "prompt_tokens": 31030, "completion_tokens": 646, "total_tokens": 31676, "cost": 0.08726500000000001, "total_cost": 0.08726500000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952248}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952265}
+{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952294}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952304}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "ask", "prompt_tokens": 41222, "completion_tokens": 810, "total_tokens": 42032, "cost": 0.115205, "total_cost": 0.20247}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952362}
+{"event": "command_ok", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952678}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952678}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "diff", "prompt_tokens": 44451, "completion_tokens": 636, "total_tokens": 45087, "cost": 0.12066750000000001, "total_cost": 0.3231375}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952742}
+{"event": "command_code", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952901}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952901}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "diff", "prompt_tokens": 45275, "completion_tokens": 108, "total_tokens": 45383, "cost": 0.1148075, "total_cost": 0.43794500000000003}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952908}
+{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952942}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952945}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "ask", "prompt_tokens": 42376, "completion_tokens": 659, "total_tokens": 43035, "cost": 0.11582500000000001, "total_cost": 0.5537700000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776952998}
+{"event": "command_ok", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953019}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953019}
+{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953049}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953057}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "ask", "prompt_tokens": 42393, "completion_tokens": 589, "total_tokens": 42982, "cost": 0.1148175, "total_cost": 0.6685875000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953110}
+{"event": "command_ok", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953237}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953237}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "diff", "prompt_tokens": 44392, "completion_tokens": 422, "total_tokens": 44814, "cost": 0.11731000000000001, "total_cost": 0.7858975000000001}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953250}
+{"event": "command_clear", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953359}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953370}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "ask", "prompt_tokens": 41178, "completion_tokens": 639, "total_tokens": 41817, "cost": 0.11253, "total_cost": 0.8984275000000002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953425}
+{"event": "command_ok", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953460}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953460}
+{"event": "message_send", "properties": {"main_model": "gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "gpt-5.4", "edit_format": "diff", "prompt_tokens": 44511, "completion_tokens": 1811, "total_tokens": 46322, "cost": 0.13844250000000002, "total_cost": 1.0368700000000002}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776953535}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776970988}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776970989}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776970989}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776970989}
+{"event": "message_send", "properties": {"main_model": "openai/gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "openai/gpt-5.4", "edit_format": "ask", "prompt_tokens": 82, "completion_tokens": 10, "total_tokens": 92, "cost": 0.00035500000000000006, "total_cost": 0.00035500000000000006}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776970990}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776970990}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971000}
+{"event": "model warning", "properties": {"main_model": "openai/REDACTED", "weak_model": "gpt-5.4-nano", "editor_model": "openai/REDACTED"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971001}
+{"event": "exit", "properties": {"reason": "Keyboard interrupt during model warnings"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971005}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971009}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971010}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971010}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971010}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971010}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971189}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971190}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971190}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971190}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971191}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971338}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971338}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971338}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971338}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971339}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971344}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971345}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971345}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971345}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971346}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971348}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971348}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971348}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971348}
+{"event": "message_send", "properties": {"main_model": "openai/gpt-5.4", "weak_model": "gpt-5.4-nano", "editor_model": "openai/gpt-5.4", "edit_format": "ask", "prompt_tokens": 82, "completion_tokens": 12, "total_tokens": 94, "cost": 0.00038500000000000003, "total_cost": 0.00038500000000000003}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971349}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971349}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971353}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971353}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971353}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971353}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971354}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971740}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971741}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971741}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971741}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971741}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971783}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971783}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971783}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971783}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776971784}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972085}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972086}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972086}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972086}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972086}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972363}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972364}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972364}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972364}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972365}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972450}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972451}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972451}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972451}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972451}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972835}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972835}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972835}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972835}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776972837}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973161}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973161}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973161}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973161}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973162}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973626}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973626}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973626}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973626}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973628}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973896}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973896}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973896}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973896}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776973897}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975145}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975146}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975146}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975146}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975147}
+{"event": "launched", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975294}
+{"event": "no-repo", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975295}
+{"event": "auto_commits", "properties": {"enabled": true}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975295}
+{"event": "message_send_starting", "properties": {}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975295}
+{"event": "exit", "properties": {"reason": "Completed --message"}, "user_id": "c42c4e6b-f054-44d7-ae1f-6726cc41da88", "time": 1776975296}

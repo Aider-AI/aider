@@ -264,18 +264,17 @@ tr:hover { background-color: #f5f5f5; }
 </style>
 <table>
 <tr><th>Model Name</th><th class='right'>Total Tokens</th><th class='right'>Percent</th></tr>
-<tr><td>openai/gpt-5.2</td><td class='right'>982,120</td><td class='right'>45.8%</td></tr>
-<tr><td>gemini/gemini-3-flash-preview</td><td class='right'>241,516</td><td class='right'>11.3%</td></tr>
-<tr><td>gemini/gemini-2.5-pro</td><td class='right'>222,047</td><td class='right'>10.4%</td></tr>
-<tr><td>gpt-5</td><td class='right'>209,977</td><td class='right'>9.8%</td></tr>
-<tr><td>gpt-5.2-codex</td><td class='right'>166,945</td><td class='right'>7.8%</td></tr>
-<tr><td>gpt-5.2</td><td class='right'>87,029</td><td class='right'>4.1%</td></tr>
-<tr><td>gemini/gemini-3-pro-preview</td><td class='right'>81,851</td><td class='right'>3.8%</td></tr>
-<tr><td>gpt-5.3-codex</td><td class='right'>64,402</td><td class='right'>3.0%</td></tr>
-<tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>1.7%</td></tr>
-<tr><td>gpt-5.4</td><td class='right'>24,026</td><td class='right'>1.1%</td></tr>
-<tr><td>gemini/gemini-2.5-flash-lite</td><td class='right'>15,470</td><td class='right'>0.7%</td></tr>
-<tr><td>gemini/gemini-2.5-flash-lite-preview-06-17</td><td class='right'>11,371</td><td class='right'>0.5%</td></tr>
+<tr><td>openai/gpt-5.2</td><td class='right'>982,120</td><td class='right'>40.5%</td></tr>
+<tr><td>gpt-5.4</td><td class='right'>493,061</td><td class='right'>20.3%</td></tr>
+<tr><td>gemini/gemini-3-flash-preview</td><td class='right'>241,516</td><td class='right'>10.0%</td></tr>
+<tr><td>gpt-5</td><td class='right'>177,674</td><td class='right'>7.3%</td></tr>
+<tr><td>gpt-5.2-codex</td><td class='right'>166,945</td><td class='right'>6.9%</td></tr>
+<tr><td>gpt-5.2</td><td class='right'>93,248</td><td class='right'>3.8%</td></tr>
+<tr><td>gemini/gemini-2.5-pro</td><td class='right'>87,910</td><td class='right'>3.6%</td></tr>
+<tr><td>gemini/gemini-3-pro-preview</td><td class='right'>81,851</td><td class='right'>3.4%</td></tr>
+<tr><td>gpt-5.3-codex</td><td class='right'>64,402</td><td class='right'>2.7%</td></tr>
+<tr><td>o3-pro</td><td class='right'>36,620</td><td class='right'>1.5%</td></tr>
+<tr><td>openai/gpt-5.4</td><td class='right'>186</td><td class='right'>0.0%</td></tr>
 </table>
 <!--[[[end]]]-->
 

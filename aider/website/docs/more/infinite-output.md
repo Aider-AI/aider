@@ -81,8 +81,12 @@ cog.out(model_list)
 - azure_ai/deepseek-v3.2
 - azure_ai/deepseek-v3.2-speciale
 - azure_ai/mistral-medium-2505
+- bedrock/us-gov-east-1/anthropic.claude-haiku-4-5-20251001-v1:0
+- bedrock/us-gov-east-1/anthropic.claude-sonnet-4-5-20250929-v1:0
 - bedrock/us-gov-east-1/claude-sonnet-4-5-20250929-v1:0
 - bedrock/us-gov-west-1/anthropic.claude-3-7-sonnet-20250219-v1:0
+- bedrock/us-gov-west-1/anthropic.claude-haiku-4-5-20251001-v1:0
+- bedrock/us-gov-west-1/anthropic.claude-sonnet-4-5-20250929-v1:0
 - bedrock/us-gov-west-1/claude-sonnet-4-5-20250929-v1:0
 - bedrock/us.anthropic.claude-3-5-haiku-20241022-v1:0
 - claude-3-7-sonnet-20250219
@@ -200,6 +204,7 @@ cog.out(model_list)
 - openrouter/deepseek/deepseek-v3.2
 - openrouter/deepseek/deepseek-v3.2-exp
 - openrouter/z-ai/glm-4.7
+- us-gov.anthropic.claude-sonnet-4-5-20250929-v1:0
 - us.anthropic.claude-3-5-haiku-20241022-v1:0
 - us.anthropic.claude-3-5-sonnet-20241022-v2:0
 - us.anthropic.claude-3-7-sonnet-20250219-v1:0
@@ -231,6 +236,7 @@ cog.out(model_list)
 - vertex_ai/claude-3-opus@20240229
 - vertex_ai/claude-3-sonnet
 - vertex_ai/claude-3-sonnet@20240229
+- vertex_ai/claude-haiku-4-5
 - vertex_ai/claude-haiku-4-5@20251001
 - vertex_ai/claude-opus-4
 - vertex_ai/claude-opus-4-1
