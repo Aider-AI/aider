@@ -514,11 +514,7 @@ class Model(ModelSettings):
             self.reminder = "sys"
             return  # <--
 
-        if (
-            "sonnet-4-" in model
-            or "opus-4-" in model
-            or "haiku-4-" in model
-        ):
+        if "sonnet-4-" in model or "opus-4-" in model or "haiku-4-" in model:
             self.edit_format = "diff"
             self.use_repo_map = True
             self.examples_as_sys_msg = False
