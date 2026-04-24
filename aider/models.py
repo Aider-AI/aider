@@ -1013,13 +1013,19 @@ class Model(ModelSettings):
             dump(kwargs)
         kwargs["messages"] = messages
 
+        # Set User-Agent header for all API calls
+        if "extra_headers" not in kwargs:
+            kwargs["extra_headers"] = {}
+
+        # Add User-Agent if not already present
+        if "User-Agent" not in kwargs["extra_headers"]:
+            kwargs["extra_headers"]["User-Agent"] = f"aider/{__version__}"
+
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ:
-            if "extra_headers" not in kwargs:
-                kwargs["extra_headers"] = {
-                    "Editor-Version": f"aider/{__version__}",
-                    "Copilot-Integration-Id": "vscode-chat",
-                }
+            # Add GitHub Copilot specific headers
+            kwargs["extra_headers"]["Editor-Version"] = f"aider/{__version__}"
+            kwargs["extra_headers"]["Copilot-Integration-Id"] = "vscode-chat"
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
 
