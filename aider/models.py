@@ -52,6 +52,9 @@ gpt-4-vision-preview
 gpt-4-1106-vision-preview
 gpt-4o-mini
 gpt-4o-mini-2024-07-18
+gpt-5.5
+gpt-5.5-pro
+gpt-5.5-chat-latest
 gpt-3.5-turbo
 gpt-3.5-turbo-0301
 gpt-3.5-turbo-0613
