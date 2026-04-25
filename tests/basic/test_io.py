@@ -383,6 +383,32 @@ class TestInputOutputMultilineMode(unittest.TestCase):
             # The invalid Unicode should be replaced with '?'
             self.assertEqual(converted_message, "Hello ?World")
 
+    def test_tool_output_unicode_fallback(self):
+        """tool_output must not crash on Unicode that the terminal can't encode.
+
+        Regression guard for issue #5029 — /map output on Windows cp1251 raised
+        UnicodeEncodeError on the vertical-ellipsis char (U+22EE) used by Rich
+        for tree/box drawing.
+        """
+        io = InputOutput(pretty=False, fancy_input=False)
+
+        with patch.object(io.console, "print") as mock_print:
+            # First call raises (cp1251 can't encode U+22EE), second call succeeds.
+            mock_print.side_effect = [
+                UnicodeEncodeError("charmap", "", 0, 1, "undefined"),
+                None,
+            ]
+            # U+22EE is the character that crashed the legacy-Windows renderer in #5029.
+            io.tool_output("Repo map:\n\u22ee line 1\n\u22ee line 2")
+
+            # The fallback must be invoked.
+            self.assertEqual(mock_print.call_count, 2)
+            # The retry should send plain-ASCII content (U+22EE → '?').
+            args, _ = mock_print.call_args
+            joined = " ".join(str(a) for a in args)
+            self.assertNotIn("\u22ee", joined)
+            self.assertIn("?", joined)
+
     def test_multiline_mode_restored_after_interrupt(self):
         """Test that multiline mode is restored after KeyboardInterrupt"""
         io = InputOutput(fancy_input=True)
