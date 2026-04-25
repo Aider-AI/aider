@@ -16,12 +16,12 @@ Then configure your API keys and endpoint:
 ```
 # Mac/Linux:                                           
 export AZURE_API_KEY=<key>
-export AZURE_API_VERSION=2024-12-01-preview
+export AZURE_API_VERSION=2025-03-01-preview
 export AZURE_API_BASE=https://myendpt.openai.azure.com
 
 # Windows
 setx AZURE_API_KEY <key>
-setx AZURE_API_VERSION 2024-12-01-preview
+setx AZURE_API_VERSION 2025-03-01-preview
 setx AZURE_API_BASE https://myendpt.openai.azure.com
 # ... restart your shell after setx commands
 ```
