@@ -2,7 +2,7 @@ FROM python:3.12-slim-bookworm AS base
 
 # Install system dependencies
 RUN apt-get update && \
-    apt-get install --no-install-recommends -y build-essential git libportaudio2 pandoc && \
+    apt-get install --no-install-recommends -y build-essential git libportaudio2 openssh-client pandoc && \
     rm -rf /var/lib/apt/lists/*
 
 # Create app user with UID 1000
