@@ -672,6 +672,11 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="GUI session ended")
         return
 
+    if args.acp and not return_coder:
+        from aider.acp_adapter.entry import launch_acp
+        launch_acp(args)
+        return
+
     if args.verbose:
         for fname in loaded_dotenvs:
             io.tool_output(f"Loaded {fname}")
