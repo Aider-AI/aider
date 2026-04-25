@@ -19,6 +19,7 @@ from PIL import Image
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.llmapi import LLMApiModelManager
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
@@ -169,10 +170,15 @@ class ModelInfoManager:
         # Manager for the cached OpenRouter model database
         self.openrouter_manager = OpenRouterModelManager()
 
+        # Manager for the cached LLM API model database
+        self.llmapi_manager = LLMApiModelManager()
+
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
         if hasattr(self, "openrouter_manager"):
             self.openrouter_manager.set_verify_ssl(verify_ssl)
+        if hasattr(self, "llmapi_manager"):
+            self.llmapi_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -263,6 +269,11 @@ class ModelInfoManager:
             openrouter_info = self.fetch_openrouter_model_info(model)
             if openrouter_info:
                 return openrouter_info
+
+        if not cached_info and model.startswith("llmapi/"):
+            llmapi_info = self.llmapi_manager.get_model_info(model)
+            if llmapi_info:
+                return llmapi_info
 
         return cached_info
 
@@ -721,6 +732,7 @@ class Model(ModelSettings):
             anthropic="ANTHROPIC_API_KEY",
             groq="GROQ_API_KEY",
             fireworks_ai="FIREWORKS_API_KEY",
+            llmapi="LLMAPI_API_KEY",
         )
         var = None
         if model in OPENAI_MODELS:
@@ -1016,6 +1028,16 @@ class Model(ModelSettings):
             dump(kwargs)
         kwargs["messages"] = messages
 
+        # For llmapi, translate prefix and route through OpenAI-compatible endpoint
+        if self.name.startswith("llmapi/"):
+            kwargs["model"] = "openai/" + self.name[len("llmapi/") :]
+            kwargs["api_base"] = "https://api.llmapi.ai/v1"
+            if "LLMAPI_API_KEY" in os.environ:
+                kwargs["api_key"] = os.environ["LLMAPI_API_KEY"]
+            if "extra_headers" not in kwargs:
+                kwargs["extra_headers"] = {}
+            kwargs["extra_headers"]["x-source"] = "aider"
+
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ:
             if "extra_headers" not in kwargs:
@@ -1223,6 +1245,10 @@ def fuzzy_match_models(name):
     chat_models = set()
     model_metadata = list(litellm.model_cost.items())
     model_metadata += list(model_info_manager.local_model_metadata.items())
+
+    # Include dynamically fetched LLM API models
+    for llmapi_model in model_info_manager.llmapi_manager.get_available_models():
+        model_metadata.append((llmapi_model, {"mode": "chat", "litellm_provider": "llmapi"}))
 
     for orig_model, attrs in model_metadata:
         model = orig_model.lower()
