@@ -887,6 +887,13 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         analytics.event("exit", reason="Invalid lint command format")
         return 1
 
+    if main_model.ollama_error and args.exit:
+        io.tool_error(
+            f"Cannot connect to Ollama: {main_model.ollama_error}\n"
+            "Aborting because --exit (batch mode) was specified."
+        )
+        return 1
+
     if args.show_model_warnings:
         problem = models.sanity_check_models(io, main_model)
         if problem:
