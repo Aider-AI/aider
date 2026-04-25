@@ -1028,7 +1028,7 @@ class Coder:
         self.summarizer_thread.join()
         self.summarizer_thread = None
 
-        if self.summarizing_messages == self.done_messages:
+        if self.summarizing_messages is not None and id(self.summarizing_messages) == id(self.done_messages):
             self.done_messages = self.summarized_done_messages
         self.summarizing_messages = None
         self.summarized_done_messages = []
