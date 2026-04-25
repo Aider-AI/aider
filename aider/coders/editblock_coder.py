@@ -384,7 +384,7 @@ def do_replace(fname, content, before_text, after_text, fence=None):
 
 
 HEAD = r"^<{5,9} SEARCH>?\s*$"
-DIVIDER = r"^={5,9}\s*$"
+DIVIDER = r"^={7}\s*$"
 UPDATED = r"^>{5,9} REPLACE\s*$"
 
 HEAD_ERR = "<<<<<<< SEARCH"
