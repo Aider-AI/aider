@@ -1,6 +1,7 @@
 from .architect_coder import ArchitectCoder
 from .ask_coder import AskCoder
 from .base_coder import Coder
+from .betweenblock_coder import BetweenBlockCoder
 from .context_coder import ContextCoder
 from .editblock_coder import EditBlockCoder
 from .editblock_fenced_coder import EditBlockFencedCoder
@@ -27,6 +28,7 @@ __all__ = [
     UnifiedDiffSimpleCoder,
     #    SingleWholeFileFunctionCoder,
     ArchitectCoder,
+    BetweenBlockCoder,
     EditorEditBlockCoder,
     EditorWholeFileCoder,
     EditorDiffFencedCoder,

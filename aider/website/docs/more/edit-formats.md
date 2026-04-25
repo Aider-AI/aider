@@ -102,6 +102,36 @@ style comments.
 ```
 ````
 
+## between
+
+The "between" edit format asks the LLM to write changes for a file as a series of
+code snippets with instructions where in the file them should be applied. Then
+generated snippets are merged to specified fragments of the input file by additional
+queries to the LLM.
+
+The between edit format uses the following format of the snippets:
+````
+functions.py
+```
+@BETWEEN@ "def func1():" AND "def func3():"
+def func2():
+    print("func2")
+```
+````
+The first line of the snippet must be a special tag which defines where the snippet
+will be merged. There are two possible tags: `@BETWEEN@` - a main tag for editing 
+existing files, which defines that the code snippet should be applied to the code in 
+between of two specified lines and `@WHOLE FILE@` which is used to create new files
+or when editing existing files that will be fully rewritten.
+
+Code snippets are merged by merge model, which can be selected by `--merge-model` 
+switch. Merge model should be a usual non-thinking LLM, not fast-apply model. 
+By default, weak model is used as merge model.
+
+The "between" edit format should be used as replacement of the "diff" edit format 
+for LLMs that cannot stable write valid diffs or essentially degrade when 
+diff format is selected.
+
 ## editor-diff and editor-whole
 
 These are streamlined versions of the diff and whole formats, intended to be used

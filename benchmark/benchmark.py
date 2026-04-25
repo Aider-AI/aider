@@ -172,6 +172,7 @@ def main(
     edit_format: str = typer.Option(None, "--edit-format", "-e", help="Edit format"),
     editor_model: str = typer.Option(None, "--editor-model", help="Editor model name"),
     editor_edit_format: str = typer.Option(None, "--editor-edit-format", help="Editor edit format"),
+    merge_model: str = typer.Option(None, "--merge-model", help="Merge model name"),
     replay: str = typer.Option(
         None,
         "--replay",
@@ -366,6 +367,7 @@ def main(
                 replay,
                 editor_model,
                 editor_edit_format,
+                merge_model,
                 num_ctx,
                 sleep,
                 reasoning_effort,
@@ -392,6 +394,7 @@ def main(
                 replay,
                 editor_model,
                 editor_edit_format,
+                merge_model,
                 num_ctx,
                 sleep,
                 reasoning_effort,
@@ -689,6 +692,7 @@ def run_test_real(
     replay,
     editor_model,
     editor_edit_format,
+    merge_model,
     num_ctx=None,
     sleep=0,
     reasoning_effort: Optional[str] = None,
@@ -797,6 +801,7 @@ def run_test_real(
         weak_model=weak_model_name,
         editor_model=editor_model,
         editor_edit_format=editor_edit_format,
+        merge_model=merge_model,
         verbose=verbose,
     )
 
