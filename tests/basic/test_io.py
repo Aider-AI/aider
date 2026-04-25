@@ -474,6 +474,19 @@ class TestInputOutputMultilineMode(unittest.TestCase):
             io.tool_output("Test message")
             mock_print.assert_called_once()
 
+    def test_get_style_invalid_color_fallback(self):
+        """Test that _get_style falls back gracefully when prompt_toolkit rejects a color"""
+        from prompt_toolkit.styles import Style
+
+        io = InputOutput(pretty=True, fancy_input=False)
+        # Manually set an invalid color that would cause Style.from_dict to raise ValueError
+        io.user_input_color = "not_a_valid_color!!!"
+
+        with patch.object(io.console, "print"):
+            # Should not raise - falls back to empty style
+            style = io._get_style()
+            self.assertIsInstance(style, Style)
+
 
 @patch("aider.io.is_dumb_terminal", return_value=False)
 @patch.dict(os.environ, {"NO_COLOR": ""})
