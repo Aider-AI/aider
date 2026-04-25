@@ -1433,6 +1433,48 @@ This command will print 'Hello, World!' to the console."""
                     # (because user rejected the changes)
                     mock_editor.run.assert_not_called()
 
+    def test_architect_coder_includes_prior_assistant_messages(self):
+        """After a reflection loop (e.g. file mention), the editor should
+        receive all architect assistant messages, not just the last one."""
+        with GitTemporaryDirectory():
+            io = InputOutput(yes=True)
+            io.confirm_ask = MagicMock(return_value=True)
+
+            with patch("aider.coders.architect_coder.AskCoder.__init__", return_value=None):
+                from aider.coders.architect_coder import ArchitectCoder
+
+                coder = ArchitectCoder()
+                coder.io = io
+                coder.main_model = self.GPT35
+                coder.auto_accept_architect = True
+                coder.verbose = False
+                coder.total_cost = 0
+                coder.done_messages = []
+                coder.summarizer = MagicMock()
+                coder.summarizer.too_big.return_value = False
+
+                # Simulate a reflection loop: the original architect response
+                # with code changes is in cur_messages, and a shorter follow-up
+                # (after file was added) is the latest response.
+                original_response = "Here are the code changes:\n```\nprint('hello')\n```"
+                reflection_response = "I see the file now. Let me know if you need more."
+                coder.cur_messages = [
+                    dict(role="user", content="make changes"),
+                    dict(role="assistant", content=original_response),
+                    dict(role="user", content="I added foo.py to the chat."),
+                    dict(role="assistant", content=reflection_response),
+                ]
+
+                mock_editor = MagicMock()
+                with patch("aider.coders.architect_coder.Coder.create", return_value=mock_editor):
+                    coder.reply_completed()
+
+                    # The editor should receive BOTH assistant messages
+                    call_args = mock_editor.run.call_args
+                    editor_content = call_args[1]["with_message"]
+                    assert original_response in editor_content
+                    assert reflection_response in editor_content
+
 
 if __name__ == "__main__":
     unittest.main()
