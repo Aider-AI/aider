@@ -17,7 +17,6 @@ diff-match-patch
 pypandoc
 litellm
 flake8
-importlib_resources
 pyperclip
 posthog
 mixpanel
