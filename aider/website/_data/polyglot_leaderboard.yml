@@ -1854,3 +1854,31 @@
   versions: 0.86.2.dev
   seconds_per_case: 104.0
   total_cost: 0.8756
+
+- dirname: 2026-04-24-09-29-50--full-opus47-adaptive
+  test_cases: 225
+  model: Claude Opus 4.7 (adaptive thinking)
+  edit_format: diff
+  commit_hash: 0189cf4
+  pass_rate_1: 64.9
+  pass_rate_2: 93.3
+  pass_num_1: 146
+  pass_num_2: 210
+  percent_cases_well_formed: 100.0
+  error_outputs: 0
+  num_malformed_responses: 0
+  num_with_malformed_responses: 0
+  user_asks: 96
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 0
+  prompt_tokens: 3357354
+  completion_tokens: 528139
+  test_timeouts: 0
+  total_tests: 225
+  command: aider --model bedrock/global.anthropic.claude-opus-4-7
+  date: 2026-04-24
+  versions: 0.86.3.dev
+  seconds_per_case: 18.8
+  total_cost: 26.2738
