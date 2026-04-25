@@ -714,3 +714,10 @@ class TestRepo(unittest.TestCase):
                 system_msg_content.startswith(prefix),
                 "system_prompt_prefix should be prepended to the system prompt",
             )
+
+    def test_bare_repo_raises_file_not_found(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            bare_path = Path(tmpdir) / "bare.git"
+            git.Repo.init(str(bare_path), bare=True)
+            with self.assertRaises(FileNotFoundError):
+                GitRepo(InputOutput(), None, str(bare_path))
