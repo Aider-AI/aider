@@ -11,7 +11,11 @@ def count(msg):
 
 
 class TestChatSummary(TestCase):
-    def setUp(self):
+    mock_model: mock.Mock
+    chat_summary: ChatSummary
+
+    def __init__(self, methodName="runTest"):
+        super().__init__(methodName)
         self.mock_model = mock.Mock(spec=Model)
         self.mock_model.name = "gpt-3.5-turbo"
         self.mock_model.token_count = count
@@ -62,10 +66,10 @@ class TestChatSummary(TestCase):
 
     def test_summarize(self):
         N = 100
-        messages = [None] * (2 * N)
+        messages = []
         for i in range(N):
-            messages[2 * i] = {"role": "user", "content": f"Message {i}"}
-            messages[2 * i + 1] = {"role": "assistant", "content": f"Response {i}"}
+            messages.append({"role": "user", "content": f"Message {i}"})
+            messages.append({"role": "assistant", "content": f"Response {i}"})
 
         with mock.patch.object(
             self.chat_summary,
@@ -83,13 +87,17 @@ class TestChatSummary(TestCase):
     def test_fallback_to_second_model(self):
         mock_model1 = mock.Mock(spec=Model)
         mock_model1.name = "gpt-4"
-        mock_model1.simple_send_with_retries = mock.Mock(side_effect=Exception("Model 1 failed"))
+        mock_model1.simple_send_with_retries = mock.Mock(
+            side_effect=Exception("Model 1 failed")
+        )
         mock_model1.info = {"max_input_tokens": 4096}
         mock_model1.token_count = lambda msg: len(msg["content"].split())
 
         mock_model2 = mock.Mock(spec=Model)
         mock_model2.name = "gpt-3.5-turbo"
-        mock_model2.simple_send_with_retries = mock.Mock(return_value="Summary from Model 2")
+        mock_model2.simple_send_with_retries = mock.Mock(
+            return_value="Summary from Model 2"
+        )
         mock_model2.info = {"max_input_tokens": 4096}
         mock_model2.token_count = lambda msg: len(msg["content"].split())
 
@@ -116,5 +124,34 @@ class TestChatSummary(TestCase):
                         "I spoke to you previously about a number of things.\nSummary from Model 2"
                     ),
                 }
+            ],
+        )
+
+    def test_summarize_chat_history_markdown(self):
+        markdown = """# aider chat
+#### First question
+First answer line 1
+First answer line 2
+> quoted line to ignore
+#### /tokens
+#### Second question
+Second answer
+"""
+
+        with mock.patch.object(
+            self.chat_summary, "summarize", side_effect=lambda messages: messages
+        ):
+            messages = self.chat_summary.summarize_chat_history_markdown(markdown)
+
+        self.assertEqual(
+            messages,
+            [
+                {"role": "user", "content": "First question\n"},
+                {
+                    "role": "assistant",
+                    "content": "First answer line 1\nFirst answer line 2\n",
+                },
+                {"role": "user", "content": "Second question\n"},
+                {"role": "assistant", "content": "Second answer\n"},
             ],
         )
