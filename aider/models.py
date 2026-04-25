@@ -1014,7 +1014,7 @@ class Model(ModelSettings):
             kwargs["timeout"] = request_timeout
         if self.verbose:
             dump(kwargs)
-        kwargs["messages"] = messages
+        kwargs["messages"] = sanitize_for_utf8(messages)
 
         # Are we using github copilot?
         if "GITHUB_COPILOT_TOKEN" in os.environ:
@@ -1073,6 +1073,24 @@ class Model(ModelSettings):
                 continue
             except AttributeError:
                 return None
+
+
+def sanitize_for_utf8(obj):
+    """Replace surrogate characters that cannot be encoded as UTF-8.
+
+    On some Windows systems (e.g. Chinese locale), file content or console
+    input can contain surrogate characters that cause UnicodeEncodeError
+    when httpx tries to JSON-encode the outgoing LLM request.  This
+    recursively walks the message structure and replaces any surrogates
+    with the Unicode replacement character.
+    """
+    if isinstance(obj, str):
+        return obj.encode("utf-8", errors="replace").decode("utf-8")
+    if isinstance(obj, dict):
+        return {k: sanitize_for_utf8(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [sanitize_for_utf8(item) for item in obj]
+    return obj
 
 
 def register_models(model_settings_fnames):
