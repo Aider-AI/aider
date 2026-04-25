@@ -4,10 +4,6 @@
 # Place in your home dir, or at the root of your git repo.
 ##########################################################
 
-# Note: You can only put OpenAI and Anthropic API keys in the YAML
-# config file. Keys for all APIs can be stored in a .env file
-# https://aider.chat/docs/config/dotenv.html
-
 ##########
 # options:
 
@@ -29,6 +25,12 @@
 ## Specify the Anthropic API key
 #anthropic-api-key: xxx
 
+## Specify API key for other providers (eg: --api-key provider=<key> sets PROVIDER_API_KEY=<key>)
+# api-key:
+# - openrouter=sk-or-v1-42424242
+# - deepseek=sk-42424242
+# - ...
+
 ## Specify the api base url
 #openai-api-base: xxx
 
@@ -48,14 +50,6 @@
 #set-env: xxx
 ## Specify multiple values like this:
 #set-env:
-#  - xxx
-#  - yyy
-#  - zzz
-
-## Set an API key for a provider (eg: --api-key provider=<key> sets PROVIDER_API_KEY=<key>)
-#api-key: xxx
-## Specify multiple values like this:
-#api-key:
 #  - xxx
 #  - yyy
 #  - zzz
