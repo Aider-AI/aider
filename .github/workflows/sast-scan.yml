@@ -1,0 +1,68 @@
+name: SAST Scanning
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    # Run at 00:00 on Sunday (semi-routinely)
+    - cron: '0 0 * * 0'
+  push:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  semgrep:
+    name: Semgrep Source Code Scan
+    runs-on: ubuntu-24.04
+    container:
+      image: semgrep/semgrep:1.66.0 
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.2
+
+      - name: Run Semgrep
+        run: |
+          semgrep scan \
+            --config="p/python" \
+            --config="p/owasp-top-ten" \
+            --config="p/cwe-top-25" \
+            --config="p/security-audit" \
+            --config="p/secrets" \
+            --sarif --sarif-output=semgrep.sarif \
+            .
+        continue-on-error: true 
+
+      - name: Upload Semgrep SARIF report
+        uses: github/codeql-action/upload-sarif@v3.25.0
+        with:
+          sarif_file: semgrep.sarif
+          category: semgrep
+
+  osv-scanner:
+    name: OSV-Scanner Dependency Scan
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.2
+
+      - name: Run OSV-Scanner
+        uses: google/osv-scanner-action@v2.3.5
+        continue-on-error: true
+        with:
+
+          scan-args: |-
+            --min-severity=7.0
+            --recursive
+            ./
+
+      - name: Upload OSV-Scanner SARIF
+        uses: github/codeql-action/upload-sarif@v3.25.0
+        if: always()
+        with:
+          # The OSV action defaults to outputting "results.sarif"
+          sarif_file: results.sarif
+          category: osv-scanner
