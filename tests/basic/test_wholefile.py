@@ -160,6 +160,7 @@ Quote!
 
         # Initialize WholeFileCoder with the temporary directory
         io = InputOutput(yes=True)
+        io.confirm_ask = lambda *args, **kwargs: True
         coder = WholeFileCoder(main_model=self.GPT35, io=io)
 
         # Set the partial response content with the updated content
