@@ -52,6 +52,15 @@ class TestMain(TestCase):
         main(["foo.txt", "--yes", "--no-git", "--exit"], input=DummyInput(), output=DummyOutput())
         self.assertTrue(os.path.exists("foo.txt"))
 
+    def test_main_with_invalid_long_path_does_not_crash(self):
+        invalid_path = "a" * 300
+        result = main(
+            [invalid_path, "--yes", "--no-git", "--exit"],
+            input=DummyInput(),
+            output=DummyOutput(),
+        )
+        self.assertEqual(result, 1)
+
     @patch("aider.repo.GitRepo.get_commit_message", return_value="mock commit message")
     def test_main_with_empty_git_dir_new_file(self, _):
         make_repo()

@@ -676,11 +676,32 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         for fname in loaded_dotenvs:
             io.tool_output(f"Loaded {fname}")
 
+    def resolve_path(path_str):
+        try:
+            return Path(path_str).resolve()
+        except OSError as err:
+            io.tool_error(f"{path_str} is not a valid path: {err}")
+            analytics.event("exit", reason="Invalid path input")
+            return None
+
+    def is_dir_path(path_str):
+        try:
+            return Path(path_str).is_dir()
+        except OSError as err:
+            io.tool_error(f"{path_str} is not a valid path: {err}")
+            analytics.event("exit", reason="Invalid path input")
+            return None
+
     all_files = args.files + (args.file or [])
-    fnames = [str(Path(fn).resolve()) for fn in all_files]
+    resolved_fnames = [resolve_path(fn) for fn in all_files]
+    if any(path is None for path in resolved_fnames):
+        return 1
+    fnames = [str(path) for path in resolved_fnames]
     read_only_fnames = []
     for fn in args.read or []:
-        path = Path(fn).expanduser().resolve()
+        path = resolve_path(Path(fn).expanduser())
+        if path is None:
+            return 1
         if path.is_dir():
             read_only_fnames.extend(str(f) for f in path.rglob("*") if f.is_file())
         else:
@@ -689,7 +710,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
     if len(all_files) > 1:
         good = True
         for fname in all_files:
-            if Path(fname).is_dir():
+            is_dir = is_dir_path(fname)
+            if is_dir is None:
+                return 1
+            if is_dir:
                 io.tool_error(f"{fname} is a directory, not provided alone.")
                 good = False
         if not good:
@@ -701,7 +725,10 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
     git_dname = None
     if len(all_files) == 1:
-        if Path(all_files[0]).is_dir():
+        is_dir = is_dir_path(all_files[0])
+        if is_dir is None:
+            return 1
+        if is_dir:
             if args.git:
                 git_dname = str(Path(all_files[0]).resolve())
                 fnames = []
