@@ -435,6 +435,8 @@ def sanity_check_repo(repo, io):
     except AssertionError as exc:
         error_msg = str(exc)
         bad_ver = True
+    except Exception as exc:
+        error_msg = str(exc)
 
     if bad_ver:
         io.tool_error("Aider only works with git repos with version number 1 or 2.")
