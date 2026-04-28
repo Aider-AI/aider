@@ -10,6 +10,7 @@ This module provides functionality to:
 
 import os
 import platform
+import shlex
 import subprocess
 import tempfile
 
@@ -131,7 +132,7 @@ def pipe_editor(input_data="", suffix=None, editor=None):
     command_str = discover_editor(editor)
     command_str += " " + filepath
 
-    subprocess.call(command_str, shell=True)
+    subprocess.call(shlex.split(command_str), shell=False)
     with open(filepath, "r") as f:
         output_data = f.read()
     try:
