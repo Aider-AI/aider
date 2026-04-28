@@ -819,13 +819,20 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             )
             return 1
 
-    main_model = models.Model(
-        args.model,
-        weak_model=args.weak_model,
-        editor_model=args.editor_model,
-        editor_edit_format=args.editor_edit_format,
-        verbose=args.verbose,
-    )
+    try:
+        main_model = models.Model(
+            args.model,
+            weak_model=args.weak_model,
+            editor_model=args.editor_model,
+            editor_edit_format=args.editor_edit_format,
+            verbose=args.verbose,
+        )
+    except ImportError as err:
+        io.tool_error(str(err))
+        io.tool_output("Error loading required imports. Did you install aider properly?")
+        io.offer_url(urls.install_properly, "Open documentation url for more info?")
+        analytics.event("exit", reason="Model initialization import error")
+        return 1
 
     # Check if deprecated remove_reasoning is set
     if main_model.remove_reasoning is not None:

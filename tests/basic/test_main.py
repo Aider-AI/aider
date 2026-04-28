@@ -391,6 +391,25 @@ class TestMain(TestCase):
         args, kwargs = MockInputOutput.call_args
         self.assertEqual(args[1], None)
 
+    @patch("aider.main.models.Model")
+    @patch("aider.main.InputOutput")
+    def test_model_import_error_is_reported(self, MockInputOutput, mock_model):
+        mock_model.side_effect = ImportError(
+            "cannot import name 'is_type_alias_type' from 'openai._utils'"
+        )
+        mock_io_instance = MockInputOutput.return_value
+
+        result = main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+
+        self.assertEqual(result, 1)
+        mock_io_instance.tool_error.assert_called_with(
+            "cannot import name 'is_type_alias_type' from 'openai._utils'"
+        )
+        mock_io_instance.tool_output.assert_any_call(
+            "Error loading required imports. Did you install aider properly?"
+        )
+        mock_io_instance.offer_url.assert_called_once()
+
     def test_dark_mode_sets_code_theme(self):
         # Mock InputOutput to capture the configuration
         with patch("aider.main.InputOutput") as MockInputOutput:
