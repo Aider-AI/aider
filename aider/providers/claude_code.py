@@ -50,8 +50,8 @@ class ClaudeCodeProvider(BaseProvider):
                     yield ProviderEvent(type="error", content=str(msg.error))
 
             elif isinstance(msg, ResultMessage):
-                if msg.result:
-                    yield ProviderEvent(type="text", content=msg.result)
+                if msg.session_id:
+                    self._session_id = msg.session_id
 
         yield ProviderEvent(type="done", session_id=self._session_id)
 
