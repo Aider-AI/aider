@@ -97,19 +97,22 @@ The classifier sits outside the provider dispatch layer. Providers (local Ollama
 
 ## Convergence Strategy
 
-| Phase | Routing logic | Signal |
-|---|---|---|
-| Now (Phase 1) | Reactive exhaustion switch | Usage window event |
-| Phase 2 | Proactive `allowed_warning` pre-switch | Claude Code `RateLimitEvent` |
-| Phase 3 | Rule-based complexity classifier | Prompt length, task keywords |
-| Phase 4 | Semantic router (Aurelio Labs) | Embedding similarity to capability profiles |
-| Phase 5 | Cascade with local LLM | llama.cpp logprob confidence |
+| Phase | Routing logic | Signal | Notes |
+|---|---|---|---|
+| Now (Phase 1) | Reactive exhaustion switch | Usage window event | |
+| Phase 2 | Proactive `allowed_warning` pre-switch + `error_kind` on `ProviderEvent` | Claude Code `RateLimitEvent` | `error_kind` required before any new provider joins pool (KB-2026-020) |
+| Phase 3 | Rule-based complexity classifier; add Ollama as Tier B for **new sessions only** | Prompt length, task keywords | Tier B cannot continue Tier A sessions until Phase 4 validation (KB-2026-019) |
+| Phase 4 | Semantic router (Aurelio Labs); validate Tier A → Tier B handoff | Embedding similarity to capability profiles | RouteLLM classifier not applicable without SE-domain validation (KB-2026-018) |
+| Phase 5 | Cascade with local LLM | llama.cpp logprob confidence | |
 
 ## Applicability
 
+- ✅ Phase 2: add `error_kind` to `ProviderEvent` before adding any new provider to the pool
 - ✅ Phase 3+: implement rule-based task classifier before provider dispatch
-- ✅ Phase 4+: add Ollama as a `LocalProvider(BaseProvider)` for cheap tasks
+- ✅ Phase 3+: add Ollama as a `LocalProvider(BaseProvider)` for **new sessions only** — no Tier A→B handoff until Phase 4 validated
+- ✅ Phase 4+: validate cross-tier session portability (KB-2026-019) before enabling mid-session Tier B routing
 - ✅ Phase 5+: cascade escalation using llama.cpp logprobs
 - ✅ RouterBench for evaluating any custom router built here
 - ❌ RouteLLM full stack — not applicable (completion API only)
+- ❌ RouteLLM matrix factorisation classifier — SE-domain validity unvalidated (KB-2026-018)
 - ❌ Commercial routers — not applicable (no subprocess dispatch)
