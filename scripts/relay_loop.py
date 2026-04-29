@@ -29,7 +29,7 @@ def git_context() -> str:
     def run(cmd):
         try:
             return subprocess.check_output(cmd, stderr=subprocess.DEVNULL, text=True).strip()
-        except subprocess.CalledProcessError:
+        except (subprocess.CalledProcessError, OSError):
             return None
 
     log = run(["git", "log", "--oneline", "-10"]) or "(no git history)"
@@ -81,7 +81,10 @@ async def relay(task: str, primary: str, fallback: str, sim_exhaust_after: int =
         # Simulate exhaustion after N turns on the current provider
         if result is None and sim_exhaust_after > 0 and turn_counts[active] >= sim_exhaust_after:
             other = fallback if active == primary else primary
-            print(f"\n[RELAY] (sim) Simulating exhaustion after {sim_exhaust_after} turn(s) on {label}. Switching to {other.upper()}...")
+            print(
+                f"\n[RELAY] (sim) Simulating exhaustion after {sim_exhaust_after} turn(s) on"
+                f" {label}. Switching to {other.upper()}..."
+            )
             result = "exhausted"
 
         if result == "exhausted":
@@ -109,7 +112,10 @@ def main():
     parser.add_argument("--primary", default="claude", choices=["claude", "codex"])
     parser.add_argument("--fallback", default="codex", choices=["claude", "codex"])
     parser.add_argument(
-        "--sim-exhaust-after", type=int, default=0, metavar="N",
+        "--sim-exhaust-after",
+        type=int,
+        default=0,
+        metavar="N",
         help="Simulate exhaustion after N turns on each provider (0=disabled)",
     )
     args = parser.parse_args()
