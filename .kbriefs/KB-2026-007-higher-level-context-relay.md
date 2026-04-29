@@ -3,9 +3,9 @@ id: KB-2026-007
 type: design-space
 status: draft
 created: 2026-04-27
-updated: 2026-04-27
-tags: [context-relay, handoff, task-state, session-switch, architecture]
-related: [KB-2026-001, KB-2026-003, KB-2026-004, KB-2026-006]
+updated: 2026-04-29
+tags: [context-relay, handoff, task-state, session-switch, architecture, provider-tiers]
+related: [KB-2026-001, KB-2026-003, KB-2026-004, KB-2026-006, KB-2026-015, KB-2026-016]
 ---
 
 # Higher-Level Context Relay Design Space
@@ -219,13 +219,59 @@ Please continue from where the previous assistant left off. Run `git log --oneli
 """
 ```
 
+## Provider Capability Tiers (added 2026-04-29)
+
+The handoff strategy above assumes both providers are agentic CLIs (Tier A). As aider-relay expands to include completion APIs and local LLMs (KB-2026-016), the handoff shape must change depending on what the incoming provider can do.
+
+### Tier A — Agentic CLI (Claude Code, Codex)
+- Reads files, runs bash, makes edits autonomously in the repo
+- Does not need file contents injected — it can read them itself
+- **Handoff:** git context + task description + config summary (KB-2026-015)
+
+### Tier B — Completion API (Ollama, GPT-4o direct, Claude API direct)
+- Returns text only; no autonomous tool use
+- Cannot read repo files on its own
+- **Handoff:** message history + relevant file contents inline + task description
+
+### Tier C — Hybrid (Claude API with tool_use, GPT-4o with function calling)
+- Can use tools if the caller provides definitions and handles results
+- **Handoff:** message history + tool definitions + task description
+
+### Handoff matrix
+
+| From \ To | Tier A (Agentic CLI) | Tier B (Completion API) | Tier C (Hybrid) |
+|---|---|---|---|
+| **Tier A** | git diff + task (current Phase 1) | git diff + task + file contents | git diff + task + tool defs |
+| **Tier B** | message history + task | message history carry-forward | message history + tool defs |
+| **Tier C** | message history + task | message history + file contents | message history carry-forward |
+
+### Implementation impact
+
+`RelayContext.to_handoff_prompt()` (Phase 2 target) must accept the incoming provider's tier and generate the appropriate prompt shape. `ProviderRun` should record the tier of each provider so the router knows which handoff to build.
+
+```python
+ProviderTier = Literal["agentic_cli", "completion_api", "hybrid"]
+
+@dataclass
+class ProviderRun:
+    provider: str
+    tier: ProviderTier        # NEW
+    session_id: str
+    started_at: str
+    exhausted_at: str | None
+```
+
+`BaseProvider` should expose a `tier` property so the relay can inspect it without knowing the concrete type.
+
 ## Critical Open Questions
 
 1. Can we reliably extract subtask completion from agentic session events, or must it be manually tracked?
 2. When Claude Code is exhausted, can we still issue one final "summarise" request, or is the session fully blocked?
 3. Does the Codex SDK provide structured output (JSONL) that makes event parsing reliable enough for auto-tracking?
+4. For Tier A → Tier B handoffs: what is the minimum set of files-in-scope that must be injected? Injecting too many will overflow context; too few leaves the completion model without needed code.
 
 ## Applicability
 
 - ✅ The central design challenge for aider-relay
 - ✅ Must be validated with Phase 1 (git-only) before committing to Phase 2
+- ✅ Tier model must be incorporated into RelayContext before any non-agentic provider is added
