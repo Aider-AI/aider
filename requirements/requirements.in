@@ -1,5 +1,9 @@
 pydub
 configargparse
+
+# aider-relay: CLI provider SDKs
+claude-agent-sdk
+# codex: subprocess adapter only — no PyPI package (see KB-2026-010)
 GitPython
 jsonschema
 rich

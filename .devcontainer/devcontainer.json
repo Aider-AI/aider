@@ -1,0 +1,35 @@
+{
+  "name": "aider-relay",
+  "image": "ghcr.io/senanayake/polyglot-devcontainers-python-node:v0.0.27",
+  "postCreateCommand": "task init && pre-commit install",
+  "mounts": [
+    "source=${localEnv:USERPROFILE}\\.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
+    "source=${localEnv:USERPROFILE}\\.claude.json,target=/home/vscode/.claude.json,type=bind,consistency=cached",
+    "source=${localEnv:USERPROFILE}\\.codex,target=/home/vscode/.codex,type=bind,consistency=cached"
+  ],
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/vscode/.npm-global/bin"
+  },
+  "containerEnv": {
+    "NPM_CONFIG_PREFIX": "/home/vscode/.npm-global",
+    "CLAUDE_CODE_OAUTH_TOKEN": "${localEnv:CLAUDE_CODE_OAUTH_TOKEN}",
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}"
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.formatOnSave": true,
+        "python.defaultInterpreterPath": "/workspaces/aider-relay/.venv/bin/python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"],
+        "python.analysis.typeCheckingMode": "basic"
+      },
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker"
+      ]
+    }
+  },
+  "remoteUser": "vscode"
+}

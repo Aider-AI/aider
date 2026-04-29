@@ -1,0 +1,70 @@
+version: "3"
+
+tasks:
+  # ── Development environment ────────────────────────────────────────────────
+
+  init:
+    desc: Bootstrap the dev environment (run inside devcontainer)
+    cmds:
+      - uv pip install -e ".[dev]"
+      - npm install -g @anthropic-ai/claude-code @openai/codex
+
+  # ── Devcontainer lifecycle (run on HOST with Podman) ───────────────────────
+
+  dc:check:
+    desc: Verify host credentials are present before launching devcontainer
+    cmds:
+      - bash scripts/check-credentials.sh
+
+  dc:up:
+    desc: Launch the devcontainer using Podman
+    cmds:
+      - task: dc:check
+      - devcontainer up --workspace-folder . --docker-path podman
+
+  dc:exec:
+    desc: "Run a command inside the devcontainer (usage: task dc:exec -- <cmd>)"
+    cmds:
+      - devcontainer exec --workspace-folder . --docker-path podman {{.CLI_ARGS}}
+
+  dc:shell:
+    desc: Open a shell inside the running devcontainer
+    cmds:
+      - devcontainer exec --workspace-folder . --docker-path podman bash
+
+  # ── Code quality ──────────────────────────────────────────────────────────
+
+  lint:
+    desc: Run code quality checks
+    cmds:
+      - uv run ruff check .
+      - uv run ruff format --check .
+
+  format:
+    desc: Auto-format code
+    cmds:
+      - uv run ruff format .
+      - uv run ruff check --fix .
+
+  # ── Tests ─────────────────────────────────────────────────────────────────
+
+  test:
+    desc: Run test suite
+    cmds:
+      - uv run pytest tests/ -v
+
+  # ── Security ──────────────────────────────────────────────────────────────
+
+  scan:
+    desc: Run security vulnerability scan
+    cmds:
+      - uv run pip-audit
+
+  # ── Full pipeline ─────────────────────────────────────────────────────────
+
+  ci:
+    desc: Full validation pipeline (lint + test + scan)
+    cmds:
+      - task: lint
+      - task: test
+      - task: scan
