@@ -487,3 +487,6 @@ scipy<1.16; python_version < "3.11"
 scipy>=1.16.1,<1.18; python_version >= "3.11"
 # Remove if Python 3.13+ support lands in pydub upstream.
 audioop-lts>=0.2.2; python_version >= "3.13"
+
+# aider-relay: CLI provider SDKs
+claude-agent-sdk
