@@ -64,15 +64,25 @@ async def run_turn(provider: BaseProvider, prompt: str, label: str) -> str | Non
     return None
 
 
-async def relay(task: str, primary: str, fallback: str) -> None:
+async def relay(task: str, primary: str, fallback: str, sim_exhaust_after: int = 0) -> None:
     providers = {primary: make_provider(primary), fallback: make_provider(fallback)}
     active = primary
     prompt = task
     exhausted_count = 0
+    turn_counts: dict[str, int] = {primary: 0, fallback: 0}
 
     while True:
         label = active.upper()
         result = await run_turn(providers[active], prompt, label)
+
+        if result is None:
+            turn_counts[active] += 1
+
+        # Simulate exhaustion after N turns on the current provider
+        if result is None and sim_exhaust_after > 0 and turn_counts[active] >= sim_exhaust_after:
+            other = fallback if active == primary else primary
+            print(f"\n[RELAY] (sim) Simulating exhaustion after {sim_exhaust_after} turn(s) on {label}. Switching to {other.upper()}...")
+            result = "exhausted"
 
         if result == "exhausted":
             exhausted_count += 1
@@ -98,6 +108,10 @@ def main():
     parser.add_argument("task", nargs="?", help="Initial task (prompted if omitted)")
     parser.add_argument("--primary", default="claude", choices=["claude", "codex"])
     parser.add_argument("--fallback", default="codex", choices=["claude", "codex"])
+    parser.add_argument(
+        "--sim-exhaust-after", type=int, default=0, metavar="N",
+        help="Simulate exhaustion after N turns on each provider (0=disabled)",
+    )
     args = parser.parse_args()
 
     if args.primary == args.fallback:
@@ -112,7 +126,7 @@ def main():
     print(f"[RELAY] Primary: {args.primary.upper()} | Fallback: {args.fallback.upper()}")
     print(f"[RELAY] Task: {task}")
 
-    asyncio.run(relay(task, args.primary, args.fallback))
+    asyncio.run(relay(task, args.primary, args.fallback, args.sim_exhaust_after))
 
 
 if __name__ == "__main__":
