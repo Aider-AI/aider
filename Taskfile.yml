@@ -6,6 +6,7 @@ tasks:
   init:
     desc: Bootstrap the dev environment (run inside devcontainer)
     cmds:
+      - uv venv --python 3.12
       - uv pip install -e ".[dev]"
       - npm install -g @anthropic-ai/claude-code @openai/codex
 

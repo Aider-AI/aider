@@ -24,7 +24,7 @@ dynamic = ["dependencies", "optional-dependencies", "version"]
 Homepage = "https://github.com/Aider-AI/aider"
 
 [project.scripts]
-aider = "aider.main:main"
+aider-relay = "aider.main:main"
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.txt" }

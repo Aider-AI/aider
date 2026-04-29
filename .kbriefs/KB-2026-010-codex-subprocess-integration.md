@@ -3,7 +3,7 @@ id: KB-2026-010
 type: standard
 status: validated
 created: 2026-04-28
-updated: 2026-04-28
+updated: 2026-04-29
 tags: [codex, subprocess, jsonl, session-management, integration-path, python]
 related: [KB-2026-001, KB-2026-002, KB-2026-006]
 ---
@@ -40,7 +40,7 @@ codex exec --json --skip-git-repo-check "<prompt>"
 codex exec --json --sandbox workspace-write "<prompt>"
 ```
 
-### JSONL Event Taxonomy (validated 2026-04-28)
+### JSONL Event Taxonomy (validated 2026-04-28, extended 2026-04-29)
 
 A complete turn produces this event sequence on stdout:
 
@@ -48,8 +48,10 @@ A complete turn produces this event sequence on stdout:
 {"type":"thread.started","thread_id":"019dd753-b1e4-7f21-add4-91c3727048ed"}
 {"type":"turn.started"}
 {"type":"item.completed","item":{"id":"item_0","type":"agent_message","text":"4"}}
-{"type":"turn.completed","usage":{"input_tokens":9866,"cached_input_tokens":2432,"output_tokens":16}}
+{"type":"turn.completed","usage":{"input_tokens":9866,"cached_input_tokens":2432,"output_tokens":16,"reasoning_output_tokens":18}}
 ```
+
+**`reasoning_output_tokens`** appears in `turn.completed` when the active model is a reasoning model (e.g. o4-mini). The field is absent for non-reasoning models. The `CodexProvider` must treat it as optional.
 
 **Key events:**
 
@@ -63,15 +65,23 @@ A complete turn produces this event sequence on stdout:
 
 Additional `item.type` values expected for coding tasks (not yet captured): `tool_call`, `tool_result`, `code_change`.
 
-### Session Resumption (validated 2026-04-28)
+### Session Resumption (validated 2026-04-28, confirmed in devcontainer 2026-04-29)
 
 `codex exec resume <thread_id> "<prompt>" --json` correctly resumes the session. Validated: the resumed session retains conversational context (model answered a follow-up correctly without re-stating prior answer). The same `thread_id` is returned in `thread.started` on resumption.
 
-**Token caching on resume**: `cached_input_tokens` jumped from 2,432 to 12,032 on the second turn of the same session — the CLI caches prior context server-side.
+**Token caching on resume**: `cached_input_tokens` jumped from 3,456 to 7,936 on the second turn — prior context is cached server-side, not in the local sqlite db.
+
+**Session state is server-side.** The local `~/.codex/state_5.sqlite` is only a cache for the interactive UI. This means session resumption works correctly even when the local db write fails (see stderr error below).
 
 ### Stderr
 
-Stderr is clean on success. Error messages (e.g. "not inside a trusted directory") go to stderr and do not appear in the JSONL stream.
+Functional errors (e.g. "not inside a trusted directory") go to stderr and do not appear in the JSONL stream.
+
+**Known benign stderr error in devcontainer (validated 2026-04-29):**
+```
+ERROR codex_core::session: failed to record rollout items: thread <id> not found
+```
+This appears after every successful call when `~/.codex/` is host-mounted into the container. The CLI fails to write the session to the local SQLite cache due to a file locking or schema conflict between host and container. **It does not affect call success or session resumption** — both work correctly because session state is held server-side. The `CodexProvider` subprocess adapter should log this error at DEBUG level and not treat it as a failure.
 
 ## CodexProvider Implementation
 
