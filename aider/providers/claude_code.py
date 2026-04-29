@@ -14,10 +14,14 @@ class ClaudeCodeProvider(BaseProvider):
     async def run_turn(self, prompt: str) -> AsyncIterator[ProviderEvent]:
         from claude_agent_sdk import ClaudeAgentOptions, query
         from claude_agent_sdk import RateLimitEvent
+        from claude_agent_sdk.types import AssistantMessage, ResultMessage, TextBlock
 
         async for msg in query(
             prompt=prompt,
-            options=ClaudeAgentOptions(resume=self._session_id),
+            options=ClaudeAgentOptions(
+                resume=self._session_id,
+                permission_mode="bypassPermissions",
+            ),
         ):
             if hasattr(msg, "session_id") and msg.session_id:
                 self._session_id = msg.session_id
@@ -38,11 +42,16 @@ class ClaudeCodeProvider(BaseProvider):
                         (info.utilization or 0) * 100,
                     )
 
-            elif hasattr(msg, "result") and msg.result:
-                yield ProviderEvent(type="text", content=msg.result)
+            elif isinstance(msg, AssistantMessage):
+                for block in msg.content or []:
+                    if isinstance(block, TextBlock):
+                        yield ProviderEvent(type="text", content=block.text)
+                if msg.error:
+                    yield ProviderEvent(type="error", content=str(msg.error))
 
-            elif hasattr(msg, "error") and msg.error:
-                yield ProviderEvent(type="error", content=str(msg.error))
+            elif isinstance(msg, ResultMessage):
+                if msg.result:
+                    yield ProviderEvent(type="text", content=msg.result)
 
         yield ProviderEvent(type="done", session_id=self._session_id)
 
