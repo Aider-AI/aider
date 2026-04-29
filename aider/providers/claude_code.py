@@ -46,6 +46,13 @@ class ClaudeCodeProvider(BaseProvider):
                 for block in msg.content or []:
                     if isinstance(block, TextBlock):
                         yield ProviderEvent(type="text", content=block.text)
+                    elif hasattr(block, "name") and hasattr(block, "input"):
+                        # ToolUseBlock — show the tool call so the user sees progress
+                        tool_input = str(block.input) if block.input else ""
+                        yield ProviderEvent(
+                            type="text",
+                            content=f"\n[tool: {block.name} {tool_input[:80]}]\n",
+                        )
                 if msg.error:
                     yield ProviderEvent(type="error", content=str(msg.error))
 
