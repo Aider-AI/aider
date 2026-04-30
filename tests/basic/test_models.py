@@ -596,5 +596,36 @@ class TestModels(unittest.TestCase):
                 self.assertIn("reasoning_effort", model.accepts_settings)
 
 
+    def test_perplexity_model_settings(self):
+        names = [
+            "perplexity/sonar",
+            "perplexity/sonar-pro",
+            "perplexity/sonar-reasoning",
+            "perplexity/sonar-reasoning-pro",
+            "perplexity/sonar-deep-research",
+        ]
+
+        for name in names:
+            with self.subTest(name=name):
+                model = Model(name)
+                self.assertTrue(model.use_repo_map)
+                self.assertTrue(model.examples_as_sys_msg)
+
+        # Default integration model uses diff format
+        self.assertEqual(Model("perplexity/sonar-pro").edit_format, "diff")
+        self.assertEqual(
+            Model("perplexity/sonar-pro").weak_model_name, "perplexity/sonar"
+        )
+
+        # Reasoning models should not pass temperature
+        for name in (
+            "perplexity/sonar-reasoning",
+            "perplexity/sonar-reasoning-pro",
+            "perplexity/sonar-deep-research",
+        ):
+            with self.subTest(name=name):
+                self.assertFalse(Model(name).use_temperature)
+
+
 if __name__ == "__main__":
     unittest.main()
