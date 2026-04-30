@@ -25,6 +25,9 @@ def make_provider(name: str) -> BaseProvider:
     raise ValueError(f"Unknown provider: {name}")
 
 
+_MAX_DIFF_CHARS = 8_000
+
+
 def git_context() -> str:
     def run(cmd):
         try:
@@ -34,6 +37,11 @@ def git_context() -> str:
 
     log = run(["git", "log", "--oneline", "-10"]) or "(no git history)"
     diff = run(["git", "diff", "HEAD"]) or "(none)"
+    if len(diff) > _MAX_DIFF_CHARS:
+        diff = (
+            diff[:_MAX_DIFF_CHARS]
+            + f"\n... (truncated — {len(diff) - _MAX_DIFF_CHARS} chars omitted)"
+        )
     return f"Recent git history:\n{log}\n\nCurrent uncommitted changes:\n{diff}"
 
 

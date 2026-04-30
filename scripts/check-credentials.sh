@@ -3,8 +3,24 @@
 # Run this on the HOST before 'task dc:up'.
 set -euo pipefail
 
-CLAUDE_DIR="$HOME/.claude"
-CODEX_DIR="$HOME/.codex"
+# Resolve the Windows host home directory across WSL, Git Bash, and native Linux.
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  # WSL: translate Windows USERPROFILE into a /mnt/c/... path
+  if command -v wslvar &>/dev/null; then
+    WIN_HOME=$(wslvar USERPROFILE 2>/dev/null)
+  else
+    WIN_HOME=$(cmd.exe /C "echo %USERPROFILE%" 2>/dev/null | tr -d '\r\n')
+  fi
+  HOST_HOME=$(wslpath "$WIN_HOME" 2>/dev/null || echo "$HOME")
+elif [ -n "${USERPROFILE:-}" ] && command -v cygpath &>/dev/null; then
+  # Git Bash / MSYS2
+  HOST_HOME=$(cygpath -u "$USERPROFILE")
+else
+  HOST_HOME="$HOME"
+fi
+
+CLAUDE_DIR="$HOST_HOME/.claude"
+CODEX_DIR="$HOST_HOME/.codex"
 MISSING=0
 
 echo "=== aider-relay credential check ==="

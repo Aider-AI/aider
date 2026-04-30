@@ -1,0 +1,18 @@
+# Normalize all text files to LF in the repo and on checkout
+* text=auto eol=lf
+
+# Force binary files to never be normalized
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pyc binary
+*.pyd binary
+*.so binary
+*.dll binary
+*.exe binary
