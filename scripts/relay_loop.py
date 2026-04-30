@@ -11,10 +11,13 @@ import argparse
 import asyncio
 import subprocess
 import sys
+from datetime import datetime, timezone
+from pathlib import Path
 
 from aider.providers.base import BaseProvider
 from aider.providers.claude_code import ClaudeCodeProvider
 from aider.providers.codex import CodexProvider
+from aider.relay.session import MTARPSession
 
 
 def make_provider(name: str) -> BaseProvider:
@@ -45,14 +48,22 @@ def git_context() -> str:
     return f"Recent git history:\n{log}\n\nCurrent uncommitted changes:\n{diff}"
 
 
-def handoff_prompt(task: str) -> str:
-    return (
+def handoff_prompt(task: str, session: MTARPSession | None = None) -> str:
+    base = (
         "You are continuing a coding task in this repository. "
         "A previous AI assistant was working on this and hit its usage limit.\n\n"
         f"## Task\n{task}\n\n"
         f"## What has been done (from git)\n{git_context()}\n\n"
         "Please continue from where the previous assistant left off."
     )
+    if session is not None:
+        base += (
+            "\n\n## MTARP Session Envelope\n"
+            "A session record has been written to .aider-relay/session.json capturing the task,\n"
+            "git state at handoff, and which provider was working. You can inspect it with:\n"
+            "  cat .aider-relay/session.json"
+        )
+    return base
 
 
 async def run_turn(provider: BaseProvider, prompt: str, label: str) -> str | None:
@@ -72,12 +83,21 @@ async def run_turn(provider: BaseProvider, prompt: str, label: str) -> str | Non
     return None
 
 
-async def relay(task: str, primary: str, fallback: str, sim_exhaust_after: int = 0) -> None:
+async def relay(
+    task: str,
+    primary: str,
+    fallback: str,
+    sim_exhaust_after: int = 0,
+    session_dir: str = ".aider-relay",
+) -> None:
     providers = {primary: make_provider(primary), fallback: make_provider(fallback)}
     active = primary
     prompt = task
     exhausted_count = 0
     turn_counts: dict[str, int] = {primary: 0, fallback: 0}
+
+    session = MTARPSession.create(task=task, primary_provider=primary)
+    provider_started_at = datetime.now(tz=timezone.utc).isoformat()
 
     while True:
         label = active.upper()
@@ -97,13 +117,39 @@ async def relay(task: str, primary: str, fallback: str, sim_exhaust_after: int =
 
         if result == "exhausted":
             exhausted_count += 1
+
+            # Record provider run and write session envelope
+            ended_at = datetime.now(tz=timezone.utc).isoformat()
+            session.add_provider_run(
+                provider=active,
+                tier=providers[active].tier,
+                session_id=providers[active].current_session_id or "",
+                started_at=provider_started_at,
+                ended_at=ended_at,
+                end_reason="exhausted",
+            )
+            session.outgoing_provider = active
+            session.handoff_at = ended_at
+            # Capture current git HEAD (may have changed during session)
+            try:
+                session.git_head = subprocess.check_output(
+                    ["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL, text=True
+                ).strip()
+            except (subprocess.CalledProcessError, OSError):
+                pass
+            session_path = Path(session_dir) / "session.json"
+            session_path.parent.mkdir(parents=True, exist_ok=True)
+            session.write(session_path)
+            # Reset timer for next provider
+            provider_started_at = datetime.now(tz=timezone.utc).isoformat()
+
             if exhausted_count >= 2:
                 print("\n[RELAY] Both providers exhausted. Stopping.")
                 break
             other = fallback if active == primary else primary
             print(f"[RELAY] Switching to {other.upper()}...")
             active = other
-            prompt = handoff_prompt(task)
+            prompt = handoff_prompt(task, session=session)
         else:
             try:
                 next_input = input("\nYou: ").strip()
@@ -140,7 +186,9 @@ def main():
     print(f"[RELAY] Primary: {args.primary.upper()} | Fallback: {args.fallback.upper()}")
     print(f"[RELAY] Task: {task}")
 
-    asyncio.run(relay(task, args.primary, args.fallback, args.sim_exhaust_after))
+    asyncio.run(
+        relay(task, args.primary, args.fallback, args.sim_exhaust_after, session_dir=".aider-relay")
+    )
 
 
 if __name__ == "__main__":

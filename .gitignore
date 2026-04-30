@@ -3,6 +3,8 @@
 aider.code-workspace
 *.pyc
 .aider*
+!.aider-relay/
+.aider-relay/session.json
 aider_chat.egg-info/
 build
 dist/
