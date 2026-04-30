@@ -3126,3 +3126,44 @@
   use_repo_map: true
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
+
+- name: perplexity/sonar-pro
+  edit_format: diff
+  weak_model_name: perplexity/sonar
+  use_repo_map: true
+  examples_as_sys_msg: true
+  editor_model_name: perplexity/sonar-pro
+  editor_edit_format: editor-diff
+
+- name: perplexity/sonar
+  edit_format: whole
+  weak_model_name: perplexity/sonar
+  use_repo_map: true
+  examples_as_sys_msg: true
+
+- name: perplexity/sonar-reasoning
+  edit_format: diff
+  weak_model_name: perplexity/sonar
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: perplexity/sonar-pro
+  editor_edit_format: editor-diff
+
+- name: perplexity/sonar-reasoning-pro
+  edit_format: diff
+  weak_model_name: perplexity/sonar
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: perplexity/sonar-pro
+  editor_edit_format: editor-diff
+
+- name: perplexity/sonar-deep-research
+  edit_format: diff
+  weak_model_name: perplexity/sonar
+  use_repo_map: true
+  examples_as_sys_msg: true
+  use_temperature: false
+  editor_model_name: perplexity/sonar-pro
+  editor_edit_format: editor-diff
