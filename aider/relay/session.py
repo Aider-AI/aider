@@ -2,7 +2,10 @@
 MTARP Phase 1 session envelope.
 
 Implements MTARPSession — a record of what was in progress when a provider
-was switched due to exhaustion, per KB-2026-021 / KB-2026-022.
+was switched due to exhaustion, per KB-2026-021 / KB-2026-022 / KB-2026-026.
+
+MTARP is a domain-specific A2A extension (KB-2026-026). session.json is the
+payload schema; to_a2a_artifact() wraps it for A2A transport when needed.
 """
 import json
 import subprocess
@@ -122,3 +125,47 @@ class MTARPSession:
                 "end_reason": end_reason,
             }
         )
+
+    _EXTENSION_URI = "https://mtarp.dev/ext/coding-session/v1"
+
+    def to_a2a_artifact(self) -> dict:
+        """Wrap this session as an A2A Artifact (KB-2026-026).
+
+        When MTARP is used with an A2A transport layer, the session.json payload
+        is embedded here rather than written to a sidecar file.
+        """
+        return {
+            "artifactId": f"mtarp-session-{self.session_id}",
+            "name": "mtarp-session",
+            "mimeType": "application/json",
+            "description": "MTARP session envelope for handoff continuation",
+            "extensions": [self._EXTENSION_URI],
+            "parts": [{"kind": "text", "text": json.dumps(self.to_dict(), indent=2)}],
+        }
+
+    def to_a2a_task_metadata(self) -> dict:
+        """Return namespaced metadata keys for an A2A Task (KB-2026-026).
+
+        These allow an MTARP-aware orchestrator to inspect handoff signals from
+        the Task object without parsing the full artifact.
+        """
+        ns = self._EXTENSION_URI
+        return {
+            f"{ns}/handoff_reason": self.handoff_reason,
+            f"{ns}/git_diff_since": self.git_diff_since,
+            f"{ns}/outgoing_tier": self.outgoing_tier,
+        }
+
+    @staticmethod
+    def agent_card_extension(tier: str = "agentic_cli", delivery_mode: str = "pull") -> dict:
+        """Return the MTARP extension block for inclusion in an A2A AgentCard (KB-2026-026)."""
+        return {
+            "uri": MTARPSession._EXTENSION_URI,
+            "description": "Git-aware session continuation for exhaustion-triggered handoffs",
+            "required": False,
+            "params": {
+                "tier": tier,
+                "delivery_mode": delivery_mode,
+                "handoff_signals": ["exhausted", "escalate", "deescalate", "user_request", "error"],
+            },
+        }

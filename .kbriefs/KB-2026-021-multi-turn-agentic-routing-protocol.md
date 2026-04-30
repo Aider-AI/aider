@@ -3,23 +3,32 @@ id: KB-2026-021
 type: design-space
 status: draft
 created: 2026-04-29
-updated: 2026-04-29
-tags: [protocol, multi-turn, agentic-routing, open-standard, session-continuity, handoff, interoperability]
-related: [KB-2026-007, KB-2026-015, KB-2026-016, KB-2026-017, KB-2026-018, KB-2026-019, KB-2026-020]
+updated: 2026-04-30
+tags: [protocol, multi-turn, agentic-routing, open-standard, session-continuity, handoff, interoperability, a2a-extension]
+related: [KB-2026-007, KB-2026-015, KB-2026-016, KB-2026-017, KB-2026-018, KB-2026-019, KB-2026-020, KB-2026-025, KB-2026-026]
 ---
 
 # Multi-Turn Agentic Routing Protocol (MTARP)
 
 ## The Gap
 
+> **Updated 2026-04-30:** KB-2026-025 found that the original framing overstated the gap vs A2A.
+> KB-2026-026 repositions MTARP as a formal A2A extension rather than a competing protocol.
+> The claims below have been sharpened accordingly.
+
 Every existing agent interoperability effort targets one of two problems:
 
 - **Task delegation** (Google A2A, April 2025): agent A assigns a fresh, well-defined task to agent B. Clean handoff of a *new* task.
 - **Tool/resource access** (Anthropic MCP): how an agent accesses external tools and data. Inbound to agent, not between agents.
 
-Neither addresses **session continuation**: agent A was executing a task, hit a wall (exhaustion, capability ceiling, cost threshold), and agent B must continue from that exact point — without the user re-explaining, without losing work already done, without knowing the internals of agent A's session state.
+A2A's `contextId` + `history[]` + `artifacts[]` can approximate session continuation through orchestrator-driven re-submission, but it does not natively support **exhaustion-triggered continuation with git-aware context**. Specifically, A2A has no:
 
-This is the problem that aider-relay must solve, and no open protocol exists for it.
+- Pre-exhaustion warning state (`approaching_limit`)
+- Handoff trigger taxonomy distinguishing *why* a task ended (routing-relevant semantics)
+- Git-aware context delivery (diff_since SHA anchoring what the outgoing agent changed)
+- Tier-specific delivery mode (pull vs push vs push-tools depending on incoming agent type)
+
+These gaps — not the broader claim that "A2A doesn't handle session continuation" — are what MTARP adds. MTARP is therefore positioned as a **domain-specific A2A extension** for git-based coding agents (KB-2026-026), not a competing protocol.
 
 ## Core Constraint (Non-Negotiable)
 
@@ -119,22 +128,27 @@ A closed enum of reasons a session transfer occurs. The incoming agent uses this
 | `user_request` | User explicitly requested switch | No failure; full context available |
 | `error` | Provider failed non-exhaustion failure | Prior output may be incomplete or incorrect; verify before continuing |
 
-### 3. Provider Capability Advertisement (`agent-card.json`)
+### 3. Provider Capability Advertisement (A2A Agent Card + MTARP extension)
 
-A static file (or inline in the session envelope) declaring what a compliant agent can do:
+> **Updated 2026-04-30:** A standalone `agent-card.json` is dropped. Use an A2A Agent Card
+> with an MTARP extension namespace instead (KB-2026-026). This makes MTARP-compliant agents
+> also A2A-compatible.
 
 ```json
 {
-  "provider": "claude-code",
-  "tier": "agentic_cli",
-  "context_window_tokens": 200000,
-  "can_read_files": true,
-  "can_write_files": true,
-  "can_run_shell": true,
-  "can_resume_session": true,
-  "handoff_requirements": {
-    "delivery_mode": "pull",
-    "minimum_envelope_fields": ["task.description", "git.head"]
+  "name": "claude-code",
+  "capabilities": {
+    "streaming": true,
+    "extensions": [
+      {
+        "uri": "https://mtarp.dev/ext/coding-session/v1",
+        "required": false,
+        "params": {
+          "tier": "agentic_cli",
+          "delivery_mode": "pull"
+        }
+      }
+    ]
   }
 }
 ```
@@ -192,10 +206,10 @@ A lowest-common-denominator schema enables broad adoption but may be insufficien
 
 | Protocol | Problem solved | Relation to MTARP |
 |---|---|---|
-| Google A2A | Task delegation between agents | Complementary — A2A for new tasks; MTARP for continuation |
+| Google A2A | Task delegation between agents | **MTARP extends A2A** — session.json is an A2A artifact; agent card is an A2A AgentCard with MTARP extension namespace; health events extend A2A SSE |
 | Anthropic MCP | Tool/resource access for agents | Orthogonal — MCP is inbound to agent; MTARP is between agents |
 | OpenAI Assistants threads | Session persistence within OpenAI | Subset — threads work only within one provider; MTARP is cross-provider |
-| LangGraph/CrewAI handoff | Framework-specific agent handoff | Framework-specific; MTARP is the protocol those frameworks could implement |
+| LangGraph/CrewAI handoff | Framework-specific agent handoff | Framework-specific; MTARP is the protocol layer those frameworks could implement |
 
 ## Validation Requirements
 
@@ -222,7 +236,7 @@ Before MTARP can be proposed as a standard, these must be empirically demonstrat
 
 ## Open Questions
 
-1. **Is "session continuation" sufficiently distinct from A2A task delegation** to justify a separate protocol? Or can A2A be extended with continuation semantics? (Current assessment: yes, they are distinct — delegation is clean; continuation requires in-flight state transfer.)
+1. ~~**Is "session continuation" sufficiently distinct from A2A task delegation** to justify a separate protocol?~~ **Resolved (KB-2026-025, KB-2026-026):** MTARP is a domain-specific A2A extension, not a competing protocol. The genuinely distinct contributions are git-first context, exhaustion trigger taxonomy, and tier-aware delivery — not a new wire protocol.
 2. **Can the protocol handle multi-agent parallelism** (two agents working on different files simultaneously, then merging)? Git branches are the natural mechanism, but the session envelope would need to express a merge event, not just a handoff.
 3. **Who maintains the schema?** An open standard requires a governance body or at minimum a versioned spec repo. Should this be published under aider-relay's GitHub org, or proposed to an existing agent interoperability working group?
 4. **Does the Routesplain task taxonomy** (KB-2026-018) belong in `routing_hints.estimated_complexity` or should it be a separate `task_taxonomy` field? A richer taxonomy helps the router but increases envelope verbosity.

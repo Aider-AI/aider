@@ -3,9 +3,9 @@ id: KB-2026-022
 type: standard
 status: draft
 created: 2026-04-29
-updated: 2026-04-29
-tags: [protocol, mtarp, multi-turn, agentic-routing, open-standard, session-continuity, handoff, interoperability]
-related: [KB-2026-021, KB-2026-007, KB-2026-017, KB-2026-019, KB-2026-016]
+updated: 2026-04-30
+tags: [protocol, mtarp, multi-turn, agentic-routing, open-standard, session-continuity, handoff, interoperability, a2a-extension]
+related: [KB-2026-021, KB-2026-007, KB-2026-017, KB-2026-019, KB-2026-016, KB-2026-025, KB-2026-026]
 ---
 
 # Multi-Turn Agentic Routing Protocol (MTARP)
@@ -16,14 +16,12 @@ When an AI coding agent hits its usage limit, capability ceiling, or cost thresh
 
 This is not a niche case. Any architecture that routes across providers — local LLMs for cheap tasks, subscription CLIs for complex coding, frontier APIs for hard problems — will trigger mid-session switches regularly. Every multi-agent CI pipeline, every cost-tiered coding assistant, every team workflow with model quotas has this problem. No standard exists for it.
 
-The two most prominent agent interoperability protocols do not solve it:
+The two most prominent agent interoperability protocols do not solve it fully:
 
-- **Google A2A (April 2025)** addresses *task delegation*: agent A assigns a well-defined new task to agent B. This is a clean handoff with no in-flight state.
+- **Google A2A (April 2025)** addresses *task delegation*: agent A assigns a well-defined new task to agent B. A2A's `contextId` + `history[]` + `artifacts[]` can support orchestrator-driven re-submission that approximates continuation, but A2A has no exhaustion-triggered git-aware continuation, no pre-exhaustion warning signal, and no handoff trigger taxonomy that tells an incoming agent *why* the previous agent stopped and what posture to take.
 - **Anthropic MCP** addresses *tool and resource access*: how a model calls external tools and data sources. It is inbound to an agent, not between agents.
 
-Neither protocol handles *session continuation*: agent A was mid-task, stopped for any reason, and agent B must continue from that exact point without the user re-explaining.
-
-MTARP fills this gap.
+**Updated positioning (KB-2026-025, KB-2026-026):** MTARP is a **domain-specific A2A extension** for git-based coding agents, not a competing transport protocol. Its wire format (session.json) is expressed as an A2A artifact; its agent capability declaration is expressed as an A2A AgentCard with MTARP extension namespace. MTARP adds what A2A lacks for this domain: git-first context, exhaustion trigger taxonomy, and tier-aware delivery mode.
 
 ## Protocol Description
 
@@ -90,26 +88,33 @@ A closed enum of reasons a session transfer occurs. This is the information git 
 | `user_request` | Explicit user switch | No failure; full context available |
 | `error` | Provider failed for non-exhaustion reason | Prior output may be incomplete; verify before continuing |
 
-### Provider Capability Declaration (`agent-card.json`)
+### Provider Capability Declaration (A2A AgentCard + MTARP extension)
 
-A static file declaring what a compliant agent can do and what it requires at handoff time:
+> **Updated 2026-04-30 (KB-2026-026):** Standalone `agent-card.json` is dropped. Capability
+> is declared as an A2A AgentCard with a MTARP extension namespace, making MTARP-compliant
+> agents also A2A-compatible.
 
 ```json
 {
-  "provider": "claude-code",
-  "tier": "agentic_cli",
-  "context_window_tokens": 200000,
-  "can_read_files": true,
-  "can_write_files": true,
-  "can_run_shell": true,
-  "handoff_requirements": {
-    "delivery_mode": "pull",
-    "minimum_envelope_fields": ["task.description", "git.head"]
+  "name": "claude-code",
+  "capabilities": {
+    "streaming": true,
+    "extensions": [
+      {
+        "uri": "https://mtarp.dev/ext/coding-session/v1",
+        "required": false,
+        "params": {
+          "tier": "agentic_cli",
+          "delivery_mode": "pull",
+          "handoff_signals": ["exhausted", "escalate", "deescalate", "error"]
+        }
+      }
+    ]
   }
 }
 ```
 
-`delivery_mode` is the key field: `pull` (agent reads files autonomously) or `push` (relay injects file contents) or `push-tools` (relay provides tool definitions and handles calls). A compliant relay selects the delivery mode declared by the incoming agent.
+`delivery_mode` is the key field: `pull` (agent reads files autonomously) or `push` (relay injects file contents) or `push-tools` (relay provides tool definitions and handles calls). A compliant relay selects the delivery mode declared by the incoming agent. `required: false` means A2A orchestrators that don't understand MTARP can still call this agent using standard task semantics.
 
 ### Health Event Schema
 
@@ -147,9 +152,10 @@ Phase 1 compliance is writing a JSON file. There is no infrastructure to deploy,
 ## Alternatives Evaluated
 
 ### A2A (Google Agent-to-Agent Protocol)
-- Handles task delegation (new task to a new agent); does not handle in-progress session continuation
-- HTTP-based; requires both agents to be running HTTP services — not viable for subprocess-based agentic CLIs
-- Could be complementary: A2A for fresh task dispatch; MTARP for continuation after exhaustion
+- Handles task delegation and, via contextId/history/artifacts, orchestrator-driven re-submission that approximates continuation
+- A2A does **not** natively express exhaustion-triggered git-aware handoffs, pre-exhaustion signals, or tier-specific context delivery
+- **MTARP is now an A2A extension** (KB-2026-026) — not a competing protocol. session.json is an A2A artifact; the agent card is an A2A AgentCard with MTARP extension namespace
+- HTTP-based A2A transport is the future target; today's file-first approach works for subprocess CLI providers without HTTP wrappers
 
 ### MCP (Model Context Protocol)
 - Addresses inbound tool/resource access for a single agent; not inter-agent communication
