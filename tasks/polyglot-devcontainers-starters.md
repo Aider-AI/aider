@@ -1,5 +1,15 @@
 # Task: Add node-secure and python-api-secure to the starter catalog
 
+## Orientation
+- God nodes: `starters/catalog.toml`, `task starters:prove`, `proof_paths`, `templates/python-secure/`, maintainer container
+- Key relationship: `proof_paths` is derived empirically — run `task starters:prove`, observe what exists after generation + `task init`, then list exactly those files
+- Non-obvious: `proof_paths` must be exact (no more, no less) — an extra file fails the same as a missing one; this is the most common failure mode
+- Non-obvious: all `task` commands run inside the maintainer container, not the host shell
+
+## Knowledge Briefs
+- KB-2026-031: evidence-based TASK.md structure this spec follows
+- KB-2026-033: Orientation / Agent Log conventions applied here
+
 ## Acceptance Criteria
 1. `task starters:validate` passes with no errors
 2. `task starters:prove -- --starter node-secure` completes successfully
@@ -47,3 +57,8 @@
 - `task starters:show -- --starter <name>` prints the resolved catalog entry as JSON — use this to verify your entry was parsed correctly
 - If `task starters:prove` fails on a proof_path, run `find <generated-dir> -type f` to see what actually exists after generation
 - If a task inside the generated starter fails, cd into the generated directory and run `task ci` manually to see the full output
+
+## Agent Log <!-- [AGENT-MAINTAINED] -->
+<!-- Append-only. Write one line after each logical unit of work. -->
+<!-- Format: [HH:MM] action | file or outcome -->
+- [start] Beginning task
