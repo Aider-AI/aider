@@ -42,6 +42,40 @@ class TestGitContext:
         assert "no git history" in result
 
 
+# ── git_context with GitRepo ──────────────────────────────────────────────────
+
+
+class TestGitContextWithRepo:
+    def test_falls_back_gracefully_when_git_repo_raises(self):
+        class _BadRepo:
+            @property
+            def repo(self):
+                raise RuntimeError("broken")
+
+        result = git_context(git_repo=_BadRepo())
+        # Must fall through to subprocess and still return the expected structure
+        assert "Recent git history:" in result
+        assert "Current uncommitted changes:" in result
+
+    def test_uses_git_repo_when_provided(self):
+        class _FakeGit:
+            def log(self, *a, **kw):
+                return "abc1234 fake commit"
+
+        class _FakeInnerRepo:
+            git = _FakeGit()
+
+        class _FakeRepo:
+            repo = _FakeInnerRepo()
+
+            def get_diffs(self):
+                return "diff --git a/foo.py"
+
+        result = git_context(git_repo=_FakeRepo())
+        assert "fake commit" in result
+        assert "diff --git" in result
+
+
 # ── handoff_prompt ────────────────────────────────────────────────────────────
 
 
@@ -255,11 +289,120 @@ class TestRelayStateMachine:
         )
         assert len(primary.prompts_received) == 1
 
+    # ── autonomous mode ───────────────────────────────────────────────────────
+
+    def test_autonomous_runs_without_user_input(self, capsys):
+        primary, fallback = self._run_relay_autonomous(
+            primary_turns=[success_turn("auto1"), success_turn("auto2")],
+            fallback_turns=[],
+            max_turns=2,
+        )
+        out = capsys.readouterr().out
+        assert "auto1" in out
+        assert "auto2" in out
+        assert "max turns" in out.lower()
+
+    def test_autonomous_continuation_prompt_sent(self):
+        primary, _ = self._run_relay_autonomous(
+            primary_turns=[success_turn("a"), success_turn("b")],
+            fallback_turns=[],
+            max_turns=2,
+        )
+        assert len(primary.prompts_received) == 2
+        assert "continue" in primary.prompts_received[1].lower()
+
+    def test_autonomous_switches_on_exhaustion(self, capsys):
+        primary, fallback = self._run_relay_autonomous(
+            primary_turns=[exhausted_turn()],
+            fallback_turns=[success_turn("fallback auto")],
+            max_turns=1,
+        )
+        out = capsys.readouterr().out
+        assert "fallback auto" in out
+
+    def _run_relay_autonomous(self, primary_turns, fallback_turns, max_turns=0):
+        primary = MockProvider(primary_turns, session_id="primary-session")
+        fallback = MockProvider(fallback_turns, session_id="fallback-session")
+        with patch("scripts.relay_loop.make_provider") as mock_make:
+            mock_make.side_effect = lambda name: primary if name == "claude" else fallback
+            asyncio.run(
+                relay(
+                    "test task",
+                    "claude",
+                    "codex",
+                    sim_exhaust_after=0,
+                    autonomous=True,
+                    max_turns=max_turns,
+                )
+            )
+        return primary, fallback
+
+    # ── provider cycling ──────────────────────────────────────────────────────
+
+    def test_both_exhausted_stops_with_set_tracking(self, capsys):
+        primary, fallback = self._run_relay(
+            primary_turns=[exhausted_turn()],
+            fallback_turns=[exhausted_turn()],
+        )
+        out = capsys.readouterr().out
+        assert "Both providers exhausted" in out
+
     # ── provider tier ─────────────────────────────────────────────────────────
 
     def test_mock_provider_tier_is_agentic_cli(self):
         provider = MockProvider([])
         assert provider.tier == "agentic_cli"
+
+
+# ── task-file support ────────────────────────────────────────────────────────
+
+
+class TestTaskFile:
+    def test_relay_uses_task_file_content(self, tmp_path):
+        task_file = tmp_path / "TASK.md"
+        task_file.write_text("build the OAuth feature")
+
+        primary = MockProvider([success_turn()], session_id="p")
+        with patch("scripts.relay_loop.make_provider") as mock_make:
+            mock_make.side_effect = lambda name: primary
+            with patch("builtins.input", side_effect=EOFError()):
+                asyncio.run(relay(task_file.read_text().strip(), "claude", "codex"))
+        assert primary.prompts_received[0] == "build the OAuth feature"
+
+
+# ── AiderProvider unit ────────────────────────────────────────────────────────
+
+
+class TestAiderProvider:
+    def test_tier_is_completion_api(self):
+        from aider.providers.aider_coder import AiderProvider
+
+        p = AiderProvider("gpt-4o-mini")
+        assert p.tier == "completion_api"
+
+    def test_current_session_id_is_none(self):
+        from aider.providers.aider_coder import AiderProvider
+
+        p = AiderProvider("gpt-4o-mini")
+        assert p.current_session_id is None
+
+    def test_is_rate_limit_detects_by_name(self):
+        from aider.providers.aider_coder import _is_rate_limit
+
+        class FakeRateLimitError(Exception):
+            pass
+
+        assert _is_rate_limit(FakeRateLimitError("RateLimitError hit"))
+
+    def test_is_rate_limit_detects_by_message(self):
+        from aider.providers.aider_coder import _is_rate_limit
+
+        assert _is_rate_limit(Exception("rate_limit exceeded"))
+
+    def test_is_rate_limit_false_for_generic(self):
+        from aider.providers.aider_coder import _is_rate_limit
+
+        assert not _is_rate_limit(ValueError("something else"))
 
 
 # ── ProviderEvent dataclass ───────────────────────────────────────────────────
