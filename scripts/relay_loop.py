@@ -47,6 +47,40 @@ def _try_make_git_repo():
         return None
 
 
+def _files_changed(session: MTARPSession, git_repo) -> list[str]:
+    """Return files changed between session start and current HEAD via git diff --name-only."""
+    if not (git_repo and session.git_diff_since and session.git_head):
+        return []
+    try:
+        raw = git_repo.repo.git.diff("--name-only", session.git_diff_since, session.git_head)
+        return [f for f in raw.splitlines() if f.strip()]
+    except Exception:
+        return []
+
+
+def _generate_summary(task: str, diff: str, model_name: str = "claude-haiku-4-5-20251001") -> str:
+    """Generate a 2-3 sentence summary of what was accomplished. Returns '' on any failure."""
+    if not diff.strip():
+        return ""
+    try:
+        import litellm
+
+        prompt = (
+            f"Task: {task}\n\n"
+            f"Git diff:\n{diff[:6000]}\n\n"
+            "Summarise in 2-3 sentences what was accomplished. "
+            "Be specific: mention file names and key changes."
+        )
+        response = litellm.completion(
+            model=model_name,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=200,
+        )
+        return response.choices[0].message.content.strip()
+    except Exception:
+        return ""
+
+
 def _build_repomap_context(session: MTARPSession, git_repo) -> str:
     """Return a RepoMap string for files changed during the session, or '' on any failure."""
     try:
@@ -54,16 +88,8 @@ def _build_repomap_context(session: MTARPSession, git_repo) -> str:
         from aider.models import Model
         from aider.repomap import RepoMap
 
-        changed: list[str] = []
-        if session.git_diff_since and session.git_head:
-            try:
-                raw = git_repo.repo.git.diff(
-                    "--name-only", session.git_diff_since, session.git_head
-                )
-                changed = [f for f in raw.splitlines() if f.strip()]
-            except Exception:
-                pass
-
+        # Prefer pre-computed files_in_scope; fall back to re-running git diff
+        changed = session.files_in_scope or _files_changed(session, git_repo)
         all_files = list(git_repo.get_tracked_files())
         if not all_files:
             return ""
@@ -224,6 +250,18 @@ async def relay(
                     ).strip()
                 except (subprocess.CalledProcessError, OSError):
                     pass
+
+            # Phase 2: populate files_in_scope and session_summary before writing
+            session.files_in_scope = _files_changed(session, git_repo)
+            diff_for_summary = ""
+            if git_repo and session.git_diff_since and session.git_head:
+                try:
+                    diff_for_summary = (
+                        git_repo.diff_commits(False, session.git_diff_since, session.git_head) or ""
+                    )
+                except Exception:
+                    pass
+            session.session_summary = _generate_summary(task, diff_for_summary)
 
             session.add_provider_run(
                 provider=active,

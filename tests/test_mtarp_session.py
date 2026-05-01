@@ -76,6 +76,8 @@ class TestMTARPSessionToDict:
         assert "git" in d
         assert "handoff" in d
         assert "provider_history" in d
+        assert "files_in_scope" in d
+        assert "session_summary" in d
 
     def test_task_section_structure(self):
         from aider.relay.session import MTARPSession
@@ -156,6 +158,50 @@ class TestMTARPSessionDiskIO:
         assert loaded.session_id == s.session_id
         assert loaded.outgoing_provider == "claude-code"
         assert loaded.git_head == "abc123"
+
+    def test_round_trip_preserves_phase2_fields(self, tmp_path):
+        from aider.relay.session import MTARPSession
+
+        s = MTARPSession(task_description="test")
+        s.files_in_scope = ["src/foo.py", "src/bar.py"]
+        s.session_summary = "Added OAuth support to the auth module."
+        path = tmp_path / "session.json"
+        s.write(path)
+        loaded = MTARPSession.read(path)
+        assert loaded.files_in_scope == ["src/foo.py", "src/bar.py"]
+        assert loaded.session_summary == "Added OAuth support to the auth module."
+
+    def test_phase2_fields_default_to_empty(self, tmp_path):
+        from aider.relay.session import MTARPSession
+
+        s = MTARPSession(task_description="test")
+        assert s.files_in_scope == []
+        assert s.session_summary == ""
+
+    def test_legacy_session_json_missing_phase2_fields_reads_gracefully(self, tmp_path):
+        import json
+
+        from aider.relay.session import MTARPSession
+
+        # Simulate a session.json written before Phase 2 fields existed
+        legacy = {
+            "schema_version": "1.0",
+            "session_id": "abc",
+            "task": {"description": "test", "created_at": ""},
+            "git": {"head": "", "branch": "", "diff_since": ""},
+            "handoff": {
+                "reason": "exhausted",
+                "at": "",
+                "outgoing_provider": "",
+                "outgoing_tier": "agentic_cli",
+            },
+            "provider_history": [],
+        }
+        path = tmp_path / "session.json"
+        path.write_text(json.dumps(legacy))
+        loaded = MTARPSession.read(path)
+        assert loaded.files_in_scope == []
+        assert loaded.session_summary == ""
 
     def test_round_trip_preserves_provider_history(self, tmp_path):
         from aider.relay.session import MTARPSession

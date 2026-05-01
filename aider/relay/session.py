@@ -29,6 +29,9 @@ class MTARPSession:
     outgoing_provider: str = ""
     outgoing_tier: str = "agentic_cli"
     provider_history: list = field(default_factory=list)
+    # Phase 2 fields (KB-2026-030 Step 6)
+    files_in_scope: list = field(default_factory=list)  # files changed during session
+    session_summary: str = ""  # LLM-generated summary of what was accomplished
 
     def to_dict(self) -> dict:
         """Serialize to MTARP schema structure (nested, not flat)."""
@@ -51,6 +54,8 @@ class MTARPSession:
                 "outgoing_tier": self.outgoing_tier,
             },
             "provider_history": list(self.provider_history),
+            "files_in_scope": list(self.files_in_scope),
+            "session_summary": self.session_summary,
         }
 
     def write(self, path: Path) -> None:
@@ -79,6 +84,8 @@ class MTARPSession:
             outgoing_provider=handoff.get("outgoing_provider", ""),
             outgoing_tier=handoff.get("outgoing_tier", "agentic_cli"),
             provider_history=data.get("provider_history", []),
+            files_in_scope=data.get("files_in_scope", []),
+            session_summary=data.get("session_summary", ""),
         )
 
     @classmethod
