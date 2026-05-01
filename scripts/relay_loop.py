@@ -47,6 +47,35 @@ def _try_make_git_repo():
         return None
 
 
+def _build_repomap_context(session: MTARPSession, git_repo) -> str:
+    """Return a RepoMap string for files changed during the session, or '' on any failure."""
+    try:
+        from aider.io import InputOutput
+        from aider.models import Model
+        from aider.repomap import RepoMap
+
+        changed: list[str] = []
+        if session.git_diff_since and session.git_head:
+            try:
+                raw = git_repo.repo.git.diff(
+                    "--name-only", session.git_diff_since, session.git_head
+                )
+                changed = [f for f in raw.splitlines() if f.strip()]
+            except Exception:
+                pass
+
+        all_files = list(git_repo.get_tracked_files())
+        if not all_files:
+            return ""
+
+        io = InputOutput(pretty=False, yes=True)
+        model = Model("claude-haiku-4-5-20251001")
+        repo_map = RepoMap(map_tokens=2048, root=str(Path.cwd()), main_model=model, io=io)
+        return repo_map.get_repo_map(chat_files=changed, other_files=all_files) or ""
+    except Exception:
+        return ""
+
+
 def git_context(git_repo=None) -> str:
     if git_repo is not None:
         try:
@@ -101,10 +130,17 @@ def handoff_prompt(task: str, session: MTARPSession | None = None, git_repo=None
     else:
         context_section = f"## What has been done (from git)\n{git_context(git_repo)}"
 
+    repomap_section = ""
+    if git_repo and session:
+        repomap = _build_repomap_context(session, git_repo)
+        if repomap:
+            repomap_section = f"\n\n## Repository map (files touched this session)\n{repomap}"
+
     base = (
         "You are continuing a coding task in this repository. "
         "A previous AI assistant was working on this and hit its usage limit.\n\n"
-        f"## Task\n{task}\n\n"
+        f"## Task\n{task}\n"
+        f"{repomap_section}\n\n"
         f"{context_section}\n\n"
         "Please continue from where the previous assistant left off."
     )
