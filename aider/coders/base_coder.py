@@ -1128,8 +1128,11 @@ class Coder:
         platform_text = ""
         try:
             platform_text = f"- Platform: {platform.platform()}\n"
-        except KeyError:
-            # Skip platform info if it can't be retrieved
+        except (KeyError, OSError):
+            # Windows 11 WMI calls inside platform.platform() can fail with
+            # `OSError: [WinError 258] The wait operation timed out` (#3464),
+            # in addition to the previously-seen `KeyError: 'Architecture'`
+            # path. Skip platform info on either rather than crashing aider.
             platform_text = "- Platform information unavailable\n"
 
         shell_var = "COMSPEC" if os.name == "nt" else "SHELL"
