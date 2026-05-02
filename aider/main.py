@@ -62,7 +62,12 @@ def get_git_root():
     try:
         repo = git.Repo(search_parent_directories=True)
         return repo.working_tree_dir
-    except (git.InvalidGitRepositoryError, FileNotFoundError):
+    except (git.InvalidGitRepositoryError, git.NoSuchPathError, FileNotFoundError):
+        # Windows paths containing `$` (e.g. `F:\$data\...` from
+        # `mklink /D`-style mounts) reach here as `NoSuchPathError`
+        # because git-python resolves them through the parent search and
+        # fails the existence check (#2957). Treat the same as no repo —
+        # aider operates without one — instead of crashing on startup.
         return None
 
 
