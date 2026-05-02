@@ -56,8 +56,17 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     ]  # Always ignore
     for path in gitignore_paths:
         if path.exists():
-            with open(path) as f:
-                patterns.extend(f.readlines())
+            # `.gitignore` files often contain bytes that don't round-trip
+            # through Windows' cp1252 default codec — comments in non-ASCII,
+            # files dropped in by Unix tools, etc. Read with utf-8 first and
+            # fall back to a permissive decode so an unreadable .gitignore
+            # doesn't crash aider on startup (#2888).
+            try:
+                with open(path, encoding="utf-8") as f:
+                    patterns.extend(f.readlines())
+            except UnicodeDecodeError:
+                with open(path, encoding="utf-8", errors="replace") as f:
+                    patterns.extend(f.readlines())
 
     return PathSpec.from_lines(GitWildMatchPattern, patterns) if patterns else None
 
