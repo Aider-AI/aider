@@ -33,9 +33,23 @@ class WholeFileCoder(Coder):
         fname = None
         fname_source = None
         new_lines = []
+        inner_fence_depth = 0
         for i, line in enumerate(lines):
             if line.startswith(self.fence[0]) or line.startswith(self.fence[1]):
                 if fname is not None:
+                    # Check if this fence is nested inside the file block
+                    stripped = line.strip()
+                    if stripped != self.fence[0] and stripped != self.fence[1]:
+                        # Has a language specifier — opening inner fence, treat as content
+                        inner_fence_depth += 1
+                        new_lines.append(line)
+                        continue
+                    elif inner_fence_depth > 0:
+                        # Plain fence closing an inner fence
+                        inner_fence_depth -= 1
+                        new_lines.append(line)
+                        continue
+
                     # ending an existing block
                     saw_fname = None
 
@@ -49,9 +63,11 @@ class WholeFileCoder(Coder):
                     fname = None
                     fname_source = None
                     new_lines = []
+                    inner_fence_depth = 0
                     continue
 
                 # fname==None ... starting a new block
+                inner_fence_depth = 0
                 if i > 0:
                     fname_source = "block"
                     fname = lines[i - 1].strip()
