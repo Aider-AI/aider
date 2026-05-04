@@ -316,6 +316,34 @@ after b
             updated_content = f.read()
         self.assertEqual(updated_content, new_content)
 
+    def test_nested_code_blocks_in_file_content(self):
+        # Issue #4225: README.md with inner ```bash blocks caused inner fence lines
+        # to be treated as file block boundaries, splitting content incorrectly.
+        sample_file = "README.md"
+
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(main_model=self.GPT35, io=io, fnames=[sample_file])
+
+        expected_content = (
+            "# My Project\n\n"
+            "## Installation\n\n"
+            "```bash\n"
+            "git clone <this-repo>\n"
+            "npm install\n"
+            "```\n\n"
+            "## Usage\n\n"
+            "```bash\n"
+            "npm run dev\n"
+            "```\n"
+        )
+
+        coder.partial_response_content = f"{sample_file}\n```\n{expected_content}```"
+
+        edited_files = coder.apply_updates()
+
+        self.assertIn(sample_file, edited_files)
+        self.assertEqual(Path(sample_file).read_text(), expected_content)
+
     def test_full_edit(self):
         # Create a few temporary files
         _, file1 = tempfile.mkstemp()
