@@ -165,9 +165,9 @@ def find_available_port(start_port=8484, end_port=8584):
 # PKCE code generation
 def generate_pkce_codes():
     code_verifier = secrets.token_urlsafe(64)
-    hasher = hashlib.sha256()
-    hasher.update(code_verifier.encode("utf-8"))
-    code_challenge = base64.urlsafe_b64encode(hasher.digest()).rstrip(b"=").decode("utf-8")
+    code_challenge = base64.urlsafe_b64encode(
+        hashlib.sha256(code_verifier.encode("utf-8")).digest()
+    ).rstrip(b"=").decode("utf-8")
     return code_verifier, code_challenge
 
 
