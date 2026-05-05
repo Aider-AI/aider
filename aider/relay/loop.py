@@ -221,19 +221,36 @@ async def _run_turn_events(provider: BaseProvider, prompt: str, label: str) -> s
     return None
 
 
+async def _heartbeat(label: str, interval: float = 15.0) -> None:
+    """Print elapsed time every *interval* seconds while a turn is in flight."""
+    elapsed = 0.0
+    while True:
+        await asyncio.sleep(interval)
+        elapsed += interval
+        print(f"\n[{label}] ... {int(elapsed)}s elapsed", end="", flush=True)
+
+
 async def run_turn(
     provider: BaseProvider, prompt: str, label: str, turn_timeout: int = 0
 ) -> str | None:
     """Run one provider turn. Returns 'exhausted'/'timeout' if limit hit, None on success."""
     print(f"\n[{label}] ", end="", flush=True)
     coro = _run_turn_events(provider, prompt, label)
-    if turn_timeout > 0:
+    heartbeat_task = asyncio.create_task(_heartbeat(label))
+    try:
+        if turn_timeout > 0:
+            try:
+                return await asyncio.wait_for(coro, timeout=turn_timeout)
+            except asyncio.TimeoutError:
+                print(f"\n[{label}] Turn timed out after {turn_timeout}s.")
+                return "timeout"
+        return await coro
+    finally:
+        heartbeat_task.cancel()
         try:
-            return await asyncio.wait_for(coro, timeout=turn_timeout)
-        except asyncio.TimeoutError:
-            print(f"\n[{label}] Turn timed out after {turn_timeout}s.")
-            return "timeout"
-    return await coro
+            await heartbeat_task
+        except asyncio.CancelledError:
+            pass
 
 
 async def relay(
