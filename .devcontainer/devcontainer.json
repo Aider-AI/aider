@@ -6,7 +6,8 @@
     "source=${localEnv:USERPROFILE}\\.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
     "source=${localEnv:USERPROFILE}\\.claude.json,target=/home/vscode/.claude.json,type=bind,consistency=cached",
     "source=${localEnv:USERPROFILE}\\.codex,target=/home/vscode/.codex,type=bind,consistency=cached",
-    "source=C:\\dev\\polyglot-openrewrite,target=/workspaces/polyglot-devcontainers,type=bind,consistency=cached"
+    "source=C:\\dev\\polyglot-openrewrite,target=/workspaces/polyglot-devcontainers,type=bind,consistency=cached",
+    "source=C:\\dev\\polyglot-devcontainers\\.git,target=/workspaces/polyglot-devcontainers-main-git,type=bind,consistency=cached"
   ],
   "remoteEnv": {
     "PATH": "${containerEnv:PATH}:/home/vscode/.npm-global/bin"
@@ -15,7 +16,8 @@
     "NPM_CONFIG_PREFIX": "/home/vscode/.npm-global",
     "UV_LINK_MODE": "copy",
     "CLAUDE_CODE_OAUTH_TOKEN": "${localEnv:CLAUDE_CODE_OAUTH_TOKEN}",
-    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}"
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
   },
   "customizations": {
     "vscode": {

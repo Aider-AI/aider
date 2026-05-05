@@ -41,6 +41,8 @@ WORKSPACE_FOLDER=""
 PODMAN_CONTAINER=""
 CONTAINER_ENV_ARGS=()   # -e KEY=VALUE pairs for podman run
 PASS_ARGS=()
+GIT_DIR_ARG=""          # KB-2026-038: explicit GIT_DIR for worktree-in-container
+GIT_WORK_TREE_ARG=""    # KB-2026-038: explicit GIT_WORK_TREE
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -53,12 +55,47 @@ while [[ $# -gt 0 ]]; do
         --workspace-folder) WORKSPACE_FOLDER="$2";                      shift 2 ;;
         --podman-container) PODMAN_CONTAINER="$2";                      shift 2 ;;
         --container-env)    CONTAINER_ENV_ARGS+=("-e" "$2");            shift 2 ;;
+        --git-dir)          GIT_DIR_ARG="$2";                          shift 2 ;;
+        --work-tree)        GIT_WORK_TREE_ARG="$2";                    shift 2 ;;
         *)                  PASS_ARGS+=("$1");                          shift   ;;
     esac
 done
 
 if [[ -n "$REPO_DIR" ]]; then cd "$REPO_DIR"; fi
 CWD="$(pwd)"
+
+# ── KB-2026-038: Worktree .git path resolution ────────────────────────────────
+# When a git worktree is bind-mounted from a Windows host, its .git file
+# contains a Windows-native gitdir path unreachable inside the container.
+# --git-dir / --work-tree bypass .git discovery entirely via env vars.
+_dot_git="$CWD/.git"
+if [[ -f "$_dot_git" ]]; then
+    _gitdir_line=$(grep '^gitdir:' "$_dot_git" 2>/dev/null | cut -d' ' -f2- | tr -d '\r')
+    if [[ -n "$_gitdir_line" ]] && [[ ! -d "$_gitdir_line" ]]; then
+        echo "[RELAY] ⚠ Worktree detected: .git → '$_gitdir_line'"
+        echo "[RELAY]   Path not accessible (likely a Windows host path in a Linux container)."
+        if [[ -z "$GIT_DIR_ARG" ]]; then
+            echo "[RELAY]   Git operations will fail. Fix: pass --git-dir <linux-path> --work-tree <linux-path>"
+            echo "[RELAY]   See KB-2026-038 for details and devcontainer.json mount config."
+        fi
+    fi
+fi
+
+if [[ -n "$GIT_DIR_ARG" ]]; then
+    export GIT_DIR="$GIT_DIR_ARG"
+    echo "[RELAY] GIT_DIR      → $GIT_DIR"
+    if [[ -n "$GIT_WORK_TREE_ARG" ]]; then
+        export GIT_WORK_TREE="$GIT_WORK_TREE_ARG"
+        echo "[RELAY] GIT_WORK_TREE → $GIT_WORK_TREE"
+    fi
+    # Propagate into container env for podman/devcontainer exec modes
+    CONTAINER_ENV_ARGS+=("-e" "GIT_DIR=$GIT_DIR_ARG")
+    if [[ -n "$GIT_WORK_TREE_ARG" ]]; then
+        CONTAINER_ENV_ARGS+=("-e" "GIT_WORK_TREE=$GIT_WORK_TREE_ARG")
+    fi
+    # Trust the mounted directory (avoids "dubious ownership" errors)
+    git config --global safe.directory "${GIT_WORK_TREE_ARG:-$CWD}" 2>/dev/null || true
+fi
 
 # ── Validate gateway selection ────────────────────────────────────────────────
 GATEWAY_COUNT=$(( (${#IMAGE} > 0) + (${#CONTAINER_NAME} > 0) + \

@@ -71,7 +71,7 @@ tasks:
   relay:polyglot:
     desc: "[TEMP] Run relay against polyglot-devcontainers/feat/java-openrewrite"
     cmds:
-      - devcontainer exec --workspace-folder . --docker-path podman bash /workspaces/aider-relay/scripts/relay.sh --repo /workspaces/polyglot-devcontainers --primary claude --fallback codex --autonomous --max-turns 30 --task-file TASK.md
+      - devcontainer exec --workspace-folder . --docker-path podman bash /workspaces/aider-relay/scripts/relay.sh --repo /workspaces/polyglot-devcontainers --git-dir /workspaces/polyglot-devcontainers-main-git/worktrees/polyglot-openrewrite --work-tree /workspaces/polyglot-devcontainers --primary claude --fallback codex --autonomous --max-turns 30 --task-file TASK.md
 
   # ── Full pipeline ─────────────────────────────────────────────────────────
 

@@ -1,6 +1,6 @@
 # KB-2026-038: Worktree .git Path Unreachable from Linux Container
 
-**Status:** Open  
+**Status:** Implemented (Option B+E)  
 **Date:** 2026-05-02  
 **Context:** Observed during first relay run against polyglot-devcontainers feat/java-openrewrite
 
@@ -93,6 +93,12 @@ in `devcontainer.json` (add `GH_TOKEN` to `containerEnv` from `localEnv`) alongs
 whichever git path option is chosen. These are two separate problems that both need
 fixing before agents can commit and push end-to-end.
 
-## Decision Needed
+## Implementation
 
-Which option to implement; whether to add `GH_TOKEN` to devcontainer.json now.
+Option B+E implemented:
+
+- `devcontainer.json`: mounts `C:\dev\polyglot-devcontainers\.git` → `/workspaces/polyglot-devcontainers-main-git`; forwards `GH_TOKEN` from host env.
+- `relay.sh`: new `--git-dir` / `--work-tree` args export `GIT_DIR` and `GIT_WORK_TREE` before spawning the relay. Also detects broken worktree `.git` files at startup and warns with fix instructions. Env vars are propagated via `CONTAINER_ENV_ARGS` for podman exec modes.
+- `Taskfile relay:polyglot`: passes `--git-dir /workspaces/polyglot-devcontainers-main-git/worktrees/polyglot-openrewrite --work-tree /workspaces/polyglot-devcontainers`.
+
+Setting `GIT_DIR` bypasses `.git` file discovery entirely; git reads `commondir` (relative path `../../..`) inside the worktree admin dir to locate the main `.git`, which resolves correctly against the mounted path.
