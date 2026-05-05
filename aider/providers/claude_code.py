@@ -12,15 +12,14 @@ class ClaudeCodeProvider(BaseProvider):
         self._session_id: str | None = None
 
     async def run_turn(self, prompt: str) -> AsyncIterator[ProviderEvent]:
-        from claude_agent_sdk import ClaudeAgentOptions, query
-        from claude_agent_sdk import RateLimitEvent
+        from claude_agent_sdk import ClaudeAgentOptions, RateLimitEvent, query
         from claude_agent_sdk.types import AssistantMessage, ResultMessage, TextBlock
 
         async for msg in query(
             prompt=prompt,
             options=ClaudeAgentOptions(
                 resume=self._session_id,
-                permission_mode="bypassPermissions",
+                permission_mode="acceptEdits",
             ),
         ):
             if hasattr(msg, "session_id") and msg.session_id:

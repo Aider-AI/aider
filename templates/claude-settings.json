@@ -1,0 +1,44 @@
+{
+  "_comment": [
+    "Two-tier host trust model for aider-relay (KB-2026-039).",
+    "",
+    "Tier H-1 (always allowed on host): file ops + git reads.",
+    "  File ops are side-effect-free on the workspace the agent owns.",
+    "  Git reads are needed for MTARP session.json population.",
+    "",
+    "Tier H-2 (container exec gateway): podman / devpod / devcontainer exec.",
+    "  ALL build, test, git-write, and install operations must route",
+    "  through one of these gateways. Podman/Docker is the actual sandbox.",
+    "  The container image (polyglot-devcontainers) is the trust boundary.",
+    "",
+    "Everything else is absent from this list and will be blocked by",
+    "Claude Code's permission system."
+  ],
+  "allowedTools": [
+    "Read",
+    "Write",
+    "Edit",
+    "MultiEdit",
+    "Glob",
+    "Grep",
+    "LS",
+
+    "Bash(git status*)",
+    "Bash(git log*)",
+    "Bash(git diff*)",
+    "Bash(git stash list*)",
+
+    "Bash(podman exec *)",
+    "Bash(podman start *)",
+    "Bash(podman ps*)",
+
+    "Bash(devpod exec *)",
+    "Bash(devpod up *)",
+    "Bash(devpod ssh *)",
+    "Bash(devpod list*)",
+    "Bash(devpod status*)",
+
+    "Bash(devcontainer exec *)",
+    "Bash(devcontainer up *)"
+  ]
+}

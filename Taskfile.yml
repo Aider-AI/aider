@@ -61,6 +61,18 @@ tasks:
     cmds:
       - uv run pip-audit
 
+  # ── Relay runs (host → devcontainer) ─────────────────────────────────────
+  # TEMPORARY: relay:polyglot is a one-off workaround for PowerShell terminal
+  # wrapping eating arguments off long command lines. It hardcodes a specific
+  # target repo and task, which violates the generic-tool principle. Replace
+  # with a proper invocation mechanism (e.g. relay.ps1 in the target repo,
+  # or a --config flag on relay.sh) before using aider-relay on a second repo.
+
+  relay:polyglot:
+    desc: "[TEMP] Run relay against polyglot-devcontainers/feat/java-openrewrite"
+    cmds:
+      - devcontainer exec --workspace-folder . --docker-path podman bash /workspaces/aider-relay/scripts/relay.sh --repo /workspaces/polyglot-devcontainers --primary claude --fallback codex --autonomous --max-turns 30 --task-file TASK.md
+
   # ── Full pipeline ─────────────────────────────────────────────────────────
 
   ci:

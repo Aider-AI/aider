@@ -337,7 +337,7 @@ class TestRelayWritesSession:
         primary = MockProvider(primary_turns, session_id="primary-session")
         fallback = MockProvider(fallback_turns, session_id="fallback-session")
 
-        with patch("scripts.relay_loop.make_provider") as mock_make:
+        with patch("aider.relay.loop.make_provider") as mock_make:
             mock_make.side_effect = lambda name: primary if name == "claude" else fallback
             with patch("builtins.input", side_effect=EOFError()):
                 asyncio.run(
@@ -411,7 +411,7 @@ class TestHandoffPromptWithSession:
         received_prompts = []
 
         async def capture_and_run():
-            with patch("scripts.relay_loop.make_provider") as mock_make:
+            with patch("aider.relay.loop.make_provider") as mock_make:
 
                 def make(name):
                     if name == "claude":

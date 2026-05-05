@@ -58,6 +58,17 @@ class MTARPSession:
             "session_summary": self.session_summary,
         }
 
+    def validate_handoff(self) -> list[str]:
+        """Return warning strings for fields that will leave downstream reviewers blind."""
+        issues = []
+        if not self.session_summary:
+            issues.append("session_summary is empty — downstream reviewer has no context")
+        if not self.files_in_scope:
+            issues.append("files_in_scope is empty — changed files not recorded")
+        if not self.git_head:
+            issues.append("git.head is empty — git state at handoff not captured")
+        return issues
+
     def write(self, path: Path) -> None:
         """Write session.json, creating parent directories as needed."""
         path = Path(path)
