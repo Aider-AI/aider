@@ -108,7 +108,7 @@ class TestHandoffPromptRepomap:
         session = _session()
         git_repo = _git_repo()
         with patch(
-            "scripts.relay_loop._build_repomap_context",
+            "aider.relay.loop._build_repomap_context",
             return_value="src/foo.py:\n│ def foo()\n",
         ):
             prompt = handoff_prompt("add OAuth", session=session, git_repo=git_repo)
@@ -118,7 +118,7 @@ class TestHandoffPromptRepomap:
     def test_repomap_section_absent_when_empty(self):
         session = _session()
         git_repo = _git_repo()
-        with patch("scripts.relay_loop._build_repomap_context", return_value=""):
+        with patch("aider.relay.loop._build_repomap_context", return_value=""):
             prompt = handoff_prompt("add OAuth", session=session, git_repo=git_repo)
         assert "## Repository map" not in prompt
 
@@ -137,7 +137,7 @@ class TestHandoffPromptRepomap:
         session = _session()
         git_repo = _git_repo()
         with patch(
-            "scripts.relay_loop._build_repomap_context",
+            "aider.relay.loop._build_repomap_context",
             return_value="src/foo.py:\n│ def foo()\n",
         ):
             prompt = handoff_prompt("add OAuth", session=session, git_repo=git_repo)
@@ -151,12 +151,12 @@ class TestHandoffPromptRepomap:
 
     def test_task_still_present_with_repomap(self):
         session = _session()
-        with patch("scripts.relay_loop._build_repomap_context", return_value="map content"):
+        with patch("aider.relay.loop._build_repomap_context", return_value="map content"):
             prompt = handoff_prompt("add OAuth login", session=session, git_repo=_git_repo())
         assert "add OAuth login" in prompt
 
     def test_mtarp_note_still_present_with_repomap(self):
         session = _session()
-        with patch("scripts.relay_loop._build_repomap_context", return_value="map content"):
+        with patch("aider.relay.loop._build_repomap_context", return_value="map content"):
             prompt = handoff_prompt("add OAuth", session=session, git_repo=_git_repo())
         assert "session.json" in prompt

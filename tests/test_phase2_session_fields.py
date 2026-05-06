@@ -125,11 +125,9 @@ class TestRelayPhase2Fields:
         fallback = MockProvider([success_turn()], session_id="f-session")
 
         with (
-            patch("scripts.relay_loop.make_provider") as mock_make,
-            patch("scripts.relay_loop._files_changed", return_value=["src/auth.py"]),
-            patch(
-                "scripts.relay_loop._generate_summary", return_value="Added OAuth login support."
-            ),
+            patch("aider.relay.loop.make_provider") as mock_make,
+            patch("aider.relay.loop._files_changed", return_value=["src/auth.py"]),
+            patch("aider.relay.loop._generate_summary", return_value="Added OAuth login support."),
             patch("builtins.input", side_effect=EOFError()),
         ):
             mock_make.side_effect = lambda name: primary if name == "claude" else fallback
@@ -152,9 +150,9 @@ class TestRelayPhase2Fields:
         fallback = MockProvider([success_turn()], session_id="f")
 
         with (
-            patch("scripts.relay_loop.make_provider") as mock_make,
-            patch("scripts.relay_loop._files_changed", return_value=[]),
-            patch("scripts.relay_loop._generate_summary", return_value=""),
+            patch("aider.relay.loop.make_provider") as mock_make,
+            patch("aider.relay.loop._files_changed", return_value=[]),
+            patch("aider.relay.loop._generate_summary", return_value=""),
             patch("builtins.input", side_effect=EOFError()),
         ):
             mock_make.side_effect = lambda name: primary if name == "claude" else fallback
