@@ -152,6 +152,40 @@ Quote!
             updated_content = f.read()
         self.assertEqual(updated_content, "Updated content\n")
 
+    def test_update_files_doubled_path_prefix(self):
+        # Two files in distinct subdirs so that find_common_root resolves to the
+        # tempdir, and chat_files retains the "subdir/" prefix on the target.
+        os.makedirs("subdir", exist_ok=True)
+        os.makedirs("other", exist_ok=True)
+
+        target_rel = "subdir/sample.txt"
+        with open(target_rel, "w") as f:
+            f.write("Original content\n")
+        with open("other/sibling.txt", "w") as f:
+            f.write("sibling\n")
+
+        io = InputOutput(yes=True)
+        coder = WholeFileCoder(
+            main_model=self.GPT35,
+            io=io,
+            fnames=[target_rel, "other/sibling.txt"],
+        )
+
+        # LLM hallucinates a doubled prefix: chat_files contains
+        # "subdir/sample.txt"; LLM emits "subdir/subdir/sample.txt".
+        coder.partial_response_content = (
+            f"subdir/{target_rel}\n```\nUpdated content\n```"
+        )
+
+        edited_files = coder.apply_updates()
+
+        # Canonical path should be edited; doubled path must not be created.
+        self.assertIn(target_rel, edited_files)
+        self.assertFalse(Path("subdir", "subdir", "sample.txt").exists())
+
+        with open(target_rel, "r") as f:
+            self.assertEqual(f.read(), "Updated content\n")
+
     def test_update_files_not_in_chat(self):
         # Create a sample file in the temporary directory
         sample_file = "sample.txt"
