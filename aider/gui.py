@@ -480,8 +480,11 @@ class GUI:
                 combined_prefix = "\n\n".join(prefixes)
                 body = visible_text if visible_text else ""
                 self.prompt = (combined_prefix + "\n\n" + body).strip() if body else combined_prefix
+                # Store the user's original text for display — skill prefix is only for the model
+                self._display_text = visible_text if visible_text else user_inp
             else:
                 self.prompt = user_inp
+                self._display_text = user_inp
 
         if self.prompt_pending():
             self.process_chat()
@@ -497,10 +500,12 @@ class GUI:
         self.state.input_history.append(self.prompt)
 
         if self.prompt_as:
-            self.state.messages.append({"role": self.prompt_as, "content": self.prompt})
+            # Display the user's original text, not the skill-prefixed prompt
+            display_content = getattr(self, '_display_text', self.prompt)
+            self.state.messages.append({"role": self.prompt_as, "content": display_content})
         if self.prompt_as == "user":
             with self.messages.chat_message("user"):
-                st.write(self.prompt)
+                st.write(getattr(self, '_display_text', self.prompt))
         elif self.prompt_as == "text":
             line = self.prompt.splitlines()[0]
             line += "??"
@@ -828,6 +833,8 @@ header[data-testid="stHeader"] [data-testid="stStatusWidget"],
     margin: 0.5rem 0 !important;
     padding: 0.75rem 1rem !important;
     backdrop-filter: blur(4px) !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 /* --- Chat messages: assistant bubble --- */
@@ -838,6 +845,8 @@ header[data-testid="stHeader"] [data-testid="stStatusWidget"],
     border-radius: var(--radius-lg) !important;
     margin: 0.5rem 0 !important;
     padding: 0.75rem 1rem !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 /* ALL avatars hidden — design decision, distinguish messages by styling not icons */
