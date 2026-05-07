@@ -419,6 +419,7 @@ class GUI:
         self.state.init("recent_msgs_num", 0)
         self.state.init("web_content_num", 0)
         self.state.init("prompt")
+        self.state.init("user_visible_text")
         self.state.init("scraper")
 
         self.state.init("initial_inchat_files", self.coder.get_inchat_relative_files())
@@ -485,11 +486,11 @@ class GUI:
                 body = visible_text if visible_text else ""
                 # Model gets: user message + skill instructions
                 self.prompt = (body + "\n\n" + combined_suffix).strip() if body else combined_suffix
-                # Display gets: only the user's original words
-                self._user_visible_text = visible_text if visible_text else user_inp
+                # Display gets: only the user's original words (persisted in state for rerun survival)
+                self.state.user_visible_text = visible_text if visible_text else user_inp
             else:
                 self.prompt = user_inp
-                self._user_visible_text = user_inp
+                self.state.user_visible_text = user_inp
 
         if self.prompt_pending():
             self.process_chat()
@@ -506,11 +507,11 @@ class GUI:
 
         if self.prompt_as:
             # Show user's clean text in chat history, not the skill-appended prompt
-            display_text = getattr(self, '_user_visible_text', self.prompt)
+            display_text = getattr(self.state, 'user_visible_text', self.prompt)
             self.state.messages.append({"role": self.prompt_as, "content": display_text})
         if self.prompt_as == "user":
             with self.messages.chat_message("user"):
-                st.write(getattr(self, '_user_visible_text', self.prompt))
+                st.write(getattr(self.state, 'user_visible_text', self.prompt))
         elif self.prompt_as == "text":
             line = self.prompt.splitlines()[0]
             line += "??"
