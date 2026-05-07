@@ -1,15 +1,20 @@
 """
-skill_loader.py — Loads Claude Code skills from ~/.claude/skills/ for the aider GUI.
+skill_loader.py — Loads Claude Code skills for the aider GUI.
 
-Scans each subdirectory for a SKILL.md with YAML frontmatter and returns a list of
-skill dicts: {name, description, path}. Results are cached for the lifetime of the
-process (one scan per session).
+Scans a skills directory for subdirectories containing SKILL.md files with
+YAML frontmatter and returns a list of skill dicts: {name, description, path}.
+
+Skills directory is resolved in order:
+  1. AIDER_SKILLS_DIR env var (if set)
+  2. ~/.claude/skills/ (default for Claude Code users)
+
+Results are cached for the lifetime of the process (one scan per session).
 """
 
 import os
 import re
 
-_SKILLS_DIR = os.path.expanduser("~/.claude/skills")
+_SKILLS_DIR = os.environ.get("AIDER_SKILLS_DIR", os.path.expanduser("~/.claude/skills"))
 _SKILLS_CACHE = None
 
 

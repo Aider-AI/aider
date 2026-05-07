@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 
+import json
 import os
 import random
+import re
 import sys
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from aider import urls
 from aider.coders import Coder
@@ -458,19 +461,27 @@ class GUI:
         if user_inp:
             self.prompt = user_inp
 
-            # If skills are queued, prepend their invocation prompts and clear the queue
+            # --- Expand inline /skillname tokens typed directly in the chat input ---
+            visible_text, inline_skill_prefix = _expand_skill_tokens(user_inp)
+
+            # --- Also honour any skills queued via the sidebar multiselect ---
+            sidebar_skill_prefix = ""
             if self.state.queued_skills:
                 skill_names = [
                     skill_loader.skill_name_from_label(lbl)
                     for lbl in self.state.queued_skills
                 ]
-                skill_prompt = skill_loader.get_multi_skill_prompt(skill_names)
-                # Combine skill invocation with the user's actual message
-                if user_inp.strip():
-                    self.prompt = skill_prompt + "\n\n" + user_inp
-                else:
-                    self.prompt = skill_prompt
+                sidebar_skill_prefix = skill_loader.get_multi_skill_prompt(skill_names)
                 self.state.queued_skills = []
+
+            # Combine: sidebar skills first, then inline skills, then the user's message
+            prefixes = [p for p in [sidebar_skill_prefix, inline_skill_prefix] if p]
+            if prefixes:
+                combined_prefix = "\n\n".join(prefixes)
+                body = visible_text if visible_text else ""
+                self.prompt = (combined_prefix + "\n\n" + body).strip() if body else combined_prefix
+            else:
+                self.prompt = user_inp
 
         if self.prompt_pending():
             self.process_chat()
@@ -1235,10 +1246,402 @@ html, [data-testid="stChatMessageContainer"], .main .block-container {
     white-space: nowrap;
     letter-spacing: 0.01em;
 }
+
+/* ============================================================
+   SIDEBAR SKILLS — hover expand tags + styled dropdown
+   ============================================================ */
+
+/* Selected skill tags — show full text, no truncation */
+[data-testid="stSidebar"] [data-baseweb="tag"] {
+    white-space: normal !important;
+    max-width: 100% !important;
+    height: auto !important;
+    padding: 0.25rem 0.5rem !important;
+    line-height: 1.35 !important;
+    font-size: 0.78rem !important;
+    transition: all 0.15s ease !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"]:hover {
+    background: var(--bg-elevated) !important;
+    border-color: var(--accent) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(88, 166, 255, 0.15) !important;
+}
+
+/* Dropdown options — full description, no truncation */
+[data-testid="stSidebar"] [data-baseweb="menu"] li,
+[data-testid="stSidebar"] [role="option"] {
+    white-space: normal !important;
+    line-height: 1.4 !important;
+    padding: 8px 12px !important;
+    font-size: 0.82rem !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-subtle) !important;
+}
+[data-testid="stSidebar"] [data-baseweb="menu"] li:hover,
+[data-testid="stSidebar"] [role="option"]:hover {
+    background: rgba(88, 166, 255, 0.08) !important;
+}
+
+/* Dropdown panel itself */
+[data-testid="stSidebar"] [data-baseweb="popover"],
+[data-testid="stSidebar"] [data-baseweb="menu"] {
+    background: var(--bg-elevated) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(12px) !important;
+    max-height: 350px !important;
+    overflow-y: auto !important;
+}
 </style>
         """,
         unsafe_allow_html=True,
     )
+
+
+def inject_skill_autocomplete():
+    """
+    Inject a JS-powered slash-command autocomplete popover above the Streamlit chat textarea.
+
+    Approach:
+    - Build a JSON payload of all skills (name + description) once per page load.
+    - Render a zero-height streamlit.components.v1.html() iframe whose script reaches
+      into the parent document (window.parent.document) to find the chat textarea.
+    - Attach a keyup/input listener; when the current word starts with '/', show a
+      floating popover of matching skills above the input bar.
+    - Clicking / pressing Enter on a skill replaces the '/partial' token in the textarea
+      with the full '/skillname' readable text.
+    - The Python submit handler (in __init__) later expands those tokens to full prompts.
+    """
+    skills = skill_loader.load_skills()
+    # Build a compact JSON array: [{n: "name", d: "description"}, ...]
+    skills_json = json.dumps(
+        [{"n": s["name"], "d": s["description"][:100]} for s in skills],
+        ensure_ascii=False,
+    )
+
+    html_src = f"""
+<style>
+  body {{ margin: 0; padding: 0; overflow: hidden; background: transparent; }}
+</style>
+<script>
+(function() {{
+  var SKILLS = {skills_json};
+
+  // --- State ---
+  var popover = null;
+  var activeIdx = 0;
+  var filtered = [];
+  var currentSlashStart = -1;   // caret position where the '/' started
+  var textarea = null;
+
+  // --- Find the Streamlit chat textarea (cross-iframe) ---
+  function findTextarea() {{
+    try {{
+      var doc = window.parent.document;
+      // Try multiple selectors Streamlit uses across versions
+      var selectors = [
+        '[data-testid="stChatInput"] textarea',
+        '[data-testid="stChatInputTextArea"]',
+        'textarea[data-testid]',
+        '.stChatInput textarea',
+        'textarea[placeholder]',
+      ];
+      for (var i = 0; i < selectors.length; i++) {{
+        var el = doc.querySelector(selectors[i]);
+        if (el) return el;
+      }}
+    }} catch(e) {{}}
+    return null;
+  }}
+
+  // --- Build/update the popover ---
+  function buildPopover(doc) {{
+    if (!popover) {{
+      popover = doc.createElement('div');
+      popover.id = 'aider-skill-popover';
+      popover.style.cssText = [
+        'position:fixed',
+        'bottom:80px',
+        'left:50%',
+        'transform:translateX(-50%)',
+        'width:520px',
+        'max-height:320px',
+        'overflow-y:auto',
+        'background:#141720',
+        'border:1px solid #252A3D',
+        'border-radius:10px',
+        'box-shadow:0 8px 32px rgba(0,0,0,0.55)',
+        'backdrop-filter:blur(12px)',
+        '-webkit-backdrop-filter:blur(12px)',
+        'z-index:999999',
+        'font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif',
+        'display:none',
+        'scrollbar-width:thin',
+        'scrollbar-color:#252A3D transparent',
+      ].join(';');
+
+      // Header hint
+      var header = doc.createElement('div');
+      header.style.cssText = 'padding:6px 14px 4px;font-size:11px;color:#484f58;letter-spacing:0.04em;text-transform:uppercase;border-bottom:1px solid #1E2333;';
+      header.textContent = 'Skills — press ↑↓ to navigate, Enter to select, Esc to close';
+      popover.appendChild(header);
+
+      var list = doc.createElement('div');
+      list.id = 'aider-skill-list';
+      popover.appendChild(list);
+
+      doc.body.appendChild(popover);
+    }}
+    return popover;
+  }}
+
+  function renderItems(doc, query) {{
+    var list = doc.getElementById('aider-skill-list');
+    if (!list) return;
+    list.innerHTML = '';
+    activeIdx = 0;
+
+    var q = query.toLowerCase();
+    filtered = q === '' ? SKILLS : SKILLS.filter(function(s) {{
+      return s.n.toLowerCase().indexOf(q) !== -1 ||
+             (s.d && s.d.toLowerCase().indexOf(q) !== -1);
+    }});
+
+    if (filtered.length === 0) {{
+      hidePopover();
+      return;
+    }}
+
+    // Cap visible items to keep the list snappy
+    var visible = filtered.slice(0, 80);
+    visible.forEach(function(skill, idx) {{
+      var item = doc.createElement('div');
+      item.style.cssText = [
+        'padding:8px 14px',
+        'cursor:pointer',
+        'display:flex',
+        'justify-content:space-between',
+        'align-items:center',
+        'border-bottom:1px solid #1E2333',
+        'gap:12px',
+      ].join(';');
+      item.dataset.idx = idx;
+
+      var nameEl = doc.createElement('span');
+      nameEl.style.cssText = 'color:#7CA7E8;font-family:monospace;font-size:13px;font-weight:600;white-space:nowrap;flex-shrink:0;';
+      nameEl.textContent = '/' + skill.n;
+
+      var descEl = doc.createElement('span');
+      descEl.style.cssText = 'color:#8B91A8;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;text-align:right;';
+      descEl.textContent = skill.d || '';
+
+      item.appendChild(nameEl);
+      item.appendChild(descEl);
+
+      item.addEventListener('mouseenter', function() {{
+        activeIdx = parseInt(this.dataset.idx);
+        highlightActive(doc);
+      }});
+      item.addEventListener('mousedown', function(e) {{
+        e.preventDefault(); // don't blur textarea
+        selectSkill(filtered[parseInt(this.dataset.idx)]);
+      }});
+
+      list.appendChild(item);
+    }});
+
+    highlightActive(doc);
+    showPopover();
+  }}
+
+  function highlightActive(doc) {{
+    var list = doc.getElementById('aider-skill-list');
+    if (!list) return;
+    var items = list.children;
+    for (var i = 0; i < items.length; i++) {{
+      if (i === activeIdx) {{
+        items[i].style.background = 'rgba(88,166,255,0.10)';
+        items[i].style.borderLeft = '2px solid #58a6ff';
+        items[i].style.paddingLeft = '12px';
+        // scroll into view
+        items[i].scrollIntoView({{ block: 'nearest' }});
+      }} else {{
+        items[i].style.background = '';
+        items[i].style.borderLeft = '';
+        items[i].style.paddingLeft = '';
+      }}
+    }}
+  }}
+
+  function showPopover() {{
+    if (popover) popover.style.display = 'block';
+  }}
+
+  function hidePopover() {{
+    if (popover) popover.style.display = 'none';
+    currentSlashStart = -1;
+  }}
+
+  function selectSkill(skill) {{
+    if (!textarea || !skill) return;
+
+    var val = textarea.value;
+    var caret = textarea.selectionStart;
+
+    // Find the slash token start: scan backward from caret
+    var slashPos = currentSlashStart;
+    if (slashPos === -1) {{
+      // Fallback: scan backward for '/'
+      slashPos = caret - 1;
+      while (slashPos > 0 && val[slashPos] !== '/') slashPos--;
+    }}
+
+    // Replace from slashPos up to caret with the canonical skill token
+    var replacement = '/' + skill.n;
+    var newVal = val.slice(0, slashPos) + replacement + val.slice(caret);
+
+    // Use the native input value setter so React/Streamlit sees the change
+    var nativeSetter = Object.getOwnPropertyDescriptor(window.parent.HTMLTextAreaElement.prototype, 'value');
+    if (nativeSetter && nativeSetter.set) {{
+      nativeSetter.set.call(textarea, newVal);
+    }} else {{
+      textarea.value = newVal;
+    }}
+
+    // Fire synthetic input event so Streamlit picks up the new value
+    textarea.dispatchEvent(new Event('input', {{ bubbles: true }}));
+    textarea.dispatchEvent(new Event('change', {{ bubbles: true }}));
+
+    // Place caret right after the inserted token
+    var newCaret = slashPos + replacement.length;
+    textarea.setSelectionRange(newCaret, newCaret);
+    textarea.focus();
+
+    hidePopover();
+  }}
+
+  // --- Get the word currently being typed at the caret ---
+  function getCurrentSlashToken(ta) {{
+    var val = ta.value;
+    var caret = ta.selectionStart;
+
+    // Walk backward to find the start of the current word
+    var start = caret - 1;
+    while (start >= 0 && !/\\s/.test(val[start])) start--;
+    start++; // step back to include the first non-space char
+
+    var word = val.slice(start, caret);
+    if (word.startsWith('/')) {{
+      currentSlashStart = start;
+      return word.slice(1); // query without the leading '/'
+    }}
+    currentSlashStart = -1;
+    return null;
+  }}
+
+  // --- Attach listeners once the textarea is available ---
+  function attachListeners(ta) {{
+    textarea = ta;
+    var doc = window.parent.document;
+    buildPopover(doc);
+
+    ta.addEventListener('keydown', function(e) {{
+      if (popover && popover.style.display !== 'none') {{
+        if (e.key === 'ArrowDown') {{
+          e.preventDefault();
+          activeIdx = Math.min(activeIdx + 1, filtered.length - 1);
+          highlightActive(doc);
+        }} else if (e.key === 'ArrowUp') {{
+          e.preventDefault();
+          activeIdx = Math.max(activeIdx - 1, 0);
+          highlightActive(doc);
+        }} else if (e.key === 'Enter' || e.key === 'Tab') {{
+          if (filtered.length > 0) {{
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            selectSkill(filtered[activeIdx]);
+          }}
+        }} else if (e.key === 'Escape') {{
+          e.preventDefault();
+          hidePopover();
+        }}
+      }}
+    }}, true);  // capture phase so we intercept before Streamlit's submit handler
+
+    ta.addEventListener('input', function() {{
+      var query = getCurrentSlashToken(ta);
+      if (query === null) {{
+        hidePopover();
+      }} else {{
+        renderItems(doc, query);
+      }}
+    }});
+
+    ta.addEventListener('blur', function() {{
+      // Small delay so mousedown selection fires first
+      setTimeout(function() {{
+        if (popover && !popover.matches(':hover')) hidePopover();
+      }}, 150);
+    }});
+
+    // Click anywhere outside closes the popover
+    doc.addEventListener('click', function(e) {{
+      if (popover && !popover.contains(e.target) && e.target !== ta) {{
+        hidePopover();
+      }}
+    }});
+  }}
+
+  // --- Poll until the textarea appears (Streamlit renders async) ---
+  function waitForTextarea() {{
+    var ta = findTextarea();
+    if (ta) {{
+      attachListeners(ta);
+    }} else {{
+      setTimeout(waitForTextarea, 300);
+    }}
+  }}
+
+  waitForTextarea();
+}})();
+</script>
+"""
+    # height=0 so the component takes no visible space
+    components.html(html_src, height=0, scrolling=False)
+
+
+def _expand_skill_tokens(text):
+    """
+    Scan *text* for /skillname tokens and return (visible_text, skill_prompt_prefix).
+
+    visible_text      — the user's message with /skillname tokens stripped out
+    skill_prompt_prefix — the full invocation prompts to prepend (may be empty string)
+
+    A /skillname token is any '/word' where 'word' matches a known skill name.
+    Unknown /words are left in the visible text untouched.
+    """
+    skills = skill_loader.load_skills()
+    skill_names_set = {s["name"].lower() for s in skills}
+
+    found_skill_names = []
+    # Match /word tokens (word = letters, digits, hyphens, underscores)
+    token_pattern = re.compile(r'/([A-Za-z][A-Za-z0-9_-]*)')
+
+    def replace_token(m):
+        name = m.group(1).lower()
+        if name in skill_names_set:
+            found_skill_names.append(name)
+            return ""  # strip from visible text
+        return m.group(0)  # leave unknown tokens as-is
+
+    visible = token_pattern.sub(replace_token, text).strip()
+
+    if not found_skill_names:
+        return text, ""
+
+    skill_prompt_prefix = skill_loader.get_multi_skill_prompt(found_skill_names)
+    return visible, skill_prompt_prefix
 
 
 def gui_main():
@@ -1255,6 +1658,7 @@ def gui_main():
 
     inject_custom_css()
     inject_generative_background()
+    inject_skill_autocomplete()
 
     # config_options = st.config._config_options
     # for key, value in config_options.items():
