@@ -178,3 +178,15 @@ See the [installation instructions](https://aider.chat/docs/install.html) and [u
 - *"Aider ... is the tool to benchmark against."* — [BeetleB on Hacker News](https://news.ycombinator.com/item?id=43930201)
 - *"aider is really cool"* — [kache on X](https://x.com/yacineMTB/status/1911224442430124387)
 
+
+---
+
+## Development Log
+
+### May 7, 2026 — Local Model + Skill System Integration
+
+Testing Qwen 3.5 35B-A3B (MoE, 256 experts, 3B active params) running locally via Ollama as the coding agent backend. Working on skill file access, system prompt calibration, and thinking mode integration.
+
+**Overview:** [Loom Recording](https://www.loom.com/share/aa65b23acaaf419eb6b348500c2a9df3)
+
+**Setup Guide:** See [docs/aider-setup.md](docs/aider-setup.md) for configuring Aider with local Claude Code skills.
