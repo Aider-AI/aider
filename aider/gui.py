@@ -13,6 +13,7 @@ from aider.io import InputOutput
 from aider.main import main as cli_main
 from aider.scrape import Scraper, has_playwright
 from aider.generative_bg import inject_generative_background
+from aider import skill_loader
 
 
 class CaptureIO(InputOutput):
@@ -194,6 +195,7 @@ class GUI:
             self.do_add_to_chat()
             self.do_recent_msgs()
             self.do_clear_chat_history()
+            self.do_skills_panel()
 
             # De-emphasised experimental notice
             st.markdown(
@@ -205,6 +207,38 @@ class GUI:
 
     def do_settings_tab(self):
         pass
+
+    def do_skills_panel(self):
+        """Sidebar skills queue — select skills to prepend as invocation prompts on next send."""
+        st.markdown("---")
+
+        # Multiselect: pick any skills to queue
+        selected_labels = st.multiselect(
+            "Queue skills",
+            options=self.state.skill_labels,
+            default=self.state.queued_skills,
+            placeholder="Type / to filter skills...",
+            disabled=self.prompt_pending(),
+            help=(
+                "Select one or more skills to invoke on your next message. "
+                "The skill instructions will be prepended to whatever you type."
+            ),
+            key="skills_multiselect",
+        )
+
+        # Persist selection back into state
+        self.state.queued_skills = selected_labels
+
+        # Show queued indicator if any skills are selected
+        if selected_labels:
+            names = [f"/{skill_loader.skill_name_from_label(lbl)}" for lbl in selected_labels]
+            queued_display = "  ".join(
+                [f'<span class="skill-queue-badge">{n}</span>' for n in names]
+            )
+            st.markdown(
+                f'<div class="skill-queue-indicator">Queued: {queued_display}</div>',
+                unsafe_allow_html=True,
+            )
 
     def do_recommended_actions(self):
         text = "Aider works best when your code is stored in a git repo.  \n"
@@ -385,6 +419,11 @@ class GUI:
 
         self.state.init("initial_inchat_files", self.coder.get_inchat_relative_files())
 
+        # Skills autocomplete state
+        self.state.init("skills", skill_loader.load_skills())
+        self.state.init("queued_skills", [])
+        self.state.init("skill_labels", skill_loader.build_skill_option_labels(self.state.skills))
+
         if "input_history" not in self.state.keys:
             input_history = list(self.coder.io.get_input_history())
             seen = set()
@@ -418,6 +457,20 @@ class GUI:
         user_inp = st.chat_input("Ask me to edit code...")
         if user_inp:
             self.prompt = user_inp
+
+            # If skills are queued, prepend their invocation prompts and clear the queue
+            if self.state.queued_skills:
+                skill_names = [
+                    skill_loader.skill_name_from_label(lbl)
+                    for lbl in self.state.queued_skills
+                ]
+                skill_prompt = skill_loader.get_multi_skill_prompt(skill_names)
+                # Combine skill invocation with the user's actual message
+                if user_inp.strip():
+                    self.prompt = skill_prompt + "\n\n" + user_inp
+                else:
+                    self.prompt = skill_prompt
+                self.state.queued_skills = []
 
         if self.prompt_pending():
             self.process_chat()
@@ -1153,6 +1206,34 @@ html, [data-testid="stChatMessageContainer"], .main .block-container {
     color: var(--accent);
     border-color: var(--user-bubble-border);
     background: var(--accent-dim);
+}
+
+/* ============================================================
+   SKILLS QUEUE — sidebar skill badge strip
+   ============================================================ */
+.skill-queue-indicator {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    align-items: center;
+    margin-top: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+.skill-queue-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.5rem;
+    background: rgba(88, 166, 255, 0.08);
+    border: 1px solid rgba(88, 166, 255, 0.3);
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    letter-spacing: 0.01em;
 }
 </style>
         """,
