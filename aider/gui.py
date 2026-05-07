@@ -473,6 +473,9 @@ class GUI:
                 ]
                 sidebar_skill_prefix = skill_loader.get_multi_skill_prompt(skill_names)
                 self.state.queued_skills = []
+                # Clear the Streamlit widget's persisted value so it doesn't re-populate on rerun
+                if "skills_multiselect" in st.session_state:
+                    st.session_state["skills_multiselect"] = []
 
             # Combine: sidebar skills first, then inline skills, then the user's message
             prefixes = [p for p in [sidebar_skill_prefix, inline_skill_prefix] if p]
@@ -480,11 +483,8 @@ class GUI:
                 combined_prefix = "\n\n".join(prefixes)
                 body = visible_text if visible_text else ""
                 self.prompt = (combined_prefix + "\n\n" + body).strip() if body else combined_prefix
-                # Store the user's original text for display — skill prefix is only for the model
-                self._display_text = visible_text if visible_text else user_inp
             else:
                 self.prompt = user_inp
-                self._display_text = user_inp
 
         if self.prompt_pending():
             self.process_chat()
@@ -500,12 +500,10 @@ class GUI:
         self.state.input_history.append(self.prompt)
 
         if self.prompt_as:
-            # Display the user's original text, not the skill-prefixed prompt
-            display_content = getattr(self, '_display_text', self.prompt)
-            self.state.messages.append({"role": self.prompt_as, "content": display_content})
+            self.state.messages.append({"role": self.prompt_as, "content": self.prompt})
         if self.prompt_as == "user":
             with self.messages.chat_message("user"):
-                st.write(getattr(self, '_display_text', self.prompt))
+                st.write(self.prompt)
         elif self.prompt_as == "text":
             line = self.prompt.splitlines()[0]
             line += "??"
