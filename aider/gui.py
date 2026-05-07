@@ -479,18 +479,16 @@ class GUI:
                 if "skills_multiselect" in st.session_state:
                     st.session_state["skills_multiselect"] = []
 
-            # Combine: user's message first, then skill instructions appended AFTER
-            prefixes = [p for p in [sidebar_skill_prefix, inline_skill_prefix] if p]
-            if prefixes:
-                combined_suffix = "\n\n".join(prefixes)
-                body = visible_text if visible_text else ""
-                # Model gets: user message + skill instructions
-                self.prompt = (body + "\n\n" + combined_suffix).strip() if body else combined_suffix
-                # Display gets: only the user's original words (persisted in state for rerun survival)
-                self.state.user_visible_text = visible_text if visible_text else user_inp
+            # Append skill instructions AFTER the user's message — never before
+            skill_suffixes = [p for p in [sidebar_skill_prefix, inline_skill_prefix] if p]
+            if skill_suffixes:
+                skill_expansion = "\n\n".join(skill_suffixes)
+                # Model gets: user's exact message, then skill instructions below it
+                self.prompt = user_inp + "\n\n" + skill_expansion
             else:
                 self.prompt = user_inp
-                self.state.user_visible_text = user_inp
+            # Display always shows the user's original input exactly as typed
+            self.state.user_visible_text = user_inp
 
         if self.prompt_pending():
             self.process_chat()
@@ -1647,10 +1645,11 @@ def _expand_skill_tokens(text):
         name = m.group(1).lower()
         if name in skill_names_set:
             found_skill_names.append(name)
-            return ""  # strip from visible text
-        return m.group(0)  # leave unknown tokens as-is
+            return m.group(0)  # keep the /command visible in the user's message
+        return m.group(0)
 
-    visible = token_pattern.sub(replace_token, text).strip()
+    # Don't modify the visible text — keep it exactly as typed
+    visible = text.strip()
 
     if not found_skill_names:
         return text, ""
