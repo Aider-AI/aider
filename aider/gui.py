@@ -216,15 +216,16 @@ class GUI:
         st.markdown("---")
 
         # Multiselect: pick any skills to queue
+        # NOT disabled during processing — users should be able to queue skills
+        # for the next turn while the model is working
         selected_labels = st.multiselect(
             "Queue skills",
             options=self.state.skill_labels,
             default=self.state.queued_skills,
             placeholder="Type / to filter skills...",
-            disabled=self.prompt_pending(),
             help=(
                 "Select one or more skills to invoke on your next message. "
-                "The skill instructions will be prepended to whatever you type."
+                "The skill instructions will be appended to whatever you type."
             ),
             key="skills_multiselect",
         )
@@ -477,14 +478,18 @@ class GUI:
                 if "skills_multiselect" in st.session_state:
                     st.session_state["skills_multiselect"] = []
 
-            # Combine: sidebar skills first, then inline skills, then the user's message
+            # Combine: user's message first, then skill instructions appended AFTER
             prefixes = [p for p in [sidebar_skill_prefix, inline_skill_prefix] if p]
             if prefixes:
-                combined_prefix = "\n\n".join(prefixes)
+                combined_suffix = "\n\n".join(prefixes)
                 body = visible_text if visible_text else ""
-                self.prompt = (combined_prefix + "\n\n" + body).strip() if body else combined_prefix
+                # Model gets: user message + skill instructions
+                self.prompt = (body + "\n\n" + combined_suffix).strip() if body else combined_suffix
+                # Display gets: only the user's original words
+                self._user_visible_text = visible_text if visible_text else user_inp
             else:
                 self.prompt = user_inp
+                self._user_visible_text = user_inp
 
         if self.prompt_pending():
             self.process_chat()
@@ -500,10 +505,12 @@ class GUI:
         self.state.input_history.append(self.prompt)
 
         if self.prompt_as:
-            self.state.messages.append({"role": self.prompt_as, "content": self.prompt})
+            # Show user's clean text in chat history, not the skill-appended prompt
+            display_text = getattr(self, '_user_visible_text', self.prompt)
+            self.state.messages.append({"role": self.prompt_as, "content": display_text})
         if self.prompt_as == "user":
             with self.messages.chat_message("user"):
-                st.write(self.prompt)
+                st.write(getattr(self, '_user_visible_text', self.prompt))
         elif self.prompt_as == "text":
             line = self.prompt.splitlines()[0]
             line += "??"
