@@ -1,11 +1,13 @@
 import os
 import tempfile
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
-from aider.commands import Commands
+# Mock pyperclip before importing Commands to avoid dependency issues
+with patch.dict('sys.modules', {'pyperclip': Mock()}):
+    from aider.commands import Commands
 from aider.speckit import SpecKitDiscovery
 
 
