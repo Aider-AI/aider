@@ -25,6 +25,12 @@
 - Maintain aider's existing test patterns and structure
 - All changes must be backward compatible with existing aider workflows
 
+### Project Tooling
+- This project uses `uv` for Python package management and virtual environments
+- Use `uv` commands for dependency installation, testing, and environment management
+- Prefer `uv run` for executing Python scripts and tests
+- Use `uv add` for adding new dependencies
+
 ## Governance
 
 ### Decision Making
