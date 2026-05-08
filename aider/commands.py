@@ -22,6 +22,7 @@ from aider.llm import litellm
 from aider.repo import ANY_GIT_ERROR
 from aider.run_cmd import run_cmd
 from aider.scrape import Scraper, install_playwright
+from aider.speckit import SpecKitDiscovery
 from aider.utils import is_image_file
 
 from .dump import dump  # noqa: F401
@@ -1634,6 +1635,35 @@ class Commands:
         # Output announcements
         announcements = "\n".join(self.coder.get_announcements())
         self.io.tool_output(announcements)
+
+    def cmd_speckit(self, args):
+        "SpecKit integration commands (status)"
+        
+        args = args.strip()
+        if not args:
+            self.io.tool_error("Please specify a SpecKit command. Available: status")
+            return
+        
+        subcommand = args.split()[0].lower()
+        
+        if subcommand == "status":
+            self._cmd_speckit_status()
+        else:
+            self.io.tool_error(f"Unknown SpecKit command: {subcommand}. Available: status")
+    
+    def _cmd_speckit_status(self):
+        """Show status of SpecKit artifacts in the repository."""
+        if not self.coder.root:
+            self.io.tool_error("No repository root found.")
+            return
+        
+        try:
+            discovery = SpecKitDiscovery(self.coder.root)
+            artifacts = discovery.discover_artifacts()
+            report = discovery.format_status_report(artifacts)
+            self.io.tool_output(report)
+        except Exception as e:
+            self.io.tool_error(f"Error discovering SpecKit artifacts: {e}")
 
     def cmd_copy_context(self, args=None):
         """Copy the current chat context as markdown, suitable to paste into a web UI"""
