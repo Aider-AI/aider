@@ -20,8 +20,14 @@ class CodexProvider(BaseProvider):
             cmd = ["codex", "exec", "--json", "--sandbox", self._sandbox, prompt]
         else:
             cmd = [
-                "codex", "exec", "resume", self._thread_id, prompt,
-                "--json", "--sandbox", self._sandbox,
+                "codex",
+                "exec",
+                "resume",
+                self._thread_id,
+                prompt,
+                "--json",
+                "--sandbox",
+                self._sandbox,
             ]
 
         proc = await asyncio.create_subprocess_exec(

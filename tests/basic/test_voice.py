@@ -53,6 +53,14 @@ def test_voice_init_invalid_format():
         assert "Unsupported audio format" in str(exc.value)
 
 
+def test_voice_init_allows_missing_audio_backend_for_non_recording_paths():
+    with patch("aider.voice.sf", None):
+        voice = Voice()
+        assert voice.device_id is None
+        assert voice.audio_format == "wav"
+        assert voice.sd is None
+
+
 def test_callback_processing():
     with patch("aider.voice.sf", MagicMock()):  # Need to mock sf to avoid SoundDeviceError
         voice = Voice()
@@ -101,3 +109,13 @@ def test_record_and_transcribe_device_error():
         ):
             result = voice.record_and_transcribe()
             assert result is None
+
+
+def test_raw_record_and_transcribe_requires_audio_backend():
+    with patch("aider.voice.sf", None):
+        voice = Voice()
+
+    with pytest.raises(SoundDeviceError) as exc:
+        voice.raw_record_and_transcribe(history=None, language=None)
+
+    assert "portaudio" in str(exc.value).lower()

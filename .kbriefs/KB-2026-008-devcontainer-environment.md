@@ -3,9 +3,9 @@ id: KB-2026-008
 type: standard
 status: validated
 created: 2026-04-27
-updated: 2026-04-27
+updated: 2026-05-08
 tags: [devcontainer, environment, python-node, polyglot, development-workflow]
-related: [KB-2026-001, KB-2026-006]
+related: [KB-2026-001, KB-2026-006, KB-2026-049]
 ---
 
 # Devcontainer Development Environment Standard
@@ -26,8 +26,9 @@ This image provides:
 - Python 3.12 + `uv` package manager
 - Node.js 22 + npm (required for `@anthropic-ai/claude-code` and `@openai/codex`)
 - `task` runner (implements the standard task contract)
-- `ruff` linter, `pytest`, `pip-audit`, `gitleaks`
+- `pytest`, `pip-audit`, `gitleaks`
 - `gh` GitHub CLI, `git`, `pre-commit`
+- style tooling through pre-commit hook environments (`isort`, `black`, `flake8`, `codespell`)
 
 ### Why Python+Node (not Python-only)
 
@@ -80,8 +81,14 @@ tasks:
   lint:
     desc: Run code quality checks
     cmds:
-      - uv run ruff check .
-      - uv run ruff format --check .
+      - uv run pre-commit run --all-files
+
+  format:
+    desc: Auto-format code
+    cmds:
+      - uv run pre-commit run isort --all-files
+      - uv run pre-commit run black --all-files
+      - uv run pre-commit run codespell --all-files
 
   test:
     desc: Run test suite
@@ -100,6 +107,11 @@ tasks:
       - task: test
       - task: scan
 ```
+
+### Validation Boundary
+
+Run validation through the devcontainer for this repo. Do not reuse a container-created `.venv`
+from the Windows host. See KB-2026-049 for the failure mode and recovery pattern.
 
 ## Authentication Constraint (Known Limitation)
 

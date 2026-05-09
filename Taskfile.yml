@@ -38,14 +38,14 @@ tasks:
   lint:
     desc: Run code quality checks
     cmds:
-      - uv run ruff check .
-      - uv run ruff format --check .
+      - uv run pre-commit run --all-files
 
   format:
     desc: Auto-format code
     cmds:
-      - uv run ruff format .
-      - uv run ruff check --fix .
+      - uv run pre-commit run isort --all-files
+      - uv run pre-commit run black --all-files
+      - uv run pre-commit run codespell --all-files
 
   # ── Tests ─────────────────────────────────────────────────────────────────
 

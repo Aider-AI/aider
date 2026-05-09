@@ -37,9 +37,19 @@ class Voice:
 
     threshold = 0.15
 
-    def __init__(self, audio_format="wav", device_name=None):
+    def __init__(self, audio_format="wav", device_name=None, require_input_device=False):
+        if audio_format not in ["wav", "mp3", "webm"]:
+            raise ValueError(f"Unsupported audio format: {audio_format}")
+
+        self.audio_format = audio_format
+        self.device_id = None
+        self.sd = None
+
         if sf is None:
-            raise SoundDeviceError
+            if require_input_device:
+                raise SoundDeviceError
+            return
+
         try:
             print("Initializing sound device...")
             import sounddevice as sd
@@ -69,10 +79,8 @@ class Voice:
                 self.device_id = None
 
         except (OSError, ModuleNotFoundError):
-            raise SoundDeviceError
-        if audio_format not in ["wav", "mp3", "webm"]:
-            raise ValueError(f"Unsupported audio format: {audio_format}")
-        self.audio_format = audio_format
+            if require_input_device:
+                raise SoundDeviceError
 
     def callback(self, indata, frames, time, status):
         """This is called (from a separate thread) for each audio block."""
@@ -114,6 +122,11 @@ class Voice:
             return
 
     def raw_record_and_transcribe(self, history, language):
+        if sf is None or self.sd is None:
+            raise SoundDeviceError(
+                "Unable to import `sounddevice` and/or `soundfile`, is portaudio installed?"
+            )
+
         self.q = queue.Queue()
 
         temp_wav = tempfile.mktemp(suffix=".wav")

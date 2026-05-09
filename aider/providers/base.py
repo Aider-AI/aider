@@ -16,11 +16,13 @@ class ProviderEvent:
 
 class BaseProvider(ABC):
     @abstractmethod
-    async def run_turn(self, prompt: str) -> AsyncIterator[ProviderEvent]: ...
+    async def run_turn(self, prompt: str) -> AsyncIterator[ProviderEvent]:
+        ...
 
     @property
     @abstractmethod
-    def current_session_id(self) -> str | None: ...
+    def current_session_id(self) -> str | None:
+        ...
 
     @property
     def tier(self) -> ProviderTier:

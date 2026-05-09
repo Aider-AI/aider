@@ -1259,7 +1259,9 @@ class Commands:
                 return
             try:
                 self.voice = voice.Voice(
-                    audio_format=self.voice_format or "wav", device_name=self.voice_input_device
+                    audio_format=self.voice_format or "wav",
+                    device_name=self.voice_input_device,
+                    require_input_device=True,
                 )
             except voice.SoundDeviceError:
                 self.io.tool_error(
@@ -1638,25 +1640,25 @@ class Commands:
 
     def cmd_speckit(self, args):
         "SpecKit integration commands (status)"
-        
+
         args = args.strip()
         if not args:
             self.io.tool_error("Please specify a SpecKit command. Available: status")
             return
-        
+
         subcommand = args.split()[0].lower()
-        
+
         if subcommand == "status":
             self._cmd_speckit_status()
         else:
             self.io.tool_error(f"Unknown SpecKit command: {subcommand}. Available: status")
-    
+
     def _cmd_speckit_status(self):
         """Show status of SpecKit artifacts in the repository."""
         if not self.coder.root:
             self.io.tool_error("No repository root found.")
             return
-        
+
         try:
             discovery = SpecKitDiscovery(self.coder.root)
             artifacts = discovery.discover_artifacts()
