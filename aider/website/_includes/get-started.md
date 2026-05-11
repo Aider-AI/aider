@@ -20,3 +20,12 @@ aider --model sonnet --api-key anthropic=<key>
 # o3-mini
 aider --model o3-mini --api-key openai=<key>
 ```
+
+Using a local model? See the per-provider setup pages for
+[Ollama](https://aider.chat/docs/llms/ollama.html),
+[LM Studio](https://aider.chat/docs/llms/lm-studio.html),
+or any
+[OpenAI-compatible endpoint](https://aider.chat/docs/llms/openai-compat.html)
+such as a llama.cpp server.
+The full list of supported providers is on the
+[Connecting to LLMs](https://aider.chat/docs/llms.html) page.
