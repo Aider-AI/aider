@@ -66,8 +66,8 @@ def get_git_root():
         # Windows paths containing `$` (e.g. `F:\$data\...` from
         # `mklink /D`-style mounts) reach here as `NoSuchPathError`
         # because git-python resolves them through the parent search and
-        # fails the existence check (#2957). Treat the same as no repo —
-        # aider operates without one — instead of crashing on startup.
+        # fails the existence check (#2957). Treat the same as no repo,
+        # aider operates without one, instead of crashing on startup.
         return None
 
 
