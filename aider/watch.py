@@ -57,7 +57,7 @@ def load_gitignores(gitignore_paths: list[Path]) -> Optional[PathSpec]:
     for path in gitignore_paths:
         if path.exists():
             # `.gitignore` files often contain bytes that don't round-trip
-            # through Windows' cp1252 default codec — comments in non-ASCII,
+            # through Windows' cp1252 default codec, comments in non-ASCII,
             # files dropped in by Unix tools, etc. Read with utf-8 first and
             # fall back to a permissive decode so an unreadable .gitignore
             # doesn't crash aider on startup (#2888).
