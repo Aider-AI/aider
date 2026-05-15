@@ -537,6 +537,46 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(staged_fname), fnames)
             io.tool_error.assert_not_called()
 
+    def test_get_tracked_files_handles_string_index_output(self):
+        with GitTemporaryDirectory():
+            raw_repo = git.Repo()
+
+            fname = Path("tracked.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "tracked")
+
+            staged_fname = Path("staged.txt")
+            staged_fname.touch()
+            raw_repo.git.add(str(staged_fname))
+
+            git_repo = GitRepo(InputOutput(), None, None)
+            with patch.object(git_repo, "get_index_file_output", return_value=f"{staged_fname}\0"):
+                fnames = git_repo.get_tracked_files()
+
+            self.assertIn(str(fname), fnames)
+            self.assertIn(str(staged_fname), fnames)
+
+    def test_get_tracked_files_caches_unchanged_index(self):
+        with GitTemporaryDirectory():
+            raw_repo = git.Repo()
+
+            fname = Path("tracked.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "tracked")
+
+            git_repo = GitRepo(InputOutput(), None, None)
+            with patch.object(
+                git_repo,
+                "get_index_file_output",
+                wraps=git_repo.get_index_file_output,
+            ) as mock_ls_files:
+                self.assertIn(str(fname), git_repo.get_tracked_files())
+                self.assertIn(str(fname), git_repo.get_tracked_files())
+
+            self.assertEqual(1, mock_ls_files.call_count)
+
     def test_get_tracked_files_with_aiderignore(self):
         with GitTemporaryDirectory():
             # new repo
