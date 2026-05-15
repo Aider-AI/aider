@@ -510,6 +510,33 @@ class TestRepo(unittest.TestCase):
             self.assertIn(str(fname), fnames)
             self.assertIn(str(fname2), fnames)
 
+    def test_get_tracked_files_without_gitpython_index_parser(self):
+        with GitTemporaryDirectory():
+            raw_repo = git.Repo()
+
+            fname = Path("tracked.txt")
+            fname.touch()
+            raw_repo.git.add(str(fname))
+            raw_repo.git.commit("-m", "tracked")
+
+            staged_fname = Path("intent-to-add.txt")
+            staged_fname.touch()
+            raw_repo.git.add("-N", str(staged_fname))
+
+            io = InputOutput()
+            io.tool_error = MagicMock()
+            git_repo = GitRepo(io, None, None)
+
+            def broken_index(_repo):
+                raise AssertionError("index version in (1, 2) is required")
+
+            with patch.object(git.Repo, "index", property(broken_index)):
+                fnames = git_repo.get_tracked_files()
+
+            self.assertIn(str(fname), fnames)
+            self.assertIn(str(staged_fname), fnames)
+            io.tool_error.assert_not_called()
+
     def test_get_tracked_files_with_aiderignore(self):
         with GitTemporaryDirectory():
             # new repo

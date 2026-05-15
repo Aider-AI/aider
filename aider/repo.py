@@ -475,11 +475,14 @@ class GitRepo:
                 files = set(self.normalize_path(path) for path in files)
                 self.tree_files[commit] = set(files)
 
-        # Add staged files
-        index = self.repo.index
+        # Add files from the index without parsing .git/index through GitPython. GitPython
+        # only understands older index formats, while git itself handles newer versions.
         try:
-            staged_files = [path for path, _ in index.entries.keys()]
-            files.update(self.normalize_path(path) for path in staged_files)
+            staged_files = self.repo.git.ls_files(
+                "-z", "--cached", "--full-name", stdout_as_string=False
+            )
+            staged_files = staged_files.decode(self.io.encoding, "replace").split("\0")
+            files.update(self.normalize_path(path) for path in staged_files if path)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to read staged files: {err}")
 
