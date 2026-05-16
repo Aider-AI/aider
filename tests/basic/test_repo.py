@@ -577,6 +577,23 @@ class TestRepo(unittest.TestCase):
 
             self.assertEqual(1, mock_ls_files.call_count)
 
+    def test_get_tracked_files_refreshes_changed_index(self):
+        with GitTemporaryDirectory():
+            git.Repo()
+
+            git_repo = GitRepo(InputOutput(), None, None)
+            with patch.object(git_repo, "get_index_stat", side_effect=[1, 1, 2]):
+                with patch.object(
+                    git_repo,
+                    "get_index_file_output",
+                    side_effect=["first.txt\0", "second.txt\0"],
+                ) as mock_ls_files:
+                    self.assertEqual(["first.txt", ""], git_repo.get_index_files())
+                    self.assertEqual(["first.txt", ""], git_repo.get_index_files())
+                    self.assertEqual(["second.txt", ""], git_repo.get_index_files())
+
+            self.assertEqual(2, mock_ls_files.call_count)
+
     def test_get_tracked_files_with_aiderignore(self):
         with GitTemporaryDirectory():
             # new repo
