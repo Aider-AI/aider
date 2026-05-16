@@ -4,6 +4,7 @@ import re
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import git
 
@@ -42,6 +43,29 @@ class TestRepoMap(unittest.TestCase):
             self.assertIn("test_file2.py", result)
             self.assertIn("test_file3.md", result)
             self.assertIn("test_file4.json", result)
+
+            # close the open cache files, so Windows won't error
+            del repo_map
+
+    def test_get_repo_map_skips_invalid_tree_sitter_query(self):
+        with IgnorantTemporaryDirectory() as temp_dir:
+            test_file = os.path.join(temp_dir, "broken_query.py")
+            with open(test_file, "w", encoding="utf-8") as f:
+                f.write("def hello():\n    return 1\n")
+
+            invalid_query = Path(temp_dir) / "invalid-tags.scm"
+            invalid_query.write_text(
+                "(not_a_real_node) @name.definition.function\n", encoding="utf-8"
+            )
+
+            io = InputOutput()
+            repo_map = RepoMap(main_model=self.GPT35, root=temp_dir, io=io)
+
+            with patch("aider.repomap.get_scm_fname", return_value=invalid_query):
+                result = repo_map.get_repo_map([], [test_file])
+
+            self.assertIn("broken_query.py", result)
+            self.assertNotIn("hello", result)
 
             # close the open cache files, so Windows won't error
             del repo_map
