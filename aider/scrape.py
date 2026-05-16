@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
+import ipaddress
 import re
+import socket
 import sys
+from urllib.parse import urljoin, urlsplit
 
 import pypandoc
 
@@ -9,6 +12,72 @@ from aider import __version__, urls, utils
 from aider.dump import dump  # noqa: F401
 
 aider_user_agent = f"Aider/{__version__} +{urls.website}"
+
+blocked_scrape_hostnames = {
+    "metadata.google.internal",
+}
+
+
+class ScrapeNetworkBackend:
+    def __init__(self, scraper):
+        self.scraper = scraper
+
+    def connect_tcp(
+        self,
+        host,
+        port,
+        timeout=None,
+        local_address=None,
+        socket_options=None,
+    ):
+        from httpcore import ConnectError, ConnectTimeout
+        from httpcore._backends.sync import SyncStream
+
+        addresses, error = self.scraper.get_safe_addresses(
+            host, port, "http", f"{host}:{port}"
+        )
+        if error:
+            raise ConnectError(error)
+
+        last_error = None
+        for family, socktype, proto, sockaddr, _ip in addresses:
+            sock = None
+            try:
+                sock = socket.socket(family, socktype, proto)
+                sock.settimeout(timeout)
+                if local_address is not None:
+                    if family == socket.AF_INET6:
+                        sock.bind((local_address, 0, 0, 0))
+                    else:
+                        sock.bind((local_address, 0))
+                if socket_options:
+                    for option in socket_options:
+                        sock.setsockopt(*option)
+                sock.connect(sockaddr)
+                sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                return SyncStream(sock)
+            except socket.timeout as err:
+                last_error = err
+            except OSError as err:
+                last_error = err
+
+            if sock is not None:
+                sock.close()
+
+        if isinstance(last_error, socket.timeout):
+            raise ConnectTimeout(str(last_error))
+        raise ConnectError(str(last_error or f"Unable to connect to {host}:{port}"))
+
+    def connect_unix_socket(self, path, timeout=None, socket_options=None):
+        from httpcore._backends.sync import SyncBackend
+
+        return SyncBackend().connect_unix_socket(path, timeout, socket_options)
+
+    def sleep(self, seconds):
+        from time import sleep
+
+        sleep(seconds)
+
 
 # Playwright is nice because it has a simple way to install dependencies on most
 # platforms.
@@ -94,6 +163,7 @@ class Scraper:
 
         self.playwright_available = playwright_available
         self.verify_ssl = verify_ssl
+        self._blocked_playwright_request_error = None
 
     def scrape(self, url):
         """
@@ -103,7 +173,12 @@ class Scraper:
         `url` - the URL to scrape.
         """
 
-        if self.playwright_available:
+        error = self.validate_url(url)
+        if error:
+            self.print_error(error)
+            return None
+
+        if self.playwright_available and self.can_use_playwright_for_url(url):
             content, mime_type = self.scrape_with_playwright(url)
         else:
             content, mime_type = self.scrape_with_httpx(url)
@@ -120,6 +195,120 @@ class Scraper:
             content = self.html_to_markdown(content)
 
         return content
+
+    def validate_url(self, url):
+        """
+        Return an error if the URL targets a private or otherwise non-public network.
+        """
+        try:
+            parsed_url = urlsplit(url)
+        except ValueError as err:
+            return f"Invalid URL {url}: {err}"
+
+        if parsed_url.scheme not in ("http", "https"):
+            return None
+
+        hostname = parsed_url.hostname
+        if not hostname:
+            return f"Invalid URL {url}: missing hostname"
+
+        if hostname.lower().rstrip(".") in blocked_scrape_hostnames:
+            return f"Blocked scraping private or metadata URL: {url}"
+
+        try:
+            port = parsed_url.port
+        except ValueError as err:
+            return f"Invalid URL {url}: {err}"
+
+        _addresses, error = self.get_safe_addresses(hostname, port, parsed_url.scheme, url)
+        if error:
+            return error
+
+    def get_safe_addresses(self, hostname, port, scheme, display_url):
+        if hostname.lower().rstrip(".") in blocked_scrape_hostnames:
+            return [], f"Blocked scraping private or metadata URL: {display_url}"
+
+        addresses, error = self.resolve_url_addresses(hostname, port, scheme)
+        if error:
+            return [], error
+
+        if not addresses:
+            return [], f"Unable to resolve URL host {hostname}: no addresses found"
+
+        for _family, _socktype, _proto, _sockaddr, ip in addresses:
+            if not self.is_public_unicast_address(ip):
+                return [], f"Blocked scraping private or metadata URL: {display_url}"
+
+        return addresses, None
+
+    def is_public_unicast_address(self, ip):
+        return (
+            ip.is_global
+            and not ip.is_multicast
+            and not ip.is_reserved
+            and not ip.is_unspecified
+        )
+
+    def resolve_url_addresses(self, hostname, port, scheme):
+        if port is None:
+            port = 443 if scheme == "https" else 80
+
+        try:
+            infos = socket.getaddrinfo(hostname, port, type=socket.SOCK_STREAM)
+        except OSError as err:
+            return [], f"Unable to resolve URL host {hostname}: {err}"
+
+        addresses = []
+        for info in infos:
+            address = info[4][0]
+            try:
+                ip = ipaddress.ip_address(address)
+            except ValueError:
+                continue
+            addresses.append((info[0], info[1], info[2], info[4], ip))
+
+        return addresses, None
+
+    def can_use_playwright_for_url(self, url):
+        try:
+            parsed_url = urlsplit(url)
+        except ValueError:
+            return False
+
+        if parsed_url.scheme not in ("http", "https") or not parsed_url.hostname:
+            return False
+
+        try:
+            ipaddress.ip_address(parsed_url.hostname)
+        except ValueError:
+            return False
+        return True
+
+    def validate_playwright_url(self, url):
+        error = self.validate_url(url)
+        if error:
+            return error
+
+        try:
+            parsed_url = urlsplit(url)
+        except ValueError as err:
+            return f"Invalid URL {url}: {err}"
+
+        if parsed_url.scheme in ("http", "https"):
+            try:
+                ipaddress.ip_address(parsed_url.hostname)
+            except ValueError:
+                return f"Blocked scraping browser URL that requires DNS resolution: {url}"
+
+    def route_scrape_request(self, route):
+        error = self.validate_playwright_url(route.request.url)
+        if error:
+            if not self._blocked_playwright_request_error:
+                self._blocked_playwright_request_error = error
+            route.abort()
+            return
+
+        route.continue_()
 
     def looks_like_html(self, content):
         """
@@ -157,6 +346,8 @@ class Scraper:
             try:
                 context = browser.new_context(ignore_https_errors=not self.verify_ssl)
                 page = context.new_page()
+                self._blocked_playwright_request_error = None
+                page.route("**/*", self.route_scrape_request)
 
                 user_agent = page.evaluate("navigator.userAgent")
                 user_agent = user_agent.replace("Headless", "")
@@ -172,7 +363,10 @@ class Scraper:
                     print(f"Page didn't quiesce, scraping content anyway: {url}")
                     response = None
                 except PlaywrightError as e:
-                    self.print_error(f"Error navigating to {url}: {str(e)}")
+                    if self._blocked_playwright_request_error:
+                        self.print_error(self._blocked_playwright_request_error)
+                    else:
+                        self.print_error(f"Error navigating to {url}: {str(e)}")
                     return None, None
 
                 try:
@@ -196,12 +390,32 @@ class Scraper:
 
         headers = {"User-Agent": f"Mozilla./5.0 ({aider_user_agent})"}
         try:
+            transport = httpx.HTTPTransport(verify=self.verify_ssl, trust_env=False)
+            transport._pool._network_backend = ScrapeNetworkBackend(self)
             with httpx.Client(
-                headers=headers, verify=self.verify_ssl, follow_redirects=True
+                headers=headers,
+                follow_redirects=False,
+                transport=transport,
+                trust_env=False,
             ) as client:
-                response = client.get(url)
-                response.raise_for_status()
-                return response.text, response.headers.get("content-type", "").split(";")[0]
+                for _ in range(20):
+                    error = self.validate_url(url)
+                    if error:
+                        self.print_error(error)
+                        return None, None
+
+                    response = client.get(url)
+                    if response.is_redirect:
+                        location = response.headers.get("location")
+                        if not location:
+                            response.raise_for_status()
+                        url = urljoin(str(response.url), location)
+                        continue
+
+                    response.raise_for_status()
+                    return response.text, response.headers.get("content-type", "").split(";")[0]
+
+                self.print_error(f"Too many redirects while scraping {url}")
         except httpx.HTTPError as http_err:
             self.print_error(f"HTTP error occurred: {http_err}")
         except Exception as err:
