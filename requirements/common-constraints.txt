@@ -132,7 +132,7 @@ fsspec==2026.2.0
     #   torch
 gitdb==4.0.12
     # via gitpython
-gitpython==3.1.46
+gitpython==3.1.49
     # via
     #   -r requirements/requirements.in
     #   streamlit
@@ -331,7 +331,7 @@ pathspec==1.0.4
     #   grep-ast
 pexpect==4.9.0
     # via -r requirements/requirements.in
-pillow==12.1.1
+pillow==12.2.0
     # via
     #   -r requirements/requirements.in
     #   llama-index-core
@@ -607,7 +607,7 @@ typing-inspection==0.4.2
     #   pydantic
 tzdata==2025.3
     # via pandas
-urllib3==2.6.3
+urllib3==2.7.0
     # via requests
 uv==0.10.11
     # via -r requirements/requirements-dev.in
