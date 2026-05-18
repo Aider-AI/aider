@@ -653,6 +653,20 @@ def get_parser(default_config_files, git_root):
             " (disables chat mode)"
         ),
     ).complete = shtab.FILE
+
+    group.add_argument(
+        "--one-shot",
+        metavar="PROMPT",
+        help="Run a single prompt without git/session, process reply, then exit (implies --no-git)",
+    )
+
+    group.add_argument(
+        "--one-shot-mode",
+        choices=["ask", "code"],
+        default="ask",
+        help="Mode to use with --one-shot, ask or code (default: ask)",
+    )
+
     group.add_argument(
         "--gui",
         "--browser",
