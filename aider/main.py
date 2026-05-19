@@ -584,7 +584,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         if not io.pretty:
             raise err
         io = get_io(False)
-        io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
+        io.tool_warning("Terminal does not support pretty output (UnicodeEncodeError)")
 
     # Process any environment variables set via --set-env
     if args.set_env:
