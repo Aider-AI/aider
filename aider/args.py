@@ -654,6 +654,12 @@ def get_parser(default_config_files, git_root):
         ),
     ).complete = shtab.FILE
     group.add_argument(
+        "--one-shot",
+        action="store_true",
+        default=False,
+        help="Run a single prompt without git repo, then exit (implies --no-git)",
+    )
+    group.add_argument(
         "--gui",
         "--browser",
         action=argparse.BooleanOptionalAction,

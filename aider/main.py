@@ -676,6 +676,17 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         for fname in loaded_dotenvs:
             io.tool_output(f"Loaded {fname}")
 
+    if args.one_shot:
+        args.git = False
+        if not args.message and not args.message_file:
+            if args.files:
+                # Use the first positional arg as the message
+                args.message = args.files.pop(0)
+            else:
+                io.tool_error("--one-shot requires a message, use --message or --message-file")
+                analytics.event("exit", reason="One-shot without message")
+                return 1
+
     all_files = args.files + (args.file or [])
     fnames = [str(Path(fn).resolve()) for fn in all_files]
     read_only_fnames = []
