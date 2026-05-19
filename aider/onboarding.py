@@ -362,9 +362,42 @@ def start_openrouter_oauth_flow(io, analytics):
         try:
             config_dir = os.path.expanduser("~/.aider")
             os.makedirs(config_dir, exist_ok=True)
+            # Ensure the credentials directory is owner-only. Tighten even if
+            # the directory pre-existed at a wider mode (e.g. 0o755 from a
+            # prior tool laying down ~/.aider/).
+            try:
+                os.chmod(config_dir, 0o700)
+            except (OSError, NotImplementedError):
+                pass
             key_file = os.path.join(config_dir, "oauth-keys.env")
-            with open(key_file, "a", encoding="utf-8") as f:
-                f.write(f'OPENROUTER_API_KEY="{api_key}"\n')
+            # When the file does not yet exist, create it with an atomic
+            # owner-only mode (0o600). Python's `open(path, "a")` honours the
+            # process umask which on standard Linux/macOS installs (umask 022)
+            # creates the file world-readable at 0o644 — exposing the
+            # OPENROUTER_API_KEY to every local UID. When the file already
+            # exists we tighten its mode explicitly after the append.
+            if not os.path.exists(key_file):
+                fd = os.open(
+                    key_file,
+                    os.O_WRONLY | os.O_CREAT | os.O_TRUNC,
+                    0o600,
+                )
+                try:
+                    with os.fdopen(fd, "w", encoding="utf-8") as f:
+                        f.write(f'OPENROUTER_API_KEY="{api_key}"\n')
+                except Exception:
+                    try:
+                        os.unlink(key_file)
+                    except OSError:
+                        pass
+                    raise
+            else:
+                with open(key_file, "a", encoding="utf-8") as f:
+                    f.write(f'OPENROUTER_API_KEY="{api_key}"\n')
+                try:
+                    os.chmod(key_file, 0o600)
+                except (OSError, NotImplementedError):
+                    pass
 
             io.tool_warning("Aider will load the OpenRouter key automatically in future sessions.")
             io.tool_output()
