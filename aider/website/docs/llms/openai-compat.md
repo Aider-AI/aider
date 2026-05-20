@@ -34,6 +34,28 @@ cd /to/your/project
 aider --model openai/<model-name>
 ```
 
+## Tuning Engines
+
+Tuning Engines exposes an OpenAI compatible inference endpoint, so it works with
+aider through the same configuration:
+
+```
+# Mac/Linux:
+export OPENAI_API_BASE=https://api.tuningengines.com/v1
+export OPENAI_API_KEY=sk-te-...
+
+# Windows:
+setx OPENAI_API_BASE https://api.tuningengines.com/v1
+setx OPENAI_API_KEY sk-te-...
+# ... restart shell after setx commands
+```
+
+Then run aider with a model alias that is enabled for your Tuning Engines key:
+
+```bash
+aider --model openai/<your-model-alias>
+```
+
 See the [model warnings](warnings.html)
 section for information on warnings which will occur
 when working with models that aider is not familiar with.
