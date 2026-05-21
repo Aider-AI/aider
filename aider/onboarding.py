@@ -63,6 +63,7 @@ def try_to_select_default_model():
     model_key_pairs = [
         ("ANTHROPIC_API_KEY", "sonnet"),
         ("DEEPSEEK_API_KEY", "deepseek"),
+        ("NEARAI_API_KEY", "nearai/zai-org/GLM-5.1-FP8"),
         ("OPENAI_API_KEY", "gpt-4o"),
         ("GEMINI_API_KEY", "gemini/gemini-2.5-pro-exp-03-25"),
         ("VERTEXAI_PROJECT", "vertex_ai/gemini-2.5-pro-exp-03-25"),
@@ -228,7 +229,7 @@ def start_openrouter_oauth_flow(io, analytics):
 
     class OAuthCallbackHandler(http.server.SimpleHTTPRequestHandler):
         def do_GET(self):
-            nonlocal auth_code, server_error
+            nonlocal auth_code
             parsed_path = urlparse(self.path)
             if parsed_path.path == "/callback/aider":
                 query_params = parse_qs(parsed_path.query)
