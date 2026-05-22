@@ -19,6 +19,7 @@ from PIL import Image
 from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
+from aider.nearai import NearAIModelManager
 from aider.openrouter import OpenRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
@@ -29,6 +30,9 @@ request_timeout = 600
 
 DEFAULT_MODEL_NAME = "gpt-4o"
 ANTHROPIC_BETA_HEADER = "prompt-caching-2024-07-31,pdfs-2024-09-25"
+NEARAI_API_BASE = "https://cloud-api.near.ai/v1"
+NEARAI_UNSUPPORTED_PARAMS = {"store", "reasoning_effort", "strict"}
+NEARAI_UNSUPPORTED_SETTINGS = {"thinking_tokens", "reasoning_effort"}
 
 OPENAI_MODELS = """
 o1
@@ -119,6 +123,7 @@ MODEL_ALIASES = {
     "gemini": "gemini/gemini-3-pro-preview",
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
+    "nearai": "nearai/zai-org/GLM-5.1-FP8",
     "optimus": "openrouter/openrouter/optimus-alpha",
 }
 # Model metadata loaded from resources and user's files.
@@ -175,11 +180,14 @@ class ModelInfoManager:
 
         # Manager for the cached OpenRouter model database
         self.openrouter_manager = OpenRouterModelManager()
+        self.nearai_manager = NearAIModelManager()
 
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
         if hasattr(self, "openrouter_manager"):
             self.openrouter_manager.set_verify_ssl(verify_ssl)
+        if hasattr(self, "nearai_manager"):
+            self.nearai_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -247,6 +255,15 @@ class ModelInfoManager:
         return dict()
 
     def get_model_info(self, model):
+        local_info = self.local_model_metadata.get(model)
+        if local_info:
+            return local_info
+
+        if model.startswith("nearai/"):
+            nearai_info = self.nearai_manager.get_model_info(model)
+            if nearai_info:
+                return nearai_info
+
         cached_info = self.get_model_from_cached_json_db(model)
 
         litellm_info = None
@@ -433,6 +450,13 @@ class Model(ModelSettings):
                 self.accepts_settings.append("thinking_tokens")
             if "reasoning_effort" not in self.accepts_settings:
                 self.accepts_settings.append("reasoning_effort")
+
+        if self.is_nearai() and self.accepts_settings:
+            self.accepts_settings = [
+                setting
+                for setting in self.accepts_settings
+                if setting not in NEARAI_UNSUPPORTED_SETTINGS
+            ]
 
     def apply_generic_model_settings(self, model):
         if "/o3-mini" in model:
@@ -728,6 +752,7 @@ class Model(ModelSettings):
             anthropic="ANTHROPIC_API_KEY",
             groq="GROQ_API_KEY",
             fireworks_ai="FIREWORKS_API_KEY",
+            nearai="NEARAI_API_KEY",
         )
         var = None
         if model in OPENAI_MODELS:
@@ -931,6 +956,43 @@ class Model(ModelSettings):
     def is_ollama(self):
         return self.name.startswith("ollama/") or self.name.startswith("ollama_chat/")
 
+    def is_nearai(self):
+        return self.name.startswith("nearai/")
+
+    def configure_nearai_completion(self, kwargs):
+        kwargs["model"] = "openai/" + self.name[len("nearai/") :]
+        kwargs["api_base"] = os.environ.get("NEARAI_API_BASE") or NEARAI_API_BASE
+
+        if "max_completion_tokens" in kwargs:
+            max_completion_tokens = kwargs.pop("max_completion_tokens")
+            if "max_tokens" not in kwargs:
+                kwargs["max_tokens"] = max_completion_tokens
+
+        for param in NEARAI_UNSUPPORTED_PARAMS:
+            kwargs.pop(param, None)
+
+        extra_body = kwargs.get("extra_body")
+        if isinstance(extra_body, dict):
+            extra_body = dict(extra_body)
+            for param in NEARAI_UNSUPPORTED_PARAMS:
+                extra_body.pop(param, None)
+            if extra_body:
+                kwargs["extra_body"] = extra_body
+            else:
+                kwargs.pop("extra_body", None)
+
+        return os.environ.get("NEARAI_API_KEY")
+
+    def prepare_nearai_messages(self, messages):
+        updated_messages = []
+        changed = False
+        for message in messages:
+            if isinstance(message, dict) and message.get("role") == "developer":
+                message = {**message, "role": "system"}
+                changed = True
+            updated_messages.append(message)
+        return updated_messages if changed else messages
+
     def github_copilot_token_to_open_ai_key(self, extra_headers):
         # check to see if there's an openai api key
         # If so, check to see if it's expire
@@ -1009,6 +1071,10 @@ class Model(ModelSettings):
             kwargs["tool_choice"] = {"type": "function", "function": {"name": function["name"]}}
         if self.extra_params:
             kwargs.update(self.extra_params)
+        nearai_api_key = None
+        if self.is_nearai():
+            messages = self.prepare_nearai_messages(messages)
+            nearai_api_key = self.configure_nearai_completion(kwargs)
         if self.is_ollama() and "num_ctx" not in kwargs:
             num_ctx = int(self.token_count(messages) * 1.25) + 8192
             kwargs["num_ctx"] = num_ctx
@@ -1021,6 +1087,8 @@ class Model(ModelSettings):
             kwargs["timeout"] = request_timeout
         if self.verbose:
             dump(kwargs)
+        if nearai_api_key:
+            kwargs["api_key"] = nearai_api_key
         kwargs["messages"] = messages
 
         # Are we using github copilot?
@@ -1230,6 +1298,8 @@ def fuzzy_match_models(name):
     chat_models = set()
     model_metadata = list(litellm.model_cost.items())
     model_metadata += list(model_info_manager.local_model_metadata.items())
+    if "nearai" in name:
+        model_metadata += list(model_info_manager.nearai_manager.get_model_infos().items())
 
     for orig_model, attrs in model_metadata:
         model = orig_model.lower()

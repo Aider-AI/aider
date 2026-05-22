@@ -38,6 +38,12 @@ It can also access
 local models that provide an
 [Open AI compatible API](/docs/llms/openai-compat.html).
 
+## Other cloud providers
+{: .no_toc }
+
+Aider can connect to many other providers, including
+[NEAR AI Cloud TEE inference](/docs/llms/nearai.html).
+
 ## Use a capable model
 {: .no_toc }
 
@@ -51,4 +57,3 @@ and commit the changes...
 this is usually because the model isn't capable of properly
 returning "code edits".
 Models weaker than GPT 3.5 may have problems working well with aider.
-
