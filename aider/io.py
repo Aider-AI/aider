@@ -812,6 +812,8 @@ class InputOutput:
         explicit_yes_required=False,
         group=None,
         allow_never=False,
+        show_readonly=False,
+        return_string=False,
     ):
         self.num_user_asks += 1
 
@@ -821,7 +823,7 @@ class InputOutput:
         question_id = (question, subject)
 
         if question_id in self.never_prompts:
-            return False
+            return False if not return_string else "no"
 
         if group and not group.show_group:
             group = None
@@ -830,6 +832,12 @@ class InputOutput:
 
         valid_responses = ["yes", "no", "skip", "all"]
         options = " (Y)es/(N)o"
+
+        # Only add "Read-only" option when show_readonly is True
+        if show_readonly:
+            valid_responses.append("read")
+            options += "/(R)ead-only"
+
         if group:
             if not explicit_yes_required:
                 options += "/(A)ll"
@@ -903,7 +911,13 @@ class InputOutput:
             self.never_prompts.add(question_id)
             hist = f"{question.strip()} {res}"
             self.append_chat_history(hist, linebreak=True, blockquote=True)
-            return False
+            return "never" if return_string else False
+
+        # Handle read-only option when show_readonly is True
+        if show_readonly and res == "r":
+            hist = f"{question.strip()} {res}"
+            self.append_chat_history(hist, linebreak=True, blockquote=True)
+            return "readonly" if return_string else True
 
         if explicit_yes_required:
             is_yes = res == "y"
@@ -922,7 +936,7 @@ class InputOutput:
         hist = f"{question.strip()} {res}"
         self.append_chat_history(hist, linebreak=True, blockquote=True)
 
-        return is_yes
+        return "yes" if return_string and is_yes else "no" if return_string else is_yes
 
     @restore_multiline
     def prompt_ask(self, question, default="", subject=None):
