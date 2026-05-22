@@ -2,6 +2,8 @@
 .vscode/
 aider.code-workspace
 *.pyc
+__pycache__/
+.env
 .aider*
 aider_chat.egg-info/
 build
