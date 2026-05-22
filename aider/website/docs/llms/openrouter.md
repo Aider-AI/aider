@@ -19,6 +19,13 @@ export OPENROUTER_API_KEY=<key> # Mac/Linux
 setx   OPENROUTER_API_KEY <key> # Windows, restart shell after setx
 ```
 
+Alternatively, you may set the API key in the config file ~/.aider.conf.yml , just add the line:
+
+```
+api-key: openrouter=sk-...
+```
+
+
 Start working with aider and OpenRouter on your codebase:
 
 ```bash
