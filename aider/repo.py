@@ -80,6 +80,8 @@ class GitRepo:
 
         self.normalized_path = {}
         self.tree_files = {}
+        self.index_stat = None
+        self.index_files = None
 
         self.attribute_author = attribute_author
         self.attribute_committer = attribute_committer
@@ -447,7 +449,7 @@ class GitRepo:
         files = set()
         if commit:
             if commit in self.tree_files:
-                files = self.tree_files[commit]
+                files = set(self.tree_files[commit])
             else:
                 try:
                     iterator = commit.tree.traverse()
@@ -475,17 +477,44 @@ class GitRepo:
                 files = set(self.normalize_path(path) for path in files)
                 self.tree_files[commit] = set(files)
 
-        # Add staged files
-        index = self.repo.index
+        # Add files from the index without parsing .git/index through GitPython. GitPython
+        # only understands older index formats, while git itself handles newer versions.
         try:
-            staged_files = [path for path, _ in index.entries.keys()]
-            files.update(self.normalize_path(path) for path in staged_files)
+            staged_files = self.get_index_files()
+            files.update(self.normalize_path(path) for path in staged_files if path)
         except ANY_GIT_ERROR as err:
             self.io.tool_error(f"Unable to read staged files: {err}")
 
         res = [fname for fname in files if not self.ignored_file(fname)]
 
         return res
+
+    def get_index_files(self):
+        index_stat = self.get_index_stat()
+        if self.index_files is not None and self.index_stat == index_stat:
+            return self.index_files
+
+        index_files = self.get_index_file_output()
+        if isinstance(index_files, bytes):
+            index_files = index_files.decode(self.io.encoding, "replace")
+        elif index_files is None:
+            index_files = ""
+        else:
+            index_files = str(index_files)
+
+        self.index_stat = index_stat
+        self.index_files = index_files.split("\0")
+        return self.index_files
+
+    def get_index_file_output(self):
+        return self.repo.git.ls_files("-z", "--cached", "--full-name", stdout_as_string=False)
+
+    def get_index_stat(self):
+        try:
+            stat = (Path(self.repo.git_dir) / "index").stat()
+            return (stat.st_mtime_ns, stat.st_ctime_ns, stat.st_size)
+        except OSError:
+            return None
 
     def normalize_path(self, path):
         orig_path = path
