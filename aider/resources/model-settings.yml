@@ -2260,6 +2260,34 @@
   use_temperature: false
   accepts_settings: ["reasoning_effort"]
 
+- name: gpt-5.4-mini
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: gpt-5.4-mini-2026-03-17
+  edit_format: diff
+  weak_model_name: gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: gpt-5.4-nano
+  edit_format: diff
+  weak_model_name: gpt-5-nano
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
+- name: gpt-5.4-nano-2026-03-17
+  edit_format: diff
+  weak_model_name: gpt-5-nano-2025-08-07
+  use_repo_map: true
+  use_temperature: false
+  accepts_settings: ["reasoning_effort"]
+
 - name: gpt-5-chat
   edit_format: diff
   weak_model_name: gpt-5-nano
