@@ -56,6 +56,77 @@ def check_config_files_for_yes(config_files):
                 pass
     return found
 
+def check_workspace_config_security(io, config_files, args):
+    """
+    Warn users when workspace configs contain shell commands.
+    
+    This helps protect against malicious repositories that include .aider.conf.yml
+    with arbitrary shell commands in lint-cmd, test-cmd, or notifications-command.
+    These commands execute automatically when users make code changes.
+    
+    Only configs from untrusted locations (not home directory) trigger warnings.
+    """
+    try:
+        import yaml
+    except ImportError:
+        return  # Can't check without yaml
+    
+    home_config = str(Path.home() / ".aider.conf.yml")
+    shell_command_fields = {
+        'lint-cmd': 'lint_cmd',
+        'test-cmd': 'test_cmd',
+        'notifications-command': 'notifications_command',
+    }
+    
+    for config_file in config_files:
+        # Skip home directory config (trusted)
+        if config_file == home_config:
+            continue
+        
+        config_path = Path(config_file)
+        if not config_path.exists():
+            continue
+        
+        try:
+            with open(config_path, 'r') as f:
+                config_data = yaml.safe_load(f) or {}
+        except Exception:
+            continue
+        
+        # Check if this workspace config contains any shell commands
+        dangerous_commands = []
+        for yaml_field, attr_name in shell_command_fields.items():
+            if yaml_field in config_data:
+                value = config_data[yaml_field]
+                if value:  # Non-empty value
+                    dangerous_commands.append((yaml_field, value))
+        
+        if dangerous_commands:
+            io.tool_warning(
+                f"\nSecurity Warning: Workspace config contains shell commands"
+            )
+            io.tool_output(f"   Config file: {config_file}")
+            io.tool_output(f"   Commands that will execute:")
+            for field, value in dangerous_commands:
+                if isinstance(value, list):
+                    for v in value:
+                        io.tool_output(f"     {field}: {v}")
+                else:
+                    io.tool_output(f"     {field}: {value}")
+            io.tool_output("")
+            io.tool_output(
+                "   These commands run automatically when you make code changes."
+            )
+            io.tool_output(
+                "   If you didn't create this config, the repository may be malicious."
+            )
+            io.tool_output(
+                "   Use --no-auto-lint --no-auto-test to disable automatic execution."
+            )
+            io.tool_output("")
+
+
+
 
 def get_git_root():
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
@@ -585,6 +656,9 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             raise err
         io = get_io(False)
         io.tool_warning("Terminal does not support pretty output (UnicodeDecodeError)")
+
+    # Security: Warn about shell commands in workspace configs
+    check_workspace_config_security(io, default_config_files, args)
 
     # Process any environment variables set via --set-env
     if args.set_env:
