@@ -123,6 +123,12 @@ class GitRepo:
 
         # https://github.com/gitpython-developers/GitPython/issues/427
         self.repo = git.Repo(repo_paths.pop(), odbt=git.GitDB)
+
+        if not self.repo.working_tree_dir:
+            raise FileNotFoundError(
+                "The git repo does not seem to have a working tree?"
+            )
+
         self.root = utils.safe_abs_path(self.repo.working_tree_dir)
 
         if aider_ignore_file:
