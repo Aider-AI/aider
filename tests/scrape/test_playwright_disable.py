@@ -30,7 +30,7 @@ def test_scraper_disable_playwright_flag(monkeypatch):
         return "plain text", "text/plain"
 
     scraper.scrape_with_httpx = fake_httpx
-    content = scraper.scrape("http://example.com")
+    content = scraper.scrape("http://93.184.216.34")
     assert content == "plain text"
     assert called["called"]
 
@@ -47,7 +47,7 @@ def test_scraper_enable_playwright(monkeypatch):
         return "<html>hi</html>", "text/html"
 
     scraper.scrape_with_playwright = fake_playwright
-    content = scraper.scrape("http://example.com")
+    content = scraper.scrape("http://93.184.216.34")
     assert content.startswith("hi") or "<html>" in content
     assert called["called"]
 
