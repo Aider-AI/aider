@@ -58,6 +58,8 @@ You can use aider without adding any files,
 and it will try to figure out which files need to be edited based
 on your requests.
 
+You can add files as read-only with the in-chat `/read` command.
+
 {: .tip }
 You'll get the best results if you think about which files need to be
 edited. Add **just** those files to the chat. Aider will include
