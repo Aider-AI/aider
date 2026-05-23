@@ -172,6 +172,18 @@ def test_sanity_check_repo_with_corrupt_repo(create_repo, mock_io):
     mock_io.tool_output.assert_called_with(str(git_error))
 
 
+def test_sanity_check_repo_with_corrupt_git_index(create_repo, mock_io):
+    _, repo = create_repo
+    git_error = struct.error("unpack requires a buffer of 8 bytes")
+    mock_repo_obj = mock_repo_wrapper(repo, git_repo_error=git_error)
+
+    result = sanity_check_repo(mock_repo_obj, mock_io)
+
+    assert result is False
+    mock_io.tool_error.assert_called_with("Unable to read git repository, it may be corrupt?")
+    mock_io.tool_output.assert_called_with(str(git_error))
+
+
 def test_sanity_check_repo_with_no_repo(mock_io):
     # Call the function with repo=None
     result = sanity_check_repo(None, mock_io)
