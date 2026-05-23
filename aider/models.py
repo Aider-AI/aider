@@ -20,6 +20,7 @@ from aider import __version__
 from aider.dump import dump  # noqa: F401
 from aider.llm import litellm
 from aider.openrouter import OpenRouterModelManager
+from aider.orcarouter import OrcaRouterModelManager
 from aider.sendchat import ensure_alternating_roles, sanity_check_messages
 from aider.utils import check_pip_install_extra
 
@@ -120,6 +121,8 @@ MODEL_ALIASES = {
     "gemini-exp": "gemini/gemini-2.5-pro-exp-03-25",
     "grok3": "xai/grok-3-beta",
     "optimus": "openrouter/openrouter/optimus-alpha",
+    # OrcaRouter (https://www.orcarouter.ai)
+    "orcarouter-auto": "orcarouter/orcarouter/auto",
 }
 # Model metadata loaded from resources and user's files.
 
@@ -175,11 +178,15 @@ class ModelInfoManager:
 
         # Manager for the cached OpenRouter model database
         self.openrouter_manager = OpenRouterModelManager()
+        # Manager for the cached OrcaRouter model database
+        self.orcarouter_manager = OrcaRouterModelManager()
 
     def set_verify_ssl(self, verify_ssl):
         self.verify_ssl = verify_ssl
         if hasattr(self, "openrouter_manager"):
             self.openrouter_manager.set_verify_ssl(verify_ssl)
+        if hasattr(self, "orcarouter_manager"):
+            self.orcarouter_manager.set_verify_ssl(verify_ssl)
 
     def _load_cache(self):
         if self._cache_loaded:
@@ -259,6 +266,11 @@ class ModelInfoManager:
 
         if litellm_info:
             return litellm_info
+
+        if not cached_info and model.startswith("orcarouter/"):
+            orcarouter_info = self.orcarouter_manager.get_model_info(model)
+            if orcarouter_info:
+                return orcarouter_info
 
         if not cached_info and model.startswith("openrouter/"):
             # First try using the locally cached OpenRouter model database
@@ -722,6 +734,7 @@ class Model(ModelSettings):
 
         keymap = dict(
             openrouter="OPENROUTER_API_KEY",
+            orcarouter="ORCAROUTER_API_KEY",
             openai="OPENAI_API_KEY",
             deepseek="DEEPSEEK_API_KEY",
             gemini="GEMINI_API_KEY",
@@ -1032,6 +1045,26 @@ class Model(ModelSettings):
                 }
 
             self.github_copilot_token_to_open_ai_key(kwargs["extra_headers"])
+
+        # OrcaRouter (https://www.orcarouter.ai): route via the OpenAI-compatible
+        # endpoint at api.orcarouter.ai/v1 using ORCAROUTER_API_KEY. The user-facing
+        # model name keeps the orcarouter/ prefix; we rewrite it to openai/<rest>
+        # only for the underlying litellm call.
+        if isinstance(kwargs.get("model"), str) and kwargs["model"].startswith("orcarouter/"):
+            rest = kwargs["model"][len("orcarouter/"):]
+            kwargs["model"] = "openai/" + rest
+            kwargs.setdefault("api_base", "https://api.orcarouter.ai/v1")
+            orca_key = os.environ.get("ORCAROUTER_API_KEY")
+            if orca_key and "api_key" not in kwargs:
+                kwargs["api_key"] = orca_key
+            attribution = {
+                "HTTP-Referer": "https://aider.chat/",
+                "X-Title": "aider",
+            }
+            existing_headers = kwargs.get("extra_headers") or {}
+            for hk, hv in attribution.items():
+                existing_headers.setdefault(hk, hv)
+            kwargs["extra_headers"] = existing_headers
 
         res = litellm.completion(**kwargs)
         return hash_object, res
