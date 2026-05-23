@@ -69,6 +69,10 @@ class MissingAPIKeyError(ValueError):
 class FinishReasonLength(Exception):
     pass
 
+# Add this new exception
+class AiderAbortException(Exception):
+    pass
+
 
 def wrap_fence(name):
     return f"<{name}>", f"</{name}>"
@@ -869,6 +873,7 @@ class Coder:
         self.test_outcome = None
         self.shell_commands = []
         self.message_cost = 0
+        self.partial_response_function_call = None # Initialize function call attribute
 
         if self.repo:
             self.commit_before_message.append(self.repo.get_head_commit_sha())
@@ -1422,6 +1427,8 @@ class Coder:
         # Notify IO that LLM processing is starting
         self.io.llm_started()
 
+        self.partial_response_function_call = None # Initialize function call attribute here
+
         self.cur_messages += [
             dict(role="user", content=inp),
         ]
@@ -1452,10 +1459,11 @@ class Coder:
 
         self.usage_report = None
         exhausted = False
-        interrupted = False
-        try:
+        interrupted = False # Flag to track if AiderAbortException was caught
+        try: # This try block handles retries and different exception types
             while True:
                 try:
+                    # This is where AiderAbortException can be raised by show_send_output_stream
                     yield from self.send(messages, functions=self.functions)
                     break
                 except litellm_ex.exceptions_tuple() as err:
@@ -1487,8 +1495,14 @@ class Coder:
                     time.sleep(retry_delay)
                     continue
                 except KeyboardInterrupt:
-                    interrupted = True
-                    break
+                    # This handles Ctrl+C from the terminal, which calls io.interrupt_input()
+                    interrupted = True # Mark as interrupted
+                    self.keyboard_interrupt() # Handle the Ctrl+C signal
+                    break # Exit the retry loop
+                except AiderAbortException: # This is the exception raised by show_send_output_stream
+                    # This handles abort signals from the IO layer (e.g., Connector)
+                    interrupted = True # Mark as interrupted
+                    break # Exit the retry loop
                 except FinishReasonLength:
                     # We hit the output limit!
                     if not self.main_model.info.get("supports_assistant_prefill"):
@@ -1511,6 +1525,7 @@ class Coder:
                     self.event("message_send_exception", exception=str(err))
                     return
         finally:
+            # This block always runs, even if an exception occurred or the loop broke (e.g., due to interrupt)
             if self.mdstream:
                 self.live_incremental_response(True)
                 self.mdstream = None
@@ -1518,34 +1533,36 @@ class Coder:
             # Ensure any waiting spinner is stopped
             self._stop_waiting_spinner()
 
+            # Capture the final partial content regardless of how it ended
             self.partial_response_content = self.get_multi_response_content_in_progress(True)
             self.remove_reasoning_content()
             self.multi_response_content = ""
 
-        ###
-        # print()
-        # print("=" * 20)
-        # dump(self.partial_response_content)
+            # Add the assistant's reply (even if partial/interrupted) to cur_messages
+            self.add_assistant_reply_to_cur_messages(interrupted=interrupted) # Pass interrupted status
 
-        self.io.tool_output()
+        # Check the interrupted flag *after* the finally block
+        if interrupted:
+            # If interrupted, we stop here and don't proceed with post-processing
+            self.io.tool_output("Response interrupted.")
+            return # Exit send_message
+
+        # If we reach here, the stream completed without interruption or context exhaustion
+
+        self.io.tool_output() # Add a newline after the assistant output
 
         self.show_usage_report()
 
-        self.add_assistant_reply_to_cur_messages()
+        # The assistant reply was already added to cur_messages in the finally block
 
         if exhausted:
-            if self.cur_messages and self.cur_messages[-1]["role"] == "user":
-                self.cur_messages += [
-                    dict(
-                        role="assistant",
-                        content="FinishReasonLength exception: you sent too many tokens",
-                    ),
-                ]
-
+            # This case should now be handled before the main post-processing
+            # but keeping the check here for safety/clarity.
             self.show_exhausted_error()
             self.num_exhausted_context_windows += 1
             return
 
+        # Proceed with post-processing only if not interrupted
         if self.partial_response_function_call:
             args = self.parse_partial_args()
             if args:
@@ -1557,31 +1574,35 @@ class Coder:
         else:
             content = ""
 
-        if not interrupted:
-            add_rel_files_message = self.check_for_file_mentions(content)
-            if add_rel_files_message:
-                if self.reflected_message:
-                    self.reflected_message += "\n\n" + add_rel_files_message
-                else:
-                    self.reflected_message = add_rel_files_message
-                return
-
-            try:
-                if self.reply_completed():
-                    return
-            except KeyboardInterrupt:
-                interrupted = True
-
-        if interrupted:
-            if self.cur_messages and self.cur_messages[-1]["role"] == "user":
-                self.cur_messages[-1]["content"] += "\n^C KeyboardInterrupt"
+        # Check for file mentions in the final content
+        add_rel_files_message = self.check_for_file_mentions(content)
+        if add_rel_files_message:
+            # If files were mentioned and added, set reflected_message
+            if self.reflected_message:
+                self.reflected_message += "\n\n" + add_rel_files_message
             else:
-                self.cur_messages += [dict(role="user", content="^C KeyboardInterrupt")]
-            self.cur_messages += [
-                dict(role="assistant", content="I see that you interrupted my previous reply.")
-            ]
+                self.reflected_message = add_rel_files_message
+            # Return here to trigger reflection in run_one
             return
 
+        try:
+            # Check if the reply completed successfully (subclass specific)
+            if self.reply_completed():
+                return
+        except KeyboardInterrupt:
+            # Handle Ctrl+C during reply_completed (less likely but possible)
+            interrupted = True
+            self.keyboard_interrupt()
+            # Fall through to the interrupted handling below
+
+        # If interrupted during reply_completed or file mention check
+        if interrupted:
+             # The message history already has the partial content + "(interrupted)"
+             # No need to add another message here.
+             self.io.tool_output("Response interrupted.")
+             return # Exit send_message
+
+        # Apply edits only if not interrupted and reply completed successfully
         edited = self.apply_updates()
 
         if edited:
@@ -1591,11 +1612,14 @@ class Coder:
             if not saved_message and hasattr(self.gpt_prompts, "files_content_gpt_edits_no_repo"):
                 saved_message = self.gpt_prompts.files_content_gpt_edits_no_repo
 
+            # Move messages back only after successful edits and commit
             self.move_back_cur_messages(saved_message)
 
+        # Check for reflections again after applying edits
         if self.reflected_message:
             return
 
+        # Run lint/test only if edits were applied and not interrupted
         if edited and self.auto_lint:
             lint_errors = self.lint_edited(edited)
             self.auto_commit(edited, context="Ran the linter")
@@ -1606,13 +1630,16 @@ class Coder:
                     self.reflected_message = lint_errors
                     return
 
+        # Run shell commands only if not interrupted
         shared_output = self.run_shell_commands()
         if shared_output:
+            # Add shell command output to chat history
             self.cur_messages += [
                 dict(role="user", content=shared_output),
                 dict(role="assistant", content="Ok"),
             ]
 
+        # Run tests only if edits were applied and not interrupted
         if edited and self.auto_test:
             test_errors = self.commands.cmd_test(self.test_cmd)
             self.test_outcome = not test_errors
@@ -1699,10 +1726,21 @@ class Coder:
         """Cleanup when the Coder object is destroyed."""
         self.ok_to_warm_cache = False
 
-    def add_assistant_reply_to_cur_messages(self):
-        if self.partial_response_content:
-            self.cur_messages += [dict(role="assistant", content=self.partial_response_content)]
-        if self.partial_response_function_call:
+    def add_assistant_reply_to_cur_messages(self, interrupted=False):
+        # Add the partial or complete response content to the current messages
+        # This happens in the finally block, so it includes interrupted content
+        content_to_add = self.partial_response_content
+        if interrupted and content_to_add: # Use the passed interrupted flag
+             content_to_add += " (interrupted)" # Indicate interruption in history
+
+        if content_to_add:
+            self.cur_messages += [dict(role="assistant", content=content_to_add)]
+        # Only add function call if not interrupted, as it implies completion
+        if self.partial_response_function_call and not interrupted:
+            # Note: Function calls are not currently interrupted by the IO layer check
+            # as they don't stream content chunk by chunk in the same way.
+            # If function calls needed interruption, the LiteLLM call itself would need
+            # to be cancellable, which is provider/LiteLLM dependent.
             self.cur_messages += [
                 dict(
                     role="assistant",
@@ -1710,6 +1748,7 @@ class Coder:
                     function_call=self.partial_response_function_call,
                 )
             ]
+
 
     def get_file_mentions(self, content, ignore_current=False):
         words = set(word for word in content.split())
@@ -1901,6 +1940,11 @@ class Coder:
         received_content = False
 
         for chunk in completion:
+            # Check for interruption at the start of processing each chunk
+            if self.io.is_interrupted():
+                self._stop_waiting_spinner() # Stop spinner on abort
+                raise AiderAbortException("Stream interrupted by user.")
+
             if len(chunk.choices) == 0:
                 continue
 
