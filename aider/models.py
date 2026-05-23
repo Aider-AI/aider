@@ -35,6 +35,8 @@ o1
 o1-preview
 o1-mini
 o3-mini
+zima/gpt-4o
+zima/gpt-4o-mini
 gpt-4
 gpt-4o
 gpt-4o-2024-05-13
@@ -728,6 +730,8 @@ class Model(ModelSettings):
             anthropic="ANTHROPIC_API_KEY",
             groq="GROQ_API_KEY",
             fireworks_ai="FIREWORKS_API_KEY",
+            zima="ZIMA_API_KEY",
+
         )
         var = None
         if model in OPENAI_MODELS:
