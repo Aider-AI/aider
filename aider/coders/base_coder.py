@@ -786,13 +786,13 @@ class Coder:
 
         return readonly_messages
 
-    def get_chat_files_messages(self):
+    def get_chat_files_messages(self, repo_map_included):
         chat_files_messages = []
         if self.abs_fnames:
             files_content = self.gpt_prompts.files_content_prefix
             files_content += self.get_files_content()
             files_reply = self.gpt_prompts.files_content_assistant_reply
-        elif self.get_repo_map() and self.gpt_prompts.files_no_full_files_with_repo_map:
+        elif repo_map_included and self.gpt_prompts.files_no_full_files_with_repo_map:
             files_content = self.gpt_prompts.files_no_full_files_with_repo_map
             files_reply = self.gpt_prompts.files_no_full_files_with_repo_map_reply
         else:
@@ -1280,7 +1280,7 @@ class Coder:
 
         chunks.repo = self.get_repo_messages()
         chunks.readonly_files = self.get_readonly_files_messages()
-        chunks.chat_files = self.get_chat_files_messages()
+        chunks.chat_files = self.get_chat_files_messages(repo_map_included=bool(chunks.repo))
 
         if self.gpt_prompts.system_reminder:
             reminder_message = [
