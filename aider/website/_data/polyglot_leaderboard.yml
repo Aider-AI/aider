@@ -1854,3 +1854,87 @@
   versions: 0.86.2.dev
   seconds_per_case: 104.0
   total_cost: 0.8756
+
+- dirname: 2025-11-27-12-10-48--glm_5
+  test_cases: 225
+  model: unsloth/GLM-4.6-UD-Q5_K_XL
+  edit_format: diff
+  commit_hash: 84c9a27-dirty
+  pass_rate_1: 11.6
+  pass_rate_2: 40.4
+  pass_num_1: 26
+  pass_num_2: 91
+  percent_cases_well_formed: 96.0
+  error_outputs: 20
+  num_malformed_responses: 9
+  num_with_malformed_responses: 9
+  user_asks: 92
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 11
+  prompt_tokens: 2410966
+  completion_tokens: 383380
+  test_timeouts: 5
+  total_tests: 225
+  command: aider --model unsloth/glm-4_6-q5-k-xl
+  date: 2025-11-27
+  versions: 0.86.2.dev
+  seconds_per_case: 3061.2
+  total_cost: 0.0000
+
+- dirname: 2025-11-23-13-45-49--glm_3
+  test_cases: 225
+  model: unsloth/GLM-4.6-UD-Q3_K_XL
+  edit_format: diff
+  commit_hash: 84c9a27-dirty
+  pass_rate_1: 13.8
+  pass_rate_2: 39.6
+  pass_num_1: 31
+  pass_num_2: 89
+  percent_cases_well_formed: 93.3
+  error_outputs: 28
+  num_malformed_responses: 18
+  num_with_malformed_responses: 15
+  user_asks: 81
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 9
+  prompt_tokens: 2715514
+  completion_tokens: 361397
+  test_timeouts: 4
+  total_tests: 225
+  command: aider --model unsloth/glm-4_6-q3-k-xl
+  date: 2025-11-23
+  versions: 0.86.2.dev
+  seconds_per_case: 2760.9
+  total_cost: 0.0000
+
+- dirname: 2025-11-20-14-26-53--glm_2
+  test_cases: 225
+  model: unsloth/GLM-4.6-UD-Q2_K_XL
+  edit_format: diff
+  commit_hash: 84c9a27-dirty
+  pass_rate_1: 9.3
+  pass_rate_2: 35.1
+  pass_num_1: 21
+  pass_num_2: 79
+  percent_cases_well_formed: 92.0
+  error_outputs: 22
+  num_malformed_responses: 19
+  num_with_malformed_responses: 18
+  user_asks: 91
+  lazy_comments: 0
+  syntax_errors: 0
+  indentation_errors: 0
+  exhausted_context_windows: 2
+  prompt_tokens: 3222486
+  completion_tokens: 411225
+  test_timeouts: 6
+  total_tests: 225
+  command: aider --model unsloth/glm-4_6-q2-k-xl
+  date: 2025-11-20
+  versions: 0.86.2.dev
+  seconds_per_case: 4824.2
+  total_cost: 0.0000
