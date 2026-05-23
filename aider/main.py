@@ -141,13 +141,20 @@ def setup_git(git_root, io):
     if user_name and user_email:
         return repo.working_tree_dir
 
-    with repo.config_writer() as git_config:
+    try:
+        with repo.config_writer() as git_config:
+            if not user_name:
+                git_config.set_value("user", "name", "Your Name")
+                io.tool_warning('Update git name with: git config user.name "Your Name"')
+            if not user_email:
+                git_config.set_value("user", "email", "you@example.com")
+                io.tool_warning('Update git email with: git config user.email "you@example.com"')
+    except OSError as err:
+        io.tool_warning(f"Unable to update git config automatically: {err}")
         if not user_name:
-            git_config.set_value("user", "name", "Your Name")
-            io.tool_warning('Update git name with: git config user.name "Your Name"')
+            io.tool_warning('Set git name with: git config user.name "Your Name"')
         if not user_email:
-            git_config.set_value("user", "email", "you@example.com")
-            io.tool_warning('Update git email with: git config user.email "you@example.com"')
+            io.tool_warning('Set git email with: git config user.email "you@example.com"')
 
     return repo.working_tree_dir
 

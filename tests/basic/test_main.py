@@ -126,6 +126,22 @@ class TestMain(TestCase):
         self.assertTrue(gitignore.exists())
         self.assertEqual(".aider*", gitignore.read_text().splitlines()[0])
 
+    def test_setup_git_handles_config_writer_lock(self):
+        with IgnorantTemporaryDirectory() as git_dir:
+            git.Repo.init(git_dir)
+            io = MagicMock()
+            with patch.object(git.Repo, "config_writer", side_effect=OSError("config.lock exists")):
+                git_root = setup_git(str(git_dir), io)
+
+            self.assertEqual(Path(git_root).resolve(), Path(git_dir).resolve())
+            io.tool_warning.assert_any_call(
+                "Unable to update git config automatically: config.lock exists"
+            )
+            io.tool_warning.assert_any_call('Set git name with: git config user.name "Your Name"')
+            io.tool_warning.assert_any_call(
+                'Set git email with: git config user.email "you@example.com"'
+            )
+
     def test_check_gitignore(self):
         with GitTemporaryDirectory():
             os.environ["GIT_CONFIG_GLOBAL"] = "globalgitconfig"
