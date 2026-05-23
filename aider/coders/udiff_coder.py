@@ -112,8 +112,9 @@ class UnifiedDiffCoder(Coder):
             self.io.write_text(full_path, content)
 
         if errors:
+            some_hunks_applied = len(errors) < len(uniq)
             errors = "\n\n".join(errors)
-            if len(errors) < len(uniq):
+            if some_hunks_applied:
                 errors += other_hunks_applied
             raise ValueError(errors)
 
