@@ -533,8 +533,18 @@ class TestMain(TestCase):
             cwd_config = cwd / ".aider.conf.yml"
             named_config = git_dir / "named.aider.conf.yml"
 
+            # Create XDG config files
+            xdg_config_home = fake_home / ".config"
+            os.environ["XDG_CONFIG_HOME"] = str(xdg_config_home)
+            xdg_aider_dir = xdg_config_home / "aider"
+            xdg_aider_dir.mkdir(parents=True)
+            xdg_config_dot = xdg_aider_dir / ".aider.conf.yml"
+            xdg_config_no_dot = xdg_aider_dir / "conf.yml"
+
             cwd_config.write_text("model: gpt-4-32k\nmap-tokens: 4096\n")
             git_config.write_text("model: gpt-4\nmap-tokens: 2048\n")
+            xdg_config_no_dot.write_text("model: xdg-no-dot\nmap-tokens: 600\n")
+            xdg_config_dot.write_text("model: xdg-dot\nmap-tokens: 500\n")
             home_config.write_text("model: gpt-3.5-turbo\nmap-tokens: 1024\n")
             named_config.write_text("model: gpt-4-1106-preview\nmap-tokens: 8192\n")
 
@@ -555,8 +565,6 @@ class TestMain(TestCase):
                 # Test loading from current working directory
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
-                print("kwargs:", kwargs)  # Add this line for debugging
-                self.assertIn("main_model", kwargs, "main_model key not found in kwargs")
                 self.assertEqual(kwargs["main_model"].name, "gpt-4-32k")
                 self.assertEqual(kwargs["map_tokens"], 4096)
 
@@ -567,8 +575,22 @@ class TestMain(TestCase):
                 self.assertEqual(kwargs["main_model"].name, "gpt-4")
                 self.assertEqual(kwargs["map_tokens"], 2048)
 
-                # Test loading from home directory
+                # Test loading from XDG (no dot)
                 git_config.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "xdg-no-dot")
+                self.assertEqual(kwargs["map_tokens"], 600)
+
+                # Test loading from XDG (dot)
+                xdg_config_no_dot.unlink()
+                main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
+                _, kwargs = MockCoder.call_args
+                self.assertEqual(kwargs["main_model"].name, "xdg-dot")
+                self.assertEqual(kwargs["map_tokens"], 500)
+
+                # Test loading from home directory
+                xdg_config_dot.unlink()
                 main(["--yes", "--exit"], input=DummyInput(), output=DummyOutput())
                 _, kwargs = MockCoder.call_args
                 self.assertEqual(kwargs["main_model"].name, "gpt-3.5-turbo")

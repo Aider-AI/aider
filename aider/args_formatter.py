@@ -93,7 +93,7 @@ class YamlHelpFormatter(argparse.HelpFormatter):
 ##########################################################
 # Sample .aider.conf.yml
 # This file lists *all* the valid configuration entries.
-# Place in your home dir, or at the root of your git repo.
+# Place in your home dir, git repo root, or $XDG_CONFIG_HOME/aider/conf.yml.
 ##########################################################
 
 # Note: You can only put OpenAI and Anthropic API keys in the YAML
