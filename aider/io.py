@@ -263,6 +263,7 @@ class InputOutput:
         root=".",
         notifications=False,
         notifications_command=None,
+        fzf_history_search=False,
     ):
         self.placeholder = None
         self.interrupted = False
@@ -370,6 +371,8 @@ class InputOutput:
 
         # Validate color settings after console is initialized
         self._validate_color_settings()
+
+        self.fzf_history_search = fzf_history_search
 
     def _validate_color_settings(self):
         """Validate configured color strings and reset invalid ones."""
@@ -593,6 +596,43 @@ class InputOutput:
         def _(event):
             "Navigate forward through history"
             event.current_buffer.history_forward()
+
+        if self.fzf_history_search:
+            @kb.add("c-r")
+            def _(event):
+                if not self.input_history_file:
+                    self.tool_error("Reverse search attempt without history file")
+
+                    event.app.reset()
+
+                    return
+
+                history_lines = "\n".join(
+                    FileHistory(self.input_history_file).load_history_strings()
+                )
+
+                fzf_result = (
+                    subprocess.run(
+                        ["fzf", "--reverse", "--height", "20"],
+                        check=False,
+                        capture_output=True,
+                        text=True,
+                        input=history_lines,
+                    )
+                )
+                if fzf_result.returncode != 0:
+                    self.tool_error(f"fzf returned error: {fzf_result.stderr}")
+
+                    event.app.reset()
+
+                    return
+
+                fzf_output = fzf_result.stdout.rstrip("\n")
+
+                event.app.reset()
+                buffer = event.current_buffer
+                buffer.text = fzf_output
+                buffer.cursor_position = len(buffer.text)
 
         @kb.add("c-x", "c-e")
         def _(event):

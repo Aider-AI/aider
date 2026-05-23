@@ -849,6 +849,10 @@ def get_parser(default_config_files, git_root):
         "--editor",
         help="Specify which editor to use for the /editor command",
     )
+    group.add_argument(
+        "--fzf-history-search",
+        help="Use fuzzy find (fzf) for backwards history search",
+    )
 
     supported_shells_list = sorted(list(shtab.SUPPORTED_SHELLS))
     group.add_argument(
