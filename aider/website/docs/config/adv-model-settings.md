@@ -150,9 +150,11 @@ cog.out("```\n")
   caches_by_default: false
   use_system_prompt: true
   use_temperature: true
+  merge_temperature: 0.0
   streaming: true
   editor_model_name: null
   editor_edit_format: null
+  merge_model_name: null
   reasoning_tag: null
   remove_reasoning: null
   system_prompt_prefix: null

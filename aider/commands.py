@@ -97,6 +97,7 @@ class Commands:
             model_name,
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=self.coder.main_model.weak_model.name,
+            merge_model=self.coder.main_model.merge_model.name,
         )
         models.sanity_check_models(self.io, model)
 
@@ -119,6 +120,7 @@ class Commands:
             self.coder.main_model.name,
             editor_model=model_name,
             weak_model=self.coder.main_model.weak_model.name,
+            merge_model=self.coder.main_model.merge_model.name,
         )
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
@@ -131,6 +133,7 @@ class Commands:
             self.coder.main_model.name,
             editor_model=self.coder.main_model.editor_model.name,
             weak_model=model_name,
+            merge_model=self.coder.main_model.merge_model.name,
         )
         models.sanity_check_models(self.io, model)
         raise SwitchCoder(main_model=model)
@@ -456,7 +459,8 @@ class Commands:
             dict(role="system", content=main_sys),
             dict(
                 role="system",
-                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder),
+                content=self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_reminder)
+                + self.coder.fmt_system_prompt(self.coder.gpt_prompts.system_end_reminder),
             ),
         ]
 
