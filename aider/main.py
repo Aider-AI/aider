@@ -1130,6 +1130,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             coder.run(with_message=args.message)
         except SwitchCoder:
             pass
+        except ImportError as err:
+            io.tool_error(str(err))
+            io.tool_output("Error loading required imports. Did you install aider properly?")
+            io.offer_url(urls.install_properly, "Open documentation url for more info?")
+            analytics.event("exit", reason="Message run import error")
+            return 1
         analytics.event("exit", reason="Completed --message")
         return
 
@@ -1145,6 +1151,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
         except IOError as e:
             io.tool_error(f"Error reading message file: {e}")
             analytics.event("exit", reason="Message file IO error")
+            return 1
+        except ImportError as err:
+            io.tool_error(str(err))
+            io.tool_output("Error loading required imports. Did you install aider properly?")
+            io.offer_url(urls.install_properly, "Open documentation url for more info?")
+            analytics.event("exit", reason="Message file import error")
             return 1
 
         analytics.event("exit", reason="Completed --message-file")
@@ -1178,6 +1190,12 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
 
             if switch.kwargs.get("show_announcements") is not False:
                 coder.show_announcements()
+        except ImportError as err:
+            io.tool_error(str(err))
+            io.tool_output("Error loading required imports. Did you install aider properly?")
+            io.offer_url(urls.install_properly, "Open documentation url for more info?")
+            analytics.event("exit", reason="Main coder.run import error")
+            return 1
 
 
 def is_first_run_of_new_version(io, verbose=False):

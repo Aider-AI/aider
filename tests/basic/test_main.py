@@ -384,6 +384,23 @@ class TestMain(TestCase):
 
     @patch("aider.main.InputOutput")
     @patch("aider.coders.base_coder.Coder.run")
+    def test_message_import_error_is_reported(self, mock_run, MockInputOutput):
+        mock_run.side_effect = ImportError("cannot import name 'BaseTransport' from 'httpx'")
+        mock_io_instance = MockInputOutput.return_value
+
+        result = main(["--message", "test message"], input=DummyInput(), output=DummyOutput())
+
+        self.assertEqual(result, 1)
+        mock_io_instance.tool_error.assert_called_with(
+            "cannot import name 'BaseTransport' from 'httpx'"
+        )
+        mock_io_instance.tool_output.assert_any_call(
+            "Error loading required imports. Did you install aider properly?"
+        )
+        mock_io_instance.offer_url.assert_called_once()
+
+    @patch("aider.main.InputOutput")
+    @patch("aider.coders.base_coder.Coder.run")
     def test_default_yes(self, mock_run, MockInputOutput):
         test_message = "test message"
 
