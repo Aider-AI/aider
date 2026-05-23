@@ -204,7 +204,10 @@ def main(
         None, "--num-ctx", help="Override model context window size"
     ),
     read_model_settings: str = typer.Option(
-        None, "--read-model-settings", help="Load aider model settings from YAML file"
+        None,
+        "--model-settings-file",
+        "--read-model-settings",
+        help="Load aider model settings from YAML file",
     ),
     reasoning_effort: Optional[str] = typer.Option(
         None, "--reasoning-effort", help="Set reasoning effort for models that support it"
