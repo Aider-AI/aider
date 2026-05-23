@@ -226,11 +226,9 @@ def write_streamlit_credentials():
         os.makedirs(os.path.dirname(credential_path), exist_ok=True)
         with open(credential_path, "w") as f:
             f.write(empty_creds)
-    else:
-        print("Streamlit credentials already exist.")
 
 
-def launch_gui(args):
+def launch_gui(argv, parsed_args):
     from streamlit.web import cli
 
     from aider import gui
@@ -251,8 +249,18 @@ def launch_gui(args):
         "--server.runOnSave=false",
     ]
 
+    if parsed_args.gui_port is not None:
+        st_args += [f"--server.port={parsed_args.gui_port}"]
+
+    if parsed_args.gui_ip is not None:
+        st_args += [f'--server.address={parsed_args.gui_ip}']
+
+    if parsed_args.gui_launch is False:
+        st_args += ["--server.headless=true"]
+
+
     # https://github.com/Aider-AI/aider/issues/2193
-    is_dev = "-dev" in str(__version__)
+    is_dev = "-dev" in str(__version__) or parsed_args.gui_dev
 
     if is_dev:
         print("Watching for file changes.")
@@ -263,7 +271,7 @@ def launch_gui(args):
             "--client.toolbarMode=viewer",  # minimal?
         ]
 
-    st_args += ["--"] + args
+    st_args += ["--"] + argv
 
     cli.main(st_args)
 
@@ -668,7 +676,7 @@ def main(argv=None, input=None, output=None, force_git_root=None, return_coder=F
             analytics.event("exit", reason="Streamlit not installed")
             return
         analytics.event("gui session")
-        launch_gui(argv)
+        launch_gui(argv,args)
         analytics.event("exit", reason="GUI session ended")
         return
 
