@@ -37,6 +37,11 @@ src="https://img.shields.io/badge/🔄%20Singularity-88%25-e74c3c?style=flat-squ
 <!--[[[end]]]-->  
 </p>
 
+<p align="center">
+  <strong>English</strong> ·
+  <a href="README.zh.md">中文</a>
+</p>
+
 ## Features
 
 ### [Cloud and local LLMs](https://aider.chat/docs/llms.html)
