@@ -17,3 +17,7 @@ aider/_version.py
 .gitattributes
 tmp.benchmarks/
 .docker_bash_history
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
