@@ -1132,7 +1132,13 @@ class Commands:
                 self.io.tool_error("Unable to initialize interactive help.")
                 return
 
-            self.help = Help()
+            try:
+                self.help = Help()
+            except Exception as err:
+                self.help = None
+                self.io.tool_error("Unable to initialize interactive help.")
+                self.io.tool_error(str(err))
+                return
 
         coder = Coder.create(
             io=self.io,
