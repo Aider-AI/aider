@@ -1132,16 +1132,25 @@ class Commands:
                 self.io.tool_error("Unable to initialize interactive help.")
                 return
 
-            self.help = Help()
+            try:
+                self.help = Help()
+            except (RuntimeError, OSError, Exception) as err:
+                self.io.tool_error(f"Unable to initialize interactive help: {err}")
+                return
 
-        coder = Coder.create(
-            io=self.io,
-            from_coder=self.coder,
-            edit_format="help",
-            summarize_from_coder=False,
-            map_tokens=512,
-            map_mul_no_files=1,
-        )
+        try:
+            coder = Coder.create(
+                io=self.io,
+                from_coder=self.coder,
+                edit_format="help",
+                summarize_from_coder=False,
+                map_tokens=512,
+                map_mul_no_files=1,
+            )
+        except Exception as err:
+            self.io.tool_error(f"Unable to initialize help coder: {err}")
+            return
+
         user_msg = self.help.ask(args)
         user_msg += """
 # Announcement lines from when this session of aider was launched:
@@ -1149,7 +1158,11 @@ class Commands:
 """
         user_msg += "\n".join(self.coder.get_announcements()) + "\n"
 
-        coder.run(user_msg, preproc=False)
+        try:
+            coder.run(user_msg, preproc=False)
+        except Exception as err:
+            self.io.tool_error(f"Error running help: {err}")
+            return
 
         if self.coder.repo_map:
             map_tokens = self.coder.repo_map.max_map_tokens
