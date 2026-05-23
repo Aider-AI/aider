@@ -1,5 +1,6 @@
 import os
 import platform
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -11,6 +12,38 @@ from aider.dump import dump  # noqa: F401
 from aider.waiting import Spinner
 
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp", ".pdf"}
+
+
+def run_fzf(input_data, multi=False):
+    """
+    Runs fzf as a subprocess, feeding it input_data.
+    Returns the selected items.
+    """
+    if not shutil.which("fzf"):
+        return []  # fzf not available
+
+    fzf_command = ["fzf"]
+    if multi:
+        fzf_command.append("--multi")
+
+    # Recommended flags for a good experience
+    fzf_command.extend(["--height", "80%", "--reverse"])
+
+    process = subprocess.Popen(
+        fzf_command,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        text=True,
+    )
+    # fzf expects a newline-separated list of strings
+    stdout, _ = process.communicate("\n".join(input_data))
+
+    if process.returncode == 0:
+        # fzf returns selected items newline-separated
+        return stdout.strip().splitlines()
+    else:
+        # User cancelled (e.g., pressed Esc)
+        return []
 
 
 class IgnorantTemporaryDirectory:
